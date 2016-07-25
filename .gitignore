@@ -5,6 +5,4 @@
 data/*
 realm/*
 log/*
-pol.cfg
 pol.exe
-scripts/ecompile.cfg
