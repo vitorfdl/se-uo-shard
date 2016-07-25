@@ -14,7 +14,7 @@ include "include/say";
 
 //Main Menu
 const GF_ADD_BTN        := 888;
-const GF_DEL_BTN     := 887;
+const GF_DEL_BTN        := 887;
 const GF_SELECTELEM_BTN := 100;
 
 //Moblist menu

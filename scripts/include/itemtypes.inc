@@ -180,7 +180,8 @@ function IsWoodenWeapon (byref weapon)
 	elseif (weapon.graphic >= 0x48B8	and weapon.graphic <= 0x48B9)
 		return 1;
 	endif
-		return 0;
+	return 0;
+
 endfunction
 
 function IsStoneWeapon (byref weapon)
