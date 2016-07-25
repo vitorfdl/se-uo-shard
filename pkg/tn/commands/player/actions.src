@@ -1,0 +1,277 @@
+
+use basic;
+use uo;
+use util;
+use os;
+use cfgfile;
+
+program action(who, text)
+
+		var layout := array(
+		
+	 		"page 0",
+			"resizepic 50 50 3600 430 430",
+			"text 160 65 500 0",
+			"gumppic 70 85 96",
+			"button 70 100 2103 2104 1 0 1",
+			"text 90 95 500 1",
+			"button 70 120 2103 2104 1 0 2",
+			"text 90 115 500 2",
+			"button 70 140 2103 2104 1 0 3",
+			"text 90 135 500 3",
+			"button 70 160 2103 2104 1 0 4",
+			"text 90 155 500 4",
+			"button 70 180 2103 2104 1 0 5",
+			"text 90 175 500 5",
+			"button 70 200 2103 2104 1 0 6",
+			"text 90 195 500 6",
+			"button 70 220 2103 2104 1 0 7",
+			"text 90 215 500 7",
+			"button 70 240 2103 2104 1 0 8",
+			"text 90 235 500 8",
+			"button 70 260 2103 2104 1 0 9",
+			"text 90 255 500 9",
+			"button 70 280 2103 2104 1 0 10",
+			"text 90 275 500 10",
+			"button 70 300 2103 2104 1 0 11",
+			"text 90 295 500 11",
+			"button 70 320 2103 2104 1 0 12",
+			"text 90 315 500 12",
+			"button 70 340 2103 2104 1 0 13",
+			"text 90 335 500 13",
+			"button 70 360 2103 2104 1 0 14",
+			"text 90 355 500 14",
+			"button 70 380 2103 2104 1 0 15",
+			"text 90 375 500 15",
+			"button 70 400 2103 2104 1 0 16",
+			"text 90 395 500 16",
+			"button 70 420 2103 2104 1 0 17",
+			"text 90 415 500 17",
+			"gumppic 250 85 96",
+			"gumppic 280 85 96",
+			"button 260 100 2103 2104 1 1 18",
+			"text 280 95 500 18",
+			"button 260 120 2103 2104 1 1 19",
+			"text 280 115 500 19",
+			"button 260 140 2103 2104 1 1 20",
+			"text 280 135 500 20",
+			"button 260 160 2103 2104 1 1 21",
+			"text 280 155 500 21",
+			"button 260 180 2103 2104 1 1 22",
+			"text 280 175 500 22",
+			"button 260 200 2103 2104 1 1 23",
+			"text 280 195 500 23",
+			"button 260 220 2103 2104 1 1 24",
+			"text 280 215 500 24",
+			"button 260 240 2103 2104 1 1 25",
+			"text 280 235 500 25",
+			"button 260 260 2103 2104 1 1 26",
+			"text 280 255 500 26",
+			"button 260 280 2103 2104 1 1 27",
+			"text 280 275 500 27",
+			"button 260 300 2103 2104 1 1 28",
+			"text 280 295 500 28",
+			"button 260 320 2103 2104 1 1 29",
+			"text 280 315 500 29",
+			"button 260 340 2103 2104 1 1 30",
+			"text 280 335 500 30",
+			"button 260 360 2103 2104 1 1 31",
+			"text 280 355 500 31",
+			"button 260 380 2103 2104 1 1 32",
+			"text 280 375 500 32",
+			"button 260 400 2103 2104 1 1 33",
+			"text 280 395 500 33",
+			"button 260 420 2103 2104 1 1 34",
+			"text 280 415 500 34",
+			"button 235 440 2121 2120 1 0 0"
+		);
+		
+		var data := array(
+		
+			"esclha sua açao:",
+			"1. Walk (UnArmed)",
+			"2. Walk (Armed)",
+			"3. Walk (Warmode)",
+			"4. Run (UnArmed)",
+			"5. Run (Armed)",
+			"6. Look Around",
+			"7. Fidget",
+			"8. Directed Spellcast",
+			"9. Area Spellcast",
+			"10. Bow",
+			"11. Salute",
+			"12. Eat",
+			"13. Dodge",
+			"14. Punch",
+			"15. Fall Backwards",
+			"16. Fall Forwards",
+			"17. Get Hit",
+			"18. Fire Bow",
+			"19. Fire Crossbow",
+			"20. Jump",
+			"21. Mounted Attack",
+			"22. Mounted Bow Shot",
+			"23. Mounted Crossbow Shot",
+			"24. Ride Horse (Slow)",
+			"25. Ride Horse (Fast)",
+			"26. Slap Horse",
+			"27. Warmode (1H Weapon)",
+			"28. Warmode (2H Weapon)",
+			"29. Attack (1H Swing)",
+			"30. Attack (1H Jab)",
+			"31. Attack (1H Overhead)",
+			"32. Attack (2H Swing)",
+			"33. Attack (2H Overhead)",
+			"34. Attack (Spear Jab)"
+		);
+
+	text := splitwords(text);
+
+	var input  := array;
+//	sendsysmessage(who, " " + text.size());
+
+	var delay := 1;
+	var repeatcount := 1;
+	var repeatflag := 0;
+	if (text.size() == 0)
+		input := SendDialogGump( who, Layout, Data );
+		if ( (input[0]==0) )
+			SendSysMessage(who, "Cancelled.");
+			return;
+		endif
+	else
+
+		var k := 0;
+		while (k < 34)
+			input[k] := 0;
+			k := k + 1;
+		endwhile
+		if (cint(text[1]) >= 1)
+			input[cint(text[1])] := 1;
+		endif
+		//sendsysmessage(who, "input " + text[1] );
+		var i := 1;
+		for(i := 1; i < text.size(); i := i + 1)
+			if (text[i] == "d")
+				delay := cint(text[i+1]);
+				if (delay == 0)
+					delay := 1;
+				endif
+			elseif (text[i] == "l")
+				repeatcount := cint(text[i+1]);
+				if (repeatcount == 0)
+					repeatcount := 1;
+					repeatflag := 0;
+				else
+					repeatflag := 1;
+				endif
+			endif
+		endfor
+endif
+
+if ( (input[1]==1) )
+performaction(who, 0x00, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[2]==1) )
+performaction(who, 0x01, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[3]==1) )
+performaction(who, 0x0f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[4]==1) )
+performaction(who, 0x02, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[5]==1) )
+performaction(who, 0x03, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[6]==1) )
+performaction(who, 0x05, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[7]==1) )
+performaction(who, 0x06, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[8]==1) )
+performaction(who, 0x10, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[9]==1) )
+performaction(who, 0x11, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[10]==1) )
+performaction(who, 0x20, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[11]==1) )
+performaction(who, 0x21, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif	
+if ( (input[12]==1) )
+performaction(who, 0x22, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[13]==1) )
+performaction(who, 0x1e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[14]==1) )
+performaction(who, 0x1f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[15]==1) )
+performaction(who, 0x15, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[16]==1) )
+performaction(who, 0x16, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[17]==1) )
+performaction(who, 0x14, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[18]==1) )
+performaction(who, 0x12, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[19]==1) )
+performaction(who, 0x13, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[20]==1) )
+performaction(who, 0x19, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[21]==1) )
+performaction(who, 0x1a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[22]==1) )
+performaction(who, 0x1b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[23]==1) )
+performaction(who, 0x1c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[24]==1) )
+performaction(who, 0x17, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[25]==1) )
+performaction(who, 0x18, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[26]==1) )
+performaction(who, 0x1d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[27]==1) )
+performaction(who, 0x07, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[28]==1) )
+performaction(who, 0x08, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[29]==1) )
+performaction(who, 0x09, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[30]==1) )
+performaction(who, 0x0a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+
+if ( (input[31]==1) )
+//performaction(who, 0x0b, 5, 1, 0, 1, 100 );
+performaction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+
+if ( (input[32]==1) )
+performaction(who, 0x0d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[33]==1) )
+performaction(who, 0x0c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+if ( (input[34]==1) )
+performaction(who, 0x0e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+endprogram

@@ -1,0 +1,25 @@
+use uo;
+use os;
+use vitals;
+use util;
+
+include ":mounts:mounts";
+
+program TimedScript_Paralysis(params)
+	var mobile := params[1];
+
+	if (GetEquipmentByLayer(mobile, LAYER_MOUNT))
+		MP_Unmount(mobile);
+		performaction(mobile, 0x15);
+		ApplyRawDamage(mobile, 20 + RandomInt(20));
+
+		if (mobile.graphic == 401)
+		  PlaySoundEffect( mobile, 0x32F );
+		else
+		  PlaySoundEffect( mobile, 0x441 );
+		endif
+	endif
+	SetObjProperty(mobile, "#desmontar", 1);
+	return 1;
+endprogram
+ 

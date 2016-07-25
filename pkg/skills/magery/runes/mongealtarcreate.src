@@ -1,0 +1,32 @@
+use uo;
+use util;
+use cfgfile;
+
+program OnCreate(altar)
+	var itens := array{};
+	var item;
+	if (!altar.container)
+		item := CreateItemAtLocation( altar.x-1, altar.y-1, altar.z, 0x41DC);
+		itens.append(item);
+		item := CreateItemAtLocation( altar.x, altar.y-1, altar.z, 0x41DD);
+		itens.append(item);
+		item := CreateItemAtLocation( altar.x+1, altar.y-1, altar.z, 0x41DE);
+		itens.append(item);
+		
+		item := CreateItemAtLocation( altar.x-1, altar.y, altar.z, 0x41DF);
+		itens.append(item);
+		item := CreateItemAtLocation( altar.x+1, altar.y, altar.z, 0x41E1);
+		itens.append(item);
+		
+		item := CreateItemAtLocation( altar.x-1, altar.y+1, altar.z, 0x41E2);
+		itens.append(item);
+		item := CreateItemAtLocation( altar.x, altar.y+1, altar.z, 0x41E3);
+		itens.append(item);
+		item := CreateItemAtLocation( altar.x+1, altar.y+1, altar.z, 0x41E4);
+		itens.append(item);
+	endif
+	
+	foreach objeto in itens
+		objeto.movable := 0;
+	endforeach
+endprogram

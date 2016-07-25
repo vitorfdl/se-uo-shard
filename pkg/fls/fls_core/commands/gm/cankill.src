@@ -1,0 +1,78 @@
+use uo;
+
+
+include ":fls_core:fls_characters";
+include "include/say";
+include ":gumps:yesno";
+include ":gumps:playerselectiongump";
+
+program changeSkill(who, text)
+	text := SplitWords(text);
+	var tipo := text[1];
+	var serial := cint(text[2]);
+	var user;
+	if (!serial)
+		user := SelectCharacter(who, who.cmdlevel);
+		serial := user.serial;
+	else
+		user := SystemFindObjectBySerial( serial, SYSFIND_SEARCH_OFFLINE_MOBILES );
+	endif
+	
+	
+	if (!user)
+		SendSysMessageEX(who, "Serial nao existe", SSM_FAIL);
+		return;
+	endif
+	
+	if (tipo == "add")
+		SendSysMessageEx(who, "Escolha o alvo", SSM_REQUEST);
+		var targ := Target(who);
+		addkill(targ, serial);
+		addkill(user, targ.serial);
+		var script := start_script( ":email:emailMessage/sendSystemMail", array{ targ, "Permissão de Assassinato!", "Você recebeu permissão para assassinar o personagem " + user.name + ". [P] Em Algumas ocasiões, o outro jogador também será avisado que pode te matar. Mas, em qualquer circunstância, é importante lembrar que ele também pode te matar, mesmo que não tenha sido avisado. [P] Esta permissão pode ser revogada a qualquer momento. [P]  [P] Bom Jogo!"} );
+		if (YesNo(who, "Deseja avisar o jogador que será assassinado??","Sim","Não"))
+			var script := start_script( ":email:emailMessage/sendSystemMail", array{ user, "Permissão de Assassinato!", "Você recebeu permissão para assassinar o personagem " + targ.name + ". [P] Em Algumas ocasiões, o outro jogador também será avisado que pode te matar. Mas, em qualquer circunstância, é importante lembrar que ele também pode te matar, mesmo que não tenha sido avisado. [P] Esta permissão pode ser revogada a qualquer momento. [P]  [P] Bom Jogo!"} );
+		endif
+		elseif (tipo == "remove")
+		var targ := Target(who);
+		removekill(targ, serial);
+		var script := start_script( ":email:emailMessage/sendSystemMail", array{ targ, "Permissão de Ass. Revogado!", "Sua permissão para assassinar o personagem " + user.name + " foi revogada. [P] Isso ocorre pois você não conseguiu cumprir com algum de seus objetivos a tempo ou seu personagem perdeu motivações cruciais para o ato. [P]  [P] Bom Jogo!"} );
+		if (YesNo(who, "Deseja remover do outro jogador também?","Sim","Não"))
+			removekill(user, targ.serial);
+			if (YesNo(who, "Deseja avisar o jogador assassinado?","Sim","Não"))
+				var script := start_script( ":email:emailMessage/sendSystemMail", array{ user, "Permissão de Ass. Revogado!", "Sua permissão para assassinar o personagem " + targ.name + " foi revogada. [P] Isso ocorre pois você não conseguiu cumprir com algum de seus objetivos a tempo ou seu personagem perdeu motivações cruciais para o ato. [P]  [P] Bom Jogo!"} );
+			endif
+		endif
+	endif
+endprogram
+
+function addkill(targ, serial)
+	var killarray := GetObjProperty(targ, "PodeMatar");
+	if (!killarray)
+		killarray := array{};
+	endif
+	
+	if (!(serial in killarray))
+		killarray.append(serial);
+	endif
+	
+	SetObjProperty(targ, "PodeMatar", killarray);
+endfunction
+
+function removekill(targ, serial)
+	var killarray := GetObjProperty(targ, "PodeMatar");
+	if (!killarray)
+		killarray := array{};
+	endif
+	
+	if (serial in killarray)
+		var i;
+		for(i:=1;i<=killarray.size();i+=1)
+			if (cint(killarray[i]) == serial)
+				killarray.erase(i);
+			endif
+		endfor
+	endif
+	
+	SetObjProperty(targ, "PodeMatar", killarray);
+endfunction

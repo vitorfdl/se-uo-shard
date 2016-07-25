@@ -1,0 +1,10 @@
+
+use os;
+
+program hunger_logon(who)
+
+	sleep(5);
+	start_script("hunger", who);
+
+endprogram
+

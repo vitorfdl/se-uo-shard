@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="308"
+   name=""
+   committed-date="2005-09-29T05:26:53.190799Z"
+   url="svn://svn.berlios.de/poldistro/trunk/096/pkg/skills/taming/config"
+   last-author="muaddiblsd"
+   kind="dir"
+   uuid="9d346cd0-66fc-0310-bdc5-e57197e5a75e"
+   revision="1233"/>
+<entry
+   committed-rev="308"
+   name="icp.cfg"
+   text-time="2006-03-11T02:33:31.000000Z"
+   committed-date="2005-09-29T05:26:53.190799Z"
+   checksum="c3ece06fdc154d843ab52d8d91c4723a"
+   last-author="muaddiblsd"
+   kind="file"
+   prop-time="2006-03-11T02:33:31.000000Z"/>
+</wc-entries>

@@ -1,0 +1,166 @@
+use uo;
+use os;
+use npc;
+use cfgfile;
+
+include "include/say";
+include ":ghaia:ghaiaInit";
+include ":dyes:include/dyes";
+include ":ghaia:npcSettings";
+include ":ghaia:ghaia";
+include ":ghaia:generic";
+
+var me         := self();
+var npccfgfile := NPC_GetNPCConfig(me);
+var idlesnd1;
+var idlesnd2;
+var areasize;
+var mystate      := INITIALIZING;
+var flee_point   := 0.1;
+var alert_allies := 0;
+var align;
+var mytemplate;
+var throwinfo;
+var propallies;
+
+var g_settings:= dictionary; //"setting name"->value
+var g_scripts := dictionary; // "script type"->value{.flags, .script}
+
+program Merchant()
+    var ev;
+    var wanders;
+
+    set_critical(1);
+    //printtextabove(me, "vai inicializr");
+    InitializeSettings();
+
+    InitializeNpc(me);
+    set_critical(0);
+
+    SetWarMode( 0 );
+    ev := os::wait_for_event(0);
+    EnableMainEvents("merchant");
+    Set_Event_Queue_Size(1000);
+    while(me)
+
+        if(wanders >= 30)
+            wanders := 0;
+            ev := sleepmode();
+        else
+            ev := os::wait_for_event(10);
+        endif
+
+        if(ev)
+            case(ev.type)
+                // SYSEVENT_ENTEREDAREA:   
+                SYSEVENT_ENGAGED:
+                    SayUC(UC("Não seja tolo de me atacar!"), "yell");
+                    break;
+                SYSEVENT_DAMAGED:
+                    // Ignore 'damaged'.
+                    break;
+                SYSEVENT_ITEM_GIVEN:
+                    ItemGivenEvent(ev);
+                    break;
+                SYSEVENT_DOUBLECLICKED:
+                    DblClickScript(ev);
+                    break;
+                SYSEVENT_SPEECH:
+                    Say(ev.text, ev.texttype, ev.doevent);
+                    break;
+                EVID_DOOBJECTIVE:
+                    if (ev.destiny)
+                        wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
+                    endif
+                // EVID_ALERT_ALLIES:  wanders := 0; Fight(ev.opponent, 1);
+                // EVID_HERDING:       herd(ev);
+                // EVID_TAUNT:
+                // EVID_FLEE:
+                // EVID_DOOBJECTIVE:
+
+            endcase
+        endif   
+        sleepms(5);
+    endwhile
+endprogram
+
+
+function ItemGivenEvent(byref event)
+    var item := event.item;
+    var source := event.source;
+
+    // Train skills here?
+
+    return 0;
+endfunction
+
+function DblClickScript(event)
+    if ( Distance(event.source, me) <= g_settings["DblClickRange"])
+        var process := start_script(g_scripts["DblClick"], array{me, event});
+
+        if ( process.errortext )
+            var errmsg := "Error::ghaiaDblClick() - ['DblClick'] [{}] failed to start! ->{}".format(g_scripts["DblClick"], process.errortext);
+            Print(errmsg);
+            NPC_ErrorSysLog(me, errmsg);
+            return error{"errortext":=errmsg};
+        endif
+    endif
+endfunction
+
+function GetMainScript()
+    
+endfunction
+
+
+// function InitScript(params)
+//     var npc := params[1];
+//     // var settings := params[2];
+
+//     npc.color := 1056 - RandomInt(55); // 1002-1056
+//     npc.truecolor := npc.color;
+
+//     var result;
+//     case( RandomInt(1) )
+//         0: // Male
+//             npc.gender := 0;
+//             npc.graphic := 400;
+//             result := NPC_SetupName(npc, "Human_Male");
+//         1: //Female
+//             npc.gender := 1;
+//             npc.graphic := 401;
+//             result := NPC_SetupName(npc, "Human_Female");
+//     endcase 
+    
+//     if (npc.npctemplate == ":merchants:estalagem")
+//         var innkeepers := getglobalproperty("InnKeeper");
+//         if (innkeepers == error)
+//             innkeepers := array;
+//         endif
+//         if (npc.serial in innkeepers)
+//         else
+//             innkeepers.Append(npc.serial);
+//             setglobalproperty("InnKeeper",innkeepers);
+//         endif
+//     endif
+    
+    
+//     if ( result.errortext )
+//         return result;
+//     endif
+
+//     result := NPC_SetupRandomEquipment(npc);
+//     if ( result.errortext )
+//         PrintTextAbove(npc, result.errortext);
+//         return 0;
+//     endif
+    
+//     foreach item in ( ListEquippedItems(npc) )
+//         if ( CanDye(item) )
+//             item.color := RandomDyeColor();
+//         endif
+
+//         SleepMS(2);
+//     endforeach
+    
+//     return 1;
+// endfunction

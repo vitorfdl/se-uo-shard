@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="1177"
+   name=""
+   committed-date="2006-02-10T01:37:31.521252Z"
+   url="svn://svn.berlios.de/poldistro/trunk/096/pkg/items/mounts/config"
+   last-author="austin"
+   kind="dir"
+   uuid="9d346cd0-66fc-0310-bdc5-e57197e5a75e"
+   revision="1233"/>
+<entry
+   committed-rev="1177"
+   name="mounts.cfg"
+   text-time="2006-03-11T02:33:08.000000Z"
+   committed-date="2006-02-10T01:37:31.521252Z"
+   checksum="63ca27e1dd3cbae5cd0b4aa41faa87e7"
+   last-author="austin"
+   kind="file"
+   prop-time="2006-03-11T02:33:08.000000Z"/>
+<entry
+   committed-rev="1005"
+   name="icp.cfg"
+   text-time="2006-03-11T02:33:08.000000Z"
+   committed-date="2005-11-15T09:20:06.894839Z"
+   checksum="f3fb19b5bf24e5741a907fef4843f7ed"
+   last-author="muaddiblsd"
+   kind="file"
+   prop-time="2006-03-11T02:33:08.000000Z"/>
+</wc-entries>

@@ -1,0 +1,695 @@
+/*
+1- so quem tem tag pode por coisa pra vender OK
+2- cada coisa q vc colocou la tem seu id OK
+3- voce pode setar o preço das coisas OK
+4- voce pode remover coisas  OK
+5- quando o npc vende o dinheiro vai pro seu id (uma prop) e 10% vai pro npc  OK
+6- player comuns (sem tag)so podem comprar e nao vende OK
+*/
+
+use uo;
+use os;
+
+include ":gumps:include/requestgump";
+include "include/string";
+include ":gumps:gumps";
+include ":gumps:include/gumpprompt";
+include ":merchants:merchant";
+include	":merchants:crafthelp";
+include ":gumps:yesno";
+include "include/say";    
+include ":charactercreation:habilidades";
+include ":ghaia:ghaiaUtil";
+
+const ADD_ITEM_SELL_BTN:= 0x1;
+const MY_SELLS_BTN     := 0x2;
+const MY_ACCOUNT_BTN   := 0x3;
+const WITHDRAW_BTN     := 0x4;
+
+const SHOW_ITEMS_SOLD_BTN  := 0x5;
+const SHOW_ITEMS_BOUGHT_BTN:= 0x6;
+
+const CONFISCAR_BTN:= 0x7;
+
+const MERCHANT_SELLER:= 0xA;
+const MERCHANT_GM    := 0xB;
+
+//Menu Position Constants
+const MENU_INTRO         := 0x0;
+const MENU_ITEMS_SOLD    := 0x1;
+const MENU_ITEM_SOLD_INFO:= 0x2;
+const MENU_MY_SELLS      := 0x3;
+const MENU_MY_SELLS_INFO := 0x4;
+const MENU_MY_ACCOUNT    := 0x5;
+
+const END_Y:= 405;	  // nextpage
+
+//Gump Constants
+const BKGND_STONESLAB:= 9200;  // Gray stone slab background
+const BKGND_BLUESLAB := 3600;  // Raised edge (blocky)
+const GF_STDCOLOR    := 1890;
+
+const MOEDAS:= 47715;
+
+var item_cfg := ReadConfigFile(":*:itemdesc");
+
+
+program MerchantMenu(params)
+	var npc      := params[1];
+	var player   := params[2];
+	var cur_menu := MENU_INTRO;
+	var gump     := MENU_INTRO;
+	var input    := MENU_INTRO;
+	var escondido:= player.hidden;
+	if (escondido)
+		player.hidden := 0;
+		SendSysMessageEx (player, "Voce se revelou ao mercador.", SSM_FAIL);
+	endif
+	
+	MAIN_LOOP: while ( 1 )
+		gump := MainLayout(player);
+		
+		case ( cur_menu )
+			MENU_INTRO:
+				IntroGump(gump);
+			MENU_ITEMS_SOLD:
+				if ( input == SHOW_ITEMS_SOLD_BTN )
+					ShowItemsSold(gump, npc, player);
+				else
+					cur_menu := MENU_ITEM_SOLD_INFO;
+					ShowItemSoldInfo(gump, npc, player, input);
+				endif
+			MENU_ITEM_SOLD_INFO:
+				DoPurchase(npc, player, input);
+				break MAIN_LOOP;
+			MENU_MY_SELLS:
+				if ( input == MY_SELLS_BTN )
+					ShowItemsSold(gump, npc, player, 1);
+				else
+					cur_menu := MENU_MY_SELLS_INFO;
+					ShowItemSoldInfo(gump, npc, player, input, 1);
+				endif
+			MENU_MY_SELLS_INFO:
+				DoRemove(npc, player, input);
+				break MAIN_LOOP;
+			MENU_MY_ACCOUNT:
+				//if ( input == MY_ACCOUNT_BTN )
+					ShowMyAccount(gump, npc, player);
+				//else
+				//	DoWithdraw(npc, player);
+				//endif
+		endcase
+		
+		
+		input := GFSendGump(player, gump);
+		if ( GetObjProperty(player, "#Online") )
+			break MAIN_LOOP;
+		else
+			input := input[0];
+		endif
+
+		
+		case ( input )
+			0:	
+				break MAIN_LOOP;
+			ADD_ITEM_SELL_BTN:
+				AddItemToSell(npc, player);
+				cur_menu := MENU_INTRO;
+			SHOW_ITEMS_SOLD_BTN:
+				cur_menu := MENU_ITEMS_SOLD;
+			MY_SELLS_BTN:
+				cur_menu := MENU_MY_SELLS;
+			MY_ACCOUNT_BTN:
+				cur_menu := MENU_MY_ACCOUNT;
+			WITHDRAW_BTN:
+				DoWithdraw(npc, player);
+				cur_menu := MENU_INTRO;				
+		endcase
+	endwhile
+
+	return 1;
+endprogram
+
+function MainLayout(player)
+	var gump := GFCreateGump(0, 0);
+	GFPage(gump, 0);
+	GFResizePic(gump, 0, 0, BKGND_BLUESLAB, 640, 480);
+	GFResizePic(gump, 15, 15, BKGND_STONESLAB, 150, 450);
+
+	GFAddButton(gump, 20, 33, 2117, 2118, GF_CLOSE_BTN, SHOW_ITEMS_SOLD_BTN);
+	GFTextLine(gump, 40, 30, GF_STDCOLOR, "Itens a venda");
+	
+	var classes_permitidas := array{"Carpinteiro", "Cozinheiro", "Pescador", "Inventor",
+				   "Engenheiro", "Alfaiate", "Ferreiro", "Fazendeiro" };
+
+	//if( ( GetObjProperty(player, "kit") in classes_permitidas ) || player.cmdlevel )
+		GFAddButton(gump, 20, 83, 2117, 2118, GF_CLOSE_BTN, ADD_ITEM_SELL_BTN);
+		GFTextLine(gump, 40, 80, GF_STDCOLOR, "Adicionar items");
+
+		GFAddButton(gump, 20, 133, 2117, 2118, GF_CLOSE_BTN, MY_SELLS_BTN);
+		GFTextLine(gump, 40, 130, GF_STDCOLOR, "Minhas vendas");
+
+		GFAddButton(gump, 20, 183, 2117, 2118, GF_CLOSE_BTN, MY_ACCOUNT_BTN);
+		GFTextLine(gump, 40, 180, GF_STDCOLOR, "Minha conta");
+	//endif
+
+	return gump;
+endfunction
+
+function IntroGump(byref gump)
+	GFPage(gump, 1);
+	GFResizePic(gump, 170, 15, BKGND_STONESLAB, 455, 450);
+	GFTextMid(gump, 170, 200, 455, GF_STDCOLOR, "Use os botoes da esquerda.");
+endfunction
+
+function DoPurchase(npc, player, input)
+	var info := GetItemSoldInfo(npc, input);
+	var cost := info[1];
+	var selling := info[2];
+	var confiscar := 0;
+
+//	foreach i in selling
+//		SendSysMessage(player, _i_iter+" -> "+i);
+//	endforeach
+
+	if ( player.cmdlevel >= 3 )
+		if ( YesNo(player, "Você deseja confiscar este objeto?") )
+			confiscar := 1;
+		endif
+	endif
+	
+	info := array{}; // Cleanup
+	if ( !confiscar )
+		if ( AmountInPack(player, cost.cost_type) < CInt(cost.cost_amt) )
+			SendSysMessage(player, "Voce nao tem "+GetName(cost.cost_type, 1)+ " suficiente para comprar isto.");
+			return 0;
+		endif
+	endif
+
+	var cost_desc := AddArticle(GetName(cost.cost_type));
+	var owed := cost.cost_amt;
+	var pay_list := array{};
+	if ( !confiscar )
+		repeat
+			SendSysMessage(player, "Escolha "+cost_desc+" que voce quer usar para pagar. Voce deve mais ["+owed+"].");
+			var targ := Target(player);
+			if ( !targ )
+				SendSysMessage(player, "Cancelado");
+				return;
+			elseif ( targ in pay_list )
+				SendSysMessage(player, "Voce ja esta pagando com isto.");
+			elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+				SendSysMessage(player, "Essa nao eh sua bolsa.");
+			elseif ( targ.objtype == cost.cost_type )
+				if ( !ReserveItem(targ) )
+					SendSysMessage(player, "Voce nao pode pagar com isto.");
+				else
+					if ( cost.specialProp != error)
+						if (cost.specialProp.value != GetObjProperty(targ, cost.specialProp.name))
+							SendSysMessage(player, "item invalido");
+						else
+							owed := owed - targ.amount;
+							pay_list.Append(targ);
+						endif
+					else
+						owed := owed - targ.amount;
+						pay_list.Append(targ);
+					endif
+				endif
+			else
+				SendSysMessage(player, "Item escolhido nao eh "+cost_desc+".");
+			endif
+		until ( owed <= 0 );
+	
+	
+		owed := cost.cost_amt;
+		if (TemHabilidade(player,"Negociador Eximio"))
+			owed := cint(owed*0.7);
+			SendSysMessage(player, "O custo final vai ser de " + owed);
+		endif
+
+		foreach item in pay_list
+			ReleaseItem(item);
+			var amount := item.amount;
+			
+			var template := CreateItemTemplate(item);
+			template.desc := GetName(item.objtype, CInt( (owed-1)/(owed-1) ));
+			
+			if ( owed > amount )
+				AddPaymentForSeller(npc, cost.seller, template);
+				DestroyItem(item);
+			else
+				//template.amount := owed;
+				template.amount := cost.cost_amt;
+				AddPaymentForSeller(npc, cost.seller, template);
+				SubtractAmount(item, owed);
+				break;
+			endif
+			owed := owed-amount;
+			sleepms(2);
+		endforeach
+	endif
+	
+	if ( confiscar )
+		var ItensRevogados := dictionary;
+		if ( GetObjProperty(npc, "ItensRevogados") )
+			ItensRevogados := GetObjProperty(npc, "ItensRevogados");
+		endif
+		ItensRevogados.Insert(cost.seller, 1);
+		if (ItensRevogados == error)
+			AI_Speak(npc, "Error" + ItensRevogados);
+		else
+			SetObjProperty(npc, "ItensRevogados", itensRevogados);
+		endif
+		
+		AI_Speak(npc, "Aqui esta o objeto confiscado, avisarei o dono assim que ele aparecer por aqui.");
+	else
+		if (GetObjProperty(npc, "endbuy"))
+			AI_Speak(npc, ""+GetObjProperty(npc, "endbuy"));
+		else
+			AI_Speak(npc, "Muito Obrigado. Aqui esta sua compra.");
+		endif
+	endif
+	
+	RemoveItemForSale(npc, input, confiscar);
+	/*var purchase := CreateItemInBackPack(player, selling, selling.amount);
+	if ( purchase == error )
+		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
+		if ( purchase == error )
+			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
+		else
+			AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+		endif
+	endif
+	if (selling.amount == 1)
+		SetName(purchase, selling.desc);
+	endif
+	foreach prop in selling
+		//sendsysmessage(player, " " + _prop_iter + " "+ selling[_prop_iter]);
+		purchase.set_member(_prop_iter, selling[_prop_iter]);
+	endforeach */
+	CreateItemInBackpackFromTemplate(player, selling);
+endfunction
+
+function ShowItemSoldInfo(byref gump, npc, player, input, special := 0)
+	var sell_details:= GetItemSoldInfo(npc, input);
+	
+	GFResizePic(gump, 170, 15, BKGND_STONESLAB, 455, 450);
+	var cost_info := sell_details[1];
+	var selling := sell_details[2];
+
+	var color := GF_STDCOLOR;
+	if ( selling.color )
+		color := selling.color-1;
+	endif
+
+	GFTextLine(gump, 200, 25, GF_STDCOLOR, "Nome");
+	GFTextLine(gump, 400, 25, GF_STDCOLOR, "Quantidade");
+	GFTextLine(gump, 175, 50, GF_STDCOLOR, "Produto");
+	GFTextLine(gump, 420, 50, GF_STDCOLOR, selling.amount);
+	if (!GetObjProperty(npc, "secret") || GetObjProperty(player, "secret"))
+		GFTextLine(gump, 175, 95, GF_STDCOLOR, "Vendedor");
+		var vendor := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
+		if (vendor.cmdlevel && !player.cmdlevel)
+			GFTextLine(gump, 205, 115, GF_STDCOLOR, "Desconhecido");
+		else
+			var nome := vendor.name;
+			if (GetObjProperty(vendor, "realname"))
+				nome := GetObjProperty(vendor, "realname");
+			endif
+			GFTextLine(gump, 205, 115, GF_STDCOLOR, nome);
+		endif
+	endif
+	GFTextLine(gump, 205, 70, color, selling.desc);
+	GFResizePic(gump, 500, 25, 2620, 120, 100);
+	GFTilePic(gump, 515, 40, selling.graphic);
+
+	color := GF_STDCOLOR;
+	var temp := item_cfg[cost_info.cost_type].color;
+	if ( temp )
+		color := temp-1;
+	endif
+	var cost_name;
+	if (cost_info.objtype == MOEDAS)
+		cost_name := "moedas de cobre";
+	else
+		if (cost_info.cost_name)
+			cost_name := cost_info.cost_name;
+		else
+			cost_name := GetName(cost_info.cost_type);
+		endif
+	endif
+	GFTextLine(gump, 175, 150, GF_STDCOLOR, "Preço");
+	GFTextLine(gump, 420, 150, GF_STDCOLOR, cost_info.cost_amt);
+	GFTextLine(gump, 205, 170, color, cost_name);
+	GFResizePic(gump, 500, 125, 2620, 120, 100);
+	GFTilePic(gump, 515, 140, GetGraphic(cost_info.cost_type));
+
+	GFTextLine(gump, 180, 235, GF_STDCOLOR, "Descriçao");
+	GFResizePic(gump, 175, 255, 2620, 445, 140);
+	var desc_lines := GFWordWrap(cost_info.desc, 455);
+	var y_pos := 260;
+	foreach line in desc_lines
+		GFTextLine(gump, 185, y_pos, GF_STDCOLOR, line);
+		y_pos := y_pos+20;
+	endforeach
+
+	GFAddButton(gump, 200, 430, 2151, 2154, 1, input);
+	if(!special)
+		if ( player.cmdlevel < 3 )
+			GFTextLine(gump, 235, 433, GF_STDCOLOR, "Adquirir");
+		else
+			GFTextLine(gump, 235, 433, GF_STDCOLOR, "Adquirir ou Confiscar(GM)");
+		endif
+	else
+		GFTextLine(gump, 235, 433, GF_STDCOLOR, "Remover");
+	endif
+endfunction
+
+function AddItemToSell(npc, player)
+
+	if ( (cint(GetObjProperty(npc, "onlygmsells")) == 1 ) && player.cmdlevel < 3 )
+		SendSysMessage(player, "Voce nao pode colocar itens a venda nesse vendedor.");
+		return;
+	endif
+	
+	var onlyplayersells := GetObjProperty(npc, "oneplayersells");
+	if (onlyplayersells)
+		if (onlyplayersells != player.name)
+			SendSysMessage(player, "Perdao, somente " + onlyplayersells + " pode fazer vendas comigo");
+			return;
+		endif
+	endif
+	
+	if ( cint(GetObjPRoperty(npc, "onlyartifice")) == 1)
+		if (getObjProperty(player, "kit") != "Artifice")
+			SendSysMessage(player, "Apenas artifices podem por itens a venda nesse mercador.");
+			return;
+		endif
+	endif
+	SendSysMessage(player, "O que voce deseja dar para o mercador vender?");
+	var targ := target(player);
+
+	var serialid:=GetObjProperty(targ,"serialid");
+
+	if (serialid != error)
+		SendSysMessageEx(player,"Voce nao pode vender isto.",SSM_FAIL);
+		return 0;
+	endif
+
+	if ( !targ.IsA(POLCLASS_ITEM) )
+		SendSysMessage(player, "Cancelado.");
+		return;
+	elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+		SendSysMessage(player, "Esta nao é sua bolsa.");
+		return;
+	elseif ( (targ.objtype == 0xba63 || targ.objtype == 0xba64 || targ.objtype == 0xba65 ) && player.cmdlevel < 3)
+		SendSysMessage(player, "Você não pode vender moedas");
+		return;
+	endif
+	AddItem(npc, player, targ);
+	
+endfunction
+
+function AddItem(npc, player, targ)
+	
+	var cost_amt;
+	var cost_type;
+	var cost_name;
+	var specialProp := struct;
+	if (player.cmdlevel > 2)
+
+		AI_Speak(npc, "O que voce gostaria que eu cobrasse por "+targ.desc+"?");
+		SendSysMessage(player, "Selecione um objeto para mostrar ao mercador o que voce deseja cobrar por este item.");
+		cost_type := target(player);
+		if ( !cost_type.IsA(POLCLASS_ITEM) )
+			SendSysMessage(player, "Cancelado.");
+			return;
+		endif
+		var cost_limit, limit_reason;
+		if ( cost_type.amount > 1 ) // Guaranteed stackable item
+			if (player.cmdlevel)
+				cost_limit := 100000;
+			else	
+				cost_limit := 100000;
+			endif
+			limit_reason := " (stackable item)";
+		else
+			if (player.cmdlevel > 2)
+				cost_limit := 1;
+			else
+				cost_limit := 10;
+			endif
+			limit_reason := " (non-stackable item)";
+		endif
+		
+		//if (cost_type.name)
+		//	 cost_name := cost_type.name;
+		//else
+			cost_name := cost_type.desc;
+		//endif
+		if ( cost_type.amount > 1 )
+			var RemoveNumber := splitwords(cost_name);
+			RemoveNumber.Erase(1);
+			cost_name := "";
+			foreach x in ( RemoveNumber )
+				cost_name := cstr(cost_name) + cstr(x) + " ";
+				sleepms(10);
+			endforeach
+		endif
+		cost_type := cost_type.objtype;
+		AI_Speak(npc, "Quantos '"+cost_name+"' voce quer que eu cobre?");
+		cost_amt := RequestGump(player, "Quantos '"+cost_name+"' voce quer que o mercador cobre?", "1 - "+cost_limit+limit_reason, 1, 1);
+		cost_amt := CInt(cost_amt);
+		if ( !cost_amt || cost_amt > cost_limit || cost_amt == 0 )
+			SendSysMessage(player, "Cancelado");
+			return;
+		endif
+
+		var specialItem := YesNo(player, "Esse item vai ter uma prop unica? Caso sim, use props do tipo String");
+		if (specialItem)
+			var specialName := RequestGump(player, "Escreva o nome da prop unica");
+			var specialValue := RequestGump(player, "Escreva o valor da prop");
+			if (specialName && specialValue)
+				specialProp.+name := specialName;
+				specialProp.+value := specialValue;
+			endif
+		endif
+
+	else
+
+		var cost_limit;
+		if (player.cmdlevel)
+			cost_limit := 100000;
+		else
+			cost_limit := 100000;
+		endif
+		var limit_reason := " (stackable item)";
+		cost_type := MOEDAS;
+		cost_amt := RequestGump(player, "Quantas moedas de cobre deseja cobrar por "+targ.desc+"?", "1 - "+cost_limit+limit_reason, 1, 1);
+		cost_amt := CInt(cost_amt);
+		if ( !cost_amt || cost_amt == 0 )
+			SendSysMessage(player, "Cancelado");
+			return;
+		elseif (cost_amt > cost_limit)
+			SendSysMessage(player, "Voce ultrapassou o limite maximo de "+cost_limit+" moedas.");
+			return;
+		elseif (GetObjProperty(npc, "taverneiro")); // Nao verifica as 10 moedas mínimas a grana pra pagar.
+		elseif ((cost_amt < 10) && (player.cmdlevel < 2))
+			SendSysMessage(player, "Valor minimo de 10 moedas de cobre.");
+			return;
+		elseif ( AmountInPack(player, MOEDAS) < CInt(cost_amt * 0.1) )
+			if (!TemHabilidade(player, "Mercador Reconhecido"))
+				SendSysMessage(player, "Voce nao tem moedas suficiente para pagar o vendedor pelo seu servico.");
+				return 0;
+			endif
+		endif
+	endif
+
+	var desc := RequestGump(player, "Entre com uma pequena descriçao do produto.", "Isso é opcional", "", 1);
+	if ( !desc )
+		desc := "";
+	elseif ( Len(desc) > 300 )
+		desc := desc[0,300]+"...";
+	endif
+
+	var infinite := 0;
+	var dezperc := CInt(cost_amt * 0.1);
+	if (player.cmdlevel > 2)
+		infinite := YesNo(player, "Voce deseja deixar esse item infinito?");
+	elseif (!GetObjProperty(npc, "taverneiro"))
+		if (!TemHabilidade(player, "Mercador Reconhecido"))
+		var pay := 0;
+		do
+			SendSysMessage(player, "Escolha o montante de moedas para que seu item seja colocado a venda.");
+			var targ := Target(player);
+			if ( !targ )
+				SendSysMessage(player, "Cancelado.");
+				return;
+			elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+				SendSysMessage(player, "Nao esta na sua bolsa.");
+			elseif ( GetObjProperty(targ, "stealed") )
+				SendSysMessage(player, "Objeto foi roubado!");
+			elseif ( targ.objtype == MOEDAS )
+				if ( !ReserveItem(targ) )
+					SendSysMessage(player, "Voce nao pode pagar com isto.");
+				else
+					if (!SubtractAmount(targ, dezperc))
+						SendSysMessage(player, "Voce nao pode pagar com isto.");
+					else
+						pay := 1;
+						SendSysMessage(player, "Pagamento efetuado com sucesso!");
+					endif
+				endif
+			else
+				SendSysMessage(player, "Voce deve indicar moedas de cobre.");
+			endif
+		dowhile ( !pay );
+		endif
+	endif
+	var result := AddItemForSale(npc, player, targ, cost_type, cost_name, cost_amt, desc, infinite, specialProp);
+	if ( result != error )
+		AI_Speak(npc, "Tudo certo. Colocarei seu item a venda.");
+		SendSysMessage(player, "O item foi adicionado com sucesso.");
+	else
+		AI_Speak(npc, "Me desculpe mas nao poderei vender isto para voce, tome seu dinheiro de volta.");
+		if (!GetObjProperty(npc, "taverneiro"))
+			CreateItemInBackpack(player, MOEDAS, dezperc);
+		endif
+		SendSysMessage(player, "Error =>"+result.errortext);
+	endif
+endfunction
+
+function ShowItemsSold(byref gump, npc, player, special := 0)
+
+	GFResizePic(gump, 170, 15, BKGND_STONESLAB, 455, 450);
+	GFTextMid(gump, 170, 25, 455, GF_STDCOLOR, "Itens a Venda");
+	GFPage(gump, 1);
+
+	var items_sold := GetItemsSoldList(npc);	
+	var ItensRevogados := dictionary;
+	
+	if ( GetObjProperty(npc, "ItensRevogados") )
+		ItensRevogados := GetObjProperty(npc, "ItensRevogados");
+	endif
+
+	var y_pos := 45;
+	foreach serial in items_sold
+		var info := GetItemSoldInfo(npc, serial);
+		var item := info[2];
+		var cost_info := info[1];
+		var donoDoItem := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
+		//print( "array: " + items_sold + " item " + info);
+		//print("serial "  + cost_info.seller  + " player " + player);
+		if (!donoDoItem)
+			RemoveItemForSale(npc, serial);
+			//print("removendo item do vendor de char deletado.");
+		endif
+		info := info[1];
+
+		//print("inso.seller " + info.seller + " player.serial " + player.serial);
+		var cost_name;
+		if( (!special) || (info.seller == CInt(player.serial)) )
+			if( y_pos > END_Y )
+				GFAddButton(gump, 230, 25, 2224, 2224, GF_PAGE_BTN, gump.cur_page+1);
+				y_pos := 45;
+				GFPage(gump, gump.cur_page+1);
+			
+			endif
+			if(gump.cur_page > 1)
+				GFAddButton(gump, 200, 25, 2223, 2223, GF_PAGE_BTN, gump.cur_page-1);
+			endif
+
+			var color := GF_STDCOLOR;
+			if ( item.color )
+				color := item.color-1;
+			endif
+			if (cost_info.objtype == MOEDAS)
+				cost_name := "moedas de cobre";
+			else
+				if (cost_info.cost_name)
+					cost_name := cost_info.cost_name;
+				else
+					cost_name := GetName(cost_info.cost_type);
+				endif
+			endif
+			GFAddButton(gump, 175, y_pos+3, 2117, 2118, 1, serial);
+			GFTextLine(gump, 195, y_pos, color, item.desc + " -> " + cost_info.cost_amt + " " + cost_name );
+			y_pos := y_pos+20;
+			sleepms(2);
+		endif
+	endforeach
+	
+	if (ItensRevogados.Exists(player.serial))
+		GumpPrompt(player, "Algumas de suas mercadorias foram confiscadas, procure saber os motivos com as autoridades comerciais locais.");
+		ItensRevogados.Erase(player.serial);
+		SetObjProperty(npc, "ItensRevogados", ItensRevogados);
+	endif
+endfunction
+
+function DoRemove(npc, player, input)
+	var info := GetItemSoldInfo(npc, input);
+	var cost := info[1];
+	var selling := info[2];
+	info := array{}; // Cleanup
+	
+	var cost_desc := AddArticle(GetName(cost.cost_type));
+	
+	AI_Speak(npc, "Certo. Aqui esta seu produto.");
+	RemoveItemForSale(npc, input);
+	var purchase := CreateItemInBackPack(player, selling, selling.amount);
+	if ( purchase == error )
+		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
+		if ( purchase == error )
+			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
+		else
+			AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+		endif
+	endif
+endfunction
+
+function ShowMyAccount(byref gump, npc, player)
+	GFResizePic(gump, 170, 15, BKGND_STONESLAB, 455, 450);
+	GFTextMid(gump, 170, 25, 455, GF_STDCOLOR, "Minhas vendas");
+	GFPage(gump, 1);
+
+	var items_inside := GetSellerAccount(npc, player.serial);
+
+	var y_pos := 45;
+	foreach template in items_inside
+		var color := GF_STDCOLOR;
+		if ( template.color )
+			color := template.color-1;
+		endif
+
+		GFTextLine(gump, 175, y_pos, color, template.desc);
+		y_pos := y_pos+20;
+		sleepms(2);
+	endforeach
+
+	if( len(items_inside) > 0 )
+		y_pos += 20;
+		GFAddButton(gump, 175, y_pos+3, 2117, 2118, 1, WITHDRAW_BTN);
+		GFTextLine(gump, 195, y_pos, GF_STDCOLOR, "Retirar tudo");
+	endif
+endfunction
+
+function DoWithdraw(npc, player)
+	var data_elem := GetPaymentsDataElem(Hex(npc.serial));
+	var account := data_elem.GetProp(Hex(player.serial));
+	
+	foreach item in account
+		var withdraw := CreateItemInBackPack(player, item, item.amount);
+		if( withdraw == error )
+			withdraw := CreateItemAtLocation(player.x, player.y, player.z, item, item.amount);
+			if ( withdraw == error )
+				SendSysMessage(player, "Error - Unable to create item! ->"+withdraw.errortext);
+			else
+				AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+			endif
+		endif
+		sleepms(2);
+	endforeach
+
+	data_elem.EraseProp(Hex(player.serial));
+endfunction

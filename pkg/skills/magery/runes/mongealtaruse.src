@@ -1,0 +1,46 @@
+use uo;
+
+include ":timedScripts:timedScripts";
+include ":gumps:gumps";
+include ":gumps:yesno";
+include ":gumps:requestgump";
+include ":tn:tngumps";
+include ":magery:tnmagery";
+include ":attributes:attributes";
+include ":itemutils:itemdesc";
+include "include/client";
+include "include/say";
+include ":charactercreation:habilidades";
+var cfg := ReadConfigFile(":magery:allspells");
+
+program mongeAltar(who, altar)
+	if (who.cmdlevel < 3)
+		return;
+	endif
+	var creationKeys := array{};
+	var creationNames := array{};
+	foreach spell in ( GetConfigIntKeys(cfg) )
+		var elem := FindConfigElem(cfg, spell);
+		if (elem.Type == "Creation")
+			creationKeys.append(elem.SpellId);
+			creationNames.append(elem.Name);
+		endif
+		sleepms(5);
+	endforeach
+	if (GetObjProperty(altar, "runatype"))
+		SendSysMessage(who, "Atual Magia: " + FindConfigElem(cfg, GetObjProperty(altar, "runatype")).Name);
+	endif
+	var question := RadioGump(who, 300, 80+(20*len(creationNames)), "Qual magia quer que o jogador aprenda?", creationNames);
+	
+	var i := 1;
+	foreach spell in creationNames
+		if (spell == question)
+			break;
+		endif
+		i+=1;
+		sleepms(5);
+	endforeach
+	
+	SetObjProperty(altar, "runatype", i);
+
+endprogram

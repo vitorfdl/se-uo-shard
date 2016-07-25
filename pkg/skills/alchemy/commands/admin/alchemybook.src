@@ -1,0 +1,70 @@
+
+use uo;
+include ":charactercreation:createchar";
+
+program createAlchemybook(who, text)
+
+	var recipes := array;
+	
+	//text := splitwords(text);
+	//sendsysmessage(who, " " + text);
+
+	if (text == "kit")
+		recipes := CreateAdvancedRecipes();
+	else
+
+		recipes := CreateBasicRecipes();	
+	endif
+	var book := createiteminbackpack(who, "alchemybook");
+	setobjproperty(book, "recipes", recipes);
+
+
+endprogram
+
+function CreateAdvancedRecipes()
+	var x := array;
+
+
+	var spellinfo1 := struct;
+	spellinfo1.+name := "Gas alucinogeno";
+        spellinfo1.+id := 0xbf16;
+	spellinfo1.+description := "Dois ginsengs, uma solenaceae, uma lasca de madeira morta e um musgo vermelho formam uma forte combinacao de fungos que induzem a experiencias alucinogenas em quem os ingere essa Poção. Dificuldade media.";
+	x.append(spellinfo1);
+
+	var spellinfo2 := struct;
+ 	spellinfo2.+name := "Poção flamejante fraca";
+        spellinfo2.+id := 0xbf13;
+	spellinfo2.+description := "Duas lascas de madeiras morta, duas cinzas de enxofre e duas cinzas vulcanicas criam um composto altamente inflamavel capaz de queimar uma grande area. Dificuldade media.";
+	x.append(spellinfo2);
+
+	var spellinfo3 := struct;
+	spellinfo3.+name := "Gas do veneno fraco";
+        spellinfo3.+id := 0xbf0f;
+	spellinfo3.+description := "Duas cinzas de enxofre e dois ramos de solenaceae sao suficiente pra criar um mecanismo que pulverize o veneno da planta no ar e deixe envenenado quem as respirar. Dificuldade um pouco alta.";
+	x.append(spellinfo3);
+
+	var spellinfo4 := struct;
+	spellinfo4.+name := "Poção da invisibilidade fraca";
+        spellinfo4.+id := 0xbf09;
+	spellinfo4.+description := "Olhos de salamandra podem fazer voce desaparecer, uns dizem que quem bebe essa Poção ganha propiedades mimetizantes das salamandras outros dizem que voce emana uma energia mistica que faz com que os outros nao o enxergeum. Use dois olhos. O efeito dura apenas alguns segundos. Dificuldade um pouco alta.";
+	x.append(spellinfo4);
+
+	var spellinfo5 := struct;
+ 	spellinfo5.+name := "Po da visao";
+        spellinfo5.+id := 0xbf0c;
+	spellinfo5.+description := "Com duas cinzas vulcanicas e dois olhos de salamandra voce pode fazer um po muito fino que revela pessoas escondidas ou invisiveis na area. Dificuldade baixa.";
+	x.append(spellinfo5);
+
+	var spellinfo6 := struct;
+ 	spellinfo6.+name := "Bolsa de cola";
+        spellinfo6.+id := 0xbf0e;
+	spellinfo6.+description := "Duas teias de aranha e duas lascas de madeira morta criam essa Poção que gera teia por todo lado, prendendo as vitimas. Dificuldade media.";
+	x.append(spellinfo6);
+
+
+
+
+
+	return x;
+endfunction
+

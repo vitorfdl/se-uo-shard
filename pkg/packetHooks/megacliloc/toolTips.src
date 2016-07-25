@@ -1,0 +1,473 @@
+/* $Id: toolTips.src 104 2006-05-25 22:14:15Z montuz $
+ *	Description: AOS Tooltips. Starter script.
+ *	This packet takes awhile to get used to.
+ */
+
+use uo;
+use basic;
+use cfgfile;
+
+include ":magery:swordmage";
+include ":attributes:attributes";
+include ":charactercreation:habilidades";
+include ":yggdrasil:boss";
+
+const OFFSET_OBJECT_SERIAL   := 0x05;
+const OFFSET_CLILOC_ID       := 0x0F;
+const OFFSET_LENGTH_ID       := 0x13;
+const OFFSET_UNICODE_TEXT    := 0x14;
+
+function GetDmgStringDesc(elem, item)
+
+	var avgdmg := cint(elem.MinDam + elem.MaxDam)/2;
+
+	if(avgdmg >= 20)
+		return "Letal";
+	elseif(avgdmg >= 18)
+		return "Muito";
+	elseif(avgdmg >= 16)
+		return "Bom";
+	elseif(avgdmg >= 14)
+		return "Mediano";
+	elseif(avgdmg >= 12)
+		return "Pouco";
+	elseif(avgdmg >= 10)
+		return "Pouquissimo ";
+	else
+		return "Inofensivo";
+	endif
+
+endfunction
+
+function getQuality(num)
+
+	if (num >= 1.1)
+		return "Excepcional";
+	elseif(num  > 0.8)
+		return "Normal";
+	else
+		return "Ruim";
+	endif
+
+endfunction
+
+function getCondition(item)
+
+	var c := cdbl(item.hp) / cdbl(item.maxhp);
+
+	if (c > 0.9)
+		return "Boa";
+	elseif (c > 0.6)
+		return "Pouco Danificada";
+	elseif (c > 0.3)
+		return "Bastante Danificada";
+	else
+		return "Quebradiça";
+	endif
+endfunction
+
+
+
+function TranslateCritical(crit)
+	if (crit == "damage3")
+		return "Dano Triplo";
+	elseif (crit == "damage2")
+		return "Dano Duplo";
+	elseif (crit == "armorignore")
+		return "Ignorar Armadura";
+	elseif ( crit == "stun")
+		return "Ataque Atordoante";
+	elseif (Crit == "bleed")
+		return "Alvejar Ponto Vital";
+	endif
+		
+endfunction
+
+
+function GetCriticalInfo(entry)
+
+	var criticals := GetconfigStringArray(entry, "CriticalHitScripts");
+
+	var critstr := "";
+	
+	var str;
+	foreach crit in criticals
+		str := ParseScriptString(crit);
+		critstr := critstr + TranslateCritical(lower(str)) + "<br>";
+	endforeach
+
+	return critstr;
+
+endfunction
+
+function TranslateHit(crit)
+	if (crit == "antimountedhit")
+		return "Anti-montaria";
+	elseif (crit == "chargehit")
+		return "Carga";
+	elseif (crit == "concussionhit")
+		return "Concussão";
+	elseif ( crit == "freearmorhit")
+		return "Movimento Livre";
+	elseif (crit == "heighthit")
+		return "Diferença de Altura";
+	elseif ( crit == "QueimaRoupa")
+		return "Tiro a Queima Roupa";
+	elseif ( crit == "pushback")
+		return "Golpe Esmagador";
+	elseif ( crit == "passivedisarm")
+		return "Disarme Passivo";
+	endif
+endfunction
+
+function GetHitsInfo(entry)
+
+	var criticals := GetconfigStringArray(entry, "HitScripts");
+
+	var critstr := "";
+	
+	var str;
+	foreach crit in criticals
+		str := ParseScriptString(crit);
+		critstr := critstr + TranslateHit(lower(str)) + "<br>";
+	endforeach
+
+	return critstr;
+
+endfunction
+
+function getVelStringDesc(elem, item)
+
+	if(speed >= 39)
+		return "Extrema";
+	elseif(speed >= 34)
+		return "Muito rapida";
+	elseif(speed >= 30)
+		return "Rapida";
+	elseif(speed >= 26)
+		return "Mediana";
+	elseif(speed >= 21)
+		return "Lenta";
+	elseif(speed >= 20)
+		return "Lentissima";
+	else
+		return "Extremamente Lenta";
+	endif
+
+
+endfunction
+
+
+function ParseScriptString(crit)
+
+	var str := "";
+	var i := 1;
+	
+	while(crit[i] != "/")
+		i := i + 1;
+	endwhile
+	i := i +1;
+	while (crit[i])
+		str := str + crit[i];
+		i := i + 1;
+	endwhile
+
+	return str;
+
+endfunction
+
+
+program Install()
+
+	 Print("INSTALLING: Outgoing Tooltip PH...");
+	 return 1;
+
+endprogram
+
+exported function MegaCliloc( who, byref packet )
+
+	var item := SystemFindObjectBySerial(packet.GetInt32(OFFSET_OBJECT_SERIAL));
+
+	if ( item )
+
+		packet.SetSize(15);//primeira parte do packet eh tamanho 15
+
+		var Object_Name;
+		//var Text_Color := "CBA300";
+
+		if( item.IsA(POLCLASS_MOBILE) )
+			Object_Name := item.name;
+			/*var raca := GetObjProperty(item, "chardata").raca;
+			if (raca)
+				Object_Name := Object_Name  + " [" + raca + "]";
+			endif*/
+			
+			if (item.npctemplate)
+				if (IsBoss(item))
+					Object_Name :=  "<BASEFONT COLOR=#CBA300>" + Object_Name;
+				endif
+			endif
+			
+			// Let's get the characters hightlight color.
+			// This is just an example, NPC's and stuff will still have to be added
+			// ofcourse. :)
+			// Setting the text color for the object's name will only show 
+			// if the object's name has changed. So it's been left commented out for now.
+			//if (xObject.murderer)
+			//	Text_Color := "FF0000";
+			//elseif (xObject.criminal)
+			//	Text_Color := "666666";
+			//else
+			//	Text_Color := "00CCFF";
+			//endif
+		elseif ( item.IsA(POLCLASS_ITEM) )
+			Object_Name := item.desc;
+		endif
+
+		// If you try to break a new line in the first cliloc(below) it doesn't
+		// display right for some reason.
+		// If you want to change the color of the Object's name.
+		// Use this. 
+		// Object_Name := CAscZ("<BASEFONT COLOR=#" + Text_Color + ">" + Object_Name);
+
+		Object_Name := CAscZ(Object_Name);
+
+		packet.SetInt32(OFFSET_CLILOC_ID, 1042971);
+		packet.SetUnicodeString(OFFSET_UNICODE_TEXT, Object_Name, 1);
+		// I've noticed that this packet is only sent if this value has changed
+		// from the last time it was checked. And using html to change the size doesn't work
+		// for some reason. Maybe a core/client issue?
+		packet.SetInt16(OFFSET_LENGTH_ID, Object_Name.Size() * 2);
+
+		// Start of Loop.
+
+		// This is where you'll be putting all your properties. <br> to break a new line.
+		// You wont need to add anymore cliloc id's because you can just add all the props
+		// into one string.
+		var white := "<BASEFONT COLOR=#FFFFFF>";
+		var red := "<BASEFONT COLOR=#FF0000>";
+		var blue := "<BASEFONT COLOR=#3232ff>";
+		var orange :=  "<BASEFONT COLOR=#FFA500>";
+		var xDesc := "";
+		var desc := GetObjProperty(item, "description");
+
+		if (GetObjProperty(item,"magic"))
+			if (temHabilidade(who, "Detectar Item Magico"))
+				xDesc := xDesc + blue + "Mágico<br>";
+			endif
+		endif
+		
+		if (GetObjProperty(item, "SpecialCraft"))
+			xDesc := xDesc + blue + "Feito com" + GetObjProperty(item, "SpecialCraft") + "<br>";
+		endif
+
+		
+		 var descmods := GetObjProperty(item, "descmod");
+
+		if((descmods!=error) && (desc == error))
+			 desc:="";
+		endif
+
+		 if(descmods != error)
+			foreach descmod in descmods
+				desc:=desc + descmod ;
+			endforeach
+		 endif
+		 
+		if (len(desc) > 85)
+			desc := desc[1, 85];
+		endif
+		if (desc!=error && desc != "")
+			xDesc := xDesc + white + "" + desc + "<BR>";
+		endif
+
+		if (item.IsA(POLCLASS_MOBILE))
+			var deathpoint := AP_GetVital(item, "DP");
+			var deathpoint_max := AP_GetVitalMaximumValue(item, "DP");
+			var xy;
+			for (xy := deathpoint_max; xy > deathpoint ; xy-=10);
+				xDesc:=xDesc + white + "Gravemente Ferido<br>";
+			endfor
+		endif
+
+		if (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
+			var cfg := ReadConfigFile(":*:itemdesc");
+			var elem := FindConfigElem(cfg, item.objtype);
+			xDesc := xDesc + white + "Qualidade: " +  + getQuality(item.quality) +"<br>";
+			if (elem.habcategory)
+				xDesc := xDesc + "Tipo: " + elem.habcategory + "<br>";
+			endif
+			var cond := GetCondition(item);
+			if (cond != "Boa")
+	 			xDesc := xDesc + GetCondition(item) + "<br>";
+			endif
+
+			if (item.isA(POLCLASS_WEAPON))
+				xDesc := xDesc + "Min Str: " + elem.strrequired + "<br>";
+//				xDesc := xDesc + "Dano: " + GetDmgStringDesc(elem,  item) + "<br>";
+//				xDesc := xDesc + "Velocidade: " + GetVelStringDesc(elem, item) + "<br>";
+				var crits := GetCriticalInfo(elem);
+				if (crits != "")
+					xDesc := xDesc + red + crits;
+				endif
+
+				var hits :=  GetHitsInfo(elem);
+				if (hits != "")
+					xDesc := xDesc + orange + hits;
+				endif
+
+				xDesc := xDesc + white + "Fisico " + (item.damage_physical ) + "<br>";
+				if ( (item.damage_cold + item.damage_cold_mod != 0))
+					xDesc := xDesc  + "Frio " + (item.damage_cold ) + "<br>";
+				endif
+				if ( (item.damage_fire + item.damage_fire_mod != 0))
+					xDesc := xDesc  + "Fogo " + (item.damage_fire ) + "<br>";
+				endif
+				if ( (item.damage_energy + item.damage_mod != 0))
+					xDesc := xDesc  + "Energia " + (item.damage_energy ) + "<br>";
+				endif
+				if ( (item.damage_poison + item.damage_poison_mod != 0))
+					xDesc := xDesc  + "Veneno " + (item.damage_poison ) + "<br>";
+				endif		
+			
+			elseif (item.isA(POLCLASS_ARMOR))
+				if (cint(elem.strrequired) > 0)
+					xDesc := xDesc + "Min Str: " + elem.strrequired + "<br>";
+				endif
+				
+			endif
+		
+		endif
+
+		var pplmage := GetObjProperty(item, "magicwho"); //magic lore
+		if ( pplmage != error)
+			if (who.serial in pplmage)
+				if (GetObjProperty(item, "pocaoname"))
+					xDesc := xDesc + white + GetObjProperty(item, "pocaoname");
+				endif
+				var mods := GetObjProperty(item, "equip");
+				if (mods != error)
+					foreach mod in (mods.keys())
+						xDesc := xDesc + blue + getbonusname(mod) + "<br>";
+					endforeach
+				endif
+				if (item.dmg_mod > 0 )
+					xDesc := xDesc + blue + "Bônus Dano";
+				endif
+				if (item.hp_mod > 0)
+					xDesc := xDesc + blue + "Bônus Item PVs";
+				endif
+				var hitsscripts := GetObjProperty(item, "HitScripts");
+				if (hitsscripts != error)
+					foreach hits in hitsscripts
+						if (hits == ":combat:weaponHitScripts/FireHit")
+							xDesc := xDesc + blue + "Dano de Fogo<br>";
+						elseif ( hits == ":combat:weaponHitScripts/IceHit")
+							xDesc := xDesc + blue + "Dano de Gelo<br>";
+						elseif ( hits == ":combat:weaponHitScripts/LightningHit")
+							xDesc := xDesc + blue + "Dano de Energia<br>";
+						endif
+					endforeach
+				endif
+
+				if (GetObjProperty(item, "swordmage") != error)
+					xDesc := xDesc + white + GetObjProperty(item, "swordmage") + "<br>";
+				endif
+			endif
+		endif
+		
+		var craftproperty := GetObjProperty(item, "craftproperty");
+		if (craftproperty)
+			var properties := cint(GetObjProperty(item, "identificado"));
+			if (properties)
+				if (craftproperty.tipo)
+					xDesc := xDesc + white + "Fundir: " + craftproperty.tipo;
+				endif
+				if (craftproperty.veste)
+					xDesc := xDesc + " " + craftproperty.veste +"<br>";
+				else
+					xDesc := xDesc + "<br>";
+				endif
+				if (craftproperty.equipamentos)
+					var equipamentos := "";
+					foreach equipamento in (craftproperty.equipamentos)
+						equipamentos := equipamentos + equipamento + " ";
+					endforeach
+					xDesc := xDesc + "Peças: " + equipamentos +"<br>";
+				endif
+			endif
+			var i := 1;
+			for(i:=1;i<=properties;i+=1)
+				var bonus := craftproperty.bonus[i];
+				xDesc := xDesc + orange + "+" + getbonusname(bonus.name) + "<br>";
+			endfor
+
+			if (i <= craftproperty.bonus.size())
+				xDesc := xDesc + blue + "+Não Identificado<br>";
+			endif
+			
+		endif
+
+		xDesc := CAscZ(xDesc);
+
+		if ( xDesc.Size() > 0 )
+			// Cliloc ID if these two ID's match it'll only show one line.
+			packet.SetInt32(packet.GetSize() - 1, 1070722);
+
+			// Get the offset of where the next text size
+			var Length_ID := packet.GetSize();
+			packet.SetUnicodeString(packet.GetSize() + 1, xDesc, 1);
+
+			// SetUnicodeString adds 00 BYTE[1] at the start of the Unicode offset, which messes with the length offset.
+			// Setting the length of the unicode text below will fix that issue. Same deal as above.
+			packet.SetInt16(Length_ID, xDesc.Size() * 2);
+		endif
+
+		// End of loop.
+
+		packet.SetInt32(packet.GetSize(), 0);
+	endif
+
+	return 0;
+
+endfunction
+
+function getbonusname(mod)
+	if (mod == "strmod")
+		return "Bônus For";
+	elseif (mod == "dexmod")
+		return "Bônus Des";
+	elseif (mod == "intmod")
+		return "Bônus Int";
+	elseif (mod == "conmod")
+		return "Bônus Cons";
+	elseif (mod == "hitsmod")
+		return "Bônus HP";
+	elseif (mod == "manamod")
+		return "Bônus Mana";
+	elseif (mod == "stammod")
+		return "Bônus Stam";
+	elseif (mod == "PhysicalResistMod")
+		return "Resistencia Fisica";
+	elseif (mod == "ColdResistMod")
+		return "Resistencia Frio";
+	elseif (mod == "FireResistMod")
+		return "Resistencia Fogo";
+	elseif (mod == "EnergyResistMod")
+		return "Resistencia Energia";
+	elseif (mod == "PoisonResistMod")
+		return "Resistencia Veneno";
+	elseif (mod == "ColdDamageMod")
+		return "Dano por Frio";
+	elseif (mod == "FireDamageMod")
+		return "Dano por Fogo";
+	elseif (mod == "EnergyDamageMod")
+		return "Dano por Energia";
+	elseif (mod == "PoisonDamageMod")
+		return "Dano por Veneno";
+	elseif (mod == "hp_mod")
+		return "Bônus Item PVs";
+	else
+		return "Bonus " + mod;
+	endif
+endfunction

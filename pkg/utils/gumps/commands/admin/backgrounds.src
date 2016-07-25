@@ -1,0 +1,34 @@
+use uo;
+use cfgfile;
+
+program gump(who)
+
+	var cfg := ReadConfigFile(":gumps:GumpInfo");
+	var elem := FindConfigElem(cfg,  "BackGrounds");
+
+	foreach prop in (ListConfigElemProps( elem ))
+
+		var id := GetConfigInt(elem, prop);
+		var gflayout := array{
+		//		"noclose",   
+				"nodispose", 
+				"nomove",    
+				"page 0",    
+    				"resizepic 100 100 " + id + " 300 300", 
+				"text 145 120 32 0"
+	
+				};
+		var gfdata := array{
+				"Background ID: " + id,	 
+				""
+				};
+
+	
+
+		SendSysMessage(who, " " + prop + " " + id);
+		SendDialogGump( who, gflayout, gfdata );
+
+	endforeach
+
+
+endprogram

@@ -1,0 +1,87 @@
+/*
+ * @AUTHOR   Steven Jimenez [SMJ]
+ * @DATE   October 29, 2006
+ *
+ * @NAME   flip.src
+ * @VERSION   2.0
+ *
+ * @PARAM[me]   Can contain a character reference, or an array
+ *      holding a character reference and the object to
+ *      be flipped.
+ *
+ * @RETURN   1 on completion.
+ *       0 on failure.
+ */
+
+use cfgfile;
+use os;
+use uo;
+
+CONST FLIP_CONFIG_FILE := ("::flip");
+
+program textcmd_flip (me)
+   var flip_config := ReadConfigFile(FLIP_CONFIG_FILE);
+   var object;
+   var who;
+   var flip_graphic;
+
+   if(!flip_config)
+      SysLog("Error: "+FLIP_CONFIG_FILE+" nao existe!");
+      return 0;
+   endif
+
+   if( TypeOf(me) == TypeOf( array{} ) )
+      object := me[2];
+      who := me[1];
+   else
+      who := me;
+      SendSysMessage(who, "Girar o que?");
+      object := Target(who);
+   endif
+
+   if( !object )
+      SendSysMessage(who, "Cancelado.");
+      return 0;
+   endif
+
+   if( !(object.isA(POLCLASS_ITEM)) )
+      SendSysMessage(who, "Voce nao pode girar isso!");
+      return 0;
+   endif
+   
+   if( object.movable == 0 )
+      SendSysMessage(who, "O objeto esta fixo.");
+      return 0;
+   endif
+
+   var object_graphic := object.graphic;
+   var new_obj_graphic;
+   var graphic_array := array{};
+   var i := 1;
+
+   while( (i < 100) && (object_graphic != new_obj_graphic) )
+      if(!new_obj_graphic)
+         new_obj_graphic := object_graphic;
+      endif
+      new_obj_graphic := flip_config[CInt(new_obj_graphic)].ChangeTo;
+      if(new_obj_graphic != object_graphic)
+         graphic_array[i] := new_obj_graphic;
+         i := i+1;
+      endif
+   endwhile
+
+   var flip_menu := CreateMenu("Selecione a nova orientacao:");
+   var j;
+   for(j:=1;j<i;j:=j+1)
+      AddMenuItem(flip_menu,CInt(graphic_array[j]),object.name);
+   endfor
+   var selection := SelectMenuItem2(who,flip_menu);
+   if(!selection)
+      SendSysMessage(who, "Cancelado.");
+      return 0;
+   endif
+   flip_graphic := CInt(selection.graphic);
+
+   object.graphic := flip_graphic;
+   return 1;
+endprogram

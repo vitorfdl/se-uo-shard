@@ -1,0 +1,37 @@
+use uo;
+use cfgfile;
+use util;
+
+program cria(item)
+	if (GetObjProperty(item, "spellinfo") != error)
+		return 1;
+	endif
+
+	var spellinfo := struct;
+
+	//pega o level do scroll
+	var scrollcfg := ReadConfigFile(":magery:itemdesc");
+	var lvl       := GetConfigInt(FindconfigElem(scrollcfg, item.objtype), "Circle" );
+	var spelltype := GetConfigString(FindconfigElem(scrollcfg, item.objtype), "SpellType" );
+	if (!lvl)
+		lvl := 1;
+	endif
+
+	//pega todas magias do cfg com esse level e armazena no array
+	var spellcfg := ReadConfigFile(":magery:config/allspells");
+	var keys := GetConfigIntKeys(spellcfg);
+	var randomspells := array;
+	foreach key in keys
+		var spelllvl := GetConfigInt( FindconfigElem(spellcfg, key), "Circle" );
+		var type     := GetConfigString( FindconfigElem(spellcfg, key), "Type" );
+		var unico    := GetConfigInt( FindConfigElem(spellcfg, key), "Unico" );
+		if (!unico && spelllvl == lvl && spelltype == type)
+			randomspells.append(key);
+		endif
+	endforeach
+
+	spellinfo.+id := randomspells[RandomInt(randomspells.size())+1];
+	SetObjProperty(item, "spellinfo", spellinfo);
+
+	return 1;
+endprogram

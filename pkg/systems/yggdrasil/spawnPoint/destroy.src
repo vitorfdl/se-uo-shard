@@ -1,0 +1,19 @@
+use uo;
+use os;
+include ":attributes:attributes";
+
+ program DestroyMe(spawnpoint)
+    var yggdrasil := spawnpoint.GetProps().yggdrasil;
+    foreach serial in (yggdrasil.spawned)
+        var targ := SystemFindObjectBySerial(serial);
+        targ.Disable("invul");
+        SetObjProperty(targ, "GuardKill", 1);   
+        ApplyRawDamage(targ, CInt(AP_GetVitalMaximumValue(targ, "Hits")));
+        sleepms(2);
+    endforeach
+
+    var mydata := spawnpoint.GetProps();
+    var spot   := SystemFindObjectBySerial(mydata.spot_serie);
+    spot.RemoveSpawnPoint(spawnpoint.serial);
+    return 1;
+endprogram

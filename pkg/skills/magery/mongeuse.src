@@ -1,0 +1,80 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/say";
+include ":tn:cooldown";
+include ":charactercreation:habilidades";
+include ":gumps:yesno";     
+include ":gumps:requestgump";
+include ":gumps:htmlgump";
+
+var cfg_spells := ReadConfigFile(":magery:allspells");
+
+program mongeuse(who, item)
+	var spelluser := GetObjPRoperty(who, "spelluser");
+	if (spelluser != "Monge" && who.cmdlevel < 3)
+		return;
+	endif 
+	
+	if (GetObjProperty(item, "monge") != who.serial && who.cmdlevel < 3)
+		SendSysMessageEx(who, "Voce nao pode usar tercos de outras pessoas", SSM_FAIL);
+		return;
+	endif
+	
+	var gliphs := GetObjProperty(item, "spellids");
+	if (!gliphs)
+		gliphs := array{};
+	endif
+	while (1)
+		var cargas := GetObjProperty(item, "cargas");
+		if (!cargas)
+			cargas := 0;
+			SetObjProperty(item, "cargas", 0);
+		endif
+		var chargump := GFCreateGump();
+		GFDisposable(chargump, 0);
+		GFPage(chargump, 0);
+		GFResizePic( chargump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 250, 250 );
+		GFResizePic( chargump, 15, 15, 5120, 220, 220 );
+		
+		GFTextLine(chargump, 25, 25, 1153, "Lista de Magias Monge");
+		GFTextLine(chargump, 25, 45, 2105, "Você têm "+cargas+" cargas de runas. ");
+		
+		GFPage(chargump, 1);
+		var index := 1;
+		var my := 85;
+		foreach gliph in gliphs
+			if (index == 7 || index == 14 || index == 21)
+				my := 85;
+				GFAddButton(chargump, 205, 205, 5601, 5605, GF_PAGE_BTN, chargump.cur_page+1);
+				GFPage(chargump, chargump.cur_page+1);
+				GFAddButton(chargump, 25, 205,  5603, 5607, GF_PAGE_BTN, chargump.cur_page-1);
+			endif
+			var gliph_elem := FindConfigElem(cfg_spells, gliph);
+			if (gliph_elem)
+				GFTextLine(chargump, 65, my, 2103, gliph_elem.Name);
+				GFAddButton(chargump, 45, my+2, 22153, 22155, GF_CLOSE_BTN, index+100);
+				GFAddButton(chargump, 25, my+2, 22150, 22152, GF_CLOSE_BTN, index);
+				my+= 20;
+			endif
+			index+= 1;
+		endforeach
+		
+		var input := GFSendGump(who, chargump);
+		
+		if (input[0] >= 100)
+			input := input[0] - 100;
+			var gliph_elem := FindConfigElem(cfg_spells, gliphs[input]);
+			SendHTMLGump(who, gliph_elem.Name + " [" + gliph_elem.Target + "] [" + gliph_elem.Mana + "]" , gliph_elem.Desc);
+		elseif (input[0] >= 1)
+			var spellid := struct;
+			spellid.+id := gliphs[input[0]];
+			var script := Start_Script("cast_spell", {who, spellid, item});
+			break;
+		else
+			break;
+		endif
+	endwhile
+
+endprogram

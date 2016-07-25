@@ -1,0 +1,75 @@
+
+use uo;
+use os;
+use util;
+
+
+include "include/client";
+include ":attributes:attributeConstants";
+include ":attributes:attributes";
+include ":attributes:skillCheck";
+
+Const ITEM_SWARM		:= 0x091b;
+Const SOUND_SCRUNCH		:= 0x58;
+Const ACTION_BOW		:= 0x0020;
+Const UOBJ_HONEY                := 0x9ec;
+Const UOBJ_WAX                  := 0x1422;
+
+
+Const MAX_PER_HIVE	:= 10;
+
+program harvest_honey (character, beehive)
+	if (Distance (character, beehive) > 1)
+		sendsysmessage (character, "Voce esta muito distante!", 3, 40);
+		return;
+	endif
+
+	var already_harvested_amount := CInt(GetObjProperty (beehive, "#harvested"));
+
+	//if there's no honey or wax, ask the user if they want to destroy the hive
+	if (already_harvested_amount >= MAX_PER_HIVE)
+		SendSysmessage (character, "A colmeia esta vazia.", FONT_NORMAL, 40);
+		return;
+	endif
+
+	SendSysmessage (character, "Voce comecou a mecher colmeia.", 3, 90);
+	var characterx := character.x;
+	var charactery := character.y;
+	repeat
+		//action, sound, and time delay
+		PlaySoundEffect( character, SOUND_SCRUNCH );
+		PerformAction( character, ACTION_BOW );
+		sleep (2);
+		PlaySoundEffect( character, SOUND_SCRUNCH );
+		PerformAction( character, ACTION_BOW );
+		sleep (3);
+
+		//do a skill check to see if they manage to harvest anything
+		if (skillcheck (character, SURVIVAL, 20, 0) > 0)
+			already_harvested_amount := CInt(GetObjProperty (beehive, "#harvested"));
+			if (!already_harvested_amount)
+				SetObjProperty (beehive, "#harvested", 1);
+			else
+				SetObjProperty (beehive, "#harvested", CInt(already_harvested_amount + 1));
+			endif
+			
+			CreateItemInContainer (character.backpack, UOBJ_HONEY, 1);
+			CreateItemInContainer (character.backpack, UOBJ_WAX, 1);
+		endif
+
+		//See if they stir up any bees
+		if (checkskill (character, HANDLEANIMAL, 15, 0) > 0)
+			if (RandomInt (4) == 1)
+				CreateItemAtLocation (beehive.x, beehive.y, beehive.z, ITEM_SWARM, 1, character.realm);
+				SendSysmessage (character, "Uh-oh...", 3, 40);
+				return;
+			endif
+		endif
+		
+		if (already_harvested_amount >= MAX_PER_HIVE)
+			SendSysmessage (character, "Nao ha mais nada para ser retirado daqui.", 3, 40);
+			return;
+		endif
+	until (character.x != characterx or character.y != charactery);
+	SendSysMessage (character, "Voce parou de mecher na colmeia.", 3, 90);
+endprogram

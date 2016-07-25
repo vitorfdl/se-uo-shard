@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="1150"
+   name=""
+   committed-date="2006-02-01T18:15:39.880694Z"
+   url="svn://svn.berlios.de/poldistro/trunk/096/pkg/items/mounts/commands/seer"
+   last-author="austin"
+   kind="dir"
+   uuid="9d346cd0-66fc-0310-bdc5-e57197e5a75e"
+   revision="1233"/>
+<entry
+   committed-rev="1150"
+   name="mount.src"
+   text-time="2006-03-11T02:33:08.000000Z"
+   committed-date="2006-02-01T18:15:39.880694Z"
+   checksum="effdbbeac05c795b5c665751d578b663"
+   last-author="austin"
+   kind="file"
+   prop-time="2006-03-11T02:33:08.000000Z"/>
+<entry
+   committed-rev="664"
+   name="unmount.src"
+   text-time="2006-03-11T02:33:08.000000Z"
+   committed-date="2005-10-27T03:36:13.103163Z"
+   checksum="d41d8cd98f00b204e9800998ecf8427e"
+   last-author="muaddiblsd"
+   kind="file"
+   prop-time="2006-03-11T02:33:08.000000Z"/>
+</wc-entries>

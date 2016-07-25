@@ -1,0 +1,39 @@
+
+use uo;
+
+include ":fls_core:packets";
+include ":combat:combat";
+include ":blood:blood";
+include "include/damage";
+include ":timedScripts:timedScripts";
+
+program doubleattack(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	var weapon	:= params[3];
+	var armor	:= params[4];
+	var basedamage	:= params[5];
+	var rawdamage	:= params[6];
+	params := 0; // Not needed anymore.
+	
+	if (lower(attacker.weapon.attribute) != "rangedcombat")
+		return;
+	endif
+	
+	PlayAttackAnimation(attacker);
+	PlayHitSounds(attacker, defender);
+	
+	PrintText(defender, "*flecha acerta seu joelho*");
+
+	TS_StartTimer(defender, "lentidao", 10);
+	
+	var bonus := cdbl(0.1+(Ap_GetSkill(attacker, TACTICS) / 80));
+	debugMSG(attacker, "bonus: " + bonus);
+	
+	var dmgList := dictionary;
+	dmgList := getNewDamageList(attacker);
+	var total := cint(CalculateTotalDamage(defender, basedamage, attacker, dmgList));
+	debugMSG(attacker, "total: " + total+(total*bonus));
+	DamageFLS(defender, cint(total+(total*bonus)), DMG_FORCED, attacker);
+
+endprogram  

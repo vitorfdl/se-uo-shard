@@ -1,0 +1,25 @@
+use uo;
+use os;
+
+include "include/client";
+include ":attributes:attributes";
+include "include/say";
+
+program fome(who)
+
+   var total :=  CInt(AP_GetVital(who, "Hunger") / 60);
+   var msg;
+
+   case (total)
+	6 : msg := "Voce esta correndo perigo de vida";
+	5 : msg := "Voce esta faminto.";
+	4 : msg := "Voce esta com fome.";
+	3 : msg := "Voce esta satisfeito.";
+	2 : msg := "Voce esta cheio.";
+	1 : msg := "Voce esta muito bem alimentado.";
+	0 : msg := "Voce esta muito bem alimentado.";
+   endcase
+
+   SendSysMessageEx(who, " " + msg, SSM_INFO);
+
+endprogram

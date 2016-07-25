@@ -1,0 +1,50 @@
+use uo;
+use vitals;
+use os;
+
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include "include/damage";
+include ":blood:blood";
+
+program default_poison(params)
+	var who := params[1];
+
+
+	var dmg := 0;
+	//var stam := 0;
+	var poisonedmsg := "";
+	var viewermsg := "";
+	var time := 15;
+	dmg := 7;
+	poisonedmsg := "Voce esta com uma grave hemorragia!";
+	viewermsg := "* - " + who.name + " esta sangrando muito! - *";
+	time := 5;
+
+	while(1)
+		PrintTextAbovePrivate(who, poisonedmsg, who);
+		foreach mobile in ( ListMobilesInLineOfSight(who, 8) )
+			if( mobile.ip && mobile != who )
+				PrintTextAbovePrivate(who, viewermsg, mobile);
+			endif
+			sleepms(2);
+		endforeach		
+		
+		ApplyRawDamage(who, dmg);
+		MakeBleed(who);
+
+		Set_Critical(1);
+		//var curr := CInt(AP_GetVital(who, "Stamina"));
+		//if ( curr >= stam )
+		//	AP_SetVital(who, "Stamina", (curr-stam));
+		//else
+		//	AP_SetVital(who, "Stamina", 0);
+		//endif
+		Set_Critical(0);
+		
+		sleep(time);
+	endwhile
+
+	return;
+endprogram
+

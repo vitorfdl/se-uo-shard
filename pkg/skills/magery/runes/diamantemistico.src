@@ -1,0 +1,20 @@
+use uo;
+use os;
+use util;
+
+include "include/say";
+
+program diamanteUse(who, diamante)
+	SendSysMessageEx(who, "Escolha o que recebera novas cargas", SSM_REQUEST);
+	var targ := Target(who);
+	
+	if (targ.objtype != 0x790c)
+		SendSysMessageEx(who, "Objeto Invalido", SSM_FAIL);
+		return;
+	endif
+	
+	SetObjProperty(targ, "cargas", cint(GetObjProperty(targ, "cargas") + 5));
+	
+	var destruir := DestroyItem(diamante);
+
+endprogram

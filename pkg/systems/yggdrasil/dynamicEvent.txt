@@ -1,0 +1,96 @@
+['Dynamic Events States']
+'Active'      – The event is running now
+'Success'     – The event has succeeded. During this state NPCs may have different dialogs and offer certain services. And the following events of a chain of events may start within a few seconds.
+'Fail'        – The event has failed
+'Ready'       – The event is inactive, and will only become active once certain criteria are met. Such as talking to an NPC.
+'Preparation' - The event criterias are done, and the events is performing all the necessary changes to get activated. 
+
+['Essentials']
+The foremost requirement of an event is being in the right place at the right time. Events can be discovered in a number of ways, such as exploring the world, conversing with non-player characters.
+/**
+ * TODO: How should calculate if player is in the right place to start an event
+ * Possible way is to check every player in shard, verify if X and Y is inside the area event trigger.
+ *
+ */
+
+['Scalling Event']
+Event can be scalled by the number of players inside the area of the Event.
+
+[1]Enemy stats can be increased
+[2]Enemies can gain new abilities
+[3]New enemy types may appear, including veterans, elites, or even champion versions
+[4]Enemy count can be increased
+[5]Objective requirements may increase
+
+['Scripting Details']
+CFG ->
+    ['Event Name']
+    Active_Script   = Run periodically when event is running. Should return if Success/Fail was trigered
+    Success_Script  = Run when Success is trigered.
+    Fail_Script     = Run when Fail is trigered.
+    Scalling_Script = Run every time the Scalling requisites are completed. //TODO: Define scalling requisites
+    Ready_Script    = Run periodically to check if conditions to trigger are done.
+    Prepare_Script  = Run every time Ready conditions are completed, to setup the event.
+    TimeInterval    = Time to wait until script can be trigerred again.
+    ChainGroup      = Do not active event if one of the chain is ON.
+    ChainOrder      = Order to be executed in the event chain
+    
+Main Script ->
+    Get CFG events. 
+    Check if EventCondition is Active [Global Props or Data Document?]. If Active run Active_Script.
+        If Active_Script == Success > Success_Script
+        If Active_Script == Fail    > Fail_Script
+        If Active_Script == null    > next()
+            Try to check ChainGroup for next event in ChainOrder
+    Check if event ready conditions has been completed. Activate Ready_Script.
+        if Yes check for TimeInterval
+            if Done check for existing events by ChainGroup
+                Start Prepare_Script
+                Set EventCondition to Prepatation
+                    If Done, set EventCondition to Active
+    
+
+
+['Ready Script']
+
+
+/*=============================================
+=             Goblin Events Chain            =
+=============================================*/
+// Ritual of the Goblins
+"Description"    : Goblins reunites in a place [array(possible locations)] and starts a ritual to invoke an ancient elemental demon.
+"Enemies"        : Goblins and Goblin Shaman 
+"Scalling"       : [4][3] Goblin Warrior
+"Success"        : Kill all goblins in the area and prevent elemental demon to be summoned.
+"Fail"           : Active next Event ['Goblin Basement']
+"Active Criteria": Some Player should enter the Area
+"Cooldown"       : 1 Week and the chain should not be on
+
+// Goblin Basement
+"Description"    : Goblins take the place for a base. Some tents are placed around.
+"Enemies"        : Goblins, Goblin Warrior, Goblin Shaman, Elemental Demon Boss.
+"Scalling"       : [1]
+"Success"        : Kill Elemental Demon Boss.
+"Fail"           : Next Event ['Goblin Attack']
+"Active Criteria": Fail ['Ritual of the Goblins']
+
+// Goblin Attack
+"Description"    : Goblins starts to spawn around the cities.
+"Enemies"        : Goblins, Goblin Warrior
+"Scalling"       : [3] Goblin Champion
+"Success"        : Kill all enemis to put event to cooldown 
+"Fail"           : Not Possible to Fail.
+"Active Criteria": Fail ['Goblin Attack']
+"Cooldown"       : One day
+
+/*=============================================
+=             Bandits Event Chain            =
+=============================================*/
+// Bandits in the Street
+"Description"    : Bandits are summoned in [arraw(possible locations)] in streets, and attack near players.
+"Enemies"        : Bandits and Bandit Archers.
+"Scalling"       : [1]
+"Success"        : Kill all the bandits.
+"Fail"           : Bandits gone after a while
+"Active Criteria": Some Player should enter the Area
+"Cooldown"       : 2 days

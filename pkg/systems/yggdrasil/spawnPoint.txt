@@ -1,0 +1,134 @@
+['Spots Configuration']
+SpotGroup:
+GM should be able to construct a spot;
+Contains a list of spots, any spawngroup should be able to born from that spot.
+Contains a list of spawngroups, a premade group of mobs configured by GM. Yggdrasil should determine what spot will receive that spawngroup.
+Spawngroups have a influence entry, GM can 'use' this to force Yggdrasil to give more power against other mobs by a period of time. The higher the influence, more difficulty will be for players to change this conditions. Yggdrasil can even ignore player actions.
+    Should be easily editaded, so GMS can always insert or remove a spawnGroups when history needs.
+
+    Spot:
+    Contains a list of spawnpoints where mobs will be spawned;
+    Contain a Dynamic Event entry, soo Yggdrasil can determine if Dynamic Events will be activated based on this spot. //Need to think how it will work later.
+    TimeInterval entry, with mimimun time spot will be deactived when cleaned by users.
+
+    Spawnpoint:
+    Every Spawnpoint should contain a level range between 1-3. The higher the level, more hard will be the mobs spawned in this spot.
+    Can contain the type of the spawnpoint: Meele, Ranged, Spellcaster, Boss. Should be able to select more than one.
+
+    Spawngroup:
+    Contain a list of mobs like [":ghaia:goblin", ":ghaia:goblinwarrior"].
+        Determine if mob is a BOSS. Open the GUMP BOSS config to set his particularities.
+        Determine if will spawn only in Days or Nights
+    Dynamic Event entry, soo Yggdrasil can determine if Dynamic Events will be activated based on this spawngroup. //Need to think how it will work later.
+    Enemies entry. GM can set this entry to make wars between monster os the same SpotGroup. Need to be cautious, since it is possible to complete erase some spawnGroups of the SpotGroup.
+    Allies entry. GM can determine what spawnGroups are part of an Alliance. Allies never attack each other, and Yggdrasil will send them to help a attacked spot if determines that players in the area is too strong for the spot.
+
+DATA ->
+    //SYSTEM DONE
+    SpawnGroup ['GroupName'] 
+        mobList: [{
+            name    : ":ghaia:goblin",
+            isBoss  : (bool)False,
+            daytime : (enum)Day,Night
+            power   : (int)1~3
+            bossParams: {..}
+        }..],
+        eventEntry:"referenceName", //missingThis
+    //SYSTEM DONE
+        
+    spotGroup ['GroupName']
+        activated: (bool)False //Can Turn off/on if Gm wishes.
+        spots: ["spotSerial reference..."],
+        spawnGroup_list : [{
+            name      : "spawnGroup referenceName",
+            influence : (int)1~5,
+            allies    : ["spawnGroup reference"], //Each spotGroup can have your own allies, so in differente places, some spawngroups can have an Alliance or not.
+            enemies   : ["spawnGroup reference"] //Each spotGroup can have your own enemies, so in differente places, some spawngroups can be in War or not.
+        }..],
+        
+Itemdesc Spot
+    active   : 1/0,
+    spawnpoints: ["spawnPointSerial refrence"],
+    timeInterval : (int)number*60,
+    eventEntry   : "referenceName",
+    yggdrasil: { //seted by Yggdrasil
+        spawnGroup : "spawnGroup referenceName", 
+        level      : 1~3,
+    }
+
+Itemdesc spawnPoint
+    name       : "refrenceName"
+    ref_id     : "SpotSerial reference"
+    location   : {x,y,z} [Gm should Click in the place]
+    level      : (int)0-3,
+    type       : (enum)Meele,Range,Spellcaster,Boss
+    mob_number : (int)
+    treasure: [{ //player click in existing container
+        level        : 1 ~ 5,
+        start_hidden : 1/0
+    }],
+    yggdrasil: { //seted by Yggdrasil
+        "last_erase" : date
+    }
+
+["Script Definitions"]
+command: .spawnGroups
+    GM can add, edit and remove spawnGroups.
+        'Remove' should check for spot inside spotGroups and tell to GM to replace them.
+
+command: .spotGroups
+    GM can add spotGroups, and reference to Spots. Spots will not work if they arent in a spotGroup.
+    Have a button to popup a menu with all spots in the game.
+        Should show if spot have no ref_id.
+
+itemdesc: spotPoint
+    Should be place in a easily location.
+    Double-Clicks open the spot configuration [Spot Gump Menu].
+    Delete Spot, automatic delete spawnPoints.
+
+itemdesc: spawnPoint
+    Should be placed where the spawn will start to check for radius.
+    Added from [Spot Gump Menu]
+
+['Spawn Decision']
+Get 20 range area around.
+Automatic calculate strenght of each monster in the spawnGroup.
+Check what kind of type monster spawnpoint accept. Create an array with it.
+Do Spawn, by:
+    Boss only spawn in level 3
+    Try to spawn Archers and Spellcasters in safe location.
+
+['Yggdrasil Decisions']
+- At First, spots will respawn by Influence. //Need to determine how many spots should be respawn, and how it will be distributed between spawngroups.
+
+- Spot will only 'dies' if players complete one of the follow conditions:
+    [1] Kill the all 'BOSSes' of the spot, if exists.
+        Any remaining mob will leave the area if no players is around for the next 20 minutes.
+    [2] Kill all monsters of the spot, if no BOSS exists.
+
+- Spot will only became 'active' again, if complete one of the follow conditions:
+    [1] timeInterval of the spot has been achieved. 
+        25% of chance to spawn become activaded in intervals of one hour.
+    [2] Spot has been killed by another Spot.
+        In this case, the spot instantly becomes activated, with spawnGroup of the spot winner.
+    [3]A external Dynamic Event can active the spot. Any conditions of the spot is determinated by the event.
+
+- Spot 'evolution' can happen if complete the follow conditions: //Should think better about this
+    * Do not be attacked by players in 48hours.
+    * 
+
+- Spot can 'war' each other, inside of the 'spawnGroup'. Conditions are:
+    * Is in the Enemies list and is differente of himself. (GM can create two different spawnGroup with same mobs, soo will look like they are different tribes.)
+    * Spot should be in his max level of upgrade to attack another spot.
+    * No player should been attacking this spot. That doenst mean this spot cannot be attacked by another one.
+    Details:
+        Yggdrasil should ALWAYS send mobs to attack that spot if previous conditions are done.
+        If no player arrive the location in the next minutes, Yggdrasil determines the Winner and reset the spot with properly spawnGroup. //Soo players can see the War happening.
+        Yggdrasil will check if what spawnGroup players are attacking. Mobiles will became temporary allies of the players if they dont suffer any harm.
+
+- Dynamic Events synchronization:
+    * Everytime a spot is created, Yggdrasil send a trigger to Dynamic Events, to check if any condition has done.
+    * Everytime a spot is erased, Yggdrasil send a tigger to Dynamic events, to check if any conditions has done.
+
+
+

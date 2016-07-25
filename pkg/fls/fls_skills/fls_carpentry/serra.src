@@ -1,0 +1,179 @@
+use uo;
+use os;
+use util;
+
+
+include ":gumps:gumps";
+
+program usar_serra(who, item)
+
+	if (!Accessible (who, item) )
+		SendSysMessage (who, "Voce nao alcanca aquilo!");
+		return;
+	endif
+
+	if (!ReserveItem (item) )
+		SendSysMessage (who, "voce nao pode usar isso agora.");
+		return;
+	endif
+
+	SendSysMessage (who, "O que voce deseja fazer com isto?");
+	var targetted := Target (who);
+
+	if (!targetted)
+		SendSysMessage (who, "Cancelado.");
+		return;
+	endif
+	if (!Accessible (who, targetted) )
+		SendSysMessage (who, "Voce nao alcanca isto!");
+		return;
+	endif
+	if (!targetted.movable)
+		SendSysMessage (who, "Voce nao pode usar isto.");
+		return;
+	endif
+	if (!ReserveItem (targetted) )
+		SendSysMessage (who, "Voce nao pode usar isto agora.");
+		return;
+	endif
+
+	if((targetted.objtype != 0x1bdd) && (targetted.objtype != 0x1bd7) && (targetted.objtype != 0xee36) && (targetted.objtype != 0xee37) && (targetted.objtype != 0xee39)  && (targetted.objtype != 0xee38) && (targetted.objtype != 0xee3) && (targetted.objtype != 0xee3a) && (targetted.objtype != 0xee3b) && (targetted.objtype != 0xee3c) )
+           SendSysMessage(who, "Voce deve usar a serra nas madeiras!");
+           return;
+        else
+            OpenMenuLog(who, targetted);
+	endif
+
+endprogram
+
+function OpenMenuLog(who, targetted)
+
+    var sawgump := GFCreateGump();
+    GFResizePic(sawgump, 0, 60, 3600, 260, 230);
+    GFResizePic(sawgump, 15, 75, 0x13BE, 230, 200);
+//cor 55 e 600 sao boas
+    GFTextLine(sawgump, 50, 93, 55, "O que voce deseja fazer?" );
+    GFTextLine(sawgump, 50, 123, 600, "Tabuas");
+    GFTextLine(sawgump, 170, 123, 600, "Cabos");
+    GFTilePic(sawgump, 60, 153, 7127);
+    GFTilePic(sawgump, 180, 153, 3978);
+
+    GFAddButton(sawgump, 160, 240, 0x819, 0x818, 1, 1 );
+    GFAddButton(sawgump, 25, 153, 210, 211, 1, 2);
+    GFAddButton(sawgump, 145, 153, 210, 211, 1, 3);
+
+
+    var retv := GFSendGump(who, sawgump );
+
+    if ( retv[0] == 1 )
+        return 0;
+    elseif ( retv[0] == 2 )
+        maketabuas(who, targetted);
+    elseif ( retv[0] == 3)
+        makecabos(who, targetted);
+    else
+        return -1;
+    endif
+
+endfunction
+
+function maketabuas(who, item)
+ 
+   var nova_tabua;
+
+   case (item.objtype)
+        0xee36: 
+                nova_tabua :=0xee66;
+                MakeBoardSerra(who, item, nova_tabua);
+        0xee37: 
+                nova_tabua :=0xee67;
+                MakeBoardSerra(who, item, nova_tabua);
+        0xee38: 
+                nova_tabua :=0xee68;
+                MakeBoardSerra(who, item, nova_tabua);
+        0xee39:
+                nova_tabua :=0xee69;
+                MakeBoardSerra(who, item, nova_tabua);
+        0xee3a:
+                nova_tabua :=0xee70;
+                MakeBoardSerra(who, item, nova_tabua);
+        0xee3b:
+                nova_tabua := 0xee73;
+                MakeBoardSerra(who, item, nova_tabua);
+        0xee3c:
+                nova_tabua :=0xee74;
+                MakeBoardSerra(who, item, nova_tabua);
+        default:
+                nova_tabua :=0x1bd7;
+                MakeBoardSerra(who, item, nova_tabua);
+   endcase
+
+endfunction
+
+function MakeBoardSerra(who, item, nova_tabua)
+
+	var characterx := who.x;
+	var charactery := who.y;
+	repeat
+                if ((item.amount) <= 0)
+                   break;
+                endif
+                MakeSerraEfect(who);
+
+		//CreateItemInContainer (who.backpack, nova_tabua, 1);
+                //SubtractAmount(item, item.amount);
+
+		//alterado - Ed.
+		CreateItemInContainer (who.backpack, nova_tabua, item.amount);
+                SubtractAmount(item, item.amount);
+
+
+
+	until ((who.x != characterx or who.y != charactery));
+
+endfunction
+
+function makecabos(who, item)
+ 
+
+   case (item.objtype)
+        0xee36: 
+                MakeCaboSerra(who, item);
+        0xee37: 
+                MakeCaboSerra(who, item);
+        0xee38: 
+                MakeCaboSerra(who, item);
+        0xee39:
+                MakeCaboSerra(who, item);
+        0xee3a:
+                MakeCaboSerra(who, item);
+        0xee3b:
+                MakeCaboSerra(who, item);
+        0xee3c:
+                MakeCaboSerra(who, item);
+        default:
+                MakeCaboSerra(who, item);
+   endcase
+
+endfunction
+
+function MakeCaboSerra(who, item)
+        var cabo := 0xee71;
+	var characterx := who.x;
+	var charactery := who.y;
+	repeat
+                if ((item.amount) <= 0)
+                   break;
+                endif
+                MakeSerraEfect(who);
+        	CreateItemInContainer (who.backpack, cabo, 1);
+                SubtractAmount(item, 1);
+
+	until ((who.x != characterx or who.y != charactery));
+
+endfunction
+
+function MakeSerraEfect(who)
+  PlaySoundEffect(who, 0xff);
+  sleep(2);
+endfunction

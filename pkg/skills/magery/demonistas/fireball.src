@@ -1,0 +1,58 @@
+use uo;
+use os;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include "include/damage";
+include "include/client";
+var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5};
+
+
+program SpellScript(params)
+	var who := params[1];
+	var targ := params[2];
+	params := 0; // No longer needed
+	
+	var path := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
+	path.erase(1);
+	var definitive_coord;
+	PlaySoundEffect(who, SFX_SPELL_FIREBALL);
+	var i := 1;
+	foreach coord in path
+		foreach mobile in (ListMobilesNearLocationEx( coord.x, coord.y, GetWorldHeight(coord.x, coord.y), 1, LISTEX_FLAG_NORMAL+LISTEX_FLAG_HIDDEN))
+			if (mobile != who)
+				definitive_coord := mobile;
+				PlayMovingEffect (who, mobile, GFX_LARGE_FIREBALL, 5, 1);
+				PlaySoundEffect(who, 0x208);
+				break;
+			endif
+		endforeach
+		
+		if (definitive_coord)
+			break;
+		endif
+		
+		i += 1;
+		if (i == path.size())
+			PlayMovingEffectXYZ( who.x, who.y, who.z, targ.x, targ.y, targ.z, GFX_LARGE_FIREBALL, 5, 1);
+			definitive_coord := targ;
+		endif
+	endforeach
+	
+	
+	foreach mobile in (ListMobilesNearLocationEx( definitive_coord.x, definitive_coord.y, definitive_coord.z, 1, LISTEX_FLAG_NORMAL+LISTEX_FLAG_HIDDEN))
+		if (!(mobile in who.party.members) && mobile != who)
+			var damage := AP_GetStat(who, "Intelligence") / 4;
+			DamageFLS(mobile, cint(damage+1), DMG_FIRE, who);
+		endif
+	endforeach	
+	
+	var fogo := CreateItemAtLocation(definitive_coord.x, definitive_coord.y, definitive_coord.z, 0x3996);
+	sleep(10);
+	var destroy := Destroyitem(fogo);
+		
+	return 1;
+endprogram 

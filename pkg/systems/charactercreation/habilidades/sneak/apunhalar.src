@@ -1,0 +1,149 @@
+use uo;
+use util;
+use os;
+
+include ":attributes:attributeConstants";
+include ":attributes:attributes";
+include ":attributes:skillCheck";
+include ":attributes:stats";
+include ":combat:combat";
+include ":blood:blood";
+include ":fls_core:fls_characters";
+include ":fls_core:packets";
+include ":tn:combat";
+include "include/packets";
+include "include/facings";
+include "include/damage";
+
+var item_cfg	:= ReadConfigFile(":*:itemdesc");
+
+program backstab(who)
+	
+	var weapon := who.weapon;
+	var weaponBow := 0;
+	if (lower(weapon.attribute) == "rangedcombat")
+		if (TemHabilidade(who, "Mira Assassina"))
+			weaponBow := 1;
+		else
+			return;
+		endif
+	endif
+
+	if ( !CanBackStab(who, weapon) )
+		return;
+	endif
+	
+	SendSysMessage(who, "Quem voce deseja atacar?");
+	var targ := target(who, TGTOPT_HARMFUL+TGTOPT_CHECK_LOS);
+	if ( !targ.ISA(POLCLASS_MOBILE) )
+		SendSysMessage(who, "Voce nao pode atacar isto.");
+		return;
+	elseif ( who.weapon != weapon )
+		SendSysMessage(who, "Voce nao pode atacar depois de ter trocado a arma.");
+		return;
+	elseif ( Distance(who, targ) > 2 && !weaponBow)
+		SendSysMessage(who, targ.name+" esta muito distante.");
+		return;
+	elseif ( Distance(who, targ) > 18)
+		SendSysMessage(who, targ.name+" esta muito distante.");
+		return;
+	elseif ( targ.serial == who.serial)
+		SendSysMessage(who, "Isso nao e muito esperto.");
+		return;
+	elseif ( IsBehind(targ, who.x, who.y) )
+		if ( !CanBackStab(who, weapon) )
+			return;
+		else
+			who.hidden := 0;
+			sleepms(100);
+			
+			if ( weaponBow)
+				if (!AmmoCheck(who, targ))
+					return 1;
+				endif
+			else
+				PerformAction(who, 0x000a );
+			endif
+			
+
+			SetObjProperty(who, "backstab", 1);
+			var rawdamage := CalculateRawDamage(who, weapon);
+			if (TemHabilidade(who, "Lamina Assassina") && !weaponBow)
+				rawdamage := rawdamage*4;
+			else
+				rawdamage := rawdamage*2;
+			endif
+			if (rawdamage < 1)
+				rawdamage := 1;
+			endif
+
+			if ( rawdamage > 0 )
+				var dmgList := dictionary;
+				dmgList := getNewDamageList(who);
+				var basedamage := CalculateTotalDamageBonus(rawdamage, who, targ);
+				var total := CalculateTotalDamage(targ, basedamage, who, dmgList);
+				if (total < 1)
+					total := 1;
+				endif
+				ApplyRawDamage(targ, total);
+				MostraDano(who, targ, total);
+				MakeBleed(targ);
+			endif
+			EraseObjProperty(who, "backstab");
+			SendSysMessage(who, "Voce acertou seu alvo!");
+		endif
+	else
+		SendSysMessage(who, "Voce deve ficar atras de " + targ.name);
+	endif
+endprogram
+
+function CanBackStab(who, weapon)
+	var elem := FindConfigElem(item_cfg, who.weapon.objtype);
+	
+	var can_back_stab := 0;
+	if (lower(weapon.attribute) == "meleecombat1h" && lower(elem.habcategory) == "perfuração")
+		can_back_stab := 1;
+	endif
+	
+	if (lower(weapon.attribute) == "rangedcombat")
+		can_back_stab := 1;
+	endif
+
+	
+	if ( !can_back_stab )
+		SendSysMessage(who, "Esta arma nao e apropriada para um ataque furtivo.");
+		return 0;
+	elseif ( !who.hidden )
+		SendSysMessage(who, "Voce precisa estar escondido para realizar esse ataque.");
+		return 0;
+	endif
+	
+	return 1;
+endfunction
+
+function AmmoCheck(attacker, defender)
+	var wpn_a_elem := GetWpnCfgInfo(attacker, attacker.weapon);
+
+	if ( !wpn_a_elem.ProjectileType )
+		return 1;
+	endif
+
+	var has_ammo := 0;
+
+	var aljava := GetEquipmentByLayer(attacker, 0x14);
+	var ammo := GetObjProperty(attacker.weapon, "ammo");
+	if (!ammo)
+		SendSysMessage(attacker, "Voce nao definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
+		return 0;
+	endif
+	if ( ConsumeSubstance( aljava, ammo, 1 ) )
+		var cfg:=ReadConfigFile(":woodworking:itemdesc");
+		var elem := FindConfigElem(cfg, ammo);
+		var ammo_color := elem.color;
+		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, ammo_color);
+		return 1;
+	else
+		return 0;
+	endif
+	
+endfunction

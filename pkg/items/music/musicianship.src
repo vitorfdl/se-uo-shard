@@ -1,0 +1,176 @@
+
+
+use os;
+use uo;
+
+include ":musicianship:bard";
+include ":attributes:attributeConstants";
+include ":attributes:attributes";
+include ":attributes:skillCheck";
+include ":itemutils:canAccess";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:requestgump";
+include ":gumps:yesno";
+include ":charactercreation:habilidades";
+
+var config;
+
+program skill_Musicianship(who, item)
+
+	EraseObjProperty(who, "IsMeditating");
+
+	if( Cint(GetObjProperty(who, "#LastMusic")) > ReadGameClock() )
+		SendSysMessage(who, "Voce deve esperar um momento antes de tocar novamente.");
+		return 0;
+	endif
+
+	if( item.container != who.backpack && GetEquipmentByLayer(who, 1) != item && GetEquipmentByLayer(who, 2) != item)
+		SendSysMessage( who, "Este instrumento nao esta na sua mochila.");
+		return 0;
+	endif
+	if(!Accessible(who, item))
+		return 0;
+	endif
+
+	if ((item.objtype == 0x0E9C) || (item.objtype == 0x0E9D) || (item.objtype == 0x0E9E)
+		|| (item.objtype == 0x2805) || (item.objtype == 0x2807))
+		PlayAlternative(who, item);
+		return 0;
+	endif
+
+	var success, fail;
+	var notas := array;
+	var notas2 := array;
+	var letra := array;
+	var magica;
+
+	var bardgump := GFCreateGump();
+	GFResizePic(bardgump, 30, 30, 2600, 200, 250);
+	GFResizePic(bardgump, 50, 50, 3500, 160, 210); //55
+	GFTextLine(bardgump, 80, 63, 1890, "Escolha a Opcao:" );
+
+	GFTextLine(bardgump, 86, 93, 600, "Seguir Partitura" );
+	GFTextLine(bardgump, 86, 113, 600, "Tocar Livremente" );
+
+	var partitura  := GFAddButton(bardgump, 71, 98, 2103, 2104, 1, 1);
+	var livremente  := GFAddButton(bardgump, 71, 118, 2103, 2104, 1, 2);
+
+	var musicas := getObjProperty(who, "musicas");
+	if (temhabilidade(who, "Memorizar Musica") || who.cmdlevel >= 3)
+		var i := 1;
+		foreach musica in (musicas.keys())
+			GFTextLine(bardgump, 86, 113 + i*20, 600, musicas[musica].nome + "" );
+			GFAddButton(bardgump, 71, 118 + i*20, 2103, 2104, 1, 100+i);
+			i := i + 1;
+		endforeach
+	endif
+
+	var retv := GFSendGump(who, bardgump );
+	
+	var tempo := "";
+
+	//Tocar Livremente
+	if (retv[0] == 1)
+		SendSysMessage(who, "Escolha uma partitura para acompanhar:",3,191);
+		var partitura := Target(who);
+		if ((partitura.objtype == 0x9924) || (partitura.objtype == 0x9925))
+			SendSysMessage(who, "Voce comeca a tocar a musica " + partitura.desc + ".",3,660);
+			notas := Getobjproperty(partitura, "notas");
+			notas2 := Getobjproperty(partitura, "notas2");
+			tempo := Getobjproperty(partitura, "tempo");
+			letra := Getobjproperty(partitura, "letra");
+			magica := Getobjproperty(partitura, "magica");
+			tocarsound(who,item,notas,notas2,tempo,letra,magica);
+		else
+			SendSysMessage(who, "Isso nao e uma partitura!",3,38);
+			return 1;
+		endif
+	endif
+
+	if (retv[0] == 2)
+		var what := 1; 
+		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		return 1;
+	endif
+
+	if (retv[0] > 100)
+		var slot := retv[0] - 100;
+		tocarsound(who, item, musicas[slot].notas, musicas[slot].notas2, musicas[slot].tempo, musicas[slot].letra, musicas[slot].magica);
+	endif
+
+		SetObjProperty(who, "#LastMusic", Cint(ReadGameClock() + 0));
+
+	return 1;
+
+
+endprogram
+
+function PlayAlternative(who, item)
+var success, fail;
+
+	var bardgump := GFCreateGump();
+	GFResizePic(bardgump, 0, 0, 2600, 200, 200);
+	GFResizePic(bardgump, 20, 20, 3500, 160, 160); //55
+	GFTextLine(bardgump, 50, 33, 1890, "Escolha a melodia" );
+
+	GFTextLine(bardgump, 60, 63, 600, "Comum" );
+	GFTextLine(bardgump, 60, 83, 600, "Calma" );
+	GFTextLine(bardgump, 60, 103, 600, "Triste" );
+	GFTextLine(bardgump, 60, 123, 600, "Acao" );
+
+	var comum  := GFAddButton(bardgump, 45, 68, 2103, 2104, 1, 1);
+	var calma  := GFAddButton(bardgump, 45, 88, 2103, 2104, 1, 2);
+	var triste := GFAddButton(bardgump, 45, 108, 2103, 2104, 1, 3);
+	var acao   := GFAddButton(bardgump, 45, 128, 2103, 2104, 1, 4);
+
+	var retv := GFSendGump(who, bardgump );
+
+	if (retv[0] == 1)
+		case(item.graphic)
+			0x0e9c:  success := 0x39;  fail := 0x3a;
+			0x0e9d:  success := 0x53;  fail := 0x54;
+			0x0e9e:  success := 0x53;  fail := 0x54;
+			0x2805:  success := 0x3E;  fail := 0x5B8;
+			0x2807:  success := 0x3E;  fail := 0x5B8;
+		endcase
+	elseif (retv[0] == 2)
+		case(item.graphic)
+			0x0e9c:  success := 746;  fail := 0x3a;
+			0x0e9d:  success := 1208;  fail := 0x54;
+			0x0e9e:  success := 1208;  fail := 0x54;
+			0x2805:  success := 0x505;  fail := 0x5B8;
+			0x2807:  success := 0x505;  fail := 0x5B8;
+		endcase
+	elseif (retv[0] == 3)
+		case(item.graphic)
+			0x0e9c:  success := 745;  fail := 0x3a;
+			0x0e9d:  success := 1207;  fail := 0x54;
+			0x0e9e:  success := 1207;  fail := 0x54;
+			0x2805:  success := 0x58C;  fail := 0x5B8;
+			0x2807:  success := 0x58C;  fail := 0x5B8;
+		endcase
+	elseif (retv[0] == 4)
+		case(item.graphic)
+			0x0e9c:  success := 744;  fail := 0x3a;
+			0x0e9d:  success :=  1206;  fail := 0x54;
+			0x0e9e:  success :=  1206;  fail := 0x54;
+			0x2805:  success := 0x58B;  fail := 0x5B8;
+			0x2807:  success := 0x58B;  fail := 0x5B8;
+		endcase
+	else
+		return;
+	endif
+
+	if (randomIntMinMax(cint(AP_GetStat(who, "Dexterity")-20),cint(AP_GetStat(who, "Dexterity")+20)) >= 45)
+		PlaySoundEffect(who, success);
+	else
+		PlaySoundEffect(who, fail);
+	endif
+
+	SetObjProperty(who, "#LastMusic", Cint(ReadGameClock() + 3));
+
+	return 1;
+
+endfunction
+

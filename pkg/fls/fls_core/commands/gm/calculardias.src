@@ -1,0 +1,20 @@
+use datafile;
+use uo;
+use unicode;
+
+include ":yggdrasil:boss";
+include "include/say";
+program gmtools(who, params)
+	params := cint(params);
+	
+
+	SendSysMessageEx(who, "Dias: " + CalcularDias(params));
+endprogram
+
+function CalcularDias(data)
+    var criadoEm := cint(data);
+    var tempoAgora := polcore().systime;// segundos
+    var tempoDevida:= tempoAgora - criadoEm;
+    var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
+    return dias;
+endfunction

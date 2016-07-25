@@ -1,0 +1,134 @@
+kit 1
+{
+	Nome Nenhum
+	Desc Sem kit, fica sem vantagens e desvantagens.
+	NotaRP 0
+}
+
+kit 2
+{
+	Nome Corpulento
+	Raca Humano
+	Desc   Você tem um grande porte e assusta as pessoas pelo seu tamanho horizontal. Apesar de ser forte, seus movimentos são lentos e desengonçados.
+	Vantagens +5 STR
+	Desvantagens -5 DEX
+	NotaRP 0
+}
+
+kit 3
+{
+	Nome Gênio
+	Raca Humano
+	Desc   Você dedicou grande parte de sua vida aos estudos. Apesar de ser bastante inteligente você nunca se exercitou o suficiente, sendo um tanto fraco.
+	Vantagens +5 INT
+	Desvantagens -5 STR
+	NotaRP 0
+}
+
+
+kit 4
+{
+	Nome Ágil
+	Raca Humano
+	Desc Você tem uma grande estabilidade corporal pela sua baixa estatura. Apesar de ser agil, seu tamanho e pouca musculatura faz com que você seja fraco.
+	Vantagens +5 DEX
+	Desvantagens -5 STR
+	NotaRP 0
+}
+
+kit 5
+{
+	Nome Velho
+	Raca Humano
+	Desc Você possui uma idade bastante avançada, como um humano de 60 anos ou mais ou um elfo de 120 anos ou mais. Com tanto tempo de vida você ganhou sabedoria (Inteligência), mas perdeu seu condicionamento físico (Força e Destreza).
+	Vantagens +10 INT
+	Desvantagens -5 STR/DEX
+	NotaRP 0
+}
+
+kit 6
+{
+	Nome Sabe-Tudo
+	Raca Humano
+	Desc Você sempre teve facilidade em aprender muitas perícias, mas não foi capaz de se especializar bastante
+	Vantagens +5 pontos para comprar perícias
+	Desvantagens Apenas uma perícia primária
+	NotaRP 0
+}
+
+kit 7
+{
+	Nome Ranger
+	Raca Humano
+	Classe Armas
+	Desc Você vive em maior contato com a natureza, principalmente em locais ermos e selvagens.
+	Vantagens Sobrevivência 2->1, Furtividade 3->2, Trato de Animais 4->3
+	Desvantagens Táticas de Combate 1->2, Bloqueio com Escudo 1->3 
+	NotaRP 0
+}
+
+
+kit 8
+{
+	Nome Artifice
+	Desc Você se dedicou a uma profissão e sabe várias perícias envolvendo o trabalho.
+	Raca Humano
+	Vantagens Custo modificado. Custo 1: todas as de crafting. Custo 2: Sobrevivência, Alquimia e Trato de Animais. <BR>  Pode colocar itens pra vender nos NPCs de todo o mapa. <BR> Futuramente entrar para a facção mercante.
+	Desvantagens Custo modificado. Demais perecias (nao citadas acima) passam de Custo 1->3, 2->3, 3->4, 4->4.
+	NotaRP 0
+}
+
+kit 9
+{
+	Nome Versatilidade
+	Desc Você é bom em aprender coisas novas, desenvolvendo um bom raciocínio rápido.
+	Raca Humano
+	Vantagens +2 pontos para adquirir perícias.
+	Desvantagens -5 pontos em todos os atributos.
+	NotaRP 0
+}
+kit 10
+{
+	Nome Rico
+	Desc Sua família é bem estruturada financeiramente.
+	Raca Humano
+	Vantagens +200 moedas na criação do personagem.
+	Desvantagens -5 pontos em todos os atributos.
+	NotaRP 0
+}
+kit 11
+{
+	Nome Cavaleiro
+	Desc Você foi nomeado Cavaleiro por um nobre, e honra os votos de garantir a justiça de seu patricio onde estiver.
+	Raca Humano
+	Vantagens Você começa com um cavalo.
+	Desvantagens Você começa com menos moedas.
+	NotaRP	1
+}
+kit 12
+{
+	Nome Membro da Nobreza
+	Desc Você pertence a nobreza, sendo um Patricio, e tem deveres a cumprir com seu reino, assim como alguns previlégios.
+	Raca Humano
+	Vantagens Começa com Símbolo de Família e pode adentrar a Corte.
+	Desvantagens Nenhum
+	NotaRP	1
+}
+kit 13
+{
+	Nome Característica Marcante
+	Desc De alguma forma, você possui uma característica marcante que todos podem notar a distância. Pode ser uma cicatriz, o corpo queimado, uma pele rugosa, até mesmo um anão!
+	Raca Humano
+	Vantagens Pode adicionar uma descrição ao personagem.
+	Desvantagens Nenhum
+	NotaRP	1
+}
+kit 14
+{
+	Nome Título Conhecido
+	Desc Herdado de seus parentes ou adquirido em seu curto espaço de vida, você consolidou um título facilmente compreendido ao redor de Tera.
+	Raca Humano
+	Vantagens Pode adicionar um título ao personagem.
+	Desvantagens Nenhum
+	NotaRP	1
+}

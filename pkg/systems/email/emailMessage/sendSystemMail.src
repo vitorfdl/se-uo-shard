@@ -1,0 +1,21 @@
+/*
+        Created by *Edwards
+        For FantasiaShard.com
+
+        Edwards@FantasiaShard.com
+
+        2009-01-03
+
+        Last maintenance 2010-08-04
+*/
+use uo;
+use os;
+
+include ":email:email";
+
+program EmailMessage( params )
+	var mobile := params[1];
+	var subject := params[2];
+	var msg := params[3];
+	SendSystemMail( mobile, subject, msg );
+endprogram

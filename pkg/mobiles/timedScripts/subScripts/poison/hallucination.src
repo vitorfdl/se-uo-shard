@@ -1,0 +1,48 @@
+use uo;
+use os;
+
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include "include/damage";
+//include ":tn:hallucination";
+
+/*program default_poison(params)
+	var who := params[1];
+	var attacker := params[2];
+	var level := CInt(params[3]);
+
+	if ( !level )
+		level := 1;
+	endif
+
+	if ( attacker )
+		SetScriptController(attacker);
+	endif
+
+	var time := 15;
+//	Hallucinate(who);
+
+	var times := 0;
+
+	while(times < 10)
+		PrintTextAbovePrivate(who, "*vendo coisas estranhas e fora do normal*", who);
+		foreach mobile in ( ListMobilesInLineOfSight(who, 8) )
+			if( mobile.ip && mobile != who )
+				PrintTextAbovePrivate(who, "*parece muito doido*", mobile);
+			endif
+			sleepms(2);
+		endforeach
+		
+//		Hallucinate(who);
+
+		if (who.dead)
+			var script := GetProcess(GetPid());
+			script.kill();
+		endif
+		
+		sleep(time);
+		times := times + 1;
+	endwhile
+
+	return;
+endprogram*/

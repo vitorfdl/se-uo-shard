@@ -1,0 +1,22 @@
+// voicer 2012 - clairslair.com
+
+use uo;
+use os;
+use polsys;
+use basic;
+
+program receive_viewrange()
+	Print("Installing hook - Receive View Range Packet.");
+	return 1;
+endprogram
+
+
+exported function getrange(who, byref packet)
+	
+	var range := packet.GetInt8(1);
+	range := Hex(range);
+	range := SplitWords(range, delimiter := "x");
+	var pdata := "C8"+range[2];
+	SendPacket(who, pdata);
+	return 1; // don't allow packet to reach server.
+endfunction

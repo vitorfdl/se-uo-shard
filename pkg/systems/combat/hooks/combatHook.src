@@ -1,0 +1,319 @@
+/////////////////////////////////////////////
+//
+// combathook.src
+//
+// Combat System Hooks
+//
+// Created: 2/26/2004 1:13AM
+// Updated: 06/03/2007 1:13AM
+//
+// Responsavel por:
+//
+//
+////////////////////////////////////////////
+
+use uo;
+use cfgfile;
+
+include ":attributes:attributes";
+include "include/client";
+include ":combat:armorZones";
+include ":combat:combat";
+include "include/packets";
+include "include/facings";
+include "include/say";
+include "include/damage";
+include ":charactercreation:habilidades";
+include ":tn:cooldown";
+include ":tn:combat";
+include ":timedscripts:timedScripts";
+include ":fls_core:packets";
+
+var item_cfg	:= ReadConfigFile(":*:itemdesc");
+var strat_cfg	:= ReadConfigFile("combatlevel");
+var npc_cfg	:= ReadConfigFile("::npcdesc");
+
+//Global because they're important, and it keeps the function
+//prototypes shorter and easier to read.
+var wpn_a, wpn_d;
+var wpn_a_elem, wpn_d_elem;
+
+program Install()
+	print("INSTALLING: AttackHook ... OK!");
+	print("");
+endprogram
+
+exported function Attack(attacker, defender)
+
+	if ( attacker == defender )
+		ApplyRawDamage(attacker, 5000);
+		return 1;
+	elseif ( !CheckLineOfSight(attacker, defender) )
+		return 1;
+	endif
+
+	if (attacker.acctname)
+		if (!attacker.warmode)
+			if(GetObjProperty(attacker, "attackmsg") <= polcore().systime)
+				SendSysMessageEx(attacker, "Voce precisa estar em modo de combate para ameacar alguem.", SSM_FAIL);
+				SetObjProperty(attacker, "attackmsg", polcore().systime+15);
+			endif
+			return 1;
+		endif
+	endif
+
+	wpn_a := attacker.weapon;
+	wpn_d := defender.weapon;
+
+	wpn_a_elem := GetWpnCfgInfo(attacker, wpn_a);
+	wpn_d_elem := GetWpnCfgInfo(defender, wpn_d);
+
+	if ( (attacker.paralyzed) || (attacker.frozen) )
+		SendSysMessage(attacker, "Voce nao consegue atacar.");
+		return 1;
+	elseif ( (attacker.concealed) && (attacker.cmdlevel == 0) )
+		attacker.concealed := 0;
+	elseif ( !DistanceChecks(attacker, defender) )
+		return 1;
+	elseif ( !FacingChecks(attacker, defender) )
+		return 1;
+	elseif ( !AmmoCheck(attacker, defender) )
+		return 1;
+	endif
+
+	var hit_chance := CalculateHitChance(attacker, defender);
+
+	if (GetObjProperty(attacker, "#attackfail") == 1)
+		EraseObjProperty(attacker, "#attackfail");
+		hit_chance := 0;
+	endif
+
+	if (GetObjProperty(defender, "#defensefail") == 1)
+		EraseObjProperty(defender, "#defensefail");
+		hit_chance := 100;
+	endif
+
+	if (GetObjProperty(defender, "#arrowrepulse") == 1 && lower(attacker.weapon.attribute) == "rangedcombat" )
+		hit_chance := 0;
+	endif
+
+	var oportunidade := 0;
+
+	var random := RandomInt(100)+1;
+
+	PlayAttackAnimation(attacker);
+
+	if (GetObjProperty(attacker, "debug") == 1)
+		printtextabove(attacker, "hit chance "+ hit_chance);
+	endif
+
+	//ACERTOU
+	if ( random < hit_chance )
+		if ( GetCooldown(attacker, "SequenciaDevastadora"))
+			var ataques := cint(GetObjProperty(attacker, "#SequenciaDevastadoraAcumulada"));
+			ataques := ataques + 1;
+			SetObjProperty(attacker, "#SequenciaDevastadoraAcumulada", ataques);
+		endif
+
+		if ( GetCooldown(defender, "desviararmas") )
+			PrintText(defender, "*esquiva-se*");
+			return 1;
+		endif
+
+		if ( TemHabilidade(attacker, "golpedesleal") && IsBehind(attacker, defender.x, defender.y) )
+			if (randomInt(10) < 3)
+				TS_StartTimer(defender, "paralysis", 2);
+			endif
+		endif
+
+		var armor :=  CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
+		armor := armor[ RandomInt( len( armor ) ) + 1];
+		PlayHitSounds(attacker, defender);
+		var dmg := CalculateRawDamage(attacker, attacker.weapon);
+		var result := Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, wpn_a, armor, dmg, dmg});
+
+	else //ERROU O ATAQUE
+
+		if ( wpn_a_elem.ProjectileType )
+			if(!attacker.npctemplate)
+				ArrowRecovery(attacker, defender, wpn_a);
+			endif
+		endif
+		EraseObjProperty(attacker, "movement");
+		PlayMissSound(attacker);
+	endif
+
+	return 1;
+
+endfunction
+
+function CalculateHitChance(attacker, defender)
+
+	var skill_a;
+	var skill_d;
+	if ( !attacker.npctemplate )
+		skill_a := CDbl(AP_GetSkill(attacker, wpn_a.attribute));
+
+		if ( GetEquipmentByLayer(attacker, LAYER_MOUNT))
+			skill_a := skill_a / 2;
+		endif
+
+		if (wpn_a.attribute == WRESTLING) // Ajustar se for soco pra melhor melee combat
+			if (AP_GetSkill(attacker, MELEECOMBAT1H) > AP_GetSkill(attacker, MELEECOMBAT2H))
+				skill_a := AP_GetSkill(attacker, MELEECOMBAT1H);
+			else
+				skill_a := AP_GetSkill(attacker, MELEECOMBAT2H);
+			endif
+		endif
+
+	else
+		skill_a := CDbl(AP_GetSkill(attacker, WRESTLING));
+	endif
+
+	if ( GetObjProperty(attacker, "metamorfose") != error)
+		skill_a := cint(GetObjProperty(attacker, "skill_a"));
+	endif
+
+	if ( !defender.npctemplate )
+		skill_d := CDbl(AP_GetSkill(defender, wpn_d.attribute));
+		if ( GetEquipmentByLayer(defender, LAYER_MOUNT))
+			skill_d := skill_d / 2;
+		endif
+		if (wpn_d.attribute == WRESTLING)
+			if (AP_GetSkill(defender, MELEECOMBAT1H) > AP_GetSkill(defender, MELEECOMBAT2H))
+				skill_d := AP_GetSkill(defender, MELEECOMBAT1H);
+			else
+				skill_d := AP_GetSkill(defender, MELEECOMBAT2H);
+			endif
+		endif
+	else
+		skill_d := CDbl(AP_GetSkill(defender, WRESTLING));
+	endif
+
+	if ( GetObjProperty(defender, "metamorfose") != error)
+		skill_d := cint(GetObjProperty(defender, "skill_d"));
+	endif
+
+	var hit_chance := 50.0 + ((skill_a - skill_d) / 1.5);
+
+	hit_chance := hit_chance + CDbl( GetObjProperty(attacker, "hitbonus") ) + attacker.hitchance_mod - defender.evasionchance_mod;
+	hit_chance := hit_chance + cint( GetObjProperty(attacker, "#attackbonus" ));
+
+	if (getcooldown(defender, "evasion_chance"))
+		hit_chance := hit_chance - 10;
+	endif
+
+	if (TemHabilidade(defender, "Luta Defensiva"))
+		var wpn_d_elem := GetWpnCfgInfo(defender, wpn_d);
+		var habcategory := lower(wpn_d_elem.habcategory);
+		if ( habcategory == "perfuracao" && lower(defender.weapon.attribute) == "meleecombat2h")
+			hit_chance := hit_chance -15;
+		endif
+	endif
+
+	if (lower(wpn_a.attribute) == "meleecombat2h")
+		hit_chance += 15;
+	endif
+
+	if (hit_chance < 5.0)
+		hit_chance := 5.0;
+	endif
+
+	if (defender.acctname  )
+		if (!defender.warmode)
+			hit_chance := 100;
+		endif
+	endif
+
+	return hit_chance;
+
+endfunction
+
+// Arqueiros
+
+function AmmoCheck(attacker, defender)
+	if ( !wpn_a_elem.ProjectileType )
+		return 1;
+	endif
+
+	if(attacker.npctemplate)
+		ArqueiroNPC(attacker, defender);
+		return 1;
+	endif
+
+	var has_ammo := 0;
+
+	var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
+	var ammo := GetObjProperty(attacker.weapon, "ammo");
+	if (!ammo)
+		SendSysMessage(attacker, "Voce nao definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
+		return 0;
+	endif
+	if ( ConsumeSubstance( aljava, ammo, 1 ) )
+		var cfg:=ReadConfigFile(":woodworking:itemdesc");
+		var elem := FindConfigElem(cfg, ammo);
+		var ammo_color := elem.color;
+		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, ammo_color);
+		return 1;
+	else
+		return 0;
+	endif
+
+endfunction
+
+function ArqueiroNPC(attacker, defender)
+	PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, 0); //ammo_color);
+
+	return 1;
+endfunction
+
+
+function CombatDbgMsg(mobile, text)
+	SendSysMessage(mobile, "CombatHook:"+text);
+endfunction
+
+function CombatMsg(mobile, type, text, ssm_type := 0)
+	//This is done just to prevent spam from would-be repetetive messages.
+	if ( GetObjProperty(mobile, "#CH"+type) )
+		SendSysMessage(mobile, text);
+	endif
+endfunction
+
+function ArrowRecovery(attacker, defender, weapon)
+	var chance := 15;
+	if (TemHabilidade(attacker, "Disciplina do Cacador"))
+		var chance := chance + 35;
+	endif
+	if ( RandomDiceRoll("1d100") <= chance )
+		var ammo := GetObjProperty(weapon, "ammo");
+		var y;
+		var x;
+		case (RandomInt(5))
+			1: y := RandomInt(3) * -1; x := RandomInt(3);
+			2: y := RandomInt(3); x := RandomInt(3) * -1;
+			3: y := RandomInt(3) * -1; x := RandomInt(3) * -1;
+			4: y := RandomInt(3); x := RandomInt(3);
+		endcase
+		CreateItemAtLocation(defender.x + x, defender.y + y, defender.z, ammo, 1, defender.realm);
+	endif
+endfunction
+
+function FacingChecks(attacker, defender)
+	var retval := 1;
+	if ( !IsFacing(attacker, defender.x, defender.y) )
+		if ( attacker.npctemplate )
+			TurnObjectToward(attacker, defender.x, defender.y);
+		else
+			if ( IsBehind(attacker, defender.x, defender.y) )
+				SendSysMessage(attacker, "Voce esta de costas para o inimigo!");
+				retval := 0;
+			endif
+		endif
+	elseif ( !IsFacing(defender, attacker.x, attacker.y) )
+		if ( defender.npctemplate )
+			TurnObjectToward(defender, attacker.x, attacker.y);
+		endif
+	endif
+
+	return retval;
+endfunction

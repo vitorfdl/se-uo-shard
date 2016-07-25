@@ -1,0 +1,217 @@
+use uo;
+use os;
+use datafile;
+
+include ":datafile:include/datafile";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:include/requestgump";
+include ":gumps:yesno";
+include "include/say";
+include ":tn:tngumps";
+
+program reagentConfigure(who, text)
+	if (!text)
+		regionsChoice(who);
+	elseif (text == "groups")
+		reagentsChoice(who);
+	endif
+endprogram
+
+function reagentsChoice(who)
+	while(who.connected)
+		var gump := GFCreateGump();
+		GFDisposable(gump, 0);
+		GFResizePic(gump, 0, 25, 3600, 250, 430);	
+		GFResizePic(gump, 15, 40, 0x13BE, 220, 400);
+		GFTextMid(gump, 20, 50, 250, 1153, "Contole de Reagentes");
+		
+		var y := 60;
+		GFTextLine(gump, 35, y, 1153, "Adicionar Nova");
+		GFAddButton(gump, 20, y+2, 2117, 2118, 1, 100);
+		
+		var reagents := GetGroupDataFile();
+		
+		var i := 1;
+		foreach reagent in (reagents.keys())
+			y := y+ 15;
+			GFTextLine(gump, 35, y, 1153, ""+reagent);
+			GFAddButton(gump, 20, y+2, 2117, 2118, 1, 400+i);
+			i := i + 1;
+		endforeach
+		
+		var input := GFSendGump(who, gump);
+		input := input[0];
+		
+		if (input == 100)
+			var nome := RequestGump(who, "Escolha o nome do Group");
+			var item := RequestGump(who, "Coloque o nome ou objtype dos reagentes, separando por espaço.");
+			
+			var region := GetGroupDataElem(""+nome);
+			region.setprop("name", nome);
+			region.setprop("item", item);
+			
+		elseif(input >= 400)
+		
+			var index :=  input - 400;
+			var elem := GetGroupDataElem(reagents.keys()[index]);
+		
+			var gump2 := GFCreateGump(220, 300);
+			GFResizePic(gump2, 0,  0, 3600, 220, 200);
+			
+			GFTextLine(gump2, 45, 15, 2100, "Itens: ");
+			GFHTMLArea(gump2, 35, 30, 160, 90, elem.getprop("item"), 0, 1);
+
+			GFTextLine(gump2, 45,  115, 2100, "Deletar Group");
+			GFAddButton(gump2, 20, 117, 2117, 2118, 1, 100);
+			GFTextLine(gump2, 45, 130, 2100, "Editar Group");
+			GFAddButton(gump2, 20, 132, 2117, 2118, 1, 200);
+			
+			var input2 := GFSendGump(who, gump2);
+			input2 := input2[0];
+			
+			if (input2 == 100)
+				reagents.deleteelement(reagents.keys()[index]);
+				SendSysMessage(who, "Group deletado.");
+			elseif (input2 == 200)
+			
+				var item := RequestGump(who, "Coloque o nome ou objtype dos reagentes, separando por espaço.","",elem.getprop("item"));
+				
+				elem.setprop("item", item);
+			endif
+		
+		else
+			break;
+		endif
+	endwhile
+		
+		
+endfunction
+
+/*---------------------------------*/
+
+function regionsChoice(who)
+	while(who.connected)
+		var gump := GFCreateGump();
+		GFDisposable(gump, 0);
+		GFResizePic(gump, 0, 25, 3600, 250, 430);	
+		GFResizePic(gump, 15, 40, 0x13BE, 220, 400);
+		GFTextMid(gump, 20, 50, 250, 1153, "Contole de Reagentes");
+		
+		var y := 60;
+		GFTextLine(gump, 35, y, 1153, "Adicionar Nova");
+		GFAddButton(gump, 20, y+2, 2117, 2118, 1, 100);
+		
+		var reagents := GetReagentDataFile();
+		
+		var i := 1;
+		foreach reagent in (reagents.keys())
+			y := y+ 15;
+			GFTextLine(gump, 35, y, 1153, ""+reagent);
+			GFAddButton(gump, 20, y+2, 2117, 2118, 1, 400+i);
+			i := i + 1;
+		endforeach
+		
+		var input := GFSendGump(who, gump);
+		input := input[0];
+		
+		if (input == 100)
+			var nome := RequestGump(who, "Escolha o nome da região");
+			var groups := SelectGroups(who);
+			var density := RequestGump(who, "Descreva a raridade para cada group adicionado anteriormente  (de 0 a 100)");
+			var rect :=  RequestGump(who, "Qual o rect da região?");
+			
+			var region := GetReagentDataElem(""+nome);
+			
+			region.setprop("name", nome);
+			region.setprop("groups", groups);
+			region.setprop("density", density);
+			region.setprop("rect", rect);
+			
+		elseif(input >= 400)
+		
+			var index :=  input - 400;
+			var elem := GetReagentDataElem(reagents.keys()[index]);
+		
+			var gump2 := GFCreateGump(220, 300);
+			GFResizePic(gump2, 0,  0, 3600, 220, 200);
+			
+			GFTextLine(gump2, 45, 15, 2100, "Name: "+elem.getprop("name"));
+			GFTextLine(gump2, 45, 35, 2100, "Groups: "+elem.getprop("groups"));
+			GFTextLine(gump2, 45, 55, 2100, "Density: "+elem.getprop("density"));
+			GFTextLine(gump2, 45, 70, 2100, "Rect: "+elem.getprop("rect"));
+			GFTextLine(gump2, 45,  85, 2100, "Deletar Região");
+			GFAddButton(gump2, 20, 87, 2117, 2118, 1, 100);
+			GFTextLine(gump2, 45, 100, 2100, "Editar Região");
+			GFAddButton(gump2, 20, 102, 2117, 2118, 1, 200);
+			
+			var input2 := GFSendGump(who, gump2);
+			input2 := input2[0];
+			
+			if (input2 == 100)
+				reagents.deleteelement(reagents.keys()[index]);
+				SendSysMessage(who, "Região deletada.");
+			elseif (input2 == 200)
+			
+				var groups := SelectGroups(who, elem.getprop("groups"));
+				var density := RequestGump(who, "Descreva a raridade para cada group adicionado anteriormente  (de 0 a 100)","",elem.getprop("density"));
+				var rect :=  RequestGump(who, "Qual o rect da região?","",elem.getprop("rect"));
+				
+				elem.setprop("groups", groups);
+				elem.setprop("density", density);
+				elem.setprop("rect", rect);
+			endif
+		
+		else
+			break;
+		endif
+	endwhile
+endfunction
+
+function SelectGroups(who, oldgroups := 0)
+	var oreoption := array{};
+	var arrayquestion := DFGetElemNames(GetGroupDataFile());
+	foreach question in arrayquestion
+		if (oldgroups[question])
+			oreoption.append(1);
+		else
+			oreoption.append(0);
+		endif
+		sleepms(5);
+	endforeach	
+	var selectedores := CheckBoxGump(who, 300, 100+cint(20*len(arrayquestion)), "Quais reagentes deseja encontrar aqui?",  arrayquestion, oreoption);
+	var ores := selectedores[1];
+	selectedores.Erase(1);
+	foreach ore in selectedores
+		ores := ores + " " + ore;
+	endforeach
+	
+	return ores;
+
+endfunction
+
+function GetReagentDataFile()
+	var data_file := DFOpenDataFile(":gathering:reagentspawn", DF_CREATE);
+	return data_file;
+endfunction
+
+function GetReagentDataElem(elem_name)
+	var data_file := GetReagentDataFile();
+	var data_elem := DFFindElement(data_file, elem_name, DF_CREATE);
+	
+	return data_elem;
+endfunction
+
+function GetGroupDataFile()
+	var data_file := DFOpenDataFile(":gathering:reagentgroups", DF_CREATE);
+	return data_file;
+endfunction
+
+function GetGroupDataElem(elem_name)
+	var data_file := GetGroupDataFile();
+	var data_elem := DFFindElement(data_file, elem_name, DF_CREATE);
+	
+	return data_elem;
+endfunction
+
+

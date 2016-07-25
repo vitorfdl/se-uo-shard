@@ -1,0 +1,108 @@
+     use uo;
+use os;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/tileEffects";
+include ":timedScripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+include "include/sysEvent";
+
+program SpellScript(params)
+	var who := params[1];
+	params := 0; // No longer needed
+	
+	PlaySoundEffect(who, SFX_SPELL_STRENGTH);
+	
+	var gliphs := array{};
+	var newmobiles;
+	var i := 1;
+	var oldx := who.x;
+	var oldy := who.y;
+	
+	CreateRandomGliph(gliphs, who.x-1, who.y+3, who.z);
+	CreateRandomGliph(gliphs, who.x-2, who.y+3, who.z);
+	CreateRandomGliph(gliphs, who.x-3, who.y+3, who.z);
+	CreateRandomGliph(gliphs, who.x-3, who.y+2, who.z);
+	
+	CreateRandomGliph(gliphs, who.x+1, who.y-3, who.z);
+	CreateRandomGliph(gliphs, who.x+2, who.y-3, who.z);
+	CreateRandomGliph(gliphs, who.x+3, who.y-3, who.z);
+	CreateRandomGliph(gliphs, who.x+3, who.y-2, who.z);
+	PrintTextPrivate(who, "'Mova-se para parar a conjuração!'", who, SSM_INFO);
+	while ( AP_ConsumeVital(who, MANA, 2) )
+		if (oldx != who.x || oldy != who.y)
+			break;
+		endif
+		
+		newmobiles := ListMobilesNearLocation( who.x ,who.y, who.z, 3);
+		
+		foreach mobile in newmobiles
+			if (mobile.npctemplate)
+				var elem := NPC_GetNPCConfig(mobile.npctemplate);
+				var category := lower(GetConfigString(elem, "Category"));
+				if (category == "undead" || category == "demons")
+					var elem := NPC_GetNPCConfig(mobile.npctemplate);
+					var category := lower(GetConfigString(elem, "Category"));
+					if (category == "undead" )
+						var ev :=  struct;
+						ev.+source := who;
+						ev.+type := EVID_FLEE;
+						sendEvent(mobile, ev);
+					endif
+				endif
+			endif
+			sleepms(5);
+		endforeach
+
+		var x;
+		foreach gliph in gliphs
+			if ((who.x-3 == gliph.x && who.y+3 == gliph.y)
+				|| (who.x-2 == gliph.x && who.y+3 == gliph.y)
+				|| (who.x-1 == gliph.x && who.y+3 == gliph.y)
+				|| (who.x == gliph.x && who.y+3 == gliph.y)
+				|| (who.x+1 == gliph.x && who.y+3 == gliph.y)
+				|| (who.x+2 == gliph.x && who.y+3 == gliph.y))
+				MoveObjectToLocation( gliph, gliph.x+1, gliph.y, gliph.z, flags := MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+			elseif ((who.x+3 == gliph.x && who.y+3 == gliph.y)
+				|| (who.x+3 == gliph.x && who.y+2 == gliph.y)
+				|| (who.x+3 == gliph.x && who.y+1 == gliph.y)
+				|| (who.x+3 == gliph.x && who.y == gliph.y)
+				|| (who.x+3 == gliph.x && who.y-1 == gliph.y)
+				|| (who.x+3 == gliph.x && who.y-2 == gliph.y))
+				MoveObjectToLocation( gliph, gliph.x, gliph.y-1, gliph.z, flags := MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+
+			elseif ((who.x+3 == gliph.x && who.y-3 == gliph.y)
+				|| (who.x+2 == gliph.x && who.y-3 == gliph.y)
+				|| (who.x+1 == gliph.x && who.y-3 == gliph.y)
+				|| (who.x == gliph.x && who.y-3 == gliph.y)
+				|| (who.x-1 == gliph.x && who.y-3 == gliph.y)
+				|| (who.x-2 == gliph.x && who.y-3 == gliph.y))
+				MoveObjectToLocation( gliph, gliph.x-1, gliph.y, gliph.z, flags := MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+
+	
+			elseif ((who.x-3 == gliph.x && who.y-3 == gliph.y)
+				|| (who.x-3 == gliph.x && who.y-2 == gliph.y)
+				|| (who.x-3 == gliph.x && who.y-1 == gliph.y)
+				|| (who.x-3 == gliph.x && who.y == gliph.y)
+				|| (who.x-3 == gliph.x && who.y+1 == gliph.y)
+				|| (who.x-3 == gliph.x && who.y+2 == gliph.y))
+				MoveObjectToLocation( gliph, gliph.x, gliph.y+1, gliph.z, flags := MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+				
+			endif
+			
+			sleepms(5);
+		endforeach
+
+		PerformAction(who, ANIM_CAST_AREA);
+		sleepms(800);
+	endwhile
+	
+	foreach gliph in gliphs
+		var destro := DestroyItem(gliph);
+	endforeach
+	
+	return 1;
+endprogram 

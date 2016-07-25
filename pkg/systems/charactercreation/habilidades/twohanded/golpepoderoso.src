@@ -1,0 +1,81 @@
+
+use uo;
+
+include ":fls_core:packets";
+include ":combat:combat";
+include ":blood:blood";
+include "include/damage";
+include ":timedScripts:timedScripts";
+
+program doubleattack(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	var weapon	:= params[3];
+	var armor	:= params[4];
+	var basedamage	:= params[5];
+	var rawdamage	:= params[6];
+	params := 0; // Not needed anymore.
+	
+	if (lower(attacker.weapon.attribute) != "meleecombat2h")
+		return;
+	endif
+	
+	PlayAttackAnimation(attacker);
+	PlayHitSounds(attacker, defender);
+	
+	PrintTextAbove(attacker, "*Desfere um forte golpe com a arma*");
+
+	PushBack(defender, 3, 300, attacker);
+	
+	var bonus := cdbl(0.2+(Ap_GetSkill(attacker, TACTICS) / 100));
+	
+	var dmgList := dictionary;
+	dmgList := getNewDamageList(attacker);
+	var total := cint(CalculateTotalDamage(defender, basedamage, attacker, dmgList));
+	DamageFLS(defender, cint(total+(total*bonus)), DMG_FORCED, attacker);
+
+endprogram  
+
+function PushBack(who, dist, delay, attacker)
+
+	var x := 0;
+	var y := 0;
+
+	if (attacker.facing == 0)
+		y :=  - 1;
+	elseif (attacker.facing == 1)
+		y :=  - 1;
+		x := 1;
+	elseif (attacker.facing == 2)
+		x :=  1;
+	elseif (attacker.facing == 3)
+		x :=  1;
+		y :=  1;
+	elseif (attacker.facing == 4)
+		y :=  1;
+	elseif (attacker.facing == 5)
+		y :=  1;
+		x :=  -1;
+	elseif (attacker.facing == 6)
+		x :=   -1;
+	elseif (attacker.facing == 7)
+		x :=  -1;
+		y :=  -1;
+	endif
+
+	var i := 0;
+	for( i := 1; i < dist; i := i + 1)
+		var finalx := (who.x + x);
+		var finaly := (who.y + y);
+		if (!CheckLosAt(who, finalx, finaly, who.z))
+			break;
+		endif
+		var err := MoveObjectToLocation( who, finalx, finaly, who.z, who.realm );
+		sleepms(delay);
+		if (!err)
+		//	PrintText(who, "*bate no obstaculo*");
+			break;
+		endif
+	endfor
+
+endfunction

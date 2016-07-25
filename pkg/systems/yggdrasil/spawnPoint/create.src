@@ -1,0 +1,6 @@
+use uo;
+
+program Install(spawnpoint)
+    spawnpoint.SetProps(struct{});
+    return 1;
+endprogram

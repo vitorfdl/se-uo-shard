@@ -1,0 +1,25 @@
+use uo;
+use os;
+
+include ":attributes:attributes";
+include "include/say";
+
+program cureScript(params)
+	var mobile := params[1];
+	PrintText(mobile, "*sumindo pouco a pouco*");
+	if (getObjProperty(mobile, "owner")) 
+		var masterserial := getObjProperty(mobile, "owner");
+		var master := SystemFindObjectBySerial(masterserial);
+		if(getobjproperty(mobile, "Necro"))
+			var numbersummons := Cint(GetObjProperty(master, "NecroSummons"));
+			SetObjProperty(master, "NecroSummons", (numbersummons - 1));
+		endif			
+	endif
+	sleep(5);
+	ApplyRawDamage(mobile, 200);	
+	ApplyRawDamage(mobile, 200);
+	ApplyRawDamage(mobile, 200);
+	ApplyRawDamage(mobile, 200);
+	ApplyRawDamage(mobile, 200);
+	return 1;
+endprogram 

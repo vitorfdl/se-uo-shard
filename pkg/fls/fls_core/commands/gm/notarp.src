@@ -1,0 +1,21 @@
+use uo;
+
+
+include ":fls_core:fls_characters";
+program changeSkill(who, text)
+	text := SplitWords(text);
+	var conta := text[1];
+	var nota := cint(text[2]);
+	
+	var notarp := setNotaRP(conta, nota);
+	if (!notarp)
+		SendSysMessage(who, "Error: " +notarp);
+	endif
+	
+	SendSysMessage(who, "Nota alterada com sucesso");
+
+endprogram
+
+function setNotaRP(who, nota)
+	return findAccount(who).setProp("nota", nota);
+endfunction

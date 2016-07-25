@@ -1,0 +1,70 @@
+use uo;
+use os;
+use cfgfile;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include ":attributes:attributes";
+include ":tn:npcutil";
+include ":ghaia:ghaiaUtil";
+include ":ghaia:ghaia";
+include ":magery:summon";
+include ":taming:taming";
+include ":charactercreation:habilidades";
+
+program summontotem(params)
+
+	var who := params[1];
+	var targ := params[2];
+	params := 0; // No longer needed
+
+	//sendsysmessage(who, " " + GetNumPets(who) );
+	if (GetMaxPEts(who) <= GetNumPets(who) )
+		SendSysMessageEx(who, "Voce tem " + GetNumPets(who) + " criaturas sob seu comando e o maximo sao : " + GetMaxPEts(who)  + "  . "  , SSM_FAIL);
+		return;
+	endif
+	
+
+	//Efeito da magia
+	
+	var i;
+	var randomobject := array{0x1363, 0x1365, 0x1366, 0x1776, 0x1775};
+	PlaySoundEffectXYZ( targ.x, targ.y, targ.z, 0x657);
+	for (i:=1;i<=11;i+=1)
+		var x := randomint(4)+3;
+		var y := randomint(4)+3;
+		var a;
+		for (a:=1;a<=2;a+=1)
+			var randommove := randomint(5);
+			if (randommove == 1)
+				PlayMovingEffectXYZ( targ.x+x, targ.y+y, targ.z, targ.x, targ.y, targ.z, randomobject[randomint(6)], 50, 10, 0, who.realm);
+			elseif (randommove == 2)
+				PlayMovingEffectXYZ( targ.x-x, targ.y-y, targ.z, targ.x, targ.y, targ.z, randomobject[randomint(6)], 50, 10, 0, who.realm);
+			elseif (randommove == 3)
+				PlayMovingEffectXYZ( targ.x+x, targ.y-y, targ.z, targ.x, targ.y, targ.z, randomobject[randomint(6)], 50, 10, 0, who.realm);
+			else
+				PlayMovingEffectXYZ( targ.x-x, targ.y+y, targ.z, targ.x, targ.y, targ.z, randomobject[randomint(6)], 50, 10, 0, who.realm);
+			endif
+		endfor
+		sleepms(600);
+	endfor
+	
+	
+	
+	var undead :=   summon(":ghaia:colossus", targ, who);
+
+	if (undead)
+		SendSysMEssageEx(who, "Voce teve sucesso em invocar  a criatura.", SSM_INFO);
+		AddPet(who, undead.serial);
+	endif
+
+	var duracao := GetSpellDuration(cint(AP_GetStat(who, "Intelligence")/3));
+
+	TS_StartTimer(undead, "summon", duracao );
+	
+	return 1;
+
+endprogram

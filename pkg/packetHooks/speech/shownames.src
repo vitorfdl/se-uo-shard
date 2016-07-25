@@ -1,0 +1,17 @@
+use uo;
+
+program speechHook()
+  Print("SystemHook: Hooking Shownames.");
+  return 1;
+endprogram
+
+exported function handeSendSpeech(who, byref pkt)
+	if(pkt.GetInt8(9) == 0x6)
+		var obj := SystemFindObjectBySerial(pkt.GetInt32(3));
+    		If(obj.IsA(POLCLASS_MOBILE)) // Se for um mobile, não exibe o nome
+			return 1;
+		endif
+	endif
+
+	return 0;
+endfunction

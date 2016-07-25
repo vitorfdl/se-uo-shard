@@ -1,0 +1,344 @@
+use uo;
+use os;
+use util;
+include ":attributes:attributes";
+include ":yggdrasil:boss";
+include ":combat:hitscripts";
+
+program spawnpointcontrol(spawnpoint)
+    var monsters      := GetObjProperty(spawnpoint, "Monsters");
+    var spawnqueue    := array{};
+    var childrenSerial:= array{};
+	var i, x;
+	var active := GetObjProperty(spawnpoint, "Active");
+	while(!active)
+		sleep(10);
+		active := GetObjProperty(spawnpoint, "Active");
+	endwhile
+
+    SetObjProperty(spawnpoint, "ResetMe", 1);
+	i := RandomInt(20);
+	sleep(i);
+	while(spawnpoint)
+		var resetme := GetObjProperty(spawnpoint, "ResetMe");
+		if(resetme)
+            var n;
+            for ( n:=1; n<=3; n:=n+1)
+              KillChildren(spawnpoint, monsters["monster"+n], resetme);
+              ResetSpawnQueue(spawnpoint, monsters["monster"+n]);
+            endfor
+			EraseObjProperty(spawnpoint, "ResetMe");
+		endif
+		
+		active := GetObjProperty(spawnpoint, "Active");
+		monsters := GetObjProperty(spawnpoint, "Monsters");
+		if (active)
+			foreach monster in monsters
+				if (!monster.activate)
+					continue;
+				elseif (monster.daycicle)
+					var clima := lower(GetGlobalProperty("dia"));
+					if (monster.daycicle == 1 && clima == "noite")
+						KillChildren(spawnpoint, monster, 2);
+						continue;
+					elseif (monster.daycicle == 2 && clima != "noite")
+						KillChildren(spawnpoint, monster, 2);
+						continue;
+					endif
+				endif
+				
+				getspawn(spawnpoint, monster, spawnqueue);
+				getchildren(spawnpoint, monster, childrenSerial);
+				var amount := monster.amount;
+				
+				for( i := 1; i <= amount; i := i + 1 );
+					if( (childrenSerial[i] != "Empty") ) 
+						x := SystemFindObjectBySerial(childrenSerial[i]);
+						if((!x) || (x.dead == 1) || (x.master))
+							spawnqueue[i] := "Empty";
+							childrenSerial[i] := "Empty";
+						endif
+					endif
+				endfor
+				setspawn(spawnpoint, monster, spawnqueue);
+				setchildren(spawnpoint, monster, childrenSerial);
+				ResetSpawnQueue(spawnpoint, monster);
+				
+				getspawn(spawnpoint, monster, spawnqueue);
+				for(i:=1; i<=amount; i:=i+1)
+					x := spawnqueue[i];
+					if((x != "Empty") && (x != "Active"))
+						if(x == 0)
+							//enquanto tiver player perto sleepa, se nao cria o npc
+							while ( 1 )
+								var playernear := hasplayernear(spawnpoint.x, spawnpoint.y, spawnpoint.realm);
+								if (!playernear)
+									break;
+								else
+									sleep(60);
+								endif
+							endwhile
+							childrenSerial[i] := CreateSpawn(spawnpoint, monster);
+							if (monster.boss && monster.uniquestat)
+								var spawnmod := monster.uniquestat;
+								SetBoss(SystemFindObjectBySerial(childrenSerial[i]), spawnmod);
+							endif
+							spawnqueue[i] := "Active";
+						else
+							spawnqueue[i] := x - 1;
+						endif
+					endif
+				endfor
+				setspawn(spawnpoint, monster, spawnqueue);
+				setchildren(spawnpoint, monster, childrenSerial);
+				sleepms(5);
+			endforeach	
+		endif
+		sleep(60);
+	endwhile
+endprogram
+
+function HasPlayerNear(x, y, realm)
+	var mobs := ListMobilesNearLocation( x, y, LIST_IGNORE_Z, 8, realm );
+	foreach mob in mobs
+		if (mob.acctname ) //se for player e priv de player
+			return 1;
+		endif
+	endforeach
+	return 0;
+endfunction
+
+
+//mata todos os spawns e coloca a lista "Empty"
+function KillChildren(spawnpoint, monster, btn_reset := 0)
+	var i;
+	var children, spawnqueue := array{};
+	getchildren(spawnpoint, monster, children);
+	if (children)
+		foreach x in children
+			if(x != "Empty")
+				x := CInt(x);
+				i := SystemFindObjectBySerial(x);
+				if(!i.master)
+					SetObjProperty(i, "summoned", 1);
+					SetObjProperty(i, "spawnkill", 1);
+					RevokePrivilege(i, "invul" );
+					ApplyRawDamage(i, GetVital(i, HITS)+3);
+				endif
+			endif
+		endforeach
+	endif
+	var amount := monster.amount;
+	children := array{};
+	if(!monster.activate)
+		spawnqueue := 0;
+		children := 0;
+	else
+		for(i:=1; i<=amount; i:=i+1);
+			if (btn_reset == 2)
+				spawnqueue[i] := 0;
+			else
+				spawnqueue[i] := "Empty";
+			endif
+			children[i] := "Empty";
+		endfor
+	endif
+	
+	setspawn(spawnpoint, monster, spawnqueue);
+	setchildren(spawnpoint, monster, children);
+		
+endfunction
+
+//recalcula todos os tempos de spawn para os que estao "Empty"
+function ResetSpawnQueue(spawnpoint, byref monster)
+	var i;
+	if (monster.activate)
+		var amount := monster.amount;
+		var delay := monster.delay;
+		var spawnqueue := array{};
+
+		getspawn(spawnpoint, monster, spawnqueue);
+		if (delay < 1)
+			delay := 1;
+		endif
+		for(i:=1; i<=amount; i:=i+1)
+			if(spawnqueue[i] == "Empty")
+				spawnqueue[i] := delay;
+				/*if(mindelay == maxdelay)
+					spawnqueue[i] := mindelay;
+				else
+					spawnqueue[i] := RandomInt(maxdelay - mindelay) + mindelay + 1;
+				endif*/
+			endif
+		endfor
+		
+		setspawn(spawnpoint, monster, spawnqueue);
+	endif
+endfunction
+
+function CreateSpawn(spawnpoint, byref monster)
+	var spawn := monster.spawn;
+	var range := monster.range;
+	var loscheck := monster.loscheck;
+	var x, y, z, success := 0;
+	var i;
+	while(success == 0)
+		if(range == 0)
+			x := spawnpoint.x;
+			y := spawnpoint.y;
+			z := spawnpoint.z;
+		elseif(spawnpoint.z >= 0)
+			x := spawnpoint.x + RandomInt(1 + range);
+			y := spawnpoint.y + RandomInt(1 + range);
+			z := GetWorldHeight(x, y);
+		elseif(spawnpoint.z < 0)
+			x := spawnpoint.x + RandomInt(1 + range);
+			y := spawnpoint.y + RandomInt(1 + range);
+			z := spawnpoint.z;
+		endif
+
+		if(!loscheck)
+			if(CheckLosAt(spawnpoint, x, y, z))
+				var i := CreateNpcFromTemplate(spawn, x, y, z, 0, spawnpoint.realm);
+				SetObjProperty(i, "spawnpoint", spawnpoint.serial);
+				SetObjProperty(i, "spawnpointtype", monster.type);
+				success := 1;
+				return i.serial;
+			endif
+		else
+			var i := CreateNpcFromTemplate(spawn, x, y, z, 0, spawnpoint.realm);
+
+			SetObjProperty(i, "spawnpoint", spawnpoint.serial);
+			SetObjProperty(i, "spawnpointtype", monster.type);
+			success := 1;
+			return i.serial;
+		endif
+
+		i := i + 1;
+		if(i > 10)
+			var i := CreateNpcFromTemplate(spawn, spawnpoint.x, spawnpoint.y, spawnpoint.z, 0, spawnpoint.realm);
+
+			success := 1;
+			SetObjProperty(i, "spawnpoint", spawnpoint.serial);
+			SetObjProperty(i, "spawnpointtype", monster.type);
+			return i.serial;
+		endif
+		sleepms(5);
+	endwhile
+endfunction
+
+
+function getspawn(byref spawnpoint, byref monster, byref spawnqueue)
+    spawnqueue := GetObjProperty(spawnpoint, "SpawnQueue"+monster.type);
+
+	if (!spawnqueue)
+		spawnqueue := array{};
+	endif
+endfunction
+
+function getchildren(byref spawnpoint, byref monster, byref childrenSerial)
+    childrenSerial := GetObjProperty(spawnpoint, "Children"+monster.type);
+
+	if (!childrenSerial)
+		childrenSerial := array{};
+	endif
+endfunction
+
+function setspawn(byref spawnpoint, byref monster, byref spawnqueue)
+    SetObjProperty(spawnpoint, "SpawnQueue"+monster.type, spawnqueue);
+endfunction
+
+function setchildren(byref spawnpoint, byref monster, byref childrenSerial)
+    SetObjProperty(spawnpoint, "Children"+monster.type, childrenSerial);
+endfunction
+
+function GetCritter(type)
+  if(type == "vermin")
+    case(RandomInt(11) + 1)
+      1: return "grat";
+      2: return "grat";
+      3: return "grat";
+      4: return "jwilson";
+      5: return "slime";
+      6: return "slime";
+      7: return "slime";
+      8: return "giant_serpent";
+      9: return "giant_serpent";
+     10: return "giantscorp";
+     11: return "giantscorp";
+    endcase
+  elseif(type == "orcs")
+     case(RandomInt(10) + 1)
+      1: return "orcmage";
+      2: return "orclord";
+      3: return "orc1";
+      4: return "orc1";
+      5: return "orc1";
+      6: return "orc2";
+      7: return "orc2";
+      8: return "orc2";
+      9: return "ettin";
+     10: return "ettin2";
+    endcase
+  elseif(type == "orchorde")
+    case(RandomInt(8) + 1)
+      1: return "orc1";
+      2: return "orc1";
+      3: return "orc1";
+      4: return "orcmage";
+      5: return "orclord";
+      6: return "orc2";
+      7: return "orc2";
+      8: return "orc2";
+    endcase
+  elseif(type == "ratmen")
+    case(RandomInt(3) + 1)
+      1: return "ratman3";
+      2: return "ratman2";
+      3: return "ratman1";
+    endcase
+  elseif(type == "lizardmen")
+    case(RandomInt(3) + 1)
+      1: return "lizardman3";
+      2: return "lizardman2";
+      3: return "lizardman1";
+    endcase
+  elseif(type == "dracos")
+    case(RandomInt(4) + 1)
+      1: return "dragon1";
+      2: return "dragon2";
+      3: return "drake1";
+      4: return "drake2";
+    endcase
+  elseif(type == "trolls")
+    case(RandomInt(3) + 1)
+      1: return "troll1";
+      2: return "troll2";
+      3: return "troll3";
+    endcase
+  elseif(type == "undead")
+    case(RandomInt(7) + 1)
+      1: return "zombie";
+      2: return "zombie";
+      3: return "skeleton";
+      4: return "skeleton";
+      5: return "shade";
+      6: return "shade";
+      7: return "liche";
+    endcase
+  elseif(type == "lesserundead")
+    case(RandomInt(4) + 1)
+      1: return "zombie";
+      2: return "zombie";
+      3: return "skeleton";
+      4: return "skeleton";
+    endcase
+  elseif(type == "ettins")
+    case(RandomInt(2) + 1)
+      1: return "ettin";
+      2: return "ettin2";
+    endcase
+  else
+    return type;
+  endif
+endfunction

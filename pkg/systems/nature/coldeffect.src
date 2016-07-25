@@ -1,0 +1,164 @@
+use uo;
+use os;
+use vitals;
+
+include ":charactercreation:resists";
+include "include/damage";
+include ":attributes:attributes";
+
+var leatherArmors := { 0x13C7, 0x13CD, 0x13C6, 0x1DB9, 0x13CB, 0x13CC, 0x13D3, 0x13D6, 0x13D5, 0x13D4, 0x13DA, 0x13DB, 0x170B, 0x1711};
+
+
+
+program neve(params)
+
+	var who := params[1];
+
+	SetObjProperty(who, "neve", 1);
+	detach();
+	
+	while (1)
+		sleep(600);
+	
+		if ( GetObjProperty(who, "neve") == error)
+			var p := cint(GetObjProperty(who, "penalidadeclima"));
+			if (p > 0)
+				RemoveColdMod(who, 1);
+			endif
+			EraseObjProperty(who, "penalidadeclima");
+			return;
+		endif
+	
+		var dif := 140; //dif base		
+		
+		if (GetGlobalProperty("dia") == "noite") 
+			dif := dif + 20;
+		endif
+	
+		if ( cint( GetGlobalProperty("season")) == 3) //inverno
+			dif := dif + 20;
+		endif
+	
+		if ( GetGlobalProperty("weater") != error) //ta chovendo ou nevando
+			dif := dif + 40;
+		endif
+		
+		if ( GetObjProperty(who, "chardata").povo == "Thuriao")
+			dif := dif - 90;
+		endif
+		
+		var survivalBonus := cint(AP_GetSkill(who, SURVIVAL)/3);
+		dif := dif - survivalBonus;
+		
+		foreach item in (ListEquippedITems(who))
+		
+			if (item in leatherArmors)
+				dif := dif - 2;
+			endif
+			
+			if ( (GetObjProperty(item, "material") == 0xee58) || (GetObjProperty(item, "material") == 0xef26) )
+				dif := dif - 6;
+			endif
+		
+		endforeach
+
+		foreach item in ( ListItemsNearLocation( who.x, who.y, who.z, 4, who.realm ) )
+			 if ((item.objtype >= 0x0461) and (item.objtype <= 0x046f))
+				dif := dif - 40;
+				break;
+     			elseif ((item.objtype >= 0x092b) and (item.objtype <= 0x0934))
+				dif := dif - 40;
+				break;
+    			elseif((item.objtype >= 0x08cf) && (item.objtype <= 0x08df))
+      				dif := dif - 40;
+				break;
+    			elseif((item.objtype >= 0x092b) && (item.objtype <= 0x096c))
+				dif := dif - 40;
+				break;
+    			elseif((item.objtype >= 0x45d) && (item.objtype <= 0x48e))
+				dif := dif - 40;
+				break;
+   			elseif((item.objtype >= 0x0de3) && (item.objtype <= 0x0de9))
+				dif := dif - 40;
+				break;
+    			elseif((item.objtype >= 0x0e31) && (item.objtype <= 0x0e33))
+				dif := dif - 40;
+				break;
+    			elseif((item.objtype >= 0x1849) && (item.objtype <= 0x1850))
+				dif := dif - 40;
+				break;
+   			elseif((item.objtype >= 0x197a) && (item.objtype <= 0x19a9))
+				dif := dif - 40;
+				break;
+    			elseif((item.objtype >= 0x0de3) && (item.objtype <= 0x0de9))
+				dif := dif - 40;
+				break;
+    			elseif((item.objtype == 0x19bb) || (item.objtype == 0x0fb1))
+				dif := dif - 40;
+				break;
+     			endif
+			sleepms(20);
+		endforeach
+		
+		var penalty := cint(GetObjProperty(who, "penalidadeclima"));
+		
+		var resistcheck := CheckResist(who,  FORTITUDE, dif);
+		
+		if (resistcheck)
+			SendSysMessageEx(who, "Voce resiste aos efeito do frio.", SSM_INFO);
+			if (penalty == 1)
+				penalty := 0;
+				RemoveColdMod(who, 1);
+			elseif (penalty == 2)
+				penalty := 1;
+				//RemoveColdMod(who, 2);
+			endif
+		else
+			SendSysMessageEx(who, "Voce nao resiste aos efeito do frio.", SSM_FAIL);
+			if (penalty == 0)
+				penalty := 1;
+				ApplyColdMod(who, 1);
+			elseif (penalty >= 1)
+				penalty := 2;
+				ApplyColdMod(who, 2);
+			endif			
+		endif
+		
+		SetObjProperty(who, "penalidadeclima", penalty);
+	endwhile
+
+
+endprogram
+
+
+function RemoveColdMod(who, mod)
+			
+	if ( GetObjProperty(who, "penalidadetaiga") != error )
+		var stammod := cint(GetObjProperty(who, "stammod"));
+		var penalidade := GetObjProperty(who, "penalidadetaiga");
+		SetObjProperty(who, "stammod",  stammod +  (0-penalidade) );
+		EraseObjProperty(who, "penalidadetaiga");
+		RecalcVitals(who);
+	endif
+	
+endfunction
+			
+function ApplyColdMod(who, mod)
+
+//	sendsysmessage(who, "mod "+ mod);	
+
+	if (mod == 1)
+		var stammod := cint(GetObjProperty(who, "stammod"));
+		SetObjProperty(who, "stammod",  stammod + (0 - cint(AP_GetVitalMaximumValue(who, STAMINA)/2) ));
+		SetObjProperty(who, "penalidadetaiga", (0 - cint(AP_GetVitalMaximumValue(who, STAMINA)/2)));
+		RecalcVitals(who);
+	elseif ( mod == 2)
+		var dmg := AP_GetVital(who, HITS) -  GetHP(who);
+//		sendsysmessage(who, "dmg " + dmg + "  " + GetPH(who));
+//		if (dmg >= GetPH(who))
+		//	sendsysmessage(who, "dano fls");
+			DamageFLS(who, dmg);
+//		endif
+	endif
+	
+endfunction

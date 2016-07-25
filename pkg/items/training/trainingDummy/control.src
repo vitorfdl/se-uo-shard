@@ -1,0 +1,19 @@
+use uo;
+
+program DummyControl(dummy)
+
+	if ( dummy.graphic == 38946) // Animated
+		dummy.graphic := 38945; // None animated
+		
+	elseif ( dummy.graphic == 0x981D ) // Animated
+		dummy.graphic := 0x981C; // Non animated
+		
+	elseif ( dummy.graphic == 4209 ) // Animated
+		dummy.graphic := 4208; // None animated
+		
+	elseif ( dummy.graphic == 4213 ) // Animated
+		dummy.graphic := 4212; // Non animated
+	endif
+	
+	return 1;
+endprogram

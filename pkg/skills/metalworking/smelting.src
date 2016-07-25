@@ -1,0 +1,99 @@
+use cfgfile;
+use util;
+
+include ":attributes:attributes";
+include ":attributes:skillCheck";
+include ":crafting:crafting";
+include ":attributes:attributeConstants";
+include "include/client";
+include ":itemutils:canAccess";
+
+var item_config     := ReadConfigFile(":*:itemdesc");
+var craft_config    := ReadConfigFile(":metalworking:blacksmithy");
+var resources_config    := ReadConfigFile(":gathering:itemdesc");
+
+program smelthing(who, tool)
+
+	if(!can_access(who, tool))
+		return 0;
+	endif
+	if((!tool.movable) or !ReserveItem(tool))
+		SendSysMessageEx(who, "Voce nao pode usar isto.", SSM_FAIL);
+		return 0;
+	endif
+	if(!tool in ListEquippedItems(who))
+		if( !(tool in EnumerateItemsInContainer(who.backpack)) )
+			SendSysMessageEx(who, "A ferramenta nao esta na sua mochila.", SSM_FAIL);
+			return 0;
+		endif
+	endif
+
+	EraseObjProperty(who, "IsMeditating");
+	EraseObjProperty(who, "HealTimer");
+	
+	SendSysMessageEx(who, "O que voce deseja esmeltar?", SSM_REQUEST);
+	var what := Target(who);
+	if (!FindConfigElem( craft_config, what.objtype))
+		SendSysMessageEx(who, "Este objeto nao pode ser esmaltado.", SSM_FAIL);
+		return;
+	endif
+		
+		
+	var elem := FindConfigElem( craft_config, what.objtype);
+	var materials := GetConfigStringDictionary(elem, "materials");
+	var matname := "";
+	var matresource := "";
+	foreach material in (materials.keys())
+		if (FindConfigElem( resources_config, material))
+			materials[material] := cint(materials[material] / 2);
+			matname := matname + "\n" + GetMaterialName(material);
+			matresource := matresource + "\n" + materials[material];
+		else
+			materials.erase(material);
+		endif
+	endforeach
+	
+	if (materials.size() <= 0)
+		SendSysMessageEx(who, "Voce nao conseguira recuperar nada deste objeto", SSM_FAIL);
+		return;
+	endif
+	
+	var chargump := GFCreateGump(150,150);
+	GFDisposable(chargump, 0);
+	GFPage(chargump, 0);
+	GFResizePic( chargump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 280, 200 );
+	GFResizePic( chargump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 250, 170 );
+	
+	GFTextLine(chargump, 25, 25, 1153, "Esmeltar Objetos");
+	GFTextLine(chargump, 25, 45, 2105, "Você irá recuperar os seguintes recursos:");
+	
+	GFHTMLArea(chargump, 40, 85, 150, 60, ("<basefont color=#ffffff>" + matname));
+	GFHTMLArea(chargump, 230, 85, 20, 60, ("<basefont color=#ffffff>" + matresource));
+	
+	GFAddButton(chargump, 190, 150, 4005, 4007, GF_CLOSE_BTN, 99);
+	GFAddButton(chargump, 40, 150, 4017, 4019, GF_CLOSE_BTN, 0);
+	
+	var input := GFSendGump(who, chargump);
+
+	if (input[0] == 99)
+		var anvil_near := 0;
+		var anvil;
+		foreach item in ListItemsNearLocation(who.x, who.y, who.z, 1)
+			if((item.objtype == 0x0faf) || (item.objtype == 0x0fb0))
+				anvil_near := 1;
+				anvil := item;
+				break;
+			endif
+		endforeach
+		if(anvil_near == 0)
+			SendSysMessageEx(who, "Voce precisa estar proximo a uma forja para esmeltar itens.", SSM_FAIL);
+			return 0;
+		endif
+		PlaySoundEffect(who, 0x22);
+		sleep(2);
+		foreach material in (materials.keys())
+			CreateItemInBackpack(who, cint(material), cint(materials[material])); 
+		endforeach
+		var destruir := DestroyItem(what);
+	endif
+endprogram

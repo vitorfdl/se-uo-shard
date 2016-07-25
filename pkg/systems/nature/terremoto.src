@@ -1,0 +1,54 @@
+use uo;
+use os;
+use util;
+use cfgfile;
+
+include ":nature:tremor";
+
+program terremoto(params)
+
+        var who := params[1];
+        var regname := params[2];
+        
+        SetObjProperty(who, "areaInstavel", 1);
+
+        //configurações de tremor.
+        var cfgfile := ReadConfigFile(":nature:config/terConfig");
+	var elem:= FindConfigElem(cfgfile , "configuracoes" );
+        var tchance := GetConfigInt(elem , "tchance" );
+        var danobase := GetConfigInt(elem , "danobase" );
+        var danoale := GetConfigInt(elem , "danoaleatorio" );
+        var dif := GetConfigInt(elem , "dificuldade" );
+        
+        detach();
+        while (1)
+              sleep(40);
+              
+              if ( GetObjProperty(who,"areaInstavel") == error)
+              // para o script
+                 return;
+              endif
+              
+              if ( tchance >= RandomInt( 100 ) ) //chance de terremoto
+                 //SendSysMessageEx(who, "p1", SSM_INFO);
+                 if (GetObjProperty(who,"terremoto") == error)
+                    SetObjProperty(who, "terremoto", 1);
+                 endif
+                 //faz os efeitos de um terremoto para todos os outros jogadores na mesma regiao
+                 foreach jogador in (EnumerateOnlineCharacters())
+                         if (GetRegionName( jogador ) == regname
+                         && GetObjProperty(jogador,"terremoto") == error)
+                            SetObjProperty(jogador, "terremoto", 1);
+                            
+                            EfeitosTerremoto(jogador,danobase,danoale,dif);
+                            EraseObjProperty(jogador, "terremoto");
+                            
+                         endif
+                 endforeach
+                 
+                 EfeitosTerremoto(who,danobase,danoale,dif);
+                 EraseObjProperty(who, "terremoto");
+                 
+              endif
+        endwhile;
+endprogram

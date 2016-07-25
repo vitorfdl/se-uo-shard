@@ -1,0 +1,97 @@
+use uo;
+use os;
+
+
+program Install()
+	return 1;
+endprogram
+
+exported function IsLever(lever)
+	lever := lever;
+	return 1;
+endfunction
+
+exported function reset(lever)
+
+	if ( cint(GetObjProperty(lever, "FindDiff")) > 0)
+		lever.invisible := 1;
+	endif
+
+
+	var funct  := GetObjProperty(lever, "function");
+	
+	case(funct)
+		//"setobj"  : stobj(who, item); //nao precisa
+		"door"    : resetdoor(lever);
+		"passage" : resetpassage(lever);
+		//"trap"    : trappedswitch(who, item, mid, gfx, snd); //nao precisa
+		//lights"  : lightswitch(who, item); //nao precisa
+		//"tele"    : teleporter(who, item, mid, gfx, snd); //nao precisa
+		//"graphic": changegraphiclever(who, item); //talvez fosse bom
+		"elevator": resetelevator(lever);
+	endcase
+
+endfunction
+
+function resetelevator(item)
+
+	var maxz := Cint(GetObjProperty(item, "z"));
+	var stat := GetObjProperty(item, "status");
+	var items := GetObjProperty(item, "items");
+	var startz := 0;
+	
+	while (startz <= maxz )
+		foreach obj in items
+			var coisa := SystemFindObjectBySerial(obj);
+			MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z - 1, coisa.realm, MOVEOBJECT_FORCELOCATION);
+		endforeach
+		startz := startz + 1;
+		sleepms(50);
+	endwhile
+	SetObjProperty(item, "status", "up");
+
+endfunction
+
+function resetdoor(item)
+	var da := GetObjProperty(item, "ds");
+	var status := GetObjProperty(item, "status");
+	if (status == "on")
+		foreach dr in da
+			var door := SystemFindObjectBySerial(CInt(dr));
+			door.locked := 1;
+		endforeach
+		SetObjProperty(item,"status", "off");
+	endif
+endfunction
+
+function resetPassage(item)
+
+	//se tiver ativado desativa
+	var pl := GetObjProperty(item,"partsarray");
+	var la := GetObjProperty(item,"links");
+	var obj;
+	if (GetObjproperty(item, "status") == "on")
+		var stp := 1;
+		while(stp <= 11)
+			foreach entry in pl
+				obj := SystemFindObjectBySerial(CInt(entry));
+				obj.movable := 1;
+				if (getobjproperty(item, "reversepassage" ) == 1)
+					//printtextabove(item, "ta on  control SOBE");
+					MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+				else
+					///printtextabove(item, "ta on control DESCE");
+					MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+				endif
+				obj.movable := 0;
+			endforeach
+			stp := stp+1;
+			sleep(1);
+		endwhile
+		foreach entry in la
+			obj := SystemFindObjectBySerial(CInt(entry));
+			SetObjProperty(obj, "status", "off");
+		endforeach
+	endif
+	
+endfunction

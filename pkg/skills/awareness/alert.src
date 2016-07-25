@@ -1,0 +1,14 @@
+include ":awareness:awareness";
+include "include/say";
+
+program alert(mobile)
+	while ( mobile )
+		SetName(mobile, mobile.name);
+		if ( mobile.connected && !mobile.cmdlevel)
+			examinarArea(mobile);
+		endif
+		sleep(15);
+	endwhile
+	
+	return 1;
+endprogram

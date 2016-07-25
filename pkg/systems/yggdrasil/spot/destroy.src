@@ -1,0 +1,12 @@
+use uo;
+use os;
+
+program DestroyMe(spot)
+    var data := spot.GetProps();
+    foreach serial in (data.spawnpoints)
+        var spawnpoint := SystemFindObjectBySerial(serial);
+        DestroyItem(spawnpoint);
+        sleepms(2);
+    endforeach
+    return 1;
+endprogram

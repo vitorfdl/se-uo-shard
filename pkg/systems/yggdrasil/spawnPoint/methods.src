@@ -1,0 +1,154 @@
+use os;
+use uo;
+
+include "include/arrays";
+
+program Install()
+    return 1;
+endprogram
+
+exported function GetProps( spawpoint )
+    var data         := struct{};
+    data.+spot_serie := GetObjProperty(spawpoint, "spot_serie");
+    data.+level      := GetObjProperty(spawpoint, "level");
+    data.+type       := GetObjProperty(spawpoint, "type");
+    data.+range      := GetObjProperty(spawpoint, "range");
+    data.+mob_number := GetObjProperty(spawpoint, "mob_number");
+    data.+treasures  := GetObjProperty(spawpoint, "treasures");
+    
+    data.+yggdrasil := GetObjProperty(spawpoint, "yggdrasil");
+
+    return data;
+endfunction
+
+exported function SetProps( spawnpoint, data := struct{});
+    var old_data := GetProps(spawnpoint);
+    if (data.name)
+        spawnpoint.name := data.name;
+    endif
+
+    if (data.location)
+        spawnpoint.location := data.location;
+    endif
+
+    if (data.spot_serie)
+        old_data.spot_serie := data.spot_serie;
+    endif
+
+    if (data.type)
+        old_data.type := data.type;
+    endif
+
+    if (data.range)
+        old_data.range := data.range;
+    endif
+
+    if (data.level)
+        old_data.level := data.level;
+    endif
+
+    if (data.mob_number)
+        old_data.mob_number := data.mob_number;
+    endif
+
+    if (data.treasures)
+        foreach treasure in (data.treasures)
+            treasure := TreasureModel(treasure);
+        endforeach
+        old_data.treasures := data.treasures;
+    endif
+
+    if (data.eventEntry)
+        old_data.eventEntry := data.eventEntry;
+    endif
+
+    old_data := ModelSpawnPoint(old_data);
+
+    SetObjProperty(spawnpoint, "spot_serie", old_data.spot_serie);
+    SetObjProperty(spawnpoint, "type", old_data.type);
+    SetObjProperty(spawnpoint, "level", old_data.level);
+    SetObjProperty(spawnpoint, "range", old_data.range);
+    SetObjProperty(spawnpoint, "mob_number", old_data.mob_number);
+    SetObjProperty(spawnpoint, "treasures", old_data.treasures);
+    SetObjProperty(spawnpoint, "eventEntry", old_data.eventEntry);
+endfunction
+
+exported function yggdrasil ( spawnpoint, data := struct{})
+     SetObjProperty(spawnpoint, "yggdrasil", data);
+endfunction
+
+function ModelSpawnPoint( data := struct{})
+    if (data.level != 1 && data.level != 2 && data.level != 3 && data.level != 4 && data.level != 5)
+        data.level := 1;
+    endif
+
+    if (!data.spot_serie)
+        data.spot_serie := 0;
+    endif
+
+    if (!data.range)
+        data.range := 0;
+    endif
+
+    if (!data.eventEntry)
+        data.eventEntry := "";
+    endif 
+
+    if (TypeOf(data.type) != "Array")
+        data.type := array{"Melee"};
+    elseif (!FindInArray(data.type, "Melee") || !FindInArray(data.type, "Ranged") || !FindInArray(data.type, "Spellcaster") || !FindInArray(data.type, "Boss"))
+        data.type := array{"Melee"};
+    endif
+
+    if (!data.mob_number)
+        data.mob_number := 1;
+    endif
+
+    if (TypeOf(data.treasures) != "Array")
+        data.treasures := array{};
+    endif
+
+    if (TypeOf(data.yggdrasil) != "Struct")
+        data.yggdrasil := struct{};
+    endif
+
+    return data;
+endfunction
+
+function TreasureModel( data := struct{} )
+    if (!data.ref_serial)
+        data.+ref_serial := "missing";
+    endif
+
+    if (!data.level)
+        data.+level := 1;
+    endif
+    
+    if (data.start_hidden != 0 && data.start_hidden != 1)
+        data.+start_hidden := 0;
+    endif
+
+    if (TypeOf(data.custom) != "Array")
+        data.+custom := array{};
+    endif
+
+    return data;
+endfunction
+
+exported function RemoveTreasure(spawnpoint, treasure)
+    var treasures := GetProps(spawnpoint).treasures;
+    var index := FindInArray(treasures, treasure.ref_id);
+    if (index)
+        treasures.Erase(index);
+        SetProps(spawnpoint, struct{"treasures" := treasures});
+        return 1;
+    endif
+    return 0;
+endfunction
+
+exported function AddTreasure(spawnpoint, treasure)
+    var treasures := GetProps(spawnpoint).treasures;
+    treasures.append(treasure);
+    SetProps(spawnpoint, struct{"treasures" := treasures});
+    return 1;
+endfunction

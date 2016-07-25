@@ -1,0 +1,118 @@
+use uo;
+use os;
+use cfgfile;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include ":attributes:attributes";
+include ":tn:npcutil";
+include ":ghaia:ghaiaUtil";
+include ":ghaia:ghaia";
+include ":magery:summon";
+
+
+
+program summontotem(params)
+
+	var who := params[1];
+	var targ := params[2];
+	var spellid := params[3];
+	params := 0; // No longer needed
+
+	if(GetObjProperty(who, "metamorfose") != error)
+		SendSysMessageEx(who, "Voce ja esta metamorfoseado.", SSM_FAIL);
+		return;
+	endif
+
+	//Efeito da magia
+	PlaySoundEffect(targ, SFX_SPELL_HEAL);
+
+
+	var cfg  :=  ReadConfigFile(":magery:allspells");
+	var elem := FindConfigElem(cfg, spellid);
+	var graphic := getConfigInt(elem, "graphic");
+	
+	var skill_a := getConfigInt(elem, "skill_a");
+	var skill_d := getConfigInt(elem, "skill_d");
+
+	var dicedmg := getConfigString(elem, "dicedmg");
+	var hitsmod := getConfigInt(elem, "hitsmod");
+	var resistmod := getConfigInt(elem, "resistmod");
+	var template := getConfigString(elem, "template");
+	var snd := getConfigInt(elem, "snd");	
+	var namepoly:=GetConfigString(elem, "namepoly");
+
+	//seta os mods
+	SetObjProperty(who, "skill_a", skill_a);
+	SetObjProperty(who, "skill_d", skill_d);
+	SetObjProperty(who, "dicedmg", dicedmg);
+	SetObjProperty(who, "polymorphhitsmod", hitsmod);
+	
+	
+	SetObjProperty(who, "resitmod", resistmod);
+	who.resist_physical_mod := who.resist_physical_mod + resistmod;
+	SetObjProperty(who, "hitsmod", hitsmod + hitsmod);
+	recalcvitals(who);
+	HealDamage(who, hitsmod);
+	
+
+
+	if (graphic == error)
+			SendSysMessage(who, "erro ao ler o template" + template);
+			return;
+	endif
+	var metamorfosetime := (1 + cint(AP_GetStat(who, "Intelligence"))) *3;
+	
+	Transforma(who, template, snd, graphic,namepoly);
+	TS_StartTimer(who, "metamorfosedruida", metamorfosetime);
+	if (elem.velocidade)
+		TS_StartTimer(who, "velocidade", metamorfosetime);
+	endif
+	
+	return 1;
+
+endprogram
+
+
+function Transforma(who, animal, snd, graphic,namepoly)
+	
+	
+	// Alterado por Edmond
+	if (GetObjProperty(who,"charname") == error)
+		SetObjProperty(who,"charname",who.name);
+	endif
+	
+	UnequipAll(who);
+	PerformAction(who, ANIM_CAST_AREA);
+
+	var npc := CreateNpcFromTemplate(animal, who.x,  who.y, who.z, 0, who.realm);
+
+	PrintText(who, "*transformando-se*");
+	if (npc)
+		//detach();
+		Playsoundeffect(npc, snd);
+		npc.facing := who.facing;
+		npc.frozen := 1;
+		npc.color  := 30000;
+		PerformAction(npc, 5);
+		sleep(2);
+		MoveObjectToLocation(npc, 10, 10, 10, npc.realm,  MOVEOBJECT_FORCELOCATION);
+		npc.kill();
+
+		var metamorfose := struct;
+		metamorfose.+originalcolor := who.color;
+		metamorfose.+originalgraphic := who.graphic;
+		metamorfose.+newgraphic := graphic;
+		SetObjProperty(who, "metamorfose", metamorfose);
+		who.graphic := graphic;
+		who.truegraphic := graphic;
+	//	who.squelch(-1);
+		who.color := 0;
+	endif
+
+	SetName(who,namepoly);
+
+endfunction

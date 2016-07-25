@@ -1,0 +1,137 @@
+/*
+        Maintened by *Edwards
+        For FantasiaShard.com
+
+        Edwards@FantasiaShard.com
+
+        2010-05-10
+*/
+use os;
+
+include ":datafile:datafile";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:requestgump";
+
+var email_datafile := DFOpenDataFile( "Emails", DF_CREATE );
+var addresses_datafile := DFOpenDataFile( "AddressBooks", DF_CREATE );
+var block_list_datafile := DFOpenDataFile( "BlockLists", DF_CREATE );
+
+program ListMailBoxes( who )
+	ListMails( who );
+endprogram
+function ListMails( who, flag := 0 )
+	var mail_elem := DFGetElemNames( email_datafile );
+	
+	var gump := GFCreateGump();
+	GFDisposable(gump, 0);
+	GFResizePic(gump, 84, 90, 9260, 460, 535);
+
+	GFGumpPicTiled(gump, 100,100,30,510,10460);
+	GFGumpPicTiled(gump, 500,100,30,510,10460);
+	GFGumpPicTiled(gump, 80,88,463,16,10100);
+	GFGumpPicTiled(gump, 84,610,457,16,10100);
+	GFGumpPic(gump, 50,80, 10421);
+	GFGumpPic(gump, 83,79, 10420);
+	
+//	GFAddAlphaRegion(gump, 127,103,375,509);
+	GFGumpPic(gump, 96,200, 10411);
+	GFGumpPic(gump, 33,370, 10402);
+	
+	GFTextLine(gump, 245,120,1153,"Lista de Inboxes");
+	
+	GFAddButton( gump, 170, 148, 2103, 2104, GF_CLOSE_BTN, 5);
+	GFTextLine(gump, 190,145,2103,"Pesquisar");
+	
+	GFAddButton( gump, 260, 148, 2103, 2104, GF_CLOSE_BTN, 6);
+	GFTextLine(gump, 280,145,2103,"Listar Tudo");
+	
+	GFAddButton( gump, 370, 148, 2103, 2104, GF_CLOSE_BTN, 7);
+	GFTextLine(gump, 390,145,2103,"Listar Staffers");
+	
+	var player_array := array{};
+	var mail_array := array{};
+	
+	if (flag == 0 || flag == 3)
+		foreach mail in mail_elem
+			var mobile := SystemFindObjectBySerial( cint(mail), SYSFIND_SEARCH_OFFLINE_MOBILES );
+			if (!mobile)
+				email_datafile.DeleteElement( Hex( mobile.serial ));
+				addresses_datafile.DeleteElement( Hex( mobile.serial ));
+				block_list_datafile.DeleteElement( Hex( mobile.serial ));
+				continue;
+			endif
+			player_array.Append(mobile);
+			mail_array.Append(cint(mail));
+			sleepms(5);
+		endforeach
+	elseif(flag == 2)
+		var parse_name := Requestgump(who, "Digite o nome do Personagem ou parte dele.");
+		if (parse_name)
+			foreach mail in mail_elem
+				var mobile := SystemFindObjectBySerial( cint(mail), SYSFIND_SEARCH_OFFLINE_MOBILES );
+				if (!mobile)
+					email_datafile.DeleteElement( Hex( mobile.serial ));
+					addresses_datafile.DeleteElement( Hex( mobile.serial ));
+					block_list_datafile.DeleteElement( Hex( mobile.serial ));
+					continue;
+				endif
+				var name := lower(mobile.name);
+				if (name[parse_name])
+					player_array.Append(mobile);
+					mail_array.Append(cint(mail));
+				endif
+				sleepms(5);
+			endforeach
+		endif
+
+	endif
+	
+	
+	var x := 170;
+	var y := 200;
+	var pagecount := 1;
+	var i := 1;
+	var playercount := 1;
+	var mixcolor := 2103;
+	GFPage(gump, pagecount);
+	foreach player in player_array
+		if (player.cmdlevel >=3 && (flag == 3 || flag == 2))
+			GFTextLine(gump, x,y,1153, player.name + " [" + player.acctname + "] [ STAFF ]" );
+		elseif (flag != 3)
+			GFTextLine(gump, x,y,mixcolor, player.name + " [" + player.acctname + "]" );
+		endif
+		GFTextLine(gump, x+280,y,mixcolor, mail_array[playercount]);
+		
+		y+=20;
+		i+= 1;
+		playercount+=1;
+		if (mixcolor == 2103)
+			mixcolor := 2105;
+		else
+			mixcolor := 2103;
+		endif
+		if ( i >= 20)
+			GFTextLine(gump, 420,580,2103,"Próximo");
+			GFAddButton(gump, 470, 580, 9903, 9905, GF_PAGE_BTN, gump.cur_page+1);
+			y := 200;
+			i := 1;
+			pagecount+=1;
+			GFPage(gump, pagecount);
+			GFTextLine(gump, 170,580,2103,"Voltar");
+			GFAddButton(gump, 140, 580, 9909, 9911, GF_PAGE_BTN, gump.cur_page-1);
+		endif
+		sleepms(5);
+	endforeach
+	
+	var input := GFSendGump(who, gump);
+	
+	if (input[0] == 5)
+		ListMails( who, 2 );
+	elseif(input[0] == 7)
+		ListMails(who, 3);
+	elseif(input[0] == 6)
+		ListMails(who);
+	endif
+
+endfunction

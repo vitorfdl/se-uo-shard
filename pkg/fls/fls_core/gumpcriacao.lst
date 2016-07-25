@@ -1,0 +1,7800 @@
+D:/Programs/forgottenlore/pkg/systems/attributes/include/skillCheck.inc, Line 23
+var g_skill_debug	:= 0;
+0: decl global #0
+1: 0L
+2: :=
+3: #
+D:/Programs/forgottenlore/pkg/utils/datafile/include/datafile.inc, Line 36
+var DF_DEBUG_MODE	:= 1;
+4: decl global #1
+5: 1L
+6: :=
+7: #
+D:\Programs\forgottenlore\pkg\fls\fls_core\gumpcriacao.src, Line 21
+program createchar(who)
+const OK_BUTTON			:= 10;
+8: get arg 'who'
+if (who.cmdlevel < 2)
+9: local #0
+10: get member id 'cmdlevel' (46)
+11: 2L
+12: <
+13: if false goto 46
+var equiped := listequippeditems(who);
+14: decl local #0
+15: local #0
+16: Func(3,16): ListEquippedItems
+17: :=
+18: #
+foreach item in  equiped
+19: local #1
+20: initforeach @29
+if (item != who.backpack)
+21: local #2
+22: local #0
+23: get member id 'backpack' (41)
+24: <>
+25: if false goto 29
+DestroyItem(item);
+26: local #2
+27: Func(3,14): DestroyItem
+28: #
+29: stepforeach @21
+30: leave block(3)
+equiped := enumerateitemsincontainer(who.backpack);
+31: local #0
+32: get member id 'backpack' (41)
+33: 0L
+34: Func(3,17): EnumerateItemsInContainer
+35: local1 := 
+foreach item in  equiped
+36: local #1
+37: initforeach @41
+DestroyItem(item);
+38: local #2
+39: Func(3,14): DestroyItem
+40: #
+41: stepforeach @38
+42: leave block(3)
+equiped := 0;
+43: 0L
+44: local1 := 
+45: leave block(1)
+UnloadConfigFile(":fls_core:config/introduction");
+46: ":fls_core:config/introduction"
+47: Func(2,10): UnloadConfigFile
+48: #
+UnloadConfigFile(":fls_core:config/classes");
+49: ":fls_core:config/classes"
+50: Func(2,10): UnloadConfigFile
+51: #
+UnloadConfigFile(":fls_core:config/racas");
+52: ":fls_core:config/racas"
+53: Func(2,10): UnloadConfigFile
+54: #
+UnloadConfigFile(":fls_core:config/itempicker");
+55: ":fls_core:config/itempicker"
+56: Func(2,10): UnloadConfigFile
+57: #
+var chardata := struct;
+58: decl local #1
+59: struct
+60: :=
+61: #
+chardata.+Credits := 100;
+62: local #1
+63: "Credits"
+64: .+
+65: 100L
+66: := #
+IntroGump(who);
+67: local #0
+68: makelocal
+69: jmp userfunc @1618
+70: #
+NameClassRace(who, chardata);
+71: local #0
+72: local #1
+73: makelocal
+74: jmp userfunc @2072
+75: #
+HairColor(who, chardata);
+76: local #0
+77: local #1
+78: makelocal
+79: jmp userfunc @1139
+80: #
+AttributesGump(who, chardata);
+81: local #0
+82: local #1
+83: makelocal
+84: jmp userfunc @171
+85: #
+SkillsGump(who, chardata);
+86: local #0
+87: local #1
+88: makelocal
+89: jmp userfunc @2788
+90: #
+MoveObjectToLocation(who, 5185, 1195, 4, who.realm );
+91: local #0
+92: 5185L
+93: 1195L
+94: 4L
+95: local #0
+96: get member id 'realm' (112)
+97: 0L
+98: Func(3,18): MoveObjectToLocation
+99: #
+ItemPickerGump(who, chardata);
+100: local #0
+101: local #1
+102: makelocal
+103: jmp userfunc @1723
+104: #
+who.title_race := GetTitleRace(GetObjProperty(who, "raca"));
+105: local #0
+106: local #0
+107: "raca"
+108: Func(3,3): GetObjProperty
+109: makelocal
+110: jmp userfunc @476
+111: set member id 'title_race' (54) #
+SetObjProperty(who, "chardata", chardata);
+112: local #0
+113: "chardata"
+114: local #1
+115: Func(3,4): SetObjProperty
+116: #
+var myrace := GetObjProperty(who, "raca");
+117: decl local #2
+118: local #0
+119: "raca"
+120: Func(3,3): GetObjProperty
+121: :=
+122: #
+if ( myrace == "orc" )
+123: local #2
+124: "orc"
+125: ==
+126: if false goto 152
+var orcmask := CreateItemInBackpack(who, 0x141C); //orcmask
+127: decl local #0
+128: local #0
+129: 5148L
+130: 1L
+131: Func(3,5): CreateItemInBackpack
+132: :=
+133: #
+orcmask.newbie := 1;
+134: local #3
+135: 1L
+136: set member id 'newbie' (25) #
+orcmask.color := who.color;
+137: local #3
+138: local #0
+139: get member id 'color' (7)
+140: set member id 'color' (7) #
+EquipItem( who, orcmask );
+141: local #0
+142: local #3
+143: Func(3,6): EquipItem
+144: #
+CreateItemInBackpack(who, 0xff22, 100); //moeda de orc
+145: local #0
+146: 65314L
+147: 100L
+148: Func(3,5): CreateItemInBackpack
+149: #
+150: leave block(1)
+151: goto 166
+CreateItemInBackpack(who, 0xff21, 100); //moeda de humano
+152: local #0
+153: 65313L
+154: 100L
+155: Func(3,5): CreateItemInBackpack
+156: #
+SetObjProperty(who, "temskin", 1);
+157: local #0
+158: "temskin"
+159: 1L
+160: Func(3,4): SetObjProperty
+161: #
+EquipRaceSkin(who);
+162: local #0
+163: makelocal
+164: jmp userfunc @233
+165: #
+who.race := RACE_HUMAN;
+166: local #0
+167: 0L
+168: set member id 'race' (127) #
+169: leave block(3)
+170: progend
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 302
+function attributesGump(who, byref chardata)
+171: pop param byref 'chardata'
+172: pop param 'who'
+var stats := 100;
+173: decl local #2
+174: 100L
+175: :=
+176: #
+var str, int, dex, vit;
+177: decl local #3
+178: #
+179: decl local #4
+180: #
+181: decl local #5
+182: #
+183: decl local #6
+184: #
+str := 0;
+185: 0L
+186: local3 := 
+int := 0;
+187: 0L
+188: local4 := 
+vit := 0;
+189: 0L
+190: local6 := 
+dex := 0;
+191: 0L
+192: local5 := 
+var repeatGump := 0;
+193: decl local #7
+194: 0L
+195: :=
+196: #
+foreach attrib_name in AP_ListAttributesByType()
+197: ""
+198: makelocal
+199: jmp userfunc @3143
+200: initforeach @210
+AP_SetTrueSkill(who, attrib_name, 0);
+201: local #1
+202: local #8
+203: 0L
+204: makelocal
+205: jmp userfunc @3168
+206: #
+sleepms(10);
+207: 10L
+208: Func(4,0): Sleepms
+209: #
+210: stepforeach @201
+211: leave block(3)
+while ( (repeatGump != 1) )
+212: local #7
+213: 1L
+214: <>
+215: if false goto 231
+if (!who.connected)
+216: local #1
+217: get member id 'connected' (121)
+218: if true goto 220
+break;
+219: goto 231
+repeatGump := GumpAttr(who, chardata, stats, str, int, vit, dex);
+220: local #1
+221: local #0
+222: local #2
+223: local #3
+224: local #4
+225: local #6
+226: local #5
+227: makelocal
+228: jmp userfunc @520
+229: local7 := 
+230: goto 212
+231: 0L
+232: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_characters.inc, Line 10
+function EquipRaceSkin(who)
+233: pop param 'who'
+var myrace := GetObjProperty(who, "raca");
+234: decl local #1
+235: local #0
+236: "raca"
+237: Func(3,3): GetObjProperty
+238: :=
+239: #
+if ( myrace == "humano")
+240: local #1
+241: "humano"
+242: ==
+243: if false goto 287
+if (who.gender) // female
+244: local #0
+245: get member id 'gender' (28)
+246: if false goto 267
+var paperdoll := CreateItemInBackpack(who, 0x3823);
+247: decl local #0
+248: local #0
+249: 14371L
+250: 1L
+251: Func(3,5): CreateItemInBackpack
+252: :=
+253: #
+paperdoll.newbie := 1;
+254: local #2
+255: 1L
+256: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+257: local #2
+258: local #0
+259: get member id 'color' (7)
+260: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+261: local #0
+262: local #2
+263: Func(3,6): EquipItem
+264: #
+265: leave block(1)
+266: goto 286
+var paperdoll := CreateItemInBackpack(who, 0x3822);
+267: decl local #0
+268: local #0
+269: 14370L
+270: 1L
+271: Func(3,5): CreateItemInBackpack
+272: :=
+273: #
+paperdoll.newbie := 1;
+274: local #2
+275: 1L
+276: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+277: local #2
+278: local #0
+279: get member id 'color' (7)
+280: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+281: local #0
+282: local #2
+283: Func(3,6): EquipItem
+284: #
+285: leave block(1)
+286: goto 474
+elseif ( myrace == "elfo")
+287: local #1
+288: "elfo"
+289: ==
+290: if false goto 334
+if (who.gender) // female
+291: local #0
+292: get member id 'gender' (28)
+293: if false goto 314
+var paperdoll := CreateItemInBackpack(who, 0x3827);
+294: decl local #0
+295: local #0
+296: 14375L
+297: 1L
+298: Func(3,5): CreateItemInBackpack
+299: :=
+300: #
+paperdoll.newbie := 1;
+301: local #2
+302: 1L
+303: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+304: local #2
+305: local #0
+306: get member id 'color' (7)
+307: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+308: local #0
+309: local #2
+310: Func(3,6): EquipItem
+311: #
+312: leave block(1)
+313: goto 333
+var paperdoll := CreateItemInBackpack(who, 0x3826);
+314: decl local #0
+315: local #0
+316: 14374L
+317: 1L
+318: Func(3,5): CreateItemInBackpack
+319: :=
+320: #
+paperdoll.newbie := 1;
+321: local #2
+322: 1L
+323: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+324: local #2
+325: local #0
+326: get member id 'color' (7)
+327: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+328: local #0
+329: local #2
+330: Func(3,6): EquipItem
+331: #
+332: leave block(1)
+333: goto 474
+elseif ( myrace == "hobbit")
+334: local #1
+335: "hobbit"
+336: ==
+337: if false goto 381
+if (who.gender) // female
+338: local #0
+339: get member id 'gender' (28)
+340: if false goto 361
+var paperdoll := CreateItemInBackpack(who, 0x382D);
+341: decl local #0
+342: local #0
+343: 14381L
+344: 1L
+345: Func(3,5): CreateItemInBackpack
+346: :=
+347: #
+paperdoll.newbie := 1;
+348: local #2
+349: 1L
+350: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+351: local #2
+352: local #0
+353: get member id 'color' (7)
+354: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+355: local #0
+356: local #2
+357: Func(3,6): EquipItem
+358: #
+359: leave block(1)
+360: goto 380
+var paperdoll := CreateItemInBackpack(who, 0x382C);
+361: decl local #0
+362: local #0
+363: 14380L
+364: 1L
+365: Func(3,5): CreateItemInBackpack
+366: :=
+367: #
+paperdoll.newbie := 1;
+368: local #2
+369: 1L
+370: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+371: local #2
+372: local #0
+373: get member id 'color' (7)
+374: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+375: local #0
+376: local #2
+377: Func(3,6): EquipItem
+378: #
+379: leave block(1)
+380: goto 474
+elseif ( myrace == "anao")
+381: local #1
+382: "anao"
+383: ==
+384: if false goto 428
+if (who.gender) // female
+385: local #0
+386: get member id 'gender' (28)
+387: if false goto 408
+var paperdoll := CreateItemInBackpack(who, 0x3825);
+388: decl local #0
+389: local #0
+390: 14373L
+391: 1L
+392: Func(3,5): CreateItemInBackpack
+393: :=
+394: #
+paperdoll.newbie := 1;
+395: local #2
+396: 1L
+397: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+398: local #2
+399: local #0
+400: get member id 'color' (7)
+401: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+402: local #0
+403: local #2
+404: Func(3,6): EquipItem
+405: #
+406: leave block(1)
+407: goto 427
+var paperdoll := CreateItemInBackpack(who, 0x3824);
+408: decl local #0
+409: local #0
+410: 14372L
+411: 1L
+412: Func(3,5): CreateItemInBackpack
+413: :=
+414: #
+paperdoll.newbie := 1;
+415: local #2
+416: 1L
+417: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+418: local #2
+419: local #0
+420: get member id 'color' (7)
+421: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+422: local #0
+423: local #2
+424: Func(3,6): EquipItem
+425: #
+426: leave block(1)
+427: goto 474
+elseif ( myrace == "drow")
+428: local #1
+429: "drow"
+430: ==
+431: if false goto 474
+if (who.gender) // female
+432: local #0
+433: get member id 'gender' (28)
+434: if false goto 455
+var paperdoll := CreateItemInBackpack(who, 0x382B);
+435: decl local #0
+436: local #0
+437: 14379L
+438: 1L
+439: Func(3,5): CreateItemInBackpack
+440: :=
+441: #
+paperdoll.newbie := 1;
+442: local #2
+443: 1L
+444: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+445: local #2
+446: local #0
+447: get member id 'color' (7)
+448: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+449: local #0
+450: local #2
+451: Func(3,6): EquipItem
+452: #
+453: leave block(1)
+454: goto 474
+var paperdoll := CreateItemInBackpack(who, 0x382A);
+455: decl local #0
+456: local #0
+457: 14378L
+458: 1L
+459: Func(3,5): CreateItemInBackpack
+460: :=
+461: #
+paperdoll.newbie := 1;
+462: local #2
+463: 1L
+464: set member id 'newbie' (25) #
+paperdoll.color := who.color;
+465: local #2
+466: local #0
+467: get member id 'color' (7)
+468: set member id 'color' (7) #
+EquipItem(who, paperdoll);
+469: local #0
+470: local #2
+471: Func(3,6): EquipItem
+472: #
+473: leave block(1)
+474: 0L
+475: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_characters.inc, Line 169
+function GetTitleRace(racename)
+476: pop param 'racename'
+if (racename == "humano")
+477: local #0
+478: "humano"
+479: ==
+480: if false goto 484
+return "Humano";
+481: "Humano"
+482: return
+483: goto 518
+elseif (racename == "orc")
+484: local #0
+485: "orc"
+486: ==
+487: if false goto 491
+return "Uruk";
+488: "Uruk"
+489: return
+490: goto 518
+elseif (racename == "hobbit")
+491: local #0
+492: "hobbit"
+493: ==
+494: if false goto 498
+return "Hobbit";
+495: "Hobbit"
+496: return
+497: goto 518
+elseif (racename == "elfo")
+498: local #0
+499: "elfo"
+500: ==
+501: if false goto 505
+return "Quende";
+502: "Quende"
+503: return
+504: goto 518
+elseif (racename == "anao")
+505: local #0
+506: "anao"
+507: ==
+508: if false goto 512
+return "Khuzd";
+509: "Khuzd"
+510: return
+511: goto 518
+elseif (racename == "drow")
+512: local #0
+513: "drow"
+514: ==
+515: if false goto 518
+return "Ilythiiri";
+516: "Ilythiiri"
+517: return
+518: 0L
+519: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 328
+function GumpAttr(who, byref chardata, byref stats, byref str, byref int, byref
+520: pop param byref 'dex'
+521: pop param byref 'vit'
+522: pop param byref 'int'
+523: pop param byref 'str'
+524: pop param byref 'stats'
+525: pop param byref 'chardata'
+526: pop param 'who'
+var chargump := GFCreateGump();
+527: decl local #7
+528: 0L
+529: 0L
+530: 0L
+531: 0L
+532: makelocal
+533: jmp userfunc @4489
+534: :=
+535: #
+var input;
+536: decl local #8
+537: #
+var classCfg := ReadConfigFile(":fls_core:config/classes");
+538: decl local #9
+539: ":fls_core:config/classes"
+540: Func(2,0): ReadConfigFile
+541: :=
+542: #
+var elem := FindConfigElem(classCfg, cstr(getobjproperty(who, "classe")) );
+543: decl local #10
+544: local #9
+545: local #6
+546: "classe"
+547: Func(3,3): GetObjProperty
+548: Func(0,1): CStr
+549: Func(2,5): FindConfigElem
+550: :=
+551: #
+var baseInt := Cint(GetConfigInt(elem, "int"));
+552: decl local #11
+553: local #10
+554: "int"
+555: Func(2,1): GetConfigInt
+556: Func(0,0): CInt
+557: :=
+558: #
+var baseStr := Cint(GetConfigInt(elem, "str"));
+559: decl local #12
+560: local #10
+561: "str"
+562: Func(2,1): GetConfigInt
+563: Func(0,0): CInt
+564: :=
+565: #
+var baseDex := Cint(GetConfigInt(elem, "dex"));
+566: decl local #13
+567: local #10
+568: "dex"
+569: Func(2,1): GetConfigInt
+570: Func(0,0): CInt
+571: :=
+572: #
+var baseVit := Cint(GetConfigInt(elem, "vit"));
+573: decl local #14
+574: local #10
+575: "vit"
+576: Func(2,1): GetConfigInt
+577: Func(0,0): CInt
+578: :=
+579: #
+var raceCfg := ReadConfigFile(":fls_core:config/racas");
+580: decl local #15
+581: ":fls_core:config/racas"
+582: Func(2,0): ReadConfigFile
+583: :=
+584: #
+var elem2 := FindConfigElem(raceCfg, cstr(getobjproperty(who, "raca")) );
+585: decl local #16
+586: local #15
+587: local #6
+588: "raca"
+589: Func(3,3): GetObjProperty
+590: Func(0,1): CStr
+591: Func(2,5): FindConfigElem
+592: :=
+593: #
+var modInt := Cint(GetConfigInt(elem2, "intmod"));
+594: decl local #17
+595: local #16
+596: "intmod"
+597: Func(2,1): GetConfigInt
+598: Func(0,0): CInt
+599: :=
+600: #
+var modStr := Cint(GetConfigInt(elem2, "strmod"));
+601: decl local #18
+602: local #16
+603: "strmod"
+604: Func(2,1): GetConfigInt
+605: Func(0,0): CInt
+606: :=
+607: #
+var modDex := Cint(GetConfigInt(elem2, "dexmod"));
+608: decl local #19
+609: local #16
+610: "dexmod"
+611: Func(2,1): GetConfigInt
+612: Func(0,0): CInt
+613: :=
+614: #
+var modVit := Cint(GetConfigInt(elem2, "vitmod"));
+615: decl local #20
+616: local #16
+617: "vitmod"
+618: Func(2,1): GetConfigInt
+619: Func(0,0): CInt
+620: :=
+621: #
+GFClosable(chargump, 0);
+622: local #7
+623: 0L
+624: makelocal
+625: jmp userfunc @4430
+626: #
+GFDisposable(chargump, 0);
+627: local #7
+628: 0L
+629: makelocal
+630: jmp userfunc @4570
+631: #
+GFResizePic(chargump, 0, 25, 3600, 300, 480);
+632: local #7
+633: 0L
+634: 25L
+635: 3600L
+636: 300L
+637: 480L
+638: makelocal
+639: jmp userfunc @4850
+640: #
+GFResizePic(chargump, 15, 40, 0x13BE, 270, 450);
+641: local #7
+642: 15L
+643: 40L
+644: 5054L
+645: 270L
+646: 450L
+647: makelocal
+648: jmp userfunc @4850
+649: #
+GFTextMid(chargump, 15, 50, 300, 1153, "Defina os Atributos");
+650: local #7
+651: 15L
+652: 50L
+653: 300L
+654: 1153L
+655: "Defina os Atributos"
+656: makelocal
+657: jmp userfunc @5092
+658: #
+GFTextMid(chargump, 15, 70, 300, 1153, "Voce tem " + stats + " pontos.");
+659: local #7
+660: 15L
+661: 70L
+662: 300L
+663: 1153L
+664: "Voce tem "
+665: local #4
+666: +
+667: " pontos."
+668: +
+669: makelocal
+670: jmp userfunc @5092
+671: #
+GFTextLine(chargump, 230, 90, 1153,  "+   - ");
+672: local #7
+673: 230L
+674: 90L
+675: 1153L
+676: "+   - "
+677: makelocal
+678: jmp userfunc @5043
+679: #
+GFTextLine(chargump, 50, 120, 1153,  "Forca: ");
+680: local #7
+681: 50L
+682: 120L
+683: 1153L
+684: "Forca: "
+685: makelocal
+686: jmp userfunc @5043
+687: #
+GFTextLine(chargump, 50, 150, 1153, "Destreza: ");
+688: local #7
+689: 50L
+690: 150L
+691: 1153L
+692: "Destreza: "
+693: makelocal
+694: jmp userfunc @5043
+695: #
+GFTextLine(chargump, 50, 180, 1153, "Vitalidade: ");
+696: local #7
+697: 50L
+698: 180L
+699: 1153L
+700: "Vitalidade: "
+701: makelocal
+702: jmp userfunc @5043
+703: #
+GFTextLine(chargump, 50, 210, 1153, "Inteligencia: ");
+704: local #7
+705: 50L
+706: 210L
+707: 1153L
+708: "Inteligencia: "
+709: makelocal
+710: jmp userfunc @5043
+711: #
+GFTextLine(chargump, 120, 120, 1153,  baseStr + " + " + modStr + " + " + str);
+712: local #7
+713: 120L
+714: 120L
+715: 1153L
+716: local #12
+717: " + "
+718: +
+719: local #18
+720: +
+721: " + "
+722: +
+723: local #3
+724: +
+725: makelocal
+726: jmp userfunc @5043
+727: #
+GFTextLine(chargump, 120, 150, 1153, baseDex +  " + " + modDex + " + " + dex);
+728: local #7
+729: 120L
+730: 150L
+731: 1153L
+732: local #13
+733: " + "
+734: +
+735: local #19
+736: +
+737: " + "
+738: +
+739: local #0
+740: +
+741: makelocal
+742: jmp userfunc @5043
+743: #
+GFTextLine(chargump, 120, 180, 1153, baseVit +  " + " + modVit + " + " + vit);
+744: local #7
+745: 120L
+746: 180L
+747: 1153L
+748: local #14
+749: " + "
+750: +
+751: local #20
+752: +
+753: " + "
+754: +
+755: local #1
+756: +
+757: makelocal
+758: jmp userfunc @5043
+759: #
+GFTextLine(chargump, 120, 210, 1153, baseInt +  " + " + modInt + " + " + int);
+760: local #7
+761: 120L
+762: 210L
+763: 1153L
+764: local #11
+765: " + "
+766: +
+767: local #17
+768: +
+769: " + "
+770: +
+771: local #2
+772: +
+773: makelocal
+774: jmp userfunc @5043
+775: #
+GFAddButton(chargump, 230, 120, 9760, 9761, 1, 10); //+str
+776: local #7
+777: 230L
+778: 120L
+779: 9760L
+780: 9761L
+781: 1L
+782: 10L
+783: makelocal
+784: jmp userfunc @4286
+785: #
+GFAddButton(chargump, 230, 150, 9760, 9761, 1, 11); //+dex
+786: local #7
+787: 230L
+788: 150L
+789: 9760L
+790: 9761L
+791: 1L
+792: 11L
+793: makelocal
+794: jmp userfunc @4286
+795: #
+GFAddButton(chargump, 230, 180, 9760, 9761, 1, 12); //+vit
+796: local #7
+797: 230L
+798: 180L
+799: 9760L
+800: 9761L
+801: 1L
+802: 12L
+803: makelocal
+804: jmp userfunc @4286
+805: #
+GFAddButton(chargump, 230, 210, 9760, 9761, 1, 13); //+int
+806: local #7
+807: 230L
+808: 210L
+809: 9760L
+810: 9761L
+811: 1L
+812: 13L
+813: makelocal
+814: jmp userfunc @4286
+815: #
+GFAddButton(chargump, 260, 120, 9764, 9765, 1, 20); //-str
+816: local #7
+817: 260L
+818: 120L
+819: 9764L
+820: 9765L
+821: 1L
+822: 20L
+823: makelocal
+824: jmp userfunc @4286
+825: #
+GFAddButton(chargump, 260, 150, 9764, 9765, 1, 21); //-dex
+826: local #7
+827: 260L
+828: 150L
+829: 9764L
+830: 9765L
+831: 1L
+832: 21L
+833: makelocal
+834: jmp userfunc @4286
+835: #
+GFAddButton(chargump, 260, 180, 9764, 9765, 1, 22); //-vit
+836: local #7
+837: 260L
+838: 180L
+839: 9764L
+840: 9765L
+841: 1L
+842: 22L
+843: makelocal
+844: jmp userfunc @4286
+845: #
+GFAddButton(chargump, 260, 210, 9764, 9765, 1, 23); //-int
+846: local #7
+847: 260L
+848: 210L
+849: 9764L
+850: 9765L
+851: 1L
+852: 23L
+853: makelocal
+854: jmp userfunc @4286
+855: #
+GFAddButton(chargump, 230, 450, 4502, 4502, 1, 1 );
+856: local #7
+857: 230L
+858: 450L
+859: 4502L
+860: 4502L
+861: 1L
+862: 1L
+863: makelocal
+864: jmp userfunc @4286
+865: #
+GFTextLine(chargump, 190, 460, 1153, "Proximo");
+866: local #7
+867: 190L
+868: 460L
+869: 1153L
+870: "Proximo"
+871: makelocal
+872: jmp userfunc @5043
+873: #
+input := GFSendGump(who, chargump);
+874: local #6
+875: local #7
+876: makelocal
+877: jmp userfunc @4907
+878: local8 := 
+input := input[0];
+879: local #8
+880: 0L
+881: [] 1
+882: local8 := 
+if (input == 10)
+883: local #8
+884: 10L
+885: ==
+886: if false goto 911
+if (stats >= 5)
+887: local #4
+888: 5L
+889: >=
+890: if false goto 910
+if (str < 50)
+891: local #3
+892: 50L
+893: <
+894: if false goto 904
+str := str +5;
+895: local #3
+896: 5L
+897: +
+898: local3 := 
+stats := stats - 5;
+899: local #4
+900: 5L
+901: -
+902: local4 := 
+903: goto 910
+SendSysMessage(who, "Voce so pode colocar 50 pontos em um attributo.");
+904: local #6
+905: "Voce so pode colocar 50 pontos em um attributo."
+906: 3L
+907: 1000L
+908: Func(3,1): SendSysMessage
+909: #
+910: goto 1137
+elseif (input == 11)
+911: local #8
+912: 11L
+913: ==
+914: if false goto 939
+if (stats >= 5)
+915: local #4
+916: 5L
+917: >=
+918: if false goto 938
+if (dex < 50)
+919: local #0
+920: 50L
+921: <
+922: if false goto 932
+dex := dex + 5;
+923: local #0
+924: 5L
+925: +
+926: local0 := 
+stats := stats - 5;
+927: local #4
+928: 5L
+929: -
+930: local4 := 
+931: goto 938
+SendSysMessage(who, "Voce so pode colocar 50 pontos em um attributo.");
+932: local #6
+933: "Voce so pode colocar 50 pontos em um attributo."
+934: 3L
+935: 1000L
+936: Func(3,1): SendSysMessage
+937: #
+938: goto 1137
+elseif (input == 12)
+939: local #8
+940: 12L
+941: ==
+942: if false goto 967
+if (stats >= 5)
+943: local #4
+944: 5L
+945: >=
+946: if false goto 966
+if (vit < 50)
+947: local #1
+948: 50L
+949: <
+950: if false goto 960
+vit := vit + 5;
+951: local #1
+952: 5L
+953: +
+954: local1 := 
+stats := stats - 5;
+955: local #4
+956: 5L
+957: -
+958: local4 := 
+959: goto 966
+SendSysMessage(who, "Voce so pode colocar 50 pontos em um attributo.");
+960: local #6
+961: "Voce so pode colocar 50 pontos em um attributo."
+962: 3L
+963: 1000L
+964: Func(3,1): SendSysMessage
+965: #
+966: goto 1137
+elseif (input == 13)
+967: local #8
+968: 13L
+969: ==
+970: if false goto 995
+if (stats >= 5)
+971: local #4
+972: 5L
+973: >=
+974: if false goto 994
+if (int < 50)
+975: local #2
+976: 50L
+977: <
+978: if false goto 988
+int := int+5;
+979: local #2
+980: 5L
+981: +
+982: local2 := 
+stats := stats - 5;
+983: local #4
+984: 5L
+985: -
+986: local4 := 
+987: goto 994
+SendSysMessage(who, "Voce so pode colocar 50 pontos em um attributo.");
+988: local #6
+989: "Voce so pode colocar 50 pontos em um attributo."
+990: 3L
+991: 1000L
+992: Func(3,1): SendSysMessage
+993: #
+994: goto 1137
+elseif (input == 20)
+995: local #8
+996: 20L
+997: ==
+998: if false goto 1012
+if (str > 0)
+999: local #3
+1000: 0L
+1001: >
+1002: if false goto 1011
+str := str - 5;
+1003: local #3
+1004: 5L
+1005: -
+1006: local3 := 
+stats := stats + 5;
+1007: local #4
+1008: 5L
+1009: +
+1010: local4 := 
+1011: goto 1137
+elseif (input == 21)
+1012: local #8
+1013: 21L
+1014: ==
+1015: if false goto 1029
+if (dex > 0)
+1016: local #0
+1017: 0L
+1018: >
+1019: if false goto 1028
+dex := dex - 5;
+1020: local #0
+1021: 5L
+1022: -
+1023: local0 := 
+stats := stats + 5;
+1024: local #4
+1025: 5L
+1026: +
+1027: local4 := 
+1028: goto 1137
+elseif (input == 22)
+1029: local #8
+1030: 22L
+1031: ==
+1032: if false goto 1046
+if (vit > 0)
+1033: local #1
+1034: 0L
+1035: >
+1036: if false goto 1045
+vit := vit - 5;
+1037: local #1
+1038: 5L
+1039: -
+1040: local1 := 
+stats := stats + 5;
+1041: local #4
+1042: 5L
+1043: +
+1044: local4 := 
+1045: goto 1137
+elseif (input == 23)
+1046: local #8
+1047: 23L
+1048: ==
+1049: if false goto 1063
+if (int >0)
+1050: local #2
+1051: 0L
+1052: >
+1053: if false goto 1062
+int := int -5;
+1054: local #2
+1055: 5L
+1056: -
+1057: local2 := 
+stats := stats + 5;
+1058: local #4
+1059: 5L
+1060: +
+1061: local4 := 
+1062: goto 1137
+elseif (input == 1)
+1063: local #8
+1064: 1L
+1065: ==
+1066: if false goto 1137
+chardata.+Str := baseStr + modStr + str;
+1067: local #5
+1068: "Str"
+1069: .+
+1070: local #12
+1071: local #18
+1072: +
+1073: local #3
+1074: +
+1075: := #
+chardata.+Dex := baseDex + modDex + dex;
+1076: local #5
+1077: "Dex"
+1078: .+
+1079: local #13
+1080: local #19
+1081: +
+1082: local #0
+1083: +
+1084: := #
+chardata.+Int := baseInt + modInt + int;
+1085: local #5
+1086: "Int"
+1087: .+
+1088: local #11
+1089: local #17
+1090: +
+1091: local #2
+1092: +
+1093: := #
+chardata.+Vit := baseVit + modVit + vit;
+1094: local #5
+1095: "Vit"
+1096: .+
+1097: local #14
+1098: local #20
+1099: +
+1100: local #1
+1101: +
+1102: := #
+AP_SetTrueStat(who, STRENGTH, chardata.Str);
+1103: local #6
+1104: "Strength"
+1105: local #5
+1106: get member 'Str'
+1107: makelocal
+1108: jmp userfunc @3187
+1109: #
+AP_SetTrueStat(who, DEXTERITY, chardata.Dex);
+1110: local #6
+1111: "Dexterity"
+1112: local #5
+1113: get member 'Dex'
+1114: makelocal
+1115: jmp userfunc @3187
+1116: #
+AP_SetTrueStat(who, INTELLIGENCE, chardata.Int);
+1117: local #6
+1118: "Intelligence"
+1119: local #5
+1120: get member 'Int'
+1121: makelocal
+1122: jmp userfunc @3187
+1123: #
+SetObjProperty(who, "Vitality", chardata.Vit);
+1124: local #6
+1125: "Vitality"
+1126: local #5
+1127: get member 'Vit'
+1128: Func(3,4): SetObjProperty
+1129: #
+RecalcVitals(who);
+1130: local #6
+1131: 1L
+1132: 1L
+1133: Func(6,0): RecalcVitals
+1134: #
+return 1;
+1135: 1L
+1136: return
+return 0;
+1137: 0L
+1138: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 12
+function HairColor(who, byref chardata)
+1139: pop param byref 'chardata'
+1140: pop param 'who'
+var chargump := GFCreateGump();
+1141: decl local #2
+1142: 0L
+1143: 0L
+1144: 0L
+1145: 0L
+1146: makelocal
+1147: jmp userfunc @4489
+1148: :=
+1149: #
+GFClosable(chargump, 0);
+1150: local #2
+1151: 0L
+1152: makelocal
+1153: jmp userfunc @4430
+1154: #
+GFDisposable(chargump, 0);
+1155: local #2
+1156: 0L
+1157: makelocal
+1158: jmp userfunc @4570
+1159: #
+var input;
+1160: decl local #3
+1161: #
+var new_look := struct;
+1162: decl local #4
+1163: struct
+1164: :=
+1165: #
+new_look.+SkinColor := who.color;
+1166: local #4
+1167: "SkinColor"
+1168: .+
+1169: local #1
+1170: get member id 'color' (7)
+1171: := #
+new_look.+HairStyle := GetEquipmentByLayer(who, LAYER_HAIR).graphic;
+1172: local #4
+1173: "HairStyle"
+1174: .+
+1175: local #1
+1176: 11L
+1177: Func(3,13): GetEquipmentByLayer
+1178: get member id 'graphic' (5)
+1179: := #
+new_look.+HairColor := GetEquipmentByLayer(who, LAYER_HAIR).color;
+1180: local #4
+1181: "HairColor"
+1182: .+
+1183: local #1
+1184: 11L
+1185: Func(3,13): GetEquipmentByLayer
+1186: get member id 'color' (7)
+1187: := #
+new_look.+BeardStyle := GetEquipmentByLayer(who, LAYER_BEARD).graphic;
+1188: local #4
+1189: "BeardStyle"
+1190: .+
+1191: local #1
+1192: 16L
+1193: Func(3,13): GetEquipmentByLayer
+1194: get member id 'graphic' (5)
+1195: := #
+new_look.+BeardColor := GetEquipmentByLayer(who, LAYER_BEARD).color;
+1196: local #4
+1197: "BeardColor"
+1198: .+
+1199: local #1
+1200: 16L
+1201: Func(3,13): GetEquipmentByLayer
+1202: get member id 'color' (7)
+1203: := #
+new_look.+Gender := who.gender;
+1204: local #4
+1205: "Gender"
+1206: .+
+1207: local #1
+1208: get member id 'gender' (28)
+1209: := #
+var myraca := GetObjProperty(who, "raca");
+1210: decl local #5
+1211: local #1
+1212: "raca"
+1213: Func(3,3): GetObjProperty
+1214: :=
+1215: #
+if (!who.connected)
+1216: local #1
+1217: get member id 'connected' (121)
+1218: if true goto 1220
+break;
+1219: goto 1404
+GFResizePic(chargump, 0, 25, 3600, 300, 480);
+1220: local #2
+1221: 0L
+1222: 25L
+1223: 3600L
+1224: 300L
+1225: 480L
+1226: makelocal
+1227: jmp userfunc @4850
+1228: #
+GFResizePic(chargump, 15, 40, 0x13BE, 270, 450);
+1229: local #2
+1230: 15L
+1231: 40L
+1232: 5054L
+1233: 270L
+1234: 450L
+1235: makelocal
+1236: jmp userfunc @4850
+1237: #
+GFTextMid(chargump, 15, 45, 300, 1153, "Criacao do Personagem");
+1238: local #2
+1239: 15L
+1240: 45L
+1241: 300L
+1242: 1153L
+1243: "Criacao do Personagem"
+1244: makelocal
+1245: jmp userfunc @5092
+1246: #
+GFTextLine(chargump, 50, 75, 1153, "Escolher Cor da Pele");
+1247: local #2
+1248: 50L
+1249: 75L
+1250: 1153L
+1251: "Escolher Cor da Pele"
+1252: makelocal
+1253: jmp userfunc @5043
+1254: #
+GFTextLine(chargump, 50, 105, 1153, "Escolher Cabelo");
+1255: local #2
+1256: 50L
+1257: 105L
+1258: 1153L
+1259: "Escolher Cabelo"
+1260: makelocal
+1261: jmp userfunc @5043
+1262: #
+GFTextLine(chargump, 50, 135, 1153, "Escolher Cabelo Facial");
+1263: local #2
+1264: 50L
+1265: 135L
+1266: 1153L
+1267: "Escolher Cabelo Facial"
+1268: makelocal
+1269: jmp userfunc @5043
+1270: #
+GFTextLine(chargump, 50, 165, 1153, "Escolher Cor do Cabelo");
+1271: local #2
+1272: 50L
+1273: 165L
+1274: 1153L
+1275: "Escolher Cor do Cabelo"
+1276: makelocal
+1277: jmp userfunc @5043
+1278: #
+GFAddButton(chargump, 30, 75, 2117, 2118, 1, 2);
+1279: local #2
+1280: 30L
+1281: 75L
+1282: 2117L
+1283: 2118L
+1284: 1L
+1285: 2L
+1286: makelocal
+1287: jmp userfunc @4286
+1288: #
+GFAddButton(chargump, 30, 105, 2117, 2118, 1, 3);
+1289: local #2
+1290: 30L
+1291: 105L
+1292: 2117L
+1293: 2118L
+1294: 1L
+1295: 3L
+1296: makelocal
+1297: jmp userfunc @4286
+1298: #
+GFAddButton(chargump, 30, 135, 2117, 2118, 1, 4);
+1299: local #2
+1300: 30L
+1301: 135L
+1302: 2117L
+1303: 2118L
+1304: 1L
+1305: 4L
+1306: makelocal
+1307: jmp userfunc @4286
+1308: #
+GFAddButton(chargump, 30, 165, 2117, 2118, 1, 5);
+1309: local #2
+1310: 30L
+1311: 165L
+1312: 2117L
+1313: 2118L
+1314: 1L
+1315: 5L
+1316: makelocal
+1317: jmp userfunc @4286
+1318: #
+GFAddButton(chargump, 230, 450, 4502, 4502, 1, 1 );
+1319: local #2
+1320: 230L
+1321: 450L
+1322: 4502L
+1323: 4502L
+1324: 1L
+1325: 1L
+1326: makelocal
+1327: jmp userfunc @4286
+1328: #
+GFTextLine(chargump, 190, 460, 1153, "Proximo");
+1329: local #2
+1330: 190L
+1331: 460L
+1332: 1153L
+1333: "Proximo"
+1334: makelocal
+1335: jmp userfunc @5043
+1336: #
+input := GFSendGump(who, chargump);
+1337: local #1
+1338: local #2
+1339: makelocal
+1340: jmp userfunc @4907
+1341: local3 := 
+input := input[0];
+1342: local #3
+1343: 0L
+1344: [] 1
+1345: local3 := 
+if (input == 2)
+1346: local #3
+1347: 2L
+1348: ==
+1349: if false goto 1356
+FLSkinGump(who, new_look);
+1350: local #1
+1351: local #4
+1352: makelocal
+1353: jmp userfunc @4017
+1354: #
+1355: goto 1400
+elseif (input == 3) 
+1356: local #3
+1357: 3L
+1358: ==
+1359: if false goto 1366
+FLHairGump(who, new_look);
+1360: local #1
+1361: local #4
+1362: makelocal
+1363: jmp userfunc @3735
+1364: #
+1365: goto 1400
+elseif (input == 4)
+1366: local #3
+1367: 4L
+1368: ==
+1369: if false goto 1391
+if ( (myraca == "anao") || (myraca == "humano") )
+1370: local #5
+1371: "anao"
+1372: ==
+1373: local #5
+1374: "humano"
+1375: ==
+1376: ||
+1377: if false goto 1384
+FLBeardGump(who, new_look);
+1378: local #1
+1379: local #4
+1380: makelocal
+1381: jmp userfunc @3206
+1382: #
+1383: goto 1390
+SendSysMessage(who, "Sua raca nao usa barba.");
+1384: local #1
+1385: "Sua raca nao usa barba."
+1386: 3L
+1387: 1000L
+1388: Func(3,1): SendSysMessage
+1389: #
+1390: goto 1400
+elseif (input == 5)
+1391: local #3
+1392: 5L
+1393: ==
+1394: if false goto 1400
+FLHairDye(who, new_look);
+1395: local #1
+1396: local #4
+1397: makelocal
+1398: jmp userfunc @3492
+1399: #
+1400: local #3
+1401: 1L
+1402: <=
+1403: if false goto 1216
+var raca := cstr(GetObjProperty(who, "raca"));
+1404: decl local #6
+1405: local #1
+1406: "raca"
+1407: Func(3,3): GetObjProperty
+1408: Func(0,1): CStr
+1409: :=
+1410: #
+if (who.color == new_look.SkinColor)//se a cor for a cor q veio da criacao
+1411: local #1
+1412: get member id 'color' (7)
+1413: local #4
+1414: get member 'SkinColor'
+1415: ==
+1416: if false goto 1449
+var cfg := ReadConfigFile(":fls_core:config/racas");
+1417: decl local #0
+1418: ":fls_core:config/racas"
+1419: Func(2,0): ReadConfigFile
+1420: :=
+1421: #
+var elem := cfg[cstr(raca)];
+1422: decl local #1
+1423: local #7
+1424: local #6
+1425: Func(0,1): CStr
+1426: [] 1
+1427: :=
+1428: #
+var cores := GetConfigStringArray(elem, "SkinColor");
+1429: decl local #2
+1430: local #8
+1431: "SkinColor"
+1432: Func(2,3): GetConfigStringArray
+1433: :=
+1434: #
+who.color := cint(cores[2]);
+1435: local #1
+1436: local #9
+1437: 2L
+1438: [] 1
+1439: Func(0,0): CInt
+1440: set member id 'color' (7) #
+who.truecolor := cint(cores[2]);
+1441: local #1
+1442: local #9
+1443: 2L
+1444: [] 1
+1445: Func(0,0): CInt
+1446: set member id 'truecolor' (30) #
+1447: leave block(3)
+1448: goto 1457
+who.color := new_look.SkinColor;
+1449: local #1
+1450: local #4
+1451: get member 'SkinColor'
+1452: set member id 'color' (7) #
+who.truecolor := new_look.SkinColor;
+1453: local #1
+1454: local #4
+1455: get member 'SkinColor'
+1456: set member id 'truecolor' (30) #
+if ( (GetEquipmentByLayer(who, LAYER_HAIR).color) == new_look.HairColor)
+1457: local #1
+1458: 11L
+1459: Func(3,13): GetEquipmentByLayer
+1460: get member id 'color' (7)
+1461: local #4
+1462: get member 'HairColor'
+1463: ==
+1464: if false goto 1490
+var cfg := ReadConfigFile(":fls_core:config/racas");
+1465: decl local #0
+1466: ":fls_core:config/racas"
+1467: Func(2,0): ReadConfigFile
+1468: :=
+1469: #
+var elem := cfg[cstr(raca)];
+1470: decl local #1
+1471: local #7
+1472: local #6
+1473: Func(0,1): CStr
+1474: [] 1
+1475: :=
+1476: #
+var cores := GetConfigStringArray(elem, "HairColor");
+1477: decl local #2
+1478: local #8
+1479: "HairColor"
+1480: Func(2,3): GetConfigStringArray
+1481: :=
+1482: #
+new_look.HairColor := cint(cores[2]);
+1483: local #4
+1484: local #9
+1485: 2L
+1486: [] 1
+1487: Func(0,0): CInt
+1488: set member 'HairColor' #
+1489: leave block(3)
+if ( (raca == "elfo") || (raca == "hobbit") || (raca == "drow") || (raca == "or
+1490: local #6
+1491: "elfo"
+1492: ==
+1493: local #6
+1494: "hobbit"
+1495: ==
+1496: ||
+1497: local #6
+1498: "drow"
+1499: ==
+1500: ||
+1501: local #6
+1502: "orc"
+1503: ==
+1504: ||
+1505: if false goto 1516
+var barba := GetEquipmentByLayer(who, LAYER_BEARD);
+1506: decl local #0
+1507: local #1
+1508: 16L
+1509: Func(3,13): GetEquipmentByLayer
+1510: :=
+1511: #
+DestroyItem(barba);
+1512: local #7
+1513: Func(3,14): DestroyItem
+1514: #
+1515: leave block(1)
+var cabelo := GetEquipmentByLayer(who, LAYER_HAIR);
+1516: decl local #7
+1517: local #1
+1518: 11L
+1519: Func(3,13): GetEquipmentByLayer
+1520: :=
+1521: #
+DestroyItem(cabelo);
+1522: local #7
+1523: Func(3,14): DestroyItem
+1524: #
+cabelo := CreateItemAtLocation(who.x, who.y, who.z, new_look.HairStyle, 1, who.
+1525: local #1
+1526: get member id 'x' (0)
+1527: local #1
+1528: get member id 'y' (1)
+1529: local #1
+1530: get member id 'z' (2)
+1531: local #4
+1532: get member 'HairStyle'
+1533: 1L
+1534: local #1
+1535: get member id 'realm' (112)
+1536: Func(3,15): CreateItemAtLocation
+1537: local7 := 
+cabelo.color := new_look.HairColor;
+1538: local #7
+1539: local #4
+1540: get member 'HairColor'
+1541: set member id 'color' (7) #
+EquipItem(who, cabelo);
+1542: local #1
+1543: local #7
+1544: Func(3,6): EquipItem
+1545: #
+if ( (raca == "humano") || (raca == "anao") )
+1546: local #6
+1547: "humano"
+1548: ==
+1549: local #6
+1550: "anao"
+1551: ==
+1552: ||
+1553: if false goto 1585
+var barba := GetEquipmentByLayer(who, LAYER_BEARD);
+1554: decl local #0
+1555: local #1
+1556: 16L
+1557: Func(3,13): GetEquipmentByLayer
+1558: :=
+1559: #
+DestroyItem(barba);
+1560: local #8
+1561: Func(3,14): DestroyItem
+1562: #
+barba := CreateItemAtLocation(who.x, who.y, who.z, new_look.BeardStyle,1, who.r
+1563: local #1
+1564: get member id 'x' (0)
+1565: local #1
+1566: get member id 'y' (1)
+1567: local #1
+1568: get member id 'z' (2)
+1569: local #4
+1570: get member 'BeardStyle'
+1571: 1L
+1572: local #1
+1573: get member id 'realm' (112)
+1574: Func(3,15): CreateItemAtLocation
+1575: local8 := 
+barba.color := new_look.HairColor;
+1576: local #8
+1577: local #4
+1578: get member 'HairColor'
+1579: set member id 'color' (7) #
+EquipItem(who, barba);
+1580: local #1
+1581: local #8
+1582: Func(3,6): EquipItem
+1583: #
+1584: leave block(1)
+if ( who.graphic == 401 )
+1585: local #1
+1586: get member id 'graphic' (5)
+1587: 401L
+1588: ==
+1589: if false goto 1600
+var barba := GetEquipmentByLayer(who, LAYER_BEARD);
+1590: decl local #0
+1591: local #1
+1592: 16L
+1593: Func(3,13): GetEquipmentByLayer
+1594: :=
+1595: #
+DestroyItem(barba);
+1596: local #8
+1597: Func(3,14): DestroyItem
+1598: #
+1599: leave block(1)
+var continua :=	YesNo(who, "Voce ainda pode voltar e refazer a aparencia do seu
+1600: decl local #8
+1601: local #1
+1602: "Voce ainda pode voltar e refazer a aparencia do seu personagem caso nao tenha gostado de algo."
+1603: "Sim, quero refazer."
+1604: "Nao, quero desse jeito."
+1605: makelocal
+1606: jmp userfunc @2903
+1607: :=
+1608: #
+if (continua)
+1609: local #8
+1610: if false goto 1616
+HairColor(who, chardata);
+1611: local #1
+1612: local #0
+1613: makelocal
+1614: jmp userfunc @1139
+1615: #
+1616: 0L
+1617: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 627
+function introgump(who)
+1618: pop param 'who'
+var chargump := GFCreateGump();
+1619: decl local #1
+1620: 0L
+1621: 0L
+1622: 0L
+1623: 0L
+1624: makelocal
+1625: jmp userfunc @4489
+1626: :=
+1627: #
+var input;
+1628: decl local #2
+1629: #
+GFClosable(chargump, 0);
+1630: local #1
+1631: 0L
+1632: makelocal
+1633: jmp userfunc @4430
+1634: #
+GFDisposable(chargump, 0);
+1635: local #1
+1636: 0L
+1637: makelocal
+1638: jmp userfunc @4570
+1639: #
+GFResizePic(chargump, 0, 25, 3600, 600, 480);
+1640: local #1
+1641: 0L
+1642: 25L
+1643: 3600L
+1644: 600L
+1645: 480L
+1646: makelocal
+1647: jmp userfunc @4850
+1648: #
+GFResizePic(chargump, 15, 40, 0xA3C, 570, 450);
+1649: local #1
+1650: 15L
+1651: 40L
+1652: 2620L
+1653: 570L
+1654: 450L
+1655: makelocal
+1656: jmp userfunc @4850
+1657: #
+var cfgtext := ReadConfigFile(":fls_core:config/introduction");
+1658: decl local #3
+1659: ":fls_core:config/introduction"
+1660: Func(2,0): ReadConfigFile
+1661: :=
+1662: #
+var textelem := FindConfigElem( cfgtext, "intro1" );
+1663: decl local #4
+1664: local #3
+1665: "intro1"
+1666: Func(2,5): FindConfigElem
+1667: :=
+1668: #
+var lines := GetConfigString(textelem, "Line");
+1669: decl local #5
+1670: local #4
+1671: "Line"
+1672: Func(2,4): GetConfigString
+1673: :=
+1674: #
+GFAddButton(chargump, 510, 450, 4502, 4502, 1, 1 );
+1675: local #1
+1676: 510L
+1677: 450L
+1678: 4502L
+1679: 4502L
+1680: 1L
+1681: 1L
+1682: makelocal
+1683: jmp userfunc @4286
+1684: #
+GFTextLine(chargump, 450, 460, 1153, "Proximo");
+1685: local #1
+1686: 450L
+1687: 460L
+1688: 1153L
+1689: "Proximo"
+1690: makelocal
+1691: jmp userfunc @5043
+1692: #
+GFHTMLArea(chargump, 20, 65, 560, 400, lines, 0, 1);
+1693: local #1
+1694: 20L
+1695: 65L
+1696: 560L
+1697: 400L
+1698: local #5
+1699: 0L
+1700: 1L
+1701: makelocal
+1702: jmp userfunc @4701
+1703: #
+cfgtext := 0;
+1704: 0L
+1705: local3 := 
+input := GFSendGump(who, chargump);
+1706: local #0
+1707: local #1
+1708: makelocal
+1709: jmp userfunc @4907
+1710: local2 := 
+input := input[0];
+1711: local #2
+1712: 0L
+1713: [] 1
+1714: local2 := 
+if (input == 1)
+1715: local #2
+1716: 1L
+1717: ==
+1718: if false goto 1721
+return;
+1719: ""
+1720: return
+1721: 0L
+1722: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 654
+function ItemPickerGump(who, byref chardata)
+1723: pop param byref 'chardata'
+1724: pop param 'who'
+var cfg := ReadConfigFile(":fls_core:config/itempicker");
+1725: decl local #2
+1726: ":fls_core:config/itempicker"
+1727: Func(2,0): ReadConfigFile
+1728: :=
+1729: #
+var secoes := GetConfigStringKeys( cfg );
+1730: decl local #3
+1731: local #2
+1732: Func(2,2): GetConfigStringKeys
+1733: :=
+1734: #
+var chargump := GFCreateGump();
+1735: decl local #4
+1736: 0L
+1737: 0L
+1738: 0L
+1739: 0L
+1740: makelocal
+1741: jmp userfunc @4489
+1742: :=
+1743: #
+var input;
+1744: decl local #5
+1745: #
+GFClosable(chargump, 0);
+1746: local #4
+1747: 0L
+1748: makelocal
+1749: jmp userfunc @4430
+1750: #
+GFDisposable(chargump, 0);
+1751: local #4
+1752: 0L
+1753: makelocal
+1754: jmp userfunc @4570
+1755: #
+GFResizePic(chargump, 0, 25, 3600, 600, 480);
+1756: local #4
+1757: 0L
+1758: 25L
+1759: 3600L
+1760: 600L
+1761: 480L
+1762: makelocal
+1763: jmp userfunc @4850
+1764: #
+GFResizePic(chargump, 15, 40, 0x13BE, 570, 450);
+1765: local #4
+1766: 15L
+1767: 40L
+1768: 5054L
+1769: 570L
+1770: 450L
+1771: makelocal
+1772: jmp userfunc @4850
+1773: #
+GFTextMid(chargump, 15, 45, 600, 1153, "Defina seus Itens Iniciais");
+1774: local #4
+1775: 15L
+1776: 45L
+1777: 600L
+1778: 1153L
+1779: "Defina seus Itens Iniciais"
+1780: makelocal
+1781: jmp userfunc @5092
+1782: #
+GFTextMid(chargump, 15, 60, 600, 1153, "Voce tem " + chardata.Credits + " credi
+1783: local #4
+1784: 15L
+1785: 60L
+1786: 600L
+1787: 1153L
+1788: "Voce tem "
+1789: local #0
+1790: get member 'Credits'
+1791: +
+1792: " creditos."
+1793: +
+1794: makelocal
+1795: jmp userfunc @5092
+1796: #
+GFAddButton(chargump, 510, 450, 4502, 4502, 1, 999 );
+1797: local #4
+1798: 510L
+1799: 450L
+1800: 4502L
+1801: 4502L
+1802: 1L
+1803: 999L
+1804: makelocal
+1805: jmp userfunc @4286
+1806: #
+GFTextLine(chargump, 450, 460, 1153, "Proximo");
+1807: local #4
+1808: 450L
+1809: 460L
+1810: 1153L
+1811: "Proximo"
+1812: makelocal
+1813: jmp userfunc @5043
+1814: #
+var x := 50;
+1815: decl local #6
+1816: 50L
+1817: :=
+1818: #
+var y := 75;
+1819: decl local #7
+1820: 75L
+1821: :=
+1822: #
+var page := 1;
+1823: decl local #8
+1824: 1L
+1825: :=
+1826: #
+foreach entry in secoes
+1827: local #3
+1828: initforeach @1863
+if (entry != "DefaultAmount")
+1829: local #9
+1830: "DefaultAmount"
+1831: <>
+1832: if false goto 1863
+GFTextLine(chargump, x, y, 1153, entry );
+1833: local #4
+1834: local #6
+1835: local #7
+1836: 1153L
+1837: local #9
+1838: makelocal
+1839: jmp userfunc @5043
+1840: #
+GFAddButton(chargump, x-30, y+4, 9762, 9763, GF_PAGE_BTN, page);
+1841: local #4
+1842: local #6
+1843: 30L
+1844: -
+1845: local #7
+1846: 4L
+1847: +
+1848: 9762L
+1849: 9763L
+1850: 0L
+1851: local #8
+1852: makelocal
+1853: jmp userfunc @4286
+1854: #
+y := y + 20;
+1855: local #7
+1856: 20L
+1857: +
+1858: local7 := 
+page := page + 1;
+1859: local #8
+1860: 1L
+1861: +
+1862: local8 := 
+1863: stepforeach @1829
+1864: leave block(3)
+page := 1;
+1865: 1L
+1866: local8 := 
+var itens;
+1867: decl local #9
+1868: #
+x := 170;
+1869: 170L
+1870: local6 := 
+y := 75;
+1871: 75L
+1872: local7 := 
+var itensmap := dictionary;
+1873: decl local #10
+1874: dictionary
+1875: :=
+1876: #
+var itemcusto := dictionary;
+1877: decl local #11
+1878: dictionary
+1879: :=
+1880: #
+var i := 1;
+1881: decl local #12
+1882: 1L
+1883: :=
+1884: #
+var elem;
+1885: decl local #13
+1886: #
+var custo;
+1887: decl local #14
+1888: #
+foreach entry in secoes
+1889: local #3
+1890: initforeach @1981
+if (entry != "DefaultAmount")
+1891: local #15
+1892: "DefaultAmount"
+1893: <>
+1894: if false goto 1981
+GFPage(chargump, page);
+1895: local #4
+1896: local #8
+1897: makelocal
+1898: jmp userfunc @4771
+1899: #
+elem := FindConfigElem(cfg, entry);
+1900: local #2
+1901: local #15
+1902: Func(2,5): FindConfigElem
+1903: local13 := 
+itens := ListConfigElemProps(elem);
+1904: local #13
+1905: Func(2,8): ListConfigElemProps
+1906: local9 := 
+foreach item in itens
+1907: local #9
+1908: initforeach @1971
+GFTextLine(chargump, x, y, 1153, item );
+1909: local #4
+1910: local #6
+1911: local #7
+1912: 1153L
+1913: local #18
+1914: makelocal
+1915: jmp userfunc @5043
+1916: #
+custo := GetConfigInt(elem, item);
+1917: local #13
+1918: local #18
+1919: Func(2,1): GetConfigInt
+1920: local14 := 
+GFTextLine(chargump, x+100, y, 1153, ""+custo );
+1921: local #4
+1922: local #6
+1923: 100L
+1924: +
+1925: local #7
+1926: 1153L
+1927: ""
+1928: local #14
+1929: +
+1930: makelocal
+1931: jmp userfunc @5043
+1932: #
+itemcusto[item] := custo;
+1933: local #11
+1934: local #18
+1935: local #14
+1936: [] := (1) #
+itensmap[i] := item;
+1937: local #10
+1938: local #12
+1939: local #18
+1940: [] := (1) #
+GFAddButton(chargump, x-20, y+4, 2103, 2104, 1, i);
+1941: local #4
+1942: local #6
+1943: 20L
+1944: -
+1945: local #7
+1946: 4L
+1947: +
+1948: 2103L
+1949: 2104L
+1950: 1L
+1951: local #12
+1952: makelocal
+1953: jmp userfunc @4286
+1954: #
+i := i + 1;
+1955: local #12
+1956: 1L
+1957: +
+1958: local12 := 
+y := y + 20;
+1959: local #7
+1960: 20L
+1961: +
+1962: local7 := 
+if ( y >= 450 )
+1963: local #7
+1964: 450L
+1965: >=
+1966: if false goto 1971
+y := 75;
+1967: 75L
+1968: local7 := 
+x := 320;
+1969: 320L
+1970: local6 := 
+1971: stepforeach @1909
+1972: leave block(3)
+x := 170;
+1973: 170L
+1974: local6 := 
+y := 75;
+1975: 75L
+1976: local7 := 
+page := page + 1;
+1977: local #8
+1978: 1L
+1979: +
+1980: local8 := 
+1981: stepforeach @1891
+1982: leave block(3)
+input := GFSendGump(who, chargump);
+1983: local #1
+1984: local #4
+1985: makelocal
+1986: jmp userfunc @4907
+1987: local5 := 
+input := input[0];
+1988: local #5
+1989: 0L
+1990: [] 1
+1991: local5 := 
+if (input == 999)
+1992: local #5
+1993: 999L
+1994: ==
+1995: if false goto 1999
+return;
+1996: ""
+1997: return
+1998: goto 2070
+var buyitem := itensmap[input];
+1999: decl local #0
+2000: local #10
+2001: local #5
+2002: [] 1
+2003: :=
+2004: #
+var custo := itemcusto[buyitem];
+2005: decl local #1
+2006: local #11
+2007: local #15
+2008: [] 1
+2009: :=
+2010: #
+var amt := 1;
+2011: decl local #2
+2012: 1L
+2013: :=
+2014: #
+var amtelem := FindConfigElem(cfg, "DefaultAmount");
+2015: decl local #3
+2016: local #2
+2017: "DefaultAmount"
+2018: Func(2,5): FindConfigElem
+2019: :=
+2020: #
+amt := Cint(GetConfigInt(amtelem, buyitem));
+2021: local #18
+2022: local #15
+2023: Func(2,1): GetConfigInt
+2024: Func(0,0): CInt
+2025: local17 := 
+if ( (amt == 0) || (amt == error) )
+2026: local #17
+2027: 0L
+2028: ==
+2029: local #17
+2030: error
+2031: ==
+2032: ||
+2033: if false goto 2036
+amt := 1;
+2034: 1L
+2035: local17 := 
+if (chardata.Credits >= custo)
+2036: local #0
+2037: get member 'Credits'
+2038: local #16
+2039: >=
+2040: if false goto 2058
+chardata.Credits := chardata.Credits - custo;
+2041: local #0
+2042: local #0
+2043: get member 'Credits'
+2044: local #16
+2045: -
+2046: set member 'Credits' #
+CreateItemInBackpack( who, buyitem, amt );
+2047: local #1
+2048: local #15
+2049: local #17
+2050: Func(3,5): CreateItemInBackpack
+2051: #
+ItemPickerGump(who, chardata);
+2052: local #1
+2053: local #0
+2054: makelocal
+2055: jmp userfunc @1723
+2056: #
+2057: goto 2069
+SendSysMessage(who, "Voce nao tem creditos para comprar isto.");
+2058: local #1
+2059: "Voce nao tem creditos para comprar isto."
+2060: 3L
+2061: 1000L
+2062: Func(3,1): SendSysMessage
+2063: #
+ItemPickerGump(who, chardata);
+2064: local #1
+2065: local #0
+2066: makelocal
+2067: jmp userfunc @1723
+2068: #
+2069: leave block(4)
+2070: 0L
+2071: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 137
+function NameClassRace(who, byref chardata)
+2072: pop param byref 'chardata'
+2073: pop param 'who'
+var chargump := GFCreateGump();
+2074: decl local #2
+2075: 0L
+2076: 0L
+2077: 0L
+2078: 0L
+2079: makelocal
+2080: jmp userfunc @4489
+2081: :=
+2082: #
+var input;
+2083: decl local #3
+2084: #
+var first_name, last_name;
+2085: decl local #4
+2086: #
+2087: decl local #5
+2088: #
+first_name := "";
+2089: ""
+2090: local4 := 
+last_name := "";
+2091: ""
+2092: local5 := 
+GFClosable(chargump, 0);
+2093: local #2
+2094: 0L
+2095: makelocal
+2096: jmp userfunc @4430
+2097: #
+GFDisposable(chargump, 0);
+2098: local #2
+2099: 0L
+2100: makelocal
+2101: jmp userfunc @4570
+2102: #
+GFResizePic(chargump, 0, 25, 3600, 350, 480);	
+2103: local #2
+2104: 0L
+2105: 25L
+2106: 3600L
+2107: 350L
+2108: 480L
+2109: makelocal
+2110: jmp userfunc @4850
+2111: #
+GFResizePic(chargump, 15, 40, 0x13BE, 320, 450);
+2112: local #2
+2113: 15L
+2114: 40L
+2115: 5054L
+2116: 320L
+2117: 450L
+2118: makelocal
+2119: jmp userfunc @4850
+2120: #
+GFTextMid(chargump, 20, 50, 300, 1153, "Criacao do Personagem");
+2121: local #2
+2122: 20L
+2123: 50L
+2124: 300L
+2125: 1153L
+2126: "Criacao do Personagem"
+2127: makelocal
+2128: jmp userfunc @5092
+2129: #
+GFTextLine(chargump, 80, 75, 1153, "Defina o Nome do seu Personagem");
+2130: local #2
+2131: 80L
+2132: 75L
+2133: 1153L
+2134: "Defina o Nome do seu Personagem"
+2135: makelocal
+2136: jmp userfunc @5043
+2137: #
+GFTextLine(chargump, 100, 95, 1153, "Primeiro Nome:");
+2138: local #2
+2139: 100L
+2140: 95L
+2141: 1153L
+2142: "Primeiro Nome:"
+2143: makelocal
+2144: jmp userfunc @5043
+2145: #
+GFGumpPic(chargump, 100, 115, 0x988);
+2146: local #2
+2147: 100L
+2148: 115L
+2149: 2440L
+2150: 0L
+2151: makelocal
+2152: jmp userfunc @4657
+2153: #
+first_name := GFTextEntry(chargump, 105, 117, 150, 25, 1153, first_name, 99);
+2154: local #2
+2155: 105L
+2156: 117L
+2157: 150L
+2158: 25L
+2159: 1153L
+2160: local #4
+2161: 99L
+2162: makelocal
+2163: jmp userfunc @4959
+2164: local4 := 
+GFTextLine(chargump, 100, 135, 1153, "Ultimo Nome:");
+2165: local #2
+2166: 100L
+2167: 135L
+2168: 1153L
+2169: "Ultimo Nome:"
+2170: makelocal
+2171: jmp userfunc @5043
+2172: #
+GFGumpPic(chargump, 100, 155, 0x988);
+2173: local #2
+2174: 100L
+2175: 155L
+2176: 2440L
+2177: 0L
+2178: makelocal
+2179: jmp userfunc @4657
+2180: #
+last_name := GFTextEntry(chargump, 105, 157, 150, 25, 1153, last_name, 98);
+2181: local #2
+2182: 105L
+2183: 157L
+2184: 150L
+2185: 25L
+2186: 1153L
+2187: local #5
+2188: 98L
+2189: makelocal
+2190: jmp userfunc @4959
+2191: local5 := 
+GFTextLine(chargump, 30, 195, 1153, "Escolha a Classe");
+2192: local #2
+2193: 30L
+2194: 195L
+2195: 1153L
+2196: "Escolha a Classe"
+2197: makelocal
+2198: jmp userfunc @5043
+2199: #
+GFTextLine(chargump, 60, 215, 1153, "Combatente");
+2200: local #2
+2201: 60L
+2202: 215L
+2203: 1153L
+2204: "Combatente"
+2205: makelocal
+2206: jmp userfunc @5043
+2207: #
+GFTextLine(chargump, 60, 235, 1153, "Ladino");	
+2208: local #2
+2209: 60L
+2210: 235L
+2211: 1153L
+2212: "Ladino"
+2213: makelocal
+2214: jmp userfunc @5043
+2215: #
+GFTextLine(chargump, 60, 255, 1153, "Sabio");	
+2216: local #2
+2217: 60L
+2218: 255L
+2219: 1153L
+2220: "Sabio"
+2221: makelocal
+2222: jmp userfunc @5043
+2223: #
+GFTextLine(chargump, 60, 275, 1153, "Artifice");	
+2224: local #2
+2225: 60L
+2226: 275L
+2227: 1153L
+2228: "Artifice"
+2229: makelocal
+2230: jmp userfunc @5043
+2231: #
+GFTextLine(chargump, 30, 315, 1153, "Escolha a Raca");
+2232: local #2
+2233: 30L
+2234: 315L
+2235: 1153L
+2236: "Escolha a Raca"
+2237: makelocal
+2238: jmp userfunc @5043
+2239: #
+GFTextLine(chargump, 60, 335, 1153, "Humano");
+2240: local #2
+2241: 60L
+2242: 335L
+2243: 1153L
+2244: "Humano"
+2245: makelocal
+2246: jmp userfunc @5043
+2247: #
+GFTextLine(chargump, 60, 355, 1153, "Elfo");	
+2248: local #2
+2249: 60L
+2250: 355L
+2251: 1153L
+2252: "Elfo"
+2253: makelocal
+2254: jmp userfunc @5043
+2255: #
+GFTextLine(chargump, 60, 375, 1153, "Anao");	
+2256: local #2
+2257: 60L
+2258: 375L
+2259: 1153L
+2260: "Anao"
+2261: makelocal
+2262: jmp userfunc @5043
+2263: #
+GFTextLine(chargump, 60, 395, 1153, "Hobbit");	
+2264: local #2
+2265: 60L
+2266: 395L
+2267: 1153L
+2268: "Hobbit"
+2269: makelocal
+2270: jmp userfunc @5043
+2271: #
+GFTextLine(chargump, 60, 415, 1153, "Drow");	
+2272: local #2
+2273: 60L
+2274: 415L
+2275: 1153L
+2276: "Drow"
+2277: makelocal
+2278: jmp userfunc @5043
+2279: #
+GFTextLine(chargump, 60, 435, 1153, "Orc");	
+2280: local #2
+2281: 60L
+2282: 435L
+2283: 1153L
+2284: "Orc"
+2285: makelocal
+2286: jmp userfunc @5043
+2287: #
+GFSetRadioGroup(chargump, 1);
+2288: local #2
+2289: 1L
+2290: makelocal
+2291: jmp userfunc @4946
+2292: #
+GFRadioButton(chargump, 30, 215, 210, 211, 1, 1);
+2293: local #2
+2294: 30L
+2295: 215L
+2296: 210L
+2297: 211L
+2298: 1L
+2299: 1L
+2300: makelocal
+2301: jmp userfunc @4788
+2302: #
+GFRadioButton(chargump, 30, 235, 210, 211, 0, 2);
+2303: local #2
+2304: 30L
+2305: 235L
+2306: 210L
+2307: 211L
+2308: 0L
+2309: 2L
+2310: makelocal
+2311: jmp userfunc @4788
+2312: #
+GFRadioButton(chargump, 30, 255, 210, 211, 0, 3);
+2313: local #2
+2314: 30L
+2315: 255L
+2316: 210L
+2317: 211L
+2318: 0L
+2319: 3L
+2320: makelocal
+2321: jmp userfunc @4788
+2322: #
+GFRadioButton(chargump, 30, 275, 210, 211, 0, 4);
+2323: local #2
+2324: 30L
+2325: 275L
+2326: 210L
+2327: 211L
+2328: 0L
+2329: 4L
+2330: makelocal
+2331: jmp userfunc @4788
+2332: #
+GFSetRadioGroup(chargump, 2);
+2333: local #2
+2334: 2L
+2335: makelocal
+2336: jmp userfunc @4946
+2337: #
+GFRadioButton(chargump, 30, 335, 210, 211, 1, 10);
+2338: local #2
+2339: 30L
+2340: 335L
+2341: 210L
+2342: 211L
+2343: 1L
+2344: 10L
+2345: makelocal
+2346: jmp userfunc @4788
+2347: #
+GFRadioButton(chargump, 30, 355, 210, 211, 0, 11);
+2348: local #2
+2349: 30L
+2350: 355L
+2351: 210L
+2352: 211L
+2353: 0L
+2354: 11L
+2355: makelocal
+2356: jmp userfunc @4788
+2357: #
+GFRadioButton(chargump, 30, 375, 210, 211, 0, 12);
+2358: local #2
+2359: 30L
+2360: 375L
+2361: 210L
+2362: 211L
+2363: 0L
+2364: 12L
+2365: makelocal
+2366: jmp userfunc @4788
+2367: #
+GFRadioButton(chargump, 30, 395, 210, 211, 0, 13);
+2368: local #2
+2369: 30L
+2370: 395L
+2371: 210L
+2372: 211L
+2373: 0L
+2374: 13L
+2375: makelocal
+2376: jmp userfunc @4788
+2377: #
+GFRadioButton(chargump, 30, 415, 210, 211, 0, 14);
+2378: local #2
+2379: 30L
+2380: 415L
+2381: 210L
+2382: 211L
+2383: 0L
+2384: 14L
+2385: makelocal
+2386: jmp userfunc @4788
+2387: #
+GFAddButton(chargump, 280, 450, 4502, 4502, 1, 20 );
+2388: local #2
+2389: 280L
+2390: 450L
+2391: 4502L
+2392: 4502L
+2393: 1L
+2394: 20L
+2395: makelocal
+2396: jmp userfunc @4286
+2397: #
+GFTextLine(chargump, 240, 460, 1153, "Proximo");
+2398: local #2
+2399: 240L
+2400: 460L
+2401: 1153L
+2402: "Proximo"
+2403: makelocal
+2404: jmp userfunc @5043
+2405: #
+input := GFSendGump(who, chargump);
+2406: local #1
+2407: local #2
+2408: makelocal
+2409: jmp userfunc @4907
+2410: local3 := 
+if (input[0] == 20)
+2411: local #3
+2412: 0L
+2413: [] 1
+2414: 20L
+2415: ==
+2416: if false goto 2786
+first_name := GFExtractData( input, 99);
+2417: local #3
+2418: 99L
+2419: makelocal
+2420: jmp userfunc @4629
+2421: local4 := 
+last_name := GFExtractData( input, 98);
+2422: local #3
+2423: 98L
+2424: makelocal
+2425: jmp userfunc @4629
+2426: local5 := 
+if ( len(first_name) < 3)
+2427: local #4
+2428: Func(0,2): Len
+2429: 3L
+2430: <
+2431: if false goto 2444
+SendSysMessage(who, "Seu primeiro nome deve ter mais de 3 letras.");
+2432: local #1
+2433: "Seu primeiro nome deve ter mais de 3 letras."
+2434: 3L
+2435: 1000L
+2436: Func(3,1): SendSysMessage
+2437: #
+NameClassRace(who,  chardata);
+2438: local #1
+2439: local #0
+2440: makelocal
+2441: jmp userfunc @2072
+2442: #
+2443: goto 2786
+if ( len(last_name) < 3 )
+2444: local #5
+2445: Func(0,2): Len
+2446: 3L
+2447: <
+2448: if false goto 2451
+last_name := "";
+2449: ""
+2450: local5 := 
+chardata.+FirstName := first_name;
+2451: local #0
+2452: "FirstName"
+2453: .+
+2454: local #4
+2455: := #
+chardata.+LastName := last_name;
+2456: local #0
+2457: "LastName"
+2458: .+
+2459: local #5
+2460: := #
+who.name := first_name;
+2461: local #1
+2462: local #4
+2463: set member id 'name' (3) #
+if (last_name)
+2464: local #5
+2465: if false goto 2474
+who.name := who.name + " " + last_name;
+2466: local #1
+2467: local #1
+2468: get member id 'name' (3)
+2469: " "
+2470: +
+2471: local #5
+2472: +
+2473: set member id 'name' (3) #
+var nameinfo := struct;
+2474: decl local #0
+2475: struct
+2476: :=
+2477: #
+nameinfo.+FirstName := first_name;
+2478: local #6
+2479: "FirstName"
+2480: .+
+2481: local #4
+2482: := #
+nameinfo.+LastName := last_name;
+2483: local #6
+2484: "LastName"
+2485: .+
+2486: local #5
+2487: := #
+SetObjProperty(who, "NameInfo", nameinfo);
+2488: local #1
+2489: "NameInfo"
+2490: local #6
+2491: Func(3,4): SetObjProperty
+2492: #
+foreach key in (input.keys)
+2493: local #3
+2494: get member 'keys'
+2495: initforeach @2783
+if (key == 1)
+2496: local #7
+2497: 1L
+2498: ==
+2499: if false goto 2512
+SendSysMessage(who, "Sua classe sera combatente!");
+2500: local #1
+2501: "Sua classe sera combatente!"
+2502: 3L
+2503: 1000L
+2504: Func(3,1): SendSysMessage
+2505: #
+SetObjProperty(who, "classe", "combatente");
+2506: local #1
+2507: "classe"
+2508: "combatente"
+2509: Func(3,4): SetObjProperty
+2510: #
+2511: goto 2783
+elseif (key == 2)
+2512: local #7
+2513: 2L
+2514: ==
+2515: if false goto 2528
+SendSysMessage(who, "Sua classe sera ladino!");
+2516: local #1
+2517: "Sua classe sera ladino!"
+2518: 3L
+2519: 1000L
+2520: Func(3,1): SendSysMessage
+2521: #
+SetObjProperty(who, "classe", "ladino");
+2522: local #1
+2523: "classe"
+2524: "ladino"
+2525: Func(3,4): SetObjProperty
+2526: #
+2527: goto 2783
+elseif (key == 3)
+2528: local #7
+2529: 3L
+2530: ==
+2531: if false goto 2544
+SendSysMessage(who, "Sua classe sera sabio!");
+2532: local #1
+2533: "Sua classe sera sabio!"
+2534: 3L
+2535: 1000L
+2536: Func(3,1): SendSysMessage
+2537: #
+SetObjProperty(who, "classe", "sabio");
+2538: local #1
+2539: "classe"
+2540: "sabio"
+2541: Func(3,4): SetObjProperty
+2542: #
+2543: goto 2783
+elseif (key == 4)
+2544: local #7
+2545: 4L
+2546: ==
+2547: if false goto 2560
+SendSysMessage(who, "Sua classe sera artifice!");
+2548: local #1
+2549: "Sua classe sera artifice!"
+2550: 3L
+2551: 1000L
+2552: Func(3,1): SendSysMessage
+2553: #
+SetObjProperty(who, "classe", "artifice");
+2554: local #1
+2555: "classe"
+2556: "artifice"
+2557: Func(3,4): SetObjProperty
+2558: #
+2559: goto 2783
+elseif (key == 10)
+2560: local #7
+2561: 10L
+2562: ==
+2563: if false goto 2576
+SendSysMessage(who, "Sua raca sera humana!");
+2564: local #1
+2565: "Sua raca sera humana!"
+2566: 3L
+2567: 1000L
+2568: Func(3,1): SendSysMessage
+2569: #
+SetObjProperty(who, "raca", "humano");
+2570: local #1
+2571: "raca"
+2572: "humano"
+2573: Func(3,4): SetObjProperty
+2574: #
+2575: goto 2783
+elseif (key == 11)
+2576: local #7
+2577: 11L
+2578: ==
+2579: if false goto 2592
+SendSysMessage(who, "Sua raca sera elfica!");
+2580: local #1
+2581: "Sua raca sera elfica!"
+2582: 3L
+2583: 1000L
+2584: Func(3,1): SendSysMessage
+2585: #
+SetObjProperty(who, "raca", "elfo");
+2586: local #1
+2587: "raca"
+2588: "elfo"
+2589: Func(3,4): SetObjProperty
+2590: #
+2591: goto 2783
+elseif (key == 12)
+2592: local #7
+2593: 12L
+2594: ==
+2595: if false goto 2608
+SendSysMessage(who, "Sua raca sera ana!");
+2596: local #1
+2597: "Sua raca sera ana!"
+2598: 3L
+2599: 1000L
+2600: Func(3,1): SendSysMessage
+2601: #
+SetObjProperty(who, "raca", "anao");
+2602: local #1
+2603: "raca"
+2604: "anao"
+2605: Func(3,4): SetObjProperty
+2606: #
+2607: goto 2783
+elseif (key == 13)
+2608: local #7
+2609: 13L
+2610: ==
+2611: if false goto 2624
+SendSysMessage(who, "Sua raca sera hobbit!");
+2612: local #1
+2613: "Sua raca sera hobbit!"
+2614: 3L
+2615: 1000L
+2616: Func(3,1): SendSysMessage
+2617: #
+SetObjProperty(who, "raca", "hobbit");
+2618: local #1
+2619: "raca"
+2620: "hobbit"
+2621: Func(3,4): SetObjProperty
+2622: #
+2623: goto 2783
+elseif (key == 14)
+2624: local #7
+2625: 14L
+2626: ==
+2627: if false goto 2640
+SendSysMessage(who, "Sua raca sera drow!");
+2628: local #1
+2629: "Sua raca sera drow!"
+2630: 3L
+2631: 1000L
+2632: Func(3,1): SendSysMessage
+2633: #
+SetObjProperty(who, "raca", "drow");
+2634: local #1
+2635: "raca"
+2636: "drow"
+2637: Func(3,4): SetObjProperty
+2638: #
+2639: goto 2783
+elseif (key == 15)
+2640: local #7
+2641: 15L
+2642: ==
+2643: if false goto 2656
+SetObjProperty(who, "raca", "orc");
+2644: local #1
+2645: "raca"
+2646: "orc"
+2647: Func(3,4): SetObjProperty
+2648: #
+SendSysMessage(who, "Sua raca sera orc!");
+2649: local #1
+2650: "Sua raca sera orc!"
+2651: 3L
+2652: 1000L
+2653: Func(3,1): SendSysMessage
+2654: #
+2655: goto 2783
+elseif (key == 31)
+2656: local #7
+2657: 31L
+2658: ==
+2659: if false goto 2672
+SendSysMessage(who, "Sua tendencia sera Leal e Bom!");
+2660: local #1
+2661: "Sua tendencia sera Leal e Bom!"
+2662: 3L
+2663: 1000L
+2664: Func(3,1): SendSysMessage
+2665: #
+SetObjProperty(who, "tendencia", "Leal e Bom");
+2666: local #1
+2667: "tendencia"
+2668: "Leal e Bom"
+2669: Func(3,4): SetObjProperty
+2670: #
+2671: goto 2783
+elseif (key == 32)
+2672: local #7
+2673: 32L
+2674: ==
+2675: if false goto 2688
+SendSysMessage(who, "Sua tendencia sera Neutro e Bom!");
+2676: local #1
+2677: "Sua tendencia sera Neutro e Bom!"
+2678: 3L
+2679: 1000L
+2680: Func(3,1): SendSysMessage
+2681: #
+SetObjProperty(who, "tendencia", "Neutro e Bom");
+2682: local #1
+2683: "tendencia"
+2684: "Neutro e Bom"
+2685: Func(3,4): SetObjProperty
+2686: #
+2687: goto 2783
+elseif (key == 33)
+2688: local #7
+2689: 33L
+2690: ==
+2691: if false goto 2704
+SendSysMessage(who, "Sua tendencia sera Caotico e Bom!");
+2692: local #1
+2693: "Sua tendencia sera Caotico e Bom!"
+2694: 3L
+2695: 1000L
+2696: Func(3,1): SendSysMessage
+2697: #
+SetObjProperty(who, "tendencia", "Caotico e Bom");
+2698: local #1
+2699: "tendencia"
+2700: "Caotico e Bom"
+2701: Func(3,4): SetObjProperty
+2702: #
+2703: goto 2783
+elseif (key == 34)
+2704: local #7
+2705: 34L
+2706: ==
+2707: if false goto 2720
+SendSysMessage(who, "Sua tendencia sera Leal e Neutro!");
+2708: local #1
+2709: "Sua tendencia sera Leal e Neutro!"
+2710: 3L
+2711: 1000L
+2712: Func(3,1): SendSysMessage
+2713: #
+SetObjProperty(who, "tendencia", "Leal e Neutro");
+2714: local #1
+2715: "tendencia"
+2716: "Leal e Neutro"
+2717: Func(3,4): SetObjProperty
+2718: #
+2719: goto 2783
+elseif (key == 35)
+2720: local #7
+2721: 35L
+2722: ==
+2723: if false goto 2736
+SendSysMessage(who, "Sua tendencia sera Neutro!");
+2724: local #1
+2725: "Sua tendencia sera Neutro!"
+2726: 3L
+2727: 1000L
+2728: Func(3,1): SendSysMessage
+2729: #
+SetObjProperty(who, "tendencia", "Neutro");
+2730: local #1
+2731: "tendencia"
+2732: "Neutro"
+2733: Func(3,4): SetObjProperty
+2734: #
+2735: goto 2783
+elseif (key == 36)
+2736: local #7
+2737: 36L
+2738: ==
+2739: if false goto 2752
+SendSysMessage(who, "Sua tendencia sera Caotico e Neutro!");
+2740: local #1
+2741: "Sua tendencia sera Caotico e Neutro!"
+2742: 3L
+2743: 1000L
+2744: Func(3,1): SendSysMessage
+2745: #
+SetObjProperty(who, "tendencia", "Caotico e Neutro");
+2746: local #1
+2747: "tendencia"
+2748: "Caotico e Neutro"
+2749: Func(3,4): SetObjProperty
+2750: #
+2751: goto 2783
+elseif (key == 37)
+2752: local #7
+2753: 37L
+2754: ==
+2755: if false goto 2768
+SendSysMessage(who, "Sua tendencia sera Leal e Mau!");
+2756: local #1
+2757: "Sua tendencia sera Leal e Mau!"
+2758: 3L
+2759: 1000L
+2760: Func(3,1): SendSysMessage
+2761: #
+SetObjProperty(who, "tendencia", "Leal e Mau");
+2762: local #1
+2763: "tendencia"
+2764: "Leal e Mau"
+2765: Func(3,4): SetObjProperty
+2766: #
+2767: goto 2783
+elseif (key == 38)
+2768: local #7
+2769: 38L
+2770: ==
+2771: if false goto 2783
+SendSysMessage(who, "Sua tendencia sera Neutro e Mau!");
+2772: local #1
+2773: "Sua tendencia sera Neutro e Mau!"
+2774: 3L
+2775: 1000L
+2776: Func(3,1): SendSysMessage
+2777: #
+SetObjProperty(who, "tendencia", "Neutro e Mau");
+2778: local #1
+2779: "tendencia"
+2780: "Neutro e Mau"
+2781: Func(3,4): SetObjProperty
+2782: #
+2783: stepforeach @2496
+2784: leave block(3)
+2785: leave block(1)
+2786: 0L
+2787: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 455
+function skillsgump(who, byref chardata)
+2788: pop param byref 'chardata'
+2789: pop param 'who'
+var skillspoints := 25;
+2790: decl local #2
+2791: 25L
+2792: :=
+2793: #
+var bonus := Cint(AP_GetStat(who, INTELLIGENCE));
+2794: decl local #3
+2795: local #1
+2796: "Intelligence"
+2797: makelocal
+2798: jmp userfunc @3113
+2799: Func(0,0): CInt
+2800: :=
+2801: #
+skillspoints := skillspoints + Cint(bonus/20);
+2802: local #2
+2803: local #3
+2804: 20L
+2805: /
+2806: Func(0,0): CInt
+2807: +
+2808: local2 := 
+if (GetObjProperty(who, "raca") == "humano")
+2809: local #1
+2810: "raca"
+2811: Func(3,3): GetObjProperty
+2812: "humano"
+2813: ==
+2814: if false goto 2819
+skillspoints := skillspoints + 1;
+2815: local #2
+2816: 1L
+2817: +
+2818: local2 := 
+var repeatGump := 0;
+2819: decl local #4
+2820: 0L
+2821: :=
+2822: #
+chardata.+Skills := dictionary;
+2823: local #0
+2824: "Skills"
+2825: .+
+2826: dictionary
+2827: := #
+chardata.+Primarias := 0;
+2828: local #0
+2829: "Primarias"
+2830: .+
+2831: 0L
+2832: := #
+while ( (repeatGump != 1) )
+2833: local #4
+2834: 1L
+2835: <>
+2836: if false goto 2848
+if (!who.connected)
+2837: local #1
+2838: get member id 'connected' (121)
+2839: if true goto 2841
+break;
+2840: goto 2848
+repeatGump := GumpSkills(who, chardata, skillspoints);
+2841: local #1
+2842: local #0
+2843: local #2
+2844: makelocal
+2845: jmp userfunc @5224
+2846: local4 := 
+2847: goto 2833
+var value;
+2848: decl local #5
+2849: #
+var skillsmap := chardata.Skills;
+2850: decl local #6
+2851: local #0
+2852: get member 'Skills'
+2853: :=
+2854: #
+var skillsArray := skillsmap.keys();
+2855: decl local #7
+2856: local #6
+2857: Call Method id keys (#56, 0 params)
+2858: :=
+2859: #
+foreach skill in skillsArray
+2860: local #7
+2861: initforeach @2894
+value := 0;
+2862: 0L
+2863: local5 := 
+if ( chardata.Skills[skill] == 3)
+2864: local #0
+2865: get member 'Skills'
+2866: local #8
+2867: [] 1
+2868: 3L
+2869: ==
+2870: if false goto 2874
+value := 40;
+2871: 40L
+2872: local5 := 
+2873: goto 2886
+elseif (chardata.Skills[skill] == 2)
+2874: local #0
+2875: get member 'Skills'
+2876: local #8
+2877: [] 1
+2878: 2L
+2879: ==
+2880: if false goto 2884
+value := 20;
+2881: 20L
+2882: local5 := 
+2883: goto 2886
+value := 0;
+2884: 0L
+2885: local5 := 
+AP_SetTrueSkill(who, GetTrueSkillName(skill), value);
+2886: local #1
+2887: local #8
+2888: makelocal
+2889: jmp userfunc @4260
+2890: local #5
+2891: makelocal
+2892: jmp userfunc @3168
+2893: #
+2894: stepforeach @2862
+2895: leave block(3)
+chardata.Skills["classskill"] := 3;
+2896: local #0
+2897: get member 'Skills'
+2898: "classskill"
+2899: 3L
+2900: [] := (1) #
+2901: 0L
+2902: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/yesno.inc, Line 36
+function YesNo(mobile, prompt:="", yes_text:="Yes", no_text:="No")
+2903: pop param 'no_text'
+2904: pop param 'yes_text'
+2905: pop param 'prompt'
+2906: pop param 'mobile'
+var yn_gump := GFCreateGump(140, 100);
+2907: decl local #4
+2908: 140L
+2909: 100L
+2910: 0L
+2911: 0L
+2912: makelocal
+2913: jmp userfunc @4489
+2914: :=
+2915: #
+var wraps := struct;
+2916: decl local #5
+2917: struct
+2918: :=
+2919: #
+wraps.+prompt := GFWordWrap(prompt, 360);
+2920: local #5
+2921: "prompt"
+2922: .+
+2923: local #2
+2924: 360L
+2925: makelocal
+2926: jmp userfunc @5117
+2927: := #
+wraps.+yes := GFWordWrap(yes_text, 355);
+2928: local #5
+2929: "yes"
+2930: .+
+2931: local #1
+2932: 355L
+2933: makelocal
+2934: jmp userfunc @5117
+2935: := #
+wraps.+no := GFWordWrap(no_text, 355);
+2936: local #5
+2937: "no"
+2938: .+
+2939: local #0
+2940: 355L
+2941: makelocal
+2942: jmp userfunc @5117
+2943: := #
+var wraps_size := len(wraps.prompt) + len(wraps.yes) + len(wraps.no);
+2944: decl local #6
+2945: local #5
+2946: get member id 'prompt' (133)
+2947: Func(0,2): Len
+2948: local #5
+2949: get member 'yes'
+2950: Func(0,2): Len
+2951: +
+2952: local #5
+2953: get member 'no'
+2954: Func(0,2): Len
+2955: +
+2956: :=
+2957: #
+GFClosable(yn_gump, 0);
+2958: local #4
+2959: 0L
+2960: makelocal
+2961: jmp userfunc @4430
+2962: #
+GFResizePic(yn_gump, 0, 0, GFCfgConst("Defaults", "BackGround"), 400, wraps_siz
+2963: local #4
+2964: 0L
+2965: 0L
+2966: "Defaults"
+2967: "BackGround"
+2968: makelocal
+2969: jmp userfunc @4368
+2970: 400L
+2971: local #6
+2972: 20L
+2973: *
+2974: 80L
+2975: +
+2976: makelocal
+2977: jmp userfunc @4850
+2978: #
+GFResizePic(yn_gump, 15, 15, GFCfgConst("Defaults", "ForeGround"), 370, wraps_s
+2979: local #4
+2980: 15L
+2981: 15L
+2982: "Defaults"
+2983: "ForeGround"
+2984: makelocal
+2985: jmp userfunc @4368
+2986: 370L
+2987: local #6
+2988: 20L
+2989: *
+2990: 50L
+2991: +
+2992: makelocal
+2993: jmp userfunc @4850
+2994: #
+var y_pos := 20;
+2995: decl local #7
+2996: 20L
+2997: :=
+2998: #
+foreach line in (wraps.prompt)
+2999: local #5
+3000: get member id 'prompt' (133)
+3001: initforeach @3017
+GFTextLine(yn_gump, 20, y_pos, 1153, line);
+3002: local #4
+3003: 20L
+3004: local #7
+3005: 1153L
+3006: local #8
+3007: makelocal
+3008: jmp userfunc @5043
+3009: #
+y_pos := y_pos+20;
+3010: local #7
+3011: 20L
+3012: +
+3013: local7 := 
+SleepMS(2);
+3014: 2L
+3015: Func(4,0): Sleepms
+3016: #
+3017: stepforeach @3002
+3018: leave block(3)
+y_pos += 20;
+3019: local #7
+3020: 20L
+3021: +=
+3022: #
+GFAddButton(yn_gump, 20, (y_pos+3), 2117, 2118, GF_CLOSE_BTN, 100);
+3023: local #4
+3024: 20L
+3025: local #7
+3026: 3L
+3027: +
+3028: 2117L
+3029: 2118L
+3030: 1L
+3031: 100L
+3032: makelocal
+3033: jmp userfunc @4286
+3034: #
+foreach line in (wraps.yes);
+3035: local #5
+3036: get member 'yes'
+3037: initforeach @3053
+GFTextLine(yn_gump, 40, y_pos, 1153, line);
+3038: local #4
+3039: 40L
+3040: local #7
+3041: 1153L
+3042: local #8
+3043: makelocal
+3044: jmp userfunc @5043
+3045: #
+y_pos := y_pos+20;
+3046: local #7
+3047: 20L
+3048: +
+3049: local7 := 
+SleepMS(2);
+3050: 2L
+3051: Func(4,0): Sleepms
+3052: #
+3053: stepforeach @3038
+3054: leave block(3)
+y_pos += 20;
+3055: local #7
+3056: 20L
+3057: +=
+3058: #
+GFAddButton(yn_gump, 20, (y_pos+3), 2117, 2118, GF_CLOSE_BTN);
+3059: local #4
+3060: 20L
+3061: local #7
+3062: 3L
+3063: +
+3064: 2117L
+3065: 2118L
+3066: 1L
+3067: 0L
+3068: makelocal
+3069: jmp userfunc @4286
+3070: #
+foreach line in (wraps.no)
+3071: local #5
+3072: get member 'no'
+3073: initforeach @3089
+GFTextLine(yn_gump, 40, y_pos, 1153, line);
+3074: local #4
+3075: 40L
+3076: local #7
+3077: 1153L
+3078: local #8
+3079: makelocal
+3080: jmp userfunc @5043
+3081: #
+y_pos := y_pos+20;
+3082: local #7
+3083: 20L
+3084: +
+3085: local7 := 
+SleepMS(2);
+3086: 2L
+3087: Func(4,0): Sleepms
+3088: #
+3089: stepforeach @3074
+3090: leave block(3)
+var input := GFSendGump(mobile, yn_gump);
+3091: decl local #8
+3092: local #3
+3093: local #4
+3094: makelocal
+3095: jmp userfunc @4907
+3096: :=
+3097: #
+input := input[0];
+3098: local #8
+3099: 0L
+3100: [] 1
+3101: local8 := 
+if ( input == 100 )
+3102: local #8
+3103: 100L
+3104: ==
+3105: if false goto 3109
+return 1;
+3106: 1L
+3107: return
+3108: goto 3111
+return 0;
+3109: 0L
+3110: return
+3111: 0L
+3112: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/stats.inc, Line 29
+function AP_GetStat(who, stat_name)
+3113: pop param 'stat_name'
+3114: pop param 'who'
+return AP_GetTrueStat(who, stat_name)+AP_GetStatMod(who, stat_name);
+3115: local #1
+3116: local #0
+3117: makelocal
+3118: jmp userfunc @3134
+3119: local #1
+3120: local #0
+3121: makelocal
+3122: jmp userfunc @3125
+3123: +
+3124: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/stats.inc, Line 65
+function AP_GetStatMod(who, stat_name)
+3125: pop param 'stat_name'
+3126: pop param 'who'
+return CDbl(GetAttributeTemporaryMod(who, stat_name)) / 10.0;
+3127: local #1
+3128: local #0
+3129: Func(7,1): GetAttributeTemporaryMod
+3130: Func(0,7): CDbl
+3131: 10LF
+3132: /
+3133: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/stats.inc, Line 47
+function AP_GetTrueStat(who, stat_name)
+3134: pop param 'stat_name'
+3135: pop param 'who'
+return CDbl(GetAttributeBaseValue(who, stat_name)) / 10.0;
+3136: local #1
+3137: local #0
+3138: Func(7,0): GetAttributeBaseValue
+3139: Func(0,7): CDbl
+3140: 10LF
+3141: /
+3142: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/attributes.inc, Line 164
+function AP_ListAttributesByType(type:="")
+3143: pop param 'type'
+if ( !type )
+3144: local #0
+3145: if true goto 3155
+var cfg_file := ReadConfigFile(":attributes:attributes");
+3146: decl local #0
+3147: ":attributes:attributes"
+3148: Func(2,0): ReadConfigFile
+3149: :=
+3150: #
+return GetConfigStringKeys(cfg_file);
+3151: local #1
+3152: Func(2,2): GetConfigStringKeys
+3153: return
+3154: leave block(1)
+type := Lower(type);
+3155: local #0
+3156: Func(0,3): Lower
+3157: local0 := 
+var data_elem := AP_GetAttributeDataElem("Categories");
+3158: decl local #1
+3159: "Categories"
+3160: makelocal
+3161: jmp userfunc @5792
+3162: :=
+3163: #
+return data_elem.GetProp(type);
+3164: local #1
+3165: local #0
+3166: Call Method id getprop (#35, 1 params)
+3167: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/skills.inc, Line 88
+function AP_SetTrueSkill(mobile, skill_name, points)
+3168: pop param 'points'
+3169: pop param 'skill_name'
+3170: pop param 'mobile'
+SetAttributeBaseValue(mobile, skill_name, CInt(CDbl(points) * 10.0));
+3171: local #2
+3172: local #1
+3173: local #0
+3174: Func(0,7): CDbl
+3175: 10LF
+3176: *
+3177: Func(0,0): CInt
+3178: Func(7,2): SetAttributeBaseValue
+3179: #
+RecalcVitals(mobile);
+3180: local #2
+3181: 1L
+3182: 1L
+3183: Func(6,0): RecalcVitals
+3184: #
+3185: 0L
+3186: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/stats.inc, Line 85
+function AP_SetTrueStat(mobile, stat_name, points)
+3187: pop param 'points'
+3188: pop param 'stat_name'
+3189: pop param 'mobile'
+SetAttributeBaseValue(mobile, stat_name, CInt(CDbl(points) * 10.0));
+3190: local #2
+3191: local #1
+3192: local #0
+3193: Func(0,7): CDbl
+3194: 10LF
+3195: *
+3196: Func(0,0): CInt
+3197: Func(7,2): SetAttributeBaseValue
+3198: #
+RecalcVitals(mobile);
+3199: local #2
+3200: 1L
+3201: 1L
+3202: Func(6,0): RecalcVitals
+3203: #
+3204: 0L
+3205: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 211
+function FLBeardGump(who, byref new_look)
+3206: pop param byref 'new_look'
+3207: pop param 'who'
+var beardgump := GFCreateGump();
+3208: decl local #2
+3209: 0L
+3210: 0L
+3211: 0L
+3212: 0L
+3213: makelocal
+3214: jmp userfunc @4489
+3215: :=
+3216: #
+GFResizePic(beardgump, 0, 0, 3600, 300, 420);
+3217: local #2
+3218: 0L
+3219: 0L
+3220: 3600L
+3221: 300L
+3222: 420L
+3223: makelocal
+3224: jmp userfunc @4850
+3225: #
+GFResizePic(beardgump, 15, 15, 0x13BE, 270, 390);
+3226: local #2
+3227: 15L
+3228: 15L
+3229: 5054L
+3230: 270L
+3231: 390L
+3232: makelocal
+3233: jmp userfunc @4850
+3234: #
+GFTextMid(beardgump, 15, 25, 270, 1890, "Escolha sua barba");
+3235: local #2
+3236: 15L
+3237: 25L
+3238: 270L
+3239: 1890L
+3240: "Escolha sua barba"
+3241: makelocal
+3242: jmp userfunc @5092
+3243: #
+GFAddButton(beardgump, 220, 370, 2128, 2129, 1, OK_BUTTON);
+3244: local #2
+3245: 220L
+3246: 370L
+3247: 2128L
+3248: 2129L
+3249: 1L
+3250: 10L
+3251: makelocal
+3252: jmp userfunc @4286
+3253: #
+GFResizePic(beardgump, 220, 55, 2620, 50, 280);
+3254: local #2
+3255: 220L
+3256: 55L
+3257: 2620L
+3258: 50L
+3259: 280L
+3260: makelocal
+3261: jmp userfunc @4850
+3262: #
+var config := ReadConfigFile(":fls_core:config/hairtypes");
+3263: decl local #3
+3264: ":fls_core:config/hairtypes"
+3265: Func(2,0): ReadConfigFile
+3266: :=
+3267: #
+var hair;
+3268: decl local #4
+3269: #
+if (GetObjProperty(who, "raca") == "anao")
+3270: local #1
+3271: "raca"
+3272: Func(3,3): GetObjProperty
+3273: "anao"
+3274: ==
+3275: if false goto 3290
+if (who.cmdlevel)
+3276: local #1
+3277: get member id 'cmdlevel' (46)
+3278: if false goto 3285
+SendSysMessage(who, "lendo barbas de anoes");
+3279: local #1
+3280: "lendo barbas de anoes"
+3281: 3L
+3282: 1000L
+3283: Func(3,1): SendSysMessage
+3284: #
+hair := config["facialhairdwarf"];
+3285: local #3
+3286: "facialhairdwarf"
+3287: [] 1
+3288: local4 := 
+3289: goto 3294
+hair := config["facialhair"];
+3290: local #3
+3291: "facialhair"
+3292: [] 1
+3293: local4 := 
+var hairgumps := config["hairgump"];
+3294: decl local #5
+3295: local #3
+3296: "hairgump"
+3297: [] 1
+3298: :=
+3299: #
+GFSetRadioGroup(beardgump, 1);
+3300: local #2
+3301: 1L
+3302: makelocal
+3303: jmp userfunc @4946
+3304: #
+var y_pos := 65;
+3305: decl local #6
+3306: 65L
+3307: :=
+3308: #
+foreach style in GetConfigStringArray(hair, "style")
+3309: local #4
+3310: "style"
+3311: Func(2,3): GetConfigStringArray
+3312: initforeach @3418
+style := splitwords(style);
+3313: local #7
+3314: " "
+3315: -1L
+3316: Func(0,5): SplitWords
+3317: local7 := 
+var hairname := style[1];
+3318: decl local #0
+3319: local #7
+3320: 1L
+3321: [] 1
+3322: :=
+3323: #
+var hairgraphic := cint(style[2]);
+3324: decl local #1
+3325: local #7
+3326: 2L
+3327: [] 1
+3328: Func(0,0): CInt
+3329: :=
+3330: #
+while (hairname["_"])
+3331: local #10
+3332: "_"
+3333: [] 1
+3334: if false goto 3340
+hairname["_"] := " ";
+3335: local #10
+3336: "_"
+3337: " "
+3338: [] := (1) #
+3339: goto 3331
+if (hairgraphic == new_look.BeardStyle)
+3340: local #11
+3341: local #0
+3342: get member 'BeardStyle'
+3343: ==
+3344: if false goto 3356
+GFRadioButton(beardgump, 20, y_pos, 2151, 2154, 1, hairgraphic);
+3345: local #2
+3346: 20L
+3347: local #6
+3348: 2151L
+3349: 2154L
+3350: 1L
+3351: local #11
+3352: makelocal
+3353: jmp userfunc @4788
+3354: #
+3355: goto 3366
+GFRadioButton(beardgump, 20, y_pos, 2151, 2154, 0, hairgraphic);
+3356: local #2
+3357: 20L
+3358: local #6
+3359: 2151L
+3360: 2154L
+3361: 0L
+3362: local #11
+3363: makelocal
+3364: jmp userfunc @4788
+3365: #
+GFTextline(beardgump, 55, y_pos+5, 1890, hairname);
+3366: local #2
+3367: 55L
+3368: local #6
+3369: 5L
+3370: +
+3371: 1890L
+3372: local #10
+3373: makelocal
+3374: jmp userfunc @5043
+3375: #
+var gumppic := GetConfigString(hairgumps, style[1]);
+3376: decl local #2
+3377: local #5
+3378: local #7
+3379: 1L
+3380: [] 1
+3381: Func(2,4): GetConfigString
+3382: :=
+3383: #
+GFGumpPic(beardgump, 155, y_pos-65, gumppic);
+3384: local #2
+3385: 155L
+3386: local #6
+3387: 65L
+3388: -
+3389: local #12
+3390: 0L
+3391: makelocal
+3392: jmp userfunc @4657
+3393: #
+if (who.cmdlevel)
+3394: local #1
+3395: get member id 'cmdlevel' (46)
+3396: if false goto 3413
+SendSysMessage(who, "nome do estilo: " + style + " gump: " + gumppic + " id " +
+3397: local #1
+3398: "nome do estilo: "
+3399: local #7
+3400: +
+3401: " gump: "
+3402: +
+3403: local #12
+3404: +
+3405: " id "
+3406: +
+3407: local #11
+3408: +
+3409: 3L
+3410: 1000L
+3411: Func(3,1): SendSysMessage
+3412: #
+y_pos := y_pos + 30;
+3413: local #6
+3414: 30L
+3415: +
+3416: local6 := 
+3417: leave block(3)
+3418: stepforeach @3313
+3419: leave block(3)
+if (!new_look.BeardStyle || new_look.BeardStyle == 1)
+3420: local #0
+3421: get member 'BeardStyle'
+3422: !
+3423: local #0
+3424: get member 'BeardStyle'
+3425: 1L
+3426: ==
+3427: ||
+3428: if false goto 3440
+GFRadioButton(beardgump, 20, y_pos, 2151, 2154, 1, 1);
+3429: local #2
+3430: 20L
+3431: local #6
+3432: 2151L
+3433: 2154L
+3434: 1L
+3435: 1L
+3436: makelocal
+3437: jmp userfunc @4788
+3438: #
+3439: goto 3450
+GFRadioButton(beardgump, 20, y_pos, 2151, 2154, 0, 1);
+3440: local #2
+3441: 20L
+3442: local #6
+3443: 2151L
+3444: 2154L
+3445: 0L
+3446: 1L
+3447: makelocal
+3448: jmp userfunc @4788
+3449: #
+GFTextline(beardgump, 55, y_pos+5, 1890, "Bald");
+3450: local #2
+3451: 55L
+3452: local #6
+3453: 5L
+3454: +
+3455: 1890L
+3456: "Bald"
+3457: makelocal
+3458: jmp userfunc @5043
+3459: #
+var input := GFSendGump(who, beardgump);
+3460: decl local #7
+3461: local #1
+3462: local #2
+3463: makelocal
+3464: jmp userfunc @4907
+3465: :=
+3466: #
+if (input[0] == OK_BUTTON)
+3467: local #7
+3468: 0L
+3469: [] 1
+3470: 10L
+3471: ==
+3472: if false goto 3490
+foreach key in (input.keys)
+3473: local #7
+3474: get member 'keys'
+3475: initforeach @3488
+if ( (key != OK_BUTTON) && (key > 0))
+3476: local #8
+3477: 10L
+3478: <>
+3479: local #8
+3480: 0L
+3481: >
+3482: &&
+3483: if false goto 3488
+new_look.BeardStyle := key;
+3484: local #0
+3485: local #8
+3486: set member 'BeardStyle' #
+break;
+3487: goto 3489
+3488: stepforeach @3476
+3489: leave block(3)
+3490: 0L
+3491: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 9
+function FLHairDye(who, byref new_look)
+3492: pop param byref 'new_look'
+3493: pop param 'who'
+var skingump := GFCreateGump();
+3494: decl local #2
+3495: 0L
+3496: 0L
+3497: 0L
+3498: 0L
+3499: makelocal
+3500: jmp userfunc @4489
+3501: :=
+3502: #
+GFResizePic(skingump, 0, 0, 3600, 300, 420);
+3503: local #2
+3504: 0L
+3505: 0L
+3506: 3600L
+3507: 300L
+3508: 420L
+3509: makelocal
+3510: jmp userfunc @4850
+3511: #
+GFResizePic(skingump, 15, 15, 0x13BE, 270, 390);
+3512: local #2
+3513: 15L
+3514: 15L
+3515: 5054L
+3516: 270L
+3517: 390L
+3518: makelocal
+3519: jmp userfunc @4850
+3520: #
+GFTextMid(skingump, 15, 25, 270, 1890, "Escolha a Cor do Cabelo");
+3521: local #2
+3522: 15L
+3523: 25L
+3524: 270L
+3525: 1890L
+3526: "Escolha a Cor do Cabelo"
+3527: makelocal
+3528: jmp userfunc @5092
+3529: #
+GFAddButton(skingump, 220, 370, 2128, 2129, 1, OK_BUTTON);
+3530: local #2
+3531: 220L
+3532: 370L
+3533: 2128L
+3534: 2129L
+3535: 1L
+3536: 10L
+3537: makelocal
+3538: jmp userfunc @4286
+3539: #
+var skin_cfg := ReadConfigFile(":fls_core:config/racas");
+3540: decl local #3
+3541: ":fls_core:config/racas"
+3542: Func(2,0): ReadConfigFile
+3543: :=
+3544: #
+if ( !skin_cfg )
+3545: local #3
+3546: if true goto 3556
+SendSysMessage(who, "Error: Could not open :fls_core:config/racas.cfg -> "+skin
+3547: local #1
+3548: "Error: Could not open :fls_core:config/racas.cfg -> "
+3549: local #3
+3550: get member 'errortext'
+3551: +
+3552: 3L
+3553: 1000L
+3554: Func(3,1): SendSysMessage
+3555: #
+skin_cfg := skin_cfg[cstr(GetObjProperty(who, "raca"))];
+3556: local #3
+3557: local #1
+3558: "raca"
+3559: Func(3,3): GetObjProperty
+3560: Func(0,1): CStr
+3561: [] 1
+3562: local3 := 
+GFPage(skingump, 1);
+3563: local #2
+3564: 1L
+3565: makelocal
+3566: jmp userfunc @4771
+3567: #
+var y_pos := 60;
+3568: decl local #4
+3569: 60L
+3570: :=
+3571: #
+var x_pos := 20;
+3572: decl local #5
+3573: 20L
+3574: :=
+3575: #
+var place := 1;
+3576: decl local #6
+3577: 1L
+3578: :=
+3579: #
+var page_num := 1;
+3580: decl local #7
+3581: 1L
+3582: :=
+3583: #
+var line := 1;
+3584: decl local #8
+3585: 1L
+3586: :=
+3587: #
+foreach color in GetConfigStringArray(skin_cfg, "HairColor");
+3588: local #3
+3589: "HairColor"
+3590: Func(2,3): GetConfigStringArray
+3591: initforeach @3701
+color := CInt(color);
+3592: local #9
+3593: Func(0,0): CInt
+3594: local9 := 
+if (color == new_look.SkinColor)
+3595: local #9
+3596: local #0
+3597: get member 'SkinColor'
+3598: ==
+3599: if false goto 3611
+GFRadioButton(skingump, x_pos, y_pos, 9727, 9730, 1, color);
+3600: local #2
+3601: local #5
+3602: local #4
+3603: 9727L
+3604: 9730L
+3605: 1L
+3606: local #9
+3607: makelocal
+3608: jmp userfunc @4788
+3609: #
+3610: goto 3621
+GFRadioButton(skingump, x_pos, y_pos, 9727, 9730, 0, color);
+3611: local #2
+3612: local #5
+3613: local #4
+3614: 9727L
+3615: 9730L
+3616: 0L
+3617: local #9
+3618: makelocal
+3619: jmp userfunc @4788
+3620: #
+GFTextline(skingump, x_pos+35, y_pos+5, color-1, "Hair");
+3621: local #2
+3622: local #5
+3623: 35L
+3624: +
+3625: local #4
+3626: 5L
+3627: +
+3628: local #9
+3629: 1L
+3630: -
+3631: "Hair"
+3632: makelocal
+3633: jmp userfunc @5043
+3634: #
+if (place < 3)
+3635: local #6
+3636: 3L
+3637: <
+3638: if false goto 3648
+x_pos := x_pos+80;
+3639: local #5
+3640: 80L
+3641: +
+3642: local5 := 
+place := place+1;
+3643: local #6
+3644: 1L
+3645: +
+3646: local6 := 
+3647: goto 3701
+place := 1;
+3648: 1L
+3649: local6 := 
+x_pos := 20;
+3650: 20L
+3651: local5 := 
+y_pos := y_pos+30;
+3652: local #4
+3653: 30L
+3654: +
+3655: local4 := 
+line := line+1;
+3656: local #8
+3657: 1L
+3658: +
+3659: local8 := 
+if (line > 10)
+3660: local #8
+3661: 10L
+3662: >
+3663: if false goto 3701
+GFAddButton(skingump, 265, 340, 2648, 2649, GF_PAGE_BTN, page_num+1);
+3664: local #2
+3665: 265L
+3666: 340L
+3667: 2648L
+3668: 2649L
+3669: 0L
+3670: local #7
+3671: 1L
+3672: +
+3673: makelocal
+3674: jmp userfunc @4286
+3675: #
+page_num := page_num+1;
+3676: local #7
+3677: 1L
+3678: +
+3679: local7 := 
+GFPage(skingump, page_num);
+3680: local #2
+3681: local #7
+3682: makelocal
+3683: jmp userfunc @4771
+3684: #
+GFAddButton(skingump, 265, 60, 2650, 2651, GF_PAGE_BTN, page_num-1);
+3685: local #2
+3686: 265L
+3687: 60L
+3688: 2650L
+3689: 2651L
+3690: 0L
+3691: local #7
+3692: 1L
+3693: -
+3694: makelocal
+3695: jmp userfunc @4286
+3696: #
+line := 1;
+3697: 1L
+3698: local8 := 
+y_pos := 60;
+3699: 60L
+3700: local4 := 
+3701: stepforeach @3592
+3702: leave block(3)
+var input := GFSendGump(who, skingump);
+3703: decl local #9
+3704: local #1
+3705: local #2
+3706: makelocal
+3707: jmp userfunc @4907
+3708: :=
+3709: #
+if (input[0] == OK_BUTTON)
+3710: local #9
+3711: 0L
+3712: [] 1
+3713: 10L
+3714: ==
+3715: if false goto 3733
+foreach key in (input.keys)
+3716: local #9
+3717: get member 'keys'
+3718: initforeach @3731
+if ( (key != OK_BUTTON) && (key > 0))
+3719: local #10
+3720: 10L
+3721: <>
+3722: local #10
+3723: 0L
+3724: >
+3725: &&
+3726: if false goto 3731
+new_look.HairColor := key;
+3727: local #0
+3728: local #10
+3729: set member 'HairColor' #
+break;
+3730: goto 3732
+3731: stepforeach @3719
+3732: leave block(3)
+3733: 0L
+3734: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 143
+function FLHairGump(who, byref new_look)
+3735: pop param byref 'new_look'
+3736: pop param 'who'
+var hairgump := GFCreateGump();
+3737: decl local #2
+3738: 0L
+3739: 0L
+3740: 0L
+3741: 0L
+3742: makelocal
+3743: jmp userfunc @4489
+3744: :=
+3745: #
+GFResizePic(hairgump, 0, 0, 3600, 300, 420);
+3746: local #2
+3747: 0L
+3748: 0L
+3749: 3600L
+3750: 300L
+3751: 420L
+3752: makelocal
+3753: jmp userfunc @4850
+3754: #
+GFResizePic(hairgump, 15, 15, 0x13BE, 270, 390);
+3755: local #2
+3756: 15L
+3757: 15L
+3758: 5054L
+3759: 270L
+3760: 390L
+3761: makelocal
+3762: jmp userfunc @4850
+3763: #
+GFTextMid(hairgump, 15, 25, 270, 1890, "Escolha seu Cabelo");
+3764: local #2
+3765: 15L
+3766: 25L
+3767: 270L
+3768: 1890L
+3769: "Escolha seu Cabelo"
+3770: makelocal
+3771: jmp userfunc @5092
+3772: #
+GFAddButton(hairgump, 220, 370, 2128, 2129, 1, OK_BUTTON);
+3773: local #2
+3774: 220L
+3775: 370L
+3776: 2128L
+3777: 2129L
+3778: 1L
+3779: 10L
+3780: makelocal
+3781: jmp userfunc @4286
+3782: #
+GFResizePic(hairgump, 220, 55, 2620, 50, 310);
+3783: local #2
+3784: 220L
+3785: 55L
+3786: 2620L
+3787: 50L
+3788: 310L
+3789: makelocal
+3790: jmp userfunc @4850
+3791: #
+var config := ReadConfigFile(":fls_core:config/hairtypes");
+3792: decl local #3
+3793: ":fls_core:config/hairtypes"
+3794: Func(2,0): ReadConfigFile
+3795: :=
+3796: #
+var hair;
+3797: decl local #4
+3798: #
+if ( (GetObjProperty(who, "raca") == "anao") || (GetObjProperty(who, "raca") ==
+3799: local #1
+3800: "raca"
+3801: Func(3,3): GetObjProperty
+3802: "anao"
+3803: ==
+3804: local #1
+3805: "raca"
+3806: Func(3,3): GetObjProperty
+3807: "hobbit"
+3808: ==
+3809: ||
+3810: if false goto 3816
+hair := config["headdwarf"];
+3811: local #3
+3812: "headdwarf"
+3813: [] 1
+3814: local4 := 
+3815: goto 3820
+hair := config["head"];
+3816: local #3
+3817: "head"
+3818: [] 1
+3819: local4 := 
+var hairgumps := config["hairgump"];
+3820: decl local #5
+3821: local #3
+3822: "hairgump"
+3823: [] 1
+3824: :=
+3825: #
+GFSetRadioGroup(hairgump, 1);
+3826: local #2
+3827: 1L
+3828: makelocal
+3829: jmp userfunc @4946
+3830: #
+var y_pos := 65;
+3831: decl local #6
+3832: 65L
+3833: :=
+3834: #
+foreach style in GetConfigStringArray(hair, "style")
+3835: local #4
+3836: "style"
+3837: Func(2,3): GetConfigStringArray
+3838: initforeach @3935
+style := splitwords(style);
+3839: local #7
+3840: " "
+3841: -1L
+3842: Func(0,5): SplitWords
+3843: local7 := 
+var hairname := style[1];
+3844: decl local #0
+3845: local #7
+3846: 1L
+3847: [] 1
+3848: :=
+3849: #
+var hairgraphic := cint(style[2]);
+3850: decl local #1
+3851: local #7
+3852: 2L
+3853: [] 1
+3854: Func(0,0): CInt
+3855: :=
+3856: #
+while (hairname["_"])
+3857: local #10
+3858: "_"
+3859: [] 1
+3860: if false goto 3866
+hairname["_"] := " ";
+3861: local #10
+3862: "_"
+3863: " "
+3864: [] := (1) #
+3865: goto 3857
+if (hairgraphic == new_look.HairStyle)
+3866: local #11
+3867: local #0
+3868: get member 'HairStyle'
+3869: ==
+3870: if false goto 3882
+GFRadioButton(hairgump, 20, y_pos, 2151, 2154, 1, hairgraphic);
+3871: local #2
+3872: 20L
+3873: local #6
+3874: 2151L
+3875: 2154L
+3876: 1L
+3877: local #11
+3878: makelocal
+3879: jmp userfunc @4788
+3880: #
+3881: goto 3892
+GFRadioButton(hairgump, 20, y_pos, 2151, 2154, 0, hairgraphic);
+3882: local #2
+3883: 20L
+3884: local #6
+3885: 2151L
+3886: 2154L
+3887: 0L
+3888: local #11
+3889: makelocal
+3890: jmp userfunc @4788
+3891: #
+GFTextline(hairgump, 55, y_pos+5, 1890, hairname);
+3892: local #2
+3893: 55L
+3894: local #6
+3895: 5L
+3896: +
+3897: 1890L
+3898: local #10
+3899: makelocal
+3900: jmp userfunc @5043
+3901: #
+var gumppic := GetConfigStringArray(hairgumps, style[1]);
+3902: decl local #2
+3903: local #5
+3904: local #7
+3905: 1L
+3906: [] 1
+3907: Func(2,3): GetConfigStringArray
+3908: :=
+3909: #
+gumppic := splitwords(gumppic);
+3910: local #12
+3911: " "
+3912: -1L
+3913: Func(0,5): SplitWords
+3914: local12 := 
+GFGumpPic(hairgump, 155, y_pos-50, gumppic[new_look.Gender+2]);
+3915: local #2
+3916: 155L
+3917: local #6
+3918: 50L
+3919: -
+3920: local #12
+3921: local #0
+3922: get member id 'gender' (28)
+3923: 2L
+3924: +
+3925: [] 1
+3926: 0L
+3927: makelocal
+3928: jmp userfunc @4657
+3929: #
+y_pos := y_pos + 30;
+3930: local #6
+3931: 30L
+3932: +
+3933: local6 := 
+3934: leave block(3)
+3935: stepforeach @3839
+3936: leave block(3)
+if ( !new_look.HairStyle || new_look.HairStyle == 1 )
+3937: local #0
+3938: get member 'HairStyle'
+3939: !
+3940: local #0
+3941: get member 'HairStyle'
+3942: 1L
+3943: ==
+3944: ||
+3945: if false goto 3957
+GFRadioButton(hairgump, 20, y_pos, 2151, 2154, 1, 1);
+3946: local #2
+3947: 20L
+3948: local #6
+3949: 2151L
+3950: 2154L
+3951: 1L
+3952: 1L
+3953: makelocal
+3954: jmp userfunc @4788
+3955: #
+3956: goto 3967
+GFRadioButton(hairgump, 20, y_pos, 2151, 2154, 0, 1);
+3957: local #2
+3958: 20L
+3959: local #6
+3960: 2151L
+3961: 2154L
+3962: 0L
+3963: 1L
+3964: makelocal
+3965: jmp userfunc @4788
+3966: #
+GFTextline(hairgump, 55, y_pos+5, 1890, "Bald");
+3967: local #2
+3968: 55L
+3969: local #6
+3970: 5L
+3971: +
+3972: 1890L
+3973: "Bald"
+3974: makelocal
+3975: jmp userfunc @5043
+3976: #
+var input := GFSendGump(who, hairgump);
+3977: decl local #7
+3978: local #1
+3979: local #2
+3980: makelocal
+3981: jmp userfunc @4907
+3982: :=
+3983: #
+if (input[0] == OK_BUTTON)
+3984: local #7
+3985: 0L
+3986: [] 1
+3987: 10L
+3988: ==
+3989: if false goto 4015
+foreach key in (input.keys)
+3990: local #7
+3991: get member 'keys'
+3992: initforeach @4013
+if ( (key != OK_BUTTON) && (key > 0))
+3993: local #8
+3994: 10L
+3995: <>
+3996: local #8
+3997: 0L
+3998: >
+3999: &&
+4000: if false goto 4013
+sendsysmessage(who, " "+ key);
+4001: local #1
+4002: " "
+4003: local #8
+4004: +
+4005: 3L
+4006: 1000L
+4007: Func(3,1): SendSysMessage
+4008: #
+new_look.HairStyle := key;
+4009: local #0
+4010: local #8
+4011: set member 'HairStyle' #
+break;
+4012: goto 4014
+4013: stepforeach @3993
+4014: leave block(3)
+4015: 0L
+4016: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 76
+function FLSkinGump(who, byref new_look)
+4017: pop param byref 'new_look'
+4018: pop param 'who'
+var skingump := GFCreateGump();
+4019: decl local #2
+4020: 0L
+4021: 0L
+4022: 0L
+4023: 0L
+4024: makelocal
+4025: jmp userfunc @4489
+4026: :=
+4027: #
+GFResizePic(skingump, 0, 0, 3600, 300, 420);
+4028: local #2
+4029: 0L
+4030: 0L
+4031: 3600L
+4032: 300L
+4033: 420L
+4034: makelocal
+4035: jmp userfunc @4850
+4036: #
+GFResizePic(skingump, 15, 15, 0x13BE, 270, 390);
+4037: local #2
+4038: 15L
+4039: 15L
+4040: 5054L
+4041: 270L
+4042: 390L
+4043: makelocal
+4044: jmp userfunc @4850
+4045: #
+GFTextMid(skingump, 15, 25, 270, 1890, "Escolha a Cor de Pele");
+4046: local #2
+4047: 15L
+4048: 25L
+4049: 270L
+4050: 1890L
+4051: "Escolha a Cor de Pele"
+4052: makelocal
+4053: jmp userfunc @5092
+4054: #
+GFAddButton(skingump, 220, 370, 2128, 2129, 1, OK_BUTTON);
+4055: local #2
+4056: 220L
+4057: 370L
+4058: 2128L
+4059: 2129L
+4060: 1L
+4061: 10L
+4062: makelocal
+4063: jmp userfunc @4286
+4064: #
+var skin_cfg := ReadConfigFile(":fls_core:config/racas");
+4065: decl local #3
+4066: ":fls_core:config/racas"
+4067: Func(2,0): ReadConfigFile
+4068: :=
+4069: #
+if ( !skin_cfg )
+4070: local #3
+4071: if true goto 4081
+SendSysMessage(who, "Error: Could not open :fls_core:config/racas.cfg -> "+skin
+4072: local #1
+4073: "Error: Could not open :fls_core:config/racas.cfg -> "
+4074: local #3
+4075: get member 'errortext'
+4076: +
+4077: 3L
+4078: 1000L
+4079: Func(3,1): SendSysMessage
+4080: #
+skin_cfg := skin_cfg[cstr(GetObjProperty(who, "raca"))];
+4081: local #3
+4082: local #1
+4083: "raca"
+4084: Func(3,3): GetObjProperty
+4085: Func(0,1): CStr
+4086: [] 1
+4087: local3 := 
+GFPage(skingump, 1);
+4088: local #2
+4089: 1L
+4090: makelocal
+4091: jmp userfunc @4771
+4092: #
+var y_pos := 60;
+4093: decl local #4
+4094: 60L
+4095: :=
+4096: #
+var x_pos := 20;
+4097: decl local #5
+4098: 20L
+4099: :=
+4100: #
+var place := 1;
+4101: decl local #6
+4102: 1L
+4103: :=
+4104: #
+var page_num := 1;
+4105: decl local #7
+4106: 1L
+4107: :=
+4108: #
+var line := 1;
+4109: decl local #8
+4110: 1L
+4111: :=
+4112: #
+foreach color in GetConfigStringArray(skin_cfg, "SkinColor");
+4113: local #3
+4114: "SkinColor"
+4115: Func(2,3): GetConfigStringArray
+4116: initforeach @4226
+color := CInt(color);
+4117: local #9
+4118: Func(0,0): CInt
+4119: local9 := 
+if (color == new_look.SkinColor)
+4120: local #9
+4121: local #0
+4122: get member 'SkinColor'
+4123: ==
+4124: if false goto 4136
+GFRadioButton(skingump, x_pos, y_pos, 9727, 9730, 1, color);
+4125: local #2
+4126: local #5
+4127: local #4
+4128: 9727L
+4129: 9730L
+4130: 1L
+4131: local #9
+4132: makelocal
+4133: jmp userfunc @4788
+4134: #
+4135: goto 4146
+GFRadioButton(skingump, x_pos, y_pos, 9727, 9730, 0, color);
+4136: local #2
+4137: local #5
+4138: local #4
+4139: 9727L
+4140: 9730L
+4141: 0L
+4142: local #9
+4143: makelocal
+4144: jmp userfunc @4788
+4145: #
+GFTextline(skingump, x_pos+35, y_pos+5, color-1, "Skin");
+4146: local #2
+4147: local #5
+4148: 35L
+4149: +
+4150: local #4
+4151: 5L
+4152: +
+4153: local #9
+4154: 1L
+4155: -
+4156: "Skin"
+4157: makelocal
+4158: jmp userfunc @5043
+4159: #
+if (place < 3)
+4160: local #6
+4161: 3L
+4162: <
+4163: if false goto 4173
+x_pos := x_pos+80;
+4164: local #5
+4165: 80L
+4166: +
+4167: local5 := 
+place := place+1;
+4168: local #6
+4169: 1L
+4170: +
+4171: local6 := 
+4172: goto 4226
+place := 1;
+4173: 1L
+4174: local6 := 
+x_pos := 20;
+4175: 20L
+4176: local5 := 
+y_pos := y_pos+30;
+4177: local #4
+4178: 30L
+4179: +
+4180: local4 := 
+line := line+1;
+4181: local #8
+4182: 1L
+4183: +
+4184: local8 := 
+if (line > 10)
+4185: local #8
+4186: 10L
+4187: >
+4188: if false goto 4226
+GFAddButton(skingump, 265, 340, 2648, 2649, GF_PAGE_BTN, page_num+1);
+4189: local #2
+4190: 265L
+4191: 340L
+4192: 2648L
+4193: 2649L
+4194: 0L
+4195: local #7
+4196: 1L
+4197: +
+4198: makelocal
+4199: jmp userfunc @4286
+4200: #
+page_num := page_num+1;
+4201: local #7
+4202: 1L
+4203: +
+4204: local7 := 
+GFPage(skingump, page_num);
+4205: local #2
+4206: local #7
+4207: makelocal
+4208: jmp userfunc @4771
+4209: #
+GFAddButton(skingump, 265, 60, 2650, 2651, GF_PAGE_BTN, page_num-1);
+4210: local #2
+4211: 265L
+4212: 60L
+4213: 2650L
+4214: 2651L
+4215: 0L
+4216: local #7
+4217: 1L
+4218: -
+4219: makelocal
+4220: jmp userfunc @4286
+4221: #
+line := 1;
+4222: 1L
+4223: local8 := 
+y_pos := 60;
+4224: 60L
+4225: local4 := 
+4226: stepforeach @4117
+4227: leave block(3)
+var input := GFSendGump(who, skingump);
+4228: decl local #9
+4229: local #1
+4230: local #2
+4231: makelocal
+4232: jmp userfunc @4907
+4233: :=
+4234: #
+if (input[0] == OK_BUTTON)
+4235: local #9
+4236: 0L
+4237: [] 1
+4238: 10L
+4239: ==
+4240: if false goto 4258
+foreach key in (input.keys)
+4241: local #9
+4242: get member 'keys'
+4243: initforeach @4256
+if ( (key != OK_BUTTON) && (key > 0))
+4244: local #10
+4245: 10L
+4246: <>
+4247: local #10
+4248: 0L
+4249: >
+4250: &&
+4251: if false goto 4256
+new_look.SkinColor := key;
+4252: local #0
+4253: local #10
+4254: set member 'SkinColor' #
+break;
+4255: goto 4257
+4256: stepforeach @4244
+4257: leave block(3)
+4258: 0L
+4259: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 415
+function GetTrueSkillName(skill)
+4260: pop param 'skill'
+if (skill == "Evidance")
+4261: local #0
+4262: "Evidance"
+4263: ==
+4264: if false goto 4268
+return "EvaluatingIntelligence";
+4265: "EvaluatingIntelligence"
+4266: return
+4267: goto 4284
+elseif ( skill == "ItemLore")
+4268: local #0
+4269: "ItemLore"
+4270: ==
+4271: if false goto 4275
+return "ArmsLore";
+4272: "ArmsLore"
+4273: return
+4274: goto 4284
+elseif ( skill == "BowCraft");
+4275: local #0
+4276: "BowCraft"
+4277: ==
+4278: if false goto 4282
+return "BowcraftFletching";
+4279: "BowcraftFletching"
+4280: return
+4281: goto 4284
+return skill;
+4282: local #0
+4283: return
+4284: 0L
+4285: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 177
+function GFAddButton(byref gump, x, y, off_id, on_id, btn_type:=GF_PAGE_BTN, bt
+4286: pop param 'btn_value'
+4287: pop param 'btn_type'
+4288: pop param 'on_id'
+4289: pop param 'off_id'
+4290: pop param 'y'
+4291: pop param 'x'
+4292: pop param byref 'gump'
+var line := "Button "+CStr(x)+" "+CStr(y)+" "+CStr(off_id)+" "+CStr(on_id);
+4293: decl local #7
+4294: "Button "
+4295: local #5
+4296: Func(0,1): CStr
+4297: +
+4298: " "
+4299: +
+4300: local #4
+4301: Func(0,1): CStr
+4302: +
+4303: " "
+4304: +
+4305: local #3
+4306: Func(0,1): CStr
+4307: +
+4308: " "
+4309: +
+4310: local #2
+4311: Func(0,1): CStr
+4312: +
+4313: :=
+4314: #
+btn_value := CInt(btn_value);
+4315: local #0
+4316: Func(0,0): CInt
+4317: local0 := 
+if ( btn_value < 1 ) // Catch errors (0) and invalid (negative) values
+4318: local #0
+4319: 1L
+4320: <
+4321: if false goto 4330
+gump.data_id += 1;
+4322: local #6
+4323: get member 'data_id'
+4324: 1L
+4325: +=
+4326: #
+btn_value := gump.data_id;
+4327: local #6
+4328: get member 'data_id'
+4329: local0 := 
+if ( btn_type == GF_CLOSE_BTN )
+4330: local #1
+4331: 1L
+4332: ==
+4333: if false goto 4342
+line += " 1 0 "+CStr(btn_value);
+4334: local #7
+4335: " 1 0 "
+4336: local #0
+4337: Func(0,1): CStr
+4338: +
+4339: +=
+4340: #
+4341: goto 4361
+elseif ( btn_type == GF_DUMMY_BTN )
+4342: local #1
+4343: 2L
+4344: ==
+4345: if false goto 4354
+line += " 0 0 "+CStr(btn_value);
+4346: local #7
+4347: " 0 0 "
+4348: local #0
+4349: Func(0,1): CStr
+4350: +
+4351: +=
+4352: #
+4353: goto 4361
+line += " 0 "+CStr(btn_value);
+4354: local #7
+4355: " 0 "
+4356: local #0
+4357: Func(0,1): CStr
+4358: +
+4359: +=
+4360: #
+(gump.layout).Append(line);
+4361: local #6
+4362: get member 'layout'
+4363: local #7
+4364: Call Method id append (#52, 1 params)
+4365: #
+return (btn_value);
+4366: local #0
+4367: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps_ex.inc, Line 63
+function GFCfgConst(elem_name, prop_name)
+4368: pop param 'prop_name'
+4369: pop param 'elem_name'
+var cfg := ReadConfigFile(":gumps:config/GumpInfo");
+4370: decl local #2
+4371: ":gumps:config/GumpInfo"
+4372: Func(2,0): ReadConfigFile
+4373: :=
+4374: #
+if ( cfg.errortext )
+4375: local #2
+4376: get member 'errortext'
+4377: if false goto 4386
+return XGFError("GetCfgConst():: Unable to open GumpInfo.cfg -> "+cfg.errortext
+4378: "GetCfgConst():: Unable to open GumpInfo.cfg -> "
+4379: local #2
+4380: get member 'errortext'
+4381: +
+4382: 0L
+4383: makelocal
+4384: jmp userfunc @5779
+4385: return
+var elem := cfg[elem_name];
+4386: decl local #3
+4387: local #2
+4388: local #1
+4389: [] 1
+4390: :=
+4391: #
+if ( elem.errortext )
+4392: local #3
+4393: get member 'errortext'
+4394: if false goto 4407
+return XGFError("GetCfgConst():: Unable to find GumpInfo.cfg["+elem_name+"] ->"
+4395: "GetCfgConst():: Unable to find GumpInfo.cfg["
+4396: local #1
+4397: +
+4398: "] ->"
+4399: +
+4400: local #3
+4401: get member 'errortext'
+4402: +
+4403: 0L
+4404: makelocal
+4405: jmp userfunc @5779
+4406: return
+var value := GetConfigInt(elem, prop_name);
+4407: decl local #4
+4408: local #3
+4409: local #0
+4410: Func(2,1): GetConfigInt
+4411: :=
+4412: #
+if ( !value )
+4413: local #4
+4414: if true goto 4428
+return XGFError("GetCfgConst():: Unable to find property ["+prop_name+"] in ele
+4415: "GetCfgConst():: Unable to find property ["
+4416: local #0
+4417: +
+4418: "] in elem ["
+4419: +
+4420: local #1
+4421: +
+4422: "]"
+4423: +
+4424: 0L
+4425: makelocal
+4426: jmp userfunc @5779
+4427: return
+return value;
+4428: local #4
+4429: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 76
+function GFClosable(byref gump, bool)
+4430: pop param 'bool'
+4431: pop param byref 'gump'
+case ( bool )
+4432: local #0
+4433: casejmp
+	0: @4434
+	1: @4456
+	default: @4478
+if ( gump.base.CloseLoc )
+4434: local #1
+4435: get member 'base'
+4436: get member 'CloseLoc'
+4437: if false goto 4443
+return XGFError("Gump already contains the 'NoClose' flag.");
+4438: "Gump already contains the 'NoClose' flag."
+4439: 0L
+4440: makelocal
+4441: jmp userfunc @5779
+4442: return
+(gump.layout).Append("NoClose");
+4443: local #1
+4444: get member 'layout'
+4445: "NoClose"
+4446: Call Method id append (#52, 1 params)
+4447: #
+gump.base.CloseLoc := (gump.layout).Size();
+4448: local #1
+4449: get member 'base'
+4450: local #1
+4451: get member 'layout'
+4452: Call Method id size (#48, 0 params)
+4453: set member 'CloseLoc' #
+break;
+4454: goto 4455
+4455: goto 4487
+if ( !gump.base.CloseLoc )
+4456: local #1
+4457: get member 'base'
+4458: get member 'CloseLoc'
+4459: if true goto 4465
+return XGFError("Gump is already closable.");
+4460: "Gump is already closable."
+4461: 0L
+4462: makelocal
+4463: jmp userfunc @5779
+4464: return
+(gump.layout).Erase(gump.base.CloseLoc);
+4465: local #1
+4466: get member 'layout'
+4467: local #1
+4468: get member 'base'
+4469: get member 'CloseLoc'
+4470: Call Method id erase (#49, 1 params)
+4471: #
+gump.base.CloseLoc := 0;
+4472: local #1
+4473: get member 'base'
+4474: 0L
+4475: set member 'CloseLoc' #
+break;
+4476: goto 4477
+4477: goto 4487
+return XGFError("gumps::Closable: Invalid bool value '"+bool+"'");
+4478: "gumps::Closable: Invalid bool value '"
+4479: local #0
+4480: +
+4481: "'"
+4482: +
+4483: 0L
+4484: makelocal
+4485: jmp userfunc @5779
+4486: return
+return 1;
+4487: 1L
+4488: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 45
+function GFCreateGump(x:=0, y:=0, width:=0, height:=0)
+4489: pop param 'height'
+4490: pop param 'width'
+4491: pop param 'y'
+4492: pop param 'x'
+var gump := struct;
+4493: decl local #4
+4494: struct
+4495: :=
+4496: #
+gump.+base := struct;
+4497: local #4
+4498: "base"
+4499: .+
+4500: struct
+4501: := #
+gump.base.+x := CInt(x);
+4502: local #4
+4503: get member 'base'
+4504: "x"
+4505: .+
+4506: local #3
+4507: Func(0,0): CInt
+4508: := #
+gump.base.+y := CInt(y);
+4509: local #4
+4510: get member 'base'
+4511: "y"
+4512: .+
+4513: local #2
+4514: Func(0,0): CInt
+4515: := #
+gump.base.+width := CInt(width);
+4516: local #4
+4517: get member 'base'
+4518: "width"
+4519: .+
+4520: local #1
+4521: Func(0,0): CInt
+4522: := #
+gump.base.+height := CInt(height);
+4523: local #4
+4524: get member 'base'
+4525: "height"
+4526: .+
+4527: local #0
+4528: Func(0,0): CInt
+4529: := #
+gump.base.+MoveLoc := 0;	// Movable flag location
+4530: local #4
+4531: get member 'base'
+4532: "MoveLoc"
+4533: .+
+4534: 0L
+4535: := #
+gump.base.+CloseLoc := 0;	// NoClose flag location
+4536: local #4
+4537: get member 'base'
+4538: "CloseLoc"
+4539: .+
+4540: 0L
+4541: := #
+gump.base.+DisposeLoc := 0;	// NoDispose flag location
+4542: local #4
+4543: get member 'base'
+4544: "DisposeLoc"
+4545: .+
+4546: 0L
+4547: := #
+gump.+layout	:= array;	// Main layout array for entire gump
+4548: local #4
+4549: "layout"
+4550: .+
+4551: array
+4552: := #
+gump.+data	:= array;	// Storage array for static-text and
+4553: local #4
+4554: "data"
+4555: .+
+4556: array
+4557: := #
+gump.+data_id	:= 1;
+4558: local #4
+4559: "data_id"
+4560: .+
+4561: 1L
+4562: := #
+gump.+cur_page := 0;
+4563: local #4
+4564: "cur_page"
+4565: .+
+4566: 0L
+4567: := #
+return(gump);
+4568: local #4
+4569: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 100
+function GFDisposable(byref gump, bool)
+4570: pop param 'bool'
+4571: pop param byref 'gump'
+case ( bool )
+4572: local #0
+4573: casejmp
+	0: @4574
+	1: @4596
+	default: @4618
+if ( gump.base.DisposeLoc )
+4574: local #1
+4575: get member 'base'
+4576: get member 'DisposeLoc'
+4577: if false goto 4583
+return XGFError("Gump already contains the 'NoDispose' flag.");
+4578: "Gump already contains the 'NoDispose' flag."
+4579: 0L
+4580: makelocal
+4581: jmp userfunc @5779
+4582: return
+(gump.layout).Append("NoDispose");
+4583: local #1
+4584: get member 'layout'
+4585: "NoDispose"
+4586: Call Method id append (#52, 1 params)
+4587: #
+gump.base.DisposeLoc := (gump.layout).Size();
+4588: local #1
+4589: get member 'base'
+4590: local #1
+4591: get member 'layout'
+4592: Call Method id size (#48, 0 params)
+4593: set member 'DisposeLoc' #
+break;
+4594: goto 4595
+4595: goto 4627
+if ( !gump.base.CloseLoc )
+4596: local #1
+4597: get member 'base'
+4598: get member 'CloseLoc'
+4599: if true goto 4605
+return XGFError("Gump is already disposable.");
+4600: "Gump is already disposable."
+4601: 0L
+4602: makelocal
+4603: jmp userfunc @5779
+4604: return
+(gump.layout).Erase(gump.base.DisposeLoc);
+4605: local #1
+4606: get member 'layout'
+4607: local #1
+4608: get member 'base'
+4609: get member 'DisposeLoc'
+4610: Call Method id erase (#49, 1 params)
+4611: #
+gump.base.DisposeLoc := 0;
+4612: local #1
+4613: get member 'base'
+4614: 0L
+4615: set member 'DisposeLoc' #
+break;
+4616: goto 4617
+4617: goto 4627
+return XGFError("gumps::Disposable: Invalid bool value '"+bool+"'");
+4618: "gumps::Disposable: Invalid bool value '"
+4619: local #0
+4620: +
+4621: "'"
+4622: +
+4623: 0L
+4624: makelocal
+4625: jmp userfunc @5779
+4626: return
+return 1;
+4627: 1L
+4628: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps_ex.inc, Line 98
+function GFExtractData(input, data_id)
+4629: pop param 'data_id'
+4630: pop param 'input'
+var key_string := CStr(data_id)+": ";
+4631: decl local #2
+4632: local #0
+4633: Func(0,1): CStr
+4634: ": "
+4635: +
+4636: :=
+4637: #
+var data_string := input[data_id];
+4638: decl local #3
+4639: local #1
+4640: local #0
+4641: [] 1
+4642: :=
+4643: #
+var ret_val := data_string[Len(key_string)+1,Len(data_string)];
+4644: decl local #4
+4645: local #3
+4646: local #2
+4647: Func(0,2): Len
+4648: 1L
+4649: +
+4650: local #3
+4651: Func(0,2): Len
+4652: [,]
+4653: :=
+4654: #
+return ret_val;
+4655: local #4
+4656: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 242
+function GFGumpPic(byref gump, x, y, gump_id, hue := 0)
+4657: pop param 'hue'
+4658: pop param 'gump_id'
+4659: pop param 'y'
+4660: pop param 'x'
+4661: pop param byref 'gump'
+var text := "GumpPic "+CStr(CInt(x))+" "+CStr(CInt(y))+" "+CStr(CInt(gump_id));
+4662: decl local #5
+4663: "GumpPic "
+4664: local #3
+4665: Func(0,0): CInt
+4666: Func(0,1): CStr
+4667: +
+4668: " "
+4669: +
+4670: local #2
+4671: Func(0,0): CInt
+4672: Func(0,1): CStr
+4673: +
+4674: " "
+4675: +
+4676: local #1
+4677: Func(0,0): CInt
+4678: Func(0,1): CStr
+4679: +
+4680: :=
+4681: #
+hue := CInt(hue);
+4682: local #0
+4683: Func(0,0): CInt
+4684: local0 := 
+if ( hue )
+4685: local #0
+4686: if false goto 4694
+text += " hue="+CStr(hue);
+4687: local #5
+4688: " hue="
+4689: local #0
+4690: Func(0,1): CStr
+4691: +
+4692: +=
+4693: #
+(gump.layout).Append(text);
+4694: local #4
+4695: get member 'layout'
+4696: local #5
+4697: Call Method id append (#52, 1 params)
+4698: #
+return 1;
+4699: 1L
+4700: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 219
+function GFHTMLArea(byref gump, x, y, width, height, text, background:=0, scrol
+4701: pop param 'scrollbar'
+4702: pop param 'background'
+4703: pop param 'text'
+4704: pop param 'height'
+4705: pop param 'width'
+4706: pop param 'y'
+4707: pop param 'x'
+4708: pop param byref 'gump'
+gump.data.Append(""+CStr(text));
+4709: local #7
+4710: get member 'data'
+4711: ""
+4712: local #2
+4713: Func(0,1): CStr
+4714: +
+4715: Call Method id append (#52, 1 params)
+4716: #
+var index := gump.data.Size()-1;
+4717: decl local #8
+4718: local #7
+4719: get member 'data'
+4720: Call Method id size (#48, 0 params)
+4721: 1L
+4722: -
+4723: :=
+4724: #
+(gump.layout).Append("HTMLGump "+CStr(CInt(x))+" "+CStr(CInt(y))+" "
+4725: local #7
+4726: get member 'layout'
+4727: "HTMLGump "
+4728: local #6
+4729: Func(0,0): CInt
+4730: Func(0,1): CStr
+4731: +
+4732: " "
+4733: +
+4734: local #5
+4735: Func(0,0): CInt
+4736: Func(0,1): CStr
+4737: +
+4738: " "
+4739: +
+4740: local #4
+4741: Func(0,0): CInt
+4742: Func(0,1): CStr
+4743: +
+4744: " "
+4745: +
+4746: local #3
+4747: Func(0,0): CInt
+4748: Func(0,1): CStr
+4749: +
+4750: " "
+4751: +
+4752: local #8
+4753: Func(0,1): CStr
+4754: +
+4755: " "
+4756: +
+4757: local #1
+4758: Func(0,0): CInt
+4759: Func(0,1): CStr
+4760: +
+4761: " "
+4762: +
+4763: local #0
+4764: Func(0,0): CInt
+4765: Func(0,1): CStr
+4766: +
+4767: Call Method id append (#52, 1 params)
+4768: #
+return (index);
+4769: local #8
+4770: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 148
+function GFPage(byref gump, page_num)
+4771: pop param 'page_num'
+4772: pop param byref 'gump'
+gump.cur_page := CInt(page_num);
+4773: local #1
+4774: local #0
+4775: Func(0,0): CInt
+4776: set member 'cur_page' #
+(gump.layout).Append("Page "+CStr(gump.cur_page));
+4777: local #1
+4778: get member 'layout'
+4779: "Page "
+4780: local #1
+4781: get member 'cur_page'
+4782: Func(0,1): CStr
+4783: +
+4784: Call Method id append (#52, 1 params)
+4785: #
+return 1;
+4786: 1L
+4787: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 296
+function GFRadioButton(byref gump, x, y, unp_id, pres_id, status:=0, btn_value:
+4788: pop param 'btn_value'
+4789: pop param 'status'
+4790: pop param 'pres_id'
+4791: pop param 'unp_id'
+4792: pop param 'y'
+4793: pop param 'x'
+4794: pop param byref 'gump'
+btn_value := CInt(btn_value);
+4795: local #0
+4796: Func(0,0): CInt
+4797: local0 := 
+if ( btn_value < 1 ) // Catch errors (0) and invalid (negative) values
+4798: local #0
+4799: 1L
+4800: <
+4801: if false goto 4810
+gump.data_id += 1;
+4802: local #6
+4803: get member 'data_id'
+4804: 1L
+4805: +=
+4806: #
+btn_value := gump.data_id;
+4807: local #6
+4808: get member 'data_id'
+4809: local0 := 
+(gump.layout).Append("Radio "+CStr(CInt(x))+" "+CStr(CInt(y))+" "
+4810: local #6
+4811: get member 'layout'
+4812: "Radio "
+4813: local #5
+4814: Func(0,0): CInt
+4815: Func(0,1): CStr
+4816: +
+4817: " "
+4818: +
+4819: local #4
+4820: Func(0,0): CInt
+4821: Func(0,1): CStr
+4822: +
+4823: " "
+4824: +
+4825: local #3
+4826: Func(0,0): CInt
+4827: Func(0,1): CStr
+4828: +
+4829: " "
+4830: +
+4831: local #2
+4832: Func(0,0): CInt
+4833: Func(0,1): CStr
+4834: +
+4835: " "
+4836: +
+4837: local #1
+4838: Func(0,0): CInt
+4839: Func(0,1): CStr
+4840: +
+4841: " "
+4842: +
+4843: local #0
+4844: Func(0,1): CStr
+4845: +
+4846: Call Method id append (#52, 1 params)
+4847: #
+return (btn_value);
+4848: local #0
+4849: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 156
+function GFResizePic(byref gump, x, y, gump_id, width, height)
+4850: pop param 'height'
+4851: pop param 'width'
+4852: pop param 'gump_id'
+4853: pop param 'y'
+4854: pop param 'x'
+4855: pop param byref 'gump'
+width := CInt(width);
+4856: local #1
+4857: Func(0,0): CInt
+4858: local1 := 
+height := CInt(height);
+4859: local #0
+4860: Func(0,0): CInt
+4861: local0 := 
+if ( !width )
+4862: local #1
+4863: if true goto 4868
+width := gump.base.width;
+4864: local #5
+4865: get member 'base'
+4866: get member 'width'
+4867: local1 := 
+if ( !height )
+4868: local #0
+4869: if true goto 4874
+height := gump.base.width;
+4870: local #5
+4871: get member 'base'
+4872: get member 'width'
+4873: local0 := 
+(gump.layout).Append("ResizePic "+CStr(CInt(x))+" "+CStr(CInt(y))+" "
+4874: local #5
+4875: get member 'layout'
+4876: "ResizePic "
+4877: local #4
+4878: Func(0,0): CInt
+4879: Func(0,1): CStr
+4880: +
+4881: " "
+4882: +
+4883: local #3
+4884: Func(0,0): CInt
+4885: Func(0,1): CStr
+4886: +
+4887: " "
+4888: +
+4889: local #2
+4890: Func(0,0): CInt
+4891: Func(0,1): CStr
+4892: +
+4893: " "
+4894: +
+4895: local #1
+4896: Func(0,1): CStr
+4897: +
+4898: " "
+4899: +
+4900: local #0
+4901: Func(0,1): CStr
+4902: +
+4903: Call Method id append (#52, 1 params)
+4904: #
+return 1;
+4905: 1L
+4906: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 327
+function GFSendGump(mobile, byref gump)
+4907: pop param byref 'gump'
+4908: pop param 'mobile'
+var ret_val := SendDialogGump(mobile, gump.layout, gump.data, gump.base.x, gump
+4909: decl local #2
+4910: local #1
+4911: local #0
+4912: get member 'layout'
+4913: local #0
+4914: get member 'data'
+4915: local #0
+4916: get member 'base'
+4917: get member id 'x' (0)
+4918: local #0
+4919: get member 'base'
+4920: get member id 'y' (1)
+4921: 0L
+4922: 0L
+4923: Func(3,0): SendDialogGump
+4924: :=
+4925: #
+if ( ret_val.errortext )
+4926: local #2
+4927: get member 'errortext'
+4928: if false goto 4944
+SendSysMessage(mobile, "Error - Unable to display gump.");
+4929: local #1
+4930: "Error - Unable to display gump."
+4931: 3L
+4932: 1000L
+4933: Func(3,1): SendSysMessage
+4934: #
+SendSysMessage(mobile, "Error text is ->"+ret_val.errortext);
+4935: local #1
+4936: "Error text is ->"
+4937: local #2
+4938: get member 'errortext'
+4939: +
+4940: 3L
+4941: 1000L
+4942: Func(3,1): SendSysMessage
+4943: #
+return ret_val;
+4944: local #2
+4945: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 214
+function GFSetRadioGroup(byref gump, group_id)
+4946: pop param 'group_id'
+4947: pop param byref 'gump'
+(gump.layout).Append("Group "+CStr(CInt(group_id)));
+4948: local #1
+4949: get member 'layout'
+4950: "Group "
+4951: local #0
+4952: Func(0,0): CInt
+4953: Func(0,1): CStr
+4954: +
+4955: Call Method id append (#52, 1 params)
+4956: #
+return 1;
+4957: 1L
+4958: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 309
+function GFTextEntry(byref gump, x, y, width, height, txt_color, ini_text:="", 
+4959: pop param 'txt_id'
+4960: pop param 'ini_text'
+4961: pop param 'txt_color'
+4962: pop param 'height'
+4963: pop param 'width'
+4964: pop param 'y'
+4965: pop param 'x'
+4966: pop param byref 'gump'
+gump.data.Append(""+CStr(ini_text));
+4967: local #7
+4968: get member 'data'
+4969: ""
+4970: local #1
+4971: Func(0,1): CStr
+4972: +
+4973: Call Method id append (#52, 1 params)
+4974: #
+var index := gump.data.Size()-1;
+4975: decl local #8
+4976: local #7
+4977: get member 'data'
+4978: Call Method id size (#48, 0 params)
+4979: 1L
+4980: -
+4981: :=
+4982: #
+txt_id := CInt(txt_id);
+4983: local #0
+4984: Func(0,0): CInt
+4985: local0 := 
+if ( txt_id < 1 ) // Catch errors (0) and invalid (negative) values
+4986: local #0
+4987: 1L
+4988: <
+4989: if false goto 4998
+gump.data_id += 1;
+4990: local #7
+4991: get member 'data_id'
+4992: 1L
+4993: +=
+4994: #
+txt_id := gump.data_id;
+4995: local #7
+4996: get member 'data_id'
+4997: local0 := 
+(gump.layout).Append("TextEntry "+CStr(CInt(x))+" "+CStr(CInt(y))+" "
+4998: local #7
+4999: get member 'layout'
+5000: "TextEntry "
+5001: local #6
+5002: Func(0,0): CInt
+5003: Func(0,1): CStr
+5004: +
+5005: " "
+5006: +
+5007: local #5
+5008: Func(0,0): CInt
+5009: Func(0,1): CStr
+5010: +
+5011: " "
+5012: +
+5013: local #4
+5014: Func(0,0): CInt
+5015: Func(0,1): CStr
+5016: +
+5017: " "
+5018: +
+5019: local #3
+5020: Func(0,0): CInt
+5021: Func(0,1): CStr
+5022: +
+5023: " "
+5024: +
+5025: local #2
+5026: Func(0,0): CInt
+5027: Func(0,1): CStr
+5028: +
+5029: " "
+5030: +
+5031: local #0
+5032: Func(0,1): CStr
+5033: +
+5034: " "
+5035: +
+5036: local #8
+5037: Func(0,1): CStr
+5038: +
+5039: Call Method id append (#52, 1 params)
+5040: #
+return (txt_id);
+5041: local #0
+5042: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 276
+function GFTextLine(byref gump, x, y, hue:=0, text:="")
+5043: pop param 'text'
+5044: pop param 'hue'
+5045: pop param 'y'
+5046: pop param 'x'
+5047: pop param byref 'gump'
+gump.data.Append(""+CStr(text));
+5048: local #4
+5049: get member 'data'
+5050: ""
+5051: local #0
+5052: Func(0,1): CStr
+5053: +
+5054: Call Method id append (#52, 1 params)
+5055: #
+var index := gump.data.Size()-1;
+5056: decl local #5
+5057: local #4
+5058: get member 'data'
+5059: Call Method id size (#48, 0 params)
+5060: 1L
+5061: -
+5062: :=
+5063: #
+(gump.layout).Append("Text "+CStr(CInt(x))+" "+CStr(CInt(y))+" "
+5064: local #4
+5065: get member 'layout'
+5066: "Text "
+5067: local #3
+5068: Func(0,0): CInt
+5069: Func(0,1): CStr
+5070: +
+5071: " "
+5072: +
+5073: local #2
+5074: Func(0,0): CInt
+5075: Func(0,1): CStr
+5076: +
+5077: " "
+5078: +
+5079: local #1
+5080: Func(0,0): CInt
+5081: Func(0,1): CStr
+5082: +
+5083: " "
+5084: +
+5085: local #5
+5086: Func(0,1): CStr
+5087: +
+5088: Call Method id append (#52, 1 params)
+5089: #
+return (index);
+5090: local #5
+5091: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps_ex.inc, Line 209
+function GFTextMid(byref gump, x, y, width, color, text)
+5092: pop param 'text'
+5093: pop param 'color'
+5094: pop param 'width'
+5095: pop param 'y'
+5096: pop param 'x'
+5097: pop param byref 'gump'
+var x_pos := GFTextCoords(ALIGN_CENTER, text, x, CStr(width));
+5098: decl local #6
+5099: 1L
+5100: local #0
+5101: local #4
+5102: local #2
+5103: Func(0,1): CStr
+5104: makelocal
+5105: jmp userfunc @6316
+5106: :=
+5107: #
+return GFTextLine(gump, x_pos, y, color, CStr(text));
+5108: local #5
+5109: local #6
+5110: local #3
+5111: local #1
+5112: local #0
+5113: Func(0,1): CStr
+5114: makelocal
+5115: jmp userfunc @5043
+5116: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps_ex.inc, Line 310
+function GFWordWrap(text, pixels)
+5117: pop param 'pixels'
+5118: pop param 'text'
+var wrap_lines := array{};
+5119: decl local #2
+5120: array
+5121: :=
+5122: #
+var word_list := SplitWords(text);
+5123: decl local #3
+5124: local #1
+5125: " "
+5126: -1L
+5127: Func(0,5): SplitWords
+5128: :=
+5129: #
+var space_size := GFTextWidth(" ");
+5130: decl local #4
+5131: " "
+5132: makelocal
+5133: jmp userfunc @6356
+5134: :=
+5135: #
+var cur_line := "";
+5136: decl local #5
+5137: ""
+5138: :=
+5139: #
+var cur_length := 0;
+5140: decl local #6
+5141: 0L
+5142: :=
+5143: #
+var start_new := 0;
+5144: decl local #7
+5145: 0L
+5146: :=
+5147: #
+foreach word in word_list
+5148: local #3
+5149: initforeach @5209
+var word_width := GFTextWidth(word);
+5150: decl local #0
+5151: local #8
+5152: makelocal
+5153: jmp userfunc @6356
+5154: :=
+5155: #
+if ( word == "[P]" || word == "<br>" )
+5156: local #8
+5157: "[P]"
+5158: ==
+5159: local #8
+5160: "<br>"
+5161: ==
+5162: ||
+5163: if false goto 5171
+word := "";
+5164: ""
+5165: local8 := 
+word_width := 0;
+5166: 0L
+5167: local11 := 
+start_new := 1;
+5168: 1L
+5169: local7 := 
+5170: goto 5179
+elseif ( (word_width+cur_length) > pixels )
+5171: local #11
+5172: local #6
+5173: +
+5174: local #0
+5175: >
+5176: if false goto 5179
+start_new := 1;
+5177: 1L
+5178: local7 := 
+if ( start_new )
+5179: local #7
+5180: if false goto 5191
+start_new := 0;
+5181: 0L
+5182: local7 := 
+wrap_lines.Append(cur_line);
+5183: local #2
+5184: local #5
+5185: Call Method id append (#52, 1 params)
+5186: #
+cur_line := "";
+5187: ""
+5188: local5 := 
+cur_length := 0;
+5189: 0L
+5190: local6 := 
+if ( word )
+5191: local #8
+5192: if false goto 5205
+cur_line := cur_line + word+" ";
+5193: local #5
+5194: local #8
+5195: +
+5196: " "
+5197: +
+5198: local5 := 
+cur_length := cur_length+word_width+space_size;
+5199: local #6
+5200: local #11
+5201: +
+5202: local #4
+5203: +
+5204: local6 := 
+SleepMS(2);
+5205: 2L
+5206: Func(4,0): Sleepms
+5207: #
+5208: leave block(1)
+5209: stepforeach @5150
+5210: leave block(3)
+if ( wrap_lines[wrap_lines.Size()] != cur_line )
+5211: local #2
+5212: local #2
+5213: Call Method id size (#48, 0 params)
+5214: [] 1
+5215: local #5
+5216: <>
+5217: if false goto 5222
+wrap_lines.Append(cur_line);
+5218: local #2
+5219: local #5
+5220: Call Method id append (#52, 1 params)
+5221: #
+return wrap_lines;	
+5222: local #2
+5223: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps.inc, Line 494
+function GumpSkills(who, byref chardata, byref skillspoints)
+5224: pop param byref 'skillspoints'
+5225: pop param byref 'chardata'
+5226: pop param 'who'
+var chargump := GFCreateGump();
+5227: decl local #3
+5228: 0L
+5229: 0L
+5230: 0L
+5231: 0L
+5232: makelocal
+5233: jmp userfunc @4489
+5234: :=
+5235: #
+var input;
+5236: decl local #4
+5237: #
+var cfg := ReadConfigFile(":fls_core:config/classes");
+5238: decl local #5
+5239: ":fls_core:config/classes"
+5240: Func(2,0): ReadConfigFile
+5241: :=
+5242: #
+var elem := FindConfigElem(cfg, cstr(GetObjProperty(who, "classe")) );
+5243: decl local #6
+5244: local #5
+5245: local #2
+5246: "classe"
+5247: Func(3,3): GetObjProperty
+5248: Func(0,1): CStr
+5249: Func(2,5): FindConfigElem
+5250: :=
+5251: #
+var primarias    := GetConfigStringArray(elem, "P");
+5252: decl local #7
+5253: local #6
+5254: "P"
+5255: Func(2,3): GetConfigStringArray
+5256: :=
+5257: #
+var secundarias  := GetConfigStringArray(elem, "S");
+5258: decl local #8
+5259: local #6
+5260: "S"
+5261: Func(2,3): GetConfigStringArray
+5262: :=
+5263: #
+var terciarias   := GetConfigStringArray(elem, "T");
+5264: decl local #9
+5265: local #6
+5266: "T"
+5267: Func(2,3): GetConfigStringArray
+5268: :=
+5269: #
+var quaternarias := GetConfigStringArray(elem, "Q");	
+5270: decl local #10
+5271: local #6
+5272: "Q"
+5273: Func(2,3): GetConfigStringArray
+5274: :=
+5275: #
+GFClosable(chargump, 0);
+5276: local #3
+5277: 0L
+5278: makelocal
+5279: jmp userfunc @4430
+5280: #
+GFDisposable(chargump, 0);
+5281: local #3
+5282: 0L
+5283: makelocal
+5284: jmp userfunc @4570
+5285: #
+GFResizePic(chargump, 0, 25, 3600, 600, 480);
+5286: local #3
+5287: 0L
+5288: 25L
+5289: 3600L
+5290: 600L
+5291: 480L
+5292: makelocal
+5293: jmp userfunc @4850
+5294: #
+GFResizePic(chargump, 15, 40, 0x13BE, 570, 450);
+5295: local #3
+5296: 15L
+5297: 40L
+5298: 5054L
+5299: 570L
+5300: 450L
+5301: makelocal
+5302: jmp userfunc @4850
+5303: #
+GFTextMid(chargump, 15, 45, 600, 1153, "Defina suas Skills");
+5304: local #3
+5305: 15L
+5306: 45L
+5307: 600L
+5308: 1153L
+5309: "Defina suas Skills"
+5310: makelocal
+5311: jmp userfunc @5092
+5312: #
+GFTextMid(chargump, 15, 60, 600, 1153, "Voce tem " + skillspoints + " pontos.")
+5313: local #3
+5314: 15L
+5315: 60L
+5316: 600L
+5317: 1153L
+5318: "Voce tem "
+5319: local #0
+5320: +
+5321: " pontos."
+5322: +
+5323: makelocal
+5324: jmp userfunc @5092
+5325: #
+GFAddButton(chargump, 510, 450, 4502, 4502, 1, 99 );
+5326: local #3
+5327: 510L
+5328: 450L
+5329: 4502L
+5330: 4502L
+5331: 1L
+5332: 99L
+5333: makelocal
+5334: jmp userfunc @4286
+5335: #
+GFTextLine(chargump, 450, 460, 1153, "Proximo");
+5336: local #3
+5337: 450L
+5338: 460L
+5339: 1153L
+5340: "Proximo"
+5341: makelocal
+5342: jmp userfunc @5043
+5343: #
+GFTextLine(chargump, 30, 460, 1153, "Custo dos pontos: ");
+5344: local #3
+5345: 30L
+5346: 460L
+5347: 1153L
+5348: "Custo dos pontos: "
+5349: makelocal
+5350: jmp userfunc @5043
+5351: #
+GFTextLine(chargump, 140, 460, 88, "Azul: 1 ");
+5352: local #3
+5353: 140L
+5354: 460L
+5355: 88L
+5356: "Azul: 1 "
+5357: makelocal
+5358: jmp userfunc @5043
+5359: #
+GFTextLine(chargump, 190, 460, 80, "Verde: 2 ");
+5360: local #3
+5361: 190L
+5362: 460L
+5363: 80L
+5364: "Verde: 2 "
+5365: makelocal
+5366: jmp userfunc @5043
+5367: #
+GFTextLine(chargump, 250, 460, 52, "Amarelo: 3 ");
+5368: local #3
+5369: 250L
+5370: 460L
+5371: 52L
+5372: "Amarelo: 3 "
+5373: makelocal
+5374: jmp userfunc @5043
+5375: #
+GFTextLine(chargump, 320, 460, 38, "Vermelho: 4 ");
+5376: local #3
+5377: 320L
+5378: 460L
+5379: 38L
+5380: "Vermelho: 4 "
+5381: makelocal
+5382: jmp userfunc @5043
+5383: #
+var x := 50;
+5384: decl local #11
+5385: 50L
+5386: :=
+5387: #
+var y := 75;	
+5388: decl local #12
+5389: 75L
+5390: :=
+5391: #
+var x2 := 150;
+5392: decl local #13
+5393: 150L
+5394: :=
+5395: #
+var x3 := 30;
+5396: decl local #14
+5397: 30L
+5398: :=
+5399: #
+foreach skill in primarias
+5400: local #7
+5401: initforeach @5464
+GFTextLine(chargump, x, y, 88, skill); //nome da skill
+5402: local #3
+5403: local #11
+5404: local #12
+5405: 88L
+5406: local #15
+5407: makelocal
+5408: jmp userfunc @5043
+5409: #
+var value := chardata.Skills[skill];
+5410: decl local #0
+5411: local #1
+5412: get member 'Skills'
+5413: local #15
+5414: [] 1
+5415: :=
+5416: #
+if (value == error)
+5417: local #18
+5418: error
+5419: ==
+5420: if false goto 5423
+value := "";
+5421: ""
+5422: local18 := 
+GFTextLine(chargump, x2, y, 88, GetSkillDescValue(value)); 
+5423: local #3
+5424: local #13
+5425: local #12
+5426: 88L
+5427: local #18
+5428: makelocal
+5429: jmp userfunc @6230
+5430: makelocal
+5431: jmp userfunc @5043
+5432: #
+GFAddButton(chargump, x3, y+4, 2103, 2104, 1, FL_GetSkillID(skill) );
+5433: local #3
+5434: local #14
+5435: local #12
+5436: 4L
+5437: +
+5438: 2103L
+5439: 2104L
+5440: 1L
+5441: local #15
+5442: makelocal
+5443: jmp userfunc @5958
+5444: makelocal
+5445: jmp userfunc @4286
+5446: #
+y := y + 15;
+5447: local #12
+5448: 15L
+5449: +
+5450: local12 := 
+if (y >= 450)
+5451: local #12
+5452: 450L
+5453: >=
+5454: if false goto 5463
+y := 75;
+5455: 75L
+5456: local12 := 
+x := 350;
+5457: 350L
+5458: local11 := 
+x2 := 450;
+5459: 450L
+5460: local13 := 
+x3 := 330;
+5461: 330L
+5462: local14 := 
+5463: leave block(1)
+5464: stepforeach @5402
+5465: leave block(3)
+foreach skill in secundarias
+5466: local #8
+5467: initforeach @5530
+GFTextLine(chargump, x, y, 80, skill);
+5468: local #3
+5469: local #11
+5470: local #12
+5471: 80L
+5472: local #15
+5473: makelocal
+5474: jmp userfunc @5043
+5475: #
+var value := chardata.Skills[skill];
+5476: decl local #0
+5477: local #1
+5478: get member 'Skills'
+5479: local #15
+5480: [] 1
+5481: :=
+5482: #
+if (value == error)
+5483: local #18
+5484: error
+5485: ==
+5486: if false goto 5489
+value := "";
+5487: ""
+5488: local18 := 
+GFTextLine(chargump, x2, y, 80, GetSkillDescValue(value)); 
+5489: local #3
+5490: local #13
+5491: local #12
+5492: 80L
+5493: local #18
+5494: makelocal
+5495: jmp userfunc @6230
+5496: makelocal
+5497: jmp userfunc @5043
+5498: #
+GFAddButton(chargump, x3, y+4, 2103, 2104, 1, FL_GetSkillID(skill) );
+5499: local #3
+5500: local #14
+5501: local #12
+5502: 4L
+5503: +
+5504: 2103L
+5505: 2104L
+5506: 1L
+5507: local #15
+5508: makelocal
+5509: jmp userfunc @5958
+5510: makelocal
+5511: jmp userfunc @4286
+5512: #
+y := y + 15;
+5513: local #12
+5514: 15L
+5515: +
+5516: local12 := 
+if (y >= 450)
+5517: local #12
+5518: 450L
+5519: >=
+5520: if false goto 5529
+y := 75;
+5521: 75L
+5522: local12 := 
+x := 350;
+5523: 350L
+5524: local11 := 
+x2 := 450;
+5525: 450L
+5526: local13 := 
+x3 := 330;
+5527: 330L
+5528: local14 := 
+5529: leave block(1)
+5530: stepforeach @5468
+5531: leave block(3)
+foreach skill in terciarias
+5532: local #9
+5533: initforeach @5596
+GFTextLine(chargump, x, y, 52, skill);
+5534: local #3
+5535: local #11
+5536: local #12
+5537: 52L
+5538: local #15
+5539: makelocal
+5540: jmp userfunc @5043
+5541: #
+var value := chardata.Skills[skill];
+5542: decl local #0
+5543: local #1
+5544: get member 'Skills'
+5545: local #15
+5546: [] 1
+5547: :=
+5548: #
+if (value == error)
+5549: local #18
+5550: error
+5551: ==
+5552: if false goto 5555
+value := "";
+5553: ""
+5554: local18 := 
+GFTextLine(chargump, x2, y, 52, GetSkillDescValue(value)); 
+5555: local #3
+5556: local #13
+5557: local #12
+5558: 52L
+5559: local #18
+5560: makelocal
+5561: jmp userfunc @6230
+5562: makelocal
+5563: jmp userfunc @5043
+5564: #
+GFAddButton(chargump, x3, y+4, 2103, 2104, 1, FL_GetSkillID(skill) );
+5565: local #3
+5566: local #14
+5567: local #12
+5568: 4L
+5569: +
+5570: 2103L
+5571: 2104L
+5572: 1L
+5573: local #15
+5574: makelocal
+5575: jmp userfunc @5958
+5576: makelocal
+5577: jmp userfunc @4286
+5578: #
+y := y + 15;
+5579: local #12
+5580: 15L
+5581: +
+5582: local12 := 
+if (y >= 450)
+5583: local #12
+5584: 450L
+5585: >=
+5586: if false goto 5595
+y := 75;
+5587: 75L
+5588: local12 := 
+x := 350;
+5589: 350L
+5590: local11 := 
+x2 := 450;
+5591: 450L
+5592: local13 := 
+x3 := 330;
+5593: 330L
+5594: local14 := 
+5595: leave block(1)
+5596: stepforeach @5534
+5597: leave block(3)
+foreach skill in quaternarias
+5598: local #10
+5599: initforeach @5662
+GFTextLine(chargump, x, y, 38, skill);
+5600: local #3
+5601: local #11
+5602: local #12
+5603: 38L
+5604: local #15
+5605: makelocal
+5606: jmp userfunc @5043
+5607: #
+var value := chardata.Skills[skill];
+5608: decl local #0
+5609: local #1
+5610: get member 'Skills'
+5611: local #15
+5612: [] 1
+5613: :=
+5614: #
+if (value == error)
+5615: local #18
+5616: error
+5617: ==
+5618: if false goto 5621
+value := "";
+5619: ""
+5620: local18 := 
+GFTextLine(chargump, x2, y, 38, GetSkillDescValue(value)); 
+5621: local #3
+5622: local #13
+5623: local #12
+5624: 38L
+5625: local #18
+5626: makelocal
+5627: jmp userfunc @6230
+5628: makelocal
+5629: jmp userfunc @5043
+5630: #
+GFAddButton(chargump, x3, y+4, 2103, 2104, 1, FL_GetSkillID(skill) );
+5631: local #3
+5632: local #14
+5633: local #12
+5634: 4L
+5635: +
+5636: 2103L
+5637: 2104L
+5638: 1L
+5639: local #15
+5640: makelocal
+5641: jmp userfunc @5958
+5642: makelocal
+5643: jmp userfunc @4286
+5644: #
+y := y + 15;
+5645: local #12
+5646: 15L
+5647: +
+5648: local12 := 
+if (y >= 450)
+5649: local #12
+5650: 450L
+5651: >=
+5652: if false goto 5661
+y := 75;
+5653: 75L
+5654: local12 := 
+x := 350;
+5655: 350L
+5656: local11 := 
+x2 := 450;
+5657: 450L
+5658: local13 := 
+x3 := 330;
+5659: 330L
+5660: local14 := 
+5661: leave block(1)
+5662: stepforeach @5600
+5663: leave block(3)
+input := GFSendGump(who, chargump);
+5664: local #2
+5665: local #3
+5666: makelocal
+5667: jmp userfunc @4907
+5668: local4 := 
+input := input[0];
+5669: local #4
+5670: 0L
+5671: [] 1
+5672: local4 := 
+if ( input != 99)
+5673: local #4
+5674: 99L
+5675: <>
+5676: if false goto 5775
+var custo := GetSkillPrice(input, primarias, secundarias, terciarias, quaternar
+5677: decl local #0
+5678: local #4
+5679: local #7
+5680: local #8
+5681: local #9
+5682: local #10
+5683: makelocal
+5684: jmp userfunc @6263
+5685: :=
+5686: #
+var skillname := FL_GetSkillName(input);
+5687: decl local #1
+5688: local #4
+5689: makelocal
+5690: jmp userfunc @6094
+5691: :=
+5692: #
+if (skillspoints >= custo) //se tem pontos pra comprar
+5693: local #0
+5694: local #15
+5695: >=
+5696: if false goto 5767
+if (chardata.Skills[skillname] == 3)//se ja for primaria
+5697: local #1
+5698: get member 'Skills'
+5699: local #16
+5700: [] 1
+5701: 3L
+5702: ==
+5703: if false goto 5711
+SendSysMessage(who, "Voce ja tem essa skill primaria!");
+5704: local #2
+5705: "Voce ja tem essa skill primaria!"
+5706: 3L
+5707: 1000L
+5708: Func(3,1): SendSysMessage
+5709: #
+5710: goto 5766
+elseif (chardata.Skills[skillname] == 2)//se for secundaria
+5711: local #1
+5712: get member 'Skills'
+5713: local #16
+5714: [] 1
+5715: 2L
+5716: ==
+5717: if false goto 5751
+if (chardata.Primarias <3)
+5718: local #1
+5719: get member 'Primarias'
+5720: 3L
+5721: <
+5722: if false goto 5744
+chardata.Skills[skillname] := chardata.Skills[skillname]+1;
+5723: local #1
+5724: get member 'Skills'
+5725: local #16
+5726: local #1
+5727: get member 'Skills'
+5728: local #16
+5729: [] 1
+5730: 1L
+5731: +
+5732: [] := (1) #
+chardata.Primarias := chardata.Primarias + 1;
+5733: local #1
+5734: local #1
+5735: get member 'Primarias'
+5736: 1L
+5737: +
+5738: set member 'Primarias' #
+skillspoints := skillspoints - custo;
+5739: local #0
+5740: local #15
+5741: -
+5742: local0 := 
+5743: goto 5750
+SendSysMessage(who, "Voce ja tem 3 skills primarias!");
+5744: local #2
+5745: "Voce ja tem 3 skills primarias!"
+5746: 3L
+5747: 1000L
+5748: Func(3,1): SendSysMessage
+5749: #
+5750: goto 5766
+chardata.Skills[skillname] := Cint(chardata.Skills[skillname]) +1;
+5751: local #1
+5752: get member 'Skills'
+5753: local #16
+5754: local #1
+5755: get member 'Skills'
+5756: local #16
+5757: [] 1
+5758: Func(0,0): CInt
+5759: 1L
+5760: +
+5761: [] := (1) #
+skillspoints := skillspoints - custo;
+5762: local #0
+5763: local #15
+5764: -
+5765: local0 := 
+5766: goto 5773
+SendSysMessage(who, "Voce nao tem pontos para comprar esta skill.");
+5767: local #2
+5768: "Voce nao tem pontos para comprar esta skill."
+5769: 3L
+5770: 1000L
+5771: Func(3,1): SendSysMessage
+5772: #
+5773: leave block(2)
+5774: goto 5777
+return 1;
+5775: 1L
+5776: return
+5777: 0L
+5778: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps.inc, Line 348
+function XGFError(text, log:=0)
+5779: pop param 'log'
+5780: pop param 'text'
+if ( log )
+5781: local #0
+5782: if false goto 5788
+SysLog("Gump Error:: "+text);
+5783: "Gump Error:: "
+5784: local #1
+5785: +
+5786: Func(4,1): SysLog
+5787: #
+return error{"errortext":=text};
+5788: error
+5789: local #1
+5790: addmember-assign(errortext)
+5791: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/attributes.inc, Line 140
+function AP_GetAttributeDataElem(elem_name)
+5792: pop param 'elem_name'
+var data_file := AP_GetAttributesDataFile();
+5793: decl local #1
+5794: makelocal
+5795: jmp userfunc @5821
+5796: :=
+5797: #
+var data_elem := DFFindElement(data_file, elem_name, DF_CREATE);
+5798: decl local #2
+5799: local #1
+5800: local #0
+5801: 1L
+5802: makelocal
+5803: jmp userfunc @5840
+5804: :=
+5805: #
+if ( data_elem.errortext )
+5806: local #2
+5807: get member 'errortext'
+5808: if false goto 5819
+SysLog("Error::AP_GetAttributeDataElem() - unable to find elem ["+elem_name+"] 
+5809: "Error::AP_GetAttributeDataElem() - unable to find elem ["
+5810: local #0
+5811: +
+5812: "] ->"
+5813: +
+5814: local #2
+5815: get member 'errortext'
+5816: +
+5817: Func(4,1): SysLog
+5818: #
+return data_elem;
+5819: local #2
+5820: return
+D:/Programs/forgottenlore/pkg/systems/attributes/include/attributes.inc, Line 119
+function AP_GetAttributesDataFile()
+var data_file := DFOpenDataFile(":attributes:attributes", DF_CREATE);
+5821: decl local #0
+5822: ":attributes:attributes"
+5823: 1L
+5824: 0L
+5825: makelocal
+5826: jmp userfunc @5902
+5827: :=
+5828: #
+if ( data_file.errortext )
+5829: local #0
+5830: get member 'errortext'
+5831: if false goto 5838
+SysLog("Error::AP_GetAttributesDataFile() - Unable to open attributes.txt ->"+d
+5832: "Error::AP_GetAttributesDataFile() - Unable to open attributes.txt ->"
+5833: local #0
+5834: get member 'errortext'
+5835: +
+5836: Func(4,1): SysLog
+5837: #
+return data_file;
+5838: local #0
+5839: return
+D:/Programs/forgottenlore/pkg/utils/datafile/include/datafile.inc, Line 139
+function DFFindElement(byref file_ref, elem_name, create:=DF_NO_CREATE)
+5840: pop param 'create'
+5841: pop param 'elem_name'
+5842: pop param byref 'file_ref'
+var temp := file_ref.FindElement(CStr(elem_name));
+5843: decl local #3
+5844: local #2
+5845: local #1
+5846: Func(0,1): CStr
+5847: Call Method id findelement (#72, 1 params)
+5848: :=
+5849: #
+if ( !temp && create )
+5850: local #3
+5851: !
+5852: local #0
+5853: &&
+5854: if false goto 5872
+DF_OutPut("Debug::DFFindElement() - Creating elem: "+CStr(elem_name));
+5855: "Debug::DFFindElement() - Creating elem: "
+5856: local #1
+5857: Func(0,1): CStr
+5858: +
+5859: makelocal
+5860: jmp userfunc @6457
+5861: #
+file_ref.CreateElement(CStr(elem_name));
+5862: local #2
+5863: local #1
+5864: Func(0,1): CStr
+5865: Call Method id createelement (#71, 1 params)
+5866: #
+temp := file_ref.FindElement(CStr(elem_name));
+5867: local #2
+5868: local #1
+5869: Func(0,1): CStr
+5870: Call Method id findelement (#72, 1 params)
+5871: local3 := 
+if ( temp )
+5872: local #3
+5873: if false goto 5877
+return temp;
+5874: local #3
+5875: return
+5876: goto 5900
+elseif (create)
+5877: local #0
+5878: if false goto 5900
+var errmsg := error{"errortext":="Error::DFFindElement() - Could not open data 
+5879: decl local #0
+5880: error
+5881: "Error::DFFindElement() - Could not open data elem ["
+5882: local #1
+5883: +
+5884: "] - "
+5885: +
+5886: local #3
+5887: get member 'errortext'
+5888: +
+5889: addmember-assign(errortext)
+5890: :=
+5891: #
+DF_OutPut(errmsg.errortext);
+5892: local #4
+5893: get member 'errortext'
+5894: makelocal
+5895: jmp userfunc @6457
+5896: #
+return errmsg;
+5897: local #4
+5898: return
+5899: leave block(1)
+5900: 0L
+5901: return
+D:/Programs/forgottenlore/pkg/utils/datafile/include/datafile.inc, Line 58
+function DFOpenDataFile(file_name, create:=DF_NO_CREATE, flags:=DF_KEYTYPE_STRI
+5902: pop param 'flags'
+5903: pop param 'create'
+5904: pop param 'file_name'
+var data_file := OpenDataFile(file_name);
+5905: decl local #3
+5906: local #2
+5907: Func(11,0): OpenDataFile
+5908: :=
+5909: #
+if ( (!data_file) && (create) )
+5910: local #3
+5911: !
+5912: local #1
+5913: &&
+5914: if false goto 5928
+DF_OutPut("Debug::DFOpenDataFile() - Creating data file: "+file_name);
+5915: "Debug::DFOpenDataFile() - Creating data file: "
+5916: local #2
+5917: +
+5918: makelocal
+5919: jmp userfunc @6457
+5920: #
+CreateDataFile(file_name, flags);
+5921: local #2
+5922: local #0
+5923: Func(11,1): CreateDataFile
+5924: #
+data_file := OpenDataFile(file_name);
+5925: local #2
+5926: Func(11,0): OpenDataFile
+5927: local3 := 
+if ( data_file )
+5928: local #3
+5929: if false goto 5933
+return data_file;
+5930: local #3
+5931: return
+5932: goto 5956
+elseif ( create )
+5933: local #1
+5934: if false goto 5956
+var errmsg := error{"errortext":="Error::DFOpenDataFile() - Could not open "+fi
+5935: decl local #0
+5936: error
+5937: "Error::DFOpenDataFile() - Could not open "
+5938: local #2
+5939: +
+5940: " : "
+5941: +
+5942: local #3
+5943: get member 'errortext'
+5944: +
+5945: addmember-assign(errortext)
+5946: :=
+5947: #
+DF_OutPut(errmsg.errortext);
+5948: local #4
+5949: get member 'errortext'
+5950: makelocal
+5951: jmp userfunc @6457
+5952: #
+return errmsg;
+5953: local #4
+5954: return
+5955: leave block(1)
+5956: 0L
+5957: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 280
+function FL_GetSkillID(skillname)
+5958: pop param 'skillname'
+case (skillname)
+5959: local #0
+5960: casejmp
+	"Alchemy": @5961
+	"Anatomy": @5964
+	"AnimalLore": @5967
+	"Archery": @5970
+	"ItemLore": @5973
+	"Axe": @5976
+	"Backstab": @5979
+	"Blacksmithy": @5982
+	"BowCraft": @5985
+	"Camping": @5988
+	"Carpentry": @5991
+	"Cartography": @5994
+	"Cooking": @5997
+	"DetectingHidden": @6000
+	"Disguise": @6003
+	"Evidance": @6006
+	"Farming": @6009
+	"Fishing": @6012
+	"Healing": @6015
+	"Hiding": @6018
+	"Lockpicking": @6021
+	"Lumberjacking": @6024
+	"Magery": @6027
+	"Mining": @6030
+	"Musicianship": @6033
+	"Poisoning": @6036
+	"Removetrap": @6039
+	"Skinning": @6042
+	"Stealth": @6045
+	"Tailoring": @6048
+	"AnimalTaming": @6051
+	"Tinkering": @6054
+	"Tracking": @6057
+	"Parry": @6060
+	"Fencing": @6063
+	"Swordsmanship": @6066
+	"MaceFighting": @6069
+	"Tactics": @6072
+	"Wrestling": @6075
+	"PoleArms": @6078
+	"Masonry": @6081
+	"Staff": @6084
+	"ResistingSpells": @6087
+	"Magery": @6090
+	default: @6092
+return 1;
+5961: 1L
+5962: return
+5963: goto 6092
+return 2;
+5964: 2L
+5965: return
+5966: goto 6092
+return 3;
+5967: 3L
+5968: return
+5969: goto 6092
+return 4;
+5970: 4L
+5971: return
+5972: goto 6092
+return 5;
+5973: 5L
+5974: return
+5975: goto 6092
+return 6;
+5976: 6L
+5977: return
+5978: goto 6092
+return 7;
+5979: 7L
+5980: return
+5981: goto 6092
+return 8;
+5982: 8L
+5983: return
+5984: goto 6092
+return 9;
+5985: 9L
+5986: return
+5987: goto 6092
+return 10;
+5988: 10L
+5989: return
+5990: goto 6092
+return 11;
+5991: 11L
+5992: return
+5993: goto 6092
+return 12;
+5994: 12L
+5995: return
+5996: goto 6092
+return 13;
+5997: 13L
+5998: return
+5999: goto 6092
+return 14;
+6000: 14L
+6001: return
+6002: goto 6092
+return 15;
+6003: 15L
+6004: return
+6005: goto 6092
+return 16;
+6006: 16L
+6007: return
+6008: goto 6092
+return 17;
+6009: 17L
+6010: return
+6011: goto 6092
+return 18;
+6012: 18L
+6013: return
+6014: goto 6092
+return 19;
+6015: 19L
+6016: return
+6017: goto 6092
+return 20;
+6018: 20L
+6019: return
+6020: goto 6092
+return 21;
+6021: 21L
+6022: return
+6023: goto 6092
+return 22;
+6024: 22L
+6025: return
+6026: goto 6092
+return 23;
+6027: 23L
+6028: return
+6029: goto 6092
+return 24;
+6030: 24L
+6031: return
+6032: goto 6092
+return 25;
+6033: 25L
+6034: return
+6035: goto 6092
+return 26;
+6036: 26L
+6037: return
+6038: goto 6092
+return 27;
+6039: 27L
+6040: return
+6041: goto 6092
+return 28;
+6042: 28L
+6043: return
+6044: goto 6092
+return 29;
+6045: 29L
+6046: return
+6047: goto 6092
+return 30;
+6048: 30L
+6049: return
+6050: goto 6092
+return 31;
+6051: 31L
+6052: return
+6053: goto 6092
+return 32;
+6054: 32L
+6055: return
+6056: goto 6092
+return 33;
+6057: 33L
+6058: return
+6059: goto 6092
+return 34;
+6060: 34L
+6061: return
+6062: goto 6092
+return 35;
+6063: 35L
+6064: return
+6065: goto 6092
+return 36;
+6066: 36L
+6067: return
+6068: goto 6092
+return 37;
+6069: 37L
+6070: return
+6071: goto 6092
+return 38;
+6072: 38L
+6073: return
+6074: goto 6092
+return 39;
+6075: 39L
+6076: return
+6077: goto 6092
+return 40;
+6078: 40L
+6079: return
+6080: goto 6092
+return 41;
+6081: 41L
+6082: return
+6083: goto 6092
+return 42;
+6084: 42L
+6085: return
+6086: goto 6092
+return 43;
+6087: 43L
+6088: return
+6089: goto 6092
+return 44;
+6090: 44L
+6091: return
+6092: 0L
+6093: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 332
+function FL_GetSkillName(skill)
+6094: pop param 'skill'
+case (skill)
+6095: local #0
+6096: casejmp
+	1: @6097
+	2: @6100
+	3: @6103
+	4: @6106
+	5: @6109
+	6: @6112
+	7: @6115
+	8: @6118
+	9: @6121
+	10: @6124
+	11: @6127
+	12: @6130
+	13: @6133
+	14: @6136
+	15: @6139
+	16: @6142
+	17: @6145
+	18: @6148
+	19: @6151
+	20: @6154
+	21: @6157
+	22: @6160
+	23: @6163
+	24: @6166
+	25: @6169
+	26: @6172
+	27: @6175
+	28: @6178
+	29: @6181
+	30: @6184
+	31: @6187
+	32: @6190
+	33: @6193
+	34: @6196
+	35: @6199
+	36: @6202
+	37: @6205
+	38: @6208
+	39: @6211
+	40: @6214
+	41: @6217
+	42: @6220
+	43: @6223
+	44: @6226
+	default: @6228
+return "Alchemy";
+6097: "Alchemy"
+6098: return
+6099: goto 6228
+return "Anatomy";
+6100: "Anatomy"
+6101: return
+6102: goto 6228
+return "AnimalLore";
+6103: "AnimalLore"
+6104: return
+6105: goto 6228
+return "Archery";
+6106: "Archery"
+6107: return
+6108: goto 6228
+return "ItemLore";
+6109: "ItemLore"
+6110: return
+6111: goto 6228
+return "Axe"; 
+6112: "Axe"
+6113: return
+6114: goto 6228
+return "Backstab";
+6115: "Backstab"
+6116: return
+6117: goto 6228
+return "Blacksmithy";
+6118: "Blacksmithy"
+6119: return
+6120: goto 6228
+return "BowCraft";
+6121: "BowCraft"
+6122: return
+6123: goto 6228
+return "Camping";
+6124: "Camping"
+6125: return
+6126: goto 6228
+return "Carpentry";
+6127: "Carpentry"
+6128: return
+6129: goto 6228
+return "Cartography";
+6130: "Cartography"
+6131: return
+6132: goto 6228
+return "Cooking";
+6133: "Cooking"
+6134: return
+6135: goto 6228
+return "DetectingHidden";
+6136: "DetectingHidden"
+6137: return
+6138: goto 6228
+return "Disguise";
+6139: "Disguise"
+6140: return
+6141: goto 6228
+return "Evidance";
+6142: "Evidance"
+6143: return
+6144: goto 6228
+return "Farming";
+6145: "Farming"
+6146: return
+6147: goto 6228
+return "Fishing";
+6148: "Fishing"
+6149: return
+6150: goto 6228
+return "Healing";
+6151: "Healing"
+6152: return
+6153: goto 6228
+return "Hiding";
+6154: "Hiding"
+6155: return
+6156: goto 6228
+return "Lockpicking";
+6157: "Lockpicking"
+6158: return
+6159: goto 6228
+return "Lumberjacking";
+6160: "Lumberjacking"
+6161: return
+6162: goto 6228
+return "Magery";
+6163: "Magery"
+6164: return
+6165: goto 6228
+return "Mining";
+6166: "Mining"
+6167: return
+6168: goto 6228
+return "Musicianship";
+6169: "Musicianship"
+6170: return
+6171: goto 6228
+return "Poisoning";
+6172: "Poisoning"
+6173: return
+6174: goto 6228
+return "Removetrap";
+6175: "Removetrap"
+6176: return
+6177: goto 6228
+return "Skinning";
+6178: "Skinning"
+6179: return
+6180: goto 6228
+return "Stealth";
+6181: "Stealth"
+6182: return
+6183: goto 6228
+return "Tailoring";
+6184: "Tailoring"
+6185: return
+6186: goto 6228
+return "AnimalTaming";
+6187: "AnimalTaming"
+6188: return
+6189: goto 6228
+return "Tinkering";
+6190: "Tinkering"
+6191: return
+6192: goto 6228
+return "Tracking";
+6193: "Tracking"
+6194: return
+6195: goto 6228
+return "Parry";
+6196: "Parry"
+6197: return
+6198: goto 6228
+return "Fencing";
+6199: "Fencing"
+6200: return
+6201: goto 6228
+return "Swordsmanship";
+6202: "Swordsmanship"
+6203: return
+6204: goto 6228
+return "MaceFighting";
+6205: "MaceFighting"
+6206: return
+6207: goto 6228
+return "Tactics";
+6208: "Tactics"
+6209: return
+6210: goto 6228
+return "Wrestling";
+6211: "Wrestling"
+6212: return
+6213: goto 6228
+return "PoleArms";
+6214: "PoleArms"
+6215: return
+6216: goto 6228
+return "Masonry";
+6217: "Masonry"
+6218: return
+6219: goto 6228
+return "Staff";
+6220: "Staff"
+6221: return
+6222: goto 6228
+return "ResistingSpells";
+6223: "ResistingSpells"
+6224: return
+6225: goto 6228
+return "Magery";
+6226: "Magery"
+6227: return
+6228: 0L
+6229: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 429
+function GetSkillDescValue(skill)
+6230: pop param 'skill'
+if (!skill || skill == error)
+6231: local #0
+6232: !
+6233: local #0
+6234: error
+6235: ==
+6236: ||
+6237: if false goto 6241
+return "";
+6238: ""
+6239: return
+6240: goto 6261
+elseif (skill == 1)
+6241: local #0
+6242: 1L
+6243: ==
+6244: if false goto 6248
+return "Ter";
+6245: "Ter"
+6246: return
+6247: goto 6261
+elseif (skill == 2)
+6248: local #0
+6249: 2L
+6250: ==
+6251: if false goto 6255
+return "Sec";
+6252: "Sec"
+6253: return
+6254: goto 6261
+elseif (skill == 3)
+6255: local #0
+6256: 3L
+6257: ==
+6258: if false goto 6261
+return "Pri";
+6259: "Pri"
+6260: return
+6261: 0L
+6262: return
+D:/Programs/forgottenlore/pkg/fls/fls_core/include/fls_chargumps_ex.inc, Line 383
+function GetSkillPrice(skillid, byref primarias, byref secundarias, byref terci
+6263: pop param byref 'quaternarias'
+6264: pop param byref 'terciarias'
+6265: pop param byref 'secundarias'
+6266: pop param byref 'primarias'
+6267: pop param 'skillid'
+var skillname := FL_GetSkillName(skillid);
+6268: decl local #5
+6269: local #4
+6270: makelocal
+6271: jmp userfunc @6094
+6272: :=
+6273: #
+foreach skill in primarias
+6274: local #3
+6275: initforeach @6282
+if (skill == skillname)
+6276: local #6
+6277: local #5
+6278: ==
+6279: if false goto 6282
+return 1;
+6280: 1L
+6281: return
+6282: stepforeach @6276
+6283: leave block(3)
+foreach skill in secundarias
+6284: local #2
+6285: initforeach @6292
+if (skill == skillname)
+6286: local #6
+6287: local #5
+6288: ==
+6289: if false goto 6292
+return 2;
+6290: 2L
+6291: return
+6292: stepforeach @6286
+6293: leave block(3)
+foreach skill in terciarias
+6294: local #1
+6295: initforeach @6302
+if (skill == skillname)
+6296: local #6
+6297: local #5
+6298: ==
+6299: if false goto 6302
+return 3;
+6300: 3L
+6301: return
+6302: stepforeach @6296
+6303: leave block(3)
+foreach skill in quaternarias
+6304: local #0
+6305: initforeach @6312
+if (skill == skillname)
+6306: local #6
+6307: local #5
+6308: ==
+6309: if false goto 6312
+return 4;
+6310: 4L
+6311: return
+6312: stepforeach @6306
+6313: leave block(3)
+return 4;
+6314: 4L
+6315: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps_ex.inc, Line 180
+function GFTextCoords(type:=ALIGN_CENTER, gump_text, x_pos, width:=0)
+6316: pop param 'width'
+6317: pop param 'x_pos'
+6318: pop param 'gump_text'
+6319: pop param 'type'
+x_pos := CInt(x_pos);
+6320: local #1
+6321: Func(0,0): CInt
+6322: local1 := 
+width := CInt(width);
+6323: local #0
+6324: Func(0,0): CInt
+6325: local0 := 
+if ( type == ALIGN_CENTER )
+6326: local #3
+6327: 1L
+6328: ==
+6329: if false goto 6343
+return CInt(x_pos+CInt((width-GFTextWidth(gump_text))/2));
+6330: local #1
+6331: local #0
+6332: local #2
+6333: makelocal
+6334: jmp userfunc @6356
+6335: -
+6336: 2L
+6337: /
+6338: Func(0,0): CInt
+6339: +
+6340: Func(0,0): CInt
+6341: return
+6342: goto 6354
+elseif ( type == ALIGN_RIGHT )
+6343: local #3
+6344: 2L
+6345: ==
+6346: if false goto 6354
+return CInt(x_pos-GFTextWidth(gump_text));
+6347: local #1
+6348: local #2
+6349: makelocal
+6350: jmp userfunc @6356
+6351: -
+6352: Func(0,0): CInt
+6353: return
+6354: 0L
+6355: return
+D:/Programs/forgottenlore/pkg/utils/gumps/include/gumps_ex.inc, Line 253
+function GFTextWidth(gump_text)
+6356: pop param 'gump_text'
+var gft_length := struct;
+6357: decl local #1
+6358: struct
+6359: :=
+6360: #
+gft_length.+charsf :=
+6361: local #1
+6362: "charsf"
+6363: .+
+6364: "||||||||||||||`',.;:::::::::!!!!!!!!!!!!!!il1[]]]]]]]]]"bcejotî(){}===adfpqrszIÑ~~~~ghnuvyÅ<>-----xJ578$?++++++ kCE2369^/*****mwABDFOPéô40%%GLNQSZ@#######HRT&__________KöUYYYYYYYYYYYXXXXXXXXXXXXXXVVVVVVVVVVVVVVMMMMMMMMMMMMMMWWWWWWWWWWWWWW"
+6365: := #
+gft_length.+width := array
+6366: local #1
+6367: "width"
+6368: .+
+6369: array
+6370: 2L
+6371: init{}
+6372: 3L
+6373: init{}
+6374: 4L
+6375: init{}
+6376: 5L
+6377: init{}
+6378: 6L
+6379: init{}
+6380: 7L
+6381: init{}
+6382: 8L
+6383: init{}
+6384: 9L
+6385: init{}
+6386: 10L
+6387: init{}
+6388: 11L
+6389: init{}
+6390: 12L
+6391: init{}
+6392: 13L
+6393: init{}
+6394: 14L
+6395: init{}
+6396: 15L
+6397: init{}
+6398: 16L
+6399: init{}
+6400: 18L
+6401: init{}
+6402: 21L
+6403: init{}
+6404: := #
+var points:=0;
+6405: decl local #2
+6406: 0L
+6407: :=
+6408: #
+var j := Len(gump_text);
+6409: decl local #3
+6410: local #0
+6411: Func(0,2): Len
+6412: :=
+6413: #
+for ( j; j>0; j-=1 )
+6414: local #3
+6415: #
+6416: local #3
+6417: 0L
+6418: >
+6419: if false goto 6455
+var i := Find(gft_length.charsf, gump_text[j], 1) - 1;
+6420: decl local #0
+6421: local #1
+6422: get member 'charsf'
+6423: local #0
+6424: local #3
+6425: [] 1
+6426: 1L
+6427: Func(0,4): Find
+6428: 1L
+6429: -
+6430: :=
+6431: #
+if ( i>=0 )
+6432: local #4
+6433: 0L
+6434: >=
+6435: if false goto 6449
+points += gft_length.width[CInt(i/14)+1];
+6436: local #2
+6437: local #1
+6438: get member 'width'
+6439: local #4
+6440: 14L
+6441: /
+6442: Func(0,0): CInt
+6443: 1L
+6444: +
+6445: [] 1
+6446: +=
+6447: #
+6448: goto 6449
+6449: leave block(1)
+6450: local #3
+6451: 1L
+6452: -=
+6453: #
+6454: goto 6416
+return (points);
+6455: local #2
+6456: return
+D:/Programs/forgottenlore/pkg/utils/datafile/include/datafile.inc, Line 348
+function DF_OutPut(text)
+6457: pop param 'text'
+if ( DF_DEBUG_MODE )
+6458: global #1
+6459: if false goto 6478
+var script_name := GetProcess(GetPid()).name;
+6460: decl local #0
+6461: Func(4,4): GetPid
+6462: Func(4,3): GetProcess
+6463: get member id 'name' (3)
+6464: :=
+6465: #
+LogToFile("::log/dataFile.log", "["+script_name+"]: "+text, LOG_DATETIME);
+6466: "::log/dataFile.log"
+6467: "["
+6468: local #1
+6469: +
+6470: "]: "
+6471: +
+6472: local #0
+6473: +
+6474: 1L
+6475: Func(10,0): LogToFile
+6476: #
+6477: leave block(1)
+return 1;
+6478: 1L
+6479: return

@@ -1,0 +1,22 @@
+/*
+ * $Id: endFeebleMind.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+ 
+use uo;
+use os;
+
+include ":attributes:attributes";
+
+program TimedScript_EndFeebleMind(params)
+	var mobile := params[1];
+	
+	mobile.color := GetObjProperty(mobile, "AG_oldcolor");
+	EraseObjProperty(mobile, "armaduraglacial");
+	EraseObjProperty(mobile, "ArmorHitScripts");
+	EraseObjProperty(mobile, "AG_oldcolor");
+	
+	return 1;
+endprogram
+
+ 

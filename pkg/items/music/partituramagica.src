@@ -1,0 +1,102 @@
+use os;
+use uo;
+
+include ":attributes:attributeConstants";
+include ":attributes:attributes";
+include ":attributes:skillCheck";
+include ":itemutils:canAccess";
+include ":musicianship:bard";
+
+program partituramagica(item)
+
+	var randmagica;
+	var notas := array;
+	var compositor;
+	var tempo;
+	var letra := array;
+	var magica;
+	randmagica := (Randomint(12) + 1);
+
+	if (randmagica == 1) //OK
+		item.name := "Hino de Zharkia";
+		compositor := "Desconhecido";
+		notas := {"G", "|", "L", "|", "F", "D#", "|", "G", "|", "F", "|", "|", "D#", "D", "|", "|", "L", "|", "G", "|", "|", "G#", "A#", "|", "G#", "G", "F", "|", "G", "G#", "G", "|", "|", "L", "|", "F", "|", "G", "|", "D#", "|", "C", "L", "|", "D", "|", "D#", "|", "D", "|", "|", "L", "|", "F", "|", "G", "|", "D#", "|", "F", "|", "D", "|", "D#", "|", "L", "C"};
+		tempo := 450;
+		magica := 1;
+		letra := { "Vamos vamos vamos lutar!" , "Com forca e Coragem no Coracao!", "Todo dia Memmar vamos defender", "Pois lutaremos como Ahenson, Deus-Rei de Zanshir", "Para que um dia Zharkia veja o raiar", "De um dia sem sangue no Chao!" };
+	elseif (randmagica == 2) //OK
+		item.name := "Vento das Brumas";
+		compositor := "Desconhecido";
+		notas := {"B", "C", "B", "C", "B", "C", "B", "C", "G#", "C", "G#", "C", "G#", "C", "G#", "C", "F", "C", "F", "C", "F", "C", "F", "C", "G", "C", "G", "C", "G", "C", "G", "C", "G#", "G", "F", "G", "G#", "G", "F", "D#", "D", "F", "D", "D#", "D#"};
+		tempo := 300;
+		magica := 2;
+	elseif (randmagica == 3) //OK
+		item.name := "A Irmandade";
+		compositor := "Desconhecido";
+		notas := {"C", "C", "C#", "C#", "C", "C", "D#", "C", "C", "C#", "C#", "C", "C", "F#", "|", "|", "F", "F", "F#", "F#", "D#", "D#", "F", "|", "|", "D#", "F#", "G", "C#", "C", "|", "|", "|"};
+		tempo := 450;
+		magica := 3;
+	elseif (randmagica == 4) //OK
+		item.name := "Aurora de Tor'Amril";
+		compositor := "Desconhecido";
+		notas := {"E", "|", "|", "E", "|", "B", "A", "|", "|", "G", "|", "F#", "G", "F#", "|", "D", "|", "|", "|", "|", "E", "|", "|", "E", "|", "B", "|", "A", "|", "|", "G", "|", "F#", "G", "F#", "|", "G"};
+		tempo := 450;
+		magica := 4;
+	elseif (randmagica == 5)
+		item.name := "Grito de Cha'ke";
+		compositor := "Desconhecido";
+		notas := {"C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C", "C"};
+		tempo := 200;
+		magica := 5;
+	elseif (randmagica == 6) //OK
+		item.name := "Ardiloso Marach";
+		compositor := "Desconhecido";
+		notas := {"C", "G#", "|", "|", "C", "G", "|", "|", "D#", "A#", "|", "|", "C#", "G#", "|", "|", "C", "G", "|", "|", "F", "G", "|", "|", "D", "F", "|", "|", "D#", "C"};
+		tempo := 550;
+		magica := 6;
+	elseif (randmagica == 7) //OK
+		item.name := "Lamina da Eldrad";
+		compositor := "Desconhecido";
+		notas := {"C", "D", "C", "D#", "C", "D", "|", "F", "F#", "F", "A", "|", "|", "F#", "F", "|", "F#", "F", "D#", "|", "D#", "F", "D#", "C", "|", "C", "C", "C"};
+		tempo := 350;
+		magica := 7;
+	elseif (randmagica == 8) //OK
+		item.name := "Cancao de Hamelin";
+		compositor := "Flautista";
+		notas := {"C", "D", "E", "G", "A", "G", "D", "|", "A", "G", "A", "|", "D", "G", "A", "|", "|", "|", "C", "E", "C", "|", "C", "E", "D", "|", "C", "D", "E", "G", "A", "G", "C"};
+		tempo := 300;
+		magica := 8;
+	elseif (randmagica == 10) 
+		item.name := "Flamula de Kandis Ra";
+		compositor := "Desconhecido";
+		notas := {"A", "|", "B", "|", "C", "|", "D", "|", "E", "A", "E", "A", "F", "A", "F", "A", "E", "A", "E", "A", "|", "D", "|", "C", "|", "B", "|", "A", "G#", "E", "G#", "E", "B", "E", "B", "E", "A", "A", "A", "A"};
+		tempo := 100;
+		magica := 10;
+	elseif (randmagica == 9)  //OK
+		item.name := "Noite em Unnam";
+		compositor := "Desconhecido";
+		notas := {"C", "D", "D#", "|", "D#", "D", "C", "|", "C", "D", "D#", "G", "D#", "D", "C", "|", "C", "D", "D#", "|", "D#", "D", "C", "|", "C", "D", "D#", "G", "D#", "D", "C"};
+		tempo := 350;
+		magica := 9;
+	elseif (randmagica == 11) //OK
+		item.name := "Silencio de Anlar";
+		compositor := "Desconhecido";
+		notas := {"C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "B", "A#", "A", "G#", "G", "F#", "F", "D#", "D", "C#", "C", "C#", "C", "C#", "C", "C#"};
+		tempo := 200;
+		magica := 11;
+	elseif (randmagica == 12) //OK
+		item.name := "Paixao Minguante";
+		compositor := "Pokiehl";
+		notas := {"C", "D", "E", "|", "C", "D", "E", "|", "C", "D", "E", "F", "E", "D", "E", "|", "G", "|", "F", "E", "G", "|", "F", "E", "G", "|", "F", "E", "D", "C"};
+		tempo := 250;
+		magica := 12;
+
+	endif
+
+	Setobjproperty(item, "compositor", compositor);	
+	Setobjproperty(item, "notas", notas);
+	Setobjproperty(item, "tempo", tempo);
+	Setobjproperty(item, "letra", letra);
+	Setobjproperty(item, "magica", magica);
+
+endprogram

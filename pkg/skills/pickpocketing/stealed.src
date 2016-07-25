@@ -1,0 +1,14 @@
+use uo;
+use os;
+
+include ":attributes:attributes";
+include "include/facings";
+include "include/say";
+include ":ghaia:ghaia";
+
+program stealed_item (who, item)
+	SendSysMessageEx(who, "O item foi roubado!", SSM_INFO);
+	SendSysMessageEx(who, "E desapareceu!!", SSM_INFO);
+	var Destroy := Destroyitem(item);
+	
+endprogram

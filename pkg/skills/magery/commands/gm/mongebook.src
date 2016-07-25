@@ -1,0 +1,19 @@
+use uo;
+use os;
+include "include/say";
+
+program monge_book(who, params )
+	params := splitwords(params);
+	
+	SetObjProperty(who, "spelluser", "Monge");
+	var item := CreateItemInBackpack(who, 0x790c,  1);
+	
+	var spells := array{};
+	foreach param in params
+		spells.append(cint(param));
+	endforeach
+	
+	SetObjProperty(item, "spellids", spells);
+	SetObjProperty(item, "monge", who.serial);
+	SendSysMessageEX(who, "Objeto criado com sucesso");
+endprogram

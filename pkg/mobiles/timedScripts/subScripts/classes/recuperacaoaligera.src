@@ -1,0 +1,27 @@
+use uo;
+use os;
+
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":timedscripts:poisonUtil";
+include "include/damage";
+
+program default_poison(params)
+	var who := params[1];
+	var attacker := params[2];
+	var level := CInt(params[3]);
+
+	while( isBloodied(who) )
+
+		if (who.dead)
+			break;
+		endif
+		HealFLS(who, 5);
+		
+		sleep(2);
+	endwhile
+	var script := GetProcess(GetPid());
+	script.kill();
+	return;
+endprogram
+

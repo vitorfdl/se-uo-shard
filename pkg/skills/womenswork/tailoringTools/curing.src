@@ -1,0 +1,478 @@
+use uo;
+use os;
+
+//include "include/client";
+//include "include/objtype";
+//include "include/canAccess";
+include "include/say";
+
+program use_curing(who, item)
+
+var carregar := GetObjProperty(item, "#uso");
+var temitem := GetObjProperty(item, "#item");
+
+if (carregar == "1" )
+   SendSysMessage(who, "Voce nao pode usar este item agora!");
+   return;
+
+else
+   if (temitem == "1" )
+      if (getobjproperty(item, "#itemtype") == "string" )
+         SendSysMessage(who, "Voce pegou a corda pra arco");
+         EraseObjProperty(item, "#item");
+         EraseObjProperty(item, "#itemtype");
+         CreateItemInBackpack(who, 0xee47 , 1);
+         PlaySoundEffect (who, 0x49);
+      elseif (getobjproperty(item, "#itemtype") == "couro")
+         SendSysMessage(who, "Voce pegou o couro curtido");
+         EraseObjProperty(item, "#item");
+         EraseObjProperty(item, "#itemtype");
+         CreateItemInBackpack(who, 0xee45, 1);
+         PlaySoundEffect (who, 0x49);
+      elseif (getobjproperty(item, "#itemtype") == "pelebege")
+         SendSysMessage(who, "Voce pegou a pele curtida");
+         EraseObjProperty(item, "#item");
+         EraseObjProperty(item, "#itemtype");
+         CreateItemInBackpack(who, 0xee57, 1);
+         PlaySoundEffect (who, 0x49);
+      elseif (getobjproperty(item, "#itemtype") == "pelecinza")
+         SendSysMessage(who, "Voce pegou a pele curtida");
+         EraseObjProperty(item, "#item");
+         EraseObjProperty(item, "#itemtype");
+         CreateItemInBackpack(who, 0xee55, 1);
+         PlaySoundEffect (who, 0x49);
+      elseif (getobjproperty(item, "#itemtype") == "pelemarrom")
+         SendSysMessage(who, "Voce pegou a pele curtida");
+         EraseObjProperty(item, "#item");
+         EraseObjProperty(item, "#itemtype");
+         CreateItemInBackpack(who, 0xee56, 1);
+         PlaySoundEffect (who, 0x49);
+      elseif (getobjproperty(item, "#itemtype") == "pelebranca")
+         SendSysMessage(who, "Voce pegou a pele curtida");
+         EraseObjProperty(item, "#item");
+         EraseObjProperty(item, "#itemtype");
+         CreateItemInBackpack(who, 0xee58, 1);
+         PlaySoundEffect (who, 0x49);
+      else
+         SendSysMessage(who, "Nao a nada aqui para pegar");
+      endif
+   else
+         EraseObjProperty(who, "IsMeditating");
+         EraseObjProperty(who, "HealTimer");
+         if(!Accessible(who, item))
+           return;
+         endif
+         SendSysMessage(who, "Escolha o que voce deseja usar aqui.");
+         var useon := Target(who);
+         if (!useon)
+           return;
+         endif
+         if(!ReserveItem(useon))
+           SendSysMessage(who,"Este item esta em uso.");
+           return;
+         endif
+ 
+         var obj_type := useon.objtype;
+          if ( (obj_type == 0x1078) || (obj_type == 0x1079) )
+             UsarCuringCouro(who, useon);
+             return;
+          elseif ( (obj_type == 0xee46))
+             UsarCuringCorda(who, useon);
+             return;
+          elseif ((obj_type == 0xee51))
+             UsarCuringPeleBege(who, useon);
+             return;
+          elseif ((obj_type == 0xee52))
+             UsarCuringPeleBranca(who, useon);
+             return;
+          elseif ((obj_type == 0xee53))
+             UsarCuringPeleMarrom(who, useon);
+             return;
+          elseif ((obj_type == 0xee54))
+             UsarCuringPeleCinza(who, useon);
+             return;
+          elseif ((obj_type == 0xef11))
+             UsarCuringCouroAnfibio(who, useon);
+             return;
+          elseif ((obj_type == 0xef12))
+             UsarCuringCouroPedra(who, useon);
+             return;
+          elseif ((obj_type == 0xef13))
+             UsarCuringCouroEncouracado(who, useon);
+             return;
+          elseif ((obj_type == 0xef14))
+             UsarCuringCouroEspinhos(who, useon);
+             return;
+          elseif ((obj_type == 0xef15))
+             UsarCuringCouroPeludo(who, useon);
+             return;
+          elseif ((obj_type == 0xef16))
+             UsarCuringCouroRepteis(who, useon);
+             return;
+          elseif ((obj_type == 0xef17))
+             UsarCuringCouroPlumado(who, useon);
+             return;
+          elseif ((obj_type == 0xef18))
+             UsarCuringCouroFadas(who, useon);
+             return;
+          elseif ((obj_type == 0xef19))
+             UsarCuringCouroMarinho(who, useon);
+             return;
+          elseif ((obj_type == 0xed20))
+             UsarCuringCouroDraconiano(who, useon);
+             return;
+          else
+             SendSysMessage(who,"Voce so pode usar couro aqui");
+             return;
+          endif
+   endif
+endif
+
+endprogram
+
+function UsarCuringCouro(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xee45, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroDraconiano(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xed29, 1);
+ PlaySoundEffect (who, 0x49);
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+
+function UsarCuringCouroAnfibio(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef20, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroPedra(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef21, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroEncouracado(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef22, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroEspinhos(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef23, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroPeludo(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef24, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroRepteis(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef25, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroPlumado(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef26, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroFadas(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef27, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCouroMarinho(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xef28, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringCorda(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xee47, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringPeleBege(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xee57, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringPeleCinza(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xee55, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringPeleMarrom(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xee56, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction
+
+function UsarCuringPeleBranca(who, useon)
+var characterx := who.x;
+var charactery := who.y;
+repeat
+ if (SubtractAmount(useon, 1))
+ PrintText(who, "*curtindo couro*");
+ Sleep(1);
+ CreateItemInBackpack(who, 0xee58, 1);
+ PlaySoundEffect (who, 0x49);
+//   SetObjProperty(item, "#uso", "1");
+//   Detach();
+//   Sleep(10);
+//   EraseObjProperty(item, "#uso");
+//   SetObjProperty(item, "#item", "1");
+//   SetObjProperty(item, "#itemtype", "couro");
+ else
+   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   break;
+ endif
+until (who.x != characterx or who.y != charactery);
+endfunction

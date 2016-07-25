@@ -1,0 +1,16 @@
+use uo;
+
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include ":tn:cooldown";
+include "include/sysEvent";
+include "include/client";
+include "include/say"; 
+
+program taunt(who)
+
+	SendSysMessageEx(who, "Voce vai se esquivar de todos os proximos golpes!", SSM_INFO);
+	SetCooldown(who, "desviararmas", 10);
+
+endprogram
+  

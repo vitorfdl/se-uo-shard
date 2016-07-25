@@ -1,0 +1,86 @@
+/* *
+ * freezetostatics.src
+ * Type script decription
+ *
+ * By andenixa, at 11/3/2011
+ */
+
+use uo;
+use os;
+use polsys;
+use file;
+use cfgfile;
+use math;
+
+include "include/client";
+//include ":effects:effects";
+//include ":zuluhotelnet:zhpackets";
+
+
+set_script_option(SCRIPTOPT_NO_RUNAWAY, 1);
+
+program freezetostatics( user, filename )
+
+    if( not filename )
+        SendSysMessage( user, "Syntax: freezetostatics <filename>" );
+        exit;
+    endif
+
+    SendSysMessage(user, "Select 1st corner.");
+    var corner1 := TargetCoordinates(user);
+    if( not corner1 )
+        SendSysMessage( user, "Cancelled" );
+        exit;
+    endif
+
+    SendSysMessage(user, "Select 2nd corner.");
+    var corner2 := TargetCoordinates(user);
+    if( not corner2 )
+        SendSysMessage( user, "Cancelled" );
+        exit;
+    endif
+
+    var counter := 1;
+
+    foreach obj in ListObjectsInBox( min(corner1.x, corner2.x), min(corner1.y, corner2.y), min(corner1.z, corner2.z)-25,
+        max(corner1.x, corner2.x), max(corner1.y, corner2.y), max(corner1.z, corner2.z)+25, realm := corner1.realm )
+
+        //print(obj);
+        if(obj.isa(POLCLASS_ITEM))
+            if(obj.invisible)
+                continue;
+            endif
+            //EffectVisualEffectHighlightTile(obj, delay := 30, color := 1172);
+            write_object(obj, filename:=filename, index:=counter);
+            counter += 1;
+            //PlayStationaryEffectZh(obj.x, obj.y, obj.z, obj.objtype, speed:=15, duration:=30, fixeddirection:=1, hue:=1182, render:=3, realm := obj.realm );
+        endif
+        sleepms(10);
+    endforeach
+
+    SendSysMessage( user, ""+CStr(counter)+" items frozen." );
+
+endprogram
+
+function write_object(obj, filename, index)
+
+    if( not obj.objtype )
+        return;
+    endif
+
+    var lines := {
+        "SECTION WORLDITEM "+CStr( index ),
+        "{",
+        "  NAME #",
+        "  ID "+CStr( obj.objtype ),
+        "  X "+CStr( obj.x ),
+        "  Y "+CStr( obj.y ),
+        "  Z "+CStr( obj.z ),
+        "  COLOR "+CStr( obj.color ),
+        "  CONT -1",
+        "  TYPE 255",
+        "}"};
+
+    //print(AppendToFile( filename, lines ));
+    AppendToFile( "::"+filename+".wsc", lines );
+endfunction

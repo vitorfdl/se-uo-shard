@@ -1,0 +1,29 @@
+/*
+ *
+ */
+
+use uo;
+use os;
+include "include/say";
+
+program onRemove(character, container, item, item_amount, movetype)
+	var aux := container;
+	while (aux.container)
+		aux := aux.container;
+	endwhile
+	
+	
+	if (aux == character)
+		return 1;
+	endif
+	
+	if (character.concealed || character.hidden || aux.objtype == 0xEFFD || movetype == MOVETYPE_COREMOVE);
+	else
+		if (GetObjPRoperty(character, "maosleves") == 1)
+			EraseObjProperty(character, "maosleves");
+		else
+			PrintText(character, "*Tirou " + item.desc + " da " + container.desc + "*", 41);
+		endif
+	endif
+	return 1;
+endprogram

@@ -1,0 +1,276 @@
+//<?
+use uo;
+use datafile;
+use basic;
+
+include ":yggdrasil:spawnGroup";
+include ":yggdrasil:boss";
+// include ":ghaia:ghaiaUtil";
+include ":gumps:requestgump";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include ":tn:tngumps";
+include "include/say";
+
+//Main Menu
+const GF_ADD_BTN        := 888;
+const GF_DEL_BTN     := 887;
+const GF_SELECTELEM_BTN := 100;
+
+//Moblist menu
+const GF_ADDMOB_BTN     := 889;
+const GF_DELMOB_BTN     := 900;
+const GF_SELECTMOB_BTN := 200;
+
+//Mobinfo menu
+var mob_name, mob_power, mob_daytime, mob_bossparams;
+const INPUT_ISBOSS   := 20;
+const GF_BOSS_BTN    := 30;
+const GF_POWER_BTN   := 31;
+const GF_DAYTIME_BTN := 32;
+const GF_UPDATE_BTN  := 29;
+
+var selected_elem := ""; //Name of the Elem
+var selected_mob  := 0; //Number of the mob in array list 
+var spawngroups;
+var gumpid := 0x1F4;
+
+program spawnGroups(who)
+    CloseGump(who, gumpid);
+    var closed := 0;
+
+    while (closed != 1)
+        var gump := ConstructGump();
+        var input := GFSendGump(who, gump);
+
+        //Start Group Select
+        if (input[0] == GF_ADD_BTN)
+                var spawngroup_name := RequestGump(who, "Nome do novo SpawnGroup", "Obrigatório um nome ainda não usado.", "", CANCEL_BTN_ON);
+                var group_list      := LoadSpawnGroupData().Keys();
+                if (spawngroup_name == 0 || !spawngroup_name || spawngroup_name == " " )
+                    continue;
+                elseif (spawngroup_name in group_list)
+                    selected_elem := spawngroup_name;
+                    continue;
+                endif
+                // group_list := group_list;
+                GetSpawnGroupData(spawngroup_name);
+                SetElemButton(spawngroup_name);
+        elseif (input[0] == GF_DEL_BTN)
+            RemoveGroupData(selected_elem);
+            SetElemButton(0);
+        elseif (input[0] >= GF_SELECTELEM_BTN && input[0] < GF_SELECTELEM_BTN+100)
+            var key_index := input[0]-GF_SELECTELEM_BTN;
+            SetElemButton(key_index);
+        //End Group Select
+
+        //Start Mob Select
+        elseif (input[0] >= GF_SELECTMOB_BTN && input[0] < GF_SELECTMOB_BTN+20)
+            var key_index := input[0]-GF_SELECTMOB_BTN;
+            selected_mob := key_index;
+        elseif (input[0] == GF_DELMOB_BTN)
+            RemoveGroupMobData(selected_elem, selected_mob);
+            selected_mob := 0;
+        elseif (input[0] == GF_ADDMOB_BTN)
+            var mob_string := RequestGump(who, "Entre com o nome do mob", "Exemplo :ghaia:rabbit", ":ghaia:", CANCEL_BTN_ON);
+            if (mob_string == 0 || !mob_string || mob_string == " " )
+                continue;
+            endif
+            var elem := GetSpawnGroupData(selected_elem);
+            elem.mob_list.append(struct{name:=mob_string});
+            SetSpawnGroupData(selected_elem, elem);
+        //End Mob Select
+
+        elseif(input[0] >= GF_UPDATE_BTN && input[0] <= 40)
+            MobSetConfigs(who, input);
+        //Close Button
+        else
+            closed := 1;
+        endif
+        sleepms(2);
+    endwhile
+endprogram
+
+function SetElemButton(key_index)
+    if (TypeOf(key_index) == "Integer")
+        selected_elem := spawngroups[key_index];
+    else
+        selected_elem := key_index;
+    endif
+
+    selected_mob  := 0;
+endfunction
+
+function ConstructGump()
+    spawngroups := DFGetElemNames(LoadSpawnGroupData()); //Reset every time the Gump is created
+    var gump := GFCreateGump(250, 150);
+    GFPage(gump, 0);
+    GFSetID(gump, gumpid);
+    // GFResizePic(gump, 195, 220, GFCfgConst("Defaults", "ForeGround"), 390, 245);
+
+    if (selected_elem)
+        ConstructMobList(gump);
+    endif
+
+    if (selected_mob)
+        constructMobInfo(gump);
+    endif
+
+    ConstructGroupList(gump);
+
+    GFoptimizeGump(gump);
+    return gump;
+endfunction
+
+function ConstructGroupList(byref gump)
+    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 180, 450);
+    GFTextLine(gump, 48, 28, 555, "Spawn Group List");
+
+    var page     := 1;
+    var max_page := 10;
+    for i:=1 to spawngroups.Size()+1
+        GFPage(gump, page);
+        var x := 50;
+        var y := (30+(18*i)); // (((page-1) * max_page)+1); //(BaseX(Espaï¿½amento*i)) / (Calculo de Pagina)
+
+        var color := 1153;
+        if (selected_elem == spawngroups[i])
+            color := 2103;
+        endif
+        if (spawngroups[i])
+            GFTextLine(gump, x, y, color, spawngroups[i]);
+            GFAddButton(gump, x-14, y+5, 2103, 2104, GF_CLOSE_BTN, GF_SELECTELEM_BTN+i);
+        else
+            GFTextLine(gump, x+70, y, 1153, "Adicionar");
+            GFAddButton(gump, x+70-14, y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_ADD_BTN);
+
+            if (selected_elem)
+                GFTextLine(gump, x+70, y+18, 1153, "Remover");
+                GFAddButton(gump, x+70-14, y+18+5, 0x938, 0x938, GF_CLOSE_BTN, GF_DEL_BTN);
+            endif
+        endif
+
+         //change page
+        if (i == (page+1) * max_page)
+            page += 1;
+        endif
+    endfor
+endfunction
+
+function AddPageChange(byref gump)
+
+endfunction
+
+function ConstructMobList(byref gump)
+    GFPage(gump, 0);
+    var group_data     := GetSpawnGroupData(selected_elem).mob_list;
+    var groupdata_size := group_data.Size();
+    GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 250, 70+(groupdata_size*18));
+    GFTextLine(gump, 200, 28, 555, "Select from mob list");
+
+    for i:=0 to groupdata_size
+        var x := 218;
+        var y := (45+(18*i));
+        var n := i+1;
+
+        if (group_data[n])
+            //Start Button Change Color and Icon
+            var start_button := 0x2622;
+            var color := 1153;
+            if (n == selected_mob)
+                start_button := 0x2623;
+                color := 2103;
+            endif
+            //endbutton
+
+            //Start Boss Tip
+            var name_string := group_data[n].name;
+            if (group_data[n].isBoss)
+                name_string := "<BOSS> {}".format(name_string);
+            endif
+            //endboss
+
+            GFTextLine(gump, x, y, color, name_string);
+            GFAddButton(gump, x-20, y+5, start_button, 0x2623, GF_CLOSE_BTN, GF_SELECTMOB_BTN+n);
+        else
+            if (groupdata_size <= 10)
+                GFTextLine(gump, x+40, y, 1153, "Novo Monstro");
+                GFAddButton(gump, x+40-14, y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_ADDMOB_BTN);
+            endif
+            if (selected_mob)
+                GFTextLine(gump, x+145, y, 1153, "Remover");
+                GFAddButton(gump, x+145-14, y+5, 0x938, 0x938, GF_CLOSE_BTN, GF_DELMOB_BTN);
+            endif
+        endif
+
+        // GFTextLine(gump, x, y, color, spawngroups[i]);
+        // GFAddButton(gump, x-14, y+5, 2103, 2104, GF_CLOSE_BTN, 100+i);
+
+         //change page
+    endfor
+
+endfunction
+
+function constructMobInfo(byref gump)
+    GFPage(gump, 0);
+    GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 230, 130);
+    GFTextLine(gump, 490, 28, 555, "Mob Configuration");
+    var group_data := GetSpawnGroupData(selected_elem).mob_list;
+    var mob_info := group_data[selected_mob];
+
+    var sy := 45;
+    var sx := 450;
+
+    mob_bossparams := mob_info.bossParams;
+    mob_power      := mob_info.power;
+    mob_daytime    := mob_info.daytime;
+
+    GFTextLine(gump, sx, sy, 1153, "Nome:");
+    mob_name := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, mob_info.name);
+
+    GFTextLine(gump, sx, sy+18, 1153, "Poder:");
+    GFTextLine(gump, sx+40, sy+18, 2103, mob_power);
+    GFAddButton(gump, sx-15, sy+21, 2103, 2104, GF_CLOSE_BTN, GF_POWER_BTN);
+
+    GFTextLine(gump, sx, sy+18+18, 1153, "Daytime:");
+    GFTextLine(gump, sx+55, sy+18+18, 2103, mob_daytime);
+    GFAddButton(gump, sx-15, sy+18+21, 2103, 2104, GF_CLOSE_BTN, GF_DAYTIME_BTN);
+
+    GFTextLine(gump, 525+59, 45+18, 5, "BOSS");
+    GFCheckBox(gump, 527+60, 45+18+20, 2360, 2361, mob_info.isBoss, INPUT_ISBOSS);
+    GFAddButton(gump, 542+60, 45+18+20, 2362, 2362, 1, GF_BOSS_BTN);
+
+    GFAddButton(gump, 500, 45+18+20+20, 0xEF, 0xF0, 1, GF_UPDATE_BTN);
+endfunction
+
+function MobSetConfigs(byref who, byref input)
+    var mob_entry   := struct{};
+
+    case ( input[0] )
+        GF_BOSS_BTN: 
+            CreateBossStructGump(who, mob_bossparams);
+            break;
+        GF_DAYTIME_BTN:
+            var daytime := CheckBoxGump(who, 150, 150, "Horï¿½rio de Spawn:", array{"Night", "Day"});
+            if (daytime.Size() > 1)
+                mob_daytime := "always";
+            else
+                mob_daytime := daytime[1];
+            endif
+            break;
+        GF_POWER_BTN:
+            mob_power := cint(RadioGump(who, 150, 165, "Nivel de Poder:", array{"1", "2", "3"}));
+            break;
+    endcase
+
+    mob_entry.+name       := GFExtractData(input, mob_name);
+    mob_entry.+power      := mob_power;
+    mob_entry.+daytime    := mob_daytime;
+    mob_entry.+isBoss     := input[INPUT_ISBOSS];
+    mob_entry.+bossParams := mob_bossparams;
+
+    UpdateGroupMobData(selected_elem, mob_entry, selected_mob);
+
+    SendSysMessageEx(who, "Mob atualizado no spawnGroup!");
+
+endfunction

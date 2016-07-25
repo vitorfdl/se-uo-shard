@@ -1,0 +1,18 @@
+use uo;
+use os;
+include ":yggdrasil:spawnSpot";
+
+program DoubleClickMe(who, spot)
+    var df := LoadSpotGroupData();
+    var elem_names := DFGetElemNames(df);
+
+    foreach ename in (elem_names)
+        var elem := GetSpotGroupData(ename, 0);
+        if (spot.serial in elem.spots)
+            start_script(":yggdrasil:commands/admin/spawns", {who, struct{"selected_group":=ename, "selected_spot":=spot.serial}});
+        endif
+        sleepms(2);
+    endforeach
+
+    return 1;
+endprogram

@@ -1,0 +1,21 @@
+use uo;
+
+include ":fls_core:fls_characters";
+include ":gumps:htmlgump";
+include ":gumps:requestgump";
+include ":gumps:yesno";
+
+program changeSkill(who, text)
+	var targ := Target(who);
+	if (!targ)
+		return;
+	endif
+	
+	if (YesNo(who, "Deseja ler uma outra array dentro desta?"))
+		var inside_array := RequestGump(who, "Escreva o nome da array");
+		var first_array := GetObjProperty(targ, text);
+		SendHTMLGump(who, "Leitura de Array", first_array[inside_array]);
+		return;
+	endif
+	SendHTMLGump(who, "Leitura de Array", GetObjProperty(targ, text));
+endprogram

@@ -1,0 +1,22 @@
+use uo;
+use os;
+include ":ghaia:ghaiaUtil";
+include "include/sysEvent";
+
+program textcmd_attack(who, text)
+	SendSysMessage(who, "Selecione o NPC.");
+	var targ := target(who);
+	if ( !targ.npctemplate ) 
+		SendSysMessage(who, "Cancelled");
+		return 0;
+	endif
+
+	SendSysMessage(who, "Clique para onde ele deve ir.");
+	var loc := TargetCoordinates(who);
+
+	if (text)
+		ghaiaObjective(targ, loc, 2);
+	else
+		ghaiaObjective(targ, loc, 1);
+	endif
+endprogram

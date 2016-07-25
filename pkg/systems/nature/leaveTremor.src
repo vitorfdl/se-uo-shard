@@ -1,0 +1,7 @@
+use uo;
+
+program sairterremoto(who, textarea)
+
+	EraseObjProperty(who, "areaInstavel");
+	
+endprogram

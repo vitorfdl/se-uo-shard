@@ -1,0 +1,38 @@
+use uo;
+use os;
+
+include ":gumps:yesno";
+include ":magery:tnmagery";
+include "include/say";
+include ":magery:spellbooks";
+
+program usaPergaminho(who, scroll)
+
+	var spellinfo := GetObjProperty(scroll, "spellinfo");
+
+	WritespellInfo(who, spellinfo);
+
+	var gump := GFCreateGump();
+	GFClosable(gump, 1);
+	GFDisposable(gump, 0);
+	GFGumpPic(gump, 15, 20, 1247);
+	GFTextCrop(gump, 70, 50, 150, 17, 995, "Nome: {}".format(spellinfo.name));
+	// GFTextCrop(gump, 70, 70, 150, 17, 995, "Tipo: " + "teste 4");
+	// GFTextCrop(gump, 70, 90, 150, 17, 995, "Inimigos: " + "teste 2");
+
+	GFHTMLArea(gump, 70, 125, 290, 170, "<BASEFONT COLOR=#330000> {} <br><br> {}".format(spellinfo.description,spellinfo.flavortext), 0, 1);
+
+	GFTextCrop(gump, 270, 50, 100, 17, 995, "Invocar");
+	GFAddButton(gump, 320, 53, 9702, 9703, GF_CLOSE_BTN, 99);
+
+	var input := GFSendGump(who, gump);
+	if (input[0] == 99)
+		var script := Start_Script("cast_spell", {who, spellinfo, scroll});
+		if ( script.errortext )
+			SendSysMessage(who, "Error - Could not start spell starter ->"+script.errortext);
+			return 0;
+		endif
+	endif
+
+
+endprogram

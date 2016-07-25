@@ -1,0 +1,50 @@
+/* $Id$
+ *
+ */
+
+use uo;
+use util;
+
+include "include/client";
+include "include/say";
+include "include/damage";
+include ":timedscripts:timedScripts";
+include ":charactercreation:habilidades";
+include ":charactercreation:resists";
+
+program trapScript(params)
+	var mobile := params[1];
+	var object := params[2];
+	var trap_info := params[3];
+	var sounds := { 560, 561, 562};
+	//var trap_index := params[4];
+	params := 0; // Not needed anymore.
+	
+	PlaysoundEffect(object, sounds[RandomInt(sounds.size())+1] );
+	PlayStationaryEffect(object.x, object.y, object.z, GFX_POISON_GAS, 10,10, 0, object.realm);
+
+	var range := trap_info.Strength;
+	if (range < 1)
+		range := 1;
+	endif 
+	range := range*3;
+
+	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, range, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL);
+
+	foreach mobile in mobiles
+
+		if (!mobile.npctemplate)
+			var poisonLvl := trap_info.Strength;
+
+			if (CheckResist(mobile, FORTITUDE, CInt(25+25*poisonLvl)))
+				SendSysMessageEx(mobile, "Voce resistiu ao veneno.", SSM_INFO);
+				continue;
+			else
+				TS_StartTimer(mobile, "defaultPoison", 120, poisonLvl);
+			endif
+		endif
+
+	endforeach
+	
+	return 1;
+endprogram

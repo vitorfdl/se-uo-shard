@@ -1,0 +1,145 @@
+/* $Id: plyrdeath.src 937 2005-11-07 01:20:20Z austin $
+ *
+ * Purpose
+ * This script allows side effects to be triggered as a result of Player death,
+ * like unmounting players off their mount, allowing ghosts to report their murderer,
+ * Auto-Resurrect choices, etc.
+ *
+ */
+use uo;
+use os;
+use util;
+
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":death:death";
+include ":mounts:mounts";
+include ":death:settings";
+include ":combat:hitscripts";
+include "include/say";
+include ":commands:possess";
+include ":death:resurrection";
+
+program core_chrDeath(params)
+	var corpse := params[1];
+	var ghost := params[2];
+	
+	MP_Unmount(ghost);
+	MP_DeathUnmount(corpse);
+	
+	if (GetObjProperty(ghost, "lastpossessedserial") && GetObjProperty(ghost, "npchero")==error)
+		var oldnpc := SystemFindObjectBySerial(GetObjProperty(ghost, "lastpossessedserial"));
+		if (oldnpc)
+			ghost.concealed := 1;
+			WakeUp(ghost, corpse);
+			unpossess (ghost);
+			ApplyRawDamage(oldnpc, 9999);
+			return 1;
+		endif
+	endif
+	
+	var lastHit := GetObjProperty(corpse, "lastHit"); 
+	if (":combat:weaponHitScripts/generic" in lastHit.hitscript)
+		var attacker := SystemFindObjectBySerial(lastHit.attacker);
+		if (attacker != error)
+			execonkill(attacker, corpse);
+		endif
+	endif
+	
+
+	var corpse_name := corpse.desc;
+	corpse_name["A corpse of"] := "corpo de";
+	SetName(corpse, corpse_name);
+	
+	if ( GetObjProperty(corpse, "realname") )
+		corpse_name["Desconhecido"] := GetObjProperty(corpse, "realname");
+		SetName(ghost, GetObjProperty(corpse, "realname"));
+		EraseObjProperty(corpse, "realname");
+	endif
+	
+	SetObjProperty(ghost, "realname", ghost.name);
+	SetName(ghost, "Fantasminha");	
+
+	TS_Death(ghost);
+	
+	EraseObjProperty(ghost, "#IsMeditating");
+	
+	DP_PlayDeathSound(ghost);
+	//MP_DeathUnmount(corpse);
+	
+	CheckForAutoRes(ghost, corpse);
+
+	MoveObjectToLocation( ghost, 6036, 142, 2, flags := MOVEITEM_IGNOREMOVABLE+MOVEOBJECT_FORCELOCATION);
+	SetName(ghost, ghost.name);
+	SetObjProperty(ghost, "corpo", corpse.serial);
+	Start_Script("deathscripts/players", params);
+
+	
+	return 1;
+endprogram
+
+function CheckForAutoRes(who, corpse)
+	var auto_res := CInt(GetObjProperty(who, "AutoRes"));
+	if ( auto_res )
+		Resurrect(who);
+		AP_RefreshVitals(who);	
+		
+		if ( !who.backpack )
+			return 1;
+		endif
+		
+		foreach item in (EnumerateItemsInContainer(corpse))
+			if ( item.container == corpse )
+				if ( !EquipItem(who, item) )
+					MoveItemToContainer(item, who.backpack);
+				endif
+			endif
+		endforeach
+		
+		if ( auto_res != -1 ) // -1 means infinite uses
+			auto_res := auto_res-1;
+			SetObjProperty(who, "AutoRes", auto_res);
+		endif
+		return 1;
+	endif
+	return 0;
+endfunction
+
+function WakeUp(ghost, corpse)
+	var serialC := ghost.serial;
+	if ( !MoveObjectToLocation(ghost, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION) )
+		SendSysMessage(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Solicite ajude da Staff");
+	endif
+
+	Resurrect(ghost);
+	var ressrobe := GetEquipmentByLayer(ghost, 0x16);
+	DestroyItem(ressrobe);
+
+	foreach item in EnumerateItemsInContainer(corpse)
+		if (item.container == corpse)
+			MoveObjectToLocation(item, ghost.x, ghost.y, ghost.z, ghost.realm);
+			MoveItemToContainer(item, ghost.backpack);
+			if ( CInt(GetObjProperty(item, "#EquippedOn")) == serialC )
+				if ( !EquipItem(ghost, item) )
+					EraseObjProperty(item, "#EquippedOn");
+				endif
+			endif
+		endif
+	endforeach
+
+	SetVital(ghost, "hits", CInt(GetVitalMaximumValue(ghost, "hits")));
+	SetVital(ghost, "stamina", CInt(GetVitalMaximumValue(ghost, "stamina")));
+	SetVital(ghost, "mana", CInt(GetVitalMaximumValue(ghost, "mana")));
+	RecalcVitals(ghost);
+
+	DestroyItem(corpse);
+
+	var save := GetObjPRoperty(ghost, "savegame");
+	if (save != error)
+		MoveObjectToLocation(ghost, save.x, save.y, save.z, save.realm, MOVEOBJECT_FORCELOCATION);
+		AP_SetVital(ghost, STAMINA, cint(save.stamina));
+		AP_SetVital(ghost, MANA, cint(save.mana));
+		AP_SetVital(ghost, HITS, cint(save.hits));
+		eraseobjproperty(ghost, "savegame");
+	endif
+endfunction

@@ -1,0 +1,31 @@
+    use uo;
+use os;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":attributes:regen";
+include ":attributes:vitals";
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+
+program SpellScript(params)
+	var who := params[1];
+	var targ := params[2];
+	params := 0; // No longer needed
+
+	if (!targ.isa(POLCLASS_MOBILE))
+		SendSysMessageEx(who, "Isto nao pode ser alvejado por essa magia.", SSM_FAIL);
+		return;
+	endif
+
+	var lvl := cdbl(AP_GetStat(who, "Intelligence")/100);
+	if (lvl > 0.7)
+		lvl := 0.7;
+	endif
+	var time := cint(AP_GetStat(who, "Intelligence"))*2;
+	TS_StartTimer(targ, "dmgreturn", time, lvl);
+	
+	return 1;
+endprogram 

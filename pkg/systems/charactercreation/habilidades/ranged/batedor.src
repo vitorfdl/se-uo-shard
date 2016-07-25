@@ -1,0 +1,13 @@
+  use uo;
+
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include "include/say";
+
+program manobra(attacker)
+
+	SendSysMessageEx(attacker, "Voce pode atirar em movimento!", SSM_INFO);
+	TS_StartTimer(attacker, "tiroemmovimento", 10);
+
+
+endprogram 

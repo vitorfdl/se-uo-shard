@@ -1,0 +1,54 @@
+ use uo;
+
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include "include/say";
+include ":tn:cooldown";
+include ":tn:combat";
+include "include/damage";
+include ":charactercreation:habilidades";
+
+program manobra(who)
+	var defender := target(who, TGTOPT_CHECK_LOS+TGTOPT_HARMFUL);
+	var attacker := who;
+	if (!defender)
+		return;
+	elseif(distance(who, defender) > 1)
+		SendSysMessageEX(who, "Alvo Invalido", SSM_FAIL);
+		return;
+	endif
+	
+	PlaySoundEffect(who, 0x510);
+	var timer := 3;
+	if (defender.npctemplate)
+		timer := 5;
+	endif
+	TS_StartTimer(defender, "paralysis", timer);
+	PrintText(who, "*Dá uma pancada com o escudo*");
+	Performaction(who, 0x0e);
+	
+	var dmgList := dictionary;
+	dmgList := getNewDamageList(attacker);
+	var basedamage := CalculateRawDamage(attacker, attacker.weapon);
+	var total := cint(CalculateTotalDamage(defender, basedamage, attacker, dmgList));
+	if (!TemHabilidade(who, "Golpe Esmagador Aprimorado"))
+		DamageFLS(defender, total, DMG_FORCED, attacker);
+	else
+		var bonus := cdbl(0.2+(Ap_GetSkill(attacker, TACTICS) / 50));
+		DamageFLS(defender, cint(total+(total*bonus)), DMG_FORCED, attacker);
+	endif
+	
+	if (TemHabilidade(who, "Golpe Desarmante"))
+		if (RandomInt(100) < 20)
+			var defweapon := defender.weapon;
+			if (defweapon.objtype != 0xF020)
+				var x := defender.x + RandomInt(2)+1;
+				var y := defender.y + RandomInt(2)+1;
+				MoveObjectToLocation(defweapon, x, y,  GetWorldHeight(x, y), attacker.realm, MOVEOBJECT_FORCELOCATION);
+				MoveItemToContainer(defweapon, attacker.backpack);
+				PrintText(who, "*desarmou " + defender.name + "*");
+			endif
+		endif
+	endif
+	
+endprogram    

@@ -1,0 +1,107 @@
+
+use uo;
+use os;
+use util;
+include ":itemutils:canAccess";
+include ":attributes:attributes";
+include ":traps:traps";
+include "include/say";
+include ":charactercreation:habilidades";
+
+program skillremoveTrap(who)
+
+	EraseObjProperty(who, "IsMeditating");
+	EraseObjProperty(who, "HealTimer");
+
+	if (!maolivre(who, 2))
+		return 0;
+	endif
+
+	SendSysMessageEx(who, "Escolha o alvo.", SSM_REQUEST);
+	var item := Target(who);
+	if(!item)
+		SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+		return;
+	endif
+	if ( !Accessible(who,item)  )
+		SendSysMessageEx(who, "Voce nao alcanca o alvo!", SSM_FAIL);
+		return;
+	endif
+
+	if ( Distance(who, item) > 2)
+		SendSysMessageEx(who, "Voce esta muito distante.", SSM_FAIL);
+		return;
+	endif
+
+	if( GetObjProperty(item, "TrapList") != error )
+
+		var spotedTrap := Cint(GetObjProperty(item, "trapSpoted"));
+		if (!spotedTrap)
+			SendSysMessageEx(who, "Nao tem armadilhas aqui.", SSM_INFO);
+			return;
+		endif
+
+		var traps := GetObjProperty(item, "TrapList");
+		foreach trap in traps
+			if (trap.Name == "Magic")
+				SendSysMessageEx(who, "Voce nao sabe desarmar essa armadilha.", SSM_FAIL);
+				return 1;
+			endif
+		endforeach
+
+		PrintText(who, "*desarmando armadilha*");
+		if (!Wait(who, 5))
+			SendSysMessageEx(who, "Voce interrompeu o processo.", SSM_FAIL);
+			return;
+		endif
+		var dif;
+		var lvl := Cint(GetObjProperty(item, "level"));
+		case (lvl)
+			1: dif := 15;
+			2: dif := 40;
+			3: dif := 60;
+			4: dif := 86;
+			5: dif := 90;
+			6: dif := 110;
+			default: dif := 40; 
+		endcase
+		var check := SkillCheck( who, MECHANICALAPITUDE, dif);
+		if( check > 0 )
+			SendSysMessageEx( who, "Voce desarmou a armadilha com sucesso.", SSM_INFO);
+			RemoveTrap(item, 1);
+			item.usescript := "";
+			var name := item.desc;
+			name[" [trapped]"] := "";
+			SetName(item, name);
+			return;
+		else
+			SendSysMessageEx( who, "Voce falhou em desarmar a armadilha.", SSM_FAIL);
+			if (!temHabilidade(who, "Especialista em Invasoes") && check < -20)
+				if (who.hidden)
+					who.hidden := 0;
+				endif
+				PrintText(who, "*"+who.name+" disparou a armadilha*");
+				RunTraps(item, who);
+			endif
+		endif
+	elseif ( item.isTrap() )
+		if (GetObjProperty(item, "trap_inativa"))
+			SendSysMessageEx(who, "Voce ja desativou essa armadilha", SSM_INFO);
+			return;
+		endif
+		PrintText(who, "*desarmando armadilha*");
+		if (!Wait(who, 5))
+			SendSysMessageEx(who, "Voce interrompeu o processo.", SSM_FAIL);
+			return;
+		endif
+		if (SkillCheck( who, MECHANICALAPITUDE, -1) > 0)
+			SendSysMessageEx( who, "Voce desativou a armadilha com sucesso.", SSM_INFO);
+			SetObjProperty(item, "trap_inativa", 1);
+		else
+			SendSysMessageEx( who, "Voce falhou em desarmar a armadilha.", SSM_FAIL);
+		endif
+	else
+		SendSysMessageEx(who, "Nao tem armadilhas aqui.", SSM_INFO);
+	endif
+
+endprogram

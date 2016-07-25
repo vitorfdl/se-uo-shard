@@ -1,0 +1,87 @@
+use os;
+use uo;
+
+include ":gumps:requestgump";
+include ":gumps:gumps_ex";
+// include ":gumps:yesno";
+var gumpid := 0x99B7;
+
+var upMenu   := array{"[mTele", "[mDestroy", "[nSight", "[conceal", "[gmpage"};
+var downMenu := array{"[teleto", "[Info", "[fichaRP", "[Propedit", "[players"};
+//UpMenu is 100+i
+//Downmenu is 200+i
+
+program start_gmMeny(who)
+    CloseGump(who, gumpid);
+    var closed := 0;
+    do
+        var gump := ConstructGump();
+        var input := GFSendGump(who, gump);
+
+        case (input[0])
+            101://mtele
+                start_script(":commands:coun/mtele", who);
+                break;
+            102://mDestroy
+                start_script(":commands:building/mdestroy", who);
+                break;
+            103://nSight
+                start_script(":commands:coun/nSight", who);
+                break;
+            104://conceal
+                start_script(":commands:coun/conceal", who);
+                break;
+            105://gmpage
+                start_script(":email:commands/gm/gmpage", who);
+                break;
+            201://teleto
+                 start_script(":commands:seer/teleto", who);
+                break;
+            202://Info
+                start_script(":commands:gm/info", who);
+                break;
+            203://fichaRP
+                 start_script(":fls_core:commands/player/ficharp", who);
+                break;
+            204://Propedit
+                 start_script(":commands:props/propedit", who);
+                break;
+            205://players
+                 start_script(":fls_core:commands/gm/players", who);
+                break;
+            default:
+                closed := 1;
+                break;
+        endcase
+    dowhile (closed == 0);
+endprogram
+
+function ConstructGump()
+    var gump := GFCreateGump(250, 150);
+    GFPage(gump, 0);
+    GFSetID(gump, gumpid);
+    GFClosable(gump, 0);
+    var width  := upMenu.Size() * 80;
+    GFResizePic(gump, 0, 0, GFCfgConst("Defaults", "BackGround"), 25+width, 60+60+25); //Spawnpoints Backgroud
+    // GFGumpPic(gump, 0, 5, 0x8B0);
+
+    var basex := 12;
+    var basey := 15;
+
+    for i:=1 to upMenu.Size()
+        var x := basex+((i-1)*80);
+        GFAddButton(gump, x, basey, 0x918, 0x919, GF_CLOSE_BTN, 100+i);
+        GFAddAlphaRegion(gump, x, basey, 80, 60);
+        GFTextMid(gump, x, basey+15, 90, 1150, upMenu[i]);
+    endfor
+
+    for i:=1 to downMenu.Size()
+        var x := basex+((i-1)*80);
+        var y := basey + 60;
+        GFAddButton(gump, x, y, 0x918, 0x919, GF_CLOSE_BTN, 200+i);
+        GFAddAlphaRegion(gump, x, y, 80, 60);
+        GFTextMid(gump, x, y+15, 90, 1150, downMenu[i]);
+    endfor
+
+    return gump;
+endfunction

@@ -1,0 +1,83 @@
+use datafile;
+use uo;
+use unicode;
+
+include "include/say";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:requestgump";
+program gmtools(who)
+	
+	var gump := GFCreateGump();
+	GFResizePic(gump, 84, 90, 9260, 460, 535);
+
+	GFGumpPicTiled(gump, 100,100,30,510,10460);
+	GFGumpPicTiled(gump, 500,100,30,510,10460);
+	GFGumpPicTiled(gump, 80,88,463,16,10100);
+	GFGumpPicTiled(gump, 84,610,457,16,10100);
+	GFGumpPic(gump, 50,80, 10421);
+	GFGumpPic(gump, 83,79, 10420);
+
+	GFGumpPic(gump, 96,200, 10411);
+	GFGumpPic(gump, 33,370, 10402);
+
+	GFTextLine(gump, 245,120,1153,"Lista de Notas RP");
+	GFTextLine(gump, 170,185,1153, "CONTAS");
+	GFTextLine(gump, 450,185,1153, "NOTA");
+	GFTextLine(gump, 320,185,1153, "PASSUP");
+	GFTextLine(gump, 390,185,1153, "CAPUP");
+	
+	var x := 170;
+	var y := 200;
+	var pagecount := 1;
+	var i := 1;
+	var playercount := 1;
+	var mixcolor := 2103;			
+	GFPage(gump, pagecount);
+	
+	var accounts := ListAccounts();
+	foreach acct in accounts
+		GFTextLine(gump, x,y,mixcolor, acct);
+		GFTextLine(gump, x+290,y,mixcolor, cint(FindAccount(acct).getprop("nota")));
+		
+		if (who.cmdlevel >= 4)
+			if (FindAccount(acct).getprop("passiveUP"))
+				GFTextLine(gump, x+170,y,mixcolor, CalcularDias(FindAccount(acct).getprop("passiveUP")));
+			endif
+			if (FindAccount(acct).getprop("capUP"))
+				GFTextLine(gump, x+240,y,mixcolor, CalcularDias(FindAccount(acct).getprop("capUP")));
+			endif
+		endif
+	
+		y+=20;
+		i+= 1;
+		playercount+=1;
+		if (mixcolor == 2103)
+			mixcolor := 2105;
+		else
+			mixcolor := 2103;
+		endif
+		if ( i >= 20)
+			GFTextLine(gump, 420,580,2103,"Próximo");
+			GFAddButton(gump, 470, 580, 9903, 9905, GF_PAGE_BTN, gump.cur_page+1);
+			y := 200;
+			i := 1;
+			pagecount+=1;
+			GFPage(gump, pagecount);
+			GFTextLine(gump, 170,580,2103,"Voltar");
+			GFAddButton(gump, 140, 580, 9909, 9911, GF_PAGE_BTN, gump.cur_page-1);
+		endif
+		sleepms(5);
+	endforeach
+	
+	var input := GFSendGump(who, gump);
+
+endprogram
+
+function CalcularDias(data)
+    var criadoEm := cint(data);
+    var tempoAgora := polcore().systime;// segundos
+    var tempoDevida:= tempoAgora - criadoEm;
+    var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
+    return dias;
+endfunction

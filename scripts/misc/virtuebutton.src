@@ -1,0 +1,15 @@
+use cfgfile;
+use uo;
+use os;
+use datafile;
+
+program virtueachievements(mobile)
+	
+	var script := start_script( ":email:email", array{mobile, mobile.serial} );
+	
+	if (!script)
+		SendSysMessage(mobile, "Error: " + script);
+	endif
+
+endprogram
+

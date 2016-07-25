@@ -1,0 +1,219 @@
+use uo;
+
+include ":gumps:gumps";
+include ":gumps:yesno";
+include ":gumps:requestgump";
+include ":tn:tngumps";
+include ":magery:tnmagery";
+include "include/say";
+include ":attributes:attributes";
+include ":containers:containers";
+include ":itemutils:itemdesc";
+include "include/client";
+include "include/sounds";
+include ":charactercreation:habilidades";
+include "include/facings";
+include ":tn:cooldown";
+
+program book(who, book)
+	var book_gump := CreateBookGump(book, who);
+	var result := GFSendGump(who, book_gump);
+
+	if (result[0] > 900)
+		var spell := result[0] - 900;
+
+		var spells := GetObjProperty(book, "spells");
+		//sendsysmessage(who, " " + bookopt);
+
+		if (spells[spell])
+			copyrecipe(who, spells[spell]);
+		endif
+	else
+
+		var spell := result[0] - 100;
+
+		var spells := GetObjProperty(book, "spells");
+
+		var serialid:= GetObjProperty(book, "serialid");
+		if (serialid != error)
+			if (serialid != who.serial);
+				SendSysMessageEx(who, "Voce nao entende esse livro.", SSM_FAIL);
+				return 1;
+			endif
+		endif
+		if (spells[spell])
+			Start_Script("cast_spell", array{who, spells[spell], 0});
+		endif
+	endif
+
+endprogram
+
+Const OBJ_BLANK_SCROLL := 0xE34;
+Const OBJ_RECIPE_SLIP := 0x6116;
+
+function copyrecipe(who, recipe)
+	writeSpellInfo(who, recipe);
+	//sendsysmessage(who, " " + spellinfo + " " + recipe + "  " + cint(recipe));
+	if (ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
+		if ((SkillCheck(who, MAGERY, cint(recipe.Difficulty), 0) > 0))
+			if  (!AP_ConsumeVital(who, MANA, recipe.mana))
+				SendSysMEssageEx(who, "Voce esta sem mana.", SSM_FAIL);
+				return 1;
+			endif
+			if (!TNCheckReagents(who, recipe, 0))
+				SendSysMessageEx(who, "Voce nao tem os reagentes.", SSM_FAIL);
+				return 1;
+			endif
+			var item := createiteminbackpack(who, OBJ_RECIPE_SLIP, 1);
+			if (item == error)
+				sendsysmessage(who, "  " + item);
+			endif
+			setobjproperty(item, "spellinfo", recipe);
+			SendSysMessageEx(who, "Voce fez uma copia do pergaminho.", SSM_INFO);
+			printtext(who, "*escrevendo pergaminho*");
+		else
+			SendSysMessageEx(who, "Voce copiou o pergaminho sem cuidados e ela esta ilegivel.", SSM_FAIL);
+		endif
+	else
+		SendSysMessageEx(who, "Voce precisa de um pergaminho em branco.", SSM_FAIL);
+	endif
+endfunction
+
+
+function CreateBookGump(book, who)
+	var spell_list := GetObjProperty(book, "spells");
+	if( TypeOf(spell_list) != "Array" )
+		spell_list := array{};
+		SetObjProperty(book, "spells", spell_list);
+	endif
+
+	var book_gump := GFCreateGump();
+// Begin Page 0 Setup
+	GFGumpPic(book_gump, 100, 10, 2200);
+	GFGumpPic(book_gump, 125, 50, 57);
+	GFGumpPic(book_gump, 145, 50, 58);
+	GFGumpPic(book_gump, 160, 50, 58);
+	GFGumpPic(book_gump, 175, 50, 58);
+	GFGumpPic(book_gump, 190, 50, 58);
+	GFGumpPic(book_gump, 205, 50, 58);
+	GFGumpPic(book_gump, 220, 50, 58);
+	GFGumpPic(book_gump, 230, 50, 59);
+	GFGumpPic(book_gump, 290, 50, 57);
+	GFGumpPic(book_gump, 310, 50, 58);
+	GFGumpPic(book_gump, 325, 50, 58);
+	GFGumpPic(book_gump, 340, 50, 58);
+	GFGumpPic(book_gump, 355, 50, 58);
+	GFGumpPic(book_gump, 370, 50, 58);
+	GFGumpPic(book_gump, 385, 50, 58);
+	GFGumpPic(book_gump, 395, 50, 59);
+
+// Begin Page 1 Setup
+	GFPage(book_gump, 1);
+	//GFAddButton(book_gump, 125, 15, 2472, 2473, GF_CLOSE_BTN, 50);
+	GFHTMLArea(book_gump, 135, 24, 130, 18, "<i>Livro de Magia</i>");
+	GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, 2);
+
+	var pOX       := 130;
+	var pOY       := 65;
+	var spell_pos := 1;
+	foreach rune in spell_list
+		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+spell_pos);
+		spell_pos+=1;
+		pOY+=15;
+		if (pOY >180)
+			pOY := 65;
+			pOX := 290;
+		endif
+	endforeach
+// End Page 1 Setup
+
+	pOX      := 145;
+	pOY      := 60;
+	spell_pos := 1;
+
+	for i := 2 to 9
+		GFPage(book_gump, i);
+
+		GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, (i-1));
+		if(i != 9)
+			GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, (i+1));
+		endif
+
+		GenerateFilledSide(who, book_gump, spell_list, i, 1, pOX, pOY, spell_pos);
+		GenerateFilledSide(who, book_gump, spell_list, i, 2, pOX, pOY, spell_pos);
+
+		SleepMS(2);
+	endfor
+
+	return book_gump;
+endfunction
+
+//----------------------------
+// Generate every page of the book. And the button for the First page.
+// Inside generate empty page too
+//-----------------
+function GenerateFilledSide(byref who, byref book_gump, spell_list, i, side, byref pOX, byref pOY, byref spell_pos)
+	var sOX := 160;
+	if (side == 2)
+		sOX := 300;
+	endif
+
+	var spell_entry := spell_list[spell_pos];
+	WritespellInfo(who, spell_entry);
+
+	spell_entry.description := "<BASEFONT COLOR=#000066>{}<br>{}<br><br> <BASEFONT COLOR=#330000> Componentes <br>".format(cstr(spell_entry.description), cstr(spell_entry.flavortext));
+
+	var regkeys := spell_entry.reagents.keys();
+	foreach r in (regkeys)
+		spell_entry.description := "{}{} {}<br>".format(spell_entry.description, cstr( r ), cstr(spell_entry.reagents[cstr(r)]));
+	endforeach
+	spell_entry.description := "{}Mana: {}".format(spell_entry.description, spell_entry.mana);
+	if( TypeOf(spell_entry) == "Struct" )
+		if( spell_entry.name )
+			// This puts the rune in page 1's list.
+			GFPage(book_gump, 1);
+			GFTextCrop(book_gump, pOX,  pOY, 115, 17, 995, spell_entry.name);
+			GFPage(book_gump, i);
+
+			GFTextCrop(book_gump, sOX,  15, 100, 18, 995, spell_entry.name);
+			if ( TemHabilidade(who, "Escrever Pergaminhos") )
+				GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Copiar");
+				GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 900+spell_pos);
+			endif
+
+			//Fix description position by side
+			if (side == 1)
+				GFHTMLArea(book_gump, sOX-20, 60, 120,  140, cstr(spell_entry.description), 0, 1);
+			else
+				GFHTMLArea(book_gump, sOX, 60, 120,  140, cstr(spell_entry.description), 0, 1);
+			endif
+
+		endif
+	else
+		GenerateEmptySide(book_gump, side, pOX, pOY, i);
+	endif
+
+	spell_pos := spell_pos + 1;
+	pOY := pOY + 15;
+	if( pOY > 165 )
+		pOY := 60;
+		pOX := 305;
+	endif
+endfunction
+
+function GenerateEmptySide(byref book_gump, side, pOX, pOY, page_num)
+	if( side == 1)
+		// This puts the rune in page 1's list.
+		GFPage(book_gump, 1);
+		GFTextCrop(book_gump, pOX,  pOY, 115, 17, 10, "");
+		GFPage(book_gump, page_num);
+		GFTextCrop(book_gump, 145, 60, 115, 17, 10, "");
+	else
+		// This puts the rune in page 1's list.
+		GFPage(book_gump, 1);
+		GFTextCrop(book_gump, pOX,  pOY, 115, 17, 10, "");
+		GFPage(book_gump, page_num);
+		GFTextCrop(book_gump, 305, 60, 115, 17, 10, "");
+	endif
+
+endfunction

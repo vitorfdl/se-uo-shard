@@ -1,0 +1,54 @@
+
+use uo;
+
+include "include/say";
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include "include/facings";
+include "include/damage";
+include ":tn:combat";
+include ":combat:combat";
+
+program lancararma(who)
+	SendSysMessageEX(who, "Selecione o alvo para lancar a arma.", SSM_INFO);
+	var targ := target(who);
+	if (!targ || !targ.ISA(POLCLASS_MOBILE))
+		SendSysMessageEX(who, "Cancelado.", SSM_FAIL);
+		return;
+	endif
+	
+	if (Distance(who, targ) > 10 || !CheckLineOfSight(who, targ))
+		SendSysMessageEX(who, "O alvo esta muito distante.", SSM_FAIL);
+		return;
+	endif
+	
+	if(lower(who.weapon.attribute) != "meleecombat2h")
+		SendSysMessageEX(who, "Cancelado.", SSM_FAIL);
+		return;
+	endif
+	
+	var weapon := who.weapon;
+	PlayMovingEffectXYZ( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, who.weapon.objtype, 10, 10, 0, who.realm);
+	PlaySoundEffect(who, 0x5D3);
+	PrintText(who, "*lança " + weapon.desc + " em " + targ.name + "*");
+	
+	var dmgList := dictionary;
+	dmgList := getNewDamageList(who);
+	var basedamage := CalculateRawDamage(who, who.weapon);
+	var total := cint(CalculateTotalDamage(targ, basedamage, who, dmgList));
+	
+	MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+	
+	var altura := cint(who.z - targ.z);
+	if (altura < 0)
+		altura := 0;
+	endif
+	
+	var bonus := cdbl( 0.2+(Ap_GetSkill(who, TACTICS) / 40));
+	
+	total := cint((total+(total*bonus)) + altura + floor(Distance(who, targ) / 2));
+	
+	
+	DamageFLS(targ, total, DMG_FORCED, who);
+
+endprogram 

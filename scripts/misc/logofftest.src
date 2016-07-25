@@ -1,0 +1,43 @@
+/* $Id: logofftest.src 1371 2006-05-12 23:55:57Z austin $
+ *
+ * Purpose
+ * This script allows the scripter to control how long the character lingers in the world
+ * after logoff.
+ *
+ */
+use uo;
+
+include ":timeutils:time";
+include ":coords:innFunctions";
+include ":timedscripts:timedScripts";
+
+program core_logoffTest(who)
+	// Send event to the 'timed scripts' package to run log off scripts.
+	TS_LogOff(who);
+
+	if ( (FindAccount(who.acctname).defaultcmdlevel > 1) || who.cmdlevel > 1 || (GetObjProperty(who,"Delete")) 
+		|| (who.x > 6005 && who.y > 42 && who.x < 6029 && who.y < 92 ))
+		// Let staff or characters being deleted/banned logout immediately.
+		return 0;
+	endif
+
+	var logout_delay := SECONDS_IN_MINUTE * 5;
+	
+	/*if (isInInn(who))
+		logout_delay := SECONDS_IN_MINUTE / 2;
+	// Check if player is in a house
+	// Then check if player is the owner or  friend of the owner.
+	endif*/
+	
+	// Check if player is camping
+	if( CInt(GetObjProperty(who, "#camped")) == 1 )
+		EraseObjProperty(who, "#camped");
+		logout_delay := 0;
+	// Check if prop exists
+	elseif ( CInt(GetObjProperty(who, "#delete")) == 1)
+		EraseObjProperty(who, "#delete");
+		logout_delay := 1;
+	// elseif ( IsInHouse(who) )
+	endif
+	return logout_delay;
+endprogram

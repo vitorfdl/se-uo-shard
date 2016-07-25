@@ -1,0 +1,163 @@
+use uo;
+use os;
+use util;
+
+include ":datafile:datafile";
+include ":containers:storageAreas";
+include ":containers:containers";
+include "include/say";   
+include ":keys:key";
+include "include/client";
+include ":itemutils:itemdesc";
+
+CONST CYCLE_WAIT := 60 * 180;
+
+program GlobalInnControl()
+	//set_priority(1);
+	while(1)
+		InnKeeperChecks();
+		sleep(CYCLE_WAIT);
+	endwhile
+endprogram
+
+function InnKeeperChecks()
+	var innkeeper := getglobalproperty("InnKeeper");
+
+	if (innkeeper[1] == error)
+		return 1;
+	endif
+	
+	var x := 1;
+	while (x <= innkeeper.size())
+		var npc := SystemFindObjectBySerial(cint(innkeeper[x]));
+		if (npc.errortext)
+			innkeeper.erase(x);
+			SetGlobalProperty("InnKeeper", innkeeper);
+		endif
+		var quartos := GetObjProperty(npc, "quartos");
+		
+		var i := 1;
+		foreach quarto in quartos
+			if (quartos[i].inquilino && quartos[i].inquilino != error)
+				var rentdate := quartos[i].data;
+
+				if (rentdate == error)
+					quartos[i].data := polcore().systime;
+					SetObjProperty(npc, "quartos", quartos);
+				endif
+
+				var ticks := CalcularDias(rentdate);
+				var renttime := GetObjProperty(npc, "tempoalugado");
+				if (!renttime || renttime.errortext)
+					renttime := 7;
+				endif
+				
+				var player2 := SystemFindObjectBySerial(quartos[i].inquilino, SYSFIND_SEARCH_OFFLINE_MOBILES);
+				
+				if (ticks >= renttime || !player2)
+					if (player2)
+						var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Despejo!", 
+						"O pagamento da sua estalagem com " + npc.name + " não foi efetuado como esperado. Estarei colocando a estalagem de novo a disposição de novos moradores, e manterei armazenado seus objetos até que me procure."} );
+					endif
+					var door := SystemFindObjectBySerial(quarto.door);
+					Eraseobjproperty(door, "LockId");
+					quartos[i].inquilino := 0;
+					SetObjProperty(npc, "quartos", quartos);
+					var cent := quartos[i].centro;
+					if (cent[1])
+						DestroyRentItens(cent[1], cent[2], cent[3], npc.realm, player2, npc);
+						ChecarMobileQuarto(player2, cent[1], cent[2], cent[3], npc);
+						if (cent[4])
+							DestroyRentItens(cent[4], cent[5], cent[6], npc.realm, player2, npc);
+							ChecarMobileQuarto(player2, cent[4], cent[5], cent[6], npc);
+						endif
+					endif
+				elseif (ticks >= 5 && !quartos[i].alert)
+					quartos[i].+alert := 1;
+					var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Aluguel!", 
+					"O pagamento da sua estalagem com " + npc.name + " irá vencer em dois dias. Caso não renove o contrato para a próxima semana até o ultimo dia, você será despejado e seus objetos confiscados, podendo recupera-los comigo."} );
+					SetObjProperty(npc, "quartos", quartos);
+				endif
+			endif
+			i := i +1;
+			sleepms(20);
+		endforeach
+		x := x+1;
+		sleepms(20);
+	endwhile
+	return 1;
+endfunction
+
+function DestroyRentItens(x, y, z, r, player, npc)
+	var objects := ListItemsNearLocation( x, y, z, 10, r);
+	var backpack;
+	if (player && player != error)
+		backpack := CreateItemAtLocation( x, y, z, hex(3701), 1, r);
+		SetName(backpack, player.name);
+	endif
+	foreach obj in objects
+		if (CheckLosBetween( x, y, z, obj.x, obj.y, obj.z, r))
+			if (GetObjProperty(obj, "crafterserial"))
+				if (player && player != error)
+					obj.movable := 1;
+					MoveItemToContainer( obj, backpack);
+				else
+					DestroyItem(obj);
+				endif
+				
+				
+			elseif (obj.IsA(POLCLASS_CONTAINER))
+				var container := EnumerateItemsInContainer( obj, ENUMERATE_IGNORE_LOCKED );
+				foreach item in container
+				if (player && player != error)
+					item.movable := 1;
+					MoveItemToContainer( item, backpack);
+				else
+					DestroyItem(item);
+				endif
+					sleepms(20);
+				endforeach
+			endif
+		endif
+		sleepms(20);
+	endforeach
+	if (player && player != error)
+		if ( !npc.backpack )
+			Set_Critical(1);
+			var newpack := CreateItemAtLocation(npc.x, npc.y, npc.z, "backpack", 1, npc.realm);
+			if ( !EquipItem(npc, newpack) )
+				DestroyItem(newpack);
+				return 0;
+			endif
+		endif
+		MoveItemToContainer( backpack, npc.backpack);
+		var confiscado := GetObjProperty(npc, "confiscados");
+		if (!confiscado || confiscado == error)
+			confiscado := struct;
+		endif
+		confiscado.insert(""+player.serial, backpack.serial);
+		SetObjProperty(npc, "confiscados", confiscado);
+	endif
+	return 1;
+endfunction
+
+function ChecarMobileQuarto(who, x, y, z, npc)
+	if ( CheckLosAt( who, x, y, z ) )
+		if (!MoveObjectToLocation(who, npc.x, npc.y+3, npc.z, npc.realm))
+			if (!MoveObjectToLocation(who, npc.x, npc.y-3, npc.z, npc.realm))
+				if (!MoveObjectToLocation(who, npc.x+3, npc.y, npc.z, npc.realm))
+					MoveObjectToLocation(who, npc.x-3, npc.y, npc.z, npc.realm);
+				endif
+			endif
+		endif
+	endif
+endfunction
+
+
+function CalcularDias(data)
+    var criadoEm := cint(data);
+    var tempoAgora := polcore().systime;// segundos
+    var tempoDevida:= tempoAgora - criadoEm;
+    var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
+    return dias;
+endfunction

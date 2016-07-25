@@ -1,0 +1,188 @@
+use uo;
+use util;
+
+include ":attributes:attributes";
+include ":ghaia:ghaiaUtil";
+include ":charactercreation:habilidades";
+include ":tn:cooldown";
+
+program Install()
+	print("INSTALLING: Exported Vital - RegenRate and MaxValue functions ...");
+	return 1;
+endprogram
+
+// *****
+// Hit Point Functions
+// *****
+exported function GetHitsRegenRate(mobile)
+	var base_regen := CInt(AP_GetSettingsCfgElem("Regen").Hits) * 100;
+	var regen := base_regen + AP_GetVitalRegenRateMod(mobile, "hits");
+	
+	//No regen if poisoned
+	if ((isBloodied(mobile) || mobile.poisoned || GetObjProperty(mobile, "nocure")) && (!mobile.npctemplate))
+		return 0;
+	endif	
+	
+	return regen;
+endfunction
+
+exported function GetHitsMaximumValue(mobile)
+	var vital_points;
+
+	if (mobile.npctemplate)
+		vital_points := GetNPCVitalSetting(mobile, "HITS") + (Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+		vital_points := vital_points * 2; 
+	else // no getHP ja pega o hitsmod dos players
+		vital_points := (GetHP(mobile) + GetPH(mobile)) * 100;
+	endif
+
+	return vital_points;
+endfunction
+
+// *****
+// Mana Functions
+// *****
+exported function GetManaRegenRate(mobile)
+	var base_regen := CInt(AP_GetSettingsCfgElem("Regen").Mana) * 100;
+
+	//if(!mobile.npctemplate)
+	//	base_regen := 0;
+	//endif
+	if (TemHabilidade(mobile, "Meditação 2"))
+		base_regen := base_regen + base_regen;
+	elseif (TemHabilidade(mobile, "Meditação"))
+		base_regen := base_regen + cint(base_regen * 0.5);
+	endif
+
+	return base_regen + AP_GetVitalRegenRateMod(mobile, "mana");
+endfunction
+
+exported function GetManaMaximumValue(mobile)
+	var vital_points := GetNPCVitalSetting(mobile, "MANA");
+
+	if ( !vital_points )
+		vital_points := CInt(AP_GetTrueStat(mobile, "Intelligence")) * 100;
+	endif
+
+	vital_points := vital_points + ((Cint( GetObjProperty(mobile, "manamod") ) + Cint( GetObjProperty(mobile, "#manamod")))*100);
+	return vital_points;
+endfunction
+
+// *****
+// Stamina Functions
+// *****
+exported function GetStaminaRegenRate(mobile)
+	if (mobile.poisoned)
+		return 100;
+	endif
+
+	var base_regen := CInt(AP_GetSettingsCfgElem("Regen").Stamina) * 100;
+
+	return base_regen + AP_GetVitalRegenRateMod(mobile, "stamina");
+endfunction
+
+exported function GetStaminaMaximumValue(mobile)
+	var vital_points := 0; //Cint(GetObjProperty(mobile, "Vitality"));
+
+	vital_points := GetNPCVitalSetting(mobile, "STAM");
+	if (!vital_points);
+		vital_points := CInt(AP_GetTrueStat(mobile, "Dexterity")) * 100;
+	endif
+
+	vital_points := vital_points + (( Cint( GetObjProperty(mobile, "stammod") ) + Cint( GetObjProperty(mobile, "#stammod") ) )*100);
+
+	if (!mobile.npctemplate)
+		var hunger := CInt(AP_GetVital(mobile, "Hunger") / 60);
+		if (hunger == 5)
+			vital_points := vital_points - 2000;
+		elseif (hunger == 4)
+			vital_points := vital_points - 1000;
+		endif
+	endif
+
+	return vital_points;
+endfunction
+
+// *****
+// Hunger Functions
+// Note: This vital is not linked to any attributes.
+// *****
+exported function GetHungerRegenRate(mobile)
+	var base_regen := CInt(AP_GetSettingsCfgElem("Regen").Hunger) * 100;
+
+	return base_regen + AP_GetVitalRegenRateMod(mobile, "hunger");
+
+endfunction
+
+exported function GetHungerMaximumValue(mobile)
+	return 400*100;
+endfunction
+
+
+
+// *****
+// Private Function for NPC stuff
+// *****
+function GetNPCVitalSetting(mobile, vital)
+	if ( !mobile.npctemplate )
+		return 0;
+	endif
+
+	var value := 0;
+
+	// CProp used if NPC had dice settings - so they dont change over and over.
+	var vital_settings := GetObjProperty(mobile, "%NPC_Vitals%");
+
+	if ( vital_settings.Exists(vital) )
+		value := CInt(vital_settings[vital]);
+	else
+		// No prior setup took place - get information from the npcdesc.cfg
+		var npc_cfg := NPC_GetNPCConfig(mobile.npctemplate);
+		value := GetConfigString(npc_cfg, vital);
+
+		if ( !value )
+			return 0;
+		endif
+
+		if ( value["d"] ) // Dice
+			value := RandomDiceRoll(value);
+			if ( Lower(TypeOf(vital_settings)) != "dictionary" )
+				vital_settings := dictionary;
+			endif
+			vital_settings[vital] := CInt(value);
+			SetObjProperty(mobile, "%NPC_Vitals%", vital_settings);
+		else
+			value := CInt(value);
+		endif
+	endif
+
+	return (value * 100);
+endfunction
+
+// *****
+// DP Functions
+// Note: This vital is to kill all.
+// *****
+exported function GetDPRegenRate(mobile)
+	return 16; // 1 DP por hora
+endfunction
+
+exported function GetDPMaximumValue(mobile)
+	return 30*100 + CInt(GetObjProperty(mobile, "dpmod"))*100;
+endfunction
+
+// *****
+// SkillCap Functions
+// Note: This vital fuck the macroers.
+// *****
+exported function GetSkillCapRegenRate(mobile)
+	if (mobile.npctemplate)
+		return 100;
+	endif
+	return 60;
+endfunction
+
+exported function GetSkillCapMaximumValue(mobile)
+	return 25*100;
+endfunction
+

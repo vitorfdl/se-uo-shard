@@ -1,0 +1,47 @@
+
+use uo;
+
+include "include/say";
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include "include/facings";
+include "include/damage";
+include ":tn:combat";
+include ":combat:combat";
+include ":yggdrasil:boss";
+
+program decepar(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	var weapon	:= params[3];
+	var armor	:= params[4];
+	var basedamage	:= params[5];
+	var rawdamage	:= params[6];
+	params := 0; // Not needed anymore.
+	
+	if (lower(attacker.weapon.attribute) != "meleecombat2h")
+		return;
+	endif
+	
+	PlayAttackAnimation(attacker);
+	PlayHitSounds(attacker, defender);
+	if (isBoss(defender))
+		PrintText(defender, "*Esquiva do Decepar*");
+	endif
+	
+	if (isBloodied(defender) && !isBoss(defender))
+		if(defender.npctemplate)
+			PrintText(attacker, "*Decepa " + defender.name + "*");
+		else
+			PrintText(attacker, "*Desfere violento golpe em " + defender.name + "*");
+		endif
+		ApplyRawDamage(defender, CInt(AP_GetVitalMaximumValue(defender, "Hits")));
+	else
+		var dmgList := dictionary;
+		dmgList := getNewDamageList(attacker);
+		var basedamage := CalculateRawDamage(attacker, attacker.weapon);
+		var total := cint(CalculateTotalDamage(defender, basedamage, attacker, dmgList));
+		DamageFLS(defender, total, DMG_FORCED, attacker);
+	endif
+	
+endprogram 

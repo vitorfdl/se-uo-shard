@@ -1,0 +1,27 @@
+use uo;
+use os;
+use cfgfile;
+
+program explosion_timer(parms)
+  var potion := parms[1];
+  var who := parms[2];
+  if (potion.container)
+    PrintTextAbove(who, "3");
+  else
+    PrintTextAbove(potion, "3");
+  endif
+  sleep(1);
+  if (potion.container)
+    PrintTextAbove(who, "2");
+  else
+    PrintTextAbove(potion, "2");
+  endif
+  sleep(1);
+  if (potion.container)
+    PrintTextAbove(who, "1");
+  else
+    PrintTextAbove(potion, "1");
+  endif
+  sleep(1);
+  start_script("potions/exploder", {potion, who});
+endprogram

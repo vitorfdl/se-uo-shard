@@ -1,0 +1,87 @@
+
+
+use os;
+use uo;
+
+include ":musicianship:bard";
+include ":attributes:attributeConstants";
+include ":attributes:attributes";
+include ":attributes:skillCheck";
+include ":itemutils:canAccess";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:requestgump";
+include ":gumps:yesno";
+
+var config;
+
+program partitura(who, item)
+
+	PartituraGump(who,item);
+
+endprogram
+
+function PartituraGump(who,item)
+
+	var compositor := Getobjproperty(item, "compositor");	
+	var notas := Getobjproperty(item, "notas");
+	var notas2 := Getobjproperty(item, "notas2");
+	var tempo := Getobjproperty(item, "tempo");
+	var letra := Getobjproperty(item, "letra");
+	var magica := Getobjproperty(item, "magica");
+
+	var gump := GFCreateGump(140, 100);
+	GFClosable(gump, 1);
+	GFResizePic(gump, 0, 0, 0x9D8, 240, 260);
+
+	if (magica != error) 
+	 	GFTextLine(gump, 40, 10, 38, item.name + " [Lendaria]");
+	else
+		GFTextLine(gump, 40, 10, 0, item.name);
+	endif
+
+	GFTextLine(gump, 40, 40, 0, "Tempo entre notas:");
+	GFTextLine(gump, 167, 40, 0, tempo);
+	GFHTMLArea( gump, 34, 65, 180, 130, notas,3,1);
+
+	GFTextLine(gump, 40, 200, 0, "Compositor:");
+	GFTextLine(gump, 110, 200, 660, compositor);
+
+
+	GFTextLine(gump, 55, 230, 0, "Ver a Letra");
+	GFAddButton(gump, 40, 234, 2103, 2104, 1, 99);
+
+	var retv := GFSendGump(who, gump);
+	if (retv[0] == 99)
+		LetraDaMusica(who, item, letra, compositor);
+	endif
+
+
+endfunction
+
+function LetraDaMusica(who,item, letra, compositor)
+
+	var gump := GFCreateGump(140, 100);
+	GFClosable(gump, 1);
+	GFResizePic(gump, 0, 0, 0x9D8, 240, 260);
+
+
+
+	GFTextLine(gump, 40, 10, 0, "Letra de " + item.name);
+
+
+	GFHTMLArea( gump, 34, 40, 180, 160, letra,3,1);
+
+	GFTextLine(gump, 40, 200, 0, "Compositor:");
+	GFTextLine(gump, 110, 200, 660, compositor);
+
+	GFTextLine(gump, 55, 230, 0, "Ver a Partitura");
+	GFAddButton(gump, 40, 234, 2103, 2104, 1, 99);
+
+	var retv := GFSendGump(who, gump);
+	if (retv[0] == 99)
+		PartituraGump(who,item);
+	endif
+
+
+endfunction

@@ -1,0 +1,146 @@
+
+
+use cfgfile;
+use uo;
+use os;
+use util;
+
+include "include/client";
+include "include/say";
+include ":attributes:attributeConstants";
+include ":attributes:attributes";
+include ":attributes:skillCheck";
+include ":blood:blood";
+include ":survival:skinning";
+include ":ghaia:ghaiaUtil";
+include ":gumps:yesno";
+
+
+program skinning(parms)
+	var who := parms[1];
+	var cadaver := parms[2];
+	var blade := parms[3];
+	
+	if (who.weapon != blade)
+		var cfg := ReadConfigFile(":combat:itemdesc");
+		var equippedright := GetEquipmentByLayer(who, 0x01);
+		var equippedleft := GetEquipmentByLayer(who, 0x02);
+		var twohanded := Cint(cfg[equippedleft.objtype].TwoHanded);
+		if (equippedright || equippedleft || twohanded)
+			SendSysMessage(who, "Voce precisa das duas maos livres!");
+			return 0;
+		endif
+	endif
+
+	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
+		SendSysMessage(who, "Voce nao pode fazer cortar o corpo montado.");
+		return 0;
+	endif
+
+	if((!Accessible(who, cadaver)) || (!CheckLineOfSight(who, cadaver)))
+		SendSysMessage(who, "Voce nao pode usar isto.");
+		return;
+	endif
+	if(Distance(who, cadaver) > 2)
+		SendSysMessage(who, "Voce nao esta perto o bastante do alvo.");
+		return;
+	endif
+	var c_type := cadaver.corpsetype;
+	SendSysMessage(who,cadaver.corpsetype);
+	detach();
+	if(GetObjProperty(cadaver, "cut") == "1")
+		SendSysMessage( who, "Voce nao pode pegar mais coisas desse corpo." );
+		foreach thing in EnumerateItemsInContainer(cadaver)
+			MoveObjectToLocation(thing, cadaver.x, cadaver.y, cadaver.z, cadaver.realm, MOVEOBJECT_FORCELOCATION);
+		endforeach
+		//DestroyItem(cadaver);
+		return;
+		
+
+	elseif((GetObjProperty(cadaver,"npctemplate")== error) && (GetObjProperty(cadaver, "morto")!=1))
+		if (FindAccount(who.acctname).getprop("nota") == 2 || cadaver.ownerserial in GetObjProperty(who,"PodeMatar")) 
+			if (YesNo(who, "Voce deseja mesmo matar o alvo?", "Sim: o alvo morrera e voce perdera 1 DP permanentemente.", "Nao: nenhuma consequencia.")) //quer matar mesmo
+				DesmembreCorpse(cadaver);
+				if (!(cadaver.ownerserial in GetObjProperty(who,"PodeMatar"))) //retira 1 dp
+					var dpmod := cint(GetObjProperty(who, "dpmod"));
+					dpmod := dpmod - 10;
+					SetObjProperty(who, "dpmod", dpmod);
+				endif
+				PrintText( who, "*Corta a cabeça*");
+				SetObjProperty(cadaver, "description", "[Decaptado]");
+				SetObjProperty(cadaver, "WeaponKill", blade.desc);
+				SetObjProperty(cadaver, "charname", cadaver.name);
+				SetObjProperty(cadaver, "deathtime", polcore().systime);
+				SetName(cadaver, "Corpo Irreconhecivel");
+				SetObjProperty(cadaver, "morto",1);
+				
+			endif
+		endif
+		//DesmembreCorpse(cadaver);
+	
+	elseif (((c_type == 400) || (c_type == 401)) && (GetObjProperty(cadaver, "morto")!=1))
+				DesmembreCorpse(cadaver);
+				PrintTextAbove( who, "*Corta a cabeca*", font := _DEFAULT_TEXT_FONT, color := _DEFAULT_TEXT_COLOR, journal_print := JOURNAL_PRINT_NAME);	
+				SetObjProperty(cadaver, "morto",1);
+	else
+		PrintText(who, "*escalpelando "+cadaver.desc+"*");
+		SetObjProperty(cadaver, "morto",1);
+		if(c_type == 223)
+			CreateItemInContainer(cadaver, 0x9f1, 2);
+			SendSysMessage(who, "Voce colocou os itens no corpo.");
+			MakeBleed(cadaver);
+			return;
+		endif
+
+		var conf := ReadConfigFile(":ghaia:npcdesc");
+		var tmplate := GetObjProperty(cadaver, "npctemplate");
+		//var tmplate := cadaver.NPCTemplate();
+
+		if(!tmplate)
+			SendSysMessage(who, "Voce cortou o corpo, mas nao conseguiu nada de util.");
+			MakeBleed(cadaver);
+			return;
+		else
+			SetObjProperty(cadaver, "cut","1");
+
+			var elem :=  NPC_GetNPCConfig(tmplate);
+			var corpseitm := elem.corpseitm;
+			var corpseamt := elem.corpseamt;
+
+			if(!corpseitm)
+				MakeBleed(cadaver);
+				SendSysMessage(who, "Voce nao vai conseguir nada de util aqui.");
+				return;
+			endif
+			var i := 1;
+      			corpseitm := SplitWords(corpseitm);
+			corpseamt := SplitWords(corpseamt);
+			var minamt;
+			var dif := 0;
+			var bonusdif := 0;
+			if (blade.objtype == 0x0ec4)//se for skinning knife da bonus
+				bonusdif := -5;
+			endif
+			var found := 0;
+			foreach thing in corpseitm
+				dif := bonusdif + CINT(GetSkinningDifficulty(corpseitm[i]) );
+				minamt := GetMinSkinningAmt(corpseitm[i]);
+				if(SkillCheck(who, SURVIVAL, dif) > 0)
+					if (minamt > corpseamt[i])
+						minamt := corpseamt[i];
+					endif
+					var item := CreateItemInContainer(cadaver, cstr(thing), cint(minamt) );			
+					found := 1;
+				endif
+				i := i + 1;
+			endforeach
+			if (found)
+				SendSysMessage(who, "Voce conseguiu aproveitar algo do corpo.");
+			else
+				SendSysMessage(who, "Voce nao conseguiu nada de util.");
+			endif
+			MakeBleed(cadaver);
+		endif
+	endif
+endprogram
+

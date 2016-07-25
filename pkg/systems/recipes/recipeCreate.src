@@ -1,0 +1,23 @@
+use uo;
+use util;
+use cfgfile;
+use datafile;
+
+program create(item)
+
+	var possiveis:={};
+	var cfg := ReadConfigFile(":recipes:recipes");	
+	
+	foreach key in (GetconfigStringKeys(cfg))
+		var elem:= GetconfigStringKeys(cfg);
+		var level := GetConfigInt(elem, "level");
+		var name:= GetConfigString(elem,"name");
+		var text:= GetConfigString(elem,"text");
+		if (item.objtype == 0xF990) 
+			possiveis.append(key);
+		endif
+	endforeach	
+	var sorteado := possiveis[randomint(possiveis.size())+1];
+	SetObjProperty(item, "recipe",sorteado);
+	
+endprogram

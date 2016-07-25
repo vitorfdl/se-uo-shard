@@ -1,0 +1,148 @@
+/*-----------------------------------------  Attributes  -----------------------------------------*/
+["Astucia"]
+    //Rolagens: Medicina, WoomensWork, MetalWork, WoodWork, Cozinheiro, Alquímia, Extração, Sobrevivência.
+    Foco: Cartografia, Conhecimento Antigo, Navegação, Pesquisa, Alquimia, Sobrevivência.
+["Força"]
+    //Rolagens: meleecombat1H-(contusão, lâminas Pesadas, lanças), meleecombat2H, Dano.
+    Foco: 
+["Destreza"]
+    //Rolagens: Furtividade, Armadilhas/Arrombamento, Prestidigitação, meleecombat1H-(Laminas Leves, Briga), Arcos.
+    Foco: Cavalgar, Arrombamento, Desarmar Armadilhas, Prestidigitação, Combate Laminas Leves, Combate Briga, Combate Arco, Furtividade.
+["Constituição"]
+    //Rolagens: Resistência Mágica, 
+    Foco: Vigor.
+["Percepção"]
+    //Rolagens: Encontrar Armadilhas, Encontrar Escondido, Dano Arco
+    Foco: Rastrear, 
+["Magia"]
+    //Rolagens: Magery-(Mesum, Divino)
+    Foco: 
+//Comunicação: Trato de Animais
+["Vontade"]
+    //Rolagens: Resistência Mágica
+    Foco: Coragem, Fé, Disciplina
+/*-----------------------------------------------------------------------------------------------*/   
+
+/*----------  Character Creation  ----------*/
+    "Pontos de Mana"   : 10 + Magia + 1d6
+    "Mana por Nivel"   : 1d6 + Magia 
+
+    "Pontos de Stamina": 10 + Constituição + 1d6
+    "Stamina por Nivel": 1d6 + Constituição
+
+    "Classe Guerreiro" : 30 + Constituição + ld6.
+    "Classe Ladino"    : 25 + Constituição + ld6.
+    "Classe Mago"      : 20 + Constituiçao + ld6.
+    "HP por Nivel"     : 1d6 + Constituição.
+/*------------------------------------------*/    
+
+/*----------  Combat and Other Tests  ----------*/
+    "Teste"            : 3d6 + Magia + Habilidade
+    "Poder do Feitiço" : 10 + Magia + Habilidade
+
+    "Teste de Ataque"  : 3d6 + Força/Destreza + Habilidade
+    "Esquiva/Bloqueio" : 10 + Destreza + Escudo-(+1/+2)
+    "Dano:" (DA) + Força/Percepção - Armadura
+/*----------------------------------------------*/    
+
+
+["Dado do Dragão"]
+
+
+["Tabela de Rolamentos"]
+
+
+
+["Random Ideas"]
+Mesum:
+    - Aprender Pergaminho exigiria um Teste Avançado de 5 x2horas.
+    - Usar Magia pode spawnar espiritos.
+    - Corrupção: 
+        Aparência se torna cadavérica. 
+        Olheiras aparecem.
+        Mesumbeiros Poderosos podem notar corrupção alta em outros jogadores.
+        Clérigos Heróicos podem notar corrupção em outros jogadores.
+
+Roleplay:
+    - GM:
+        * Rolar Dados de Disputa;
+
+
+
+/*----------  Base Weapon Stats  ----------*/
+
+[ARMA]                  [DANO]  [F. MÍNIMA]
+"GRUPO DOS ARCOS (DESTREZA)"
+[Arco curto]            ld6+1       -1 
+[Arco longo]            ld6+3        1 
+[Besta]                 2d6+1        1
+
+"GRUPO DA BRIGA (DESTREZA)"
+[Arma improvisada]      ld6-1        -
+[Manopla]               ld3+1        -
+[Punho]                 ld3          -
+
+"GRUPO DOS CAJADOS (DESTREZA)"
+[Cajado longo]          ld6+1        -
+[Maça com espinhos]     ld6+3        1
+[Porrete]               ld6          -
+
+"GRUPO DAS LÂMINAS LEVES (DESTREZA)"
+[Adaga]                 ld6+1        -
+[Espada curta]          ld6+2       -1
+[Faca de arremesso]     ld6          -
+
+"GRUPO DAS ARMAS OE CONTUSÃO (FORÇA)"
+[Maça]                  2d6          1
+[Marreta]               ld6+3        1
+[Marreta de duas maos]  2d6+3        3
+
+"GRUPO DAS LÂMINAS PESADAS (FORÇA)"
+[Espada bastarda]       2d6+1        2
+[Espada de duas mãos]   3d6          3
+[Espada longa ]         2d6          1
+
+"GRUPO DAS LANÇAS (FORÇA)"
+[Lança]                 ld6+3        0
+[Lança de arremesso]    ld6+3        0
+[Lança de duas mãos]    2d6          1
+
+"GRUPO DOS MACHADOS (FORÇA)"
+[Machado de arremesso]  ld6+2        1
+[Machado de batalha]    2d6          1
+[Machado de duas mãos]  3d6          3
+
+                  [Alcance C.] [Alcance L.] [Recarga]
+"ALCANCE DAS ARMAS DE PROJÉTEIS"
+[Arco curto]           16m          32m       Menor
+[Arco longo]           26m          52m       Menor
+[Besta]                30m          60m     Principal
+[Faca de arremesso]    6m           12m       Menor
+[Lança de arremesso]   8m           16m       Menor
+[Machado de arremesso] 3m           8m        Menor
+
+                        [AR] [Penalidade]
+"ARMADURAS"
+[Couro leve]              3         0
+[Couro pesado]            4        -1
+[Malha leve]              5        -2
+[Malha pesada]            7        -3
+[Placas leves]            8        -4
+[Placas pesadas]          10       -5
+
+                [Bonus Defesa]
+"Escudos"
+[Escudo leve]       +1
+[Escudo médio]      +2
+[Escudo pesado]     +3
+
+
+[Test]      [Difficulty]
+Routine         7       Riding a horse at astandard pace
+Easy            9       Swimming across a pond
+Average         11      Applying first aid
+Challenging     13      Climbing a brick wall inthe dark
+Hard            15      Convincing the townguard that your broadsword is no threat
+Formidable      17      Following old tracksduring a heavy rainstorm
+Imposing        19      Shooting an apple while blind folded
+Impossible      21      Swimming across an ocean

@@ -1,0 +1,7 @@
+use uo;
+
+program removecold(who, textarea)
+
+	EraseObjProperty(who, "neve");
+	
+endprogram

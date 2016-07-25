@@ -1,0 +1,244 @@
+use uo;
+use os;
+use cfgfile;
+use util;
+use vitals;
+
+include "include/client";
+include ":attributes:attributes";
+include ":gumps:requestgump";
+include "include/damage";
+
+const FX_POISON_GAS := 0x113a;
+const FX_EXPLODE_3      :=  0x36b0; //
+const SFX_SPELL_LIGHTNING           :=  0x002a;
+
+program loko(who, item)
+
+	if (who.npctemplate)
+		return 1;
+	endif
+
+  if(GetObjProperty(item, "#inuse") == 1)
+   // SendSysMessage(who,"that switch is in use");
+    return;
+  endif
+
+  normalusage(who, item);
+  
+  endprogram
+  
+  
+  function normalusage(who, item)
+  var firstclick := GetObjProperty (item, "firstclick");
+  if ( firstclick )
+    SetObjProperty (item, "firstclick", 0);
+    //PrintTextAbove(who, "*Desativa*");
+  else
+    //PrintTextAbove(who, "*Ativa*");
+    SetObjProperty (item, "firstclick", 1);
+  endif	
+  var funct  := GetObjProperty(item, "function");
+  //if(!funct)
+   // SendSysMessage(who,"this switch seems to be broken");
+   // return;
+  //endif
+  var status := GetObjProperty(item, "status");
+  if(!status)
+    status := "off";
+    SetObjProperty( item, "status", status);
+  endif
+  var mid := 0;
+  var fin;
+  var snd;
+  var obj;
+  var gfx;
+  var la := GetObjProperty(item,"links");
+  if(!la)
+    la := {};
+    la.append(item.serial);
+    SetObjProperty(item,"links", la);
+  endif
+  foreach entry in la
+    obj := SystemFindObjectBySerial(CInt(entry));
+    gfx := obj.graphic;
+    mid := 0;
+    if(mid == 0)
+      mid := fin;
+    endif
+    sleepms(500);
+    PlaySoundEffect( obj, snd);
+    obj.graphic := mid;
+    sleepms(500);
+    obj.graphic := fin;
+  endforeach
+  case(funct)
+    "passage" : alterpassage(who, item, gfx, snd);
+  endcase
+  //setobjproperty(item, "reversepassage", 1); //passagens que fecham de cima pra baiixo 
+endfunction
+
+
+function alterpassage(who, item, stt, snd);
+
+ var la := GetObjProperty(item,"links");
+ var obj;
+  foreach entry in la
+    obj := SystemFindObjectBySerial(CInt(entry));
+    SetObjProperty(obj, "#inuse", 1);
+  endforeach
+  Detach();
+  var newsound := CInt(GetObjProperty(item, "sound"));
+  var speaker  := GetObjProperty(item, "speaker");
+  var x := speaker[1];
+  var y := speaker[2];
+  var z := speaker[3];
+  var speakr :=CreateItemAtLocation( x, y, z, 0xeed, 1);
+  speakr.movable := 0;
+  speakr.graphic := 0x1;
+  var pl := GetObjProperty(item,"partsarray");
+  var i;
+  var stp;
+  var a := 0;
+  
+ /* if(GetObjProperty(item, "status") == "on")
+    stp := 1;
+    while(stp <= 11)
+       foreach entry in pl
+        obj := SystemFindObjectBySerial(CInt(entry));
+        obj.movable := 1;
+        MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 1, obj.realm, MOVEOBJECT_FORCELOCATION);
+        obj.movable := 0;
+      endforeach
+      if(a == 2)
+        PlaySoundEffect(speakr, newsound);
+        a := 0;
+      else
+        a := a + 1;
+      endif
+      stp := stp+1;
+      sleep(2);
+    endwhile
+    foreach entry in la
+      obj := SystemFindObjectBySerial(CInt(entry));
+      SetObjProperty(obj, "status", "off");
+    endforeach*/
+  if(GetObjProperty(item, "status") == "off")
+    var msg := GetObjProperty(obj, "msg");
+  if(!msg)
+    msg := "Voce ativou alguma coisa onde pisou..";
+  endif
+  SendSysMessage(who, msg);
+    stp := 1;
+    while(stp <= 11)
+      foreach entry in pl
+        obj := SystemFindObjectBySerial(CInt(entry));
+        obj.movable := 1;
+	if (getobjproperty(item, "reversepassage") == 1)
+		MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+	else
+		MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+	endif
+        obj.movable := 0;
+      endforeach
+      if(a == 2)
+        PlaySoundEffect(speakr, newsound);
+        a := 0;
+      else
+        a := a + 1;
+      endif
+      stp := stp+1;
+      sleep(1);
+    endwhile
+    foreach entry in la
+      obj := SystemFindObjectBySerial(CInt(entry));
+      SetObjProperty(obj, "status", "on");
+    endforeach
+  endif
+  var timer := CInt(GetObjProperty(item, "timer"));
+  if(timer > 0)
+    sleep(timer);
+    var mid := 0;
+    var gfx;
+    var fin;
+    foreach entry in la
+      obj := SystemFindObjectBySerial(CInt(entry));
+      gfx := obj.graphic;
+      mid := 0;
+      if(mid == 0)
+        mid := fin;
+      endif
+      sleepms(500);
+      PlaySoundEffect( obj, snd);
+      obj.graphic := mid;
+      sleepms(500);
+      obj.graphic := fin;
+    endforeach
+    if(GetObjProperty(item, "status") == "on")
+      stp := 1;
+      while(stp <= 11)
+        foreach entry in pl
+          obj := SystemFindObjectBySerial(CInt(entry));
+          obj.movable := 1;
+	if (getobjproperty(item, "reversepassage") == 1)
+		//printtextabove(item, " ta on SOBE");
+		MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+	else
+		//printtextabove(item, " ta on DESCE");
+		MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+	endif
+
+          obj.movable := 0;
+        endforeach
+        if(a == 2)
+          PlaySoundEffect(speakr, newsound);
+          a := 0;
+        else
+          a := a + 1;
+        endif
+        stp := stp+1;
+        sleep(1);
+      endwhile
+      foreach entry in la
+        obj := SystemFindObjectBySerial(CInt(entry));
+        SetObjProperty(obj, "status", "off");
+      endforeach
+    elseif(GetObjProperty(item, "status") == "off")
+      stp := 1;
+      while(stp <= 11)
+        foreach entry in pl
+          obj := SystemFindObjectBySerial(CInt(entry));
+          obj.movable := 1;
+	if (getobjproperty(item, "reversepassage") == 1)
+		//printtextabove(item, " ta off SOBE");
+		MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+	else
+		//printtextabove(item, " ta off DESCE");
+		MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
+	endif
+
+          obj.movable := 0;
+        endforeach
+        if(a == 2)
+          PlaySoundEffect(speakr, newsound);
+          a := 0;
+        else
+          a := a + 1;
+        endif
+        stp := stp+1;
+        sleep(1);
+      endwhile
+      foreach entry in la
+        obj := SystemFindObjectBySerial(CInt(entry));
+        SetObjProperty(obj, "status", "on");
+      endforeach
+    endif
+  endif
+  DestroyItem(speakr);
+  EraseObjProperty(item, "#inuse");
+  foreach entry in la
+    obj := SystemFindObjectBySerial(CInt(entry));
+    EraseObjProperty(obj, "#inuse");
+  endforeach
+endfunction
+

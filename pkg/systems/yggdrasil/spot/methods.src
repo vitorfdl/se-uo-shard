@@ -1,0 +1,102 @@
+use os;
+use uo;
+
+include "include/arrays";
+
+program Install()
+    return 1;
+endprogram
+
+exported function GetProps( spot )
+    var data := struct{};
+    data.+active       := GetObjProperty(spot, "active");
+    data.+spawnpoints  := GetObjProperty(spot, "spawnpoints");
+    data.+timeInterval := GetObjProperty(spot, "timeInterval");
+    data.+eventEntry   := GetObjProperty(spot, "eventEntry");
+
+    data.+yggdrasil := GetObjProperty(spot, "yggdrasil");
+
+    return data;
+endfunction
+
+exported function SetProps( spot, data := struct{} )
+    var old_data := GetProps(spot);
+    if (data.name)
+        spot.name := data.name;
+    endif
+
+    if (data.location)
+        spot.location := data.location;
+    endif
+
+    if (data.active)
+        old_data.active := data.active;
+    endif
+
+    if (data.spawnpoints)
+        old_data.spawnpoints := data.spawnpoints;
+    endif
+
+    if (data.timeInterval)
+        old_data.timeInterval := data.timeInterval;
+    endif
+
+    if (data.eventEntry)
+        old_data.eventEntry := data.eventEntry;
+    endif
+
+    old_data := ModelSpot(old_data);
+
+    SetObjProperty(spot, "timeInterval", old_data.timeInterval);
+    SetObjProperty(spot, "spawnpoints", old_data.spawnpoints);
+    SetObjProperty(spot, "active", old_data.active);
+    SetObjProperty(spot, "eventEntry", old_data.eventEntry);
+endfunction
+
+exported function yggdrasil ( spawnpoint, data := struct{})
+     SetObjProperty(spawnpoint, "yggdrasil", data);
+endfunction
+
+function ModelSpot( data := struct{})
+    if (!data.active != 0 && data.active != 1)
+        data.active := 0;
+    endif
+
+    if (TypeOf(data.spawnpoints) != "Array")
+        data.spawnpoints := array{};
+    endif
+
+    if (!data.timeInterval)
+        data.timeInterval := 60;
+    endif
+
+    if (!data.eventEntry)
+        data.eventEntry := "";
+    endif 
+
+    if (TypeOf(data.yggdrasil) != "Struct")
+        data.yggdrasil := struct{};
+    endif
+    return data;
+endfunction
+
+exported function AddSpawnPoint( spot, serial )
+    var data := GetProps( spot );
+    data.spawnpoints.append(serial);
+    SetProps( spot, data );
+    return 1;
+endfunction
+
+exported function RemoveSpawnPoint( spot, serial )
+    var data  := GetProps( spot );
+    var index := FindInArray(data.spawnpoints, serial);
+    if (index)
+        data.spawnpoints.Erase(index);
+        SetProps( spot, data );
+        var spawnpoint := SystemFindObjectBySerial(serial);
+        if (spawnpoint)
+            DestroyItem(spawnpoint);
+        endif
+    endif
+    return 1;
+endfunction

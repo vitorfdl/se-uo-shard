@@ -1,0 +1,302 @@
+use uo;
+use os;
+use cfgfile;
+use vitals;
+
+include "include/client";
+include "include/say";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:htmlgump";
+include ":gumps:yesno";
+include ":datafile:datafile";
+include ":tn:tngumps";
+include ":gumps:include/requestgump";
+
+var tips := array{"Caracteristicas", "Planejamentos", "Feitos", "Anotacoes", "Avaliacoes"};
+
+function criargump(byref gump)
+	
+	GFResizePic(gump, 50, 25, 5054, 330, 400);
+	GFGumpPic(gump, 0, 15, 10440);
+	GFResizePic(gump, 112, 29, 9500, 200, 29);
+	
+	GFAddButton(gump, 346, 35, 22150, 22152, GF_CLOSE_BTN, 1);
+	//GFAddButton(gump, 185, 395, 2128, 2129, GF_CLOSE_BTN, 1);
+	GFResizePic(gump, 270, 392, 9550, 100, 29);
+	
+	GFTextLine(gump, 95, 62, 600, "Características" );
+	
+	GFTextLine(gump, 215, 62, 600, "Histórico" );
+	
+	GFTextLine(gump, 302, 62, 600, "Avaliações" );
+	
+	
+	//Conteudo
+	GFPage(gump, 1);
+	GFAddButton(gump, 75, 65, 30008, 30008, GF_PAGE_BTN, 1);
+	GFAddButton(gump, 195, 65, 30009, 30008, GF_PAGE_BTN, 2);
+	GFAddButton(gump, 282, 65, 30009, 30008, GF_PAGE_BTN, 3);
+	
+	GFTextLine(gump, 65, 85, 2103, "Características Comportamentais:" );
+	GFResizePic(gump, 65, 105, 9350, 295, 135);
+	
+	GFTextLine(gump, 65, 250, 2103, "Objetivos:" );
+	GFResizePic(gump, 65, 270, 9350, 295, 120);
+
+	GFPage(gump, 2);
+	GFAddButton(gump, 75, 65, 30009, 30008, GF_PAGE_BTN, 1);
+	GFAddButton(gump, 195, 65, 30008, 30008, GF_PAGE_BTN, 2);
+	GFAddButton(gump, 282, 65, 30009, 30008, GF_PAGE_BTN, 3);
+	GFTextLine(gump, 65, 85, 2103, "Feitos Importantes (GM)" );
+	GFResizePic(gump, 65, 105, 9350, 295, 105);
+	
+	GFTextLine(gump, 65, 220, 2103, "Anotações do Jogador:" );
+	GFResizePic(gump, 65, 240, 9350, 295, 150);
+	
+	GFPage(gump, 3);
+	GFAddButton(gump, 75, 65, 30009, 30008, GF_PAGE_BTN, 1);
+	GFAddButton(gump, 195, 65, 30009, 30008, GF_PAGE_BTN, 2);
+	GFAddButton(gump, 282, 65, 30008, 30008, GF_PAGE_BTN, 3);
+	GFTextLine(gump, 65, 85, 2103, "Avaliações:" );
+	GFResizePic(gump, 65, 105, 9350, 295, 285);
+	
+endfunction
+
+program fichaRP(who)
+	var targ;
+	if (who.cmdlevel >= 3)
+		targ := Target(who);
+	endif
+	
+	if (!targ)
+		sendFichaRp(who, who, 1);
+	else
+		sendFichaRp(who, targ, 2);
+	endif
+	
+endprogram
+
+function sendFichaRp(who, targ, edit := 0)
+	while (who.connected)
+		var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
+		var ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_NO_CREATE);
+		if (!ficharp_elem)
+			ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_CREATE);
+			var ficha := struct;
+            ficha.+Caracteristicas := array{};
+            ficha.+Planejamentos   := array{};
+            ficha.+Feitos          := array{};
+            ficha.+Anotacoes       := array{};
+            ficha.+Avaliacoes      := array{};
+            ficha.+Xettones        := "Limitador";
+			fichaSetProp(targ, "Ficha", ficha);
+		endif
+		var texto;
+		var gump := GFCreateGump();
+		criargump(gump);
+		
+		GFPage(gump, 0);
+		if (targ == who)
+			GFTextLine(gump, 155,35,1153,"Ficha de Personagem");
+		else	
+			GFTextLine(gump, 135,35,1153,"Ficha de "+targ.name);
+		endif
+		
+		GFTextLine(gump, 295,398,1153, "Nota "+ getNotaRP(targ));
+		if (edit == 2)
+			GFAddButton(gump, 345, 394, 5600, 5604, GF_CLOSE_BTN, 98);
+			GFAddButton(gump, 345, 409, 5602, 5606, GF_CLOSE_BTN, 99);
+		endif
+		
+		GFPage(gump, 1);
+
+		texto := OrganizarTexto(ficharp_elem, "Caracteristicas");
+		GFHTMLArea(gump, 70, 106, 305, 132, texto, 0, 1);
+		texto := OrganizarTexto(ficharp_elem, "Planejamentos");
+		GFHTMLArea(gump, 70, 272, 305, 117, texto, 0, 1);
+		if (edit == 1)
+			GFResizePic(gump, 315, 82, 9350, 45, 23);
+			GFAddButton(gump, 320, 85, 56, 56, GF_CLOSE_BTN, 200);
+			GFAddButton(gump, 340, 85, 55, 55, GF_CLOSE_BTN, 100);
+			
+			GFResizePic(gump, 315, 247, 9350, 45, 23);
+			GFAddButton(gump, 320, 250, 56, 56, GF_CLOSE_BTN, 201);
+			GFAddButton(gump, 340, 250, 55, 55, GF_CLOSE_BTN, 101);
+		endif
+		
+		GFPage(gump, 2);
+		texto := OrganizarTexto(ficharp_elem, "Feitos");
+		GFHTMLArea(gump, 70, 106, 305, 102, texto, 0, 1);
+		if (edit == 2)
+			GFResizePic(gump, 315, 81, 9350, 45, 23);
+			GFAddButton(gump, 320, 84, 56, 56, GF_CLOSE_BTN, 202);
+			GFAddButton(gump, 340, 84, 55, 55, GF_CLOSE_BTN, 102);
+		endif
+		
+		texto := OrganizarTexto(ficharp_elem, "Anotacoes");
+		GFHTMLArea(gump, 70, 242, 305, 147, texto, 0, 1);
+		if (edit == 1)
+			GFResizePic(gump, 315, 217, 9350, 45, 23);
+			GFAddButton(gump, 320, 220, 56, 56, GF_CLOSE_BTN, 203);
+			GFAddButton(gump, 340, 220, 55, 55, GF_CLOSE_BTN, 103);
+		endif
+
+		GFPage(gump, 3);
+		texto := OrganizarTexto(ficharp_elem, "Avaliacoes");
+		GFHTMLArea(gump, 70, 106, 305, 282, texto, 0, 1);
+		if (edit == 2)
+			GFResizePic(gump, 315, 81, 9350, 45, 23);
+			GFAddButton(gump, 320, 84, 56, 56, GF_CLOSE_BTN, 204);
+			GFAddButton(gump, 340, 84, 55, 55, GF_CLOSE_BTN, 104);
+		endif
+		
+		var input := GFSendGump(who, gump);
+		if (!input[0] || input[0] == 1)
+			break;
+		elseif (input[0] == 98)
+			var notarp := getNotaRP(targ);
+			if (notarp >= 2)
+				SendSysMessage(who, "Nota ja atingiu o maximo!");
+			else
+				setNotaRP(targ, notarp+1);
+				PrintTextPrivate(targ, "*Sua NotaRP foi aumentada!*", targ, SSM_INFO);
+				PrintTextPrivate(targ, "*Sua NotaRP foi aumentada!*", who, SSM_INFO);
+			endif
+		elseif (input[0] == 99)
+			var notarp := getNotaRP(targ);
+			if (notarp <= 0)
+				SendSysMessage(who, "Nota ja esta no minimo!");
+			else
+				setNotaRP(targ, notarp-1);
+				PrintTextPrivate(targ, "*Sua NotaRP foi diminuida!*", targ, SSM_FAIL);
+				PrintTextPrivate(targ, "*Sua NotaRP foi diminuida!*", who, SSM_FAIL);
+			endif
+		elseif (input[0] >= 200)
+			input := cint(input[0] - 200) +1;
+			input := tips[input];
+			var apagar := cint(RequestGump(who, "Entre com o número que deseja apagar."));
+			if (YesNo(who, "Tem certeza que deseja apagar " + apagar + "?", "Sim", "Não"))
+				var value := ficharp_elem.GetProp("Ficha");
+				if (len(value[input]) < apagar)
+					SendSysMessageEx(who, "Este valor nao existe", SSM_FAIL);
+				elseif (typeof(apagar) != "Integer")
+					SendSysMessageEx(who, "Este valor nao existe.", SSM_FAIL);
+				else
+					value[input].erase(apagar);
+					var teste := fichaSetProp(targ, "Ficha", value);
+				endif
+			endif
+		elseif (input[0] >= 100)
+			input := cint(input[0] - 100) +1;
+			input := tips[input];
+			var value := ficharp_elem.GetProp("Ficha");
+			value[input].append(PegarResposta(who));
+			var teste := fichaSetProp(targ, "Ficha", value);
+			
+			if (input == "Avaliacoes")
+				PrintTextPrivate(targ, "*Você foi avaliado!*", targ, SSM_INFO);
+				PrintTextPrivate(targ, "*Você foi avaliado!*", who, SSM_INFO);
+			elseif (input == "Feitos")
+				PrintTextPrivate(targ, "*Você recebeu um novo Grande Feito!*", targ, SSM_INFO);
+				PrintTextPrivate(targ, "*Você recebeu um novo Grande Feito!*", who, SSM_INFO);			
+			endif
+			
+		endif
+		RecalcVitals(who);
+	endwhile
+endfunction
+
+function fichaSetProp(who, prop, value)
+	var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
+	var ficharp_elem := DFFindElement(ficharp_data_file, Hex(who.serial), DF_NO_CREATE);
+	
+	var setvalue := ficharp_elem.SetProp(prop, value);
+	
+	return setvalue;
+	
+endfunction
+
+function OrganizarTexto(ficharp_elem, prop)
+	var valores := ficharp_elem.GetProp("Ficha");
+	var texto := "<BASEFONT COLOR=#330000>";
+
+	var i := 1;
+	foreach valor in (valores[prop])
+		if (valor == error)
+			valores[prop].erase(i);
+			continue;
+		endif
+		texto := texto+i+"."+valor+"<br>";
+		i+=1;
+		sleepms(5);
+	endforeach
+	
+	ficharp_elem.SetProp("Ficha", valores);
+
+	return texto;
+endfunction
+
+
+function PegarResposta(who)
+	var gump := GFCreateGump();
+	var num_lines := 15;
+	var msg_array := array;
+	var y_pos := 80;
+	var i;
+
+	GFResizePic(gump, 0, 0, 3600, 420, 405);
+	GFResizePic(gump, 15, 15, 0x13BE, 390, 55);
+	GFTextMid(gump, 15, 20, 390, 1153, "Descreva a nova linha");
+	GFTextMid(gump, 15, 40, 390, 1153, "Você pode usar <i> para itálico e <b> para negrito!");
+	GFAddButton(gump, 325, 45, 2128, 2129, GF_CLOSE_BTN, 20);
+	GFResizePic(gump, 15, 70, 0xA3C, 390, 320);
+	for ( i:=1; i<=num_lines; i:=i+1 )
+		msg_array.Append(GFTextEntry(gump, 20, y_pos, 396, 20, 1153, ""));
+		y_pos := y_pos+19;
+	endfor
+	
+	var input := GFSendGump(who, gump);
+
+	if (input[0] == 20)
+		var i;
+		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
+			var line := GFExtractData(input, msg_array[i]);
+      //sendsysmessage(who, "extraindo linha " + line);
+			if ( line )
+				line := " "+line;
+				msg_array[i] := line;
+			else
+				msg_array[i] := "";
+			endif
+      //sendsysmessage(who, "linha final " + line);
+		endfor
+	
+		//Clear off empty lines.
+		for ( i := msg_array.Size(); i>=1; i:=i-1 )
+			if ( Len(msg_array[i]) <= 0 )
+				msg_array.Erase(i);
+			endif
+			SleepMS(5);
+		endfor
+		
+		var text := "";
+		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
+			text := text + msg_array[i];
+			SleepMS(5);
+		endfor
+		return text;
+	endif
+endfunction
+
+function getNotaRP(who)
+	var nota := cint(FindAccount(who.acctname).getprop("nota"));
+	if (!nota)
+		setNotaRP(who, 0);
+	endif
+	return nota;
+endfunction
+
+function setNotaRP(who, nota)
+	return findAccount(who.acctname).setProp("nota", nota);
+endfunction

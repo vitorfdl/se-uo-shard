@@ -1,0 +1,112 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/say";
+include ":magery:spellbooks";
+var cfg := ReadConfigFile(":magery:allspells");
+program magia(who, spellname)
+	spellname := lower(spellname);
+	var elem;
+	var achou := 0;
+	var id;
+	foreach spell in ( GetConfigIntKeys(cfg) )
+		elem := FindConfigElem(cfg, spell);
+		if (spellname == lower(elem.Name))
+			achou := 1;
+			id := elem.SpellId;
+			break;
+		endif
+		sleepms(5);
+	endforeach
+
+	if (!achou)
+		SendSysMEssageEx(who, "A magia " + spellname + " nao existe.", SSM_FAIL);
+		return;
+	endif
+
+	//SendSysMessage(who, " " + id);
+
+	if (who.cmdlevel >= 3)
+		var spellinfo := struct;
+		spellinfo.+id := id;
+		var script := Start_Script(":magery:cast_spell", {who, spellinfo, 0});
+		return;
+	endif
+	
+	
+	var spelluser := GetObjProperty(who, "spelluser");
+	var spellbook := 0;
+	if (!spelluser)
+		return;
+	elseif (spelluser == "Monge")
+		var necklace := GetEquipmentByLayer(who, 10);
+		if (GetObjProperty(necklace, "monge") == who.serial)
+			var spells := GetObjProperty(necklace, "spellids");
+			if (id in spells)
+				spellbook := necklace;
+			endif	
+		else
+		//PrintText(who, "Monge");
+			foreach item in ( EnumerateItemsInContainer(who.backpack) )
+				if (item.objtype == 0x790c)
+					//PrintText(who, "Encontrou Livro");
+					var serialid := GetObjProperty(item, "monge");
+					if (serialid && (serialid == who.serial))
+						//PrintText(who, "Verificou Spell");
+						var spells := GetObjProperty(item, "spellids");
+						if (id in spells)
+							spellbook := necklace;
+							break;
+						endif					
+					endif
+				endif
+				sleepms(5);
+			endforeach
+		endif
+	else
+		//PrintText(who, "Demon");
+		var demonbook := GetEquipmentByLayer(who, 1);
+		if (demonbook.serial in GetObjProperty(who, "magicbooks"))
+			var spells := GetObjProperty(demonbook, "spells");
+			if (cint(id) in spells)
+				spellbook := 2;
+			endif
+		endif
+		if (!spellbook)
+			foreach item in ( EnumerateItemsInContainer(who.backpack) )
+				if ( item.objtype == 0x2253)
+					//PrintText(who, "Encontrou Livro");
+					var serialid := GetObjProperty(who, "magicbooks");
+					if (item.serial in serialid)
+						var spells := GetObjProperty(item, "spells");
+						//PrintText(who, "Spells" + spells);
+						if (cint(id) in spells)
+							spellbook := 2;
+							break;
+						endif	
+					endif
+				endif
+				sleepms(5);
+			endforeach
+		endif
+	endif   
+
+	if ( !spellbook)
+		SendSysMessageEx(who, "Voce nao possui a magia " + spellname + " nos seu grimorio.", SSM_FAIL);
+		return;
+	elseif (spellbook == 2 || spellbook.objtype == 0x2253)
+		spellbook == 0;
+	endif
+	
+	var spellinfo := struct;
+	spellinfo.+id := id;
+    var script := Start_Script(":magery:cast_spell", {who, spellinfo, spellbook});
+    if ( script.errortext )
+		SendSysMessage(who, "Error - Could not start spell starter ->"+script.errortext);
+		return 0;
+	endif
+	
+
+
+endprogram

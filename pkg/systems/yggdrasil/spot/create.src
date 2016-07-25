@@ -1,0 +1,6 @@
+use uo;
+
+program Install(spot)
+    spot.SetProps(struct{});
+    return 1;
+endprogram

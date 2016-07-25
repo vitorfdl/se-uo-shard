@@ -1,0 +1,25 @@
+use uo;
+
+program install()
+   Print("Installing Allnames packethook");
+   return 1;
+endprogram
+
+exported function allnames(who, byref packet)
+	Packet.SetLength(37);
+	var mobile := SystemFindObjectBySerial(packet.getint32(3));
+	var creaturename := mobile.name;
+	if (mobile.iSA(POLCLASS_MOBILE) && !CheckLineOfSight(who, mobile) && mobile != who && who.cmdlevel < 3)
+		creaturename := "Desconhecido";
+	endif
+	
+	if ( mobile.dead && who.cmdlevel >= 3)
+		creaturename := GetObjProperty(mobile, "realname");
+	elseif (GetObjProperty(mobile, "realname") && who.cmdlevel >= 3)
+		creaturename := "Desc...[" +  GetObjProperty(mobile, "realname") + "]";
+	endif
+   
+	Packet.SetString(7, creaturename, 1);
+	Packet.SendPacket(who);
+	return 1;
+endfunction

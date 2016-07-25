@@ -1,0 +1,66 @@
+
+use uo;
+use datafile;
+use cfgfile;
+
+include ":tn:tngumps";
+include ":gumps:gumps";
+include ":gumps:yesno";
+include ":gumps:gumps_ex";
+include ":gumps:requestgump";
+include ":help:help";
+
+const BUTTON_HELP_CANCEL := 1;
+const BUTTON_HELP_SENDGMPAGE := 2;
+const BUTTON_HELP_SENDCOUNPAGE := 3;
+const BUTTON_HELP_REPORTBUG := 4;
+
+program help_menu(who)
+	var chargump := GFCreateGump();
+	var input;
+	var first_name, last_name;
+	first_name := "";
+	last_name := "";
+
+	GFDisposable(chargump, 0);
+	GFResizePic(chargump, 50, 25, 5054, 350, 480);	
+	GFGumpPic(chargump, 0,10, 10400);
+	GFGumpPic(chargump, 368,10, 10410);
+	
+	GFGumpPic(chargump, 0,190, 10401);
+	GFGumpPic(chargump, 368,190, 10411);
+	
+	GFGumpPic(chargump, 0,400, 10402);
+	GFGumpPic(chargump, 368,400, 10412);
+	
+	GFTextMid(chargump, 70, 40, 300, 1153, "Menu de Ajuda");
+	GFTextLine(chargump, 70, 75, 2103, "Lista de Comandos");
+
+	var cfgtext := ReadConfigFile(":help:config/commands");
+	var textelem := FindConfigElem( cfgtext, "commands" );
+	var lines := GetConfigString(textelem, "Line");
+	GFHTMLArea(chargump, 70, 100, 310, 290, lines, 9390, 1);
+
+	GFTextLine(chargump, 125, 425, 1153, "Solicitar ajuda aos GMs");
+	GFTextLine(chargump, 125, 460, 1153, "Reportar Bug");
+	GFAddButton(chargump, 70, 410, 4502, 4502, 1, BUTTON_HELP_SENDGMPAGE );
+	GFAddButton(chargump, 70, 444, 4502, 4502, 1, BUTTON_HELP_REPORTBUG );
+
+	input := GFSendGump(who, chargump);
+	input := input[0];
+
+	if (input == BUTTON_HELP_SENDGMPAGE )
+		var sendpage := YesNo(who, "Use a page somente caso seu problema possa ser resolvido por Staffers, ou deseja alguma espécie auxílio. Continuar?", "Sim, quero enviar a msg.", "Nao, nao quero enviar a msg."  );
+		if (sendpage)
+			var script := start_script( ":email:emailMessage/helpLetter", array{ who, 999999998} );
+		endif
+
+	elseif (input == BUTTON_HELP_REPORTBUG )
+		var sendpage := YesNo(who, "Um Bug so pode ser resolvido por Scripters. Detalhe o máximo possivel como voce descobriu o bug. Continuar?", "Sim, quero reportar o bug.", "Não, não tenho bug para reportar."  );
+		if (sendpage)
+			var script := start_script( ":email:emailMessage/helpLetter", array{ who, 999999999} );
+		endif
+
+	endif
+
+endprogram

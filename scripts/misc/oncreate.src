@@ -1,0 +1,14 @@
+/* $Id: oncreate.src 1345 2006-05-12 08:18:29Z austin $
+ *
+ * Purpose
+ * This script allows the scripter to run code when a new character is created.
+ * Useful for giving out starting equipment, etc.
+ *
+ */
+use uo;
+use os;
+
+program core_onCreate(who)
+    start_script(":charactercreation:gumpcriacao", who);
+	return 1;
+endprogram

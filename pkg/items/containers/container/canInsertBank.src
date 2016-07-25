@@ -1,0 +1,39 @@
+//$Id: canInsert.src 87 2006-05-23 19:04:43Z sroyalty $
+
+use uo;
+use cfgfile;
+include ":attributes:attributes";
+include ":containers:checks";
+
+
+program canInsert(mobile, container, movetype, inserttype, item, existing_stack, amount_to_add)
+	if (!maoLivre(mobile, 1))
+		return 0;
+	endif
+	if (mobile.frozen || mobile.paralyzed)
+		SendSysMessage(mobile, "Voce esta paralizado.");
+		return 0;
+	endif
+	var valid :=	{0xba63, 0xba64, 0xba65, // moedas
+			 0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70, // joias
+			 0x1011, 0x100E, 0x100F, 0x1010, 0x1012, 0x1013, // chaves
+			 0xFEF, 0xFF0, 0xFF1, 0xFF2, 0xFF3, 0xFF4, // livros
+			 0xF0F, 0xF10, 0xF11, 0xF13, 0xF15, 0xF16, 0xF18, 0xF25, 0xF30, // pedras preciosas
+			 0xE34, 0x6116, 0xff990, 0xff991, 0xff992, 0xff994, 0xff995, // pergaminhos
+			 0xfbf, // caneta tinteiro
+			 0x6100, 0x2253, // grimório
+			 0x702D, 0x702C, 0x702E, //cookwork
+			 0x790c, 0x4079// terço
+			};
+	if (item.objtype IN valid)
+		return 1;
+	elseif (GetObjProperty(item, "bank"))
+		return 1;
+	endif
+
+	SendSysMessage(mobile, "O banco nao aceita todos os tipos de itens. Apenas pertences pessoais, tais como:");
+	SendSysMessage(mobile, "Moedas, joias, pedras preciosas, livros, chaves, pergaminhos.");
+	SendSysMessage(mobile, "Se o item que tiver tentando guardar no banco esteja em uma dessas categorias, envie page.");
+	
+	return 0;
+endprogram

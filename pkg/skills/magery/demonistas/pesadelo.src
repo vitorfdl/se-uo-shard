@@ -1,0 +1,45 @@
+    use uo;
+use os;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":timedScripts:timedScripts";
+include ":attributes:attributes";
+include ":charactercreation:resists";
+
+program SpellScript(params)
+	var who := params[1];
+	var targ := params[2];
+	params := 0; // No longer needed
+
+
+	if (!GetObjProperty(targ, "#sleep"))
+		TS_StartTimer(targ, "desarmar", 30);
+		var defweapon := targ.weapon;
+		if (defweapon.objtype != 0xF020)
+			var x := targ.x + RandomInt(2)+1;
+			var y := targ.y + RandomInt(2)+1;
+			MoveObjectToLocation(defweapon, x, y,  GetWorldHeight(x, y), who.realm, MOVEOBJECT_FORCELOCATION);
+		endif
+		PrintText(targ, "*esta em horror tremendo*");
+	else
+
+		var dmg := AP_GetStat(who, "Intelligence")*0.75;
+
+		if (CheckResist(targ, VONTADE, 80+cint(AP_GetStat(who, "Intelligence"))))
+			dmg := dmg/2;
+		endif
+
+		DamageFLS(targ, dmg, DMG_FORCED, who);
+
+		PlaySoundEffect(who, 385);
+		SendSysMEssageEx(who, "O alvo esta tendo sonhos terriveis.", SSM_INFO);
+	endif
+
+
+	
+	return 1;
+endprogram 

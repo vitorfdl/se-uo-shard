@@ -1,0 +1,6 @@
+use uo;
+use os;
+
+program LogOn(character)
+	Start_Script("alert", character);
+endprogram

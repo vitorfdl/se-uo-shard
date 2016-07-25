@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wc-entries
+   xmlns="svn:">
+<entry
+   committed-rev="1150"
+   name=""
+   committed-date="2006-02-01T18:15:39.880694Z"
+   url="svn://svn.berlios.de/poldistro/trunk/096/pkg/items/mounts/commands"
+   last-author="austin"
+   kind="dir"
+   uuid="9d346cd0-66fc-0310-bdc5-e57197e5a75e"
+   revision="1233"/>
+<entry
+   name="seer"
+   kind="dir"/>
+</wc-entries>

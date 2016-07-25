@@ -1,0 +1,36 @@
+use uo;
+use os;
+use util;
+
+include ":attributes:attributes";
+include "include/say";
+
+program Hunger(chr)
+	if( chr.cmdlevel >= 2 )
+		return 0;
+	endif
+
+	var hunger;
+	while( chr )
+		hunger := CInt(AP_GetVital(chr, "Hunger") / 60);
+
+		if (hunger == 4)
+			SendSysMessageEx(chr, "Voce esta se sentindo faminto.",  SSM_INFO);
+		elseif (hunger == 5)
+			SendSysMessageEx(chr, "Voce esta muito faminto e correndo perigo de vida.",  SSM_INFO);
+		elseif (hunger == 6 && !chr.dead && !(chr.x > 6005 && chr.y > 42 && chr.x < 6029 && chr.y < 92 ))
+			SendSysMessageEx(chr, "Voce esta muito faminto e correndo perigo de vida!!",  SSM_INFO);
+			if (randomint(5) == 1)
+				if (AP_GetVital(chr, "DP") >= 20)
+					SendSysMessageEx(chr, "Voce desmaiou de fome!!",  SSM_FAIL);
+					ApplyRawDamage(chr, CInt(AP_GetVitalMaximumValue(chr, "Hits")));
+					AP_SetVital(chr, "Hunger", AP_GetVital(chr, "DP")+(2*60));
+				endif
+			endif	
+		endif
+
+		RecalcVitals(chr);
+
+		Sleep(90 * 10); //15 min
+	endwhile
+endprogram

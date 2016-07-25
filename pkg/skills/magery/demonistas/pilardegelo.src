@@ -1,0 +1,51 @@
+use uo;
+use os;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include "include/damage";
+var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
+
+
+program SpellScript(params)
+	var who := params[1];
+	var targ := params[2];
+	params := 0; // No longer needed
+	
+	var path := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
+	path.erase(1);
+	var alreadydamaged := array{};
+	var pilarlist := array{};
+	foreach coord in path
+		PlaySoundEffect(who, 0x20E);
+		var stalagmite := stalagmites[randomint(4)+1];
+		if (!stalagmite)
+			stalagmite := 0x08E4;
+		endif
+		var item := CreateItemAtLocation(coord.x, coord.y, who.z, stalagmite);
+		
+		item.color := 1266;
+		PlayStationaryEffectEx( item.x, item.y, item.z, item.realm, 0x3779, 1, 16);
+		if (item)
+			pilarlist.append(item);
+		endif
+		foreach mobile in (ListMobilesNearLocationEx( item.x, item.y, item.z, 1, LISTEX_FLAG_NORMAL+LISTEX_FLAG_HIDDEN))
+			if (!(mobile in alreadydamaged) && !(mobile in who.party.members) && mobile != who)
+				var damage := AP_GetStat(who, "Intelligence") / 2;
+				DamageFLS(mobile, cint(damage+1), DMG_COLD, who);
+				alreadydamaged.append(mobile);
+			endif
+		endforeach
+		sleepms(300);		
+	endforeach
+	
+	sleep(5);
+	foreach pilar in pilarlist
+		var destroy := DestroyItem(pilar);
+	endforeach
+	
+	return 1;
+endprogram 
