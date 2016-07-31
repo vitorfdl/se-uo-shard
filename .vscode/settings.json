@@ -4,9 +4,14 @@
         "**/.git": true,
         "**/.svn": true,
         "**/.DS_Store": true,
+        "**/**.dep": true,
         "**/**.ecl": true,
         "**.so": true
     },
     // The default character set encoding to use when reading and writing files.
-    "files.encoding": "windows1252"
+    "files.encoding": "windows1252",
+
+    "files.associations": {
+        "**/**.cfg": "Jade"
+    }
 }

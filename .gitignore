@@ -2,6 +2,8 @@
 *.ecl
 *~
 *.so
+*.dep
+*.exe
 data/*
 realm/*
 log/*
