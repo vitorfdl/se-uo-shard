@@ -39,12 +39,12 @@ program CheckPackages()
 		icp_cfg := icp_cfg["Register"];
 
 		if ( icp_cfg )
-			temp_info.+Name := GetCfgValue(icp_cfg, "Name");
-			temp_info.+Version := CDbl(GetCfgValue(icp_cfg, "Version"));
-			temp_info.+Creator := GetCfgValue(icp_cfg, "Creator");
-			temp_info.+C_Email := GetCfgValue(icp_cfg, "C_Email");
+			temp_info.+Name       := GetCfgValue(icp_cfg, "Name");
+			temp_info.+Version    := CDbl(GetCfgValue(icp_cfg, "Version"));
+			temp_info.+Creator    := GetCfgValue(icp_cfg, "Creator");
+			temp_info.+C_Email    := GetCfgValue(icp_cfg, "C_Email");
 			temp_info.+Maintainer := GetCfgValue(icp_cfg, "Maintainer");
-			temp_info.+M_Email := GetCfgValue(icp_cfg, "M_Email");
+			temp_info.+M_Email    := GetCfgValue(icp_cfg, "M_Email");
 			
 			var description := "";
 			foreach line in  GetConfigStringArray(icp_cfg, "Description")

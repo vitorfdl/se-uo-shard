@@ -80,7 +80,6 @@ function TranslateCritical(crit)
 	elseif (Crit == "bleed")
 		return "Alvejar Ponto Vital";
 	endif
-		
 endfunction
 
 
@@ -185,7 +184,6 @@ program Install()
 endprogram
 
 exported function MegaCliloc( who, byref packet )
-
 	var item := SystemFindObjectBySerial(packet.GetInt32(OFFSET_OBJECT_SERIAL));
 
 	if ( item )
@@ -244,12 +242,12 @@ exported function MegaCliloc( who, byref packet )
 		// This is where you'll be putting all your properties. <br> to break a new line.
 		// You wont need to add anymore cliloc id's because you can just add all the props
 		// into one string.
-		var white := "<BASEFONT COLOR=#FFFFFF>";
-		var red := "<BASEFONT COLOR=#FF0000>";
-		var blue := "<BASEFONT COLOR=#3232ff>";
-		var orange :=  "<BASEFONT COLOR=#FFA500>";
-		var xDesc := "";
-		var desc := GetObjProperty(item, "description");
+		var white  := "<BASEFONT COLOR=#FFFFFF>";
+		var red    := "<BASEFONT COLOR=#FF0000>";
+		var blue   := "<BASEFONT COLOR=#3232ff>";
+		var orange := "<BASEFONT COLOR=#FFA500>";
+		var xDesc  := "";
+		var desc   := GetObjProperty(item, "description");
 
 		if (GetObjProperty(item,"magic"))
 			if (temHabilidade(who, "Detectar Item Magico"))

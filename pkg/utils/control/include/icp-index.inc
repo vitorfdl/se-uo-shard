@@ -7,13 +7,15 @@ function ICP_IndexGump()
 	GFResizePic(gump, 15, 55, BKGND_DARK_STONE, 470, 410);
 	GFPage(gump, 1);
 	
-	var y_pos := 65;
+	var y_pos    := 65;
 	var page_num := 1;
-	var counter := 1;
+	var counter  := 1;
 	
 	var pkg_elems := pkg_info.keys();
+    print("Keys "+ pkg_elems);
 	pkg_elems.sort();
 	foreach pkg_name in pkg_elems
+        print(pkg_name);
 		var pkg_elem := DFFindElement(pkg_info, pkg_name);
 		var main_info := pkg_elem.GetProp("Main");
 		

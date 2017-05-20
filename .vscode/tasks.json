@@ -4,6 +4,6 @@
     "version": "0.1.0",
     "command": "tcompile.exe",
     "isShellCommand": true,
-    "args": ["-b -r -u"],
+    "args": ["${file}"],
     "showOutput": "always"
 }

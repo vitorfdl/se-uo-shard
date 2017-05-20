@@ -291,6 +291,12 @@ function GFTextLine(byref gump, x, y, hue:=0, text:="")
 	return (index);
 endfunction
 
+function GFToolTip(byref gump, cliloc:="")
+	(gump.layout).Append("Tooltip "+CStr(CInt(cliloc)));
+
+	return 1;
+endfunction
+
 function GFTextCrop(byref gump, x, y, width, height, hue:=0, text:="")
 	gump.data.Append(text);
 	gump.data.Append(""+CStr(text));

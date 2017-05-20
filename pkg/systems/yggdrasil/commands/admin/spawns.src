@@ -264,7 +264,6 @@ function ConstructGroupList(byref gump)
         GFPage(gump, page);
         var x := 50;
         var y := (30+(18*i)) / (((page-1) * max_page)+1); //(BaseX(Espaçamento*i)) / (Calculo de Pagina)
-
         var color := 1153;
         if (selected_group == spotgroups[i])
             color := 2103;
