@@ -51,18 +51,11 @@ function CanFight(me, mobile, align)
         else
             return 0;
         endif
-    elseif  ( mobile.concealed) // kra ta intocado
-        return 0;
-    elseif (GetObjProperty(mobile, "ignorenpcs")) //kra eh gm
-        return 0;
-    elseif ( GetCooldown(me, "peacemade") > 0 )
-    //printtextabove(me, "nao");
+    elseif  ( mobile.concealed || GetObjProperty(mobile, "ignorenpcs") || GetCooldown(me, "peacemade") > 0) // kra ta intocado
         return 0;
     elseif ( GetObjProperty(mobile, "#fantasma") == 1)
         return 0;
-    endif
-    //printtextabove(me, "nao vou atacar " + mobile.name + " " + GetObjProperty(mobile, "#deathtime" ) );
-    if ( Cint(GetCooldown(mobile, "deathtime" )) > 0  )
+    elseif ( Cint(GetCooldown(mobile, "deathtime" )) > 0  )
         //printtextabove(me, "nao vou atacar" + mobile.name);
         return 0;
     endif
@@ -71,39 +64,37 @@ function CanFight(me, mobile, align)
   
     if (!mobile.npctemplate) //se for player olha a tendencia do npc
         if (align == ALIGN_EVIL) //npcs malignos atacam todos os players
-        
-        //printtextabove(me, "mytemplate " + mytemplate + " " + cint(GetObjProperty(mobile, "empatiacomanimais"))); 
-        if ( TemHabilidade(mobile, "Aliado da Natureza" )) //verifica se tem empatia por animais
-            var templateList := array{
-                "giantbat", "giantrat", "gianttoad", "giantserpent", "snake", "mongbat", "naja", "warg", "polarbear", "lynx", "cougar", "alligator",
-                "panther", "grizzlybear", "wolf", "sapop"
-            };
-            if (mytemplate in templateList)
-                if (isBoss(mobile)) //verifica se é boss
-                    return 1;
-                elseif ( TemHabilidade(mobile, "Aliado da Natureza 2" ) || Distance(me, mobile) > 5)
-                    return 0;
-                endif
-            endif
-        endif
+            //printtextabove(me, "mytemplate " + mytemplate + " " + cint(GetObjProperty(mobile, "empatiacomanimais"))); 
+            // if ( TemHabilidade(mobile, "Aliado da Natureza" )) //verifica se tem empatia por animais
+            //     var templateList := array{
+            //         "giantbat", "giantrat", "gianttoad", "giantserpent", "snake", "mongbat", "naja", "warg", "polarbear", "lynx", "cougar", "alligator",
+            //         "panther", "grizzlybear", "wolf", "sapop"
+            //     };
+            //     if (mytemplate in templateList)
+            //         if (isBoss(mobile)) //verifica se é boss
+            //             return 1;
+            //         elseif ( TemHabilidade(mobile, "Aliado da Natureza 2" ) || Distance(me, mobile) > 5)
+            //             return 0;
+            //         endif
+            //     endif
+            // endif
 
-        if ( (mycategory == "undead") && (GetObjProperty(mobile, "aparenciacadaverica") == 1) )
-          return 0;
-        elseif ( GetObjProperty(mobile, "kit") == "Bandido")
-            if ( (mytemplate == "MercenarioRecruta") || (mytemplate == "MercenarioBesteiro") || (mytemplate == "Mercenario") || (mytemplate == "MercenarioLider") || (mytemplate == "MercenarioExperiente") )
-                return 0;
-            endif
-          
-        elseif ( propallies != error )
-            foreach key in (propallies.keys())
-                if ( GetObjProperty(mobile, key) == propallies[key] ) //eh meu chapa, entao nao ataco.
-                    return 0;
-                endif
-            endforeach
-        endif
-      
+            // if ( (mycategory == "undead") && (GetObjProperty(mobile, "aparenciacadaverica") == 1) )
+            //     return 0;
+            // elseif ( GetObjProperty(mobile, "kit") == "Bandido")
+            //     if ( (mytemplate == "MercenarioRecruta") || (mytemplate == "MercenarioBesteiro") || (mytemplate == "Mercenario") || (mytemplate == "MercenarioLider") || (mytemplate == "MercenarioExperiente") )
+            //         return 0;
+            //     endif
+            // elseif ( propallies != error )
+            //     foreach key in (propallies.keys())
+            //         if ( GetObjProperty(mobile, key) == propallies[key] ) //eh meu chapa, entao nao ataco.
+            //             return 0;
+            //         endif
+            //     endforeach
+            // endif
             return 1;
-        else //npcs bons ou neutrals nao atacam
+        else 
+            //npcs bons ou neutrals nao atacam
             return 0;
         endif
         
@@ -125,6 +116,7 @@ function CanFight(me, mobile, align)
     endif
 endfunction
 
+// TODO: Re-do AlertAllies
 function AlertAllies(me, opponent)
     var spawnpointserial := GetObjProperty(me, "spawnpoint");
     var spawnpoint := SystemFindObjectBySerial(spawnpointserial);   
@@ -245,12 +237,12 @@ function InitializeNpc(mobile)
   endif
 
 
-    if (GetObjPRoperty(mobile, "championspawn") == 2)
-        SetObjProperty(mobile, "#championspawn", 1);
-        ApplyDamage( mobile, 20000);
-    elseif (GetObjPRoperty(mobile, "championspawn") == 1)
-        SetObjPRoperty(mobile, "championspawn", 2);
-    endif
+    // if (GetObjPRoperty(mobile, "championspawn") == 2)
+    //     SetObjProperty(mobile, "#championspawn", 1);
+    //     ApplyDamage( mobile, 20000);
+    // elseif (GetObjPRoperty(mobile, "championspawn") == 1)
+    //     SetObjPRoperty(mobile, "championspawn", 2);
+    // endif
 
   //elem := FindConfigElem(npccfgfile, mytemplate);
     propallies := GetConfigStringDictionary( elem, "allyprop");
@@ -310,6 +302,7 @@ function MoveAround(byref wanders)
     if (!range)
         range := 6;
     endif
+    
     if (anchor == error)
         wander();
     else
@@ -575,43 +568,46 @@ function ParseTemplateName(template_name)
 endfunction
 
 function herd(ev)
-  var holder := ev.data;
-  var lx := holder[1];
-  var ly := holder[2];
-  var loops := 0;
-  var walkmode := cint(holder[3]);
-  var saytrigger := cint(holder[4]);
-  var idlesound := cint(holder[5]);
-  var opponent;
-  var waittime := 0;
-  var nome := ev.source.name;
-  while(1)
+    var holder     := ev.data;
+    var lx         := holder[1];
+    var ly         := holder[2];
+    var loops      := 0;
+    var walkmode   := cint(holder[3]);
+    var saytrigger := cint(holder[4]);
+    var idlesound  := cint(holder[5]);
+    var waittime   := 0;
+    var nome       := ev.source.name;
+    var opponent;
+
+    while(1)
         if( !CloseIn(me, lx, ly, walkmode))
-          loops := loops + 1;
-          waittime := 0;
+            loops := loops + 1;
+            waittime := 0;
         else
-          loops := 0;
-          waittime := 1;
+            loops := 0;
+            waittime := 1;
         endif
         if((loops >= 30) or (coordinatedistance(me.x, me.y, lx, ly) <= 1))
             break;
         endif
         ev := wait_for_event(waittime);
         case (ev.type)
-          SYSEVENT_DAMAGED: opponent := ev.source;
-                                            SetOpponent(opponent);
-                                            TurnToward(opponent);
-          SYSEVENT_ENGAGED: opponent := ev.source;
-                                            SetOpponent(opponent);
-                                            TurnToward(opponent);
+            SYSEVENT_DAMAGED: 
+                opponent := ev.source;
+                SetOpponent(opponent);
+                TurnToward(opponent);
+            SYSEVENT_ENGAGED: 
+                opponent := ev.source;
+                SetOpponent(opponent);
+                TurnToward(opponent);
         endcase
-  endwhile
-  if (saytrigger)
-    printtext(me, "*atende o chamado de " + nome + "*");
-  endif
+    endwhile
 
-  if (idlesound)
+    if (saytrigger)
+        printtext(me, "*atende o chamado de " + nome + "*");
+    endif
+
+    if (idlesound)
         PlayIdleSound();
-  endif
-  return;
+    endif
 endfunction

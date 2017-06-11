@@ -184,7 +184,7 @@ function SendGumpEspadaArcana(who)
 		if (!targ || GetObjProperty(targ, "swordmage") != who.serial )
 			return;
 		endif
-		var gems := getobjproperty(targ, "gems");
+		var gems := GetObjProperty(targ, "gems");
 		if (!gems)
 			gems := dictionary;
 		endif
@@ -217,7 +217,7 @@ function SendGumpEspadaArcana(who)
 		if (!targ || GetObjProperty(targ, "swordmage") != who.serial )
 			return;
 		endif
-		var gems := getobjproperty(targ, "gems");
+		var gems := GetObjProperty(targ, "gems");
 		if (!gems)
 			return;
 		endif

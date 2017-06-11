@@ -18,6 +18,7 @@ include ":charactercreation:habilidades";
 include ":charactercreation:resists";
 include "include/sysEvent";
 include ":timedscripts:timedScripts";
+include ":fls_core:fls_characters";
 
 program TrapWalkOn(mobile, trap)
 	if ( mobile.dead )
@@ -91,9 +92,9 @@ program TrapWalkOn(mobile, trap)
 				sleep(2);
 				DamageFLS(mobile, dmg);
 				performaction(mobile, 0x14);
-				if (mobile.graphic == 401)
+				if (mobile.gender == 1)
 					PlaySoundEffect( mobile, 0x32F );
-				elseif (mobile.graphic == 400)
+				elseif (mobile.gender == 0)
 					PlaySoundEffect( mobile, 0x441 );
 				endif
 				sleep(tempo);
@@ -127,9 +128,9 @@ program TrapWalkOn(mobile, trap)
 		endif
 		DamageFLS(mobile, dmg);
 		performaction(mobile, 0x14);
-		if (mobile.graphic == 401)
+		if (CheckGender(mobile) == 2)
 			PlaySoundEffect( mobile, 0x32F );
-		elseif (mobile.graphic == 400)
+		elseif (CheckGender(mobile) == 1)
 			PlaySoundEffect( mobile, 0x441 );
 		endif
 		sleep(10);

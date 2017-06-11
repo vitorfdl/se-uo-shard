@@ -29,15 +29,15 @@ program fillbook(who, slip)
 	var targ := target(who);	
 
 	if (targ.objtype in booklist)
-		if (getobjproperty(targ, "noadd") ) // Dont add recipes to gm made books. (They are used for players to copy recipes from).
+		if (GetObjProperty(targ, "noadd") ) // Dont add recipes to gm made books. (They are used for players to copy recipes from).
 			SendSysMessageEx(who, "Voce nao pode adicionar receitas nesse livro.", SSM_FAIL);
 			return;
 		endif
-		var sliprecipe := cint(getobjproperty(slip, "RecipeId"));
+		var sliprecipe := cint(GetObjProperty(slip, "RecipeId"));
 		
 		var recipelist := { };
-		if (getobjproperty(targ, "recipes"))
-			recipelist := getobjproperty(targ, "recipes");
+		if (GetObjProperty(targ, "recipes"))
+			recipelist := GetObjProperty(targ, "recipes");
 		endif
 		
 		if (len(recipelist) > 20)

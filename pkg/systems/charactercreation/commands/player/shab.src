@@ -47,17 +47,17 @@ function ProccessHab(who, hab)
 		return;
 	endif
 	var stammod := 1;
-	var habcategory := GetConfigString(habelem, "habcategory");
-	if (habcategory)
-		habcategory := lower(habcategory);
+	var DamageType := GetConfigString(habelem, "DamageType");
+	if (DamageType)
+		DamageType := lower(DamageType);
 		var skill := lower(GetConfigString(habelem, "skill"));
 		var weapon := who.weapon;
 		var elem := FindConfigElem(item_cfg, weapon.objtype);
-		if (habcategory == "ranged" && lower(weapon.attribute) == lower(skill))
-		elseif (habcategory == "melee1h" && lower(weapon.attribute) == lower(skill))
-		elseif (habcategory == "melee2h" && lower(weapon.attribute) == lower(skill))
-		elseif (habcategory == "parry" && who.shield)
-		elseif (lower(weapon.attribute) != skill || habcategory != lower(elem.habcategory)) 
+		if (DamageType == "ranged" && lower(weapon.attribute) == lower(skill))
+		elseif (DamageType == "melee1h" && lower(weapon.attribute) == lower(skill))
+		elseif (DamageType == "melee2h" && lower(weapon.attribute) == lower(skill))
+		elseif (DamageType == "parry" && who.shield)
+		elseif (lower(weapon.attribute) != skill || DamageType != lower(elem.DamageType)) 
 			SendSysMessageEx(who, "Voce nao pode usar esta habilidade com esta arma.", SSM_FAIL);
 			return;
 		endif

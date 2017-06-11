@@ -23,14 +23,14 @@ program disguise(who, kit)
 	endif
 
 	var disfarce := struct;
-	disfarce.+barba := "";
-	disfarce.+cabelo := "";
+	disfarce.+barba     := "";
+	disfarce.+cabelo    := "";
 	disfarce.+corcabelo := -1;
-	disfarce.+corbarba := -1;
-	disfarce.+corpele := -1;
+	disfarce.+corbarba  := -1;
+	disfarce.+corpele   := -1;
 	disfarce.+aparencia := "";
-	disfarce.+sexo := -1;
-	disfarce.+raca := "";
+	disfarce.+sexo      := -1;
+	disfarce.+raca      := "";
 
 	var gump := GfCreateGump();
 	GFDisposable(gump, 0);
@@ -40,14 +40,11 @@ program disguise(who, kit)
 
 	//GfTextLine(gump, 35, 80, 1153, "Remover disfarce");
 	GfTextLine(gump, 35, 100, 1153, "Criar disfarce");
-	if (TemHabilidade(who, "Toque Perfeito"))
-		GfTextLine(gump, 35, 120, 1153, "Disfarcar-se de alguem");
-	endif
+	GfTextLine(gump, 35, 120, 1153, "Disfarcar-se de alguem");
 	//GfAddButton(gump, 20, 82, 2117, 2118, 1, 1);
 	GfAddButton(gump, 20, 102, 2117, 2118, 1, 2);
-	if (TemHabilidade(who, "Toque Perfeito"))
-		GfAddButton(gump, 20, 122, 2117, 2118, 1, 3);
-	endif
+	GfAddButton(gump, 20, 122, 2117, 2118, 1, 3);
+
 	GfTextLine(gump, 35, 160, 1153, "Disfarces:");
 	var disfarces := GetObjProperty(kit, "disfarces");
 	if (disfarces)

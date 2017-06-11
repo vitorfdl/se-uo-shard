@@ -16,13 +16,10 @@ program doubleattack(params)
 	params := 0; // Not needed anymore.
 	
 	PrintTextAbove(attacker, "*ataque giratorio*");
-	var dmgList := dictionary;
-	dmgList := getNewDamageList(attacker);	
-	
+
 	foreach mobile in (ListMobilesNearLocation(attacker.x, attacker.y, attacker.z, 1, attacker.realm ))
-		var total := CalculateTotalDamage(mobile, basedamage, attacker, dmgList);
-		ApplyDamage(mobile, total);
-		MostraDano(attacker, mobile, total);
+		ApplyDamage(mobile, basedamage);
+		MostraDano(attacker, mobile, basedamage);
 		MakeBleed(defender);
 		PlayAttackAnimation(attacker);
 		PlayHitSounds(attacker, defender);

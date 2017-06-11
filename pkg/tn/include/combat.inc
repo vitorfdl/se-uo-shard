@@ -22,6 +22,7 @@ function CalculateRawDamage(attacker, weapon)
 		else
 			dmg :=  RandomDiceRoll(cstr(weaponelem.Damage));
 		endif
+		
 		return (  dmg + weapon.dmg_mod );
 	endif
 

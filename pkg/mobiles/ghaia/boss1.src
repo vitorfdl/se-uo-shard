@@ -46,7 +46,7 @@ program KillPlayers()
 		wanders := wanders +1;
 		if(wanders >= 30)
 			wanders := 0;
-			look_around();
+			lookAround();
 			ev := sleepmode();
 		else
 			ev := os::wait_for_event(10);
@@ -77,7 +77,7 @@ program KillPlayers()
 			endcase
 		endif	
 
-		look_around();
+		lookAround();
 		sleepms(2);
 	endwhile
 
@@ -104,7 +104,7 @@ var sleepdelay := 275 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
 
 endfunction
 
-function look_around()
+function lookAround()
   foreach npc in ListMobilesInLineOfSight(me, areasize)
     if( CanFight(me, npc, align) )
          Fight(npc);

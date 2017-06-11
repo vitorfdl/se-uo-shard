@@ -36,14 +36,14 @@ program KillPlayers()
 
     	while(me)
 		
-		look_around(spell_list); 
+		lookAround(spell_list); 
 		wander();
 		PlayIdleSound();
 		
 		wanders := wanders +1;
 		if(wanders >= 30)
 			wanders := 0;
-			look_around(spell_list);
+			lookAround(spell_list);
 			ev := sleepmode();
 		else
 			ev := os::wait_for_event(10);
@@ -132,7 +132,7 @@ function CloseDistance(opponent)
 
 endfunction
 
-function look_around(spells)
+function lookAround(spells)
   foreach npc in ListMobilesInLineOfSight(me, areasize)
     if( CanFight(me, npc, align) )
          SpellFight(npc, spells);

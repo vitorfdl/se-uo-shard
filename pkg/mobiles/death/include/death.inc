@@ -11,6 +11,7 @@ use util;
 include ":ghaia:ghaiaUtil";
 include ":attributes:attributes";
 include ":timeutils:time";
+include ":fls_core:fls_characters";
 
 /*
  * DP_PlayDeathSound(corpse, ghost:=0)
@@ -32,19 +33,19 @@ function DP_PlayDeathSound(object)
 		if ( template )
 			var cfg_info := NPC_GetNPCConfig(template);
 			var sounds := GetConfigStringArray(cfg_info, "DeathSound");
-			death_sound := CInt(sounds[RandomInt(sounds.Size())+1]);
+			death_sound := CInt(sounds.randomentry());
 		endif
 	endif
-	if ( !death_sound || object.corpsetype == 401 )
+	if ( !death_sound || checkGender(object) )
 		// No sound selected yet.
-		if ( object.graphic == 402 || object.corpsetype == 400 )
+		if ( checkGender(object) == 1 )
 			 // Male ghost / corpse
 			var sounds := array{347, 348, 349, 350};
-			death_sound := sounds[RandomInt(sounds.Size())+1];
-		elseif ( (GetObjProperty(object, "female") == 1) || object.graphic == 401 ||  object.graphic == 403 || object.corpsetype == 401 )
+			death_sound := sounds.randomentry();
+		elseif ( checkGender(object) == 2 )
 			 // Female ghost / corpse
 			var sounds := array{337, 338, 339, 340};
-			death_sound := sounds[RandomInt(sounds.Size())+1];
+			death_sound := sounds.randomentry();
 		endif
 	endif
 

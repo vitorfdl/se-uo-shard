@@ -5,7 +5,7 @@ include ":attributes:attributes";
 include "include/say";
 include ":charactercreation:habilidades";
 
-program soltar (me)
+program soltar(me)
 	if (!GetObjProperty(me, "corda"))
 		SendSysMessage(me, "Esse comando nao ira lhe ajudar em nada.");
 		return;
@@ -16,6 +16,7 @@ program soltar (me)
 		SendSysMessage(me, "Voce esta cansado demais para tentar algo...");
 		return;
 	endif
+
 	var chance;
 	if (temhabilidade(me, "Movimento Livre"))
 		chance := ( 30 + GetAttribute(me,"Dexterity") ) - (GetObjProperty(me, "corda") / 2);
@@ -24,6 +25,7 @@ program soltar (me)
 	else
 		chance := GetAttribute(me,"Strength") - GetObjProperty(me, "corda");
 	endif
+
 	if (RandomInt(100) < chance)
 		if (RandomInt(100) > GetAttribute(me,"Dexterity"))
 			PrintText(me, "*consegue se soltar*");

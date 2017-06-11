@@ -1,0 +1,10 @@
+->
+ Crafting vai usar livros
+ Adiciona receita no livro (cargas pra aprender)
+
+ -> gumps
+    Costura:
+    Marcenaria:
+    Ferreiro: 0x2B05
+    Mago: 0x8AA (normal spellbook)
+    Runas: 0x2B29

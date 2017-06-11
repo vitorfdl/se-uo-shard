@@ -199,10 +199,10 @@ function EquipItemString(who, str, lastcolor)
 					sex := CStr(str2[2]);
 					if(sex != error)
 						if(sex == "m" || sex == "f")
-							if(sex == "m" && who.graphic == 400)
+							if(sex == "m" && who.gender == 0)
 								newarray[i] := str2[1];
 								i := i + 1;
-							elseif(sex == "f" && who.graphic == 401)
+							elseif(sex == "f" && who.gender == 1)
 								newarray[i] := str2[1];
 								i := i + 1;
 							endif

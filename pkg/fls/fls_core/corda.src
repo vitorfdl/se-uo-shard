@@ -6,8 +6,9 @@ include ":attributes:attributes";
 include ":gumps:yesno";
 include "include/say";
 include ":charactercreation:habilidades";
+include ":fls_core:fls_characters";
 
-program rope(who, item)
+program corda(who, item)
 	var alvo := Target(who, TGTOPT_CHECK_LOS);
 	SendSysMessage(who, "Selecione um corpo.");
 	if (!alvo)
@@ -26,11 +27,11 @@ program rope(who, item)
 		diff := 100;
 	endif
 	var mod := 0;
-	if (TemHabilidade(who, "Maos Habilidosas"))
-		mod := 20;
-	endif
+	// if (TemHabilidade(who, "Maos Habilidosas"))
+	// 	mod := 20;
+	// endif
 
-	if (alvo.corpsetype == 400 || alvo.corpsetype == 401) // Se for corpo
+	if (alvo.isA(POLCLASS_CORPSE) && CheckGender(alvo)) // Se for corpo
 		var char := SystemFindObjectBySerial(alvo.ownerserial);
 
 		if (!char)
@@ -43,18 +44,20 @@ program rope(who, item)
 		SetObjProperty (alvo, "corda", 1);
 		SetObjProperty (char, "corda", diff+mod);
 	elseif (alvo.ip) // Se for player e tiver on
+		print("mo ipzao");
 		if (!alvo.connected)
 			SendSysMessage(who, "Nao pode amarrar um jogador deslogado.");
 			return;
 		endif
-		var ok := YesNo(alvo, "Voce permite ser amarrado por "+who.name+"?" , "Sim, permito.", "Nao.");
+
+		var ok := YesNo(alvo, "Voce permite ser amarrado por "+who.name+"?" , "Sim, permito.", "Não.");
 		if (ok)
 			PrintText(who, "*amarra "+alvo.name+"*");
 			SubtractAmount(item, 1);
 			SetObjProperty (alvo, "corda", diff+mod);
 			alvo.frozen := 1;
 		else
-			SendSysMessage(who, alvo.name+" nao permitiu que voce amarrasse!");
+			SendSysMessage(who, alvo.name+" evitou sua tentativa de amarra-lo!");
 		endif
 	else
 		SendSysMessage(who, "Voce nao pode amarrar isso!");

@@ -31,7 +31,15 @@ function GetSpotGroupData(name, create := 1)
 endfunction
 
 function RemoveSpotGroupData(name)
-    var df := LoadSpotGroupData();
+    var df   := LoadSpotGroupData();
+    var data := GetSpotGroupData(name);
+
+    foreach serial in (data.spots)
+        var spot := SystemFindObjectBySerial(serial);
+        SetObjProperty(spot, "GM_FLAG", 1);
+        DestroyItem(spot);
+    endforeach
+    
     df.DeleteElement(name);
 endfunction
 

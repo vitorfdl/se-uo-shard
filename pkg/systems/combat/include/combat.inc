@@ -7,22 +7,22 @@ include "include/client";
 
 function DistanceChecks(attacker, defender)
 	var cur_range := Distance(attacker, defender);
-	var wpn_a_elem2 := GetWpnCfgInfo(attacker, attacker.weapon);
+	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
 	if ( wpn_a_elem2.MaxRange == error )
 		return 1;
 	endif
 	if ( cur_range > wpn_a_elem2.MaxRange )
-		CombatDbgMsg(attacker, "Oponente esta muito longe.");
+		// CombatDbgMsg(attacker, "Oponente esta muito longe.");
 		return 0;
 	elseif ( cur_range < wpn_a_elem2.MinRange )
-		CombatDbgMsg(attacker, "Oponente esta muito perto.");
+		// CombatDbgMsg(attacker, "Oponente esta muito perto.");
 		return 0;
 	else
 		return 1;
 	endif
 endfunction
 
-function GetWpnCfgInfo(mobile, weapon)
+function GetItemCFGInfo(mobile, weapon)
 
 	var npc_cfg2	:= ReadConfigFile("::npcdesc");
 	var item_cfg2	:= ReadConfigFile(":*:itemdesc");
@@ -38,23 +38,20 @@ function GetWpnCfgInfo(mobile, weapon)
 endfunction
   
 function PlayHitSounds(attacker, defender)
-	var wpn_a_elem2 := GetWpnCfgInfo(attacker, attacker.weapon);
-	var npc_cfg2	:= ReadConfigFile("::npcdesc");
+	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
 
 	if ( wpn_a_elem2.HitSound )
 		PlaySoundEffect(attacker, wpn_a_elem2.HitSound);
 	else
 		//NPC intrinsic weapon
-		var npctemplate := defender.npctemplate;
-		npctemplate := npctemplate[10, len(npctemplate)-9];
-		PlaySoundEffect(attacker, npc_cfg2[npctemplate].AttackHitSound);
+		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
+		PlaySoundEffect(attacker, npcelem.AttackSound);
 	endif
 	
-	var damaged_sound;
+	var hurt_sound;
 	if ( defender.npctemplate )
-		var npctemplate := defender.npctemplate;
-		npctemplate := npctemplate[10, len(npctemplate)-9];
-		damaged_sound := npc_cfg2[npctemplate].DamageSound;		
+		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
+		hurt_sound  := npcelem.HurtSound;		
 	else
 		var sounds;
 		if ( defender.gender == 0 )
@@ -64,27 +61,30 @@ function PlayHitSounds(attacker, defender)
 			// Female
 			sounds := array(332, 333, 334, 335, 336);
 		endif
-		damaged_sound := sounds[RandomInt(sounds.size())+1];
+		hurt_sound := sounds.randomentry();
 	endif
 	
-	PlaySoundEffect(defender, damaged_sound);
+	PlaySoundEffect(defender, hurt_sound);
 endfunction
 
 function PlayMissSound(attacker)
-	var npc_cfg2	:= ReadConfigFile("::npcdesc");
 	if ( wpn_a_elem.MissSound )
 		PlaySoundEffect(attacker, wpn_a_elem.MissSound);
 	else
 		//NPC intrinsic weapon
-		var npctemplate := attacker.npctemplate;
-		npctemplate := npctemplate[10, len(npctemplate)-9];
-		PlaySoundEffect(attacker, npc_cfg2[npctemplate].AttackMissSound);
+		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
+		if (!npcelem.MissSound)
+			var miss_sound := array{569, 570, 571};
+			PlaySoundEffect(attacker, miss_sound.randomentry());
+		else
+			PlaySoundEffect(attacker, npcelem.MissSound);
+		endif
 	endif
 endfunction
 
 function PlayAttackAnimation(attacker)
 	//If they're not human, use different attack animations based on their graphic
-	var attacker_weapon_elem := GetWpnCfgInfo(attacker, attacker.weapon);
+	var attacker_weapon_elem := GetItemCFGInfo(attacker, attacker.weapon);
 	if (attacker.graphic != 400 and attacker.graphic != 401 and attacker.graphic != 605 and attacker.graphic != 606 and attacker.graphic != 666 and attacker.graphic != 667 and attacker.graphic != 744 and attacker.graphic != 745)
 		case (attacker.graphic)
 			CID_ALLIGATOR:

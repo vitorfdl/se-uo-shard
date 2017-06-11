@@ -35,13 +35,13 @@ program angry_bees (bees)
 	var end_time := ReadGameClock() + attack_length;
 
 	//Wait a short time to see if we have a creator
-	var creator_serial := getobjproperty (bees, "creator");
+	var creator_serial := GetObjProperty (bees, "creator");
 	if (!creator_serial)
 		var counter := 0;
 		repeat
 			sleepms (100);
 			counter := counter + 1;
-			creator_serial := getobjproperty (bees, "creator");
+			creator_serial := GetObjProperty (bees, "creator");
 		until (creator_serial or counter > 10);
 	endif
 

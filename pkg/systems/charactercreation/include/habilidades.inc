@@ -82,10 +82,10 @@ function DescHabilidade(habilidade)
 
 	var desc := GetConfigString( elem, "desc" );
 	var ativavel := GetConfigString( elem, "uso" );
-	var habcategory := GetConfigString( elem, "habcategory" );
+	var DamageType := GetConfigString( elem, "DamageType" );
 	
-	if (habcategory)
-		desc := desc + "<br>Categoria de Arma: " + habcategory;
+	if (DamageType)
+		desc := desc + "<br>Categoria de Arma: " + DamageType;
 	endif
 	
 	if (ativavel == "Ativa")

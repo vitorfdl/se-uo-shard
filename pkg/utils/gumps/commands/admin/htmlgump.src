@@ -4,10 +4,13 @@ include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":gumps:include/htmlgump";
 
-program PromptDemo(who, text)
-	if ( !text )
-		text := "Hey, you didn't enter any text to go with the command!";
+program PromptDemo(who, new_size)
+	if (!new_size)
+		new_size := 1;
 	endif
+
+	var size := "<BASEFONT SIZE={}>".format(new_size);
+	var text := "{}Hey, you didn't enter any text to go with the command!".format(size);
 	
 	SendHTMLGump(who, "Sample HTML Gump", text);
 endprogram

@@ -1,2 +1,51 @@
-['Ghaia Remembers']
-With minimum intelligence, ghaia should remember the last guy did he kill. And harass him in battles.
+Create NPC Config
+Name
+Script
+Objtype
+Color
+Truecolor
+Gender
+AR
+Runspeed
+Alignment
+Category
+ 
+STR
+DEX
+INT
+ 
+HITS
+MAN
+STAM
+ 
+AttackSpeed
+AttackDamage           (die-string damage for intrinsic weapon)
+AttackAttribute        (string attribute name used for intrinsic weapon)
+AttackHitscript
+ 
+DeathSound
+DamagedSound
+IdleSound
+[AttackHitSound        (int sound ID for intrinsic weapon {default 0})]
+[AttackMissSound       (int sound ID for intrinsic weapon {default 0})]
+
+[AttackMinRange        (int intrinsic weapon minimum range {default 0})]
+[AttackMaxRange        (int intrinsic weapon maximum range {default 0})]
+ 
+[AttackAnimation       (int animation ID {default 0 (wrestling)})]
+
+[FireDamage]            0] <- sempre 0
+[ColdDamage]            0] <- sempre 0
+[EnergyDamage]          0] <- sempre 0
+[PoisonDamage]          0] <- sempre 0
+[PhysicalDamage]        (int/(die-string value))]
+ 
+CProps
+ 
+corpseitm	feather RawBird
+corpseamt	10 1
+ 
+colors 22 33 44 55
+ 
+AlertAllies	1/0
+[allie npcname

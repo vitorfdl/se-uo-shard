@@ -672,7 +672,7 @@ function alterpassage(who, item, stt, snd);
        foreach entry in pl
         obj := SystemFindObjectBySerial(CInt(entry));
         obj.movable := 1;
-		if (!getobjproperty(item, "reversepassage" ))
+		if (!GetObjProperty(item, "reversepassage" ))
 			MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
 		else
 			MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
@@ -698,7 +698,7 @@ function alterpassage(who, item, stt, snd);
       foreach entry in pl
         obj := SystemFindObjectBySerial(CInt(entry));
         obj.movable := 1;
-		if (!getobjproperty(item, "reversepassage" ))
+		if (!GetObjProperty(item, "reversepassage" ))
 			MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
 		else
 			MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);

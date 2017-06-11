@@ -118,3 +118,13 @@ function CS_GetArmorZone(equip)
 	
 	return zones;
 endfunction
+
+function CS_SelectArmored(item_array)
+	foreach item in ( item_array )
+		if (item.AR > 10)
+			return item;
+		endif
+		sleepms(2);
+	endforeach
+	return 0;
+endfunction

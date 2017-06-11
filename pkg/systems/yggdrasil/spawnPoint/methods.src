@@ -73,7 +73,7 @@ exported function SetProps( spawnpoint, data := struct{});
     SetObjProperty(spawnpoint, "eventEntry", old_data.eventEntry);
 endfunction
 
-exported function yggdrasil ( spawnpoint, data := struct{})
+exported function setYggdrasil( spawnpoint, data := struct{})
      SetObjProperty(spawnpoint, "yggdrasil", data);
 endfunction
 

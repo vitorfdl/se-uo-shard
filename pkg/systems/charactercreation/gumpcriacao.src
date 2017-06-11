@@ -8,6 +8,7 @@ include ":gumps:gumps_ex";
 include ":gumps:include/requestgump";
 include ":attributes:attributes";
 include "include/client";
+include "include/arrays";
 include ":disguise:disguise";
 include ":charactercreation:createchar";
 include ":gumps:yesno";
@@ -15,7 +16,6 @@ include ":datafile:datafile";
 
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
-
 	if (GetObjProperty(who, "criandochar") == 1 && who.cmdlevel < 1)
 		SendSysMEssageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
 		return 1;
@@ -58,15 +58,9 @@ program createchar(who)
 	AP_SetTrueStat(who, "Dexterity", chardata.dex);
 	AP_SetTrueStat(who, "Intelligence", chardata.inte);
 	AP_SetTrueStat(who, "Constitution", chardata.con);
+	AP_SetTrueStat(who, "Wisdom", chardata.wis);
+	AP_SetTrueStat(who, "Charisma", chardata.char);
 
-	//Basic
-	if (chardata.kit != "Cavaleiro")
-		CreateItemInBackpack(who, 0xba63, 100); //dinheiro
-	else
-		CreateItemInBackpack(who, 0xba63, 30); //dinheiro
-	endif
-
-	//who.title_race := chardata.raca;
 	who.race := RACE_HUMAN;
 	who.name := chardata.nome;
 	if (chardata.nomefinal && chardata.nomefinal != "" && chardata.nomefinal != " ")
@@ -74,35 +68,8 @@ program createchar(who)
 	endif
 	RecalcVitals(who);
 
-	/*=============================================
-	=           Config and Set Skills            =
-	=============================================*/
-	var privalue := 30.0;
-	var secvalue := 15.0;
-	var tercvalue := 5.0;
-	if (getNotaRP(who) == 2)
-		privalue := 35.0;
-		secvalue := 20.0;
-		tercvalue := 10.0;
-	endif
-
-	var primarias := GetPrimarias(who);
-	foreach primaria in primarias
-		AP_setTrueSkill(who, primaria, privalue);
-	endforeach
-
-	var secundarias := GetSecundarias(who);
-	foreach secundaria in secundarias
-		AP_setTrueSkill(who, secundaria, secvalue);
-	endforeach
-
-	var terciarias := GetTerciarias(who);
-	foreach terciaria in terciarias
-		AP_setTrueSkill(who, terciaria, tercvalue);
-	endforeach
 	/*=====  End of Section comment block  ======*/
 
-	AP_SetTrueSkill(who, "Gathering", 0);
 	SetAllEspecializations(who, chardata);
 
 	//Mudar Aparência
@@ -114,136 +81,140 @@ program createchar(who)
 	AP_RefreshVitals(who);
 	AP_SetVital(who, "Hunger", 1);
 
-	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao FLS!", "Seja bem vindo ao Forgotten Lore Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser lhe comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para lhe deixar mensangens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Bom Jogo!"} );
-	if (getNotaRP(who) == 2)
-		start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
-		CreateItemInBackpack(who, 0xba63, 200); //dinheiro
-		setNotaRP(who, 0);
-		SetSkillPoints(who, GetSkillPoints(who)+3);
-		SetAttribPoints(who, GetAttribPoints(who)+9);
-		SetCharLevel(who, GetCharLevel(who)+3);
-	endif
+	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser lhe comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para lhe deixar mensangens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Bom Jogo!"} );
+	// if (getNotaRP(who) == 2)
+	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
+	// 	CreateItemInBackpack(who, 0xba63, 200); //dinheiro
+	// 	setNotaRP(who, 0);
+	// 	// SetSkillPoints(who, GetSkillPoints(who)+3);
+	// 	// SetAttribPoints(who, GetAttribPoints(who)+9);
+	// 	SetCharLevel(who, GetCharLevel(who)+3);
+	// endif
 endprogram
 
 function construirgump(byref gump, back := 0) //monta a aparência da gump
 	GFClosable(gump, 0);
 	GFDisposable(gump, 0);
-	GFResizePic(gump, 84, 90, 9260, 460, 535);
-
-	GFGumpPicTiled(gump, 100,100,30,510,10460);
-	GFGumpPicTiled(gump, 500,100,30,510,10460);
-	GFGumpPicTiled(gump, 80,88,463,16,10100);
-	GFGumpPicTiled(gump, 84,610,457,16,10100);
+	GFSetID(gump, GUMPID_CREATECHAR);//9260
 	GFGumpPic(gump, 50,80, 10421);
-	GFGumpPic(gump, 83,79, 10420);
+	GFResizePic(gump, 84, 90, 0x9c40, 420, 500);
+
+	GFGumpPicTiled(gump, 90,100,30,480,10460);
+	GFGumpPicTiled(gump, 468,100,30,480,10460);
+	// GFGumpPicTiled(gump, 80,88,463,16,10100);
+	// GFGumpPicTiled(gump, 84,610,457,16,10100);
+	GFGumpPic(gump, 85,79, 10420);
 
 //	GFAddAlphaRegion(gump, 127,103,375,509);
-	GFGumpPic(gump, 96,200, 10411);
-	GFGumpPic(gump, 33,370, 10402);
+	GFGumpPic(gump, 37,370, 10402);
 
-	GFTextLine(gump, 245,120,1153,"Forgotten Lore Shard");
+	GFHTMLArea(gump, 120, 103, 380, 20,"<BASEFONT Size=6 Color=#cccccc><center>Ultimos Sussurros Shard");
 
-	GFTextLine(gump, 420,580,2103,"Próximo");
-	GFAddButton(gump, 470, 580, 9903, 9905, GF_CLOSE_BTN, 200);
+	GFTextLine(gump, 390,550,2103,"Próximo");
+	GFAddButton(gump, 440, 550, 9903, 9905, GF_CLOSE_BTN, 200);
 
 	if (!back)
-		GFTextLine(gump, 170,580,2103,"Reiniciar");
-		GFAddButton(gump, 140, 580, 9909, 9911, GF_CLOSE_BTN, 201);
+		GFTextLine(gump, 160,550,2103,"Reiniciar");
+		GFAddButton(gump, 130, 550, 9909, 9911, GF_CLOSE_BTN, 201);
 	endif
+endfunction
+
+function rollBaseDice(sum := 0) 
+	var dices := array{ RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6") };
+	RemoveLowest(dices);
+
+	var final_dice := ArraySum(dices) + sum;
+	return final_dice;
 endfunction
 
 function ShowCreateGumps(who, byref chardata)
 	while (who.connected)
 		chardata := struct;
 		chardata.+Skills := dictionary;
-		chardata.+credits := 100;
-		chardata.+str := 40;
-		chardata.+dex := 40;
-		chardata.+inte := 40;
-		chardata.+con := 40;
-		chardata.+kit := "";
+		chardata.+str  := rollBaseDice();
+		chardata.+dex  := rollBaseDice();
+		chardata.+inte := rollBaseDice();
+		chardata.+con  := rollBaseDice();
+		chardata.+wis  := rollBaseDice();
+		chardata.+char := rollBaseDice();
+		chardata.+antecedente := "";
 
 		if (RaceGump(who,chardata))
 			continue;
 		endif
-		if (AttributeGump(who, chardata, 80))
-			continue;
-		endif
-		if (BuyKits(who, chardata))
-			continue;
-		endif
-		if (SkillGump(who, chardata, 20))
-			continue;
-		endif
-		if (getNotaRP(who) == 2)
-			if (!YesNo(who, "Você receberá bonificações nesse personagem. Elas não estarão disponíveis no próximo. Deseja continuar?", "Sim", "Não"))
-				continue;
-			endif
-		endif
-		if (ItemPicker(who, chardata))
+
+		if (ChooseGod(who, chardata))
 			continue;
 		endif
 
+		if (AttributeGump(who, chardata))
+			continue;
+		endif
+
+		if (ChooseBackground(who, chardata))
+			continue;
+		endif
+
+		if (SkillGump(who, chardata))
+			continue;
+		endif
+		// if (getNotaRP(who) == 2)
+		// 	if (!YesNo(who, "Você receberá bonificações nesse personagem. Elas não estarão disponíveis no próximo. Deseja continuar?", "Sim", "Não"))
+		// 		continue;
+		// 	endif
+		// endif
 		break;
 	endwhile
 endfunction
 
 function RaceGump(who, byref  chardata)
 	var first_name, last_name;
-	first_name := "";
-	last_name := "";
+	first_name := "eeeeeee";
+	last_name := "wwww";
 
 	var gump := GFCreateGump();
 	construirgump(gump, 1); //monta a aparência da gump
 
-    //GFTextLine(gump, 215,200,2105,"Humanos");
 	if (getNotaRP(who) == 2)
 		GFTextLine(gump, 200,138,52,"Criação de Personagem Bonificado!!");
 	endif
-	GFTextLine(gump, 220, 170, 1153, "Defina o Nome do seu Personagem");
-	GFTextLine(gump, 240, 195, 2103, "Primeiro Nome:");
-	GFGumpPic(gump, 240, 215, 0x988);
-	GFTextEntry(gump, 245, 217, 150, 25, 1153, first_name, 99);
+	GFTextLine(gump, 176, 150, 1153, "Defina o Nome do seu Personagem");
+	GFTextLine(gump, 176, 175, 2103, "Primeiro Nome:");
+	GFGumpPic(gump, 176, 195, 0x9C53);
+	GFTextEntry(gump, 180, 197, 150, 25, 1153, first_name, 99);
 
-	GFTextLine(gump, 240, 235, 2103, "Ultimo Nome:");
-	GFGumpPic(gump, 240, 255, 0x988);
-	GFTextEntry(gump, 245, 257, 150, 25, 1153, last_name, 98);
+	GFTextLine(gump, 176, 230, 2103, "Ultimo Nome:");
+	GFGumpPic(gump, 176, 250, 0x9C53);
+	GFTextEntry(gump, 180, 252, 150, 25, 1153, last_name, 98);
 
+	var choice_x := 175;
 	GFSetRadioGroup(gump, 1);
-	GFTextLine(gump, 180,295,1153,"Escolha o povo do seu personagem");
+	GFTextLine(gump, choice_x+1,295,1153,"Escolha sua raça");
 
-	GFTextLine(gump, 210,315,2103,"Zharkiano");
-	GFTextLine(gump, 210,335,2103,"Thurião");
-	GFTextLine(gump, 210,355,2103,"Asanita");
-	GFRadioButton(gump, 180, 315, 210, 211, 1, 2);
-	GFRadioButton(gump, 180, 335, 210, 211, 0, 3);
-	GFRadioButton(gump, 180, 355, 210, 211, 0, 4);
-
-	GFTextLine(gump, 350, 315, 2103,"Aquilrano");
-	GFTextLine(gump, 350, 335, 2103,"Vanirio");
-	GFTextLine(gump, 350, 355, 2103,"Numajene");
-	GFRadioButton(gump, 320, 315, 210, 211, 0, 5);
-	GFRadioButton(gump, 320, 335, 210, 211, 0, 6);
-	GFRadioButton(gump, 320, 355, 210, 211, 0, 7);
+	GFTextLine(gump, choice_x+25,315,2103,"Humano");
+	GFTextLine(gump, choice_x+25,335,2103,"Elfo");
+	GFTextLine(gump, choice_x+25,355,2103,"Meio-Elfo");
+	GFRadioButton(gump, choice_x, 315, 0x9C4E, 0x9C4F, 1, 2);
+	GFRadioButton(gump, choice_x, 335, 0x9C4E, 0x9C4F, 0, 3);
+	GFRadioButton(gump, choice_x, 355, 0x9C4E, 0x9C4F, 0, 4);
 
 	GFSetRadioGroup(gump, 2);
-	GFTextLine(gump, 180,395,1153,"Escolha sua classe");
-	GFTextLine(gump, 210,415,2103,"Caminho das Armas");
-	GFTextLine(gump, 210,435,2103,"Caminho do Subterfugio");
-	GFTextLine(gump, 210,455,2103,"Caminho da Sabedoria");
-	//GFTextLine(gump, 210,475,2103,"Caminho do Artíficie");
-	GFRadioButton(gump, 180, 415, 210, 211, 1, 8);
-	GFRadioButton(gump, 180, 435, 210, 211, 0, 9);
-	GFRadioButton(gump, 180, 455, 210, 211, 0, 10);
-	//GFRadioButton(gump, 180, 475, 210, 211, 0, 8);
+	GFTextLine(gump, choice_x+131, 295,1153,"Escolha seu sexo");
+	GFTextLine(gump, choice_x+155, 315,2103,"Homem");
+	GFTextLine(gump, choice_x+155, 335,2103,"Mulher");
+	GFRadioButton(gump, choice_x+130, 315, 0x9C4E, 0x9C4F, 1, 11);
+	GFRadioButton(gump, choice_x+130, 335, 0x9C4E, 0x9C4F, 0, 12);
 
 	GFSetRadioGroup(gump, 3);
-	GFTextLine(gump, 180,515,1153,"Escolha seu sexo");
-	GFTextLine(gump, 210,535,2103,"Homem");
-	GFTextLine(gump, 210,555,2103,"Mulher");
-
-	GFRadioButton(gump, 180, 535, 210, 211, 1, 11);
-	GFRadioButton(gump, 180, 555, 210, 211, 0, 12);
+	GFTextLine(gump, choice_x+1,395,1153,"Escolha sua classe");
+	GFTextLine(gump, choice_x+25,415,2103,"Guerreiro");
+	GFTextLine(gump, choice_x+25,435,2103,"Ladino");
+	GFRadioButton(gump, choice_x, 415, 0x9C4E, 0x9C4F, 1, 5);
+	GFRadioButton(gump, choice_x, 435, 0x9C4E, 0x9C4F, 0, 6);
+	GFTextLine(gump, choice_x+155,415,2103,"Mago");
+	GFTextLine(gump, choice_x+155,435,2103,"Clérigo");
+	GFRadioButton(gump, choice_x+130, 415, 0x9C4E, 0x9C4F, 0, 7);
+	GFRadioButton(gump, choice_x+130, 435, 0x9C4E, 0x9C4F, 0, 8);
 
 	var input := GFSendGump(who, gump);
 
@@ -251,40 +222,48 @@ function RaceGump(who, byref  chardata)
 		first_name := GFExtractData( input, 99);
 		last_name := GFExtractData( input, 98);
 		if (len(first_name) < 3 || cint(len(first_name) + len(last_name)) > 17)
-			SendSysMessageEx(who, "A combinacao do seu nome com sobrenome nao pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
-			RaceGump(who, chardata);
-		elseif (3 in input.keys && 12 in input.keys)
-			SendSysMessageEx(who, "Apenas personagens homens podem ser thurioes.", SSM_FAIL);
+			SendSysMessageEX(who, "A combinacao do seu nome com sobrenome nao pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
 			RaceGump(who, chardata);
 		endif
 
 		foreach thing in (input.keys)
 			case (thing)
-				2: chardata.povo := "Zharkiano";
-				   chardata.raca := "Humano";
-				3: chardata.povo := "Thuriao";
-				   chardata.raca := "Humano";
-				4: chardata.povo := "Asanita";
-				   chardata.raca := "Humano";
+				2: chardata.raca := "Humano";
+				   chardata.inte += 1;
+				   chardata.str += 1;
+				   chardata.dex += 1;
+				   chardata.wis += 1;
+				   chardata.con += 1;
+				3: chardata.raca := "Elfo";
+				   chardata.inte += 2;
+				   chardata.dex += 1;
+				4: chardata.raca := "Meio-Elfo";
+				   chardata.dex += 2;
+				   chardata.inte += 1;
 
-			   5: chardata.povo := "Aquilrano";
-				  chardata.raca := "Elfo";
-			   6: chardata.povo := "Vanirio";
-				  chardata.raca := "Elfo";
-			   7: chardata.povo := "Numajene";
-				  chardata.raca := "Elfo";
+				5: chardata.classe 	 := "Guerreiro";
+				6: chardata.classe 	 := "Ladino";
+				7: chardata.classe   := "Mago";
+				8: chardata.classe   := "Clérigo";
 
-				8: chardata.classe 	:= "Armas";
-				9: chardata.classe 	:= "Subterfugio";
-				10: chardata.classe := "Sabedoria";
-				//8: chardata.classe := "Artificie";
-
-				11: who.graphic 	:= 400;
-					who.trueobjtype := 400;
+				11: 
+					if (chardata.raca == "Humano")
+						who.graphic 	:= 400;
+						who.trueobjtype := 400;
+					else
+						who.graphic 	:= 605;
+						who.trueobjtype := 605;
+					endif
 					who.gender 		:= 0;
-				12: who.graphic 	:= 401;
-					who.trueobjtype := 401;
-					who.gender 		:= 1;
+				12: 
+					if (chardata.raca == "Humano")
+						who.graphic 	:= 402;
+						who.trueobjtype := 402;
+					else
+						who.graphic 	:= 606;
+						who.trueobjtype := 606;
+					endif
+					who.gender := 1;
 			endcase
 
 			chardata.nome := first_name;
@@ -295,144 +274,161 @@ function RaceGump(who, byref  chardata)
 	endif
 endfunction
 
-function AttributeGump(who, byref  chardata, byref points)
+function ChooseGod(who, byref chardata)
+	var god_choose := "Anar";
+	if (chardata.raca != "Humano")
+		god_choose := "Seredhiel";
+	endif
 	while (who.connected)
 		var gump := GFCreateGump();
 		construirgump(gump); //monta a aparência da gump
-		GFTextLine(gump, 150,160,1153,"Defina seus atributos: " + points + " restantes. ");
+		// GFTextLine(gump, 140,120,1153,"Escolha seu Deus: ");
 
-		GFTextLine(gump, 200,200,2103,"Força:");
-		GFTextLine(gump, 200,240,2103,"Destreza:");
-		GFTextLine(gump, 200,280,2103,"Inteligência:");
-		GFTextLine(gump, 200,320,2103,"Constituição:");
+		case (god_choose)
+			"Anar":
+				GFGumpPic(gump, 180, 130, 0x7770);
+			"Seredhiel":
+				GFGumpPic(gump, 180, 130, 0x7767);
+			"Eredich":
+				GFGumpPic(gump, 180, 130, 0x7774);
+		endcase
+		// GFGumpPic(gump, 160, 200, );
+		// GFGumpPic(gump, 240, 200, 0x7767);
 
-		GFTextLine(gump, 300,200,2103, chardata.str);
-		GFTextLine(gump, 300,240,2103, chardata.dex);
-		GFTextLine(gump, 300,280,2103, chardata.inte);
-		GFTextLine(gump, 300,320,2103, chardata.con);
-
-		GFAddButton(gump, 160, 205, 2436, 2436, GF_CLOSE_BTN, 2);
-		GFAddButton(gump, 160, 245, 2436, 2436, GF_CLOSE_BTN, 3);
-		GFAddButton(gump, 160, 285, 2436, 2436, GF_CLOSE_BTN, 4);
-		GFAddButton(gump, 160, 325, 2436, 2436, GF_CLOSE_BTN, 5);
-
-		GFAddButton(gump, 180, 205, 2437, 2438, GF_CLOSE_BTN, 6);
-		GFAddButton(gump, 180, 245, 2437, 2438, GF_CLOSE_BTN, 7);
-		GFAddButton(gump, 180, 285, 2437, 2438, GF_CLOSE_BTN, 8);
-		GFAddButton(gump, 180, 325, 2437, 2438, GF_CLOSE_BTN, 9);
+		var name_picx := 230;
+		GFGumpPic(gump, name_picx, 485, 0x2939);
+		GFGumpPicTiled(gump, name_picx+25, 485, 90, 60, 0x293A);
+		GFGumpPic(gump, name_picx+110, 485, 0x293B);
+		
+		GFHTMLArea(gump, name_picx+5, 503, 135, 20, "<BASEFONT SIZE=5 COLOR=#ffffcc><center>{}".format(god_choose));
+		
+		GFTextMid(gump, 235, 545, 140, 1150, "Trocar");
+		GFAddButton(gump, 278, 560, 0x7777, 0x7777, GF_CLOSE_BTN, 7);
 
 		var input := GFSendGump(who, gump);
-		case (input[0])
-			2:
-				if (chardata.str >= 80)
-					SendSysMessageEx(who, "Voce nao pode aumentar mais este atributo.", SSM_FAIL);
-				else
-					if (points <= 0)
-						SendSysMessageEx(who, "Voce nao tem mais pontos.", SSM_FAIL);
-					else
-						chardata.str := chardata.str+5;
-						points := points - 5;
-					endif
-				endif
+		// case (input[0])
 
-			3:
-				if (chardata.dex >= 80)
-					SendSysMessageEx(who, "Voce nao pode aumentar mais este atributo.", SSM_FAIL);
-				else
-					if (points <= 0)
-						SendSysMessageEx(who, "Voce nao tem mais pontos.", SSM_FAIL);
-					else
-						chardata.dex := chardata.dex+5;
-						points := points - 5;
-					endif
-				endif
-			4:
-				if (chardata.inte >= 80)
-					SendSysMessageEx(who, "Voce nao pode aumentar mais este atributo.", SSM_FAIL);
-				else
-					if (points <= 0)
-						SendSysMessageEx(who, "Voce nao tem mais pontos.", SSM_FAIL);
-					else
-						chardata.inte := chardata.inte+5;
-						points := points - 5;
-					endif
-				endif
-			5:
-				if (chardata.con >= 80)
-					SendSysMessageEx(who, "Voce nao pode aumentar mais este atributo.", SSM_FAIL);
-				else
-					if (points <= 0)
-						SendSysMessageEx(who, "Voce nao tem mais pontos.", SSM_FAIL);
-					else
-						chardata.con := chardata.con+5;
-						points := points - 5;
-					endif
-				endif
+		// endcase
 
-			6:
-				if (chardata.str <= 40)
-					SendSysMessageEx(who, "Voce nao pode diminuir mais este atributo.", SSM_FAIL);
-				else
-					chardata.str := chardata.str-5;
-					points := points + 5;
-				endif
-			7:
-				if (chardata.dex <= 40)
-					SendSysMessageEx(who, "Voce nao pode diminuir mais este atributo.", SSM_FAIL);
-				else
-					chardata.dex := chardata.dex-5;
-					points := points + 5;
-				endif
-			8:
-				if (chardata.inte <= 40)
-					SendSysMessageEx(who, "Voce nao pode diminuir mais este atributo.", SSM_FAIL);
-				else
-					chardata.inte := chardata.inte-5;
-					points := points + 5;
-				endif
-			9:
-				if (chardata.con <= 40)
-					SendSysMessageEx(who, "Voce nao pode diminuir mais este atributo.", SSM_FAIL);
-				else
-					chardata.con := chardata.con-5;
-					points := points + 5;
-				endif
-		endcase
-		if (input[0] == 200)
-			if (points > 0 && !who.cmdlevel)
-				SendSysMessageEx(who, "Você ainda possui pontos para gastar.", SSM_FAIL);
-			else
-				break;
-			endif
+		if (input[0] == 7)
+			case (chardata.raca)
+				"Elfo":
+					SendSysMessageEx(who, "Elfos servem somente a Seredhiel.", SSM_FAIL);
+					god_choose := "Seredhiel";
+				"Humano":
+				"Meio-Elfo":
+					case (god_choose)
+						"Seredhiel":
+							god_choose := "Anar";
+						"Anar":
+							god_choose := "Seredhiel";
+					endcase
+			endcase
+		elseif (input[0] == 200)
+			chardata.god := god_choose;
+			break;
 		elseif (input[0] == 201)
 			return 1;
 		endif
 	endwhile
 endfunction
 
-function BuyKits(who, byref chardata)
+function AttributeGump(who, byref  chardata)
+	var last_attr := 0;
+	var btn_values := array{"str", "dex", "inte", "con", "wis"};
+	while (who.connected)
+		var gump := GFCreateGump();
+		construirgump(gump); //monta a aparência da gump
 
-	var cfg := ReadConfigFile(":charactercreation:config/kits");
-	var keys:= GetConfigStringKeys( cfg );
-	var kits := array;
+		var x := 225;
+		var y := 260;
+
+		GFResizePic(gump, x-60, y-75, 0x7748, 265, 250);
+		
+		GFTextLine(gump, x+5,y-30,1153,"Defina seus atributos: ");
+
+		GFResizePic(gump, x, y, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
+		GFResizePic(gump, x, y+25, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
+		GFResizePic(gump, x, y+50, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
+		GFResizePic(gump, x, y+75, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
+		GFResizePic(gump, x, y+100, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
+		GFTextLine(gump, x+3, y, 1150,"Força:");
+		GFTextLine(gump, x+3, y+25, 1150,"Destreza:");
+		GFTextLine(gump, x+3, y+50, 1150,"Inteligência:");
+		GFTextLine(gump, x+3, y+75, 1150,"Constituição:");
+		GFTextLine(gump, x+3, y+100, 1150,"Sabedoria:");
+
+		GFResizePic(gump, x+80, y, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
+		GFResizePic(gump, x+80, y+25, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
+		GFResizePic(gump, x+80, y+50, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
+		GFResizePic(gump, x+80, y+75, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
+		GFResizePic(gump, x+80, y+100, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
+
+		GFTextLine(gump, x+83,y,2103, chardata.str);
+		GFTextLine(gump, x+83,y+25,2103, chardata.dex);
+		GFTextLine(gump, x+83,y+50,2103, chardata.inte);
+		GFTextLine(gump, x+83,y+75,2103, chardata.con);
+		GFTextLine(gump, x+83,y+100,2103, chardata.wis);
+
+		var btn_hex := array{0x9c4E, 0x9c4E, 0x9c4E, 0x9c4E, 0x9c4E, 0x9c4E};
+		if (last_attr != 0)
+			btn_hex[last_attr] := 0x9c4F;
+		endif
+
+		GFAddButton(gump, x+115, y, btn_hex[2], 0x9c4F, GF_CLOSE_BTN, 2);
+		GFAddButton(gump, x+115, y+25, btn_hex[3], 0x9c4F, GF_CLOSE_BTN, 3);
+		GFAddButton(gump, x+115, y+50, btn_hex[4], 0x9c4F, GF_CLOSE_BTN, 4);
+		GFAddButton(gump, x+115, y+75, btn_hex[5], 0x9c4F, GF_CLOSE_BTN, 5);
+		GFAddButton(gump, x+115, y+100, btn_hex[6], 0x9c4F, GF_CLOSE_BTN, 6);
+
+		var input := GFSendGump(who, gump);
+
+		if (input[0] == 201)
+			return 1;
+		elseif (input[0] == 200)
+			break;
+		elseif (input[0] > 1 && input[0] < 8)
+			if (last_attr == 0)
+				last_attr := input[0];
+			elseif (last_attr == input[0])
+				last_attr := 0;
+			else
+				var atr       := btn_values[last_attr-1];
+				var choose_atr := btn_values[input[0]-1];
+
+				var stored_atr := chardata[choose_atr];
+				chardata[choose_atr] := chardata[atr];
+				chardata[atr] := stored_atr;
+
+				last_attr := 0;
+			endif
+		endif
+	endwhile
+endfunction
+
+function ChooseBackground(who, byref chardata)
+
+	var cfg         := ReadConfigFile(":charactercreation:config/antecedentes");
+	var keys        := GetConfigStringKeys( cfg );
+	var kits        := array{};
 	var selectedkit := 1;
 	foreach key in keys
 		var elem         := FindConfigElem(cfg, key);
 		var canadd       := 1;
 		var racas        := GetConfigStringArray( elem, "Raca" );
-		var povos        := GetConfigStringArray( elem, "Povo" );
+		var sexos        := GetConfigStringArray( elem, "Sexo" );
 		var classes      := GetConfigStringArray( elem, "Classe" );
 		var require_nota := GetConfigInt( elem, "NotaRP" );
 
-		if ((racas.size() >= 1) && (chardata.raca in racas))
+		if ((racas.size() >= 1) && !(chardata.raca in racas))
 			//sendsysmessage(who, " racas " + racas + " chardata.raca " + chardata.raca);
 			canadd := 0;
 		endif
-		if ((classes.size()>=1) && (chardata.classe in classes))
+		if ((classes.size()>=1) && !(chardata.classe in classes))
 			//sendsysmessage(who, " classes " + classes + " chardata.classe " + chardata.classe);
 			canadd := 0;
 		endif
-		if ((povos.size() >= 1) && (chardata.povo in povos))
+		if ((sexos.size() >= 1) && !(cstr(who.gender) in sexos))
 			//sendsysmessage(who, " povos " + povos + " chardata.povo " + chardata.povo);
 			canadd := 0;
 		endif
@@ -442,39 +438,38 @@ function BuyKits(who, byref chardata)
 		endif
 
 		if (canadd)
-			var kit           := struct;
-			kit.+nome         := GetconfigString(elem, "Nome");
-			kit.+desc         := GetconfigString(elem, "Desc");
-			kit.+vantagens    := GetConfigString( elem, "Vantagens" );
-			kit.+desvantagens := GetConfigString( elem, "Desvantagens" );
+			var kit         := struct;
+			kit.+nome       := key;
+			kit.+desc       := GetconfigString(elem, "Desc");
+			kit.+equip_desc := GetconfigString(elem, "ItemDesc");
+			kit.+pericias   := GetConfigStringArray( elem, "Pericia" );
 			kits.append(kit);
-
 		endif
 		sleepms(5);
 	endforeach
 
 
-	if (kitgump(who, chardata, selectedkit, kits))
+	if (BackgroundGump(who, chardata, selectedkit, kits))
 		return 1;
 	endif
 
 endfunction
 
 
-function kitgump(who, byref chardata, byref selectedkit, byref  kits)
+function BackgroundGump(who, byref chardata, byref selectedkit, byref  kits)
 	while (who.connected)
 		var gump := GFCreateGump();
 		construirgump(gump); //monta a aparência da gump
-		GFTextLine(gump, 150,160,2103,"Você pode escolher um dos backgrounds abaixo:");
+		GFTextLine(gump, 150, 140, 2103, "Você pode escolher um dos antecedentes abaixo:");
 
 		var i := 1;
 		var x := 170;
 		var y := 200;
 		for ( i := 1; i <= kits.size(); i := i + 1)
 			if ( i == selectedkit)
-				GFTextLine(gump, x,y,2105,kits[i].nome);
+				GFTextLine(gump, x, y,2105,kits[i].nome);
 			else
-				GFTextLine(gump, x,y,2103,kits[i].nome);
+				GFTextLine(gump, x, y,2103,kits[i].nome);
 			endif
 
 			var selected := 0;
@@ -483,12 +478,13 @@ function kitgump(who, byref chardata, byref selectedkit, byref  kits)
 			endif
 
 			if  (i == selectedkit)
-				GFAddButton(gump, (x-20), y, 9703, 9703, GF_CLOSE_BTN, i);
+				GFAddButton(gump, (x-24), y, 0x9c4F, 0x9c4F, GF_CLOSE_BTN, i);
 			else
-				GFAddButton(gump, (x-20), y, 9702, 9703, GF_CLOSE_BTN, i);
+				GFAddButton(gump, (x-24), y, 0x9c4E, 0x9c4F, GF_CLOSE_BTN, i);
 			endif
-			y := y + 20;
-			if (i == 14)
+
+			y := y + 24;
+			if (i == 10)
 				y := 200;
 				x := 400;
 			endif
@@ -496,25 +492,26 @@ function kitgump(who, byref chardata, byref selectedkit, byref  kits)
 
 		var str := "";
 		if ( kits[selectedkit].desc)
-			str :=  str + kits[selectedkit].desc + "<BR>";
+			str :=  str + kits[selectedkit].desc + "<BR>Pericias: ";
 		endif
-		if ( kits[selectedkit].vantagens)
-			str :=  str + kits[selectedkit].vantagens + "<BR>";
+		if ( kits[selectedkit].pericias)
+			str :=  str + kits[selectedkit].pericias + "<BR>Equipamentos: ";
 		endif
-		if ( kits[selectedkit].desvantagens)
-			str :=  str + kits[selectedkit].desvantagens + "<BR>";
+		if ( kits[selectedkit].equip_desc)
+			str :=  str + kits[selectedkit].equip_desc;
 		endif
-
-		GFHTMLArea(gump, 150, 480, 330, 100, str, 3000);
+		GFHTMLArea(gump, 125, 440, 340, 100, str, 3000);
 
 		var ret := GFSendGump(who, gump);
 
 		//sendsysmessage(who, "ret.keys " + ret.keys[2]);
 
 		if (cint(ret[0]) == 200)
-			var kitname := kits[selectedkit].nome;
-			chardata.kit := kitname;
-			SendSysMessageEx(who, "Seu kit sera: " + chardata.kit, SSM_INFO);
+			var kitname  := kits[selectedkit].nome;
+			var pericias := kits[selectedkit].pericias;
+			chardata.background := kitname;
+			chardata.skills     := pericias;
+			SendSysMessageEx(who, "Seu antecedente: " + chardata.background, SSM_INFO);
 			break;
 		elseif (cint(ret[0]) == 201)
 			return 1;
@@ -526,428 +523,63 @@ endfunction
 
 
 
-function SkillGump(who, byref  chardata, byref skillspoints)
-	chardata.+Skills := dictionary;
-	chardata.+Primarias := 2;
+function SkillGump(who, byref  chardata)
+	var cfg := ReadConfigFile(":charactercreation:config/classes");
+	var elem := FindConfigElem(cfg, cstr(chardata.classe) );
 
-	if (chardata.kit == "Sabe-Tudo");
-		skillspoints := skillspoints + 5;
-		chardata.Primarias := 1;
-	endif
-	if (chardata.kit == "Versatilidade")
-		skillspoints := skillspoints + 2;
-	endif
+	// Adiciona pericias de classe
+	var skills_classe := GetConfigStringArray(elem, "Pericia");
+	chardata.skills := skills_classe + chardata.skills;
 
-	var cfg,elem;
-	cfg := ReadConfigFile(":charactercreation:config/classes");
-	elem := FindConfigElem(cfg, cstr(chardata.classe) );
-
-
-	var primarias    := GetConfigStringArray(elem, "P");
-	var secundarias  := GetConfigStringArray(elem, "S");
-	var terciarias   := GetConfigStringArray(elem, "T");
-	var quaternarias := GetConfigStringArray(elem, "Q");
-
-
-	if (chardata.kit == "Artifice")
-
-		var novasquaternarias := array;
-		var novasterciarias := array;
-
-		foreach skill in quaternarias
-			if ( (skill != "Survival") && (skill != "HandleAnimal") && (skill != "Alchemy")
-			&& (skill != "WomensWork") && (skill != "MetalWorking") && (skill != "WoodWorking")
-			&& (skill != "Research") && (skill != "CookWork"))
-				novasquaternarias.append(skill);
-			endif
-
-		endforeach
-
-		foreach skill in terciarias
-			if ( (skill != "Survival") && (skill != "HandleAnimal") && (skill != "Alchemy")
-			&& (skill != "WomensWork") && (skill != "MetalWorking") && (skill != "WoodWorking")
-			&& (skill != "Research") && (skill != "CookWork"))
-				novasquaternarias.append(skill);
-			endif
-
-		endforeach
-
-		foreach skill in secundarias
-			if ( (skill != "Survival") && (skill != "HandleAnimal") && (skill != "Alchemy")
-			&& (skill != "WomensWork") && (skill != "MetalWorking") && (skill != "WoodWorking")
-			&& (skill != "Research") && (skill != "CookWork"))
-				novasterciarias.append(skill);
-			endif
-
-		endforeach
-
-		foreach skill in primarias
-			if ( (skill != "Survival") && (skill != "HandleAnimal") && (skill != "Alchemy")
-			&& (skill != "WomensWork") && (skill != "MetalWorking") && (skill != "WoodWorking")
-			&& (skill != "Research") && (skill != "CookWork") )
-				novasterciarias.append(skill);
-			endif
-
-		endforeach
-
-		secundarias := array;
-		primarias := array;
-		terciarias := novasterciarias;
-		quaternarias := novasquaternarias;
-		secundarias.append("Survival");
-		secundarias.append("HandleAnimal");
-		secundarias.append("Alchemy");
-		secundarias.append("Research");
-		primarias.append("WomensWork");
-		primarias.append("MetalWorking");
-		primarias.append("WoodWorking");
-		primarias.append("CookWork");
-
-		var i := 1;
-		foreach skill in quaternarias //limpa as que vao ser primarias e sec
-			//sendsysmessage(who, "skill " + skill);
-			if ( (skill == "Survival") || (skill == "HandleAnimal") || (skill == "Alchemy")
-			|| (skill == "WomensWork") || (skill == "MetalWorking") || (skill == "WoodWorking")
-			|| (skill == "Research") || (skill == "CookWork") )
-
-				//sendsysmessage(who, "deletando skill " + skill);
-				var err := quaternarias.erase(i);
-				if (err == error)
-					sendsysmessage(who, " " + err);
-				endif
-			endif
-			i := i + 1;
-		endforeach
-
-		i := 1;
-		foreach skill in terciarias //limpa as que vao ser primarias e sec
-			//sendsysmessage(who, "skill " + skill);
-			if ( (skill == "Survival") || (skill == "HandleAnimal") || (skill == "Alchemy")
-			|| (skill == "WomensWork") || (skill == "MetalWorking") || (skill == "WoodWorking")
-			|| (skill == "Research") || (skill == "CookWork") )
-
-				//sendsysmessage(who, "deletando skill " + skill);
-				var err := quaternarias.erase(i);
-				if (err == error)
-					sendsysmessage(who, " " + err);
-				endif
-			endif
-			i := i + 1;
-		endforeach
-
-	endif
-
-
-	if (chardata.kit == "Ranger")
-
-		var i := 1;
-		foreach skill in primarias //reduz as primarias
-			if ( skill == "Tactics")
-				primarias.erase(i);
-				secundarias.append("Tactics");
-			endif
-			i := i + 1;
-		endforeach
-
-		i := 1;
-		foreach skill in primarias //reduz as primarias
-			if (skill == "Parry")
-				primarias.erase(i);
-				terciarias.append("Parry");
-			endif
-			i := i + 1;
-		endforeach
-
-		//sobe as secundarias
-		i := 1;
-		foreach skill in secundarias //reduz as primarias
-			if ( skill == "Survival")
-				secundarias.erase(i);
-				primarias.append("Survival");
-			endif
-			i := i + 1;
-		endforeach
-
-		//sobe as terciarias
-		i := 1;
-		foreach skill in terciarias //reduz as primarias
-			if ( skill == "Sneak")
-				terciarias.erase(i);
-				secundarias.append("Sneak");;
-			endif
-			i := i + 1;
-		endforeach
-
-		//sobe as quaternarias
-		i := 1;
-		foreach skill in quaternarias //reduz as primarias
-			if ( skill == "HandleAnimal")
-				quaternarias.erase(i);
-				terciarias.append("HandleAnimal");
-			endif
-			i := i + 1;
-		endforeach
-	endif
+	var raw_skillchoice := GetConfigStringArray(elem, "Lista");
+	var skills_choice := array{};
+	foreach skill in raw_skillchoice;
+		if (!(skill in chardata.skills))
+			skills_choice += skill;
+		endif
+	endforeach
 
 	while (who.connected)
 		var gump := GFCreateGump();
 		construirgump(gump); //monta a aparência da gump
-		GFTextLine(gump, 150,160,2103,"Defina suas skills iniciais, você tem " + skillspoints + " pontos.");
+		GFTextLine(gump, 150,140,2103,"Escolha mais duas pericias para seu personagem.");
 
 		var x := 180;
-		var y := 200;
+		var y := 180;
 
-		foreach skill in primarias
-			GFTextLine(gump, x, y, 88, GetTranslatedName(cstr(skill)));
-
-			var value := chardata.Skills[skill];
-			if (!value)
-				value := 0;
-			endif
-			GFTextLine(gump, x+200, y, 88, value);
-
-			GFAddButton(gump, x-10, y+3, 2436, 2436, GF_CLOSE_BTN, GetSkillIdFromName(skill));
-
-			if (chardata.Skills[skill] >= 1)
-				GFAddButton(gump, x-20, y+3, 2437, 2438, GF_CLOSE_BTN, (300+GetSkillIdFromName(skill)));
-			endif
-
-			y := y + 20;
-		endforeach
-
-		foreach skill in secundarias
-			GFTextLine(gump, x, y, 80, GetTranslatedName(cstr(skill)));
-
-			var value := chardata.Skills[skill];
-			if (!value)
-				value := 0;
-			endif
-			GFTextLine(gump, x+200, y, 80, cstr(value));
-
-			GFAddButton(gump, x-10, y+3, 2436, 2436, GF_CLOSE_BTN, GetSkillIdFromName(skill));
-
-			if (chardata.Skills[skill] >= 1)
-				GFAddButton(gump, x-20, y+3, 2437, 2438, GF_CLOSE_BTN, (300+GetSkillIdFromName(skill)));
-			endif
-
-			y := y + 20;
-		endforeach
-
-
-		foreach skill in terciarias
-			GFTextLine(gump, x, y, 52, GetTranslatedName(cstr(skill)));
-
-			var value := chardata.Skills[skill];
-			if (!value)
-				value := 0;
-			endif
-			GFTextLine(gump, x+200, y, 52, cstr(value));
-
-			GFAddButton(gump, x-10, y+3, 2436, 2436, GF_CLOSE_BTN, GetSkillIdFromName(skill));
-
-			if (chardata.Skills[skill] >= 1)
-				GFAddButton(gump, x-20, y+3, 2437, 2438, GF_CLOSE_BTN, (300+GetSkillIdFromName(skill)));
-			endif
-
-			y := y + 20;
-		endforeach
-
-		foreach skill in quaternarias
-			GFTextLine(gump, x, y, 38, GetTranslatedName(cstr(skill)));
-
-			var value := chardata.Skills[skill];
-			if (!value)
-				value := 0;
-			endif
-			GFTextLine(gump, x+200, y, 38, cstr(value));
-
-			GFAddButton(gump, x-10, y+3, 2436, 2436, GF_CLOSE_BTN, GetSkillIdFromName(skill));
-
-			if (chardata.Skills[skill] >= 1)
-				GFAddButton(gump, x-20, y+3, 2437, 2438, GF_CLOSE_BTN, (300+GetSkillIdFromName(skill)));
-			endif
-
-			y := y + 20;
+		var i := 21;
+		foreach skill in skills_choice
+			GFTextLine(gump, x, y, 2100, skill);
+			GFCheckBox(gump, x-25, y, 0x9c4E, 0x9c4F, 0, i);
+			y := y + 25;
+			i += 1;
 		endforeach
 
 		var input := GFSendGump(who, gump);
-		input := input[0];
-		if (input != 200 && input != 201 )
-			if (input >= 300)
-				input := input - 300;
-				var skillname := GetSkillNameFromId(input);
-				var custo := SkillPrice(skillname, primarias, secundarias, terciarias, quaternarias);
-				if (chardata.Skills[skillname] == 3)
-					chardata.Skills[skillname] := 2;
-					chardata.Primarias := chardata.Primarias + 1;
-					skillspoints := skillspoints + custo;
-				elseif ( chardata.Skills[skillname] == 2 )
-					chardata.Skills[skillname] := 1;
-					skillspoints := skillspoints + custo;
-				elseif (chardata.Skills[skillname] == 1)
-					chardata.Skills.erase(skillname);
-					skillspoints := skillspoints + custo;
-				endif
-			else
-				var skillname := GetSkillNameFromId(input);
-				var custo := SkillPrice(skillname, primarias, secundarias, terciarias, quaternarias);
 
-				if (skillspoints >= custo) //se tem pontos pra comprar
-					if (chardata.Skills[skillname] == 3)//se ja for primaria
-						SendSysMessage(who, "Voce ja tem essa skill primaria!");
-					elseif (chardata.Skills[skillname] == 2) //se for secundaria
-						if (chardata.Primarias > 0)
-							chardata.Skills[skillname] := CInt(chardata.Skills[skillname])+1;
-							chardata.Primarias := chardata.Primarias - 1;
-							skillspoints := skillspoints - custo;
-						else
-							SendSysMessage(who, "Voce nao pode comprar mais skills primarias!");
-						endif
-					elseif (chardata.Skills[skillname] == 1) //se for terciaria
-						chardata.Skills[skillname] := CInt(chardata.Skills[skillname])+1;
-						skillspoints := skillspoints - custo;
-					else //se nao tiver comprado ainda
-						chardata.Skills[skillname] := CInt(chardata.Skills[skillname])+1;
-						skillspoints := skillspoints - custo;
-					endif
-				else
-					SendSysMessage(who, "Voce nao tem pontos para comprar esta skill.");
+		if (input[0] == 200)
+			var skills_chosed := array{};
+			foreach btn in (input.keys)
+				if (btn > 20 && btn <= 40)
+					skills_chosed += skills_choice[btn-20];
 				endif
+			endforeach
+
+			if (skills_chosed.Size() > 2)
+				SendSysMessageEx(who, "Escolha somente duas pericias!", SSM_FAIL);
+			elseif (skills_chosed.Size() < 2)
+				SendSysMessageEx(who, "Escolha pelo menos duas pericias!", SSM_FAIL);
+			else
+				chardata.skills := chardata.skills + skills_chosed;
+				break;
 			endif
-		else
-			if (input == 200)
-				var skillsmap := chardata.Skills;
-				chardata.Skills["Gathering"] := 3;
-				var skillsArray := skillsmap.keys();
-				foreach skill in skillsArray
-					var value := 0;
-					if ( chardata.Skills[skill] == 3)
-						value := 25;
-					elseif (chardata.Skills[skill] == 2)
-						value := 10;
-					else
-						value := 5;
-					endif
-	/*				if ( AP_GetTrueSkill(who, skill) == 0)
-						AP_SetTrueSkill(who, skill, value);
-					endif*/
-				endforeach
-			elseif (input == 201)
-				return 1;
-			endif
-			break;
+			// break;
+		elseif (input[0] == 201)
+			return 1;
 		endif
 	endwhile
 endfunction
-
-function SkillPrice(input, primarias, secundarias, terciarias, quaternarias)
-
-	if (input in primarias)
-		return 1;
-	elseif (input in secundarias)
-		return 2;
-	elseif (input in terciarias)
-		return 3;
-	elseif (input in quaternarias)
-		return 4;
-	endif
-
-endfunction
-
-function ItemPicker(who, byref chardata)
-	while (who.connected)
-		var gump := GFCreateGump();
-		construirgump(gump, 1); //monta a aparência da gump
-		GFTextLine(gump, 180,160,1153,"Compre seu equipamento inicial: " + chardata.credits + " creditos.");
-
-		GFTextLine(gump, 150, 180, 2103,"Armas");
-		GFTextLine(gump, 200, 180, 2103,"Armaduras");
-		GFTextLine(gump, 280, 180, 2103,"Roupas");
-		GFTextLine(gump, 330, 180, 2103,"Ferramentas");
-		GFTextLine(gump, 420, 180, 2103,"Outros");
-
-		GFAddButton(gump, 190, 185, 2437, 2438, GF_PAGE_BTN, 1);
-		GFAddButton(gump, 270, 185, 2437, 2438, GF_PAGE_BTN, 2);
-		GFAddButton(gump, 320, 185, 2437, 2438, GF_PAGE_BTN, 3);
-		GFAddButton(gump, 410, 185, 2437, 2438, GF_PAGE_BTN, 4);
-		GFAddButton(gump, 460, 185, 2437, 2438, GF_PAGE_BTN, 5);
-
-		UnloadConfigFile(":charactercreation:config/itempicker");
-		var cfg := ReadConfigFile(":charactercreation:config/itempicker");
-		var paginas := GetConfigStringArray(FindConfigElem(cfg, "pages"), "page");
-
-		var pagecount := 1;
-		var itemcount := 1;
-		var itemsname := array;
-		var itemscost := array;
-
-		foreach page in paginas
-			GFPage(gump, pagecount);
-			var elem := FindConfigElem(cfg, page);
-
-			var items := GetConfigStringDictionary(elem, "item");
-			var itemsgroups := GetConfigStringDictionary(elem, "Group");
-
-			foreach item in (itemsgroups.keys())
-				items[item] :=  itemsgroups[item];
-			endforeach
-
-			var i := 1;
-			foreach item in (items.keys())
-				itemsname.append(item);
-				itemscost.append(CInt(items[item]));
-
-				GFTextLine(gump, 180, 200+(i*20), 2105, cstr(item)); //Objeto Nome
-				GFTextLine(gump, 450, 200+(i*20), 2105, items[item]); //Objeto Nome
-				GFAddButton(gump, 160, 200+(i*20), 9702, 9703, GF_CLOSE_BTN, 50+itemcount); //Botaum
-
-				itemcount := itemcount + 1;
-				i := i + 1;
-			endforeach
-
-			pagecount := pagecount + 1;
-		endforeach
-
-		var input := GFSendGump(who, gump);
-		input := input[0];
-
-		if (input > 50 && input != 200)
-			var index := input - 50;
-			var itemname := itemsname[index];
-			var custo := CInt(itemscost[index]);
-
-			if (chardata.credits < custo)
-				SendsysMessageEx(who, "Voce nao possui creditos para este item.", SSM_FAIL);
-				ItemPicker(who, chardata);
-			else
-				chardata.credits := chardata.credits - custo;
-				var items := GetConfigStringDictionary(FindConfigElem(cfg, itemname), "item");
-				if (items == error) //nao eh group
-					var amount := Cint(GetconfigInt(FindConfigElem(cfg, "DefaultAmount"),  itemname));
-					if (amount == 0)
-						amount := 1;
-					endif
-					var itm := CreateItemInBackpack(who, itemname,  amount);
-					itm.quality := 0.6;
-				else
-					foreach item in (items.keys())
-						var amount := Cint(GetconfigInt(FindConfigElem(cfg, "DefaultAmount"),  item));
-						if (amount == 0)
-							amount := 1;
-						endif
-						var itm := CreateItemInBackpack(who, item, amount);
-						itm.quality := 0.6;
-					endforeach
-				endif
-			endif
-		else
-			break;
-		endif
-
-	endwhile
-
-endfunction
-
+ 
 function CharacterApparencGump(who, chardata)
 	var disfarce := struct;
 	disfarce.+barba := "";
@@ -1006,142 +638,6 @@ function SetAllEspecializations(who, chardata);
 		setobjproperty(book2, "serialid",who.serial);
 		setobjproperty(book2, "marked",who.name + " - " + who.acctname);
 	endif
-
-	case(chardata.kit)
-	    "Corpulento":
-			AP_SetTrueStat(who, "Strength", chardata.str+5);
-			AP_SetTrueStat(who, "Dexterity", chardata.dex-5);
-	    	break;
-	    "Gênio":
-			AP_SetTrueStat(who, "Strength", chardata.str-5);
-			AP_SetTrueStat(who, "Intelligence", chardata.inte+5);
-	    	break;
-	    "Ágil":
-			AP_SetTrueStat(who, "Strength", chardata.str-5);
-			AP_SetTrueStat(who, "Dexterity", chardata.dex+5);
-	    	break;
-	    "Velho":
-			AP_SetTrueStat(who, "Strength", chardata.str-5);
-			AP_SetTrueStat(who, "Intelligence", chardata.inte+10);
-			AP_SetTrueStat(who, "Dexterity", chardata.dex-5);
-			break;
-		"Resistente":
-			AP_SetTrueStat(who, "Strength", chardata.inte-5);
-			AP_SetTrueStat(who, "Constitution", chardata.con+10);
-			AP_SetTrueStat(who, "Dexterity", chardata.dex-5);
-			break;
-		"Versatilidade":
-			AP_SetTrueStat(who, "Strength", chardata.str-5);
-			AP_SetTrueStat(who, "Intelligence", chardata.inte-5);
-			AP_SetTrueStat(who, "Dexterity", chardata.dex-5);
-			AP_SetTrueStat(who, "Constitution", chardata.con-5);
-			break;
-		"Shimoriano":
-			SetObjProperty(who, "spelluser", "Mesum");
-			//Create Scroll with Autorization for Shimoria
-			var ordem := CreateItemInBackpack(who, 8792, 1);
-			SetName(ordem, "Autorização de Shimoria para " + who.name);
-
-			//Create Ring for Shimoria
-			var ring  := CreateItemInBackpack(who, "ring", 1);
-			ring.color:= 1150;
-			SetObjProperty(ring, "descmod", "Shimoriano");
-			SetName(ring, "Anel de Shimoria");
-
-			//Create Grimorie with Scrolls Spells
-			var grimorio := createiteminbackpack(who, "grimorio", 1);
-			setobjproperty(grimorio, "serialid", who.serial);
-			setobjproperty(grimorio, "marked",who.name + " - " + who.acctname);
-			var spellinfo := struct;
-
-			var p1 := createiteminbackpack(who, "pergaminhomagico1");
-			spellinfo.+id := 43;
-			SetObjProperty(p1, "spellinfo", spellinfo);
-
-			p1 := createiteminbackpack(who, "pergaminhomagico1");
-			spellinfo.id := 44;
-			SetObjProperty(p1, "spellinfo", spellinfo);
-
-			// p1 := createiteminbackpack(who, "pergaminhomagico1");
-			// spellinfo.id := 2;
-			// SetObjProperty(p1, "spellinfo", spellinfo);
-			//
-			// p1 := createiteminbackpack(who, "pergaminhomagico1");
-			// spellinfo.id := 28;
-			// SetObjProperty(p1, "spellinfo", spellinfo);
-			break;
-		"Acolito do Panteao Zhark":
-			var robe := CreateItemInBackpack(who, 0x1389, 1); //bodysash
-			SetObjProperty(robe, "description", "Robe com bordado do símbolo do clero de Zharkia");
-			SetObjProperty(robe, "cannotdye", 1);
-			SetObjProperty(robe, "descmod", "Acólito de Zhark");
-			SetObjProperty(who, "spelluser", "Monge");
-			var terco := CreateItemInBackpack(who, 0x790c,  1);
-			SetObjProperty(terco, "spellids", array{1});
-			SetObjProperty(terco, "monge", who.serial);
-			SetObjProperty(terco, "cargas", 40);
-			terco.newbie := 1;
-			break;
-		"Defensor do Reino Zharkes":
-			var capa := CreateItemInBackpack(who, 0x1541, 1); //bodysash
-			capa.color := 2117;
-			SetObjProperty(capa, "description", "Faixa de Defensor de Zharkia de " + who.name + "<BR>");
-			SetObjProperty(capa, "cannotdye", 1);
-			SetObjProperty(capa, "descmod", "Defensor Zharkía");
-			SetName(capa, "Faixa");
-			break;
-		// "Membro da Nobreza":
-		// 	if (who.graphic == 400)
-		// 		who.title_prefix := "Sir";
-		// 	else
-		// 		who.title_prefix := "Lady";
-		// 	endif
-		// 	var ring := CreateItemInBackpack(who, 0x108a, 1); //ring
-		// 	var NomeDaFamilia := cstr(RequestGump(who, "Escreva o Nome da sua Família"));
-		// 	var FamiliaVassala := cstr(RadioGump(who, 270, 200, "Para quem irá prestar Vassalagem?", array{"Rothenien","Khumardigann","Hivyttain","Zanshirdd"}));
-		// 	if (FamiliaVassala != "Nenhuma")
-		// 		SetObjProperty(ring, "description", "Anel Da Família: " + NomeDaFamilia + "<br> Vassala Dos: " + FamiliaVassala);
-		// 	else
-		// 		SetObjProperty(ring, "description", "Anel Da Família: " + NomeDaFamilia);
-		// 	endif
-		// 	SetObjProperty(ring, "familia", NomeDaFamilia);
-		// 	SetObjProperty(ring, "description", "Anel Da Famí­lia: " + NomeDaFamilia + "<br> Vassala Dos: " + FamiliaVassala);
-		// 	SetName(ring, "Anel com Símbolo de Familia");
-		// 	break;
-		"Cavaleiro":
-			var cavalo := CreateNpcFromTemplate(":ghaia:horse2", who.x, who.y-10, who.z, 0, who.realm);
-			cavalo.SetMaster(who);
-			SetObjProperty(cavalo, "owner", who.serial);
-			SetObjProperty(cavalo, "name", cavalo.name);
-			SetObjproperty(cavalo, "script", cavalo.script);
-			cavalo.script := ":ghaia:tamed";
-			RestartScript(cavalo);
-			var tamed := array;
-			tamed.append(cavalo.serial);
-			SetObjProperty(who, "TamedPets", tamed);
-			break;
-		"Característica Marcante":
-			var caracteristica := cstr(RequestGump(who, "Entre com a caracteristica do personagem. Seja Breve e Direto!"));
-			SetObjProperty(who, "description", caracteristica);
-			break;
-		"Título Conhecido":
-			var caracteristica := cstr(RequestGump(who, "Entre com o Titulo do seu personagem!"));
-			who.title_suffix := caracteristica;
-			break;
-		"Rico":
-			CreateItemInBackpack(who, 0xba63, 200); //dinheiro
-			break;
-		"Artifice":
-			AP_SetTrueSkill(who, GATHERING, 20);
-			break;
-		"Pacto com Asan":
-			SetObjProperty(who, "dpmod", 10);
-			break;
-		"Escravo Vanirio":
-			setObjProperty(who, "description", "Marca de escravo no rosto");
-			setObjProperty(who, "hitsmod", 10);
-			break;
-	endcase
 
 endfunction
 

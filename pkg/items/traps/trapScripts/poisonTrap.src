@@ -20,7 +20,7 @@ program trapScript(params)
 	//var trap_index := params[4];
 	params := 0; // Not needed anymore.
 	
-	PlaysoundEffect(object, sounds[RandomInt(sounds.size())+1] );
+	PlaysoundEffect(object, sounds.randomentry() );
 	PlayStationaryEffect(object.x, object.y, object.z, GFX_POISON_GAS, 10,10, 0, object.realm);
 
 	var range := trap_info.Strength;

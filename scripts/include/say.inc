@@ -1,7 +1,7 @@
 use uo;
 use unicode;
 
-const SSM_FAIL      := 37;
+const SSM_FAIL      := 39;
 const SSM_REQUEST   := 168;
 const SSM_INFO      := 91;
 const SSM_HELPFU    := 168;
@@ -20,36 +20,48 @@ CONST SPEAK_TEXTTYPE_YELL   := "yell";
 CONST SPEAK_DOEVENT_DISABLE := 0x0;
 CONST SPEAK_DOEVENT_ENABLE  := 0x1;
 
+CONST SYSTEM_REPORT := 117;
+
 
 function SendSysMessageEX(who, message, SSM_TYPE := _DEFAULT_TEXT_COLOR, font_number := _DEFAULT_TEXT_FONT)
 	SendSysMessage(who, ""+message, font_number, SSM_TYPE);
 endfunction
 
-function SendSysMessageUNI(above_object, uc_text, color:=_DEFAULT_UCCOLOR, font:=_DEFAULT_UCFONT, langcode := "ENU")
+function SendSysMessageUNI(who, uc_text, color:=_DEFAULT_UCCOLOR, font:=_DEFAULT_UCFONT, langcode := "ENU")
   if (uc_text == error)
-	return;
+	  return;
   endif
-  var theUCtext := UC(uc_text);
-  theUCtext.append(0x0000);
-  print(theUCtext);
-  return SendSysMessageUC(above_object, CAscZ(uc_text), langcode, font, color);
+
+  var theUCtext := array{111, 108, 225};
+
+  print(cAscZ("olá"));
+  var foi := SendSysMessageUC(who, theUCtext, langcode, 4, 55);
+  print(foi);
+  return SendSysMessageUC(who, theUCtext, langcode, 4, 55);
 endfunction
 
 function PrintText(above_object, uc_text, color := _DEFAULT_UCCOLOR, font := _DEFAULT_UCFONT, langcode := "ENG")
   if (uc_text == error)
-	return;
+	  return;
   endif
+
   if (above_object.concealed || above_object.hidden)
-	return 1;
+	  return 1;
   endif
+
   return PrintTextAboveUC(above_object, UC(uc_text), langcode, font, color);
 endfunction
 
 function PrintTextPrivate(above_object, uc_text, for_object, color := _DEFAULT_UCCOLOR, font := _DEFAULT_UCFONT, langcode := "ENG")
-    if (uc_text == error)
-        return;
-    endif
-    return PrintTextAbovePrivateUC(above_object, UC(uc_text), langcode, for_object, font, color);
+  if (uc_text == error)
+      return;
+  endif
+
+  return PrintTextAbovePrivateUC(above_object, UC(uc_text), langcode, for_object, font, color);
+endfunction
+
+function PrivateSystemReport(above_object, text, character, color := SYSTEM_REPORT)
+  return PrintTextAbovePrivate(above_object, text, character, 9, color);
 endfunction
 
 function UC(strs)

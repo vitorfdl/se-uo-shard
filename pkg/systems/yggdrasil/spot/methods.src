@@ -2,6 +2,7 @@ use os;
 use uo;
 
 include "include/arrays";
+include ":yggdrasil:treasures";
 
 program Install()
     return 1;
@@ -13,6 +14,7 @@ exported function GetProps( spot )
     data.+spawnpoints  := GetObjProperty(spot, "spawnpoints");
     data.+timeInterval := GetObjProperty(spot, "timeInterval");
     data.+eventEntry   := GetObjProperty(spot, "eventEntry");
+    data.+treasures    := GetObjProperty(spot, "treasures");
 
     data.+yggdrasil := GetObjProperty(spot, "yggdrasil");
 
@@ -29,7 +31,7 @@ exported function SetProps( spot, data := struct{} )
         spot.location := data.location;
     endif
 
-    if (data.active)
+    if (data.active != error)
         old_data.active := data.active;
     endif
 
@@ -45,20 +47,25 @@ exported function SetProps( spot, data := struct{} )
         old_data.eventEntry := data.eventEntry;
     endif
 
+    if (data.treasures)
+        old_data.treasures := data.treasures;
+    endif
+
     old_data := ModelSpot(old_data);
 
     SetObjProperty(spot, "timeInterval", old_data.timeInterval);
     SetObjProperty(spot, "spawnpoints", old_data.spawnpoints);
     SetObjProperty(spot, "active", old_data.active);
     SetObjProperty(spot, "eventEntry", old_data.eventEntry);
+    SetObjProperty(spot, "treasures", old_data.treasures);
 endfunction
 
 exported function yggdrasil ( spawnpoint, data := struct{})
      SetObjProperty(spawnpoint, "yggdrasil", data);
 endfunction
 
-function ModelSpot( data := struct{})
-    if (!data.active != 0 && data.active != 1)
+function ModelSpot( data := struct{} )
+    if (data.active != 1)
         data.active := 0;
     endif
 
@@ -77,6 +84,15 @@ function ModelSpot( data := struct{})
     if (TypeOf(data.yggdrasil) != "Struct")
         data.yggdrasil := struct{};
     endif
+
+    if (TypeOf(data.treasures) != "Array")
+        data.treasures := array{};
+    else
+        foreach treasure in (data.treasures)
+            treasure := ModelTreasure(treasure);
+        endforeach
+    endif
+
     return data;
 endfunction
 
@@ -95,8 +111,42 @@ exported function RemoveSpawnPoint( spot, serial )
         SetProps( spot, data );
         var spawnpoint := SystemFindObjectBySerial(serial);
         if (spawnpoint)
+            SetObjProperty(spawnpoint, "GM_FLAG", 1);
             DestroyItem(spawnpoint);
         endif
+    endif
+    return 1;
+endfunction
+
+exported function AddTreasure( spot, new_treasure )
+    var data := GetProps( spot );
+
+    var treasure := ModelTreasure(new_treasure);
+
+    data.treasures.append(treasure);
+    SetProps( spot, data );
+    return 1;
+endfunction
+
+exported function UpdateTreasure( spot, serial, treasure_data )
+    var data := GetProps( spot );
+    var index := FindInArray(data.treasures, struct{"serial":=serial});
+    if (!index)
+        return 0;
+    endif
+
+    data.treasures[index] := treasure_data;
+
+    SetProps( spot, data );
+    return 1;
+endfunction
+
+exported function RemoveTreasure( spot, serial )
+    var data  := GetProps( spot );
+    var index := FindInArray(data.treasures, struct{"serial":=serial});
+    if (index)
+        data.treasures.Erase(index);
+        SetProps( spot, data );
     endif
     return 1;
 endfunction

@@ -476,7 +476,7 @@ function iteminfogump(who, item)
 		endif
 		var arrayquestion;
 		if (craftproperty.tipo == "Armas")
-			arrayquestion := array{"Arcos", "Balestras", "1h Corte", "1h Contusão", "1h Perfuração", "2h Corte", "2h Contusão", "2h Perfuração"};
+			arrayquestion := array{"Arcos", "Balestras", "1h Corte", "1h Concussão", "1h Perfuração", "2h Corte", "2h Concussão", "2h Perfuração"};
 		else
 			arrayquestion := array{"Luvas", "Calças", "Capas", "Cabeça", "Ombreiras", "Peitoral", "Joias", "Escudos"};
 		endif

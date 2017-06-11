@@ -4,6 +4,7 @@ use cfgfile;
 
 include ":ghaia:generic";
 include ":ghaia:ghaia";
+include ":ghaia:objective";
 
 var npccfgfile := NPC_GetNPCConfig(self());
 var me := self();
@@ -19,37 +20,44 @@ var throwinfo;
 var propallies;
 
 program KillPlayers()
-	
+
 	var ev;
 	var wanders;
 	propallies := dictionary;
 
+	set_critical(1);
+	//printtextabove(me, "vai inicializr");
 	InitializeNPC(me);
+	set_critical(0);
+	//printtextabove(me, "done");
 	SetWarMode( 0 );
 	ev := os::wait_for_event(0);
-	wanders := 60;
+	wanders := 0;
 	EnableMainEvents();
-
-    	while(me)
-
-		look_around(); 
-		wander();
-		PlayIdleSound();
-
-		wanders := wanders +1;
-		if(wanders >=30)
+	Set_Event_Queue_Size(50);
+	while(me)
+		//se tem objetivo, anda na direcao dele, se nao tem so wander
+		if (GetObjProperty(me, "objloc") != error)
 			wanders := 0;
-			//mystate := SLEEPING;
-			look_around();
+			DoObjective();
+		else
+			MoveAround(wanders);
+		endif
+		
+		wanders := wanders +1;
+		if(wanders >= 30)
+			wanders := 0;
+			lookAround();
 			ev := sleepmode();
 		else
 			ev := os::wait_for_event(10);
 		endif
-
+		
+		
 		if(ev)
 			case(ev.type)
 				SYSEVENT_ENTEREDAREA:   
-					if (CheckLineOfSight( me, ev.source ))
+					if (CheckLineOfSight(me, ev.source))
 						if(CanFight(me, ev.source, align)) //verifica se eh inimigo
 							wanders := 0;
 							Fight(ev.source);
@@ -60,19 +68,23 @@ program KillPlayers()
 				EVID_ALERT_ALLIES:	wanders := 0; Fight(ev.opponent, 1);
 				EVID_HERDING:		herd(ev);
 				EVID_TAUNT:
-						if(ev.source)
-							wanders := 0; Fight(ev.opponent);
-						endif
+							if(ev.source)
+								wanders := 0; Fight(ev.opponent, 1);
+							endif
 				EVID_FLEE:
-						if (ev.source)
-							flee(ev.source);
-						endif
-
+							if (ev.source)
+								flee(ev.source);
+							endif
+				EVID_DOOBJECTIVE:
+					if (ev.destiny)
+						wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
+					endif
 			endcase
 		endif	
+
+		lookAround();
 		sleepms(5);
 	endwhile
-
 endprogram
 
 function CloseDistance(opponent)
@@ -109,7 +121,7 @@ function CloseDistance(opponent)
 
 endfunction
 
-function look_around()
+function lookAround()
 	foreach npc in ListMobilesInLineOfSight(me, areasize)
 		if( CanFight(me, npc, align) )
 			Fight(npc);

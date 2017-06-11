@@ -192,41 +192,6 @@ function AP_ConsumeVital(mobile, vital_name, points)
 	endif
 endfunction
 
-function DamageMANA(mobile, points)
-
-	points := CDbl(points);
-	var cur_amount := AP_GetVital(mobile, MANA);
-	
-	if ( points > cur_amount )
-		cur_amount := 0;
-	else
-		cur_amount := cur_amount-points;
-	endif
-
-	AP_SetVital(mobile, MANA, cur_amount);
-	return 1;
-
-
-endfunction
-
-
-function DamageStamina(mobile, points)
-
-	points := CDbl(points);
-	var cur_amount := AP_GetVital(mobile, STAMINA);
-	
-	if ( points > cur_amount )
-		cur_amount := 0;
-	else
-		cur_amount := cur_amount-points;
-	endif
-
-	AP_SetVital(mobile, STAMINA, cur_amount);
-	return 1;
-
-
-endfunction
-
 /*
  * AP_RefreshVitals(mobile)
  *

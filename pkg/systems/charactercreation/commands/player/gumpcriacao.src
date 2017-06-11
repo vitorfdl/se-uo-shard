@@ -1,0 +1,10 @@
+use uo;
+use os;
+include "include/client";
+include "include/say";
+
+program resethab(who)
+    CloseGump(who, GUMPID_CREATECHAR);
+    sleepms(5);
+    start_script(":charactercreation:gumpcriacao", who);
+endprogram

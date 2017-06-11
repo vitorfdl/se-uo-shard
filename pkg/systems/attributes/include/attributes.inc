@@ -26,6 +26,138 @@ include ":attributes:skillCheck";
 include ":attributes:advanceCheck";
 include ":datafile:datafile";
 include ":charactercreation:habilidades";
+include "include/arrays";
+include ":ghaia:ghaiaUtil";
+
+function rollAttrDice(mobile, attribute, penalty := 0, critical := 20)
+	var dice := RandomDiceRoll("1d20");
+
+	if (penalty < 0 || GetObjProperty(mobile, "ArmorPenalty") >= 1)
+		var dices := array{ RandomDiceRoll("1d20"), dice};
+		RemoveHighest(dices);
+		dice := dices[1];
+	elseif (penalty > 0)
+		var dices := array{ RandomDiceRoll("1d20"), dice};
+		RemoveLowest(dices);
+		dice := dices[1];
+	endif
+
+	// print("{}: DiceResult: {}".format(mobile.name, dice));
+
+	if (attribute && attribute != 0)
+		var mod := GetBonusAttr(AP_GetTrueStat(mobile, attribute));;
+		// print("{}: dice mod: {}".format(mobile.name, mod));
+		dice += mod;
+	endif
+	
+	if (dice < 1)
+		dice := 1;
+	endif
+
+	return dice;
+endfunction
+
+function getProfiencyBonus(mobile)
+	var proficiency := 0;
+	var level := 1;
+	if (mobile.npctemplate);
+		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
+		level       := GetConfigInt(npcelem, "Difficulty");
+	else
+		var chardata := GetObjProperty(mobile, "chardata");
+		level        := cint(chardata.level);
+	endif
+
+	if (!level || level <= 4)
+		proficiency := 2;
+	elseif (level <= 8)
+		proficiency := 3;
+	elseif (level <= 12)
+		proficiency := 4;
+	elseif (level <= 16)
+		proficiency := 5;
+	elseif (level <= 20)
+		proficiency := 6; // Players stop here
+	elseif (level <= 24)
+		proficiency := 7;
+	elseif (level <= 28)
+		proficiency := 8;
+	elseif (level <= 30)
+		proficiency := 9; // Npc's can get to +9
+	endif
+
+	return proficiency;
+endfunction
+
+function rollResistDice(mobile, type)
+	var resist_list := array{};
+
+	if (mobile.npctemplate);
+		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
+		resist_list  := GetConfigStringArray(npcelem, "Resistência");
+	else
+		var chardata := GetObjProperty(mobile, "chardata");
+		resist_list   := chardata.resist_list;
+	endif
+
+	var proficiency_bonus := 0;
+	if (type in resist_list)
+		proficiency_bonus := getProfiencyBonus(mobile);
+	endif
+
+	var dice := RandomDiceRoll("1d20") + proficiency_bonus;
+
+	return dice;
+endfunction
+
+function GetBonusAttr(number)
+	var modifier := Floor((number - 10) / 2);
+	return modifier;
+endfunction
+
+function GetTranslatedAttribute(number)
+	var translated := GetBonusAttr(number);
+	case(cstr(translated))
+		"-5":"-4":
+			translated := "Ameba";
+		"-3":"-2":
+			translated := "Baixissimo";
+		"-1":"0":
+			translated := "Baixo";
+		"1":"2":
+			translated := "Normal";
+		"3":"4":
+			translated := "Médio";
+		"5":"6":
+			translated := "Alto";
+		"7":"8":
+			translated := "Muito Alto";
+		"9":"10":
+			translated := "Heróico";
+	endcase
+
+	return translated;
+endfunction
+
+function HaveSkill(mobile, skill)
+	var skill_list := array{};
+
+	if (mobile.npctemplate);
+		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
+		skill_list  := GetConfigStringArray(npcelem, "Pericia");
+	else
+		var chardata := GetObjProperty(mobile, "chardata");
+		skill_list   := chardata.Skills;
+	endif
+
+	if (!skill_list)
+		return 0; //n tem skill
+	elseif (skill in skill_list)
+		return 1; //Tem Skill
+	endif
+
+	return 0; //n tem skill
+endfunction
 
 function GetSkillIdFromName(name)
 	var cfg := AP_GetAttributesCfgFile();
@@ -172,58 +304,58 @@ function AP_ListAttributesByType(type:="")
 	return data_elem.GetProp(type);
 endfunction
 
-function Wait(who, segundos)
-	if ( GetObjProperty(who, "#IsWaiting") > ReadGameClock() )
+function Wait(mobile, segundos)
+	if ( GetObjProperty(mobile, "#IsWaiting") > ReadGameClock() )
 		return 0; // Já está esperando
 	else
-		EraseObjProperty(who, "#IsWaiting");
+		EraseObjProperty(mobile, "#IsWaiting");
 	endif
 
-	var x := who.x;
-	var y := who.y;
-	var hp := AP_GetVital(who, "Hits");
-	SetObjProperty(who, "#IsWaiting", ReadGameClock()+segundos+1);
+	var x := mobile.x;
+	var y := mobile.y;
+	var hp := AP_GetVital(mobile, "Hits");
+	SetObjProperty(mobile, "#IsWaiting", ReadGameClock()+segundos+1);
 	while (segundos)
 		sleep(1);
-		if (x != who.x || y != who.y ||
-		    AP_GetVital(who, "Hits") < hp ||
-		    !CInt(GetObjProperty(who, "#IsWaiting")) ||
-		    who.warmode ||
-		    GetEquipmentByLayer(who, 0x01) ||
-		    GetEquipmentByLayer(who, 0x02)
+		if (x != mobile.x || y != mobile.y ||
+		    AP_GetVital(mobile, "Hits") < hp ||
+		    !CInt(GetObjProperty(mobile, "#IsWaiting")) ||
+		    mobile.warmode ||
+		    GetEquipmentByLayer(mobile, 0x01) ||
+		    GetEquipmentByLayer(mobile, 0x02)
 		   )
-			EraseObjProperty(who, "#IsWaiting");
+			EraseObjProperty(mobile, "#IsWaiting");
 			return 0;
 		endif
 		segundos := segundos - 1;
 	endwhile
 
-	EraseObjProperty(who, "#IsWaiting");
+	EraseObjProperty(mobile, "#IsWaiting");
 
 	return 1;
 endfunction
 
-function maolivre(who, qtd, checkmount := 1)
-	var rightHand := GetEquipmentByLayer(who, 0x01);
-	var leftHand := GetEquipmentByLayer(who, 0x02);
+function maolivre(mobile, qtd, checkmount := 1)
+	var rightHand := GetEquipmentByLayer(mobile, 0x01);
+	var leftHand := GetEquipmentByLayer(mobile, 0x02);
 
 	if (qtd == 1)
 		if (rightHand && leftHand)
-			SendSysMessage(who, "Voce precisa de uma mao livre.");
+			SendSysMessage(mobile, "Voce precisa de uma mao livre.");
 	    		return 0;
 		endif
 	elseif (qtd == 2)
 		if (rightHand || leftHand)
-			SendSysMessage(who, "Voce precisa das duas maos livres.");
+			SendSysMessage(mobile, "Voce precisa das duas maos livres.");
 	    		return 0;
 		endif
 	endif
 
 	if (checkmount)
-		var mounted := GetEquipmentByLayer(who, 0x19);
+		var mounted := GetEquipmentByLayer(mobile, 0x19);
 
 		if (mounted)
-			SendSysMessage(who, "Voce nao pode fazer isto montado.");
+			SendSysMessage(mobile, "Voce nao pode fazer isto montado.");
 			return 0;
 		endif
 	endif
@@ -231,32 +363,19 @@ function maolivre(who, qtd, checkmount := 1)
 	return 1;
 endfunction
 
-function GetHP(who)
-	var hp;
-	if (!getObjProperty(who, "lastpossessedserial"))
-		hp := CInt(AP_GetTrueStat(who, "Constitution")) * 2;
-	else
-		hp := CInt(AP_GetTrueStat(who, "Strength")) * 2;
+function GetHP(mobile)
+	var cons     := CInt(AP_GetTrueStat(mobile, "Constitution"));
+	var attr_mod := GetBonusAttr(cons);
+	var chardata := GetObjProperty(mobile, "chardata");
+	var hp := 0;
+	if (chardata != error && chardata.hitpoints)
+		hp := chardata.hitpoints;
 	endif
 
-	hp := hp + Cint(GetObjProperty(who, "hitsmod")) + Cint(GetObjProperty(who, "#hitsmod"));
-
+	hp += cint(attr_mod + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+	if (hp < 1) 
+		hp := 1;
+	endif
+                      
 	return hp;
-endfunction
-
-function GetPH(who)
-	var ph;
-	var classe := GetObjProperty(who, "classe");
-
-	if ( (classe == "Armas"))
-		ph := 90;
-	elseif (classe == "Subterfugio")
-		ph := 75;
-	else
-		ph := 50;
-	endif
-
-	ph := ph + Cint(GetObjProperty(who, "phmod")) + Cint(GetObjProperty(who, "#phmod")) +  CInt(AP_GetTrueStat(who, "Constitution"))/2;
-
-	return ph;
 endfunction

@@ -1,55 +1,126 @@
 use uo;
-var who;
-var what;
+use os;
 
-program PopUpMenu( font, end )
-    who := font; what := end;
-    var menu := array{};
+const GREEN_COLOR  := 0xff1;
+const YELLOW_COLOR := 0xffff2a;
 
-    if (what.isa(POLCLASS_ITEM))
-        MenuPlayerToItem(menu);
+program PopUpMenu( who, what )
+    var entries;
+    if (what.isA(POLCLASS_ITEM))
+        entries := MenuPlayerToItem(who, what);
+    elseif (what.isa(POLCLASS_MOBILE) && what.npctemplate)
+        return;
     elseif (who.cmdlevel >= 1 && what.isa(POLCLASS_MOBILE))
-        MenuGmToPlayer(menu);
-    elseif (what.isa(POLCLASS_MOBILE))
-        MenuPlayerToPlayer(menu);
+        entries := MenuGmToPlayer(who, what);
+        var menuplayer := MenuPlayerToPlayer(who, what);
+        foreach menu in (menuplayer.Keys())
+            entries[menu] := menuplayer[menu];
+        endforeach
+    elseif (what.isa(POLCLASS_MOBILE) && who != what)
+        entries := MenuPlayerToPlayer(who, what);
+    elseif (what == who)
+        entries := struct{ "ficharp" := 3002023 };
+        if (GetObjProperty(who, "corda"))
+            entries.+soltar := struct{ "cliloc" := 3002026, color := YELLOW_COLOR };
+        endif
     else
         return;
     endif
-    
+
+    if (entries.Keys() < 1)
+        return;
+    endif
+
+    var menu := array{};
+    var i := 1;
+    foreach entry in (entries.Keys())
+        menu[i] := entries[entry];
+        i+=1;
+        sleepms(1);
+    endforeach
+
     var input := SendPopUpMenu( who, what, menu );
     if (!input)
+       return;
+    endif
+
+    input := entries.Keys()[input];
+    if (input == "info")
+       return;
+    elseif (input == "ficharp")
+        Start_Script(":fls_core:commands/player/ficharp", { who, what });
+        return;
+    elseif (input == "profile")
+        start_script(":charprofile:parseCharProfile", { who, "0", what });
+        return;
+    elseif (input == "arrastar")
+        Start_Script(":tn:commands/player/arrastar", { who, what });
+    elseif (input == "unmask")
+        return;
+    elseif (input == "soltar")
+        Start_Script(":fls_core:commands/player/soltar", who);
+        return;
+    elseif (input == "revistar")
+        Start_Script(":commands:/player/revistar", { who, what });
+        return;
+    elseif (input == "flip")
+        Start_Script(":commands:/player/flip", { who, what });
+       return;
+    elseif (input == "fix")
+        Start_Script(":tn:commands/player/fix", { who, what });
+        return;
+    elseif (input == "erguer")
         return;
     endif
 
-    if (who.cmdlevel >= 1)
-        DoGameMaster(input);
-    else
-        DoPlayer(input);
-    endif
+    return 1;
 endprogram
 
-function MenuPlayerToPlayer(byref menu)
+function MenuPlayerToPlayer(who, what)
+    var entries := struct{
+        "profile"   := struct{ cliloc := 3002021 }
+    };
 
+    if (Distance(who, what) <= 2)
+        entries.+revistar := 3002028;
+    endif
+
+    var disguisable := GetObjProperty(who, "#can_unmask");
+    if (disguisable == what.serial && GetObjProperty(what, "disfarce"))
+        entries.+unmask := struct{ cliloc := 1078276, color := YELLOW_COLOR };
+    endif
+
+    if (GetObjProperty(what, "corda") && !GetObjProperty(what, "algemado"))
+        "arrastar"  := struct{ cliloc := 3002013, color := YELLOW_COLOR };
+    endif
+
+    return entries;
 endfunction
 
-function MenuGmToPlayer(byref menu)
-    menu[10] := 3000484; //Info
-    menu[20] := struct{ cliloc := 3000490 }; //Spy
-    menu[30] := struct{ cliloc := 3000480 }; //Teste
-    menu[40] := struct{ cliloc := 3000481 }; //Teste
-    menu[50] := struct{ cliloc := 3000482 }; //Teste
-    menu[60] := struct{ cliloc := 3000485 }; //FichaRP
-    menu[70] := struct{ cliloc := 3000501, color := 0x1f };
+function MenuGmToPlayer(who, what)
+    return struct{
+        "info"     := 3002022, 
+        "ficharp"  := 3002023,
+        "rolldice" := 3002025
+    };
 endfunction
 
-function MenuPlayerToItem(byref menu)
-    // code...
-endfunction
+function MenuPlayerToItem(who, what)
+    var entries := struct{};
 
-function DoPlayer(input)
+    if ((what.x >= 142)) //hack to check if not in bag or held
+        if (Distance(who, what) <= 2 && GetObjProperty(what, "canfix"))
+            entries.+fix := 3002011;
+        endif
 
-endfunction
+        if (what.movable != 0)
+            entries.+flip := 3002012;
+        endif
+    endif
 
-function DoGameMaster(input)
+    if (what.isA(POLCLASS_CORPSE) && CoordinateDistance(what.x, what.y, who.x, who.y) <= 2)
+        entries.+arrastar := struct{ cliloc := 3002013};
+    endif
 
+    return entries;
 endfunction

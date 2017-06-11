@@ -44,7 +44,7 @@ program core_npcDeath(params)
 	if (getObjProperty(corpse, "owner")) //se for tamed, atualiza a prop tamedpets do master
 		var masterserial := getObjProperty(corpse, "owner");
 		var master := SystemFindObjectBySerial(masterserial);
-		if(!getobjproperty(corpse, "Necro"))
+		if(!GetObjProperty(corpse, "Necro"))
 			GetNumPets(master);
 		else
 			var numbersummons := Cint(GetObjProperty(master, "NecroSummons"));

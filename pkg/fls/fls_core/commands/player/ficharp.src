@@ -65,7 +65,12 @@ endfunction
 
 program fichaRP(who)
 	var targ;
-	if (who.cmdlevel >= 3)
+	if (TypeOf(who) == "Array")
+		targ := who[2];
+		who := who[1];
+	endif
+
+	if (who.cmdlevel >= 3 && !targ)
 		targ := Target(who);
 	endif
 	

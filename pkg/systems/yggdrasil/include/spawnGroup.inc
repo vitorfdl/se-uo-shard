@@ -23,7 +23,7 @@ function LoadSpawnGroupData()
 endfunction
 
 function ModelMobListData(entry := struct{})
-    if (lower(entry.daytime) != "night" && lower(entry.daytime) != "day" && lower(entry.daytime) != "always")
+    if (lower(entry.daytime) != "night" && lower(entry.daytime) != "day" && lower(entry.daytime) != "new moon" && lower(entry.daytime) != "always")
         entry.+daytime := "always";
     endif
 
@@ -36,6 +36,10 @@ function ModelMobListData(entry := struct{})
     endif
 
     if (cint(entry.power) != 1 && cint(entry.power) != 2 && cint(entry.power) != 3) 
+        entry.+power := 1;
+    endif
+
+    if (lower(entry.type) != "melee" && lower(entry.type) != "ranged" && lower(entry.type) != "boss" && lower(entry.type) != "spellcaster") 
         entry.+power := 1;
     endif
 
@@ -65,6 +69,7 @@ endfunction
 function GetSpawnGroupData(name, create := 1)
     var df   := loadSpawnGroupData();
     var elem := DFFindElement(df, name, create);
+
     if (!elem)
         return 0;
     endif

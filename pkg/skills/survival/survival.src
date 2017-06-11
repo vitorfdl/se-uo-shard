@@ -9,7 +9,7 @@ use cfgfile;
 include "include/client";
 include ":attributes:attributes";
 include ":charactercreation:habilidades";
-
+include ":fls_core:fls_characters";
 
 include "include/say";
 include ":itemutils:canAccess";
@@ -452,7 +452,7 @@ endfunction
 
 function GetMobDesc(who, mobile)
 
-if ((mobile.graphic == 400) || (mobile.graphic == 401))
+if (CheckGender(who))
 	var itemonmobile := ListEquippedItems( mobile );
 	foreach item in itemonmobile
 		if (item.graphic == 5903) 

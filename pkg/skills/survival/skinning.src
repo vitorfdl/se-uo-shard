@@ -14,6 +14,7 @@ include ":blood:blood";
 include ":survival:skinning";
 include ":ghaia:ghaiaUtil";
 include ":gumps:yesno";
+include ":fls_core:fls_characters";
 
 
 program skinning(parms)
@@ -45,8 +46,6 @@ program skinning(parms)
 		SendSysMessage(who, "Voce nao esta perto o bastante do alvo.");
 		return;
 	endif
-	var c_type := cadaver.corpsetype;
-	SendSysMessage(who,cadaver.corpsetype);
 	detach();
 	if(GetObjProperty(cadaver, "cut") == "1")
 		SendSysMessage( who, "Voce nao pode pegar mais coisas desse corpo." );
@@ -78,14 +77,14 @@ program skinning(parms)
 		endif
 		//DesmembreCorpse(cadaver);
 	
-	elseif (((c_type == 400) || (c_type == 401)) && (GetObjProperty(cadaver, "morto")!=1))
+	elseif ((CheckGender(cadaver)) && (GetObjProperty(cadaver, "morto")!=1))
 				DesmembreCorpse(cadaver);
 				PrintTextAbove( who, "*Corta a cabeca*", font := _DEFAULT_TEXT_FONT, color := _DEFAULT_TEXT_COLOR, journal_print := JOURNAL_PRINT_NAME);	
 				SetObjProperty(cadaver, "morto",1);
 	else
 		PrintText(who, "*escalpelando "+cadaver.desc+"*");
 		SetObjProperty(cadaver, "morto",1);
-		if(c_type == 223)
+		if(cadaver.corpsetype == 223)
 			CreateItemInContainer(cadaver, 0x9f1, 2);
 			SendSysMessage(who, "Voce colocou os itens no corpo.");
 			MakeBleed(cadaver);

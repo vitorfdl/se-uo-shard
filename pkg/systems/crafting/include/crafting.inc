@@ -383,19 +383,19 @@ function CraftExceptional(who, theitem, craft_skill)
 						return;
 					endif
 					
-					//pra pegar o habcategory
+					//pra pegar o DamageType
 					var cfg:=ReadConfigFile(":combat:itemdesc");
 					var elem := FindConfigElem(cfg, theitem.objtype);
 					
 					//Compara material e o tipo de arma, dá return se não passar em nenhum
-					if ("Arcos" in special_props.equipamentos && elem.habcategory == "Arco" )
-					elseif (("Balestras" in special_props.equipamentos || "Bestas" in special_props.equipamentos) && lower(elem.habcategory) == "balestra")
-					elseif ("1h Corte" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat1h" && lower(elem.habcategory) == "corte" )
-					elseif ("1h Contusão" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat1h" && lower(elem.habcategory) == "contusão" )
-					elseif ("1h Perfuração" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat1h" && lower(elem.habcategory) == "perfuração" )
-					elseif ("2h Corte" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat2h" && lower(elem.habcategory) == "corte" )
-					elseif ("2h Contusão" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat2h" && lower(elem.habcategory) == "contusão" )
-					elseif ("2h Perfuração" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat2h" && lower(elem.habcategory) == "perfuração" )
+					if ("Arcos" in special_props.equipamentos && elem.DamageType == "Arco" )
+					elseif (("Balestras" in special_props.equipamentos || "Bestas" in special_props.equipamentos) && lower(elem.DamageType) == "balestra")
+					elseif ("1h Corte" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat1h" && lower(elem.DamageType) == "corte" )
+					elseif ("1h Concussão" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat1h" && lower(elem.DamageType) == "Concussão" )
+					elseif ("1h Perfuração" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat1h" && lower(elem.DamageType) == "perfuração" )
+					elseif ("2h Corte" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat2h" && lower(elem.DamageType) == "corte" )
+					elseif ("2h Concussão" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat2h" && lower(elem.DamageType) == "Concussão" )
+					elseif ("2h Perfuração" in special_props.equipamentos && lower(theitem.attribute) == "meleecombat2h" && lower(elem.DamageType) == "perfuração" )
 					else
 						SendSysMessageEx(who, "Material invalido com este objeto [Armas].", SSM_FAIL);
 						return;
@@ -625,8 +625,6 @@ endfunction
 // (none) if none sent. Who is who the info is to be sent to.
 // All delays are in seconds.
 function playCraftWork(who, craftSound, loops:=0, delay:=2, craftAction:=0, fastcraft := 0)
-
-
   if(loops)
     for i := 1 to loops
       if(craftAction)
@@ -643,9 +641,8 @@ function playCraftWork(who, craftSound, loops:=0, delay:=2, craftAction:=0, fast
 	endif
     sleep(delay);
   endif
-
+  
   return;
-
 endfunction
 
 function CheckAnvil(who)

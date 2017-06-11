@@ -25,7 +25,7 @@ program doubleattack(params)
 	var ammo := GetObjProperty(attacker.weapon, "ammo");
 
 	if (ConsumeSubstance(attacker.backpack, ammo, 3) )
-		var elem := GetWpnCfgInfo(attacker, attacker.weapon);
+		var elem := GetItemCFGInfo(attacker, attacker.weapon);
 		PlayMovingEffectXYZHued(attacker, defender, elem.ProjectileAnim, 10, 10, 0);
 		sleepms(500);
 		 PlayMovingEffectXYZHued(attacker, defender, elem.ProjectileAnim, 10, 10, 0);
@@ -38,14 +38,9 @@ program doubleattack(params)
 	
        basedamage := basedamage*2;
 
-
-       var dmgList := dictionary;
-       dmgList := getNewDamageList(attacker);
-	var total := CalculateTotalDamage(defender, basedamage, attacker, dmgList);
-	ApplyDamage(defender, total);
-//       var total := ApplyDamageWra(defender, basedamage, dmgList);
-       MostraDano(attacker, defender, total);
-       MakeBleed(defender);
+		ApplyDamage(defender, basedamage);
+		MostraDano(attacker, defender, basedamage);
+		MakeBleed(defender);
 
 
 endprogram

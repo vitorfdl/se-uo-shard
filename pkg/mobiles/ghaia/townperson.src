@@ -129,6 +129,6 @@ function SetupNewQuest(me)
 endfunction
 
 
-function look_around()
+function lookAround()
   return 0;
 endfunction

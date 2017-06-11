@@ -35,7 +35,6 @@ program GumpTest(who)
 	
 	//Buttons
 	GFTextLine(gump, 25, 25, 1153, "Standard Buttons");
-    GFToolTip(gump, "1042971");
 	GFAddButton(gump, 25, 50, 2117, 2118, GF_PAGE_BTN, 10);
 	GFTextLine(gump, 45, 47, 1153, "Page");
 	temp := GFAddButton(gump, 25, 70, 2117, 2118, GF_DUMMY_BTN);

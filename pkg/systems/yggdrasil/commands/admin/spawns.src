@@ -10,6 +10,7 @@ include ":gumps:gumps_ex";
 include ":gumps:yesno";
 include ":tn:tngumps";
 include "include/say";
+include ":unicos:item_template";
 
 //Main Menu
 const GF_ADD_BTN        := 900;
@@ -17,15 +18,17 @@ const GF_DEL_BTN        := 901;
 const GF_SELECTELEM_BTN := 100;
 
 //SpotGroup Config Menu
-const GF_GROUP_ACTIVE_BTN        := 910;
+const GF_GROUP_ACTIVE_SWITCH        := 915;
 const GF_GROUP_ADDSPOT_BTN       := 911;
 const GF_GROUP_REMSPOT_BTN       := 912;
 const GF_GROUP_ADDSPAWNGROUP_BTN := 913;
 const GF_GROUP_REMSPAWNGROUP_BTN := 914;
 
+
 const GF_SELECTSPOT_BTN            := 300;
 const GF_SELECTSPAWNGROUP_BTN      := 350;
 const GF_SPOT_SELECTSPAWNPOINT_BTN := 400;
+const GF_SPOT_SELECTTREASURE_BTN   := 420;
 
 const GF_SPOT_TERASURE_BTN      := 450;
 const GF_SPAWNGROUP_ALLIES_BTN  := 500;
@@ -33,24 +36,38 @@ const GF_SPAWNGROUP_ENEMIES_BTN := 510;
 
 //Spot Menu
 var spot_name, spot_timeInterval, spot_location, spot_eventEntry; 
-const GF_SPOT_ACTIVE_BTN        := 920;
+const GF_SPOT_ACTIVE_SWITCH     := 920;
 const GF_SPOT_ADDSPAWNPOINT_BTN := 921;
 const GF_SPOT_REMSPAWNPOINT_BTN := 922;
 const GF_SPOT_TELEPORT_BTN      := 923;
 const GF_SPOT_APPLY_BTN         := 924;
+const GF_SPOT_ADDTREASURE_BTN   := 925;
+const GF_SPOT_REMTREASURE_BTN   := 926;
 
 //SpawnPoint Menu
-var spawnpoint_name, spawnpoint_mobnumber;
-//Treasure Menu
+var spawnpoint_name, spawnpoint_mobnumber, spawnpoint_range, spawnpoint_level;
+const GF_SPAWN_LEVEL_BTN    := 930;
+const GF_SPAWN_TELEPORT_BTN := 931;
 
-//SpawnGroup menu
-const GF_SPAWNGROUP_INFLUENCE_BTN := 940;
+//Treasure Menu
+var treasure_name;
+const GF_TREASURE_PROTECTED_SWITCH := 1002;
+const GF_TREASURE_ACTIVE_SWITCH    := 1003;
+const GF_TREASURE_TRAP_SWITCH      := 1004;
+const GF_TREASURE_TARGET_BTN       := 1005;
+const GF_TREASURE_ADDITEM_BTN      := 1006;
+const GF_TREASURE_REMITEM_BTN      := 1007;
+const GF_TREASURE_TELEPORT_BTN     := 1000;
+const GF_TREASURE_LEVEL_BTN        := 1001;
+const GF_TREASURE_ITEM_BTN         := 1010;
+
 
 //Basic
 var selected_group      := ""; //Name of the Elem
 var selected_spawngroup := ""; //Name of the spawngroup
 var selected_spot       := 0x0; //Serial Number
 var selected_spawnpoint := 0x0; //Serial Number
+var selected_treasure   := 0x0; //Serial Number
 var spotgroups;
 var gumpid := 0x1F5;
 
@@ -70,12 +87,56 @@ program spotGroups(params)
         selected_spawngroup := params.spawngroup; //Name of the spawngroup
         selected_spot       := params.selected_spot; //Serial Number
         selected_spawnpoint := params.selected_spawnpoint; //Serial Number
+        selected_treasure   := params.selected_treasure; //Serial Number
     endif
 
     var closed := 0;
     while (closed != 1)
         var gump := ConstructGump();
         var input := GFSendGump(who, gump);
+
+        if (selected_group)
+            var active_switch := GFExtractData(input, GF_GROUP_ACTIVE_SWITCH);
+            if (!active_switch || active_switch == error)
+                active_switch := 0;
+            endif
+            SetSpotGroupData(selected_group, struct{"active":=active_switch});
+        endif
+
+        if (selected_spawnpoint)
+            var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
+            var new_spawnpoint := struct{
+                "name"       := GFExtractData(input, spawnpoint_name),
+                "mob_number" := GFExtractData(input, spawnpoint_mobnumber),
+                "range"      := GFExtractData(input, spawnpoint_range)
+            };
+            spawnpoint.SetProps(new_spawnpoint);
+        endif
+
+        if (selected_spot)
+            var active_switch := GFExtractData(input, GF_SPOT_ACTIVE_SWITCH);
+            if (!active_switch || active_switch == error)
+                active_switch := 0;
+            endif
+            var spot := SystemFindObjectBySerial(selected_spot);
+            var new_spot := struct{
+                "active" := active_switch,
+                "name" := GFExtractData(input, spot_name),
+                "eventEntry" := GFExtractData(input, spot_eventEntry),
+                "timeInterval" := GFExtractData(input, spot_timeInterval)
+            };
+            spot.SetProps(new_spot);
+        endif
+
+        if (selected_treasure)
+            var spot := SystemFindObjectBySerial(selected_spot);
+            var data := spot.GetProps();
+            var treasure := FindElemInArray(data.treasures, struct{"serial":=selected_treasure});
+            treasure.protected := GFExtractData(input, GF_TREASURE_PROTECTED_SWITCH);
+            treasure.active    := GFExtractData(input, GF_TREASURE_ACTIVE_SWITCH);
+            treasure.trapped   := GFExtractData(input, GF_TREASURE_TRAP_SWITCH);
+            spot.UpdateTreasure(selected_treasure, treasure);
+        endif
 
         if ((input[0] >= 900 && input[0] < 910) || (input[0] >= 50 && input[0] < 300))
             DoGroupList(who, input[0]);
@@ -84,15 +145,13 @@ program spotGroups(params)
         elseif ((input[0] >= 920 && input[0] < 930) || (input[0] >= 400 && input[0] < 450))
             DoSpotList(who, input[0]);
         elseif (input[0] >= 930 && input[0] < 940)
-            // DoSpawnGroupList(who, input[0]);
-        elseif (input[0] >= 940 && input[0] < 950)
+            DoSpawnPointList(who, input[0]);
+        elseif (input[0] >= 1000 && input[0] < 1040)
+            DoTreasureList(who, input[0]);
         else
             closed := 1;
         endif
 
-        if (selected_group)
-            SetSpotGroupData(selected_group, struct{"active":=input[GF_GROUP_ACTIVE_BTN]});
-        endif
         sleepms(2);
     endwhile
 endprogram
@@ -119,6 +178,10 @@ function ConstructGump()
         ConstructSpawnPointConfig(gump);
     endif
 
+    if (selected_treasure)
+        ConstructTreasureConfig(gump);
+    endif
+
     ConstructGroupList(gump);
 
     GFoptimizeGump(gump);
@@ -142,10 +205,12 @@ function SetSelectGroupButton(select, type)
         "spawngroup":
             selected_spawngroup := select;
             selected_spawnpoint := 0;
+            selected_treasure   := 0;
             selected_spot       := 0;
             break;
         "spot":
             selected_spawngroup := 0;
+            selected_treasure   := 0;
             selected_spawnpoint := 0;
             selected_spot       := select;
             break;
@@ -201,6 +266,7 @@ function DoSelectedGroupList(byref who, input)
             var respost := YesNo(who, "Deseja deletar o Spot do mundo?", "Sim", "Não");
             if (respost)
                 var spot := SystemFindObjectBySerial(selected_spot);
+                SetObjProperty(spot, "GM_FLAG", 1);
                 DestroyItem(spot);
             endif
             SetSelectGroupButton(0, "spot");
@@ -246,11 +312,157 @@ function DoSpotList(who, input)
             spot.RemoveSpawnPoint(selected_spawnpoint);
             selected_spawnpoint := 0;
             break;
+        GF_SPOT_ADDTREASURE_BTN:
+            var container := Target(who);
+            if (!container.isA(POLCLASS_CONTAINER))
+                SendSysMessageEx(who, "You must select a container");
+                break;
+            endif
+            var new__name := RequestGump(who, "Nome do novo Treasure", "Obrigatório um nome ainda não usado neste spot.", "", CANCEL_BTN_ON);
+            var new_treasure := struct{
+                "serial" := container.serial,
+                "name" := new__name
+            };
+            spot.AddTreasure(new_treasure);
+            break;
+        GF_SPOT_REMTREASURE_BTN:
+            spot.RemoveTreasure(selected_treasure);
+            selected_treasure := 0;
+            break;
+        GF_SPOT_TELEPORT_BTN:
+            MoveObjectToLocation( who, spot.x, spot.y, spot.z, spot.realm, MOVEOBJECT_FORCELOCATION );
+            break;
         default:
+            if (input[0] >= GF_SPOT_SELECTTREASURE_BTN && input[0] < GF_SPOT_SELECTTREASURE_BTN+10)
+                var select := input[0]-GF_SPOT_SELECTTREASURE_BTN;
+                var treasure := data.treasures[select];
+                selected_treasure := treasure.serial;
+                selected_spawnpoint := 0;
+                break;
+            endif
             var select := input[0]-GF_SPOT_SELECTSPAWNPOINT_BTN;
             var spawnpoint_serie := data.spawnpoints[select];
             selected_spawnpoint  := spawnpoint_serie;
+            selected_treasure := 0;
             break;
+    endcase
+endfunction
+
+function DoSpawnPointList(who, input)
+    var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
+    var data       := spawnpoint.GetProps();
+    case(input[0])
+        GF_SPAWN_LEVEL_BTN:
+            var spawnpoint_level := cint(RadioGump(who, 150, 165, "Level do Spawn:", array{"1", "2", "3"}));
+            break;
+        GF_SPAWN_TELEPORT_BTN:
+            MoveObjectToLocation( who, spawnpoint.x, spawnpoint.y, spawnpoint.z, spawnpoint.realm, MOVEOBJECT_FORCELOCATION );
+            break;
+    endcase
+endfunction
+
+function DoTreasureList(who, input)
+    var spot := SystemFindObjectBySerial(selected_spot);
+    var data := spot.GetProps();
+    var treasure := FindElemInArray(data.treasures, struct{"serial":=selected_treasure});
+    var treasure_obj := SystemFindObjectBySerial(selected_treasure);
+    case(input[0])
+        GF_TREASURE_TELEPORT_BTN:
+            MoveObjectToLocation( who, treasure_obj.x, treasure_obj.y, treasure_obj.z, treasure_obj.realm, MOVEOBJECT_FORCELOCATION );
+            break;
+        GF_TREASURE_TARGET_BTN:
+            var container := Target(who);
+            if (!container.isA(POLCLASS_CONTAINER))
+                SendSysMessageEx(who, "You must select a container");
+                break;
+            endif
+            treasure.serial := container.serial;
+            var result := spot.UpdateTreasure(treasure_obj.serial, treasure);
+            if (result)
+                SendSysMessageEx(who, "Container updated!");
+                selected_treasure := treasure.serial;
+            else
+                SendSysMessageEx(who, "Error Ocurred!");
+            endif
+            break;
+        GF_TREASURE_TRAP_SWITCH: 
+            if (treasure.trapped == 1)
+                treasure.trapped := 0;
+            else
+                treasure.trapped := 1;
+            endif
+            spot.UpdateTreasure(selected_treasure, treasure);
+            break;
+        GF_TREASURE_PROTECTED_SWITCH:
+            if (treasure.protected == 1)
+                treasure.protected := 0;
+            else
+                treasure.protected := 1;
+            endif
+            spot.UpdateTreasure(selected_treasure, treasure);
+            break;
+        GF_TREASURE_ACTIVE_SWITCH:
+            if (treasure.active == 1)
+                treasure.active := 0;
+            else
+                treasure.active := 1;
+            endif
+            spot.UpdateTreasure(selected_treasure, treasure);
+            break;
+        GF_TREASURE_LEVEL_BTN: 
+            treasure.level := cint(RadioGump(who, 150, 165, "Level da Fechadura:", array{"1", "2", "3", "4", "5"}));
+            spot.UpdateTreasure(selected_treasure, treasure);
+            break;
+        GF_TREASURE_ADDITEM_BTN:
+            var t_option := RadioGump(who, 150, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
+            case (t_option)
+                "Adicionar lista":
+                    var list := RequestGump(who, "Entre com o nome da lista", "", "");
+                    var loot := struct{
+                        "by_group":= list
+                    };
+                    treasure.loots.append(loot);
+                    break;
+                "Adicionar item":
+                        SendSysMessage(who, "Escolha o item do loot.");
+                        var targ := Target(who);
+                        if (targ)
+                            var lootinfo := struct{};
+                            lootinfo.+chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
+                            lootinfo.+item := CreateItemTemplate(targ);				
+                            treasure.loots.append(lootinfo);
+                        endif
+                    break;
+                "Cancelar":
+                    break;
+            endcase
+            spot.UpdateTreasure(selected_treasure, treasure);
+            break;
+        default: 
+            var index := input[0]-GF_TREASURE_ITEM_BTN;
+
+            var available_opts := array{};
+            if (!treasure.loots[index].by_group)
+                available_opts.append("Criar");
+                available_opts.append("Alterar Chance");
+            endif
+            available_opts.append("Deletar");
+            available_opts.append("Cancelar");
+
+            var opt := RadioGump(who, 180, 120+(available_opts.Size()*18), "Editar item", available_opts);			
+			if (opt == "Deletar")
+				treasure.loots.Erase(index);
+				SendSysMEssageEx(who, "O item foi removido.", SSM_INFO);
+			elseif ( opt == "Criar" )
+				var retitem := CreateItemInBackpackFromTemplate(who, treasure.loots[index].item);
+				if (!retitem)
+					SendSysMessageEx(who, "erro: " + retitem);
+				endif
+				SendSysMessageEx(who, "Voce criou o item na sua mochila."); 
+			elseif (opt == "Alterar Chance")
+				treasure.loots[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
+            endif 
+            spot.UpdateTreasure(selected_treasure, treasure);
     endcase
 endfunction
 
@@ -301,7 +513,7 @@ function ConstructGroupConfig(byref gump)
     GFTextLine(gump, 202, 28, 555, "Configurações do Grupo");
 
     GFTextLine(gump, 210, 50, 1153, "Ativado:");
-    GFCheckBox(gump, 210+50, 50+5, 2360, 2361, group_data.active, GF_GROUP_ACTIVE_BTN);
+    GFCheckBox(gump, 210+50, 50+5, 2360, 2361, group_data.active, GF_GROUP_ACTIVE_SWITCH);
 
 
     //Create Spots Menu
@@ -382,8 +594,11 @@ function ConstructSpotConfig(byref gump)
     var spot := SystemFindObjectBySerial(selected_spot);
     var data := spot.GetProps();
     var spawpoint_list := data.spawnpoints;
+    var treasure_list  := data.treasures;
+
+    var form_size   := spawpoint_list.Size() + treasure_list.Size();
     GFPage(gump, 0);
-    GFResizePic(gump, 385, 125, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 80+(spawpoint_list.Size()*18)); //Spawnpoints Backgroud
+    GFResizePic(gump, 385, 125, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 130+(form_size*18)); //Spawnpoints Backgroud
 
     GFResizePic(gump, 385, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 130);
     GFTextMid(gump, 390, 28, 260, 555, "Spot Configuration");
@@ -395,7 +610,7 @@ function ConstructSpotConfig(byref gump)
     spot_name := GFTextEntry(gump, sx+40, sy, 140, 18, 2103, spot.name);
 
     GFTextLine(gump, sx, sy+18, 1153, "Ativado:");
-    GFCheckBox(gump, sx+50, sy+18+5, 2360, 2361, data.active, GF_SPOT_ACTIVE_BTN);
+    GFCheckBox(gump, sx+50, sy+18+5, 2360, 2361, data.active, GF_SPOT_ACTIVE_SWITCH);
 
     GFTextLine(gump, sx+80, sy+18, 1153, "Intervalo:");
     spot_timeInterval := GFTextEntry(gump, sx+135, sy+18, 30, 18, 2103, data.TimeInterval);
@@ -403,16 +618,17 @@ function ConstructSpotConfig(byref gump)
     GFTextLine(gump, sx, sy+18+18, 1153, "Dynamic Event:");
     spot_eventEntry := GFTextEntry(gump, sx+90, sy+18+18, 140, 18, 2103, data.eventEntry);
 
-    GFTextLine(gump, sx, sy+36+18, 1153, "Location:");
-    GFTextLine(gump, sx+65, sy+36+18, 2103, "{}, {}, {}".format(spot.x, spot.y, spot.z));
-    GFAddButton(gump, sx+52, sy+36+24, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_TELEPORT_BTN);
+    GFTextLine(gump, sx, sy+54, 1153, "Location:");
+    GFTextLine(gump, sx+65, sy+54, 2103, "{}, {}, {}".format(spot.x, spot.y, spot.z));
+    GFAddButton(gump, sx+52, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_TELEPORT_BTN);
 
     //SpawnPoints Menu
     GFTextMid(gump, 390, 150, 260, 555, "SpawnPoint List");
 
     sx += 15;
+    var base_y := 172;
     for i:=0 to spawpoint_list.Size();
-        var y := (172+(18*i));
+        var y := (base_y+(18*i));
         var n := i+1;
         if (spawpoint_list[n])
             var spawnpoint := SystemFindObjectBySerial(spawpoint_list[n]);
@@ -441,17 +657,54 @@ function ConstructSpotConfig(byref gump)
             endif
         endif
 
+        if (i == spawpoint_list.Size())
+            base_y := y+32; //start Y for the next menu
+        endif
+    endfor
+
+    //Create Treasure Menu
+    GFTextMid(gump, 380, base_y, 260, 555, "Treasure List");
+    base_y += 18;
+    for i:=0 to treasure_list.Size();
+        var y := (base_y+(18*i));
+        var n := i+1;
+
+        if (treasure_list[n])
+            var treasure := treasure_list[n];
+            //Start Button Change Color and Icon
+            var start_button := 0x2622;
+            var color := 1153;
+            if (treasure_list[n].serial == selected_treasure)
+                start_button := 0x2623;
+                color := 2103;
+            endif
+
+            if (!treasure)
+                color := 337;
+            endif
+            //endbutton
+
+            GFTextLine(gump, sx, y, color, treasure.name);
+            GFAddButton(gump, sx-20, y+2, start_button, 0x2623, GF_CLOSE_BTN, GF_SPOT_SELECTTREASURE_BTN+n);
+        else
+            if (treasure_list.Size() <= 10)
+                GFTextLine(gump, sx+30, y, 1153, "Adicionar");
+                GFAddButton(gump, sx+30-14, y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_SPOT_ADDTREASURE_BTN);
+            endif
+            if (selected_treasure)
+                GFTextLine(gump, sx+110, y, 1153, "Remover");
+                GFAddButton(gump, sx+110-14, y+5, 0x938, 0x938, GF_CLOSE_BTN, GF_SPOT_REMTREASURE_BTN);
+            endif
+        endif
     endfor
 endfunction
 
 function ConstructSpawnPointConfig(byref gump)
-    var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
-    var data := spawnpoint.GetProps();
-    Print(data);
-    var treasure_list := data.treasures;
+    var spawnpoint    := SystemFindObjectBySerial(selected_spawnpoint);
+    var data          := spawnpoint.GetProps();
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 160);
+    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 130);
     GFTextMid(gump, basex, 28, 260, 555, "SpawnPoint Configuration");
 
     var sx := basex+30;
@@ -468,12 +721,66 @@ function ConstructSpawnPointConfig(byref gump)
     spawnpoint_mobnumber := GFTextEntry(gump, sx+145, sy+18, 30, 18, 2103, data.mob_number);
 
     GFTextLine(gump, sx, sy+18+18, 1153, "Range Spawn:");
-    spawnpoint_mobnumber := GFTextEntry(gump, sx+80, sy+18+18, 30, 18, 2103, data.range);
+    spawnpoint_range := GFTextEntry(gump, sx+80, sy+18+18, 30, 18, 2103, data.range);
 
-    GFTextLine(gump, sx, sy+36+18, 1153, "Location:");
-    GFTextLine(gump, sx+65, sy+36+18, 2103, "{}, {}, {}".format(spawnpoint.x, spawnpoint.y, spawnpoint.z));
-    GFAddButton(gump, sx+52, sy+36+24, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_TELEPORT_BTN);
+    GFTextLine(gump, sx, sy+54, 1153, "Location:");
+    GFTextLine(gump, sx+65, sy+54, 2103, "{}, {}, {}".format(spawnpoint.x, spawnpoint.y, spawnpoint.z));
+    GFAddButton(gump, sx+52, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TELEPORT_BTN);
 
+endfunction
+
+function ConstructTreasureConfig(byref gump)
+    var spot     := SystemFindObjectBySerial(selected_spot);
+    var data     := spot.GetProps();
+    var treasure := FindElemInArray(data.treasures, struct{"serial":=selected_treasure});
+    var treasure_cont := SystemFindObjectBySerial(treasure.serial);
+
+    var basex := 590;
+    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 180+(treasure.loots.Size()*18));
+    GFTextMid(gump, basex-10, 28, 260, 555, "Treasure Configuration");
+
+    var sx := basex+30;
+    var sy := 45;
+
+    GFTextLine(gump, sx, sy, 1153, "Nome:");
+    treasure_name := GFTextEntry(gump, sx+40, sy, 140, 18, 2103, treasure.name);
+
+    GFTextLine(gump, sx, sy+18, 1153, "Ativado:");
+    GFCheckBox(gump, sx+50, sy+18+5, 2360, 2361, treasure.active, GF_TREASURE_ACTIVE_SWITCH);
+
+    GFTextLine(gump, sx+80, sy+18, 1153, "Target:");
+    GFAddButton(gump, sx+130, sy+18+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_TARGET_BTN);
+
+    GFTextLine(gump, sx, sy+36, 1153, "Trapped:");
+    GFCheckBox(gump, sx+50, sy+36+5, 2360, 2361, treasure.trapped, GF_TREASURE_TRAP_SWITCH);
+
+    GFTextLine(gump, sx+80, sy+36, 1153, "Protected:");
+    GFCheckBox(gump, sx+145, sy+36+5, 2360, 2361, treasure.protected, GF_TREASURE_PROTECTED_SWITCH);
+
+    GFTextLine(gump, sx, sy+54, 1153, "Level:");
+    GFTextLine(gump, sx+40, sy+54, 2103, treasure.level);
+    GFAddButton(gump, sx-15, sy+21+36, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_LEVEL_BTN);
+
+    GFTextLine(gump, sx, sy+72, 1153, "Location:");
+    GFTextLine(gump, sx+65, sy+72, 2103, "{}, {}, {}".format(treasure_cont.x, treasure_cont.y, treasure_cont.z));
+    GFAddButton(gump, sx+52, sy+72+6, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_TELEPORT_BTN);
+
+    GFTextLine(gump, sx, sy+96, 1153, "Loots:");
+    sy := 159;
+    for i:=0 to treasure.loots.Size();
+        var loot := treasure.loots[i];
+        if (loot)
+            GFAddButton( gump, sx-8, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
+            if (loot.by_group)
+                GFTextLine(gump, sx, sy, 2103, " " + Upper(loot.by_group));
+            else
+                GFTextLine(gump, sx, sy, 2103, " " + Upper(loot.item.desc) + " [" + loot.chance + "%]");
+            endif
+            sy += 18;
+        endif
+    endfor
+    GFTextLine(gump, sx+100, sy, 1153, "Adicionar");
+    GFAddButton(gump, sx+100-14, sy+5, 0x939, 0x939, GF_CLOSE_BTN, GF_TREASURE_ADDITEM_BTN);
 endfunction
 
 function ConstructSpawnGroupConfig(byref gump)

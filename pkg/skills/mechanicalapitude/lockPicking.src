@@ -14,7 +14,7 @@ include ":gumps:yesno";
 
 var stones := array{6255, 6250, 6251, 6252, 6253, 6254, 6249, 6256};
 var stands := array{"", "", "", "", ""};
-var last := array{};
+var last   := array{};
 var enigma := array{};
 
 program skill_lockpicking( me, lockpick )
@@ -314,7 +314,7 @@ while(who.connected)
 		foreach key in (Res.keys)
 			if(key > 100 && key < 106)
 				if (stones[res[0]-10] in stands)
-					SendSysMessageEx(who, "Nao e possÃ­vel usar os mesmos cilindros!", SSM_FAIL);
+					SendSysMessageEx(who, "Nao e possí­vel usar os mesmos cilindros!", SSM_FAIL);
 				else
 					stands[key-100] := stones[res[0]-10];
 				endif

@@ -3,7 +3,7 @@ use uo;
 
 function DoObjective();
   
-  look_around();
+  lookAround();
   
 	var dest := GetObjProperty(me, "objloc");
 	var path;

@@ -19,7 +19,7 @@ var data := array{};
 
 program cookbooks(who, cookbook)
 
-	var recipeprop := getobjproperty(cookbook, "recipes");
+	var recipeprop := GetObjProperty(cookbook, "recipes");
 	var maxpages := len(recipeprop);
 	var pagenum := 1;
 	var pageskip := cdbl(maxpages) / 20.0;

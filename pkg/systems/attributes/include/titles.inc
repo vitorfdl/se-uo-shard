@@ -40,30 +40,3 @@ function AP_GetLevelTitle(skill_level)
 		return "Inábil";
 	endif
 endfunction
-
-/*
- * AP_GetSkillTitle(skill_name)
- * 
- * Purpose
- * Finds the title name of a skill.
- *
- * Parameters
- * skill_name:	Name of a skill from attributes.cfg
- *
- * Return value
- * Returns a string on success.
- * Returns an error on failure.
- *
- */
-function AP_GetSkillTitle(skill_name)
-	var elem_info := AP_GetAttributeCfgElem(skill_name);
-	if ( !elem_info )
-		return elem_info;
-	endif
-	
-	if ( elem_info.Title) 
-		return elem_info.Title;
-	else
-		return error{"errortext":="Attribute does not have a 'Title' entry."};
-	endif
-endfunction

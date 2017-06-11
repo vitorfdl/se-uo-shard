@@ -2,7 +2,12 @@ use uo;
 use os;
 include ":attributes:attributes";
 
- program DestroyMe(spawnpoint)
+program DestroyMe(spawnpoint)
+    var gm_flag := GetObjProperty(spawnpoint,"GM_FLAG");
+    if (!gm_flag)
+        return 0;
+    endif
+    
     var yggdrasil := spawnpoint.GetProps().yggdrasil;
     foreach serial in (yggdrasil.spawned)
         var targ := SystemFindObjectBySerial(serial);

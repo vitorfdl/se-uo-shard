@@ -5,6 +5,7 @@ use util;
 include ":attributes:attributes";
 include ":gumps:yesno";
 include "include/say";
+include ":fls_core:fls_characters";
 
 program rope(who, item)
 	var alvo := Target(who, TGTOPT_CHECK_LOS);
@@ -25,7 +26,7 @@ program rope(who, item)
 		diff := 100;
 	endif
 
-	if (alvo.corpsetype == 400 || alvo.corpsetype == 401) // Se for corpo
+	if (CheckGender(alvo)) // Se for corpo
 		var char := SystemFindObjectBySerial(alvo.ownerserial);
 
 		if (!char)
@@ -35,8 +36,8 @@ program rope(who, item)
 
 		PrintText(who, "*amarra "+char.name+"*");
 		SubtractAmount(item, 1);
-		SetObjProperty (alvo, "corda", 1);
-		SetObjProperty (char, "corda", diff);
+		SetObjProperty(alvo, "corda", 1);
+		SetObjProperty(char, "corda", diff);
 	elseif (alvo.ip) // Se for player e tiver on
 		if (!alvo.connected)
 			SendSysMessage(who, "Nao pode amarrar um jogador deslogado.");

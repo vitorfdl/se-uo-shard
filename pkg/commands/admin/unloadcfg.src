@@ -1,5 +1,6 @@
 use cfgfile;
 use uo;
+use polsys;
 
 program command_unloadCFG(who, filename)
 	var res := UnloadConfigFile(filename);
@@ -12,5 +13,6 @@ program command_unloadCFG(who, filename)
 		SendSysMessage(who, "Config file unloaded.  "+res+" reference(s) to config file exist.");
 	endif
 
+	ReloadConfiguration();
 	return;
 endprogram

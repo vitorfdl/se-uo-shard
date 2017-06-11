@@ -22,11 +22,8 @@ program doubleattack(params)
 	basedamage := basedamage*2;
 
 	//TODO colocar isso em uma funcao depois
-	var dmgList := dictionary;
-	dmgList := getNewDamageList(attacker);
-	var total := CalculateTotalDamage(defender, basedamage, attacker, dmgList);
-	ApplyDamage(defender, total);
-	MostraDano(attacker, defender, total);
+	ApplyDamage(defender, basedamage);
+	MostraDano(attacker, defender, basedamage);
 	MakeBleed(defender);
 
 endprogram

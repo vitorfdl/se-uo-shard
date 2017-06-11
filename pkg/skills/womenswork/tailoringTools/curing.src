@@ -17,37 +17,37 @@ if (carregar == "1" )
 
 else
    if (temitem == "1" )
-      if (getobjproperty(item, "#itemtype") == "string" )
+      if (GetObjProperty(item, "#itemtype") == "string" )
          SendSysMessage(who, "Voce pegou a corda pra arco");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee47 , 1);
          PlaySoundEffect (who, 0x49);
-      elseif (getobjproperty(item, "#itemtype") == "couro")
+      elseif (GetObjProperty(item, "#itemtype") == "couro")
          SendSysMessage(who, "Voce pegou o couro curtido");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee45, 1);
          PlaySoundEffect (who, 0x49);
-      elseif (getobjproperty(item, "#itemtype") == "pelebege")
+      elseif (GetObjProperty(item, "#itemtype") == "pelebege")
          SendSysMessage(who, "Voce pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee57, 1);
          PlaySoundEffect (who, 0x49);
-      elseif (getobjproperty(item, "#itemtype") == "pelecinza")
+      elseif (GetObjProperty(item, "#itemtype") == "pelecinza")
          SendSysMessage(who, "Voce pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee55, 1);
          PlaySoundEffect (who, 0x49);
-      elseif (getobjproperty(item, "#itemtype") == "pelemarrom")
+      elseif (GetObjProperty(item, "#itemtype") == "pelemarrom")
          SendSysMessage(who, "Voce pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee56, 1);
          PlaySoundEffect (who, 0x49);
-      elseif (getobjproperty(item, "#itemtype") == "pelebranca")
+      elseif (GetObjProperty(item, "#itemtype") == "pelebranca")
          SendSysMessage(who, "Voce pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");

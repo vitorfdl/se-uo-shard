@@ -30,12 +30,11 @@ exported function GetHitsMaximumValue(mobile)
 	var vital_points;
 
 	if (mobile.npctemplate)
-		vital_points := GetNPCVitalSetting(mobile, "HITS") + (Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
-		vital_points := vital_points * 2; 
+		vital_points := GetNPCVitalSetting(mobile, "HITS") + (Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod")));
 	else // no getHP ja pega o hitsmod dos players
-		vital_points := (GetHP(mobile) + GetPH(mobile)) * 100;
+		vital_points := GetHP(mobile);
 	endif
-
+	
 	return vital_points;
 endfunction
 
@@ -58,14 +57,16 @@ exported function GetManaRegenRate(mobile)
 endfunction
 
 exported function GetManaMaximumValue(mobile)
-	var vital_points := GetNPCVitalSetting(mobile, "MANA");
+	var mana_points := GetNPCVitalSetting(mobile, "MANA");
 
-	if ( !vital_points )
-		vital_points := CInt(AP_GetTrueStat(mobile, "Intelligence")) * 100;
+	if ( !mana_points )
+		var intelligence := CInt(AP_GetTrueStat(mobile, "Intelligence"));
+		var chardata     := GetObjProperty(mobile, "chardata");
+		mana_points      := (cint(chardata.manapoints) + GetBonusAttr(intelligence)) * 100;
 	endif
 
-	vital_points := vital_points + ((Cint( GetObjProperty(mobile, "manamod") ) + Cint( GetObjProperty(mobile, "#manamod")))*100);
-	return vital_points;
+	mana_points := mana_points + ((Cint( GetObjProperty(mobile, "manamod") ) + Cint( GetObjProperty(mobile, "#manamod")))*100);
+	return mana_points;
 endfunction
 
 // *****
@@ -86,7 +87,7 @@ exported function GetStaminaMaximumValue(mobile)
 
 	vital_points := GetNPCVitalSetting(mobile, "STAM");
 	if (!vital_points);
-		vital_points := CInt(AP_GetTrueStat(mobile, "Dexterity")) * 100;
+		vital_points := CInt(20 + (AP_GetTrueStat(mobile, "Constitution") * 2)) * 100;
 	endif
 
 	vital_points := vital_points + (( Cint( GetObjProperty(mobile, "stammod") ) + Cint( GetObjProperty(mobile, "#stammod") ) )*100);

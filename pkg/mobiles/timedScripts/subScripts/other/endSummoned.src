@@ -10,7 +10,7 @@ program cureScript(params)
 	if (getObjProperty(mobile, "owner")) 
 		var masterserial := getObjProperty(mobile, "owner");
 		var master := SystemFindObjectBySerial(masterserial);
-		if(getobjproperty(mobile, "Necro"))
+		if(GetObjProperty(mobile, "Necro"))
 			var numbersummons := Cint(GetObjProperty(master, "NecroSummons"));
 			SetObjProperty(master, "NecroSummons", (numbersummons - 1));
 		endif			

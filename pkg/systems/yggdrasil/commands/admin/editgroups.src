@@ -23,11 +23,12 @@ const GF_DELMOB_BTN     := 900;
 const GF_SELECTMOB_BTN := 200;
 
 //Mobinfo menu
-var mob_name, mob_power, mob_daytime, mob_bossparams;
+var mob_name, mob_power, mob_daytime, mob_bossparams, mob_type;
 const INPUT_ISBOSS   := 20;
 const GF_BOSS_BTN    := 30;
 const GF_POWER_BTN   := 31;
 const GF_DAYTIME_BTN := 32;
+const GF_TYPE_BTN    := 33;
 const GF_UPDATE_BTN  := 29;
 
 var selected_elem := ""; //Name of the Elem
@@ -213,7 +214,7 @@ endfunction
 
 function constructMobInfo(byref gump)
     GFPage(gump, 0);
-    GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 230, 130);
+    GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 220, 150);
     GFTextLine(gump, 490, 28, 555, "Mob Configuration");
     var group_data := GetSpawnGroupData(selected_elem).mob_list;
     var mob_info := group_data[selected_mob];
@@ -224,6 +225,7 @@ function constructMobInfo(byref gump)
     mob_bossparams := mob_info.bossParams;
     mob_power      := mob_info.power;
     mob_daytime    := mob_info.daytime;
+    mob_type       := mob_info.type;
 
     GFTextLine(gump, sx, sy, 1153, "Nome:");
     mob_name := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, mob_info.name);
@@ -232,15 +234,19 @@ function constructMobInfo(byref gump)
     GFTextLine(gump, sx+40, sy+18, 2103, mob_power);
     GFAddButton(gump, sx-15, sy+21, 2103, 2104, GF_CLOSE_BTN, GF_POWER_BTN);
 
-    GFTextLine(gump, sx, sy+18+18, 1153, "Daytime:");
-    GFTextLine(gump, sx+55, sy+18+18, 2103, mob_daytime);
+    GFTextLine(gump, sx, sy+18+18, 1153, "Dia:");
+    GFTextLine(gump, sx+30, sy+18+18, 2103, mob_daytime);
     GFAddButton(gump, sx-15, sy+18+21, 2103, 2104, GF_CLOSE_BTN, GF_DAYTIME_BTN);
+
+    GFTextLine(gump, sx, sy+18+18+18, 1153, "Tipo:");
+    GFTextLine(gump, sx+35, sy+18+18+18, 2103, mob_type);
+    GFAddButton(gump, sx-15, sy+18+21+18, 2103, 2104, GF_CLOSE_BTN, GF_TYPE_BTN);
 
     GFTextLine(gump, 525+59, 45+18, 5, "BOSS");
     GFCheckBox(gump, 527+60, 45+18+20, 2360, 2361, mob_info.isBoss, INPUT_ISBOSS);
     GFAddButton(gump, 542+60, 45+18+20, 2362, 2362, 1, GF_BOSS_BTN);
 
-    GFAddButton(gump, 500, 45+18+20+20, 0xEF, 0xF0, 1, GF_UPDATE_BTN);
+    GFAddButton(gump, 500, 45+18+20+20+20, 0xEF, 0xF0, 1, GF_UPDATE_BTN);
 endfunction
 
 function MobSetConfigs(byref who, byref input)
@@ -251,15 +257,18 @@ function MobSetConfigs(byref who, byref input)
             CreateBossStructGump(who, mob_bossparams);
             break;
         GF_DAYTIME_BTN:
-            var daytime := CheckBoxGump(who, 150, 150, "Horï¿½rio de Spawn:", array{"Night", "Day"});
+            var daytime := CheckBoxGump(who, 150, 165, "Horário de Spawn:", array{"Night", "Day", "New Moon"});
             if (daytime.Size() > 1)
                 mob_daytime := "always";
             else
-                mob_daytime := daytime[1];
+                mob_daytime := lower(daytime[1]);
             endif
             break;
         GF_POWER_BTN:
             mob_power := cint(RadioGump(who, 150, 165, "Nivel de Poder:", array{"1", "2", "3"}));
+            break;
+        GF_TYPE_BTN:
+            mob_type := lower(RadioGump(who, 190, 180, "Tipo de Monstro:", array{"Meele", "Ranged", "Spellcaster", "Boss"}));
             break;
     endcase
 
@@ -268,6 +277,7 @@ function MobSetConfigs(byref who, byref input)
     mob_entry.+daytime    := mob_daytime;
     mob_entry.+isBoss     := input[INPUT_ISBOSS];
     mob_entry.+bossParams := mob_bossparams;
+    mob_entry.+type       := mob_type;
 
     UpdateGroupMobData(selected_elem, mob_entry, selected_mob);
 

@@ -4,9 +4,16 @@ use basic;
 include "include/say";
 
 program fix(who)
+	var alvo;
+	if (TypeOf(who) == "Array")
+		alvo := who[2];
+		who := who[1];
+	endif
 
-	SendSysMessageEx(who, "Qual item deseja tornar imovel?", SSM_REQUEST);
-	var alvo := Target(who, TGTOPT_CHECK_LOS);
+	if (!alvo)
+		SendSysMessageEx(who, "Qual item deseja tornar imovel?", SSM_REQUEST);
+		alvo := Target(who, TGTOPT_CHECK_LOS);
+	endif
 
 	if (!alvo)
 		SendSysMessage(who, "Cancelado", SSM_FAIL);

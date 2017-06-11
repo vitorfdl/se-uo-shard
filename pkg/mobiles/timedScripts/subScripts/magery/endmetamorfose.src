@@ -27,7 +27,7 @@ program cureScript(params)
 	SetName(who,namechar);
 
 	var hitsmod := cint(getObjProperty(who, "polymorphhitsmod"));
-	setobjproperty(who, "hitsmod", cint(getobjproperty(who,"hitsmod")) - hitsmod);
+	setobjproperty(who, "hitsmod", cint(GetObjProperty(who,"hitsmod")) - hitsmod);
 	var resist := cint(GetObjProperty(who, "resitmod"));
 
 	who.resist_physical_mod := who.resist_physical_mod - resist;

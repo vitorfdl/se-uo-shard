@@ -2,5 +2,6 @@ use uo;
 
 program Install(spawnpoint)
     spawnpoint.SetProps(struct{});
+    spawnpoint.setYggdrasil(struct{});
     return 1;
 endprogram

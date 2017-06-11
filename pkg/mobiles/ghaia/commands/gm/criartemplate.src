@@ -11,89 +11,446 @@
 use uo;
 use os;
 use cfgfile;
+use polsys;
 
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include "include/packets";
 include ":gumps:yesno";
+include "include/say";
+include "include/arrays";
 
-program command_NPCCreation( mobile )
+const GF_CHOOSE_TEMPLATE := 100;
+const GF_APPLY_BTN       := 110;
+const GF_CANCEL_BTN      := 111;
+var npc_data := struct{};
+var entries := struct{};
 
-        while( Send_Command( mobile ) )
-                SleepMS(10);
-        endwhile
+var structure := dictionary{
+	"texts" -> dictionary{
+		"1"-> Array{
+			"Elem",
+			"Name",
+			"Script",
+			"Objtype",
+			"Color",
+			"AR",
+			"Runspeed",
+			"Category",
+			"TameDifficulty",
 
-        return 1;
+			"NameTemplate",
+			"EquipTemplate",
+
+			"BaseSound"
+		},
+
+		"2"-> array{
+			"AttackSpeed",
+			"AttackDamage",
+			"AttackHitscript",
+			"AttackMinRange",
+			"AttackMaxRange",
+
+			"DeathScript"
+		}
+	},
+	"text_number" -> dictionary{
+		"1" -> Array{
+			"Strength",
+			"Dexterity",
+			"Intelligence",
+			"Wisdom",
+			"Constitute",
+
+			"HITS",
+			"MANA",
+			"STAM",
+			"BloodColor"
+		},
+		"2" -> array{
+			"AttackSound",
+			"AngerSound",
+			"DeathSound",
+			"HurtSound",
+			"IdleSound",
+			"MissSound"
+		}
+	},
+	"large_texts" -> dictionary{
+		"1" -> array{
+			"Colors",
+			"Tracking",
+			"CorpseItem",
+			"CorpseAmount"
+		}
+	},
+	"checkboxes" -> dictionary{
+		"3"-> Array{
+			"AllertAllies"
+		}
+	},
+	"options" -> dictionary{
+		"1"-> dictionary{
+			"Gender" ->  Array{"Macho", "Femea"},
+			"Alignment" ->  Array{"evil", "good", "neutral"},
+			"MoveMode" ->  Array{"L", "S", "A"}
+		}
+	},
+	"create_entries" -> dictionary{
+		"3"->  Array{
+			"Allie",
+			"Cprop",
+			"Speech"
+		}
+	}
+};
+
+var default_struct := dictionary{
+	"Script"     := ":ghaia:generic",
+	"Alignment"  := "evil",
+	"BloodColor" := 0,
+	"Gender"     := 0,
+	"Color"      := 0,
+	"Truecolor"  := 0,
+	"MoveMode" := "L"
+};
+
+/*
+	Add to final:
+			AttackAttribute: wrestling		
+*/
+
+program command_NPCCreation( who, cmd )
+	// var config := ReadConfigFile( ":ghaia:createNPC" );
+	// if( config.errortext )
+	// 	SendSysMessage( who, "Error cannot open <:ghaia:createNPC> --> "+config.errortext );
+	// 	return 0;
+	// endif
+	SendSysMessageUNI( who, "Testando lã");
+	
+	if (cmd)
+		npc_data := GetVariables(cmd);
+		if (!npc_data.Name)
+			SendSysMessageEx(who, "NPC not found");
+		return;
+		endif
+	endif
+
+	var no_close := 1;
+	do
+		var gump  := mainGump(who);
+		var input := GFSendGump( who, gump );
+		case (input[0])
+			GF_CHOOSE_TEMPLATE:
+				if (entries.Elem)
+					var elem := GFExtractData(input, entries.Elem);
+					npc_data := GetVariables(elem);
+					if (!npc_data.Name)
+						SendSysMessageEx(who, "NPC not found");
+					endif
+				endif
+				break;
+			GF_APPLY_BTN:
+				var elem := GFExtractData(input, entries.Elem);
+				SendSysMessageEx(who, SetVariables(elem, input));
+				UnloadConfigFile(":*:npcdesc");
+				ReloadConfiguration();
+				no_close := 0;
+				break;
+			default:
+				no_close := 0;
+				break;
+		endcase
+		sleepms(2);
+	dowhile(no_close);
 endprogram
 
-function Send_Command( who )
-	var config := ReadConfigFile( ":ghaia:createNPC" );
-	if( config.errortext )
-		SendSysMessage( who, "Error cannot open <:ghaia:createNPC> --> "+config.errortext );
-		return 0;
+function GetVariables(elem_name)
+	var npc_desc := struct{};
+	if (!elem_name)
+		return npc_desc;
+	endif
+
+	var cfg := ReadConfigFile( ":ghaia:npcdesc" );
+	var npc := cfg[elem_name];
+	if (!npc)
+		return npc_desc;
+	endif
+
+	foreach type_name in (structure.Keys())
+		var type := structure[type_name];
+		foreach type_n in (type)
+			var type_n_ex := type_n;
+			if (type_name == "options")
+				type_n_ex := type_n.Keys();
+			endif
+			// print(type_n_ex);
+			foreach entry in (type_n_ex)
+				// print(entry);
+				if (type_name == "text_number")
+					npc_desc[entry] := GetConfigInt(npc, entry);
+				elseif (type_name == "create_entry")
+					npc_desc[entry] := GetConfigStringArray(npc, entry);
+				else
+					npc_desc[entry] := GetConfigString(npc, entry);
+				endif
+
+				if (npc_desc[entry] == error)
+					npc_desc.Erase(entry);
+				endif
+				sleepms(5);
+			endforeach
+		endforeach
+	endforeach
+
+	npc_desc["Elem"] := elem_name;
+
+	if (npc_desc["Script"])
+		npc_desc["Script"] := StrReplace(npc_desc["script"], ":ghaia:", "");
 	endif
 	
+	return npc_desc;
+endfunction
+
+function strToInt(word)
+	word := cAscZ(word);
+	word := ArraySum(word);
+	return word;
+endfunction
+
+function SetVariables(elem_name, input)
+	var cfg := ReadConfigFile( ":ghaia:npcdesc" );
+	var npc_desc := struct{};
+	foreach type_name in (structure.Keys())
+		var type := structure[type_name];
+		foreach type_n in (type)
+			var type_n_ex := type_n;
+			if (type_name == "options")
+				type_n_ex := type_n.Keys();
+			endif
+			foreach entry in (type_n_ex)
+				if (type_name == "options")
+					foreach entry_value in (type_n[entry])
+						var opt_btn := strToInt(entry_value)  + 1000;
+						if (opt_btn in input.keys)
+							npc_desc[entry] := entry_value;
+						endif
+
+						if (!npc_desc[entry])
+							npc_desc[entry] := "";
+						endif
+					endforeach
+				else
+					npc_desc[entry] := GFExtractData(input, entries[entry]);
+				endif
+
+				if (npc_desc[entry] == error)
+					npc_desc.Erase(entry);
+				endif
+				sleepms(5);
+			endforeach
+		endforeach
+	endforeach
+
+	// Fix npc_desc
+	npc_desc.Erase("Elem");
+	npc_desc.Script := ":ghaia:{}".format(npc_desc.Script);
+	if (npc_desc["Gender"] == "Femea")
+		npc_desc["Gender"] := 1;
+	else
+		npc_desc["Gender"] := 0;
+	endif
+
+	npc_desc.TrueColor := npc_desc.Color;
+	npc_desc.AttackAttribute := "Wrestling";
+
+	//Transform to Array
+	var final_array := array{};
+	foreach entry in (npc_desc.Keys())
+		final_array.append(array{entry, npc_desc[entry]});
+	endforeach
+
+	// print(final_array);
+	var result := AppendConfigFileElem( ":ghaia:npcdesc", "NPCTemplate", elem_name, final_array );
+	return result;
+endfunction
+
+
+function getLinePos(entry)
+	var line_pos := 0;
+	if (len(entry) < 3)
+		line_pos := -30;
+	elseif (len(entry) <= 5)
+		line_pos := -20;
+	elseif (len(entry) < 8)
+		line_pos := -10;
+	elseif (len(entry) >= 9)
+		line_pos := 30;
+	endif
+
+	return line_pos;
+endfunction
+
+function CreateEntries(byref gump, byref x_pos, byref y_pos, i_picked)
+	var init_ypos := y_pos;
+	foreach entry in (structure["texts"][i_picked])
+		var init_text := npc_data[entry];
+		if (!init_text)
+			init_text := "";
+		endif
+
+		GFTextLine( gump, x_pos, y_pos, 1152, entry);
+
+		var line_pos := 55 + getLinePos(entry);
+		GFResizePic(gump, x_pos+line_pos, y_pos, GFCfgConst("Backgrounds", "PAPER"), 120, 20);
+		entries[entry] := GFTextEntry(gump, x_pos+line_pos+2, y_pos, 115, 20, 2106, init_text);
+
+		if (entry == "Elem")
+			GFAddButton(gump, x_pos+160, y_pos, 0xFBD, 0xFBE, GF_CLOSE_BTN, GF_CHOOSE_TEMPLATE );
+		endif
+
+		y_pos += 20;
+	endforeach
+
+	var textn_ypos := init_ypos;
+	var init_xpos := x_pos + 250;
+	foreach entry in (structure["text_number"][i_picked])
+		var init_text := npc_data[entry];
+		if (!init_text)
+			init_text := "";
+		endif
+
+		GFTextLine( gump, init_xpos, textn_ypos, 1152, entry);
+
+		GFResizePic(gump, init_xpos+55, textn_ypos, GFCfgConst("Backgrounds", "PAPER"), 50, 20);
+		entries[entry] := GFTextEntry(gump, init_xpos+55+2, textn_ypos, 45, 20, 2106, init_text);
+		textn_ypos += 20;
+	endforeach
+
+	y_pos += 20;
+
+	foreach entry in (structure["large_texts"][i_picked])
+		var init_text := npc_data[entry];
+		if (!init_text)
+			init_text := "";
+		endif
+		GFTextLine( gump, x_pos, y_pos, 1152, entry);
+
+		var line_pos := 55 + getLinePos(entry);
+		GFResizePic(gump, x_pos+line_pos, y_pos, GFCfgConst("Backgrounds", "PAPER"), 280, 20);
+		entries[entry] := GFTextEntry(gump, x_pos+line_pos+2, y_pos, 275, 20, 2106, init_text);
+		y_pos += 20;
+	endforeach
+	
+	y_pos += 20;
+	var option := 0;
+	foreach opt_name in (structure["options"][i_picked].Keys())
+		GFTextLine( gump, x_pos, y_pos, 1152, opt_name);
+		var line_pos := 55 + getLinePos(opt_name);
+		var radio_group := cint("{}{}".format(i_picked, option));
+		GFSetRadioGroup(gump, radio_group);
+
+		var option_n := 1;
+		var option_x := x_pos;
+		foreach opt in (structure["options"][i_picked][opt_name])
+			GFTextLine( gump, option_x+20, y_pos+20, 1153, opt);
+			var init_value := 0;
+			if (npc_data[opt_name] == opt)
+				init_value := 1;
+			endif
+
+			var radio_btn := strToInt(opt) + 1000; //hack to get opt easily in setvariables
+			GFRadioButton(gump, option_x, y_pos+20, 0x233C, 0x233D, init_value, radio_btn);
+			//  GFRadioButton(byref gump, x, y, unp_id, pres_id, status:=0, btn_value:=0)
+			option_n += 1;
+			option_x += 50;
+		endforeach
+		option += 1;
+		y_pos += 45;
+	endforeach
+
+	return 1;
+	// var textn_ypos := init_ypos;
+	// var init_xpos := x_pos + 250;
+	// foreach entry in (structure["checkboxes"][i_picked])
+	// 	var init_text := npc_data[entry];
+	// 	if (!init_text)
+	// 		init_text := "";
+	// 	endif
+
+	// 	GFTextLine( gump, init_xpos, textn_ypos, 1152, entry);
+
+	// 	GFResizePic(gump, init_xpos+55, textn_ypos, GFCfgConst("Backgrounds", "PAPER"), 50, 20);
+	// 	entries[entry] := GFTextEntry(gump, init_xpos+55+2, textn_ypos, 45, 20, 2106, init_text);
+	// 	textn_ypos += 20;
+	// endforeach
+endfunction
+
+function mainGump(who)
 	var gump := GFCreateGump();
 	GFClosable( gump, 0 );
-	
-	GFResizePic( gump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 500, 605 );
-	GFResizePic( gump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 470, 25 );
+	GFPage(gump, 0);
+	GFResizePic( gump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 450, 605 );
+	GFResizePic( gump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 420, 25 );
 	
 	GFTextMid( gump, 15, 17, 470, 1720, "Criação de Templates" );
 	
-	GFResizePic( gump, 15, 45, GFCfgConst( "Defaults", "ForeGround" ), 470, 540 );
+	GFResizePic( gump, 15, 45, GFCfgConst( "Defaults", "ForeGround" ), 420, 540 );
 	
-	GFAddButton( gump, 28, 562, 4017, 4018, GF_CLOSE_BTN, 0xA01 );
-	GFTextLine( gump, 60, 562, 1153, "Cancel" );
+	GFAddButton( gump, 150, 562, 4017, 4018, GF_CLOSE_BTN, GF_CANCEL_BTN );
+	GFTextLine( gump, 182, 562, 1153, "Cancel" );
 
-	GFAddButton(gump, 445, 562, 4012, 4013, GF_CLOSE_BTN, 0xA02 );
-	GFTextLine( gump, 400, 562, 1153, "Apply" );
+	GFAddButton(gump, 250, 562, 0xFB7, 0xFB8, GF_CLOSE_BTN, GF_APPLY_BTN );
+	GFTextLine( gump, 282, 562, 1153, "Apply" );
+	
+	// var elem := config["Config"];
+	// var script_list := GetConfigStringArray( elem, "Elem" );
+	var i;
+	var x_pos := 20;
+	var y_pos := 60;
+	GFPage(gump, 1);
+	GFAddButton( gump, 400, 562, 0x2622, 0x2623, GF_PAGE_BTN, 2 );
+	GFPage(gump, 2);
+	GFAddButton( gump, 40, 562, 0x2626, 0x2627, GF_PAGE_BTN, 1 );
+	GFPage(gump, 1);
+	for (i:=1;i<=3;i+=1)
+		CreateEntries(gump, x_pos, y_pos, cstr(i));
 
-	var elem := config["Config"];
-	var script_list := GetConfigStringArray( elem, "Elem" );
-	var num_options := script_list.Size();
-	
-	var i := 1;
-	var x := 1;
-	var npc_prop := array;
-	var npc_elem := array;
-	foreach entry in script_list
-	
-	endforeach
-	
-	
-	var y_pos := 110;
-//	var numb_page := 1;
-	var numb_max_page := 17;
-	
-	GFPage( gump, 1 );
-	foreach entry in npc_prop
-		if (entry == "Group")
-			y_pos += 20;
-		else
-			var param := SplitWords( entry );
-			var param_name;
-			if (param[2] == "CProp")
-				param_name := param[2] + " " + param[3];
-			else
-				param_name := param[2];
-			endif
-			GFTextLine( gump, 45, y_pos, 1153, param_name );
-			
-			y_pos += 20;
-			i+=1;
-			x+=1;
-		endif	
-		
-		if (i >= numb_max_page && x < num_options)
-			GFAddButton( gump, 30, 90, 0xA92, 0xA93, GF_PAGE_BTN, gump.cur_page+1 );
-			GFPage( gump,  gump.cur_page+1 );
-			GFAddButton( gump, 40, 90, 0xA90, 0xA91, GF_PAGE_BTN, gump.cur_page-1 );
-			y_pos := 110;
-			i := 1;
+		if (y_pos >= 550)
+			GFPage(gump, 2);
+			y_pos := 60;
 		endif
-	endforeach
-	var input := GFSendGump( who, gump );
-	
+		sleepms(5);
+	endfor
+//	var numb_page := 1;
+
+	// GFPage( gump, 1 );
+	// foreach entry in npc_prop
+	// 	if (entry == "Group")
+	// 		y_pos += 20;
+	// 	else
+	// 		var param := SplitWords( entry );
+	// 		var param_name;
+	// 		if (param[2] == "CProp")
+	// 			param_name := param[2] + " " + param[3];
+	// 		else
+	// 			param_name := param[2];
+	// 		endif
+	// 		GFTextLine( gump, 45, y_pos, 1153, param_name );
+			
+	// 		y_pos += 20;
+	// 		i+=1;
+	// 		x+=1;
+	// 	endif	
 		
+	// 	if (i >= numb_max_page && x < num_options)
+	// 		GFAddButton( gump, 30, 90, 0xA92, 0xA93, GF_PAGE_BTN, gump.cur_page+1 );
+	// 		GFPage( gump,  gump.cur_page+1 );
+	// 		GFAddButton( gump, 40, 90, 0xA90, 0xA91, GF_PAGE_BTN, gump.cur_page-1 );
+	// 		y_pos := 110;
+	// 		i := 1;
+	// 	endif
+	// endforeach
+	return gump;
 endfunction

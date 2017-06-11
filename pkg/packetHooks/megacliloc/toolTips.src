@@ -292,8 +292,8 @@ exported function MegaCliloc( who, byref packet )
 			var cfg := ReadConfigFile(":*:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);
 			xDesc := xDesc + white + "Qualidade: " +  + getQuality(item.quality) +"<br>";
-			if (elem.habcategory)
-				xDesc := xDesc + "Tipo: " + elem.habcategory + "<br>";
+			if (elem.DamageType)
+				xDesc := xDesc + "Tipo: " + elem.DamageType + "<br>";
 			endif
 			var cond := GetCondition(item);
 			if (cond != "Boa")

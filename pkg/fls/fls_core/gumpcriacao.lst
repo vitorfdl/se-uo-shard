@@ -671,7 +671,7 @@ var classCfg := ReadConfigFile(":fls_core:config/classes");
 540: Func(2,0): ReadConfigFile
 541: :=
 542: #
-var elem := FindConfigElem(classCfg, cstr(getobjproperty(who, "classe")) );
+var elem := FindConfigElem(classCfg, cstr(GetObjProperty(who, "classe")) );
 543: decl local #10
 544: local #9
 545: local #6
@@ -719,7 +719,7 @@ var raceCfg := ReadConfigFile(":fls_core:config/racas");
 582: Func(2,0): ReadConfigFile
 583: :=
 584: #
-var elem2 := FindConfigElem(raceCfg, cstr(getobjproperty(who, "raca")) );
+var elem2 := FindConfigElem(raceCfg, cstr(GetObjProperty(who, "raca")) );
 585: decl local #16
 586: local #15
 587: local #6
@@ -7668,7 +7668,7 @@ gft_length.+charsf :=
 6361: local #1
 6362: "charsf"
 6363: .+
-6364: "||||||||||||||`',.;:::::::::!!!!!!!!!!!!!!il1[]]]]]]]]]"bcejotî(){}===adfpqrszIÑ~~~~ghnuvyÅ<>-----xJ578$?++++++ kCE2369^/*****mwABDFOPéô40%%GLNQSZ@#######HRT&__________KöUYYYYYYYYYYYXXXXXXXXXXXXXXVVVVVVVVVVVVVVMMMMMMMMMMMMMMWWWWWWWWWWWWWW"
+6364: "||||||||||||||`',.;:::::::::!!!!!!!!!!!!!!il1[]]]]]]]]]"bcejotî(){}===adfpqrszIÑ~~~~ghnuvyù<>-----xJ578$?++++++ kCE2369^/*****mwABDFOPéô40%%GLNQSZ@#######HRT&__________KöUYYYYYYYYYYYXXXXXXXXXXXXXXVVVVVVVVVVVVVVMMMMMMMMMMMMMMWWWWWWWWWWWWWW"
 6365: := #
 gft_length.+width := array
 6366: local #1

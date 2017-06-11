@@ -176,3 +176,51 @@ function FindElemInArray(byref the_array, find_what)
 
     return 0;
 endfunction
+
+function RemoveLowest(byref the_array)
+	if (the_array.Size() <= 1)
+		print("here?");
+        return the_array;
+	endif
+
+	var i;
+	var l_val := 1;
+	for (i := 1; i < the_array.Size(); i+=1)
+		if (the_array[l_val] > the_array[i])
+			l_val := i;
+		endif
+	endfor
+
+	the_array.Erase(l_val);
+	return 1;
+endfunction
+
+function RemoveHighest(byref the_array)
+	if (the_array.Size() <= 1)
+        return the_array;
+	endif
+
+	var i;
+	var l_val := 1;
+	for (i := 1; i < the_array.Size(); i+=1)
+		if (the_array[l_val] < the_array[i])
+			l_val := i;
+		endif
+	endfor
+
+	the_array.Erase(l_val);
+	return 1;
+endfunction
+
+function ArraySum(the_array)
+	if (the_array.Size() <= 1)
+        return the_array[1];
+	endif
+
+	var f_val := 0;
+	foreach entry in (the_array)
+		f_val += entry;
+	endforeach
+
+	return f_val;
+endfunction

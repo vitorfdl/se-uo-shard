@@ -2,10 +2,29 @@ use uo;
 use os;
 
 program DestroyMe(spot)
+    var gm_flag := GetObjProperty(spot, "GM_FLAG");
+    if (!gm_flag)
+        return 0;
+    endif
+    
     var data := spot.GetProps();
     foreach serial in (data.spawnpoints)
         var spawnpoint := SystemFindObjectBySerial(serial);
         DestroyItem(spawnpoint);
+        sleepms(2);
+    endforeach
+
+    foreach treasure_data in (data.treasures)
+        var treasure := SystemFindObjectBySerial(treasure_data.serial);
+        if (!treasure)
+            continue;
+        endif
+        EraseObjProperty(treasure, "treasure_level");
+        var items := EnumerateItemsInContainer(treasure);
+        foreach item in items
+            DestroyItem(item);
+            sleepms(2);
+        endforeach
         sleepms(2);
     endforeach
     return 1;

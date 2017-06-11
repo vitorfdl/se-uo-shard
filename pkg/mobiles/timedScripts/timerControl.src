@@ -45,7 +45,7 @@ program TimerControl(mobile)
 			break;
 		elseif( event.type == EVENT_PLAYER_DIED )
 			PlayerDeath(mobile, timer_list, num_poisons);
-		elseif ( event.type == EVENT_LOGOFF )
+		elseif ( event.type ==      )
 			LogOff(mobile, timer_list, cooldowns);
 			break;
 		endif
@@ -140,7 +140,10 @@ function LogOff(mobile, byref timer_list, byref cooldowns)
 		if ( elem_info.errortext )
 			print("Error::LogOff() - Unable to find elem ["+_timer_iter+"] "+elem_info.errortext);
 			continue;
-		elseif( elem_info.LogOffScript )
+		endif
+		
+		mobile.delBuff(elem_info.Icon);
+		if( elem_info.LogOffScript )
 			var script := Start_Script(elem_info.LogOffScript, array{mobile, "LogOff"});
 			if( script.errortext )
 				print("Error::LogOff() - ["+elem_info.LogOffScript+"] "+script.errortext);
@@ -163,8 +166,6 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 	// If it does not exist, add it to the list on the mobile.
 	// Start the necessary script and store the name, duration and sub-script pid.
 	
-		
-
 	if (event.timerType == EVENT_TYPE_COOLDOWN)
 		var result := 0;
 		//sendsysmessage(mobile, "add cd");
@@ -183,8 +184,8 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 			SaveState(mobile, timer_list, cooldowns);
 		endif
 		return 1;
-	else
-		/*
+	/*else
+		
 		sendsysmessage(mobile, "add timer "+event.name+" "+event.amount);
 		event.amount := CInt(event.amount);
 		var timer := struct;
@@ -203,22 +204,6 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 	endif
 
 	var elem_info := TS_GetCfgElem(event.name);
-	if ( Cstr(elem_info.Type) == "P" )
-		if (Cint(GetObjProperty(mobile, "protecaoveneno")))
-			SendSysMessageEx(mobile, "Voce nao ficou envenenado.", SSM_INFO);
-			EraseObjProperty(mobile, "protecaoveneno");
-			return 0;
-		endif
-		if ( GetObjProperty(mobile, "kit") == "criado por encatadores de serpentes" )
-			SendSysMessageEx(mobile, "O veneno nao faz efeito em voce.", SSM_INFO);
-			return 0;
-		endif
-		if ( TemHabilidade(mobile, "Resistencia a Venenos" ) )
-			SendSysMessageEx(mobile, "O veneno nao faz efeito em voce.", SSM_INFO);
-			return 0;
-		endif
-	endif
-
 	var result := 0;
 	if ( !timer_list.Exists(event.name) )
 		if (event.name)
@@ -229,7 +214,7 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 					text := "";
 				endif
 				//SendSysMessage(mobile, "te " + text);
-				SendBuff(mobile, 1, elem_info.Icon, event.amount, elem_info.cliloc1, elem_info.cliloc2, text  );
+				mobile.addBuff(elem_info.Icon, event.amount, elem_info.cliloc1, elem_info.cliloc2, text);
 			endif
 		endif
 		//SendSysMessage(mobile, "AddNewTimer");
@@ -271,26 +256,21 @@ function AddNewTimer(mobile, byref event, byref timer_list, byref num_poisons)
 		endif
 	endif
 
-	var timer := struct;
+	var timer := struct{};
 	// .endtime is used instead of .duration now to ensure more accurate time keeping.
 	timer.+endtime := event.amount + ReadGameClock();
-	timer.+pid := script.pid;
-	timer.+level := event.level;
+	timer.+pid     := script.pid;
+	timer.+level   := event.level;
 //	printtextabove(mobile, "event " + event);
 	if (event.mantain)
 		timer.+mantain := 1;
-		timer.+mage := event.mage;
-		timer.+duration := event.amount;
-		timer.+name := event.name;
+		timer.+mage      := event.mage;
+		timer.+duration  := event.amount;
+		timer.+name      := event.name;
 		timer.+mobserial := mobile.serial;
 	endif
 
 	timer_list.Insert(event.name, timer);
-
-	if( elem_info.IndicatePoison )
-		num_poisons += 1;
-	endif
-
 	return 1;
 endfunction
 
@@ -323,21 +303,6 @@ function AddExistingTimer(mobile, byref event, byref timer_list, byref num_poiso
 		else
 			event.amount := (duration + amt);
 		endif
-/*	else
-		if ( (event.level) && level )
-			if ( (level == event.level) && (amt > duration) )
-				event.amount := amt;
-			elseif ( event.level > level )
-				KillTimedScript(mobile, timer_list[event.name].pid, timer_list, event.name);
-				event.amount := amt;
-				AddTimer(mobile, event, timer_list, num_poisons);
-				return 1;
-			endif
-		else
-			if ( amt > duration )
-				event.amount := amt;
-			endif
-		endif */
 	endif
 
 	var maxdur := CInt(elem_info.MaxDuration);
@@ -430,13 +395,6 @@ function LowerDuration(mobile, byref event, byref timer_list, byref cooldowns, b
 			cooldowns.Erase(event.name);
 		endif
 		SaveState(mobile, timer_list, cooldowns);
-
-
-		//tive que colocar esse codigo aqui, deveria ser em outro arquivo separado
-		if (event.name[1,5] == "quest")
-			Start_Script(":tn:endquest", array{mobile, timer_info} );
-		endif	
-
 		return 1;
 	endif
 
@@ -520,8 +478,8 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 	endif
 
  	if ( elem_info.Icon )
-                 SendBuff(mobile, 0, elem_info.Icon);
-	 endif
+    	SendBuff(mobile, 0, elem_info.Icon);
+	endif
 
 	if( elem_info.EndScript )
 		Set_Critical(1);

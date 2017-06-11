@@ -7,7 +7,6 @@ include ":attributes:attributes";
 include ":gumps:yesno";
 
 function ApplySkillCap(who)
-
 	var classe := GetObjProperty(who, "classe");
 	if (classe != error)
 
@@ -24,77 +23,8 @@ function ApplySkillCap(who)
 				AP_SetTrueSkill(who, terciaria, 40);
 			endif
 		endif
-		
-
 	endif
-
 endfunction
-
-function getTerciarias(who)
-
-	var chardata := GetObjProperty(who, "chardata");
-	if ( !chardata)
-		return;
-	endif
-
-	var myskills := chardata.Skills;
-	var primarias := array;
-	//sendsysmessage(who, "skills" + myskills);
-	foreach skill in (myskills.keys())
-		if (myskills[skill] == 1)
-			primarias.append( skill );
-		endif
-	endforeach
-
-	
-	return primarias;
-
-endfunction
-
-
-function getSecundarias(who)
-
-	var chardata := GetObjProperty(who, "chardata");
-	if ( !chardata)
-		return;
-	endif
-
-	var myskills := chardata.Skills;
-	var primarias := array;
-	//sendsysmessage(who, "skills" + myskills);
-	foreach skill in (myskills.keys())
-		if (myskills[skill] == 2)
-			primarias.append( skill );
-		endif
-	endforeach
-
-	
-	return primarias;
-
-endfunction
-
-
-function getPrimarias(who)
-
-	var chardata := GetObjProperty(who, "chardata");
-	if ( !chardata)
-		return;
-	endif
-
-	var myskills := chardata.Skills;
-	var primarias := array;
-	//sendsysmessage(who, "skills" + myskills);
-	foreach skill in (myskills.keys())
-		if (myskills[skill] == 3)
-			primarias.append( skill );
-		endif
-	endforeach
-
-	
-	return primarias;
-
-endfunction
-
 
 function AP_AttributeNameToSkillId(skill)
 	if (skill == "Alchemy")
@@ -121,7 +51,6 @@ function AP_SkillIdToAttributeName(skillid)
 endfunction
 
 function CreateBasicRecipes()
-
 	var x := array;
 
 	var spellinfo1 := struct;
@@ -135,7 +64,6 @@ function CreateBasicRecipes()
 	spellinfo4.+id := 0xbf17;
 	spellinfo4.+description := "Uma pedra negra e uma obsidiana quando misturadas liberam um extrato capaz de destravar propriedes do espirito. Dificuldade Media"; 
 	x.append(spellinfo4);
-
 
 	return x;
 endfunction

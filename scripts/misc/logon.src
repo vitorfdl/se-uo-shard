@@ -16,7 +16,7 @@ program Logon(who)
 	EraseObjProperty(who, "#torobando");
 	SetObjProperty(who, "ConnectTime", polcore().systime);
 
-	var createdat :=  getobjproperty(who, "createdate");
+	var createdat :=  GetObjProperty(who, "createdate");
 	if (createdat == error)
 		var script := start_script( ":email:email", array{who, who.serial} );
 		CloseGump(who, GUMPID_EMAIL_INDEX);

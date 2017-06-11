@@ -136,7 +136,8 @@ function escolherCabelo(who, byref disfarce, raca := 0)
 		style := splitwords(style);
 		var hairname := style[1];
 		var hairgraphic := cint(style[2]);
-		while (hairname["_"])															hairname["_"] := " ";
+		while (hairname["_"])															
+			hairname["_"] := " ";
 		endwhile
 		if (hairgraphic == disfarce.barba)
 			GFRadioButton(gump, 20, y_pos, 2151, 2154, 1, hairgraphic);

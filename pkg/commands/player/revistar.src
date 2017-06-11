@@ -9,8 +9,16 @@ include "include/say";
 include ":charactercreation:habilidades";
 
 program textcmd_openPack(who)
-	SendSysMessageEx(who, "Selecione o personagem que voce deseja revistar.", SSM_REQUEST);
-	var targ := Target(who);
+	var targ;
+	if (TypeOf(who) == "Array")
+		targ := who[2];
+		who := who[1];
+	endif
+
+	if (!targ)
+		SendSysMessageEx(who, "Selecione o personagem que voce deseja revistar.", SSM_REQUEST);
+		targ := Target(who);
+	endif
 	
 	if ( !targ )
 		SendSysMessageEx(who, "Cancelled.", SSM_FAIL);
