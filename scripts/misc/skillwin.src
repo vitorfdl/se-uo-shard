@@ -20,7 +20,6 @@ include ":gumps:yesno";
 include ":attributes:titles";
 include "include/say";
 include "include/client";
-include ":charactercreation:habilidades";
 include ":gumps:requestgump";
 include ":gumps:htmlgump";
 //Standard text colors on TSSE
@@ -28,357 +27,91 @@ include ":gumps:htmlgump";
 CONST GF_STDCOLOR		:= 1890;
 CONST GF_HDRCOLOR		:= 1890;
 CONST GF_SLCTDCOLOR		:= 1720;
-CONST MAX_PAGE 			:= 14;
+var attr_list 	    := array{"Strength", "Dexterity", "Intelligence", "Wisdom", "Constitution"};
 
 program core_skillWin(who)
 	if (who.dead)
-		SendSysMessage(who, "Voce esta morto e nao pode fazer isto.");
+		PrivateSystemReport(who, "Estou morto e impossibilitado de realizar qualquer atividade.");
 		return;
 	endif
 	
-	sendnewskillwindow(who);
+	skillWindow(who);
 endprogram
 
-function sendnewskillwindow(who)
-	//construindo Gump
-    CloseGump( who, GUMPID_SKILLLIST);
-	var chargump := GFCreateGump();
-	GFDisposable(chargump, 0);
-	GFPage(chargump, 0);
-    GFSetID(chargump, GUMPID_SKILLLIST);
-	GFResizePic(chargump, 0, 25, 5170, 360, 385);
-	GFTextLine(chargump, 120, 51, GF_STDCOLOR, "Você está no Level " + GetCharLevel(who) + ".");
-	GFTextLine(chargump, 49, 69, GF_STDCOLOR, "Perícia");
-	GFTextLine(chargump, 235, 69, GF_STDCOLOR, "Aprendizado");
-
-	//Rodapé
-	GFTextLine(chargump, 272, 385, GF_STDCOLOR, "Atributos");
-	GFAddButton(chargump, 247, 388, 10006, 10006, 1, 902);
-	
-	GFTextLine(chargump, 50, 385, GF_STDCOLOR, "Habilidades");
-	GFAddButton(chargump, 25, 388, 10006, 10006, 1, 901);
-
-	//Lista as habilidades
-	var skilllist := GetSkillList(who);
-
-	var skilllistnumber := skilllist.size();
-	var skill_locklist := GetObjProperty(who, "skills_lock");
-	if (!skill_locklist)
-		skill_locklist := array{};
-	endif
-	
-	var my := 90;
-	var i;
-	var actualX := 1;
-	for(i := 1; actualX <= skilllistnumber; i+=1)
-		var maxX := actualX + MAX_PAGE;
-
-		while (actualX <= maxX && actualX <= skilllistnumber)
-			var mx := 49;
-			var skillname := skilllist[actualX];
-
-			GFTextLine(chargump, mx, my, 1153, GetTranslatedName(skillname)); //Skill Nome
-			GFTextLine(chargump, 255, my, 52, ""+Floor(AP_GetSkill(who,skillname))); //Aprendizado
-			//GFTextLine(chargump, 235, my, 52, ""+AP_GetLevelTitle(AP_GetSkill(who,skillname))); //Aprendizado por extenso, se quiser voltar.
-			
-			//estado da skill
-			var elem := AP_GetAttributeCfgElem(skilllist[actualX]);
-			var id := elem.SkillId;
-			if (skillname in skill_locklist)
-				GFAddButton(chargump, 322, my+2, 2092, 2092, 1, id);
-			else
-				GFAddButton(chargump, 322, my+2, 2435, 2435, 1, id);
-			endif
-			//Botão para upar Skill
-			if (AP_GetSkillScript(skillname) != error)
-				GFAddButton(chargump, 29, my+2, 2103, 2104, 1, id+100);
-			endif
-
-			actualX+=1;
-			my+=19;
-		endwhile
-		
-		my:= 90;//Reseta Y
-		sleepms(5);
-	endfor
-	var input := GFSendGump(who, chargump);
-	input := input[0];
-	//usa skill ativavel
-	if ( (input >= 100) && (input <= 160) )
-		input -= 100;
-		Start_Script( AP_GetSkillScript( GetSkillNameByID( input ) ) , who);
-	//Muda status da skill
-	elseif ( (input >= 1) && (input <= 60) )
-		var skillname := GetSkillNameByID( input );
-		if (skillname in skill_locklist)
-			var i;
-			for(i := 1;i <= skill_locklist.size();i+=1)
-				if (skill_locklist[i] == skillname)
-					skill_locklist.erase(i);
-				endif
-			endfor
-			SetObjProperty(who, "skills_lock", skill_locklist);
-		else
-			skill_locklist.append(skillname);
-			SetObjProperty(who, "skills_lock", skill_locklist);
-		endif
-		sendnewskillwindow(who);
-	//Acessa gump de Vantagens
-	elseif (input == 901)
-		sendnewhabwindow(who);
-	elseif (input == 902)
-		sendnewattwindow(who);
-	endif
+function skillWindow(who)
+	var gump  := buildGump(who);
+	var input := GFSendGump(who, gump);
 endfunction
 
-function sendnewhabwindow(who, startat := 1, atualgump := 1);
-	//organiza as habilidades para buscar nos botões depois
-	var skilllist := GetSkillList(who, 1);
-	var skilllistnumber := skilllist.size();
-	var allhabs := array{};
-	var i;
-	
-	for(i := startat; i <= skilllistnumber; i+=1)
-		if (i > startat+1)
-			break;
-		endif
-		var skillname := skilllist[i];
-		var lvl := 20; //começa level 20
-		while (lvl <= 100) //para no 100
-			var skillhabs := HabilidadesPorSkilleNivel(who, skillname, lvl);
-			if (allhabs[1] == error)
-				allhabs := skillhabs;
-			else
-				allhabs := allhabs + skillhabs;
-			endif
-			lvl+= 10; //ganha +1 até o 100
-			sleepms(5);
-		endwhile
+function buildGump(who)
+	var gump := GFCreateGump();
+	GFDisposable(gump, 0);
+	GFSetID(gump, GUMPID_SKILLLIST);
+	GFResizePic(gump, 526, 42, 40000, 79, 48); //Options background
+	GFResizePic(gump, 229, 13, 39925, 347, 465); //Default Background
+
+	GFHTMLArea(gump, 287, 27, 60, 20, "<BASEFONT SIZE=5 COLOR=#ffffea>Pericias");
+	var skill_list := GetSkillList(who);
+
+	var s_x := 240;
+	var s_y := 52;
+	foreach skill in skill_list
+		// GFAddButton(gump, s_x, s_y, 2224, 2224, GF_CLOSE_BTN, 0); //Use Skill
+		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
+		GFTextLine(gump, s_x+18, s_y-3, 1152, skill);
+		s_y += 30;
 		sleepms(5);
-	endfor
+	endforeach
 
-	//monta a gump
-	var chargump := GFCreateGump();
-	GFPage(chargump, 0);
-	GFResizePic(chargump, 0, 25, 5170, 550, 442);
-	GFGumpPicTiled(chargump, 280,48,2,392,9155);
-	
-	GFTextLine(chargump, 25, 441, 52, "Você possui " + GetSkillPoints(who) + " pontos disponíveis.");
-	
-	var habnumber := 1;
-	var skillnamex := 89;
-	var mx := 100;
-	var actualX := cint(startat);
-
-	//botões do rodapé
-	GFTextLine(chargump, 460, 441, 2103, "Páginas");
-	if (atualgump == 1) 
-		GFAddButton(chargump, 515, 443, 9704, 9705, 1, 4); //avançar
-	else
-		GFAddButton(chargump, 515, 443, 9700, 9701,  1, 5); //voltar
-	endif
-	//fim botões do rodapé
-	
-	while (actualX <= cint(startat)+1) //montando habilidades e skillname
-		var skillname := skilllist[actualX];
-		if (!skillname)
-			break;
-		endif
-		
-		GFTextLine(chargump, skillnamex, 29, 52, GetTranslatedName(skillname)); //Skill Nome
-		
-		//Pegar Habilidades
-		var lvl := 20;
-		var my := 58;
-		var skillcolor := 1153;
-		
-		while (lvl <= 100) //montando habs
-			var skillhabs := HabilidadesPorSkilleNivel(who, skillname, lvl);
-			if (atualgump == 2 && lvl < 70)
-				lvl+= 10;
-				habnumber+= cint(len(skillhabs));
-				continue;
-			elseif (atualgump == 1 && lvl >= 70)
-				lvl+= 10;
-				habnumber+= cint(len(skillhabs));
-				continue;
-			endif
-			
-			
-			if (actualX == startat)
-				GFGumpPicTiled(chargump, mx-55, my-10, 215, 2, 9157);
-				GFTextLine(chargump, mx-75, my, 2103, lvl + "%");
-			else
-				GFGumpPicTiled(chargump, mx-45, my-10, 215, 2, 9157);
-			endif
-			
-			foreach hab in skillhabs
-				if (TemHabilidade(who, hab)) //se tiver a hab, coloca "checado" no botão
-					GFGumpPic(chargump, mx-38, my+2, 2511);
-				else
-					GFAddButton(chargump, mx-38, my+2, 2510, 2510, 1, habnumber+100);
-				endif
-				
-				
-				GFAddButton(chargump, mx-20, my+2, 22153, 22155, 1, habnumber+200);
-				GFTextLine(chargump, mx, my, skillcolor, NomeHabilidade(hab));
-				my+= 19;
-				habnumber+= 1;
-				sleepms(5);
-			endforeach
-			
-			lvl+= 10; //soma 10 até o 100
-			case(lvl) //fix height
-			    20:
-			    70:
-			    	my := 58;
-			    	break;
-			    30:
-			    80:
-			    	my := 134;
-			    	break;
-			    40:
-			    90:
-			    	my := 210;
-			    	break;
-			    50:
-			    100:
-			    	my := 286;
-			    	break;
-			    60:
-			    	my := 362;
-			    	break;
-			endcase
-
-			sleepms(5);
-		endwhile
-			
-		skillnamex:=330;
-		mx := 343;
-		actualX+= 1;
-	endwhile //fim montar habilidades
-	
-	if (actualX <= skilllistnumber)
-		GFAddButton(chargump, 515, 30, 9702, 9703, 1, 2); //avançar pag
-	endif
-	if (startat > 1)
-		GFAddButton(chargump, 19, 30, 9706, 9707, 1, 3); //recuar pag
+	GFHTMLArea(gump, 442, 26, 60, 20, "<BASEFONT SIZE=5 COLOR=#ffffea>Talentos");
+	var feat_list := GetFeatList(who);
+	if (!feat_list[1])
+		feat_list += "Nenhum";
 	endif
 
-	var input := GFSendGump(who, chargump);
-	if (input[0] >= 200) //botão de interrogação
-		input := input[0] - 200;
-		var desc := DescHabilidade(allhabs[input]);
-		var req  := ReqHabilidade(allhabs[input]);
-		var title:= UsoHabilidade(allhabs[input]);
-		var texto:= "Descrição: " + desc;
-		if (req[1])
-			 texto :=  texto + " <br><br>Pré-Requesitos: " + req[1];
-		endif
-		if (req[2])
-			texto := texto + " ou " + req[2];
-		endif
-		SendHTMLGump(who, title, texto);
-		sendnewhabwindow(who, startat, atualgump);
-	elseif (input[0] >= 100) //botão para aprender
-		input := input[0] - 100;
-		var erro := 0;
-		if (!YesNo(who, "Deseja mesmo aprender " + allhabs[input] + "?", "Sim", "Não"))
-			erro := 1;
-		elseif (GetSkillPoints(who) < 1)
-			SendSysMessageEx(who, "Voce nao tem SkillPoint disponivel.", SSM_FAIL);
-			erro := 1;
-		elseif (!TemRequisito(who, allhabs[input], msg := 1))
-			erro := 1;
-		endif
-		
-		if (!erro)
-			var myhabs := GetObjProperty(who, "myhabs");
-			if (!myhabs)
-				myhabs := array{};
-			endif
-			myhabs.Append(allhabs[input]);
-			CreateHabObject(who, allhabs[input]);
-			SetObjProperty(who, "myhabs", myhabs);
-			SetSkillPoints(who, GetSkillPoints(who)-1);
-		endif
-		sendnewhabwindow(who, startat, atualgump);
-	elseif (input[0] == 2) //botões de página v
-		sendnewhabwindow(who, actualX);
-	elseif (input[0] == 3)
-		sendnewhabwindow(who, startat-2);
-	elseif (input[0] == 4)
-		sendnewhabwindow(who, startat, atualgump+1);
-	elseif (input[0] == 5)
-		sendnewhabwindow(who, startat, atualgump-1);
-	endif
+	var f_x := 395;
+	var f_y := 53;
+	foreach feat in feat_list
+		GFAddButton(gump, f_x, f_y, 2224, 2224, GF_CLOSE_BTN, 0); //Usar Talento
+		GFGumpPic(gump, f_x+14, f_y-5, 40135, 0);
+		GFTextLine(gump, f_x+18, f_y-3, 1152, feat);
+		GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 0); // Info
+	endforeach
+
+	// GFGumpPic(gump, 581, 55, 4033, 1259);
+	// GFGumpPic(gump, 577, 59, 4033, 1259);
+	GFAddButton(gump, 579, 57, 4033, 4033, GF_CLOSE_BTN, 0); //Comprar Talento
+	GFTooltip(gump, 1030297);
+
+	AttrGump(who, gump);
+
+	return gump;
 endfunction
 
-function sendnewattwindow(who);
-	while (1)
-		//montando gump
-		var chargump := GFCreateGump(150,150);
-		GFDisposable(chargump, 0);
-		GFPage(chargump, 0);
-		GFResizePic( chargump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 250, 200 );
-		GFResizePic( chargump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 220, 170 );
-		
-		GFTextLine(chargump, 25, 25, 1153, "Atributos");
-		GFTextLine(chargump, 25, 45, 2105, "Você têm " + GetAttribPoints(who) + " pontos. ");
-		
-		GFTextLine(chargump, 70,85,2103,"Força:");
-		GFTextLine(chargump, 70,105,2103,"Destreza:");
-		GFTextLine(chargump, 70,125,2103,"Inteligência:");
-		GFTextLine(chargump, 70,145,2103,"Constituição:");
-		
-		//setando valores para a gump
-		var stri  := AP_GetTrueStat(who, "Strength");
-		var dexi  := AP_GetTrueStat(who, "Dexterity");
-		var inte  := AP_GetTrueStat(who, "Intelligence");
-		var consti:= AP_GetTrueStat(who, "Constitution");
-		
-		//montando gump
-		GFTextLine(chargump, 170, 85,2103, stri);
-		GFTextLine(chargump, 170, 105,2103, dexi);
-		GFTextLine(chargump, 170, 125,2103, inte);
-		GFTextLine(chargump, 170, 145,2103, consti);
-		
-		if (GetAttribPoints(who)) //se tiver pontos de att, aparece os botões
-			GFAddButton(chargump, 30, 90, 2436, 2436, GF_CLOSE_BTN, 22);
-			GFAddButton(chargump, 30, 110, 2436, 2436, GF_CLOSE_BTN, 23);
-			GFAddButton(chargump, 30, 130, 2436, 2436, GF_CLOSE_BTN, 24);
-			GFAddButton(chargump, 30, 150, 2436, 2436, GF_CLOSE_BTN, 25);
-		endif
-		
-		var input := GFSendGump(who, chargump);
-		input := input[0];
-		if (!input)
-			break;
-		elseif (input) //se usar algum botão
-			var attrib;
-			var valor;
-			case (input)
-				22: attrib := "Strength";
-					valor := stri;
-				23: attrib := "Dexterity";
-					valor := dexi;
-				24: attrib := "Intelligence";
-					valor := inte;
-				25: attrib := "Constitution";
-					valor := consti;
-			endcase
-			
-			if (AP_GetTrueStat(who, attrib) >= 150)
-				SendSysMessageEx(who, "Voce nao pode aumentar mais este atributo.", SSM_FAIL);
-			else
-				if (GetAttribPoints(who) <= 0)
-					SendSysMessageEx(who, "Voce nao tem mais pontos.", SSM_FAIL);
-				else //seta os valores e tira o ponto.
-					AP_SetTrueStat(who, attrib, valor+1);
-					SetAttribPoints(who, GetAttribPoints(who)-1);
-				endif
-			endif
-		endif
-	endwhile
+function AttrGump(who, byref gump)
+	// Attributes
+	// GFHTMLArea(gump, 20, 11, 185, 20, "<BASEFONT SIZE=4 COLOR=#D3D3D3><center>Atributos");
+	GFResizePic(gump, 6, 7, 5170, 219, 216);
+	GFHTMLArea(gump, 52, 37, 131, 20, "<BASEFONT SIZE=5 COLOR=#4c4ca6>Status");
+	GFGumpPic(gump, 153, 35, 5411, 0);
 
+	var attr_points := GetAttribPoints(who);
+	var attr_x := 52;
+	var attr_y := 55;
+	foreach attr in (attr_list)
+		GFResizePic(gump, attr_x, attr_y, 3000, 120, 21);
+		GFTextLine(gump, attr_x+4, attr_y, 2966, "{}:".format(translateAttribute(attr)));
+		// GFResizePic(gump, attr_x+95, attr_y, 3000, 30, 21);
+		GFTextLine(gump, attr_x+101, attr_y, 655, "{}".format(AP_GetTrueStat(who, attr)));
+
+		if (attr_points)
+			GFAddButton(gump, attr_x-21, attr_y-2, 55, 55, GF_CLOSE_BTN, 20+_attr_iter);
+		endif
+
+		attr_y += 24;
+	endforeach
+
+	if (attr_points)
+		GFHTMLArea(gump, 26, 177, 185, 20, "<BASEFONT SIZE=2 COLOR=#ffffd6><center>Você tem {} pontos para atribuir".format(attr_points));
+	endif
 endfunction

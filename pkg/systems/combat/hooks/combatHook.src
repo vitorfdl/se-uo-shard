@@ -160,7 +160,7 @@ function GetAttackerChance(attacker, defender)
 		endif
 	endif
 	
-	var dice := rollAttrDice(attacker, attribute, dice_gain);
+	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
 	return dice;
 endfunction
 

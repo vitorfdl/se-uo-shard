@@ -55,7 +55,7 @@ function ghaiaObjective(npc, destiny, move_type)
 	ev.type     := EVID_DOOBJECTIVE; // ajetra isso
 	ev.destiny  := destiny;
 	ev.move_type:= move_type;
-	ev.move_direction:=
+	// ev.move_direction:=
 	
 	sendEvent( npc, ev);
 endfunction

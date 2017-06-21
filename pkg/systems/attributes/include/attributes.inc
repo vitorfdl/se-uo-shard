@@ -45,7 +45,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, critical := 20)
 	// print("{}: DiceResult: {}".format(mobile.name, dice));
 
 	if (attribute && attribute != 0)
-		var mod := GetBonusAttr(AP_GetTrueStat(mobile, attribute));;
+		var mod := GetBonusAttr(AP_GetTrueStat(mobile, attribute));
 		// print("{}: dice mod: {}".format(mobile.name, mod));
 		dice += mod;
 	endif
@@ -57,7 +57,10 @@ function rollAttrDice(mobile, attribute, penalty := 0, critical := 20)
 	return dice;
 endfunction
 
-function getProfiencyBonus(mobile)
+function getProfiencyBonus(mobile, skill := 0)
+	if (skill && !HaveSkill(mobile, skill))
+		return 0;
+	endif
 	var proficiency := 0;
 	var level := 1;
 	if (mobile.npctemplate);
@@ -113,30 +116,6 @@ endfunction
 function GetBonusAttr(number)
 	var modifier := Floor((number - 10) / 2);
 	return modifier;
-endfunction
-
-function GetTranslatedAttribute(number)
-	var translated := GetBonusAttr(number);
-	case(cstr(translated))
-		"-5":"-4":
-			translated := "Ameba";
-		"-3":"-2":
-			translated := "Baixissimo";
-		"-1":"0":
-			translated := "Baixo";
-		"1":"2":
-			translated := "Normal";
-		"3":"4":
-			translated := "Médio";
-		"5":"6":
-			translated := "Alto";
-		"7":"8":
-			translated := "Muito Alto";
-		"9":"10":
-			translated := "Heróico";
-	endcase
-
-	return translated;
 endfunction
 
 function HaveSkill(mobile, skill)

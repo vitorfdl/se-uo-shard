@@ -185,7 +185,6 @@ endprogram
 
 exported function MegaCliloc( who, byref packet )
 	var item := SystemFindObjectBySerial(packet.GetInt32(OFFSET_OBJECT_SERIAL));
-
 	if ( item )
 
 		packet.SetSize(15);//primeira parte do packet eh tamanho 15
@@ -195,10 +194,11 @@ exported function MegaCliloc( who, byref packet )
 
 		if( item.IsA(POLCLASS_MOBILE) )
 			Object_Name := item.name;
-			/*var raca := GetObjProperty(item, "chardata").raca;
+
+			var raca := GetObjProperty(item, "chardata").raca;
 			if (raca)
 				Object_Name := Object_Name  + " [" + raca + "]";
-			endif*/
+			endif
 			
 			if (item.npctemplate)
 				if (IsBoss(item))
@@ -286,9 +286,7 @@ exported function MegaCliloc( who, byref packet )
 			for (xy := deathpoint_max; xy > deathpoint ; xy-=10);
 				xDesc:=xDesc + white + "Gravemente Ferido<br>";
 			endfor
-		endif
-
-		if (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
+		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
 			var cfg := ReadConfigFile(":*:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);
 			xDesc := xDesc + white + "Qualidade: " +  + getQuality(item.quality) +"<br>";
@@ -327,14 +325,11 @@ exported function MegaCliloc( who, byref packet )
 				if ( (item.damage_poison + item.damage_poison_mod != 0))
 					xDesc := xDesc  + "Veneno " + (item.damage_poison ) + "<br>";
 				endif		
-			
 			elseif (item.isA(POLCLASS_ARMOR))
 				if (cint(elem.strrequired) > 0)
 					xDesc := xDesc + "Min Str: " + elem.strrequired + "<br>";
 				endif
-				
 			endif
-		
 		endif
 
 		var pplmage := GetObjProperty(item, "magicwho"); //magic lore

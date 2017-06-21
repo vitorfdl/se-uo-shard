@@ -64,6 +64,7 @@ program Logon(who)
 	endif
 
 	LogonPets(who);
+	CloseGump(who, GUMPID_SKILLLIST);
 
 	return 1;
 endprogram

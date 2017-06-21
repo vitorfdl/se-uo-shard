@@ -39,8 +39,6 @@ exported function LoginHook(who, byref packet)
 	var username := Packet.GetString(OFFSET_ACCOUNT_NAME, INFO_LEN);
 	var password := Packet.GetString(OFFSET_ACCOUNT_PASS, INFO_LEN);
 	var isRazor  := Packet.GetString(OFFSET_ACCOUNT_ALLOW, 1);
-	print(username);
-	print(password);
 	// print(isRazor);
 	// if (isRazor != "D")
 	// 	return 1;

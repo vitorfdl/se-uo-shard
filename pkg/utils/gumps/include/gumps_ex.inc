@@ -4,14 +4,15 @@
  * TODO
  *
  * Function List
- * GFExtractData()
- * GFOptimizeGump()
+ * GFExtractData(input, data_id)
+ * GFOptimizeGump(byref gump)
  * GFTextCoords()
  * GFTextMid()
  * GFTextRight()
  * GFTextWidth()
- * GFWordWrap()
- *
+ * GFWordWrap(text, pixels)
+ * GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
+ * GFHtmlShadowed(byref gump, x, y, width, height, color, text);
  */
 use uo;
 use os;
@@ -40,7 +41,11 @@ function GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
 	return Start_Script(":gumps:autoClose", array{mobile, pid, timer, ret_val});
 endfunction
 
-
+function GFHtmlShadowed(byref gump, x, y, width, height, color, text);
+	GFHTMLArea(gump, x-1, y-1, width, height, "<BASEFONT SIZE=5 COLOR=#111111>{}".format(text));
+   GFHTMLArea(gump, x+1, y+1, width, height, "<BASEFONT SIZE=5 COLOR=#111111>{}".format(text));
+   GFHTMLArea(gump, x, y, width, height, "<BASEFONT COLOR={}>{}".format(color, text));
+endfunction
 
 /*
  * GetCfgConst(elem_name, prop_name)
@@ -259,7 +264,7 @@ function GFTextWidth(gump_text)
 	"il1[]]]]]]]]]\""+	//  5
 	"bcejotî(){}==="+	//  6
 	"adfpqrszIÑ~~~~"+	//  7
-	"ghnuvyÅ<>-----"+	//  8
+	"ghnuvyù<>-----"+	//  8
 	"xJ578$?++++++ "+	//  9
 	"kCE2369^/*****"+	// 10
 	"mwABDFOPéô40%%"+	// 11

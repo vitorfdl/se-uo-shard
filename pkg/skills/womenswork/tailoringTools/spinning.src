@@ -32,17 +32,17 @@ program use_wool(who, wool)
   if (((obj >= uobj_wheel_start) && (obj <= uobj_wheel_end)) || ((obj >= 0x10a4) && (obj <= 0x10a6)))
 
 
-    	var gfx;
-    	case(obj)
-      		4117:   gfx := 0x1016;
-      		4119:   gfx := 0x1016;
-      		4121:   gfx := 0x101a;
-      		4123:   gfx := 0x101a;
-      		4124:   gfx := 0x101d;
-      		4126:   gfx := 0x101d;
-      		4260:   gfx := 0x10a5;
-      		4262:   gfx := 0x10a5;
-    	endcase
+	var gfx;
+	case(obj)
+			4117:   gfx := 0x1016;
+			4119:   gfx := 0x1016;
+			4121:   gfx := 0x101a;
+			4123:   gfx := 0x101a;
+			4124:   gfx := 0x101d;
+			4126:   gfx := 0x101d;
+			4260:   gfx := 0x10a5;
+			4262:   gfx := 0x10a5;
+	endcase
 
 	var initx := who.x;
 	var inity := who.y;
@@ -50,11 +50,11 @@ program use_wool(who, wool)
 	while (wool.amount >= 1)	
 
 		use_on.graphic := gfx;
-    		Detach();
+    Detach();
 		sleep(3);
 		use_on.graphic := use_on.objtype;
 	
-    		if (Makeyarn(who, wool) == 0)
+    if (Makeyarn(who, wool) == 0)
 			break;
 		endif
 

@@ -2008,15 +2008,17 @@
 0x9987 lambari survival
 # 0x9988 unused
 0x9989 FishingPoleIron survival
-# 0x998a - 0x9e3f unused
+# 0x998a - 0x9a38 unused
+0x9a39 sewingmachine womenswork
+# 0x9a3a - 0x9c1b unused
+0x9c1c woodmachine woodworking
+# 0x9c1d - 0x9c2f unused
+0x9c30 fletchingmachine woodworking
+# 0x9c31 - 0x9e3f unused
 0x9e40 soschest containers
 # 0x9e41 - 0xa1ff unused
 0xa200 arenastone arena
-0xa201 Amolador metalworking
-0xa202 Smithtable metalworking
-0xa203 WomensDress womenswork
-0xa204 Worktable woodworking
-# 0xa205 - 0xa35f unused
+# 0xa201 - 0xa35f unused
 0xa360 sosbottle sosbottles
 # 0xa361 - 0xa362 unused
 0xa363 sosmessage sosbottles
@@ -2035,7 +2037,11 @@
 # 0xa371 - 0xa400 unused
 0xa401 SpawnPoint yggdrasil
 0xa402 SpawnSpot yggdrasil
-# 0xa403 - 0xafef unused
+# 0xa403 - 0xa880 unused
+0xa881 PrimitiveBackPack containers
+0xa882 FurryBackPack containers
+0xa883 StrapsBackpack containers
+# 0xa884 - 0xafef unused
 0xaff0 TintaVerdeClaro alchemy
 0xaff1 TintaVerdeClaro1 alchemy
 0xaff2 TintaVerdeClaro2 alchemy

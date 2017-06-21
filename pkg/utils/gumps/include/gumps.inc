@@ -385,3 +385,24 @@ function GFTextEntryLimited(byref gump, x, y, width, height, txt_color, ini_text
 endfunction
 
 //Vitor Lima Entry
+/*
+ * GFTooltip(byref gump, cliloc_id)
+ *
+ * Purpose
+ * Adds a tooltip to the previous layoutarray entry
+ *
+ * Parameters
+ * gump: Reference to the gump
+ * cliloc_id:  The decimal number reference to the cliloc entry which will be used as the tooltip.
+ *
+ *
+ * Return value
+ * No return value.
+ *
+ */
+function GFTooltip(byref gump, cliloc_id)
+ var text := "Tooltip " + CStr(CInt(cliloc_id)) + "'";
+ (gump.layout).Append(text);
+
+ return 1;
+endfunction

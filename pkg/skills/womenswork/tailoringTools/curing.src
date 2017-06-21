@@ -412,25 +412,25 @@ until (who.x != characterx or who.y != charactery);
 endfunction
 
 function UsarCuringPeleCinza(who, useon)
-var characterx := who.x;
-var charactery := who.y;
-repeat
- if (SubtractAmount(useon, 1))
- PrintText(who, "*curtindo couro*");
- Sleep(1);
- CreateItemInBackpack(who, 0xee55, 1);
- PlaySoundEffect (who, 0x49);
-//   SetObjProperty(item, "#uso", "1");
-//   Detach();
-//   Sleep(10);
-//   EraseObjProperty(item, "#uso");
-//   SetObjProperty(item, "#item", "1");
-//   SetObjProperty(item, "#itemtype", "couro");
- else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
-   break;
- endif
-until (who.x != characterx or who.y != charactery);
+  var characterx := who.x;
+  var charactery := who.y;
+  repeat
+    if (SubtractAmount(useon, 1))
+    PrintText(who, "*curtindo couro*");
+    Sleep(1);
+    CreateItemInBackpack(who, 0xee55, 1);
+    PlaySoundEffect (who, 0x49);
+    //   SetObjProperty(item, "#uso", "1");
+    //   Detach();
+    //   Sleep(10);
+    //   EraseObjProperty(item, "#uso");
+    //   SetObjProperty(item, "#item", "1");
+    //   SetObjProperty(item, "#itemtype", "couro");
+    else
+      SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+      break;
+    endif
+  until (who.x != characterx or who.y != charactery);
 endfunction
 
 function UsarCuringPeleMarrom(who, useon)

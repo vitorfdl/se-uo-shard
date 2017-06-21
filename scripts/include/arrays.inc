@@ -177,6 +177,42 @@ function FindElemInArray(byref the_array, find_what)
     return 0;
 endfunction
 
+
+/*
+ * FindInArray(byref the_array, find_what)
+ *
+ * Purpose
+ * Finds the first instance of something in an array.
+ *
+ * Parameters
+ * the_array:	Array to search.
+ * find_what:	What to look for.
+ *
+ * Return value
+ * Returns > 1 (the index) if it is found.
+ * Returns 0 if 'find_what' was not found.
+ *
+ */
+function RemoveFromArray(the_array, delete_what)
+	if ( Lower(TypeOf(delete_what)) != "array")
+		delete_what := array{delete_what};
+	endif
+
+	var iter_to_remove := array{};
+	foreach item in (the_array)
+		if (item in delete_what)
+			iter_to_remove += _item_iter;
+		endif
+		sleepms(5);
+	endforeach
+
+	foreach iter in iter_to_remove
+		the_array.Erase(iter - _iter_iter);
+	endforeach
+
+	return the_array;
+endfunction
+
 function RemoveLowest(byref the_array)
 	if (the_array.Size() <= 1)
 		print("here?");

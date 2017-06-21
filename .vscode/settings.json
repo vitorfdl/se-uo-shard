@@ -14,5 +14,7 @@
 
     "files.associations": {
         "**/*.cfg": "cfgpol"
-    }
+    },
+    "editor.tabSize": 3,
+    "editor.insertSpaces": true
 }

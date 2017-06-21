@@ -1,6 +1,7 @@
 use uo;	
 use cfgfile;
 include ":attributes:attributes";
+include ":charactercreation:feats";
 
 function GetExpPoints(who)
 	var chardata := GetObjProperty(who, "chardata");
@@ -38,18 +39,55 @@ function SetCharLevel(who, points)
 	return 1;
 endfunction
 
-function GetSkillList(who, noskill := 0)
-	var chardata := GetObjProperty(who, "chardata");
+function GetSkillList(who)
+	var chardata   := GetObjProperty(who, "chardata");
 	var skill_list := chardata.Skills;
 
 	if (!skill_list)
-		skill_list := array{}
+		skill_list := array{};
 	endif
 	
 	return skill_list;
 endfunction
 
+function Have_Skill(who, skill)
+	var skill_list = GetSkillList(who);
+	if (skill in skill_list)
+		return 1;
+	endif
+
+	return 0;
+endfunction
+
+function GetAttribPoints(who)
+	var chardata := GetObjProperty(who, "chardata");
+	var attpoints := chardata["attpoints"];
+	if (attpoints == error || !attpoints)
+		SetAttribPoints(who, 0);
+		attpoints := 0;
+	endif
+	return attpoints;
+endfunction
+
+function SetAttribPoints(who, points)
+	var chardata := GetObjProperty(who, "chardata");
+	chardata["attpoints"] := points;
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+
+
 //Traduz o nome da skill
+function translateAttribute(attr)
+	attr["Wisdom"] := "Sabedoria";
+	attr["Strength"] := "Força";
+	attr["Intelligence"] := "Inteligência";
+	attr["Constitution"] := "Constituição";
+	attr["Dexterity"] := "Destreza";
+
+	return attr;
+endfunction
+
 function GetTranslatedName(skill)
 	var classCfg := ReadConfigFile(":charactercreation:config/skilltraducao");
 	var elem := FindConfigElem(classCfg, "Traducao");

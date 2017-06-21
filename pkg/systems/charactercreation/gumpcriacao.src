@@ -73,9 +73,7 @@ program createchar(who)
 	SetAllEspecializations(who, chardata);
 
 	//Mudar Aparência
-	while (CharacterApparencGump(who, chardata))
-		sleepms(10);
-	endwhile
+	LookGump(who, chardata);
 
 	MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
@@ -521,8 +519,6 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref  kits)
 	endwhile
 endfunction
 
-
-
 function SkillGump(who, byref  chardata)
 	var cfg := ReadConfigFile(":charactercreation:config/classes");
 	var elem := FindConfigElem(cfg, cstr(chardata.classe) );
@@ -580,45 +576,38 @@ function SkillGump(who, byref  chardata)
 	endwhile
 endfunction
  
-function CharacterApparencGump(who, chardata)
-	var disfarce := struct;
-	disfarce.+barba := "";
-	disfarce.+cabelo := "";
-	disfarce.+corcabelo := -1;
-	disfarce.+corbarba := -1;
-	disfarce.+corpele := -1;
+function LookGump(who, chardata, aparencia := 0)
+	var params := struct{
+		"raca"  := chardata.raca,
+		"barba" := (chardata.raca == "Humano")
+	};
 
-	escolherCabelo(who, disfarce, chardata.povo);
-	escolheCorCabelo(who, disfarce, 0, chardata.povo, 1);
-	if (chardata.raca != "Elfo")
-		escolherBarba(who, disfarce);
-	endif
-	SkinGump(who, disfarce, chardata.povo, 1);
+	aparencia := disguiseGump(who, params, aparencia);
 
 	//equipa os itens de aparencia tudo
-	who.color    := disfarce.corpele;
-	who.truecolor:= disfarce.corpele;
+	who.color    := aparencia.corpele;
+	who.truecolor:= aparencia.corpele;
 	//barba
 	var mybarba  := GetEquipmentByLayer(who, LAYER_BEARD);
 	DestroyItem(mybarba);
 
-	var newbarba := CreateItemAtLocation(who.x, who.y, who.z, disfarce.barba, 1, who.realm);
+	var newbarba := CreateItemAtLocation(who.x, who.y, who.z, aparencia.barba, 1, who.realm);
 	newbarba.color := 1109;
-	newbarba.color := disfarce.corcabelo;
+	newbarba.color := aparencia.corcabelo;
 	EquipItem(who, newbarba);
 	
 	var myhair := GetEquipmentByLayer(who, LAYER_HAIR);
 	DestroyItem(myhair);
 
-	var newhair:= CreateItemAtLocation(who.x, who.y, who.z, disfarce.cabelo, 1, who.realm);
+	var newhair:= CreateItemAtLocation(who.x, who.y, who.z, aparencia.cabelo, 1, who.realm);
 	newhair.color := 1109;
-	newhair.color := disfarce.corcabelo;
+	newhair.color := aparencia.corcabelo;
 	EquipItem(who, newhair);
 
-	if (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Nao."))
-		return 0;
-	else
+	if (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
 		return 1;
+	else
+		LookGump(who, chardata, aparencia);
 	endif
 endfunction
 

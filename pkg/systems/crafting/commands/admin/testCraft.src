@@ -1,8 +1,18 @@
 use uo;
+use cfgfile;
 
 include "include/say";
-include ":crafting:craftBookGump";
-program testCraft(who, text)
-    
+include "include/client";
+include ":crafting:craftGumpFLS";
+
+program testCraft(who)
+    var params := struct{
+        "type"       := "Ferraria",
+        "recipe_cfg" := ReadConfigFile(":metalworking:recipes")
+    };
+    SetObjProperty(who, "recipes", array{ 0x1451, 0xe76, 0x9B0, 0x13EC });
+    SendCraftGump(who, params);
     return 1;
 endprogram
+
+

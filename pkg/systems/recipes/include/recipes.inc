@@ -69,11 +69,11 @@ function CraftRecipe(who, index)
 		return 0;
 	endif
 
-	var craft_skill := lower(GetConfigString(elem, "mainskill"));
-	var diff := GetConfigInt(elem, "difficulty");
-	var points := GetConfigInt(elem, "points");
-	var itemindex := GetconfigInt(elem, "itemindex");
-	var materials := GetConfigStringDictionary(elem, "materials");
+	var craft_skill       := lower(GetConfigString(elem, "mainskill"));
+	var diff              := GetConfigInt(elem, "difficulty");
+	var points            := GetConfigInt(elem, "points");
+	var itemindex         := GetconfigInt(elem, "itemindex");
+	var materials         := GetConfigStringDictionary(elem, "materials");
 	var principalMaterial := GetConfigString(elem, "principalMaterial"); //o material q vai dar bonus
 	var chosenPrincipalMaterial := 0;
 	var theitem;
