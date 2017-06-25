@@ -199,6 +199,10 @@ function GetDefenderCA(defender, armor)
 			// Se n tem armadura, usa defesa
 			CA := 10 + GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
 		endif
+
+		if (defender.shield)
+			CA += defender.shield.AR;
+		endif
 	else
 		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
 		CA := cint(npcelem.AR);

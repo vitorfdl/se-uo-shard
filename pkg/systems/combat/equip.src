@@ -144,28 +144,3 @@ function SetEquipmentMods(who, item)
 
 	return 1;
 endfunction;
-
-function SetEquipMod(item, modname, value)
-
-	var mods := GetObjProperty(item, "equip");
-
-	if (!mods)
-		mods := array;
-	endif
-
-	if ((modname != "skillmod")&&(modname!=error))
-		mods.append(modname);
-		SetObjProperty(item, modname, value);
-	else
-		mods.append(modname);
-		var skill := array;
-		skill.append( skilllist[RandomInt(skilllist.size())+1 ]);
-		var skillamt := array;
-		skillamt.append(value);
-		SetObjProperty(item, "skillmod", skill );
-		SetObjProperty(item, "skillamt", skillamt );
-	endif
-
-	SetObjProperty(item, "equip", mods);
-
-endfunction
