@@ -201,7 +201,7 @@ function GetDefenderCA(defender, armor)
 		endif
 
 		if (defender.shield)
-			CA += defender.shield.AR;
+			CA += defender.shield.AR;   
 		endif
 	else
 		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
@@ -238,7 +238,6 @@ function WearDownArmor(defender, armor)
 				SetObjProperty(armor, "realdesc", armor.desc);
 				SetName(armor, armor.desc+" [danificado]");
 				MoveItemToContainer(armor, defender.backpack);
-				//DestroyItem(armor);
 			elseif ( armor.hp > armor.maxhp )
 				armor.hp := armor.maxhp;
 			else
