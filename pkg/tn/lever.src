@@ -8,7 +8,6 @@ include "include/client";
 include ":attributes:attributes";
 include ":gumps:requestgump";
 include "include/damage";
-include ":charactercreation:resists";
 include ":timedscripts:timedScripts";
 
 const FX_POISON_GAS := 0x113a;

@@ -15,7 +15,6 @@ include "include/damage";
 include "include/say";
 include ":blood:blood";
 include ":charactercreation:habilidades";
-include ":charactercreation:resists";
 include "include/sysEvent";
 include ":timedscripts:timedScripts";
 include ":fls_core:fls_characters";

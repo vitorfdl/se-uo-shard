@@ -25,7 +25,8 @@ function GetSpotGroupData(name, create := 1)
     var data := struct{};
     data.+active          := DFGetProp(elem, "active", create, 0);
     data.+spots           := DFGetProp(elem, "spots", create, array{});
-    data.+spawnGroup_list := DFGetProp(elem, "spawnGroup_list", create, array{});
+    data.+spawngroup_list := DFGetProp(elem, "spawngroup_list", create, array{});
+    data.+activegroup     := DFGetProp(elem, "activegroup", create, 0);
 
     return data;
 endfunction
@@ -46,15 +47,19 @@ endfunction
 function SetSpotGroupData(name, spotGroup)
     var df   := LoadSpotGroupData();
     var elem := DFFindElement(df, name, DF_CREATE);
-    if (spotGroup.spawnGroup_list)
-        foreach entry in (spotGroup.spawnGroup_list)
+    if (spotGroup.spawngroup_list)
+        foreach entry in (spotGroup.spawngroup_list)
             entry := ModelSpawnGroupData(entry);
         endforeach
-        elem.SetProp("spawnGroup_list", spotGroup.spawnGroup_list);
+        elem.SetProp("spawngroup_list", spotGroup.spawngroup_list);
     endif
 
     if (spotGroup.active == 0 || spotGroup.active == 1)
         elem.SetProp("active", spotGroup.active);
+    endif
+    
+    if (spotGroup.activegroup)
+        elem.SetProp("activegroup", spotGroup.activegroup);
     endif
 
     if (spotGroup.spots)
@@ -84,20 +89,24 @@ endfunction
 
 function UpdateSpawnGroupInSpotGroup(name, data := struct{})
     var elem  := GetSpotGroupData(name);
-    var index := FindInArray(elem.spawnGroup_list, struct{"name":=data.name});
+    var index := FindInArray(elem.spawngroup_list, struct{"name":=data.name});
     if (index)
-        elem.spawnGroup_list[index] := data;
+        elem.spawngroup_list[index] := data;
     else
-        elem.spawnGroup_list.append(data);
+        elem.spawngroup_list.append(data);
+    endif
+
+    if (elem.spawngroup_list.size() == 1)
+        elem.activegroup := data.name;
     endif
     SetSpotGroupData(name, elem);
 endfunction
 
 function RemoveSpawnGroupInSpotGroup(name, spawngroup_name)
     var elem  := GetSpotGroupData(name);
-    var index := FindInArray(elem.spawnGroup_list, struct{"name":=spawngroup_name});
+    var index := FindInArray(elem.spawngroup_list, struct{"name":=spawngroup_name});
     if (index)
-        elem.spawnGroup_list.Erase(index);
+        elem.spawngroup_list.Erase(index);
         SetSpotGroupData(name, elem);
         return 0;
     endif
@@ -119,6 +128,9 @@ function AddSpotToSpotGroup(name, serial)
 
     elem.spots.append(serial);
     SetSpotGroupData(name, elem);
+
+    var spot := SystemFindObjectBySerial(serial);
+    spot.SetProps(struct{ "spotgroup" := name} );
     return 0;
 endfunction
 

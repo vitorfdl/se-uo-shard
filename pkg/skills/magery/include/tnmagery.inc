@@ -7,7 +7,6 @@ include ":attributes:attributes";
 include "include/damage";
 include ":timedScripts:timedScripts";
 include "spellSounds";
-include ":charactercreation:resists";
 include ":charactercreation:habilidades";
 
 function spelllearn(who)

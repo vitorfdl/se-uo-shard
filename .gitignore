@@ -4,6 +4,8 @@
 *.so
 *.dep
 *.exe
+*.dmp
+*.log
 data/*
 realm/*
 log/*

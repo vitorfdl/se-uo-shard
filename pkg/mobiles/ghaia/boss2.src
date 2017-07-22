@@ -59,7 +59,7 @@ program KillPlayers()
 			case(ev.type)
 				SYSEVENT_ENTEREDAREA:   
 					if (CheckLineOfSight(me, ev.source))
-						if(CanFight(me, ev.source, align)) //verifica se eh inimigo
+						if(CanFight(me, ev.source)) //verifica se eh inimigo
 							wanders := 0;
 							Boss2Fight(ev.source, spell_list);
 						endif
@@ -108,7 +108,7 @@ endfunction
 
 function lookAround()
   foreach npc in ListMobilesInLineOfSight(me, areasize)
-    if( CanFight(me, npc, align) )
+    if( CanFight(me, npc) )
          Fight(npc);
     endif
     sleepms(2);

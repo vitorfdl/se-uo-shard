@@ -114,10 +114,10 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	dmg := cint(dmg);
 	var attr_bonus := 0;
 	if (!who.npctemplate)
-		if (who.weapon)
+		if (who.weapon && who.weapon.Attribute != "Versatil")
 			attr_bonus := GetBonusAttr(AP_GetStat(who, who.weapon.Attribute));
 		else
-			attr_bonus := GetBonusAttr(STRENGTH);
+			attr_bonus := GetBonusAttr(AP_GetStat(who, STRENGTH));
 		endif
 	endif
 /*	if (temHabilidade(who, "Ataques Precisos"))
@@ -161,7 +161,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	elseif (type != DMG_FORCED && checkImmunity(defender, type))
 		dmg := 0;
 		PrivateSystemReport(defender, "*Imune*", defender);
-		PrivateSystemReport(defender, "*Imune*", attacker);
+		PrivateSystemReport(defender, "*Imune*", source);
 		return;
 	endif
 
@@ -183,8 +183,8 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 endfunction
 
 function checkResist(defender, damage_type)
-	var resist_list := array{};
-	var vulnerability_list := array{}
+	var resist_list        := array{};
+	var vulnerability_list := array{};
 	if (!defender.npctemplate)
 		var chardata := GetObjProperty(defender, "chardata_resist");
 		if (chardata)
@@ -207,6 +207,7 @@ function checkResist(defender, damage_type)
 	if (damage_type in vulnerability_list)
 		return -1;
 	endif
+
 
 	return 0;
 endfunction

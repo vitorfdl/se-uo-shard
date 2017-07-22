@@ -1,6 +1,8 @@
 use uo;
 
 program Install(spawnpoint)
+    SetObjProperty(spawnpoint, "SpawnQueue", array{});
+    SetObjProperty(spawnpoint, "Monsters", array{});
     spawnpoint.SetProps(struct{});
     spawnpoint.setYggdrasil(struct{});
     return 1;

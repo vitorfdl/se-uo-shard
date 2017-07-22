@@ -6,7 +6,6 @@ include "include/client";
 include "include/sounds";
 include "include/say";
 include ":timedScripts:timedScripts";
-include ":charactercreation:resists";
 
 program SpellScript(params)
 	var who := params[1];

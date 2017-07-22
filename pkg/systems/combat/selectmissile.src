@@ -1,6 +1,6 @@
 use uo;
 
-include "includes/say";
+include "include/say";
 program select( who, item)
 	SendSysMessageEX(who, "Escolha o tipo de flecha.", SSM_REQUEST);
 	

@@ -121,7 +121,7 @@ endfunction
 
 function CS_SelectArmored(item_array)
 	foreach item in ( item_array )
-		if (item.AR > 10)
+		if (cint(item.ar_base) > 10)
 			return item;
 		endif
 		sleepms(2);

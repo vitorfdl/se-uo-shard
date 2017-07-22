@@ -117,7 +117,7 @@ endprogram
 function GetDamageType(attacker)
 	var attack_type := "Concussão";
 	if (!attacker.npctemplate && attacker.weapon)
-		var weapon_type := GetConfigString(item_cfg[weapon.objtype], "DamageType");
+		var weapon_type := GetConfigString(item_cfg[attacker.weapon.objtype], "DamageType");
 		if (weapon_type)
 			attack_type := weapon_type;
 		endif
@@ -229,14 +229,14 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critic
 		hitopt := GetObjProperty(weapon, "generichit");
 	endif
 
-	foreach hitscript in weapon_scripts
-		var script := start_script(hitscript, array{attacker, defender, weapon, armor, base_damage, critical, hitopt});
-		if ( !script || script.errortext )
-			SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-			SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-		endif
-		sleepms(2);
-	endforeach
+	// foreach hitscript in weapon_scripts
+	// 	var script := start_script(hitscript, array{attacker, defender, weapon, armor, base_damage, critical, hitopt});
+	// 	if ( !script || script.errortext )
+	// 		SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+	// 		SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+	// 	endif
+	// 	sleepms(2);
+	// endforeach
 
 	return 1;
 endfunction

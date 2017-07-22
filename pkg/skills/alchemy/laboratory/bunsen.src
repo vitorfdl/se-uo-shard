@@ -7,32 +7,38 @@ include "include/say";
 include ":attributes:attributes";
 
 program change(who, item )
-  var cfg := ReadConfigFile(":*:itemdesc");
+  var cfg  := ReadConfigFile(":*:itemdesc");
   var elem := FindConfigElem(cfg, item.objtype);  
-  if(item.graphic == item.objtype)
-    if(elem.changesnd)
-      PlaySoundEffect(who, elem.changesnd);
-    endif
-    item.graphic := elem.change;
-    if (item.graphic == 6222)
-          foreach balao in listitemsnearlocation (item.x, item.y, item.z, 1)
-             if ( (balao.objtype == 6194) || (balao.objtype == 6195) || (balao.objtype == 6196) )
-                  foreach beker in listitemsnearlocation (item.x, item.y, item.z, 1)
-                     if ( (beker.objtype == 6192) || (beker.objtype == 6193) )
-                         Destilar(balao, beker, who, item);
-                     endif
-                  endforeach
-                  break;
-             endif
-          endforeach
-       item.graphic := item.objtype;
-    endif
-  else
-    if(elem.originsnd)
+  if(item.graphic != item.objtype)
+      if(elem.originsnd)
       PlaySoundEffect(who, elem.originsnd );
     endif
     item.graphic := item.objtype;
+    return;
   endif
+
+  if(elem.changesnd)
+    PlaySoundEffect(who, elem.changesnd);
+  endif
+
+  item.graphic := elem.change;
+  if (item.graphic != 6222)
+    return;
+  endif
+
+  foreach balao in ListItemsNearLocation(item.x, item.y, item.z, 1)
+    if ( !(balao.objtype in array[6194, 6195, 6196]) )
+      continue;
+    endif
+    
+    foreach beker in ListItemsNearLocation(item.x, item.y, item.z, 1)
+      if ( beker.objtype in array[6192, 6193] )
+          Destilar(balao, beker, who, item);
+      endif
+    endforeach
+    break;
+  endforeach
+  item.graphic := item.objtype;
 endprogram
 
 function Destilar(balao, beker, who, item)
@@ -58,7 +64,7 @@ function Destilar(balao, beker, who, item)
    EraseObjProperty(balao, "extrato");
    EraseObjProperty(balao, "strength");
    
-   SkillCheck(who, ALCHEMY, -1);
+  //  SkillCheck(who, ALCHEMY, -1);
    item.movable := 1;
    balao.movable := 1;
    beker.movable := 1;

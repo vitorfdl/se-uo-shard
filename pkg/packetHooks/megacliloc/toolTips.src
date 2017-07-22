@@ -17,26 +17,20 @@ const OFFSET_CLILOC_ID       := 0x0F;
 const OFFSET_LENGTH_ID       := 0x13;
 const OFFSET_UNICODE_TEXT    := 0x14;
 
-function GetDmgStringDesc(elem, item)
+const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
+const RED    := "<BASEFONT COLOR=#FF0000>";
+const BLUE   := "<BASEFONT COLOR=#3232ff>";
+const ORANGE := "<BASEFONT COLOR=#FFA500>";
 
-	var avgdmg := cint(elem.MinDam + elem.MaxDam)/2;
-
-	if(avgdmg >= 20)
-		return "Letal";
-	elseif(avgdmg >= 18)
-		return "Muito";
-	elseif(avgdmg >= 16)
-		return "Bom";
-	elseif(avgdmg >= 14)
-		return "Mediano";
-	elseif(avgdmg >= 12)
-		return "Pouco";
-	elseif(avgdmg >= 10)
-		return "Pouquissimo ";
-	else
-		return "Inofensivo";
-	endif
-
+function TranslateAtt(attribute)
+	case (attribute.lower())
+		"strength": return "Força";
+		"dexterity": return "Destreza";
+		"intelligence": return "Inteligência";
+		"wisdom": return "Sabedoria";
+		"constitution": return "Constituição";
+		default: return attribute;
+	endcase
 endfunction
 
 function getQuality(num)
@@ -242,21 +236,17 @@ exported function MegaCliloc( who, byref packet )
 		// This is where you'll be putting all your properties. <br> to break a new line.
 		// You wont need to add anymore cliloc id's because you can just add all the props
 		// into one string.
-		var white  := "<BASEFONT COLOR=#FFFFFF>";
-		var red    := "<BASEFONT COLOR=#FF0000>";
-		var blue   := "<BASEFONT COLOR=#3232ff>";
-		var orange := "<BASEFONT COLOR=#FFA500>";
 		var xDesc  := "";
 		var desc   := GetObjProperty(item, "description");
 
 		if (GetObjProperty(item,"magic"))
 			if (temHabilidade(who, "Detectar Item Magico"))
-				xDesc := xDesc + blue + "Mágico<br>";
+				xDesc += BLUE + "Mágico<br>";
 			endif
 		endif
 		
 		if (GetObjProperty(item, "SpecialCraft"))
-			xDesc := xDesc + blue + "Feito com" + GetObjProperty(item, "SpecialCraft") + "<br>";
+			xDesc += "{}Feito com {}<br>".format(GetObjProperty(item, "SpecialCraft"));
 		endif
 
 		
@@ -276,7 +266,7 @@ exported function MegaCliloc( who, byref packet )
 			desc := desc[1, 85];
 		endif
 		if (desc!=error && desc != "")
-			xDesc := xDesc + white + "" + desc + "<BR>";
+			xDesc += "{}{}<br>".format(WHITE, desc);
 		endif
 
 		if (item.IsA(POLCLASS_MOBILE))
@@ -284,50 +274,49 @@ exported function MegaCliloc( who, byref packet )
 			var deathpoint_max := AP_GetVitalMaximumValue(item, "DP");
 			var xy;
 			for (xy := deathpoint_max; xy > deathpoint ; xy-=10);
-				xDesc:=xDesc + white + "Gravemente Ferido<br>";
+				xDesc += "{}Gravement Ferido<br>".format(WHITE);
 			endfor
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
-			var cfg := ReadConfigFile(":*:itemdesc");
-			var elem := FindConfigElem(cfg, item.objtype);
-			xDesc := xDesc + white + "Qualidade: " +  + getQuality(item.quality) +"<br>";
-			if (elem.DamageType)
-				xDesc := xDesc + "Tipo: " + elem.DamageType + "<br>";
-			endif
 			var cond := GetCondition(item);
 			if (cond != "Boa")
-	 			xDesc := xDesc + GetCondition(item) + "<br>";
+	 			xDesc += "Condição: {}<br>".format(cond);
+			endif
+			
+			xDesc += "Qualidade: {}<br>".format(getQuality(item.quality));
+
+			var cfg := ReadConfigFile(":*:itemdesc");
+			var elem := FindConfigElem(cfg, item.objtype);
+			if (elem.DamageType)
+				xDesc += "Tipo: " + elem.DamageType + "<br>";
 			endif
 
 			if (item.isA(POLCLASS_WEAPON))
-				xDesc := xDesc + "Min Str: " + elem.strrequired + "<br>";
-//				xDesc := xDesc + "Dano: " + GetDmgStringDesc(elem,  item) + "<br>";
-//				xDesc := xDesc + "Velocidade: " + GetVelStringDesc(elem, item) + "<br>";
-				var crits := GetCriticalInfo(elem);
-				if (crits != "")
-					xDesc := xDesc + red + crits;
+				if (elem.strrequired)
+					xDesc += "Força Mínima: " + elem.strrequired + "<br>";
 				endif
+				if (who.cmdlevel > 3)
+					xDesc += "Dano: " + cstr(elem.damage) + "<br>";
+					xDesc += "Velocidade: " + cstr(elem.speed) + "<br>";
+				endif
+				xDesc += "Atributo: " + TranslateAtt(cstr(item.attribute)) + "<br>";
+//				xDesc += "Velocidade: " + GetVelStringDesc(elem, item) + "<br>";
+				// var crits := GetCriticalInfo(elem);
+				// if (crits != "")
+				// 	xDesc += RED + crits;
+				// endif
 
 				var hits :=  GetHitsInfo(elem);
 				if (hits != "")
-					xDesc := xDesc + orange + hits;
+					xDesc += ORANGE + hits;
 				endif
 
-				xDesc := xDesc + white + "Fisico " + (item.damage_physical ) + "<br>";
-				if ( (item.damage_cold + item.damage_cold_mod != 0))
-					xDesc := xDesc  + "Frio " + (item.damage_cold ) + "<br>";
-				endif
-				if ( (item.damage_fire + item.damage_fire_mod != 0))
-					xDesc := xDesc  + "Fogo " + (item.damage_fire ) + "<br>";
-				endif
-				if ( (item.damage_energy + item.damage_mod != 0))
-					xDesc := xDesc  + "Energia " + (item.damage_energy ) + "<br>";
-				endif
-				if ( (item.damage_poison + item.damage_poison_mod != 0))
-					xDesc := xDesc  + "Veneno " + (item.damage_poison ) + "<br>";
-				endif		
 			elseif (item.isA(POLCLASS_ARMOR))
 				if (cint(elem.strrequired) > 0)
-					xDesc := xDesc + "Min Str: " + elem.strrequired + "<br>";
+					xDesc += "Força Mínima: " + elem.strrequired + "<br>";
+				endif
+
+				if (who.cmdlevel > 3)
+					xDesc += "AR: " + elem.AR + "<br>";
 				endif
 			endif
 		endif
@@ -336,35 +325,35 @@ exported function MegaCliloc( who, byref packet )
 		if ( pplmage != error)
 			if (who.serial in pplmage)
 				if (GetObjProperty(item, "pocaoname"))
-					xDesc := xDesc + white + GetObjProperty(item, "pocaoname");
+					xDesc += WHITE + GetObjProperty(item, "pocaoname");
 				endif
 				var mods := GetObjProperty(item, "equip");
 				if (mods != error)
 					foreach mod in (mods.keys())
-						xDesc := xDesc + blue + getbonusname(mod) + "<br>";
+						xDesc += BLUE + getbonusname(mod) + "<br>";
 					endforeach
 				endif
 				if (item.dmg_mod > 0 )
-					xDesc := xDesc + blue + "Bônus Dano";
+					xDesc += BLUE + "Bônus Dano";
 				endif
 				if (item.hp_mod > 0)
-					xDesc := xDesc + blue + "Bônus Item PVs";
+					xDesc += BLUE + "Bônus Item PVs";
 				endif
 				var hitsscripts := GetObjProperty(item, "HitScripts");
 				if (hitsscripts != error)
 					foreach hits in hitsscripts
 						if (hits == ":combat:weaponHitScripts/FireHit")
-							xDesc := xDesc + blue + "Dano de Fogo<br>";
+							xDesc += BLUE + "Dano de Fogo<br>";
 						elseif ( hits == ":combat:weaponHitScripts/IceHit")
-							xDesc := xDesc + blue + "Dano de Gelo<br>";
+							xDesc += BLUE + "Dano de Gelo<br>";
 						elseif ( hits == ":combat:weaponHitScripts/LightningHit")
-							xDesc := xDesc + blue + "Dano de Energia<br>";
+							xDesc += BLUE + "Dano de Energia<br>";
 						endif
 					endforeach
 				endif
 
 				if (GetObjProperty(item, "swordmage") != error)
-					xDesc := xDesc + white + GetObjProperty(item, "swordmage") + "<br>";
+					xDesc += WHITE + GetObjProperty(item, "swordmage") + "<br>";
 				endif
 			endif
 		endif
@@ -374,29 +363,29 @@ exported function MegaCliloc( who, byref packet )
 			var properties := cint(GetObjProperty(item, "identificado"));
 			if (properties)
 				if (craftproperty.tipo)
-					xDesc := xDesc + white + "Fundir: " + craftproperty.tipo;
+					xDesc += WHITE + "Fundir: " + craftproperty.tipo;
 				endif
 				if (craftproperty.veste)
-					xDesc := xDesc + " " + craftproperty.veste +"<br>";
+					xDesc += " " + craftproperty.veste +"<br>";
 				else
-					xDesc := xDesc + "<br>";
+					xDesc += "<br>";
 				endif
 				if (craftproperty.equipamentos)
 					var equipamentos := "";
 					foreach equipamento in (craftproperty.equipamentos)
 						equipamentos := equipamentos + equipamento + " ";
 					endforeach
-					xDesc := xDesc + "Peças: " + equipamentos +"<br>";
+					xDesc += "Peças: " + equipamentos +"<br>";
 				endif
 			endif
 			var i := 1;
 			for(i:=1;i<=properties;i+=1)
 				var bonus := craftproperty.bonus[i];
-				xDesc := xDesc + orange + "+" + getbonusname(bonus.name) + "<br>";
+				xDesc += ORANGE + "+" + getbonusname(bonus.name) + "<br>";
 			endfor
 
 			if (i <= craftproperty.bonus.size())
-				xDesc := xDesc + blue + "+Não Identificado<br>";
+				xDesc += BLUE + "+Não Identificado<br>";
 			endif
 			
 		endif

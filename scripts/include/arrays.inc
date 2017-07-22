@@ -177,6 +177,31 @@ function FindElemInArray(byref the_array, find_what)
     return 0;
 endfunction
 
+function FindAllElemInArray(byref the_array, find_what)
+    if ( Lower(TypeOf(the_array)) != "array" )
+        return error{"errortext":="Object passed was not an array."};
+    endif
+
+    var to_return := array{};
+    foreach index in ( the_array )
+        if ((TypeOf(find_what) == "Struct" || TypeOf(index) == "Struct") || (TypeOf(index) == "Dictionary" || TypeOf(find_what) == "Dictionary"))
+            foreach key in (find_what.Keys())
+                if (index.Exists(key) && find_what[key] == index[key])
+                    to_return.append(index);
+                endif
+                sleepms(2);
+            endforeach
+        endif
+        sleepms(2);
+    endforeach
+
+	if (to_return.size() >= 1)
+		return to_return;
+	endif
+	
+    return 0;
+endfunction
+
 
 /*
  * FindInArray(byref the_array, find_what)

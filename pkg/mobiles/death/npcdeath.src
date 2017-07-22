@@ -124,17 +124,14 @@ program core_npcDeath(params)
 	var death_script := npc_cfg.DeathScript;
 
 	var speech := GetConfigStringArray( npc_cfg[template], "diespeech" );
-	if (speech.size() > 0)
-		if (RandomInt(100)  < 30) //sempre 30% de chance de falar
-			printtextabove(corpse, speech[RandomInt(speech.size()+1)]);
-		endif
+	if (speech.size() > 0 && RandomInt(100)  < 30) //sempre 30% de chance de falar
+		PrintTextAbove(corpse, speech[RandomInt(speech.size()+1)]);
 	endif
 
 	var spawnpoint := SystemFindObjectBySerial(GetObjProperty(corpse, "spawnpoint"));	
 	//printtextabove(corpse, "spawnpoint " + spawnpoint);
 	if (GetObjProperty(corpse, "spawnkill") == error)
-	if (spawnpoint)
-		if (GetObjProperty(spawnpoint, "unique") == 1)
+		if (spawnpoint && GetObjProperty(spawnpoint, "unique") == 1)
 			var boss := GetObjProperty(spawnpoint, "uniquestat");
 			if (boss.deathevent)
 				foreach nevent in (boss.deathevent)
@@ -149,10 +146,7 @@ program core_npcDeath(params)
 				endforeach
 			endif
 		endif
-	endif
-	endif
 
-	if (GetObjProperty(corpse, "spawnkill") == error)
 		if ( death_script )
 			params.Append(npc_cfg);
 			var result := Start_Script("deathscripts/"+death_script, params);

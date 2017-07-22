@@ -124,7 +124,7 @@ function CheckExpUp(who, skill_name, skillbefore, skillafter)
 			if (exp >= maxexp)
 				exp-=maxexp;
 				SetCharLevel(who, level+1);
-				SetSkillPoints(who, GetSkillPoints(who)+1);
+				// SetSkillPoints(who, GetSkillPoints(who)+1);
 				SetAttribPoints(who, GetAttribPoints(who)+3);
 			endif
 			

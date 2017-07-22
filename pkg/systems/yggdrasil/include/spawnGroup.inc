@@ -23,7 +23,7 @@ function LoadSpawnGroupData()
 endfunction
 
 function ModelMobListData(entry := struct{})
-    if (lower(entry.daytime) != "night" && lower(entry.daytime) != "day" && lower(entry.daytime) != "new moon" && lower(entry.daytime) != "always")
+    if (lower(entry.daytime) != "noite" && lower(entry.daytime) != "dia" && lower(entry.daytime) != "lua nova" && lower(entry.daytime) != "always")
         entry.+daytime := "always";
     endif
 
@@ -60,8 +60,8 @@ function SetSpawnGroupData(name, data := struct{})
         elem.SetProp("mob_list", data.mob_list);
     endif
 
-    if (data.eventEntry)
-        elem.SetProp("eventEntry", data.eventEntry);
+    if (data.evententry)
+        elem.SetProp("evententry", data.evententry);
     endif
 
 endfunction
@@ -76,7 +76,7 @@ function GetSpawnGroupData(name, create := 1)
 
     var data := struct{};
     data.+mob_list   := DFGetProp(elem, "mob_list", create, array{});
-    data.+eventEntry := DFGetProp(elem, "eventEntry", create, "");
+    data.+evententry := DFGetProp(elem, "evententry", create, "");
 
     return data;
 endfunction

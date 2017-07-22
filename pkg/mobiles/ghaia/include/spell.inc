@@ -101,7 +101,7 @@ function SpellFight(opponent, spell_list ,alerted := 0)
     if (opponent.dead)
 	var temnego := 0;
 	foreach npc in ListMobilesInLineOfSight(me, areasize + 2)
-		if( CanFight(me, npc, align) )
+		if( CanFight(me, npc) )
 			temnego := 1;
 			break;
 		endif
@@ -246,7 +246,7 @@ function Boss2Fight(opponent, spell_list,alerted := 0)
 		if (opponent.dead)
 			var temnego := 0;
 			foreach npc in ListMobilesInLineOfSight(me, areasize + 2)
-				if( CanFight(me, npc, align) )
+				if( CanFight(me, npc) )
 					temnego := 1;
 					break;
 				endif

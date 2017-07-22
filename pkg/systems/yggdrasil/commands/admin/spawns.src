@@ -35,7 +35,7 @@ const GF_SPAWNGROUP_ALLIES_BTN  := 500;
 const GF_SPAWNGROUP_ENEMIES_BTN := 510;
 
 //Spot Menu
-var spot_name, spot_timeInterval, spot_location, spot_eventEntry; 
+var spot_name, spot_timeinterval, spot_location, spot_evententry; 
 const GF_SPOT_ACTIVE_SWITCH     := 920;
 const GF_SPOT_ADDSPAWNPOINT_BTN := 921;
 const GF_SPOT_REMSPAWNPOINT_BTN := 922;
@@ -43,11 +43,14 @@ const GF_SPOT_TELEPORT_BTN      := 923;
 const GF_SPOT_APPLY_BTN         := 924;
 const GF_SPOT_ADDTREASURE_BTN   := 925;
 const GF_SPOT_REMTREASURE_BTN   := 926;
+const GF_SPOT_FORCESPAWN_BTN    := 927;
+const GF_SPOT_FORCEKILL_BTN     := 928;
 
 //SpawnPoint Menu
-var spawnpoint_name, spawnpoint_mobnumber, spawnpoint_range, spawnpoint_level;
+var spawnpoint_name, spawnpoint_mobnumber, spawnpoint_range;
 const GF_SPAWN_LEVEL_BTN    := 930;
 const GF_SPAWN_TELEPORT_BTN := 931;
+const GF_SPAWN_TYPE_BTN     := 932;
 
 //Treasure Menu
 var treasure_name;
@@ -122,8 +125,8 @@ program spotGroups(params)
             var new_spot := struct{
                 "active" := active_switch,
                 "name" := GFExtractData(input, spot_name),
-                "eventEntry" := GFExtractData(input, spot_eventEntry),
-                "timeInterval" := GFExtractData(input, spot_timeInterval)
+                "evententry" := GFExtractData(input, spot_evententry),
+                "timeinterval" := GFExtractData(input, spot_timeinterval)
             };
             spot.SetProps(new_spot);
         endif
@@ -288,7 +291,7 @@ function DoSelectedGroupList(byref who, input)
                 SetSelectGroupButton(select, "spot");
             else
                 var select := input[0]-GF_SELECTSPAWNGROUP_BTN;
-                select     := spotgroup_data.spawnGroup_list[select].name;
+                select     := spotgroup_data.spawngroup_list[select].name;
                 SetSelectGroupButton(select, "spawngroup");
             endif
             break;
@@ -299,13 +302,19 @@ function DoSpotList(who, input)
     var spot := SystemFindObjectBySerial(selected_spot);
     var data := spot.GetProps();
     case(input[0])
+        GF_SPOT_FORCESPAWN_BTN:
+            spot.ForceSpawn();
+            break;
+        GF_SPOT_FORCEKILL_BTN:
+            spot.ForceKill();
+            break;
         GF_SPOT_ADDSPAWNPOINT_BTN:
             SendSysMessageEx(who, "Selecione um ponto para criar o spawnpoint.");
             var my_target   := TargetCoordinates(who);
             var new_spawnpoint := CreateItemAtLocation(my_target.x, my_target.y, my_target.z, 0xA401);
             if (new_spawnpoint)
                 spot.AddSpawnPoint(new_spawnpoint.serial);
-                new_spawnpoint.SetProps(struct{"spot_serie":=spot.serial});
+                new_spawnpoint.SetProps(struct{"spot_serial":=spot.serial});
             endif
             break;
         GF_SPOT_REMSPAWNPOINT_BTN:
@@ -351,14 +360,19 @@ endfunction
 function DoSpawnPointList(who, input)
     var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
     var data       := spawnpoint.GetProps();
+    var model_update := struct{};
     case(input[0])
         GF_SPAWN_LEVEL_BTN:
-            var spawnpoint_level := cint(RadioGump(who, 150, 165, "Level do Spawn:", array{"1", "2", "3"}));
+            model_update.+level := cint(RadioGump(who, 150, 165, "Level do Spawn:", array{"1", "2", "3"}));
             break;
         GF_SPAWN_TELEPORT_BTN:
             MoveObjectToLocation( who, spawnpoint.x, spawnpoint.y, spawnpoint.z, spawnpoint.realm, MOVEOBJECT_FORCELOCATION );
             break;
+        GF_SPAWN_TYPE_BTN:
+            model_update.+type := CheckBoxGump(who, 150, 190, "Types:", array{"melee", "ranged", "spellcaster", "boss"});
+            break;
     endcase
+    spawnpoint.SetProps(model_update);
 endfunction
 
 function DoTreasureList(who, input)
@@ -505,7 +519,7 @@ function ConstructGroupConfig(byref gump)
     GFPage(gump, 0);
     var group_data  := GetSpotGroupData(selected_group);
     // var groupdata_size := group_data.Size();
-    var spawnGroups := group_data.spawnGroup_list;
+    var spawnGroups := group_data.spawngroup_list;
     var spots       := group_data.spots;
     var form_size   := spawnGroups.Size() + spots.Size();
 
@@ -515,7 +529,11 @@ function ConstructGroupConfig(byref gump)
     GFTextLine(gump, 210, 50, 1153, "Ativado:");
     GFCheckBox(gump, 210+50, 50+5, 2360, 2361, group_data.active, GF_GROUP_ACTIVE_SWITCH);
 
+    GFTextLine(gump, 210+100, 50, 1153, "Spawn:");
+    GFAddButton(gump, 210+90+50, 50+5, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCESPAWN_BTN);
 
+    GFTextLine(gump, 210+115, 50+18, 1153, "Kill:");
+    GFAddButton(gump, 210+90+50, 50+5+18, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCEKILL_BTN);
     //Create Spots Menu
     GFTextLine(gump, 202, 68+18, 555, "Lista de Spots");
     var x := 218;
@@ -613,14 +631,20 @@ function ConstructSpotConfig(byref gump)
     GFCheckBox(gump, sx+50, sy+18+5, 2360, 2361, data.active, GF_SPOT_ACTIVE_SWITCH);
 
     GFTextLine(gump, sx+80, sy+18, 1153, "Intervalo:");
-    spot_timeInterval := GFTextEntry(gump, sx+135, sy+18, 30, 18, 2103, data.TimeInterval);
+    spot_timeinterval := GFTextEntry(gump, sx+135, sy+18, 30, 18, 2103, data.timeinterval);
 
     GFTextLine(gump, sx, sy+18+18, 1153, "Dynamic Event:");
-    spot_eventEntry := GFTextEntry(gump, sx+90, sy+18+18, 140, 18, 2103, data.eventEntry);
+    spot_evententry := GFTextEntry(gump, sx+90, sy+18+18, 140, 18, 2103, data.evententry);
 
     GFTextLine(gump, sx, sy+54, 1153, "Location:");
     GFTextLine(gump, sx+65, sy+54, 2103, "{}, {}, {}".format(spot.x, spot.y, spot.z));
     GFAddButton(gump, sx+52, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_TELEPORT_BTN);
+
+    GFTextLine(gump, sx, sy+72, 1153, "Spawn:");
+    GFAddButton(gump, sx+40, sy+77, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCESPAWN_BTN);
+
+    GFTextLine(gump, sx+80, sy+72, 1153, "Kill:");
+    GFAddButton(gump, sx+60+50, sy+77, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCEKILL_BTN);
 
     //SpawnPoints Menu
     GFTextMid(gump, 390, 150, 260, 555, "SpawnPoint List");
@@ -704,7 +728,7 @@ function ConstructSpawnPointConfig(byref gump)
     var data          := spawnpoint.GetProps();
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 130);
+    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 145);
     GFTextMid(gump, basex, 28, 260, 555, "SpawnPoint Configuration");
 
     var sx := basex+30;
@@ -715,7 +739,7 @@ function ConstructSpawnPointConfig(byref gump)
 
     GFTextLine(gump, sx, sy+18, 1153, "Level:");
     GFTextLine(gump, sx+40, sy+18, 2103, data.level);
-    GFAddButton(gump, sx-15, sy+21, 2103, 2104, GF_CLOSE_BTN, 940);
+    GFAddButton(gump, sx-15, sy+21, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_LEVEL_BTN);
 
     GFTextLine(gump, sx+80, sy+18, 1153, "Max_Mobs:");
     spawnpoint_mobnumber := GFTextEntry(gump, sx+145, sy+18, 30, 18, 2103, data.mob_number);
@@ -723,10 +747,13 @@ function ConstructSpawnPointConfig(byref gump)
     GFTextLine(gump, sx, sy+18+18, 1153, "Range Spawn:");
     spawnpoint_range := GFTextEntry(gump, sx+80, sy+18+18, 30, 18, 2103, data.range);
 
-    GFTextLine(gump, sx, sy+54, 1153, "Location:");
-    GFTextLine(gump, sx+65, sy+54, 2103, "{}, {}, {}".format(spawnpoint.x, spawnpoint.y, spawnpoint.z));
-    GFAddButton(gump, sx+52, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TELEPORT_BTN);
+    GFTextLine(gump, sx, sy+54, 1153, "Level:");
+    GFTextLine(gump, sx+40, sy+54, 2103, data.type);
+    GFAddButton(gump, sx-15, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TYPE_BTN);
 
+    GFTextLine(gump, sx, sy+54+20, 1153, "Location:");
+    GFTextLine(gump, sx+54, sy+54+20, 2103, "{}, {}, {}".format(spawnpoint.x, spawnpoint.y, spawnpoint.z));
+    GFAddButton(gump, sx-15, sy+60+20, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TELEPORT_BTN);
 endfunction
 
 function ConstructTreasureConfig(byref gump)
@@ -785,7 +812,7 @@ endfunction
 
 function ConstructSpawnGroupConfig(byref gump)
     GFPage(gump, 0);
-    var spawngroup_list  := GetSpotGroupData(selected_group).spawnGroup_list;
+    var spawngroup_list  := GetSpotGroupData(selected_group).spawngroup_list;
     var this_group := FindElemInArray(spawngroup_list, selected_spawngroup);
     GFResizePic(gump, 385, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 230, 130);
     GFTextMid(gump, 390, 28, 260, 555, "SpawnGroup {}".format(selected_spawngroup));

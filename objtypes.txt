@@ -590,7 +590,12 @@
 0xde3 campfire lighting
 # 0xde4 - 0xdef unused
 0xdf0 BlackStaff combat
-# 0xdf1 - 0xdf8 unused
+# 0xdf1 unused
+0xdf2 wand01 combat
+0xdf3 wand02 combat
+0xdf4 wand05 combat
+0xdf5 wand03 combat
+# 0xdf6 - 0xdf8 unused
 0xdf9 cotton womenswork
 # 0xdfa - 0xdfd unused
 0xdfe cuthair hair
@@ -620,9 +625,7 @@
 0xe41 MetalChest containers
 0xe42 WoodenChest2 containers
 0xe43 WoodenChest containers
-# 0xe44 - 0xe72 unused
-0xe73 projetildecanhao metalworking
-# 0xe74 unused
+# 0xe44 - 0xe74 unused
 0xe75 BackPackCore containers
 0xe76 Bag containers
 0xe77 openbarrel containers
@@ -1531,7 +1534,7 @@
 # 0x26c1 - 0x26c4 unused
 0x26c5 ShortScythe combat
 0x26c6 Scepter combat
-0x26c7 BladedStaff combat
+0x26c7 Glaive combat
 0x26c8 Pike combat
 0x26c9 DoubleBladedStaff combat
 # 0x26ca unused
@@ -1540,21 +1543,9 @@
 0x26cd RepeatingCrossbow combat
 # 0x26ce unused
 0x26cf GreatSword combat
-# 0x26d0 - 0x277b unused
-0x277c PlateDo combat
-# 0x277d - 0x277e unused
-0x277f SamuraiKote combat
-# 0x2780 - 0x2786 unused
-0x2787 SamuraiSuneate combat
-# 0x2788 unused
-0x2789 KabutoHelm combat
-# 0x278a - 0x278c unused
-0x278d SamuraiHaidate combat
-# 0x278e unused
+# 0x26d0 - 0x278e unused
 0x278f Hood womenswork
-# 0x2790 - 0x279c unused
-0x279d SamuraiMempo combat
-# 0x279e - 0x27a4 unused
+# 0x2790 - 0x27a4 unused
 0x27a5 YumiBow combat
 # 0x27a6 - 0x27a8 unused
 0x27a9 EspadasDuplas combat
@@ -1562,12 +1553,7 @@
 0x27af DualDagger combat
 # 0x27b0 - 0x27d8 unused
 0x27d9 NinjaMask combat
-# 0x27da unused
-0x27db NinjaBelt combat
-0x27dc NinjaLeggings combat
-0x27dd NinjaGloves combat
-0x27de NinjaJacket combat
-# 0x27df - 0x2803 unused
+# 0x27da - 0x2803 unused
 0x2804 dardo tn
 0x2805 flute musicianship
 # 0x2806 - 0x2b05 unused
@@ -1593,8 +1579,8 @@
 # 0x2b71 - 0x2be0 unused
 0x2be1 biscuit food
 # 0x2be2 - 0x2d29 unused
-0x2d2a FeericLongBow combat
-0x2d2b FeericShortBow combat
+0x2d2a CompositeLongBow combat
+0x2d2b CompositeShortBow combat
 # 0x2d2c unused
 0x2d2d karda combat
 0x2d2e kukri combat
@@ -2368,11 +2354,6 @@
 # 0x1f023 - 0x1ff00 unused
 0x1ff01 SecureTradeContainer containers
 0x1ff02 WornItemsContainer containers
-# 0x1ff03 - 0xfe994 unused
-0xfe995 recipe2 recipes
-0xfe996 recipe3 recipes
-# 0xfe997 - 0xff98f unused
-0xff990 recipe1 recipes
-# 0xff991 - 0xff992 unused
+# 0x1ff03 - 0xff992 unused
 0xff993 olhonegro tn
 # 0xff994 - 0xffffffff unused

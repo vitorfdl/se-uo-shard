@@ -84,6 +84,8 @@ program command_newAccount(who)
 			GumpPrompt(who, "Error Creating Account [P] "+account.errortext);
 			return 0;
 		else
+			account.addcharacter(0);
+			SetObjProperty(character, "criandochar", 1);
 			GumpPrompt(who, "Account created successfully.");	
 			return 1;
 		endif

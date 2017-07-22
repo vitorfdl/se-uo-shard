@@ -12,6 +12,7 @@ enum GUMPID_LIST
     GUMPID_TNGUMPS     := 0x15,
     GUMPID_CREATECHAR  := 0x16,
     GUMPID_CRAFTING    := 0x17,
+    GUMPID_FICHARP     := 0x18,
 endenum
 
 enum HUMAN_ANIMATIONS

@@ -1,9 +1,9 @@
-
 use basic;
 use uo;
 use util;
 use os;
 use cfgfile;
+include "include/newperformaction";
 
 program action(who, text)
 
@@ -170,108 +170,109 @@ program action(who, text)
 endif
 
 if ( (input[1]==1) )
-performaction(who, 0x00, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x00, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[2]==1) )
-performaction(who, 0x01, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x01, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[3]==1) )
-performaction(who, 0x0f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x0f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[4]==1) )
-performaction(who, 0x02, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x02, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[5]==1) )
-performaction(who, 0x03, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x03, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[6]==1) )
-performaction(who, 0x05, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x05, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[7]==1) )
-performaction(who, 0x06, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x06, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[8]==1) )
-performaction(who, 0x10, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x10, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[9]==1) )
-performaction(who, 0x11, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x11, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[10]==1) )
-performaction(who, 0x20, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x20, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[11]==1) )
-performaction(who, 0x21, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x21, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif	
 if ( (input[12]==1) )
-performaction(who, 0x22, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x22, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[13]==1) )
-performaction(who, 0x1e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x1e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[14]==1) )
-performaction(who, 0x1f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x1f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[15]==1) )
-performaction(who, 0x15, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x15, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[16]==1) )
-performaction(who, 0x16, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x16, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[17]==1) )
-performaction(who, 0x14, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x14, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[18]==1) )
-performaction(who, 0x12, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x12, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[19]==1) )
-performaction(who, 0x13, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x13, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[20]==1) )
-performaction(who, 0x19, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x19, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[21]==1) )
-performaction(who, 0x1a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x1a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[22]==1) )
-performaction(who, 0x1b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x1b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[23]==1) )
-performaction(who, 0x1c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x1c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[24]==1) )
-performaction(who, 0x17, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x17, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[25]==1) )
-performaction(who, 0x18, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x18, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[26]==1) )
-performaction(who, 0x1d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x1d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[27]==1) )
-performaction(who, 0x07, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x07, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[28]==1) )
-performaction(who, 0x08, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x08, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[29]==1) )
-performaction(who, 0x09, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x09, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[30]==1) )
-performaction(who, 0x0a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x0a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 
 if ( (input[31]==1) )
-//performaction(who, 0x0b, 5, 1, 0, 1, 100 );
-performaction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+//OldPerformAction(who, 0x0b, 5, 1, 0, 1, 100 );
+// PerformAction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 
 if ( (input[32]==1) )
-performaction(who, 0x0d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x0d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[33]==1) )
-performaction(who, 0x0c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x0c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 if ( (input[34]==1) )
-performaction(who, 0x0e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+OldPerformAction(who, 0x0e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 endif
 endprogram

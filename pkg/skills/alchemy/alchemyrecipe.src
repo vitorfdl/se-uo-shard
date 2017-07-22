@@ -27,11 +27,12 @@ program cria(item)
 	var elem := FindConfigelem(cfg, possiveis[chosen]);
 
 	if (elem)
-		spellinfo.+name := GetConfigString(elem, "name");
-		spellinfo.+id := GetConfigInt(elem, "id");
+		spellinfo.+name        := GetConfigString(elem, "name");
+		spellinfo.+id          := GetConfigInt(elem, "id");
 		spellinfo.+description := GetConfigString(elem, "desc");
-		spellinfo.+habilidade := GetConfigString(elem, "habilidade");
-	endif
+		spellinfo.+habilidade  := GetConfigString(elem, "habilidade");
+	endif
+
 
 	SetObjProperty(item, "spellinfo", spellinfo);
 

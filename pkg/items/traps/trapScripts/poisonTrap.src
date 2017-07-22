@@ -10,7 +10,6 @@ include "include/say";
 include "include/damage";
 include ":timedscripts:timedScripts";
 include ":charactercreation:habilidades";
-include ":charactercreation:resists";
 
 program trapScript(params)
 	var mobile := params[1];

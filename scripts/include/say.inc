@@ -64,7 +64,7 @@ function PrivateSystemReport(above_object, text, character := 0, color := SYSTEM
   if (!character)
     character := above_object;
   endif
-  return PrintTextAbovePrivate(above_object, text, character, 9, color);
+  return PrintTextAbovePrivate(above_object, text, character, 9, 2027);
 endfunction
 
 function UC(strs)

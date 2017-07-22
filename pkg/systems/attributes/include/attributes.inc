@@ -8,6 +8,15 @@
 * -- Revision v1.0 --
 * Austin:
 *  Created include file
+*
+* Functions:
+* rollAttrDice(mobile, attribute, penalty := 0, critical := 20) - Rolagem de atributo
+* getProfiencyBonus(mobile, skill := 0) - Bonus de profiencia pelo nivel, se passar skill já checa se vai ter
+* rollResistDice(mobile, type) - Rolagem de resistência
+* GetBonusAttr(number) - Convert numero em bonus 12 -> 1
+* HaveSkill(mobile, skill) - Checa se tem skill
+* (attr...)
+* GetHP(mobile)
 ===============================================================*/
 
 use uo;
@@ -29,9 +38,30 @@ include ":charactercreation:habilidades";
 include "include/arrays";
 include ":ghaia:ghaiaUtil";
 
-function rollAttrDice(mobile, attribute, penalty := 0, critical := 20)
-	var dice := RandomDiceRoll("1d20");
+function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
+	// Seta parametro de critico
+	if (!params.critical)
+		params.critical := 20;
+	endif
+	if (!params.failure)
+		params.failure := 1;
+	endif
 
+	// Rolagem de dados
+	var dice := RandomDiceRoll("1d20");
+	var param_return := {};
+
+	// Aplica penalidades comums
+	if (GetObjProperty(mobile, "ArmorPenalty"))
+		penalty -= 1;
+	endif
+
+	var hunger := AP_GetVital(mobile, "Hunger") / 60;
+	if (!mobile.npctemplate && hunger >= 5)
+		penalty -= 2;
+	endif
+
+	// Rola o dado com penalidade, se for o caso.
 	if (penalty < 0 || GetObjProperty(mobile, "ArmorPenalty") >= 1)
 		var dices := array{ RandomDiceRoll("1d20"), dice};
 		RemoveHighest(dices);
@@ -42,16 +72,29 @@ function rollAttrDice(mobile, attribute, penalty := 0, critical := 20)
 		dice := dices[1];
 	endif
 
-	// print("{}: DiceResult: {}".format(mobile.name, dice));
+	// Grava info de critico.
+	if (dice >= params.critical)
+		param_return.critical := 1;
+	elseif (dice <= params.failure)
+		param_return.critical := -1;
+	else
+		param_return.critical := 0;
+	endif
 
+	// Adiciona bonus de atributo
 	if (attribute && attribute != 0)
 		var mod := GetBonusAttr(AP_GetTrueStat(mobile, attribute));
-		// print("{}: dice mod: {}".format(mobile.name, mod));
 		dice += mod;
 	endif
 	
 	if (dice < 1)
 		dice := 1;
+	endif
+
+	// Retorna
+	if (params.get_critical)
+		param_return.dice := dice;
+		return param_return;
 	endif
 
 	return dice;
@@ -314,44 +357,14 @@ function Wait(mobile, segundos)
 	return 1;
 endfunction
 
-function maolivre(mobile, qtd, checkmount := 1)
-	var rightHand := GetEquipmentByLayer(mobile, 0x01);
-	var leftHand := GetEquipmentByLayer(mobile, 0x02);
-
-	if (qtd == 1)
-		if (rightHand && leftHand)
-			SendSysMessage(mobile, "Voce precisa de uma mao livre.");
-	    		return 0;
-		endif
-	elseif (qtd == 2)
-		if (rightHand || leftHand)
-			SendSysMessage(mobile, "Voce precisa das duas maos livres.");
-	    		return 0;
-		endif
-	endif
-
-	if (checkmount)
-		var mounted := GetEquipmentByLayer(mobile, 0x19);
-
-		if (mounted)
-			SendSysMessage(mobile, "Voce nao pode fazer isto montado.");
-			return 0;
-		endif
-	endif
-
-	return 1;
-endfunction
-
 function GetHP(mobile)
 	var cons     := CInt(AP_GetTrueStat(mobile, "Constitution"));
-	var attr_mod := GetBonusAttr(cons);
 	var chardata := GetObjProperty(mobile, "chardata");
 	var hp := 0;
 	if (chardata != error && chardata.hitpoints)
 		hp := chardata.hitpoints;
 	endif
-
-	hp += cint(attr_mod + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+	hp := (hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
 	if (hp < 1) 
 		hp := 1;
 	endif

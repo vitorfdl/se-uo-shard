@@ -9,7 +9,6 @@ include "include/client";
 include "include/say";
 include "include/damage";
 include ":charactercreation:habilidades";
-include ":charactercreation:resists";
 
 program trapScript(params)
 	var mobile := params[1];

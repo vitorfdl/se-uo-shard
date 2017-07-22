@@ -3,7 +3,6 @@ use uo;
 use os;
 use vitals;
 
-include ":charactercreation:resists";
 include "include/damage";
 
 program neve(who, regioname)

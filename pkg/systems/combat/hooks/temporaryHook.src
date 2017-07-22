@@ -1,0 +1,361 @@
+/////////////////////////////////////////////
+//
+// combathook.src
+//
+// Combat System Hooks
+//
+// Created: 2/26/2004 1:13AM
+// Updated: 06/03/2007 1:13AM
+//
+// Responsavel por:
+//
+//
+////////////////////////////////////////////
+
+use uo;
+use cfgfile;
+
+include ":attributes:attributes";
+include ":combat:armorZones";
+include ":combat:combat";
+include "include/packets";
+include "include/facings";
+include "include/say";
+include "include/damage";
+// include ":charactercreation:habilidades";
+// include ":tn:cooldown";
+include ":tn:combat";
+include ":timedscripts:timedScripts";
+include ":combat:settings";
+include ":fls_core:fls_characters";
+
+var item_cff  := ReadConfigFile(":*:itemdesc");
+
+//Global because they're important, and it keeps the function
+//prototypes shorter and easier to read.
+var wpn_a_elem;
+
+program Attack(params)
+   var attacker := params[1];
+   var defender := params[2];
+
+	if ( attacker == defender )
+		ApplyRawDamage(attacker, 5000);
+		return 1;
+	elseif ( !CheckLineOfSight(attacker, defender) )
+		return 1;
+	endif
+
+	if (attacker.acctname)
+		if (!attacker.warmode)
+			if(GetObjProperty(attacker, "#attackmsg") <= polcore().systime)
+				SendSysMessageEx(attacker, "Voce precisa estar em modo de combate para ameacar alguem.", SSM_FAIL);
+				SetObjProperty(attacker, "#attackmsg", polcore().systime+15);
+			endif
+			return 1;
+		endif
+	endif
+
+	wpn_a_elem := GetItemCFGInfo(attacker, attacker.weapon);
+
+	if ( (attacker.paralyzed) || (attacker.frozen) )
+		SendSysMessage(attacker, "Voce nao consegue atacar.");
+		return 1;
+	elseif ( (attacker.concealed) && (attacker.cmdlevel == 0) )
+		attacker.concealed := 0;
+	elseif ( !DistanceChecks(attacker, defender) )
+		return 1;
+	elseif ( !FacingChecks(attacker, defender) )
+		return 1;
+	elseif ( !AmmoCheck(attacker, defender) )
+		return 1;
+	endif
+
+	var attack_chance := GetAttackerChance(attacker, defender);
+
+	var armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
+	armor     := CS_SelectArmored(armor);
+
+	//Only calculate defender CA if fail/success is not sure
+	var defender_CA   := 0;
+	if (GetObjProperty(attacker, "#attackfail") == 1)
+		EraseObjProperty(attacker, "#attackfail");
+		defender_CA := 100;
+	elseif (GetObjProperty(defender, "#defensefail") == 1)
+		EraseObjProperty(defender, "#defensefail");
+	else
+		defender_CA := GetDefenderCA(defender, armor);
+	endif
+
+	//Arrow repulse magic
+	if (GetObjProperty(defender, "#arrowrepulse") == 1 && isBow())
+		defender_CA := 100;
+	endif
+
+	PlayAttackAnimation(attacker);
+
+	//ACERTOU
+	if ( attack_chance > defender_CA )
+		// if ( TemHabilidade(attacker, "golpedesleal") && IsBehind(attacker, defender.x, defender.y) )
+		// 	if (RandomInt(10) < 3)
+		// 		TS_StartTimer(defender, "paralysis", 2);
+		// 	endif
+		// endif
+		WearDownWeapon(attacker, attacker.weapon);
+		PlayHitSounds(attacker, defender);
+		var dmg := CalculateRawDamage(attacker, attacker.weapon);
+		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, attacker.weapon, armor, dmg, dmg});
+
+	else //ERROU O ATAQUE
+		if ( isBow() )
+			if(!attacker.npctemplate)
+				ArrowRecovery(defender, attacker.weapon);
+			endif
+		endif
+
+		EraseObjProperty(attacker, "movement");
+
+      if (defender.shield)
+         WearDownArmor(defender, defender.shield);
+      elseif (!defender.npctemplate && armor)
+		   WearDownArmor(defender, armor);
+      endif
+
+		var armor_elem := GetItemCFGInfo(defender, armor);
+		// Com armadura leve tem 40% de chance de dar miss
+		if ((!armor_elem.ArmorDexPenalty && RandomInt(100) <= 20) || RandomInt(100) <= 20)
+			PlayMissSound(attacker);
+		else
+			PlayHitSounds(attacker);
+			WearDownWeapon(attacker, attacker.weapon);
+		endif
+	endif
+
+	return 1;
+endprogram
+
+// Rola o dado de ataque
+function GetAttackerChance(attacker, defender)
+	var dice_gain := 0;
+	if ( !attacker.npctemplate )
+		if ( GetEquipmentByLayer(attacker, LAYER_MOUNT))
+			dice_gain -= -1;
+		endif
+	endif
+
+	if (GetObjProperty(attacker, "#attackbonus" ) || GetObjProperty(attacker, "hitbonus") || !IsFacing(defender, attacker.x, attacker.y) )
+		dice_gain += 1;
+	endif
+
+	var attribute := "Strength";
+	var bonus := 0;
+	if (!attacker.npctemplate)
+		// Verifica se arma tem atributo
+		if (attacker.weapon.Attribute)
+			attribute := attacker.weapon.Attribute;
+			// Checa Pericia
+			if (HaveSkill(attacker, wpn_a_elem.Pericia))
+				bonus := cint(getProfiencyBonus(attacker));
+			endif
+			// Escolhe maior atributo para versatilidade
+			if (attribute == "Versatil")
+				var dex := AP_GetTrueStat(attacker, "Dexterity");
+				var str := AP_GetTrueStat(attacker, "Strength");
+				if (str > dex)
+					attribute := "Strength";
+				else
+					attribute := "Dexterity";
+				endif
+			endif
+		endif
+	else
+		// Pega atributo principal do npc
+		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
+		if (npcelem.AttackAttribute)
+			attribute := npcelem.AttackAttribute;
+		endif
+	endif
+	
+	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
+	return dice;
+endfunction
+
+function GetDefenderCA(defender, armor)
+	var CA := 5;
+	if ( !defender.npctemplate )
+		if (armor)
+			CA := armor.ar_base; //se é armadura pesada, n tem dex
+
+			var armor_elem := GetItemCFGInfo(defender, armor);
+			if (armor_elem.pericia == "Armadura Leve")
+				CA += GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
+			elseif (armor_elem.pericia == "Armadura Média")
+				var mod := GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
+				if (mod > 2) //max de mod é 2 pra média
+					mod := 2;
+				endif
+
+				CA += mod;
+			endif
+		else
+			// Se n tem armadura, usa defesa
+			CA := 10 + GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
+		endif
+
+		if (defender.shield)
+			CA += defender.shield.ar_base;   
+		endif
+	else
+		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
+		CA := cint(npcelem.AR);
+	endif
+
+	//nao ta em warmode, 100% de chance
+	if (defender.acctname && !defender.warmode)
+		CA := 0;
+	endif
+
+	return CA;
+endfunction
+
+function WearDownArmor(defender, armor)
+	if ( armor )
+		var armr_elem := CS_GetSettingsCfgElem("Armor");
+		var wearchance := armr_elem.WearChance;
+		// if ( TemHabilidade(defender, "Conservar Equipamento"))
+		// 	wearchance := wearchance/2;
+		// 	if (wearchance < 1)
+		// 		wearchance := 1;
+		// 	endif
+		// endif
+
+		if ( RandomDiceRoll("1d100") <= wearchance )
+			SendSysMessage(defender, "Seu equipamento foi danificado.");
+			var armorhp := armor.hp;
+			armorhp := armorhp - Cint(armr_elem.WearRate);
+			if ( armorhp <= 0 )
+				armor.hp := 0;
+				SendSysMessage(defender, armor.desc+" foi destruida.");
+				SetObjProperty(armor, "broken", 1);
+				SetObjProperty(armor, "realdesc", armor.desc);
+				SetName(armor, armor.desc+" [danificado]");
+				MoveItemToContainer(armor, defender.backpack);
+			elseif ( armor.hp > armor.maxhp )
+				armor.hp := armor.maxhp;
+			else
+				armor.hp := armorhp;
+			endif
+		endif
+	endif
+	
+	return 1;
+endfunction
+
+function WearDownWeapon(attacker, weapon)
+	if ( weapon.IsA(POLCLASS_WEAPON) && !attacker.npctemplate)
+		if ( weapon.objtype == 0x1F020)
+			return 1;
+		else
+			var wpn_elem := CS_GetSettingsCfgElem("Weapons");
+			var wearchance := CInt(wpn_elem.WearChance);
+         var roll := RandomDiceRoll("1d100");
+			if ( roll <= wearchance )
+				var weaponhp := weapon.hp - 1;				
+				if ( weaponhp <= 0 )
+					weapon.hp := 0;
+					SendSysMessage(attacker, weapon.desc+" quebrou.");
+					MoveObjectToLocation(weapon, 1, 1, 1, attacker.realm, MOVEOBJECT_FORCELOCATION);
+					SetObjProperty(weapon, "broken", 1);
+					SetObjProperty(weapon, "realdesc", weapon.desc);
+					SetName(weapon, weapon.desc+" [danificado]");
+					MoveItemToContainer(weapon, attacker.backpack);
+				elseif ( weapon.hp > weapon.maxhp )
+					weapon.hp := weapon.maxhp;
+				else
+					weapon.hp := weaponhp;
+				endif
+			endif
+			return 1;
+		endif
+	endif
+
+	return 0;
+endfunction
+
+// Checa por munição ou faz efeito do npc arqueiro
+function AmmoCheck(attacker, defender)
+	if (wpn_a_elem.isMagic)
+		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		return 1;
+	elseif ( !isBow() )
+		return 1;
+	endif
+
+	if(attacker.npctemplate)
+		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		return 1;
+	endif
+
+	var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
+	var ammo   := GetObjProperty(attacker.weapon, "ammo");
+	if (!ammo)
+		SendSysMessageEX(attacker, "Voce nao definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]", SSM_FAIL);
+		return 0;
+	endif
+	if ( ConsumeSubstance( aljava, ammo, 1 ) )
+		var cfg  := ReadConfigFile(":woodworking:itemdesc");
+		var elem := FindConfigElem(cfg, ammo);
+		var ammo_color := elem.color;
+		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, ammo_color);
+		return 1;
+	else
+		SendSysMessageEX(attacker, "Sua flecha acabou ou esta fora da aljava.", SSM_FAIL);
+		return 0;
+	endif
+
+endfunction
+
+function isBow()
+	if (wpn_a_elem.ProjectileType && wpn_a_elem.Attribute != "Intelligence" )
+		return 1;
+	endif
+	return 0;
+endfunction
+
+// Cria as munição no chão
+function ArrowRecovery(defender, weapon)
+	var chance := 15;
+	if ( RandomDiceRoll("1d100") <= chance )
+		var ammo := GetObjProperty(weapon, "ammo");
+		var y;
+		var x;
+		case (RandomInt(5))
+			1: y := RandomInt(3) * -1; x := RandomInt(3);
+			2: y := RandomInt(3); x := RandomInt(3) * -1;
+			3: y := RandomInt(3) * -1; x := RandomInt(3) * -1;
+			4: y := RandomInt(3); x := RandomInt(3);
+		endcase
+		CreateItemAtLocation(defender.x + x, defender.y + y, defender.z, ammo, 1, defender.realm);
+	endif
+endfunction
+
+// Checa direção q ta olhando
+function FacingChecks(attacker, defender)
+	var retval := 1;
+	if ( !IsFacing(attacker, defender.x, defender.y) )
+		if ( attacker.npctemplate )
+			TurnObjectToward(attacker, defender.x, defender.y);
+		else
+			if ( IsBehind(attacker, defender.x, defender.y) )
+				SendSysMessage(attacker, "Voce esta de costas para o inimigo!");
+				retval := 0;
+			endif
+		endif
+	elseif ( !IsFacing(defender, attacker.x, attacker.y) )
+		if ( defender.npctemplate )
+			TurnObjectToward(defender, attacker.x, attacker.y);
+		endif
+	endif
+
+	return retval;
+endfunction

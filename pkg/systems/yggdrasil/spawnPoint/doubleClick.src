@@ -4,7 +4,7 @@ include ":yggdrasil:spawnSpot";
 
 program DoubleClickMe(who, spawnpoint)
     var mydata     := spawnpoint.GetProps();
-    var spot       := mydata.spot_serie;
+    var spot       := mydata.spot_serial;
     var df         := LoadSpotGroupData();
     var elem_names := DFGetElemNames(df);
 

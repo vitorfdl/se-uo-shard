@@ -44,7 +44,6 @@ function DestroyItems(who, tool, item)
 			SendSysMessage(who, "O alvo esta distante.");
 			return;
 		else
-		print("chamou");
 			var parms;
 			var script := start_script (":tn:destroyitems", {who, item, tool});
 			return 1;

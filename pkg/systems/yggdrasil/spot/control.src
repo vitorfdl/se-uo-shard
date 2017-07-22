@@ -1,0 +1,7 @@
+use uo;
+
+program Install(spawnspot)
+   while(spawnspot)
+      
+   endwhile
+endprogram

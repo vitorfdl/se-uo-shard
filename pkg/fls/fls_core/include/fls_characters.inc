@@ -115,18 +115,46 @@ function IsPoisonImune(who, poison)
 
 endfunction
 
-function GetSkillNameByID(input)
+function maolivre(mobile, qtd, checkmount := 1)
+	var rightHand := GetEquipmentByLayer(mobile, 0x01);
+	var leftHand  := GetEquipmentByLayer(mobile, 0x02);
 
-	var cfg := AP_GetAttributesCfgFile();
-	var entries := GetConfigStringKeys(cfg);
-
-	foreach entry in entries
-		var elem := FindConfigElem(cfg, entry);
-		if (elem.SkillId == input)
-			return entry;
+	if (qtd == 1)
+		if (rightHand && leftHand)
+			SendSysMessageEx(mobile, "Voce precisa de uma mao livre.", SSM_INFO);
+	    		return 0;
 		endif
-	endforeach
+	elseif (qtd == 2)
+		if (rightHand || leftHand)
+			SendSysMessageEx(mobile, "Voce precisa das duas maos livres.", SSM_INFO);
+	    		return 0;
+		endif
+	endif
 
-	return "";
+	if (checkmount)
+		var mounted := GetEquipmentByLayer(mobile, 0x19);
 
+		if (mounted)
+			SendSysMessageEx(mobile, "Voce nao pode fazer isto montado.", SSM_INFO);
+			return 0;
+		endif
+	endif
+
+	return 1;
 endfunction
+
+// function GetSkillNameByID(input)
+
+// 	var cfg := AP_GetAttributesCfgFile();
+// 	var entries := GetConfigStringKeys(cfg);
+
+// 	foreach entry in entries
+// 		var elem := FindConfigElem(cfg, entry);
+// 		if (elem.SkillId == input)
+// 			return entry;
+// 		endif
+// 	endforeach
+
+// 	return "";
+
+// endfunction

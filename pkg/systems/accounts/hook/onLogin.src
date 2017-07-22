@@ -42,6 +42,7 @@ exported function LoginHook(who, byref packet)
 	// print(isRazor);
 	// if (isRazor != "D")
 	// 	return 1;
+
 	if ( !username )
 		SysLog( "Account/GetString Error: "+username.errortext );
 		return 0;
@@ -49,6 +50,7 @@ exported function LoginHook(who, byref packet)
 		SysLog( "Password/GetString Error: "+password.errortext );
 		return 0;
 	endif
+	
 
 	/*var theft_level := AcctHackChecks(username, password);
 	case ( theft_level )

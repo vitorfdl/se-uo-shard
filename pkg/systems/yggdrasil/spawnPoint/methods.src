@@ -1,149 +1,194 @@
+/**
+ * Included Functions
+ * GetProps(spawnpoint)
+ * SetProps(data[struct])
+ * ModelSpawnPoint( data := struct{})
+ *
+ * Treasure
+ * TreasureModel( data := struct{} )
+ * AddTreasure(treasure)
+ * RemoveTreasure(treasure)
+ *
+ * Spawns
+ * FillQueue() - Fill the queue
+ * DoSpawnQueue() - Spawn Next in queue
+ * KillSpawn(index) - Kill monster by index
+ * SpawnAll() - Spawn all monsters
+ * KillAll() - Kill all monters
+**/
+
 use os;
 use uo;
 
 include "include/arrays";
+include "include/dungeons";
+include ":yggdrasil:spawnGroup";
+include ":yggdrasil:spawnSpot";
+include ":yggdrasil:boss";
 
 program Install()
     return 1;
 endprogram
 
-exported function GetProps( spawpoint )
-    var data         := struct{};
-    data.+spot_serie := GetObjProperty(spawpoint, "spot_serie");
-    data.+level      := GetObjProperty(spawpoint, "level");
-    data.+type       := GetObjProperty(spawpoint, "type");
-    data.+range      := GetObjProperty(spawpoint, "range");
-    data.+mob_number := GetObjProperty(spawpoint, "mob_number");
-    data.+treasures  := GetObjProperty(spawpoint, "treasures");
-    
-    data.+yggdrasil := GetObjProperty(spawpoint, "yggdrasil");
+exported function GetProps( spawnpoint )
+   var data         := struct{};
+   data.+spot_serial := GetObjProperty(spawnpoint, "spot_serial");
+   data.+level      := GetObjProperty(spawnpoint, "level");
+   data.+type       := GetObjProperty(spawnpoint, "type");
+   data.+range      := GetObjProperty(spawnpoint, "range");
+   data.+mob_number := GetObjProperty(spawnpoint, "mob_number");
+   data.+treasures  := GetObjProperty(spawnpoint, "treasures");
+   data.+spotgroup  := GetObjProperty(spawnpoint, "spotgroup");
+   data.+monsters   := GetObjProperty(spawnpoint, "monsters");
+   data.+spawnqueue := GetObjProperty(spawnpoint, "spawnqueue");
 
-    return data;
+   if (!data.monsters)
+      data.monsters := array{};
+   endif
+   if (!data.spawnqueue)
+      data.spawnqueue := array{};
+   endif
+
+   data.+yggdrasil := GetObjProperty(spawnpoint, "yggdrasil");
+
+   return data;
 endfunction
 
 exported function SetProps( spawnpoint, data := struct{});
-    var old_data := GetProps(spawnpoint);
-    if (data.name)
-        spawnpoint.name := data.name;
-    endif
+   var old_data := GetProps(spawnpoint);
+   if (data.name)
+      spawnpoint.name := data.name;
+   endif
 
-    if (data.location)
-        spawnpoint.location := data.location;
-    endif
+   if (data.location)
+      spawnpoint.location := data.location;
+   endif
 
-    if (data.spot_serie)
-        old_data.spot_serie := data.spot_serie;
-    endif
+   if (data.spot_serial)
+      old_data.spot_serial := data.spot_serial;
+   endif
 
-    if (data.type)
-        old_data.type := data.type;
-    endif
+   if (data.type)
+      old_data.type := data.type;
+   endif
 
-    if (data.range)
-        old_data.range := data.range;
-    endif
+   if (data.monsters)
+      old_data.monsters := data.monsters;
+   endif
 
-    if (data.level)
-        old_data.level := data.level;
-    endif
+   if (data.spawnqueue)
+      old_data.spawnqueue := data.spawnqueue;
+   endif
 
-    if (data.mob_number)
-        old_data.mob_number := data.mob_number;
-    endif
+   if (data.range)
+      old_data.range := cint(data.range);
+   endif
 
-    if (data.treasures)
-        foreach treasure in (data.treasures)
-            treasure := TreasureModel(treasure);
-        endforeach
-        old_data.treasures := data.treasures;
-    endif
+   if (data.level)
+      old_data.level := cint(data.level);
+   endif
 
-    if (data.eventEntry)
-        old_data.eventEntry := data.eventEntry;
-    endif
+   if (data.mob_number)
+      old_data.mob_number := cint(data.mob_number);
+   endif
 
-    old_data := ModelSpawnPoint(old_data);
+   if (data.treasures)
+      foreach treasure in (data.treasures)
+         treasure := TreasureModel(treasure);
+      endforeach
+      old_data.treasures := data.treasures;
+   endif
 
-    SetObjProperty(spawnpoint, "spot_serie", old_data.spot_serie);
-    SetObjProperty(spawnpoint, "type", old_data.type);
-    SetObjProperty(spawnpoint, "level", old_data.level);
-    SetObjProperty(spawnpoint, "range", old_data.range);
-    SetObjProperty(spawnpoint, "mob_number", old_data.mob_number);
-    SetObjProperty(spawnpoint, "treasures", old_data.treasures);
-    SetObjProperty(spawnpoint, "eventEntry", old_data.eventEntry);
-endfunction
+   if (data.evententry)
+      old_data.evententry := data.evententry;
+   endif
 
-exported function setYggdrasil( spawnpoint, data := struct{})
-     SetObjProperty(spawnpoint, "yggdrasil", data);
+   old_data := ModelSpawnPoint(old_data);
+
+   SetObjProperty(spawnpoint, "spot_serial", old_data.spot_serial);
+   SetObjProperty(spawnpoint, "type", old_data.type);
+   SetObjProperty(spawnpoint, "level", old_data.level);
+   SetObjProperty(spawnpoint, "range", old_data.range);
+   SetObjProperty(spawnpoint, "mob_number", old_data.mob_number);
+   SetObjProperty(spawnpoint, "treasures", old_data.treasures);
+   SetObjProperty(spawnpoint, "evententry", old_data.evententry);
+   SetObjProperty(spawnpoint, "spawnqueue", old_data.spawnqueue);
+   SetObjProperty(spawnpoint, "monsters", old_data.monsters);
 endfunction
 
 function ModelSpawnPoint( data := struct{})
-    if (data.level != 1 && data.level != 2 && data.level != 3 && data.level != 4 && data.level != 5)
-        data.level := 1;
-    endif
+   if (data.level != 1 && data.level != 2 && data.level != 3 && data.level != 4 && data.level != 5)
+      data.level := 1;
+   endif
 
-    if (!data.spot_serie)
-        data.spot_serie := 0;
-    endif
+   if (!data.spot_serial)
+      data.spot_serial := 0;
+   endif
 
-    if (!data.range)
-        data.range := 0;
-    endif
+   if (!data.range)
+      data.range := 0;
+   endif
 
-    if (!data.eventEntry)
-        data.eventEntry := "";
-    endif 
+   if (!data.evententry)
+      data.evententry := "";
+   endif 
 
-    if (TypeOf(data.type) != "Array")
-        data.type := array{"Melee"};
-    elseif (!FindInArray(data.type, "Melee") || !FindInArray(data.type, "Ranged") || !FindInArray(data.type, "Spellcaster") || !FindInArray(data.type, "Boss"))
-        data.type := array{"Melee"};
-    endif
+   if (TypeOf(data.monsters) != "Array")
+      data.monsters := array{};
+   endif 
 
-    if (!data.mob_number)
-        data.mob_number := 1;
-    endif
+   if (TypeOf(data.spawnqueue) != "Array")
+      data.spawnqueue := array{};
+   endif 
 
-    if (TypeOf(data.treasures) != "Array")
-        data.treasures := array{};
-    endif
+   if (TypeOf(data.type) != "Array")
+      data.type := array{"melee", "ranged", "spellcaster"};
+   endif
 
-    if (TypeOf(data.yggdrasil) != "Struct")
-        data.yggdrasil := struct{};
-    endif
+   if (!data.mob_number)
+      data.mob_number := 1;
+   endif
 
-    return data;
+   if (TypeOf(data.treasures) != "Array")
+      data.treasures := array{};
+   endif
+
+   if (TypeOf(data.yggdrasil) != "Struct")
+      data.yggdrasil := struct{};
+   endif
+
+   return data;
 endfunction
 
 function TreasureModel( data := struct{} )
-    if (!data.ref_serial)
-        data.+ref_serial := "missing";
-    endif
+   if (!data.ref_serial)
+      data.+ref_serial := "missing";
+   endif
 
-    if (!data.level)
-        data.+level := 1;
-    endif
-    
-    if (data.start_hidden != 0 && data.start_hidden != 1)
-        data.+start_hidden := 0;
-    endif
+   if (!data.level)
+      data.+level := 1;
+   endif
+   
+   if (data.start_hidden != 0 && data.start_hidden != 1)
+      data.+start_hidden := 0;
+   endif
 
-    if (TypeOf(data.custom) != "Array")
-        data.+custom := array{};
-    endif
+   if (TypeOf(data.custom) != "Array")
+      data.+custom := array{};
+   endif
 
-    return data;
+   return data;
 endfunction
 
 exported function RemoveTreasure(spawnpoint, treasure)
-    var treasures := GetProps(spawnpoint).treasures;
-    var index := FindInArray(treasures, treasure.ref_id);
-    if (index)
-        treasures.Erase(index);
-        SetProps(spawnpoint, struct{"treasures" := treasures});
-        return 1;
-    endif
-    return 0;
+   var treasures := GetProps(spawnpoint).treasures;
+   var index := FindInArray(treasures, treasure.ref_id);
+   if (index)
+      treasures.Erase(index);
+      SetProps(spawnpoint, struct{"treasures" := treasures});
+      return 1;
+   endif
+   return 0;
 endfunction
 
 exported function AddTreasure(spawnpoint, treasure)
@@ -151,4 +196,218 @@ exported function AddTreasure(spawnpoint, treasure)
     treasures.append(treasure);
     SetProps(spawnpoint, struct{"treasures" := treasures});
     return 1;
+endfunction
+
+exported function FillQueue(spawnpoint)
+   var config      := GetProps(spawnpoint);
+   var monsters    := config.monsters;
+
+   // Remove monster from array
+   // Set types and levels that is already spawned
+   var types     := dictionary{};
+   var levels    := dictionary{};
+   var index_rem := array{};
+   foreach monster_obj in monsters
+      var monster := SystemFindObjectBySerial(monster_obj.serial);
+      if (!monster || monster.master)
+         index_rem += _monster_obj_iter;
+      endif
+
+      types[monster_obj.type]   := cint(types[monster_obj.type]) + 1;
+      levels[monster_obj.level] := cint(levels[monster_obj.level]) + 1;
+      sleepms(2);
+   endforeach
+
+   var spawn_queue := config.spawnqueue;
+   foreach item in spawn_queue
+      types[item.type]   := cint(types[item.type]) + 1;
+      levels[item.level] := cint(levels[item.level]) + 1;
+   endforeach
+
+   // Remove dead monsters and set the property
+   index_rem.Reverse(); //cheat for pol
+   foreach index in index_rem
+      monsters.erase(index);
+   endforeach
+   SetObjProperty(spawnpoint, "monsters", monsters);
+
+   // Spawn
+   var spawn_size := monsters.size() + spawn_queue.size();
+
+   if (spawn_size >= config.mob_number)
+      print("Max Spawn size " + spawn_size);
+      return; // Don't need to queue anything
+   endif
+
+   var spotgroup  := GetSpotGroupData(config.spotgroup, 0);
+   if (!spotgroup.activegroup)
+      print("no active in spotgroup");
+      return; //no active group
+   endif
+   var spawngroup := GetSpawnGroupData(spotgroup.activegroup, 0);
+   if (!spawngroup)
+      print("no active group");
+      return; //no active group
+   endif
+
+   var daytime    := lower(GetGlobalProperty("dia"));
+   var n := 0;
+   var spawn_number := cint(config.mob_number) - cint(spawn_size);
+   for (n := 0; n < spawn_number; n := n + 1)
+      var spawn_list := array{};
+      spawn_queue := GetObjProperty(spawnpoint, "spawnqueue");
+
+      foreach mob_config in (spawngroup.mob_list)
+         if (!(mob_config.type in config.type) || mob_config.power > config.level)
+            continue;
+         elseif ((mob_config.daytime != "always" && daytime != mob_config.daytime))
+            continue;
+         endif
+
+         spawn_list.append(mob_config);
+         sleepms(2);
+      endforeach
+
+      if (spawn_list.size() < 1)
+         print("size < 1");
+         return; 
+      endif
+
+      if (config.type.size() > 1)
+         var preference := "melee";
+
+         var spot := SystemFindObjectBySerial(config.spot_serial);
+         var z_diff := spot.z - spawnpoint.z;
+         if (spot.z < 0 && z_diff < 0)
+            z_diff := z_diff * -1;
+         endif
+         if (z_diff >= 10 && "ranged" in config.type)
+            preference := "ranged";
+         endif
+
+         var calc_pref := Ceil(config.mob_number * 0.6);
+         if (calc_pref < types[preference])
+            spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := preference });
+         elseif ("spellcaster" in config.type && types["spellcaster"] < Ceil(config.mob_number * 0.2))
+            spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := "spellcaster" });
+         endif
+      endif
+
+      var mob := spawn_list.RandomEntry();
+      var to_spawn := struct{
+         "template" := mob.name,
+         "type"     := mob.type,
+         "level"    := mob.power,
+         "daytime" := mob.daytime
+      };
+      
+      spawn_queue += to_spawn;
+      SetObjProperty(spawnpoint, "spawnqueue", spawn_queue);
+      SetProps(spawnpoint, struct{ "spawnqueue" := spawn_queue });
+      types[mob.type]   := cint(types[mob.type]) + 1;
+      levels[mob.power] := cint(levels[mob.power]) + 1;
+      sleepms(2);
+   endfor
+endfunction
+
+exported function DoSpawnQueue(spawnpoint, pass := 0)
+   var config  := GetProps(spawnpoint);
+   var monster := config.spawnqueue[1];
+   if (!monster)
+      return 1;
+   elseif (!pass && HasPlayerNear(spawnpoint.x, spawnpoint.y, spawnpoint.ream))
+      return 1;
+   endif
+
+   var i, x, y, z, spawned, success := 0;
+   var loscheck := (config.loscheck == 1);
+	while(success == 0)
+		if(config.range == 0 || i >= 10)
+			x := spawnpoint.x;
+			y := spawnpoint.y;
+			z := spawnpoint.z;
+		elseif(spawnpoint.z >= 0)
+			x := spawnpoint.x + RandomInt(1 + config.range);
+			y := spawnpoint.y + RandomInt(1 + config.range);
+			z := GetWorldHeight(x, y);
+		elseif(spawnpoint.z < 0)
+			x := spawnpoint.x + RandomInt(1 + config.range);
+			y := spawnpoint.y + RandomInt(1 + config.range);
+			z := spawnpoint.z;
+		endif
+
+		if(loscheck && !CheckLosAt(spawnpoint, x, y, z))
+         i += 1;
+         continue;
+      endif
+
+      spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
+      SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
+      SetObjProperty(spawned, "spawnspot", config.spot_serial);
+      success := 1;
+
+		sleepms(5);
+	endwhile
+
+   if (spawned == error || !spawned.serial)
+      return 0;
+   endif
+
+   monster.+serial := spawned.serial;
+   config.spawnqueue.erase(1);
+   config.monsters.append(monster);
+
+   var update_conf := struct{
+      "monsters" := config.monsters,
+      "spawnqueue" := config.spawnqueue
+   };
+
+   SetProps(spawnpoint, update_conf);
+   return 1;
+endfunction
+
+exported function KillSpawn(spawnpoint, index)
+   var monsters := GetObjProperty(spawnpoint, "monsters");
+   var monster_obj := monsters[index];
+   if (!monster_obj)
+      return 0;
+   endif
+
+   var monster := SystemFindObjectBySerial(monster_obj.serial);
+   if (!monster || !monster.master)
+      SetObjProperty(monster, "summoned", 1);
+      SetObjProperty(monster, "spawnkill", 1);
+      RevokePrivilege(monster, "invul" );
+      ApplyRawDamage(monster, GetVital(monster, HITS)+3);
+   endif
+
+   monsters.Erase(index);
+   SetObjProperty(spawnpoint, "monsters", monsters);
+endfunction
+
+exported function SpawnAll(spawnpoint)
+   var monsters := GetObjProperty(spawnpoint, "monsters");
+
+   foreach m in monsters
+      KillSpawn(spawnpoint, (monsters.size()+1) - _m_iter);
+   endforeach
+   SetObjProperty(spawnpoint, "monsters", array{});
+
+   FillQueue(spawnpoint);
+   var queue := GetObjProperty(spawnpoint, "spawnqueue");
+   foreach q in queue
+      DoSpawnQueue(spawnpoint, 1);
+      sleepms(5);
+   endforeach
+endfunction
+
+exported function KillAll(spawnpoint)
+   SetObjProperty(spawnpoint, "spawnqueue", array{});
+   var monsters := GetObjProperty(spawnpoint, "monsters");
+   
+   foreach m in monsters
+      KillSpawn(spawnpoint, (monsters.size()+1) - _m_iter);
+   endforeach
+
+   SetObjProperty(spawnpoint, "monsters", array{});
 endfunction

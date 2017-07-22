@@ -16,11 +16,16 @@ include ":datafile:datafile";
 
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
+	PlayMusic(who, 8);
+	sleepms(200);
+	CloseGump(who, GUMPID_SKILLLIST);
+	CloseGump(who, GUMPID_EMAIL_INDEX);
+
 	if (GetObjProperty(who, "criandochar") == 1 && who.cmdlevel < 1)
-		SendSysMEssageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
+		SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
 		return 1;
 	elseif (GetObjProperty(who, "delete") == 1)
-		SendSysMEssageEx(who, "Voce nao pode ter mais de um personagem por conta.", SSM_FAIL);
+		SendSysMessageEx(who, "Voce nao pode ter mais de um personagem por conta.", SSM_FAIL);
 		return 1;
 	endif
 
@@ -51,7 +56,6 @@ program createchar(who)
 	//Gumps
 	var chardata := struct;
 	ShowCreateGumps(who, chardata);
-	SetObjProperty(who, "chardata", chardata);
 
 	//Status
 	AP_SetTrueStat(who, "Strength", chardata.str);
@@ -60,6 +64,13 @@ program createchar(who)
 	AP_SetTrueStat(who, "Constitution", chardata.con);
 	AP_SetTrueStat(who, "Wisdom", chardata.wis);
 	AP_SetTrueStat(who, "Charisma", chardata.char);
+
+	var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
+	chardata.hitpoints  := cint(class_cfg.HITS) + cint(GetBonusAttr(chardata.con));
+	chardata.manapoints := cint(class_cfg.MANA) + cint(GetBonusAttr(chardata.inte));
+	chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
+
+	SetObjProperty(who, "chardata", chardata);
 
 	who.race := RACE_HUMAN;
 	who.name := chardata.nome;
@@ -239,10 +250,10 @@ function RaceGump(who, byref  chardata)
 				   chardata.dex += 2;
 				   chardata.inte += 1;
 
-				5: chardata.classe 	 := "Guerreiro";
-				6: chardata.classe 	 := "Ladino";
-				7: chardata.classe   := "Mago";
-				8: chardata.classe   := "Clérigo";
+				5: chardata.classe := "Guerreiro";
+				6: chardata.classe := "Ladino";
+				7: chardata.classe := "Mago";
+				8: chardata.classe := "Clérigo";
 
 				11: 
 					if (chardata.raca == "Humano")
@@ -604,7 +615,10 @@ function LookGump(who, chardata, aparencia := 0)
 	newhair.color := aparencia.corcabelo;
 	EquipItem(who, newhair);
 
-	if (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
+	if (aparencia.corpele == -1 || aparencia.corcabelo == -1)
+		SendSysMessageEx(who, "Escolha uma cor para os cabelos!", SSM_FAIL);
+		LookGump(who, chardata, aparencia);
+	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
 		return 1;
 	else
 		LookGump(who, chardata, aparencia);

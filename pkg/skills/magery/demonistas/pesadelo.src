@@ -8,7 +8,6 @@ include "include/say";
 include "include/damage";
 include ":timedScripts:timedScripts";
 include ":attributes:attributes";
-include ":charactercreation:resists";
 
 program SpellScript(params)
 	var who := params[1];

@@ -38,5 +38,7 @@ enum TILE_EFFECTS
 	FX_BIRDS_EFFECT   :=  0x3C27, //Birds moving around effect
 	FX_HEALING_EFFECT :=  0x3C2B, //Healing effect
 	FX_PWINGS_EFFECT  :=  0x3C3B, //Phoenix wing effect
-	FX_POISON_GAS     := 0x113a
+	FX_POISON_GAS     := 0x113a,
+	FX_PUFF_SMOKE     := 0x9DAC,
+	FX_HEARTS         := 0x4AA4
 endenum

@@ -3,7 +3,6 @@ use uo;
 use util;
 use vitals;
 
-include ":charactercreation:resists";
 include ":timedScripts:timedScripts";
 include "include/damage";
 

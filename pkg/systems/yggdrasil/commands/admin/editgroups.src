@@ -257,7 +257,7 @@ function MobSetConfigs(byref who, byref input)
             CreateBossStructGump(who, mob_bossparams);
             break;
         GF_DAYTIME_BTN:
-            var daytime := CheckBoxGump(who, 150, 165, "Horário de Spawn:", array{"Night", "Day", "New Moon"});
+            var daytime := CheckBoxGump(who, 150, 165, "Horário de Spawn:", array{"Noite", "Dia", "Lua Nova"});
             if (daytime.Size() > 1)
                 mob_daytime := "always";
             else
@@ -268,7 +268,7 @@ function MobSetConfigs(byref who, byref input)
             mob_power := cint(RadioGump(who, 150, 165, "Nivel de Poder:", array{"1", "2", "3"}));
             break;
         GF_TYPE_BTN:
-            mob_type := lower(RadioGump(who, 190, 180, "Tipo de Monstro:", array{"Meele", "Ranged", "Spellcaster", "Boss"}));
+            mob_type := lower(RadioGump(who, 190, 180, "Tipo de Monstro:", array{"Melee", "Ranged", "Spellcaster", "Boss"}));
             break;
     endcase
 

@@ -452,8 +452,8 @@ function GetCustom(targ, property)
 			return CS_GetWeaponInfo(targ.weapon, "Speed");
 		"damage_min_max":
 			return CS_GetWeaponInfo(targ.weapon, "MinDam") + "-" + CS_GetWeaponInfo(targ.weapon, "MaxDam");
-		"average_damage":
-			return CS_GetAverageDamage(targ.weapon);
+		// "average_damage":
+		// 	return CS_GetAverageDamage(targ.weapon);
 		"gotten_item_name":
 			return targ.GetGottenItem().desc;
 		"gotten_item_serial":

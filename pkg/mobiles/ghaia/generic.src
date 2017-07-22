@@ -7,15 +7,14 @@ include ":ghaia:generic";
 include ":ghaia:ghaia";
 include ":ghaia:objective";
 
-var me        := self();
-var npccfgfile  := NPC_GetNPCConfig(me);
+var me         := self();
+var npccfgfile := NPC_GetNPCConfig(me);
 var idlesnd1; 
 var idlesnd2;
 var areasize;
 var alert_allies:= 0;
 var flee_point  := 0.1;
 var mystate     := INITIALIZING;
-var align;
 var mytemplate;
 var throwinfo;
 var propallies;
@@ -59,7 +58,7 @@ program KillPlayers()
 			case(ev.type)
 				SYSEVENT_ENTEREDAREA:   
 					if (CheckLineOfSight(me, ev.source))
-						if(CanFight(me, ev.source, align)) //verifica se eh inimigo
+						if(CanFight(me, ev.source)) //verifica se eh inimigo
 							wanders := 0;
 							Fight(ev.source);
 						endif
@@ -89,8 +88,7 @@ program KillPlayers()
 endprogram
 
 function CloseDistance( opponent )
-
-	if ( GetObjPRoperty(me, "noclosecombat") == 1)
+	if ( GetObjProperty(me, "noclosecombat") == 1)
 		return 0;
 	endif
 
@@ -100,21 +98,20 @@ function CloseDistance( opponent )
 		sleepdelay := 0;
 	endif
 
-
-    case (CoordinateDistance( me.x, me.y, opponent.x, opponent.y ))
-        1:              
-        0:
-            return 1;
-        default:
-		CalcPathAndMove(me, opponent, sleepdelay);
-		return 0;
-    endcase
+	case (CoordinateDistance( me.x, me.y, opponent.x, opponent.y ))
+		1:              
+		0:
+			return 1;
+		default:
+			CalcPathAndMove(me, opponent, sleepdelay);
+			return 0;
+	endcase
 
 endfunction
 
 function lookAround()
   foreach npc in ListMobilesInLineOfSight(me, areasize)
-    if( CanFight(me, npc, align) )
+    if( CanFight(me, npc) )
          Fight(npc);
     endif
     sleepms(2);

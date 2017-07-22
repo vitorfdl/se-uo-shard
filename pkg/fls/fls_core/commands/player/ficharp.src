@@ -16,14 +16,14 @@ include ":gumps:include/requestgump";
 var tips := array{"Caracteristicas", "Planejamentos", "Feitos", "Anotacoes", "Avaliacoes"};
 
 function criargump(byref gump)
-	
+	GFSetID(gump, GUMPID_FICHARP);
 	GFResizePic(gump, 50, 25, 5054, 330, 400);
 	GFGumpPic(gump, 0, 15, 10440);
 	GFResizePic(gump, 112, 29, 9500, 200, 29);
 	
 	GFAddButton(gump, 346, 35, 22150, 22152, GF_CLOSE_BTN, 1);
 	//GFAddButton(gump, 185, 395, 2128, 2129, GF_CLOSE_BTN, 1);
-	GFResizePic(gump, 270, 392, 9550, 100, 29);
+	// GFResizePic(gump, 270, 392, 9550, 100, 29); //notarp
 	
 	GFTextLine(gump, 95, 62, 600, "Características" );
 	
@@ -108,11 +108,11 @@ function sendFichaRp(who, targ, edit := 0)
 			GFTextLine(gump, 135,35,1153,"Ficha de "+targ.name);
 		endif
 		
-		GFTextLine(gump, 295,398,1153, "Nota "+ getNotaRP(targ));
-		if (edit == 2)
-			GFAddButton(gump, 345, 394, 5600, 5604, GF_CLOSE_BTN, 98);
-			GFAddButton(gump, 345, 409, 5602, 5606, GF_CLOSE_BTN, 99);
-		endif
+		// GFTextLine(gump, 295,398,1153, "Nota "+ getNotaRP(targ));
+		// if (edit == 2)
+		// 	GFAddButton(gump, 345, 394, 5600, 5604, GF_CLOSE_BTN, 98);
+		// 	GFAddButton(gump, 345, 409, 5602, 5606, GF_CLOSE_BTN, 99);
+		// endif
 		
 		GFPage(gump, 1);
 

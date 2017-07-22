@@ -2,7 +2,6 @@ use uo;
 use os;
 use vitals;
 
-include ":charactercreation:resists";
 include "include/damage";
 include ":attributes:attributes";
 

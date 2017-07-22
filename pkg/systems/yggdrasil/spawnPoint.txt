@@ -33,13 +33,13 @@ DATA ->
             power   : (int)1~3
             bossParams: {..}
         }..],
-        eventEntry:"referenceName", //missingThis
+        evententry:"referenceName", //missingThis
     //SYSTEM DONE
         
     spotGroup ['GroupName']
         activated: (bool)False //Can Turn off/on if Gm wishes.
         spots: ["spotSerial reference..."],
-        spawnGroup_list : [{
+        spawngroup_list : [{
             name      : "spawnGroup referenceName",
             influence : (int)1~5,
             allies    : ["spawnGroup reference"], //Each spotGroup can have your own allies, so in differente places, some spawngroups can have an Alliance or not.
@@ -49,8 +49,8 @@ DATA ->
 Itemdesc Spot
     active   : 1/0,
     spawnpoints: ["spawnPointSerial refrence"],
-    timeInterval : (int)number*60,
-    eventEntry   : "referenceName",
+    timeinterval : (int)number*60,
+    evententry   : "referenceName",
     yggdrasil: { //seted by Yggdrasil
         spawnGroup : "spawnGroup referenceName", 
         level      : 1~3,
@@ -72,7 +72,7 @@ Itemdesc spawnPoint
     }
 
 ["Script Definitions"]
-command: .spawnGroups
+command: .spawngroups
     GM can add, edit and remove spawnGroups.
         'Remove' should check for spot inside spotGroups and tell to GM to replace them.
 
@@ -107,7 +107,7 @@ Do Spawn, by:
     [2] Kill all monsters of the spot, if no BOSS exists.
 
 - Spot will only became 'active' again, if complete one of the follow conditions:
-    [1] timeInterval of the spot has been achieved. 
+    [1] timeinterval of the spot has been achieved. 
         25% of chance to spawn become activaded in intervals of one hour.
     [2] Spot has been killed by another Spot.
         In this case, the spot instantly becomes activated, with spawnGroup of the spot winner.

@@ -1,0 +1,9 @@
+use uo;
+use os;
+
+program Install(spawnpoint)
+   while(spawnpoint)
+      spawnpoint.DoSpawnQueue();
+      sleep(60);
+   endwhile
+endprogram

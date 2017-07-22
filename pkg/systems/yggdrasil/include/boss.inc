@@ -10,55 +10,30 @@ include ":tn:tngumps";
 include ":tn:questevent";
 include ":gumps:yesno";
 include "include/client";
+include "include/arrays";
 include ":combat:hitscripts";
 
 function GetBossStruct(targ)
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
-	var spawnpointtype := GetObjProperty(targ, "spawnpointtype");
-	var monster := GetObjProperty(spawnpoint, "Monsters");
-	if (spawnpointtype == 1)
-		monster := monster.monster1;
-	elseif (spawnpointtype == 2)
-		monster := monster.monster2;
-	elseif (spawnpointtype == 3)
-		monster := monster.monster3;
-	endif
-	return monster.uniquestat;
+	var monsters   := GetObjProperty(spawnpoint, "monsters");
+	var me         := FindElemInArray(monsters, struct{ "serial" := targ.serial });
+	return me.uniquestat;
 endfunction
 
 function isBoss(targ)
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
-	var spawnpointtype := GetObjProperty(targ, "spawnpointtype");
-	if (spawnpoint != error)
-		var monster := GetObjProperty(spawnpoint, "Monsters");
-		if (spawnpointtype == 1)
-			monster := monster.monster1;
-		elseif (spawnpointtype == 2)
-			monster := monster.monster2;
-		elseif (spawnpointtype == 3)
-			monster := monster.monster3;
-		endif
-		var unique := monster.boss;
-		if (unique)
-			return 1;
-		endif
+	var monsters   := GetObjProperty(spawnpoint, "monsters");
+	var me         := FindElemInArray(monsters, struct{ "serial" := targ.serial });
+	if (me.uniquestat)
+		return 1;
 	endif
+
 	return 0;
 endfunction
 
 function CreateBossStructGump(who, byref boss)
-
-	if (boss.resist)
-		if (!boss.phresist)
-			boss.+phresist := boss.resist;
-		endif
-	endif
-	if (boss.status)
-		if (!boss.str)
-			boss.+str := boss.status;
-			boss.+dex := boss.status;
-			boss.+int := boss.status;
-		endif
+	if (boss.CA)
+		boss.+CA := boss.CA;
 	endif
 
 	var chargump := GFCreateGump();
@@ -68,7 +43,6 @@ function CreateBossStructGump(who, byref boss)
 	var npctemplate := boss.npctemplate;
 	npctemplate := npctemplate[10, len(npctemplate)-9];
 	cfg := cfg[npctemplate];
-
 
 	//GFClosable(chargump, 0);
 	GFDisposable(chargump, 0);
@@ -81,27 +55,21 @@ function CreateBossStructGump(who, byref boss)
 	GFTextLine(chargump, 50, 95, 1153, "Nome: ");
 	GFTextLine(chargump, 50, 110, 1153, "Cor: ");
 	if (cfg)
-		GFTextLine(chargump, 50, 125, 1153, "Str Mod ["+ cfg.Strength+ "]:");
+		GFTextLine(chargump, 50, 125, 1153, "Str ["+ cfg.Strength+ "]:");
+		GFTextLine(chargump, 50, 155, 1153, "Dex [" + cfg.Dexterity + "]:");
+		GFTextLine(chargump, 50, 140, 1153, "Int [" + cfg.Intelligence + "]:");
 	else
-		GFTextLine(chargump, 50, 125, 1153, "Str Mod: ");
+		GFTextLine(chargump, 50, 125, 1153, "Str: ");
+		GFTextLine(chargump, 50, 140, 1153, "Int: ");
+		GFTextLine(chargump, 50, 155, 1153, "Dex: ");
 	endif
-	if (cfg)
-		GFTextLine(chargump, 50, 140, 1153, "Int Mod [" + cfg.Intelligence + "]:");
-	else
-		GFTextLine(chargump, 50, 140, 1153, "Int Mod: ");
-	endif
+	
+	GFTextLine(chargump, 50, 170, 1153, "Damage: ");
 
 	if (cfg)
-		GFTextLine(chargump, 50, 155, 1153, "Dex Mod [" + cfg.Dexterity + "]:");
+		GFTextLine(chargump, 50, 185, 1153, "Hits mod [" + cfg.Hits+ "]:");
 	else
-		GFTextLine(chargump, 50, 155, 1153, "Dex Mod: ");
-	endif
-	GFTextLine(chargump, 50, 170, 1153, "Dmg Mod(0.1 a 1.0): ");
-
-	if (cfg)
-		GFTextLine(chargump, 50, 185, 1153, "Hits Mod [" + cfg.Hits+ "]:");
-	else
-		GFTextLine(chargump, 50, 185, 1153, "Hits Mod: ");
+		GFTextLine(chargump, 50, 185, 1153, "Hits mod: ");
 	endif
 
   	//if (cfg.specialai != error)
@@ -112,59 +80,59 @@ function CreateBossStructGump(who, byref boss)
   
 	GFTextLine(chargump, 250, 80, 1153,  "Resistencias");
 	if (cfg)
-		GFTextLine(chargump, 250, 95, 1153, "Physical [" + cfg.PhysicalResist + "]:");
+		GFTextLine(chargump, 250, 95, 1153, "CA [" + cfg.PhysicalResist + "]:");
 	else
-		GFTextLine(chargump, 250, 95, 1153, "Physical: ");
+		GFTextLine(chargump, 250, 95, 1153, "CA: ");
 	endif
 
-	if (cfg)
-		GFTextLine(chargump, 250, 110, 1153, "Fire [" + cfg.FireResist + "]:");
-	else
-		GFTextLine(chargump, 250, 110, 1153, "Fire: ");
-	endif
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 110, 1153, "Fire [" + cfg.FireResist + "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 110, 1153, "Fire: ");
+	// endif
 
-	if (cfg)
-		GFTextLine(chargump, 250, 125, 1153, "Cold [" + cfg.ColdResist + "]:");
-	else
-		GFTextLine(chargump, 250, 125, 1153, "Cold: ");
-	endif
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 125, 1153, "Cold [" + cfg.ColdResist + "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 125, 1153, "Cold: ");
+	// endif
 
-	if (cfg)
-		GFTextLine(chargump, 250, 140, 1153, "Energy [" + cfg.EnergyResist + "]:");
-	else
-		GFTextLine(chargump, 250, 140, 1153, "Energy: ");
-	endif
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 140, 1153, "Energy [" + cfg.EnergyResist + "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 140, 1153, "Energy: ");
+	// endif
 
-	if (cfg)
-		GFTextLine(chargump, 250, 155, 1153, "Poison [" + cfg.PoisonResist + "]:");
-	else
-		GFTextLine(chargump, 250, 155, 1153, "Poison: ");
-	endif
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 155, 1153, "Poison [" + cfg.PoisonResist + "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 155, 1153, "Poison: ");
+	// endif
 
-	GFTextLine(chargump, 250, 185, 1153, "Skills ");
-	if (cfg)
-		GFTextLine(chargump, 250, 200, 1153, "Wrestling Mod [" + cint(cfg.Wrestling)+ "]:");
-	else
-		GFTextLine(chargump, 250, 200, 1153, "Wrestling Mod: ");
-	endif
+	// GFTextLine(chargump, 250, 185, 1153, "Skills ");
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 200, 1153, "Wrestling Mod [" + cint(cfg.Wrestling)+ "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 200, 1153, "Wrestling Mod: ");
+	// endif
 
-	if (cfg)
-		GFTextLine(chargump, 250, 215, 1153, "Tactics Mod [" + cint(cfg.Tactics) + "]:");
-	else
-		GFTextLine(chargump, 250, 215, 1153, "Tactics Mod: ");
-	endif
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 215, 1153, "Tactics Mod [" + cint(cfg.Tactics) + "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 215, 1153, "Tactics Mod: ");
+	// endif
 
-	if (cfg)
-		GFTextLine(chargump, 250, 230, 1153, "Awareness Mod [" + cint(cfg.Awareness) + "]:");
-	else
-		GFTextLine(chargump, 250, 230, 1153, "Awareness Mod: ");
-	endif
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 230, 1153, "Awareness Mod [" + cint(cfg.Awareness) + "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 230, 1153, "Awareness Mod: ");
+	// endif
 
-	if (cfg)
-		GFTextLine(chargump, 250, 245, 1153, "Magery Mod [" + cint(cfg.Magery) + "]:");
-	else
-		GFTextLine(chargump, 250, 245, 1153, "Magery Mod: ");
-	endif
+	// if (cfg)
+	// 	GFTextLine(chargump, 250, 245, 1153, "Magery Mod [" + cint(cfg.Magery) + "]:");
+	// else
+	// 	GFTextLine(chargump, 250, 245, 1153, "Magery Mod: ");
+	// endif
 
 //	if (cfg)
 //		GFTextLine(chargump, 250, 260, 1153, "R. Spells Mod [" + cint(cfg.ResistingSpells) + "]:");
@@ -172,11 +140,8 @@ function CreateBossStructGump(who, byref boss)
 //		GFTextLine(chargump, 250, 260, 1153, "R. Spells Mod: ");
 //	endif
 
-	var template, nome, cor, statmod, resistmod, dmgmod, hitsmod, skillsmod, specialai;
-	var firesistmod, coresistmod, enresistmod, poresistmod, phresistmod;
-	var str, dex, int;
-	var wrestling, tactics, magery, awareness;
-
+	var template, nome, cor, camod, dmgmod, specialai;
+	var str, dex, int, con, wis;
 
 	if ( boss.npctemplate )
 		template := GFTextEntry( chargump, 140, 80, 150, 20, 1150, boss.npctemplate);
@@ -190,97 +155,45 @@ function CreateBossStructGump(who, byref boss)
 		nome := GFTextEntry( chargump, 140, 95, 100, 20, 1150, "-nome-");
 	endif
 
-	if (boss.color)
-		cor := GFTextEntry( chargump, 180, 110, 100, 20, 1150, boss.color+" ");
-	else
-		cor := GFTextEntry( chargump, 180, 110, 100, 20, 1150, "0");
-	endif
+	cor := GFTextEntry( chargump, 180, 110, 100, 20, 1150, cint(boss.color) + "");
 
-	if (!boss.str) //boss.status boss.resist
-		str := GFTextEntry( chargump, 180, 125, 100, 20, 1150, "0");
-	else
-		str := GFTextEntry( chargump, 180, 125, 100, 20, 1150, boss.str + "");
-	endif
+	str := GFTextEntry( chargump, 180, 125, 100, 20, 1150, cint(boss.str) + "");
 
-	if (!boss.int)
-		int := GFTextEntry( chargump, 180, 140, 100, 20, 1150, "0");
-	else
-		int := GFTextEntry( chargump, 180, 140, 100, 20, 1150, boss.int + "");
-	endif
+	int := GFTextEntry( chargump, 180, 140, 100, 20, 1150, cint(boss.int) + "");
 
-	if (!boss.dex)
-		dex := GFTextEntry( chargump, 180, 155, 100, 20, 1150, "0");
-	else
-		dex := GFTextEntry( chargump, 180, 155, 100, 20, 1150, boss.dex + "");
-	endif
+	dex := GFTextEntry( chargump, 180, 125, 100, 20, 1150, cint(boss.dex) + "");
 
-	if (!boss.dmg)
-		dmgmod := GFTextEntry( chargump, 180, 170, 100, 20, 1150, "0");
-	else
-		dmgmod := GFTextEntry( chargump, 180, 170, 100, 20, 1150,  boss.dmg +"");
-	endif
+	con := GFTextEntry( chargump, 180, 125, 100, 20, 1150, cint(boss.con) + "");
 
-	if (!boss.hits)
-		hitsmod := GFTextEntry( chargump, 180, 185, 100, 20, 1150, "0");
-	else
-		hitsmod := GFTextEntry( chargump, 180, 185, 100, 20, 1150, boss.hits+"");
-	endif
+	wis := GFTextEntry( chargump, 180, 125, 100, 20, 1150, cint(boss.wis) + "");
 
+	dmgmod := GFTextEntry( chargump, 180, 170, 100, 20, 1150, cint(boss.dmg) + "");
 
-	if (!boss.phresist)
-		phresistmod := GFTextEntry( chargump, 350, 95, 100, 20, 1150, "0");
-	else
-		phresistmod := GFTextEntry( chargump, 350, 95, 100, 20, 1150, boss.phresist+"");
-	endif
+	camod := GFTextEntry( chargump, 350, 95, 100, 20, 1150, cint(boss.CA) + "");
 
-	if (!boss.firesist)
-		firesistmod := GFTextEntry( chargump, 350, 110, 100, 20, 1150, "0");
-	else
-		firesistmod := GFTextEntry( chargump, 350, 110, 100, 20, 1150, boss.firesist+"");
-	endif
+	// if (!boss.firesist)
+	// 	firesistmod := GFTextEntry( chargump, 350, 110, 100, 20, 1150, "0");
+	// else
+	// 	firesistmod := GFTextEntry( chargump, 350, 110, 100, 20, 1150, boss.firesist+"");
+	// endif
 
-	if (!boss.coresist)
-		coresistmod := GFTextEntry( chargump, 350, 125, 100, 20, 1150, "0");
-	else
-		coresistmod := GFTextEntry( chargump, 350, 125, 100, 20, 1150, boss.coresist+"");
-	endif
+	// if (!boss.coresist)
+	// 	coresistmod := GFTextEntry( chargump, 350, 125, 100, 20, 1150, "0");
+	// else
+	// 	coresistmod := GFTextEntry( chargump, 350, 125, 100, 20, 1150, boss.coresist+"");
+	// endif
 
-	if (!boss.enresist)
-		enresistmod := GFTextEntry( chargump, 350, 140, 100, 20, 1150, "0");
-	else
-		enresistmod := GFTextEntry( chargump, 350, 140, 100, 20, 1150, boss.enresist+"");
-	endif
+	// if (!boss.enresist)
+	// 	enresistmod := GFTextEntry( chargump, 350, 140, 100, 20, 1150, "0");
+	// else
+	// 	enresistmod := GFTextEntry( chargump, 350, 140, 100, 20, 1150, boss.enresist+"");
+	// endif
 
-	if (!boss.poresist)
-		poresistmod := GFTextEntry( chargump, 350, 155, 100, 20, 1150, "0");
-	else
-		poresistmod := GFTextEntry( chargump, 350, 155, 100, 20, 1150, boss.poresist+"");
-	endif
-
-	if (!boss.wrestling)
-		wrestling := GFTextEntry( chargump, 380, 200, 100, 20, 1150, "0");
-	else
-		wrestling := GFTextEntry( chargump, 380, 200, 100, 20, 1150, boss.wrestling+"");
-	endif
-
-	if (!boss.tactics)
-		tactics := GFTextEntry( chargump, 380, 215, 100, 20, 1150, "0");
-	else
-		tactics := GFTextEntry( chargump, 380, 215, 100, 20, 1150, boss.tactics+"");
-	endif
-
-	if (!boss.awareness)
-		awareness := GFTextEntry( chargump, 380, 230, 100, 20, 1150, "0");
-	else
-		awareness := GFTextEntry( chargump, 380, 230, 100, 20, 1150, boss.awareness+"");
-	endif
-
-
-	if (!boss.magery)
-		magery := GFTextEntry( chargump, 380, 245, 100, 20, 1150, "0");
-	else
-		magery := GFTextEntry( chargump, 380, 245, 100, 20, 1150, boss.magery+"");
-	endif
+	// if (!boss.poresist)
+	// 	poresistmod := GFTextEntry( chargump, 350, 155, 100, 20, 1150, "0");
+	// else
+	// 	poresistmod := GFTextEntry( chargump, 350, 155, 100, 20, 1150, boss.poresist+"");
+	// endif
 
 
 	GFTextLine(chargump, 50, 240, 1153, "Loot: ");
@@ -325,7 +238,7 @@ function CreateBossStructGump(who, byref boss)
 	endif
 
 
-    GFTextLine(chargump, 50, 420, 1153, "Combat Events: ");
+   GFTextLine(chargump, 50, 420, 1153, "Combat Events: ");
 	GFAddButton( chargump, 50, 443, 2103, 2104, 1, 40);
 	if (boss.combatevent)
 		var y := 0;
@@ -344,49 +257,18 @@ function CreateBossStructGump(who, byref boss)
 	input := GFSendGump(who, chargump);	
 
   
-	if (boss.npctemplate == error)
-		sendsysmessage(who, "criando");
-        boss.+npctemplate := Cstr(GFExtractData(input, template));
-        boss.+name        := Cstr(GFExtractData(input, nome));
-        boss.+color       := Cint(GFExtractData(input, cor));
-        boss.+str         := Cint(GFExtractData(input, str));
-        boss.+dex         := Cint(GFExtractData(input, dex));
-        boss.+int         := Cint(GFExtractData(input, int));
-        boss.+resist      := Cint(GFExtractData(input, resistmod));
-        boss.+hits        := Cint(GFExtractData(input, hitsmod));
-        boss.+dmg         := Cdbl(GFExtractData(input, dmgmod));
-        boss.+firesist    := Cint(GFExtractData(input, firesistmod));
-        boss.+coresist    := Cint(GFExtractData(input, coresistmod));
-        boss.+enresist    := Cint(GFExtractData(input, enresistmod));
-        boss.+poresist    := Cint(GFExtractData(input, poresistmod));
-        boss.+phresist    := Cint(GFExtractData(input, phresistmod));
-        boss.+wrestling   := Cint(GFExtractData(input, wrestling));
-        boss.+tactics     := Cint(GFExtractData(input, tactics));
-        boss.+awareness   := Cint(GFExtractData(input, awareness));
-        boss.+magery      := Cint(GFExtractData(input, magery));
-	else
-		sendsysmessage(who, "atualizando");
-        boss.npctemplate := Cstr(GFExtractData(input, template));
-        boss.name        := Cstr(GFExtractData(input, nome));
-        boss.color       := Cint(GFExtractData(input, cor));
-        boss.str         := Cint(GFExtractData(input, str));
-        boss.dex         := Cint(GFExtractData(input, dex));
-        boss.int         := Cint(GFExtractData(input, int));
-        boss.skills      := Cint(GFExtractData(input, skillsmod));
-        boss.resist      := Cint(GFExtractData(input, resistmod));
-        boss.hits        := Cint(GFExtractData(input, hitsmod));
-    //boss.specialai := Cint(GFExtractData(input, specialai));
-        boss.dmg       := Cdbl(GFExtractData(input, dmgmod));
-        boss.firesist  := Cint(GFExtractData(input, firesistmod));
-        boss.coresist  := Cint(GFExtractData(input, coresistmod));
-        boss.enresist  := Cint(GFExtractData(input, enresistmod));
-        boss.poresist  := Cint(GFExtractData(input, poresistmod));
-        boss.phresist  := Cint(GFExtractData(input, phresistmod));
-        boss.wrestling := Cint(GFExtractData(input, wrestling));
-        boss.tactics   := Cint(GFExtractData(input, tactics));
-        boss.awareness :=  Cint(GFExtractData(input, awareness));
-        boss.magery    := Cint(GFExtractData(input, magery));
-	endif
+	boss.+npctemplate := Cstr(GFExtractData(input, template));
+	boss.+name        := Cstr(GFExtractData(input, nome));
+	boss.+color       := Cint(GFExtractData(input, cor));
+	boss.+str         := Cint(GFExtractData(input, str));
+	boss.+dex         := Cint(GFExtractData(input, dex));
+	boss.+int         := Cint(GFExtractData(input, int));
+	boss.+wis         := Cint(GFExtractData(input, wis));
+	boss.+con         := Cint(GFExtractData(input, con));
+	boss.+resist      := Cint(GFExtractData(input, resistmod));
+	boss.+hits        := Cint(GFExtractData(input, hitsmod));
+	boss.+dmg         := Cdbl(GFExtractData(input, dmgmod));
+	boss.+CA    		:= Cint(GFExtractData(input, ca));
 
 	if (input[0] == 1 )
 		//SendSysMessage(who, " " + boss + " " );
@@ -523,38 +405,35 @@ function SetBoss(npc, boss)
 	npc.truecolor := boss.color;
 
 	SetObjProperty(npc, "dmgbonus", Cdbl(boss.dmg));
-	if (boss.resist)
-		npc.resist_physical_mod := Cint(boss.resist);
-	else
-		npc.resist_physical_mod := Cint(boss.phresist);
-		npc.resist_fire_mod := Cint(boss.firesist);
-		npc.resist_cold_mod := Cint(boss.coresist);
-		npc.resist_energy_mod := Cint(boss.enresist);
-		npc.resist_poison_mod := Cint(boss.poresist);
+
+	if (boss.CA)
+		npc.CA := Cint(boss.CA);
 	endif
 
 
 	if (boss.status)
-		AP_SetTrueStat(npc, STRENGTH, Cint(boss.status) + AP_GetStat(npc, STRENGTH));
-		AP_SetTrueStat(npc, DEXTERITY, Cint(boss.status) + AP_GetStat(npc, DEXTERITY));
-		AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.status) + AP_GetStat(npc, INTELLIGENCE));
+		AP_SetTrueStat(npc, STRENGTH, Cint(boss.status));
+		AP_SetTrueStat(npc, DEXTERITY, Cint(boss.status));
+		AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.status));
 	else
-		AP_SetTrueStat(npc, STRENGTH, Cint(boss.str) + AP_GetStat(npc, STRENGTH));
-		AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex) + AP_GetStat(npc, DEXTERITY));
-		AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int) + AP_GetStat(npc, INTELLIGENCE));
+		AP_SetTrueStat(npc, STRENGTH, Cint(boss.str));
+		AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex));
+		AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int));
+		AP_SetTrueStat(npc, WISDOM, Cint(boss.wis));
+		AP_SetTrueStat(npc, CONSTITUTE, Cint(boss.con));
 	endif
 	
-	if(boss.skills)
-		AP_SetTrueSkill(npc, TACTICS, Cint(boss.skills) + AP_GetSkill(npc, TACTICS) );
-		AP_SetTrueSkill(npc, WRESTLING, Cint(boss.skills) + AP_GetSkill(npc, WRESTLING));
-		AP_SetTrueSkill(npc, MAGERY, Cint(boss.skills) + AP_GetSkill(npc, MAGERY) );
-		AP_SetTrueSkill(npc, AWARENESS, Cint(boss.skills) + AP_GetSkill(npc, AWARENESS) );
-	else
-		AP_SetTrueSkill(npc, TACTICS, Cint(boss.tactics) + AP_GetSkill(npc, TACTICS) );
-		AP_SetTrueSkill(npc, WRESTLING, Cint(boss.wrestling) + AP_GetSkill(npc, WRESTLING));
-		AP_SetTrueSkill(npc, MAGERY, Cint(boss.magery) + AP_GetSkill(npc, MAGERY) );
-		AP_SetTrueSkill(npc, AWARENESS, Cint(boss.awareness) + AP_GetSkill(npc, AWARENESS) );
-	endif
+	// if(boss.skills)
+	// 	AP_SetTrueSkill(npc, TACTICS, Cint(boss.skills) + AP_GetSkill(npc, TACTICS) );
+	// 	AP_SetTrueSkill(npc, WRESTLING, Cint(boss.skills) + AP_GetSkill(npc, WRESTLING));
+	// 	AP_SetTrueSkill(npc, MAGERY, Cint(boss.skills) + AP_GetSkill(npc, MAGERY) );
+	// 	AP_SetTrueSkill(npc, AWARENESS, Cint(boss.skills) + AP_GetSkill(npc, AWARENESS) );
+	// else
+	// 	AP_SetTrueSkill(npc, TACTICS, Cint(boss.tactics) + AP_GetSkill(npc, TACTICS) );
+	// 	AP_SetTrueSkill(npc, WRESTLING, Cint(boss.wrestling) + AP_GetSkill(npc, WRESTLING));
+	// 	AP_SetTrueSkill(npc, MAGERY, Cint(boss.magery) + AP_GetSkill(npc, MAGERY) );
+	// 	AP_SetTrueSkill(npc, AWARENESS, Cint(boss.awareness) + AP_GetSkill(npc, AWARENESS) );
+	// endif
 
   	SetObjProperty(npc, "hitsmod", cint(boss.hits));
   	RecalcVitals(npc);
@@ -669,130 +548,7 @@ function CreateBoss(boss, x, y, z, realm)
 		return error{"errortext":="Nao foi possivel criar o boss em x " + x + " y " + y + " z  " + z};
 	endif
 	
-	SetName(npc, boss.name);
-	npc.color := boss.color;
-	npc.truecolor := boss.color;
-
-	SetObjProperty(npc, "dmgbonus", Cdbl(boss.dmg));
-	if (boss.resist)
-		npc.resist_physical_mod := Cint(boss.resist);
-	else
-		npc.resist_physical_mod := Cint(boss.phresist);
-		npc.resist_fire_mod := Cint(boss.firesist);
-		npc.resist_cold_mod := Cint(boss.coresist);
-		npc.resist_energy_mod := Cint(boss.enresist);
-		npc.resist_poison_mod := Cint(boss.poresist);
-	endif
-	if (boss.status)
-		AP_SetStatMod(npc, STRENGTH, Cint(boss.status));
-		AP_SetStatMod(npc, DEXTERITY, Cint(boss.status));
-		AP_SetStatMod(npc, INTELLIGENCE, Cint(boss.status));
-	else
-		AP_SetStatMod(npc, STRENGTH, Cint(boss.str));
-		AP_SetStatMod(npc, DEXTERITY, Cint(boss.dex));
-		AP_SetStatMod(npc, INTELLIGENCE, Cint(boss.int));
-	endif
-	
-	if(boss.skills)
-		AP_SetSkillMod(npc, TACTICS, Cint(boss.skills));
-		AP_SetSkillMod(npc, WRESTLING, Cint(boss.skills));
-		AP_SetSkillMod(npc, MAGERY, Cint(boss.skills));
-		AP_SetSkillMod(npc, AWARENESS, Cint(boss.skills));
-	else
-		AP_SetSkillMod(npc, TACTICS, Cint(boss.tactics));
-		AP_SetSkillMod(npc, WRESTLING, Cint(boss.wrestling));
-		AP_SetSkillMod(npc, MAGERY, Cint(boss.magery));
-		AP_SetSkillMod(npc, AWARENESS, Cint(boss.awareness));
-	endif
-
-	  SetObjProperty(npc, "hitsmod", cint(boss.hits));
-	  RecalcVitals(npc);
-	AP_RefreshVitals(npc);
-
-	if (!npc.backpack)
-		var backpack := CreateItemAtLocation(npc.x, npc.y, npc.z,  2482,  1, npc.realm);
-		EquipItem(npc, backpack);
-	endif
-
-	foreach iteminfo in (boss.loot)
-    		var amt := iteminfo.item.Amount;
-    		if (!amt)
-      			amt := 1;
-    		endif
-		if (RandomInt(100) < iteminfo.chance)
-			var theitem := CreateItemInBackpackFromTemplate(npc, iteminfo.item);
-    			theitem.movale := 1;
-    			if (theitem.amount == 1)
-        			Setname(theitem, iteminfo.item.desc);
-	    		endif
-		endif
-	endforeach
-
-
-	if (boss.deathevent)
-		var lwprop := array;
-		foreach nevent in (boss.deathevent)
-			if (nevent.type == "Ultimas Palavras")
-				lwprop.append(nevent.text);
-			else
-				PrepareEvent(nevent);
-			endif
-		endforeach
-		if (lwprop.size() > 0)
-			SetObjProperty(npc, "Ultimas Palavras", lwprop);
-		endif
-	endif
-
-  //printtextabove(npc, " " + boss.special);
-	if (boss.special)
-		foreach spec in (boss.special)
-    //printtextabove(npc,  " " + spec.name);
-			if (spec.name == "Ice Hit")
-				var hit_scripts := GetObjProperty(npc, "HitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:weaponHitScripts/IceHit");
-				SetObjProperty(npc, "HitScripts", hit_scripts);
-			elseif (spec.name == "Fire Hit")
-				var hit_scripts := GetObjProperty(npc, "HitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:weaponHitScripts/FireHit");
-				SetObjProperty(npc, "HitScripts", hit_scripts);
-			elseif (spec.name == "Energy Hit")
-				var hit_scripts := GetObjProperty(npc, "HitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:weaponHitScripts/LightningHit");
-				SetObjProperty(npc, "HitScripts", hit_scripts);
-			elseif (spec.name == "Life Drain")
-				var hit_scripts := GetObjProperty(npc, "ArmorHitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:armorHitScripts/dmgreturn");
-				SetObjProperty(npc, "ArmorHitScripts", hit_scripts);
-				SetObjProperty(npc, "dmgreturn",  spec.amt);
-			elseif (spec.name == "Dmg Return")
-      elseif (spec.name == "Custom Hitscript")
-          SetObjProperty(npc, "generichit", spec.hitopt);
-          var hit_scripts := GetObjProperty(npc, "HitScripts");
-          if ( !hit_scripts )
-            hit_scripts := array{};
-          endif
-          hit_scripts.Append(":combat:weaponHitScripts/generic");
-          SetObjProperty(npc, "HitScripts", hit_scripts);
-        elseif (spec.name == "Special AI")
-            npc.script := spec.ai;
-     //       printtextabove(npc,  " " + spec.ai);
-            restartscript(npc);
-			endif
-		endforeach
-	endif	
-
+	SetBoss(npc, boss);
 	
 	return npc;
 endfunction

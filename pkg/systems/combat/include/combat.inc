@@ -37,7 +37,7 @@ function GetItemCFGInfo(mobile, weapon)
 
 endfunction
   
-function PlayHitSounds(attacker, defender)
+function PlayHitSounds(attacker, defender := 0)
 	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
 
 	if ( wpn_a_elem2.HitSound )
@@ -48,23 +48,25 @@ function PlayHitSounds(attacker, defender)
 		PlaySoundEffect(attacker, npcelem.AttackSound);
 	endif
 	
-	var hurt_sound;
-	if ( defender.npctemplate )
-		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
-		hurt_sound  := npcelem.HurtSound;		
-	else
-		var sounds;
-		if ( defender.gender == 0 )
-			// Male
-			sounds := array(341, 342, 343, 345, 346);
+	if (defender)
+		var hurt_sound;
+		if ( defender.npctemplate )
+			var npcelem := NPC_GetNPCConfig(defender.npctemplate);
+			hurt_sound  := npcelem.HurtSound;		
 		else
-			// Female
-			sounds := array(332, 333, 334, 335, 336);
+			var sounds;
+			if ( defender.gender == 0 )
+				// Male
+				sounds := array(341, 342, 343, 345, 346);
+			else
+				// Female
+				sounds := array(332, 333, 334, 335, 336);
+			endif
+			hurt_sound := sounds.randomentry();
 		endif
-		hurt_sound := sounds.randomentry();
+		
+		PlaySoundEffect(defender, hurt_sound);
 	endif
-	
-	PlaySoundEffect(defender, hurt_sound);
 endfunction
 
 function PlayMissSound(attacker)
@@ -106,11 +108,11 @@ function PlayAttackAnimation(attacker)
 			CID_RAT:
 			CID_GIANT_RAT:
 			CID_PANTHER:
-				PerformAction (attacker, (RandomInt (3) + 5));
+				PerformAction(attacker, (RandomInt (3) + 5));
 			CID_EAGLE:
-				PerformAction (attacker, 4);
+				PerformAction(attacker, 4);
 			default:
-				PerformAction (attacker, (RandomInt (3) + 4));
+				PerformAction(attacker, (RandomInt (3) + 4));
 		endcase
 	
 		return;
@@ -154,6 +156,7 @@ function PlayAttackAnimation(attacker)
 		0x1A: newanim := 7;
 		default: newanim := 0;
 	endcase
+	// OldPerformAction(attacker, anim, 5);
 	NewPerformAction(attacker, 0, newanim, RandomInt(4));
 	return;
 endfunction

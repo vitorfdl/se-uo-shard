@@ -29,12 +29,12 @@ program HTTPScript()
 		return 0;
 	endif
 	
-	var username := QueryParam("username");
-	var password := QueryParam("password");
-	var cmd_lvl := QueryParam("cmdlevel");
+	var username  := QueryParam("username");
+	var password  := QueryParam("password");
+	var cmd_lvl   := QueryParam("cmdlevel");
 	var expansion := QueryParam("expansion");
-	var email := QueryParam("email");
-	var admin_pw := QueryParam("adminpw");
+	var email     := QueryParam("email");
+	var admin_pw  := QueryParam("adminpw");
 	
 	if ( settings.AuxWebPassword )
 		if ( settings.AuxWebPassword != admin_pw )

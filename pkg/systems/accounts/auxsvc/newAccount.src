@@ -27,15 +27,19 @@ program AuxService(connection)
 			connection.Transmit(report);
 			return 0;
 		endif
+
+		// report := array{"Success", "caeai"};
+		// connection.Transmit(report);
 	
 		var event := Wait_For_Event(5);
 		if ( event ) // New account to be made?
-			var username := event[1];
-			var password := event[2];
-			var cmd_lvl := event[3];
+			print(event);
+			var username  := event[1];
+			var password  := event[2];
+			var cmd_lvl   := event[3];
 			var expansion := event[4];
-			var email := event[5];
-			var admin_pw := event[6];
+			var email     := event[5];
+			var admin_pw  := event[6];
 			
 			if ( settings.AuxWebPassword )
 				if ( settings.AuxWebPassword != admin_pw )
@@ -56,7 +60,8 @@ program AuxService(connection)
 			
 			return 1;
 		else
-			report := array{"Error", "Connection timed out."};
+			print("Timeout");
+			report := array{"Error", "Connection timed out !!!."};
 			connection.Transmit(report);
 			return 0;
 		endif

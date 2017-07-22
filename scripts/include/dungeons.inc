@@ -27,3 +27,13 @@ function InDungeon(coord) // retorna 1 se tiver numa caverna
 		return 0;
 	endif
 endfunction
+
+function HasPlayerNear(x, y, realm := 0)
+	var mobs := ListMobilesNearLocation( x, y, LIST_IGNORE_Z, 8, realm );
+	foreach mob in mobs
+		if (mob.acctname ) //se for player e priv de player
+			return 1;
+		endif
+	endforeach
+	return 0;
+endfunction

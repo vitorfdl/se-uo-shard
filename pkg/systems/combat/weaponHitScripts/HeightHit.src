@@ -24,7 +24,7 @@ program HitScript(params)
 		if (dmg > 10)
 			dmg := 10;
 		endif
-		DamageFLS(defender, CInt(dmg), DMG_PHYSICAL, attacker);
+		DamageFLS(defender, CInt(dmg), "Perfuração", attacker);
 	//endif
 	
 	return 1;

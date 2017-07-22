@@ -149,13 +149,13 @@ function clonar(newlook, oldlook)
 	var itemlist := ListEquippedItems(newlook);
 	var y;
 	
-	foreach attrib_name in AP_ListAttributesByType()
-		valor:= GetAttribute( oldlook, attrib_name );
-		mod := AP_GetStatMod( oldlook, attrib_name ) * -1;
-		valor := valor + mod;
-		AP_SetTrueSkill(newlook, attrib_name, valor);
-		sleepms(10);
-	endforeach
+	// foreach attrib_name in AP_ListAttributesByType()
+	// 	valor:= GetAttribute( oldlook, attrib_name );
+	// 	mod := AP_GetStatMod( oldlook, attrib_name ) * -1;
+	// 	valor := valor + mod;
+	// 	AP_SetTrueSkill(newlook, attrib_name, valor);
+	// 	sleepms(10);
+	// endforeach
 	
 	var newhits := CInt(GetVital(oldlook, "hits"));
 	var newmana := CInt(GetVital(oldlook, "mana"));
