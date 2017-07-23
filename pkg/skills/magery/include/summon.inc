@@ -1,20 +1,18 @@
 
 function summon(template, targ,  mage)
 
-	var undead := CreateNpcFromTemplate(template, targ.x, targ.y, targ.z, 0, targ.realm);
-	undead.SetMaster(mage);
+	var summoned := CreateNpcFromTemplate(template, targ.x, targ.y, targ.z, 0, targ.realm);
+	summoned.SetMaster(mage);
 				
-	SetObjProperty(undead, "GuardKill", 1);	
-  SetObjProperty(undead, "summoned", 1);	
-	SetObjProperty(undead, "owner", mage.serial);
-	SetObjProperty(undead, "name", targ.name);
-	SetObjproperty(undead, "script", targ.script);
-	SetObjProperty(undead, "AntigoTreinadorID", mage.serial);
+	SetObjProperty(summoned, "GuardKill", 1);	
+  	SetObjProperty(summoned, "summoned", 1);	
+	SetObjProperty(summoned, "owner", mage.serial);
+	SetObjProperty(summoned, "name", targ.name);
+	SetObjproperty(summoned, "script", targ.script);
+	SetObjProperty(summoned, "AntigoTreinadorID", mage.serial);
 		
-	undead.script := ":ghaia:tamed";
-	undead.facing := mage.facing;
-	RestartScript(undead);
-				
-
-return undead;
+	summoned.script := ":ghaia:tamed";
+	summoned.facing := mage.facing;
+	RestartScript(summoned);
+	return summoned;
 endfunction
