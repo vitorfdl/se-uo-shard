@@ -593,7 +593,7 @@
 # 0xdf1 unused
 0xdf2 wand01 combat
 0xdf3 wand02 combat
-0xdf4 wand05 combat
+0xdf4 wand04 combat
 0xdf5 wand03 combat
 # 0xdf6 - 0xdf8 unused
 0xdf9 cotton womenswork
@@ -1687,9 +1687,7 @@
 0x4044 ornamentedmirror woodworking
 # 0x4045 unused
 0x4046 floormirror woodworking
-# 0x4047 - 0x4078 unused
-0x4079 diamantemistico magery
-# 0x407a - 0x468b unused
+# 0x4047 - 0x468b unused
 0x468c jellybeans food
 # 0x468d - 0x469e unused
 0x469f merrycake food
@@ -1788,12 +1786,7 @@
 0x608f smallstoneshophouse house
 # 0x6090 - 0x60ff unused
 0x6100 grimorio magery
-# 0x6101 - 0x6115 unused
-0x6116 pergaminhomagico1 magery
-0x6117 pergaminhomagico2 magery
-0x6118 pergaminhomagico3 magery
-0x6119 pergaminhomagico4 magery
-# 0x611a - 0x613f unused
+# 0x6101 - 0x613f unused
 0x6140 nystulldeed1 house
 0x6141 scaffolddeed house
 # 0x6142 - 0x6180 unused
@@ -1919,10 +1912,7 @@
 0x76ad Fruta2 tn
 0x76ae Fruta3 tn
 0x76af Fruta4 tn
-# 0x76b0 - 0x790b unused
-0x790c mongeterco magery
-0x790d runespells magery
-0x790e altarmonges magery
+# 0x76b0 - 0x790e unused
 0x790f Nothing tn
 # 0x7910 - 0x791b unused
 0x791c aljava woodworking
