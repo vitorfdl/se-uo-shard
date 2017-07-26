@@ -2,7 +2,7 @@ use uo;
 use os;
 
 program oafeatures_sendpacket(who)
-   var res := SendPacket(who, "FC15A001000000000003F9C30000000007FFFFFF");
+   var res := SendPacket(who, "FC0015A001000000000003F9C30000000007FFFFFF");
    if (!res)
       print("SendPacket error: " + res.errortext );
    endif
