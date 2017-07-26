@@ -7,7 +7,6 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 
 function ManterMagia(magia, mage, mobile)
-
 	var mana;
 	if (magia == "bless")
 		mana := 30;
@@ -39,12 +38,9 @@ function ManterMagia(magia, mage, mobile)
 			return 1;
 		endif
 	endif
-	
-
 endfunction
 
 function CheckDelay(who, spell_elem)
-
 	SendSysMessage(who, "Voce esta se concentrando para invocar a magia.");
 
 	//var script := start_script("movementCheck", {who, GetPid()});
@@ -127,8 +123,6 @@ function CheckReagents(who, byref spell_elem, scroll)
 endfunction
 
 function KnowSpell(who, spellid)
-
-
 	var spellList := GetObjProperty(who, "magespells");
 
 	if (spellList == error)
@@ -136,7 +130,6 @@ function KnowSpell(who, spellid)
 	endif
 
 	foreach spell in SpellList
-
 		if ( cstr(spell) == cstr(spellid) )
 			return 1;
 		endif
@@ -162,7 +155,6 @@ function LearnSpell(who, spellid)
 endfunction
 
 function GetSpellName(spellid)
-
 	var elem := MS_GetSpellsCfgElem(spellid);
 	
 	if (elem == error)
@@ -170,7 +162,6 @@ function GetSpellName(spellid)
 	endif
 
 	return GetconfigString(elem, "Name");
-
 endfunction
 
 function FailSpell(who)
