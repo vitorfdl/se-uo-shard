@@ -27,7 +27,7 @@ use os;
 
 include ":datafile:datafile";
 include ":gumps:include/old/old-gumps";
-include ":attributes:include/advanceCheck";
+include ":timeutils:time";
 
 const ADD_POST_BTN := 1000;
 const DELETE_BTN := 1001;
@@ -112,7 +112,7 @@ function BoardIndex(who, board)
 			var subject := board_elem.GetProp(postnum).Subject;
 			var message := board_elem.GetProp(postnum).Message;
 			var serial := board_elem.GetProp(postnum).Serial;
-			var tempo := GetDaysBetween( board_elem.GetProp(postnum).Data );
+			var tempo := GetTimeBetween( board_elem.GetProp(postnum).Data, GetTime() );
 			
 			OldGFPage(page_num);
 			if ( tempo >= 10 && board_elem.GetProp(postnum).GMPage < 1 && !GetObjProperty(board, "NoTime"))

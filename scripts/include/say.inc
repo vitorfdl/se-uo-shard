@@ -22,11 +22,6 @@ CONST SPEAK_DOEVENT_ENABLE  := 0x1;
 
 CONST SYSTEM_REPORT := 117;
 
-CONST MESSAGE_EVENTS := dictionary{
-  "EVENT_NOPICKUP":= 500169,
-
-};
-
 function SendSysMessageEX(who, message, SSM_TYPE := _DEFAULT_TEXT_COLOR, font_number := _DEFAULT_TEXT_FONT)
 	SendSysMessage(who, ""+message, font_number, SSM_TYPE);
 endfunction

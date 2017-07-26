@@ -1,14 +1,15 @@
 use os;
 use uo;
 include "include/say";
-include "include/array";
+include "include/arrays";
 include ":magery:tnmagery";
+include ":attributes:attributes";
 
 program useWeapon(who, weapon)
    var active_spell; 
    if (!weapon)
       active_spell := who[3];
-      weapon       := who[2]
+      weapon       := who[2];
       who          := who[1];
    endif
 

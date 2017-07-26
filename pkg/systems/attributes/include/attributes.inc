@@ -31,7 +31,6 @@ include ":attributes:skills";
 include ":attributes:stats";
 include ":attributes:vitals";
 include ":attributes:attributeConstants";
-include ":attributes:skillCheck";
 include ":attributes:advanceCheck";
 include ":datafile:datafile";
 include ":charactercreation:habilidades";

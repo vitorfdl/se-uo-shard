@@ -19,10 +19,7 @@ program PopUpMenu( who, what )
     elseif (what.isa(POLCLASS_MOBILE) && who != what)
         entries := MenuPlayerToPlayer(who, what);
     elseif (what == who)
-        entries := struct{ "ficharp" := 3002023 };
-        if (GetObjProperty(who, "corda"))
-            entries.+soltar := struct{ "cliloc" := 3002026, color := YELLOW_COLOR };
-        endif
+
     else
         return;
     endif
@@ -78,6 +75,20 @@ program PopUpMenu( who, what )
     return 1;
 endprogram
 
+function MenuSelf(who)
+    var entries := struct{ "ficharp" := 3002023 };
+    if (GetObjProperty(who, "corda"))
+        entries.+soltar := struct{ "cliloc" := 3002026, color := YELLOW_COLOR };
+    endif
+
+    var chardata := GetObjProperty(who, "chardata")
+    if (chardata.classe == "Clérigo")
+        entries.+blessings := 3002028;
+    endif
+
+    return entries;
+endfunction
+
 function MenuPlayerToPlayer(who, what)
     var entries := struct{
         "profile"   := struct{ cliloc := 3002021 }
@@ -125,7 +136,7 @@ function MenuPlayerToItem(who, what)
         spell_list := array{};
     endif
     if (GetObjProperty(what, "magic_user") == who.serial && spell_list.size() > 1)
-        entries.+change_spell := 3002014;
+        entries.+change_spell := 3002015;
     endif
 
     if (what.isA(POLCLASS_CORPSE) && CoordinateDistance(what.x, what.y, who.x, who.y) <= 2)

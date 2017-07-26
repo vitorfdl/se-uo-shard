@@ -1,9 +1,16 @@
 use uo;
 use os;
 
+include ":timeutils:time";
+include "include/say";
+include ":attributes:advanceCheck";
+
 program oafeatures_sendpacket(who)
-   var res := SendPacket(who, "FC15A001000000000003F9C30000000007FFFFFF");
-   if (!res)
-      print("SendPacket error: " + res.errortext );
-   endif
+   // var res := SendPacket(who, "FC0015A001000000000003F9C30000000007FFFFFF");
+   // if (!res)
+   //    print("SendPacket error: " + res.errortext );
+   // endif
+
+   var char_age := GetTimeStruct(1498702822);
+   print(char_age);
 endprogram

@@ -17,126 +17,21 @@ use util;
 include ":charactercreation:characters";
 include ":timeutils:time";
 
-/*
- * CheckStatsForSkill(mobile, skill_name)
- *
- * Purpose
- * Performs a stat check on all stats that are listed within a skill's attributes.cfg elem.
- *
- * Parameters
- * mobile:	Mobile to do the stat checks on.
- * skill_name:	Skill to get the stat advance list from.
- *
- * Return value
- * Returns 1
- *
- */
-function CheckStatsForSkill(mobile, skill_name)
-	var settings := AP_GetSettingsCfgElem("Stats");
-	
-	var next_check := CInt(GetObjProperty(mobile, "#LastStatGain"))+CInt(settings.GainWait);
-	if ( next_check > ReadGameClock() )
-		SkillDbgMsg(mobile, "Stat advance-wait timer has not yet expired.");
-		return 0;
-	endif
-	
-	foreach stat_entry in (AP_GetSkillStats(skill_name))
-		var stat_name := _stat_entry_iter;
-		var check_chance := stat_entry[1];
-		var stat_mult := CDbl(RandomDiceRoll(stat_entry[2]));
-		
-		var roll := RandomInt(100)+1;
-		
-		if ( roll <= check_chance )
-			SkillDbgMsg(mobile, "("+roll+" < "+check_chance+"%) Checking stat "+stat_name);
-			CheckStatAdvancement(mobile, stat_name, stat_mult);
-		else
-			SkillDbgMsg(mobile, "("+roll+" > "+check_chance+"%) skipping stat check for "+stat_name);
-		endif
-		
-		sleepms(10);
-	endforeach
-	
-	return 1;
+function GetCharAge(character, factor := "days")
+	var create_date := cint(GetObjProperty(character, "createdate"));
+	var days        := GetTimeBetween(cint(create_date), GetTime(), factor);
+	return days;
 endfunction
-
-/*
- * CheckStatAdvancement(mobile, stat_name, stat_mult)
- *
- * Purpose
- * Does an advancement check on a stat.
- *
- * Parameters
- * mobile:	Mobile to do the stat advancement check on.
- * stat_name:	Name of the stat to do the advancement check on.
- * stat_mult:	Multiplier to effect the chance of a gain. 
- *		(rolled dice from an attributes.cfg StatCheck entry)
- *
- * Return value
- * Returns 1
- *
- */
-function CheckStatAdvancement(mobile, stat_name, stat_mult)
-	if ( AP_CheckStatCap(mobile, stat_name) ) 
-		SkillDbgMsg(mobile, "Stat cap for stat '"+stat_name+"' reached. No advance." );
-		return 0;
-	elseif ( AP_CheckStatCap(mobile) )
-		SkillDbgMsg(mobile, "Total stat cap reached. No advance." );
+  
+function GetExpCap(who)
+	if (who.npctemplate)
 		return 0;
 	endif
-	var settings := AP_GetSettingsCfgElem("Stats");
-	var stat_cap := AP_GetStatCap(stat_name);
-	var stat_value := AP_GetTrueStat(mobile, stat_name);
-	var stat_left := stat_cap - stat_value; // Points until it is capped
-	stat_mult := stat_mult * CDbl(settings.GainSpeed);
-	
-	SkillDbgMsg(mobile, "Stat Cap: "+stat_cap);
-	SkillDbgMsg(mobile, "Stat Current: "+stat_value);
-	SkillDbgMsg(mobile, "Left to cap: "+stat_left+" ->"+stat_cap+"-"+stat_value);
-	
-	var chance := ((stat_left * stat_mult) / (stat_cap / 2));
-	if ( chance < 1.0 )
-		chance := 1.0;
-	endif
-	SkillDbgMsg(mobile, "Chance: "+chance);
-	SkillDbgMsg(mobile, "---");
-	var random := RandomFloat(100.0);
-	SkillDbgMsg(mobile, "Check %age: "+random);
-	
-	if ( random < chance )
-		var advance := CDbl(0.1 + (0.1 * CDbl(CInt(chance / 12.5))));
-		if ( advance > stat_left )
-			advance := stat_left;
-		elseif ( advance < 0.1 )
-			advance := 0.1;
-		endif
 
-		var temp := stat_value+advance;
-		while ( CInt(temp*10.0) == CInt(GetAttributeBaseValue(mobile, stat_name)) )
-			// Kludge for an old core precision bug.
-			// Makes sure it always goes up atleast 0.1.
-			temp := temp+0.1;
-			sleepms(10);
-		endwhile	
-
-		SkillDbgMsg(mobile, "Passed. Advance "+stat_name+": " + CStr(advance));
-		AP_SetTrueStat(mobile, stat_name, temp);
-		SetObjProperty(mobile, "#LastStatGain", ReadGameClock());
-
-		if (GetObjProperty(mobile, "owner")) //se for um pet salva a skill
-			var myskills := GetObjProperty(npc, "myskills");
-			if (!myskills)
-				myskills := dictionary;
-			endif
-			myskills[stat_name] := temp;
-			SetObjProperty(mobile, "myskills", myskills);
-		endif
-		
-		return 1;
-	endif
-	
-	SkillDbgMsg(mobile, "Failed. No advance.");
-	return 0;
+	var char_age := GetCharAge(who, "weeks") +1;
+	var char_level := GetCharLevel(who) - 1; //hack
+	var result := (char_age*1000) - (char_level*2000);
+	return result;
 endfunction
 
 /*
@@ -156,275 +51,89 @@ endfunction
  * Returns 1
  *
  */
-function CheckSkillAdvance(mobile, skill_name, award_diff, pass_chance)
-	if (!g_skill_debug)
-		g_skill_debug := (GetObjProperty(mobile, "SkillDebug") != error);
-	endif
-
-	var trainingSkills := getObjProperty(mobile, "skills_lock"); //se nao tiver skill pra subir
-	if (trainingSkills != error)
-		if (trainingSkills.size() > 0 )
-			if (skill_name in trainingSkills)
-				SkillDbgMsg(mobile,"esta locked no training skills");
-				return;
-			endif
-		endif
-	endif
-
-	if ( GetObjProperty(mobile, "NoGains") ) //se tiver sem upar skill
+function ExpGain(mobile, difficulty, value := 0)
+	if ( GetObjProperty(mobile, "NoGains") ) //exp gain blocked
 		SkillDbgMsg(mobile, "Flag NoGains setada.");
 		return 0;
 	endif
 
-	var true_skill := AP_GetTrueSkill(mobile, skill_name);
-
-	var maximo := AP_CheckClassSkillCap(mobile, skill_name);
-//	printtextabove(mobile, "oi. meu maximo da skill: " + skill_name + " eh " + maximo + ", eu tenho " + true_skill);
-	if ( true_skill >= maximo ) //verifica quanto pode subir com base na classe
-	//	printtextabove(mobile, "to no maximo da skill");
-		SkillDbgMsg(mobile, "Chegou no maximo da classe: " + maximo);
-		return 0;
-	endif
-	
-  if ( (limiteportempo(mobile) + valorinicial(mobile, skill_name)) <= true_skill)
-  		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: " + limiteportempo(mobile) + " idade do char  " + GetCharAge( mobile) + " valor inicial "  + valorinicial(mobile, skill_name));
+  if ( GetExpCap(who) == 0)
+  		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
 		return 0;
    endif
   
 	var settings := AP_GetSettingsCfgElem("Skills");
 	//verifica se ja nao subiu skills em 30 segundos
-	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain"))+GetConfigInt(settings, "GainWait");
-	if (skill_name == "Tactics" || skill_name == "Anatomy")
-		SkillDbgMsg(mobile, "Ignore Timer.");
-	elseif ( next_check > ReadGameClock() )
+	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 10;
+	if ( next_check > ReadGameClock() )
 	//	printtextabove(mobile, "nao posso subir skill agora");
 		SkillDbgMsg(mobile, "Nao pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
 		return 0;
 	endif
 
 	//calcula a chance de passar
-	var adv_check := RandomInt(100)+1;
-	pass_chance := pass_chance + CInt(AP_GetTrueStat(mobile, INTELLIGENCE)/4.0);
-
-	SkillDbgMsg(mobile, "Chance: "+pass_chance+"%");
-
-	if ( true_skill < CDbl(settings.FreeGainUntil) )
-		SkillDbgMsg(mobile, "Free Gain.");
-	elseif ( DifficultyTooEasy(true_skill, award_diff) )
-		SkillDbgMsg(mobile, "Too Easy.");
-		return 0;
-	elseif ( adv_check > pass_chance )
-		SkillDbgMsg(mobile, "Nao passou.");
-		return 0;
+	var up_amount := 0;
+	if (difficulty == "major")
+		up_amount := 8;
+	elseif (difficulty == "minor")
+		up_amount := 4;
+	elseif (TypeOf(difficulty) == TypeOf( 1 ))
+		var diff := difficult - value;
+		if (diff <= -1)
+			up_amount := 1;
+		elseif(diff >= 10)
+			up_amount := 2;
+		elseif(diff >= 6)
+			up_amount := 4;
+		elseif(diff >= 4)
+			up_amount := 6;
+		else
+			up_amount := 8;
+		endif
+	else
+		SysLog("Erro em difficulty para ExpGain: {}".format(difficulty));
 	endif
-
-	if ( !CheckVitalSkillCap(mobile, true_skill) ) //verifica se tem cap pro temmpo ainda
-	//	printtextabove(mobile, "to sem cap");
-		SkillDbgMsg(mobile, "SkillCap insuficiente.");
-		return 0;
-	endif
-
-	//sobe a skill
-	SkillDbgMsg(mobile, "Passou.");
-	var temp := true_skill+0.1;
-	while ( CInt(temp*10.0) == CInt(GetAttributeBaseValue(mobile, skill_name)) )
-		// Kludge for an old core precision bug.
-		// Makes sure it always goes up atleast 0.1.
-		temp := temp+0.1;
-		sleepms(10);
-	endwhile
 
 	//guarda as skills dos npcs tamados
-	if (mobile.npctemplate)
-		if ( GetObjProperty(mobile, "owner") != error)
-			var petskills := GetObjProperty(mobile, "petskills");
-			if ( TypeOf(petskills) != "Dictionary")
-				petskills := dictionary;
-			endif
-			petskills[skill_name] := temp;
-			setObjProperty(mobile, "petskills", petskills);
-		endif
+	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)
+		// TODO: Tamed exp gain
+	elseif (up_amount > 0)
+		var exp := GetExpPoints(mobile);
+		SetExpPoints(mobile, exp+up_amount);
 	endif
 
 	SetObjProperty(mobile, "#LastSkillGain", ReadGameClock());
-	var skillbefore := floor(AP_GetTrueSkill(mobile, skill_name));
-	AP_SetTrueSkill(mobile, skill_name, temp);
-	var skillafter := floor(AP_GetTrueSkill(mobile, skill_name));
-	
-	CheckExpUp(mobile, skill_name, skillbefore, skillafter);
-	return 1;
-
-endfunction
-
-
-//retorna quanto o cara comecou com aquela skill
-function valorInicial(mobile, skill_name)
-
-if (mobile.npctemplate)
-		return 100;
-	endif
-
-	var chardata := GetObjProperty(mobile, "chardata");
-	if (chardata == error)
-		return 0;
-	endif
-
-	var myskills := chardata.Skills;
-
-	if ( myskills[skill_name] == error)
-		return 0.0;
-	elseif (myskills[skill_name] == 1)
-		return 10.0;
-	elseif (myskills[skill_name] == 2)
-		return 15.0;
-	elseif ( myskills[skill_name] == 3)
-		return 30.0;
-	endif
-
-
-endfunction
-
-function AP_CheckClassSkillCap(mobile, skill_name)
-
-	if (mobile.npctemplate)
-		return 100;
-	endif
-
-	var chardata := GetObjProperty(mobile, "chardata");
-	if (chardata == error)
-		return 0;
-	endif
-
-	var myskills := chardata.Skills;
-
-	if ( myskills[skill_name] == error)
-		return 0;
-	elseif (myskills[skill_name] == 1)
-		return 50.0;
-	elseif (myskills[skill_name] == 2)
-		return 70.0;
-	elseif ( myskills[skill_name] == 3)
-		return 100.0;
-	endif
-
-endfunction
-
-function CheckVitalSkillCap(mobile, skill)
-	var qtd := costSkill(skill);
-	if (qtd > 0)
-		if (CInt(AP_GetVital(mobile, "SkillCap")) >= qtd )
-			AP_ConsumeVital(mobile, "SkillCap", qtd);
-		else
-			return 0;
-		endif
-	endif
-
+	CheckExpUp(mobile);
 	return 1;
 endfunction
 
-function costSkill(value)
-	if (value > 90)
-		return 20;
-	elseif (value > 80)
-		return 18;
-	elseif (value > 70)
-		return 14;
-	elseif (value > 60)
-		return 10;
-	elseif (value > 50)
-		return 5;
-	elseif (value > 40)
-		return 3;
-	elseif (value > 30)
-		return 2;
-	elseif (value > 20)
-		return 1;
-	else
-		return 0;
-	endif
-endfunction
+function CheckExpUp(who)
+	var level := GetCharLevel(who);
+	if (level < 20)
+		var maxexp := (GetCharLevel(who) + 1) * 1000; //starts at 2000
+		var exp := GetExpPoints(who);
 
-function AwardPoints(who, skill, points)
-
-	var skills := GetObjProperty(who, "skills");
-	if (!skills)
-		skills := dictionary;
-	endif
-
-	skills[skill] := skills[skill] + points;
-
-	if ( skills[skill] >= GetNeededPoints(skill) )
-		skills[skill] := 0;
-		SetObjProperty(who, "skills", skills);
-		return 1;
-	endif 		
-
-	SetObjProperty(who, "skills", skills);
-	return 0;
-
-endfunction
-
-
-function PointsToIncrease(basevalue)
-
-	if(basevalue < 100)
-		return 10.0;
-	elseif ( basevalue < 30 )
-		return 100.0;
-	elseif ( basevalue < 600 )
-		return 500.0; 
-	elseif ( basevalue < 700 )
-		return 1000;
-	elseif ( basevalue < 800 )
-		return 4000;
-	elseif ( basevalue < 900 )
-		return 16000;
-	else
-		return 32000;
-	endif
-
-endfunction
-
-function GetCharAge(character)// para 10000 deu 292 segundos 300
-	var create_date := cint(GetObjProperty(character, "createdate"));
-	var days        := GetTimeBetween(cint(create_date), ReadGameClock());
-	return days;
-endfunction
-  
-function limiteportempo (who)
-	if (who.npctemplate)
-		return 100;
-	endif
-  
-	var dias := GetCharAge(who); // Colocar aqui a prop pra pegar os dias do char
-
-	var lim := 2.5; // Valor inicial
-	
-	if (dias > 2)
-		if (dias > 75)
-			if (dias > 125)
-				lim := 50.0 + ((dias - 125) * 0.1);
-			else
-				lim := 40.0 + ((dias - 75) * 0.2);
-			endif
-		else
-			lim := 5.0 + (dias-1);
+		if (exp >= maxexp)
+			exp-=maxexp;
+			SetCharLevel(who, level+1);
+			SetAttribPoints(who, GetAttribPoints(who)+1);
+			IncreaseVitalPoints(who);
+			SetExpPoints(who, exp);
 		endif
 	endif
-	
+endfunction
 
-	if (lim < 2.5)
-		lim := 2.5; // Valor mínimo de 2.5
-	endif
-	
-	if (FindAccount(who.acctname).getprop("capUP"))
-		lim += 5.0;
-	endif
-	
-	var cap_up := cint(GetObjProperty(who, "cap_increase"));
-	if (cap_up)
-		lim += cap_up;
-	endif
-	
-	return lim;
+function IncreaseVitalPoints(who)
+	var chardata  := GetObjProperty(who, "chardata");
+	var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
+
+	var increase_hitpoint := RandomDiceRoll("1d{}".format(class_cfg.HITS)) + GetBonusAttr(AP_GetTrueStat(mobile, CONSTITUTION));
+	var increase_manapoint := RandomDiceRoll("1d{}".format(class_cfg.MANA)) + GetBonusAttr(AP_GetTrueStat(mobile, INTELLIGENCE));
+	// var increase_stampoint := RandomDiceRoll("1d{}".format(class_cfg.STAM)) + GetBonusAttr(AP_GetTrueStat(mobile, DEXTERITY));
+
+	chardata.hitpoints  += increase_hitpoint;
+	chardata.manapoints += increase_manapoint;
+	// chardata.stampoints += increase_stampoint;
+
+	SetObjProperty(who, "chardata", chardata);
 endfunction
