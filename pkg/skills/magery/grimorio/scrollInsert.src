@@ -7,9 +7,9 @@ use cfgfile;
 
 include ":magery:spellbooks";
 include "include/say";
+include "include/array";
 
 program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
-
 	amt            := amt;
 	existing_stack := existing_stack;
 	movetype       := movetype;
@@ -31,22 +31,20 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 			return 0;
 		endif
 
-		var rune_list := GetObjProperty(book, "spells");
-		var spellid := GetObjProperty(item, "spellinfo");
-		foreach id in rune_list
-			if (id.id == spellid.id)
+		var spell_list := GetObjProperty(book, "spells");
+		var spellid   := GetObjProperty(item, "spellinfo");
+		if (FindInArray(spell_list, spellid))
 				SendSysMessageEX(who,"O grimorio ja possui esta magia.", SSM_FAIL);
 				MoveItemToContainer(item, who.backpack);
 				return 0;
-			endif
-		endforeach
-		
+		endif
+
 		if( GetObjProperty(item, "spellinfo") )
 			if ( addScroll(who, book, item) == 1)
 				DestroyItem(item);
 			endif
 		else
-			SendSysMessage(who, "Voce nao pode por isto no livro.");
+			SendSysMessage(who, "Este nao parece um pergaminho de magia.");
 			MoveItemToContainer(item, who.backpack);
 			return 0;
 		endif
@@ -57,16 +55,14 @@ endprogram
 
 
 function addScroll(who, book, rune)
-	var rune_list := GetObjProperty(book, "spells");
-	if (rune_list == error)
-		rune_list := array;
-	endif
-	if( rune_list.Size() > 15 )
+	var spell_list := GetObjProperty(book, "spells");
+	if (spell_list == error)
+		spell_list := array;
+	elseif( spell_list.Size() > 15 )
 		SendSysMessage(who,"Este livro ja esta cheio.");
 		MoveItemToContainer(rune, who.backpack);
 		return 0;
-	endif
-	if( !ReserveItem(rune) )
+	elseif( !ReserveItem(rune) )
 		SendSysMessage(who,"Cancelado");
 		MoveItemToContainer(rune, who.backpack);
 		return 0;
@@ -74,9 +70,9 @@ function addScroll(who, book, rune)
 	
 	Set_Critical(1);
 
-	rune_list.Append(GetObjProperty(rune, "spellinfo"));
+	spell_list.Append(GetObjProperty(rune, "spellinfo"));
 
-	SetObjProperty(book, "spells", rune_list);
+	SetObjProperty(book, "spells", spell_list);
 
 	SendSysMessage(who, "Voce adicionou o pergaminho no livro.");
 	ReleaseItem(rune);

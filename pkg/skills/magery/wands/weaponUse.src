@@ -1,0 +1,37 @@
+use os;
+use uo;
+include "include/say";
+include "include/array";
+include ":magery:tnmagery";
+
+program useWeapon(who, weapon)
+   var active_spell; 
+   if (!weapon)
+      active_spell := who[3];
+      weapon       := who[2]
+      who          := who[1];
+   endif
+
+   if (who.cmdlevel > 1 || !HaveSkill(who, "Arcanismo"))
+		SendSysMessageEx("Voce nao tem conhecimento arcano.", SSM_FAIL);
+		return;
+   endif
+
+   if (!active_spell)
+      active_spell := GetObjProperty(weapon, "active_spell");
+   endif
+   
+   var spell_list := GetObjProperty(weapon, "spell_list");
+   if (!(active_spell in spell_list))
+      SendSysMessageEx(who, "Nenhuma magia ativa na arma", SSM_FAIL);
+      SendSysMessageEx(who, "Clique com o botao direito sobre a arma e selecione 'Trocar Magia'", SSM_FAIL);
+      return 0;
+   endif
+
+   var elems := FindElemInArray(spell_list, active_spell);
+   WriteSpellInfo(active_spell);
+   if (elems.Size() > 1)
+      active_spell.powered := elems.Size()-1;
+   endif
+	Start_Script("cast_spell", array{who, active_spell, weapon});
+endprogram

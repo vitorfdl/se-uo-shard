@@ -48,29 +48,31 @@ program PopUpMenu( who, what )
     if (input == "info")
        return;
     elseif (input == "ficharp")
-        Start_Script(":fls_core:commands/player/ficharp", { who, what });
+        Start_Script(":fls_core:commands/player/ficharp", array{ who, what });
         return;
     elseif (input == "profile")
-        start_script(":charprofile:parseCharProfile", { who, "0", what });
+        start_script(":charprofile:parseCharProfile", array{ who, "0", what });
         return;
     elseif (input == "arrastar")
-        Start_Script(":tn:commands/player/arrastar", { who, what });
+        Start_Script(":tn:commands/player/arrastar", array{ who, what });
     elseif (input == "unmask")
         return;
     elseif (input == "soltar")
         Start_Script(":fls_core:commands/player/soltar", who);
         return;
     elseif (input == "revistar")
-        Start_Script(":commands:/player/revistar", { who, what });
+        Start_Script(":commands:/player/revistar", array{ who, what });
         return;
     elseif (input == "flip")
-        Start_Script(":commands:/player/flip", { who, what });
+        Start_Script(":commands:/player/flip", array{ who, what });
        return;
     elseif (input == "fix")
-        Start_Script(":tn:commands/player/fix", { who, what });
+        Start_Script(":tn:commands/player/fix", array{ who, what });
         return;
     elseif (input == "erguer")
         return;
+    elseif (input == "change_spell")
+        Start_Script(":magery:wands/changeSpell", item);
     endif
 
     return 1;
@@ -116,6 +118,14 @@ function MenuPlayerToItem(who, what)
         if (what.movable != 0)
             entries.+flip := 3002012;
         endif
+    endif
+
+    var spell_list := GetObjProperty(what, "spell_list")
+    if (!spell_list)
+        spell_list := array{};
+    endif
+    if (GetObjProperty(what, "magic_user") == who.serial && spell_list.size() > 1)
+        entries.+change_spell := 3002014;
     endif
 
     if (what.isA(POLCLASS_CORPSE) && CoordinateDistance(what.x, what.y, who.x, who.y) <= 2)

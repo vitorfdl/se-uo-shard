@@ -358,6 +358,7 @@ endfunction
 function copyrecipe(who, recipe)
 	var num := cint(recipe);
 	recipe := recipecfg(recipe);
+	
 	if (ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
 		if ((SkillCheck(who, COOKWORK, cint(recipe.scribe), cint(recipe.scribe+10)) > 0))
 			var item := createiteminbackpack(who, OBJ_RECIPE_SLIP, 1);

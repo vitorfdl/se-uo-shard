@@ -5,8 +5,6 @@ use unicode;
 include ":attributes:attributes";
 include ":containers:containers";
 include ":itemutils:itemdesc";
-include "include/client";
-include "include/sounds";
 include ":magery:tnmagery";
 include ":magery:basicMagery";
 include "include/say";
@@ -17,7 +15,7 @@ include ":tn:cooldown";
 program SpellStarter(params)
 	var mobile    := params[1]; // Caster
 	var spellinfo := params[2]; // spellinfo
-	var scroll    := params[3]; // item que usou pra castar o spell (scroll, book, varinha ou nada)
+	var item      := params[3]; // item que usou pra castar o spell (item, book, varinha ou nada)
 	var targ      := params[4];
 
 	if (spellinfo.id != error) //le o cfg pra escrever a info
@@ -30,9 +28,7 @@ program SpellStarter(params)
 	elseif (getCooldown(mobile, spellinfo.name) > 0)
 		PrintTextPrivate(mobile, "'Magia em Cooldown!'", mobile, SSM_FAIL);
 		return 1;
-	endif
-
-	if ( !Attach(mobile) )
+	elseif ( !Attach(mobile) )
 		SendSysMessageEx(mobile, "Voce ja esta fazendo alguma coisa.", SSM_FAIL);
 		return 0;
 	endif
@@ -40,209 +36,162 @@ program SpellStarter(params)
 	// Already casting?
 	if ( GetObjProperty(mobile, "#Casting") )
 		SendSysMessageEx(mobile, "Voce nao pode invocar um encanto agora.", SSM_FAIL);
-		FailSpell(mobile);
 		return 0;
-	else
-		if ( mobile.frozen )
-			SendSysMessageEx(mobile, "Voce nao pode invocar um encanto paralisado.", SSM_FAIL);
-			EraseObjProperty(mobile, "#Casting");
-			return 0;
-		else
-			SetObjProperty(mobile, "#Casting", 1);
-			mobile.frozen := 1;
-		endif
-	endif
+	elseif ( mobile.frozen )
+      SendSysMessageEx(mobile, "Voce nao pode invocar um encanto paralisado.", SSM_FAIL);
+      EraseObjProperty(mobile, "#Casting");
+      return 0;
+   endif
 
+   SetObjProperty(mobile, "#Casting", 1);
+   spellinfo.mana := spellinfo.mana + Cint(spellinfo.mana*GetObjProperty(mobile, "#manapenalty")/100);
 
-	// Perform various checks to see if mobile can perform the spell
-	spellinfo.mana := spellinfo.mana + Cint(spellinfo.mana*GetObjProperty(mobile, "#manapenalty")/100);
-	calcularManaCircle(mobile, spellinfo);
-	
-	if ( mobile.squelched && !mobile.npctemplate )
-		SendSysMessageEx(mobile, "Voce precisa falar devido os componentes verbais da magia.", SSM_FAIL);
-		FailSpell(mobile);
-		EraseObjProperty(mobile, "#Casting");
-		return 0;
-	elseif ( !EquipmentCheck(mobile) && !mobile.npctemplate )
-		SendSysMessageEx(mobile, "Suas maos precisam estar livres para gesticular os componentes gestuais necessarios para a magia.", SSM_FAIL);
-		mobile.frozen := 0;
-		EraseObjProperty(mobile, "#medding");
-		EraseObjProperty(mobile, "#Casting");
-		return 0;
-	elseif ( !AP_ConsumeVital(mobile, MANA, spellinfo.mana) && !mobile.npctemplate )
-		if ( !TemHabilidade(mobile, "Determinacao Elemental")  )
-			SendSysMessageEx(mobile, "Voce nao possui energia arcana suficiente em seu corpo para invocar esta magia!", SSM_FAIL);
-			FailSpell(mobile);
-			EraseObjProperty(mobile, "#Casting");
-			return 0;
-		else
-			if (  !isBloodied(mobile) )
-				SendSysMessageEx(mobile, "Voce nao possui energia arcana suficiente em seu corpo para invocar esta magia!", SSM_FAIL);
-				FailSpell(mobile);
-				EraseObjProperty(mobile, "#Casting");
-				return 0;
-			endif
-		endif
-	elseif ( !TNCheckReagents(mobile, spellinfo, scroll) && mobile.cmdlevel < 3)
-		SendSysMessageEx(mobile, "Voce nao possui os componentes materiais necessarios para invocacao desta magia arcana.", SSM_FAIL);
-		HealMana(mobile, cint(spellinfo.mana*0.5));
-		FailSpell(mobile);
-		EraseObjProperty(mobile, "#Casting");
-		return 0;
-    else
-		mobile.hidden := 0;
-		//EraseObjProperty(mobile, "#Medding");
-		if (!mobile.npctemplate)
-			if (spellinfo.powerwords ) //checa powerwords
-				if (GetObjProperty(mobile, "#magiasilenciosa") == error)
-					PrintText(mobile, spellinfo.powerwords);
-				endif
-			endif
-		endif
+   // consume mana and reagents
+   if (!mobile.npctemplate)
+      if ( mobile.squelched && spellinfo.powerwords )
+         SendSysMessageEx(mobile, "Voce precisa falar devido os componentes verbais da magia.", SSM_FAIL);
+         FailSpell(mobile);
+         return 0;
+      elseif ( !EquipmentCheck(mobile) )
+         SendSysMessageEx(mobile, "Suas maos precisam estar livres para gesticular os componentes gestuais necessarios para a magia.", SSM_FAIL);
+         FailSpell(mobile);
+         return 0;
+      elseif ( !ConsumeMana(mobile, spellinfo.mana) )
+         SendSysMessageEx(mobile, "Voce nao possui energia arcana suficiente em seu corpo para invocar esta magia!", SSM_FAIL);
+         FailSpell(mobile);
+         return 0;
+      elseif ( !TNCheckReagents(mobile, spellinfo, item) && mobile.cmdlevel < 3)
+         SendSysMessageEx(mobile, "Voce nao possui os componentes materiais necessarios para invocacao desta magia arcana.", SSM_FAIL);
+         HealMana(mobile, cint(spellinfo.mana*0.5));
+         FailSpell(mobile);
+         return 0;
+      endif
+   endif
+   
+   mobile.hidden := 0;
+   
+   // start casting
+   if (spellinfo.powerwords && !GetObjProperty(mobile, "#magiasilenciosa") ) //checa powerwords
+      PrintText(mobile, spellinfo.powerwords);
+   endif
 
-		var orig_hp := AP_GetVital(mobile, "Hits");
-		var delay := spellinfo.delay + Cint(GetObjProperty(mobile, "#delayspell"));
-		var moveCheck_script := Start_Script(":magery:moveCheck", array{mobile, Getpid()});
+   var moveCheck := Start_Script(":magery:moveCheck", array{mobile, Getpid()});
+   var orig_hp := AP_GetVital(mobile, "Hits");
 
-		var cycles := spellinfo.cycles;
-		if (cycles < 1)
-			cycles := 1;
-		endif
+   var cycles := spellinfo.cycles;
+   while(cycles)
+      // If mobile is injured and does not have the protection spell on, fail the spell
+      if ( orig_hp > AP_GetVital(mobile, "Hits") && randomdiceroll("1d100") < 75)
+         SendSysMessageEx(mobile, "Voce esta tendo problemas para se concentrar na magia.", SSM_FAIL);
+         cycles += 1;
+      endif
+      orig_hp := AP_GetVital(mobile, "Hits");
 
-		while(cycles)
-			// If mobile is injured and does not have the protection spell on, fail the spell
-			if ( (orig_hp > AP_GetVital(mobile, "Hits") && (!TemHabilidade(mobile, "Concentra��o Aprimorada") ) ) )
-				SendSysMessageEx(mobile, "Voce nao conseguiu se concentrar o suficiente para invocar esta magia.", SSM_FAIL);
-				FailSpell(mobile);
-				HealMana(mobile, cint(spellinfo.mana*0.5));
-				PlaySoundEffect(mobile, SFX_SPELL_FAIL);
-				PlayObjectCenteredEffect(mobile, GFX_FIZZLE, 5, 50);
-				EraseObjProperty(mobile, "#Casting");
-				EraseObjProperty(mobile, "#magiasilenciosa");
-				return 0;
-			endif
+      // Check if we recieved an event from moveCheck_script, which means the mobile moved while targetting
+      if ( Events_Waiting() )
+         SendSysMessageEx(mobile, "Voce nao conseguiu se concentrar o suficiente para invocar esta magia.", SSM_FAIL);
+         FailSpell(mobile);
+         HealMana(mobile, cint(spellinfo.mana*0.5));
+         return 0;
+      endif
 
-			// Check if we recieved an event from moveCheck_script, which means the mobile moved while targetting
-			if ( Events_Waiting() )
-				SendSysMessageEx(mobile, "Voce nao conseguiu se concentrar o suficiente para invocar esta magia.", SSM_FAIL);
-				FailSpell(mobile);
-				PlaySoundEffect(mobile, SFX_SPELL_FAIL);
-				EraseObjProperty(mobile, "#Casting");
-				EraseObjProperty(mobile, "#magiasilenciosa");
-					HealMana(mobile, cint(spellinfo.mana*0.5));
-				return 0;
-			endif
+      // Perform casting animation depending on spell target
+      if (GetObjProperty(mobile, "#magiasilenciosa") == error)
+         case ( spellinfo.range )
+            "Distancia":
+               PerformAction(mobile, ANIM_CAST_DIR);
+               break;
+            "Area":
+               PerformAction(mobile, ANIM_CAST_AREA);
+               break;
+            default:
+               PerformAction(mobile, ANIM_CAST_DIR);
+         endcase
+      endif
 
-			// Perform casting animation depending on spell target
-			if (GetObjProperty(mobile, "#magiasilenciosa") == error)
-				if (spellinfo.spelltype != "Swordmage")
-					//printtextabove(mobile, " " + spellinfo.spelltype);
-					case ( spellinfo.range )
-						"Distancia":
-							PerformAction(mobile, ANIM_CAST_DIR);
-							break;
-						"Area":
-							PerformAction(mobile, ANIM_CAST_AREA);
-							break;
-						default:
-							PerformAction(mobile, ANIM_CAST_DIR);
-					endcase
-				endif
-			endif
+      cycles -= 1;
+      sleepms(750);
+   endwhile
 
-			cycles := cycles - 1;
-			sleepms(750);
-		endwhile
+   moveCheck.kill();
 
-		moveCheck_script.kill();
-		
-		var attribute;
-		attribute := MAGERY;
-	
-		var difficulty := CInt(spellinfo.Difficulty);
-		
-		mobile.frozen := 0;
-		var skill_check := SkillCheck(mobile, attribute, difficulty);
+   // Targeting
+   // if (item.isA(POLCLASS_ITEM) && item.objtype != 0x790c && item.objtype != 0x2253)
+   //    SubtractAmount(item, 1);
+   // endif
 
-		// skill_check > 0 on success
-		if ( skill_check > 0 )
-			if (scroll.isA(POLCLASS_ITEM) && scroll.objtype != 0x790c && scroll.objtype != 0x2253)
-				SubtractAmount(scroll, 1);
-			endif
-			//escolhe o target
-			if (!targ)
-				//sendsysmessage(mobile, "spellinfo.alvo " + spellinfo.alvo);
-				if (spellinfo.alvo == "Self")
-					targ := mobile;
-				elseif (spellinfo.alvo == "Unico")
-					SendSysMessageEx(mobile, "Escolha o alvo da magia.", SSM_REQUEST);
-					var noto := TGTOPT_NEUTRAL;
-					if (spellinfo.align == "Harmful")
-						noto := TGTOPT_HARMFUL;
-					elseif (spellinfo.align == "Helpful")
-						noto := TGTOPT_HELPFUL;
-					endif
-					targ := Target(mobile, noto );
-					if (GetCooldown(targ, "repeal") > 0)
-						SendSysMessageEx(mobile, "O alvo esta invulnetavel a magias.", SSM_FAIL);
-						return 1;
-					endif
-					TurnObjectToward(mobile, targ.x, targ.y);
-				elseif (spellinfo.alvo == "Area")
-					while (1)
-						PrintTextPrivate(mobile, "'Escolha o Ponto Alvo!'", mobile, SSM_INFO);
-		//				SendSysMessageEx(mobile, "Escolha o ponto onde a magia sera castada.", SSM_REQUEST);
-						targ := TargetCoordinates(mobile);
-						TurnObjectToward(mobile, targ.x, targ.y);
-						if (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < spellinfo.radius)
-							break;
-						elseif(!spellinfo.radius)
-							break;
-						else
-							SendSysMessageEx(mobile, "Muito Distante! Escolha um novo ponto alvo");
-						endif
-					endwhile
-				endif
+   if (!targ)
+      targ := ChooseTarget(who, spellinfo);
+      if (!targ)
+         SendsysMessageEx(mobile, "Voce cancelou a magia.", SSM_FAIL);
+         FailSpell(mobile);
+         return ;
+      endif
+   endif	
 
-				
-				if (!targ)
-					SendsysMessageEx(mobile, "Voce cancelou a magia.", SSM_FAIL);
-					FailSpell(mobile);
-					return;
-				endif
-			else
-				if (GetCooldown(targ, "repeal") > 0)
-					return 1;
-				endif
-			endif	
-	
-			if (spellinfo.alvo != "Area") //checa se n�o � magia em �rea
-				if (!CheckLineOfSight(mobile, targ)) //verifica se esta na LOS
-					SendsysMessageEx(mobile, "Voce nao ve o alvo.", SSM_FAIL);
-					FailSpell(mobile);
-					return 1;
-				endif
-			else //sen�o
-				if (!CheckLOSAt(mobile, targ.x, targ.y, targ.z)) //verifica se o ponto � v�sivel
-					SendsysMessageEx(mobile, "O ponto que voce selecionou esta fora da sua linha de visao.", SSM_FAIL);
-					FailSpell(mobile);
-					return 1;
-				endif
-			endif
-			
-			CastSpell(mobile, spellinfo, targ);
-			setCooldown(mobile, spellinfo.name, spellinfo.cooldown);
-		else
-			HealMana(mobile, cint(spellinfo.mana*0.5));
-			PlaySoundEffect(mobile, SFX_SPELL_FAIL);
-			SendSysMessageEX(mobile, "Voce falhou em invocar a magia.", SSM_FAIL);
-		endif
+   if (spellinfo.alvo != "Area" && !CheckLineOfSight(mobile, targ)) //checa se n�o � magia em �rea
+      SendsysMessageEx(mobile, "Voce nao ve o alvo.", SSM_FAIL);
+      FailSpell(mobile);
+      return 1;
+   else //sen�o
+      if (!CheckLOSAt(mobile, targ.x, targ.y, targ.z)) //verifica se o ponto � v�sivel
+         SendsysMessageEx(mobile, "O ponto que voce selecionou esta fora da sua linha de visao.", SSM_FAIL);
+         FailSpell(mobile);
+         return 1;
+      endif
+   endif
 
-	endif
+   var attribute := INTELLIGENCE;
+   if (spellinfo.use_wisdom)
+      attribute := WISDOM;
+   endif
 
-	//MS_SpellDebug(mobile, "Spell starter completed.");
-	EraseObjProperty(mobile, "#magiasilenciosa");
-	EraseObjProperty(mobile, "#Casting");
-	
-	return 1;
+   spellinfo.dice_roll = rollAttrDice(mobile, attribute) + getProfiencyBonus(mobile);
+   if (spellinfo.script != error)
+      var e := Start_Script(spellinfo.script, array{mobile, spellinfo});
+      //sendsysmessage(mobile, " " );
+      return;
+   else
+      Print(mobile, " " + spellinfo);
+   endif  
+   SetCooldown(mobile, spellinfo.name, spellinfo.cooldown);
+
+   EraseObjProperty(mobile, "#magiasilenciosa");
+   EraseObjProperty(mobile, "#Casting");
 endprogram
+
+function ChooseTarget(who, spellinfo)
+   if (spellinfo.alvo == "Self")
+      targ := mobile;
+   elseif (spellinfo.alvo == "Unico")
+      SendSysMessageEx(mobile, "Escolha o alvo da magia.", SSM_REQUEST);
+      var noto := TGTOPT_NEUTRAL;
+      if (spellinfo.align == "Harmful")
+         noto := TGTOPT_HARMFUL;
+      elseif (spellinfo.align == "Helpful")
+         noto := TGTOPT_HELPFUL;
+      endif
+      targ := Target(mobile, noto);
+      if (GetCooldown(targ, "repeal") > 0)
+         SendSysMessageEx(mobile, "O alvo esta invulneravel a magias.", SSM_FAIL);
+         return 0;
+      endif
+      TurnObjectToward(mobile, targ.x, targ.y);
+   elseif (spellinfo.alvo == "Area")
+      while (1)
+         PrintTextPrivate(mobile, "'Escolha o Ponto Alvo.'", mobile, SSM_INFO);
+//   		SendSysMessageEx(mobile, "Escolha o ponto onde a magia sera castada.", SSM_REQUEST);
+         targ := TargetCoordinates(mobile);
+         TurnObjectToward(mobile, targ.x, targ.y);
+         if(!spellinfo.radius)
+            break;
+         elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < spellinfo.radius)
+            break;
+         else
+            SendSysMessageEx(mobile, "Muito Distante!", SSM_FAIL;
+         endif
+      endwhile
+   endif
+
+   return targ;
+endfunction

@@ -60,7 +60,8 @@ program BulletinBoard(who, board)
 
 
 		if ( input[ADD_POST_BTN] )
-			subject := OldGFExtractData(subject.keyid, input);
+			subject := OldGFExtractData(subject.keyid, input);
+
 			//Take the 'lines' from the post and put them into 1 string.
 			var msg_string := "";
 			foreach line in msg_lines
@@ -111,7 +112,7 @@ function BoardIndex(who, board)
 			var subject := board_elem.GetProp(postnum).Subject;
 			var message := board_elem.GetProp(postnum).Message;
 			var serial := board_elem.GetProp(postnum).Serial;
-			var tempo := CalculateDaysInReal( board_elem.GetProp(postnum).Data );
+			var tempo := GetDaysBetween( board_elem.GetProp(postnum).Data );
 			
 			OldGFPage(page_num);
 			if ( tempo >= 10 && board_elem.GetProp(postnum).GMPage < 1 && !GetObjProperty(board, "NoTime"))

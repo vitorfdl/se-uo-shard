@@ -170,13 +170,30 @@ function FindElemInArray(byref the_array, find_what)
             if (!(2 in can_return))
                 return index;
             endif
-        endif
+        elseif ( index == find_what )
+			return index;
+		endif
         sleepms(2);
     endforeach
 
     return 0;
 endfunction
 
+/*
+ * FindAllElemInArray(byref the_array, find_what)
+ *
+ * Purpose
+ * Finds the all instances of something in an array.
+ *
+ * Parameters
+ * the_array:   Array to search.
+ * find_what:   What to look for.
+ *
+ * Return value
+ * Returns all elem of what its searching
+ * Returns 0 if 'find_what' was not found.
+ *
+ */
 function FindAllElemInArray(byref the_array, find_what)
     if ( Lower(TypeOf(the_array)) != "array" )
         return error{"errortext":="Object passed was not an array."};
@@ -191,6 +208,8 @@ function FindAllElemInArray(byref the_array, find_what)
                 endif
                 sleepms(2);
             endforeach
+        elseif ( index == find_what )
+			return to_return.append(index);
         endif
         sleepms(2);
     endforeach
@@ -240,7 +259,6 @@ endfunction
 
 function RemoveLowest(byref the_array)
 	if (the_array.Size() <= 1)
-		print("here?");
         return the_array;
 	endif
 

@@ -51,78 +51,63 @@ endfunction
 
 function RemoveEquipmentMods(who, item)
 	var itemdesc := ReadConfigFile("itemdesc");
-	var penalty := CInt(itemdesc[item.objtype].DexPenalty);
-	var penaltyBonus := Cint(getObjProperty(item, "penaltybonus"));
-	penalty := penalty - penaltyBonus;
-	if (penalty < 0)
-		penalty := 0;
-	endif
-
-	if (item.isa(POLCLASS_WEAPON))
-		EraseObjProperty(who, "twohanded");
-	endif
-
-	AP_ModifyStatMod(who, DEXTERITY, (penalty));
-
+	
 	//sneak
   	penalty := CInt(itemdesc[item.objtype].SneakPenalty);
-	if (TemHabilidade(who, "Ignorar Armadura"))
-		penalty := cint(penalty*0.5);
-	endif
-  	AP_ModifySkillMod(who, SNEAK, (-1)*penalty);
-  
+  	AP_ModifySkillMod(who, SNEAK, penalty);
+
 	//mechanical  apitude
-  	penalty := CInt(itemdesc[item.objtype].MechanicalApitudePenalty);
-	if (TemHabilidade(who, "Ignorar Armadura"))
-		penalty := cint(penalty*0.5);
-	endif
-  	AP_ModifySkillMod(who, MECHANICALAPITUDE, (-1)*penalty);
+  	penalty := CInt(itemdesc[item.objtype].ArmorDexPenalty);
+  	AP_ModifySkillMod(who, MECHANICALAPITUDE, penalty);
 
 	//awareness
   	penalty := CInt(itemdesc[item.objtype].AwarenessPenalty);
-	if (TemHabilidade(who, "Ignorar Armadura"))
-		penalty := cint(penalty*0.5);
-	endif
-  	AP_ModifySkillMod(who, AWARENESS, (-1)*penalty);
+  	AP_ModifySkillMod(who, AWARENESS, penalty);
 
 	//magery
   	penalty := CInt(itemdesc[item.objtype].MageryPenalty);
-  	AP_ModifySkillMod(who, MAGERY, (-1)*penalty);
+  	AP_ModifySkillMod(who, MAGERY, penalty);
 
 	var mods := GetObjProperty(item, "equip");
-	if (mods.keys().size() >= 1) 
-    		foreach mod in (mods.keys())
-      			if ((mod == "strmod" ) && (GetObjProperty(item,"magic") !=1))
-        			AP_ModifyStatMod(who, STRENGTH, (-1)*Cint( mods["strmod"] ));
-      			elseif ((mod == "dexmod"  )&& (GetObjProperty(item,"magic") !=1))
-        			AP_ModifyStatMod(who, DEXTERITY, (-1)*Cint( mods["dexmod"] ));
-      			elseif ((mod == "intmod" )&& (GetObjProperty(item,"magic") !=1))
-        			AP_ModifyStatMod(who, INTELLIGENCE, (-1)*Cint( mods["intmod"] ));
-      			elseif ((mod == "setprop" )&& (GetObjProperty(item,"magic") !=1))
-		        	EraseObjProperty(who, "#" + GetObjProperty(item, "propname"));
-      			elseif ((mod == "manamod")&& (GetObjProperty(item,"magic") !=1))
-        			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) - Cint( mods["manamod"] ));
-        			RecalcVitals(who);
-      			elseif ((mod == "hitsmod" )&& (GetObjProperty(item,"magic") !=1))
-        			var hitswho := Cint(GetObjProperty(who, "#hitsmod"));
-        			var hitsitem :=  Cint( mods["hitsmod"] );
-        			var final := hitswho - hitsitem;
-        			if (final <= 0)
-          				EraseObjProperty(who, "#hitsmod");
-        			else
-          				SetObjProperty(who, "#hitsmod", final );
-        			endif
-        			RecalcVitals(who);
-      			elseif ((mod == "stammod")&& (GetObjProperty(item,"magic") !=1))
-        			SetObjProperty(who, "#stammod", Cint(GetObjProperty(who, "#stammod")) - Cint( mods["stammod"] ));
-        			RecalcVitals(who);
-      			else
-				if (GetObjProperty(item,"magic") !=1)
-					AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
-				endif
-
-     			 endif
-		endforeach
+	if (!mods)
+		mods := struct{}
 	endif
+	foreach mod in (mods.keys())
+		if (GetObjProperty(item,"magic") == 1))
+			continue;
+		endif
+		
+		if (mod == "strmod")
+			AP_ModifyStatMod(who, STRENGTH, (-1)*Cint( mods["strmod"] ));
+		elseif (mod == "dexmod")
+			AP_ModifyStatMod(who, DEXTERITY, (-1)*Cint( mods["dexmod"] ));
+		elseif (mod == "intmod")
+			AP_ModifyStatMod(who, INTELLIGENCE, (-1)*Cint( mods["intmod"] ));
+		elseif (mod == "conmod")
+			AP_ModifyStatMod(who, CONSTITUTE, (-1)*Cint( mods["conmod"] ) );
+		elseif (mod == "wismod")
+			AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
+		elseif (mod == "setprop"))
+			EraseObjProperty(who, "#" + GetObjProperty(item, "propname"));
+		elseif (mod == "manamod")
+			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) - Cint( mods["manamod"] ));
+			RecalcVitals(who);
+		elseif (mod == "hitsmod")
+			var hitswho := Cint(GetObjProperty(who, "#hitsmod"));
+			var hitsitem :=  Cint( mods["hitsmod"] );
+			var final := hitswho - hitsitem;
+			if (final <= 0)
+				EraseObjProperty(who, "#hitsmod");
+			else
+				SetObjProperty(who, "#hitsmod", final );
+			endif
+			RecalcVitals(who);
+		elseif (mod == "stammod")
+			SetObjProperty(who, "#stammod", Cint(GetObjProperty(who, "#stammod")) - Cint( mods["stammod"] ));
+			RecalcVitals(who);
+		else
+			AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
+		endif
+endforeach
 
 endfunction

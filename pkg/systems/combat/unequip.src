@@ -51,7 +51,7 @@ program unequipweapon(who, item)
 	endif
 
 	if ( item.isA(POLCLASS_WEAPON))
-		EraseObjProperty(who, "twohanded");
+		// EraseObjProperty(who, "twohanded");
 		if (GetCooldown(who, "SequenciaDevastadora") )
 			SetCooldown(who, "SequenciaDevastadora", 0);
 		endif

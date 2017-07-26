@@ -1,16 +1,18 @@
 use uo;
 use os;
+use cfgfile;
 
 include ":gumps:yesno";
 include ":magery:tnmagery";
 include "include/say";
+include "include/array";
 include ":magery:spellbooks";
 
 program usaPergaminho(who, scroll)
 
-	var spellinfo := GetObjProperty(scroll, "spellinfo");
+	var spellinfo := GetObjProperty(scroll, "spell_id");
 
-	WritespellInfo(who, spellinfo);
+	WriteSpellInfo(spellinfo);
 
 	var gump := GFCreateGump();
 	GFClosable(gump, 1);
@@ -20,19 +22,28 @@ program usaPergaminho(who, scroll)
 	// GFTextCrop(gump, 70, 70, 150, 17, 995, "Tipo: " + "teste 4");
 	// GFTextCrop(gump, 70, 90, 150, 17, 995, "Inimigos: " + "teste 2");
 
-	GFHTMLArea(gump, 70, 125, 290, 170, "<BASEFONT COLOR=#330000> {} <br><br> {}".format(spellinfo.description,spellinfo.flavortext), 0, 1);
+	GFHTMLArea(gump, 70, 125, 290, 170, "<BASEFONT COLOR=#330000>Tipo: {} <br<br>Circulo: {} <br><br>{}".format(spellinfo.type,spellinfo.circle,spellinfo.description), 0, 1);
 
-	GFTextCrop(gump, 270, 50, 100, 17, 995, "Invocar");
-	GFAddButton(gump, 320, 53, 9702, 9703, GF_CLOSE_BTN, 99);
+	if (who.cmdlevel > 4)
+		GFTextCrop(gump, 270, 50, 100, 17, 995, "Trocar Magia");
+		GFAddButton(gump, 320, 53, 9702, 9703, GF_CLOSE_BTN, 99);
+	endif
 
 	var input := GFSendGump(who, gump);
 	if (input[0] == 99)
-		var script := Start_Script("cast_spell", {who, spellinfo, scroll});
-		if ( script.errortext )
-			SendSysMessage(who, "Error - Could not start spell starter ->"+script.errortext);
-			return 0;
+		var spellcfg   := ReadConfigFile(":magery:config/mage");
+		var keys       := GetConfigIntKeys(spellcfg);
+		var name_array := array{};
+		for key in keys
+			name_array.append(GetConfigString(FindconfigElem(spellcfg, key), "Name"));
+		endfor
+
+		var prompt := RadioGump(who, 210, 40+(name_array.size() * 20), "Escolha a Magia:", name_array);
+		var index := FindInArray(name_array, prompt);
+		if (index)
+			var spell_id := keys[index];
+			SetObjProperty(scroll, "spell_id", spell_id);
+			Start_Script("grimorio/pergaminhoCreate", scroll);
 		endif
 	endif
-
-
 endprogram

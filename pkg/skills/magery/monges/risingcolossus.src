@@ -61,7 +61,7 @@ program summontotem(params)
 		AddPet(who, undead.serial);
 	endif
 
-	var duracao := GetSpellDuration(cint(AP_GetStat(who, "Intelligence")/3));
+	var duracao := GetSpellDuration(AP_GetStat(who, "Intelligence"));
 
 	TS_StartTimer(undead, "summon", duracao );
 	

@@ -59,7 +59,7 @@ endenum
  *
  */
 function GetMonthName(month)
-	var mon_nam := {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+	var mon_nam := {"Jan", "Fev", "Mar", "Abr", "Maio", "Jun", "Jul", "Aug", "Set", "Out", "Nov", "Dez"};
 
 	if( month > 12 || month <= 0 )
 		return error{"errortext":="Month '" + CStr(month) + "' out of range."};
@@ -153,25 +153,25 @@ function GetTimeStruct(time)
 	time := time + CInt(TIME_GetSettingsCfgElem("Settings").TimeZone) * SECONDS_IN_HOUR;
 
 	// UNIX time starts at 01/01/1970 00:00:00
-	ts := struct;
-	ts.+stamp	:= time;
-	ts.+year	:= 1970;
-	ts.+month	:= 1;
-	ts.+day		:= 1;
-	ts.+hour	:= 0;
-	ts.+minute	:= 0;
-	ts.+second	:= 0;
+	ts := struct{};
+	ts.+stamp  := time;
+	ts.+year	  := 1970;
+	ts.+month  := 1;
+	ts.+day    := 1;
+	ts.+hour	  := 0;
+	ts.+minute := 0;
+	ts.+second := 0;
 
 	// ts_off is the offset from 1/1/1970 to the last call; this avoids using like 35 iterations everytime this is called
 	if(!ts_off)
 		ts_off := struct;
 		ts_off.+year	:= 1970;
-		ts_off.+month   := 1;
-		ts_off.+sum	 := 0;
+		ts_off.+month  := 1;
+		ts_off.+sum	 	:= 0;
 	elseif(ts_off.sum < time) // Avoid "time warps"
-		ts.year := ts_off.year;
+		ts.year 	:= ts_off.year;
 		ts.month := ts_off.month;
-		time := time - ts_off.sum;
+		time 		:= time - ts_off.sum;
 	else
 		timewarp := 1;
 	endif
@@ -268,4 +268,25 @@ function AddTimeStamp(what)
 	var ts := GetTimeStruct(GetTime());
 
 	return(FormatTime(ts, "[<MON> <DAY> <YY> <HH>:<MM>:<SS>]: ") + what);
+endfunction
+
+function GetTimeBetween(old_time, new_time, type := "days")
+	var diff_calc;
+	if (type == "days")
+		diff_calc := SECONDS_IN_DAY;
+	elseif (type == "hours")
+		diff_calc := SECONDS_IN_HOUR;
+	elseif (type == "seconds")
+		diff_calc := 1;
+	elseif (type == "years")
+		diff_calc := SECONDS_IN_YEAR;
+	elseif (type == "minutes")
+		diff_calc := SECONDS_IN_MINUTE;
+	else
+		print("Wrong type for GetTimeBetween: {}".format(type) );
+		return 0;
+	endif
+
+	var diff       := Floor((new_time - old_time)/diff_calc);
+	return diff;
 endfunction

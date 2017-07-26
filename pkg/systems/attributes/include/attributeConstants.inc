@@ -7,16 +7,17 @@
 use uo;
 
 enum VITALS
-	HITS			:= "Hits",
-	MANA			:= "Mana",
-	STAMINA			:= "Stamina"
+	HITS			    := "Hits",
+	MANA			    := "Mana",
+	STAMINA			 := "Stamina"
 endenum
 
 enum STATS
-	STRENGTH		:= "Strength",
-	DEXTERITY		:= "Dexterity",
-	INTELLIGENCE	:= "Intelligence",
-	CONSTITUTION	:= "Constitution",
+	STRENGTH		    := "Strength",
+	DEXTERITY		 := "Dexterity",
+	INTELLIGENCE	 := "Intelligence",
+	CONSTITUTION	 := "Constitution",
+	WISDOM	       := "Wisdom",
 endenum
 
 enum SKILLS
