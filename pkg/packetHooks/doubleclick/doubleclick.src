@@ -15,7 +15,6 @@ exported function HandleDoubleClick( who, byref packet )
 
 	var defender := SystemFindObjectBySerial(packet.GetInt32(BYTE_DEFENDER));
 
-
 	//nao sei como, mas as vezes vem sem, entao deixa o pol tratar
 	if (!defender)
 		return 0;
