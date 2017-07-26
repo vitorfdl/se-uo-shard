@@ -54,14 +54,12 @@ function UsoHabilidade(nome)
 endfunction
 
 function NivelHabilidade(habilidade)
-
 	var habcfg := ReadConfigFile(":charactercreation:config/habilidades");
 	var elem := FindConfigElem( habcfg, habilidade );
 
 	var nivel := GetConfigInt( elem, "skillLevel" );
 
 	return nivel;
-
 endfunction
 
 function NomeHabilidade(habilidade)
@@ -145,7 +143,6 @@ function retornaRequisitos( habilidade)
 endfunction
 
 function TemHabilidade(who, habilidade)
-
 	var habs := GetObjProperty(who, "myhabs");
 
 	foreach hab in habs
@@ -155,9 +152,7 @@ function TemHabilidade(who, habilidade)
 
 	endforeach
 
-
 	return 0;
-
 endfunction
 
 function IsBloodied(mobile)

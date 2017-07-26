@@ -479,33 +479,33 @@ function CastSpellNPC(opponent, spell_list)
 		if (enemies.size() > 2)
 			if ( pilargelo && sonho )
 				if (GetCooldown(me, "pilargelo") == 0 ) //talvez colocar um random
-					start_script(":magery:demonistas/pilardegelo", array{me, enemies[RandomInt(enemies.size())+1]});
+					start_script(":magery:demonistas/pilardegelo", array{me, enemies.randomEntry()});
 					SetCooldown(me, "pilargelo", 10);
 					SetCooldown(me, "npcspell", 5);
 				endif
 	
 				if (GetCooldown(me, "sonho") == 0)
 					SetCooldown(me, "sonho", 20);
-					start_script(":magery:mesum/sonhomacabro", array{me, enemies[RandomInt(enemies.size())+1]}); //escolher: melee maior dano
+					start_script(":magery:mesum/sonhomacabro", array{me, enemies.randomEntry()}); //escolher: melee maior dano
 					SetCooldown(me, "npcspell", 5);
 				endif
 
 			elseif (pilargelo )
 				if (GetCooldown(me, "pilargelo") == 0 ) //talvez colocar um random
-					start_script(":magery:demonistas/pilardegelo", array{me, enemies[RandomInt(enemies.size())+1]});
+					start_script(":magery:demonistas/pilardegelo", array{me, enemies.randomEntry()});
 					SetCooldown(me, "pilargelo", 10);
 					SetCooldown(me, "npcspell", 5);
 				endif
 			elseif (sonho)
 				if (GetCooldown(me, "sonho") == 0)
 					SetCooldown(me, "sonho", 20);
-					start_script(":magery:demonistas/sonhomacabro", array{me, enemies[RandomInt(enemies.size())+1]}); //escolher: melee maior dano
+					start_script(":magery:demonistas/sonhomacabro", array{me, enemies.randomEntry()}); //escolher: melee maior dano
 					SetCooldown(me, "npcspell", 5);
 				endif
 			elseif(tornadofogo)
 				if (GetCooldown(me, "tornadofogo") == 0)
 					SetCooldown(me, "tornadofogo", 20);
-					start_script(":magery:demonistas/firewhirl", array{me, enemies[RandomInt(enemies.size())+1]}); //escolher: melee maior dano
+					start_script(":magery:demonistas/firewhirl", array{me, enemies.randomEntry()}); //escolher: melee maior dano
 					SetCooldown(me, "npcspell", 5);
 				endif
 			endif

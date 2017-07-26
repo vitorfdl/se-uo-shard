@@ -14,9 +14,8 @@ program SpellScript(params)
 	var who := params[1];
 	params := 0; // No longer needed
 
-	var rosto := direcao(who);
-	
-	var item := CreateItemAtLocation(who.x + rosto.x, who.y + rosto.y, who.z, 0x790d);
+	var itemloc := GetPointsByFacing(whox, who.y, who.facing, 1);
+	var item := CreateItemAtLocation(itemloc[0].x, itemloc[0].y, who.z, 0x790d);
 	if (!item)
 		SendSysMessageEX(who, "Nao foi possivel criar a runa", SSM_FAIL);
 		return;

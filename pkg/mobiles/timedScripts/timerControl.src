@@ -376,7 +376,6 @@ function CheckTimerStatus(mobile, byref timer_list, byref cooldowns, byref num_p
 endfunction
 
 function LowerDuration(mobile, byref event, byref timer_list, byref cooldowns, byref num_poisons)
-
 	if (event.timerType == EVENT_TYPE_COOLDOWN)
 		var timer_info := cooldowns[event.name];
 

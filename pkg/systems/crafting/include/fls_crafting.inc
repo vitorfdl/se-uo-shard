@@ -77,8 +77,6 @@ function GetRecipe(objtype, elem)
       "materials"  := materials,
       "requires"   :=  GetConfigStringArray(elem, "requires")
    };
-
-
    return recipe_info;
 endfunction
 
@@ -121,7 +119,6 @@ endfunction
 // was originally colored logs. The colored log objtype is stored
 // in the cprop, and is used to get it's "ResourceList" reference.
 function MaterialSelection(who, craft_skill, type, chk)
-
  	SendSysMessageEx(who, "Escolha o "+lower(type)+" que voce deseja trabalhar.");
 	var material := Target(who);
 

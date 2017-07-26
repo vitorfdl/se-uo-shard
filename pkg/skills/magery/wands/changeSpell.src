@@ -1,0 +1,41 @@
+use os;
+use uo;
+include "include/say";
+include "include/array";
+include ":magery:tnmagery";
+
+program changeSpell(item)
+   var spell_list := GetObjProperty(item, "spell_list");
+   if (!spell_list)
+      SendSysMessageEx("Nao foi encontrar magias para trocar");
+   endif
+
+   var actual_spell := GetObjProperty(item, "actual_spell");
+   if (!actual_spell || spell_list.size() == 1)
+      actual_spell := spell_list[0];
+   elseif
+      var spell_index := FindInArray(spell_list, actual_spell);
+      var tries := 1;
+      var new_spell;
+      for tries to 3
+         var new_index := spell_index + tries;
+         if (new_index > spell_list.size())
+            new_index -= spell_list.size();
+         endif
+
+         if (spell_list[new_index] != 0 && spell_list[new_index] != actual_spell)
+            new_spell := spell_list[new_index];
+            break;
+         endif
+         sleepms(2);
+      endfor
+   endif
+
+   if (!new_spell || new_spell == actual_spell)
+      SendSysMessageEx("Nao foi encontrado encanto novo para mudar.", SSM_FAIL)
+      return;
+   endif
+
+   SetObjProperty(item, "actual_spell", new_spell);
+   SendSysMessageEx("Voce alterou o encanto ativo no equipamento.", SSM_INFO);
+endprogram

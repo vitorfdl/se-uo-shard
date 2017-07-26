@@ -33,7 +33,6 @@ var makermark := 1;
 // was originally colored logs. The colored log objtype is stored
 // in the cprop, and is used to get it's "ResourceList" reference.
 function MaterialSelection(who, craft_skill, type, chk)
-
  	SendSysMessage(who, "Escolha o "+lower(type)+" que voce deseja trabalhar.");
 	var material := Target(who);
 

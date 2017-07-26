@@ -5,6 +5,7 @@ use os;
 
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
+include "include/sounds";
 
 function ManterMagia(magia, mage, mobile)
 	var mana;
@@ -59,20 +60,15 @@ function CheckDelay(who, spell_elem)
 endfunction
 
 function EquipmentCheck(who)
-	var hand_1 := GetEquipmentByLayer(who, LAYER_HAND1);
+	var cfg := ReadConfig(":combat:itemdesc")
+	var equips := ListEquippedItems( who );
 
-	if ( hand_1 )
-		if ( (cint(GetObjProperty(hand_1, "cancast")) != 1) )
+	foreach equip in equips
+		var elem := FindConfigElem( cfg, equip.objtype );
+		if (elem && elem.Pericia && HaveSkill(elem.Pericia))
 			return 0;
 		endif
-	endif
-
-	var hand_2 := GetEquipmentByLayer(who, LAYER_HAND2);
-	if ( hand_2 )
-		if ( (cint(GetObjProperty(hand_2, "cancast")) != 1)  )
-			return 0;
-		endif
-	endif
+	endforeach
 
 	return 1;
 endfunction
@@ -122,52 +118,9 @@ function CheckReagents(who, byref spell_elem, scroll)
 	return 1;
 endfunction
 
-function KnowSpell(who, spellid)
-	var spellList := GetObjProperty(who, "magespells");
-
-	if (spellList == error)
-		return 0;
-	endif
-
-	foreach spell in SpellList
-		if ( cstr(spell) == cstr(spellid) )
-			return 1;
-		endif
-	endforeach
-	return 0;
-endfunction
-
-function LearnSpell(who, spellid)
-
-	var spellList := GetObjProperty(who, "magespells");
-
-	if (spellList == error)
-		spellList := array;
-	endif
-
-	
-	if (!KnowSpell(who, spellid))
-		spellList.append(cstr(spellid));
-	endif
-
-	SetObjProperty(who, "magespells", spellList);
-	
-endfunction
-
-function GetSpellName(spellid)
-	var elem := MS_GetSpellsCfgElem(spellid);
-	
-	if (elem == error)
-		return "Erro no nome da magia!";
-	endif
-
-	return GetconfigString(elem, "Name");
-endfunction
-
 function FailSpell(who)
 	// Simple function for handling effects when a caster
 	// fails the casting.
-	who.frozen := 0;
 	EraseObjProperty(who, "#medding");
 	EraseObjProperty(who, "#Casting");
 	if (!GetObjProperty(who, "#magiasilenciosa"));
@@ -177,3 +130,17 @@ function FailSpell(who)
 	EraseObjProperty(who, "#magiasilenciosa");
 	return 1;
 endfunction
+
+function ConsumeMana(who, qty) 
+	if (!AP_ConsumeVital(mobile, MANA, spellinfo.mana))
+		var hit_qty = spellinfo.mana - GetVital(who, MANA);
+		AP_ConsumeVital(mobile, MANA, GetVital(who, MANA));
+		ApplyDamageEX(mobile, hit_qty * 2);
+		if (who.dead)
+			return 0;
+		endif
+	endif
+	// TODO: diseage for mana
+	return 1;
+endfunction
+

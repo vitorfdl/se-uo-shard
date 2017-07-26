@@ -7,7 +7,6 @@ include ":gumps:gumps";
 include ":charactercreation:habilidades";
 
 function SpellYesNo(who, nome, targname)
-	
 	GfCloseGumpTimed(who, GetPid(), 11);
 
 	var gump := GfCreateGump(140, 100);

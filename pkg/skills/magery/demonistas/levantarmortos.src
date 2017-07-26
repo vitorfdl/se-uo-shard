@@ -101,7 +101,7 @@ program SpellScript(params)
 	var numbersummons := Cint(GetObjProperty(who, "NecroSummons"));
 	SetObjProperty(who, "NecroSummons", (numbersummons + 1));
 
-	TS_StartTimer(undead, "summon", GetSpellDuration(AP_GetStat(who, "Intelligence")) / 2);
+	TS_StartTimer(undead, "summon", GetSpellDuration(AP_GetStat(who, "Intelligence")));
 		
 
 	SendSysMEssageEx(who, "Voce teve sucesso ao levantar o corpo", SSM_INFO);

@@ -1,9 +1,13 @@
 use uo;
 use cfgfile;
 use util;
+var spell_cfg;
 
-program cria(item)
-	if (GetObjProperty(item, "spellinfo") != error)
+program scrollCreate(item)
+	spellcfg := ReadConfigFile(":magery:config/mage");
+
+	if (GetObjProperty(item, "spell_id") != error)
+		setGraphic(item);
 		return 1;
 	endif
 
@@ -11,27 +15,39 @@ program cria(item)
 
 	//pega o level do scroll
 	var scrollcfg := ReadConfigFile(":magery:itemdesc");
-	var lvl       := GetConfigInt(FindconfigElem(scrollcfg, item.objtype), "Circle" );
-	var spelltype := GetConfigString(FindconfigElem(scrollcfg, item.objtype), "SpellType" );
+	var elem      := FindconfigElem(scrollcfg, item.objtype);
+	var lvl       := GetConfigInt(elem, "Circle" );
+	var spelltype := GetConfigString(elem, "SpellType" );
 	if (!lvl)
 		lvl := 1;
 	endif
 
 	//pega todas magias do cfg com esse level e armazena no array
-	var spellcfg := ReadConfigFile(":magery:config/allspells");
 	var keys := GetConfigIntKeys(spellcfg);
 	var randomspells := array;
 	foreach key in keys
 		var spelllvl := GetConfigInt( FindconfigElem(spellcfg, key), "Circle" );
 		var type     := GetConfigString( FindconfigElem(spellcfg, key), "Type" );
-		var unico    := GetConfigInt( FindConfigElem(spellcfg, key), "Unico" );
-		if (!unico && spelllvl == lvl && spelltype == type)
+		if (spelllvl == lvl && spelltype == type)
 			randomspells.append(key);
 		endif
 	endforeach
 
-	spellinfo.+id := randomspells[RandomInt(randomspells.size())+1];
-	SetObjProperty(item, "spellinfo", spellinfo);
+	spell_id := randomspells.randomEntry();
+	SetObjProperty(item, "spell_id", spell_id);
 
 	return 1;
 endprogram
+
+function setGraphic(item)
+	var spell_id = GetObjProperty(item, "spell_id");
+	var type     := GetConfigString( FindconfigElem(spellcfg, spell_id), "Type" );
+
+	case (type)
+		"Fogo": item.graphic := "";
+		"Gelo": item.graphic := "";
+		"Eletrecidade": item.graphic := "";
+		"Veneno": item.graphic := "";
+		"Comando": item.graphic := "";
+	endcase
+endfunction

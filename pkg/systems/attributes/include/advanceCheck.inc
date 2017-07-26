@@ -15,6 +15,7 @@ use os;
 use util;
 
 include ":charactercreation:characters";
+include ":timeutils:time";
 
 /*
  * CheckStatsForSkill(mobile, skill_name)
@@ -156,8 +157,6 @@ endfunction
  *
  */
 function CheckSkillAdvance(mobile, skill_name, award_diff, pass_chance)
-
-
 	if (!g_skill_debug)
 		g_skill_debug := (GetObjProperty(mobile, "SkillDebug") != error);
 	endif
@@ -188,7 +187,7 @@ function CheckSkillAdvance(mobile, skill_name, award_diff, pass_chance)
 	endif
 	
   if ( (limiteportempo(mobile) + valorinicial(mobile, skill_name)) <= true_skill)
-  		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: " + limiteportempo(mobile) + " idade do char  " + idadeChar( mobile) + " valor inicial "  + valorinicial(mobile, skill_name));
+  		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: " + limiteportempo(mobile) + " idade do char  " + GetCharAge( mobile) + " valor inicial "  + valorinicial(mobile, skill_name));
 		return 0;
    endif
   
@@ -310,24 +309,6 @@ function AP_CheckClassSkillCap(mobile, skill_name)
 
 endfunction
 
-function GetIncreaseCapFactor(skill)
-
-	if (skill < 20 )
-		return 1;
-	elseif (skill < 40 )
-		return 2;
-	elseif (skill < 60 )
-		return 4;
-	elseif (skill < 80)
-		return 8;
-	elseif (skill < 90)
-		return 16;
-	elseif (skill < 100)
-		return 25;
-	endif
-
-endfunction
-
 function CheckVitalSkillCap(mobile, skill)
 	var qtd := costSkill(skill);
 	if (qtd > 0)
@@ -362,6 +343,7 @@ function costSkill(value)
 		return 0;
 	endif
 endfunction
+
 function AwardPoints(who, skill, points)
 
 	var skills := GetObjProperty(who, "skills");
@@ -403,29 +385,18 @@ function PointsToIncrease(basevalue)
 
 endfunction
 
-function idadeChar( character)// para 10000 deu 292 segundos 300
-    var criadoEm := cint(GetObjProperty(character, "createdate"));
-    var tempoAgora := polcore().systime;// segundos
-    var tempoDevida:= tempoAgora - criadoEm;
-    var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
-    return dias;
-endfunction
-
-function CalculateDaysInReal(days)// para 10000 deu 292 segundos 300
-    var criadoEm := cint(days);
-    var tempoAgora := polcore().systime;// segundos
-    var tempoDevida:= tempoAgora - criadoEm;
-    var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
-    return dias;
+function GetCharAge(character)// para 10000 deu 292 segundos 300
+	var create_date := cint(GetObjProperty(character, "createdate"));
+	var days        := GetTimeBetween(cint(create_date), ReadGameClock());
+	return days;
 endfunction
   
 function limiteportempo (who)
-
 	if (who.npctemplate)
 		return 100;
 	endif
   
-	var dias := CInt(idadeChar(who)); // Colocar aqui a prop pra pegar os dias do char
+	var dias := GetCharAge(who); // Colocar aqui a prop pra pegar os dias do char
 
 	var lim := 2.5; // Valor inicial
 	
@@ -455,8 +426,5 @@ function limiteportempo (who)
 		lim += cap_up;
 	endif
 	
-	
-
 	return lim;
-
 endfunction

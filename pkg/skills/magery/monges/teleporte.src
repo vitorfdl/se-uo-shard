@@ -4,6 +4,7 @@ use vitals;
 
 include "include/sounds";
 include "include/say";
+include "include/say";
 include ":timedScripts:timedScripts";
 include "include/tileEffects";
 include ":charactercreation:habilidades";
@@ -14,7 +15,7 @@ program SpellScript(params)
 	var who := params[1];
 	params := 0; // No longer needed
 	var teleporte := GetObjProperty(who, "teleporte");
-	teleporte := SystemFindObjectBySerial(teleporte);
+	teleporte     := SystemFindObjectBySerial(teleporte);
 	if (teleporte)
 		if (Distance(who, teleporte) > cint(AP_GetStat(who, "Intelligence")/4))
 			SendSysMessageEX(who, "Muito Distante do Glifo!", SSM_FAIL);
@@ -27,8 +28,8 @@ program SpellScript(params)
 		return;
 	endif
 	
-	var rosto := direcao(who);
-	var item := CreateItemAtLocation(who.x + rosto.x, who.y + rosto.y, who.z, 0x790d);
+	var itemloc := GetPointsByFacing(whox, who.y, who.facing, 1);
+	var item := CreateItemAtLocation(itemloc[0].x, itemloc[0].y, who.z, 0x790d);
 	if (!item)
 		SendSysMessageEX(who, "Nao foi possivel criar a runa", SSM_FAIL);
 		return;

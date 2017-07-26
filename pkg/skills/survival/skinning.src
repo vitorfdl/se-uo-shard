@@ -18,9 +18,9 @@ include ":fls_core:fls_characters";
 
 
 program skinning(parms)
-	var who := parms[1];
+	var who     := parms[1];
 	var cadaver := parms[2];
-	var blade := parms[3];
+	var blade   := parms[3];
 	
 	if (who.weapon != blade)
 		var cfg := ReadConfigFile(":combat:itemdesc");

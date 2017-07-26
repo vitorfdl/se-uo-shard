@@ -37,6 +37,7 @@ include ":datafile:datafile";
 include ":charactercreation:habilidades";
 include "include/arrays";
 include ":ghaia:ghaiaUtil";
+include ":charactercreation:characters";
 
 function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	// Seta parametro de critico
@@ -168,8 +169,7 @@ function HaveSkill(mobile, skill)
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
 		skill_list  := GetConfigStringArray(npcelem, "Pericia");
 	else
-		var chardata := GetObjProperty(mobile, "chardata");
-		skill_list   := chardata.Skills;
+		skill_list   := GetSkillList(mobile);
 	endif
 
 	if (!skill_list)

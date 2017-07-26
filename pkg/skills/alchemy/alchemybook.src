@@ -245,7 +245,7 @@ function CreateRunebookGump(book, who)
 		endif
 
 		var rune_entry := rune_list[rune_pos];
-		//WritespellInfo(who, rune_entry);
+		//WriteSpellInfo(rune_entry);
 		rune_entry.description := "<BASEFONT COLOR=#000066>" +  cstr(rune_entry.description) ;
 		if( TypeOf(rune_entry) == "Struct" )
 			if( rune_entry.name )
@@ -270,7 +270,7 @@ function CreateRunebookGump(book, who)
 		endif
 
 		rune_entry := rune_list[rune_pos];
-		//WritespellInfo(who, rune_entry);
+		//WriteSpellInfo(rune_entry);
 		 rune_entry.description := "<BASEFONT COLOR=#000066>" +  cstr(rune_entry.description);
 
 		if( TypeOf(rune_entry) == "Struct" )

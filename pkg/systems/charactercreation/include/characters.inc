@@ -23,7 +23,7 @@ endfunction
 
 function GetCharLevel(who)
 	var chardata := GetObjProperty(who, "chardata");
-	var charlevel := chardata["charlevel"];
+	var charlevel := chardata["level"];
 	if (charlevel == error || !charlevel)
 		SetCharLevel(who, 0);
 		charlevel := 0;
@@ -32,9 +32,9 @@ function GetCharLevel(who)
 
 endfunction
 
-function SetCharLevel(who, points)
+function SetCharLevel(who, level)
 	var chardata := GetObjProperty(who, "chardata");
-	chardata["charlevel"] := points;
+	chardata.level := level;
 	SetObjProperty(who, "chardata", chardata);
 	return 1;
 endfunction
@@ -48,15 +48,6 @@ function GetSkillList(who)
 	endif
 	
 	return skill_list;
-endfunction
-
-function Have_Skill(who, skill)
-	var skill_list = GetSkillList(who);
-	if (skill in skill_list)
-		return 1;
-	endif
-
-	return 0;
 endfunction
 
 function GetAttribPoints(who)
@@ -113,21 +104,17 @@ function GetUntranslatedName(skill, who)
 	return 0;
 endfunction
 
-function CheckExpUp(who, skill_name, skillbefore, skillafter)
+function CheckExpUp(who)
 	var level := GetCharLevel(who);
-	if (level < 26)
-		if (skillbefore != skillafter)
-			var maxexp := (GetCharLevel(who) + 5) * 30;
-			var exp := GetExpPoints(who);
-			exp := GetExpPoints(who) + cint(skillafter);
-			
-			if (exp >= maxexp)
-				exp-=maxexp;
-				SetCharLevel(who, level+1);
-				// SetSkillPoints(who, GetSkillPoints(who)+1);
-				SetAttribPoints(who, GetAttribPoints(who)+3);
-			endif
-			
+	if (level < 20)
+		var maxexp := (GetCharLevel(who) + 1) * 1000;
+		var exp := GetExpPoints(who);
+
+		if (exp >= maxexp)
+			exp-=maxexp;
+			SetCharLevel(who, level+1);
+			// SetSkillPoints(who, GetSkillPoints(who)+1);
+			SetAttribPoints(who, GetAttribPoints(who)+3);
 			SetExpPoints(who, exp);
 		endif
 	endif

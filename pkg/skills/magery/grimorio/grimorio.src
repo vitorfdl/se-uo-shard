@@ -16,8 +16,9 @@ include "include/facings";
 include ":tn:cooldown";
 
 program book(who, book)
-	var book_gump := CreateBookGump(book, who);
-	var result := GFSendGump(who, book_gump);
+	var can_read  := HaveSkills(who, "Linguagem Elfica");
+	var book_gump := CreateBookGump(book, who, can_read);
+	var result    := GFSendGump(who, book_gump);
 
 	if (result[0] > 900)
 		var spell := result[0] - 900;
@@ -26,24 +27,22 @@ program book(who, book)
 		//sendsysmessage(who, " " + bookopt);
 
 		if (spells[spell])
-			copyrecipe(who, spells[spell]);
+			CopyRecipe(who, spells[spell]);
 		endif
 	else
 
 		var spell := result[0] - 100;
 
-		var spells := GetObjProperty(book, "spells");
-
-		var serialid:= GetObjProperty(book, "serialid");
-		if (serialid != error)
-			if (serialid != who.serial);
-				SendSysMessageEx(who, "Voce nao entende esse livro.", SSM_FAIL);
-				return 1;
-			endif
+		var spells   := GetObjProperty(book, "spells");
+		var serialid := GetObjProperty(book, "serialid");
+		if (serialid != error && serialid != who.serial)
+			SendSysMessageEx(who, "Voce nao entende as anotacoes do livro.", SSM_FAIL);
+			return 1;
+		elseif (!spells[spell])
+			SendSysMessageEx(who, "Algum erro ocorreu com sua magia, avise um GM.", SSM_FAIL);
+			return 1;
 		endif
-		if (spells[spell])
-			Start_Script("cast_spell", array{who, spells[spell], 0});
-		endif
+			EscreverMagia(who, spells[spell]);
 	endif
 
 endprogram
@@ -51,36 +50,30 @@ endprogram
 Const OBJ_BLANK_SCROLL := 0xE34;
 Const OBJ_RECIPE_SLIP := 0x6116;
 
-function copyrecipe(who, recipe)
-	writeSpellInfo(who, recipe);
+function CopyRecipe(who, recipe)
+	WriteSpellInfo(recipe);
 	//sendsysmessage(who, " " + spellinfo + " " + recipe + "  " + cint(recipe));
-	if (ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
-		if ((SkillCheck(who, MAGERY, cint(recipe.Difficulty), 0) > 0))
-			if  (!AP_ConsumeVital(who, MANA, recipe.mana))
-				SendSysMEssageEx(who, "Voce esta sem mana.", SSM_FAIL);
-				return 1;
-			endif
-			if (!TNCheckReagents(who, recipe, 0))
-				SendSysMessageEx(who, "Voce nao tem os reagentes.", SSM_FAIL);
-				return 1;
-			endif
-			var item := createiteminbackpack(who, OBJ_RECIPE_SLIP, 1);
-			if (item == error)
-				sendsysmessage(who, "  " + item);
-			endif
-			setobjproperty(item, "spellinfo", recipe);
-			SendSysMessageEx(who, "Voce fez uma copia do pergaminho.", SSM_INFO);
-			printtext(who, "*escrevendo pergaminho*");
-		else
-			SendSysMessageEx(who, "Voce copiou o pergaminho sem cuidados e ela esta ilegivel.", SSM_FAIL);
-		endif
-	else
+	if (!ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
 		SendSysMessageEx(who, "Voce precisa de um pergaminho em branco.", SSM_FAIL);
+		return 0;
 	endif
+
+	if (rollAttrDice(who, WISDOM) >= recipe.difficulty+5)
+		var item := createItemInBackpack(who, OBJ_RECIPE_SLIP, 1);
+		if (item == error)
+			sendsysmessage(who, "  " + item);
+		endif
+		SetObjProperty(item, "spellinfo", recipe.spellid);
+		SendSysMessageEx(who, "Voce fez uma copia do pergaminho.", SSM_INFO);
+		printtext(who, "*escrevendo pergaminho*");
+		return;
+	endif
+	
+	SendSysMessageEx(who, "Voce copiou o pergaminho sem cuidados e ela esta ilegivel.", SSM_FAIL);
 endfunction
 
 
-function CreateBookGump(book, who)
+function CreateBookGump(book, who, can_read := 0)
 	var spell_list := GetObjProperty(book, "spells");
 	if( TypeOf(spell_list) != "Array" )
 		spell_list := array{};
@@ -115,10 +108,8 @@ function CreateBookGump(book, who)
 
 	var pOX       := 130;
 	var pOY       := 65;
-	var spell_pos := 1;
 	foreach rune in spell_list
-		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+spell_pos);
-		spell_pos+=1;
+		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+rune_iter_);
 		pOY+=15;
 		if (pOY >180)
 			pOY := 65;
@@ -129,7 +120,6 @@ function CreateBookGump(book, who)
 
 	pOX      := 145;
 	pOY      := 60;
-	spell_pos := 1;
 
 	for i := 2 to 9
 		GFPage(book_gump, i);
@@ -159,7 +149,7 @@ function GenerateFilledSide(byref who, byref book_gump, spell_list, i, side, byr
 	endif
 
 	var spell_entry := spell_list[spell_pos];
-	WritespellInfo(who, spell_entry);
+	WriteSpellInfo(spell_entry);
 
 	spell_entry.description := "<BASEFONT COLOR=#000066>{}<br>{}<br><br> <BASEFONT COLOR=#330000> Componentes <br>".format(cstr(spell_entry.description), cstr(spell_entry.flavortext));
 
@@ -176,10 +166,8 @@ function GenerateFilledSide(byref who, byref book_gump, spell_list, i, side, byr
 			GFPage(book_gump, i);
 
 			GFTextCrop(book_gump, sOX,  15, 100, 18, 995, spell_entry.name);
-			if ( TemHabilidade(who, "Escrever Pergaminhos") )
-				GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Copiar");
-				GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 900+spell_pos);
-			endif
+			GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Copiar");
+			GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 900+spell_pos);
 
 			//Fix description position by side
 			if (side == 1)
@@ -215,5 +203,4 @@ function GenerateEmptySide(byref book_gump, side, pOX, pOY, page_num)
 		GFPage(book_gump, page_num);
 		GFTextCrop(book_gump, 305, 60, 115, 17, 10, "");
 	endif
-
 endfunction
