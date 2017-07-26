@@ -1,23 +1,23 @@
 use os;
 use uo;
 include "include/say";
-include "include/array";
+include "include/arrays";
 include ":magery:tnmagery";
 
 program changeSpell(item)
    var spell_list := GetObjProperty(item, "spell_list");
    if (!spell_list)
-      SendSysMessageEx("Nao foi encontrar magias para trocar");
+      SendSysMessageEx("Nao foi encontrar magias para trocar", SSM_FAIL);
    endif
 
+   var new_spell;
    var actual_spell := GetObjProperty(item, "actual_spell");
    if (!actual_spell || spell_list.size() == 1)
       actual_spell := spell_list[0];
-   elseif
+   else
       var spell_index := FindInArray(spell_list, actual_spell);
-      var tries := 1;
-      var new_spell;
-      for tries to 3
+
+      for tries := 1 to 3
          var new_index := spell_index + tries;
          if (new_index > spell_list.size())
             new_index -= spell_list.size();
@@ -32,7 +32,7 @@ program changeSpell(item)
    endif
 
    if (!new_spell || new_spell == actual_spell)
-      SendSysMessageEx("Nao foi encontrado encanto novo para mudar.", SSM_FAIL)
+      SendSysMessageEx("Nao foi encontrado encanto novo para mudar.", SSM_FAIL);
       return;
    endif
 
