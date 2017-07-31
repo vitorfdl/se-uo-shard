@@ -11,7 +11,7 @@
 *
 * Functions:
 * rollAttrDice(mobile, attribute, penalty := 0, critical := 20) - Rolagem de atributo
-* getProfiencyBonus(mobile, skill := 0) - Bonus de profiencia pelo nivel, se passar skill já checa se vai ter
+* getProficiencyBonus(mobile, skill := 0) - Bonus de profiencia pelo nivel, se passar skill já checa se vai ter
 * rollResistDice(mobile, type) - Rolagem de resistência
 * GetBonusAttr(number) - Convert numero em bonus 12 -> 1
 * HaveSkill(mobile, skill) - Checa se tem skill
@@ -38,6 +38,11 @@ include "include/arrays";
 include ":ghaia:ghaiaUtil";
 include ":charactercreation:characters";
 
+const BASE_DIFFICULTY := 19;
+
+// params.critical -> dice >= value
+// params.failure -> dice <= value
+// params.get_critical -> returns {dice, critical}
 function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	// Seta parametro de critico
 	if (!params.critical)
@@ -83,7 +88,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 
 	// Adiciona bonus de atributo
 	if (attribute && attribute != 0)
-		var mod := GetBonusAttr(AP_GetTrueStat(mobile, attribute));
+		var mod := AP_GetStat(mobile, attribute, RETURN_BONUS);
 		dice += mod;
 	endif
 	
@@ -100,7 +105,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	return dice;
 endfunction
 
-function getProfiencyBonus(mobile, skill := 0)
+function getProficiencyBonus(mobile, skill := 0)
 	if (skill && !HaveSkill(mobile, skill))
 		return 0;
 	endif
@@ -148,17 +153,12 @@ function rollResistDice(mobile, type)
 
 	var proficiency_bonus := 0;
 	if (type in resist_list)
-		proficiency_bonus := getProfiencyBonus(mobile);
+		proficiency_bonus := getProficiencyBonus(mobile);
 	endif
 
 	var dice := RandomDiceRoll("1d20") + proficiency_bonus;
 
 	return dice;
-endfunction
-
-function GetBonusAttr(number)
-	var modifier := Floor((number - 10) / 2);
-	return modifier;
 endfunction
 
 function HaveSkill(mobile, skill)
@@ -168,7 +168,7 @@ function HaveSkill(mobile, skill)
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
 		skill_list  := GetConfigStringArray(npcelem, "Pericia");
 	else
-		skill_list   := GetSkillList(mobile);
+		skill_list   := mobile.SkillList(;
 	endif
 
 	if (!skill_list)
@@ -357,7 +357,7 @@ function Wait(mobile, segundos)
 endfunction
 
 function GetHP(mobile)
-	var cons     := CInt(AP_GetTrueStat(mobile, "Constitution"));
+	var cons     := CInt(AP_GetTrueStat(mobile, CONSTITUTION));
 	var chardata := GetObjProperty(mobile, "chardata");
 	var hp := 0;
 	if (chardata != error && chardata.hitpoints)

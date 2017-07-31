@@ -21,6 +21,7 @@ CONST SPEAK_DOEVENT_DISABLE := 0x0;
 CONST SPEAK_DOEVENT_ENABLE  := 0x1;
 
 CONST SYSTEM_REPORT := 117;
+CONST SYSTEM_HEAL := 117;
 
 function SendSysMessageEX(who, message, SSM_TYPE := _DEFAULT_TEXT_COLOR, font_number := _DEFAULT_TEXT_FONT)
 	SendSysMessage(who, ""+message, font_number, SSM_TYPE);

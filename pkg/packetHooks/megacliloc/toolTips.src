@@ -349,12 +349,15 @@ exported function MegaCliloc( who, byref packet )
 					foreach spell in spell_list
 						if (spell == 0)
 							continue;
+						elseif (xDesc.search(GetSpellName(spell)))
+							xDesc += "I";
 						elseif (activel_spell == spell)
 							xDesc += WHITE;
 						else
 							xDesc += BLUE;
 						endif
-						xDesc += "{}<br>".format(GetSpellName(spell));
+
+						xDesc += "<br>{} I".format(GetSpellName(spell));
 					endforeach
 				endif
 			endif

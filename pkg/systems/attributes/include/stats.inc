@@ -12,6 +12,13 @@
 
 use uo;
 
+const RETURN_BONUS := 1;
+
+function GetBonusAttr(number)
+	var modifier := Floor((number - 10) / 2);
+	return modifier;
+endfunction
+
 /*
  * AP_GetStat(mobile, stat_name)
  *
@@ -26,8 +33,13 @@ use uo;
  * Returns an integer.
  *
  */
-function AP_GetStat(who, stat_name)
-	return AP_GetTrueStat(who, stat_name)+AP_GetStatMod(who, stat_name);
+function AP_GetStat(who, stat_name, bonus := 0)
+	var result := AP_GetTrueStat(who, stat_name)+AP_GetStatMod(who, stat_name);
+	if (bonus)
+		result := GetBonusAttr(result);
+	endif
+
+	return result;
 endfunction
 
 /*

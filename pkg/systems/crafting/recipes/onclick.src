@@ -1,0 +1,43 @@
+
+use uo;
+use os;
+use cfgfile;
+
+include ":gumps:yesno";
+include "include/say";
+include "include/array";
+
+program usaPergaminho(who, scroll)
+	var gump := GFCreateGump();
+	GFClosable(gump, 1);
+	GFDisposable(gump, 0);
+	GFGumpPic(gump, 15, 20, 1247);
+	GFTextCrop(gump, 70, 50, 150, 17, 995, "Nome: {}".format(spellinfo.name));
+	// GFTextCrop(gump, 70, 70, 150, 17, 995, "Tipo: " + "teste 4");
+	// GFTextCrop(gump, 70, 90, 150, 17, 995, "Inimigos: " + "teste 2");
+
+	GFHTMLArea(gump, 70, 125, 290, 170, "<BASEFONT COLOR=#330000>Tipo: {} <br<br>Circulo: {} <br><br>{}".format(spellinfo.type,spellinfo.circle,spellinfo.description), 0, 1);
+
+	if (who.cmdlevel > 4)
+		GFTextCrop(gump, 270, 50, 100, 17, 995, "Trocar Magia");
+		GFAddButton(gump, 320, 53, 9702, 9703, GF_CLOSE_BTN, 99);
+	endif
+
+	var input := GFSendGump(who, gump);
+	if (input[0] == 99)
+		var spellcfg   := ReadConfigFile(":magery:config/mage");
+		var keys       := GetConfigIntKeys(spellcfg);
+		var name_array := array{};
+		for key in keys
+			name_array.append(GetConfigString(FindconfigElem(spellcfg, key), "Name"));
+		endfor
+
+		var prompt := RadioGump(who, 210, 40+(name_array.size() * 20), "Escolha a Magia:", name_array);
+		var index := FindInArray(name_array, prompt);
+		if (index)
+			var spell_id := keys[index];
+			SetObjProperty(scroll, "spell_id", spell_id);
+			Start_Script("grimorio/pergaminhoCreate", scroll);
+		endif
+	endif
+endprogram

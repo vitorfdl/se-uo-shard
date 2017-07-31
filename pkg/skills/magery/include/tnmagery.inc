@@ -17,7 +17,7 @@ function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
 	spellinfo := struct{};
 	spellinfo.+id 				:= spell_id;
 	spellinfo.+name        := GetConfigString( elem, "Name" );
-	spellinfo.+powerwords  := GetConfigString( elem, "PowerWords" );
+	spellinfo.+powerwords  := GetConfigStringArray( elem, "PowerWords" );
 	spellinfo.+alvo        := GetConfigString( elem, "Target" );
 	spellinfo.+type        := GetConfigString( elem, "Type" );
 	spellinfo.+range       := GetConfigString( elem, "Range" );
@@ -57,34 +57,34 @@ function TNCheckReagents(who, byref spellinfo, item)
 		return 1;
 	endif
 
-	//sendsysmessage(who,  " " + reagent_costs);
-	var keys := reagent_costs.keys();
-	var amount;
-	foreach reag in keys
-		amount := CInt( reagent_costs[reag] );
-		if (!amount)
-			amount := 1;
-		endif
-		var objtype := GetObjTypeByName(reag);
-		var dictToAmount := dictionary; //variavel pra ser usada na funcao abaixo
-		dictToAmount["objtype"] := objtype;
-		var amountinpack := AmountInContainer(who.backpack, dictToAmount);
-		//sendsysmessage(who, "reag " + reag + " objtype " + objtype + " pack " + amountinpack);
-		if (amountinpack  < amount )
-			SendSysMessageEx(who, "Voce nao possui "+GetObjTypeDesc(objtype, (amount>1)), SSM_FAIL);
-			return 0;
-		endif
-		sleepms(2);
-	endforeach
+	// //sendsysmessage(who,  " " + reagent_costs);
+	// var keys := reagent_costs.keys();
+	// var amount;
+	// foreach reag in keys
+	// 	amount := CInt( reagent_costs[reag] );
+	// 	if (!amount)
+	// 		amount := 1;
+	// 	endif
+	// 	var objtype := GetObjTypeByName(reag);
+	// 	var dictToAmount := dictionary; //variavel pra ser usada na funcao abaixo
+	// 	dictToAmount["objtype"] := objtype;
+	// 	var amountinpack := AmountInContainer(who.backpack, dictToAmount);
+	// 	//sendsysmessage(who, "reag " + reag + " objtype " + objtype + " pack " + amountinpack);
+	// 	if (amountinpack  < amount )
+	// 		SendSysMessageEx(who, "Voce nao possui "+GetObjTypeDesc(objtype, (amount>1)), SSM_FAIL);
+	// 		return 0;
+	// 	endif
+	// 	sleepms(2);
+	// endforeach
 
-	foreach reag in ( keys )
-		amount := CInt( reagent_costs[reag] );
-		if (!amount)
-			amount := 1;
-		endif
-		ConsumeSubstance(who.backpack, GetObjTypeByName(reag), amount);
-		sleepms(2);
-	endforeach
+	// foreach reag in ( keys )
+	// 	amount := CInt( reagent_costs[reag] );
+	// 	if (!amount)
+	// 		amount := 1;
+	// 	endif
+	// 	ConsumeSubstance(who.backpack, GetObjTypeByName(reag), amount);
+	// 	sleepms(2);
+	// endforeach
 
 	return 1;
 endfunction
@@ -101,7 +101,6 @@ function MantainSpell(byref info)
 	if (info.mage.connected)
 		start_script( ":magery:mantainSpell", { info.mage, info.mobserial, info.name, info.duration, info.level  }  ); 
 	endif
-
 endfunction
 
 function GetSpellDuration(skill)

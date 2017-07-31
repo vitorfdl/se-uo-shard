@@ -22,7 +22,7 @@ program use_tool(who, tool)
 	EraseObjProperty(who, "HealTimer");
 
     var params := struct{
-        "type"       := "Mercenaria",
+        "type"       := "Marcenaria",
         "recipe_cfg" := ReadConfigFile(":woodworking:bow_recipes")
     };
 

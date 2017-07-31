@@ -1,0 +1,39 @@
+use os;
+use uo;
+use util;
+use cfgfile;
+use vitals;
+use attributes;
+include ":alchemy:alchemy";
+include "include/say";
+include ":timedScripts:timedScripts";
+include "include/damage";
+
+program healpotion(who, potion)
+	if (!CheckIfCanDrink(who, potion, "healingpot", 20))
+		return 1;
+	endif
+
+	var healed;
+	var delay := 1000;
+
+	case (potion.objtype)
+		56321: healed := RandomDiceRoll("2d4+2");
+		56322: healed := RandomDiceRoll("4d4+4");
+		56323: healed := RandomDiceRoll("8d4+8");
+		48914: healed := RandomDiceRoll("10d4+20");
+	endcase
+
+  	EmptyBottle(who, potion, 1);
+	Detach();
+
+	SendSysMessageEx(who, "Seus ferimentos estao cicatrizando...", SSM_INFO);
+	for i := 0 to healed
+		HealFLS(who, 1);
+		//HealDamage(who,  1 );
+		RecalcVitals(who);
+		sleepms(550);
+	endwhile
+	SendSysMessageEx(who, "Terminou o efeito da pocao.", SSM_INFO);
+endprogram
+ 

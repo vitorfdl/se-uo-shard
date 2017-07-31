@@ -44,7 +44,7 @@ program drink_blue (who, potion)
 		0xbf19: healed := cint(healed*0.70); cd := healed*0.5;
 	endcase
 
-  	empty_bottle(who, potion, 1);
+  	EmptyBottle(who, potion, 1);
 	TS_StartCooldown(who, "manapot", cint(healed)+1);
 	SetObjProperty(who, "#manapotion", 1);
 	Detach();
@@ -61,4 +61,5 @@ program drink_blue (who, potion)
 	EraseObjProperty(who, "#manapotion");
 	SendSysMessageEx(who, "Terminou o efeito da pocao.", SSM_INFO);	
 endprogram
-  
+ 
+ 

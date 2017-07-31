@@ -24,12 +24,9 @@ program corda(who, item)
 
 	var diff := GetObjProperty(item, "diff");
 	if (!diff)
-		diff := 100;
+		diff := 15;
 	endif
-	var mod := 0;
-	// if (TemHabilidade(who, "Maos Habilidosas"))
-	// 	mod := 20;
-	// endif
+	var mod := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + GetProficiencyBonus(who, PRESTIDIGITACAO);;
 
 	if (alvo.isA(POLCLASS_CORPSE) && CheckGender(alvo)) // Se for corpo
 		var char := SystemFindObjectBySerial(alvo.ownerserial);
@@ -44,7 +41,6 @@ program corda(who, item)
 		SetObjProperty (alvo, "corda", 1);
 		SetObjProperty (char, "corda", diff+mod);
 	elseif (alvo.ip) // Se for player e tiver on
-		print("mo ipzao");
 		if (!alvo.connected)
 			SendSysMessage(who, "Nao pode amarrar um jogador deslogado.");
 			return;
@@ -54,7 +50,7 @@ program corda(who, item)
 		if (ok)
 			PrintText(who, "*amarra "+alvo.name+"*");
 			SubtractAmount(item, 1);
-			SetObjProperty (alvo, "corda", diff+mod);
+			SetObjProperty(alvo, "corda", diff+mod);
 			alvo.frozen := 1;
 		else
 			SendSysMessage(who, alvo.name+" evitou sua tentativa de amarra-lo!");

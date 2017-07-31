@@ -395,11 +395,11 @@ function TS_StartCooldown(mobile, timer_name, duration, attacker := 0)
 	endif
 
 	var event := struct;
-	event.+type := EVENT_ADD_TIMER;
+	event.+type      := EVENT_ADD_TIMER;
 	event.+timerType := EVENT_TYPE_COOLDOWN;
-	event.+name := CStr(timer_name);
-	event.+amount := duration;
-	event.+attacker := attacker;
+	event.+name      := CStr(timer_name);
+	event.+amount    := duration;
+	event.+attacker  := attacker;
 
 	var process := TS_GetControllerProcess(mobile, START_CONTROLLER);
 	return process.SendEvent(event);

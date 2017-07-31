@@ -18,7 +18,6 @@ include ":charactercreation:habilidades";
 include "include/say";
 include ":blood:blood";
 include ":fls_core:packets";
-include ":tn:combat";
 
 /*
  * http://uo.stratics.com/content/guides/resistance.shtml
@@ -28,23 +27,27 @@ include ":tn:combat";
  */
 enum DAMAGE_TYPES
 	DMG_FORCED  := -1, // Ignores resistance
-	DMG_PHYSICAL:= "Physical",
-	DMG_FIRE    := "Fire",
-	DMG_COLD    := "Cold",
-	DMG_POISON  := "Poison",
-	DMG_ENERGY  := "Energy"
+	DMG_PHYSICAL:= "Físico",
+	DMG_FIRE    := "Fogo",
+	DMG_COLD    := "Gelo",
+	DMG_POISON  := "Veneno",
+	DMG_ENERGY  := "Eletrecidade",
+	DMG_POISON  := "Veneno",
+	DMG_POISON  := "Veneno",
+	DMG_POISON  := "Veneno",
+	
 endenum
 
 
-function HealFLS(targ, amt)
-
-	if (!GetObjProperty(targ, "nocure"))
+function HealFLS(targ, amt, show_heal := 1)
+	if (!GetObjProperty(targ, "noheal"))
 		HealDamage(targ, amt);
+		if (show_heal)	
+			PrivateSystemReport(defender, amt, source, SYSTEM_HEAL);
+		endif
 	else
 		SendSysMessageEx(targ, "Voce nao pode ser curado.", SSM_FAIL);
-
 	endif
-
 endfunction
 
 function ApplyDamageEX(defender, dmg, type, source := 0)
@@ -176,6 +179,11 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	if (source)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
+		var cleric_healing := GetObjProperty(source, "cleric_heal");
+		if (cleric_healing && dmg >= 2)
+			var targ := SystemFindObjectBySerial(cleric_healing);
+			HealFLS(targ, Floor(dmg/2));
+		endif
 	endif
 
 	return dmg;

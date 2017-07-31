@@ -10,7 +10,6 @@ use basic;
 
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
-include "include/localization";
 include "include/packets";
 include "include/client";
 include "include/time";

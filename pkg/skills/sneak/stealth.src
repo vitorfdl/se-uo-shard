@@ -6,43 +6,23 @@ include ":charactercreation:habilidades";
 include "include/say";
 
 program skill_Stealth( who )
-	
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 
 	if( GetEquipmentByLayer(who, 25) )
 		who.hidden := 0;
-		SendSysMessageEx(who, "Voce nao pode ficar furtivo montado!", SSM_FAIL);
+		SendSysMessageEx(who, "Desmonte para ficar furtivo!", SSM_FAIL);
 		return 0;
 	endif
 
-	/*
-	Como Stealth agora eh integrado, ele só roda quando já estiver em hiding mesmo
-	if ( !who.hidden )
-		var script := start_script(":hiding:hiding", who);
-		while ( script.pid )
-			sleepms(500);
-		endwhile
-		if (!who.hidden)
-			SendSysMessageEx(who, "Voce deve estar escondido para se mover furtivamente.", SSM_FAIL);
-			return;
-		endif
-	endif
-	*/
-
-	var skill := AP_GetSkill(who, SNEAK);
-	if (!temHabilidade(who, "Movimento Acolchoado"))
-		SendSysMessageEx(who, "Voce nao consegue se mover furtivamente!", SSM_FAIL);
-		return 0;		
-	endif
+	// if (!temHabilidade(who, "Movimento Acolchoado"))
+	// 	SendSysMessageEx(who, "Voce nao consegue se mover furtivamente!", SSM_FAIL);
+	// 	return 0;		
+	// endif
 	
-	skill := skill - 20;
-	var baseSteps := qtdSteps(who, skill);
-	var atualStep := CInt(GetObjProperty(who, "#steathsteps"));
-	var diff := 15 + atualStep * 10;
-	if (!temHabilidade(who, "Discricao 3"))
-		diff := diff + 20;
-	endif
+	var atual_steps := CInt(GetObjProperty(who, "#steathsteps"));
+	var diff := 16 + atual_steps;
+	// TODO: ADD dayligh check for difficulty
 	/*if (temHabilidade(who, "Misturar-se na Selva"))
 		var region := GetRegionName(who);
 		if(region != "aghaja" && region != "zharkia")
@@ -52,9 +32,20 @@ program skill_Stealth( who )
 			endif
 		endif
 	endif*/
-	var check := SkillCheck(who, SNEAK, diff);
-	if( check > 0 )
-		who.stealthsteps := baseSteps;
+
+	var base_steps := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, "Furtividade") + 2;
+	if (base_steps < 4)
+		base_steps := 4;
+	endif
+
+	var advantage := 0;
+	if (Lower(GetGlobalProperty("dia")) == "noite")
+		advantage += 1;
+	endif
+
+	var check := rollAttrDice(who, DEXTERITY, ) + getProficiencyBonus(who, "Furtividade");
+	if (check >= diff)
+		who.stealthsteps := base_steps;
 		/*
 		Removido pois agora Furtividade Aprimorada é como se fosse pra habilitar Stealth e não mais dar bonus
 		if (temHabilidade(who, "Furtividade Aprimorada"))
@@ -64,39 +55,19 @@ program skill_Stealth( who )
 		endif
 		*/
 		SendSysMessageEx(who, "Voce esta se movendo silenciosamente.", SSM_INFO);
-		SetObjProperty(who, "#steathsteps", atualStep + 1);
+		SetObjProperty(who, "#steathsteps", atual_steps + 1);
 		return 1;
-	elseif (check >= -15)
+	elseif (check >= diff-5)
 		SendSysMessageEx(who, "Voce falhou mas se manteve escondido.", SSM_FAIL);
 		return 0;
 	else
 		if (who.hidden)
-			SendSysMessageEx(who, "Voce falhou e se revelou.", SSM_FAIL);
+			SendSysMessageEx(who, "Pisou em falso e se revelou.", SSM_FAIL);
 			who.hidden := 0;
 			PrintText(who, "*aparece*");
 		else
-			SendSysMessageEx(who, "Voce falhou.", SSM_FAIL);
+			SendSysMessageEx(who, "Falhou em se esconder.", SSM_FAIL);
 		endif
 		return 0;
 	endif
 endprogram
-
-function qtdSteps(who, skill)
-	if (skill >= 100)
-		return 18;
-	elseif (skill >= 90)
-		return 15;
-	elseif (skill >= 80)
-		return 13;
-	elseif (skill >= 70)
-		return 12;
-	elseif (skill >= 50)
-		return 10;
-	elseif (skill >= 40)
-		return 8;
-	elseif (skill >= 30)
-		return 6;
-	else
-		return 5;
-	endif
-endfunction

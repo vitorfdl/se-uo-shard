@@ -9,7 +9,6 @@ include ":magery:tnmagery";
 
 //Magic Weapons 1 10 3
 function Loot_CreateMagic(container, line)
-
 	var parsed := Loot_ParseMagicString(line);
 
 	if ( Loot_ChanceCheck(parsed.chance) )
@@ -28,7 +27,6 @@ function Loot_CreateMagic(container, line)
 endfunction
 
 function CreateMagicItem(container, line)
-
 	var parsed := Loot_ParseMagicString(line);
 	var groups_cfg := ReadConfigFile(":loot:config/loot-groups");
 	if ( groups_cfg.errortext )

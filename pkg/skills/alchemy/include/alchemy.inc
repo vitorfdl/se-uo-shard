@@ -4,22 +4,33 @@ include "include/say";
 
 CONST DRINK_SOUND := 0x32;
 
-function checkifcandrink(character, type)
+function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
+  if(!Accessible(who, potion))
+		return 0;
+	elseif (!potion.movable)
+		SendSysMessageEx(who, "Voce nao pode beber isto.", SSM_FAIL);
+		return 0;
+	endif
+
   // Check to make sure they have at least one hand free to drink the potion
   var equippedright := GetEquipmentByLayer(character, 0x01);
-  var equippedleft := GetEquipmentByLayer(character, 0x02);
-  var cfg := ReadConfigFile(":*:itemdesc");
-  var twohanded := Cint(cfg[equippedleft.objtype].TwoHanded);
+  var equippedleft  := GetEquipmentByLayer(character, 0x02);
+  var cfg           := ReadConfigFile(":*:itemdesc");
+  var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
   if (equippedright and equippedleft || twohanded)
     SendSysMessage(character, "Voce precisa de pelo menos uma mao livre!");
     return 0;
+  elseif (GetObjProperty(who, "noheal") && type == "healingpot")
+		SendSysMessageEx(who, "Essa pocao nao fara efeito nas atuais circunstacias", SSM_FAIL);
+    return 0;    
   endif
-  if((type != "red") and (type != "green_potion"))
-    if(GetCooldown(character, type))
+
+  if((type != "red") and (type != "green_potion") and type)
+    if(TS_GetCooldown(character, type))
         SendSysMessage(character, "Voce deve esperar um pouco antes de beber outra pocao!");
         return 0;
-     else
-        SetCooldown(character, type, 10);
+     elseif (cooldown > 0 )
+        TS_StartCooldown(character, type, cooldown);
         return 1;
      endif
   else
@@ -27,8 +38,7 @@ function checkifcandrink(character, type)
   endif
 endfunction
 
-
-function empty_bottle(character, potion, potiontype := 0)
+function EmptyBottle(character, potion, potiontype := 0)
   PlaySoundEffect(character, DRINK_SOUND);
   PrintText(character, "*usa uma pocao*");
   var goles;
@@ -194,7 +204,7 @@ function is_poison(potion)
 endfunction
 
 function do_poison(who, potion)
-  empty_bottle(who, potion);
+  EmptyBottle(who, potion);
   case (potion.objtype)
     0xbf00: 
      var lvl := Cint(GetObjProperty(potion, "strength"));

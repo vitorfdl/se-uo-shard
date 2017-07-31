@@ -5,23 +5,16 @@ use cfgfile;
 program explosion_timer(parms)
   var potion := parms[1];
   var who := parms[2];
-  if (potion.container)
-    PrintTextAbove(who, "3");
-  else
-    PrintTextAbove(potion, "3");
-  endif
-  sleep(1);
-  if (potion.container)
-    PrintTextAbove(who, "2");
-  else
-    PrintTextAbove(potion, "2");
-  endif
-  sleep(1);
-  if (potion.container)
-    PrintTextAbove(who, "1");
-  else
-    PrintTextAbove(potion, "1");
-  endif
-  sleep(1);
+
+  for i := 0 to 2
+    var secs := 3-i;
+    if (potion.container)
+      PrintTextAbove(who, cstr(secs));
+    else
+      PrintTextAbove(potion, cstr(secs));
+    endif
+    sleep(1);
+  endfor
+
   start_script("potions/exploder", {potion, who});
 endprogram

@@ -6,19 +6,10 @@ include ":alchemy:alchemy";
 include ":timedScripts:timedScripts";
 
 program drink_blue (who, potion)
-	EraseObjProperty(who, "IsMeditating");
-	EraseObjProperty(who, "HealTimer");
-	if(!Accessible(who, potion))
-		return;
-	endif
-	if(potion.movable == 0)
-		SendSysMessage(who, "Voce nao pode beber isto.");
+	if(!checkifcandrink(who, potion, 0, 0) || TS_GetTimerDuration(who, "invis"))
 		return;
 	endif
 
-	if(!checkifcandrink(who, "invis"))
-		return;
-	endif
 
 	var bonus := cint(GetObjProperty(potion, "crafterskill")/10);
 
@@ -28,5 +19,5 @@ program drink_blue (who, potion)
 		48906: 	sleep(3); TS_StartTimer(who, "invis", (600+bonus*10), 1); 
 		48907: 	sleep(1); who.hidden := 1;
 	endcase
-	empty_bottle(who, potion);
+	EmptyBottle(who, potion);
 endprogram

@@ -8,7 +8,6 @@ include ":tn:cooldown";
 include "include/facings";
 
 program skill_Hide(who)
-
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 	EraseObjProperty(who, "#overridehiding");
@@ -35,10 +34,10 @@ program skill_Hide(who)
 		if ( !CanHide(who, orig_x, orig_y) )
 			break;
 		endif
-		var check := SkillCheck(who, SNEAK, -1);
-		var diff := 0;
+		var check := rollAttrDice(who, DEXTERITY, (GetGlobalProperty("dia") == "noite")}) + getProficiencyBonus(who, "Furtividade");
 		
-		if( check > diff )
+		if( check >= 18 )
+			ExpGain(who, "minor");
 			SendSysMessageEx(who, "Voce se escondeu.", SSM_INFO);
 			who.hidden := 1;
 			var a := start_script(":sneak:stealthmode", array{who});
@@ -48,7 +47,7 @@ program skill_Hide(who)
 				HidingParty(who);
 			endif
 			break;
-		elseif (check >= -25)
+		elseif (check >= 14)
 			SendSysMessageEx(who, "Voce falhou ao tentar se esconder.", SSM_FAIL);
 			who.hidden := 0;
 		else // Falha Crítica
@@ -88,7 +87,6 @@ function HidingParty(who)
 endfunction
 
 function CanHide(who, orig_x, orig_y, override_hiding := 0)
-
 	if ( who.warmode )
 		SendSysMessageEx(who, "Voce nao pode se esconder em posicao de combate.", SSM_FAIL);
 		return 0;
@@ -103,19 +101,19 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 		return 0;
 	endif
 
-	var skill := AP_GetSkill(who, SNEAK);
-	if (override_hiding)
-		skill := override_hiding;
-	endif
-	var range := GetHidingRange(skill);
+	// var skill := AP_GetSkill(who, SNEAK);
+	// if (override_hiding)
+	// 	skill := override_hiding;
+	// endif
+	// var range := GetHidingRange(skill);
 
-	var rangebonus := Cint(GetObjProperty(who, "esconderseaprimorado"));
-	range := range - rangebonus;
-	if (range <= 1)
-		range := 1;
-	endif
+	// var rangebonus := Cint(GetObjProperty(who, "esconderseaprimorado"));
+	// range := range - rangebonus;
+	// if (range <= 1)
+	// 	range := 1;
+	// endif
 
-	var hostiles := ListHostiles(who, range);
+	var hostiles := ListHostiles(who, 6);
 	if ( hostiles[1] )
 		SendSysMessageEx(who, "Voce nao pode se esconder enquanto " + hostiles[1].name + " esta atacando voce.", SSM_FAIL);
 		return 0;
@@ -143,8 +141,8 @@ endfunction
 function GetWatchingPeople(who)
 	var counter := 0;
 	
-	var range := GetHidingRange(AP_GetSkill(who, SNEAK));
-	foreach person in ListMobilesInLineOfSight(who, range)
+	// var range := GetHidingRange(AP_GetSkill(who, SNEAK));
+	foreach person in ListMobilesInLineOfSight(who, 6)
 	
 		if ( IsFacing(person, who.x, who.y) && person.connected )
 			counter := counter+1;

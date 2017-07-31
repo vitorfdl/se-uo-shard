@@ -1,0 +1,87 @@
+
+use os;
+use uo;
+
+include "include/arrays";
+include "";
+
+program Install()
+    return 1;
+endprogram
+
+exported function GetLevel( who )
+	var chardata := GetObjProperty(who, "chardata");
+	var charlevel := chardata["level"];
+
+	if (charlevel == error || !charlevel)
+		SetLevel(who, 0);
+		charlevel := 0;
+	endif
+
+	return charlevel;
+endfunction
+
+exported function setLevel(who, level)
+	var chardata := GetObjProperty(who, "chardata");
+	chardata.level := level;
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+
+exported function isClass(who, class)
+	var chardata := GetObjProperty(who, "chardata");
+
+	if (Lower(chardata.classe) == Lower(class))
+		return 1;
+	endif
+
+	return 0;
+endfunction
+
+exported function SkillList(who)
+	var chardata   := GetObjProperty(who, "chardata");
+	var skill_list := chardata.Skills;
+
+	if (!skill_list)
+		skill_list := array{};
+	endif
+	
+	return skill_list;
+endfunction
+
+
+exported function GetExp(who)
+	var chardata := GetObjProperty(who, "chardata");
+	var exppoints := chardata["exppoints"];
+	if (exppoints == error || !exppoints)
+		SetExp(who, 0);
+		exppoints := 0;
+	endif
+
+	return exppoints;
+endfunction
+
+exported function SetExp(who, points)
+	var chardata := GetObjProperty(who, "chardata");
+	chardata["exppoints"] := points;
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+
+
+exported function GetPoints(who)
+	var chardata := GetObjProperty(who, "chardata");
+	var attpoints := chardata["attpoints"];
+	if (attpoints == error || !attpoints)
+		SetPoints(who, 0);
+		attpoints := 0;
+	endif
+	return attpoints;
+endfunction
+
+exported function SetPoints(who, points)
+	var chardata := GetObjProperty(who, "chardata");
+	chardata["attpoints"] := points;
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction

@@ -10,7 +10,6 @@ var portal9;
 program WalkOnScript( who , item )
 
 if(GetObjProperty(item,"aberto") != 0)
-
 	var x:=cint(GetObjProperty(item,"x"));
 	var y:=cint(GetObjProperty(item,"y"));
 	var z:=cint(GetObjProperty(item,"z"));

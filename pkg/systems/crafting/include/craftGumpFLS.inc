@@ -30,14 +30,14 @@ function sendCraftGump(who, params)
     CloseGump(who, GUMPID_CRAFTING);
     params.+bag    := GetBagList(who);
     params.+search := "";
-    params.+qty     := 1;
+    params.+qty    := 1;
 
-    recipe_cfg         := params.recipe_cfg;
+    recipe_cfg := params.recipe_cfg;
 
     var not_closed := 1;
     while(not_closed)
         var player_recipes := GetRecipeList(who, recipe_cfg, params.search);
-        var input := createGump(who, player_recipes, params);
+        var input          := createGump(who, player_recipes, params);
 
         params.search := GFExtractData(input, search_entry);
         if (!params.search)
@@ -62,7 +62,6 @@ endfunction
 
 // 0xC86E
 function createGump(who, recipes, params)
-
 	var gump := GFCreateGump();
 	GFSetID(gump, GUMPID_CRAFTING);
 

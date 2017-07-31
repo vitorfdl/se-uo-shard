@@ -1,0 +1,35 @@
+use os;
+use uo;
+use util;
+use cfgfile;
+include ":alchemy:alchemy";
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include "include/say";
+
+program stamPotion(who, potion)
+	if (!CheckIfCanDrink(who, potion, "staminapot", 10))
+		return 1;
+	endif
+
+	var healed := 0;
+	healed := AP_GetVitalMaximumValue(who, STAMINA);
+	if(potion.objtype == 0xdc0f)
+		healed := RandomDiceRoll("4d4+8");
+	else
+		healed := RandomDiceRoll("2d4+4");
+	endif
+
+	EmptyBottle(who, potion);
+	Detach();
+	
+	for i := 0 to healed
+		if (AP_GetVital(who, STAMINA) > AP_GetVitalMaximumValue(who, STAMINA))
+			break;
+		endif
+		AP_SetVital(who, STAMINA, AP_GetVital(who, STAMINA)+1 );
+		i := i + 1;
+		sleepms(500);
+	endfor
+	SendSysMessageEx(who, "Terminou o efeito da pocao.", SSM_INFO);	
+endprogram

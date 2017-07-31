@@ -12,36 +12,37 @@ program soltar(me)
 	elseif (me.dead)
 		SendSysMessage(me, "Voce esta morto...");
 		return;
-	elseif (AP_GetVital(me, "Stamina") < 25)
+	elseif (AP_GetVital(me, "Stamina") < 10)
 		SendSysMessage(me, "Voce esta cansado demais para tentar algo...");
 		return;
 	endif
 
-	var chance;
-	if (temhabilidade(me, "Movimento Livre"))
-		chance := ( 30 + GetAttribute(me,"Dexterity") ) - (GetObjProperty(me, "corda") / 2);
-	elseif (GetObjProperty(me, "classe") == "Ladino")
-		chance := GetAttribute(me,"Dexterity") - GetObjProperty(me, "corda");
+	var diff := cint(GetObjProperty(me, "corda"));
+	var dice_roll;
+	if (AP_GetStat(me, DEXTERITY) > AP_GetStat(me, STRENGTH))
+		dice_roll := rollAttrDice(me, DEXTERITY, 0, struct{ "get_critical" := 1, "failure" := 2});
 	else
-		chance := GetAttribute(me,"Strength") - GetObjProperty(me, "corda");
+		dice_roll := rollAttrDice(me, STRENGTH, 0, struct{ "get_critical" := 1, "failure" := 2});
 	endif
 
-	if (RandomInt(100) < chance)
-		if (RandomInt(100) > GetAttribute(me,"Dexterity"))
-			PrintText(me, "*consegue se soltar*");
-		else
-			SendSysMessage (me, "Voce conseguiu se soltar discretamente...");
+	var check := dice_roll.dice + GetProficiencyBonus(me, PRESTIDIGITACAO);
+
+	if (check >= diff)
+		if (dice_roll.critical == 1)
+			SendSysMessage(me, "Voce conseguiu se soltar discretamente...");
 			var corda := CreateItemInBackpack (me, "rope");
 			SetObjProperty(corda, "diff", GetObjProperty(me, "corda"));
+		else
+			PrintText(me, "*consegue se soltar*");
 		endif
 		EraseObjProperty (me, "corda");
 		me.frozen := 0;
-	elseif (RandomInt(100) > GetAttribute(me,"Dexterity"))
+	elseif (dice_roll.critical == -1)
 		PrintText(me, "*tentando se soltar*");
 	else
-		SendSysMessage (me, "Voce falhou...");
+		SendSysMessageEx(me, "Voce falhou...", SSM_FAIL);
 	endif
 
-	ConsumeVital (me, "Stamina", 2500);
+	ConsumeVital(me, "Stamina", 2000);
 
 endprogram

@@ -1,0 +1,94 @@
+use uo;
+use os;
+
+include "include/client";
+include "include/sysEvent";
+include ":charactercreation:characters";
+include ":magery:clerics";
+
+const SPELL_BTN := 200;
+
+program orderSpells(who)
+   if (!who.isClass("Clérigo"))
+      SendSysMessageEx(who, "Voce presta homenagem a Anar", SSM_INFO);
+      return;
+   endif
+
+   var cfg          := ReadConfigFile(":magery:config/cleric");
+   var char_level   := who.GetLevel();
+   var cleric_slots := char_level+ 2;
+   var cleric_list  := GetObjProperty(who, "cleric_list");
+   if (!cleric_list)
+      cleric_list := array{};
+   endif
+
+   var spell_list      := array{};
+   var slots_used := 0;
+   foreach spell in (GetConfigIntKeys(cfg))
+      sleepms(2);
+      WriteSpell(spell, ":magery:config/cleric");
+
+      var spell_found := FindInArray(cleric_list, struct{ id := spell.id });
+      if (spell_found)
+         slots_used += cint(spell.circle);
+         cleric_list[spell_found].circle := spell.circle;
+      endif
+
+      if(spell.circle == 2 && char_level < 4)
+         continue;
+      elseif(spell.circle == 3 && char_level < 6)
+         continue;
+      elseif(spell.circle == 4 && char_level < 14)
+         continue;
+      elseif(spell.circle == 5 && char_level < 18)
+         continue;
+      elseif(spell.circle == 6 && char_level < 20)
+         continue;
+      endif
+      
+      spell_list.append(spell);
+   endforeach
+
+   var available_slots := cleric_slots - slots_used;
+   var canceled := 0;
+   while (!canceled)
+      RemoveUsedSpells(who, cleric_list, available_slots);
+      var input := CreateClericGump(who, spell_list, available_slots);
+
+      if (input[0] >= 200)
+         var spell := spell_list[input[0]-200];
+         StoreSpell(who, spell, cleric_list, available_slots);
+      elseif (!input[0])
+         canceled := 1;
+      endif
+   endwhile
+endprogram
+
+function CreateClericGump(who, spell_list, available_slots)
+   foreach spell in spell_list
+      if (available_slots >= spell.circle)
+         // store spell button
+      endif
+
+   endforeach
+endfunction
+
+function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
+   if (available_slots-spellinfo.circle < 0)
+      SendSysMessageEx(who, "Sem slots suficientes para memorizar o encanto.", SSM_FAIL);
+      return 0;
+   endif
+
+   var new_spell := struct{
+      "id"         := spellinfo.id,
+      "powerwords" := spellinfo.powerwords,
+      "circle"     := spellinfo.circle,
+      "time"       := AddTimeTo(polcore().systime, 2, "hours"),
+      "used"       := 0,
+   };
+
+   available_slots -= spellinfo.circle;
+   cleric_list.append(new_spell);
+   SetObjProperty(who, "cleric_list", cleric_list);
+   return 1;
+endfunction

@@ -5,14 +5,12 @@ use cfgfile;
 include "include/say";
 include ":magery:spellbooks";
 include "include/array";
+include ":charactercreation:characters";
 
 program useMagic(who, spellname)
 	spellname := lower(spellname);
 
-	var chardata := GetObjProperty(who, "chardata");
-	var classe   := chardata.classe;
-
-	if (classe == "Mago")
+	if (who.isClass("Mago"))
 		if (!who.weapon)
 			SendSysMEssageEx(who, "Voce nao tem um objeto magico para usar magias.", SSM_FAIL);
 			return 0;
@@ -24,7 +22,7 @@ program useMagic(who, spellname)
 			return 0;
 		endif
 
-		var cfg := ReadConfigFile(":magery:config/mage");
+		var cfg := ReadConfigFile();
 		var spell := FindSpell(cfg, spellname);
 
 		if (!(spell in spell_list))

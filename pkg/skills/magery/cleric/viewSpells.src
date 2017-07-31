@@ -1,0 +1,73 @@
+use uo;
+use os;
+
+include "include/client";
+include "include/sysEvent";
+include ":charactercreation:characters";
+
+const SPELL_BTN := 200;
+
+program clericPowerWords(who)
+   if (!who.isClass("Clérigo"))
+      SendSysMessageEx(who, "Este menu nao e acessivel para sua classe", SSM_FAIL);
+      return;
+   endif
+
+   var char_level   := who.GetLevel();
+   var cleric_slots := char_level+ 2;
+   var cleric_list  := GetObjProperty(who, "cleric_list");
+
+   var slots_used := 0;
+   foreach spell in cleric_list
+      var new_spell := spell.id;
+      WriteSpellInfo(new_spell, ":magery:config/cleric");
+      new_spell.+used := spell.used;
+      new_spell.+time := spell.time;
+      cleric_list.Erase(_spell_iter);
+      cleric_list.Insert(_spell_iter, new_spell);
+
+      if (EmptyOrAvailable(spell) == 1)
+         slots_used += spell.circle;
+      endif
+
+      sleepms(2);
+   endforeach
+
+   var available_slots := cleric_slots - slots_used;
+
+   var canceled := 0;
+   while (!canceled)
+      var input := CreateClericGump(who, cleric_list, available_slots);
+   endwhile
+endprogram
+
+function CreateClericGump(who, cleric_list, available_slots)
+
+   foreach spell in cleric_list
+      var not_empty := isNotEmpty(spell);
+
+      if (not_empty)
+         // show spell name
+         var powerwords := ", ".join(spell.powerwords);
+         // show powerwords
+      else
+         // show empty
+      endif
+
+      if (not_empty == 1)
+         // show forgot it button
+      endif
+   endforeach
+endfunction
+
+function isNotEmpty(spell)
+   if (spell.time < polcore().systime)
+      if (spell.used)
+         return 0;
+      else
+         return 1;
+      endif
+   endif
+
+   return 2;
+endfunction

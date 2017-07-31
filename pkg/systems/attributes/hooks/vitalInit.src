@@ -19,7 +19,7 @@ exported function GetHitsRegenRate(mobile)
 	var regen := base_regen + AP_GetVitalRegenRateMod(mobile, "hits");
 	
 	//No regen if poisoned
-	if ((isBloodied(mobile) || mobile.poisoned || GetObjProperty(mobile, "nocure")) && (!mobile.npctemplate))
+	if ((isBloodied(mobile) || mobile.poisoned || GetObjProperty(mobile, "noheal")) && (!mobile.npctemplate))
 		return 0;
 	endif	
 	

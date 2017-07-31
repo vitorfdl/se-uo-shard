@@ -2,7 +2,6 @@ use uo;
 
 include ":loot:include/lootParser";
 include ":ghaia:ghaiaInit";
-include ":tn:recipes";
 include ":tn:cooldown";
 include "include/facings";
 include ":fls_core:packets";

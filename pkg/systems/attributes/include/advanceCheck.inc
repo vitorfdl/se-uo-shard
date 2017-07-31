@@ -29,13 +29,13 @@ function GetExpCap(who)
 	endif
 
 	var char_age := GetCharAge(who, "weeks") +1;
-	var char_level := GetCharLevel(who) - 1; //hack
+	var char_level := who.getLevel() - 1; //hack
 	var result := (char_age*1000) - (char_level*2000);
 	return result;
 endfunction
 
 /*
- * CheckSkillAdvance(mobile, stat_name, stat_mult)
+ * ExpGain(mobile, stat_name, stat_mult)
  *
  * Purpose
  * Does an advancement check on a stat.
@@ -98,27 +98,27 @@ function ExpGain(mobile, difficulty, value := 0)
 	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)
 		// TODO: Tamed exp gain
 	elseif (up_amount > 0)
-		var exp := GetExpPoints(mobile);
-		SetExpPoints(mobile, exp+up_amount);
+		var exp := who.GetExp();
+		who.SetExp(exp+up_amount);
+		CheckExpUp(mobile);
 	endif
 
 	SetObjProperty(mobile, "#LastSkillGain", ReadGameClock());
-	CheckExpUp(mobile);
 	return 1;
 endfunction
 
 function CheckExpUp(who)
-	var level := GetCharLevel(who);
+	var level := who.getLevel();
 	if (level < 20)
-		var maxexp := (GetCharLevel(who) + 1) * 1000; //starts at 2000
-		var exp := GetExpPoints(who);
+		var maxexp := (who.getLevel() + 1) * 1000; //starts at 2000
+		var exp := who.GetExp();
 
 		if (exp >= maxexp)
 			exp-=maxexp;
-			SetCharLevel(who, level+1);
-			SetAttribPoints(who, GetAttribPoints(who)+1);
+			who.setLevel(level+1);
+			who.SetPoints(who.GetPoints()+1);
 			IncreaseVitalPoints(who);
-			SetExpPoints(who, exp);
+			who.SetExp(exp);
 		endif
 	endif
 endfunction

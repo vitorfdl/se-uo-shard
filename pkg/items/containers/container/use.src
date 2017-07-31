@@ -38,7 +38,7 @@ function ContainerIsLocked(mobile, container)
 		SendSysMessage(mobile, "Voce abre o container com a chave.");
 		return 0;
 	else
-		PrintTextAbovePrivate(container, "Isto esta trancado.", mobile);
+		PrintTextAbovePrivate(container, "*Isto esta trancado.*", mobile);
 		return 1;
 	endif
 endfunction

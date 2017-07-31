@@ -154,7 +154,7 @@ function doRepair(who, craft_skill, recipe_cfg)
       sleepms(2);
    endforeach
 
-   var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Maquina de Mercenaria"};
+   var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Maquina de Marcenaria"};
    foreach work_item in work_items
       if (work_item in found.Keys())
          var machine := found[work_item];
@@ -189,7 +189,7 @@ function doRepair(who, craft_skill, recipe_cfg)
       return;
    endif
 
-   var skill        := GetBonusAttr(AP_GetTrueStat(mobile, "Intelligence")) + getProfiencyBonus(mobile, craft_skill);
+   var skill        := GetBonusAttr(AP_GetTrueStat(mobile, "Intelligence")) + getProficiencyBonus(mobile, craft_skill);
    var damageamount := (2 * (1 + skill)/3000.0;
    if (damageamount > 0)
       damageamount := damageamount * -1;
@@ -208,7 +208,7 @@ function doRepair(who, craft_skill, recipe_cfg)
    if (recipe.objtype in GetObjProperty(mobile, recipes))
       advantage += 1;
    endif
-   var dice_result := rollAttrDice(who, "Intelligence", advantage) + getProfiencyBonus(mobile, craft_skill);
+   var dice_result := rollAttrDice(who, "Intelligence", advantage) + getProficiencyBonus(mobile, craft_skill);
    if (dice_result > recipe.difficulty - 1)
       var repaired_amount := cint((skill+2)*2);
       //SendSysMessage(character, "rep"+repaired_amount);

@@ -28,7 +28,6 @@ program change(who, item )
        var k := 1;
        while (k < 60 )
           foreach balao in listitemsnearlocation (item.x, item.y, item.z, 1)
-             print(balao);
              if ( (balao.objtype == 6194) || (balao.objtype == 6195) || (balao.objtype == 6196) )
                   foreach beker in listitemsnearlocation (item.x, item.y, item.z, 1)
                      if ( (beker.objtype == 6192) || (beker.objtype == 6193) )
@@ -74,7 +73,6 @@ function Destilar(balao, beker, who, item)
       61249:
             SetObjProperty(beker, "pocao", 0xef46);
       61250:
-            print("lol");
             SetObjProperty(beker, "pocao", 0xef53);
       61251:
             SetObjProperty(beker, "pocao",  0xef47);

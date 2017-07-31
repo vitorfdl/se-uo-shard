@@ -11,7 +11,7 @@ program TimedScript_Clumsy(params)
 	params := 0; // Not needed anymore.
 	
 	SendSysMessage(who, "Voce nao pode se curar.", 3, 0);
-	SetObjProperty(who, "nocure", 1 );
+	SetObjProperty(who, "noheal", 1 );
 	
 	return 1;
 endprogram

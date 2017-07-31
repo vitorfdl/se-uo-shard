@@ -5,9 +5,11 @@ use os;
 
 include ":loot:magicLoot";
 
+const RECIPE_OBJ := 0x0;
+
 function Loot_Generate(container, loot_index)
 	if ( !container.IsA(POLCLASS_CONTAINER) )
-		return error{"errortext" := "Object passed was not a container."};
+		return error{"errortext" := "`ect passed was not a container."};
 	endif
 
 	var index_cfg := ReadConfigFile(":loot:config/loot-index");
@@ -35,7 +37,12 @@ function Loot_Generate(container, loot_index)
 		Loot_CreateRandom(container, line);
 		sleepms(2);
 	endforeach
-	
+
+	foreach line in GetConfigStringArray(index_elem, "Recipe")
+		Loot_CreateItem(container, line, "recipe");
+		sleepms(2);
+	endforeach
+
 	foreach line in GetConfigStringArray(index_elem, "Group")
 		if ( line != loot_index )
 			//To do:
@@ -56,17 +63,39 @@ endfunction
 
 
 
-function Loot_CreateItem(container, line)
+function Loot_CreateItem(container, line, type := 0)
 	var parsed := Loot_ParseString(line);
 
 	if ( Loot_ChanceCheck(parsed.chance) )
 		var i;
 		for ( i:=1; i<= parsed.amount; i:=i+1 )
-			var item := CreateItemInContainer(container, parsed.name);
-			item.quality := 0.6;
-			if ( item.errortext )
-          //print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
-				return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
+			if (!type)
+				var item := CreateItemInContainer(container, parsed.name);
+				item.quality := 0.6;
+				if ( item.errortext )
+				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
+					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
+				endif
+				if (item.isA(POLCLASS_EQUIPMENT))
+					item.hp = 0;
+				endif
+			elseif (type == "recipe")
+				var objtype := parsed.name;
+				if (!Hex(objype))
+					objtype := GetObjtypeByName(parsed.name);
+				endif
+
+				if (!objtype)
+					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
+				endif
+
+				var item := CreateItemInContainer(container, RECIPE_OBJ);
+				SetObjProperty(item, "objtype", objtype);
+				if ( item.errortext )
+				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
+					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
+				endif
+				// start_script(":magery:grimorio/pergaminhoCreate", item);
 			endif
 			sleepms(2);
 		endfor

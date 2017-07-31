@@ -8,7 +8,6 @@ include ":crafting:include/craftingUtil";
 include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":PacketConfig:settings";
-include ":tn:recipes";
 include ":gumps:yesno";
 include ":gumps:requestgump";
 include "include/say";

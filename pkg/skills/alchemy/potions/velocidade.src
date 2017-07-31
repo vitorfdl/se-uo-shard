@@ -5,20 +5,10 @@ use cfgfile;
 include ":alchemy:alchemy";
 
 program drink_blue (who, potion)
-	EraseObjProperty(who, "IsMeditating");
-	EraseObjProperty(who, "HealTimer");
-	if(!Accessible(who, potion))
+	if(!checkifcandrink(who, potion, "velocidade", 0))
 		return;
 	endif
-	if(potion.movable == 0)
-		SendSysMessage(who, "Voce nao pode beber isto.");
-		return;
-	endif
-
-	if(!checkifcandrink(who, "velocidade"))
-		return;
-	endif
-	empty_bottle(who, potion);
-	var bonus := cint(GetObjProperty(potion, "crafterskill")/10);
-	TS_StartTimer(who, "velocidade", (360+bonus*10), 20); 
+	EmptyBottle(who, potion);
+	var bonus := cint(GetObjProperty(potion, "crafterskill"));
+	TS_StartTimer(who, "velocidade", 8, 20); 
 endprogram

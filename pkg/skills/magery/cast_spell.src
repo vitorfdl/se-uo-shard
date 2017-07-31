@@ -17,9 +17,10 @@ program SpellStarter(params)
 	var spellinfo := params[2]; // spellinfo
 	var item      := params[3]; // item que usou pra castar o spell (item, book, varinha ou nada)
 	var targ      := params[4];
+	var cfg       := params[5];
 
 	if (spellinfo.id != error) //le o cfg pra escrever a info
-		writeSpellInfo(mobile, spellinfo);
+		writeSpellInfo(mobile, spellinfo, cfg);
 	endif
 
 	if ( GetObjProperty(mobile, "metamorfose") != error )

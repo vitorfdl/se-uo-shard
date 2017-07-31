@@ -1,0 +1,15 @@
+/* $Id$
+ *
+ */
+ 
+use uo;
+use os;
+
+program Install()
+	return 1;
+endprogram
+
+exported function isMagicWeapon(item)
+   item := item;
+	return 1;
+endfunction

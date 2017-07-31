@@ -21,33 +21,34 @@ enum STATS
 endenum
 
 enum SKILLS
-	ALCHEMY			:= "Alchemy",
-	MAGERY			:= "Magery",
-	MAGICLORE		:= "MagicLore",
-
-	PARRY			:= "Parry",
-	MELEECOMBAT1H	:= "MeleeCombat1H",
-	MELEECOMBAT2H	:= "MeleeCombat2H",
-	RANGEDCOMBAT	:= "RangedCombat",
-	TACTICS			:= "Tactics",
-//	SPELLRESIST		:= "SpellResist",
-	RESEARCH		:= "Research",
-
-	SNEAK			:= "Sneak",
-	PICKPOCKETING	:= "Pickpocketing",
-	AWARENESS		:= "Awareness",
-	MECHANICALAPITUDE	:= "MechanicalApitude",
-
-	MEDICINE		:= "Medicine",
-	SURVIVAL		:= "Survival",
-	
-	METALWORKING	:= "MetalWorking",
-	WOODWORKING		:= "WoodWorking",
-	WOMENSWORK		:= "WomensWork",
-	COOKWORK		:= "CookWork",
-	GATHERING		:= "Gathering",
-	HANDLEANIMAL	:= "HandleAnimal",
-
-	//pros npcs
-	WRESTLING		:= "Wrestling"
+	ALQUIMIA           := "Alquimia",
+	DESARMADO          := "Desarmado",
+	ARMADURA_LEVE      := "Armadura Leve",
+	ARMADURA_MEDIA     := "Armadura Média",
+	ARMADURA_PESADA    := "Armadura Pesada",
+	ESCUDO             := "Escudo",
+	ARMA_SIMPLES       := "Arma Simples",
+	ARMA_MARCIAL       := "Arma Marcial",
+	ARCO               := "Arco",
+	BESTA              := "Besta",
+	ARCANISMO          := "Arcanismo",
+	MEDICINA           := "Medicina",
+	VENEFICIO          := "Venefício",
+	PESQUISA           := "Pesquisa",
+	PERCEPCAO          := "Percepção",
+	SOBREVIVENCIA      := "Sobrevivência",
+	PLANTACAO          := "Plantação",
+	MARCENARIA         := "Marcenaria",
+	COZINHA            := "Cozinha",
+	COSTURA            := "Costura",
+	EXTRACAO           := "Extração",
+	TRATO_ANIMAIS      := "Trato de Animais",
+	MONTARIA           := "Montaria",
+	RUNAS              := "Runas",
+	CURA               := "Milagre de Cura",
+	NECROMANCIA        := "Milagre de Necromância",
+	PRESTIDIGITACAO    := "Prestidigitação",
+	FURTIVIDADE        := "Furtividade",
+	SABOTAGEM 			 := "Sabotagem",
+	TOCAR_INSTRUMENTO  := "Tocar Instrumento",
 endenum

@@ -411,3 +411,13 @@ exported function KillAll(spawnpoint)
 
    SetObjProperty(spawnpoint, "monsters", array{});
 endfunction
+
+exported function SpawnTreasures(spawnpoint)
+    var treasures := GetProps(spawnpoint).treasures;
+    var treasures_spawned := GetObjProperty(spawnpoint, "spawned_treasures");
+
+endfunction
+
+exported function ResetTreasures(spawnpoint)
+
+endfunction

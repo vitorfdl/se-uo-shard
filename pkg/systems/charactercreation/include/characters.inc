@@ -3,34 +3,6 @@ use cfgfile;
 include ":attributes:attributes";
 include ":charactercreation:feats";
 
-function GetSkillList(who)
-	var chardata   := GetObjProperty(who, "chardata");
-	var skill_list := chardata.Skills;
-
-	if (!skill_list)
-		skill_list := array{};
-	endif
-	
-	return skill_list;
-endfunction
-
-function GetAttribPoints(who)
-	var chardata := GetObjProperty(who, "chardata");
-	var attpoints := chardata["attpoints"];
-	if (attpoints == error || !attpoints)
-		SetAttribPoints(who, 0);
-		attpoints := 0;
-	endif
-	return attpoints;
-endfunction
-
-function SetAttribPoints(who, points)
-	var chardata := GetObjProperty(who, "chardata");
-	chardata["attpoints"] := points;
-	SetObjProperty(who, "chardata", chardata);
-	return 1;
-endfunction
-
 
 //Traduz o nome da skill
 function translateAttribute(attr)
@@ -66,40 +38,4 @@ function GetUntranslatedName(skill, who)
 	endforeach
 	
 	return 0;
-endfunction
-
-function GetExpPoints(who)
-	var chardata := GetObjProperty(who, "chardata");
-	var exppoints := chardata["exppoints"];
-	if (exppoints == error || !exppoints)
-		SetExpPoints(who, 0);
-		exppoints := 0;
-	endif
-	return exppoints;
-
-endfunction
-
-function SetExpPoints(who, points)
-	var chardata := GetObjProperty(who, "chardata");
-	chardata["exppoints"] := points;
-	SetObjProperty(who, "chardata", chardata);
-	return 1;
-endfunction
-
-function GetCharLevel(who)
-	var chardata := GetObjProperty(who, "chardata");
-	var charlevel := chardata["level"];
-	if (charlevel == error || !charlevel)
-		SetCharLevel(who, 0);
-		charlevel := 0;
-	endif
-
-	return charlevel;
-endfunction
-
-function SetCharLevel(who, level)
-	var chardata := GetObjProperty(who, "chardata");
-	chardata.level := level;
-	SetObjProperty(who, "chardata", chardata);
-	return 1;
 endfunction

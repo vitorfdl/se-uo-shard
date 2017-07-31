@@ -5,9 +5,36 @@ use uo;
 use os;
 use cfgfile;
 
-include ":magery:spellbooks";
 include "include/say";
 include "include/array";
+
+//tipo do book eh pra saber se pode inserir scrolls de um certo tipo em um certo book
+function GetBookType(book)
+
+	var type := GetObjProperty(book, "Booktype");
+	if (type == error)
+		return "mage";
+	else
+		return type;
+	endif
+
+endfunction 
+
+function CanInsertScroll(book, scroll)
+
+	var booktype := GetBookType(book);
+	var cfg := ReadConfigFile(":magery:itemdesc");
+	var scrolltype := cfg[scroll.objtype].SpellType;
+
+	//printtextabove(book, " " + bookcfg[booktype].spelltype + " " + scrolltype);
+
+	if ( lower(GetBookType(book)) == lower(scrolltype))
+		return 1;
+	else
+		return 0;
+	endif
+
+endfunction
 
 program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	amt            := amt;

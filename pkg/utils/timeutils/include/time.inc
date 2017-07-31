@@ -262,20 +262,20 @@ endfunction
  * what:	The string to be timestamped
  *
  * Return value
- * The string with an added timestamp at the beginning
+ * Transform a polsys time to timestamp
  *
  */
-function GetTimeStamp(what := 0)
+function GetTimeStamp(what := 0, timestamp := "<DAY>/<MON>/<YY> <HH>:<MM>:<SS>")
 	if(!what)
 		what := GetTime();
 	endif
 	var ts := GetTimeStruct(what);
 
-	return(FormatTime(ts, "<DAY>/<MON>/<YY> <HH>:<MM>:<SS>"));
+	return(FormatTime(ts, ));
 endfunction
 
 /*
- * GetTimeStamp(old_time, new_time, type)
+ * GetTimeBetween(old_time, new_time, type)
  *
  * Purpose
  * Get difference in "type" between two dates
@@ -310,4 +310,43 @@ function GetTimeBetween(old_time, new_time, type := "days")
 
 	var diff := Floor((new_time - old_time)/diff_calc);
 	return diff;
+endfunction
+
+/*
+ * AddTimeTo(time, amount, type)
+ *
+ * Purpose
+ * Add seconds, hours to time
+ *
+ * Parameters
+ * time:	Time to be calculated
+ * amount:	Amount of time
+ * type:	Time type, can be "years", "days", "minutes", "seconds", "weeks"
+ *
+ * Return value
+ * The difference number in "type"
+ *
+ */
+function AddTimeTo(time, amount, type := "days")
+	var diff_calc;
+	if (type == "days")
+		diff_calc := SECONDS_IN_DAY;
+	elseif (type == "hours")
+		diff_calc := SECONDS_IN_HOUR;
+	elseif (type == "seconds")
+		diff_calc := 1;
+	elseif (type == "years")
+		diff_calc := SECONDS_IN_YEAR;
+	elseif (type == "minutes")
+		diff_calc := SECONDS_IN_MINUTE;
+	elseif (type == "weeks")
+		diff_calc := SECONDS_IN_WEEK;
+	else
+		print("Wrong type for GetTimeBetween: {}".format(type) );
+		return 0;
+	endif
+	amount := amount * diff_calc;
+
+	var result := time + amount;
+	return result;
 endfunction

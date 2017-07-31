@@ -115,7 +115,7 @@ program UseBandage(mobile, bandage)
 		return 0;
 	endif
 
-	if(GetObjProperty(targ, "nocure"))
+	if(GetObjProperty(targ, "noheal"))
 		SendSysMessageEx(mobile, "Nao ha nada que voce possa fazer pelo alvo nas atuais circunstacias", 3, SSM_FAIL);
 		return 0;	
 	endif

@@ -3,50 +3,22 @@ use uo;
 use util;
 use cfgfile;
 include ":alchemy:alchemy";
+include ":include/say";
+include ":include/utils";
 
-function GetPointsInRadius(mid_x, mid_y, radius)
-	var x_row := mid_x-radius;
-	var y_col := mid_y-radius;
-	var stop_x := mid_x+radius;
-	var stop_y := mid_y+radius;
-
-	var point_list := array();
-	var coord := struct;
-	coord.+x;
-	coord.+y;
-
-	for ( x_row:=(mid_x-radius); x_row<=stop_x; x_row:=x_row+1 )
-		sleepms(2);
-		for ( y_col:=(mid_y-radius); y_col<=stop_y; y_col:=y_col+1 )
-			coord.x := x_row;
-			coord.y := y_col;
-			point_list.append(coord);
-			sleepms(2);
-		endfor
-	endfor
-
-	return point_list;
-endfunction
-
-program drink_blue (who, potion)
-	EraseObjProperty(who, "IsMeditating");
-	EraseObjProperty(who, "HealTimer");
-	if(!Accessible(who, potion))
-		return;
-	endif
-	if(potion.movable == 0)
-		SendSysMessage(who, "Voce nao pode usar isto.");
+program poDaVisao(who, potion)
+	if (!CheckIfCanDrink(who, potion, 0, 0))
 		return;
 	endif
 
-	empty_bottle(who, potion);
+	EmptyBottle(who, potion);
 
-	SendSysMessage(who, "Voce espalhou o po ao redor.");
-	PrintTextAbove(who, "*espalha um fino po ao redor de si*");
+	SendSysMessageEX(who, "Voce espalhou o po ao redor.", SSM_INFO);
+	PrintText(who, "*espalha um fino pó ao redor de si*");
 	PlaySoundEffect(who, 0x0248);
 	sleepms(200);
 	PlaySoundEffect(who, 0x0248);
-	var rect := GetPointsInRadius(who.x, who.y, 1);
+	var rect := GetPointsInRadius(who.x, who.y, 2);
 	foreach coord in rect
 		PlayStationaryEffect(coord.x, coord.y, who.z, 0x3728, 35, 35);
 		sleepms(3);
@@ -56,8 +28,11 @@ program drink_blue (who, potion)
 
 	foreach coord in rect
 		foreach mobile in ListMobilesNearLocationEX(coord.x, coord.y, who.z, 2, LISTEX_FLAG_HIDDEN)
-			SendSysMessage(mobile, "A poeira revelou voce.");
-			mobile.hidden := 0;
+			if (who.hidden)
+				SendSysMessage(mobile, "A poeira revelou voce.");
+				mobile.hidden := 0;
+				TS_StartCooldown(mobile, "revealed", 15);
+			endif
 			sleepms(2);
 		endforeach
 		sleepms(2);

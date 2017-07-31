@@ -96,8 +96,8 @@ program createchar(who)
 	// 	CreateItemInBackpack(who, 0xba63, 200); //dinheiro
 	// 	setNotaRP(who, 0);
 	// 	// SetSkillPoints(who, GetSkillPoints(who)+3);
-	// 	// SetAttribPoints(who, GetAttribPoints(who)+9);
-	// 	SetCharLevel(who, GetCharLevel(who)+3);
+	// 	// who.SetPoints(who.getPoints()+9);
+	// 	who.setLevel(who.getLevel()+3);
 	// endif
 endprogram
 

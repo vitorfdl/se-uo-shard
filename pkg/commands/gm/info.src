@@ -459,7 +459,7 @@ function GetCustom(targ, property)
 		"gotten_item_serial":
 			return targ.GetGottenItem().serial;
 		"experiência":
-			return GetExpPoints(targ) + " / " + ((GetCharLevel(targ) + 5) * 30);
+			return who.GetExp() + " / " + ((who.getLevel()(targ) + 5) * 30);
 		"data_de_criação":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
 	endcase

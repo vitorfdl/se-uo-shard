@@ -28,7 +28,7 @@ program reset(who, params)
 	
 	SetSkillPoints(item, GetSkillPoints(item)+1);
 	SetAttribPoints(item, GetAttribPoints(item)+3);
-	SetCharLevel(item, GetCharLevel(item)+1);
+	// SetCharLevel(item, who.getLevel()(item)+1);
 	
 	PrintTextPrivate(item, "Voce ganhou um level", item);
 

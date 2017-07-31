@@ -51,11 +51,10 @@ function buildGump(who)
 	GFResizePic(gump, 229, 13, 39925, 347, 465); //Default Background
 
 	GFHTMLArea(gump, 287, 27, 60, 20, "<BASEFONT SIZE=5 COLOR=#ffffea>Pericias");
-	var skill_list := GetSkillList(who);
 
 	var s_x := 240;
 	var s_y := 52;
-	foreach skill in skill_list
+	foreach skill in (who.skillList())
 		// GFAddButton(gump, s_x, s_y, 2224, 2224, GF_CLOSE_BTN, 0); //Use Skill
 		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
 		GFTextLine(gump, s_x+18, s_y-3, 1152, skill);
@@ -95,7 +94,7 @@ function AttrGump(who, byref gump)
 	GFHTMLArea(gump, 52, 37, 131, 20, "<BASEFONT SIZE=5 COLOR=#4c4ca6>Status");
 	GFGumpPic(gump, 153, 35, 5411, 0);
 
-	var attr_points := GetAttribPoints(who);
+	var attr_points := who.getPoints();
 	var attr_x := 52;
 	var attr_y := 55;
 	foreach attr in (attr_list)

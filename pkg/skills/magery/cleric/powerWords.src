@@ -1,0 +1,55 @@
+
+use uo;
+use os;
+
+include "include/client";
+include "include/sysEvent";
+
+program clericPowerWords(parms)
+	detach();
+	var who := parms[1];
+
+	var pid := GetPid();
+	SetObjProperty(who, "#clericpid", pid);
+
+	var event;
+	while(who.connected)
+      RegisterForSpeechEvents( who, 1 );
+      EnableEvents( SYSEVENT_SPEECH, 1 );
+
+		event := wait_for_event( 120 );
+      if (event && event.type == SYSEVENT_SPEECH && event.source ==  who && !who.dead)
+         var cleric_list := GetObjProperty(who, "cleric_list");
+         if (!cleric_list || cleric_list.size() < 1)
+            continue;
+         endif
+
+         var spell_id;
+         for spell in cleric_list
+            var verified : 0;
+            if (!spell.powerwords && !spell.used)
+               continue;
+            endif
+
+            // Check if powerwords passed
+            for powerword in (spell.powerwords)
+               if (Lower(event.text).find(Lower(powerword)))
+                  verified += 1
+               endif
+               sleepms(2);
+            endfor
+
+            // if all passed, set the spell_id
+            if (verified == spell.powerwords.size())
+               spell_id := spell.id;
+               break;
+            endif
+            sleepms(2);
+         endfor
+      
+         if (spell_id)
+            Start_Script(":magery:cast_spell", {who, spell_id, 0, 0, ":magery:config/cleric"});
+         endif
+		endif		
+	endwhile
+endprogram 

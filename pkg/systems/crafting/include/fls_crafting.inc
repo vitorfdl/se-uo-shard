@@ -303,7 +303,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 
       var bonus := 0;
       if (HaveSkill(who, craft_skill))
-         bonus := cint(getProfiencyBonus(who));
+         bonus := cint(getProficiencyBonus(who));
       endif
 
 		var check := rollAttrDice(who, "Intelligence") + bonus;

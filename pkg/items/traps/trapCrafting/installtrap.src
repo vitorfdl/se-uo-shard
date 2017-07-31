@@ -5,7 +5,6 @@ include ":traps:traps";
 include ":attributes:attributes";
 
 program installtrap(who, trap)
-
 	if (!ReserveITem( trap))
 		SendSysMEssageEx(who,"Voce nao pode usar este item agora.", SSM_FAIL);
 		return;

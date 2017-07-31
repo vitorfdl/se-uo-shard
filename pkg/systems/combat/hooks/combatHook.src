@@ -24,7 +24,6 @@ include "include/say";
 include "include/damage";
 // include ":charactercreation:habilidades";
 // include ":tn:cooldown";
-include ":tn:combat";
 include ":timedscripts:timedScripts";
 include ":combat:settings";
 include ":fls_core:fls_characters";
@@ -65,7 +64,7 @@ endfunction
 // 			attribute := attacker.weapon.Attribute;
 // 			// Checa Pericia
 // 			if (HaveSkill(attacker, wpn_elem.Pericia))
-// 				bonus := cint(getProfiencyBonus(attacker));
+// 				bonus := cint(getProficiencyBonus(attacker));
 // 			endif
 // 			// Escolhe maior atributo para versatilidade
 // 			if (attribute == "Versatil")

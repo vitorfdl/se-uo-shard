@@ -1,0 +1,12 @@
+
+use uo;
+use os;
+use cfgfile;
+
+include ":gumps:yesno";
+include "include/say";
+include "include/array";
+
+program usaPergaminho(who, scroll)
+   
+endprogram

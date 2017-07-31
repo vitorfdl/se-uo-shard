@@ -1,0 +1,14 @@
+use os;
+use uo;
+use cfgfile;
+include ":alchemy:alchemy";
+
+program nightVision(who, potion)
+	if(!checkifcandrink(who, potion, "black", 60))
+		return;
+	endif
+	
+	EmptyBottle(who, potion);
+	PlaySoundEffect(who, 0x1e4);
+	who.setlightlevel( 0, 1800 );
+endprogram
