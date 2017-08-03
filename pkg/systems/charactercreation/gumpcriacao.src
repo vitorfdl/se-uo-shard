@@ -70,6 +70,10 @@ program createchar(who)
 	chardata.manapoints := cint(class_cfg.MANA) + cint(GetBonusAttr(chardata.inte));
 	chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
 
+	foreach skill in (chardata.skills)
+		AP_SetTrueSkill(who, skill, 1);
+	endforeach
+
 	SetObjProperty(who, "chardata", chardata);
 
 	who.race := RACE_HUMAN;
@@ -531,7 +535,7 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref  kits)
 endfunction
 
 function SkillGump(who, byref  chardata)
-	var cfg := ReadConfigFile(":charactercreation:config/classes");
+	var cfg  := ReadConfigFile(":charactercreation:config/classes");
 	var elem := FindConfigElem(cfg, cstr(chardata.classe) );
 
 	// Adiciona pericias de classe

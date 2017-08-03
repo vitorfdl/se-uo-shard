@@ -44,7 +44,7 @@ endfunction
 function GFHtmlShadowed(byref gump, x, y, width, height, color, text);
 	GFHTMLArea(gump, x-1, y-1, width, height, "<BASEFONT SIZE=5 COLOR=#111111>{}".format(text));
    GFHTMLArea(gump, x+1, y+1, width, height, "<BASEFONT SIZE=5 COLOR=#111111>{}".format(text));
-   GFHTMLArea(gump, x, y, width, height, "<BASEFONT COLOR={}>{}".format(color, text));
+   GFHTMLArea(gump, x, y, width, height, "<BASEFONT SIZE=5 COLOR={}>{}".format(color, text));
 endfunction
 
 /*

@@ -241,7 +241,7 @@ function RemoveFromArray(the_array, delete_what)
 	if ( Lower(TypeOf(delete_what)) != "array")
 		delete_what := array{delete_what};
 	endif
-
+	
 	var iter_to_remove := array{};
 	foreach item in (the_array)
 		if (item in delete_what)
@@ -250,8 +250,9 @@ function RemoveFromArray(the_array, delete_what)
 		sleepms(5);
 	endforeach
 
+	iter_to_remove.Reverse();
 	foreach iter in iter_to_remove
-		the_array.Erase(iter - _iter_iter);
+		the_array.Erase(iter);
 	endforeach
 
 	return the_array;

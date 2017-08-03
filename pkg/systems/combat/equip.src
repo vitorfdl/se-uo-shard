@@ -30,7 +30,7 @@ program equipweapon(who, item)
 	endif
 
 	set_critical(1);
-	var hostiles = ListHostiles( who );
+	var hostiles := ListHostiles( who );
 	if (hostiles.size() > 0 && !AP_ConsumeVital(who, STAMINA, 4))
 		return 0;
 	endif
@@ -59,29 +59,19 @@ function SetEquipmentMods(who, item)
 	// endif
 
 	//sneak
-	penalty := CInt(itemdesc[item.objtype].SneakPenalty);
-	AP_ModifySkillMod(who, SNEAK, (-1)*penalty);
-  
-	//mechanical apitude
-	penalty := CInt(itemdesc[item.objtype].DexPenalty);
-	AP_ModifySkillMod(who, MECHANICALAPITUDE, (-1)*penalty);
-  
-	//awareness
-	penalty := CInt(itemdesc[item.objtype].AwarenessPenalty);
-	AP_ModifySkillMod(who, AWARENESS, (-1)*penalty);
-
-	//magery
-	// penalty := CInt(itemdesc[item.objtype].MageryPenalty);
-	// AP_ModifySkillMod(who, MAGERY, (-1)*penalty);
+	var penalty_list := GetConfigStringArray(itemdesc[item.objtype], "Penalty");
+	foreach skill in penalty_list
+		AP_ModifySkillMod(who, skill, -1);
+	endforeach
 
 	//verifica se eh magico
 	var mods := GetObjProperty(item, "equip");
 	if (!mods)
-		mods := struct{}
+		mods := struct{};
 	endif
 //	SendSysMessage(who, " " + mods + " " + mods.keys().size());
 	foreach mod in (mods.keys())
-		if (GetObjProperty(item,"magic") == 1))
+		if (GetObjProperty(item,"magic") == 1)
 			continue;
 		endif
 		
@@ -92,10 +82,10 @@ function SetEquipmentMods(who, item)
 		elseif (mod == "intmod")
 			AP_ModifyStatMod(who, INTELLIGENCE, Cint( mods["intmod"] ));
 		elseif (mod == "conmod")
-			AP_ModifyStatMod(who, CONSTITUTE, Cint( mods["conmod"] ) );
+			AP_ModifyStatMod(who, CONSTITUTION, Cint( mods["conmod"] ) );
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, Cint( mods["wismod"] ) );
-		elseif (mod == "setprop"))
+		elseif (mod == "setprop")
 			EraseObjProperty(who, "#" + GetObjProperty(item, "propname"));
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) + Cint( mods["manamod"] ));

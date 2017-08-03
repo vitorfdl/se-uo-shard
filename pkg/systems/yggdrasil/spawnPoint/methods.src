@@ -37,7 +37,6 @@ exported function GetProps( spawnpoint )
    data.+type       := GetObjProperty(spawnpoint, "type");
    data.+range      := GetObjProperty(spawnpoint, "range");
    data.+mob_number := GetObjProperty(spawnpoint, "mob_number");
-   data.+treasures  := GetObjProperty(spawnpoint, "treasures");
    data.+spotgroup  := GetObjProperty(spawnpoint, "spotgroup");
    data.+monsters   := GetObjProperty(spawnpoint, "monsters");
    data.+spawnqueue := GetObjProperty(spawnpoint, "spawnqueue");
@@ -92,13 +91,6 @@ exported function SetProps( spawnpoint, data := struct{});
       old_data.mob_number := cint(data.mob_number);
    endif
 
-   if (data.treasures)
-      foreach treasure in (data.treasures)
-         treasure := TreasureModel(treasure);
-      endforeach
-      old_data.treasures := data.treasures;
-   endif
-
    if (data.evententry)
       old_data.evententry := data.evententry;
    endif
@@ -110,7 +102,6 @@ exported function SetProps( spawnpoint, data := struct{});
    SetObjProperty(spawnpoint, "level", old_data.level);
    SetObjProperty(spawnpoint, "range", old_data.range);
    SetObjProperty(spawnpoint, "mob_number", old_data.mob_number);
-   SetObjProperty(spawnpoint, "treasures", old_data.treasures);
    SetObjProperty(spawnpoint, "evententry", old_data.evententry);
    SetObjProperty(spawnpoint, "spawnqueue", old_data.spawnqueue);
    SetObjProperty(spawnpoint, "monsters", old_data.monsters);
@@ -149,10 +140,6 @@ function ModelSpawnPoint( data := struct{})
       data.mob_number := 1;
    endif
 
-   if (TypeOf(data.treasures) != "Array")
-      data.treasures := array{};
-   endif
-
    if (TypeOf(data.yggdrasil) != "Struct")
       data.yggdrasil := struct{};
    endif
@@ -160,43 +147,23 @@ function ModelSpawnPoint( data := struct{})
    return data;
 endfunction
 
-function TreasureModel( data := struct{} )
-   if (!data.ref_serial)
-      data.+ref_serial := "missing";
-   endif
+// exported function RemoveTreasure(spawnpoint, treasure)
+//    var treasures := GetProps(spawnpoint).treasures;
+//    var index := FindInArray(treasures, treasure.ref_id);
+//    if (index)
+//       treasures.Erase(index);
+//       SetProps(spawnpoint, struct{"treasures" := treasures});
+//       return 1;
+//    endif
+//    return 0;
+// endfunction
 
-   if (!data.level)
-      data.+level := 1;
-   endif
-   
-   if (data.start_hidden != 0 && data.start_hidden != 1)
-      data.+start_hidden := 0;
-   endif
-
-   if (TypeOf(data.custom) != "Array")
-      data.+custom := array{};
-   endif
-
-   return data;
-endfunction
-
-exported function RemoveTreasure(spawnpoint, treasure)
-   var treasures := GetProps(spawnpoint).treasures;
-   var index := FindInArray(treasures, treasure.ref_id);
-   if (index)
-      treasures.Erase(index);
-      SetProps(spawnpoint, struct{"treasures" := treasures});
-      return 1;
-   endif
-   return 0;
-endfunction
-
-exported function AddTreasure(spawnpoint, treasure)
-    var treasures := GetProps(spawnpoint).treasures;
-    treasures.append(treasure);
-    SetProps(spawnpoint, struct{"treasures" := treasures});
-    return 1;
-endfunction
+// exported function AddTreasure(spawnpoint, treasure)
+//     var treasures := GetProps(spawnpoint).treasures;
+//     treasures.append(treasure);
+//     SetProps(spawnpoint, struct{"treasures" := treasures});
+//     return 1;
+// endfunction
 
 exported function FillQueue(spawnpoint)
    var config      := GetProps(spawnpoint);
@@ -412,12 +379,12 @@ exported function KillAll(spawnpoint)
    SetObjProperty(spawnpoint, "monsters", array{});
 endfunction
 
-exported function SpawnTreasures(spawnpoint)
-    var treasures := GetProps(spawnpoint).treasures;
-    var treasures_spawned := GetObjProperty(spawnpoint, "spawned_treasures");
+    // exported function SpawnTreasures(spawnpoint)
+    //     var treasures := GetProps(spawnpoint).treasures;
+    //     var treasures_spawned := GetObjProperty(spawnpoint, "spawned_treasures");
 
-endfunction
+    // endfunction
 
-exported function ResetTreasures(spawnpoint)
+    // exported function ResetTreasures(spawnpoint)
 
-endfunction
+    // endfunction

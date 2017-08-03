@@ -108,9 +108,9 @@ endfunction
  */
 function AP_SetSkillMod(mobile, skill_name, points)
 	var e := SetAttributeTemporaryMod(mobile, skill_name, CInt(CDbl(points) * 10.0));
-	//if (e == error)
-	//	sendsysmessage(mobile, "Erro: " + e);
-	//endif
+	if (e == error)
+		Print("Erro: " + e);
+	endif
 	RecalcVitals(mobile);
 endfunction
 

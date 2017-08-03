@@ -142,7 +142,7 @@ program Attack(params)
 
 		var armor_elem := GetItemCFGInfo(defender, armor);
 		// Com armadura leve tem 40% de chance de dar miss
-		if ((!armor_elem.ArmorDexPenalty && RandomInt(100) <= 20) || RandomInt(100) <= 20)
+		if ((!armor_elem.ArmorDexLimit && RandomInt(100) <= 20) || RandomInt(100) <= 20)
 			PlayMissSound(attacker);
 		else
 			PlayHitSounds(attacker);

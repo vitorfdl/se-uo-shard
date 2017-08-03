@@ -17,8 +17,7 @@ function examinarAlvo(who)
 		return 0;
 	endif
 
-	var dice_roll := rollAttrDice(who, WISDOM) +  + getProficiencyBonus(who, "Percepção");
-
+	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, "Percepção");
 	if ( GetObjProperty(targ, "Disfarcado") )
 		if ( dice_roll < 20 )
 			return 0;
@@ -69,11 +68,11 @@ function examinarAlvo(who)
 endfunction
 
 function CalculateDHDiff(who, mobile, insneak := 0)
-	var difficulty := 9 + AP_GetStat(mobile, attribute, RETURN_BONUS) + getProficiencyBonus(who, "Furtividade");
+	var difficulty := 9 + AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, "Furtividade");
 
 	//sendsysmessage(mobile, "dificuldade de  "  + who.name + "te achar " + mobile_skill);
 	if (GetObjProperty(mobile, "#overridehiding") != error)
-		mobile_skill := cint(GetObjProperty(mobile, "#overridehiding"));
+		difficulty := cint(GetObjProperty(mobile, "#overridehiding"));
 	endif
 
 	difficulty += Distance(who, mobile);
@@ -88,7 +87,7 @@ function CalculateDHDiff(who, mobile, insneak := 0)
 endfunction
 
 function examinarArea(who)
-	var range := AP_GetStat(mobile, attribute, RETURN_BONUS) + 4;
+	var range := AP_GetStat(who, WISDOM, RETURN_BONUS) + 4;
 	var dice_roll := rollAttrDice(who, WISDOM) +  + getProficiencyBonus(who, "Percepção");
 	
 	var found := 0;
@@ -123,8 +122,8 @@ function examinarArea(who)
 			item.invisible := 0;
 			SendSysMessageEx(who, "Voce encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);
-		elseif (GetObjProperty(item, "FindDiff") && dice_roll >= CInt(GetObjProperty(item, "FindDiff"))
-			ExpGain(who, CInt(GetObjProperty(item, "FindDiff"), dice_roll);
+		elseif (GetObjProperty(item, "FindDiff") && dice_roll >= CInt(GetObjProperty(item, "FindDiff")))
+			ExpGain(who, CInt(GetObjProperty(item, "FindDiff")), dice_roll);
 			found := found+1;
 			item.invisible := 0;
 			SendSysMessageEx(who, "Voce encontrou "+item.desc+".", SSM_INFO);

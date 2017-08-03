@@ -167,14 +167,15 @@ function HaveSkill(mobile, skill)
 	if (mobile.npctemplate);
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
 		skill_list  := GetConfigStringArray(npcelem, "Pericia");
-	else
-		skill_list   := mobile.SkillList(;
+		if (skill in skill_list)
+			return 1; //Tem Skill
+		endif
+
+		return 0;
 	endif
 
-	if (!skill_list)
-		return 0; //n tem skill
-	elseif (skill in skill_list)
-		return 1; //Tem Skill
+	if (AP_GetTrueSkill(mobile, skill) == 1)
+		return 1;
 	endif
 
 	return 0; //n tem skill
@@ -322,7 +323,10 @@ function AP_ListAttributesByType(type:="")
 	
 	type := Lower(type);
 	var data_elem := AP_GetAttributeDataElem("Categories");
-	return data_elem.GetProp(type);
+	var list := data_elem.GetProp(type);
+	list := RemoveFromArray(list, array{"Parry", "Tactics", "Wrestling", "Versatil"});
+
+	return list;
 endfunction
 
 function Wait(mobile, segundos)

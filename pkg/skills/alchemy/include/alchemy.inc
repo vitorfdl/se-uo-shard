@@ -5,10 +5,10 @@ include "include/say";
 CONST DRINK_SOUND := 0x32;
 
 function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
-  if(!Accessible(who, potion))
+  if(!Accessible(character, potion))
 		return 0;
 	elseif (!potion.movable)
-		SendSysMessageEx(who, "Voce nao pode beber isto.", SSM_FAIL);
+		SendSysMessageEx(character, "Voce nao pode beber isto.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -20,8 +20,8 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
   if (equippedright and equippedleft || twohanded)
     SendSysMessage(character, "Voce precisa de pelo menos uma mao livre!");
     return 0;
-  elseif (GetObjProperty(who, "noheal") && type == "healingpot")
-		SendSysMessageEx(who, "Essa pocao nao fara efeito nas atuais circunstacias", SSM_FAIL);
+  elseif (GetObjProperty(character, "noheal") && type == "healingpot")
+		SendSysMessageEx(character, "Essa pocao nao fara efeito nas atuais circunstacias", SSM_FAIL);
     return 0;    
   endif
 

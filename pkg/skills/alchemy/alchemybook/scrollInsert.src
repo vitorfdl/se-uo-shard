@@ -12,15 +12,15 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	movetype       := movetype;
 	inserttype     := inserttype;
 	if( book.movable == 0 )
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.", SSM_INFO);
 		MoveItemToContainer(item, who.backpack);
 		return 0;
 	elseif( !ReserveItem(book) || !ReserveItem(item) )
 		MoveItemToContainer(item, who.backpack);
-		SendSysMessage(who, "O livro esta em uso.");
+		SendSysMessageEx(who, "O livro esta em uso.", SSM_FAIL);
 		return 0;
 	elseif( item.objtype != 0xef1f)
-		SendSysMessage(who, "Voce nao pode colocar isto no livro.");
+		SendSysMessageEx(who, "Voce nao pode colocar isto no livro.", SSM_FAIL);
 		MoveITemToContainer(item, who.backpack);
 		return 0;
 	endif
@@ -29,7 +29,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 		return addScroll(who, book, item);
 	endif
 
-	SendSysMessage(who, "Voce nao pode por isto no livro.");
+	SendSysMessageEx(who, "Voce nao pode colocar isto no livro.", SSM_FAIL);
 	MoveItemToContainer(item, who.backpack);
 	return 0;
 endprogram
@@ -40,18 +40,24 @@ function addScroll(who, book, recipe)
 	if (recipe_list == error)
 		recipe_list := array;
 	endif
+
+	var potions_cfg := ReadConfigFile(":alchemy:recipes");
 	
 	var new_recipe := GetObjProperty(recipe, "objtype");
 	if (FindInArray(recipe_list, new_recipe))
-		SendSysMessage(who, "Este livro ja contem esta receita.");
+		SendSysMessageEx(who, "Este livro ja contem esta receita.", SSM_FAIL);
+		MoveItemTocontainer(recipe, who.backpack);
+		return 0;
+	elseif(!FindConfigElem(potions_cfg, Hex(new_recipe)));
+		SendSysMessageEx(who, "Receita invalida!", SSM_FAIL);
 		MoveItemTocontainer(recipe, who.backpack);
 		return 0;
 	elseif( recipe_list.Size() > 15 )
-		SendSysMessage(who,"Este livro ja esta cheio.");
+		SendSysMessageEx(who,"Este livro ja esta cheio.", SSM_FAIL);
 		MoveItemToContainer(rune, who.backpack);
 		return 0;
 	elseif( !ReserveItem(rune) )
-		SendSysMessage(who,"Cancelado");
+		SendSysMessageEx(who,"Cancelado", SSM_INFO);
 		MoveItemToContainer(rune, who.backpack);
 		return 0;
 	endif
@@ -65,6 +71,6 @@ function addScroll(who, book, recipe)
 	DestroyItem(recipe);
 	Set_Critical(0);
 
-	SendSysMessage(who, "Voce adicionou o pergaminho no livro. ");
+	SendSysMessageEx(who, "Voce adicionou o pergaminho no livro.", SSM_INFO);
 	return 1;
 endfunction

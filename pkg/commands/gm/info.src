@@ -268,7 +268,7 @@ function DisplayAttributes(targ, byref gump, byref entry, byref y_pos)
 				RegisterButton(btn_id, attrib_name, "attribEdit");
 			endif
 
-			GFTextLine(gump, 175, y_pos, 2100, GetTranslatedName(attrib_name));
+			GFTextLine(gump, 175, y_pos, 2100, attrib_name);
 			var value := AP_GetTrueSkill(targ, attrib_name);
 			var mod_value := AP_GetSkillMod(targ, attrib_name);
 			if (gm.acctname in gmParedes && (!targ.npctemplate))
@@ -376,7 +376,6 @@ function DisplayChardata(targ, byref gump, byref y_pos)
 	//chardataconf
 		var chardata := GetObjProperty(targ, "chardata");
 		chardata.-Skills;
-		chardata.-Primarias;
 		chardata.-credits;
 		chardata.-nome;
 		chardata.-nomefinal;
@@ -459,7 +458,7 @@ function GetCustom(targ, property)
 		"gotten_item_serial":
 			return targ.GetGottenItem().serial;
 		"experiência":
-			return who.GetExp() + " / " + ((who.getLevel()(targ) + 5) * 30);
+			return targ.GetExp() + " / " + ((targ.getLevel() + 5) * 30);
 		"data_de_criação":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
 	endcase
@@ -670,9 +669,9 @@ function HabEdit(who, targ, input_info)
 	endfor
 	SetObjProperty(targ, "myhabs", habilidades);
 	
-	if (YesNo(who, "Deseja retornar um ponto de perícia para o personagem?", "Sim", "Não"))
-		SetSkillPoints(targ, GetSkillPoints(who)+1);
-	endif
+	// if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "Não"))
+	// 	SetSkillPoints(targ, GetSkillPoints(who)+1);
+	// endif
 	
 	LogToFile(":fls_core:vital.log", who.name+" ("+who.acctname+") editou "+targ.name+" ("+targ.acctname+") :: removeu habilidade "+input_info.name, LOG_DATETIME);
 
@@ -694,6 +693,8 @@ function AttributeEdit(who, targ, input_info)
 	change := SplitWords(change, " ");
 	if (!targ.cmdlevel && !targ.npctemplate)
 		LogToFile("log/edits.log", who.name+" ("+who.acctname+") editou "+targ.name+" ("+targ.acctname+") :: "+input_info.name+" de "+real_value+" ("+mod_value+") para "+change[1]+" ("+CInt(change[2])+")<br>", LOG_DATETIME);
+	elseif (change[1] != "0" && change[1] != "1")
+		return 1;
 	endif
 	//LogToFile(":fls_core:edits.log", who.name+" ("+who.acctname+") editou "+targ.name+" ("+targ.acctname+") :: "+input_info.name+" de "+real_value+" ("+mod_value+") para "+change[1]+" ("+CInt(change[2])+")<br>", LOG_DATETIME);
 	AP_SetTrueSkill(targ, input_info.name, change[1]);

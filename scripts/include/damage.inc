@@ -43,7 +43,10 @@ function HealFLS(targ, amt, show_heal := 1)
 	if (!GetObjProperty(targ, "noheal"))
 		HealDamage(targ, amt);
 		if (show_heal)	
-			PrivateSystemReport(defender, amt, source, SYSTEM_HEAL);
+			PrivateSystemReport(targ, amt, targ, SYSTEM_HEAL);
+			if (show_heal.isA(POLCLASS_MOBILE))
+				PrivateSystemReport(targ, amt, show_heal, SYSTEM_HEAL);
+			endif
 		endif
 	else
 		SendSysMessageEx(targ, "Voce nao pode ser curado.", SSM_FAIL);

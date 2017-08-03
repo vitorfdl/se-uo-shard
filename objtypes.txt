@@ -1556,21 +1556,7 @@
 # 0x27da - 0x2803 unused
 0x2804 dardo tn
 0x2805 flute musicianship
-# 0x2806 - 0x2b05 unused
-0x2b06 AdamantiumPlateLeggings combat
-# 0x2b07 unused
-0x2b08 AdamantiumBreastPlate combat
-# 0x2b09 unused
-0x2b0a AdamantiumPlateArms combat
-# 0x2b0b unused
-0x2b0c AdamantiumPlateGloves combat
-# 0x2b0d unused
-0x2b0e AdamantiumPlateGorget combat
-# 0x2b0f unused
-0x2b10 AdamantiumPlateHelm combat
-# 0x2b11 unused
-0x2b12 AdamantiumPlateShoes combat
-# 0x2b13 - 0x2b67 unused
+# 0x2806 - 0x2b67 unused
 0x2b68 tanga combat
 # 0x2b69 - 0x2b6d unused
 0x2b6e circlet metalworking
@@ -1888,7 +1874,7 @@
 # 0x702b unused
 0x702c startercookbook cooking
 0x702d cookbook cooking
-0x702e CookNote cooking
+# 0x702e unused
 0x702f CottonSeed farming
 # 0x7030 - 0x7032 unused
 0x7033 CocoaSeed farming
@@ -1906,13 +1892,7 @@
 0x70b3 dontcreateme_gamepiece games
 # 0x70b4 - 0x7104 unused
 0x7105 HairDye hair
-# 0x7106 - 0x76aa unused
-0x76ab EagleRing tn
-0x76ac Fruta1 tn
-0x76ad Fruta2 tn
-0x76ae Fruta3 tn
-0x76af Fruta4 tn
-# 0x76b0 - 0x790e unused
+# 0x7106 - 0x790e unused
 0x790f Nothing tn
 # 0x7910 - 0x791b unused
 0x791c aljava woodworking
@@ -2061,8 +2041,7 @@
 0xbf04 pocaovenenoescorpiao alchemy
 0xbf05 pocaovenenowyvern alchemy
 0xbf06 pocaovenenoliche alchemy
-0xbf07 pocaointeligencia alchemy
-0xbf08 pocaointeligenciaforte alchemy
+# 0xbf07 - 0xbf08 unused
 0xbf09 pocaoinvisibilidade alchemy
 0xbf0a pocaoinvisibilidadeforte alchemy
 0xbf0b pocaoinvisibilidadepermanente alchemy
@@ -2072,14 +2051,14 @@
 0xbf0f gasvenenofraco alchemy
 0xbf10 gasvenenomedio alchemy
 0xbf11 gasvenenoforte alchemy
-0xbf12 elixir alchemy
+0xbf12 pocaocurasuprema alchemy
 0xbf13 pocaoflamejantefraca alchemy
 0xbf14 pocaoflamejantemedia alchemy
 0xbf15 pocaoflamejanteforte alchemy
 0xbf16 gasalucinogeno alchemy
 0xbf17 pocaomana alchemy
-0xbf18 pocaomanamedia alchemy
-0xbf19 pocaomanaforte alchemy
+0xbf18 pocaomanamaior alchemy
+0xbf19 pocaomanasuperior alchemy
 # 0xbf1a - 0xbffc unused
 0xbffd TintaAzulClaro1 alchemy
 # 0xbffe - 0xc198 unused
@@ -2133,21 +2112,18 @@
 0xd4e8 ExecutionerCapSeed farming
 0xd4e9 BloodMossSeed farming
 # 0xd4ea - 0xdc00 unused
-0xdc01 pocaocuraleve alchemy
-0xdc02 pocaocuramedia alchemy
-0xdc03 pocaocuragrave alchemy
+0xdc01 pocaocura alchemy
+0xdc02 pocaocuramaior alchemy
+0xdc03 pocaocurasuperior alchemy
 0xdc04 VenenoErvaForte alchemy
 # 0xdc05 - 0xdc07 unused
 0xdc08 FogoGrego alchemy
-# 0xdc09 - 0xdc0b unused
-0xdc0c pocaoagilidadefelina alchemy
-0xdc0d pocaoagilidadefelinaforte alchemy
+# 0xdc09 - 0xdc0d unused
 0xdc0e pocaovigor alchemy
 0xdc0f pocaovigorforte alchemy
 # 0xdc10 unused
-0xdc11 pocaoforcatouro alchemy
-0xdc12 pocaoforcatouroforte alchemy
-# 0xdc13 unused
+0xdc11 pocaovigorsuperior alchemy
+# 0xdc12 - 0xdc13 unused
 0xdc14 antidoto alchemy
 0xdc15 antidotomedio alchemy
 0xdc16 antidotoforte alchemy
@@ -2249,7 +2225,7 @@
 0xef1c glanduladearanha alchemy
 0xef1d glanduladecobra alchemy
 0xef1e gravedust alchemy
-0xef1f alchemyrecipe alchemy
+0xef1f craftrecipe crafting
 0xef20 couroescamosocurtido womenswork
 # 0xef21 - 0xef23 unused
 0xef24 couropeludocurtido womenswork

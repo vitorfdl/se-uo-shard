@@ -5,7 +5,7 @@ use os;
 
 include ":loot:magicLoot";
 
-const RECIPE_OBJ := 0x0;
+const RECIPE_OBJ := 0xef1f;
 
 function Loot_Generate(container, loot_index)
 	if ( !container.IsA(POLCLASS_CONTAINER) )
@@ -77,16 +77,17 @@ function Loot_CreateItem(container, line, type := 0)
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
 				endif
 				if (item.isA(POLCLASS_EQUIPMENT))
-					item.hp = 0;
+					item.hp := 0;
+					SetName(item, item.desc+" [danificado]");
 				endif
 			elseif (type == "recipe")
 				var objtype := parsed.name;
-				if (!Hex(objype))
+				if (!Hex(objtype))
 					objtype := GetObjtypeByName(parsed.name);
 				endif
 
 				if (!objtype)
-					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
+					return error{"errortext" := "Error - Could not create ["+parsed.name+"] -> Objtype not found"};
 				endif
 
 				var item := CreateItemInContainer(container, RECIPE_OBJ);
