@@ -51,29 +51,18 @@ endfunction
 
 function RemoveEquipmentMods(who, item)
 	var itemdesc := ReadConfigFile("itemdesc");
-	
-	//sneak
-  	penalty := CInt(itemdesc[item.objtype].SneakPenalty);
-  	AP_ModifySkillMod(who, SNEAK, penalty);
 
-	//mechanical  apitude
-  	penalty := CInt(itemdesc[item.objtype].ArmorDexPenalty);
-  	AP_ModifySkillMod(who, MECHANICALAPITUDE, penalty);
-
-	//awareness
-  	penalty := CInt(itemdesc[item.objtype].AwarenessPenalty);
-  	AP_ModifySkillMod(who, AWARENESS, penalty);
-
-	//magery
-  	penalty := CInt(itemdesc[item.objtype].MageryPenalty);
-  	AP_ModifySkillMod(who, MAGERY, penalty);
+	var penalty_list := GetConfigStringArray(itemdesc[item.objtype], "Penalty");
+	foreach skill in penalty_list
+		AP_ModifySkillMod(who, skill, 1);
+	endforeach
 
 	var mods := GetObjProperty(item, "equip");
 	if (!mods)
-		mods := struct{}
+		mods := struct{};
 	endif
 	foreach mod in (mods.keys())
-		if (GetObjProperty(item,"magic") == 1))
+		if (GetObjProperty(item,"magic") == 1)
 			continue;
 		endif
 		
@@ -84,10 +73,10 @@ function RemoveEquipmentMods(who, item)
 		elseif (mod == "intmod")
 			AP_ModifyStatMod(who, INTELLIGENCE, (-1)*Cint( mods["intmod"] ));
 		elseif (mod == "conmod")
-			AP_ModifyStatMod(who, CONSTITUTE, (-1)*Cint( mods["conmod"] ) );
+			AP_ModifyStatMod(who, CONSTITUTION, (-1)*Cint( mods["conmod"] ) );
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
-		elseif (mod == "setprop"))
+		elseif (mod == "setprop")
 			EraseObjProperty(who, "#" + GetObjProperty(item, "propname"));
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) - Cint( mods["manamod"] ));

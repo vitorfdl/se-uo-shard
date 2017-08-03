@@ -69,7 +69,7 @@ function clone (character, npc)
   SetObjProperty(character, "hitsmod", AP_GetVitalMaximumValue(npc, "Life") - AP_GetVitalMaximumValue(character, "Life"));
   RecalcVitals (character);
   
-  SetVital (character, "Life", GetVital (npc, "Life"));
+  SetVital (character, "hp", GetVital (npc, "hp"));
   SetVital (character, "Mana", GetVital (npc, "Mana"));
   SetVital (character, "Stamina", GetVital (npc, "Stamina"));
 

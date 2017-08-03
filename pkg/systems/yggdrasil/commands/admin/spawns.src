@@ -4,6 +4,7 @@ use basic;
 
 include ":yggdrasil:spawnGroup";
 include ":yggdrasil:spawnSpot";
+include ":yggdrasil:treasures";
 // include ":ghaia:ghaiaUtil";
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
@@ -54,14 +55,16 @@ const GF_SPAWN_TYPE_BTN     := 932;
 
 //Treasure Menu
 var treasure_name;
+const GF_TREASURE_TELEPORT_BTN     := 1000;
+const GF_TREASURE_LEVEL_BTN        := 1001;
 const GF_TREASURE_PROTECTED_SWITCH := 1002;
 const GF_TREASURE_ACTIVE_SWITCH    := 1003;
 const GF_TREASURE_TRAP_SWITCH      := 1004;
 const GF_TREASURE_TARGET_BTN       := 1005;
 const GF_TREASURE_ADDITEM_BTN      := 1006;
 const GF_TREASURE_REMITEM_BTN      := 1007;
-const GF_TREASURE_TELEPORT_BTN     := 1000;
-const GF_TREASURE_LEVEL_BTN        := 1001;
+const GF_TREASURE_LOCKED_SWITCH    := 1008;
+const GF_TREASURE_SPAWN_BTN        := 1009;
 const GF_TREASURE_ITEM_BTN         := 1010;
 
 
@@ -333,6 +336,8 @@ function DoSpotList(who, input)
                 "name" := new__name
             };
             spot.AddTreasure(new_treasure);
+            container.movable := 0;
+            container.decayat := 0;
             break;
         GF_SPOT_REMTREASURE_BTN:
             spot.RemoveTreasure(selected_treasure);
@@ -359,7 +364,7 @@ endfunction
 
 function DoSpawnPointList(who, input)
     var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
-    var data       := spawnpoint.GetProps();
+    // var data       := spawnpoint.GetProps();
     var model_update := struct{};
     case(input[0])
         GF_SPAWN_LEVEL_BTN:
@@ -378,7 +383,7 @@ endfunction
 function DoTreasureList(who, input)
     var spot := SystemFindObjectBySerial(selected_spot);
     var data := spot.GetProps();
-    var treasure := FindElemInArray(data.treasures, struct{"serial":=selected_treasure});
+    var treasure     := FindElemInArray(data.treasures, struct{"serial" := selected_treasure});
     var treasure_obj := SystemFindObjectBySerial(selected_treasure);
     case(input[0])
         GF_TREASURE_TELEPORT_BTN:
@@ -395,6 +400,8 @@ function DoTreasureList(who, input)
             if (result)
                 SendSysMessageEx(who, "Container updated!");
                 selected_treasure := treasure.serial;
+                treasure.movable := 0;
+                treasure.decayat := 0;
             else
                 SendSysMessageEx(who, "Error Ocurred!");
             endif
@@ -424,14 +431,22 @@ function DoTreasureList(who, input)
             spot.UpdateTreasure(selected_treasure, treasure);
             break;
         GF_TREASURE_LEVEL_BTN: 
-            treasure.level := cint(RadioGump(who, 150, 165, "Level da Fechadura:", array{"1", "2", "3", "4", "5"}));
+            treasure.level := cint(RadioGump(who, 200, 165, "Level da Fechadura:", array{"0", "1", "2", "3", "4", "5"}));
             spot.UpdateTreasure(selected_treasure, treasure);
             break;
+        GF_TREASURE_SPAWN_BTN:
+            SpawnTreasure(treasure_obj, treasure);
+            break;
         GF_TREASURE_ADDITEM_BTN:
-            var t_option := RadioGump(who, 150, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
+            var t_option := RadioGump(who, 180, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
             case (t_option)
                 "Adicionar lista":
-                    var list := RequestGump(who, "Entre com o nome da lista", "", "");
+                    var loot_cfg  := ReadConfigFile(":loot:config/loot-index");
+                    var loot_list := GetConfigStringKeys(loot_cfg);
+                    var list      := RadioGump(who, 230, 120+(loot_list.Size()*18), "Escolha o loot-index?:", loot_list);
+                    if (list == "Cancelar")
+                        break; 
+                    endif
                     var loot := struct{
                         "by_group":= list
                     };
@@ -513,7 +528,6 @@ function ConstructGroupList(byref gump)
         endif
     endfor
 endfunction
-
 
 function ConstructGroupConfig(byref gump)
     GFPage(gump, 0);
@@ -787,6 +801,9 @@ function ConstructTreasureConfig(byref gump)
     GFTextLine(gump, sx, sy+54, 1153, "Level:");
     GFTextLine(gump, sx+40, sy+54, 2103, treasure.level);
     GFAddButton(gump, sx-15, sy+21+36, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_LEVEL_BTN);
+
+    GFTextLine(gump, sx+80, sy+54, 1153, "Force Spawn:");
+    GFAddButton(gump, sx+160, sy+21+38, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_SPAWN_BTN);
 
     GFTextLine(gump, sx, sy+72, 1153, "Location:");
     GFTextLine(gump, sx+65, sy+72, 2103, "{}, {}, {}".format(treasure_cont.x, treasure_cont.y, treasure_cont.z));

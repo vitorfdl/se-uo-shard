@@ -7,7 +7,7 @@ include ":attributes:attributes";
 include ":charactercreation:characters";
 //TODO seria mais facil olhar o skills.cfg que possuem script e executar ele
 
-program start_skill(who, txt)
+program start_skill(who, skillname)
 
 	if (who.dead)
 		SendSysMessage(who, "Voce esta morto e nao pode fazer isto.");
@@ -23,13 +23,16 @@ program start_skill(who, txt)
 		endif
 	endif
 	
-	var skillname;
-	var translatedname := GetUntranslatedName(txt, who);
-	if (translatedname)
-		skillname := translatedname;
-	elseif(AP_GetAttributeCfgElem(txt))
-		skillname := txt;
+	if(!AP_GetAttributeCfgElem(skillname))
+		SendSysMessage(who, "Pericia inexistente!");
+		return;
 	endif
+	// var translatedname := GetUntranslatedName(txt, who);
+	// if (translatedname)
+	// 	skillname := translatedname;
+	// elseif(AP_GetAttributeCfgElem(txt))
+	// 	skillname := txt;
+	// endif
 	
 
 //no sistema de skillcap todos tem todas skills

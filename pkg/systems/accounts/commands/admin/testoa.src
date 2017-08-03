@@ -11,6 +11,6 @@ program oafeatures_sendpacket(who)
    //    print("SendPacket error: " + res.errortext );
    // endif
 
-   var char_age := GetTimeStruct(1498702822);
-   print(char_age);
+   // print(typeof(RandomDiceRoll("1d100")));
+   who.SkillList();
 endprogram

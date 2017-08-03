@@ -1,12 +1,37 @@
-
-use uo;
 use os;
+use uo;
 use cfgfile;
 
-include ":gumps:yesno";
-include "include/say";
-include "include/array";
+program ScrollCreate(scroll)
+   var recipes_list := struct{
+      "Costura"     := ReadConfigFile(":womenswork:recipes"),
+      "Ferraria" := ReadConfigFile(":metalworking:recipes"),
+      "Marcenaria"  := ReadConfigFile(":woodworking:recipes"),
+      "Cozinha"    := ReadConfigFile(":cooking:recipes"),
+      "Alquimia"    := ReadConfigFile(":alchemy:recipes"),
+      "Runas"      := ReadConfigFile(":magery:recipes")
+   };
+   var recipe_graphic := struct{
+      "Costura"    := 0x0E37,
+      "Ferraria"   := 0x0E35,
+      "Marcenaria" := 0x0E36,
+      "Cozinha"    := 0x0EF9,
+      "Alquimia"   := 0x46B2,
+      "Runas"      := 0x46AE
+   };
 
-program usaPergaminho(who, scroll)
-   
+   sleep(2);
+
+   var objtype := GetObjProperty(scroll, "objtype");
+   if (objtype)
+      foreach cfg_name in (recipes_list.keys())
+      var cfg := recipes_list[cfg_name];
+      if (FindConfigElem(cfg, Hex(objtype)))
+            scroll.graphic := recipe_graphic[cfg_name];
+            SetObjProperty(scroll, "pericia", cfg_name);
+            break;
+      endif
+      endforeach
+   endif
+ 
 endprogram

@@ -51,13 +51,19 @@ endfunction
  * Returns 1
  *
  */
+
+function SkillDbgMsg(mobile, msg)
+	if (mobile.cmdevel >4)
+		SendSysMessage(mobile, msg);
+	endif
+endfunction
 function ExpGain(mobile, difficulty, value := 0)
 	if ( GetObjProperty(mobile, "NoGains") ) //exp gain blocked
 		SkillDbgMsg(mobile, "Flag NoGains setada.");
 		return 0;
 	endif
 
-  if ( GetExpCap(who) == 0)
+  if ( GetExpCap(mobile) == 0)
   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
 		return 0;
    endif
@@ -78,7 +84,7 @@ function ExpGain(mobile, difficulty, value := 0)
 	elseif (difficulty == "minor")
 		up_amount := 4;
 	elseif (TypeOf(difficulty) == TypeOf( 1 ))
-		var diff := difficult - value;
+		var diff := difficulty - value;
 		if (diff <= -1)
 			up_amount := 1;
 		elseif(diff >= 10)
@@ -98,8 +104,8 @@ function ExpGain(mobile, difficulty, value := 0)
 	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)
 		// TODO: Tamed exp gain
 	elseif (up_amount > 0)
-		var exp := who.GetExp();
-		who.SetExp(exp+up_amount);
+		var exp := mobile.GetExp();
+		mobile.SetExp(exp+up_amount);
 		CheckExpUp(mobile);
 	endif
 
@@ -127,9 +133,9 @@ function IncreaseVitalPoints(who)
 	var chardata  := GetObjProperty(who, "chardata");
 	var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
 
-	var increase_hitpoint := RandomDiceRoll("1d{}".format(class_cfg.HITS)) + GetBonusAttr(AP_GetTrueStat(mobile, CONSTITUTION));
-	var increase_manapoint := RandomDiceRoll("1d{}".format(class_cfg.MANA)) + GetBonusAttr(AP_GetTrueStat(mobile, INTELLIGENCE));
-	// var increase_stampoint := RandomDiceRoll("1d{}".format(class_cfg.STAM)) + GetBonusAttr(AP_GetTrueStat(mobile, DEXTERITY));
+	var increase_hitpoint := RandomDiceRoll("1d{}".format(class_cfg.HITS)) + GetBonusAttr(AP_GetTrueStat(who, CONSTITUTION));
+	var increase_manapoint := RandomDiceRoll("1d{}".format(class_cfg.MANA)) + GetBonusAttr(AP_GetTrueStat(who, INTELLIGENCE));
+	// var increase_stampoint := RandomDiceRoll("1d{}".format(class_cfg.STAM)) + GetBonusAttr(AP_GetTrueStat(who, DEXTERITY));
 
 	chardata.hitpoints  += increase_hitpoint;
 	chardata.manapoints += increase_manapoint;
