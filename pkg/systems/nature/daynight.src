@@ -21,11 +21,11 @@ program daynightsystem()
 	var i;
 	while(1)
 		SeasonRotate();  //muda o dia do ano e estaçao
-                MoonFase();      // muda a fase da lua
+		MoonFase();      // muda a fase da lua
                // Temperature();   //mmuda a temperatura local
 		Broadcast("O sol esta nascendo.");
-                SetGlobalProperty("dia", "dia");
-                darkness := GeTMoonLightMod();
+		SetGlobalProperty("dia", "dia");
+		darkness := GeTMoonLightMod();
 		
 		for (i:=darkness;i>=0;i:=i-1)
 			setregionlightlevel("Background", i);
