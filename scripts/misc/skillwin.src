@@ -31,7 +31,7 @@ var attr_list 	    := array{"Strength", "Dexterity", "Intelligence", "Wisdom", "
 
 program core_skillWin(who)
 	if (who.dead)
-		PrivateSystemReport(who, "Estou morto e impossibilitado de realizar qualquer atividade.");
+		SendSystemReport(who, "Estou morto e impossibilitado de realizar qualquer atividade.");
 		return;
 	endif
 	

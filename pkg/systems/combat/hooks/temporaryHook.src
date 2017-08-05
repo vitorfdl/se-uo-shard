@@ -21,6 +21,7 @@ include ":combat:combat";
 include "include/packets";
 include "include/facings";
 include "include/say";
+include "include/dungeons";
 include "include/damage";
 // include ":charactercreation:habilidades";
 // include ":tn:cooldown";
@@ -193,6 +194,7 @@ function GetAttackerChance(attacker, defender)
 		if (npcelem.AttackAttribute)
 			attribute := npcelem.AttackAttribute;
 		endif
+		bonus := cint(npcelem.AttackBonus);
 	endif
 	
 	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;

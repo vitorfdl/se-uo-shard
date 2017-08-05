@@ -65,11 +65,9 @@ program textcmd_sfx( who, input )
     if (soundtype == "sfx")
 	PlaySoundEffect( who, soundfx );
     elseif (soundtype == "midi")
-	var mobiles := ListMobilesNearLocation(who.x, who.y, who.z, 8, who.realm);
+	var mobiles := ListMobilesNearLocationEx(who.x, who.y, who.z, 8, LISTEX_FLAG_PLAYERS_ONLY, who.realm);
 	foreach mobile in mobiles
-		if (!mobile.npctemplate)
-		         PlayMidiMusic(mobile, soundfx);
-		endif
+        PlayMidiMusic(mobile, soundfx);
 	endforeach
 	PlayMidiMusic(who, soundfx);
     else

@@ -29,11 +29,36 @@ function InDungeon(coord) // retorna 1 se tiver numa caverna
 endfunction
 
 function HasPlayerNear(x, y, realm := 0)
-	var mobs := ListMobilesNearLocation( x, y, LIST_IGNORE_Z, 8, realm );
+	var mobs := ListMobilesNearLocationEx( x, y, LIST_IGNORE_Z, 15, LISTEX_FLAG_PLAYERS_ONLY, realm );
 	foreach mob in mobs
 		if (mob.acctname ) //se for player e priv de player
 			return 1;
 		endif
 	endforeach
+	return 0;
+endfunction
+
+function HaveLightNear(coord, realm := 0)
+	var daytime := GetGlobalProperty("dia");
+	if (daytime == "dia" && !InDungeon(coord))
+		return 1;
+	endif
+
+	var light_cfg := ReadConfigFile(":lighting:itemdesc");
+	var mobiles    := ListMobilesNearLocation( coord.x, coord.y, coord.z, 5, realm );
+	foreach mobile in mobiles
+		var equipleft  := GetEquipmentByLayer(mobile, 0x01);
+		var equipright := GetEquipmentByLayer(mobile, 0x02);
+		if (FindConfigElem(light_cfg, equipright.objtype) || FindConfigElem(light_cfg, equipleft.objtype))
+			return 1;
+		endif
+		sleepms(2);
+	endforeach
+
+	var items := ListItemsNearLocationWithFlag(coord.x, coord.y, coord.z, 5, TILEDATA_FLAG_LIGHTSOURCE, realm );
+	if (items.size() > 0)
+		return 1;
+	endif
+
 	return 0;
 endfunction

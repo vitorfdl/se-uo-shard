@@ -13,7 +13,6 @@ var craft_config    := ReadConfigFile(":metalworking:blacksmithy");
 var resources_config    := ReadConfigFile(":gathering:itemdesc");
 
 program smelthing(who, tool)
-
 	if(!can_access(who, tool))
 		return 0;
 	endif

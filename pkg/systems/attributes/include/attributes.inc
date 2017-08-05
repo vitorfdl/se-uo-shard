@@ -145,7 +145,7 @@ function rollResistDice(mobile, type)
 
 	if (mobile.npctemplate);
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
-		resist_list  := GetConfigStringArray(npcelem, "Resistência");
+		resist_list  := GetConfigStringArray(npcelem, "Resistencia");
 	else
 		var chardata := GetObjProperty(mobile, "chardata");
 		resist_list   := chardata.resist_list;

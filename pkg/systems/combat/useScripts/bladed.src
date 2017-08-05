@@ -143,7 +143,7 @@ function CarveItems(who, tool, item)
 endfunction
 
 function CarveMobiles(who, tool, mobile)
-	if ( mobile.npctemplate["sheep"] )
+	if ( mobile.npctemplate["ovelha"] )
 		if((!CheckLineOfSight(who, mobile)) or (distance(who, mobile) > 2))
 			SendSysMessage(who, "A ovelha esta distante.");
 			return;
@@ -153,7 +153,7 @@ function CarveMobiles(who, tool, mobile)
 			CreateItemInContainer(who.backpack, 0xf125, 3);
 			SetCooldown(mobile, "wool", 900);
 		else
-			SendSysMessage(who,"Esta ovelha nao tem pelo suficiente ainda.");
+			SendSysMessageEx(who,"Esta ovelha nao tem pelo suficiente ainda.", SSM_FAIL);
 		endif
 		return 1;
 	elseif (GetObjProperty(mobile, "corda"))

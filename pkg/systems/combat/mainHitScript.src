@@ -121,7 +121,7 @@ function GetDamageType(attacker)
 			attack_type := weapon_type;
 		endif
 	else
-		var damage_type := NPC_GetNPCConfig(attacker).DamageType;
+		var damage_type := NPC_GetNPCConfig(attacker).AttackType;
 		if (damage_type)
 			attack_type := damage_type;
 		endif

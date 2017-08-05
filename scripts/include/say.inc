@@ -60,9 +60,13 @@ function PrintTextPrivate(above_object, uc_text, for_object, color := _DEFAULT_U
   return PrintTextAbovePrivateUC(above_object, UC(uc_text), langcode, for_object, font, color);
 endfunction
 
-function PrivateSystemReport(above_object, text, character := 0, color := SYSTEM_REPORT)
+function SendSystemReport(above_object, text, color := SYSTEM_REPORT, character := 0)
   if (!character)
     character := above_object;
+  endif
+
+  if (character == "all")
+    return PrintTextAbove(above_object, text, 9, 2027);
   endif
   return PrintTextAbovePrivate(above_object, text, character, 9, 2027);
 endfunction

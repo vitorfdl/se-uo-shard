@@ -1,14 +1,11 @@
 use uo;
 
 function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
-
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
 
 	var mobs := array;
-	foreach mob in ListMobilesNearLocation( x, y, z, range, realm);
-
+	foreach mob in ListMobilesNearLocationEx(x, y, z, range, LISTEX_FLAG_NPC_ONLY, realm)
 		if (mob.npctemplate)
-
 			var npctemplate := mob.npctemplate;
 			npctemplate := npctemplate[10, len(npctemplate)-9];
 
@@ -17,11 +14,8 @@ function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 					mobs.append(mob);
 				//endif
 			endif
-
 		endif
-
 	endforeach
-
 	return mobs;
 
 endfunction

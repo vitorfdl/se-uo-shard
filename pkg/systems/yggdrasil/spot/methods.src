@@ -176,13 +176,3 @@ exported function RemoveTreasure( spot, serial )
     endif
     return 1;
 endfunction
-
-exported function SpawnTreasures( spot )
-    var data  := GetProps( spot ).treasures;
-
-endfunction
-
-exported function WipeTreasures( spot )
-    var data  := GetProps( spot ).treasures;
-
-endfunction

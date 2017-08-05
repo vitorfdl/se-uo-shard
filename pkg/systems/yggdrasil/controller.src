@@ -1,0 +1,48 @@
+use os;
+use uo;
+
+include "boss";
+include "spawnGroup";
+include "spawnSpot";
+include "include/arrays";
+
+program controller()
+   while (1)
+      var spotgroups := DFGetElemNames(LoadSpotGroupData());
+      foreach spot_g in spotgroups
+         resolveGroup(spot_g)
+         sleepms(2);
+      endforeach
+      sleep(600);
+   endwhile
+endprogram
+
+function resolveGroup(spot_g)
+   var group_data := GetSpotGroupData(spot_g);
+   if (!group_data.active)
+      return;
+   endif
+   var yggdrasil  := GetGlobalProperty("yggdrasil");
+   var ygg_index  := FindInArray(yggdrasil, struct{ "name" := spot_g });
+   var ygg_struct := struct{};
+   if (!ygg_index)
+      ygg_struct.+name   := spot_g;
+      ygg_struct.+killed := 0;
+   else
+      ygg_struct := yggdrasil[ygg_index];
+   endif
+
+   var ninity_percent := yggdrasil.mob_number * 0.9;
+   if (ygg_struct.killed >= ninity_percent) 
+      var new_spawngroup := yggdrasil.spawngroup_list.randomentry();
+      SetSpawnGroupData(spot_g, struct{ "activegroup" := new_spawngroup });
+      ygg_struct.killed := 0;
+
+      if (ygg_index)
+         yggdrasil.Erase(ygg_index);
+      endif
+
+      yggdrasil.append(ygg_struct);
+      SetGlobalProperty("yggdrasil", ygg_struct);
+   endif
+endfunction
