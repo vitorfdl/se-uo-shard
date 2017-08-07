@@ -21,7 +21,9 @@ include ":combat:combat";
 include "include/packets";
 include "include/facings";
 include "include/say";
+include "include/dungeons";
 include "include/damage";
+include "include/utils";
 // include ":charactercreation:habilidades";
 // include ":tn:cooldown";
 include ":timedscripts:timedScripts";
@@ -33,13 +35,11 @@ var item_cff  := ReadConfigFile(":*:itemdesc");
 //Global because they're important, and it keeps the function
 //prototypes shorter and easier to read.
 var wpn_a_elem;
+var weapon;
 
-function CalculateRawDamage(attacker, weapon)
+function CalculateRawDamage(attacker)
 	if (attacker.npctemplate)
-		var npctemplate := NPC_ParseTemplateName(attacker.npctemplate);
-		var cfg         := ReadConfigFile(":ghaia:npcdesc");
-		var dmg         := cfg[npctemplate.template].AttackDamage;
-		//printtextabove(attacker, "dmg dice " + dmg);
+		var dmg := wpn_a_elem.dicedmg;
 		return ( RandomDiceRoll(dmg) );
 	else
 		var weaponcfg  := ReadConfigFile(":*:itemdesc");
@@ -58,6 +58,7 @@ endfunction
 program Attack(params)
    var attacker := params[1];
    var defender := params[2];
+	weapon := attacker.weapon;
 
 	if ( attacker == defender )
 		ApplyRawDamage(attacker, 5000);
@@ -76,7 +77,7 @@ program Attack(params)
 		endif
 	endif
 
-	wpn_a_elem := GetItemCFGInfo(attacker, attacker.weapon);
+	wpn_a_elem := GetItemCFGInfo(attacker, weapon);
 
 	if ( (attacker.paralyzed) || (attacker.frozen) )
 		SendSysMessage(attacker, "Voce nao consegue atacar.");
@@ -108,11 +109,11 @@ program Attack(params)
 	endif
 
 	//Arrow repulse magic
-	if (GetObjProperty(defender, "#arrowrepulse") == 1 && attacker.weapon.isBow())
+	if (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow())
 		defender_CA := 100;
 	endif
 
-	PlayAttackAnimation(attacker);
+	PlayAttackAnimation(attacker, wpn_a_elem);
 
 	//ACERTOU
 	if ( attack_chance > defender_CA )
@@ -121,15 +122,15 @@ program Attack(params)
 		// 		TS_StartTimer(defender, "paralysis", 2);
 		// 	endif
 		// endif
-		WearDownWeapon(attacker, attacker.weapon);
+		WearDownWeapon(attacker);
 		PlayHitSounds(attacker, defender);
-		var dmg := CalculateRawDamage(attacker, attacker.weapon);
+		var dmg := CalculateRawDamage(attacker);
 		ExpGain(attacker, defender_CA, attack_chance);
-		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, attacker.weapon, armor, dmg, dmg});
+		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, dmg, wpn_a_elem });
 
 	else //ERROU O ATAQUE
-		if ( attacker.weapon.isBow() && !attacker.npctemplate )
-			ArrowRecovery(defender, attacker.weapon);
+		if ( weapon.isBow() && !attacker.npctemplate )
+			ArrowRecovery(defender);
 		endif
 
 		EraseObjProperty(attacker, "movement");
@@ -146,7 +147,7 @@ program Attack(params)
 			PlayMissSound(attacker);
 		else
 			PlayHitSounds(attacker);
-			WearDownWeapon(attacker, attacker.weapon);
+			WearDownWeapon(attacker);
 		endif
 	endif
 
@@ -170,8 +171,8 @@ function GetAttackerChance(attacker, defender)
 	var bonus := 0;
 	if (!attacker.npctemplate)
 		// Verifica se arma tem atributo
-		if (attacker.weapon.Attribute)
-			attribute := attacker.weapon.Attribute;
+		if (weapon.Attribute)
+			attribute := weapon.Attribute;
 			// Checa Pericia
 			if (HaveSkill(attacker, wpn_a_elem.Pericia))
 				bonus := cint(getProficiencyBonus(attacker));
@@ -189,10 +190,10 @@ function GetAttackerChance(attacker, defender)
 		endif
 	else
 		// Pega atributo principal do npc
-		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
-		if (npcelem.AttackAttribute)
-			attribute := npcelem.AttackAttribute;
+		if (wpn_a_elem.Attribute)
+			attribute := wpn_a_elem.Attribute;
 		endif
+		bonus := cint(wpn_a_elem.hitbonus);
 	endif
 	
 	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
@@ -270,32 +271,31 @@ function WearDownArmor(defender, armor)
 	return 1;
 endfunction
 
-function WearDownWeapon(attacker, weapon)
+function WearDownWeapon(attacker)
 	if ( weapon.IsA(POLCLASS_WEAPON) && !attacker.npctemplate)
 		if ( weapon.objtype == 0x1F020)
 			return 1;
-		else
-			var wpn_elem := CS_GetSettingsCfgElem("Weapons");
-			var wearchance := CInt(wpn_elem.WearChance);
-         var roll := RandomDiceRoll("1d100");
-			if ( roll <= wearchance )
-				var weaponhp := weapon.hp - 1;				
-				if ( weaponhp <= 0 )
-					weapon.hp := 0;
-					SendSysMessage(attacker, weapon.desc+" quebrou.");
-					MoveObjectToLocation(weapon, 1, 1, 1, attacker.realm, MOVEOBJECT_FORCELOCATION);
-					SetObjProperty(weapon, "broken", 1);
-					SetObjProperty(weapon, "realdesc", weapon.desc);
-					SetName(weapon, weapon.desc+" [danificado]");
-					MoveItemToContainer(weapon, attacker.backpack);
-				elseif ( weapon.hp > weapon.maxhp )
-					weapon.hp := weapon.maxhp;
-				else
-					weapon.hp := weaponhp;
-				endif
-			endif
-			return 1;
 		endif
+		var wpn_elem := CS_GetSettingsCfgElem("Weapons");
+		var wearchance := CInt(wpn_elem.WearChance);
+		var roll := RandomDiceRoll("1d100");
+		if ( roll <= wearchance )
+			var weaponhp := weapon.hp - 1;				
+			if ( weaponhp <= 0 )
+				weapon.hp := 0;
+				SendSysMessage(attacker, weapon.desc+" quebrou.");
+				MoveObjectToLocation(weapon, 1, 1, 1, attacker.realm, MOVEOBJECT_FORCELOCATION);
+				SetObjProperty(weapon, "broken", 1);
+				SetObjProperty(weapon, "realdesc", weapon.desc);
+				SetName(weapon, weapon.desc+" [danificado]");
+				MoveItemToContainer(weapon, attacker.backpack);
+			elseif ( weapon.hp > weapon.maxhp )
+				weapon.hp := weapon.maxhp;
+			else
+				weapon.hp := weaponhp;
+			endif
+		endif
+		return 1;
 	endif
 
 	return 0;
@@ -303,10 +303,10 @@ endfunction
 
 // Checa por munição ou faz efeito do npc arqueiro
 function AmmoCheck(attacker, defender)
-	if (attacker.weapon.isMagicWeapon())
+	if (weapon.isMagicWeapon())
 		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
 		return 1;
-	elseif ( !attacker.weapon.isBow() )
+	elseif ( !weapon.isBow() )
 		return 1;
 	endif
 
@@ -316,7 +316,7 @@ function AmmoCheck(attacker, defender)
 	endif
 
 	var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
-	var ammo   := GetObjProperty(attacker.weapon, "ammo");
+	var ammo   := GetObjProperty(weapon, "ammo");
 	if (!ammo)
 		SendSysMessageEX(attacker, "Voce nao definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]", SSM_FAIL);
 		return 0;
@@ -335,11 +335,11 @@ function AmmoCheck(attacker, defender)
 endfunction
 
 // Cria as munição no chão
-function ArrowRecovery(defender, weapon)
+function ArrowRecovery(defender)
 	var chance := 15;
 	if ( RandomDiceRoll("1d100") <= chance )
 		var ammo := GetObjProperty(weapon, "ammo");
-		var point = RandomPlace(who.location, 1);
+		var point := RandomPlace(defender, 1);
 		CreateItemAtLocation(point.x, point.y, defender.z, ammo, 1, defender.realm);
 	endif
 endfunction

@@ -16,8 +16,8 @@ include "include/facings";
 include ":tn:cooldown";
 
 program book(who, book)
-	var can_read  := HaveSkills(who, "Linguagem Elfica");
-	var book_gump := CreateBookGump(book, who, can_read);
+	var can_read  := HaveSkill(who, "Linguagem Elfica");
+	var book_gump := CreateBookGump(book, can_read);
 	var result    := GFSendGump(who, book_gump);
 
 	if (result[0] > 900)
@@ -42,7 +42,7 @@ program book(who, book)
 			SendSysMessageEx(who, "Algum erro ocorreu com sua magia, avise um GM.", SSM_FAIL);
 			return 1;
 		endif
-			EscreverMagia(who, spells[spell]);
+			WriteMagic(who, spells[spell]);
 	endif
 
 endprogram
@@ -73,7 +73,7 @@ function CopyRecipe(who, recipe)
 endfunction
 
 
-function CreateBookGump(book, who, can_read := 0)
+function CreateBookGump(book, can_read := 0)
 	var spell_list := GetObjProperty(book, "spells");
 	if( TypeOf(spell_list) != "Array" )
 		spell_list := array{};
@@ -108,8 +108,8 @@ function CreateBookGump(book, who, can_read := 0)
 
 	var pOX       := 130;
 	var pOY       := 65;
-	foreach rune in spell_list
-		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+rune_iter_);
+	foreach spell in spell_list
+		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+_spell_iter);
 		pOY+=15;
 		if (pOY >180)
 			pOY := 65;
@@ -129,8 +129,8 @@ function CreateBookGump(book, who, can_read := 0)
 			GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, (i+1));
 		endif
 
-		GenerateFilledSide(who, book_gump, spell_list, i, 1, pOX, pOY, spell_pos);
-		GenerateFilledSide(who, book_gump, spell_list, i, 2, pOX, pOY, spell_pos);
+		GenerateFilledSide(book_gump, spell_list, i, 1, pOX, pOY, i-1);
+		GenerateFilledSide(book_gump, spell_list, i, 2, pOX, pOY, i-1);
 
 		SleepMS(2);
 	endfor
@@ -142,7 +142,7 @@ endfunction
 // Generate every page of the book. And the button for the First page.
 // Inside generate empty page too
 //-----------------
-function GenerateFilledSide(byref who, byref book_gump, spell_list, i, side, byref pOX, byref pOY, byref spell_pos)
+function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, byref spell_pos)
 	var sOX := 160;
 	if (side == 2)
 		sOX := 300;

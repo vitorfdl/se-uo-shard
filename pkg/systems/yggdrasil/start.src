@@ -1,0 +1,4 @@
+use os;
+
+syslog("Inicializando o sistema de spawns");
+start_script("controller");

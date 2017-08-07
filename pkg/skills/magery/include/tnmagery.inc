@@ -1,3 +1,6 @@
+include "include/say";
+include ":timedscripts:timedScripts";
+
 function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
 	cfg := ReadConfigFile(cfg);
 	if (!cfg)
@@ -36,6 +39,7 @@ function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
 	spellinfo.+circle      := GetConfigInt( elem, "Circle" );
 	spellinfo.+charges     := GetConfigInt( elem, "Charges" );
 	spellinfo.+radius      := GetConfigInt( elem, "Radius" );
+	spellinfo.+pericia     := GetConfigInt( elem, "Percia" );
 	if (spellinfo.flavortext == error)
 		spellinfo.flavortext := "";
 	else
@@ -52,8 +56,8 @@ function TNCheckReagents(who, byref spellinfo, item)
 			SendSysMessageEx(who, "Não há cargas suficientes para a magia.", SSM_FAIL);
 			return 0;
 		endif
-		charges -: spellinfo.charges;
-		SetObjProperty(item, "charges", charges)
+		charges -= spellinfo.charges;
+		SetObjProperty(item, "charges", charges);
 		return 1;
 	endif
 
@@ -116,8 +120,8 @@ function WriteMagic(who, spell_id)
 		return;
 	else
 		var combat_cfg := ReadConfigFile(":combat:itemdesc");
-		var elem := FindConfigElem(combat_cfg, who.weapon);
-		if (elem.DamageType !== "Corte" || elem.DamageType !== "Perfuração")
+		var elem       := FindConfigElem(combat_cfg, who.weapon);
+		if (elem.DamageType != "Corte" || elem.DamageType != "Perfuração")
 			SendSysMessageEx("Voce precisa equipar algum objeto pontiagudo", SSM_FAIL);
 			return;
 		endif
@@ -131,27 +135,26 @@ function WriteMagic(who, spell_id)
 	var spell_list := GetObjProperty(targ, "spell_list");
 	var magic_user := GetObjProperty(targ, "magic_user");
 	if (!targ.isA(POLCLASS_ITEM))
-		SendSysMessageEx("Voce deve escolher um objeto!". SSM_FAIL);
+		SendSysMessageEx("Voce deve escolher um objeto!", SSM_FAIL);
 		return;
 	elseif (!magic_slot)
-		SendSysMessageEx("Este objeto nao tem poder magico!". SSM_FAIL);
+		SendSysMessageEx("Este objeto nao tem poder magico!", SSM_FAIL);
 		return;
 	elseif (spell_list && spell_list.size() >= magic_slot)
-		SendSysMessageEx("Este objeto nao possui mais espaco para magias!". SSM_FAIL);
+		SendSysMessageEx("Este objeto nao possui mais espaco para magias!", SSM_FAIL);
 		return;
 	elseif (spell_id in spell_list)
-		SendSysMessageEx("O equipamento ja tem essa magia!". SSM_FAIL);
+		SendSysMessageEx("O equipamento ja tem essa magia!", SSM_FAIL);
 		return;
 	elseif(magic_user && magic_user != who.serial)
-		SendSysMessageEx("Voce nao e capaz de alterar inscricoes feitas por outras pessoas". SSM_FAIL);
+		SendSysMessageEx("Voce nao e capaz de alterar inscricoes feitas por outras pessoas", SSM_FAIL);
 		return;
 	endif
 	
-	var i;
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
 		if (who.x != loc[1] && who.y != loc[2])
-			SendSysMessageEx("Voce se moveu e parou de gravar no objeto". SSM_FAIL);
+			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto". SSM_FAIL);
 			return;
 		endif
 		PrintTextAbove(who, "*inscrevendo em {}*".format(targ.desc));
@@ -161,26 +164,25 @@ function WriteMagic(who, spell_id)
 
 	var spellinfo := struct{ id := spell_id };
 	if (!WriteSpellInfo(spellinfo))
-		SendSysMessageEx("Ocorreu um erro ao inscrever a magia". SSM_FAIL);
+		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia". SSM_FAIL);
 		return;
 	endif
 	var dice_roll := rollAttrDice(who, INTELLIGENCE);
 	if (dice_roll <= spellinfo.Difficulty+3)
-		SendSysMessageEx("Parece que você errou durante a copia. O espaço ficou inutilizado.". SSM_FAIL);
+		SendSysMessageEx(who, "Parece que você errou durante a copia. O espaço ficou inutilizado.". SSM_FAIL);
 		spell_list.append(0);
 		SetObjProperty(targ, "spell_list", spell_list);
 		return;
 	endif
 
-	spell_list.append(spell_id)
+	spell_list.append(spell_id);
 	SetObjProperty(targ, "magic_user", who.serial);
 	SetObjProperty(targ, "spell_list", spell_list);
 	SetObjProperty(targ, "magicwho", array{ who.serial });
-	SendSysMessageEx("Voce inscreveu com sucesso a magia na arma.". SSM_FAIL);
+	SendSysMessageEx(who, "Voce inscreveu com sucesso a magia na arma.". SSM_FAIL);
 endfunction
 
 function dispel(targ);
-
 	var timer_list := TS_GetTimerList(targ);
 	var names := array;
 
@@ -221,3 +223,16 @@ function dispel(targ);
 	EraseObjProperty(targ, "tirocerteiro");
 	EraseObjProperty(targ, "evasao");
 endfunction 
+
+function SetClericSpellUsed(mobile, spellinfo)
+	var cleric_list := GetObjProperty(mobile, "cleric_list");
+	foreach spell in cleric_list
+		if (spell.id == spellinfo.id && !spell.used)
+			spell.used := 1;
+			break;
+		endif
+		sleepms(2);
+	endforeach
+
+	SetObjProperty(mobile, "cleric_list", cleric_list);
+endfunction

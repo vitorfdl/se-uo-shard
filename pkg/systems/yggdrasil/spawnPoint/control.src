@@ -3,7 +3,7 @@ use os;
 
 program Install(spawnpoint)
    while(spawnpoint)
-      spawnpoint.DoSpawnQueue();
+      spawnpoint.DoSpawnQueue(0);
       sleep(60);
    endwhile
 endprogram

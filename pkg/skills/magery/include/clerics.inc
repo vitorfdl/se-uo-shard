@@ -18,7 +18,7 @@ function RemoveUsedSpells(who, byref cleric_list, byref available_slots)
    foreach spell in cleric_list
       if (spell.used && polcore().systime > spell.time)
          var index := FindInArray(cleric_list, spell);
-         cleric_list.Erase(spell_found);
+         cleric_list.Erase(index);
          available_slots += spell.circle;
       endif
    endforeach

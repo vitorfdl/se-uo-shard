@@ -207,3 +207,24 @@ function AI_Speak(npc, text, text_type:=SPEAK_TEXTTYPE_DEFAULT, do_event:=SPEAK_
 
 	return SendEvent(npc, ev);
 endfunction
+
+function GetNpcRandomAttack(mobile)
+	var npctemplate := NPC_GetNPCConfig(mobile.npctemplate);
+	var attack     := GetConfigStringArray(npctemplate, "Attack");
+	if (!attack || !attack[1])
+		return 0;
+	endif
+
+	attack := SplitWords(attack.randomEntry(), " ");
+
+	var result := struct{
+		"dicedmg" := attack[2],
+		"hitbonus" := cint(attack[3]),
+		"DamageType" := attack[4],
+		"AttackAnim" := cint(attack[5]),
+		"Attribute" := npctemplate.AttackAttribute,
+		"MaxRange" := npctemplate.MaxRange,
+		"MinRange" := npctemplate.MinRange
+	};
+	return result;
+endfunction

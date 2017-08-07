@@ -12,5 +12,5 @@ program oafeatures_sendpacket(who)
    // endif
 
    // print(typeof(RandomDiceRoll("1d100")));
-   who.SkillList();
+   who.attack_once();
 endprogram

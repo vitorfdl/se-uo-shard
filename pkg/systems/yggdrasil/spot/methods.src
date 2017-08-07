@@ -57,6 +57,9 @@ exported function SetProps( spot, data := struct{} )
         old_data.treasures := data.treasures;
     endif
 
+    if (data.activegroup)
+        old_data.activegroup := data.activegroup;
+    endif
     old_data := ModelSpot(old_data);
 
     SetObjProperty(spot, "timeinterval", old_data.timeinterval);
@@ -65,6 +68,7 @@ exported function SetProps( spot, data := struct{} )
     SetObjProperty(spot, "evententry", old_data.evententry);
     SetObjProperty(spot, "spotgroup", old_data.spotgroup);
     SetObjProperty(spot, "treasures", old_data.treasures);
+    SetObjProperty(spot, "activegroup", old_data.activegroup);
 endfunction
 
 exported function yggdrasil ( spawnpoint, data := struct{})
@@ -98,6 +102,10 @@ function ModelSpot( data := struct{} )
         foreach treasure in (data.treasures)
             treasure := ModelTreasure(treasure);
         endforeach
+    endif
+
+    if (TypeOf(data.activegroup) != "String")
+        data.activegroup := "";
     endif
 
     return data;
@@ -175,14 +183,4 @@ exported function RemoveTreasure( spot, serial )
         SetProps( spot, data );
     endif
     return 1;
-endfunction
-
-exported function SpawnTreasures( spot )
-    var data  := GetProps( spot ).treasures;
-
-endfunction
-
-exported function WipeTreasures( spot )
-    var data  := GetProps( spot ).treasures;
-
 endfunction

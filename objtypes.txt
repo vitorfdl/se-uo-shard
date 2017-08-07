@@ -675,7 +675,7 @@
 0xed1 bones2 containers
 0xed2 bones containers
 # 0xed3 - 0xeec unused
-0xeed GoldCoin metalworking
+0xeed moedaouro fls_core
 # 0xeee - 0xf0d unused
 0xf0e EmptyBottle alchemy
 0xf0f starsapphire gems
@@ -730,7 +730,7 @@
 0xf7d BloodReagent alchemy
 0xf7e Bone alchemy
 0xf7f Brimstone alchemy
-0xf80 daemonbone alchemy
+0xf80 demonbone magery
 0xf81 FertileDirt alchemy
 0xf82 DragonBlood alchemy
 0xf83 ExecutionersCap alchemy
@@ -972,7 +972,9 @@
 0x1219 stonechai2
 0x121a stonechai3
 0x121b stonechair4
-# 0x121c - 0x1229 unused
+# 0x121c - 0x1224 unused
+0x1225 anaraltar magery
+# 0x1226 - 0x1229 unused
 0x122a blood blood
 # 0x122b - 0x122c unused
 0x122d bloodvial alchemy
@@ -1553,7 +1555,9 @@
 0x27af DualDagger combat
 # 0x27b0 - 0x27d8 unused
 0x27d9 NinjaMask combat
-# 0x27da - 0x2803 unused
+# 0x27da - 0x27e7 unused
+0x27e8 anaremel_mask combat
+# 0x27e9 - 0x2803 unused
 0x2804 dardo tn
 0x2805 flute musicianship
 # 0x2806 - 0x2b67 unused
@@ -1772,7 +1776,9 @@
 0x608f smallstoneshophouse house
 # 0x6090 - 0x60ff unused
 0x6100 grimorio magery
-# 0x6101 - 0x613f unused
+# 0x6101 - 0x6115 unused
+0x6116 pergaminhomagico magery
+# 0x6117 - 0x613f unused
 0x6140 nystulldeed1 house
 0x6141 scaffolddeed house
 # 0x6142 - 0x6180 unused
@@ -2028,8 +2034,7 @@
 # 0xb01b - 0xba62 unused
 0xba63 moedacobre fls_core
 0xba64 moedaprata fls_core
-0xba65 moedaouro fls_core
-# 0xba66 - 0xbd10 unused
+# 0xba65 - 0xbd10 unused
 0xbd11 pedrapequena gathering
 0xbd12 pedramedia gathering
 0xbd13 pedragrande gathering

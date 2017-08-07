@@ -17,7 +17,6 @@ include ":tn:tngumps";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
-include ":attributes:titles";
 include "include/say";
 include "include/client";
 include ":gumps:requestgump";
@@ -31,7 +30,7 @@ var attr_list 	    := array{"Strength", "Dexterity", "Intelligence", "Wisdom", "
 
 program core_skillWin(who)
 	if (who.dead)
-		PrivateSystemReport(who, "Estou morto e impossibilitado de realizar qualquer atividade.");
+		SendSystemReport(who, "Estou morto e impossibilitado de realizar qualquer atividade.");
 		return;
 	endif
 	
@@ -41,6 +40,10 @@ endprogram
 function skillWindow(who)
 	var gump  := buildGump(who);
 	var input := GFSendGump(who, gump);
+
+	if (input[0] >= 1 && input[0] <= 50)
+		Start_Script( AP_GetSkillScript( GetSkillNameByID( input[0] ) ) , who);
+	endif
 endfunction
 
 function buildGump(who)
@@ -55,7 +58,11 @@ function buildGump(who)
 	var s_x := 240;
 	var s_y := 52;
 	foreach skill in (who.skillList())
-		// GFAddButton(gump, s_x, s_y, 2224, 2224, GF_CLOSE_BTN, 0); //Use Skill
+		if (AP_GetSkillScript(skill) != error)
+			var elem := AP_GetAttributeCfgElem(skill);
+			var id := elem.SkillId;
+			GFAddButton(gump, s_x, s_y, 2224, 2224, GF_CLOSE_BTN, id); //Use Skill
+		endif
 		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
 		GFTextLine(gump, s_x+18, s_y-3, 1152, skill);
 		s_y += 30;
@@ -71,10 +78,10 @@ function buildGump(who)
 	var f_x := 395;
 	var f_y := 53;
 	foreach feat in feat_list
-		GFAddButton(gump, f_x, f_y, 2224, 2224, GF_CLOSE_BTN, 0); //Usar Talento
+		// GFAddButton(gump, f_x, f_y, 2224, 2224, GF_CLOSE_BTN, 0); //Usar Talento
 		GFGumpPic(gump, f_x+14, f_y-5, 40135, 0);
 		GFTextLine(gump, f_x+18, f_y-3, 1152, feat);
-		GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 0); // Info
+		// GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 0); // Info
 	endforeach
 
 	// GFGumpPic(gump, 581, 55, 4033, 1259);

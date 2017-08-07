@@ -6,6 +6,7 @@ use os;
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include "include/sounds";
+include "include/damage";
 
 function ManterMagia(magia, mage, mobile)
 	var mana;
@@ -60,12 +61,12 @@ function CheckDelay(who, spell_elem)
 endfunction
 
 function EquipmentCheck(who)
-	var cfg := ReadConfig(":combat:itemdesc")
+	var cfg := ReadConfigFile(":combat:itemdesc");
 	var equips := ListEquippedItems( who );
 
 	foreach equip in equips
 		var elem := FindConfigElem( cfg, equip.objtype );
-		if (elem && elem.Pericia && HaveSkill(elem.Pericia))
+		if (elem && elem.Pericia && HaveSkill(who, elem.Pericia))
 			return 0;
 		endif
 	endforeach
@@ -131,12 +132,12 @@ function FailSpell(who)
 	return 1;
 endfunction
 
-function ConsumeMana(who, qty) 
-	if (!AP_ConsumeVital(mobile, MANA, spellinfo.mana))
-		var hit_qty = spellinfo.mana - GetVital(who, MANA);
-		AP_ConsumeVital(mobile, MANA, GetVital(who, MANA));
-		ApplyDamageEX(mobile, hit_qty * 2);
-		if (who.dead)
+function TS_ConsumeMana(mobile, qty) 
+	if (!AP_ConsumeVital(mobile, MANA, qty))
+		var hit_qty := qty - GetVital(mobile, MANA);
+		AP_ConsumeVital(mobile, MANA, GetVital(mobile, MANA));
+		ApplyDamageEX(mobile, hit_qty * 2, "FORCED");
+		if (mobile.dead)
 			return 0;
 		endif
 	endif

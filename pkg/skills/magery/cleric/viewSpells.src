@@ -4,19 +4,21 @@ use os;
 include "include/client";
 include "include/sysEvent";
 include ":charactercreation:characters";
+include ":magery:tnmagery";
 
 const SPELL_BTN := 200;
 
 program clericPowerWords(who)
+	detach();
    if (!who.isClass("Clérigo"))
       SendSysMessageEx(who, "Este menu nao e acessivel para sua classe", SSM_FAIL);
       return;
    endif
 
    var char_level   := who.GetLevel();
-   var cleric_slots := char_level+ 2;
+   var cleric_slots := char_level+2;
    var cleric_list  := GetObjProperty(who, "cleric_list");
-
+   if (!cleric_list) cleric_list := array{}; endif
    var slots_used := 0;
    foreach spell in cleric_list
       var new_spell := spell.id;
@@ -26,9 +28,7 @@ program clericPowerWords(who)
       cleric_list.Erase(_spell_iter);
       cleric_list.Insert(_spell_iter, new_spell);
 
-      if (EmptyOrAvailable(spell) == 1)
-         slots_used += spell.circle;
-      endif
+      slots_used += spell.circle;
 
       sleepms(2);
    endforeach
@@ -38,35 +38,64 @@ program clericPowerWords(who)
    var canceled := 0;
    while (!canceled)
       var input := CreateClericGump(who, cleric_list, available_slots);
+
+      if (!input[0])
+         canceled := 1;
+      endif
    endwhile
 endprogram
 
 function CreateClericGump(who, cleric_list, available_slots)
+	var gump := GFCreateGump();
+	
+   GFSetId(gump, GUMPID_CLERICSPELL);
+	GFClosable(gump, 1);
+	GFResizePic(gump, 10, 26, 9390, 463, 284);
+	GFHTMLArea(gump, 180, 65, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0); //shadow
+	GFHTMLArea(gump, 182, 67, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0);
+	GFHTMLArea(gump, 181, 66, 192, 20, "<BASEFONT Size=5 Color=#ffffff >Lista de Bençãos", 0, 0); //shadow
+	GFGumpPic(gump, 139, 84, 1469);
+	// GFTextLine(gump, 187, 66, 0, "Lista de Bençãos");
+	GFGumpPic(gump, 31, 98, 9773, 0);
+	GFTextLine(gump, 56, 95, 1445, "Bençãos");
+	GFTextLine(gump, 255, 96, 1445, "Palavras de Poder");
 
+   for i := 1 to available_slots
+      cleric_list.append(struct{});
+   endfor
+
+   var y := 116;
    foreach spell in cleric_list
       var not_empty := isNotEmpty(spell);
+      var spellname := "<basefont Size= 1>Empty";
+      var powerwords := "";
 
-      if (not_empty)
-         // show spell name
-         var powerwords := ", ".join(spell.powerwords);
-         // show powerwords
-      else
-         // show empty
+      if (not_empty && spell.id)
+         spellname := spell.name;
+         powerwords := ", ".join(spell.powerwords);
       endif
 
-      if (not_empty == 1)
-         // show forgot it button
+      GFHTMLArea(gump, 52, y, 192, 24, "{}".format(spellname), 1, 0);
+      GFHTMLArea(gump, 253, y, 174, 24, "{}".format(powerwords), 1, 0);
+
+      if (not_empty == )
+         GFAddButton(gump, 431, y+2, 22150, 22151, GF_CLOSE_BTN, 200+_spell_iter);
+	      GFTooltip(gump, 1030297);
       endif
+
+      y += 26;
    endforeach
+
+   return GFSendGump(who, gump);
 endfunction
 
 function isNotEmpty(spell)
-   if (spell.time < polcore().systime)
-      if (spell.used)
-         return 0;
-      else
-         return 1;
-      endif
+   if(spell.time < polcore().systime && spell.used)
+      return 3;
+   elseif (spell.time < polcore().systime)
+      return 0;
+   elseif(spell.used)
+      return 1;
    endif
 
    return 2;

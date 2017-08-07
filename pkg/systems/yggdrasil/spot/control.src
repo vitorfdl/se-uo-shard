@@ -1,7 +1,38 @@
 use uo;
+use os;
+include ":yggdrasil:spawnSpot";
+include ":yggdrasil:treasures";
+include "include/dungeons";
 
-program Install(spawnspot)
-   while(spawnspot)
-      
+program Install(spot)
+   while(spot)
+      var config := spot.GetProps();
+      if (!HasPlayerNear(spot.x, spot.y, spot.realm) && config.active)
+         var group_data := GetSpotGroupData(config.spotgroup);
+         if (group_data.activegroup != config.activegroup)
+            spot.SetProps(struct{ "activegroup" := group_data.activegroup });
+            spot.ForceKill();
+         endif
+         FillSpawnQueue(config.spawnpoints);
+         ResetTreasures(config.treasures);
+      endif
+      var sleepwait := cint(config.timeinterval) * 60;
+      sleep(sleepwait);
    endwhile
 endprogram
+
+function FillSpawnQueue(spawnpoints)
+    foreach serial in spawnpoints
+        var spawnpoint := SystemFindObjectBySerial(serial);
+        spawnpoint.FillQueue();
+        sleepms(2);
+    endforeach
+endfunction
+
+function ResetTreasures(treasures)
+   foreach item in treasures
+      var treasure := SystemFindObjectBySerial(item.serial);
+      SpawnTreasure(treasure, item);
+      sleepms(2);
+   endforeach
+endfunction

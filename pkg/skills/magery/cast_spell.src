@@ -8,9 +8,11 @@ include ":itemutils:itemdesc";
 include ":magery:tnmagery";
 include ":magery:basicMagery";
 include "include/say";
+include "include/client";
 include ":charactercreation:habilidades";
 include "include/facings";
 include ":tn:cooldown";
+include ":attributes:attributes";
 
 program SpellStarter(params)
 	var mobile    := params[1]; // Caster
@@ -19,8 +21,8 @@ program SpellStarter(params)
 	var targ      := params[4];
 	var cfg       := params[5];
 
-	if (spellinfo.id != error) //le o cfg pra escrever a info
-		writeSpellInfo(mobile, spellinfo, cfg);
+	if (spellinfo.id == error) //le o cfg pra escrever a info
+		writeSpellInfo(spellinfo, cfg);
 	endif
 
 	if ( GetObjProperty(mobile, "metamorfose") != error )
@@ -57,7 +59,7 @@ program SpellStarter(params)
          SendSysMessageEx(mobile, "Suas maos precisam estar livres para gesticular os componentes gestuais necessarios para a magia.", SSM_FAIL);
          FailSpell(mobile);
          return 0;
-      elseif ( !ConsumeMana(mobile, spellinfo.mana) )
+      elseif ( !TS_ConsumeMana(mobile, spellinfo.mana) )
          SendSysMessageEx(mobile, "Voce nao possui energia arcana suficiente em seu corpo para invocar esta magia!", SSM_FAIL);
          FailSpell(mobile);
          return 0;
@@ -122,7 +124,7 @@ program SpellStarter(params)
    // endif
 
    if (!targ)
-      targ := ChooseTarget(who, spellinfo);
+      targ := ChooseTarget(mobile, spellinfo);
       if (!targ)
          SendsysMessageEx(mobile, "Voce cancelou a magia.", SSM_FAIL);
          FailSpell(mobile);
@@ -147,21 +149,25 @@ program SpellStarter(params)
       attribute := WISDOM;
    endif
 
-   spellinfo.dice_roll = rollAttrDice(mobile, attribute) + getProfiencyBonus(mobile);
+   spellinfo.dice_roll := rollAttrDice(mobile, attribute) + getProficiencyBonus(mobile);
    if (spellinfo.script != error)
       var e := Start_Script(spellinfo.script, array{mobile, spellinfo});
-      //sendsysmessage(mobile, " " );
-      return;
+      if (e == error)
+         FailSpell(mobile);
+      endif
    else
-      Print(mobile, " " + spellinfo);
-   endif  
+      Print(mobile + ": " + spellinfo);
+   endif
+   SetClericSpellUsed(mobile, spellinfo);
    SetCooldown(mobile, spellinfo.name, spellinfo.cooldown);
 
    EraseObjProperty(mobile, "#magiasilenciosa");
    EraseObjProperty(mobile, "#Casting");
 endprogram
 
-function ChooseTarget(who, spellinfo)
+function ChooseTarget(mobile, spellinfo)
+   var targ;
+   printtext(mobile, ""+spellinfo);
    if (spellinfo.alvo == "Self")
       targ := mobile;
    elseif (spellinfo.alvo == "Unico")
@@ -189,7 +195,7 @@ function ChooseTarget(who, spellinfo)
          elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < spellinfo.radius)
             break;
          else
-            SendSysMessageEx(mobile, "Muito Distante!", SSM_FAIL;
+            SendSysMessageEx(mobile, "Muito Distante!", SSM_FAIL);
          endif
       endwhile
    endif

@@ -8,47 +8,45 @@ include ":fls_core:fls_characters";
 include ":nature:nature";
 include ":death:death";
 
-program daynightsystem()
+var config := ReadConfigFile(":nature:config/daynight")["settings"];
 
+program daynightsystem()
 	setglobalproperty("daynightpid", getpid());
-	var config := readconfigfile(":nature:config/daynight");
-	config := config["settings"];
-	var darkness := cint(config.darkness);
-	var daylength := cint(config.daylength) * 60;
+	var darkness    := cint(config.darkness);
+	var daylength   := cint(config.daylength) * 60;
 	var nightlength := cint(config.nightlength) * 60;
-	var transspeed := cint(config.transspeed);
 	
-	var i;
 	while(1)
 		SeasonRotate();  //muda o dia do ano e estaçao
-		MoonFase();      // muda a fase da lua
+      MoonFase();      // muda a fase da lua
                // Temperature();   //mmuda a temperatura local
 		Broadcast("O sol esta nascendo.");
 		SetGlobalProperty("dia", "dia");
 		darkness := GeTMoonLightMod();
-		
-		for (i:=darkness;i>=0;i:=i-1)
-			setregionlightlevel("Background", i);
-			setglobalproperty("lightlevel", i);
-			ApllyLightLevel();
-			sleepms(transspeed);
-		endfor
-			
+		ApplyHalfDay(darkness);
+
 		SetGlobalProperty("halfdaytime", ReadGameClock());
 		sleep(daylength);
+		ApplyHalfDay(darkness);
   
-		broadcast("O sol esta se pondo.");
-                SetGlobalProperty("dia", "noite");
-		for (i:=0;i<=darkness;i:=i+1)
-			setregionlightlevel("Background", i);
-			setglobalproperty("lightlevel", i);
-			ApllyLightLevel();
-			sleepms(transspeed);
-		endfor
+		BroadCast("O sol esta se pondo.");
+      SetGlobalProperty("dia", "noite");
+
 
 		SetGlobalProperty("halfdaytime", ReadGameClock());
 		sleep(nightlength);
-
 	endwhile
 endprogram
 
+function ApplyHalfDay(darkness)
+	var transspeed := cint(config.transspeed);
+	var i;
+	for (i:=darkness;i>=0;i:=i-1)
+		Setregionlightlevel("Background", i);
+		Setglobalproperty("lightlevel", i);
+		ApllyLightLevel();
+		sleepms(transspeed);
+	endfor
+
+	return 1;
+endfunction

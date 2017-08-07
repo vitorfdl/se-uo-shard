@@ -5,6 +5,8 @@ include "include/client";
 include "include/sysEvent";
 include ":charactercreation:characters";
 include ":magery:clerics";
+include ":magery:tnmagery";
+include ":tn:tngumps";
 
 const SPELL_BTN := 200;
 
@@ -26,7 +28,7 @@ program orderSpells(who)
    var slots_used := 0;
    foreach spell in (GetConfigIntKeys(cfg))
       sleepms(2);
-      WriteSpell(spell, ":magery:config/cleric");
+      WriteSpellInfo(spell, ":magery:config/cleric");
 
       var spell_found := FindInArray(cleric_list, struct{ id := spell.id });
       if (spell_found)
@@ -43,6 +45,8 @@ program orderSpells(who)
       elseif(spell.circle == 5 && char_level < 18)
          continue;
       elseif(spell.circle == 6 && char_level < 20)
+         continue;
+      elseif (spell.type == "Automático")
          continue;
       endif
       
@@ -65,17 +69,46 @@ program orderSpells(who)
 endprogram
 
 function CreateClericGump(who, spell_list, available_slots)
-   foreach spell in spell_list
-      if (available_slots >= spell.circle)
-         // store spell button
-      endif
+   print(available_slots);
+   var gump := GFCreateGump();
+   var size := spell_list.Size() - 7;
+   if (size >= 1)
+      size := size * 26;
+   else
+      size := 0;
+   endif
+	GFResizePic(gump, 17, 31, 9390, 359, 290+size);
+	// GFHtmlShadowed(gump, 115, 70, 192, 20, "#feb98e ", "<BASEFONT Size=5>Lista de Bençãos");
+	GFHTMLArea(gump, 114, 69, 192, 20, "<BASEFONT Size=5 Color=#999999 >Lista de Bençãos", 0, 0); //shadow
+	GFHTMLArea(gump, 116, 71, 192, 20, "<BASEFONT Size=5 Color=#999999 >Lista de Bençãos", 0, 0); //shadow
+	GFHTMLArea(gump, 115, 70, 192, 20, "<BASEFONT Size=5 Color=#ffffff >Lista de Bençãos", 0, 0);
+	GFGumpPic(gump, 63, 91, 1469);
+	GFGumpPic(gump, 80, 91, 1469);
+	GFTextLine(gump, 63, 100, 0, "Bençãos");
+	GFTextLine(gump, 259, 100, 0, "Slots");
+	GFTextLine(gump, 304, 100, 0, "Receber");
+	GFGumpPic(gump, 38, 103, 9773, 0);
+	GFGumpPic(gump, 296, 0, 9000, 0);
 
+   var y := 121;
+   foreach spell in spell_list
+      GFHTMLArea(gump, 63, y, 192, 24, "{}".format(spell.name), 1, 0);
+      GFHTMLArea(gump, 259, y, 34, 24, "<center>{}".format(spell.circle), 1, 0);
+      if (available_slots >= spell.circle)
+	      GFAddButton(gump, 319, y+4, 10006, 10006, GF_CLOSE_BTN, 200+_spell_iter);
+      else
+         GFGumpPic(gump, 319, y+5, 10006, 1891);
+      endif
+      sleepms(2);
+      y += 26;
    endforeach
+
+   return GFSendGump(who, gump);
 endfunction
 
 function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
    if (available_slots-spellinfo.circle < 0)
-      SendSysMessageEx(who, "Sem slots suficientes para memorizar o encanto.", SSM_FAIL);
+      SendSysMessageEx(who, "Sem slots suficientes para memorizar..", SSM_FAIL);
       return 0;
    endif
 
@@ -84,7 +117,7 @@ function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
       "powerwords" := spellinfo.powerwords,
       "circle"     := spellinfo.circle,
       "time"       := AddTimeTo(polcore().systime, 2, "hours"),
-      "used"       := 0,
+      "used"       := 0
    };
 
    available_slots -= spellinfo.circle;

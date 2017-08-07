@@ -68,7 +68,7 @@ program skill_Stealing(mobile)
 	var user_skill := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
 	var check := rollAttrDice(mobile, DEXTERITY) + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
 	if ( check >= diff )
-		PrivateSystemReport(mobile, "*Success*", mobile, SSM_INFO);
+		SendSystemReport(mobile, "*Success*", mobile, SSM_INFO);
 		//SendSysMessageEx(mobile, "Voce conseguiu abrir a mochila de "+targ.name+".", SSM_INFO);
 		SendOpenSpecialContainer(mobile, targ.backpack);
 		SendSysMessageEx(mobile, "Se desejar parar de roubar, pressione Esc no momento da escolha do item.", SSM_INFO);
@@ -167,8 +167,8 @@ program skill_Stealing(mobile)
 		endwhile
 		mobile.facing := mobile.facing; // Pra fechar o container! ;D
 	else
-		PrivateSystemReport(mobile, "O alvo parece ter percebido algo.", mobile, SSM_FAIL);
-		PrivateSystemReport(targ, "Você sentiu algo na sua bolsa.", targ, SSM_INFO);
+		SendSystemReport(mobile, "O alvo parece ter percebido algo.", SSM_FAIL);
+		SendSystemReport(targ, "Você sentiu algo na sua bolsa.", SSM_INFO, targ);
 		if (check - diff >= 3) // Falha Crítica
 			CriticalFailure(mobile, targ);
 		endif
@@ -188,7 +188,7 @@ function CriticalFailure(mobile, targ)
 		elseif ( player == mobile );
 		elseif ( player == targ );
 		elseif ( !IsBehind(player, targ.x, targ.y) )
-			PrivateSystemReport(player, "Você nota "+mobile.name+" tentando roubar "+targ.name+".", player, SSM_INFO);
+			SendSystemReport(player, "Nota "+mobile.name+" tentando roubar "+targ.name+".", SSM_INFO);
 		endif
 		SleepMS(2);
 	endforeach

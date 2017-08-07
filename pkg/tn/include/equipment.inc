@@ -57,6 +57,11 @@ function RemoveEquipmentMods(who, item)
 		AP_ModifySkillMod(who, skill, 1);
 	endforeach
 
+	if (itemdesc[item.objtype].Pericia && !HaveSkill(who, itemdesc[item.objtype].Pericia))
+		var value := cint(GetObjProperty(who, "ArmorPenalty")) -1;
+		SetObjProperty(who, "ArmorPenalty", value);
+	endif
+	
 	var mods := GetObjProperty(item, "equip");
 	if (!mods)
 		mods := struct{};

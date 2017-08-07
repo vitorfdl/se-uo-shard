@@ -11,6 +11,7 @@ include ":magery:tnmagery";
 include "include/say";
 include ":containers:containers";
 include ":charactercreation:habilidades";
+include ":attributes:attributes";
 
 program book(who, book)
 	//Edmond - 15/02/2012
@@ -111,9 +112,12 @@ function MakePotion ( pot, who)
    
 	var proficiency;
 	if (is_poison)
-		proficiency := GetProficiencyBonus(who, ALQUIMIA);
-	else
 		proficiency := GetProficiencyBonus(who, VENEFICIO);
+		if (!proficiency)
+			proficiency := GetProficiencyBonus(who, ALQUIMIA);
+		endif
+	else
+		proficiency := GetProficiencyBonus(who, ALQUIMIA);
 	endif
 
 	var dice_roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1}) + proficiency;
@@ -154,7 +158,7 @@ function MakePotion ( pot, who)
 			// 	EraseObjProperty(who, "extratoinstantaneo");
 			// endif
 		endif
-		SetObjProperty(thing, "crafterskill", AP_GetSkill(who, ALCHEMY) );
+		SetObjProperty(thing, "crafterskill", AP_GetSkill(who, ALQUIMIA) );
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
 		SendSysMessageEx(who, "Voce fez a pocao e a guardou na sua mochila.", SSM_INFO);
 		ExpGain(who, difficulty, dice_roll.dice);

@@ -24,6 +24,8 @@ const GF_GROUP_ADDSPOT_BTN       := 911;
 const GF_GROUP_REMSPOT_BTN       := 912;
 const GF_GROUP_ADDSPAWNGROUP_BTN := 913;
 const GF_GROUP_REMSPAWNGROUP_BTN := 914;
+const GF_GROUP_FORCESPAWN_BTN := 916;
+const GF_GROUP_FORCEKILL_BTN := 917;
 
 
 const GF_SELECTSPOT_BTN            := 300;
@@ -544,10 +546,10 @@ function ConstructGroupConfig(byref gump)
     GFCheckBox(gump, 210+50, 50+5, 2360, 2361, group_data.active, GF_GROUP_ACTIVE_SWITCH);
 
     GFTextLine(gump, 210+100, 50, 1153, "Spawn:");
-    GFAddButton(gump, 210+90+50, 50+5, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCESPAWN_BTN);
+    GFAddButton(gump, 210+90+50, 50+5, 0x837, 0x838, GF_CLOSE_BTN, GF_GROUP_FORCESPAWN_BTN);
 
     GFTextLine(gump, 210+115, 50+18, 1153, "Kill:");
-    GFAddButton(gump, 210+90+50, 50+5+18, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCEKILL_BTN);
+    GFAddButton(gump, 210+90+50, 50+5+18, 0x837, 0x838, GF_CLOSE_BTN, GF_GROUP_FORCEKILL_BTN);
     //Create Spots Menu
     GFTextLine(gump, 202, 68+18, 555, "Lista de Spots");
     var x := 218;

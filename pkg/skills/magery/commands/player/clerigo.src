@@ -1,0 +1,6 @@
+use uo;
+use os;
+
+program cleric(who)
+   	start_Script(":magery:cleric/viewSpells", who);
+endprogram

@@ -61,9 +61,15 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 		penalty -= 1;
 	endif
 
-	var hunger := AP_GetVital(mobile, "Hunger") / 60;
-	if (!mobile.npctemplate && hunger >= 5)
-		penalty -= 2;
+	if (!mobile.npctemplate && !mobile.master)
+		if (AP_GetVitalMaximumValue(mobile, "DP")-20 > AP_GetVital(mobile, "DP"))
+			penalty -= 2;
+		endif
+
+		var hunger := AP_GetVital(mobile, "Hunger") / 60;
+		if (!mobile.npctemplate && hunger >= 5)
+			penalty -= 2;
+		endif
 	endif
 
 	// Rola o dado com penalidade, se for o caso.
@@ -145,7 +151,7 @@ function rollResistDice(mobile, type)
 
 	if (mobile.npctemplate);
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
-		resist_list  := GetConfigStringArray(npcelem, "Resistência");
+		resist_list  := GetConfigStringArray(npcelem, "Resistencia");
 	else
 		var chardata := GetObjProperty(mobile, "chardata");
 		resist_list   := chardata.resist_list;

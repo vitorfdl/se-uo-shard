@@ -44,7 +44,7 @@ enum SKILLS
 	EXTRACAO           := "Extração",
 	TRATO_ANIMAIS      := "Trato de Animais",
 	MONTARIA           := "Montaria",
-	RUNAS              := "Runas",
+	INSCRICAO_RUNICA   := "Inscrição Rúnica",
 	CURA               := "Milagre de Cura",
 	NECROMANCIA        := "Milagre de Necromância",
 	PRESTIDIGITACAO    := "Prestidigitação",

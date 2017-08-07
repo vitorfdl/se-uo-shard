@@ -27,6 +27,7 @@ function GetSpotGroupData(name, create := 1)
     data.+spots           := DFGetProp(elem, "spots", create, array{});
     data.+spawngroup_list := DFGetProp(elem, "spawngroup_list", create, array{});
     data.+activegroup     := DFGetProp(elem, "activegroup", create, 0);
+    data.+mob_number      := DFGetProp(elem, "mob_number", create, 0);
 
     return data;
 endfunction
@@ -64,6 +65,10 @@ function SetSpotGroupData(name, spotGroup)
 
     if (spotGroup.spots)
         elem.SetProp("spots", spotGroup.spots);
+    endif
+
+    if (spotGroup.mob_number && typeof(spotGroup.mob_number) == typeof(1))
+        elem.SetProp("mob_number", spotGroup.mob_number);
     endif
 endfunction
 
@@ -147,3 +152,26 @@ function RemoveSpotInSpotGroup(name, serial)
 endfunction
 
 /*=====  End of Spot function codes  ======*/
+function KillAllSpots(name)
+    var elem  := GetSpotGroupData(name);
+    foreach serial in (elem.spots)
+        var spot := SystemFindObjectBySerial(serial);
+        if (!spot)
+            return;
+        endif
+        spot.ForceKill();
+        sleepms(2);
+    endforeach
+endfunction
+
+function SpawnAllSpots(name)
+    var elem  := GetSpotGroupData(name);
+    foreach serial in (elem.spots)
+        var spot := SystemFindObjectBySerial(serial);
+        if (!spot)
+            return;
+        endif
+        spot.ForceSpawn();
+        sleepms(2);
+    endforeach
+endfunction

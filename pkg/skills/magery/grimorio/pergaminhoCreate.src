@@ -1,7 +1,8 @@
 use uo;
 use cfgfile;
 use util;
-var spell_cfg;
+
+var spellcfg;
 
 program scrollCreate(item)
 	spellcfg := ReadConfigFile(":magery:config/mage");
@@ -10,8 +11,6 @@ program scrollCreate(item)
 		setGraphic(item);
 		return 1;
 	endif
-
-	var spellinfo := struct;
 
 	//pega o level do scroll
 	var scrollcfg := ReadConfigFile(":magery:itemdesc");
@@ -33,21 +32,20 @@ program scrollCreate(item)
 		endif
 	endforeach
 
-	spell_id := randomspells.randomEntry();
+	var spell_id := randomspells.randomEntry();
 	SetObjProperty(item, "spell_id", spell_id);
 
 	return 1;
 endprogram
 
 function setGraphic(item)
-	var spell_id = GetObjProperty(item, "spell_id");
+	var spell_id := GetObjProperty(item, "spell_id");
 	var type     := GetConfigString( FindconfigElem(spellcfg, spell_id), "Type" );
-
 	case (type)
-		"Fogo": item.graphic := "";
-		"Gelo": item.graphic := "";
-		"Eletrecidade": item.graphic := "";
-		"Veneno": item.graphic := "";
-		"Comando": item.graphic := "";
+		"Fogo": item.graphic := 0x2DAC;
+		"Gelo": item.graphic := 0x2DA2;
+		"Eletrecidade": item.graphic := 0x2DA7;
+		"Veneno": item.graphic := 0x2DA4;
+		"Comando": item.graphic := 0x2DA9;
 	endcase
 endfunction

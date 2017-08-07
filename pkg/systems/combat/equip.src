@@ -47,11 +47,17 @@ function SetEquipmentMods(who, item)
 	//SendSysMessage(who, "equip");
 
 	var itemdesc := ReadConfigFile("::itemdesc");
+	var item_e := itemdesc[item.objtype];
 
-	var restrict := Cint(itemdesc[item.objtype].GenderSpecific);
+	var restrict := Cint(item_e.GenderSpecific);
 	if((restrict == 1) and (CheckGender(who) == 2))
 		SendSysMessage(who, "Apenas mulheres podem vestir isto.");
 		return 0;
+	endif
+
+	if (item_e.Pericia && !HaveSkill(who, item_e.Pericia))
+		var value := cint(GetObjProperty(who, "ArmorPenalty")) +1;
+		SetObjProperty(who, "ArmorPenalty", value);
 	endif
 
 	// if (item.isa(POLCLASS_ARMOR))
@@ -59,7 +65,7 @@ function SetEquipmentMods(who, item)
 	// endif
 
 	//sneak
-	var penalty_list := GetConfigStringArray(itemdesc[item.objtype], "Penalty");
+	var penalty_list := GetConfigStringArray(item_e, "Penalty");
 	foreach skill in penalty_list
 		AP_ModifySkillMod(who, skill, -1);
 	endforeach

@@ -18,13 +18,9 @@ exported function HandleDoubleClick( who, byref packet )
 	//nao sei como, mas as vezes vem sem, entao deixa o pol tratar
 	if (!defender)
 		return 0;
-	endif
-
-	if (defender == who.backpack)
+	elseif (defender == who.backpack)
 		return 0;
-	endif
-
-	if (defender.container == who.backpack)
+	elseif (defender.container == who.backpack)
 		return 0;
 	endif
 
@@ -35,7 +31,7 @@ exported function HandleDoubleClick( who, byref packet )
 
 	//se tiver dentro de container, checa a distancia pro container raiz
 	while (defender.container )
-		defender := defender.container;
+		defender := defender.container; // hack pra pegar a raiz
 	endwhile
 
 	if( Distance(who, defender) > 15 )

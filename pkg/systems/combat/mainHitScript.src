@@ -20,7 +20,6 @@ include "include/say";
 include ":charactercreation:habilidades";
 include "include/client";
 include "include/sounds";
-include ":magery:swordmage";
 
 var item_cfg := ReadConfigFile(":*:itemdesc");
 
@@ -31,6 +30,7 @@ program MainHitScript( params )
 	var armor       := params[4];
 	var base_damage := params[5];
 	var critical    := params[6];
+	var wpn_a_elem := params[7];
 
 	SetScriptController(attacker);
 
@@ -73,7 +73,7 @@ program MainHitScript( params )
 	// Chain Of Pain
 	// TODO: reaproveitar depois
 
-	var damage_type := GetDamageType(attacker);
+	var damage_type := GetDamageType(wpn_a_elem);
 	var resist := checkResist(defender, damage_type);
 	if (resist > 0)
 		base_damage := Floor(base_damage / 2); 
@@ -113,18 +113,15 @@ program MainHitScript( params )
 endprogram
 
 
-function GetDamageType(attacker)
+function GetDamageType(weapon)
 	var attack_type := "Concussão";
-	if (!attacker.npctemplate && attacker.weapon)
-		var weapon_type := GetConfigString(item_cfg[attacker.weapon.objtype], "DamageType");
+	if (weapon.objtype)
+		var weapon_type := GetConfigString(item_cfg[weapon.objtype], "DamageType");
 		if (weapon_type)
 			attack_type := weapon_type;
 		endif
-	else
-		var damage_type := NPC_GetNPCConfig(attacker).DamageType;
-		if (damage_type)
-			attack_type := damage_type;
-		endif
+	elseif (weapon.DamageType)
+		attack_type := weapon.DamageType;
 	endif
 
 	return attack_type;

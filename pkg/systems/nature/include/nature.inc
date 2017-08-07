@@ -144,9 +144,9 @@ endfunction
 
 
 function SeasonRotate()
-	var season := cint(getglobalproperty("season"));
-	var daynumber := cint(getglobalproperty("daynumber"));
-        var current_year := CINT(GetGlobalProperty("current_year"));
+	var season        := cint(getglobalproperty("season"));
+	var daynumber     := cint(getglobalproperty("daynumber"));
+  var current_year  := cint(GetGlobalProperty("current_year"));
         
 	if (!season)
 		Season := 1;
@@ -190,8 +190,7 @@ function SeasonRotate()
 endfunction
 
 function moonfase()
-
-  var fase := GetGlobalProperty("moonfase");
+  var fase        := GetGlobalProperty("moonfase");
   var moon_period := GetGlobalProperty("moon_period");
   
   if (!moon_period)
@@ -219,8 +218,7 @@ function moonfase()
 endfunction
 
 function GetMoonLightMod()
-
- var fase := GetGlobalProperty("moonfase");
+		var fase := GetGlobalProperty("moonfase");
 
     case (fase)
        "nova":      return 28;

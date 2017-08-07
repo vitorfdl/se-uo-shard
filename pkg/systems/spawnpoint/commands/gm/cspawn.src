@@ -1,9 +1,0 @@
-use uo;
-
-program spawn(who, text)
-	var values := SplitWords(text);
-
-	var spawnpoint := CreateItemAtLocation(who.x, who.y, who.z, "spawnpoint", 1, who.realm );
-
-	spawnpoint.invisible := 1;
-endprogram

@@ -88,6 +88,9 @@ exported function SetProps( spawnpoint, data := struct{});
    endif
 
    if (data.mob_number)
+      var group_data := GetSpotGroupData(old_data.spotgroup);
+      var group_mobs := cint(group_data.mob_number) - old_data.mob_number + cint(data.mob_number);
+      SetSpotGroupData(old_data.spotgroup, struct{ "mob_number" := group_mobs});
       old_data.mob_number := cint(data.mob_number);
    endif
 
@@ -217,7 +220,8 @@ exported function FillQueue(spawnpoint)
       return; //no active group
    endif
 
-   var daytime    := lower(GetGlobalProperty("dia"));
+   var daytime  := lower(GetGlobalProperty("dia"));
+   var moonfase := lower(GetGlobalProperty("moonfase"));
    var n := 0;
    var spawn_number := cint(config.mob_number) - cint(spawn_size);
    for (n := 0; n < spawn_number; n := n + 1)
@@ -227,7 +231,9 @@ exported function FillQueue(spawnpoint)
       foreach mob_config in (spawngroup.mob_list)
          if (!(mob_config.type in config.type) || mob_config.power > config.level)
             continue;
-         elseif ((mob_config.daytime != "always" && daytime != mob_config.daytime))
+         elseif (!(mob_config.daytime in array{ "always", "lua nova"}) && daytime != mob_config.daytime)
+            continue;
+         elseif (mob_config.daytime == "lua nova" && (moonfase != "nova" || daytime != "noite"))
             continue;
          endif
 
@@ -294,12 +300,12 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
 			y := spawnpoint.y;
 			z := spawnpoint.z;
 		elseif(spawnpoint.z >= 0)
-			x := spawnpoint.x + RandomInt(1 + config.range);
-			y := spawnpoint.y + RandomInt(1 + config.range);
+			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
+			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
 			z := GetWorldHeight(x, y);
 		elseif(spawnpoint.z < 0)
-			x := spawnpoint.x + RandomInt(1 + config.range);
-			y := spawnpoint.y + RandomInt(1 + config.range);
+			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
+			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
 			z := spawnpoint.z;
 		endif
 
@@ -311,6 +317,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
       SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
       SetObjProperty(spawned, "spawnspot", config.spot_serial);
+      SetObjProperty(spawned, "range", config.range);
       success := 1;
 
 		sleepms(5);

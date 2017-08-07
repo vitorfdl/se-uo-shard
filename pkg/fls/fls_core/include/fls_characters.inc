@@ -72,9 +72,9 @@ function ApllyLightLevel()
 endfunction
 
 function ReverseLight(player)
-	var config := readconfigfile(":nature:config/daynight");
-	config := config["settings"];
-	var darkness := cint(config.darkness);
+	var day_config := readconfigfile(":nature:config/daynight");
+	day_config := day_config["settings"];
+	var darkness := cint(day_config.darkness);
 
 	var light := cint(getglobalproperty("lightlevel"));
 
@@ -92,7 +92,6 @@ function IsPoisonImune(who, poison)
 	if (who.npctemplate)
 		var npcelem := NPC_GetNPCConfig(who.npctemplate);
 		var imuneList := splitwords(npcelem.PoisonImune);
-		print(" " + imuneList);
 		foreach poisonName in imuneList
 			if (poisonName == poison)
 				return 1;
@@ -143,18 +142,16 @@ function maolivre(mobile, qtd, checkmount := 1)
 	return 1;
 endfunction
 
-// function GetSkillNameByID(input)
+function GetSkillNameByID(input)
+	var cfg_file := ReadConfigFile(":attributes:attributes");
+	var entries := GetConfigStringKeys(cfg_file);
+	foreach entry in entries
+		var elem := FindConfigElem(cfg_file, entry);
+		if (cint(elem.SkillId) == input)
+			return entry;
+		endif
+	endforeach
 
-// 	var cfg := AP_GetAttributesCfgFile();
-// 	var entries := GetConfigStringKeys(cfg);
+	return "";
 
-// 	foreach entry in entries
-// 		var elem := FindConfigElem(cfg, entry);
-// 		if (elem.SkillId == input)
-// 			return entry;
-// 		endif
-// 	endforeach
-
-// 	return "";
-
-// endfunction
+endfunction

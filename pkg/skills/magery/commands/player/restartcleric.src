@@ -1,0 +1,17 @@
+use uo;
+use os;
+include "include/client";
+include "include/say";
+
+program Logon(who)
+   var pid := GetProcess(GetObjProperty(who, "#clericpid"));
+   PrintText(who, "pid: "+pid);
+   if (pid)
+      pid.kill();
+      PrintText(who, "Pid Killed");
+   endif   
+
+   if (who.isClass("Clérigo"))
+      Start_Script(":magery:cleric/powerWords", array{who});
+   endif
+endprogram

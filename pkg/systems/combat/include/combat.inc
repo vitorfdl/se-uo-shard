@@ -24,17 +24,18 @@ endfunction
 
 function GetItemCFGInfo(mobile, weapon)
 
-	var npc_cfg2	:= ReadConfigFile("::npcdesc");
 	var item_cfg2	:= ReadConfigFile(":*:itemdesc");
 
-	if ( mobile.IsA(POLCLASS_NPC) && weapon.objtype == 0xF020 )
-		var npctemplate := mobile.npctemplate;
-		npctemplate := npctemplate[10, len(npctemplate)-9];
-		return npc_cfg2[npctemplate];
+	if ( mobile.IsA(POLCLASS_NPC) && weapon.objtype == 0x1F020 )
+		return GetNpcRandomAttack(mobile);
 	else
 		return item_cfg2[weapon.objtype];
 	endif
 
+endfunction
+
+function GetNPCattack(mobile)
+	
 endfunction
   
 function PlayHitSounds(attacker, defender := 0)
@@ -84,9 +85,8 @@ function PlayMissSound(attacker)
 	endif
 endfunction
 
-function PlayAttackAnimation(attacker)
+function PlayAttackAnimation(attacker, weapon_elem)
 	//If they're not human, use different attack animations based on their graphic
-	var attacker_weapon_elem := GetItemCFGInfo(attacker, attacker.weapon);
 	if (attacker.graphic != 400 and attacker.graphic != 401 and attacker.graphic != 605 and attacker.graphic != 606 and attacker.graphic != 666 and attacker.graphic != 667 and attacker.graphic != 744 and attacker.graphic != 745)
 		case (attacker.graphic)
 			CID_ALLIGATOR:
@@ -112,7 +112,11 @@ function PlayAttackAnimation(attacker)
 			CID_EAGLE:
 				PerformAction(attacker, 4);
 			default:
-				PerformAction(attacker, (RandomInt (3) + 4));
+				if (weapon_elem.AttackAnim)
+					PerformAction(attacker, weapon_elem.AttackAnim);
+				else
+					PerformAction(attacker, (RandomInt (3) + 4));
+				endif
 		endcase
 	
 		return;
@@ -121,7 +125,7 @@ function PlayAttackAnimation(attacker)
 	//If the player is mounted, use special mount animations, if they're defined in
 	//the weapon's itemdesc.cfg entry, or a default animation if not
 	if (GetEquipmentByLayer (attacker, LAYER_MOUNT) and (attacker.graphic != 666 and attacker.graphic != 667))
-		anim := CINT (attacker_weapon_elem.MountedAnim);
+		anim := CINT(weapon_elem.MountedAnim);
 //		if (anim)
 //			PerformAction (attacker, anim);
 //			return;
@@ -132,19 +136,19 @@ function PlayAttackAnimation(attacker)
 			anim := 0;
 		endif
 	else
-		anim := attacker_weapon_elem.Anim;
+		anim := weapon_elem.Anim;
 	endif
 	
 //	//Otherwise, if they're not mounted, use the animation defined in the itemdesc.cfg file
 //	//or a default animation if one isn't defined
-//	var anim := attacker_weapon_elem.Anim;
-//	if (anim)
-//		PerformAction (attacker, anim, 7);
-//		return;
-//	endif
+//	var anim := weapon_elem.Anim;
+	// if (anim)
+	// 	PerformAction(attacker, anim, 7);
+	// 	return;
+	// endif
 //	PerformAction (attacker, 0x09, 7);
 	var newanim := 0;
-	case (anim)
+	case (Hex(anim))
 		0x09:  newanim := 4;
 		0x0A: newanim := 5;
 		0x0B: newanim := 3;
@@ -154,7 +158,7 @@ function PlayAttackAnimation(attacker)
 		0x12: newanim := 1;
 		0x13: newanim := 2;
 		0x1A: newanim := 7;
-		default: newanim := 0;
+		default: newanim := anim;
 	endcase
 	// OldPerformAction(attacker, anim, 5);
 	NewPerformAction(attacker, 0, newanim, RandomInt(4));

@@ -4,6 +4,7 @@ use os;
 
 include "include/client";
 include "include/sysEvent";
+include "include/say";
 
 program clericPowerWords(parms)
 	detach();
@@ -17,27 +18,27 @@ program clericPowerWords(parms)
       RegisterForSpeechEvents( who, 1 );
       EnableEvents( SYSEVENT_SPEECH, 1 );
 
-		event := wait_for_event( 120 );
+	   event := wait_for_event( 120 );
       if (event && event.type == SYSEVENT_SPEECH && event.source ==  who && !who.dead)
          var cleric_list := GetObjProperty(who, "cleric_list");
-         if (!cleric_list || cleric_list.size() < 1)
+         if (!cleric_list || cleric_list.size() < 1 || GetObjProperty(who, "#Casting"))
             continue;
          endif
 
-         var spell_id;
-         for spell in cleric_list
-            var verified : 0;
-            if (!spell.powerwords && !spell.used)
+         var spell_id := 0;
+         foreach spell in cleric_list
+            var verified := 0;
+            if (!spell.powerwords[1] || spell.used)
                continue;
             endif
 
             // Check if powerwords passed
-            for powerword in (spell.powerwords)
+            foreach powerword in (spell.powerwords)
                if (Lower(event.text).find(Lower(powerword)))
-                  verified += 1
+                  verified += 1;
                endif
                sleepms(2);
-            endfor
+            endforeach
 
             // if all passed, set the spell_id
             if (verified == spell.powerwords.size())
@@ -45,9 +46,10 @@ program clericPowerWords(parms)
                break;
             endif
             sleepms(2);
-         endfor
-      
+         endforeach
+
          if (spell_id)
+            PrintText(who, "Casting");
             Start_Script(":magery:cast_spell", {who, spell_id, 0, 0, ":magery:config/cleric"});
          endif
 		endif		

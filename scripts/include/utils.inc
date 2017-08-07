@@ -3,6 +3,7 @@ use os;
 use math;
 
 function randomPlace(loc, radius := 1)
+	var y, x;
    case (RandomInt(radius+1))
       1: y := RandomInt(3) * -1; x := RandomInt(3);
       2: y := RandomInt(3); 		x := RandomInt(3) * -1;
@@ -10,10 +11,12 @@ function randomPlace(loc, radius := 1)
       4: y := RandomInt(3); 		x := RandomInt(3);
    endcase
 
-   loc.x += x;
-   loc.y += y;
+	var new_loc := struct{
+		"x" := loc.x+x,
+		"y" := loc.y+y
+	};
 
-   return loc;
+   return new_loc;
 endfunction
 
 function GetPointsInRadius(mid_x, mid_y, radius)

@@ -197,7 +197,7 @@ function BuildNPCGump(category_name)
 	GFPage(gump, page_num);
 	foreach template in (npc_list[category_name])
 		GFAddButton(gump, 20, y_pos+3, 2117, 2118, GF_CLOSE_BTN, template.pos);
-		GFTextLine(gump, 40, y_pos, template.color, template.name);
+		GFTextLine(gump, 40, y_pos, template.color, "Lv. {} - {}".format(template.level, template.name));
 		y_pos := y_pos+20;
 		counter := counter+1;
 
@@ -233,9 +233,10 @@ function SortNPCs()
 	foreach template_name in (elem_names)
 		var cfg_elem := NPC_GetNPCConfig(template_name);
 		var template := struct;
-		template.+name :=template_name;
-		template.+pos :=_template_name_iter;
-		template.+color :=GetNameColor(cfg_elem.alignment);
+		template.+name  := template_name;
+		template.+level := cfg_elem.Level;
+		template.+pos   := _template_name_iter;
+		template.+color := GetNameColor(cfg_elem.alignment);
 
 		if ( !cfg_elem.category )
 			categories[DEFAULT_CATEGORY].append(template);
@@ -278,10 +279,10 @@ function GetNameColor(reputation)
 	endif
 	
 	case ( reputation )
-		"good":		return (GetConfigInt(reputation_elem, "innocent")-1);
-		"neutral":	return (GetConfigInt(reputation_elem, "attackable")-1);
-		"evil":		return (GetConfigInt(reputation_elem, "murderer")-1);
+		"good":		return 90;
+		"neutral":	return 905;
+		"evil":		return 38;
 		 // No alignment for an npc is considered neutral
-		default: 	return (GetConfigInt(reputation_elem, "attackable")-1);
+		default: 	return 38;
 	endcase
 endfunction
