@@ -152,7 +152,7 @@ function CreateBossStructGump(who, byref boss)
 	if(boss.name)
 		nome := GFTextEntry( chargump, 140, 95, 100, 20, 1150, boss.name);
 	else
-		nome := GFTextEntry( chargump, 140, 95, 100, 20, 1150, "-nome-");
+		nome := GFTextEntry( chargump, 140, 95, 100, 20, 1150, "-");
 	endif
 
 	cor := GFTextEntry( chargump, 180, 110, 100, 20, 1150, cint(boss.color) + "");
@@ -398,7 +398,7 @@ endfunction
 
   //transforma um npc em boss
 function SetBoss(npc, boss)
-	if (boss.name != "-nome-" && boss.name != "-random-")
+	if (boss.name != "-" && boss.name != "-random-")
 		SetName(npc, boss.name);
 	endif
 	npc.color := boss.color;
@@ -411,29 +411,16 @@ function SetBoss(npc, boss)
 	endif
 
 
-	if (boss.status)
-		AP_SetTrueStat(npc, STRENGTH, Cint(boss.status));
-		AP_SetTrueStat(npc, DEXTERITY, Cint(boss.status));
-		AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.status));
-	else
-		AP_SetTrueStat(npc, STRENGTH, Cint(boss.str));
-		AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex));
-		AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int));
-		AP_SetTrueStat(npc, WISDOM, Cint(boss.wis));
-		AP_SetTrueStat(npc, CONSTITUTE, Cint(boss.con));
-	endif
+	AP_SetTrueStat(npc, STRENGTH, Cint(boss.str));
+	AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex));
+	AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int));
+	AP_SetTrueStat(npc, WISDOM, Cint(boss.wis));
+	AP_SetTrueStat(npc, CONSTITUTE, Cint(boss.con));
 	
-	// if(boss.skills)
-	// 	AP_SetTrueSkill(npc, TACTICS, Cint(boss.skills) + AP_GetSkill(npc, TACTICS) );
-	// 	AP_SetTrueSkill(npc, WRESTLING, Cint(boss.skills) + AP_GetSkill(npc, WRESTLING));
-	// 	AP_SetTrueSkill(npc, MAGERY, Cint(boss.skills) + AP_GetSkill(npc, MAGERY) );
-	// 	AP_SetTrueSkill(npc, AWARENESS, Cint(boss.skills) + AP_GetSkill(npc, AWARENESS) );
-	// else
-	// 	AP_SetTrueSkill(npc, TACTICS, Cint(boss.tactics) + AP_GetSkill(npc, TACTICS) );
-	// 	AP_SetTrueSkill(npc, WRESTLING, Cint(boss.wrestling) + AP_GetSkill(npc, WRESTLING));
-	// 	AP_SetTrueSkill(npc, MAGERY, Cint(boss.magery) + AP_GetSkill(npc, MAGERY) );
-	// 	AP_SetTrueSkill(npc, AWARENESS, Cint(boss.awareness) + AP_GetSkill(npc, AWARENESS) );
-	// endif
+	foreach skill in boss.skills
+		AP_SetTrueSkill(npc, skill, 1);
+		// sleepms(2);
+	endforeach
 
   	SetObjProperty(npc, "hitsmod", cint(boss.hits));
   	RecalcVitals(npc);
@@ -541,7 +528,6 @@ endfunction
 	
 //cria um boss
 function CreateBoss(boss, x, y, z, realm)
-	
 	var npc := CreateNpcFromTemplate(boss.npctemplate, x, y, z, 0 , realm);
 	if (npc == error)
     //print("createboss " + npc + " " + boss.npctemplate);

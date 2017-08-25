@@ -33,7 +33,7 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 
 	SendSysMessage(mobile, "O banco nao aceita todos os tipos de itens. Apenas pertences pessoais, tais como:");
 	SendSysMessage(mobile, "Moedas, joias, pedras preciosas, livros, chaves, pergaminhos.");
-	SendSysMessage(mobile, "Se o item que tiver tentando guardar no banco esteja em uma dessas categorias, envie page.");
+	SendSysMessage(mobile, "Se o item que estiver tentando guardar no banco esteja em uma dessas categorias, envie page.");
 	
 	return 0;
 endprogram

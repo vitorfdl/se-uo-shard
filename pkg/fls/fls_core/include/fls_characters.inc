@@ -153,5 +153,63 @@ function GetSkillNameByID(input)
 	endforeach
 
 	return "";
+endfunction
 
+function SubtractMoney(container, qty := array{0, 0, 0})
+	if (qty.length() > 3) return 0;
+
+	var money := array{0, 0, 0};
+	foreach item in (EnumerateItemsInContainer(container))
+		if (item.serial == 0x1) money[1] += item.amount;
+		elseif (item.serial == 0x2) money[2] += item.amount;
+		elseif (item.serial == 0x3) money[3] += item.amount; endif
+		sleepms(2);
+	endforeach
+
+	var check := 1;
+	var change_back = array{0, 0, 0};
+	var i;
+	for (i := 1; i <= 3; i++)
+		if (qty[i] < money[i]) check := 0;
+		if (!check && i != 1 && qty[i-1] < money[i-1] && money[i]+100 >= qty[i])
+			qty[i-1] += 1;
+			qty[i] -= 100;
+			if (qty[i] < 0) 
+				change_back[i] := qty[i] * -1;
+				qty[i] := 0; 
+			endif
+			check := 1;
+		endif
+	endfor
+
+	if (!check) return 0; endif
+
+	for (i := 1; i <= 3; i++)
+		var coin_type;
+		if (i == 1) coin_type := 0x1;
+		elseif (i == 2) coin_type := 0x2;
+		elseif (i == 3) coin_type := 0x3; endif
+		foreach item in (EnumerateItemsInContainer(container))
+			if (item.objtype != coin_type) continue;
+			if (item.amount >= qty[i])
+				var chk := SubtractAmount(item, qty[i]);
+				if (!chk )
+					SendSysMessage(who, "chk " + chk);
+					return 0;
+				endif
+			else
+				qty[i] -= item.amount;
+				if (!SubtractAmount(item, item.amount))
+					return 0;
+				endif
+			endif
+         sleepms(2);
+		endforeach
+
+		if (change_back[i])
+			CreateItemInContainer(container, coin_type, change_back);
+		endif
+	endfor
+
+	return 1;	
 endfunction

@@ -271,10 +271,16 @@ function DisplayAttributes(targ, byref gump, byref entry, byref y_pos)
 			GFTextLine(gump, 175, y_pos, 2100, attrib_name);
 			var value := AP_GetTrueSkill(targ, attrib_name);
 			var mod_value := AP_GetSkillMod(targ, attrib_name);
+			var colors = [2100, 2100];
+			if (value > 0) colors[1] = 1989; endif
+			if (mod_value < 0) colors[2] = 1980;
+			else if (mod_value > 0) colors[2] = 1989; endif
+			
 			if (gm.acctname in gmParedes && (!targ.npctemplate))
 				GFTextRight(gump, 465, y_pos, 2100, "=x");
 			else
-				GFTextRight(gump, 465, y_pos, 2100, value+" (+"+mod_value+")");
+				GFTextRight(gump, 465, y_pos, colors[1], "{}".format(value));
+				GFTextRight(gump, 475, y_pos, colors[2], "({})".format(mod_value);
 			endif
 			y_pos := y_pos+20;
 			SleepMS(2);
@@ -449,8 +455,8 @@ function GetCustom(targ, property)
 	case ( Lower(property) )
 		"weapon_speed":
 			return CS_GetWeaponInfo(targ.weapon, "Speed");
-		"damage_min_max":
-			return CS_GetWeaponInfo(targ.weapon, "MinDam") + "-" + CS_GetWeaponInfo(targ.weapon, "MaxDam");
+		// "damage_min_max":
+		// 	return CS_GetWeaponInfo(targ.weapon, "MinDam") + "-" + CS_GetWeaponInfo(targ.weapon, "MaxDam");
 		// "average_damage":
 		// 	return CS_GetAverageDamage(targ.weapon);
 		"gotten_item_name":

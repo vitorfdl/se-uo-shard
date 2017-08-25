@@ -1,0 +1,32 @@
+use os;
+use uo;
+include "include/say";
+include "include/arrays";
+include ":magery:tnmagery";
+
+program doubleClick(item)
+   if(!item.movable) return; endif
+
+   var power := GetObjProperty(item, "power");
+   if (!power) power := 5; endif
+
+	var alvo := Target(who, TGTOPT_CHECK_LOS);
+	SendSysMessageEx(who, "Onde deseja usar isso?", SSM_REQUEST);
+	if (!alvo)
+		SendSysMessage(who, "Cancelado.");
+		return;
+	elseif (Distance(who, alvo) > 2)
+		SendSysMessageEx(who, "Voce esta muito longe!", SSM_FAIL);
+		return;
+   endif
+
+
+   if (alvo.isWand())
+      var charges := cint(GetObjProperty(item, "charges"));
+      charges += power;
+	   SendSysMessageEx(who, "O osso se esfarela ao tocar no objeto.", SSM_INFO);
+      DestroyItem(item);
+   else
+		SendSysMessage(who, "Nada aconteceu.");
+   endif
+endprogram

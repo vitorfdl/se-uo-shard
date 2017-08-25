@@ -1,0 +1,132 @@
+
+use uo;
+use os;
+
+var BUY_SPEECH := array{"artigo", "compra", "ver"};
+var item_cfg := ReadConfigFile(":*:itemdesc");
+var npc;
+
+program HandleMerchant(params)
+	case (params.type)
+		"ItemGivenEvent": 
+			if (!HandleItemGiven(params.me, params.source, params.item))
+				MoveItemToContainer(params.item, params.source.backpack);
+			endif
+		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+		"Default": return;
+	endcase
+endprogram
+
+function HandleItemGiven(npc, player, item)
+	var onlyplayersells := GetObjProperty(npc, "oneplayersells");
+	if ( (cint(GetObjProperty(npc, "onlygmsells")) == 1 ) && player.cmdlevel < 3 )
+		SendSysMessage(player, "Voce nao pode colocar itens a venda nesse vendedor.");
+		return;
+	elseif (onlyplayersells && onlyplayersells != player.name)
+		SendSysMessage(player, "Perdao, somente " + onlyplayersells + " pode fazer vendas comigo");
+		return;
+	elseif (serialid != error)
+		SendSysMessageEx(player,"Voce nao pode vender isto.",SSM_FAIL);
+		return;
+	elseif ( !item.IsA(POLCLASS_ITEM) )
+		SendSysMessage(player, "Cancelado.");
+		return;
+	elseif ( (item.objtype == 0xba63 || item.objtype == 0xba64 || item.objtype == 0xba65 ) && player.cmdlevel < 3)
+		SendSysMessage(player, "Você não pode vender moedas");
+		return;
+	endif
+
+	var result := AddItemToSell(npc, player, item);
+	return result;
+endfunction
+
+function HandleSpeech(npc, player, text)
+   var canceled := 0;
+   if (text in BUY_SPEECH)
+      while(!canceled)
+         var input := SendItemView(player, item_list);
+         if (!input[0])
+            break;
+         elseif (input[0] == 2)
+         else
+            Purchase(npc, player, input[0])
+            break;
+         endif
+      endwhile
+   endif
+endfunction
+
+function SendItemView(player)
+	var items_sold := GetItemsSoldList(npc);	
+	foreach serial in items_sold
+		var info      := GetItemSoldInfo(npc, serial);
+		var item      := info[2];
+		info := info[1];
+		var donoDoItem := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
+		if (!donoDoItem)
+			RemoveItemForSale(npc, serial);
+         continue;
+			//print("removendo item do vendor de char deletado.");
+		endif
+
+      var color := GF_STDCOLOR;
+      if ( item.color )
+         color := item.color-1;
+      endif
+      if (cost_info.objtype == MOEDAS)
+         cost_name := "moedas de cobre";
+      else
+         if (cost_info.cost_name)
+            cost_name := cost_info.cost_name;
+         else
+            cost_name := GetName(cost_info.cost_type);
+         endif
+      endif
+		GFTextLine(gump, 195, y_pos, color, item.desc + " -> " + cost_info.cost_amt + " " + cost_name );
+		sleepms(2);
+   endforeach
+endfunction
+
+function Purchase(npc, player, input)
+	var info    := GetItemSoldInfo(npc, input);
+	var cost    := info[1];
+	var selling := info[2];
+	var cost_desc := AddArticle(GetName(cost.cost_type));
+	
+	AI_Speak(npc, "Certo. Aqui esta seu produto.");
+	RemoveItemForSale(npc, input);
+	var purchase := CreateItemInBackPack(player, selling, selling.amount);
+	if ( purchase == error )
+		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
+		if ( purchase == error )
+			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
+		else
+			AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+		endif
+	endif
+endfunction
+
+
+function AddItemToSell(npc, player, item)
+	var item_cost = array{};
+	var item_desc;
+
+	var validate_cost = 0;
+	foreach cost in item_cost
+		cost = cint(cost);
+		if (!cost) 
+			continue;
+		elseif (cost > 1000) 
+			AI_Speak(npc, "Voce ultrapassou o limite de {} por moedas.".format(1000));
+			return 0; 
+		elseif (cost < 10) 
+			return 0; 
+		endif
+
+		validate_cost = 1;
+	endforeach
+
+
+	
+	return 1;
+endfunction

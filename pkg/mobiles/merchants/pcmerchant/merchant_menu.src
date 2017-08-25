@@ -561,7 +561,6 @@ function AddItem(npc, player, targ)
 endfunction
 
 function ShowItemsSold(byref gump, npc, player, special := 0)
-
 	GFResizePic(gump, 170, 15, BKGND_STONESLAB, 455, 450);
 	GFTextMid(gump, 170, 25, 455, GF_STDCOLOR, "Itens a Venda");
 	GFPage(gump, 1);

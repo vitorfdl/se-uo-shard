@@ -67,7 +67,7 @@ function EnableMainEvents(type := 0)
         "merchant":
             DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
             EnableEvents(SYSEVENT_DOUBLECLICKED, 20);
-            EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN, areasize);
+            EnableEvents(SYSEVENT_SPEECH, SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN + SYSEVENT_ENTEREDAREA, areasize);
         default:
             DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
             EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ENTEREDAREA, areasize);
@@ -76,7 +76,7 @@ endfunction
 
 function DisableMainEvents(type := 0)
     case (type)
-        "merchant": DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_DOUBLECLICKED + SYSEVENT_ITEM_GIVEN);
+        "merchant": DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_DOUBLECLICKED + SYSEVENT_ENTEREDAREA + SYSEVENT_ITEM_GIVEN + SYSEVENT_SPEECH);
         default: DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ENTEREDAREA);
     endcase
 endfunction

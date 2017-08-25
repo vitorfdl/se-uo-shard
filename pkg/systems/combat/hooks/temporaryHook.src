@@ -39,19 +39,23 @@ var weapon;
 
 function CalculateRawDamage(attacker)
 	if (attacker.npctemplate)
-		var dmg := wpn_a_elem.dicedmg;
-		return ( RandomDiceRoll(dmg) );
+		var dmg       := wpn_a_elem.dicedmg;
+		var attribute := wpn_a_elem.Attribute;
+		return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
 	else
 		var weaponcfg  := ReadConfigFile(":*:itemdesc");
 		var weaponelem := FindConfigElem(weaponcfg, weapon.objtype);
+		var attribute := SelectAttribute(attacker;)
 		var dmg;
 		if ( GetObjProperty(attacker, "metamorfose") != error)
-			dmg := RandomDiceRoll( GetObjProperty(attacker, "dicedmg"));
+			var dmg       := GetObjProperty(attacker, "dicedmg");
+			var attribute := GetObjProperty(attacker, "attrdmg");
+			dmg := RandomDiceRoll( dmg ) + AP_GetStat(attacker, attribute, RETURN_BONUS);
 		else
-			dmg :=  RandomDiceRoll(cstr(weaponelem.Damage));
+			dmg :=  RandomDiceRoll(cstr(weaponelem.Damage)) + AP_GetStat(attacker, attribute, RETURN_BONUS);
 		endif
 		
-		return (  dmg + weapon.dmg_mod );
+		return ( dmg + weapon.dmg_mod );
 	endif
 endfunction
 
@@ -64,6 +68,8 @@ program Attack(params)
 		ApplyRawDamage(attacker, 5000);
 		return 1;
 	elseif ( !CheckLineOfSight(attacker, defender) )
+		return 1;
+	elseif ( GetObjProperty(attacker, "#Casting") )
 		return 1;
 	endif
 
@@ -171,23 +177,7 @@ function GetAttackerChance(attacker, defender)
 	var bonus := 0;
 	if (!attacker.npctemplate)
 		// Verifica se arma tem atributo
-		if (weapon.Attribute)
-			attribute := weapon.Attribute;
-			// Checa Pericia
-			if (HaveSkill(attacker, wpn_a_elem.Pericia))
-				bonus := cint(getProficiencyBonus(attacker));
-			endif
-			// Escolhe maior atributo para versatilidade
-			if (attribute == "Versatil")
-				var dex := AP_GetTrueStat(attacker, "Dexterity");
-				var str := AP_GetTrueStat(attacker, "Strength");
-				if (str > dex)
-					attribute := "Strength";
-				else
-					attribute := "Dexterity";
-				endif
-			endif
-		endif
+		attribute := SelectAttribute(attacker);
 	else
 		// Pega atributo principal do npc
 		if (wpn_a_elem.Attribute)
@@ -198,6 +188,29 @@ function GetAttackerChance(attacker, defender)
 	
 	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
 	return dice;
+endfunction
+
+function SelectAttribute(attacker)
+	var attribute = STRENGTH;
+	if (weapon.Attribute)
+		attribute := weapon.Attribute;
+		// Checa Pericia
+		if (HaveSkill(attacker, wpn_a_elem.Pericia))
+			bonus := cint(getProficiencyBonus(attacker));
+		endif
+		// Escolhe maior atributo para versatilidade
+		if (attribute == "Versatil")
+			var dex := AP_GetTrueStat(attacker, DEXTERITY);
+			var str := AP_GetTrueStat(attacker, STRENGTH);
+			if (str > dex)
+				attribute := DEXTERITY;
+			else
+				attribute := STRENGTH;
+			endif
+		endif
+	endif
+
+	return attribute;
 endfunction
 
 function GetDefenderCA(defender, armor)

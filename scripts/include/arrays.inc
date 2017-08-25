@@ -258,7 +258,20 @@ function RemoveFromArray(the_array, delete_what)
 	return the_array;
 endfunction
 
-function RemoveLowest(byref the_array)
+/*
+ * RemoveLowest(byref the_array)
+ *
+ * Purpose
+ * Remove lowest integer or real value from array
+ *
+ * Parameters
+ * the_array:	Array to search.
+ *
+ * Return value
+ * Returns the array without the lowest value
+ *
+ */
+function RemoveLowest(the_array)
 	if (the_array.Size() <= 1)
         return the_array;
 	endif
@@ -272,10 +285,23 @@ function RemoveLowest(byref the_array)
 	endfor
 
 	the_array.Erase(l_val);
-	return 1;
+	return the_array;
 endfunction
 
-function RemoveHighest(byref the_array)
+/*
+ * RemoveHighest(byref the_array)
+ *
+ * Purpose
+ * Remove lowest integer or real value from array
+ *
+ * Parameters
+ * the_array:	Array to search.
+ *
+ * Return value
+ * Returns the array without the highest value
+ *
+ */
+function RemoveHighest(the_array)
 	if (the_array.Size() <= 1)
         return the_array;
 	endif
@@ -289,9 +315,22 @@ function RemoveHighest(byref the_array)
 	endfor
 
 	the_array.Erase(l_val);
-	return 1;
+	return the_array;
 endfunction
 
+/*
+ * ArraySum(byref the_array)
+ *
+ * Purpose
+ * Sum all integer/real values inside the array.
+ *
+ * Parameters
+ * the_array:	Array to sum.
+ *
+ * Return value
+ * Returns the value of sum of the values of the array
+ *
+ */
 function ArraySum(the_array)
 	if (the_array.Size() <= 1)
         return the_array[1];
