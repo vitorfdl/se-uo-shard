@@ -86,17 +86,17 @@ function AutoCheckBox(mobile, prompt, options, returnKeys := 0)
 	var input := GFSendGump(mobile, gump);
 	if ( input[0] == 999 )
 		 foreach key in (input.keys)
-        		if (options[key]  )
-				if (returnKeys)
-					ret.append(key);
-				else
-          				ret.append(options[key]);
-				endif
+        		if (options[key] )
+					if (returnKeys)
+						ret.append(key);
+					else
+						ret.append(options[key]);
+					endif
         		endif
      		endforeach
      		return ret;
   	else
-      		return 0;
+      return 0;
 	endif	
 
 endfunction
@@ -152,8 +152,7 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
 
 endfunction
 
-function RadioGump(mobile, sizex, sizey, prompt:="", options)
-
+function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0)
 	var gump := GFCreateGump(250, 200);
 	GFClosable(gump, 0);
 	GFResizePic(gump, 0, 0, 3600, sizex, sizey);
@@ -183,10 +182,13 @@ function RadioGump(mobile, sizex, sizey, prompt:="", options)
 	var input := GFSendGump(mobile, gump);
 	if ( input[0] == 999 )
 		 foreach key in (input.keys)
-        if (options[key]  )
+        if (options[key])
+		    if (returnkeys)
+				return key;
+			 endif
           return options[key];
         endif
-     endforeach
+     	endforeach
   else
       return 0;
 	endif	
@@ -252,7 +254,6 @@ endfunction
 
 
 function SmallRequestGump(who, question := "", addBR := 0)
-
 	var gump := GFCreateGump();
     GFSetID(gump, GUMPID_TNGUMPS);
 	GFResizePic(gump, 15, 50, 2620, 150, 100);
@@ -308,4 +309,76 @@ function SmallRequestGump(who, question := "", addBR := 0)
 		
 		return text;
 	endif
+endfunction
+
+	// text_entry: title
+	// radio_entry: title, radios: [choice]
+	// checkbox_entry: title: checkbox: [choice]
+function QuestionsGump(who, questions)
+	var total_height := (questions.length() * 3) * 20;
+
+	var gump := GFCreateGump();
+   GFSetID(gump, GUMPID_TNGUMPS);
+	GFResizePic(gump, 500, total_height, 2620, 150, 100);
+
+	var entries := dictionary{};
+	var x := 0;
+	var y := 0;
+	foreach quest in questions
+		var x_plus := x;
+		GFTextLine(gump, x, y, 2100, quest.title);
+		y += 18;
+		if (quest.radio)
+  			GFSetRadioGroup(gump, _quest_iter);
+			foreach entry in quest.radios
+				GFTextLine(gump, x_plus+30, y, 1153, entry);
+				GFRadioButton(gump, 30, y, 210, 211, (_entry_iter == 1), _entry_iter+(_quest_iter * 10));
+				x_plus += 30;
+			endforeach
+		elseif(quest.checkbox)
+			foreach entry in quest.checkbox
+				GFTextLine(gump, x_plus+30, y, 1153, entry);
+				GFCheckBox(gump, 30, y_pos, 210, 211, 0, _entry_iter+(_quest_iter * 10));
+				x_plus += 30;
+			endforeach
+		else
+			entries[_quest_iter] := GFTextEntry(gump, x, y, 595, 20, 2100, "");
+		endif
+
+		y += 36;
+		sleepms(2);
+	endforeach
+
+	GFAddButton(gump, x, y, 4011, 4030, GF_CLOSE_BTN, 1); //confirm
+	GFAddButton(gump, x, y, 4011, 4030, GF_CLOSE_BTN, 0); //cancel;
+
+	var input := GFSendGump(who, gump);
+	var res := array{};
+	if (!input[0]) return; endif
+
+	foreach quest in questions
+		if (quest.radios)
+			var result;
+			foreach item in (quest.radios)
+				if (input.keys[_item_iter + (_quest_iter * 20)])
+					result := item;
+					break;
+				endif
+			endforeach
+			res[_quest_iter] := result;
+		elseif (quest.checkbox)
+			var result := array{};
+			foreach item in (quest.checkbox)
+				if (input.keys[_item_iter + (_quest_iter * 20)])
+					result.append(item);
+				endif
+			endforeach
+			res[_quest_iter] := result;
+		else
+			res[_quest_iter] := GFExtractData(input, entries[_quest_iter]);
+		endif
+		sleepms(2);
+	endforeach
+
+	return res;
 endfunction

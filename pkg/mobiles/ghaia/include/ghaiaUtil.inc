@@ -208,23 +208,45 @@ function AI_Speak(npc, text, text_type:=SPEAK_TEXTTYPE_DEFAULT, do_event:=SPEAK_
 	return SendEvent(npc, ev);
 endfunction
 
+function GetNpcAttacks(npctemplate)
+	var npctemplate := NPC_GetNPCConfig(npctemplate);
+	var attacks     := GetConfigStringArray(npctemplate, "Attack");
+	if (!attacks || !attacks[1])
+		return [];
+	endif
+
+	var result := [];
+	foreach attack in attacks
+		attack := SplitWords(attack.randomEntry(), " ");
+
+		var attack_s := struct{
+			"name"    := attack[1],
+			"dicedmg"    := attack[2],
+			"hitbonus"   := cint(attack[3]),
+			"DamageType" := attack[4],
+			"AttackAnim" := cint(attack[5]),
+			"Attribute"  := npctemplate.AttackAttribute,
+			"MaxRange"   := npctemplate.MaxRange,
+			"MinRange"   := npctemplate.MinRange
+		};
+		result.append(attack_s)
+		sleepms(2);
+	endforeach
+
+	return result;
+endfunction
+
 function GetNpcRandomAttack(mobile)
-	var npctemplate := NPC_GetNPCConfig(mobile.npctemplate);
-	var attack     := GetConfigStringArray(npctemplate, "Attack");
+	var attacks := GetObjProperty(mobile, "customAttacks");
+	if (!attacks)
+		attacks := GetNpcAttacks(mobile.npctemplate);
+	endif
+	
 	if (!attack || !attack[1])
 		return 0;
 	endif
 
-	attack := SplitWords(attack.randomEntry(), " ");
+	var result := attacks.randomEntry();
 
-	var result := struct{
-		"dicedmg" := attack[2],
-		"hitbonus" := cint(attack[3]),
-		"DamageType" := attack[4],
-		"AttackAnim" := cint(attack[5]),
-		"Attribute" := npctemplate.AttackAttribute,
-		"MaxRange" := npctemplate.MaxRange,
-		"MinRange" := npctemplate.MinRange
-	};
 	return result;
 endfunction

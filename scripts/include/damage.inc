@@ -208,7 +208,13 @@ function checkResist(defender, damage_type)
 	else
 		var npcelem := NPC_GetNPCConfig(defender);
 		resist_list := GetConfigStringArray(npcelem, "Resistencia");
+		if (GetObjProperty(who, "resists"))
+			resist_list += GetObjProperty(who, "resists");
+		endif
 		vulnerability_list := GetConfigStringArray(npcelem, "Vulnerabilidade");
+		if (GetObjProperty(who, "vulnerabilities"))
+			vulnerability_list += GetObjProperty(who, "vulnerabilities");
+		endif
 	endif
 
 	if (damage_type in resist_list)
@@ -218,7 +224,6 @@ function checkResist(defender, damage_type)
 	if (damage_type in vulnerability_list)
 		return -1;
 	endif
-
 
 	return 0;
 endfunction

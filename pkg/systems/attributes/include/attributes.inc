@@ -151,10 +151,13 @@ function rollResistDice(mobile, type)
 
 	if (mobile.npctemplate);
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
-		resist_list  := GetConfigStringArray(npcelem, "Resistencia");
+		resist_list := GetConfigStringArray(npcelem, "Resistencia");
+		if (GetObjProperty(who, "resists"))
+			resist_list += GetObjProperty(who, "resists");
+		endif
 	else
 		var chardata := GetObjProperty(mobile, "chardata");
-		resist_list   := chardata.resist_list;
+		resist_list  := chardata.resist_list;
 	endif
 
 	var proficiency_bonus := 0;
@@ -173,6 +176,11 @@ function HaveSkill(mobile, skill)
 	if (mobile.npctemplate);
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
 		skill_list  := GetConfigStringArray(npcelem, "Pericia");
+
+		if (GetObjProperty(who, "skills"))
+			skill_list += GetObjProperty(who, "skills");
+		endif
+
 		if (skill in skill_list)
 			return 1; //Tem Skill
 		endif
