@@ -406,3 +406,12 @@ function GFTooltip(byref gump, cliloc_id)
 
  return 1;
 endfunction
+
+function GFTooltipText(byref gump, entrytext)
+ var text := "Tooltip 1114057 @" + entrytext + "@'";
+ (gump.layout).Append(text);
+
+ return 1;
+endfunction
+
+

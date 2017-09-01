@@ -61,7 +61,7 @@ var structure := dictionary{
 			"Dexterity",
 			"Intelligence",
 			"Wisdom",
-			"Constitute",
+			"Constitution",
 
 			"HITS",
 			"MANA",

@@ -87,7 +87,7 @@ function buildGump(who)
 	// GFGumpPic(gump, 581, 55, 4033, 1259);
 	// GFGumpPic(gump, 577, 59, 4033, 1259);
 	GFAddButton(gump, 579, 57, 4033, 4033, GF_CLOSE_BTN, 0); //Comprar Talento
-	GFTooltip(gump, 1030297);
+	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponíveis");
 
 	AttrGump(who, gump);
 

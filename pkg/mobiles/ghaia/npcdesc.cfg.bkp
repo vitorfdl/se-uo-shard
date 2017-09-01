@@ -29916,7 +29916,7 @@ NPCTemplate goblin12
 	Strength	40
 	Intelligence	20
 	Dexterity	60
-	Constitute	10
+	Constitution	10
 	Wisdom	20
 
 	AttackDamage	1d4+3

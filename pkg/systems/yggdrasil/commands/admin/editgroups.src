@@ -276,7 +276,7 @@ function MobSetConfigs(byref who, byref input)
     mob_entry.+power      := mob_power;
     mob_entry.+daytime    := mob_daytime;
     mob_entry.+isBoss     := input[INPUT_ISBOSS];
-    mob_entry.+bossParams := mob_bossparams;
+    mob_entry.+bossParams  := mob_bossparams;
     mob_entry.+type       := mob_type;
 
     UpdateGroupMobData(selected_elem, mob_entry, selected_mob);

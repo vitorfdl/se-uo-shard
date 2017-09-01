@@ -41,10 +41,10 @@ function GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
 	return Start_Script(":gumps:autoClose", array{mobile, pid, timer, ret_val});
 endfunction
 
-function GFHtmlShadowed(byref gump, x, y, width, height, color, text);
-	GFHTMLArea(gump, x-1, y-1, width, height, "<BASEFONT SIZE=5 COLOR=#111111>{}".format(text));
-   GFHTMLArea(gump, x+1, y+1, width, height, "<BASEFONT SIZE=5 COLOR=#111111>{}".format(text));
-   GFHTMLArea(gump, x, y, width, height, "<BASEFONT SIZE=5 COLOR={}>{}".format(color, text));
+function GFHtmlShadowed(byref gump, x, y, width, height, color, text, size := 5);
+	GFHTMLArea(gump, x-1, y-1, width, height, "<BASEFONT SIZE={} COLOR=#111111>{}".format(size, text));
+   GFHTMLArea(gump, x+1, y+1, width, height, "<BASEFONT SIZE={} COLOR=#111111>{}".format(size, text));
+   GFHTMLArea(gump, x, y, width, height, "<BASEFONT SIZE={} COLOR={}>{}".format(size, color, text));
 endfunction
 
 /*

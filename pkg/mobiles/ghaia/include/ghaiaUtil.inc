@@ -209,15 +209,15 @@ function AI_Speak(npc, text, text_type:=SPEAK_TEXTTYPE_DEFAULT, do_event:=SPEAK_
 endfunction
 
 function GetNpcAttacks(npctemplate)
-	var npctemplate := NPC_GetNPCConfig(npctemplate);
-	var attacks     := GetConfigStringArray(npctemplate, "Attack");
+	npctemplate := NPC_GetNPCConfig(npctemplate);
+	var attacks := GetConfigStringArray(npctemplate, "Attack");
 	if (!attacks || !attacks[1])
-		return [];
+		return array{};
 	endif
 
-	var result := [];
+	var result := array{};
 	foreach attack in attacks
-		attack := SplitWords(attack.randomEntry(), " ");
+		attack := SplitWords(attack, " ");
 
 		var attack_s := struct{
 			"name"    := attack[1],
@@ -229,7 +229,7 @@ function GetNpcAttacks(npctemplate)
 			"MaxRange"   := npctemplate.MaxRange,
 			"MinRange"   := npctemplate.MinRange
 		};
-		result.append(attack_s)
+		result.append(attack_s);
 		sleepms(2);
 	endforeach
 

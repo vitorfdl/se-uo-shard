@@ -35,7 +35,7 @@ program PopUpMenu( who, what )
         i+=1;
         sleepms(1);
     endforeach
-
+    
     var input := SendPopUpMenu( who, what, menu );
     if (!input)
        return;
@@ -69,7 +69,7 @@ program PopUpMenu( who, what )
     elseif (input == "erguer")
         return;
     elseif (input == "change_spell")
-        Start_Script(":magery:wands/changeSpell", item);
+        Start_Script(":magery:wands/changeSpell", who);
     endif
 
     return 1;
@@ -131,10 +131,11 @@ function MenuPlayerToItem(who, what)
         endif
     endif
 
-    var spell_list := GetObjProperty(what, "spell_list")
+    var spell_list := GetObjProperty(what, "spell_list");
     if (!spell_list)
         spell_list := array{};
     endif
+
     if (GetObjProperty(what, "magic_user") == who.serial && spell_list.size() > 1)
         entries.+change_spell := 3002015;
     endif

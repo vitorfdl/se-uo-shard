@@ -13,7 +13,7 @@ include "include/client";
 include "include/arrays";
 include ":combat:hitscripts";
 
-var resist_types := ["Veneno", "Fogo", "Eletricidade", "Gelo", "Perfuração", "Corte", "Contusão", "Strength", "Dexterity", "Intelligence"];
+var resist_types := array{"Veneno", "Fogo", "Eletricidade", "Gelo", "Perfuração", "Corte", "Contusão", "Strength", "Dexterity", "Intelligence"};
 
 function GetBossStruct(targ)
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
@@ -34,88 +34,86 @@ function isBoss(targ)
 endfunction
 
 function CreateBossStructGump(who, byref boss)
-	if (boss.CA)
-		boss.+CA := boss.CA;
+	if (typeOf(boss) != typeOf(struct{}))
+		boss := struct{};
 	endif
-
 	var chargump := GFCreateGump();
 	var input;
 
-	var cfg := ReadConfigFile(":ghaia:npcdesc");
+	var cfg :=	NPC_GetNPCConfig(boss.npctemplate);
 	var npctemplate := boss.npctemplate;
-	npctemplate := npctemplate[10, len(npctemplate)-9];
-	cfg := cfg[npctemplate];
-
-	var template, nome, cor, camod, dmgmod, specialai;
+	var template, nome, cor, camod;
 	var str, dex, int, con, wis, hits;
 
 	//GFClosable(chargump, 0);
 	GFDisposable(chargump, 0);
+	GFClosable( chargump, 0 );
+	GFResizePic( chargump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 450, 605 );
+	GFResizePic( chargump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 420, 25 );
+	// GFResizePic( chargump, 15, 45, GFCfgConst( "Defaults", "ForeGround" ), 420, 540 );
 
-	GFResizePic(chargump, 0, 25, 3700, 500, 500);
-	GFResizePic(chargump, 15, 40, 0x13BE, 470, 470);
+	// GFResizePic(chargump, 0, 25, 3700, 500, 500);
+	// GFResizePic(chargump, 15, 40, 0x13BE, 470, 470);
+	GFHtmlShadowed(chargump, 15, 17, 420, 20, "#ffc04c", "<center>Boss Menu");
 
-	GFTextMid(chargump, 15, 50, 300, 1153, "Boss Menu");
-	GFTextLine(chargump, 50, 80, 1153,  "NpcTemplate:");
-	if ( boss.npctemplate )
-		template := GFTextEntry( chargump, 140, 80, 150, 20, 1150, boss.npctemplate);
-	else
-		template := GFTextEntry( chargump, 140, 80, 150, 20, 1150, ":ghaia:");
+	var x_pos := 20;
+	var y_pos := 60;
+	if ( !boss.npctemplate )
+		boss.npctemplate := ":ghaia:";
 	endif
+	GFTextLine(chargump, x_pos, y_pos, 1153,  "NpcTemplate:");
+	template := GFTextEntry( chargump, x_pos+80, y_pos, 150, 20, 1150, boss.npctemplate);
+	GFAddButton(chargump, x_pos+200, y_pos, 0xFBD, 0xFBE, GF_CLOSE_BTN, 101);
 
-	GFTextLine(chargump, 50, 95, 1153, "Nome: ");
-	if (boss.name)
-		nome := GFTextEntry( chargump, 140, 95, 100, 20, 1150, boss.name);
-	else
-		nome := GFTextEntry( chargump, 140, 95, 100, 20, 1150, "-");
+	if (!boss.name)
+		boss.name := "-";
 	endif
+	GFTextLine(chargump, x_pos, y_pos+18, 1153, "Nome: ");
+	nome := GFTextEntry( chargump, x_pos+60, y_pos+18, 100, 20, 1150, boss.name);
 
-	GFTextLine(chargump, 50, 110, 1153, "Cor: ");
-	cor := GFTextEntry( chargump, 180, 110, 100, 20, 1150, cint(boss.color) + "");
+	GFTextLine(chargump, x_pos, y_pos+(18*2), 1153, "Cor: ");
+	cor := GFTextEntry( chargump, x_pos+60, y_pos+(18*2), 100, 20, 1150, cint(boss.color) + "");
 	if (cfg)
-		GFTextLine(chargump, 50, 125, 1153, "Str ["+ cfg.Strength+ "]:");
-		GFTextLine(chargump, 50, 140, 1153, "Int [" + cfg.Intelligence + "]:");
-		GFTextLine(chargump, 50, 155, 1153, "Dex [" + cfg.Dexterity + "]:");
-		GFTextLine(chargump, 50, 170, 1153, "Con [" + cfg.Constitution + "]:");
-		GFTextLine(chargump, 50, 185, 1153, "Wis [" + cfg.Wisdom + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*3), 1153, "Str ["+ cfg.Strength+ "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*4), 1153, "Int [" + cfg.Intelligence + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*5), 1153, "Dex [" + cfg.Dexterity + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*6), 1153, "Con [" + cfg.Constitution + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*7), 1153, "Wis [" + cfg.Wisdom + "]:");
 	else
-		GFTextLine(chargump, 50, 125, 1153, "Str: ");
-		GFTextLine(chargump, 50, 140, 1153, "Int: ");
-		GFTextLine(chargump, 50, 155, 1153, "Dex: ");
-		GFTextLine(chargump, 50, 170, 1153, "Con: ");
-		GFTextLine(chargump, 50, 185, 1153, "Wis: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*3), 1153, "Str: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*4), 1153, "Int: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*5), 1153, "Dex: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*6), 1153, "Con: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*7), 1153, "Wis: ");
 	endif
 
-	str := GFTextEntry( chargump, 180, 125, 100, 20, 1150, cint(boss.str) + "");
-	int := GFTextEntry( chargump, 180, 140, 100, 20, 1150, cint(boss.int) + "");
-	dex := GFTextEntry( chargump, 180, 155, 100, 20, 1150, cint(boss.dex) + "");
-	con := GFTextEntry( chargump, 180, 170, 100, 20, 1150, cint(boss.con) + "");
-	wis := GFTextEntry( chargump, 180, 185, 100, 20, 1150, cint(boss.wis) + "");
+	str := GFTextEntry( chargump, x_pos+60, y_pos+(18*3), 100, 20, 1150, cint(boss.str) + "");
+	int := GFTextEntry( chargump, x_pos+60, y_pos+(18*4), 100, 20, 1150, cint(boss.int) + "");
+	dex := GFTextEntry( chargump, x_pos+60, y_pos+(18*5), 100, 20, 1150, cint(boss.dex) + "");
+	con := GFTextEntry( chargump, x_pos+60, y_pos+(18*6), 100, 20, 1150, cint(boss.con) + "");
+	wis := GFTextEntry( chargump, x_pos+60, y_pos+(18*7), 100, 20, 1150, cint(boss.wis) + "");
 
-	if (cfg)
-		GFTextLine(chargump, 50, 200, 1153, "HP [" + cfg.Hits+ "]: +");
-	else
-		GFTextLine(chargump, 50, 200, 1153, "HP: +");
-	endif
-	hits := GFTextEntry( chargump, 180, 200, 100, 20, 1150, cint(boss.hits) + "");
+	var attacks      := GetNpcAttacks(npctemplate);
+	var boss_attacks := boss.customAttacks;
+	GFHtmlShadowed(chargump, x_pos+15, y_pos+(18*9), 250, 20,  "#FFA500", "Attack - Dice - Bonus - Type - Anim", 1);
 
-	var attacks     := GetNpcAttacks(npctemplate);
-	var boss_attcks := boss.customAttacks;
-	GFTextLine(chargump, 50, 218, 1153, "Attack - Dice - Bonus - Type - Anim");
-	var y := 236;
+	var y := y_pos+(18*9)+15;
 	foreach attack in attacks
-		GFTextLine(chargump, 70, y, 1153, "{} - {} - {} - {} - {}".(attack.name, attack.dicedmg, attack.hitbonus, attack.damageType, attack.AttackAnim));
-		y+= 18;
+		GFHtmlShadowed(chargump, x_pos+15, y, 250, 20,  "#CCCCCC", "{} - {} - {} - {} - {}".format(attack.name, attack.dicedmg, attack.hitbonus, attack.damageType, attack.AttackAnim), 1);
+		y+= 15;
 		sleepms(2);
 	endforeach
 
+	var i := 1;
 	foreach attack in boss_attacks
 		attack := SplitWords(attack, " ");
-		GFTextLine(chargump, 70, y, 1153, "{} - {} - {} - {} - {}".(attack[1], attack[2], attack[3], attack[4], attack[5]));
-		y+= 18;
-		sleepms(2);
+		GFAddButton(chargump, x_pos, y+1, 2103, 2104, 1, 90+i);
+		GFHTMLArea(chargump, x_pos+15, y, 250, 20, "<BASEFONT SIZE=1 color=#93c0ff>{} - {} - {} - {} - {}".format(attack[1], attack[2], attack[3], attack[4], attack[5]) );
+		y+= 15;
+		i += 1;
 	endforeach
-	GFAddButton( chargump, 120, y, 2103, 2104, 1, 90);
+	GFAddButton( chargump, x_pos, y+2, 2103, 2104, 1, 90);
+
 	// dmgmod := GFTextEntry( chargump, 180, 200, 100, 20, 1150, cint(boss.dmg) + "");
 
   	//if (cfg.specialai != error)
@@ -124,16 +122,25 @@ function CreateBossStructGump(who, byref boss)
 		//GFTextLine(chargump, 50, 200, 1153, "Special AI: ");
 	//endif
   
-	GFTextLine(chargump, 250, 80, 1153,  "Resistencias");
-	if (cfg)
-		GFTextLine(chargump, 250, 95, 1153, "CA [" + cfg.AR + "]:");
-	else
-		GFTextLine(chargump, 250, 95, 1153, "CA: ");
-	endif
-	camod := GFTextEntry( chargump, 350, 95, 100, 20, 1150, cint(boss.CA) + "");
+	var cx_pos := 280;
 
-	var resists   := GetConfigStringArray(cfg, "Resistencia");
-	var imunities := GetConfigStringArray(cfg, "Imunidade");
+	var cfg_hp := "";
+	if (cfg)
+		cfg_hp := " [{}]".format(cfg.Hits);
+	endif
+	GFTextLine(chargump, cx_pos, y_pos, 1153, "HP{}:".format(cfg_hp));
+	hits := GFTextEntry( chargump, cx_pos+60, y_pos, 100, 20, 1150, cint(boss.hits) + "");
+
+	var cfg_ca := "";
+	if (cfg)
+		cfg_ca := " [{}]".format(cfg.AR);
+	endif
+	GFTextLine(chargump, cx_pos, y_pos+18, 1153, "CA{}:".format(cfg_ca));
+	camod := GFTextEntry( chargump, cx_pos+60, y_pos+18, 100, 20, 1150, cint(boss.CA) + "");
+
+	GFTextLine(chargump, cx_pos, y_pos+(18*2), 1153,  "Resistencias");
+	var resists         := GetConfigStringArray(cfg, "Resistencia");
+	var imunities       := GetConfigStringArray(cfg, "Imunidade");
 	var vulnerabilities := GetConfigStringArray(cfg, "Vulnerabilidade");
 	if (boss.resists)
 		resists += boss.resists;
@@ -145,133 +152,136 @@ function CreateBossStructGump(who, byref boss)
 		vulnerabilities += boss.vulnerabilities;
 	endif
 
-	y := 110;
+	y := y_pos+(18*3);
 	foreach resist in resist_types
-		var type := "R";
+		var type  := "+";
+		var color := 171;
 		if (resist in imunities)
-			type := "I";
+			type := "*";
+			color := 51;
 		elseif (resist in vulnerabilities)
-			type := "V";
+			type := "-";
+			color := 236;
 		elseif (!(resist in resists))
 			sleepms(2);
 			continue;
 		endif
-		GFTextLine(chargump, 250, y, 1153, "[{}] {}".format(type, resist));
+		GFTextLine(chargump, cx_pos, y, color, "{} {}".format(type, resist));
 		y+= 18;
 	endforeach
-	GFAddButton( chargump, 300, y, 2103, 2104, 1, 80);
+	GFAddButton( chargump, cx_pos, y+3, 2103, 2104, 1, 80);
 
-	y += 18;
+	y += 20;
 
 	var skills := GetConfigStringArray(cfg, "Pericia");
 	if (boss.skills)
 		skills += boss.skills;
 	endif
-	GFTextLine(chargump, 250, y, 1153, "Pericias: ");
+	GFTextLine(chargump, cx_pos, y, 1153, "Pericias: ");
 	y+= 18;
 	foreach skill in skills
-		GFTextLine(chargump, 250, y, 1153, "{}".format(skill));
+		GFTextLine(chargump, cx_pos, y, 1153, "{}".format(skill));
 		y+= 18;
 		sleepms(2);
 	endforeach
-	GFAddButton( chargump, 300, y, 2103, 2104, 1, 70);
+	GFAddButton( chargump, cx_pos, y+2, 2103, 2104, 1, 70);
 	// y+= 18;
 	
-	GFTextLine(chargump, 50, 240, 1153, "Loot: ");
-	GFAddButton( chargump, 50, 263, 2103, 2104, 1, 10);
-	if (boss.loot)
-		var y := 0;
-		var i := 0;
-		foreach lootinfo in (boss.loot)
-			GFAddButton( chargump, 50, 283+y, 2103, 2104, 1, 11+i);
-			GFTextLine(chargump, 70, 270+y, 1150, " " + lootinfo.item.desc + " [" + lootinfo.chance + "%]");
-			y := y + 15;
-			i := i + 1;
-		endforeach
-	endif
-
-	GFTextLine(chargump, 50, 340, 1153, "Death Events: ");
-	GFAddButton( chargump, 50, 363, 2103, 2104, 1, 20);
+	y_pos := 340;
+	GFTextLine(chargump, x_pos, y_pos, 1153, "Death Events: ");
+	GFAddButton( chargump, x_pos, y_pos+24, 2103, 2104, 1, 20);
 	if (boss.deathevent)
 		var y := 0;
 		var i := 0;
 		foreach item in (boss.deathevent)
-			GFAddButton( chargump, 50, 383+y, 2103, 2104, 1, 21+i);
-			GFTextLine(chargump, 70, 370+y, 1150, " " + item.type);
-			y := y + 15;
-			i := i + 1;
+			GFAddButton( chargump, x_pos, y_pos+43+y, 2103, 2104, 1, 21+i);
+			GFTextLine(chargump, x_pos+10, y_pos+20+y, 1150, " " + item.type);
+			y += 18;
+			i += 1;
 		endforeach
 	endif
 
-	GFTextLine(chargump, 250, 340, 1153, "Special: ");
-	GFAddButton( chargump, 250, 363, 2103, 2104, 1, 30);
-	if (boss.special)
+	GFTextLine(chargump, cx_pos, y_pos, 1153, "Loot: ");
+	GFAddButton( chargump, cx_pos, y_pos+24, 2103, 2104, 1, 10);
+	if (boss.loot)
 		var y := 0;
 		var i := 0;
-		foreach item in (boss.special)
-			GFAddButton( chargump, 250, 383+y, 2103, 2104, 1, 31+i);
-			GFTextLine(chargump, 270, 370+y, 1150, " " + item.name);
-			y := y + 15;
-			i := i + 1;
+		foreach lootinfo in (boss.loot)
+			GFAddButton( chargump, cx_pos, y_pos+43+y, 2103, 2104, 1, 11+i);
+			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1150, " " + lootinfo.item.desc + " [" + lootinfo.chance + "%]");
+			y += 18;
+			i += 1;
 		endforeach
 	endif
 
-
-   GFTextLine(chargump, 50, 420, 1153, "Combat Events: ");
-	GFAddButton( chargump, 50, 443, 2103, 2104, 1, 40);
+	y_pos := 450;
+   GFTextLine(chargump, x_pos, y_pos, 1153, "Combat Events: ");
+	GFAddButton( chargump, x_pos, y_pos+23, 2103, 2104, 1, 40);
 	if (boss.combatevent)
 		var y := 0;
 		var i := 0;
 		foreach item in (boss.combatevent)
-			GFAddButton( chargump, 50, 463+y, 2103, 2104, 1, 41+i);
-			GFTextLine(chargump, 70, 440+y, 1150, " " + item.name);
-			y := y + 15;
-			i := i + 1;
+			GFAddButton( chargump, x_pos, y_pos+43+y, 2103, 2104, 1, 41+i);
+			GFTextLine(chargump, x_pos+10, y_pos+20+y, 1150, " " + item.name);
+			y += 18;
+			i += 1;
 		endforeach
 	endif
 
-	GFAddButton(chargump, 380, 467, 4502, 4502, 1, 1 );
-	GFTextLine(chargump, 340, 480, 1153, "Fim");
+	GFTextLine(chargump, cx_pos, y_pos, 1153, "Special: ");
+	GFAddButton( chargump, cx_pos, y_pos+23, 2103, 2104, 1, 30);
+	if (boss.special)
+		var y := 0;
+		var i := 0;
+		foreach item in (boss.special)
+			GFAddButton( chargump, cx_pos, y_pos+43+y, 2103, 2104, 1, 31+i);
+			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1150, " " + item.name);
+			y += 18;
+			i += 1;
+		endforeach
+	endif
+
+	GFAddButton(chargump, 380, 507, 4502, 4502, 1, 1 );
+	GFTextLine(chargump, 350, 520, 1153, "Apply");
 
 	input := GFSendGump(who, chargump);	
   
-	boss.+npctemplate := Cstr(GFExtractData(input, template));
-	boss.+name        := Cstr(GFExtractData(input, nome));
-	boss.+color       := Cint(GFExtractData(input, cor));
-	boss.+str         := Cint(GFExtractData(input, str));
-	boss.+dex         := Cint(GFExtractData(input, dex));
-	boss.+int         := Cint(GFExtractData(input, int));
-	boss.+wis         := Cint(GFExtractData(input, wis));
-	boss.+con         := Cint(GFExtractData(input, con));
-	boss.+resist      := Cint(GFExtractData(input, resistmod));
-	boss.+hits        := Cint(GFExtractData(input, hits));
-	boss.+dmg         := Cdbl(GFExtractData(input, dmgmod));
-	boss.+CA    		:= Cint(GFExtractData(input, ca));
+	boss.npctemplate := Cstr(GFExtractData(input, template));
+	boss.name        := Cstr(GFExtractData(input, nome));
+	boss.color       := Cint(GFExtractData(input, cor));
+	boss.str         := Cint(GFExtractData(input, str));
+	boss.dex         := Cint(GFExtractData(input, dex));
+	boss.int         := Cint(GFExtractData(input, int));
+	boss.wis         := Cint(GFExtractData(input, wis));
+	boss.con         := Cint(GFExtractData(input, con));
+	boss.hits        := Cint(GFExtractData(input, hits));
+	// boss.dmg         := Cdbl(GFExtractData(input, dmgmod));
+	boss.CA    		:= Cint(GFExtractData(input, camod));
 
 	if (input[0] == 1 )
 		//SendSysMessage(who, " " + boss + " " );
 		//SendSysMessage(who, " " + boss + " " + Cstr(GFExtractData(input, template)) );
 		return;
-	elseif ( input[0] == 90)
+	elseif ( input[0] >= 90 && input[0] <= 95)
+		var selected := input[0]-90;
 		var boss_attacks := boss.customAttacks;
-		var attacks := array{};
-		foreach attack in boss_attacks
-			attacks.append(attack.name);
-		endforeach
-		attacks.append("Novo Ataque");
-		var opt := RadioGump(who, 180, 200+(attacks.length() * 18), "Escolha o ataque", attacks, 1);
-		if (opt != attacks.length())
+		if (!boss_attacks) boss_attacks := array{}; endif
+		if (boss_attacks[selected])
 			var choice := RadioGump(who, 180, 220, "O que deseja fazer?", array{"Remover", "Editar", "Cancelar"}, 1);
 			if (choice == 1)
-				boss_attacks.Erase(opt);
+				boss_attacks.Erase(selected);
 			elseif (choice == 2)
-				var new_attack := RequestGump(who, "Entre com o novo ataque", "Attack name - Dice - Bonus - Type - Anim", attacks[opt], 1);
-				boss_attacks[opt] := new_attack;
+				var new_attack := RequestGump(who, "Entre com o novo ataque", "Attack name - Dice - Bonus - Type - Anim", boss_attacks[selected], 1);
+				boss_attacks[selected]  := new_attack;
 			endif
+			boss.customAttacks := boss_attacks;
 		else
 			var new_attack := RequestGump(who, "Entre com o novo ataque", "Attack name - Dice - Bonus - Type - Anim", "", 1);
-			boss_attacks.append(new_attack);
-		endif		
+			if (new_attack && new_attack != "")
+				boss_attacks.append(new_attack);
+				boss.customAttacks := boss_attacks;
+			endif
+		endif
 	elseif ( input[0] == 70)
 		// var opt_checked := array{};
 		// foreach resist in resist_types
@@ -282,25 +292,15 @@ function CreateBossStructGump(who, byref boss)
 		// var opts := CheckBoxGump(who, 180, 200+(resist_types.length() * 18), "Escolha as resistências:", resist_types, opt_checked);
 		// boss.resists := opts;
 	elseif ( input[0] == 80)
-		var opt := RadioGump(who, 180, 220, "Qual tipo deseja adicionar?", array{"Resistência", "Imunidade", "Vulnerabilidade"}, 1);
+		var opt := RadioGump(who, 180, 160, "Qual tipo deseja adicionar?", array{"resists", "imunities", "vulnerabilities"});
 		var opt_checked := array{};
 		foreach resist in resist_types
-			if (opt == 2 && resist in boss.imunities)
-				opt_checked[_resist_iter] := true;
-			elseif (opt == 1 && resist in boss.resists)
-				opt_checked[_resist_iter] := true;
-			elseif (opt == 3 && resist in boss.vulnerabilities)
-				opt_checked[_resist_iter] := true;
+			if (resist in boss[opt])
+				opt_checked[_resist_iter] := 1;
 			endif
 		endforeach
-		var opts := CheckBoxGump(who, 180, 200+(resist_types.length() * 18), "Escolha os tipos:", resist_types, opt_checked);
-		if (opt == 1)
-			boss.resists := opts;
-		elseif(opt == 2)
-			boss.imunities := opts;
-		elseif(opt == 3)
-			boss.vulnerabilities := opts;
-		endif
+		var opts := CheckBoxGump(who, 180, 260+(resist_types.length() * 20), "Escolha os tipos:", resist_types, opt_checked);
+		boss[opt] := opts;
 	elseif ( input[0] >= 10 && input[0] <= 15)
 		var index := input[0] - 9;
 		//sendsysmessage(who, " " + input[0] + " " + boss.loot[index]);
@@ -320,7 +320,6 @@ function CreateBossStructGump(who, byref boss)
 				boss.loot[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
 			endif 
 		else
-
 			SendSysMessage(who, "Escolha o item do loot.");
 			var targ := Target(who);
 			if (targ)
@@ -333,9 +332,6 @@ function CreateBossStructGump(who, byref boss)
 				(boss.loot).append(lootinfo);
 			endif
 		endif
-
-		CreateBossStructGump(who, boss);
-
 	elseif ( input[0] >= 20 && input[0] <= 25)
 		var index := input[0] - 19;
 		if (boss.deathevent[index] != error )
@@ -355,7 +351,6 @@ function CreateBossStructGump(who, byref boss)
 					(boss.deathevent).append(nevent);
 				endif
 		endif
-		CreateBossStructGump(who, boss);
 	elseif ( input[0] >= 40 && input[0] <= 45)
 		var index := input[0] - 39;
 		if (boss.combatevent[index] != error )
@@ -379,8 +374,6 @@ function CreateBossStructGump(who, byref boss)
 					(boss.combatevent).append(nevent);
 				endif
 		endif
-		CreateBossStructGump(who, boss);
-
 	elseif ( input[0] >= 30 && input[0] <= 35)
 		var index := input[0] - 29;
 
@@ -413,10 +406,8 @@ function CreateBossStructGump(who, byref boss)
 			endif
 			boss.special.append(spec);
 		endif
-
-		CreateBossStructGump(who, boss);
 	endif
-
+	CreateBossStructGump(who, boss);
 	//return 0;
 endfunction
 
@@ -440,7 +431,7 @@ function SetBoss(npc, boss)
 	AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex));
 	AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int));
 	AP_SetTrueStat(npc, WISDOM, Cint(boss.wis));
-	AP_SetTrueStat(npc, CONSTITUTE, Cint(boss.con));
+	AP_SetTrueStat(npc, CONSTITUTION, Cint(boss.con));
 	
 	foreach skill in boss.skills
 		AP_SetTrueSkill(npc, skill, 1);
@@ -633,7 +624,7 @@ function ConfigureCombatEvent(who, event := 0)
 	endforeach
 
 	GFAddButton(gumpcombat, 180, 387, 4502, 4502, 1, 1000 );
-	GFTextLine(gumpcombat, 140, 400, 1153, "Fim");
+	GFTextLine(gumpcombat, 140, 400, 1153, "Apply");
 	
 	var input := GFSendGump(who, gumpcombat);
 

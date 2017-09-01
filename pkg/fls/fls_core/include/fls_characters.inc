@@ -155,7 +155,7 @@ function GetSkillNameByID(input)
 	return "";
 endfunction
 
-function SubtractMoney(container, qty := array{0, 0, 0})
+function SubtractMoney(container, qty := array{})
 	if (qty.length() > 3) return 0;
 
 	var money := array{0, 0, 0};
