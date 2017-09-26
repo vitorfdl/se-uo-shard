@@ -29,9 +29,7 @@ program mining(who)
 	
 	foreach thing in ores 
 		var dif := DetermineMiningDifficulty( GetResourceId(thing) );
-		if (TemHabilidade(who, "Prospector"))
-			dif := 0;
-		endif
+
 		if ( (skill + 10) >=  dif)
 			possiveis[i] := thing;
 			raridade[i] := raridades[k];

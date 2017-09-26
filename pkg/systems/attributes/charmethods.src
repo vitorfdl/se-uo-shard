@@ -94,3 +94,48 @@ exported function SetPoints(who, points)
 	SetObjProperty(who, "chardata", chardata);
 	return 1;
 endfunction
+
+exported function GetTalentPoints(who)
+	var chardata := GetObjProperty(who, "chardata");
+	var talentpoints := chardata["talentpoints"];
+	if (talentpoints == error || !talentpoints)
+		SetPoints(who, 0);
+		talentpoints := 0;
+	endif
+	return talentpoints;
+endfunction
+
+exported function SetTalentPoints(who, points)
+	var chardata := GetObjProperty(who, "chardata");
+	chardata["talentpoints"] := points;
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+
+exported function GetAchievement(who, select := 0)
+	var achievements := GetObjProperty(who, "achievements");
+	if (achievements == error || !achievements)
+		achievements := struct;
+	endif
+
+	if (select)
+		if (!achievements[select])
+			achievements := 0;
+		else
+			achievements := achievements[select];
+		endif
+	endif
+
+	return achievements;
+endfunction
+
+exported function SetAchievement(who, achievement, plus)
+	var achievements := GetObjProperty(who, "achievements");
+	if (achievements == error || !achievements)
+		achievements := struct;
+	endif
+
+	achievements[achievement] := cint(achievements[achievement]) + plus;
+
+	SetObjProperty(who, "achievements", achievements);
+endfunction

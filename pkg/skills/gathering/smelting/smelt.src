@@ -138,8 +138,7 @@ function SmeltOre(who, item, ore)
 
   if(!ReserveItem(ore))
     return;
-  endif
-  if(!Accessible(who, ore))
+  elseif(!Accessible(who, ore))
     SendSysMessage(who,"Voce nao alcanca isto.", FONT_NORMAL, 40);
     return;
   endif
@@ -175,32 +174,34 @@ function SmeltOre(who, item, ore)
   endcase
 
   
-  if (GetObjProperty(item, "numMetal"))
-     var num := CINT(GetObjProperty(item, "amt1"));
-     var nummetal := Cint(GetObjProperty(item, "numMetal"));
-     if (num != ore.amount)
-        SendSysMessage(who, "Voce precisa colocar " + num + " minerios aqui.", FONT_NORMAL, 40);
-        return;
-     endif
-     if(SkillCheck(who, GATHERING, dif, 0) > 0)
-        SendSysMessage(who, "Voce fez a fusao entre os metais.", FONT_NORMAL, 90);
-        PlaySoundEffect(who, 0x22);
-        sleep(4);
-        SetObjProperty(item, "numMetal", nummetal+1);
-        SetObjProperty(item, "amt"+(nummetal+1), ore.amount);
-        SetObjProperty(item, "oreObj"+(nummetal+1), ingot);
-        DestroyItem(ore);
-     else
-          var perdamt := RandomInt(3)+1;
-          if (perdamt > ore.amount)
+   var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, FERRARIA);
+   if (GetObjProperty(item, "numMetal"))
+      var num := CINT(GetObjProperty(item, "amt1"));
+      var nummetal := Cint(GetObjProperty(item, "numMetal"));
+      if (num != ore.amount)
+         SendSysMessage(who, "Voce precisa colocar " + num + " minerios aqui.", FONT_NORMAL, 40);
+         return;
+      endif
+
+      if(dice_roll > dif)
+         SendSysMessage(who, "Voce fez a fusao entre os metais.", FONT_NORMAL, 90);
+         PlaySoundEffect(who, 0x22);
+         sleep(4);
+         SetObjProperty(item, "numMetal", nummetal+1);
+         SetObjProperty(item, "amt"+(nummetal+1), ore.amount);
+         SetObjProperty(item, "oreObj"+(nummetal+1), ingot);
+         DestroyItem(ore);
+      else
+         var perdamt := RandomInt(3)+1;
+         if (perdamt > ore.amount)
             perdamt := ore.amount;
-          endif
-          SubtractAmount(ore, perdamt);
-	  SendSysMessage(who, "Voce perdeu parte dos minerios.", FONT_NORMAL, 40);
-          return;
-    endif
-  else 
-     if(SkillCheck(who, GATHERING, dif, ((dif / 2) + 10)) > 0)
+         endif
+         SubtractAmount(ore, perdamt);
+         SendSysMessage(who, "Voce perdeu parte dos minerios.", FONT_NORMAL, 40);
+         return;
+      endif
+   else 
+     if(dice_roll > dif)
         SendSysMessage(who, "Voce derreteu o minerio e retirou as impurezas.", FONT_NORMAL, 90);
         PlaySoundEffect(who, 0x22);
         sleep(4);
@@ -209,17 +210,16 @@ function SmeltOre(who, item, ore)
         SetObjProperty(item, "oreObj1", ingot);
         SetObjProperty(item, "amt1", ore.amount);
         DestroyItem(ore);
-     else
-          var perdamt := RandomInt(3)+1;
-          if (perdamt > ore.amount)
+      else
+         var perdamt := RandomInt(3)+1;
+         if (perdamt > ore.amount)
             perdamt := ore.amount;
-          endif
-          SubtractAmount(ore, perdamt);
-	  SendSysMessage(who, "Voce perdeu parte dos minerios.", FONT_NORMAL, 40);
-          return;
-    endif
-     
-  endif
+         endif
+         SubtractAmount(ore, perdamt);
+         SendSysMessage(who, "Voce perdeu parte dos minerios.", FONT_NORMAL, 40);
+         return;
+      endif
+   endif
 
 
 endfunction

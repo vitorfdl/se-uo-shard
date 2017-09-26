@@ -6,7 +6,6 @@ use os;
 
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include ":crafting:crafting";
 include ":crafting:toolWear";
 include ":itemutils:canAccess";

@@ -4,7 +4,6 @@ use os;
 use cfgfile;
  include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include "include/say";
 
 var config;

@@ -9,7 +9,6 @@ include "include/client";
 include "include/say";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include ":blood:blood";
 include ":survival:skinning";
 include ":ghaia:ghaiaUtil";
@@ -96,7 +95,7 @@ program skinning(parms)
 		//var tmplate := cadaver.NPCTemplate();
 
 		if(!tmplate)
-			SendSysMessage(who, "Voce cortou o corpo, mas nao conseguiu nada de util.");
+			SendSysMessage(who, "Escalpelou o corpo, mas nada foi aproveitado.");
 			MakeBleed(cadaver);
 			return;
 		else
@@ -108,7 +107,7 @@ program skinning(parms)
 
 			if(!corpseitm)
 				MakeBleed(cadaver);
-				SendSysMessage(who, "Voce nao vai conseguir nada de util aqui.");
+				SendSysMessage(who, "Parece que nada pode ser aproveitado aqui");
 				return;
 			endif
 			var i := 1;
@@ -124,7 +123,8 @@ program skinning(parms)
 			foreach thing in corpseitm
 				dif := bonusdif + CINT(GetSkinningDifficulty(corpseitm[i]) );
 				minamt := GetMinSkinningAmt(corpseitm[i]);
-				if(SkillCheck(who, SURVIVAL, dif) > 0)
+				var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
+				if(dice_roll > dif)
 					if (minamt > corpseamt[i])
 						minamt := corpseamt[i];
 					endif
@@ -134,9 +134,9 @@ program skinning(parms)
 				i := i + 1;
 			endforeach
 			if (found)
-				SendSysMessage(who, "Voce conseguiu aproveitar algo do corpo.");
+				SendSysMessage(who, "Escalpelou o corpo.");
 			else
-				SendSysMessage(who, "Voce nao conseguiu nada de util.");
+				SendSysMessage(who, "Nada foi aproveitado.");
 			endif
 			MakeBleed(cadaver);
 		endif

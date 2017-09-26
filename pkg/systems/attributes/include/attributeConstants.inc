@@ -41,6 +41,7 @@ enum SKILLS
 	MARCENARIA         := "Marcenaria",
 	COZINHA            := "Cozinha",
 	COSTURA            := "Costura",
+	FERRARIA           := "Ferraria",
 	EXTRACAO           := "Extração",
 	TRATO_ANIMAIS      := "Trato de Animais",
 	MONTARIA           := "Montaria",

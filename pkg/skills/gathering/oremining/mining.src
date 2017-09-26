@@ -118,9 +118,9 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 
 	if ( ore_amount > 0 )
 		if (ore_type != 999) //999 eh quando nao passou na chance de raridade do minerio
-		
-			if ( SkillCheck(who, GATHERING, difficulty) > 0 )
-				var amt := Cint(AP_GetSkill(who, GATHERING)/20);
+			var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
+			if ( dice_roll > difficulty )
+				var amt := AP_GetStat(mobile, attribute, RETURN_BONUS);
 				if (amt <= 0)
 					amt := 1;
 				endif
@@ -131,7 +131,7 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 				endif
 				ore_amount := ore_amount - amt;
 				if (ore_amount < 0)
-					ore_amount := Cint(AP_GetSkill(who, GATHERING)/50);
+					ore_amount := AP_GetStat(mobile, attribute, RETURN_BONUS);
 				endif
 				SetOreAmount(who.realm, targx, targy, ore_amount); //feita
 				var minerio := CreateItemInBackPack(who, ore_type, amt);

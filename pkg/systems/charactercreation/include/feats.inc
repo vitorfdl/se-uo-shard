@@ -40,6 +40,9 @@
 	
 // endfunction
 
+enum FEATS
+
+endenum
 
 function GetFeatList(who)
 	var chardata := GetObjProperty(who, "chardata");
@@ -61,34 +64,71 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
-function FeatName(feat)
+function GetNewFeatsList(who)
+	var feat_cfg := ReadConfigFile(":charactercreation:feats");
+	var feat_list := array{};
+	foreach feat in (GetConfigStringKeys(feat_cfg))
+		sleepms(2);
+		if (HaveFeat(who, feat))
+			continue;
+		endif
 
-	var habcfg := ReadConfigFile(":charactercreation:config/feats");
-	var elem := FindConfigElem( habcfg, feat );
+		feat := FeatInfo(feat, 1);
+		if (feat.level && feat.level < who.GetLevel())
+			continue;
+		endif
 
-	var nome := GetConfigString( elem, "nome" );
+		var pass := 1;
+		foreach req in (feat.requirements)
+			req := SplitWords(requirement, " ");
 
-	return nome;
+			if (req[1] == "achievement")
+				if(who.GetAchievement(req[2]) < req[3])
+					pass := 0;
+					break;
+				endif
+			elseif (req[1] == "class")
+				if(!who.isClass(req[2]))
+					pass := 0;
+					break;
+				endif
+			elseif (req[1] == "skill")
+				if(!HaveSkill(who, req[2]))
+					pass := 0;
+					break;
+				endif
+			endif
+		endforeach
+
+		if (pass)
+			feat_list += feat;
+		endif
+	endforeach
+
+	return feat_list;
 endfunction
 
-function FeatInfo(feat)
-
-	var habcfg := ReadConfigFile(":charactercreation:config/feats");
+function FeatInfo(feat, plus := 0)
+	var habcfg := ReadConfigFile(":charactercreation:feats");
 	var elem   := FindConfigElem( habcfg, feat );
 
-	var desc       := GetConfigString( elem, "Desc" );
-	var ativavel   := GetConfigString( elem, "Use" );
-	var DamageType := GetConfigString( elem, "DamageType" );
-	
-	if (DamageType)
-		desc := desc + "<br>Categoria de Arma: " + DamageType;
+	var feat_info = struct{
+		"desc":   GetConfigString( elem, "Description" ),
+		"active": GetConfigInt( elem, "Active" ),
+		"script": GetConfigString( elem, "Script" ),
+
+		"mana": GetConfigInt( elem, "Mana" ),
+		"stam": GetConfigInt( elem, "Stam" ),
+
+		"level": GetConfigInt( elem, "Level" ),
+	};
+
+	if (plus)
+		feat_info["requirements"] := GetConfigStringArray( elem, "Require" );
+		feat_info["give"] := GetConfigStringArray( elem, "Give" );
 	endif
-	
-	if (ativavel == "Ativa")
-		desc := desc + "<br><br>Para usar Talentos ativos use '.shab Talento', lembre-se de não usar acentos";
-	endif
-	
-	return desc;
+
+	return feat_info;
 endfunction
 
 // function IsBloodied(mobile)

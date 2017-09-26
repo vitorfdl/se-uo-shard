@@ -6,7 +6,6 @@ include "include/client";
 include ":datafile:datafile";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include ":crafting:toolWear";
 include ":gathering:mining";
 include ":tn:tngumps";
@@ -88,7 +87,8 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	
 	var difficulty := 20;//CInt(100 - (resource_amount * 100 / MAX_RESOURCE_AMOUNT));
 	
-	if ( SkillCheck(who, GATHERING, difficulty) > 0 )
+	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
+	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, CLAY_BALL, 1);
 		SendSysMessageEx(who, "Voce pegou um pouco de argila.", SSM_INFO);
 		return 1;
@@ -150,7 +150,7 @@ function EnterrarCorpo(who, scoop, targ)
 	endif
 
 	
-	var grave := cstr(RadioGump(who, 280, 250, "Deseja cavar em qual direção?", {"Leste","Oeste","Norte","Sul"}));
+	var grave := cstr(RadioGump(who, 280, 250, "Deseja cavar em qual dire��o?", {"Leste","Oeste","Norte","Sul"}));
 	case ( grave )
 		"Leste": grave := 0x0EE2;
 		"Oeste": grave := 0x0EE0;
@@ -209,7 +209,7 @@ function DesenterrarCorpo(who, scoop, targ)
 		endif
 	endfor
 	if (!targ.item)
-		SendSysMessageEX(who, "Algo aconteceu com o tumulo e você não conseguiu desenterra-lo", SSM_FAIL);
+		SendSysMessageEX(who, "Algo aconteceu com o tumulo e voce nao conseguiu desenterra-lo", SSM_FAIL);
 		return;
 	endif
 	var dirth := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x0914);

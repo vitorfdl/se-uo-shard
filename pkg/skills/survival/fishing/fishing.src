@@ -133,7 +133,9 @@ program use_FishingPole(who, fishingpole)
 				CreateItemInBackpack(who, iscausada, 1);
 				return 0;
 			endif
-			if( SkillCheck(who, SURVIVAL, difficulty, cint(difficulty-5)) > 0)
+
+			var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
+			if( dice_roll > difficulty)
 
 				//Acontecimentos diferentes na pescaria
 				var otherchance := OtherChances(who, targetsquare, fishingpole);
@@ -200,14 +202,14 @@ function OtherChances(who, targetsquare, fishingpole)
 			return 0;
 		endif
 	elseif(thisone <= 99)
-		if(RandomInt(currentskill) >= 50)
+		if(RandomInt(currentskill) >= 16)
 			fishtype := "level" +(RandomInt(2)+ 1)+ "map";
 			SendSysMessage(who, "Voce achou um mapa do tesouro!",FONT_NORMAL,0);
 		else
 			return 0;
 		endif
 	else
-		if(currentskill >= 95)
+		if(currentskill >= 19)
 			fishtype := "sosbottle";
 			SendSysMessage(who, "Voce achou uma garrafa!",FONT_NORMAL,0);
 		else

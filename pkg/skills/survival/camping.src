@@ -19,35 +19,31 @@ program UseWood( who, wood )
 	EraseObjProperty(who, "HealTimer");
 	if( !can_access(who, wood) )
 		return 0;
-	endif
-	if( wood.movable == 0 )
+	elseif( wood.movable == 0 )
 		SendSysMessageEx(who, "Voce nao pode acender isso.", SSM_FAIL);
 		return 0;
-	endif
-	var camptimer := 0;//GetObjProperty(who, "CampTimer");
-	if( camptimer )
-		if( camptimer > ReadGameClock() )
-			SendSysMessageEX(who, "Voce deve esperar alguns segundos para fazer isto novamente.", SSM_FAIL);
-			return 0;
-		endif
-	endif
-	SetObjProperty(who, "CampTimer", ReadGameClock() + 3);
-	if( !Accessible(who, wood) )
+	elseif( !Accessible(who, wood) )
 		SendSysMessageEx( who, "Voce nao alcanca isto!", SSM_FAIL );
 		return 0;
-	endif
-	if( wood.container )
+	elseif( wood.container )
 		SendSysMessageEx( who, "Coloque no chao primeiro!", SSM_FAIL );
 		return 0;
 	endif
-
+	// var camptimer := 0;//GetObjProperty(who, "CampTimer");
+	// if( camptimer )
+	// 	if( camptimer > ReadGameClock() )
+	// 		SendSysMessageEX(who, "Voce deve esperar alguns segundos para fazer isto novamente.", SSM_FAIL);
+	// 		return 0;
+	// 	endif
+	// endif
+	// SetObjProperty(who, "CampTimer", ReadGameClock() + 3);
 	PrintText(who, "*tenta acender uma fogueira*");
-	var TesteSkill;
+	var difficulty == 15;
 	if (GetEquipmentByLayer(who, 0x02).objtype == 2578)
-		TesteSkill := SkillCheck(who, SURVIVAL, 8);
-	else
-		TesteSkill := SkillCheck(who, SURVIVAL, 15);
+		difficulty := 8;
 	endif
+
+	
 
 	if( TesteSkill > 0 )
 		var x := wood.x;

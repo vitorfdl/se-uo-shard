@@ -171,26 +171,15 @@ function rollResistDice(mobile, type)
 endfunction
 
 function HaveSkill(mobile, skill)
-	var skill_list := array{};
-
-	if (mobile.npctemplate);
-		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
-		skill_list  := GetConfigStringArray(npcelem, "Pericia");
-
-		if (GetObjProperty(who, "skills"))
-			skill_list += GetObjProperty(who, "skills");
-		endif
-
-		if (skill in skill_list)
-			return 1; //Tem Skill
-		endif
-
-		return 0;
+	if (typeof(skill) != "Array")
+		skill := array{skill};
 	endif
 
-	if (AP_GetTrueSkill(mobile, skill) == 1)
-		return 1;
-	endif
+	foreach name in skill
+		if (AP_GetTrueSkill(mobile, skill) == 1)
+			return 1;
+		endif
+	endforeach
 
 	return 0; //n tem skill
 endfunction

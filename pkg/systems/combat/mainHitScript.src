@@ -54,11 +54,6 @@ program MainHitScript( params )
 
 	ArrowRecovery(defender, weapon);
 
-	// Destroi armadura/arma
-	// TODO: Sistema é novo agora.
-	// WearDownWeapon(attacker, weapon);
-	// WearDownArmor(defender, armor, critical, weapon);
-
 	//calcula os danos
 	base_damage := CalculateTotalDamageBonus(base_damage, attacker, defender);
 

@@ -121,7 +121,7 @@ endfunction
 function MenuPlayerToItem(who, what)
     var entries := struct{};
 
-    if ((what.x >= 142)) //hack to check if not in bag or held
+    if (!what.container) //hack to check if not in bag or held
         if (Distance(who, what) <= 2 && GetObjProperty(what, "canfix"))
             entries.+fix := 3002011;
         endif
