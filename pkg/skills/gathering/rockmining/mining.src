@@ -6,7 +6,6 @@ include "include/client";
 include ":datafile:datafile";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include ":crafting:toolWear";
 include ":gathering:mining";
 

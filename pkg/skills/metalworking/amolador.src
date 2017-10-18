@@ -2,7 +2,6 @@ use cfgfile;
 use util;
 
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include ":crafting:crafting";
 include ":attributes:attributeConstants";
 include "include/client";

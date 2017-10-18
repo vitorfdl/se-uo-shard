@@ -206,7 +206,6 @@ function MakePotion ( pot, item, who, magic, strength := 0)
     
 	if(SkillCheck(who, ALCHEMY, difficulty) > 0) 
 		//if (GetObjProperty(who, "classe") == "sabio")
-		//	SkillCheck(who, BEGGING, -1);
 		//endif
 		var hasbottle:= 0;
 		set_critical(1);

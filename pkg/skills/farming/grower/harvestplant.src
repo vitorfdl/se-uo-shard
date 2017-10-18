@@ -41,8 +41,10 @@ function HarvestPlant(who, grower)
 	var difficulty := CInt(grower.GetDifficulty());
 	grower.SetProduceAmount(grower.GetProduceAmount()-1);
 	
-	SendSysMessage(who, "dificuldade " + difficulty);
-	if ( SkillCheck(who, COOKWORK, difficulty) > 0 )
+	// SendSysMessage(who, "dificuldade " + difficulty);
+
+	var test := rollAttrDice(who, DEXTERITY, penalty := 0, params := struct{}) + getProficiencyBonus(who, array{SOBREVIVENCIA, PLANTACAO});	
+	if ( test > difficulty )
 		CreateItemInBackPack(who, grower.GetProduceType(), 1);
 		SendSysMessage(who, "Voce guardou os frutos na sua mochila.");
 		var seed_chance := grower.GetSeedDice();

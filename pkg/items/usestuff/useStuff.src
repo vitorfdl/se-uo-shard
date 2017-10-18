@@ -13,7 +13,7 @@ program UseStuff(character, stuff)
   EraseObjProperty(character, "#IsMeditating");
   EraseObjProperty(character, "#HealTimer");
 
-  var skill, skill_needed, points;
+  var skill, skill_needed, points, attribute;
   var targetitem, prompt, target_quantity;
   var desc, destroy_failure, quantity1, quantity2, dont_destroy_success;
   var use_on, destroy_target_success, destroy_target_failure;
@@ -54,9 +54,10 @@ program UseStuff(character, stuff)
     return;
   endif
 
-  skill := CInt(GetConfigString(elem, "skill"));
-  targetitem := CInt(GetConfigString(elem, "product"));
+    skill := CInt(GetConfigString(elem, "skill"));
+    targetitem := CInt(GetConfigString(elem, "product"));
     skill_needed := CInt(GetConfigString(elem, "skill_needed"));
+    attribute := CInt(GetConfigString(elem, "attribute"));
     points := CInt(GetConfigString(elem, "points"));
     target_quantity := CInt(GetConfigString(elem, "target_quantity"));
     quantity1 := CInt(GetConfigString(elem, "quantity1"));
@@ -98,7 +99,8 @@ program UseStuff(character, stuff)
     endif
 
     if ( skill != 0)
-        if (SkillCheck(character, skill, skill_needed, points) > 0)
+        var test := rollAttrDice(character, attribute) + getProficiencyBonus(character, skill);
+        if (test > skill_needed)
             if (!dont_destroy_success)
               SubtractAmount(stuff, quantity1);  //use material
             endif

@@ -5,7 +5,6 @@ use uo;
 include ":musicianship:bard";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include "include/client";
 include "include/sounds";
 include "include/say";

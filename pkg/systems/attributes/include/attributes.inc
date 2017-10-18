@@ -112,9 +112,17 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 endfunction
 
 function getProficiencyBonus(mobile, skill := 0)
-	if (skill && !HaveSkill(mobile, skill))
-		return 0;
+	if (typeof(skill) != "Array") 
+		skill := array{skill};
 	endif
+
+	var have_skill;
+	foreach skill_n in skill
+		if (!HaveSkill(mobile, skill)) continue; endif
+		have_skill := true; break;
+	endforeach
+	if (!have_skill) return 0; endif
+
 	var proficiency := 0;
 	var level := 1;
 	if (mobile.npctemplate);

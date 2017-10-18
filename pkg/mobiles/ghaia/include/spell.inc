@@ -649,7 +649,6 @@ function CastDirect(caster, cast_on, spellname)
 
 
   var dmg := CInt(AP_GetSkill(caster, MAGERY)/2);
-  //SkillCheck(cast_on, RESISTING_SPELLS, -1);
   if (dmg < 10)
     dmg := 10;
   endif

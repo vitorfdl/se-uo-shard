@@ -7,7 +7,6 @@ use util;
 include "include/client";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 
 Const ITEM_SWARM		:= 0x091b;
 Const SOUND_SCRUNCH		:= 0x58;
@@ -45,7 +44,8 @@ program harvest_honey (character, beehive)
 		sleep (3);
 
 		//do a skill check to see if they manage to harvest anything
-		if (skillcheck (character, SURVIVAL, 20, 0) > 0)
+		var test := rollAttrDice(character, WISDOM) + getProficiencyBonus(character, SOBREVIVENCIA);
+		if (test > 13)
 			already_harvested_amount := CInt(GetObjProperty (beehive, "#harvested"));
 			if (!already_harvested_amount)
 				SetObjProperty (beehive, "#harvested", 1);

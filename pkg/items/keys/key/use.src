@@ -75,7 +75,8 @@ function CopyKey(who, key, targ)
 		return 0;
 	endif
 	
-	if (TemHabilidade(who, "Chave de Cera") || SkillCheck(who, "MetalWorking", 25) > 0)
+	var test := rollAttrDice(who, WISDOM, penalty := 0, params := struct{}) + getProficiencyBonus(who, FERRARIA);
+	if (test > 12)
 		targ.SetLockId(key_id);
 		SendSysMessageEx(who, "Voce copiou a chave.", SSM_INFO);
 		if (!TemHabilidade(who, "Chave de Cera"))

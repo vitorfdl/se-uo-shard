@@ -64,7 +64,6 @@ function Destilar(balao, beker, who, item)
    EraseObjProperty(balao, "extrato");
    EraseObjProperty(balao, "strength");
    
-  //  SkillCheck(who, ALCHEMY, -1);
    item.movable := 1;
    balao.movable := 1;
    beker.movable := 1;

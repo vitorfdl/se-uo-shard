@@ -6,7 +6,6 @@ var GROWTH_UNIT		:= GetObjTypeByName("GrowthUnit");
 
 const BOW_ANIM		:= 0x20;
 const PLANT_SOUND	:= 0x50;
-include ":attributes:skillCheck";
 include ":attributes:include/attributeConstants";
 include ":attributes:include/attributes";
 include ":charactercreation:habilidades";
@@ -49,7 +48,8 @@ program PlantSeed(who, seed)
 		difficulty := 150;
 	endif
 	
-	if ( SkillCheck(who, COOKWORK, difficulty) > 0 )
+	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PLANTACAO);
+	if ( test > difficulty )
 		var grower := CreateItemAtLocation(who.x, who.y, who.z+1, GROWTH_UNIT, 1);
 		grower.SetGrowerType(seed.objtype);
 		SendSysMessage(who, "Voce plantou a semente.");
@@ -82,7 +82,7 @@ endprogram
 function selectflower(who)
 
 	var gump := GFCreateGump();
-        GFDisposable(gump, 0);
+   GFDisposable(gump, 0);
 	GFResizePic(gump, 0, 25, 3600, 320, 550);	
 	GFResizePic(gump, 15, 40, 0x13BE, 290, 520);
 	GFTextLine(gump, 60, 50, 1153, "Escolha a flor dessa semente");

@@ -25,14 +25,16 @@ program PracticeDummy(who, dummy)
 	var weapon_anim := CInt(CS_GetWeaponInfo(weapon, "Anim"));
 	var miss_sound := CInt(CS_GetWeaponInfo(weapon, "MissSound"));
 	var weapon_attribute := CS_GetWeaponInfo(weapon, "Attribute");
-	if ( weapon_attribute["Archery"] )
+	var weapon_skill := CS_GetWeaponInfo(weapon, "Pericia");
+	if ( weapon.isBow() )
 		SendSysMessage(who, "Voce deveria usar o alvo de arquerismo.");
 		return 0;
 	endif
 	
 	PerformAction(who, weapon_anim);
-		
-	if ( SkillCheck(who, weapon_attribute, 20, 35) > 0 )
+
+	var test := rollAttrDice(who, weapon_attrib, 0) + getProficiencyBonus(who, weapon_skill);
+	if ( test > 8 )
 		PlaySoundEffect(who, DUMMY_HIT_SOUND);
 		DummyRock(dummy);
 	else

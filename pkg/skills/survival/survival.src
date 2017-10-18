@@ -65,7 +65,8 @@ function MobileTracking(who)
 		diff := -30;
 	endif
 	//SendSysMessage(who, "dif: "+diff);
-	if(SkillCheck(who, SURVIVAL, -1, 0, ADV_DISABLE) > diff)
+	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, SOBREVIVENCIA);
+	if(test > diff)
 		var tracker := ReadGameClock();
 		SetObjProperty(who, "TrackingCounter", tracker);
 		var range := CInt((AP_GetSkill(who, SURVIVAL)/1.5));
@@ -108,8 +109,8 @@ endfunction
 
 
 function ItemTracking(who)
-
-	if(SkillCheck(who, SURVIVAL, -1, 0, ADV_DISABLE) >0)
+	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, SOBREVIVENCIA);
+	if(test > 10)
 		var tracker := ReadGameClock();
 		SetObjProperty(who, "TrackingCounter", tracker);
 		var range := CInt((AP_GetSkill(who, SURVIVAL)/3));

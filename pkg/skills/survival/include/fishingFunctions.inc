@@ -212,9 +212,8 @@ endfunction
 
 
 function GetSOSTreasure(who, targetsquare, sosmsg)
-
-	targetsquare := targetsquare;
-	if( SkillCheck(who, SURVIVAL, 80, 200) > 0 )
+	var test := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
+	if( test > 18 )
 		var itemcfg := ReadConfigFile(":*:itemdesc");
 		var it, oldname;
 		if( RandomInt(100) < 75 )

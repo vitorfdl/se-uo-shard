@@ -5,7 +5,6 @@ use util;
 include "include/client";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 
 function coordist ( x1 , y1 , x2 , y2 )
 

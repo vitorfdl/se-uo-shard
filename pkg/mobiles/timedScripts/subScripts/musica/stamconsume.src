@@ -3,7 +3,6 @@ use os;
 
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 
 program cureScript(params)
 	var mobile := params[1];

@@ -19,6 +19,7 @@ program ArcheryButte(who, butte)
 
 	var weapon := who.weapon;
 	var weapon_attrib := CS_GetWeaponInfo(weapon, "Attribute");
+	var weapon_skill := CS_GetWeaponInfo(weapon, "Pericia");
 	var weapon_anim := CInt(CS_GetWeaponInfo(weapon, "Anim"));
 	var miss_sound := CInt(CS_GetWeaponInfo(weapon, "MissSound"));
 	var hit_sound := CInt(CS_GetWeaponInfo(weapon, "Hitsound"));
@@ -28,7 +29,7 @@ program ArcheryButte(who, butte)
 	if ( Distance(who, butte) == 1 )
 		RecoverAmmo(who, butte);
 		return 0;
-	elseif ( !CS_GetWeaponInfo(weapon, "Projectile") )
+	elseif ( !weapon.isBow() )
 		SendSysMessage(who, "Voce precisa de uma arma de ataque a distancia.");
 		return 0;
 	elseif ( !TP_CheckRange(who, weapon, butte) )
@@ -63,7 +64,8 @@ program ArcheryButte(who, butte)
 
 	PlayMovingEffect(who, closest, projectile_anim, 10, 0, 0);
 
-	if ( SkillCheck(who, weapon_attrib, 25, 35) > 0 )
+	var test := rollAttrDice(who, weapon_attrib, 0) + getProficiencyBonus(who, weapon_skill);
+	if ( test >= 10 )
 		PlaySoundEffect(who, hit_sound);
 		
 		if ( closest.IsA(POLCLASS_MOBILE) )
@@ -71,7 +73,7 @@ program ArcheryButte(who, butte)
 			var projectile_damage := CS_GetWeaponInfo(weapon, "Damage");
 			ApplyDamageEX(closest, RandomDiceRoll(projectile_damage), DMG_PHYSICAL);
 		else
-			PrintTextAbove(butte, DetermineHit(who, weapon_attrib));
+			PrintTextAbove(butte, DetermineHit(who, test));
 			if ( RandomInt(2) )
 				Set_Critical(1);
 				var ammo := CInt(GetObjProperty(butte, "Ammo-"+projectile_type));
@@ -88,13 +90,13 @@ program ArcheryButte(who, butte)
 endprogram
 
 function DetermineHit(who, weapon_attrib)
-	if ( SkillCheck(who, weapon_attrib, RandomDiceRoll("40d3"), 0, ADV_DISABLE) > 0 )
+	if ( test > 18 )
 		return "*Na mosca*";
-	elseif ( SkillCheck(who, weapon_attrib, RandomDiceRoll("30d3"), 0, ADV_DISABLE) > 0 )
+	elseif ( test > 16 )
 		return "*Acertou o anel interno vermelho*";
-	elseif ( SkillCheck(who, weapon_attrib, RandomDiceRoll("20d3"), 0, ADV_DISABLE) > 0 )
+	elseif ( test > 14 )
 		return "*Acertou o anel interno branco*";
-	elseif ( SkillCheck(who, weapon_attrib, RandomDiceRoll("10d3"), 0, ADV_DISABLE) > 0 )
+	elseif ( test  >= 10 )
 		return "*Acertou o anel externo vermelho*";
 	else
 		return "*Errou o alvo*";

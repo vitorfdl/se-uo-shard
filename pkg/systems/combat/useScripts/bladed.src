@@ -234,8 +234,8 @@ function MakeBlankScrolls (who, hides)
 			SendSysMessage(who, "Voce nao pode usar estes couros!");
 			return;
 		endif
-
-		if (SkillCheck(who, SURVIVAL, item_skill, 10) )
+		var test := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
+		if (test > 10)
 
 			if (!CreateItemInContainer (who.backpack, UOBJ_BLANK_SCROLL, 1))
 				PrintTextAbovePrivate (who, "*Sua mochila esta cheia!*", who);
