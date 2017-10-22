@@ -10,47 +10,54 @@ program oafeatures_sendpacket(who)
 	var gump := GFCreateGump();
 	
 	GFPage(gump, 0);
-	GFGumpPic(gump, 11, 29, 40009, 0); //borders
-	GFGumpPicTiled(gump, 42, 59, 700, 513, 30540); //background
-	GFTextLine(gump, 319, 34, 0, "Vendedor de Poções");
 
-   var i;
-   var x := 48;
-   var y := 66;
-   for (i := 0; i < 15; i+=1)
-      if (Floor(i / 5.1) >= 1)
-         x := 48;
-         y := 66;
-      endif
-      x += 135;
-      y += 167;
-	   GFGumpPic(gump, x, y, 40010, 0);
-   endfor
-	// GFGumpPic(gump, 48, 233, 40010, 0); //middle
-	// GFGumpPic(gump, 608, 67, 40010, 0); //last -> right
-	// GFGumpPic(gump, 48, 66, 40010, 0); // last -> down
+	GFAddButton(gump, 388, 0, 2093, 248, GF_CLOSE_BTN, 0); //skill page
+	GFResizePic(gump, 0, 0, 9380, 715, 508);
+	GFGumpPicTiled(gump, 22, 36, 671, 11, 2091); //top decoration
+	GFGumpPicTiled(gump, 23, 463, 671, 11, 2091); //bottom decoration
+   
+	GFAddButton(gump, 39, 73, 2151, 248, GF_CLOSE_BTN, 0);
+	GFTextLine(gump, 77, 76, 0, "Matador de DragÃµes");
+	GFHTMLArea(gump, 263, 62, 413, 70, "HtmlElement<br>hsaehausihease<br>ahhahaahha<br>haheiuahwe<br>mimimimi");
 
-	// GFGumpPic(gump, 129, 0, 40010, 0);
-	// GFGumpPic(gump, 0, 0, 40010, 0);
-	// GFGumpPic(gump, 259, 0, 40010, 0);
-	// GFGumpPic(gump, 389, 0, 40010, 0);
-	// GFGumpPic(gump, 607, 402, 40010, 0);
-	// GFGumpPic(gump, 608, 235, 40010, 0);
-	// GFGumpPic(gump, 176, 399, 40010, 0);
-	// GFGumpPic(gump, 306, 399, 40010, 0);
-	// GFGumpPic(gump, 436, 399, 40010, 0);
-	// GFGumpPic(gump, 129, 0, 40010, 0);
-	// GFGumpPic(gump, 259, 0, 40010, 0);
-	// GFGumpPic(gump, 389, 0, 40010, 0);
-	GFGumpPic(gump, 53, 184, 40032, 0);
-	GFGumpPic(gump, 49, 198, 40023, 0);
-	GFTextLine(gump, 83, 101, 0, "Item Name"); //name
-	GFTextLine(gump, 84, 67, 0, "Item Desc"); //desc
-   GFTilePic(gump, 90, 144, 0x58, 0); //objtype
-	GFTextLine(gump, 75, 189, 0, "Unidade");
-	GFResizePic(gump, 72, 208, 30546, 93, 19);
+	GFGumpPic(gump, 26, 132, 57);
+	GFGumpPicTiled(gump, 50, 132, 609, 11, 58); //divisoria
+	GFGumpPic(gump, 658, 132, 59);
+
+	GFAddButton(gump, 45, 490, 2508, 248, GF_CLOSE_BTN, 0); //previous
+	GFAddButton(gump, 651, 490, 2509, 248, GF_CLOSE_BTN, 0); //next
 
 	GFSendGump(who, gump);
+
+	// var gump := GFCreateGump();
+	
+	// GFPage(gump, 0);
+	// GFGumpPic(gump, 11, 29, 40009, 0); //borders
+	// GFGumpPicTiled(gump, 42, 59, 700, 513, 30540); //background
+	// GFTextLine(gump, 319, 34, 0, "Vendedor de Poções");
+
+   // var i;
+   // var x := 48;
+   // var y := 66;
+   // for (i := 0; i < 15; i+=1)
+   //    if (Floor(i / 5.1) >= 1)
+   //       x := 48;
+   //       y := 66;
+   //    endif
+   //    x += 135;
+   //    y += 167;
+	//    GFGumpPic(gump, x, y, 40010, 0);
+   // endfor
+
+	// GFGumpPic(gump, 53, 184, 40032, 0);
+	// GFGumpPic(gump, 49, 198, 40023, 0);
+	// GFTextLine(gump, 83, 101, 0, "Item Name"); //name
+	// GFTextLine(gump, 84, 67, 0, "Item Desc"); //desc
+   // GFTilePic(gump, 90, 144, 0x58, 0); //objtype
+	// GFTextLine(gump, 75, 189, 0, "Unidade");
+	// GFResizePic(gump, 72, 208, 30546, 93, 19);
+
+	// GFSendGump(who, gump);
 
    // var res := SendPacket(who, "FC0015A001000000000003F9C30000000007FFFFFF");
    // if (!res)
