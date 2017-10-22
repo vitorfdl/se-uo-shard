@@ -2,8 +2,6 @@ use polsys;
 use datafile;
 
 include ":keys:key";
-include ":crafting:include/craftGumps";
-include ":crafting:include/craftingSkill";
 include ":crafting:include/craftingUtil";
 include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
@@ -547,52 +545,6 @@ function SubtractMaterial(who, targMaterials, amountMod)
   
 	return 1;
 endfunction
-
-
-function CreateCraftedMap(who, craft_skill, use_on, objtype, amount, itemname, reqd)
-
-	var craft_sound  := menu_config[craft_skill].CraftSound;
-	var craft_loops  := menu_config[craft_skill].CraftLoops;
-	var craft_delay  := menu_config[craft_skill].CraftDelay;
-	var craft_action := menu_config[craft_skill].CraftAnim;
-	playCraftWork(who, craft_sound, craft_loops, craft_delay, craft_action);
-
-	var theitem := CreateItemInBackpack(who, objtype, 1);
-	if(theitem)
-		if( !SubtractAmount(use_on, amount) )
-			SendSysMessage(who, "You don't have enough materials in your backpack!");
-			DestroyItem(theitem);
-			return -1;
-		endif
-		var rint := randomint(AP_GetSkill(who, craft_skill));
-		if(reqd >= 23)
-			reqd := reqd - 20;
-		else
-			reqd := 3;
-		endif
-		if(rint < reqd)
-			SendSysMessage(who, "You were barely able to make this item.  Its quality is below average.");
-		else
-			SendSysMessage(who, "You create the item and put it in your backpack.");
-		endif
-		SetName(theitem, itemname);
-	else
-		SendSysMessage(who, "You don't have enough room in your backpack!");
-		return 0;
-	endif
-	if (theitem.objtype != 0x9923)
-	if ( YesNo(who, "Voce quer escrever o nome do mapa?"))
-		var nme2 := RequestGump(who, "Qual o nome do mapa?");
-			if (nme2 != error)
-				SetName(theitem, nme2);
-			endif
-	endif
-	endif
-	return theitem;
-
-endfunction
-
-
 
 function canUseMaterial(who, use_on, craft_skill)
 

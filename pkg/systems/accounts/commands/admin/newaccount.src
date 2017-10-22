@@ -85,6 +85,7 @@ program command_newAccount(who)
 			return 0;
 		else
 			account.addcharacter(0);
+			var character := account.getcharacter(0);
 			SetObjProperty(character, "criandochar", 1);
 			GumpPrompt(who, "Account created successfully.");	
 			return 1;

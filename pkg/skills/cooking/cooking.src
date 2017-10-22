@@ -83,7 +83,7 @@ function cookit(who,item);
   var skill_needed := cfg[item.objtype].skill_needed;;
   var points := Cint(cfg[item.objtype].points);
   if (!points)
-	points := skill_needed*2;
+	  points := skill_needed*2;
   endif
   var elem      := FindConfigElem(cfg, item.objtype);  
   var products  := GetConfigStringArray(elem,"product");
@@ -99,7 +99,8 @@ function cookit(who,item);
     endif
   endif
   if(skill_needed)
-	var cookcheck := SkillCheck( who, COOKWORK, skill_needed, 0);
+	// var cookcheck := SkillCheck( who, COOKWORK, skill_needed, 0);
+	var cookcheck := 10;
     if(cookcheck > 0);
 		var consume := SubtractAmount(item, 1);
       if(consume)

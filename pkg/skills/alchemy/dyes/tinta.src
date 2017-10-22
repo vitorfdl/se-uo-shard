@@ -2,6 +2,8 @@ use uo;
 use util;
 use cfgfile;
 
+include "include/say";
+
 const UOBJ_EMPTY_BOTTLE := 0x0f0e;
 
 program potionColor(who, potion)

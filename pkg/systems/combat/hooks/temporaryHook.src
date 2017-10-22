@@ -45,7 +45,7 @@ function CalculateRawDamage(attacker)
 	else
 		var weaponcfg  := ReadConfigFile(":*:itemdesc");
 		var weaponelem := FindConfigElem(weaponcfg, weapon.objtype);
-		var attribute := SelectAttribute(attacker;)
+		var attribute := SelectAttribute(attacker);
 		var dmg;
 		if ( GetObjProperty(attacker, "metamorfose") != error)
 			var dmg       := GetObjProperty(attacker, "dicedmg");
@@ -178,6 +178,10 @@ function GetAttackerChance(attacker, defender)
 	if (!attacker.npctemplate)
 		// Verifica se arma tem atributo
 		attribute := SelectAttribute(attacker);
+		// Checa Pericia
+		if (HaveSkill(attacker, attribute))
+			bonus := cint(getProficiencyBonus(attacker));
+		endif
 	else
 		// Pega atributo principal do npc
 		if (wpn_a_elem.Attribute)
@@ -191,13 +195,9 @@ function GetAttackerChance(attacker, defender)
 endfunction
 
 function SelectAttribute(attacker)
-	var attribute = STRENGTH;
+	var attribute := STRENGTH;
 	if (weapon.Attribute)
 		attribute := weapon.Attribute;
-		// Checa Pericia
-		if (HaveSkill(attacker, wpn_a_elem.Pericia))
-			bonus := cint(getProficiencyBonus(attacker));
-		endif
 		// Escolhe maior atributo para versatilidade
 		if (attribute == "Versatil")
 			var dex := AP_GetTrueStat(attacker, DEXTERITY);

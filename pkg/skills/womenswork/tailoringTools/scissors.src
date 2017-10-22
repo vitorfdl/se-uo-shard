@@ -49,7 +49,7 @@ program use_scissors( who, scissors )
 			else
 				MoveItemToContainer(newcloth, who.backpack);
 			endif
-			CheckToolWear (who, scissors, WOMENSWORK);
+			CheckToolWear (who, scissors, COSTURA);
 			PlaySoundEffect(who, 0x0249);
 			SendSysMessage(who, "Voce usou a tesoura para cortar o material.");
 			return;
@@ -74,13 +74,13 @@ program use_scissors( who, scissors )
 			endif
 		endif
 		PlaySoundEffect(who, 0x0249);
-		amt := CInt((material * AP_GetSkill(who,WOMENSWORK) * 75) / 10000);
+		amt := CInt((material * AP_GetSkill(who,COSTURA) * 75) / 10000);
 		if(amt < 1)
 			amt := 1;
 		endif
 		if(DestroyItem(cloth))
 			newcloth := CreateItemInContainer(who.backpack, leftover, amt);
-			CheckToolWear (who, scissors, WOMENSWORK);
+			CheckToolWear (who, scissors, COSTURA);
 			if(newcloth)
 				newcloth.color := clr;
 			endif

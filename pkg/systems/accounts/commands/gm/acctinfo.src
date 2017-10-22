@@ -150,11 +150,11 @@ function GeneralInfoGump(account, byref gump)
 	GFTextLine(gump, 25, 280, 2100, "Max Characters:");
 	GFAddButton(gump, 150, 280, 4023, 4024, GF_CLOSE_BTN, MAXCHAR_BTN);
 	GFResizePic(gump, 140, 276, 2620, 50, 30);
-	var max := account.getprop("maxchars");
-	if (max == error)
-		max := 1;
+	var maximum := account.getprop("maxchars");
+	if (maximum == error)
+		maximum := 1;
 	endif
-	GFTextMid(gump, 140, 281, 60, 2100, max );
+	GFTextMid(gump, 140, 281, 60, 2100, maximum );
 
 
 

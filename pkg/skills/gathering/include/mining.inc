@@ -199,7 +199,7 @@ endfunction
 
 function GetRange( who );
 
-  var skill := Cint((AP_GetSkill( who, GATHERING )));
+  var skill := Cint((AP_GetSkill( who, EXTRACAO )));
 
   if( skill >= 100 )
     return 5;
@@ -319,7 +319,7 @@ function DetermineOreType(who, where)
 	percent := SplitWords(percent);
 	var chance := RandomInt(1000);
 	var oreToSearch;
-	var skill := AP_GetSkill(who, GATHERING);
+	var skill := AP_GetSkill(who, EXTRACAO);
 	
 	if (GetObjProperty(who, "searchore") == error)
 		oreToSearch := "pedras";

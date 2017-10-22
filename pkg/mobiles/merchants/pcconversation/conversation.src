@@ -73,7 +73,7 @@ function ConversationPlayer(who, npc, conversation)
 	var i := 1;
 	foreach answer in answers
 		//Checa se o jogador passa por todos os requisitos para fazer essa resposta
-		if ((answer.int == 0 || answer.int <= AP_GetStat(who, "Intelligence")) && (!answer.demonistaMagery || answer.demonistaMagery <= AP_GetTrueSkill(who, MAGERY)) )
+		if ((answer.int == 0 || answer.int <= AP_GetStat(who, "Intelligence")) && (!answer.demonistaMagery || answer.demonistaMagery <= AP_GetTrueSkill(who, ARCANISMO)) )
 			if (!answer.checkhab || TemHabilidade(who, answer.checkhab))
 			if (!answer.checkkit || GetObjProperty(who, "kit") == answer.checkkit)
 				if (answer.noagain.type == 1 || !(who.serial in npcelem.GetProp(conversation+"Players"+answer.ID)))

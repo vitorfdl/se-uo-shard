@@ -7,8 +7,8 @@ use uo;
 use basic;
 use cfgfile;
 
-include ":magery:tnmgaery";
 include ":attributes:attributes";
+include ":magery:tnmagery";
 include ":charactercreation:habilidades";
 include ":yggdrasil:boss";
 
@@ -343,7 +343,7 @@ exported function MegaCliloc( who, byref packet )
 					endforeach
 				endif
 
-				var spell_list := GetObjProperty(item, "spell_list") 
+				var spell_list := GetObjProperty(item, "spell_list");
 				if (spell_list != error)
 					var active_spell := GetObjProperty(item, "active_spell");
 					foreach spell in spell_list
@@ -351,7 +351,7 @@ exported function MegaCliloc( who, byref packet )
 							continue;
 						elseif (xDesc.search(GetSpellName(spell)))
 							xDesc += "I";
-						elseif (activel_spell == spell)
+						elseif (active_spell == spell)
 							xDesc += WHITE;
 						else
 							xDesc += BLUE;

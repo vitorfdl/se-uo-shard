@@ -28,7 +28,7 @@ program decode_map( who, map )
 endprogram
 
 function GetMaxMapLevel(who)
-	var skill := 0;//AP_GetSkill( who, SURVIVAL );
+	var skill := 0;//AP_GetSkill( who, SOBREVIVENCIA );
 	if( skill >= 100 )
 		return 5;
 	elseif( skill >= 80 )

@@ -103,7 +103,7 @@ function examinarArea(who)
 				mobile.hidden := 0;
 				PrintText(mobile, "*aparece*");
 				SendSystemReport(who, "Você encontrou "+mobile.name+".", SSM_INFO);
-				SendSystemReport(mobile, who.name+" te encontrou!" SSM_FAIL, mobile);
+				SendSystemReport(mobile, who.name+" te encontrou!", SSM_FAIL, mobile);
 			elseif ( dice_roll >= difficulty-2 )
 				SendSystemReport(who, "*Você se sente observado*", SSM_INFO);
 			endif

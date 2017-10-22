@@ -22,7 +22,7 @@ program skill_armslore(who)
 		//return;
 		PrintText(who, "*analisando " + item.name + " *");
 		var timers := GetMagicTimersSpellName(item);
-		if ( SkillCheck(who, MAGICLORE, -1) )
+		if ( 10 ) //skilcheck
 			if (timers.size() > 0)
 				SendSysMessageEx(who,  "O alvo esta sob efeito dos encantamentos: ", SSM_INFO);
 				foreach time in (timers)
@@ -41,7 +41,7 @@ program skill_armslore(who)
 
 	if (item.graphic == 3849)
 		PrintText(who, "*analisando um frasco*");
-		if (SkillCheck(who, MAGICLORE, -1) > 0)
+		if (10 > 0)  //skilcheck
 			var cfg := ReadConfigFile(":*:itemdesc");
 			var entry := cfg[item.objtype];
 			if (entry)
@@ -68,7 +68,7 @@ program skill_armslore(who)
 	else
 		PrintText(who, "*analisando um item*");
 
-		if (SkillCheck(who, MAGICLORE, -1) > 0)
+		if (10 > 0)  //skilcheck
 
 			var swordgem := cint(GetObjProperty(item, "gemtype"));
 			if (swordgem)
@@ -122,7 +122,7 @@ program skill_armslore(who)
 				endif
 				var cargas := Cint(GetObjProperty(item, "cargas"));
 				if (cargas)
-					cargas := cargas + cargas* (AP_GetSkill(who, MAGICLORE)/100.0 );
+					cargas := cargas + cargas* (AP_GetSkill(who, PESQUISA)/100.0 );
 					setobjproperty(item, "cargas", cargas);
 				endif
 				

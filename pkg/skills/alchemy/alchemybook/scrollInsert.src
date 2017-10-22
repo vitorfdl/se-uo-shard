@@ -3,8 +3,11 @@
  */
 use uo;
 use os;
+use cfgfile;
 
 include ":charactercreation:habilidades";
+include "include/say";
+include "include/arrays";
 
 program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	amt            := amt;
@@ -54,11 +57,11 @@ function addScroll(who, book, recipe)
 		return 0;
 	elseif( recipe_list.Size() > 15 )
 		SendSysMessageEx(who,"Este livro ja esta cheio.", SSM_FAIL);
-		MoveItemToContainer(rune, who.backpack);
+		MoveItemToContainer(recipe, who.backpack);
 		return 0;
-	elseif( !ReserveItem(rune) )
+	elseif( !ReserveItem(recipe) )
 		SendSysMessageEx(who,"Cancelado", SSM_INFO);
-		MoveItemToContainer(rune, who.backpack);
+		MoveItemToContainer(recipe, who.backpack);
 		return 0;
 	endif
 

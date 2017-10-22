@@ -119,7 +119,7 @@ function getProficiencyBonus(mobile, skill := 0)
 	var have_skill;
 	foreach skill_n in skill
 		if (!HaveSkill(mobile, skill)) continue; endif
-		have_skill := true; break;
+		have_skill := 1; break;
 	endforeach
 	if (!have_skill) return 0; endif
 
@@ -160,8 +160,8 @@ function rollResistDice(mobile, type)
 	if (mobile.npctemplate);
 		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
 		resist_list := GetConfigStringArray(npcelem, "Resistencia");
-		if (GetObjProperty(who, "resists"))
-			resist_list += GetObjProperty(who, "resists");
+		if (GetObjProperty(mobile, "resists"))
+			resist_list += GetObjProperty(mobile, "resists");
 		endif
 	else
 		var chardata := GetObjProperty(mobile, "chardata");

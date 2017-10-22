@@ -39,18 +39,18 @@ const EVID_ALERT_ALLIES := 0x00000013;
 function CanFight(me, mobile)
    EraseObjProperty(me, "path");
    if (mobile.hidden )
-      var dif := CalculateDhDiff(me, mobile);
-      if ( SkillCheck(me, AWARENESS, dif) > 0 )
-         mobile.hidden := 0;
-         PrintText(mobile, "*aparece*");
-         SendSysMessage(me, "Voce encontrou "+mobile.name+".");
-         SendSysMessage(mobile, me.name+" te encontrou!");
-         if ( GetObjProperty(me, "attackhiddenenemy" ))
-               return 1;
-         endif
-      else
+      // var dif := CalculateDhDiff(me, mobile);
+      // if ( SkillCheck(me, AWARENESS, dif) > 0 )
+      //    mobile.hidden := 0;
+      //    PrintText(mobile, "*aparece*");
+      //    SendSysMessage(me, "Voce encontrou "+mobile.name+".");
+      //    SendSysMessage(mobile, me.name+" te encontrou!");
+      //    if ( GetObjProperty(me, "attackhiddenenemy" ))
+      //          return 1;
+      //    endif
+      // else
          return 0;
-      endif
+      // endif
    elseif  ( mobile.concealed || GetObjProperty(mobile, "ignorenpcs") || GetCooldown(me, "peacemade") > 0) // kra ta intocado
       return 0;
    elseif ( GetObjProperty(mobile, "#fantasma") == 1)
@@ -283,7 +283,7 @@ endif
    if (loot)
       Loot_Generate(mobile.backpack, loot);
    endif
-   GenerateRecipeLoot(mobile);
+//    GenerateRecipeLoot(mobile);
    SetupAmmo(mobile);
    SetObjProperty(mobile, "started", 1);
 endfunction

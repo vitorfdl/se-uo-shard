@@ -58,7 +58,7 @@ program harvest_honey (character, beehive)
 		endif
 
 		//See if they stir up any bees
-		if (checkskill (character, HANDLEANIMAL, 15, 0) > 0)
+		if (15 > 0)
 			if (RandomInt (4) == 1)
 				CreateItemAtLocation (beehive.x, beehive.y, beehive.z, ITEM_SWARM, 1, character.realm);
 				SendSysmessage (character, "Uh-oh...", 3, 40);

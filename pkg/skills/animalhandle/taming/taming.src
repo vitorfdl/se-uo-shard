@@ -93,7 +93,7 @@ function taming(who)
 	endif
 	var targ := target(who);
 
-	var skill := AP_GetSkill(who, HANDLEANIMAL);
+	var skill := AP_GetSkill(who, TRATO_ANIMAIS);
 
 	var bonus := 0;
 //	SendSysMEssage(who, " " + GetNumPets(who) + " " + GetPetCost(targ) + " " + GetMaxPEts(who) );
@@ -156,7 +156,8 @@ function taming(who)
 			SetObjProperty(who, "#tamewait", ReadGameClock()+15);
 
 			sleep(3);
-			if ( SkillCheck(who, HANDLEANIMAL, info.difficulty) > 0 )
+			// if ( SkillCheck(who, HANDLEANIMAL, info.difficulty) > 0 )
+			if ( 15 > 0 )
 				SendSysMessageEx(who, "Voce ganhou a confianca de "+targ.name+".", SSM_INFO);
 				targ.SetMaster(who);
 				EraseObjProperty(targ, "anchor");
@@ -235,7 +236,8 @@ function TameLoop(who, targ, byref info)
 	
 	PrintText(who, "*tentando adestrar " + targ.name + "*");
 
-	var check := SkillCheck(who, HANDLEANIMAL, info.difficulty, ADV_DISABLE);
+	// var check := SkillCheck(who, HANDLEANIMAL, info.difficulty, ADV_DISABLE);
+	var check := 15;
 	if ( check > 0 )
 		SendSysMessageEx(who, ""+targ.name+" parece ser seu amigo.", SSM_INFO);
 		ghaiaObjective(targ, info.x, 1);

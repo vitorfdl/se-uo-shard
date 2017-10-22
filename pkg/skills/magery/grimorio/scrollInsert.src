@@ -6,7 +6,7 @@ use os;
 use cfgfile;
 
 include "include/say";
-include "include/array";
+include "include/arrays";
 
 //tipo do book eh pra saber se pode inserir scrolls de um certo tipo em um certo book
 function GetBookType(book)

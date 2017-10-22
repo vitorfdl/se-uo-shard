@@ -55,7 +55,7 @@ program CheckPackages()
 			
 			// Makes a list of scripts and text commands that will be on the gump.
 			var script_list := GetConfigStringArray(icp_cfg, "Script");
-			var cmd_list := f;
+			var cmd_list := GetConfigStringArray(icp_cfg, "TextCmd");;
 
 			data_elem.SetProp("Main", temp_info);
 			data_elem.SetProp("Scripts", script_list);

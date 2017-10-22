@@ -40,7 +40,7 @@ program SandMining(who, scoop)
 	for ( i; i>=0; i:=i-1 )
 		if ( !MiningLoop(who, scoop, my_x, my_y, my_facing, location_name) )
 			break;
-		elseif ( !CheckToolWear(who, scoop, GATHERING) )
+		elseif ( !CheckToolWear(who, scoop, EXTRACAO) )
 			break;
 		endif
 		sleep(3);
@@ -72,9 +72,9 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	
 	SetResource(resource_type, location_elem, resource_amount-1);
 	
-	var difficulty := CInt(100 - (resource_amount * 100 / MAX_RESOURCE_AMOUNT));
-	
-	if ( SkillCheck(who, GATHERING, difficulty) > 0 )
+	var difficulty := 15; //CInt(100 - (resource_amount * 100 / MAX_RESOURCE_AMOUNT));
+	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
+	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, BLOCK_OF_STONE, 1);
 		SendSysMessage(who, "Voce minerou um bloco de pedra.");
 		return 1;

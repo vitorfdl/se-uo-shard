@@ -27,16 +27,16 @@ function ManterMagia(magia, mage, mobile)
 		SendSysMessage(mage, "Voce manteve a magia.");
 		SendSysMessage(mobile, "O mago ainda mantem a magia em voce.");
 		if (magia == "bless")
-			TS_StartTimer(mobile, "bless", CINT(AP_GetSkill(mage, MAGERY)*2)+30, mage);
+			TS_StartTimer(mobile, "bless", CINT(AP_GetSkill(mage, ARCANISMO)*2)+30, mage);
 			return 1;
 		elseif (magia == "curse")
-			TS_StartTimer(mobile, "curse", CINT(AP_GetSkill(mage, MAGERY)*2)+30, mage);
+			TS_StartTimer(mobile, "curse", CINT(AP_GetSkill(mage, ARCANISMO)*2)+30, mage);
 			return 1;
 		elseif (magia == "escudomagico")
-			TS_StartTimer(mobile, "MagicResist", CINT(AP_GetSkill(mage, MAGERY)*2)+30, mage);
+			TS_StartTimer(mobile, "MagicResist", CINT(AP_GetSkill(mage, ARCANISMO)*2)+30, mage);
 			return 1;
 		elseif (magia == "encantoprotecao")
-			TS_StartTimer(mobile, "PhysicalResist", CINT(AP_GetSkill(mage, MAGERY)*2)+30, mage);
+			TS_StartTimer(mobile, "PhysicalResist", CINT(AP_GetSkill(mage, ARCANISMO)*2)+30, mage);
 			return 1;
 		endif
 	endif

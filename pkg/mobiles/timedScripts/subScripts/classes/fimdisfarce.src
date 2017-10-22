@@ -6,7 +6,7 @@ program TimedScript_EndClumsy(params)
 	var mobile := params[1];
 	
 	//printtextabove(mobile, "FIM DO DISFARCE");
-	removeDisguise(mobile);
+	// removeDisguise(mobile);
 
 	return 1;
 endprogram 

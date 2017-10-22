@@ -648,7 +648,7 @@ endfunction
 function CastDirect(caster, cast_on, spellname)
 
 
-  var dmg := CInt(AP_GetSkill(caster, MAGERY)/2);
+  var dmg := CInt(AP_GetSkill(caster, ARCANISMO)/2);
   if (dmg < 10)
     dmg := 10;
   endif
@@ -680,7 +680,7 @@ elseif (spellname == "flamestryke")
       SetCooldown(me, "npcspell", 3);
       PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 10,10);
       PlaySoundEffect(cast_on, SOUND_EFFECT_POISON);
-	  var poisonnivel := CInt(AP_GetSkill(caster, MAGERY)/20);
+	  var poisonnivel := CInt(AP_GetSkill(caster, ARCANISMO)/20);
       TS_StartTimer(cast_on, "defaultPoison", dmg, poisonnivel, caster);
   elseif ( spellname == "hallucination")
       SetCooldown(me, "npcspell", 3);
@@ -739,7 +739,7 @@ endfunction
 
 function CastHeal(me, cast_on)
       
-    var healed := CInt(AP_GetSkill(me, MAGERY)/2);
+    var healed := CInt(AP_GetSkill(me, ARCANISMO)/2);
     HealFLS(cast_on, healed);
     PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 7, 0x10 );
     PlaySoundEffect( cast_on, SOUND_EFFECT_HEAL );

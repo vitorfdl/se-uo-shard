@@ -28,7 +28,7 @@ program UseLeech(who, leech)
 		return;
 	endif
 	
-	var test = rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MEDICINA);
+	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MEDICINA);
 	if ( test > 13 )
 		SendSysMessage(who, "Voce aplicou a sanguessuga em "+targ.name);
 		var healing := (AP_GetStat(who, WISDOM) + getProficiencyBonus(who, MEDICINA) / 2);

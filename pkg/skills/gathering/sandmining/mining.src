@@ -39,7 +39,7 @@ program SandMining(who, scoop)
 	
 	while(MiningLoop(who, scoop, my_x, my_y, my_facing, location_name) )
 		
-		CheckToolWear(who, scoop, GATHERING);
+		CheckToolWear(who, scoop, EXTRACAO);
 		//elseif ( !CheckLoop(who, scoop, my_x, my_y, my_facing))
 		//	break;
 		if ( AP_GetVital(who, "Stamina") < 5)

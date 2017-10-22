@@ -78,7 +78,7 @@ function CreateClericGump(who, cleric_list, available_slots)
       GFHTMLArea(gump, 52, y, 192, 24, "{}".format(spellname), 1, 0);
       GFHTMLArea(gump, 253, y, 174, 24, "{}".format(powerwords), 1, 0);
 
-      if (not_empty == )
+      if (not_empty == 0)
          GFAddButton(gump, 431, y+2, 22150, 22151, GF_CLOSE_BTN, 200+_spell_iter);
 	      GFTooltip(gump, 1030297);
       endif

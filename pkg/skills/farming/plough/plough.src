@@ -1,7 +1,6 @@
 use uo;
 use os;
 
-include ":attributes:skillCheck";
 include ":attributes:include/attributeConstants";
 include ":attributes:include/attributes";
 
@@ -77,7 +76,8 @@ function PloughDelay(who)
 endfunction
 
 function PloughDirt(who, targ)
-	if ( SkillCheck(who, COOKWORK, 30) > 0 )
+	var test := 0;
+	if ( test > 0 )
 		SendSysMessage(who, "Voce conseguiu arar a terra com sucesso.");
 		CreateItemAtLocation(targ.x, targ.y, GetWorldHeight(targ.x,targ.y), "dirt", 1);
 	else

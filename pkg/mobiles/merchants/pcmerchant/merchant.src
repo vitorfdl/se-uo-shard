@@ -1,12 +1,21 @@
 
 use uo;
 use os;
+use cfgfile;
+include ":merchants:merchant";
+include "include/string";
+include":merchants:crafthelp";
+include ":ghaia:ghaiaUtil";
+include ":gumps:gumps";
 
 var BUY_SPEECH := array{"artigo", "compra", "ver"};
+const GF_STDCOLOR    := 1890;
+const MOEDAS:= 47715;
 var item_cfg := ReadConfigFile(":*:itemdesc");
 var npc;
 
 program HandleMerchant(params)
+	PrintTextAbove(params.source, "test");
 	case (params.type)
 		"ItemGivenEvent": 
 			if (!HandleItemGiven(params.me, params.source, params.item))
@@ -25,9 +34,9 @@ function HandleItemGiven(npc, player, item)
 	elseif (onlyplayersells && onlyplayersells != player.name)
 		SendSysMessage(player, "Perdao, somente " + onlyplayersells + " pode fazer vendas comigo");
 		return;
-	elseif (serialid != error)
-		SendSysMessageEx(player,"Voce nao pode vender isto.",SSM_FAIL);
-		return;
+	// elseif (serialid != error)
+	// 	SendSysMessageEx(player,"Voce nao pode vender isto.",SSM_FAIL);
+	// 	return;
 	elseif ( !item.IsA(POLCLASS_ITEM) )
 		SendSysMessage(player, "Cancelado.");
 		return;
@@ -44,12 +53,12 @@ function HandleSpeech(npc, player, text)
    var canceled := 0;
    if (text in BUY_SPEECH)
       while(!canceled)
-         var input := SendItemView(player, item_list);
+         var input := SendItemView(player);
          if (!input[0])
             break;
          elseif (input[0] == 2)
          else
-            Purchase(npc, player, input[0])
+            Purchase(npc, player, input[0]);
             break;
          endif
       endwhile
@@ -59,20 +68,22 @@ endfunction
 function SendItemView(player)
 	var items_sold := GetItemsSoldList(npc);	
 	foreach serial in items_sold
-		var info      := GetItemSoldInfo(npc, serial);
-		var item      := info[2];
-		info := info[1];
+		var cost_info      := GetItemSoldInfo(npc, serial);
+		var item      := cost_info[2];
+		cost_info := cost_info[1];
 		var donoDoItem := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
+		
+		//print("removendo item do vendor de char deletado.");
 		if (!donoDoItem)
 			RemoveItemForSale(npc, serial);
          continue;
-			//print("removendo item do vendor de char deletado.");
 		endif
 
       var color := GF_STDCOLOR;
       if ( item.color )
          color := item.color-1;
       endif
+		var cost_name;
       if (cost_info.objtype == MOEDAS)
          cost_name := "moedas de cobre";
       else
@@ -82,7 +93,7 @@ function SendItemView(player)
             cost_name := GetName(cost_info.cost_type);
          endif
       endif
-		GFTextLine(gump, 195, y_pos, color, item.desc + " -> " + cost_info.cost_amt + " " + cost_name );
+		// GFTextLine(gump, 195, y_pos, color, item.desc + " -> " + cost_info.cost_amt + " " + cost_name );
 		sleepms(2);
    endforeach
 endfunction
@@ -95,11 +106,11 @@ function Purchase(npc, player, input)
 	
 	AI_Speak(npc, "Certo. Aqui esta seu produto.");
 	RemoveItemForSale(npc, input);
-	var purchase := CreateItemInBackPack(player, selling, selling.amount);
-	if ( purchase == error )
-		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
-		if ( purchase == error )
-			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
+	var purchased := CreateItemInBackPack(player, selling, selling.amount);
+	if ( purchased == error )
+		purchased := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
+		if ( purchased == error )
+			SendSysMessage(player, "Error - Unable to create item! ->"+purchased.errortext);
 		else
 			AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 		endif
@@ -108,12 +119,12 @@ endfunction
 
 
 function AddItemToSell(npc, player, item)
-	var item_cost = array{};
+	var item_cost := array{};
 	var item_desc;
 
-	var validate_cost = 0;
+	var validate_cost := 0;
 	foreach cost in item_cost
-		cost = cint(cost);
+		cost := cint(cost);
 		if (!cost) 
 			continue;
 		elseif (cost > 1000) 
@@ -123,7 +134,7 @@ function AddItemToSell(npc, player, item)
 			return 0; 
 		endif
 
-		validate_cost = 1;
+		validate_cost := 1;
 	endforeach
 
 

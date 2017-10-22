@@ -189,7 +189,7 @@ endprogram
 function OtherChances(who, targetsquare, fishingpole)
 
 	var fishtype;
-	var currentskill := AP_GetSkill(who, SURVIVAL);
+	var currentskill := AP_GetSkill(who, SOBREVIVENCIA);
 	var thisone := RandomInt(100)+ 1;
 	if(thisone <= 94)
 		return 0;
@@ -235,7 +235,7 @@ function OtherChances(who, targetsquare, fishingpole)
 		endif
 	else
 		if( CreateItemInContainer(who.backpack, fishtype, 1) )
-			CheckToolWear (who, fishingpole, SURVIVAL);
+			CheckToolWear (who, fishingpole, SOBREVIVENCIA);
 		endif
         endif
 
@@ -335,7 +335,7 @@ function FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 			PrintTextAbove(who, "*puxando a linha*",FONT_NORMAL,0);
 			PlaySoundEffect(who, cInt(0x5A5));
 			PerformAction( who, ANIM_ATTACK_2HAND_WIDE );
-			tensao := Cint(tensao + (peso * (RandomInt(2) + 1)) - (GetAttribute(who, STRENGTH) / 10) - (GetAttribute(who, DEXTERITY) / 10) - (AP_GetSkill(who, SURVIVAL) / 4));
+			tensao := Cint(tensao + (peso * (RandomInt(2) + 1)) - (GetAttribute(who, STRENGTH) / 10) - (GetAttribute(who, DEXTERITY) / 10) - (AP_GetSkill(who, SOBREVIVENCIA) / 4));
 			tensao := Cint(tensao - (tensao * molinete * 0.2));
 			if (tensao <= 0) tensao := 0; endif
 			if (cint(distancia) == 15) 
@@ -347,7 +347,7 @@ function FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 		if (acao == 2) 
 			PrintTextAbove(who, "*soltando a linha*",FONT_NORMAL,0);
 			PerformAction( who, ANIM_ATTACK_2HAND_JAB );
-			tensao := Cint(tensao - (GetAttribute(who, DEXTERITY) / 10) - (AP_GetSkill(who, SURVIVAL) / 2));
+			tensao := Cint(tensao - (GetAttribute(who, DEXTERITY) / 10) - (AP_GetSkill(who, SOBREVIVENCIA) / 2));
 			distancia := distancia + 1;
 			if (tensao <= 0) tensao := 0; endif
 		endif

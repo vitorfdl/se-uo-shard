@@ -26,6 +26,15 @@ var propallies;
 var g_settings:= dictionary; //"setting name"->value
 var g_scripts := dictionary; // "script type"->value{.flags, .script}
 
+function EnableMerchantEvents()
+   var setting_list := GetConfigStringDictionary(npccfgfile, "ghaiaSettings");
+   DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
+   EnableEvents(SYSEVENT_DOUBLECLICKED, cint(setting_list.DblClickRange));
+   EnableEvents(SYSEVENT_SPEECH, cint(setting_list.HearSpeech));
+   EnableEvents(SYSEVENT_ENTEREDAREA, cint(setting_list.LookingRange));
+   EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN, areasize);
+endfunction
+
 program Merchant()
     var ev;
     var wanders;
@@ -39,7 +48,7 @@ program Merchant()
 
     SetWarMode( 0 );
     ev := os::wait_for_event(0);
-    EnableMainEvents("merchant");
+    EnableMerchantEvents();
     Set_Event_Queue_Size(1000);
     while(me)
       if(wanders >= 30)
@@ -52,7 +61,7 @@ program Merchant()
       var occupied := GetObjProperty(me, "occupied");
       if (occupied)
          var person := SystemFindObjectBySerial(occupied);
-         if (Distance(person) > g_settings["ListenRange"] || !person.connected)
+         if (Distance(person, me) > cint(g_settings["HearSpeech"]) || !person.connected)
             EraseObjProperty(me, "occupied");
          endif
       endif
@@ -99,13 +108,13 @@ program Merchant()
 endprogram
 
 function HandleSeeEvent(byref event)
-   var pack := struct{
+   var packeded := struct{
      "source" := event.source,
      "me"     := me,
      "type"   := "SeeEvent"
    };
 
-   var process := start_script(g_scripts["SeeEvent"], pack);
+   var process := start_script(g_scripts["SeeEvent"], packeded);
 
    if ( process.errortext )
       var errmsg := "Error::ghaiaSeeEvent() - ['SeeEvent'] [{}] failed to start! ->{}".format(g_scripts["SeeEvent"], process.errortext);
@@ -118,15 +127,15 @@ function HandleSeeEvent(byref event)
 endfunction
 
 function ItemGivenEvent(byref event)
-   var pack := struct{
+   var packed := struct{
      "source" := event.source,
      "me"     := me,
      "item"   := event.item,
      "type"   := "ItemGivenEvent"
    };
 
-   if (g_scripts["ItemGivenEvent"] && Distance(pack.source, me) <= 2 && )
-      var process := start_script(g_scripts["ItemGivenEvent"], pack);
+   if (g_scripts["ItemGivenEvent"] && Distance(packed.source, me) <= 2 )
+      var process := start_script(g_scripts["ItemGivenEvent"], packed);
 
       if ( process.errortext )
          var errmsg := "Error::ghaiaItemGivenEvent() - ['ItemGiven'] [{}] failed to start! ->{}".format(g_scripts["ItemGivenEvent"], process.errortext);
@@ -135,7 +144,7 @@ function ItemGivenEvent(byref event)
          return error{"errortext":=errmsg};
       endif
    else 
-      MoveItemToContainer(item, source.backpack);
+      MoveItemToContainer(event.item, event.source.backpack);
    endif
     // Train skills here?
 
@@ -143,24 +152,27 @@ function ItemGivenEvent(byref event)
 endfunction
 
 function HandleSpeech(byref event)
-   var pack := struct{
+   var packed := struct{
      "source" := event.source,
      "me"     := me,
      "text"   := event.text,
      "type"   := "SpeechEvent"
    };
 
+   PrintTextAbove(event.source, "Test");
+   print(g_settings);
+   print(cint(g_settings["HearSpeech"]));
    if (GetObjProperty(me, "occupied"))
       return PrintTextPrivate(me, "Desculpe, estou atendendo outra pessoa agora", event.source);
-   elseif (Distance(event.source, me) > g_settings["ListenRange"])
+   elseif (Distance(event.source, me) > cint(g_settings["HearSpeech"]))
       return 0;
    endif
 
    SetObjProperty(me, "occupied", event.source.serial);
-   var process := start_script(g_scripts["TalkEvent"], pack);
+   var process := start_script(g_scripts["TalkEvent"], packed);
 
    if ( process.errortext )
-      var errmsg := "Error::ghaiaListenRange() - ['Listen'] [{}] failed to start! ->{}".format(g_scripts["ListenRange"], process.errortext);
+      var errmsg := "Error::TalkEvent() - ['Listen'] [{}] failed to start! ->{}".format(g_scripts["TalkEvent"], process.errortext);
       Print(errmsg);
       NPC_ErrorSysLog(me, errmsg);
       return error{"errortext":=errmsg};

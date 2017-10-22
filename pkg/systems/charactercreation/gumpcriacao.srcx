@@ -1132,7 +1132,7 @@ function SetAllEspecializations(who, chardata);
 			CreateItemInBackpack(who, 0xba63, 200); //dinheiro
 			break;
 		"Artifice":
-			AP_SetTrueSkill(who, GATHERING, 20);
+			AP_SetTrueSkill(who, EXTRACAO, 20);
 			break;
 		"Pacto com Asan":
 			SetObjProperty(who, "dpmod", 10);

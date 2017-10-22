@@ -49,7 +49,7 @@ program SandMining(who, scoop)
 	
 	while (MiningLoop(who, scoop, my_x, my_y, my_facing, location_name) )
 	
-		CheckToolWear(who, scoop, GATHERING);
+		CheckToolWear(who, scoop, EXTRACAO);
 		if ( AP_GetVital(who, "Stamina") < 5)
 			SendSysMessageEx(who, "Voce esta muito cansado para continuar.", SSM_FAIL);
 			return 0;

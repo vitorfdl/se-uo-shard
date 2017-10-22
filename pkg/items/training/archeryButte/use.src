@@ -89,7 +89,7 @@ program ArcheryButte(who, butte)
 	Sleep(3);
 endprogram
 
-function DetermineHit(who, weapon_attrib)
+function DetermineHit(who, test)
 	if ( test > 18 )
 		return "*Na mosca*";
 	elseif ( test > 16 )

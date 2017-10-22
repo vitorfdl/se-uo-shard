@@ -95,9 +95,9 @@ endfunction
 
 function isBardable(character, thetarget, bard_skill, bard_difficulty)
 
-	if( CalcSuccessPercent(character, bard_skill, bard_difficulty, AP_GetSkill( character, bard_skill)) < 50 )
-		return 0;
-	endif
+	// if( CalcSuccessPercent(character, bard_skill, bard_difficulty, AP_GetSkill( character, bard_skill)) < 50 )
+	// 	return 0;
+	// endif
 
 	var pTemplate := NPC_GetNPCConfig(thetarget.npctemplate);
 	var ifCanBard := 1;

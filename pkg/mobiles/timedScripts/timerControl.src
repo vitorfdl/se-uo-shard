@@ -45,7 +45,7 @@ program TimerControl(mobile)
 			break;
 		elseif( event.type == EVENT_PLAYER_DIED )
 			PlayerDeath(mobile, timer_list, num_poisons);
-		elseif ( event.type ==      )
+		elseif ( event.type == EVENT_LOGOFF)
 			LogOff(mobile, timer_list, cooldowns);
 			break;
 		endif

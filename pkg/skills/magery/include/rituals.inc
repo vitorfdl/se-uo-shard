@@ -85,7 +85,7 @@ function CheckIngredients(master, ritualid)
 	var mana := 0;
 	
 	foreach mob in ritualmages
-		skill := skill + AP_GetSkill(mob, MAGERY);
+		skill := skill + AP_GetSkill(mob, ARCANISMO);
 		mana := mana + AP_GetVital(mob, "Mana");
 	endforeach
 

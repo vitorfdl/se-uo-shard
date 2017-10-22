@@ -25,7 +25,5 @@ program reset(who, params)
 		params := 1;
 	endif
 	
-	SetAttribPoints(item, cint(params));
-	
-
+	item.SetPoints(cint(params));
 endprogram

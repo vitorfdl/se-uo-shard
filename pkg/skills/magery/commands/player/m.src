@@ -3,8 +3,8 @@ use os;
 use cfgfile;
 
 include "include/say";
-include ":magery:spellbooks";
-include "include/array";
+// include ":magery:spellbooks";
+include "include/arrays";
 include ":charactercreation:characters";
 
 program useMagic(who, spellname)
@@ -22,7 +22,7 @@ program useMagic(who, spellname)
 			return 0;
 		endif
 
-		var cfg := ReadConfigFile();
+		var cfg := ReadConfigFile(":magery:config/mage");
 		var spell := FindSpell(cfg, spellname);
 
 		if (!(spell in spell_list))
@@ -35,11 +35,11 @@ program useMagic(who, spellname)
 endprogram
 
 
-function findSpell(spell_name, cfg)
+function FindSpell(spell_name, cfg)
 	var id := 0;
 	foreach spell in ( GetConfigIntKeys(cfg) )
-		elem := FindConfigElem(cfg, spell_name);
-		if (spellname == lower(elem.Name))
+		var elem := FindConfigElem(cfg, spell_name);
+		if (spell_name == lower(elem.Name))
 			id := spell;
 			break;
 		endif

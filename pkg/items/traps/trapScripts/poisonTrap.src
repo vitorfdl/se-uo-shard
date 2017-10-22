@@ -35,7 +35,7 @@ program trapScript(params)
 		if (!mobile.npctemplate)
 			var poisonLvl := trap_info.Strength;
 
-			if (CheckResist(mobile, FORTITUDE, CInt(25+25*poisonLvl)))
+			if (CheckResist(mobile, CONSTITUTION))
 				SendSysMessageEx(mobile, "Voce resistiu ao veneno.", SSM_INFO);
 				continue;
 			else

@@ -46,7 +46,7 @@ program neve(params)
 			dif := dif - 90;
 		endif
 		
-		var survivalBonus := cint(AP_GetSkill(who, SURVIVAL)/3);
+		var survivalBonus := cint(AP_GetSkill(who, SOBREVIVENCIA)/3);
 		dif := dif - survivalBonus;
 		
 		foreach item in (ListEquippedITems(who))
@@ -101,7 +101,7 @@ program neve(params)
 		
 		var penalty := cint(GetObjProperty(who, "penalidadeclima"));
 		
-		var resistcheck := CheckResist(who,  FORTITUDE, dif);
+		var resistcheck := CheckResist(who, CONSTITUTION);
 		
 		if (resistcheck)
 			SendSysMessageEx(who, "Voce resiste aos efeito do frio.", SSM_INFO);

@@ -23,7 +23,6 @@ program Logon(who)
 		SetObjProperty(who, "createdate", polcore().systime);
 	endif
 
-
 	if (HaveReverseVision(who))
 		ReverseLight(who);
 	endif
@@ -64,7 +63,8 @@ program Logon(who)
 
 	LogonPets(who);
 
-	if (!GetObjProperty(who, "criandochar") == 1 && CloseGump(who, GUMPID_CREATECHAR))
+	if ((!GetObjProperty(who, "criandochar") || !GetObjProperty(who, "chardata")))
+		CloseGump(who, GUMPID_CREATECHAR);
 		start_script(":charactercreation:gumpcriacao", who);
 	endif
 	return 1;

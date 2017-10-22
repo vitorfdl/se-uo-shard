@@ -69,7 +69,7 @@ function MobileTracking(who)
 	if(test > diff)
 		var tracker := ReadGameClock();
 		SetObjProperty(who, "TrackingCounter", tracker);
-		var range := CInt((AP_GetSkill(who, SURVIVAL)/1.5));
+		var range := CInt((AP_GetSkill(who, SOBREVIVENCIA)*1.5));
 		if (range < 20)
 			range:= 20;
 		endif
@@ -113,7 +113,7 @@ function ItemTracking(who)
 	if(test > 10)
 		var tracker := ReadGameClock();
 		SetObjProperty(who, "TrackingCounter", tracker);
-		var range := CInt((AP_GetSkill(who, SURVIVAL)/3));
+		var range := CInt((AP_GetSkill(who, SOBREVIVENCIA)/3));
 		if (range < 25)
 			range := 25;
 		endif

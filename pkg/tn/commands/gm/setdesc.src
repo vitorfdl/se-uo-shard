@@ -2,7 +2,7 @@ use uo;
 
 include ":tn:tngumps";
 include "include/say";
-include ":crafting:craftingUtil";
+include ":crafting:fls_crafting";
 
 program settooltip(who)
 
@@ -11,10 +11,7 @@ program settooltip(who)
 	if (!item)
 		return;
 	endif
-
 	
 	AddItemDescription(who, item);
 	SetName(item, item.desc);
-
-
 endprogram

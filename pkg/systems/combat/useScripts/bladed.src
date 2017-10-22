@@ -212,7 +212,7 @@ function MakeBlankScrolls (who, hides)
 	endif
 
 	var item_skill := 10;
-	var myskill := AP_GetSkill (who, SURVIVAL);
+	var myskill := AP_GetSkill (who, SOBREVIVENCIA);
 	//sendsysmessage(who, "gmdebug: skinning " + myskill);
 
 	if (item_skill > myskill)
@@ -260,7 +260,7 @@ function CarveFishNew(who, blade, use_on)
 	var peso;
 	var num_steaks;
 	
-	var myskill := AP_GetSkill (who, SURVIVAL);
+	var myskill := AP_GetSkill (who, SOBREVIVENCIA);
 	if( (!Accessible(who, use_on)) or (!CheckLineOfSight(who, use_on)) or (distance(who, use_on) > 2) )
 		SendSysMessage(who, "Voce nao pode usar isto.");
 		return 0;

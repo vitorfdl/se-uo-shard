@@ -82,7 +82,7 @@ endprogram
       var ingot := GetObjProperty(ore, "ingType");
       var amt := GetObjProperty(ore, "size");
       if(DestroyItem(ore))
-         if(skcheck(who, GATHERING, 20, 0))
+         if(skcheck(who, EXTRACAO, 20, 0))
            SendSysMessage(who, "Voce conseguiu derreter e aproveitar parte do material.", FONT_NORMAL, 90 );
            SetObjProperty(item, "numMetal", 1);
            SetObjProperty(item, "oreObj1",ingot);

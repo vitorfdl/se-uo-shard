@@ -92,7 +92,7 @@ program skillremoveTrap(who)
 			return;
 		endif
 
-		if (dice_roll >= 15))
+		if (dice_roll >= 15)
 			ExpGain(who, dice_roll, 15);
 			SendSysMessageEx( who, "Desativou a armadilha com sucesso.", SSM_INFO);
 			SetObjProperty(item, "trap_inativa", 1);

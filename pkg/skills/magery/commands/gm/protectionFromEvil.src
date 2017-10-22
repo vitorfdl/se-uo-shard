@@ -2,6 +2,7 @@ use uo;
 use os;
 use util;
 
+include ":attributes:attributes";
 include ":magery:tnmagery";
 include "include/client";
 include "include/sounds";
@@ -16,7 +17,7 @@ program SpellScript(params)
 	SendSysMessage(who , "protectionFromEvil");
 
 	var targets := array;
-	foreach mobile in (ListMobilesNearLocation( who.x, who.y, who.z, Cint(AP_GetSkill(who, MAGICLORE)/10), who.realm))
+	foreach mobile in (ListMobilesNearLocation( who.x, who.y, who.z, Cint(AP_GetSkill(who, PESQUISA)/10), who.realm))
 		if (CheckLineOfSight(who, mobile) && mobile.isa(POLCLASS_NPC) && (who.npctemplate == "Undead" || who.npctemplate == "Demons"))
 			targets.append(mobile);
 		endif
@@ -24,7 +25,7 @@ program SpellScript(params)
 
 	PlaySoundEffect(who, SFX_SPELL_STRENGTH);
 
-	var skill := Cint(AP_GetSkill(who, MAGICLORE));
+	var skill := Cint(AP_GetSkill(who, PESQUISA));
 	var random := 0;
 	foreach mobile in targets			
 			random := RandomInt(100);

@@ -81,7 +81,7 @@ function sendToSpy(source, message_txt)
 
 	var unvalid := { message_txt[1, 7], message_txt[1, 9], message_txt[1, 9], message_txt[1, 14], message_txt[1,13], message_txt[1,7] };
 	var ignore_messages := array{"*usando ataduras em si mesmo*", "*parou de aplicar bandagens*", "*arrombando a fechadura*", "*desarmando armadilha*", "*preparando um extrato*"};
-	if (unvalid[1] == "*Tirou " || unvalid[2] == "*Guardou " || unvalid[3] == "*Colocou " || unvalid[4] == "*escalpelando " || unvalid[5] == "*Acrescentou " || unvalid[6] == "*Pegou " || message_txt == "*defende o golpe*" || message_txt in ignore_messagess)
+	if (unvalid[1] == "*Tirou " || unvalid[2] == "*Guardou " || unvalid[3] == "*Colocou " || unvalid[4] == "*escalpelando " || unvalid[5] == "*Acrescentou " || unvalid[6] == "*Pegou " || message_txt == "*defende o golpe*" || message_txt in ignore_messages)
 		return;
 	endif
 

@@ -23,7 +23,7 @@ program TimedScript_Clumsy(params)
 		return 0;
 	endif
 
-	var cast_points := CInt(AP_GetSkill(attacker, MAGICLORE)) + CInt(AP_GetSkill(attacker, MAGERY));
+	var cast_points := CInt(AP_GetSkill(attacker, PESQUISA)) + CInt(AP_GetSkill(attacker, PESQUISA));
 	cast_points := cast_points/4;
 	printtextabove(mobile, "cast_points " + cast_points + " " + attacker);
 	if (cast_points < 10)

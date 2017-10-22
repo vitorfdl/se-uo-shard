@@ -8,7 +8,7 @@ include ":gumps:gumps";
 include ":gumps:yesno";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
-'
+
 const BUTTON_HELP_CANCEL := 1;
 const BUTTON_HELP_SENDGMPAGE := 2;
 const BUTTON_HELP_SENDCOUNPAGE := 3;

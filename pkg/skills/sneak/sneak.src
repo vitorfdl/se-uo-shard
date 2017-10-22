@@ -34,13 +34,13 @@ program skill_Hide(who)
 		if ( !CanHide(who, orig_x, orig_y) )
 			break;
 		endif
-		var check := rollAttrDice(who, DEXTERITY, (GetGlobalProperty("dia") == "noite")}) + getProficiencyBonus(who, "Furtividade");
+		var check := rollAttrDice(who, DEXTERITY, (GetGlobalProperty("dia") == "noite")) + getProficiencyBonus(who, "Furtividade");
 		
 		if( check >= 18 )
 			ExpGain(who, "minor");
 			SendSysMessageEx(who, "Voce se escondeu.", SSM_INFO);
 			who.hidden := 1;
-			var a := start_script(":sneak:stealthmode", array{who});
+			var a := start_script(":FURTIVIDADE:stealthmode", array{who});
 			//sendsysmessage(who, " "+ a);
 			EraseObjProperty(who, "#steathsteps");
 			if (GetCooldown(who, "partyhiding") > 0) // Se tiver usado habilidade de Emboscada
@@ -66,7 +66,7 @@ function HidingParty(who)
 		return;
 	endif
 
-	var skill := AP_GetSkill(who, SNEAK);
+	var skill := AP_GetSkill(who, FURTIVIDADE);
 
 	foreach member in (festa.members)
 		if (member.serial != who.serial)
@@ -74,7 +74,7 @@ function HidingParty(who)
 				if (CanHide(member, member.x, member.y, skill))
 					SendSysMessageEx(member, "Voce esta preparando a emboscada!", SSM_INFO);
 					member.hidden := 1;
-					start_script(":sneak:stealthmode", array{who});
+					start_script(":FURTIVIDADE:stealthmode", array{who});
 					SetObjProperty(member, "#overridehiding", skill);
 				else
 					SendSysMessageEx(member, "Voce nao pode se esconder!", SSM_FAIL);
@@ -101,7 +101,7 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 		return 0;
 	endif
 
-	// var skill := AP_GetSkill(who, SNEAK);
+	// var skill := AP_GetSkill(who, FURTIVIDADE);
 	// if (override_hiding)
 	// 	skill := override_hiding;
 	// endif
@@ -123,7 +123,7 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 	//Caso queira colocar novamente aquele esquema de nao se esconder com pessoas OLHANDO
 	if (!TemHabilidade(who, "Guerreiro das Sombras"))
 		var num_watching := GetWatchingPeople(who);
-		skill := cint(AP_GetSkill(who, SNEAK) / 10);
+		var skill := cint(AP_GetSkill(who, FURTIVIDADE) / 10);
 
 		if (skill < 1)
 			skill := 0;
@@ -141,7 +141,7 @@ endfunction
 function GetWatchingPeople(who)
 	var counter := 0;
 	
-	// var range := GetHidingRange(AP_GetSkill(who, SNEAK));
+	// var range := GetHidingRange(AP_GetSkill(who, FURTIVIDADE));
 	foreach person in ListMobilesInLineOfSight(who, 6)
 	
 		if ( IsFacing(person, who.x, who.y) && person.connected )

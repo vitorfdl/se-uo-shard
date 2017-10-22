@@ -3,8 +3,8 @@ use uo;
 use util;
 use cfgfile;
 include ":alchemy:alchemy";
-include ":include/say";
-include ":include/utils";
+include "include/say";
+include "include/utils";
 
 program poDaVisao(who, potion)
 	if (!CheckIfCanDrink(who, potion, 0, 0))

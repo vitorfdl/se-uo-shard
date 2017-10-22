@@ -278,7 +278,7 @@ function ProcessSpeech(ev)
         var targ := target(ev.source);
         PrintText(me, "alignment: " + me.alignment);
         if (me.alignment == "evil")
-            if ( AP_GetSkill(targ, HANDLEANIMAL)+10 < cfg.TameDifficulty )
+            if ( AP_GetSkill(targ, TRATO_ANIMAIS)+10 < cfg.TameDifficulty )
                 SendSysMessage(owner, "A criatura nao aceita o alvo como novo dono.");
                 return;
             endif

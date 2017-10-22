@@ -33,7 +33,7 @@ program skill_Stealth( who )
 		endif
 	endif*/
 
-	var base_steps := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, "Furtividade") + 2;
+	var base_steps := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE) + 2;
 	if (base_steps < 4)
 		base_steps := 4;
 	endif
@@ -43,7 +43,7 @@ program skill_Stealth( who )
 		advantage += 1;
 	endif
 
-	var check := rollAttrDice(who, DEXTERITY, ) + getProficiencyBonus(who, "Furtividade");
+	var check := rollAttrDice(who, DEXTERITY, advantage) + getProficiencyBonus(who, FURTIVIDADE);
 	if (check >= diff)
 		who.stealthsteps := base_steps;
 		/*

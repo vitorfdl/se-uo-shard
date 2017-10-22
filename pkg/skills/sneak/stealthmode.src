@@ -10,8 +10,8 @@ program showdfdiff(params)
 		var mobs := ListMobilesInLineOfSight(who, 11);
 		foreach mob in mobs
 			if (!mob.hiding)
-				var dif := CalcSuccessPercent(mob, AWARENESS, cdbl(CalculateDHDiff(mob, who, 1)),  AP_GetTrueSkill(mob, AWARENESS));
-				PrintTextAbovePrivate(mob, "" + dif, who, _DEFAULT_TEXT_FONT, GetMagentaMap(cint(dif/10)) );
+				// var dif := CalcSuccessPercent(mob, AWARENESS, cdbl(CalculateDHDiff(mob, who, 1)),  AP_GetTrueSkill(mob, AWARENESS));
+				// PrintTextAbovePrivate(mob, "" + dif, who, _DEFAULT_TEXT_FONT, GetMagentaMap(cint(dif/10)) );
 			endif
 			sleepms(2);
 		endforeach

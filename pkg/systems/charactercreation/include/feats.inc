@@ -112,15 +112,15 @@ function FeatInfo(feat, plus := 0)
 	var habcfg := ReadConfigFile(":charactercreation:feats");
 	var elem   := FindConfigElem( habcfg, feat );
 
-	var feat_info = struct{
-		"desc":   GetConfigString( elem, "Description" ),
-		"active": GetConfigInt( elem, "Active" ),
-		"script": GetConfigString( elem, "Script" ),
+	var feat_info := struct{
+		"desc" :=   GetConfigString( elem, "Description" ),
+		"active" := GetConfigInt( elem, "Active" ),
+		"script" := GetConfigString( elem, "Script" ),
 
-		"mana": GetConfigInt( elem, "Mana" ),
-		"stam": GetConfigInt( elem, "Stam" ),
+		"mana" := GetConfigInt( elem, "Mana" ),
+		"stam" := GetConfigInt( elem, "Stam" ),
 
-		"level": GetConfigInt( elem, "Level" ),
+		"level" := GetConfigInt( elem, "Level" )
 	};
 
 	if (plus)

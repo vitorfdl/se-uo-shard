@@ -25,7 +25,7 @@ program walkOn(who, trap)
 	/*
 	if (GetObjProperty(who, "spelluser") == "Demonista")
 		var criador := SystemFindObjectBySerial(GetObjProperty(trap, "criador"));
-		var dano := cint(AP_GetSkill(criador, MAGERY)/2);
+		var dano := cint(AP_GetSkill(criador, ARCANISMO)/2);
 		PlayStationaryEffect(who.x, who.y, who.z, FX_CURSE_EFFECT, 5, 2);
 		ApplyRawDamage( who, dano );
 		var destro := DestroyItem(trap);

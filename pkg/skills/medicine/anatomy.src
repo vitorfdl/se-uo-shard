@@ -5,7 +5,6 @@ use uo;
 
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":attributes:skillCheck";
 include "include/say";
 include ":charactercreation:habilidades";
 
@@ -31,10 +30,10 @@ program skill_Anatomy(who)
 			return;
 		endif
 		PrintText(who, "*examinando o corpo*");
-		if( SkillCheck(who, MEDICINE, -1) > 0 )
+		if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
 			if (GetObjProperty(subject, "morto") == 1)
 				SendSysMessageEx(who, "Parece morto para voce.", SSM_INFO);
-				if (valorInicial(who, MEDICINE) == 40);
+				if (40 == 40); //valorInicial(who, MEDICINE)
 					if (GetObjProperty(subject, "WeaponKill"))
 						SendSysMessageEx(who, "O corpo foi morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
 					endif
@@ -67,9 +66,9 @@ program skill_Anatomy(who)
 			return;
 		endif
 		PrintText(who, "*examinando os ossos*");
-		if( SkillCheck(who, MEDICINE, -1) > 0 )
+		if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
 			SendSysMessageEx(who, "Parece inanimado para voce.", SSM_INFO);
-			if (valorInicial(who, MEDICINE) == 40)
+			if (40 == 40)//valorInicial(who, MEDICINE)				
 				if (GetObjProperty(subject, "WeaponKill"))
 					SendSysMessageEx(who, "O corpo foi morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
 				endif
@@ -101,7 +100,7 @@ program skill_Anatomy(who)
 		return;
 	endif
 	PrintTextPrivate(who, "*tentando examinar " + subject.name + "*", who);
-	if( SkillCheck(who, MEDICINE, -1) > 0 )
+	if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
 		AN_SendGump(who, subject);
 	else
 		PrintTextPrivate(who, "Voce falha em examinar a criatura", who);

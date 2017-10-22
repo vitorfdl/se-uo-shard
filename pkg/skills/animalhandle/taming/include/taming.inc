@@ -104,7 +104,7 @@ endfunction
 //numero maximo de pets que alguem pode ter
 function GetMaxPEts(who)
 
-	var skill := AP_GetSkill(who, HANDLEANIMAL);
+	var skill := AP_GetSkill(who, TRATO_ANIMAIS);
 	var maxpets := 1 + cint(skill/45);
 
 	maxpets := maxpets + cint( GetObjProperty(who, "extrapets") );

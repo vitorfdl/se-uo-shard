@@ -36,13 +36,13 @@ program UseBandage(mobile, bandage)
 	SendSysMessageEx(mobile, "Onde voce deseja usar as ataduras?", SSM_REQUEST);
 	var targ := Target(mobile, TGTOPT_CHECK_LOS+TGTOPT_HELPFUL);
 	
-	var heal_skill := MEDICINE;
+	var heal_skill := MEDICINA;
 	if (targ.objtype == 0xF85 && TemHabilidade(mobile, "Misturar Ervas")  ) //se for ginseng
 		if (targ.amount != bandage.amount)
 			SendSysMessageEx(mobile, "Voce precisa da mesma quantidade de ginseng.", SSM_FAIL);
 			return;
 		endif
-		if ( SkillCheck(mobile, MEDICINE, 70) > 0)
+		if ( 15 > 0) //SkillCheck(mobile, MEDICINA, 70)
 			SendSysMessageEx(mobile, "Voce passou o extrato de ginseng nas ataduras.", SSM_INFO);
 			SetObjProperty(bandage, "ginseng", 1);
 			bandage.color := 2007;
@@ -59,7 +59,7 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "Voce precisa da mesma quantidade de cogumelos.", SSM_FAIL);
 			return;
 		endif
-		if ( SkillCheck(mobile, MEDICINE, 85) > 0)
+		if ( 85 > 0) //SkillCheck(mobile, MEDICINA, 85)
 			SendSysMessageEx(mobile, "Voce passou o extrato de cogumelos nas ataduras.", SSM_INFO);
 			SetObjProperty(bandage, "cogumelo", 1);
 			DestroyITem(targ);
@@ -76,7 +76,7 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "Voce precisa da mesma quantidade de cogumelos.", SSM_FAIL);
 			return;
 		endif
-		if ( SkillCheck(mobile, MEDICINE, 100) > 0)
+		if ( 0 > 0) //SkillCheck(mobile, MEDICINA, 100) 
 			SendSysMessageEx(mobile, "Voce passou o extrato de cogumelos nas ataduras.", SSM_INFO);
 			SetObjProperty(bandage, "cap", 1);
 			DestroyITem(targ);
@@ -93,7 +93,7 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "Voce precisa da mesma quantidade de fungos.", SSM_FAIL);
 			return;
 		endif
-		if ( SkillCheck(mobile, MEDICINE, 60) > 0)
+		if ( 10 > 0) //SkillCheck(mobile, MEDICINA, 60)
 			SendSysMessageEx(mobile, "Voce passou o extrato de fungos nas ataduras.", SSM_INFO);
 			SetObjProperty(bandage, "blood", 1);
 			DestroyITem(targ);
@@ -133,23 +133,23 @@ program UseBandage(mobile, bandage)
 	endif
 
 	
-	var aux_skill := MEDICINE;
+	var aux_skill := MEDICINA;
 	var elem := NPC_GetNPCConfig(targ.npctemplate);
 	var npcdesc := ReadConfigFile(":ghaia:npcdesc");
 	var npctemplate := targ.npctemplate;
 	npctemplate := npctemplate[10, len(npctemplate)-9];
 	npcdesc := npcdesc[npctemplate];
 	if ( npcdesc.TameDifficulty || GetObjProperty(targ, "npctemplate") )
-		heal_skill := HANDLEANIMAL;
+		heal_skill := TRATO_ANIMAIS;
 	endif
 
 	aux_skill := AP_GetSkill(mobile, heal_skill);
 
 	if ( targ.IsA(POLCLASS_CORPSE) )
-		if (heal_skill == MEDICINE && !TemHabilidade(mobile, "Primeiros Socorros"))
+		if (heal_skill == MEDICINA && !TemHabilidade(mobile, "Primeiros Socorros"))
 			SendSysMessageEx(mobile, "Voce nao tem conhecimento suficiente para acordar alguem.", SSM_FAIL);
 			return 0;
-		elseif 	(heal_skill == HANDLEANIMAL && !TemHabilidade(mobile, "Veterinário"))
+		elseif 	(heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário"))
 			SendSysMessageEx(mobile, "Voce nao tem conhecimento suficiente para acordar um animal.", SSM_FAIL);
 			return 0;
 		elseif (GetObjProperty(targ, "morto"))
@@ -192,7 +192,7 @@ program UseBandage(mobile, bandage)
 		if (npcdesc.TameDifficulty && !TemHabilidade(mobile, "Veterinário"))
 			SendSysMessageEX(mobile, "Voce nao tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 			return 0;
-		elseif ((heal_skill == MEDICINE && isBloodied(targ) && !TemHabilidade(mobile, "Curandeiro")) || (heal_skill == HANDLEANIMAL && isBloodied(targ) && !TemHabilidade(mobile, "Veterinário")))
+		elseif ((heal_skill == MEDICINA && isBloodied(targ) && !TemHabilidade(mobile, "Curandeiro")) || (heal_skill == TRATO_ANIMAIS && isBloodied(targ) && !TemHabilidade(mobile, "Veterinário")))
 			SendSysMessageEx(mobile, "Voce nao tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 			return 0;
 		endif
@@ -250,7 +250,7 @@ function HealPatient(mobile, targ, heal_skill, aux_skill, bonus, poison)
 		SendSysMessage(mobile, "Seu paciente esta muito distante.");
 		return 0;
 	endif
-	if ( SkillCheck(mobile, MEDICINE, -1) > 0 )
+	if ( 10 > 0 ) //SkillCheck(mobile, MEDICINA, -1)
 		heal_amt := heal_amt / 2;
 	endif
 	if (heal_amt < 5)
@@ -296,12 +296,12 @@ function HealPatient(mobile, targ, heal_skill, aux_skill, bonus, poison)
 
 	//bandagens com garlic
 	if (   (poison == 1) )
-		if  ( SkillCheck(mobile, MEDICINE, 70) > 0 )
+		if  ( 15 > 0)  //SkillCheck(mobile, MEDICINA, 70))
 			// Should be enough to cure all poison.
 			TS_CurePoison(targ, 10000, "P", 10);
 		endif
 	elseif(   (poison == 2))
-		if (SkillCheck(mobile, MEDICINE,70) > 0) 
+		if (10 > 0)  //(SkillCheck(mobile, MEDICINA,70)
 			TS_LowerDuration(targ, "bleed", -1);
 		endif
 	endif
@@ -325,7 +325,7 @@ function HealCorpse(mobile, targ, aux_skill, restauraDP)
 	endif
 
 	if (  !GetObjProperty(targ,"morto") )
-		if ( SkillCheck(mobile, MEDICINE, diff) > 0 )
+		if ( diff > 0 ) //SkillCheck(mobile, MEDICINA, diff)
 			SendSysMessage(mobile, "Voce estabilizou "+name);
 			SetObjProperty(targ, "curado", 1);
 			if (restauraDP)
@@ -361,7 +361,7 @@ function HealNpcCorpse(mobile, targ, aux_skill)
 	endif
 
 	if (  !GetObjProperty(targ,"morto") )
-		if ( SkillCheck(mobile, MEDICINE, diff) > 0 || SkillCheck(mobile, HANDLEANIMAL, diff) > 0 )
+		if ( 15 > 0 || 15 > 0 ) // SkillCheck(mobile, MEDICINA, diff) SkillCheck(mobile, TRATO_ANIMAIS, diff)
 			SendSysMessage(mobile, "Voce estabilizou "+name);
 			ghaiaRessurect(targ);
 		else

@@ -5,7 +5,6 @@ use cfgfile;
 include ":ghaia:generic";
 include ":ghaia:ghaia";
 include ":ghaia:objective";
-include ":ghaia:boss1fight";
 
 var npccfgfile := NPC_GetNPCConfig(self());
 var me := self();

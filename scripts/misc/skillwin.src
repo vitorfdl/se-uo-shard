@@ -146,18 +146,18 @@ function BuyTalents(who)
 		SendSysMessageEx(who, "Sem pontos de talento disponiveis.", SSM_FAIL);
 	endif
 
-	var feat_list := GetNewFeatsList(who);
+	// var feat_list := GetNewFeatsList(who);
 
-	GFPage(gump, 1);
-	foreach feat in feat_list
+	// GFPage(gump, 1);
+	// foreach feat in feat_list
 
-		if (_feat_iter % 5 == 0 && feat_list[_feat_iter+1])
-			//next
-			GFPage(gump, gump.cur_page+1);
-			//previous
-		else
-			//add separator
-		endif
-		sleepms(2);
-	endforeach
+	// 	if (_feat_iter % 5 == 0 && feat_list[_feat_iter+1])
+	// 		//next
+	// 		GFPage(gump, gump.cur_page+1);
+	// 		//previous
+	// 	else
+	// 		//add separator
+	// 	endif
+	// 	sleepms(2);
+	// endforeach
 endfunction

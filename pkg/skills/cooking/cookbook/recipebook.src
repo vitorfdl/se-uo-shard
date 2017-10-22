@@ -308,7 +308,8 @@ function makefood(who, input)
 			allocateresources(who, element.vector, element.amount);
 		endforeach
 			
-		if (SkillCheck(who, COOKWORK, recipeinfo.skill, recipeinfo.skill*2) > 0)
+		// if (SkillCheck(who, COOKWORK, recipeinfo.skill, recipeinfo.skill*2) > 0)
+		if (15 > 0)
 			createiteminbackpack(who, getobjtypebyname(recipeinfo.objtype), 1);
 			SendSysMessageEx(who, "Voce guardou a comida na sua mochila.", SSM_INFO);
 		else
@@ -360,7 +361,8 @@ function copyrecipe(who, recipe)
 	recipe := recipecfg(recipe);
 	
 	if (ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
-		if ((SkillCheck(who, COOKWORK, cint(recipe.scribe), cint(recipe.scribe+10)) > 0))
+		if ((15 > 0))
+		// if ((SkillCheck(who, COOKWORK, cint(recipe.scribe), cint(recipe.scribe+10)) > 0))
 			var item := createiteminbackpack(who, OBJ_RECIPE_SLIP, 1);
 			if (item == error)
 				sendsysmessage(who, "  " + item);

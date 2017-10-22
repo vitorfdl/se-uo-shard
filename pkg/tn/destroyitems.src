@@ -86,7 +86,7 @@ if(((item.objtype==0xec25)||(item.objtype==0xec26)) && (hits > 0))
 		SendEvent(mob, ev);
 	endforeach
      
-	PlayAttackAnimation(who);
+	PlayAttackAnimation(who, who.weapon);
 	sleepms(600);
 	PlaySoundEffect(who, FLS_SFX_SKILL_LUMBERJACK);
 	PlayStationaryEffect(item.x, item.y, item.z, FX_SMOKE, 2, 4);
@@ -97,7 +97,7 @@ if(((item.objtype==0xec25)||(item.objtype==0xec26)) && (hits > 0))
 
 else
 
-	PlayAttackAnimation(who);
+	PlayAttackAnimation(who, who.weapon);
 	sleepms(600);
 	PlaySoundEffect(who, FLS_SFX_SKILL_LUMBERJACK);
 	PlayStationaryEffect(item.x, item.y, item.z, FX_SMOKE, 2, 4);

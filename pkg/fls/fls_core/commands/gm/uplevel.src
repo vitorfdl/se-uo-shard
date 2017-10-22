@@ -7,29 +7,29 @@ include ":charactercreation:habilidades";
 include ":charactercreation:characters";
 
 program reset(who, params)
-	var item;
-	if (who.cmdlevel >= 4)
-		SendSysMessageEx(who, "Escolha o alvo.", SSM_REQUEST);
-		item := target(who);
-	else
-		item := who;
-	endif
+	// var item;
+	// if (who.cmdlevel >= 4)
+	// 	SendSysMessageEx(who, "Escolha o alvo.", SSM_REQUEST);
+	// 	item := target(who);
+	// else
+	// 	item := who;
+	// endif
 	
-	params := splitwords(params);
-	params := params[1];
+	// params := splitwords(params);
+	// params := params[1];
 
-	if (!item)
-		return;
-	endif
+	// if (!item)
+	// 	return;
+	// endif
 	
-	if (!params)
-		params := 1;
-	endif
+	// if (!params)
+	// 	params := 1;
+	// endif
 	
-	SetSkillPoints(item, GetSkillPoints(item)+1);
-	SetAttribPoints(item, GetAttribPoints(item)+3);
-	// SetCharLevel(item, who.getLevel()(item)+1);
+	// SetSkillPoints(item, GetSkillPoints(item)+1);
+	// SetAttribPoints(item, GetAttribPoints(item)+3);
+	// // SetCharLevel(item, who.getLevel()(item)+1);
 	
-	PrintTextPrivate(item, "Voce ganhou um level", item);
+	// PrintTextPrivate(item, "Voce ganhou um level", item);
 
 endprogram

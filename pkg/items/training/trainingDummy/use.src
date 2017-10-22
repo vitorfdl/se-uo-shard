@@ -33,7 +33,7 @@ program PracticeDummy(who, dummy)
 	
 	PerformAction(who, weapon_anim);
 
-	var test := rollAttrDice(who, weapon_attrib, 0) + getProficiencyBonus(who, weapon_skill);
+	var test := rollAttrDice(who, weapon_attribute, 0) + getProficiencyBonus(who, weapon_skill);
 	if ( test > 8 )
 		PlaySoundEffect(who, DUMMY_HIT_SOUND);
 		DummyRock(dummy);

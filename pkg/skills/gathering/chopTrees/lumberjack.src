@@ -60,7 +60,7 @@ program skill_LumberJack(who,tool)
 		endif
 		ChopTree(who, tool, targ, orig_x, orig_y);
 		AP_ConsumeVital(who, "Stamina", 5);
-		CheckToolWear(who, tool, GATHERING );
+		CheckToolWear(who, tool, EXTRACAO );
 		sleep(1);
 		if (LJ_GetWoodAmount(who.realm, targ.x, targ.y)== 0 )
 			PrinttextAbove(who, "*derruba a arvore*");
@@ -110,7 +110,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 
 	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
-		var amt := AP_GetStat(mobile, attribute, RETURN_BONUS);
+		var amt := AP_GetStat(who, STRENGTH, RETURN_BONUS);
 		if (amt <= 0)
 			amt := 1;
 		endif

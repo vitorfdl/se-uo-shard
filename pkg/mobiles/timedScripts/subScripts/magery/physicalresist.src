@@ -15,7 +15,7 @@ program TimedScript_Clumsy(params)
 		return 0;
 	endif
 
-	var points := CINT(AP_GetSkill(attacker, MAGERY)/5)+5;
+	var points := CINT(AP_GetSkill(attacker, ARCANISMO)/5)+5;
 	SetObjProperty(mobile, "#PhysicalMod", points);
    SetObjProperty(mobile, "PhysicalResistMod", points);
 	

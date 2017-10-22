@@ -43,7 +43,7 @@ program skill_Stealing(mobile)
 	elseif (targ.npctemplate["merchants"])
 		SendSysMessageEx(mobile, "Voce nao pode roubar este tipo de NPC.", SSM_FAIL);
 		return 0;
-	elseif (npc_category in ["animal", "dinossaur"])
+	elseif (npc_category in array{"animal", "dinossaur"})
 		SendSysMessageEx(mobile, "Voce nao pode roubar este tipo de NPC.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(mobile, targ) > 2 )
@@ -181,7 +181,7 @@ function CriticalFailure(mobile, targ)
 	endif
 	SendSysMessageEx(mobile, "Voce chamou muita atencao!", SSM_FAIL);
 
-	var range := 22 - user_skill;
+	var range := 22 - AP_getSkill(mobile, PRESTIDIGITACAO);
 
 	foreach player in ( ListMobilesInLineOfSight(targ, range) )
 		if ( player.npctemplate );

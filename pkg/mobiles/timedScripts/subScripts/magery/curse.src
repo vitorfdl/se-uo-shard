@@ -31,7 +31,7 @@ program TimedScript_Clumsy(params)
 		return 0;
 	endif	
 
-	var cast_points := CInt(AP_GetSkill(attacker, MAGICLORE)) + CInt(AP_GetSkill(attacker, MAGERY));
+	var cast_points := CInt(AP_GetSkill(attacker, PESQUISA)) + CInt(AP_GetSkill(attacker, ARCANISMO));
 	cast_points := cast_points/4;
 //	var defense := CInt(AP_GetSkill(mobile, RESISTING_SPELLS))/4;
 	var final := cast_points;// - defense;

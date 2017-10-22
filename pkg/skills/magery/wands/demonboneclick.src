@@ -4,7 +4,7 @@ include "include/say";
 include "include/arrays";
 include ":magery:tnmagery";
 
-program doubleClick(item)
+program doubleClick(who, item)
    if(!item.movable) return; endif
 
    var power := GetObjProperty(item, "power");

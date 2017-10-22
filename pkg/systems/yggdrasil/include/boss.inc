@@ -1,4 +1,3 @@
-
 use uo;
 use vitals;
 include "include/say";
@@ -433,15 +432,15 @@ function SetBoss(npc, boss)
 	AP_SetTrueStat(npc, WISDOM, Cint(boss.wis));
 	AP_SetTrueStat(npc, CONSTITUTION, Cint(boss.con));
 	
-	foreach skill in boss.skills
+	foreach skill in (boss.skills)
 		AP_SetTrueSkill(npc, skill, 1);
 		// sleepms(2);
 	endforeach
 
 	if (boss.customAttacks && boss.customAttacks[0])
-		var customAttacks = array{};
+		var customAttacks := array{};
 		foreach attack in (boss.customAttacks)
-			attack := FormatAttack(npctemplate, attack);
+			attack := FormatAttack(boss.npctemplate, attack);
 			customAttacks.append(attack);
 		endforeach
 		SetObjProperty(npc, "customAttacks", customAttacks);

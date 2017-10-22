@@ -5,7 +5,6 @@ use cfgfile;
 
 include ":ghaia:ghaia";
 include "include/sysEvent";
-include ":tn:quests";
 include ":gumps:gumps";
 include ":gumps:yesno";
 include ":gumps:requestgump";

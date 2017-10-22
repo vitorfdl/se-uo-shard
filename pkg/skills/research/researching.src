@@ -25,7 +25,7 @@ program skill_armslore(who)
 
 	if (item.graphic == 3849)
 		PrintText(who, "*analisando um frasco*");
-		if (SkillCheck(who, RESEARCH, -1) > 0)
+		if (15 > 0) //SkillCheck(who, PESQUISA, -1)
 			var cfg := ReadConfigFile(":*:itemdesc");
 			var entry := cfg[item.objtype];
 			if (entry)
@@ -52,7 +52,7 @@ program skill_armslore(who)
 	else
 		PrintText(who, "*analisando um item*");
 		
-		if (SkillCheck(who, RESEARCH, -1) > 0)
+		if (15 > 0) //SkillCheck(who, PESQUISA, -1)
 			
 			if (item_config[item.objtype].PlantName)
 				var seed_habilidade, seed_estacao := "";
@@ -94,7 +94,7 @@ program skill_armslore(who)
 				endif
 				var cargas := Cint(GetObjProperty(item, "cargas"));
 				if (cargas)
-					cargas := cargas + cargas* (AP_GetSkill(who, RESEARCH)/120.0 );
+					cargas := cargas + cargas* (AP_GetSkill(who, PESQUISA)/120.0 );
 					setobjproperty(item, "cargas", cargas);
 				endif
 				
@@ -124,10 +124,10 @@ program skill_armslore(who)
 				if (properties >= craftproperty.bonus.size())
 					SendSysMessageEx(who, "Voce ja identificou o maximo de propriedades deste item.", SSM_FAIL);
 					return;
-				elseif(properties == 1 && AP_GetSkill(who, RESEARCH) < 40)
+				elseif(properties == 1 && AP_GetSkill(who, PESQUISA) < 40)
 					SendSysMessageEx(who, "Este item parece muito complexo para voce.", SSM_FAIL);
 					return;	
-				elseif(properties == 2 && AP_GetSkill(who, RESEARCH) < 80)
+				elseif(properties == 2 && AP_GetSkill(who, PESQUISA) < 80)
 					SendSysMessageEx(who, "Este item parece muito complexo para voce.", SSM_FAIL);
 					return;	
 				endif		

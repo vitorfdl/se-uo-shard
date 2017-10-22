@@ -22,7 +22,7 @@ function EfeitosTerremoto(who,danobase,danoale,dif)
          PlaySoundEffectPrivate( who, 0x222, who );
          SendSysMessageEx(who, "O solo nas proximidades treme violentamente.", SSM_INFO);
          
-         if (CheckResist(who,  REFLEXOS, dif))//note: colocar uma variavel de chance de resistir ao terremoto
+         if (CheckResist(who, DEXTERITY))//note: colocar uma variavel de chance de resistir ao terremoto
             PrintTextAbove( who, "*Atraves de movimentos acrobaticos habeis, resiste ao tremor*");
             PerformAction( who, 20);
          else

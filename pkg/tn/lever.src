@@ -449,7 +449,7 @@ function trappedswitch(who, item, mid, stt, snd)
 		 foreach mobile in mobiles
 
 			 if (!mobile.npctemplate)
-		 		 if (CheckResist(mobile, FORTITUDE, CInt(25+25*poisonLvl)))
+		 		 if (CheckResist(mobile, STRENGTH))
 		 			 SendSysMessageEx(mobile, "Voce resistiu ao veneno.", SSM_INFO);
 		 			 continue;
 		 		 else

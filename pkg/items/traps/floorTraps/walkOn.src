@@ -67,7 +67,7 @@ program TrapWalkOn(mobile, trap)
 				var tempo := 15;
 				var dmg := CInt(RandomDiceRoll("1d10"))+20;
 				SendSysMessageEx(mobile, "Voce ativou uma armadilha!", SSM_FAIL);
-				if (CheckResist(mobile, REFLEXOS, 100))
+				if (CheckResist(mobile, DEXTERITY))
 					if (temHabilidade(mobile, "Evasao"))
 						SendSysMessageEx(mobile, "Voce escapou completamente da armadilha.", SSM_INFO);
 						sleep(10);
@@ -110,7 +110,7 @@ program TrapWalkOn(mobile, trap)
 		PlayStationaryEffect(trap.x, trap.y, trap.z, CInt(cfg.Animation), 100, 11, 0, trap.realm);
 		//TODO colocar level nas traps
 		var dmg := CInt(RandomDiceRoll("1d10"))+20;
-		if (CheckResist(mobile, REFLEXOS, 100))
+		if (CheckResist(mobile, DEXTERITY))
 			if (temHabilidade(mobile, "Evasao"))
 				SendSysMessageEx(mobile, "Voce escapou completamente da armadilha.", SSM_INFO);
 				sleep(10);

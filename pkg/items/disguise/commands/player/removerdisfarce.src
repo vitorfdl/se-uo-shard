@@ -5,5 +5,5 @@ program command_remdis(who)
 		SendSysMessageEx(who, "Voce nao pode remover o disfarce com o rosto coberto", SSM_FAIL);
 		return;
 	endif
-	removeDisfarce(who);
+	// removeDisfarce(who);
 endprogram

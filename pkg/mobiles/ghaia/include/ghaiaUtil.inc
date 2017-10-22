@@ -242,7 +242,7 @@ function GetNpcRandomAttack(mobile)
 		attacks := GetNpcAttacks(mobile.npctemplate);
 	endif
 	
-	if (!attack || !attack[1])
+	if (!attacks || !attacks[1])
 		return 0;
 	endif
 
