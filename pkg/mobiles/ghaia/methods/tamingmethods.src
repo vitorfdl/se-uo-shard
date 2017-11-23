@@ -1,0 +1,156 @@
+use uo;
+include ":yggdrasil:boss";
+var personalities := array{"Agressivo", "Medroso", "Calmo"};
+
+exported function GetPetProperties(pet)
+   var props := GetObjProperty(pet, "info");
+
+   var props := dictionary{
+      "loyalt" -> props["loyalt"],
+      "personality" -> props["personality"],
+      "commands" -> props["commands"],
+      "talents" -> props["talents"],
+      "points" -> cint(props["points"]),
+   };
+
+   return props;
+endfunction
+
+exported function SetPetProperties(pet, new_props)
+   var props := GetObjProperty(pet, "info");
+
+   if (new_props["loyalt"] && cint(new_props["loyalt"]))
+      props["loyalt"] := cint(new_props["loyalt"]);
+   endif   
+   
+   if (new_props["points"] && cint(new_props["points"]))
+      props["points"] := cint(new_props["points"]);
+   endif   
+   
+   if (new_props["commands"] && typeOf(new_props["commands"]) === "Dictionary")
+      props["commands"] := new_props["commands"];
+   endif   
+
+   if (new_props["talents"] && typeOf(new_props["talents"]) === "Struct")
+      props["talents"] := new_props["talents"];
+   endif 
+
+   if (new_props["personality"] && cint(new_props["personality"]))
+      props["personality"] := cint(new_props["personality"]);
+   endif
+
+   SetObjProperty(pet, "info", props);
+endfunction
+
+exported function InitPetProperties(pet, reset := 0)
+   var old_props = GetObjProperty(pet, "info");
+   if (old_props && !reset) return; endif;
+
+	var npctemplate := targ.npctemplate;
+	npctemplate := npctemplate[10, len(npctemplate)-9];
+
+	var cfg := ReadConfigFile(":taming:pets");
+	var pet_elem := cfg[npctemplate];
+   if (!pet_elem)
+      pet_elem := cfg["generic"];
+   endif
+
+   var props := dictionary{};
+
+   props.personality := personalities.randomentry();
+   if (old_props)
+      props.personality := old_props.personality;
+   endif
+   props.commands := GetConfigStringDictionary(pet_elem, "command");
+   props.loyalt := 0;
+   props.points := 0;
+   props.talents := array{};
+   if (old_props)
+      props.personality := old_props.personality;
+   else
+      var talents := GetConfigStringArray(pet_elem, "Talent");
+      foreach talent in talents
+         talent := SplitWords(talent);
+         if ( RandomInt(100) <= cint(talent[2]) )
+            prop.talents.append(talent[1]);
+         endif
+      endforeach
+   endif
+
+   SetPetProperties(pet, props);
+endfunction
+
+exported function SetLoyalt(pet, amount := 1)
+   var props := GetObjProperty(pet, "info");
+   var new_loyalt := struct{ "loyalt" := props.loyalt + amount };
+   SetPetProperties(pet, new_loyalt);
+   return 1;
+endfunction
+
+exported function SetPoints(pet, amount := 1)
+   var props := GetObjProperty(pet, "info");
+   var new_points := struct{ "points" := props.points + amount };
+   SetPetProperties(pet, new_points);
+   return 1;
+endfunction
+
+exported function SetCommand(pet, command, amount := 1)
+   var props := GetObjProperty(pet, "info");
+   var command_list := info.commands;
+   if (!command_list[command] || command_list[command] <= 5) return 0;
+   
+   command_list[command] += amount;
+   var update := struct{ "commands" := command_list };
+   SetPetProperties(pet, update);
+   return 1;
+endfunction
+
+exported function HaveTalent(pet, talent)
+   var props := GetObjProperty(pet, "info");
+   if (talent in props.talents)
+      return 1;
+   endif
+
+   return 0;
+endfunction
+
+exported function isTamable(pet)
+   if (isBoss(pet))
+      return 0;
+   endif
+   return 1;
+endfunction
+
+exported function rollPetDice(pet, command, tame_difficulty)
+   if ((pet.owner).cmdlevel >= 2) return; endif;
+
+   var props := GetPetProperties(pet);
+   if (!props.commands) return; endif;
+
+   var command_list := props.commands;
+   if (!command_list[command]) return; endif;
+
+   var cmd_level := command_list[command];
+   if (!cmd_level || cmd_level == 0) 
+      return;
+   elseif (cmd_level >= 5)
+      return 1;
+   endif
+
+   var dice_roll := rollAttrDice(pet.owner, WISDOM) + getProficiencyBonus(pet.owner, TRATO_ANIMAIS);
+   if (dice_roll >= tame_difficulty-cmd_level)
+      return 1;
+   endif
+
+   return 0;
+endfunction
+
+exported function template(pet)
+	var npctemplate := SplitWords(pet.npctemplate, ":");
+   return npctemplate[3];
+endfunction
+
+exported function package(pet)
+	var npctemplate := SplitWords(pet.npctemplate, ":");
+   return npctemplate[2];
+endfunction

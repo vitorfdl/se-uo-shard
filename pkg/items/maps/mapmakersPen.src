@@ -9,16 +9,14 @@ include ":attributes:attributes";
 include ":crafting:toolWear";
 include ":itemutils:canAccess";
 include "include/say";
-include ":charactercreation:habilidades";
+include ":crafting:fls_crafting";
 include ":tn:tngumps";
 include ":gumps:yesno";
 
 var item_config     := ReadConfigFile(":cartography:itemdesc");
 var craft_config    := ReadConfigFile(":cartography:cartography");
 
-
 program use_MapmakersPen(who, tool)
-
 	if(!can_access(who, tool))
 		return 0;
 	endif
@@ -43,10 +41,7 @@ program use_MapmakersPen(who, tool)
 	endif
 
 	var blank_array := array{ 0xE34, 0xEF3, 0x14EB, 0x14EC };
-
 	if (targ.objtype in blank_array)
-	
-		if (TemHabilidade(who, "Cartografia") || who.cmdlevel >= 3)
 		//var rinfo := sendCraftGump(who, "Cartography");
 
 		// OK was pressed, close it on out
@@ -57,71 +52,92 @@ program use_MapmakersPen(who, tool)
 //		var options := RadioGump(who, 200, 200, "Que tipo de mapa deseja fazer:", array{"Local", "Regional", "Global"});
 		var options := "Local";
 
-		var the_objtype;
+		var the_objtype, diff;
 		if (options == 0)
 			return;
 		elseif (options == "Local")
 			the_objtype := 0x6500;
+			diff := 18;
 		elseif (options == "Regional");
 			the_objtype := 0x6501;
+			diff := 18; 
 		elseif (options == "Global");
 			the_objtype := 0x6502;
+			diff := 20;
 		endif
-		var amt         := 1;
+
+		var amt := 1;
+		var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, SOBREVIVENCIA);
+		if (roll < diff)
+			return SendSysMessageEx(who, "Voce nao conseguiu mapear o local.", SSM_FAIL);
+		endif
 
 		makeCartographyMap(who, the_objtype, amt, tool);
-		
-
-		else
-			SendSysMessageEx(who, "Voce nao tem conhecimentos para mapear regioes.", SSM_FAIL);
-		endif
 		return 1;
 	elseif (targ.isBook())
 		if (!targ.isWritable() )
 			var content := targ.ExtractInfo();
-			if ( content.Contents.size() > 1)
-				SendSysMessageEx(who, "Escolha outro livro para copiar.", SSM_REQUEST);
-				var copy := target(who);
-				if (!copy || !copy.isBook())
-					SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
-					return;
-				endif
-				if ( !copy.isWritable() )
-					SendSysMessageEx(who, "Voce nao pode escrever neste livro.", SSM_FAIL);
-					return;
-				endif
-
-				PrintText(who, "*copiando um livro*");
-				PlaySoundEffect( who, 0x24a );
-				sleep(5);
-
-				copy.SetContents(content.Contents);
-				copy.SetAuthor(content.Author);
-				copy.SetTitle(content.Title);
-
-				SendSysMessageEx(who, "Voce terminou de copiar o livro.", SSM_INFO);
-				return 1;
-				
-			endif
-		else
-			var yes := YesNo(who, "Deseja lacrar o livro?");
-			if (yes)
-				targ.ReadOnly(1);
-				SendSysMessageEx(who, "O livro esta lacrado.", SSM_INFO);
+			if ( content.Contents.size() <= 1)
 				return 1;
 			endif
+			SendSysMessageEx(who, "Escolha outro livro para copiar.", SSM_REQUEST);
+			var copy := target(who);
+			if (!copy || !copy.isBook())
+				SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+				return;
+			elseif ( !copy.isWritable() )
+				SendSysMessageEx(who, "Voce nao pode escrever neste livro.", SSM_FAIL);
+				return;
+			endif
+
+			PrintText(who, "*copiando um livro*");
+			PlaySoundEffect( who, 0x24a );
+			sleep(5);
+
+			copy.SetContents(content.Contents);
+			copy.SetAuthor(content.Author);
+			copy.SetTitle(content.Title);
+
+			SendSysMessageEx(who, "Voce terminou de copiar o livro.", SSM_INFO);
+			return;
+		elseif (!YesNo(who, "Deseja lacrar o livro?"))
+			return;
 		endif
-	else
-		SendSysMessageEx(who, "Voce nao pode fazer nada com isto.", SSM_FAIL);
-		return;
-	endif
 
+		targ.ReadOnly(1);
+		SendSysMessageEx(who, "O livro esta lacrado.", SSM_INFO);
+		return;
+	elseif (GetObjProperty(targ, "rune_id"))
+		SendSysMessageEx(who, "Para qual papel voce deseja transcrever esta runa?", SSM_REQUEST);
+		var paper := Target(who);
+		if (!paper || !paper.isA(POLCLASS_ITEM) || paper.objtype != 0x111 )
+			SendSysMessageEx(who, "Este nao e um papel valido.", SSM_FAIL);
+			return;
+		endif
+
+		var rune_id := GetObjProperty(targ, "rune_id");
+
+		var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, INSCRICAO_RUNICA);
+		if (roll <= 14)
+			SendSysMessageEx(who, "Falhou em copiar a runa.", SSM_FAIL);
+			return;
+		endif
+
+		var theitem := CreateItemInBackpack(who, 0xef1f, 1);
+		if (theitem)
+			SendSysMessageEx(who, "Sem espaco na sua mochila, voce perdeu o papel.", SSM_FAIL);
+			return;
+		endif
+
+		SetObjProperty(theitem, "objtype", rune_id);
+		SendSysMessageEx(who, "Voce transcreveu a runa para o papel.", SMM_INFO);
+		return ;
+	endif
+	SendSysMessageEx(who, "Voce nao pode fazer nada com isto.", SSM_FAIL);
 endprogram
 
 
 function makeCartographyMap(who, map_objtype, amount, tool)
-
-
 	var blank_array := array{ 0xE34, 0xEF3, 0x14EB, 0x14EC };
 	var blank := Target(who);
 	if( !blank )
@@ -205,9 +221,7 @@ function makeCartographyMap(who, map_objtype, amount, tool)
 
 endfunction
 
-
 function encodeMap(map_definitions, map)
-
 	if( map_definitions[2] < 0 )
 		map_definitions[2] := 0;
 	endif
@@ -222,50 +236,36 @@ function encodeMap(map_definitions, map)
 	map.gumpheight := map_definitions[7];
 
 	return 1;
-
 endfunction
 
 
 
 function CreateCraftedMap(who, craft_skill, use_on, objtype, amount, itemname, reqd)
+	var craft_sound  := menu_config[craft_skill].CraftSound;
+	var craft_loops  := menu_config[craft_skill].CraftLoops;
+	var craft_delay  := menu_config[craft_skill].CraftDelay;
+	var craft_action := menu_config[craft_skill].CraftAnim;
+	playCraftWork(who, craft_sound, craft_loops, craft_delay, craft_action);
 
-	// var craft_sound  := menu_config[craft_skill].CraftSound;
-	// var craft_loops  := menu_config[craft_skill].CraftLoops;
-	// var craft_delay  := menu_config[craft_skill].CraftDelay;
-	// var craft_action := menu_config[craft_skill].CraftAnim;
-	// playCraftWork(who, craft_sound, craft_loops, craft_delay, craft_action);
+	var theitem := CreateItemInBackpack(who, objtype, 1);
+	if(theitem)
+		if( !SubtractAmount(use_on, amount) )
+			SendSysMessage(who, "Voce nao tem materiais suficiente na sua mochila!");
+			DestroyItem(theitem);
+			return -1;
+		endif
 
-	// var theitem := CreateItemInBackpack(who, objtype, 1);
-	// if(theitem)
-	// 	if( !SubtractAmount(use_on, amount) )
-	// 		SendSysMessage(who, "You don't have enough materials in your backpack!");
-	// 		DestroyItem(theitem);
-	// 		return -1;
-	// 	endif
-	// 	var rint := randomint(AP_GetSkill(who, craft_skill));
-	// 	if(reqd >= 23)
-	// 		reqd := reqd - 20;
-	// 	else
-	// 		reqd := 3;
-	// 	endif
-	// 	if(rint < reqd)
-	// 		SendSysMessage(who, "You were barely able to make this item.  Its quality is below average.");
-	// 	else
-	// 		SendSysMessage(who, "You create the item and put it in your backpack.");
-	// 	endif
-	// 	SetName(theitem, itemname);
-	// else
-	// 	SendSysMessage(who, "You don't have enough room in your backpack!");
-	// 	return 0;
-	// endif
-	// if (theitem.objtype != 0x9923)
-	// if ( YesNo(who, "Voce quer escrever o nome do mapa?"))
-	// 	var nme2 := RequestGump(who, "Qual o nome do mapa?");
-	// 		if (nme2 != error)
-	// 			SetName(theitem, nme2);
-	// 		endif
-	// endif
-	// endif
-	// return theitem;
-
+		SendSysMessage(who, "Voce desenhou o mapa.");
+		SetName(theitem, itemname);
+	else
+		SendSysMessage(who, "Espaco insuficiente na sua mochila");
+		return 0;
+	endif
+	if (theitem.objtype != 0x9923 && YesNo(who, "Voce quer escrever o nome do mapa?"))
+		var nme2 := RequestGump(who, "Qual o nome do mapa?");
+		if (nme2 != error)
+			SetName(theitem, nme2);
+		endif
+	endif
+	return theitem;
 endfunction

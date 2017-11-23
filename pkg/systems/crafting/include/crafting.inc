@@ -328,7 +328,6 @@ function AddMaterialMod(who, theitem, principalMaterial, materialColor)
 	elseif (theitem.objtype == 0x9088 || theitem.objtype == 0x9098)
 		SetObjProperty(theitem, "dmgmods", DmgMods);
 	endif
-
 endfunction
 
 function CraftExceptional(who, theitem, craft_skill)

@@ -1,0 +1,17 @@
+use uo;
+use os;
+
+include "include/utils";
+include "include/sysevents";
+
+program ForceForward(mobile)
+   if (!mobile.template || !mobile.template["moriquendi"])
+      return;
+   endif
+
+   PushBack(mobile, 2, 300, 1);
+   var ev := struct{
+		ev.+type := EVID_PEACEMADE;
+   };
+   SendEvent(mobile, ev);
+endprogram

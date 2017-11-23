@@ -19,7 +19,7 @@ program PopUpMenu( who, what )
     elseif (what.isa(POLCLASS_MOBILE) && who != what)
         entries := MenuPlayerToPlayer(who, what);
     elseif (what == who)
-
+        entries := MenuSelf(who);
     else
         return;
     endif
@@ -70,6 +70,8 @@ program PopUpMenu( who, what )
         return;
     elseif (input == "change_spell")
         Start_Script(":magery:wands/changeSpell", who);
+    elseif (input == "ficharp_rate")
+        Start_Script(":fls_core:ficharp_rating", array{ who, what });
     endif
 
     return 1;
@@ -105,6 +107,11 @@ function MenuPlayerToPlayer(who, what)
 
     if (GetObjProperty(what, "corda") && !GetObjProperty(what, "algemado"))
         "arrastar"  := struct{ cliloc := 3002013, color := YELLOW_COLOR };
+    endif
+
+    var last_rates := GetObjProperty(who, "ficharp_rates");
+    if (last_rates && what.serial in last_rates && last_rates[what.serial] <= ReadGameClock())
+        entries.+ficharp_rate := 3002029;
     endif
 
     return entries;

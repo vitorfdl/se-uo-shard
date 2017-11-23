@@ -49,6 +49,8 @@ function setTypes(item)
    elseif (typeof(elem) == "String")
       item = "\"{}\"".format(item);
    endif
+   
+   // just return the item if its integer
 
    return item;
 endfunction

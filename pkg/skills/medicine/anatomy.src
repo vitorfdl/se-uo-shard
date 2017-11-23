@@ -9,7 +9,7 @@ include "include/say";
 include ":charactercreation:habilidades";
 
 program skill_Anatomy(who)
-
+	return 1;
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 

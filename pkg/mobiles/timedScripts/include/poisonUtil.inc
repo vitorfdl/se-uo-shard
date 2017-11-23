@@ -75,7 +75,7 @@ function TS_CurePoison(mobile, cure_amount, cure_type:="", cure_level:=1)
 
 			num_cured += 1;
 
-			SendSysMessage(mobile, " " + (multiply * cure_amount) + " " + duration + " " + cure_amount);
+			// SendSysMessage(mobile, " " + (multiply * cure_amount) + " " + duration + " " + cure_amount);
 
 			if ( (multiply * cure_amount) >= duration )
 				// There is enough cure power to stop the poison.

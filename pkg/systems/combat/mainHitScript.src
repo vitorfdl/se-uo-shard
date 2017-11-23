@@ -57,13 +57,7 @@ program MainHitScript( params )
 	//calcula os danos
 	base_damage := CalculateTotalDamageBonus(base_damage, attacker, defender);
 
-	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critical);
-	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical);
 
-	// PoisonChecks(attacker, defender, weapon, armor, base_damage, critical);
-
-	// TODO: Verificar depois
-	// CriticalHitScripts(attacker, defender, weapon, armor, base_damage, total);
 
 	// Chain Of Pain
 	// TODO: reaproveitar depois
@@ -79,24 +73,28 @@ program MainHitScript( params )
 	if (base_damage < 1)
 		base_damage := 1;
 	endif
+	
+	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critical);
+	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical);
 
+	// TODO: Verificar depois
+	// CriticalHitScripts(attacker, defender, weapon, armor, base_damage, total);
 
-	if( GetObjProperty(defender, "#chain_damage") != error )
-		if ( cint(GetObjProperty(defender, "#chain_damage")) > readgameclock())
-			var cop_mobs   := GetObjProperty(defender, "#chain_serials");
-			var chain_ca   := GetObjProperty(defender, "#chain_ca");
-			var chain_mage := SystemFindObjectBySerial( GetObjProperty(defender, "#mageserial") );
+	PoisonChecks(attacker, defender, weapon);
 
-			foreach serial in cop_mobs
-				var defender := SystemFindObjectBySerial(serial);
-				var roll := rollResistDice(defender, "Intelligence");
-				if (roll < chain_ca)
-					SetLastDamageInfo(defender, base_damage, "chain of pain", attacker);
-					DamageFLS(defender, Floor(base_damage/1.5), DMG_FORCED, chain_mage);
-				endif
-			endforeach
-			return 1; //stop script here
-		endif
+	if( GetObjProperty(defender, "#chain_damage") != error && cint(GetObjProperty(defender, "#chain_damage")) > readgameclock() )
+		var cop_mobs   := GetObjProperty(defender, "#chain_serials");
+		var chain_ca   := GetObjProperty(defender, "#chain_ca");
+		var chain_mage := SystemFindObjectBySerial( GetObjProperty(defender, "#mageserial") );
+
+		foreach serial in cop_mobs
+			var defender := SystemFindObjectBySerial(serial);
+			var roll := rollResistDice(defender, INTELLIGENCE);
+			if (roll < chain_ca)
+				SetLastDamageInfo(defender, base_damage, "chain of pain", attacker);
+				DamageFLS(defender, Floor(base_damage/1.5), DMG_FORCED, chain_mage);
+			endif
+		endforeach
 	endif
 
 	SetLastDamageInfo(defender, base_damage, 0, attacker); //Log 
@@ -109,7 +107,7 @@ endprogram
 
 
 function GetDamageType(weapon)
-	var attack_type := "Concussão";
+	var attack_type := DMG_BLUDGE;
 	if (weapon.objtype)
 		var weapon_type := GetConfigString(item_cfg[weapon.objtype], "DamageType");
 		if (weapon_type)
@@ -233,13 +231,14 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critic
 endfunction
 
 function ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical)
-	var body_scripts := GetObjProperty(defender, "ArmorHitScripts");
-	var armor_scripts := GetObjProperty(armor, "ArmorHitScripts");
+	var body_scripts   := GetObjProperty(defender, "ArmorHitScripts");
+	var armor_scripts  := GetObjProperty(armor, "ArmorHitScripts");
 	var others_scripts := GetConfigStringArray( item_cfg[armor.objtype], "ArmorHitScripts" );
 	if (defender.npctemplate)
 		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
 		others_scripts := GetConfigStringArray(npcelem, "ArmorHitScripts");
 	endif
+
 	if ( !body_scripts )
 		body_scripts := array{};
 	endif
@@ -278,6 +277,7 @@ function PoisonChecks(attacker, defender, weapon)
 	if ( critical < 1 )
 		return 0;
 	endif
+
 	if (GetObjProperty(weapon, "ammo"))
 		var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
 		var ammo := GetObjProperty(weapon, "ammo");
@@ -288,65 +288,63 @@ function PoisonChecks(attacker, defender, weapon)
 		endforeach
 	endif
 
+	var poisonInfo := struct{};
 	if (!attacker.npctemplate)//se nao for npc checa se tem poison na arma
-		if (attacker.graphic == 21)
-			if (IsPoisonImune(defender, "defaultPoison") )
-				return 0;
-			endif
-			if (randomint(100) < 20)
-				TS_StartTimer(defender, "defaultPoison", 60, 2, attacker);
-			endif
-		else
-			var poisonInfo := GetObjProperty(weapon, "poisonInfo" );
-			if (poisonInfo == error)
-				return 0;
-			endif
-			poisonInfo.dosage := poisonInfo.dosage -1;
-			if (poisonInfo.dosage <= 0) //se nao tiver mais cargas de veneno, deleta
-				EraseObjProperty(weapon, "poisonInfo");
-				return 0;
-			else //se ainda tiver atualiza na arma
-				SetObjProperty(weapon, "poisonInfo", poisonInfo);
-			endif
-	
-			if (IsPoisonImune(defender, poisonInfo.name) )
-				return 0;
-			endif
-			if (poisonInfo.name == "paralyzePoison")
-				poisonInfo.time := 5;
-			endif
-			TS_StartTimer(defender, poisonInfo.name, poisonInfo.time, poisonInfo.level, attacker);
-		endif
-	else //se for npc checa a skill
-		if (temhabilidade(defender, "Senso da Natureza"))
+		// if (attacker.graphic == 21)
+		// 	if (IsPoisonImune(defender, "defaultPoison") )
+		// 		return 0;
+		// 	endif
+			
+		// 	if (randomint(100) < 20)
+		// 		TS_StartTimer(defender, "defaultPoison", 60, 2, attacker);
+		// 	endif
+
+		// 	return;
+		// endif
+		poisonInfo := GetObjProperty(weapon, "poisonInfo" );
+		if (poisonInfo == error)
 			return 0;
 		endif
 
-		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
-		var poisonchance := GetConfigInt(npcelem, "Poisoning");		
-		if (poisonChance > 0)
-			if ( RandomInt(100) < poisonChance )
-				var poisonName := GetConfigString(npcelem, "PoisonType");
-				var level := Cint(GetConfigInt(npcelem, "PoisonLevel"));
-				if (!level)
-					level := 1;
-				endif
-				if (poisonName == error)
-					return 0;
-				endif
-				if (IsPoisonImune(defender, poisonName) )
-					return 0;
-				endif
-				var time := level*15;
-				if (poisonName == "paralyzePoison")
-					time := 10;
-				endif
-				TS_StartTimer(defender, poisonName, time, level, attacker);
-			endif
-		else
+		poisonInfo.dosage := poisonInfo.dosage -1;
+		if (poisonInfo.dosage <= 0) //se nao tiver mais cargas de veneno, deleta
+			EraseObjProperty(weapon, "poisonInfo");
+			return 0;
+		else //se ainda tiver atualiza na arma
+			SetObjProperty(weapon, "poisonInfo", poisonInfo);
+		endif
+	else
+	var npcelem      := NPC_GetNPCConfig(attacker.npctemplate);
+	var poisonchance := GetConfigInt(npcelem, "Poisoning");		
+	if (poisonChance > 0)
+		poisonInfo.name  := GetConfigString(npcelem, "PoisonType");
+		poisonInfo.level := Cint(GetConfigInt(npcelem, "PoisonLevel"));
+		poisonInfo.difficulty := Cint(GetConfigInt(npcelem, "PoisonDiff"));
+
+		if (poisonInfo.name == error)
 			return 0;
 		endif
+
+		if (!poisonInfo.level)
+			poisonInfo.level := 1;
+		endif
+
+		if (!poisonInfo.time)
+			poisonInfo.time := level*5;
+		endif
 	endif
+
+	if (checkImmunity(defender, DMG_POISON))
+		return;
+	elseif(rollResistDice(defender, CONSTITUION) > poisonInfo.difficulty)
+		return;
+	endif
+
+	if (poisonInfo.name == "paralyzePoison")
+		poisonInfo.time := 5;
+	endif
+
+	return TS_StartTimer(defender, poisonInfo.name, poisonInfo.time, poisonInfo.level, attacker);
 endfunction
 
 // function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byref critical)

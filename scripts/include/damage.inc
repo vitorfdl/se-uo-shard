@@ -26,30 +26,33 @@ include ":fls_core:packets";
  * and remove existing ones more easily.
  */
 enum DAMAGE_TYPES
-	DMG_FORCED  := -1, // Ignores resistance
-	DMG_PHYSICAL:= "Físico",
-	DMG_FIRE    := "Fogo",
-	DMG_COLD    := "Gelo",
-	DMG_POISON  := "Veneno",
-	DMG_ENERGY  := "Eletrecidade",
-	DMG_POISON  := "Veneno",
-	DMG_POISON  := "Veneno",
-	DMG_POISON  := "Veneno",
-	
+	DMG_FORCED   := -1, // Ignores resistance
+	DMG_PHYSICAL := "Físico",
+	DMG_FIRE     := "Fogo",
+	DMG_COLD     := "Gelo",
+	DMG_POISON   := "Veneno",
+	DMG_ENERGY   := "Eletrecidade",
+	DMG_PIERCING := "Perfuração",
+	DMG_SLASH    := "Corte",
+	DMG_BLUDGE   := "Concussão",
 endenum
 
 
 function HealFLS(targ, amt, show_heal := 1)
-	if (!GetObjProperty(targ, "noheal"))
-		HealDamage(targ, amt);
-		if (show_heal)	
-			SendSystemReport(targ, amt, targ, SYSTEM_HEAL);
-			if (show_heal.isA(POLCLASS_MOBILE))
-				SendSystemReport(targ, amt, show_heal, SYSTEM_HEAL);
-			endif
-		endif
-	else
+	if (GetObjProperty(targ, "noheal"))
 		SendSysMessageEx(targ, "Voce nao pode ser curado.", SSM_FAIL);
+		return;
+	endif
+
+	HealDamage(targ, amt);
+	
+	if (!show_heal)	
+		return;
+	endif
+
+	SendSystemReport(targ, amt, targ, SYSTEM_HEAL);
+	if (show_heal.isA(POLCLASS_MOBILE))
+		SendSystemReport(targ, amt, show_heal, SYSTEM_HEAL);
 	endif
 endfunction
 
@@ -185,7 +188,11 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		var cleric_healing := GetObjProperty(source, "cleric_heal");
 		if (cleric_healing && dmg >= 2)
 			var targ := SystemFindObjectBySerial(cleric_healing);
-			HealFLS(targ, Floor(dmg/2));
+			if (source !== targ && Distance(source, targ) > 8)
+				targ := source;
+				SetObjProperty(source, "cleric_heal", source.serial);
+			endif
+			HealFLS(targ, Floor(dmg/2), source);
 		endif
 	endif
 
@@ -231,7 +238,7 @@ endfunction
 function checkImmunity(defender, damage_type)
 	var resist_list := array{};
 	if (!defender.npctemplate)
-		var chardata := GetObjProperty(defender, "chardata_resist");
+		var chardata := GetObjProperty(defender, "imunity_list");
 		if (chardata)
 			foreach resist in (chardata.Keys())
 				if (chardata[resist] != 0)
@@ -241,7 +248,7 @@ function checkImmunity(defender, damage_type)
 		endif
 	else
 		var npcelem := NPC_GetNPCConfig(defender);
-		resist_list := GetConfigStringArray(npcelem, "Resistencia");
+		resist_list := GetConfigStringArray(npcelem, "Imunidade");
 	endif
 
 	if (damage_type in resist_list)

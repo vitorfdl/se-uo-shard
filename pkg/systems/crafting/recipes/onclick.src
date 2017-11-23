@@ -34,7 +34,6 @@ function SendGump(who, scroll)
 		return;
 	endif
 
-	objtype := Hex(objtype);
 	var skill_name := GetObjProperty(scroll, "pericia");
 	var book_recipes := ReadConfigFile(":alchemy:recipes") + ReadConfigFile(":magery:recipes");
 	var itemdesc     := ReadConfigFile(":*:itemdesc");
@@ -77,7 +76,7 @@ function SendGump(who, scroll)
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(remain_charges));
 			
 			GFTextLine(gump, 205, 182, 995, "Aprender");
-			GFAddButton(gump, 265, 186, 2224, 248, GF_CLOSE_BTN, 0);
+			GFAddButton(gump, 265, 18q6, 2224, 248, GF_CLOSE_BTN, 0);
 		else
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
 		endif

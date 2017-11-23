@@ -19,9 +19,7 @@ var mystate      := INITIALIZING;
 var flee_point   := 0.1;
 var alert_allies := 0;
 var align;
-var mytemplate;
 var throwinfo;
-var propallies;
 
 var g_settings:= dictionary; //"setting name"->value
 var g_scripts := dictionary; // "script type"->value{.flags, .script}

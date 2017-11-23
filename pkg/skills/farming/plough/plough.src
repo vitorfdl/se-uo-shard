@@ -15,6 +15,8 @@ program UsePlough(who, plough)
 		SendSysMessage(who, "Voce esta muito distante da ferramenta.");
 		return;
 	endif
+
+	var repeatable := GetObjProperty(plough, "repeat") ;
 	
 	while ( who.ip )
 		SendSysMessage(who, "Onde voce deseja arar a terra?");
@@ -24,18 +26,17 @@ program UsePlough(who, plough)
 			return;
 		elseif ( CoordinateDistance(plough.x, plough.y, targ.x, targ.y) > 4 )
 			SendSysMessage(who, "Muito longe da ferramenta.");
+		elseif ( !repeatable && Distance(me.x, me.y, targ.x, targ.y) > 1)
+			SendSysMessage(who, "Muito voce esta muito longe.");
 			return;
 		elseif ( !CheckLOSAt(who, targ.x, targ.y, targ.z) )
 			SendSysMessage(who, "Voce nao esta na linha de visao para este local.");
-			return;
 		elseif ( (targ.item).objtype == ITEM_DIRT )
 			SendSysMessage(who, "Este local ja esta arado.");
-			return;
 		elseif ( GetObjProperty(targ.item, "gmplant") )
-			return;
+			SendSysMessage(who, "Voce nao consegue remover esta planta.");
 		elseif ( !CanPlough(targ) )
 			SendSysMessage(who, "Voce nao pode arar a terra aqui.");
-			return;
 		else
 			var temp := FoundPlant(targ);
 			if ( temp )
@@ -46,8 +47,11 @@ program UsePlough(who, plough)
 				PloughDirt(who, targ);
 			endif
 		endif
+
+		if ( !repeatable )
+			return;
+		endif
 	endwhile
-		
 endprogram
 
 function FoundPlant(targ)
@@ -64,15 +68,12 @@ function FoundPlant(targ)
 endfunction
 
 function PloughDelay(who)
-	SendSysMessage(who, "Voce comecou a arar a terra...");
-	PlaySoundEffect(who, PLOUGH_SOUND);
-	sleep(2);
-	SendSysMessage(who, "Voce continuou a arar a terra...");
-	PlaySoundEffect(who, PLOUGH_SOUND);
-	sleep(2);
-	SendSysMessage(who, "Voce continuou a arar a terra...");
-	PlaySoundEffect(who, PLOUGH_SOUND);
-	sleep(2);
+	var i;
+	for (i:=1; o <= 3; i+=1)
+		SendSysMessage(who, "Voce comecou a arar a terra...");
+		PlaySoundEffect(who, PLOUGH_SOUND);
+		sleep(2);
+	endfor
 endfunction
 
 function PloughDirt(who, targ)

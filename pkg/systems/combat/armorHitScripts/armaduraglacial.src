@@ -8,22 +8,22 @@ include "include/say";
 include ":magery:tnmagery";
 
 program HitScript(params)
-	var attacker	:= params[1];
-	var defender	:= params[2];
-	var weapon	:= params[3];
-	var armor	:= params[4];
-	var basedamage	:= params[5];
-	var rawdamage	:= params[6];
-	params := 0; // Not needed anymore.
+	// var attacker	:= params[1];
+	// var defender	:= params[2];
+	// var weapon	:= params[3];
+	// var armor	:= params[4];
+	// var basedamage	:= params[5];
+	// var rawdamage	:= params[6];
+	// params := 0; // Not needed anymore.
 	
-	var time := cdbl(GetObjProperty(defender, "armaduraglacial"));
-	if (!time)
-		time := 2;
-	endif
+	// var time := cdbl(GetObjProperty(defender, "armaduraglacial"));
+	// if (!time)
+	// 	time := 2;
+	// endif
 	
-	PrintText(attacker, "*Você esta congelado*", 91);
-	TS_StartTimer(attacker, "paralysis", time);
+	// PrintText(attacker, "*Você esta congelado*", 91);
+	// TS_StartTimer(attacker, "paralysis", time);
 		
-	return 1;
+	// return 1;
 endprogram
  

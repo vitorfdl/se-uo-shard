@@ -210,7 +210,7 @@ function GetAllOpponents(who)
 	foreach mobile in mobs
 		if (mobile.serial != who.serial)
 			if ( !(mobile in a) )
-				if (mobile.acctname || mobile.script == ":ghaia:tamed" )
+				if (mobile.acctname || mobile.script == ":ghaia:follower" )
 					a.append(mobile);
 				endif
 			endif 

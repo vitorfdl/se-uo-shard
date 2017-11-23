@@ -16,5 +16,6 @@
         "**/*.cfg": "cfgpol"
     },
     "editor.insertSpaces": true,
-    "editor.tabSize": 3
+    "editor.tabSize": 3,
+    "editor.autoIndent": false
 }

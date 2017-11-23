@@ -1114,7 +1114,7 @@ function SetAllEspecializations(who, chardata);
 			SetObjProperty(cavalo, "owner", who.serial);
 			SetObjProperty(cavalo, "name", cavalo.name);
 			SetObjproperty(cavalo, "script", cavalo.script);
-			cavalo.script := ":ghaia:tamed";
+			cavalo.script := ":ghaia:follower";
 			RestartScript(cavalo);
 			var tamed := array;
 			tamed.append(cavalo.serial);

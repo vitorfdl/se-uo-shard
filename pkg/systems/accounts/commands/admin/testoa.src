@@ -7,27 +7,7 @@ include ":attributes:advanceCheck";
 include ":gumps:gumps";
 
 program oafeatures_sendpacket(who)
-	var gump := GFCreateGump();
-	
-	GFPage(gump, 0);
 
-	GFAddButton(gump, 388, 0, 2093, 248, GF_CLOSE_BTN, 0); //skill page
-	GFResizePic(gump, 0, 0, 9380, 715, 508);
-	GFGumpPicTiled(gump, 22, 36, 671, 11, 2091); //top decoration
-	GFGumpPicTiled(gump, 23, 463, 671, 11, 2091); //bottom decoration
-   
-	GFAddButton(gump, 39, 73, 2151, 248, GF_CLOSE_BTN, 0);
-	GFTextLine(gump, 77, 76, 0, "Matador de Dragões");
-	GFHTMLArea(gump, 263, 62, 413, 70, "HtmlElement<br>hsaehausihease<br>ahhahaahha<br>haheiuahwe<br>mimimimi");
-
-	GFGumpPic(gump, 26, 132, 57);
-	GFGumpPicTiled(gump, 50, 132, 609, 11, 58); //divisoria
-	GFGumpPic(gump, 658, 132, 59);
-
-	GFAddButton(gump, 45, 490, 2508, 248, GF_CLOSE_BTN, 0); //previous
-	GFAddButton(gump, 651, 490, 2509, 248, GF_CLOSE_BTN, 0); //next
-
-	GFSendGump(who, gump);
 
 	// var gump := GFCreateGump();
 	

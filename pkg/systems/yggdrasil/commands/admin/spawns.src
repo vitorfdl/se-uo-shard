@@ -319,7 +319,7 @@ function DoSpotList(who, input)
             var new_spawnpoint := CreateItemAtLocation(my_target.x, my_target.y, my_target.z, 0xA401);
             if (new_spawnpoint)
                 spot.AddSpawnPoint(new_spawnpoint.serial);
-                new_spawnpoint.SetProps(struct{"spot_serial":=spot.serial});
+                new_spawnpoint.SetProps(struct{"spot_serial":=spot.serial, "spotgroup":=spot.spotgroup});
             endif
             break;
         GF_SPOT_REMSPAWNPOINT_BTN:

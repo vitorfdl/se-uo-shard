@@ -17,17 +17,13 @@ program loko(params)
 		return;
 	endif
 
-	if (event.onlybloodied) 
-		if ( !IsBloodied(who) )
-			return;
-		endif
+	if (event.onlybloodied && !IsBloodied(who)) 
+		return;
 	endif
 
 	//check distancia
-	if (event.dist > 0)
-		if (CoordinateDistance(who.x, who.y, who.opponent.x, who.opponent.y) > event.dist)
-			return;
-		endif
+	if (event.dist > 0 && CoordinateDistance(who.x, who.y, who.opponent.x, who.opponent.y) > event.dist)
+		return;
 	endif
 
 	//checa cooldown
@@ -38,7 +34,6 @@ program loko(params)
 	TS_StartCooldown(who, "event.name", event.cd); 
 	//executa os states
 	foreach state in (event.steps)
-
 		if (state.type == "Move")
 			var sleepdelay := 275 - who.run_speed;//(CInt(GetDexterity(me)) * 1.5);
 
@@ -46,15 +41,10 @@ program loko(params)
 				sleepdelay := 0;
 			endif
 
-
-    			while (CoordinateDistance( who.x, who.y, state.x, state.y ))
-   				RunTowardLocation( state.x, state.y );
+			while (CoordinateDistance( who.x, who.y, state.x, state.y ) > 1)
+				RunTowardLocation( state.x, state.y );
 				sleepms(sleepdelay);
-            			if (CoordinateDistance( who.x, who.y, state.x, state.y ) <= 1 )
-					break;
-				endif
-    			endwhile
-
+			endwhile
 		elseif (state.type == "Teleport")
 			if (state.target == "Self")
 				MoveObjectToLocation(who, state.x, state.y, state.z, who.realm);
@@ -107,8 +97,8 @@ program loko(params)
 		elseif (state.type == "Delay")
 			Sleep(state.delay);
 		elseif (state.type == "Heal")
-			  HealFLS(who, state.healamt);
-			    RecalcVitals(who);
+			HealFLS(who, state.healamt);
+			RecalcVitals(who);
 		elseif ( state.type == "Graphic Effect")
 			var targ := array;
 			if (state.target == "Self")
@@ -155,14 +145,14 @@ program loko(params)
 				endforeach	
 			endforeach
 		elseif (state.type == "Summon Npcs") // NPC FALAR ALGO
-	           	var amt := 0;
+			var amt := 0;
 			while (amt < state.amount)
-                		var npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(state.x) + RandomInt(2 * state.range) - state.range, Cint(state.y) + RandomInt(2 * state.range) - state.range, Cint(state.z));
-                		if (npc != error)
-                  			amt := amt + 1;
-                		endif
-              			sleepms(2);
-            		endwhile
+				var npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(state.x) + RandomInt(2 * state.range) - state.range, Cint(state.y) + RandomInt(2 * state.range) - state.range, Cint(state.z));
+				if (npc != error)
+						amt := amt + 1;
+				endif
+				sleepms(2);
+			endwhile
 
 		endif
 		sleepms(500);
@@ -175,6 +165,4 @@ endprogram
 function GetAllOpponents(who)
 	var a := ListHostiles(who, flags := LH_FLAG_LOS);
 	return a;
-
-
 endfunction

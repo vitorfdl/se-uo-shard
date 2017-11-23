@@ -7,17 +7,17 @@ var templt;
 
 function SetupAmmo(mobile)
 
-	if ( npccfgfile[ParseTemplateName(mobile.npctemplate).template].MissileWeapon )
-		var weapon := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, npccfgfile[ParseTemplateName(mobile.npctemplate).template].MissileWeapon, 1, mobile.realm);
+	if ( npccfgfile[mobile.template].MissileWeapon )
+		var weapon := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, npccfgfile[mobile.template].MissileWeapon, 1, mobile.realm);
 		weapon.quality := 0.6;
 		if ( !EquipItem(mobile, weapon) )
 			DestroyItem(weapon);
 		endif
 	endif
 
-	if ( npccfgfile[ParseTemplateName(mobile.npctemplate).template].AmmoType )
-		if ( CInt(npccfgfile[ParseTemplateName(mobile.npctemplate).template].AmmoAmount) > 0 )
-			var ammo := CreateItemInBackpack(mobile, npccfgfile[ParseTemplateName(mobile.npctemplate).template].AmmoType, CInt(npccfgfile[ParseTemplateName(mobile.npctemplate).template].AmmoAmount));
+	if ( npccfgfile[mobile.template].AmmoType )
+		if ( CInt(npccfgfile[mobile.template].AmmoAmount) > 0 )
+			var ammo := CreateItemInBackpack(mobile, npccfgfile[mobile.template].AmmoType, CInt(npccfgfile[mobile.template].AmmoAmount));
 			if ( !ammo )
 				return ammo;
 			endif
@@ -45,7 +45,7 @@ function SetupBackPack(mobile)
 endfunction
 
 function SetupColor(who)
-	var colors := npccfgfile[ParseTemplateName(who.npctemplate).template].colors;
+	var colors := npccfgfile[who.template].colors;
 	if(colors)
 		colors := SplitWords(colors);
 		var clr := Cint(colors[RandomInt(Len(colors)) + 1]);
@@ -70,7 +70,7 @@ function SetupName(mobile)
 	
 	if ( !name_elem )
 		//printtextabove(mobile, "npcdesc: " + npccfgfile);
-		//printtextabove(mobile, "npc template " + ParseTemplateName(mobile.npctemplate).template);
+		//printtextabove(mobile, "npc template " + mobile.template);
 		//printtextabove(mobile, "npc_name: " + npc_names);
 		//printtextabove(mobile, "nametemplate: " + nametemplate);
 		//printtextabove(mobile, "name_elem: " + name_elem);
@@ -90,7 +90,7 @@ function SetupName(mobile)
 	my_name["<random>"] := name_list[RandomInt(Len(name_list))+1];
 	SetName(mobile, my_name);
 	//my_name := mobile.name;
-		sleepms(2);
+	sleepms(2);
 	//endwhile
 
 

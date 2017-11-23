@@ -329,21 +329,21 @@ endfunction
  */
 function AddTimeTo(time, amount, type := "days")
 	var diff_calc;
-	if (type == "days")
+	if (type["day"])
 		diff_calc := SECONDS_IN_DAY;
-	elseif (type == "hours")
+	elseif (type["hour"])
 		diff_calc := SECONDS_IN_HOUR;
-	elseif (type == "seconds")
+	elseif (type["second"])
 		diff_calc := 1;
-	elseif (type == "years")
+	elseif (type["year"])
 		diff_calc := SECONDS_IN_YEAR;
-	elseif (type == "minutes")
+	elseif (type["minute"])
 		diff_calc := SECONDS_IN_MINUTE;
-	elseif (type == "weeks")
+	elseif (type["week"])
 		diff_calc := SECONDS_IN_WEEK;
 	else
-		print("Wrong type for GetTimeBetween: {}".format(type) );
-		return 0;
+		print("Wrong type for AddTimeTo: {}".format(type) );
+		return time;
 	endif
 	amount := amount * diff_calc;
 

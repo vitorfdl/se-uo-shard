@@ -4,20 +4,21 @@ use cfgfile;
 
 program ScrollCreate(scroll)
    var recipes_list := struct{
-      "Costura"     := ReadConfigFile(":womenswork:recipes"),
-      "Ferraria" := ReadConfigFile(":metalworking:recipes"),
-      "Marcenaria"  := ReadConfigFile(":woodworking:recipes"),
+      "Costura"    := ReadConfigFile(":womenswork:recipes"),
+      "Ferraria"   := ReadConfigFile(":metalworking:recipes"),
+      "Marcenaria" := ReadConfigFile(":woodworking:recipes"),
       "Cozinha"    := ReadConfigFile(":cooking:recipes"),
-      "Alquimia"    := ReadConfigFile(":alchemy:recipes"),
-      "Runas"      := ReadConfigFile(":magery:recipes")
+      "Alquimia"   := ReadConfigFile(":alchemy:recipes")
+      // "Runas"      := ReadConfigFile(":magery:recipes")
    };
+
    var recipe_graphic := struct{
       "Costura"    := 0x0E37,
       "Ferraria"   := 0x0E35,
       "Marcenaria" := 0x0E36,
       "Cozinha"    := 0x0EF9,
       "Alquimia"   := 0x46B2,
-      "Runas"      := 0x46AE
+      // "Runas"      := 0x46AE
    };
 
    sleep(2);
@@ -33,5 +34,5 @@ program ScrollCreate(scroll)
       endif
       endforeach
    endif
- 
+
 endprogram

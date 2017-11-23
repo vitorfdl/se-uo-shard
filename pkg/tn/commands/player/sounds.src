@@ -3,125 +3,123 @@ use basic;
 use uo;
 use util;
 use os;
-use cfgfile;
+include ":fls_core:fls_characters";
+include ":tn:sounds";
 
 program sound(who, text)
-
-		var layout := array(
+   var layout := array(
+      "page 0",
+      "resizepic 50 50 3600 430 430",
+      "checkertrans 50 50 430 430",
+      "text 160 65 500 0",
+      "gumppic 70 85 96",
+      "button 70 100 2103 2104 1 0 1",
+      "text 90 95 500 1",
+      "button 70 120 2103 2104 1 0 2",
+      "text 90 115 500 2",
+      "button 70 140 2103 2104 1 0 3",
+      "text 90 135 500 3",
+      "button 70 160 2103 2104 1 0 4",
+      "text 90 155 500 4",
+      "button 70 180 2103 2104 1 0 5",
+      "text 90 175 500 5",
+      "button 70 200 2103 2104 1 0 6",
+      "text 90 195 500 6",
+      "button 70 220 2103 2104 1 0 7",
+      "text 90 215 500 7",
+      "button 70 240 2103 2104 1 0 8",
+      "text 90 235 500 8",
+      "button 70 260 2103 2104 1 0 9",
+      "text 90 255 500 9",
+      "button 70 280 2103 2104 1 0 10",
+      "text 90 275 500 10",
+      "button 70 300 2103 2104 1 0 11",
+      "text 90 295 500 11",
+      "button 70 320 2103 2104 1 0 12",
+      "text 90 315 500 12",
+      "button 70 340 2103 2104 1 0 13",
+      "text 90 335 500 13",
+      "button 70 360 2103 2104 1 0 14",
+      "text 90 355 500 14",
+      "button 70 380 2103 2104 1 0 15",
+      "text 90 375 500 15",
+      "button 70 400 2103 2104 1 0 16",
+      "text 90 395 500 16",
+      "button 70 420 2103 2104 1 0 17",
+      "text 90 415 500 17",
+      "gumppic 250 85 96",
+      "gumppic 280 85 96",
+      "button 260 100 2103 2104 1 1 18",
+      "text 280 95 500 18",
+      "button 260 120 2103 2104 1 1 19",
+      "text 280 115 500 19",
+      "button 260 140 2103 2104 1 1 20",
+      "text 280 135 500 20",
+      "button 260 160 2103 2104 1 1 21",
+      "text 280 155 500 21",
+      "button 260 180 2103 2104 1 1 22",
+      "text 280 175 500 22",
+      "button 260 200 2103 2104 1 1 23",
+      "text 280 195 500 23",
+      "button 260 220 2103 2104 1 1 24",
+      "text 280 215 500 24",
+      "button 260 240 2103 2104 1 1 25",
+      "text 280 235 500 25",
+      "button 260 260 2103 2104 1 1 26",
+      "text 280 255 500 26",
+      "button 260 280 2103 2104 1 1 27",
+      "text 280 275 500 27",
+      "button 260 300 2103 2104 1 1 28",
+      "text 280 295 500 28",
+      "button 260 320 2103 2104 1 1 29",
+      "text 280 315 500 29",
+      "button 260 340 2103 2104 1 1 30",
+      "text 280 335 500 30",
+      "button 260 360 2103 2104 1 1 31",
+      "text 280 355 500 31",
+      "button 260 380 2103 2104 1 1 32",
+      "text 280 375 500 32",
+      "button 260 400 2103 2104 1 1 33",
+      "text 280 395 500 33",
+      "button 235 440 2121 2120 1 0 0"
+   );
 		
-	 		"page 0",
-			"resizepic 50 50 3600 430 430",
-                        "checkertrans 50 50 430 430",
-			"text 160 65 500 0",
-			"gumppic 70 85 96",
-			"button 70 100 2103 2104 1 0 1",
-			"text 90 95 500 1",
-			"button 70 120 2103 2104 1 0 2",
-			"text 90 115 500 2",
-			"button 70 140 2103 2104 1 0 3",
-			"text 90 135 500 3",
-			"button 70 160 2103 2104 1 0 4",
-			"text 90 155 500 4",
-			"button 70 180 2103 2104 1 0 5",
-			"text 90 175 500 5",
-			"button 70 200 2103 2104 1 0 6",
-			"text 90 195 500 6",
-			"button 70 220 2103 2104 1 0 7",
-			"text 90 215 500 7",
-			"button 70 240 2103 2104 1 0 8",
-			"text 90 235 500 8",
-			"button 70 260 2103 2104 1 0 9",
-			"text 90 255 500 9",
-			"button 70 280 2103 2104 1 0 10",
-			"text 90 275 500 10",
-			"button 70 300 2103 2104 1 0 11",
-			"text 90 295 500 11",
-			"button 70 320 2103 2104 1 0 12",
-			"text 90 315 500 12",
-			"button 70 340 2103 2104 1 0 13",
-			"text 90 335 500 13",
-			"button 70 360 2103 2104 1 0 14",
-			"text 90 355 500 14",
-			"button 70 380 2103 2104 1 0 15",
-			"text 90 375 500 15",
-			"button 70 400 2103 2104 1 0 16",
-			"text 90 395 500 16",
-			"button 70 420 2103 2104 1 0 17",
-			"text 90 415 500 17",
-			"gumppic 250 85 96",
-			"gumppic 280 85 96",
-			"button 260 100 2103 2104 1 1 18",
-			"text 280 95 500 18",
-			"button 260 120 2103 2104 1 1 19",
-			"text 280 115 500 19",
-			"button 260 140 2103 2104 1 1 20",
-			"text 280 135 500 20",
-			"button 260 160 2103 2104 1 1 21",
-			"text 280 155 500 21",
-			"button 260 180 2103 2104 1 1 22",
-			"text 280 175 500 22",
-			"button 260 200 2103 2104 1 1 23",
-			"text 280 195 500 23",
-			"button 260 220 2103 2104 1 1 24",
-			"text 280 215 500 24",
-			"button 260 240 2103 2104 1 1 25",
-			"text 280 235 500 25",
-			"button 260 260 2103 2104 1 1 26",
-			"text 280 255 500 26",
-			"button 260 280 2103 2104 1 1 27",
-			"text 280 275 500 27",
-			"button 260 300 2103 2104 1 1 28",
-			"text 280 295 500 28",
-			"button 260 320 2103 2104 1 1 29",
-			"text 280 315 500 29",
-			"button 260 340 2103 2104 1 1 30",
-			"text 280 335 500 30",
-			"button 260 360 2103 2104 1 1 31",
-			"text 280 355 500 31",
-			"button 260 380 2103 2104 1 1 32",
-			"text 280 375 500 32",
-			"button 260 400 2103 2104 1 1 33",
-			"text 280 395 500 33",
-			"button 235 440 2121 2120 1 0 0"
-		);
-		
-		var data := array(
-
-			"escolha sua açao:",
-			"1. Ah",
-			"2. Ahha",
-			"3. Aplaudir",
-			"4. Assoar o nariz",
-			"5. Comemorar",
-			"6. Limpar a Garganta",
-			"7. Tossir",
-			"8. Tossir2",
-			"9. Chorar",
-			"10. Arfar",
-			"11. Risadinha",
-			"12. Gemer",
-			"13. Rosnar",
-			"14. Hey",
-			"15. Soluçar",
-			"16. Huh?",
-			"17. Beijar",
-			"18. Rir",
-			"19. No",
-			"20. Oh",
-			"21. Oooh",
-			"22. Oops",
-			"23. Gritar",
-			"24. SHHH!",
-			"25. Suspirar",
-			"26. Espirrar",
-			"27. Sniff",
-			"28. Roncar",
-			"29. Cuspir",
-			"30. Assobiar",
-			"31. Bocejar",
-			"32. Yeah",
-			"33. Gritar"
-		);
+   var data := array(
+      "escolha sua açao:",
+      "1. Ah",
+      "2. Ahha",
+      "3. Aplaudir",
+      "4. Assoar o nariz",
+      "5. Comemorar",
+      "6. Limpar a Garganta",
+      "7. Tossir",
+      "8. Tossir2",
+      "9. Chorar",
+      "10. Arfar",
+      "11. Risadinha",
+      "12. Gemer",
+      "13. Rosnar",
+      "14. Hey",
+      "15. Soluçar",
+      "16. Huh?",
+      "17. Beijar",
+      "18. Rir",
+      "19. No",
+      "20. Oh",
+      "21. Oooh",
+      "22. Oops",
+      "23. Gritar",
+      "24. SHHH!",
+      "25. Suspirar",
+      "26. Espirrar",
+      "27. Sniff",
+      "28. Roncar",
+      "29. Cuspir",
+      "30. Assobiar",
+      "31. Bocejar",
+      "32. Yeah",
+      "33. Gritar"
+   );
 
 
 	text := splitwords(text);
@@ -129,344 +127,26 @@ program sound(who, text)
 	var input  := array;
 //	sendsysmessage(who, " " + text.size());
 
-	var delay := 1;
+	var delay       := 1;
 	var repeatcount := 1;
-	var repeatflag := 0;
-	if (text.size() == 0)
+	var repeatflag  := 0;
+
+	if (!text)
 		input := SendDialogGump( who, Layout, Data );
-		if ( (input[0]==0) )
-			SendSysMessage(who, "Cancelled.");
+		if ( input[0] == 0 )
+			SendSysMessage(who, "Cancelado.");
 			return;
 		endif
+
+      var i;
+      for (i := 1; i <= 33; i+=1)
+         if (input[i])
+            PlayCustomSound(who, i);
+         endif
+      endfor
 	else
+      text := cint(text);
+      PlayCustomSound(who, text);
+   endif
 
-		var k := 0;
-		while (k < 33)
-			input[k] := 0;
-			k := k + 1;
-		endwhile
-
-		if (cint(text[1]) >= 1)
-			input[cint(text[1])] := 1;
-		endif
-		
-		//sendsysmessage(who, "input " + text[1] );
-		
-		var i := 1;
-		
-		for(i := 1; i < text.size(); i := i + 1)
-			if (text[i] == "d")
-				delay := cint(text[i+1]);
-				if (delay == 0)
-					delay := 1;
-				endif
-			elseif (text[i] == "l")
-				repeatcount := cint(text[i+1]);
-				if (repeatcount == 0)
-					repeatcount := 1;
-					repeatflag := 0;
-				endif
-			endif
-		endfor
-endif
-
-
-who.hidden := 0;
-if ( (input[1]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x30B );
-  PrintTextAbove(who, "*Ah*");
-else
-  PlaySoundEffect( who, 0x41A );
-  PrintTextAbove(who, "*Ah*");
-endif
-endif
-if ( (input[2]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x30C );
-  PrintTextAbove(who, "*Ahha*");
-else
-  PlaySoundEffect( who, 0x41B );
-  PrintTextAbove(who, "*Ahha*");
-endif
-endif
-if ( (input[3]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x30D );
-  PrintTextAbove(who, "*Aplausos*");
-else
-  PlaySoundEffect( who, 0x41C );
-  PrintTextAbove(who, "*Aplausos*");
-endif
-endif
-if ( (input[4]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x30E );
-  PrintTextAbove(who, "*Assoando o nariz*");
-else
-  PlaySoundEffect( who, 0x41D );
-  PrintTextAbove(who, "*Assoando o nariz*");
-endif
-endif
-if ( (input[5]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x310 );
-  PrintTextAbove(who, "*Comemorando*");
-else
-  PlaySoundEffect( who, 0x41F );
-  PrintTextAbove(who, "*Comemorando*");
-endif
-endif
-if ( (input[6]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x311 );
-  PrintTextAbove(who, "*Limpa a garganta*");
-else
-  PlaySoundEffect( who, 0x420 );
-  PrintTextAbove(who, "*Limpa a garganta*");
-endif
-endif
-if ( (input[7]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x312 );
-  PrintTextAbove(who, "*Tossindo*");
-else
-  PlaySoundEffect( who, 0x421 );
-  PrintTextAbove(who, "*Tossindo*");
-endif
-endif
-if ( (input[8]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x313 );
-  PrintTextAbove(who, "*Tossindo*");
-else
-  PlaySoundEffect( who, 0x422 );
-  PrintTextAbove(who, "*Tossindo*");
-endif
-endif
-if ( (input[9]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x314 );
-  PrintTextAbove(who, "*Chorando*");
-else
-  PlaySoundEffect( who, 0x423 );
-  PrintTextAbove(who, "*Chorando*");
-endif
-endif
-if ( (input[10]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x31A );
-  PrintTextAbove(who, "*Arfando*");
-else
-  PlaySoundEffect( who, 0x42A );
-  PrintTextAbove(who, "*Arfando*");
-endif
-endif
-if ( (input[11]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x31B );
-  PrintTextAbove(who, "*Rindo*");
-else
-  PlaySoundEffect( who, 0x42B );
-  PrintTextAbove(who, "*Rindo*");
-endif
-endif	
-if ( (input[12]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x31C );
-  PrintTextAbove(who, "*Gemendo*");
-else
-  PlaySoundEffect( who, 0x42C );
-  PrintTextAbove(who, "*Gemendo*");
-endif
-endif
-if ( (input[13]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x31D );
-  PrintTextAbove(who, "*Rosnando*");
-else
-  PlaySoundEffect( who, 0x42D );
-  PrintTextAbove(who, "*Rosnando*");
-endif
-endif
-if ( (input[14]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x31E );
-  PrintTextAbove(who, "*Hey*");
-else
-  PlaySoundEffect( who, 0x42E );
-  PrintTextAbove(who, "*Hey*");
-endif
-endif
-if ( (input[15]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x31F );
-  PrintTextAbove(who, "*Solucando*");
-else
-  PlaySoundEffect( who, 0x42F );
-  PrintTextAbove(who, "*Solucando*");
-endif
-endif
-if ( (input[16]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x320 );
-  PrintTextAbove(who, "*Huh?*");
-else
-  PlaySoundEffect( who, 0x430 );
-  PrintTextAbove(who, "*Huh?*");
-endif
-endif
-if ( (input[17]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x321 );
-  PrintTextAbove(who, "*Beijando*");
-else
-  PlaySoundEffect( who, 0x431 );
-  PrintTextAbove(who, "*Beijando*");
-endif
-endif
-if ( (input[18]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x322 );
-  PrintTextAbove(who, "*Rindo*");
-else
-  PlaySoundEffect( who, 0x432 );
-  PrintTextAbove(who, "*Rindo*");
-endif
-endif
-if ( (input[19]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x323 );
-  PrintTextAbove(who, "*Negando*");
-else
-  PlaySoundEffect( who, 0x433 );
-  PrintTextAbove(who, "*Negando*");
-endif
-endif
-if ( (input[20]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x324 );
-  PrintTextAbove(who, "*Oh*");
-else
-  PlaySoundEffect( who, 0x434 );
-  PrintTextAbove(who, "*Oh*");
-endif
-endif
-if ( (input[21]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x32C );
-  PrintTextAbove(who, "*Oooh*");
-else
-  PlaySoundEffect( who, 0x43E );
-  PrintTextAbove(who, "*Oooh*");
-endif
-endif
-if ( (input[22]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x32D );
-  PrintTextAbove(who, "*Oops*");
-else
-  PlaySoundEffect( who, 0x43F );
-  PrintTextAbove(who, "*Oops*");
-endif
-endif
-if ( (input[23]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x32F );
-  PrintTextAbove(who, "*Gritando*");
-else
-  PlaySoundEffect( who, 0x441 );
-  PrintTextAbove(who, "*Gritando*");
-endif
-endif
-if ( (input[24]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x330 );
-  PrintTextAbove(who, "*SHHH*");
-else
-  PlaySoundEffect( who, 0x442 );
-  PrintTextAbove(who, "*SHHH*");
-endif
-endif
-if ( (input[25]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x331 );
-  PrintTextAbove(who, "*Suspirando*");
-else
-  PlaySoundEffect( who, 0x443 );
-  PrintTextAbove(who, "*Suspirando*");
-endif
-endif
-if ( (input[26]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x332 );
-  PrintTextAbove(who, "*Espirrando*");
-else
-  PlaySoundEffect( who, 0x444 );
-  PrintTextAbove(who, "*Espirrando*");
-endif
-endif
-if ( (input[27]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x333 );
-  PrintTextAbove(who, "*Sniff*");
-else
-  PlaySoundEffect( who, 0x445 );
-  PrintTextAbove(who, "*Sniff*");
-endif
-endif
-if ( (input[28]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x334 );
-  PrintTextAbove(who, "*Roncando*");
-else
-  PlaySoundEffect( who, 0x446 );
-  PrintTextAbove(who, "*Roncando*");
-endif
-endif
-if ( (input[29]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x335 );
-  PrintTextAbove(who, "*Cuspindo*");
-else
-  PlaySoundEffect( who, 0x447 );
-  PrintTextAbove(who, "*Cuspindo*");
-endif
-endif
-if ( (input[30]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x336 );
-  PrintTextAbove(who, "*Assobiando*");
-else
-  PlaySoundEffect( who, 0x448 );
-  PrintTextAbove(who, "*Assobiando*");
-endif
-endif
-if ( (input[31]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x337 );
-  PrintTextAbove(who, "*Bocejando*");
-else
-  PlaySoundEffect( who, 0x449 );
-  PrintTextAbove(who, "*Bocejando*");
-endif
-endif
-if ( (input[32]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x338 );
-  PrintTextAbove(who, "*Yeah*");
-else
-  PlaySoundEffect( who, 0x44A );
-  PrintTextAbove(who, "*Yeah*");
-endif
-endif
-if ( (input[33]==1) )
-if (who.graphic == 401)
-  PlaySoundEffect( who, 0x339 );
-  PrintTextAbove(who, "*Gritando*");
-else
-  PlaySoundEffect( who, 0x44B );
-  PrintTextAbove(who, "*Gritando*");
-endif
-endif
 endprogram

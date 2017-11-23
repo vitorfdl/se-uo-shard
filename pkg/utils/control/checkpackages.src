@@ -15,6 +15,7 @@ set_priority(255);
 set_script_option(SCRIPTOPT_NO_RUNAWAY, 1);
 
 program CheckPackages()
+	sleep(5);
 	ICP_ReportText("---=[ ICP SETUP HAS STARTED UP ]=---", ICP_REPORT_SYSLOG);
 	
 	var pkg_info := DFOpenDataFile(":control:packages", DF_CREATE);

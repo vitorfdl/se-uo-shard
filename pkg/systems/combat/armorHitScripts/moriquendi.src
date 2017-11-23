@@ -1,0 +1,28 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/say";
+include "include/utils";
+
+program ArmorHitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	params := 0; // Not needed anymore.
+	
+   if (RandomInt(100) > 15)
+      return 1;
+   endif
+	
+   var point := RandomPlace(defender, 2);
+   var item := CreateItemAtLocation(point.x, point.y, defender.z, 0x0F80, 1, defender.realm);
+   PrintTextAboveUC(item, "*decepado do moriquendi*");
+   var power := cint(GetObjProperty(defender, "power")) - 1;
+   if (power < 1)
+      power := 1;
+   endif
+
+   SetObjProperty(item, "power", power);
+	return 1;
+endprogram
+ 

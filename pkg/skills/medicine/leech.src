@@ -6,14 +6,9 @@ include "include/say";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":timedscripts:poisonUtil";
-include ":charactercreation:habilidades";
+include ":charactercreation:feats";
 
 program UseLeech(who, leech)
-	if (!TemHabilidade(who, "Sangria"))
-		SendSysMessageEX(who, "Voce precisa da habilidade Sangria para usar isso.", SSM_FAIL);
-		return;
-	endif
-
 	SendSysMessage(who, "Em quem voce deseja usar isto?");
 	var targ := target(who);
 	
@@ -27,12 +22,12 @@ program UseLeech(who, leech)
 		SendSysMessage(who, targ.name+" esta muito distante.");
 		return;
 	endif
-	
+
 	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MEDICINA);
+
 	if ( test > 13 )
 		SendSysMessage(who, "Voce aplicou a sanguessuga em "+targ.name);
-		var healing := (AP_GetStat(who, WISDOM) + getProficiencyBonus(who, MEDICINA) / 2);
-		TS_CurePoison(targ, CInt(healing*2), "P", CInt(healing));
+		TS_CurePoison(targ, CInt(healing*2), "P", 1);
 	else
 		SendSysMessage(who, "As sanguessugas parecem fazer pouco efeito em "+targ.name);
 	endif

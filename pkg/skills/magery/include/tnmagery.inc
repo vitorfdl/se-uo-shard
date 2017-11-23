@@ -1,4 +1,5 @@
 include "include/say";
+include "include/arrays";
 include ":timedscripts:timedScripts";
 
 function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
@@ -112,21 +113,14 @@ function GetSpellDuration(skill)
 endfunction
 
 function WriteMagic(who, spell_id)
-	if (!who.weapon) 
-		SendSysMessageEx("Voce precisa equipar algum objeto pontiagudo", SSM_FAIL);
-		return;
-	elseif (who.cmdlevel > 1 || !HaveSkill(who, "Arcanismo"))
+	var items_bag = EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
+	if (who.cmdlevel > 1 || !HaveSkill(who, "Arcanismo"))
 		SendSysMessageEx("Voce nao tem conhecimento de magia", SSM_FAIL);
 		return;
-	else
-		var combat_cfg := ReadConfigFile(":combat:itemdesc");
-		var elem       := FindConfigElem(combat_cfg, who.weapon);
-		if (elem.DamageType != "Corte" || elem.DamageType != "Perfuração")
-			SendSysMessageEx("Voce precisa equipar algum objeto pontiagudo", SSM_FAIL);
-			return;
-		endif
+	elseif (SearchArrayOfModel("objtype", 0x10e4, EnumerateItemsInContainer(who.backpack))) 
+		SendSysMessageEx("Voce precisa de uma faca para entalhar", SSM_FAIL);
+		return;
 	endif
-
 
 	SendSysMessageEx("Escolha o objeto para inscrever a magia.", SSM_INFO);
 	var targ := Target(who);
@@ -157,7 +151,7 @@ function WriteMagic(who, spell_id)
 			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto". SSM_FAIL);
 			return;
 		endif
-		PrintTextAbove(who, "*inscrevendo em {}*".format(targ.desc));
+		PrintTextAboveUC(who, "*inscrevendo em {}*".format(targ.desc));
 		PlaySoundEffect(who, 0x002b);
 		sleep(2);
 	endfor

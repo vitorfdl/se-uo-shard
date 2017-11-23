@@ -42,3 +42,50 @@ function GetPointsInRadius(mid_x, mid_y, radius)
 
 	return point_list;
 endfunction
+
+function PushBack(who, dist, delay, invert := 0)
+	var x := 0;
+	var y := 0;
+
+	if (who.facing == 0)
+		y :=  1;
+	elseif (who.facing == 1)
+		y :=  1;
+		x := - 1;
+	elseif (who.facing == 2)
+		x :=  - 1;
+	elseif (who.facing == 3)
+		x :=  - 1;
+		y :=  - 1;
+	elseif (who.facing == 4)
+		y :=  - 1;
+	elseif (who.facing == 5)
+		x :=   1;
+		y :=  - 1;
+	elseif (who.facing == 6)
+		x :=   1;
+	elseif (who.facing == 7)
+		x :=  1;
+		y :=  1;
+	endif
+
+	if (invert)
+		x := x * -1;
+		y := y * -1;
+	endif
+
+	var i := 0;
+	for( i := 1; i <= dist; i := i + 1)
+		var finalx := (who.x + x);
+		var finaly := (who.y + y);
+		if (!CheckLosAt(who, finalx, finaly, who.z))
+			break;
+		endif
+		var err := MoveObjectToLocation( who, finalx, finaly, who.z, who.realm );
+		sleepms(delay);
+		if (err == error)
+		//	PrintText(who, "*bate no obstaculo*");
+			break;
+		endif
+	endfor
+endfunction

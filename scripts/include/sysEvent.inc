@@ -12,30 +12,31 @@
 // Last modification: 11/16/2000
 //
 
-const EVID_HERDING     := 0x1111;
-const EVID_PEACEMADE   := 0x90000000;
-const EVID_TAUNT       := 0x2222;
-const EVID_FLEE        := 0x3333;
-const EVID_COMBAT_MOVE := 0x4444;
-const EVID_DOOBJECTIVE := 0x5555;
+const EVID_HERDING     := 0x90000000;
+const EVID_PEACEMADE   := 0x90000001;
+const EVID_TAUNT       := 0x90000003;
+const EVID_FLEE        := 0x90000004;
+const EVID_COMBAT_MOVE := 0x90000005;
+const EVID_DOOBJECTIVE := 0x90000006;
+const EVID_TARGETLOSS  := 0x90000007;
 
-Const EVID_ALL_FOLLOW_CMD := 0x11;
-Const EVID_ALL_ATTACK_CMD := 0x12;
-Const EVID_ALL_GUARD_CMD  := 0x13;
+const EVID_PET_FOLLOW := 0x91000001;
+const EVID_PET_ATTACK := 0x91000002;
+const EVID_PET_GUARD  := 0x91000003;
+const EVID_PET_PATROL := 0x91000004;
 
-Const EVID_SPEECH          := 0x0001;
-Const EVID_ENGAGED         := 0x0002;
-Const EVID_DISENGAGED      := 0x0004;
-Const EVID_DAMAGED         := 0x0008;
-Const EVID_ENTEREDAREA     := 0x0010;
-Const EVID_LEFTAREA        := 0x0020;
-Const EVID_OPPONENT_MOVED  := 0x0040;
-Const EVID_HOSTILE_MOVED   := 0x0080; // not implemented
-Const EVID_MERCHANT_BOUGHT := 0x0100;
-Const EVID_MERCHANT_SOLD   := 0x0200;
-Const EVID_ITEM_GIVEN      := 0x0400;
-Const EVID_DOUBLECLICKED   := 0x0800;
-
+const EVID_SPEECH          := 0x0001;
+const EVID_ENGAGED         := 0x0002;
+const EVID_DISENGAGED      := 0x0004;
+const EVID_DAMAGED         := 0x0008;
+const EVID_ENTEREDAREA     := 0x0010;
+const EVID_LEFTAREA        := 0x0020;
+const EVID_OPPONENT_MOVED  := 0x0040;
+const EVID_HOSTILE_MOVED   := 0x0080; // not implemented
+const EVID_MERCHANT_BOUGHT := 0x0100;
+const EVID_MERCHANT_SOLD   := 0x0200;
+const EVID_ITEM_GIVEN      := 0x0400;
+const EVID_DOUBLECLICKED   := 0x0800;
 
 const SYSEVENT_SPEECH            := 0x00000001;
 

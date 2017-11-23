@@ -46,7 +46,7 @@ program orderSpells(who)
          continue;
       elseif(spell.circle == 6 && char_level < 20)
          continue;
-      elseif (spell.type == "Automático")
+      elseif (spell.type == "Auto")
          continue;
       endif
       

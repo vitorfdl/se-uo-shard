@@ -1,12 +1,12 @@
 /*
-        Created by *Edwards
-        For FantasiaShard.com
+   Created by *Edwards
+   For FantasiaShard.com
 
-        Edwards@FantasiaShard.com
+   Edwards@FantasiaShard.com
 
-        2009-01-03
+   2009-01-03
 
-        Last maintenance 2010-08-04
+   Last maintenance 2010-08-04
 */
 use uo;
 use os;
@@ -16,9 +16,9 @@ include ":email:email";
 var user_serial;
 
 program EmailMessage( params )
-	var mobile := params[1];
-	var dest := params[2];
-	user_serial := mobile.serial;
-	
-	NewLetter(mobile, dest);
+   var mobile := params[1];
+   var dest := params[2];
+   user_serial := mobile.serial;
+
+   NewLetter(mobile, dest);
 endprogram

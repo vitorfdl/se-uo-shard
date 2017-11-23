@@ -343,3 +343,19 @@ function ArraySum(the_array)
 
 	return f_val;
 endfunction
+
+function SearchArrayOfModel(search_for, equal, to_search)
+    var counter;
+      
+	foreach item in to_search
+		if ( item[search_for] == equal)
+			counter := 1;
+		endif
+	endforeach
+
+	if (!counter)
+		return 0;
+	endif
+
+	return 1;
+endfunction

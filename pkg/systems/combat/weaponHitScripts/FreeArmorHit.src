@@ -15,14 +15,13 @@ program HitScript(params)
 	var defender	:= params[2];
 	//var weapon	:= params[3];
 	//var armor	:= params[4];
-	//var basedamage	:= params[5];
-	var rawdamage	:= params[6];
+	var basedamage	:= params[5];
 	params := 0; // Not needed anymore.
 
 	var penal := AP_GetStatMod(attacker, "Dexterity");
 	if (penal >= 0)
-		var dmg := rawdamage/4;
-		//ApplyRawDamage(defender, CInt(dmg));
+		var dmg := basedamage/4;
+		//Applybasedamage(defender, CInt(dmg));
 		DamageFLS(defender, dmg, DMG_FORCED, attacker);
 	endif
 

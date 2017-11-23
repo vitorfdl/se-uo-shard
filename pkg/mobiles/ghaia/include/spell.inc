@@ -24,192 +24,39 @@ include "include/damage";
   fireexplosion
 */
 
-const MOVING_EFFECT_FIREBALL  := 0x36d4;
-const MOVING_EFFECT_MAGIC_ARROW  := 0x36e4;
-const MOVING_EFFECT_HARM  := 0x36e4;
+const MOVING_EFFECT_FIREBALL    := 0x36d4;
+const MOVING_EFFECT_MAGIC_ARROW := 0x36e4;
+const MOVING_EFFECT_HARM        := 0x36e4;
 const MOVING_EFFECT_FLAMESTRIKE := 0x3709;
 const MOVING_EFFECT_EBOLT       := 0x379f;
-const EFFECT_SPARKLE  := 0x373a;
-const EFFECT_RED_SPARKLE  := 0x374a;
+const EFFECT_SPARKLE            := 0x373a;
+const EFFECT_RED_SPARKLE        := 0x374a;
 
-const SOUND_EFFECT_HEAL := 0x1f3;
-const SOUND_EFFECT_AGILITY := 0x1e8;
-const SOUND_EFFECT_STRENGTH := 0x1ef;
-const SOUND_EFFECT_REFLECT := 0x1ee;
-const SOUND_EFFECT_POISON := 0x247;
-const SOUND_EFFECT_MINDBLAST := 0x214;
-const SOUND_EFFECT_FIREBALL  := 0x160;
-const sound_effect_curse := 0x1fc;
-const SOUND_EFFECT_MAGIC_ARROW	:= 0x01e6;
-const SOUND_EFFECT_LIGHTNING  := 0x2a;
-const SOUND_EFFECT_HARM := 0x1f2;
+const SOUND_EFFECT_HEAL         := 0x1f3;
+const SOUND_EFFECT_AGILITY      := 0x1e8;
+const SOUND_EFFECT_STRENGTH     := 0x1ef;
+const SOUND_EFFECT_REFLECT      := 0x1ee;
+const SOUND_EFFECT_POISON       := 0x247;
+const SOUND_EFFECT_MINDBLAST    := 0x214;
+const SOUND_EFFECT_FIREBALL     := 0x160;
+const sound_effect_curse        := 0x1fc;
+const SOUND_EFFECT_MAGIC_ARROW	 := 0x01e6;
+const SOUND_EFFECT_LIGHTNING    := 0x2a;
+const SOUND_EFFECT_HARM         := 0x1f2;
 const SOUND_EFFECT_FLAMESTRIKE  := 0x209;
-const SOUND_EFFECT_FEEBLEMIND := 0x1e5;
+const SOUND_EFFECT_FEEBLEMIND   := 0x1e5;
 const SOUND_EFFECT_EBOLT        := 0x20b;
-const SOUND_EFFECT_DISPEL  := 0x02;
-const SOUND_EFFECT_CURE := 0x1e1;
-const SOUND_EFFECT_CUNNING := 0x1ec;
-const sound_effect_clumsy := 0x1e1;
-const sound_effect_bless := 0x1eb;
-const SOUND_EFFECT_WEAKEN := 0x1e7;
+const SOUND_EFFECT_DISPEL       := 0x02;
+const SOUND_EFFECT_CURE         := 0x1e1;
+const SOUND_EFFECT_CUNNING      := 0x1ec;
+const sound_effect_clumsy       := 0x1e1;
+const sound_effect_bless        := 0x1eb;
+const SOUND_EFFECT_WEAKEN       := 0x1e7;
 
 
 include ":tn:cooldown";
-    
-function SpellFight(opponent, spell_list ,alerted := 0)
-  if((opponent.serial == me.serial))
-    SetWarMode(0);
-    opponent := 0;
-    return;
-  endif
-    
-  var oldprio := set_priority(50);
-  SetOpponent(opponent);
-  DisableMainEvents();
-  EnableCombatEvents();
-  TurnToward(opponent);
-  var loops := 0;
-  var ev;
-  var waittime := 0;
-  
-  if (!alerted) //se ele ja nao foi alertado por outro aliado
-    if (alert_allies) //se esse npc eh do tipo que alerta
-      AlertAllies(me, opponent); 
-    endif
-  endif
 
-   var speech := GetConfigStringArray( npccfgfile, "InitCombatSpeech" );
-   if (speech.size() > 0)
-	if (RandomInt(100)  < 30) //sempre 30% de chance de falar
-		Say(speech[RandomInt(speech.size()+1)]);
-	endif
-   endif
-
-  SetCooldown(me, "npcspell", 3);
-  var dist;
- 
-  while(me)
-
-    if  (me.dead)
-	break;
-    endif
-
-    if (!opponent)
-      break;
-    endif
-  
-    if (opponent.dead)
-	var temnego := 0;
-	foreach npc in ListMobilesInLineOfSight(me, areasize + 2)
-		if( CanFight(me, npc) )
-			temnego := 1;
-			break;
-		endif
-		sleepms(2);
-	endforeach
-	if (!temnego)
-		var corpo := opponent.GetCorpse();
-		var end := ReadGameClock() + 10;
-		while (CoordinateDistance(me.x, me.y, corpo.x, corpo.y) < areasize + 5 && end > ReadGameClock())
-			RunAwayFromLocation(corpo.x, corpo.y);
-			sleepms(100);
-		endwhile
-	endif
-	break;
-    endif
-
-    if (opponent.concealed)
-      break;
-    endif
-
-    if (opponent.hidden)
-	break;
-    endif
-
-    dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
-    if ( dist > 20)
-      break;
-    endif
-
-    if ( (dist > throwinfo.range) && (throwinfo.canthrow == 1) )
-	throwItem(me, opponent, dist);
-    endif
-
-    if ( (dist > 6) && ( CInt(npccfgfile.teleport) ) )
-	teleport(me, opponent);
-    endif
-  
-	if(!CloseDistance(opponent))
-	  loops := loops + 1;
-	  waittime := 0;
-	else
-	  loops := 0;
-	  waittime := 1;
-	endif
-
-    //se pode castar spell, manda v
-  if (CheckLineOfSight(me, opponent))
-    if (GetCooldown(me, "npcspell") == 0)
-      if ( (opponent.weapon.attribute == "Archery") || (dist <= 8) )
-         sleepms(500);
-         CastSpellNPC(opponent, spell_list);
-      endif
-    endif
-  endif
-
-	  if (hasCombat())
-
-    DoCombatSpecial(me); ////////////// SPECIALL
-
-  endif
-	
-	checkFlee(opponent);
-	
-	ev := wait_for_event(waittime);
-	if(ev.type != SYSEVENT_SPEECH)
-	  case (ev.type)
-		SYSEVENT_DAMAGED: 
-      //if((ev.source.npctemplate) and (CheckLineOfSight(me, ev.source)))
-       //   opponent := ev.source;
-			 // 		        SetOpponent(opponent);
-			//		        TurnToward(opponent);
-			//se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente nao estiver acessivel
-       if( /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/ (!CheckLineOfSight(me, opponent)) || (!opponent))
-					if ( (opponent) && RandomInt(4) == 0 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
-                if (ev.source)
-					        opponent := ev.source;
-                  SetOpponent(opponent);
-					        TurnToward(opponent);
-                endif
-           elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se nao tiver mais o oponent entao 100% de chance de mudar de alvo
-                if (ev.source)
-					        opponent := ev.source;
-                  SetOpponent(opponent);
-					        TurnToward(opponent);
-                endif
-					endif
-        endif
-		SYSEVENT_ENGAGED: if(ev.source)
-						if(RandomInt(6) == 1)
-							opponent := ev.source;
-							SetOpponent(opponent);
-							TurnToward(opponent);
-						endif
-			              endif
-	  endcase
-	endif
-  endwhile
-  
-  DisableCombatEvents();
-  EnableMainEvents();
-  SetWarMode(0);
-  SetOpponent(0);
-  sleep(1);
-endfunction
-
-
-function Boss2Fight(opponent, spell_list,alerted := 0)
-    
+function Boss2Fight(opponent ,alerted := 0)
 	if(opponent.serial == me.serial)
 		SetWarMode(0);
 		opponent := 0;
@@ -414,8 +261,7 @@ endfunction
 //essa funcao determina qual spell o npc vai castar
 //define se cura ou ataca alguem
 
-function CastSpellNPC(opponent, spell_list)
-
+function CastSpellNPC(opponent)
   var allies := GetAlliesNear(me);
   var enemies := GetEnemiesNear(me);
 
@@ -646,8 +492,6 @@ endif
 endfunction
 
 function CastDirect(caster, cast_on, spellname)
-
-
   var dmg := CInt(AP_GetSkill(caster, ARCANISMO)/2);
   if (dmg < 10)
     dmg := 10;
@@ -746,7 +590,7 @@ function CastHeal(me, cast_on)
     
 endfunction
       
-function GetAreaSpells(spell_list)
+function GetAreaSpells()
 
   var direct := array{};
   foreach spell in spell_list
@@ -772,7 +616,7 @@ function GetAreaSpells(spell_list)
   
 endfunction
       
-function GetDirectSpells(spell_list)
+function GetDirectSpells()
 
   var direct := array{};
   foreach spell in spell_list

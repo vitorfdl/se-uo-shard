@@ -22,8 +22,8 @@ program use_tool(who, tool)
 	EraseObjProperty(who, "HealTimer");
 
     var params := struct{
-        "type"       := "Ferraria",
-        "recipe_cfg" := ReadConfigFile(":woodworking:carp_recipes")
+        "type"       := "Marcenaria",
+        "recipe_cfg" := ReadConfigFile(":woodworking:recipes")
     };
 
 	var rinfo := SendCraftGump(who, params);

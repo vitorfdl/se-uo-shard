@@ -87,33 +87,6 @@ function ReverseLight(player)
 
 endfunction
 
-function IsPoisonImune(who, poison)
-
-	if (who.npctemplate)
-		var npcelem := NPC_GetNPCConfig(who.npctemplate);
-		var imuneList := splitwords(npcelem.PoisonImune);
-		foreach poisonName in imuneList
-			if (poisonName == poison)
-				return 1;
-			elseif ( lower(poisonName) == "all")
-				return 1;
-			endif
-		endforeach
-		return 0;
-	else
-		var imuneList := splitwords(GetObjProperty(who, "PoisonImune"));
-		foreach poisonName in imuneList
-			if (poisonName == poison)
-				return 1;
-			elseif ( lower(poisonName) == "all")
-				return 1;
-			endif
-		endforeach
-		return 0;
-	endif
-
-endfunction
-
 function maolivre(mobile, qtd, checkmount := 1)
 	var rightHand := GetEquipmentByLayer(mobile, 0x01);
 	var leftHand  := GetEquipmentByLayer(mobile, 0x02);

@@ -91,12 +91,11 @@ function LearnRecipe(who, recipe)
       if (type == "group")
          var recipes = GetConfigStringArray(obj, "Recipes");
          foreach obj_type in recipes
-            obj_type := Hex(obj_type);
             AddRecipe(who, obj_type);
             sleepms(2);
          endforeach
       else
-         AddRecipe(who, Hex(obj_type));
+         AddRecipe(who, obj_type);
       endif
 
       SendSysMessageEx(who, "A receita foi adicionada a sua lista.", SSM_INFO);

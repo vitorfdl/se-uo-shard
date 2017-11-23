@@ -139,3 +139,35 @@ exported function SetAchievement(who, achievement, plus)
 
 	SetObjProperty(who, "achievements", achievements);
 endfunction
+
+exported function GetLifeTime(who, original = 0)
+	var chardata := GetObjProperty(who, "chardata");
+	var lifetime;
+	if (original)
+		lifetime := chardata["lifetime"];
+	else
+		lifetime := chardata["lifetime"] - chardata["lifetime_penalty"];
+	endif
+
+	return lifetime;
+endfunction
+
+exported function SetLifeTime(who, clock)
+	var chardata := GetObjProperty(who, "chardata");
+
+	chardata["lifetime"] := chardata["lifetime"] + clock;
+
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+
+exported function ReduceLifeTime(who, time, type)
+	var chardata := GetObjProperty(who, "chardata");
+	var lifetime_penalty = AddTimeTo(cint(chardata["lifetime_penalty"]), time, type);
+
+	chardata["lifetime_penalty"] := lifetime_penalty;
+
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+

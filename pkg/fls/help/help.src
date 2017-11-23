@@ -49,17 +49,15 @@ program help_menu(who)
 	input := input[0];
 
 	if (input == BUTTON_HELP_SENDGMPAGE )
-		var sendpage := YesNo(who, "Use a page somente caso seu problema possa ser resolvido por Staffers, ou deseja alguma espécie auxílio. Continuar?", "Sim, quero enviar a msg.", "Nao, nao quero enviar a msg."  );
+		var sendpage := YesNo(who, "Use a page somente caso seu problema possa ser resolvido por Staffers, ou deseja alguma espécie auxílio. Continuar?", "Sim, quero enviar a msg.", "Não, não quero enviar a msg."  );
 		if (sendpage)
-			var script := start_script( ":email:emailMessage/helpLetter", array{ who, 999999998} );
+			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998} );
 		endif
 
 	elseif (input == BUTTON_HELP_REPORTBUG )
-		var sendpage := YesNo(who, "Um Bug so pode ser resolvido por Scripters. Detalhe o máximo possivel como voce descobriu o bug. Continuar?", "Sim, quero reportar o bug.", "Não, não tenho bug para reportar."  );
+		var sendpage := YesNo(who, "Um bug é um defeito no jogo que será analisado pelos programadores e corrigido. Detalhe o máximo possivel como voce descobriu o bug. Continuar?", "Sim, quero reportar o bug.", "Não, não tenho bug para reportar."  );
 		if (sendpage)
-			var script := start_script( ":email:emailMessage/helpLetter", array{ who, 999999999} );
+			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998} );
 		endif
-
 	endif
-
 endprogram

@@ -103,7 +103,6 @@ function GetRecipeList(who, recipe_cfg, search := "")
             if (search == "" || found)
                recipelist.append(new_recipe);
             endif
-
          endforeach
 		endif
       sleepms(2);
@@ -183,7 +182,6 @@ function MaterialSelection(who, craft_skill, type, chk)
 	var retarray := array;
 	retarray.append(material);
 	retarray.append(materialobjtype);
-	retarray.append(resource_config[materialobjtype].Ptmod);
 	return retarray;
 endfunction
 
@@ -204,8 +202,9 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 	var targ_materials   := GetBagList(who, materials.Keys());
 	var choosed_material := 0;
 	var material_color   := 0;
+	var material_cprops = struct{};
 	foreach thing in (materials.keys())
-      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "arrowhead"})
+      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "ossodemonio"} || thing["monsterpart"])
 			var ret := MaterialSelection(who, craft_skill, thing, 0);
 			if (!ret)
 				SendSysMessageEx(who, "Voce nao possui os materiais necessarios.", SSM_FAIL);
@@ -213,9 +212,14 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			elseif (ret[1].amount < materials[thing] )
             SendSysMessageEx(who, "Voce nao possui os materiais necessarios." , SSM_FAIL);
             return OUT_OF_MATERIALS;			
-			elseif (thing == "arrowhead" && cint(GetObjProperty(ret[1], "material")) != recipe.arrowtype)
+			elseif (thing == "pontaflecha" && cint(GetObjProperty(ret[1], "material")) != recipe.arrowtype)
             SendSysMessageEx(who, "Voce nao pode fabricar estas flechas com a ponta escolhida." , SSM_FAIL);
             return OUT_OF_MATERIALS;
+			elseif (thing == "ossodemonio")
+				material_cprops["magicslot"] = GetObjProperty(thing, "power")+2;
+			elseif (thing["monsterpart"])
+				material_cprops["element"] = GetObjProperty(thing, "element");
+				material_cprops["elementpower"] = GetObjProperty(thing, "elementpower");
          else
             targ_materials[ret[1].objtype] := materials[thing];
             if (thing == main_material)
@@ -324,6 +328,9 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			//passando a cor pra materiais coloridos que nao tem Id proprio (como madeira)
 			// AddMaterialMod(who, theitem, choosed_material, material_color);
 			// CraftExceptional(who, theitem, craft_skill);
+			foreach key in (material_cprops.Keys())
+				SetObjProperty(theitem, "key", material_cprops[key]);
+			endforeach
 			CraftLockable(who, theitem);
 
 			SendSysMessageEx(who, "Voce criou o item o colocou na mochila.", SSM_INFO);
@@ -398,6 +405,31 @@ function SubtractMaterial(who, targ_materials, amountMod)
 	endforeach
   
 	return 1;
+endfunction
+
+
+
+function AddMaterialMod(who, theitem, principalMaterial, materialColor)
+	if (!principalMaterial)
+		return;
+	endif	
+
+	var elem  := FindConfigElem(resource_config, principalMaterial);
+	if((craft_config[theitem.objtype].retain == 1))
+		if(resource_config[principalMaterial].Color)
+			theitem.color := resource_config[principalMaterial].Color;
+		else
+		
+			theitem.color := materialColor;
+		endif
+	endif
+	
+	SetObjProperty(theitem, "material", principalMaterial);
+
+	if (theitem.isA(POLCLASS_WEAPON) || theitem.isA(POLCLASS_ARMOR))
+		var hpmod := GetConfigInt(elem, "hpmod");
+		theitem.maxhp_mod += hpmod;
+	endif
 endfunction
 
  function AddItemDescription(who, item)

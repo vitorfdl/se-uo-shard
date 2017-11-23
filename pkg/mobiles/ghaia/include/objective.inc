@@ -16,23 +16,23 @@ function DoObjective();
 	
 	var xy := path[1];
   
-  sendsysmessage(me, "Distance: "+ CoordinateDistance( me.x, me.y, cint(xy.x), cint(xy.y) ) );
+  // sendsysmessage(me, "Distance: "+ CoordinateDistance( me.x, me.y, cint(xy.x), cint(xy.y) ) );
   var i;
   while (CoordinateDistance( me.x, me.y, cint(xy.x), cint(xy.y) ) > 0)
-	if (i >= 25)
-		Print(""+me+": abortando DoObjective por uso exagerado de CPU;");
-		EraseObjProperty(me, "objloc");
-		break;
-	endif
+    if (i >= 25)
+      Print(""+me+": abortando DoObjective por uso exagerado de CPU;");
+      EraseObjProperty(me, "objloc");
+      break;
+    endif
     TurnTowardLocation( xy.x, xy.y );
     WalkTowardLocation( xy.x, xy.y );
-	i := i + 1;
+    i := i + 1;
     sleepms(50);
   endwhile
   
 	if ( CoordinateDistance(me.x, me.y, cint(dest[1]), cint(dest[2])) <= 2 ) //se chegou no objetivo, nao tem mais objetivo.
 		EraseObjProperty(me, "objloc");
-    SetObjProperty(me, "anchor", array{me.x, me.y});
+    // SetObjProperty(me, "anchor", array{me.x, me.y});
 	endif
 	
   sleepms(50);

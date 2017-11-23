@@ -1,0 +1,13 @@
+
+use uo;
+use basic;
+
+exported function template(pet)
+	var npctemplate := SplitWords(pet.npctemplate, ":");
+   return npctemplate[3];
+endfunction
+
+exported function package(pet)
+	var npctemplate := SplitWords(pet.npctemplate, ":");
+   return npctemplate[2];
+endfunction

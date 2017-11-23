@@ -40,6 +40,7 @@ exported function GetProps( spawnpoint )
    data.+spotgroup  := GetObjProperty(spawnpoint, "spotgroup");
    data.+monsters   := GetObjProperty(spawnpoint, "monsters");
    data.+spawnqueue := GetObjProperty(spawnpoint, "spawnqueue");
+   data.+spotgroup := GetObjProperty(spawnpoint, "spotgroup");
 
    if (!data.monsters)
       data.monsters := array{};
@@ -98,6 +99,10 @@ exported function SetProps( spawnpoint, data := struct{});
       old_data.evententry := data.evententry;
    endif
 
+   if (data.spotgroup)
+      old_data.spotgroup := data.spotgroup;
+   endif
+
    old_data := ModelSpawnPoint(old_data);
 
    SetObjProperty(spawnpoint, "spot_serial", old_data.spot_serial);
@@ -108,6 +113,7 @@ exported function SetProps( spawnpoint, data := struct{});
    SetObjProperty(spawnpoint, "evententry", old_data.evententry);
    SetObjProperty(spawnpoint, "spawnqueue", old_data.spawnqueue);
    SetObjProperty(spawnpoint, "monsters", old_data.monsters);
+   SetObjProperty(spawnpoint, "spotgroup", old_data.spotgroup);
 endfunction
 
 function ModelSpawnPoint( data := struct{})
@@ -317,6 +323,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
       SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
       SetObjProperty(spawned, "spawnspot", config.spot_serial);
+      SetObjProperty(spawned, "spawngroup", config.);
       SetObjProperty(spawned, "range", config.range);
       success := 1;
 

@@ -13,6 +13,7 @@ include ":disguise:disguise";
 include ":charactercreation:createchar";
 include ":gumps:yesno";
 include ":datafile:datafile";
+include ":timeutils:time";
 
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
@@ -74,6 +75,12 @@ program createchar(who)
 		AP_SetTrueSkill(who, skill, 1);
 	endforeach
 
+	if (chardata.raca == "Humano")
+		chardata.lifetime := AddTimeTo(ReadGameClock(), 34, "weeks");
+	else
+		chardata.lifetime := AddTimeTo(ReadGameClock(), 42, "weeks");
+	endif
+
 	SetObjProperty(who, "chardata", chardata);
 
 	who.race := RACE_HUMAN;
@@ -85,7 +92,7 @@ program createchar(who)
 
 	/*=====  End of Section comment block  ======*/
 
-	SetAllEspecializations(who, chardata);
+	SetProfessions(who, chardata);
 
 	//Mudar Aparência
 	LookGump(who, chardata);
@@ -106,7 +113,10 @@ program createchar(who)
 endprogram
 
 function construirgump(byref gump, back := 0) //monta a aparência da gump
-	GFClosable(gump, 0);
+	if (who.cmdlevel < 2) 
+		GFClosable(gump, 0);
+	endif
+	
 	GFDisposable(gump, 0);
 	GFSetID(gump, GUMPID_CREATECHAR);//9260
 	GFGumpPic(gump, 50,80, 10421);
@@ -465,9 +475,7 @@ function ChooseBackground(who, byref chardata)
 	if (BackgroundGump(who, chardata, selectedkit, kits))
 		return 1;
 	endif
-
 endfunction
-
 
 function BackgroundGump(who, byref chardata, byref selectedkit, byref  kits)
 	while (who.connected)
@@ -629,23 +637,29 @@ function LookGump(who, chardata, aparencia := 0)
 	endif
 endfunction
 
-function SetAllEspecializations(who, chardata);
-	if (chardata.Skills["Alchemy"] == 2)
-		var book := createiteminbackpack(who, "alchemybook");
-		setobjproperty(book, "serialid", who.serial);
-		setobjproperty(book, "marked",who.name + " - " + who.acctname);
-	elseif (chardata.Skills["Alchemy"] == 3)
-		var book1:= CreateItemInBackpack(who, "alchemybook");
-		setobjproperty(book1, "serialid", who.serial);
-		setobjproperty(book1, "marked",who.name + " - " + who.acctname);
-		var recipes := array;
-		recipes := CreateBasicRecipes();
-		var book2 := createiteminbackpack(who, "alchemybook");
-		setobjproperty(book2, "recipes", recipes);
-		setobjproperty(book2, "serialid",who.serial);
-		setobjproperty(book2, "marked",who.name + " - " + who.acctname);
-	endif
+function SetProfessions(who, chardata);
+	var background := chardata.background;
+	var cfg        := ReadConfigFile(":charactercreation:config/antecedentes")[background];
+	var skills   := GetConfigStringArray(cfg, "Pericia")
+	var items    := GetConfigStringArray(cfg, "Item")
+	var recipess := GetConfigStringArray(cfg, "Recipe")
 
+	foreach skill in skills
+		AP_SetTrueSkill(who, skill, 1);
+	endforeach
+
+	foreach item in items
+		item := SplitWords(item);
+		var obj := CreateItemInBackpack(who, hex(item[1]), item[2]);
+		SetObjProperty(obj, "OnCreation", 1);
+		sleepms(2);
+	endforeach
+
+	foreach recipe in recipes
+		var obj := CreateItemInBackpack(who, 0xef1f);
+		SetObjProperty(obj, "objtype", hex(recipe))
+		sleepms(2);
+	endforeach
 endfunction
 
 function getNotaRP(who)

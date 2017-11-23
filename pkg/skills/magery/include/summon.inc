@@ -11,7 +11,7 @@ function summon(template, targ,  mage)
 	SetObjproperty(summoned, "script", targ.script);
 	SetObjProperty(summoned, "AntigoTreinadorID", mage.serial);
 		
-	summoned.script := ":ghaia:tamed";
+	summoned.script := ":ghaia:follower";
 	summoned.facing := mage.facing;
 	RestartScript(summoned);
 	return summoned;

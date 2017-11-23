@@ -32,7 +32,7 @@ program TamingSkill(who)
 		SendSysMessageEx(who, "Voce nao pode adestrar nada agora.", SSM_FAIL);
 		return;
 	elseif ( CInt(GetObjProperty(who, "#tamewait")) > ReadGameClock() )
-		SendSysMessage(who, "Voce precisa esperar para usar esta skill denovo.", SSM_FAIL);
+		SendSysMessage(who, "Voce precisa esperar para usar esta pericia novamente.", SSM_FAIL);
 		return;
 	endif
 
@@ -43,7 +43,7 @@ program TamingSkill(who)
 	GFResizePic(yn_gump, 15, 15, GFCfgConst("Defaults", "ForeGround"), 270, 250); //175);
 	
 	var y_pos := 20;
-	GFTextLine(yn_gump, 20, 20, 1153, "Menu de HandleAnimal.");
+	GFTextLine(yn_gump, 20, 20, 1153, "Menu de Trato de Animais.");
 
 	GFAddButton(yn_gump, 20, (63), 2117, 2118, GF_CLOSE_BTN, 1);
 	GFTextLine(yn_gump, 40, 60, 1153, "Adestrar Animal.");
@@ -55,7 +55,7 @@ program TamingSkill(who)
 
 	var y := 120;
 	var i := 1;
-	var pets := GetObjProperty(who, "TamedPets");
+	var pets := GetObjProperty(who, "followers");
 	foreach serial in pets
 		var pet := SystemFindObjectBySerial(serial);
 		GFTextLine(yn_gump, 40, y, 1153, "" + pet.name);
@@ -72,66 +72,50 @@ program TamingSkill(who)
 	elseif (input == 2)
 		Start_Script(":animallore:animalLore", who);
 	elseif (input > 100)
-		SendSysMEssageEx(who, "Voce libertou seu animal.", SSM_INFO);
+		SendSysMessageEx(who, "Voce libertou seu animal.", SSM_INFO);
 		ErasePet(who, pets[input-100]);
 		destama(pets[input-100]);
 	endif
-
 
 	EraseObjProperty(who, "#medding");
 endprogram
 
 function taming(who)
-
-	if( who.hidden )
-		who.hidden := 0;
-	endif
-		
 	SendSysMessageEx(who, "Que animal voce deseja adestrar?", SSM_REQUEST);
-	if( who.hidden )
+	if ( who.hidden )
 		who.hidden := 0;
 	endif
 	var targ := target(who);
-
-	var skill := AP_GetSkill(who, TRATO_ANIMAIS);
-
 	var bonus := 0;
-//	SendSysMEssage(who, " " + GetNumPets(who) + " " + GetPetCost(targ) + " " + GetMaxPEts(who) );
+
 	if ( !targ.IsA(POLCLASS_NPC) )
 		SendSysMessageEx(who, "Cancelado", SSM_FAIL);
 		return;
 //	elseif (Distance(who,targ) > 4)
 //		SendSysMessage(who, "Alvo esta muito distante.");
 //		return;
-	elseif ( targ.script["tamed"] )
-		//if( targ.master.serial == who.serial )
-		//	TeachGump(who, targ);
-		//else
-			SendSysMessageEx(who, targ.name+" nao pode ser adestrado.", SSM_FAIL);
-		//endif
+	elseif ( targ.script[":ghaia:follower"] )
+		SendSysMessageEx(who, targ.name+" nao pode ser adestrado.", SSM_FAIL);
 		return 0;
 	elseif ( (GetNumPets(who) + GetPetCost(targ)) > GetMaxPets(who) )
-		SendSysMessageEx(who, "Voce nao pode ter mais animais domados.", SSM_FAIL);
+		SendSysMessageEx(who, "Voce atingiu o limite de seguidores.", SSM_FAIL);
 		return 0;
 	/*elseif (who.serial IN GetObjProperty(targ, "#critical"))
 		SendSysMessage(who, targ.name+" nao aceita mais ser domado por voce.");
 		return 0;*/
-	endif
-
-	if (isBoss(targ))
+	elseif (!GetObjProperty(targ, "#peacemade") && targ.alignment == 1)
+		SendSysMessageEx(who, "A criatura esta muito hostil para ser domesticada.", SSM_FAIL);
+		return 0;
+	elseif (!targ.isTamable())
 		SendSysMEssageEx(who, "Essa criatura nao aceita ser domesticada.", SSM_FAIL);
 		return 0;
 	endif
-		
+
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
 	var npctemplate := targ.npctemplate;
 	npctemplate := npctemplate[10, len(npctemplate)-9];
 	cfg := cfg[npctemplate];
 //	Sendsysmessage(who, " " + cfg.TameDifficulty  + " " + skill);
-	if ( !cfg.TameDifficulty )
-		SendSysMessageEx(who, "Voce nao pode adestrar "+targ.name+".", SSM_FAIL);
-		return;
-	endif
 			
 	var info := struct;
 	info.+x := who.x;
@@ -139,58 +123,43 @@ function taming(who)
 	info.+facing := who.facing;
 	info.+difficulty := cfg.TameDifficulty;
 
-	if (CInt(info.difficulty) > CInt(skill + 15))
-		SendSysMessageEx(who, "Voce nao pode tentar adestrar "+targ.name+" ainda.");
-		return 0;
-	//elseif (GetSkill(who, HANDLEANIMAL) < CInt(info.difficulty))
-	//	SendSysMessageEx(who, "Voce nao pode tentar adestrar "+targ.name+" ainda.");
-	//	return 0;
-	endif
+	// if (CInt(info.difficulty) > CInt(skill + 15))
+	// 	SendSysMessageEx(who, "Voce nao pode tentar adestrar "+targ.name+" ainda.");
+	// 	return 0;
+	// endif
 	
-	cfg := 0;
-
 	SetObjProperty(who, "#tamewait", ReadGameClock()+15);
-
-
 	while( TameLoop(who, targ, info) )
-			SetObjProperty(who, "#tamewait", ReadGameClock()+15);
-
-			sleep(3);
-			// if ( SkillCheck(who, HANDLEANIMAL, info.difficulty) > 0 )
-			if ( 15 > 0 )
-				SendSysMessageEx(who, "Voce ganhou a confianca de "+targ.name+".", SSM_INFO);
-				targ.SetMaster(who);
-				EraseObjProperty(targ, "anchor");
-				EraseObjProperty(targ, "spawnpoint");
-				EraseObjProperty(targ, "spawnpointtype");
-				
-				SetObjProperty(targ, "owner", who.serial);
-				SetObjProperty(targ, "name", targ.name);
-				SetObjproperty(targ, "script", targ.script);
-				SetObjProperty(targ, "AntigoTreinadorID", who.serial);
-				
-				targ.script := ":ghaia:tamed";
-				RestartScript(targ);
-				
-				Run_Script_To_Completion(":death:npcdeath", {targ});
-				
-				var tamed := GetObjProperty(who, "TamedPets");
-				if ( !tamed )
-					tamed := array;
-				endif
-				tamed.append(targ.serial);
-				SetObjProperty(who, "TamedPets", tamed);	
+		SetObjProperty(who, "#tamewait", ReadGameClock()+15);
+		sleep(3);
+		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1, "failure" := 5}) + getProficiencyBonus(who, TRATO_ANIMAIS);
+		if (dice.critical == -1)
+			SendSysMessageEx(who, "Voce deixou "+targ.name+" irritado.", SSM_INFO);
+			break;
+		elseif ( dice.dice > 0 )
+			SendSysMessageEx(who, "Voce ganhou a confianca de "+targ.name+".", SSM_INFO);
+			targ.SetMaster(who);
+			EraseObjProperty(targ, "anchor");
+			EraseObjProperty(targ, "spawnpoint");
+			EraseObjProperty(targ, "spawnpointtype");
 			
-				break;
-			endif
+			SetObjProperty(targ, "owner", who.serial);
+			SetObjProperty(targ, "name", targ.name);
+			SetObjproperty(targ, "script", targ.script);
+			SetObjProperty(targ, "AntigoTreinadorID", who.serial);
+			
+			targ.script := ":ghaia:follower";
+			RestartScript(targ);
+			
+			Run_Script_To_Completion(":death:npcdeath", {targ});
+			AddPet(who, targ);	
+			break;
+		endif
 		
 		if ( events_waiting() )
 			clear_event_queue();
 		endif
-		
-		
 	endwhile 
-
 endfunction
 
 function TameLoop(who, targ, byref info)
@@ -214,245 +183,22 @@ function TameLoop(who, targ, byref info)
 		return 0;
 	endif
 	
-	if (info.difficulty >= 90 && !TemHabilidade(who, "Domador Mestre"))
-		SendSysMessageEx(who, "Voce assustou "+targ.name+" .", SSM_FAIL);
-		return 0;
-	elseif (info.difficulty >= 80 && !TemHabilidade(who, "Domador Hábil"))
-		SendSysMessageEx(who, "Voce assustou "+targ.name+" .", SSM_FAIL);
-		return 0;
-	elseif (info.difficulty >= 60 && !TemHabilidade(who, "Domador Perito"))
-		SendSysMessageEx(who, "Voce assustou "+targ.name+" .", SSM_FAIL);
-		return 0;
-	
-	elseif (info.difficulty >= 40 && !TemHabilidade(who, "Domador Aprendiz"))
-		SendSysMessageEx(who, "Voce assustou "+targ.name+" .", SSM_FAIL);
-		return 0;
-	
-	elseif (info.difficulty >= 30 && !TemHabilidade(who, "Domador Noviço"))
-		SendSysMessageEx(who, "Voce assustou "+targ.name+" .", SSM_FAIL);
-		return 0;
-	endif
-	
-	
 	PrintText(who, "*tentando adestrar " + targ.name + "*");
 
-	// var check := SkillCheck(who, HANDLEANIMAL, info.difficulty, ADV_DISABLE);
-	var check := 15;
-	if ( check > 0 )
-		SendSysMessageEx(who, ""+targ.name+" parece ser seu amigo.", SSM_INFO);
+	var dice := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TRATO_ANIMAIS);
+	if ( dice > info.difficulty-4 )
+		SendSysMessageEx(who, ""+targ.name+" parece interessado em voce.", SSM_INFO);
 		ghaiaObjective(targ, info.x, 1);
+		ExpGain(who, info.difficulty, dice);
 		return 1;
-	else//if (check > -25 )
-		var dist := Distance(who, targ);
-		SetObjProperty(targ, "#ForceFlee", 1);
-		// AI_Move(targ, who, NEMOVE_AWAY, NEMOVE_RUN, NOWAKE, 100); //TODO: FIX THAT
-		sleepms(160);
-		if ( dist == Distance(who, targ) )
-			SendSysMessageEx(who, targ.name+" nao aceitou voce como dono.", SSM_FAIL);
-		else
-			SendSysMessageEx(who, "Voce assustou "+targ.name+" .", SSM_FAIL);
-		endif
-		return 0;
-	/*else
-		SendSysMessage(who, "Voce falhou completamente ao domar esse animal!");
-		var critical := GetObjProperty(targ, "#critical");
-		if (!critical)
-			critical := array;
-			critical[1] := who.serial;
-		else
-			critical.append(who.serial);
-		endif
-		SetObjProperty(targ, "#critical", critical);
-		return 0;*/
 	endif
-endfunction
-
-function TeachGump(who, tamed)
-
-	info_cfg := ReadConfigFile(":taming:taming");
-	if ( !info_cfg )
-		SendSysMessage(who, "Erro ao ler cfg ->"+info_cfg);
-		return 0;
+	var dist := Distance(who, targ);
+	SetObjProperty(targ, "#ForceFlee", 1);
+	sleepms(160);
+	if ( dist == Distance(who, targ) )
+		SendSysMessageEx(who, targ.name+" nao aceitou voce como dono.", SSM_FAIL);
 	else
-		index_list := GetConfigStringArray(info_cfg["Index"], "Cmd");
-	endif
-	
-	template := GumpTemplate();
-
-	var gump := BuildGump(who, tamed);
-	var input := GFSendGump(who, gump);
-
-	if ( input[0] > 1 )
-		ProcessInput(who, tamed, input);
-	endif
-
-endfunction
-
-function ProcessInput(who, tamed, input)
-	var id := 2;
-	foreach cmd in new_list
-		
-		if( input[0] == id )
-			TeachNow(who, tamed, cmd, input);
-			break;
-		else
-			id := id + 1;
-		endif
-	endforeach
-endfunction
-
-function GumpTemplate()
-	var gump := GFCreateGump(50,50);
-	GFPage(gump, 0);
-	GFResizePic(gump, 0, 0, BACKGROUND, 302, 375);
-	GFResizePic(gump, 2, 7, FOREGROUND, 293, 360);
-	GFTextLine(gump, 24, 31, 0, "Menu de Adestramento");
-
-	GFPage(gump, 1);
-
-	return gump;
-endfunction
-
-function BuildGump(who, animal)
-	var gump := template;
-	var y_pos := START_Y;
-
-
-	foreach index in index_list
-		var cmd_elem := info_cfg[index];
-		if( AP_GetSkill(who, HANDLEANIMAL) >= cmd_elem.Skill )
-			BuildCmds(animal, gump, cmd_elem, y_pos);
-			new_list.append(index);
-		endif
-		SleepMS(2);
-	endforeach
-
-	det_page := INIT_DET_PAGE;
-	y_pos := START_Y;
-	
-	foreach index in new_list
-		BuildDetails(animal, gump, index, y_pos);
-		SleepMS(2);
-	endforeach
-
-	return gump;
-endfunction
-
-function BuildCmds(animal, byref gump, cmd_elem, byref y_pos)
-
-	if( y_pos > END_Y )
-		GFAddButton(gump, 243, 34, 2224, 2224, GF_PAGE_BTN, gump.cur_page+1);
-		y_pos := START_Y;
-		GFPage(gump, gump.cur_page+1);
-	endif
-	
-	if( y_pos == START_Y )
-		GFTextLine(gump, 24, 67, 0, "Comando");
-		GFTextLine(gump, 192, 67, 0, "Detalhar");
-	endif
-
-	if(gump.cur_page > 1)
-		GFAddButton(gump, 213, 34, 2223, 2223, GF_PAGE_BTN, gump.cur_page-1);
-	endif
-
-	GFTextLine(gump, 24, y_pos, 1890, cmd_elem.Nome);
-	GFAddButton(gump, 211, y_pos+3, 1209, 1210, GF_PAGE_BTN, det_page);
-
-	det_page := det_page + 1;
-	y_pos := y_pos+20;
-
-	return 1;
-endfunction
-
-
-function BuildDetails(targ, byref gump, cmd_name, byref y_pos)
-
-	var cfg_elem := info_cfg[cmd_name];
-	
-	GFPage(gump, det_page);
-	GFAddButton(gump, 213, 34, 2223, 2223, GF_PAGE_BTN, 1);
-	GFTextLine(gump, 24, 67, 0, "Descrição");
-	GFTextLine(gump, 192, 67, 0, "Ensinar");
-
-	GFAddButton(gump, 211, y_pos+3, 1209, 1210, GF_CLOSE_BTN, btn_maxId);
-	
-	var desc := GetConfigStringArray(cfg_elem, "Desc");
-	if ( desc.Size() < 1 )
+		SendSysMessageEx(who, "Voce assustou "+targ.name+" .", SSM_FAIL);
 		return 0;
 	endif
-	
-	foreach line in desc
-		GFTextLine(gump, 24, y_pos, 1890, line);
-		y_pos := y_pos+20;
-		SleepMS(2);
-	endforeach
-
-	y_pos := y_pos+20;
-
-	var lines := struct;
-
-	var frase := GetConfigString(cfg_elem, "WhatToSay");
-	if( !frase )
-		frase := "Comando Individual:";
-	endif
-	GFTextLine(gump, 24, y_pos, 1890, frase);
-	
-	lines.+singular := GFTextEntry(gump, 24 + GFTextWidth(frase), y_pos, 75, 20, 1418, ini_text:="aqui");
-
-	y_pos := y_pos+20;
-
-	if( cfg_elem.Group )
-		frase := "Comando de Grupo:";
-		GFTextLine(gump, 24, y_pos, 1890, frase);
-		lines.+plural := GFTextEntry(gump, 24 + len(frase)*7, y_pos, 75, 20, 1418, ini_text:="aqui");
-	endif
-
-	lines.+cmd_name := cmd_name;
-	entries_list.insert(cmd_name, lines);
-		
-	det_page := det_page + 1;
-	btn_maxId := btn_maxId + 1;
-	y_pos := START_Y;
-
-	return 1;
-endfunction
-
-function TeachNow(who, tamed, cmd, input)
-	if( Distance(who, tamed) > 1 )
-		SendSysMessage(who, "Voce nao vai conseguir ensinar nada de tao longe!");
-		return;
-	endif
-
-	var cmds := GetObjProperty(tamed, "cmds");
-	if(!cmds)
-		cmds := dictionary;
-	endif
-
-	if(cmds[cmd])
-		SendSysMessage(who, "Este animal ja conhece o truque.");
-		return;
-	endif
-	
-	var singular := input[ entries_list[cmd].singular ];
-	var plural :=   input[ entries_list[cmd].plural ];
-	singular := singular[find(singular, " ", 1)+1, len(singular)];
-	plural := plural[find(plural, " ", 1)+1, len(plural)];
-
-	var new_cmd := struct;
-	new_cmd.+singular := singular;
-	new_cmd.cmd_name := cmd;
-	if(plural)
-		new_cmd.+plural := plural;
-	endif
-		
-	if( (cmd == "All") || (cmd == "Group") )
-		SetObjProperty(tamed, cmd, singular);
-	else
-		cmds.insert(cmd, new_cmd);
-	endif
-
-	SetObjProperty(tamed, "cmds", cmds);
-
-	//SendSysMessage(who, "Ensinando " + cmd.Nome);
-	SendSysMessage(who, "Voce o ensinou com sucesso.");
 endfunction

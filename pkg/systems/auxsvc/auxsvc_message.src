@@ -1,0 +1,17 @@
+use uo;
+use os;
+
+include "includes/json";
+
+program auxsMessage( event )
+   if (typeof(event) != "Struct")
+      return;
+   endif
+
+   const json_format = toJSON(event);
+   
+   var connection := GetGlobalProperty("aux_service");
+   if (connection)
+      connection.transmit(event);
+   endif
+endprogram

@@ -30,7 +30,7 @@ program skill_Stealing(mobile)
 	SendSysMessageEx(mobile, "Selecione que pessoa ou item voce deseja roubar.", SSM_REQUEST);
 	var targ := Target(mobile);
 	
-	var npc_category := lower(getnpccategory( ParseTemplateName(targ.npctemplate).template ));
+	var npc_category := lower(getnpccategory( targ.template ));
 	if (targ == mobile)
 		SendSysMessageEx(mobile, "Espertao voce hein..?", SSM_FAIL);
 		return 0;
@@ -67,112 +67,115 @@ program skill_Stealing(mobile)
 	// endforeach
 	var user_skill := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
 	var check := rollAttrDice(mobile, DEXTERITY) + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
-	if ( check >= diff )
-		SendSystemReport(mobile, "*Success*", mobile, SSM_INFO);
-		//SendSysMessageEx(mobile, "Voce conseguiu abrir a mochila de "+targ.name+".", SSM_INFO);
-		SendOpenSpecialContainer(mobile, targ.backpack);
-		SendSysMessageEx(mobile, "Se desejar parar de roubar, pressione Esc no momento da escolha do item.", SSM_INFO);
-
-		while (1)
-			SendSysMessageEx(mobile, "Escolha um item para roubar.", SSM_REQUEST);
-			var steal := Target(mobile);//, TGTOPT_NOCHECK_LOS);
-			if (!steal)
-				SendSysMessageEx(mobile, "Voce parou de roubar.", SSM_INFO);
-				break;
-			elseif ( Distance(mobile, targ) > 2 )
-				SendSysMessageEx(mobile, "O alvo se afastou demais.", SSM_FAIL);
-				break;
-			elseif ( !IsBehind(targ, mobile.x, mobile.y) )
-				SendSysMessageEx(mobile, "O alvo nao esta mais de costas para voce.", SSM_FAIL);
-				break;
-			elseif (steal == targ)
-				SendSysMessageEx(mobile, "Alvo invalido.", SSM_FAIL);
-				continue;
-			elseif ( GetObjProperty(steal, "stealed") )
-				SendSysMessageEx(mobile, "Este objeto ja foi roubado!", SSM_FAIL);
-				continue;
-			endif
-			var aux := steal;
-			while (aux.container)
-				aux := aux.container;
-			endwhile
-			if (aux != targ)
-				SendSysMessageEx(mobile, "Voce so pode roubar da bolsa que abriu.", SSM_FAIL);
-				continue;
-			elseif (steal.IsA(POLCLASS_CONTAINER) && steal.objtype != 0x1011 && steal.objtype != 0x6100)
-				if (steal.locked)
-					SendSysMessageEx(mobile, steal.desc+" esta trancado.", SSM_FAIL);
-				else
-					SendViewContainer(mobile, steal);
-					SendSysMessageEx(mobile, "Voce abriu "+steal.desc+".", SSM_INFO);
-				endif
-				continue;
-			endif
-
-			if (steal.objtype IN {0xba63, 0xba64, 0xba65}) // moeda
-				diff := 10 + CInt(steal.amount * 0.3);
-				// if (temHabilidade(mobile, "Ladrao de Bolsas"))
-				// 	diff := cint(diff * 0.5);
-				// endif
-			elseif (steal.objtype IN {0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70}) // joias
-				diff := CInt(steal.weight*2);
-				// if (temHabilidade(mobile, "Ladrao de Bolsas"))
-				// 	diff := cint(diff * 0.5);
-				// endif
-			elseif (steal.objtype IN {0x1011, 0x100E, 0x100F, 0x1010, 0x1012, 0x1013}) // chaves
-				diff := 23;
-			elseif (steal.objtype == 0x6100) // grimório
-				diff := 25;
-			else
-				diff := 10 + CInt(steal.weight/2);
-			endif
-			
-			if (diff > (20 + user_skill))
-				SendSysMessageEx(mobile, "Voce nao tentara roubar isso, pois tem certeza que falhara.", SSM_INFO);
-				continue;
-			endif
-
-			var dice_roll := rollAttrDice(mobile, DEXTERITY, advantage, struct{ "get_critical" := 1, "failure" := 3});
-			check := dice_roll.dice + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
-			if ( check >= diff )
-				var copyitem := CreateItemCopyAtLocation(0, 0, 0, steal, mobile.realm);
-				MoveItemToContainer(copyitem, mobile.backpack);
-				
-				if (steal.isBook())
-					var bookinfo := steal.extractInfo();
-					copyitem.setAuthor(bookinfo.Author );
-					copyitem.setTitle(bookinfo.Title);
-					copyitem.SetContents(bookinfo.Contents);
-					if (steal.readonly == 1)
-						copyitem.ReadOnly(1);
-					else
-						copyitem.ReadOnly(0);
-					endif
-				endif
-				
-				
-				steal.usescript := ":pickpocketing:stealed";
-				steal.equipscript := ":pickpocketing:stealed";
-				SetObjProperty(steal, "stealed", mobile.serial);
-				
-				SendSysMessageEx(mobile, "Voce roubou "+steal.desc+".", SSM_INFO);
-				ExpGain(mobile, diff, check);
-			else
-				SendSysMessageEx(mobile, "Voce nao conseguiu roubar "+steal.desc+".", SSM_FAIL);
-				if ( dice_roll.critical == -1 )
-					CriticalFailure(mobile, targ);
-				endif
-				break;
-			endif
-		endwhile
-		mobile.facing := mobile.facing; // Pra fechar o container! ;D
-	else
+	if ( check <= diff )
 		SendSystemReport(mobile, "O alvo parece ter percebido algo.", SSM_FAIL);
 		SendSystemReport(targ, "Você sentiu algo na sua bolsa.", SSM_INFO, targ);
 		if (check - diff >= 3) // Falha Crítica
 			CriticalFailure(mobile, targ);
 		endif
+		return;
 	endif
+
+	SendSystemReport(mobile, "*Success*", mobile, SSM_INFO);
+	//SendSysMessageEx(mobile, "Voce conseguiu abrir a mochila de "+targ.name+".", SSM_INFO);
+	SendOpenSpecialContainer(mobile, targ.backpack);
+	SendSysMessageEx(mobile, "Se desejar parar de roubar, pressione Esc no momento da escolha do item.", SSM_INFO);
+
+	while (1)
+		SendSysMessageEx(mobile, "Escolha um item para roubar.", SSM_REQUEST);
+		var steal := Target(mobile);//, TGTOPT_NOCHECK_LOS);
+		if (!steal)
+			SendSysMessageEx(mobile, "Voce parou de roubar.", SSM_INFO);
+			break;
+		elseif ( Distance(mobile, targ) > 2 )
+			SendSysMessageEx(mobile, "O alvo se afastou demais.", SSM_FAIL);
+			break;
+		elseif ( !IsBehind(targ, mobile.x, mobile.y) )
+			SendSysMessageEx(mobile, "O alvo nao esta mais de costas para voce.", SSM_FAIL);
+			break;
+		elseif (steal == targ)
+			SendSysMessageEx(mobile, "Alvo invalido.", SSM_FAIL);
+			continue;
+		elseif ( GetObjProperty(steal, "stealed") )
+			SendSysMessageEx(mobile, "Este objeto ja foi roubado!", SSM_FAIL);
+			continue;
+		endif
+
+		var aux := steal;
+		while (aux.container)
+			aux := aux.container;
+		endwhile
+
+		if (aux != targ)
+			SendSysMessageEx(mobile, "Voce so pode roubar da bolsa que abriu.", SSM_FAIL);
+			continue;
+		elseif (steal.IsA(POLCLASS_CONTAINER) && steal.objtype != 0x1011 && steal.objtype != 0x6100)
+			if (steal.locked)
+				SendSysMessageEx(mobile, steal.desc+" esta trancado.", SSM_FAIL);
+			else
+				SendViewContainer(mobile, steal);
+				SendSysMessageEx(mobile, "Voce abriu "+steal.desc+".", SSM_INFO);
+			endif
+			continue;
+		endif
+
+		if (steal.objtype IN {0xba63, 0xba64, 0xba65}) // moeda
+			diff := 10 + CInt(steal.amount * 0.3);
+			// if (temHabilidade(mobile, "Ladrao de Bolsas"))
+			// 	diff := cint(diff * 0.5);
+			// endif
+		elseif (steal.objtype IN {0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70}) // joias
+			diff := CInt(steal.weight*2);
+			// if (temHabilidade(mobile, "Ladrao de Bolsas"))
+			// 	diff := cint(diff * 0.5);
+			// endif
+		elseif (steal.objtype IN {0x1011, 0x100E, 0x100F, 0x1010, 0x1012, 0x1013}) // chaves
+			diff := 23;
+		elseif (steal.objtype == 0x6100) // grimório
+			diff := 25;
+		else
+			diff := 10 + CInt(steal.weight/2);
+		endif
+		
+		if (diff > (20 + user_skill))
+			SendSysMessageEx(mobile, "Voce nao tentara roubar isso, pois tem certeza que falhara.", SSM_INFO);
+			continue;
+		endif
+
+		var dice_roll := rollAttrDice(mobile, DEXTERITY, advantage, struct{ "get_critical" := 1, "failure" := 3});
+		check := dice_roll.dice + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
+		if ( check >= diff )
+			var copyitem := CreateItemCopyAtLocation(0, 0, 0, steal, mobile.realm);
+			MoveItemToContainer(copyitem, mobile.backpack);
+			
+			if (steal.isBook())
+				var bookinfo := steal.extractInfo();
+				copyitem.setAuthor(bookinfo.Author );
+				copyitem.setTitle(bookinfo.Title);
+				copyitem.SetContents(bookinfo.Contents);
+				if (steal.readonly == 1)
+					copyitem.ReadOnly(1);
+				else
+					copyitem.ReadOnly(0);
+				endif
+			endif
+			
+			
+			steal.usescript := ":pickpocketing:stealed";
+			steal.equipscript := ":pickpocketing:stealed";
+			SetObjProperty(steal, "stealed", mobile.serial);
+			
+			SendSysMessageEx(mobile, "Voce roubou "+steal.desc+".", SSM_INFO);
+			ExpGain(mobile, diff, check);
+		else
+			SendSysMessageEx(mobile, "Voce nao conseguiu roubar "+steal.desc+".", SSM_FAIL);
+			if ( dice_roll.critical == -1 )
+				CriticalFailure(mobile, targ);
+			endif
+			break;
+		endif
+	endwhile
+	mobile.facing := mobile.facing; // Pra fechar o container! ;D
 endprogram
 
 function CriticalFailure(mobile, targ)

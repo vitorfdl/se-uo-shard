@@ -11,7 +11,6 @@ include "include/objtype";
 
 
 function CheckForPen(backpack, charges)
-
     foreach item in EnumerateItemsInContainer (backpack)
         if ( item.graphic == 4031 )
             if ( Cint(GetObjProperty(item, "cargas")) >= charges )
@@ -25,7 +24,6 @@ function CheckForPen(backpack, charges)
 endfunction
 
 function SearchForHides(who, hidesamt)
-
     var counter := 0;
       
     if (hidesamt != 0)
@@ -40,7 +38,6 @@ function SearchForHides(who, hidesamt)
            return 1;
        endif
     endif
-
 endfunction
 
 function SearchForPoles(who, polesamt)

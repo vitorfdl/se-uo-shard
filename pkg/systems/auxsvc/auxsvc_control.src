@@ -1,16 +1,23 @@
 use uo;
 use os;
 program auxtest( connection )
-	var ev;
    Set_Script_Option(SCRIPTOPT_AUXSVC_ASSUME_STRING, 1);
-	print( "aux service is running" );
-   connection.transmit("test");
+   // connection.transmit("Connected to shard.");
+	SetGlobalProperty("aux_service", connection);
+
+	var ev;
 	while (connection)
+		if (!GetGlobalProperty("aux_service"))
+			SetGlobalProperty("aux_service", connection);
+		endif
+
 		ev := wait_for_event( 5 );
 		print(ev);
 		if (ev)
 			print(ev.value);
 		endif
 	endwhile
+	
+	EraseGlobalProperty("aux_service");
 	print( "aux connection closed" );
 endprogram

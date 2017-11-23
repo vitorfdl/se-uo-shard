@@ -57,6 +57,7 @@ function SkillDbgMsg(mobile, msg)
 		SendSysMessage(mobile, msg);
 	endif
 endfunction
+
 function ExpGain(mobile, difficulty, value := 0)
 	if ( GetObjProperty(mobile, "NoGains") ) //exp gain blocked
 		SkillDbgMsg(mobile, "Flag NoGains setada.");
@@ -119,13 +120,23 @@ function CheckExpUp(who)
 		var maxexp := (who.getLevel() + 1) * 1000; //starts at 2000
 		var exp := who.GetExp();
 
-		if (exp >= maxexp)
-			exp-=maxexp;
-			who.setLevel(level+1);
-			who.SetPoints(who.GetPoints()+1);
-			IncreaseVitalPoints(who);
-			who.SetExp(exp);
+		if (exp < maxexp)
+			return;
 		endif
+		exp-=maxexp;
+		who.SetExp(exp);
+		who.setLevel(level+1);
+		IncreaseVitalPoints(who);
+		var levelup_cfg = ReadConfigFile("levelup")[level+1];
+
+		if (cint(levelup_cfg.AttributePoints))
+			who.SetPoints(who.GetPoints()+1);
+		endif
+
+		if (cint(levelup_cfg.TalentPoints))
+			who.SetTalentPoints(who.GetTalentPoints()+1);
+		endif
+
 	endif
 endfunction
 

@@ -1,14 +1,3 @@
-// function ReqHabilidade(habilidade)
-
-// 	var habcfg := ReadConfigFile(":charactercreation:config/habilidades");
-// 	var elem := FindConfigElem( habcfg, habilidade );
-
-// 	var req := GetConfigStringArray( elem, "requisito" );
-
-// 	return req;
-
-// endfunction
-
 // function UsoHabilidade(nome)
 // 	var habcfg := ReadConfigFile(":charactercreation:config/habilidades");
 // 	var elem := FindConfigElem( habcfg, nome );
@@ -40,10 +29,6 @@
 	
 // endfunction
 
-enum FEATS
-
-endenum
-
 function GetFeatList(who)
 	var chardata := GetObjProperty(who, "chardata");
 	var feat_list := chardata.Feats;
@@ -62,6 +47,32 @@ function HaveFeat(who, feat)
 	endif
 
 	return 0;
+endfunction
+
+function LearnFeat(who, feat)
+	var chardata := GetObjProperty(who, "chardata");
+	var feat_list := chardata.Feats;
+
+	if (feat in feat_list)
+		return 0;
+	endif
+
+	feat_list += feat;
+	chardata.Feats := feat_list;
+	var talent_points := who.GetTalentPoints();
+	talent_points -= 1;
+	who.SetTalentPoints(talent_points);
+	SetObjProperty(who, "chardata", chardata);
+
+	foreach give_parse in (feat.give)
+		give_parse := SplitWords(give_parse);
+		if (give_parse[1] == "item")
+			createiteminBackpack(who, give_parse[2], give_parse[3])
+		else
+			AP_SetTrueSkill(who, give_parse[2], 1);
+		endif
+		sleepms(2);
+	endforeach
 endfunction
 
 function GetNewFeatsList(who)
@@ -113,6 +124,7 @@ function FeatInfo(feat, plus := 0)
 	var elem   := FindConfigElem( habcfg, feat );
 
 	var feat_info := struct{
+		"name" := feat,
 		"desc" :=   GetConfigString( elem, "Description" ),
 		"active" := GetConfigInt( elem, "Active" ),
 		"script" := GetConfigString( elem, "Script" ),

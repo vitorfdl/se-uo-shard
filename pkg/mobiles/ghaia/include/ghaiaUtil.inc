@@ -4,7 +4,7 @@ include "include/say";
 
 function ghaiaRessurect(targ, notame := 0)
 	var npc := CreateNpcFromTemplate( GetObjProperty(targ, "npctemplate"), targ.x, targ.y, targ.z, 0, targ.realm);
-	npc.script := ":ghaia:tamed";
+	npc.script := ":ghaia:follower";
 	RestartScript(npc);
 	CopyProps(targ, npc);
 	var ownerserial := GetObjProperty(targ, "owner");
@@ -60,47 +60,6 @@ function ghaiaObjective(npc, destiny, move_type)
 	sendEvent( npc, ev);
 endfunction
 
-
-/*
- * NPC_ParseTemplateName(template_name)
- *
- * Purpose
- * Finds the appropriate npcdesc.cfg to load.
- * This enables npcs to be placed in packages and not just the ::npcdesc file.
- * ReadConfigFile(":*:npcdesc") does not work in this case because packaged npcs
- * have the package name at the begining of their .npctemplate member. Reading the
- * specific config file - helps to avoid possible elem name collisions.
- *
- * Parameters
- * template_name:	Name of the npc template to parse
- *
- * Return value
- * Returns struct .package .template
- *
- */
-function NPC_ParseTemplateName(template_name)
-	if ( template_name.IsA(POLCLASS_NPC) )
-		template_name := template_name.npctemplate;
-	endif
-
-	//Find positions of ":" characters
-	var colon_a := Find(template_name, ":", 1);
-	var colon_b := Find(template_name, ":", 2);
-
-	var parsed := struct{"package", "template"};
-
-	if ( !colon_a || !colon_b )
-		//Not a complete package name - use default npcdesc.cfg
-		parsed.package := "";
-		parsed.template := template_name;
-	else
-		parsed.package := template_name[colon_a+1, colon_b-2];
-		parsed.template := template_name[colon_b+1, Len(template_name)];
-	endif
-
-	return parsed;
-endfunction
-
 /*
  * NPC_GetNPCConfig(template)
  *
@@ -116,7 +75,7 @@ endfunction
  */
 function NPC_GetNPCConfig(template)
 	if ( !template.package )
-		template := NPC_ParseTemplateName(template);
+		template:= SplitWords(pet.npctemplate, ":")[2];
 	endif
 
 	var npc_cfg := ReadConfigFile(":"+template.package+":npcdesc");

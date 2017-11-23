@@ -151,8 +151,9 @@ program SpellStarter(params)
 
    spellinfo.dice_roll := rollAttrDice(mobile, attribute) + getProficiencyBonus(mobile);
    if (spellinfo.script != error)
-      var e := Start_Script(spellinfo.script, array{mobile, spellinfo});
+      var e := Start_Script(spellinfo.script, array{mobile, spellinfo, targ});
       if (e == error)
+         Print(mobile + ": " + spellinfo);
          FailSpell(mobile);
       endif
    else

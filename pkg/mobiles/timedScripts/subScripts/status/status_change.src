@@ -1,0 +1,50 @@
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+
+function StartScript(mobile, attacker := 0, level := 0)
+	if ( GetObjProperty(mobile, "#DexPoisonMod") )
+		return 0;
+	endif
+	
+	var points := ((AP_GetStat(mobile, DEXTERITY) * level * 10 )/100) * (-1);
+	
+	SetObjProperty(mobile, "#DexPoisonMod", points);
+	AP_ModifyStatMod(mobile, DEXTERITY, points);
+   return 1;
+endfunction
+
+function EndScript(mobile)
+	var points := CInt(GetObjProperty(mobile, "#DexPoisonMod") * (-1));	
+	AP_ModifyStatMod(mobile, DEXTERITY, points);
+	EraseObjProperty(mobile, "#DexPoisonMod");
+   return 1;
+endfunction
+
+function LogOffScript(mobile)
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile);
+      elseif (type == "LogOff")
+         return LogOffScript(mobile);
+      endif
+   endif
+
+   return StartScript(mobile, type, level)
+endprogram

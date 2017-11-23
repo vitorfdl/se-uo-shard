@@ -10,7 +10,6 @@ include "include/arrays";
 
 //tipo do book eh pra saber se pode inserir scrolls de um certo tipo em um certo book
 function GetBookType(book)
-
 	var type := GetObjProperty(book, "Booktype");
 	if (type == error)
 		return "mage";
@@ -21,7 +20,6 @@ function GetBookType(book)
 endfunction 
 
 function CanInsertScroll(book, scroll)
-
 	var booktype := GetBookType(book);
 	var cfg := ReadConfigFile(":magery:itemdesc");
 	var scrolltype := cfg[scroll.objtype].SpellType;

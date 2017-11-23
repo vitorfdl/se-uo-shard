@@ -7,18 +7,18 @@ include "include/sysEvent";
 include "include/say";
 
 program clericPowerWords(parms)
-	detach();
-	var who := parms[1];
+   detach();
+   var who := parms[1];
 
-	var pid := GetPid();
-	SetObjProperty(who, "#clericpid", pid);
+   var pid := GetPid();
+   SetObjProperty(who, "#clericpid", pid);
 
-	var event;
-	while(who.connected)
+   var event;
+   while(who.connected)
       RegisterForSpeechEvents( who, 1 );
       EnableEvents( SYSEVENT_SPEECH, 1 );
 
-	   event := wait_for_event( 120 );
+      event := wait_for_event( 120 );
       if (event && event.type == SYSEVENT_SPEECH && event.source ==  who && !who.dead)
          var cleric_list := GetObjProperty(who, "cleric_list");
          if (!cleric_list || cleric_list.size() < 1 || GetObjProperty(who, "#Casting"))
@@ -52,6 +52,6 @@ program clericPowerWords(parms)
             PrintText(who, "Casting");
             Start_Script(":magery:cast_spell", {who, spell_id, 0, 0, ":magery:config/cleric"});
          endif
-		endif		
-	endwhile
+      endif		
+   endwhile
 endprogram 
