@@ -18,14 +18,14 @@ include "include/arrays";
 var rune_cfg := ReadConfigFile("runes");
 
 function getRune(rune)
-   var rune := FindConfigElem(fgrune_cfg, rune);
-   if (!rune) return 0; endif;
+   var rune_info := FindConfigElem(rune_cfg, rune);
+   if (!rune_info) return 0; endif;
 
 	var obj := struct{
-		"desc": rune[desc],
-		"diff": cint(rune[Difficulty]),
-		"usos": GetConfigStringArray(rune, "Uso");
-		"sets": GetConfigStringDictionary(rune, "Set");
+		"desc":= rune_info.desc,
+		"diff":= cint(rune_info.Difficulty),
+		"usos":= GetConfigStringArray(rune_info, "Uso"),
+		"sets":= GetConfigStringDictionary(rune_info, "Set")
 	};
 
 	return obj;
@@ -37,7 +37,7 @@ program book(who, book)
 
 	if (result[0])
 		var rune := result[0] - 100;
-		var runes   := GetObjProerty(book, "runes");
+		var runes   := GetObjProperty(book, "runes");
 		var serialid := GetObjProperty(book, "serialid");
 		if (serialid != error && serialid != who.serial)
 			SendSysMessageEx(who, "Voce nao entende as anotacoes do livro.", SSM_FAIL);
@@ -46,7 +46,7 @@ program book(who, book)
 			SendSysMessageEx(who, "Algum erro ocorreu com sua runa, avise um GM.", SSM_FAIL);
 			return 1;
 		endif
-		WriteMagic(who, runes[rune]);
+		WriteRune(who, runes[rune]);
 	endif
 
 endprogram
@@ -133,8 +133,7 @@ function GenerateSide(byref book_gump, rune_list, i, side, byref pOX, byref pOY,
 
 	rune_entry.description := "<BASEFONT COLOR=#000066>{}<br><br> <BASEFONT COLOR=#330000> Tipos <br>".format(cstr(rune_entry.description));
 
-	var uses := rune_entry.usos
-	foreach r in (uses)
+	foreach r in (rune_entry.usos)
 		rune_entry.description := "{}{}<br>".format(rune_entry.description, cstr( r ));
 	endforeach
 
@@ -185,7 +184,7 @@ function GenerateEmptySide(byref book_gump, side, pOX, pOY, page_num)
 	endif
 endfunction
 
-function WriteRune(who, rune)
+function WriteRune(who, rune_entry)
 	if( TypeOf(rune_entry) != "Struct" )
 		return SendSysMessageEx("Algo esta errado com seu livro.", SSM_FAIL);
 	elseif (SearchArrayOfModel("objtype", 0x10e4, EnumerateItemsInContainer(who.backpack))) 
@@ -214,7 +213,7 @@ function WriteRune(who, rune)
 		item_type := "Container";
 	endif
 
-	if (!item_type || !(item_type in rune.usos))
+	if (!item_type || !(item_type in rune_entry.usos))
 		return SendSysMessageEx("Objeto invalido para esta runa.", SSM_FAIL);
 	elseif (item.hp <= (item.maxhp / 3))
 		return SendSysMessageEx("Este objeto esta muito danificado para receber uma runa..", SSM_FAIL);
@@ -226,20 +225,20 @@ function WriteRune(who, rune)
 			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto". SSM_FAIL);
 			return;
 		endif
-		PrintTextAboveUC(who, "*inscrevendo em {}*".format(targ.desc));
+		PrintTextAboveUC(who, "*inscrevendo em {}*".format(item.desc), who);
 		PlaySoundEffect(who, 0x002b);
 		sleep(2);
 	endfor
 
 	var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, INSCRICAO_RUNICA);
-	if (roll <= rune.diff)
+	if (roll <= rune_entry.diff)
 		item.hp -= Floor(item.maxhp / 4);
 		SetName(item, item.desc);
 		return SendSysMessageEx("Voce falhou em inscrever a runa e danificou o objeto.", SSM_FAIL);
 	endif
 
-	foreach set in (rune.sets.Keys())
-		var value := runes.sets[set];
+	foreach set in (rune_entry.sets.Keys())
+		var value := rune_entry.sets[set];
 		if (cint(value) != error)
 			value := cint(value);
 		endif
@@ -249,13 +248,13 @@ function WriteRune(who, rune)
 			item.hp += value;
 		elseif (set[1] == ".")
 			set := SplitWords(set, ".")[2];
-			item[set] := value
+			item[set] := value;
 		else
 			SetObjProperty(item, set, value);
 		endif
 	endforeach
 
-	SetObjProperty(item, "inscripted", rune.name);
+	SetObjProperty(item, "inscripted", rune_entry.name);
 
 	SendSysMessageEx("Voce gravou a runa.", SSM_FAIL);
 endfunction

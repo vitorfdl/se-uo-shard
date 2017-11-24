@@ -70,9 +70,7 @@
 0x29b [n/a] lighting
 # 0x29c - 0x2ab unused
 0x2ac [n/a] lighting
-# 0x2ad - 0x3b2 unused
-0x3b3 cerca woodworking
-# 0x3b4 - 0x3dc unused
+# 0x2ad - 0x3dc unused
 0x3dd [n/a] lighting
 0x3de [n/a] lighting
 # 0x3df - 0x460 unused
@@ -222,9 +220,7 @@
 0x6f2 [n/a] doors
 0x6f3 [n/a] doors
 0x6f4 [n/a] doors
-# 0x6f5 - 0x7bc unused
-0x7bd plataforma woodworking
-# 0x7be - 0x823 unused
+# 0x6f5 - 0x823 unused
 0x824 [n/a] doors
 0x825 [n/a] doors
 0x826 [n/a] doors
@@ -275,10 +271,7 @@
 0x859 [n/a] doors
 0x85a [n/a] doors
 0x85b [n/a] doors
-0x85c cerca2 woodworking
-# 0x85d - 0x861 unused
-0x862 cerca3 woodworking
-# 0x863 - 0x865 unused
+# 0x85c - 0x865 unused
 0x866 [n/a] doors
 0x867 [n/a] doors
 0x868 [n/a] doors
@@ -295,9 +288,7 @@
 0x873 [n/a] doors
 0x874 [n/a] doors
 0x875 [n/a] doors
-# 0x876 - 0x89e unused
-0x89f escada woodworking
-# 0x8a0 - 0x919 unused
+# 0x876 - 0x919 unused
 0x91a Beehive farming
 0x91b swarmofbees farming
 # 0x91c - 0x92a unused
@@ -432,9 +423,7 @@
 0xa15 lantern5 lighting
 # 0xa16 - 0xa17 unused
 0xa18 lantern6 lighting
-# 0xa19 - 0xa1e unused
-0xa1f [n/a] woodworking
-# 0xa20 - 0xa21 unused
+# 0xa19 - 0xa21 unused
 0xa22 lantern1 lighting
 0xa23 lantern2 lighting
 0xa24 lantern3 lighting
@@ -443,8 +432,7 @@
 0xa27 candelabra4 lighting
 0xa28 candle2 lighting
 0xa29 candelabra2 lighting
-0xa2a banquinho woodworking
-0xa2b banquinho2 woodworking
+# 0xa2a - 0xa2b unused
 0xa2c BrownChestOfDrawers containers
 # 0xa2d - 0xa2f unused
 0xa30 CherryChestOfDrawers containers
@@ -473,13 +461,7 @@
 # 0xa5a - 0xa9c unused
 0xa9d BookShelf containers
 0xa9e BookShelf2 containers
-# 0xa9f - 0xaff unused
-0xb00 balcao woodworking
-# 0xb01 - 0xb08 unused
-0xb09 balcao2 woodworking
-# 0xb0a - 0xb0c unused
-0xb0d balcao3 woodworking
-# 0xb0e - 0xb19 unused
+# 0xa9f - 0xb19 unused
 0xb1a candle3 lighting
 # 0xb1b - 0xb1c unused
 0xb1d candelabra3 lighting
@@ -491,54 +473,12 @@
 0xb24 lamppost5 lighting
 0xb25 lamppost6 lighting
 0xb26 candelabra1 lighting
-# 0xb27 - 0xb2b unused
-0xb2c banco woodworking
-# 0xb2d unused
-0xb2e cadeiragrande woodworking
-# 0xb2f - 0xb31 unused
-0xb32 trono woodworking
-# 0xb33 unused
-0xb34 mesinha woodworking
-# 0xb35 - 0xb3c unused
-0xb3d mesagrande2 woodworking
-# 0xb3e unused
-0xb3f mesagrande woodworking
-# 0xb40 - 0xb44 unused
+# 0xb27 - 0xb44 unused
 0xb45 lvase
 0xb46 smvase
 0xb47 lvase2
 0xb48 smvase2
-0xb49 escrivaninha woodworking
-# 0xb4a - 0xb4d unused
-0xb4e cadeiraestofada woodworking
-# 0xb4f - 0xb51 unused
-0xb52 cadeiraestofada2 woodworking
-# 0xb53 - 0xb55 unused
-0xb56 cadeira woodworking
-# 0xb57 - 0xb59 unused
-0xb5a cadeira2 woodworking
-# 0xb5b - 0xb5e unused
-0xb5f banco2 woodworking
-# 0xb60 - 0xb61 unused
-0xb62 banco3 woodworking
-# 0xb63 - 0xb6a unused
-0xb6b mesa2 woodworking
-# 0xb6c - 0xb6d unused
-0xb6e mesa3 woodworking
-# 0xb6f - 0xb74 unused
-0xb75 mesa4 woodworking
-# 0xb76 - 0xb90 unused
-0xb91 bancogrande woodworking
-# 0xb92 - 0xb96 unused
-0xb97 suportedeplacas woodworking
-# 0xb98 unused
-0xb99 suportedeplacas2 woodworking
-# 0xb9a - 0xbce unused
-0xbcf placa1 woodworking
-0xbd0 placa2 woodworking
-0xbd1 placa3 woodworking
-0xbd2 placa4 woodworking
-# 0xbd3 - 0xc5b unused
+# 0xb49 - 0xc5b unused
 0xc5c watermelon1 food
 0xc5d watermelon2 food
 # 0xc5e - 0xc63 unused
@@ -603,9 +543,7 @@
 0xe08 disguisekit disguise
 # 0xe09 - 0xe16 unused
 0xe17 Cards
-# 0xe18 - 0xe1b unused
-0xe1c tabuleirodegamao woodworking
-# 0xe1d - 0xe1e unused
+# 0xe18 - 0xe1e unused
 0xe1f yarn womenswork
 0xe20 bloody bandages medicine
 0xe21 bandages medicine
@@ -636,12 +574,10 @@
 0xe7c SilverChest2 containers
 0xe7d WoodenBox2 containers
 0xe7e SmallCrate2 containers
-0xe7f barrica woodworking
+# 0xe7f unused
 0xe80 StrongBox2 containers
 0xe81 ShepherdsCrook combat
-# 0xe82 unused
-0xe83 balde woodworking
-# 0xe84 unused
+# 0xe82 - 0xe84 unused
 0xe85 Pickaxe combat
 # 0xe86 unused
 0xe87 Pitchfork combat
@@ -657,10 +593,7 @@
 0xeb2 harp musicianship
 0xeb3 lute musicianship
 0xeb4 lute2 musicianship
-0xeb5 partiturapequena woodworking
-# 0xeb6 - 0xeb8 unused
-0xeb9 partituragrande woodworking
-# 0xeba - 0xec1 unused
+# 0xeb5 - 0xec1 unused
 0xec2 Cleaver combat
 # 0xec3 unused
 0xec4 SkinningKnife combat
@@ -692,13 +625,9 @@
 0xf25 amber gems
 # 0xf26 - 0xf2f unused
 0xf30 diamond gems
-# 0xf31 - 0xf36 unused
-0xf37 seladecavalo woodworking
-0xf38 seladecavalo2 woodworking
+# 0xf31 - 0xf38 unused
 0xf39 Shovel gathering
-# 0xf3a - 0xf3e unused
-0xf3f arrow woodworking
-# 0xf40 - 0xf42 unused
+# 0xf3a - 0xf42 unused
 0xf43 Hatchet combat
 # 0xf44 unused
 0xf45 ExecutionersAxe combat
@@ -719,9 +648,7 @@
 # 0xf61 - 0xf62 unused
 0xf63 Spear combat
 0xf64 Torch1 lighting
-# 0xf65 - 0xf70 unused
-0xf71 cavalete2 woodworking
-# 0xf72 - 0xf77 unused
+# 0xf65 - 0xf77 unused
 0xf78 BatWing alchemy
 0xf79 BlackMoor alchemy
 0xf7a BlackPearl alchemy
@@ -762,11 +689,9 @@
 # 0xf9f unused
 0xfa0 Thread1 womenswork
 0xfa1 fechadura metalworking
-# 0xfa2 - 0xfa5 unused
-0xfa6 tabuleirodexadrez woodworking
-# 0xfa7 - 0xfa8 unused
+# 0xfa2 - 0xfa8 unused
 0xfa9 dyes dyes
-0xfaa tabuleirodedamas woodworking
+# 0xfaa unused
 0xfab dyetub dyes
 0xfac firepit lighting
 # 0xfad unused
@@ -798,9 +723,7 @@
 0xffb water water
 # 0xffc - 0xfff unused
 0x1000 pewtermug metalworking
-# 0x1001 - 0x1003 unused
-0x1004 barreltap woodworking
-# 0x1005 - 0x1009 unused
+# 0x1001 - 0x1009 unused
 0x100a ArcheryButte training
 0x100b ArcheryButte2 training
 # 0x100c - 0x100d unused
@@ -810,25 +733,9 @@
 0x1011 KeyRing keys
 0x1012 MagicKey keys
 0x1013 RustyKey keys
-# 0x1014 unused
-0x1015 rodadefiar woodworking
-# 0x1016 - 0x1021 unused
-0x1022 fletchtools woodworking
-0x1023 fletchtools2 woodworking
-# 0x1024 - 0x1027 unused
-0x1028 Dovetailsaw woodworking
-# 0x1029 unused
-0x102a Hammer woodworking
-# 0x102b unused
-0x102c mouldingplane woodworking
-# 0x102d - 0x102f unused
+# 0x1014 - 0x102f unused
 0x1030 Jointingplane fls_carpentry
-# 0x1031 unused
-0x1032 Smoothingplane woodworking
-# 0x1033 unused
-0x1034 saw woodworking
-0x1035 saw2 woodworking
-# 0x1036 - 0x1038 unused
+# 0x1031 - 0x1038 unused
 0x1039 Flour cooking
 0x103a OpenFlour cooking
 0x103b bread food
@@ -899,12 +806,9 @@
 0x108c lever tn
 # 0x108d - 0x10d3 unused
 0x10d4 SpiderWeb walkon
-# 0x10d5 - 0x10e0 unused
-0x10e1 barrelhoops woodworking
-# 0x10e2 unused
+# 0x10d5 - 0x10e2 unused
 0x10e3 doughbowl cooking
-0x10e4 drawknife woodworking
-0x10e5 Froe woodworking
+# 0x10e4 - 0x10e5 unused
 0x10e6 inshave fls_carpentry
 0x10e7 SandScoop gathering
 # 0x10e8 - 0x10f4 unused
@@ -927,13 +831,7 @@
 0x112f DartTrap2 traps
 # 0x1130 - 0x1132 unused
 0x1133 WallAxeTrap traps
-# 0x1134 - 0x118a unused
-0x118b mesaadornada woodworking
-# 0x118c unused
-0x118d mesaadornada2 woodworking
-# 0x118e unused
-0x118f mesagrandeadornada woodworking
-# 0x1190 - 0x1199 unused
+# 0x1134 - 0x1199 unused
 0x119a FloorSpikeTrap traps
 # 0x119b - 0x119f unused
 0x11a0 FloorSpikeTrap2 traps
@@ -949,14 +847,7 @@
 0x11c9 LgPottedPlant farming
 0x11ca LgFlowerPot farming
 0x11cb SmFlowerPot farming
-# 0x11cc - 0x11db unused
-0x11dc logtable woodworking
-0x11dd logtable2 woodworking
-0x11de logtable3 woodworking
-0x11df logtable4 woodworking
-0x11e0 logtable5 woodworking
-0x11e1 logtable6 woodworking
-# 0x11e2 - 0x1200 unused
+# 0x11cc - 0x1200 unused
 0x1201 stonetable
 0x1202 stonetable2
 0x1203 stonetable3
@@ -1070,9 +961,7 @@
 0x1420 DragonHelmet combat
 # 0x1421 unused
 0x1422 beeswax farming
-# 0x1423 - 0x1427 unused
-0x1428 moldedevela woodworking
-# 0x1429 - 0x142b unused
+# 0x1423 - 0x142b unused
 0x142c candle5 lighting
 # 0x142d - 0x142e unused
 0x142f candle6 lighting
@@ -1099,9 +988,7 @@
 0x1452 Bonelegs combat
 # 0x1453 - 0x14df unused
 0x14e0 waterbucket water
-# 0x14e1 - 0x14e8 unused
-0x14e9 padeforno woodworking
-# 0x14ea unused
+# 0x14e1 - 0x14ea unused
 0x14eb blankmap cartography
 0x14ec blankmap_2 cartography
 0x14ed rolledmap cartography
@@ -1156,10 +1043,7 @@
 0x160a cookedlegoflamb food
 0x160b panofcookies food
 0x160c plateofcookies food
-# 0x160d - 0x1666 unused
-0x1667 mesagrandeadornada2 woodworking
-# 0x1668 - 0x166c unused
-0x166d postedetortura woodworking
+# 0x160d - 0x166d unused
 0x166e whip torture
 # 0x166f - 0x170a unused
 0x170b Boots womenswork
@@ -1239,9 +1123,7 @@
 0x18ea ginsengplant tn
 # 0x18eb unused
 0x18ec ginsengplant2 tn
-# 0x18ed - 0x190f unused
-0x1910 bar woodworking
-# 0x1911 - 0x194f unused
+# 0x18ed - 0x194f unused
 0x1950 mongbatdartboard tn
 # 0x1951 - 0x1979 unused
 0x197a bellows1 gathering
@@ -1303,9 +1185,7 @@
 0x1aa2 hopscones cooking
 # 0x1aa3 - 0x1ad2 unused
 0x1ad3 donuts food
-# 0x1ad4 - 0x1ad5 unused
-0x1ad6 barricacomtorneira woodworking
-# 0x1ad7 - 0x1ae1 unused
+# 0x1ad4 - 0x1ae1 unused
 0x1ae2 Skull
 # 0x1ae3 - 0x1b71 unused
 0x1b72 RoundShield combat
@@ -1321,11 +1201,7 @@
 # 0x1b7c - 0x1bc2 unused
 0x1bc3 Chaosshield combat
 0x1bc4 Ordershield combat
-# 0x1bc5 - 0x1bd0 unused
-0x1bd1 feather woodworking
-# 0x1bd2 - 0x1bd3 unused
-0x1bd4 arrowshaft woodworking
-# 0x1bd5 - 0x1bd6 unused
+# 0x1bc5 - 0x1bd6 unused
 0x1bd7 board
 # 0x1bd8 - 0x1bdc unused
 0x1bdd log gathering
@@ -1335,9 +1211,7 @@
 0x1be6 Brick gathering
 # 0x1be7 - 0x1beb unused
 0x1bec Sandstone gathering
-# 0x1bed - 0x1bfa unused
-0x1bfb bolt woodworking
-# 0x1bfc - 0x1bff unused
+# 0x1bed - 0x1bff unused
 0x1c00 LeatherShorts combat
 # 0x1c01 unused
 0x1c02 FemaleStudded combat
@@ -1363,12 +1237,9 @@
 0x1d98 ank3b
 # 0x1d99 - 0x1d9e unused
 0x1d9f Torso
-# 0x1da0 - 0x1da4 unused
-0x1da5 mesa woodworking
-# 0x1da6 - 0x1dad unused
+# 0x1da0 - 0x1dad unused
 0x1dae Head
-# 0x1daf - 0x1db7 unused
-0x1db8 tampadebarril woodworking
+# 0x1daf - 0x1db8 unused
 0x1db9 LeatherCap combat
 # 0x1dba - 0x1e02 unused
 0x1e03 footprint snow
@@ -1389,13 +1260,7 @@
 0x1e1b fishhead3 cooking
 # 0x1e1c - 0x1e1e unused
 0x1e1f hamslices food
-# 0x1e20 - 0x1e29 unused
-0x1e2a remos woodworking
-# 0x1e2b - 0x1e2d unused
-0x1e2e alvo2 woodworking
-# 0x1e2f - 0x1e33 unused
-0x1e34 espantalho woodworking
-# 0x1e35 - 0x1e36 unused
+# 0x1e20 - 0x1e36 unused
 0x1e37 bearhead survival
 # 0x1e38 - 0x1e49 unused
 0x1e4a polarbearhead survival
@@ -1420,12 +1285,7 @@
 0x1e9b wellhook water
 # 0x1e9c - 0x1ea2 unused
 0x1ea3 net fls_core
-# 0x1ea4 - 0x1eb1 unused
-0x1eb2 barrelstaves woodworking
-# 0x1eb3 - 0x1eb5 unused
-0x1eb6 caixadeferramentas woodworking
-0x1eb7 caixadeferramentas2 woodworking
-# 0x1eb8 unused
+# 0x1ea4 - 0x1eb8 unused
 0x1eb9 TinkerTools2 metalworking
 # 0x1eba - 0x1ebb unused
 0x1ebc TinkerTools metalworking
@@ -1440,10 +1300,7 @@
 0x1f03 deathrobe womenswork
 # 0x1f04 - 0x1f0a unused
 0x1f0b Orchelm combat
-# 0x1f0c - 0x1f27 unused
-0x1f28 placa5 woodworking
-0x1f29 placa6 woodworking
-# 0x1f2a unused
+# 0x1f0c - 0x1f2a unused
 0x1f2b brazier4 lighting
 # 0x1f2c - 0x1f7a unused
 0x1f7b Doublet womenswork
@@ -1581,20 +1438,9 @@
 0x2d33 LongScimitar combat
 # 0x2d34 unused
 0x2d35 FeericMachete combat
-# 0x2d36 - 0x2de2 unused
-0x2de3 OrnateElvenChair woodworking
-# 0x2de4 - 0x2dea unused
-0x2deb BigElvenChair woodworking
-# 0x2dec - 0x2df4 unused
-0x2df5 ElvenReadingDesk woodworking
-# 0x2df6 - 0x2fb6 unused
-0x2fb7 aljavapequena woodworking
+# 0x2d36 - 0x2fb7 unused
 0x2fb8 oculos womenswork
-# 0x2fb9 - 0x308b unused
-0x308c OrnateElvenTable woodworking
-# 0x308d - 0x3091 unused
-0x3092 FancyElvenTable woodworking
-# 0x3093 - 0x312c unused
+# 0x2fb9 - 0x312c unused
 0x312d elfears survival
 # 0x312e unused
 0x312f humanears survival
@@ -1673,11 +1519,7 @@
 0x3d4f fruitcook food
 # 0x3d50 - 0x3dd7 unused
 0x3dd8 deerhead survival
-# 0x3dd9 - 0x4043 unused
-0x4044 ornamentedmirror woodworking
-# 0x4045 unused
-0x4046 floormirror woodworking
-# 0x4047 - 0x468b unused
+# 0x3dd9 - 0x468b unused
 0x468c jellybeans food
 # 0x468d - 0x469e unused
 0x469f merrycake food
@@ -1773,7 +1615,8 @@
 0x608f smallstoneshophouse house
 # 0x6090 - 0x60ff unused
 0x6100 grimorio magery
-# 0x6101 - 0x6115 unused
+0x6101 runebook magery
+# 0x6102 - 0x6115 unused
 0x6116 pergaminhomagico magery
 # 0x6117 - 0x613f unused
 0x6140 nystulldeed1 house
@@ -1897,32 +1740,13 @@
 0x7105 HairDye hair
 # 0x7106 - 0x790e unused
 0x790f Nothing tn
-# 0x7910 - 0x791b unused
-0x791c aljava woodworking
-# 0x791d unused
+# 0x7910 - 0x791d unused
 0x791e PolarBearMask womenswork
 # 0x791f - 0x884f unused
 0x8850 marmore gathering
 # 0x8851 unused
 0x8852 arenito gathering
-# 0x8853 - 0x9086 unused
-0x9087 arrowhead woodworking
-0x9088 flechadeguerra woodworking
-0x9089 flechadehelce woodworking
-0x908a flechadefigin woodworking
-0x908b flechadesinque woodworking
-0x908c flechadeargonil woodworking
-0x908d flechademithril woodworking
-0x908e flechadeprata woodworking
-# 0x908f - 0x9097 unused
-0x9098 virotedeguerra woodworking
-0x9099 virotedehelce woodworking
-0x909a virotedefigin woodworking
-0x909b virotedesinque woodworking
-0x909c virotedeargonil woodworking
-0x909d virotedemithril woodworking
-0x909e virotedeprata woodworking
-# 0x909f - 0x9669 unused
+# 0x8853 - 0x9669 unused
 0x966a VendorContainer containers
 # 0x966b unused
 0x966c staffpack containers
@@ -1930,7 +1754,12 @@
 0x981c TrainingAdvDummy2 training
 # 0x981d - 0x9820 unused
 0x9821 TrainingAdvDummy training
-# 0x9822 - 0x9922 unused
+# 0x9822 - 0x9899 unused
+0x989a fogomonterpart magery
+0x989b geloonterpart magery
+0x989c eletricomonterpart magery
+0x989d venenomonterpart magery
+# 0x989e - 0x9922 unused
 0x9923 papelpautado musicianship
 0x9924 partitura musicianship
 0x9925 partituramagica musicianship
@@ -1947,15 +1776,15 @@
 # 0x995b unused
 0x995c leverpad tn
 # 0x995d - 0x996f unused
-0x9970 FiledeRobalo cooking
-0x9971 FiledeSardinha cooking
-0x9972 FiledeLambari cooking
-0x9973 FiledeAtum cooking
-0x9974 FiledePerca cooking
-0x9975 FiledeAnchova cooking
-0x9976 FiledeManjuba cooking
-0x9977 FiledePeixeGalo cooking
-0x9978 FiledeDourado cooking
+0x9970 filedeRobalo cooking
+0x9971 filedeSardinha cooking
+0x9972 filedeLambari cooking
+0x9973 filedeAtum cooking
+0x9974 filedePerca cooking
+0x9975 filedeAnchova cooking
+0x9976 filedeManjuba cooking
+0x9977 filedePeixeGalo cooking
+0x9978 filedeDourado cooking
 # 0x9979 - 0x997f unused
 0x9980 minhoca //Isca pra Manjuba survival
 0x9981 iscaatum survival
@@ -1969,11 +1798,7 @@
 0x9989 FishingPoleIron survival
 # 0x998a - 0x9a38 unused
 0x9a39 sewingmachine womenswork
-# 0x9a3a - 0x9c1b unused
-0x9c1c woodmachine woodworking
-# 0x9c1d - 0x9c2f unused
-0x9c30 fletchingmachine woodworking
-# 0x9c31 - 0x9e3f unused
+# 0x9a3a - 0x9e3f unused
 0x9e40 soschest containers
 # 0x9e41 - 0xa1ff unused
 0xa200 arenastone arena
@@ -2017,18 +1842,7 @@
 0xaffd TintaCinzaEscuro alchemy
 0xaffe TintaVerdeEscuro alchemy
 0xafff TintaVermelhoEscuro alchemy
-# 0xb000 - 0xb007 unused
-0xb008 tear woodworking
-0xb009 camadecasal woodworking
-0xb00a tinadeagua woodworking
-0xb00b moinho woodworking
-# 0xb00c - 0xb00d unused
-0xb00e carrinhodemao woodworking
-# 0xb00f - 0xb010 unused
-0xb011 cama woodworking
-# 0xb012 - 0xb019 unused
-0xb01a Elvenbed woodworking
-# 0xb01b - 0xba62 unused
+# 0xb000 - 0xba62 unused
 0xba63 moedacobre fls_core
 0xba64 moedaprata fls_core
 # 0xba65 - 0xbd10 unused
@@ -2133,7 +1947,7 @@
 0xdce6 pocaovisaonoturna alchemy
 # 0xdce7 - 0xdd50 unused
 0xdd51 ChickenSoup food
-0xdd52 vaniriapie food
+0xdd52 valapie food
 # 0xdd53 - 0xe0e1 unused
 0xe0e2 ambiencerune ambience
 # 0xe0e3 - 0xe806 unused

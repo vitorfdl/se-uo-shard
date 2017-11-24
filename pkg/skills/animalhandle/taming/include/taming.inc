@@ -88,7 +88,7 @@ function AddPet(who, serial)
 
 	var pet := SystemFindObjectBySerial(serial);
 	who.followers := who.followers + GetPetCost(pet);
-	SetPetProperties(pet);
+	pet.InitPetProperties();
 endfunction
 
 //numero maximo de pets que alguem pode ter
@@ -171,7 +171,6 @@ function destama(serial)
 	EraseObjproperty(me, "script");
 	EraseObjProperty(me, "happiness");
 	RestartScript(me);
-	ErasePetMods(me);
 endfunction
 
 // function isTamable(mob)

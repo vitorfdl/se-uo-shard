@@ -7,7 +7,8 @@ include ":attributes:advanceCheck";
 include ":gumps:gumps";
 
 program oafeatures_sendpacket(who)
-
+   var targ := Target(who);
+   Print(targ.my_template() );
 
 	// var gump := GFCreateGump();
 	

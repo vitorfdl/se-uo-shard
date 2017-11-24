@@ -1,7 +1,7 @@
 use os;
 
 function toJSON(item)
-   item = setTypes(item);
+   item := setTypes(item);
 
    return item;
 endfunction
@@ -11,14 +11,14 @@ function ArraytoJSON(elem)
       return elem;
    endif
 
-   var json = "[";
-   foreach item of elem
-      item = setTypes(item);
-      json = "{}, {}".format(json, item);
+   var json := "[";
+   foreach item in elem
+      item := setTypes(item);
+      json := "{}, {}".format(json, item);
       sleepms(2);
    endforeach
-   json["[,"] = "[";
-   json += "]"
+   json["[,"] := "[";
+   json += "]";
 
    return json;
 endfunction
@@ -28,26 +28,26 @@ function StructToJSON(elem)
       return elem;
    endif
 
-   var json = "{";
-   foreach item of (elem.Keys())
-      var value = setTypes(elem[item]);
-      json = "{}, \"{}\": {}".format(json, item, value);
+   var json := "{";
+   foreach item in (elem.Keys())
+      var value := setTypes(elem[item]);
+      json := "{}, \"{}\": {}".format(json, item, value);
       sleepms(2);
    endforeach
 
-   json["{,"] = "{";
-   json += "}"
+   json["{,"] := "{";
+   json += "}";
 
    return json;
 endfunction
 
 function setTypes(item)
-   if (typeof(elem) == "Array")
-      item = ArrayToJson(item);
-   elseif (typeof(elem) == "Struct")
-      item = StructToJson(item);
-   elseif (typeof(elem) == "String")
-      item = "\"{}\"".format(item);
+   if (typeof(item) == "Array")
+      item := ArrayToJson(item);
+   elseif (typeof(item) == "Struct")
+      item := StructToJson(item);
+   elseif (typeof(item) == "String")
+      item := "\"{}\"".format(item);
    endif
    
    // just return the item if its integer

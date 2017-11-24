@@ -1,9 +1,10 @@
 use uo;
 use os;
 
+include "include/say";
+
 program targetHeal(info)
    var mobile := info[1];
-   var spellinfo := info[2];
    var targ := info[3];
    info := 0;
 

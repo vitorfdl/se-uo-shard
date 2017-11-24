@@ -6,6 +6,7 @@ use uo;
 use os;
 use util;
 
+include ":attributes:attributes";
 include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
@@ -17,16 +18,16 @@ function StartScript(mobile, attacker := 0, level := 0)
 	var time := 5;
 
 	while(1)
-		PrintTextAbovePrivate(who, "Voce esta com uma grave hemorragia!", who);
-		foreach mobile in ( ListMobilesInLineOfSight(who, 8) )
-			if( mobile.ip && mobile != who )
-				PrintTextAbovePrivate(who, "* - " + who.name + " esta sangrando muito! - *", mobile);
+		PrintTextAbovePrivate(mobile, "Voce esta com uma grave hemorragia!", mobile);
+		foreach mobile in ( ListMobilesInLineOfSight(mobile, 8) )
+			if( mobile.ip && mobile != mobile )
+				PrintTextAbovePrivate(mobile, "* - " + mobile.name + " esta sangrando muito! - *", mobile);
 			endif
 			sleepms(2);
 		endforeach		
 		
-		ApplyRawDamage(who, dmg);
-		MakeBleed(who);
+		ApplyRawDamage(mobile, dmg);
+		MakeBleed(mobile);
 
 		Set_Critical(1);
 		//var curr := CInt(AP_GetVital(who, "Stamina"));
@@ -44,12 +45,10 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-
    return 1;
 endfunction
 
 function LogOffScript(mobile)
-
    return 1;
 endfunction
 
@@ -66,5 +65,5 @@ program TimedScriptInit(params)
       endif
    endif
 
-   return StartScript(mobile, type, level)
+   return StartScript(mobile, type, level);
 endprogram

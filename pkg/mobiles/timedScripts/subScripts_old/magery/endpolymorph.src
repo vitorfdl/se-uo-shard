@@ -1,9 +1,0 @@
-use uo;
-
-program endPolymorph(params)
-
-	var who := params[1];
-	
-	who.graphic := GetObjProperty(who, "originalgraphic");
-
-endprogram

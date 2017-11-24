@@ -40,7 +40,7 @@ program skill_animal_lore( who )
                 return 0;
         endif
 
-	var category := lower(getnpccategory( creature.template ));
+	var category := lower(getnpccategory( creature.my_template() ));
 	
 	if ( (category == "animal") || ( category == "evilanimal") || ( category == "giantanimal") || ( category == "mount") || ( category == "snow") )
 	else

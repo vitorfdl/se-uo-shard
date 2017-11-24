@@ -105,7 +105,7 @@ function KataWakeUp(ghost, corpse)
 	if (GetObjProperty(ghost, "corda"))
 		PrintText(ghost, "*amarrado*");
 		SendSysMessage(ghost, "Para tentar se soltar utilize o comando .soltar");
-		var item = GetEquipmentByLayer(ghost, LAYER_HAND1);
+		var item := GetEquipmentByLayer(ghost, LAYER_HAND1);
 		if (item)
 			MoveItemToContainer(item, ghost.backpack);
 		endif

@@ -4,7 +4,7 @@ include "include/say";
 include ":merchants:pcconversation";
 
 exported function CanDie(mobile)
-	if (mobile.template == ":merchants:conversation")
+	if (mobile.my_template()  == ":merchants:conversation")
 		var pcdata := GetConversationDataFile();
 		pcdata.DeleteElement(mobile.serial);
 	endif

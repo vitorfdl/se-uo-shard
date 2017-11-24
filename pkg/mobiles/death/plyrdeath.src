@@ -14,7 +14,6 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":death:death";
 include ":mounts:mounts";
-include ":death:settings";
 include ":combat:hitscripts";
 include "include/say";
 include ":commands:possess";

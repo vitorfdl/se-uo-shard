@@ -379,7 +379,7 @@ function LowerDuration(mobile, byref event, byref timer_list, byref cooldowns, b
 	if (event.timerType == EVENT_TYPE_COOLDOWN)
 		var timer_info := cooldowns[event.name];
 
-		SendSysMessageEx(mobile, "Voce pode usar " + event.name + " novamente.", SSM_INFO);
+		// SendSysMessageEx(mobile, "Voce pode usar " + event.name + " novamente.", SSM_INFO);
 
 		if ( event.amount == -1 )
 			var e := cooldowns.Erase(event.name);

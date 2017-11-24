@@ -3,6 +3,7 @@ use datafile;
 
 include ":gumps:yesno";
 include ":gumps:requestgump";
+include ":timedscripts:timedScripts";
 include "include/say";
 include "include/objtype";
 
@@ -32,22 +33,22 @@ endfunction
 
 function AddRecipe(who, objtype)
    var recipes := GetObjProperty(who, "recipes");
-   if (HaveRecipe(objtype))
+   if (HaveRecipe(who, objtype))
       return 0;
    endif
 
    recipes.append(objtype);
-   SetObjProperty(who, recipes);
+   SetObjProperty(who, "recipes", recipes);
    return 1;
 endfunction
 
-function CheckCharges(user_serial, charges_to_learn)
+function CheckCharges(who, recipe, charges_to_learn)
    var charge_list := GetObjProperty(recipe, "learning");
-   if (!learning)
+   if (!charge_list)
       charge_list := array{};
    endif
 
-   var already_learning := FindInArray(charge_list, struct{ person := user_serial });
+   var already_learning := FindInArray(charge_list, struct{ person := who.serial });
    if (already_learning)
       var charges := charge_list[already_learning].charges;
       if (charges+1 >= charges_to_learn)
@@ -60,7 +61,7 @@ function CheckCharges(user_serial, charges_to_learn)
       return 0;
    endif
 
-   var me_learning := struct{ "person" := user_serial, "charges" := 1};
+   var me_learning := struct{ "person" := who.serial, "charges" := 1};
    charge_list.append(me_learning);
    SetObjProperty(recipe, "learning", charge_list);
    TS_StartCooldown(who, "learning_recipe", 60);
@@ -69,10 +70,10 @@ endfunction
 
 function LearnRecipe(who, recipe)
    var recipe_obj := GetObjProperty(recipe, "objtype");
-   if (recipe.objtype == 0xef1f)
+   if (hex(recipe.objtype) == error)
       SendSysMessageEx(who, "Esta receita deve ser aprendida de outra forma.", SSM_INFO);
       return 0;
-   elseif (HaveRecipe(recipe_obj))
+   elseif (HaveRecipe(who, recipe_obj))
       SendSysMessageEx(who, "Ja possui essa receita.", SSM_INFO);
       return 0;
    elseif (TS_GetCooldown(who, "learning_recipe"))
@@ -87,22 +88,22 @@ function LearnRecipe(who, recipe)
    var type             := GetConfigString(obj, "Type");
    var charges_to_learn := RecipeCharges(difficulty);
 
-   if (CheckCharges(who.serial, charges_to_learn))
+   if (CheckCharges(who, recipe, charges_to_learn))
       if (type == "group")
-         var recipes = GetConfigStringArray(obj, "Recipes");
+         var recipes := GetConfigStringArray(obj, "Recipes");
          foreach obj_type in recipes
             AddRecipe(who, obj_type);
             sleepms(2);
          endforeach
       else
-         AddRecipe(who, obj_type);
+         AddRecipe(who, recipe_obj);
       endif
 
-      SendSysMessageEx(who, "A receita foi adicionada a sua lista.", SSM_INFO);
+      SendSysMessageEx(who, "A receita foi aprendida.", SSM_INFO);
       DestroyItem(recipe);
       return 1;
    endif
 
-   SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para dominar ela.", SSM_INFO);
+   SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
    SendSysMessageEx(who, "Sera possivel ler uma receita novamente em 60 minutos.", SSM_INFO);
 endfunction

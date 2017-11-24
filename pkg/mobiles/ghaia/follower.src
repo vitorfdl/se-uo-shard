@@ -10,6 +10,7 @@ include ":mounts:mounts";
 include ":taming:taming";
 include ":tn:cooldown";
 include ":ghaia:generic";
+include ":ghaia:objective";
 
 set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
@@ -20,7 +21,12 @@ var following, fighting, guarding, patrolling;
 var wait_time := 10;
 var tame_difficulty := 0;
 
-var foods := ReadConfigFile(":cooking:itemdesc") + ReadConfigFile(":cooking:itemdesc");
+//Custom events
+const FOLLOW_CMD     := 0xA001;
+const ATTACK_CMD     := 0xA002;
+const NEW_MASTER_CMD := 0xA003;
+const GUARD_CMD      := 0xA004;
+const GO_LOC_CMD     := 0xA008;
 
 program NPCMonitor()
    EnablePetMainEvents();
@@ -34,11 +40,14 @@ program NPCMonitor()
       if (GetObjProperty(me, "objloc") != error)
          DoObjective();
       endif
-      
-      Fight();
-      Follow();
-      Guard();
 
+      if ( wait_time < 1 )
+         sleepms(10);
+      endif
+
+      Fight();
+      PetFollow();
+      PetGuard();
       var ev := Wait_For_Event(wait_time);
       case(ev.type)
          SYSEVENT_ENGAGED:	
@@ -59,7 +68,7 @@ program NPCMonitor()
          SYSEVENT_SPEECH:
             ResolveSpeech(ev);
          SYSEVENT_DOUBLECLICKED:
-            if ( ev.source != owner )
+            if ( ev.source == me.master || ev.source.cmdlevel >= 3 )
                if( (Distance(ev.source, me) > 1) )
                   ProcessDoubleClick(ev);
                elseif ( me.graphic in pack_animals )
@@ -76,16 +85,34 @@ program NPCMonitor()
             endif
          SYSEVENT_ITEM_GIVEN:
             TakeItem(ev);
+
+         //Custom events
+         FOLLOW_CMD:
+            PetFollow(ev.targ);
+         ATTACK_CMD:
+            Fight(ev.targ);
+         GUARD_CMD:
+            PetGuard(ev.targ);
       endcase
 
-      wait_time := 10;
+      wait_time := 5;
       sleepms(2);
    endwhile
 endprogram
 
-function Fight(opponent, force := 1)
+function OpenPack(ev)
+    if ( ev.source != me.master )
+        return;
+    elseif ( Distance(me, ev.source) > 2 )
+        return;
+    else
+        SendOpenSpecialContainer(me.master, me.backpack);
+    endif
+endfunction
+
+function Fight(opponent := 0, force := 1)
    if (opponent)
-      if ( opponent == me || opponent == ev.source || !opponent.IsA(POLCLASS_MOBILE) )
+      if ( opponent == me || opponent == fighting || !opponent.IsA(POLCLASS_MOBILE) )
          return;
       endif
 
@@ -103,7 +130,7 @@ function Fight(opponent, force := 1)
 
    if (fighting.concealed || fighting.hidden || fighting.dead || Distance(me, fighting) > 15)
       if (personality == "Agressivo" && randomInt(4) == 1)
-         var mobs = ListMobilesInLineOfSight(me, 8);
+         var mobs := ListMobilesInLineOfSight(me, 8);
          if (mobs[1])
             Say("*enraivecido*");
             fighting := mobs.randomentry();
@@ -118,59 +145,59 @@ function Fight(opponent, force := 1)
    
    var dist := CoordinateDistance(me.x, me.y, fighting.x, fighting.y);
    if (dist > 1)
-      CalcPathAndMove(me, opponent, 275 - me.run_speed);
+      CalcPathAndMove(me, fighting, 275 - me.run_speed);
    endif
 
-   wait_time := 1;
+   wait_time := 0;
 endfunction
 
-function Follow(target)
-   if (target)
-      if ( opponent == me || opponent == ev.source || !opponent.IsA(POLCLASS_MOBILE) )
+function PetFollow(character := 0)
+   if (character)
+      if ( character == me || character == fighting || !character.IsA(POLCLASS_MOBILE) )
          return;
       endif
       patrolling := 0;
       guarding := 0;
-      following := target;
+      following := character;
       return;
-   elseif (fighting || patrolling)
+   elseif (fighting)
       return;
    endif
 
-   var dist := Distance(me, follow);
+   var dist := Distance(me, following);
 
-   if( dist <= 1 )
-      wait_time := 10;
+   if( dist <= 2 )
+      wait_time := 1;
    elseif( dist > 25 )
-      my_following := 0;
+      following := 0;
       wait_time := 120;
    elseif ( dist > 4 )
-      RunToward(my_following);
+      RunToward(following);
       wait_time := 0;
    else
-      WalkToward(my_following);
+      WalkToward(following);
       wait_time := 0;
    endif
 endfunction
 
-function Guard(target)
-   if (target)
-      if ( opponent == me || opponent == ev.source || !opponent.IsA(POLCLASS_MOBILE) )
+function PetGuard(character := 0)
+   if (character)
+      if ( character == me || character == guarding || !character.IsA(POLCLASS_MOBILE) )
          return;
       endif
-      guarding   := target;
-      following  := target;
+      guarding   := character;
+      following  := character;
       patrolling := 0;
       return;
-   elseif (!guarding)
+   elseif (!guarding || fighting)
       return;
    endif
 
    if (Distance(me, guarding) > 15)
       guarding := 0;
       return;
-   elseif ( RandomInt(20) == 1 )
-      Say("*guardando "+guarding.name+"*");
+   elseif ( RandomInt(40) == 1 )
+      Say("*protegendo "+guarding.name+"*");
    endif
 
    if (!fighting)
@@ -182,15 +209,6 @@ function Guard(target)
 endfunction
 
 function PetGoTo(destiny, move_type)
-   fighting := 0;
-   following := 0;
-   patrolling := 0;
-
-   if( me.script == "immobile" || me.script == "immobilespell")
-      sleep(2);
-      return;
-   endif
-
    var flags := FP_IGNORE_MOBILES;
    if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
       flags := flags| FP_IGNORE_DOORS;
@@ -203,7 +221,7 @@ function PetGoTo(destiny, move_type)
       else
          RunTowardLocation( coord.x, coord.y ); //anda na direcao
       endif
-      Opendoors(me);
+      OpenDoors(me);
       sleepms(sleepdelay);
    endforeach
 endfunction
@@ -247,13 +265,13 @@ function ProcessDoubleClick(ev)
             PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
             return;
          endif
-         Guard(targ.mobile);
+         PetGuard(targ.mobile);
       elseif (input ==  20)
          if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
             PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
             return;
          endif
-         Follow(targ.mobile);
+         PetFollow(targ.mobile);
       elseif (input == 30)
          if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
             PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
@@ -266,7 +284,7 @@ function ProcessDoubleClick(ev)
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
          return;
       endif
-      PetGoTo(targ);
+      PetGoTo(targ, "run");
    endif
 endfunction
 
@@ -287,9 +305,9 @@ function DisablePetMainEvents()
 endfunction
 
 function Setup()
-   var owner := SystemFindObjectBySerial(me.master, SYSFIND_SEARCH_OFFLINE_MOBILES);
+   var owner := me.master;
    var owner_property := GetObjProperty(me, "owner");
-   
+
    if ( !owner )
       UnTame();
    elseif (owner_property != me.master)
@@ -306,8 +324,8 @@ function Setup()
 
    personality     := me.GetPetProperties().personality;
    
-   var npc_cfg     := ReadConfigFile(":*:npcdesc")
-   tame_difficulty := cint(npc_cfg[me.template].TameDifficulty);
+   var npc_cfg     := ReadConfigFile(":*:npcdesc");
+   tame_difficulty := cint(npc_cfg[me.my_template()].TameDifficulty);
 
    me.facing := me.facing+1;
    TurnToward(me.master);
@@ -365,6 +383,22 @@ function UnTame()
    RestartScript(me);
 endfunction
 
+function AllCommand(ev)
+   var event := struct;
+   event.+type := ev.type;
+   event.+source := me;
+   event.+targ := ev.targ;
+
+   foreach mobile in(ListMobilesNearLocation( me.x, me.y, me.z, 8, me.realm))
+      if ( (mobile.master).serial == (me.master).serial )
+         SendEvent(mobile, event);
+      endif
+
+      sleepms(2);
+   endforeach
+endfunction
+
+
 function ResolveSpeech(ev)
    var owner := me.master;
    var text := lower(ev.text);
@@ -383,6 +417,8 @@ function ResolveSpeech(ev)
       targ := ev.source;
    endif
 
+   var allevent;
+
    /// Attack command
    if (text["mate"] || text["ataque"])
       if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
@@ -391,6 +427,7 @@ function ResolveSpeech(ev)
       endif
       targ := target(ev.source, TGTOPT_HARMFUL + TGTOPT_CHECK_LOS);
       Fight(targ);
+      allevent := struct{ targ := targ, type := ATTACK_CMD };
 
    /// Guard Command
    elseif(text["guarde"] || text["proteja"])
@@ -401,7 +438,8 @@ function ResolveSpeech(ev)
       if (!targ)
          targ := target(ev.source);
       endif
-      Guard(targ);
+      PetGuard(targ);
+      allevent := struct{ targ := targ, type := GUARD_CMD };
 
    /// Stop Command
    elseif (text["pare"])
@@ -423,7 +461,8 @@ function ResolveSpeech(ev)
       if (!targ)
          targ := target(ev.source);
       endif
-      Follow(targ);
+      PetFollow(targ);
+      allevent := struct{ targ := targ, type := FOLLOW_CMD };
 
    /// New Master Command
    elseif (text["novo dono"])
@@ -433,7 +472,7 @@ function ResolveSpeech(ev)
       endif
 
       targ := target(ev.source);
-      // var cfg := ReadConfigFile(":ghaia:npcdesc")[me.template];
+      // var cfg := ReadConfigFile(":ghaia:npcdesc")[me.my_template()];
 
       // if (me.alignment == "evil")
          // SendSysMessage(owner, "A criatura nao aceita o alvo como novo dono.");
@@ -458,6 +497,10 @@ function ResolveSpeech(ev)
       
       UnTame();
    endif
+
+   if (text["todos"] && allevent)
+      AllCommand(allevent);
+   endif
 endfunction
 
 function TakeItem(ev)
@@ -471,12 +514,12 @@ function TakeItem(ev)
       if ((EnumerateItemsInContainer(ev.item)).size() > 0)
          SendSysMessage(ev.source, "Voce precisa esvaziar a mochila antes de coloca-la na montaria.");
          return;
-      elseif ( me.template == "Horse3" )
+      elseif ( me.my_template() == "Horse3" )
          SetObjProperty(me, "beforepack", me.graphic);
          me.graphic := 291;
          DestroyItem(ev.item);
          PrintText(ev.source,"*prende uma mochila no cavalo*");
-      elseif ( me.template == "Llama" )
+      elseif ( me.my_template() == "Llama" )
          SetObjProperty(me, "beforepack", me.graphic);
          me.graphic := 292;
          DestroyItem(ev.item);
@@ -490,4 +533,18 @@ function TakeItem(ev)
    else
       SendSysMessage(ev.source, "Nao pode dar esse item!");
    endif    
+endfunction
+
+function CanFight(me, mob)
+   var hostiles := ListHostiles( me.owner, 8, LH_FLAG_LOS);
+
+   if (guarding)
+      hostiles += ListHostiles( guarding, 8, LH_FLAG_LOS);
+   endif
+
+   if (mob in hostiles)
+      return 1;
+   endif
+
+   return 0;
 endfunction

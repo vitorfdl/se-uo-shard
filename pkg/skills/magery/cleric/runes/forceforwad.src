@@ -2,16 +2,16 @@ use uo;
 use os;
 
 include "include/utils";
-include "include/sysevents";
+include "include/sysEvent";
 
 program ForceForward(mobile)
-   if (!mobile.template || !mobile.template["moriquendi"])
+   if (!mobile.my_template() || !mobile.my_template()["moriquendi"])
       return;
    endif
 
    PushBack(mobile, 2, 300, 1);
    var ev := struct{
-		ev.+type := EVID_PEACEMADE;
+		type := EVID_PEACEMADE
    };
    SendEvent(mobile, ev);
 endprogram

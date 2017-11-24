@@ -37,8 +37,8 @@ function PlayCustomSound(who, number)
    sounds[32] := array{"*Gritando*", 0x338, 0x41A};
    sounds[33] := array{"**", 0x339, 0x44B};
 
-   var sound_array = sounds[number];
-   if (!sound_array) return;
+   var sound_array := sounds[number];
+   if (!sound_array) return; endif
    
    who.hidden := 0;
    if (CheckGender(who) == 1)

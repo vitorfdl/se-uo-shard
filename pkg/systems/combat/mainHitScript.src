@@ -274,10 +274,6 @@ endfunction
 
 
 function PoisonChecks(attacker, defender, weapon)
-	if ( critical < 1 )
-		return 0;
-	endif
-
 	if (GetObjProperty(weapon, "ammo"))
 		var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
 		var ammo := GetObjProperty(weapon, "ammo");
@@ -313,7 +309,7 @@ function PoisonChecks(attacker, defender, weapon)
 		else //se ainda tiver atualiza na arma
 			SetObjProperty(weapon, "poisonInfo", poisonInfo);
 		endif
-	else
+	endif
 	var npcelem      := NPC_GetNPCConfig(attacker.npctemplate);
 	var poisonchance := GetConfigInt(npcelem, "Poisoning");		
 	if (poisonChance > 0)
@@ -330,13 +326,13 @@ function PoisonChecks(attacker, defender, weapon)
 		endif
 
 		if (!poisonInfo.time)
-			poisonInfo.time := level*5;
+			poisonInfo.time := poisonInfo.level*5;
 		endif
 	endif
 
 	if (checkImmunity(defender, DMG_POISON))
 		return;
-	elseif(rollResistDice(defender, CONSTITUION) > poisonInfo.difficulty)
+	elseif(rollResistDice(defender, CONSTITUTION) > poisonInfo.difficulty)
 		return;
 	endif
 

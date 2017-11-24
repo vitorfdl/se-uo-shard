@@ -65,7 +65,6 @@ program do_poisoning(who)
 		0xbf04: level := 3; difficulty := 16;  poisonType := "defaultPoison";
 		0xdc04: level := 2; difficulty := 12;  poisonType := "defaultPoison";
 		0xbf05: level := 4; difficulty := 16;  poisonType := "defaultPoison";
-		default: difficulty := 0; poisonType := "invalid";
 	endcase
 
 	var canBePoisoned := 0;

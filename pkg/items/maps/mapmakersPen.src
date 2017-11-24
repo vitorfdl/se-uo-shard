@@ -7,6 +7,7 @@ use os;
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
 include ":crafting:toolWear";
+include ":gumps:requestgump";
 include ":itemutils:canAccess";
 include "include/say";
 include ":crafting:fls_crafting";
@@ -130,7 +131,7 @@ program use_MapmakersPen(who, tool)
 		endif
 
 		SetObjProperty(theitem, "objtype", rune_id);
-		SendSysMessageEx(who, "Voce transcreveu a runa para o papel.", SMM_INFO);
+		SendSysMessageEx(who, "Voce transcreveu a runa para o papel.", SSM_INFO);
 		return ;
 	endif
 	SendSysMessageEx(who, "Voce nao pode fazer nada com isto.", SSM_FAIL);

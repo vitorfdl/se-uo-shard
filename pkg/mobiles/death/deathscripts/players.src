@@ -8,7 +8,6 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":death:death";
 include ":mounts:mounts";
-include ":death:settings";
 include ":attributes:attributes";
 include "include/say";
 include ":tn:cooldown";
@@ -76,7 +75,9 @@ program death(params)
 			ghost.ReduceLifeTime(2, "day");
 
 			if (randomint(11) <= 5 && AP_GetVital(ghost, "DP") >= 10)
-				if (AP_GetVital(ghost, "DP") <= 20) ghost.ReduceLifeTime(2, "day"); // + 2 days
+				if (AP_GetVital(ghost, "DP") <= 20) 
+					ghost.ReduceLifeTime(2, "day"); // + 2 days
+				endif 
 				AP_ConsumeVital(ghost, "DP", 10);
 				SendSystemReport(ghost, "Voce sofreu uma fratura!");
 			endif
@@ -91,6 +92,7 @@ program death(params)
 			SetObjProperty(corpse, "deathtimer", polcore().systime);
 			sleep(5);
 			return 1;
+		endif
 	endif
 
 	SendSystemReport(ghost, "Voce desmaiou.");
@@ -111,6 +113,7 @@ program death(params)
 		tempo := 0;
 	endif	
 
+	var i;
 	while (tempo > 1)
 		var deathprop := DeathProperties(ghost, corpse, tempo, i);
 		if (deathprop == 1)
@@ -119,12 +122,12 @@ program death(params)
 			return 1;
 		elseif ( GetObjProperty(corpse, "curado") )
 			EraseObjProperty(corpse, "prolongardesmaio");
-			sleep(2);
 			i := "curado";
+			sleep(2);
 			break;
 		endif
 
-		if (tempo % 60 == 0 && tempo !== 0)
+		if (tempo % 60 == 0 && tempo != 0)
 			SendSystemReport(ghost, "Voce acordara em "+(tempo/10)+" minuto(s).");
 		elseif (tempo <= 10)
 			SendSystemReport(ghost, "Voce acordara em "+(tempo)+" segundo(s).");
@@ -162,7 +165,7 @@ function PactoSepulturaCheck(ghost, corpse)
 	return pacto;
 endfunction
 
-function DeathProperties(ghost, corpse, byref tempo, byref i)
+function DeathProperties(ghost, corpse, byref tempo, i)
 	if ( GetObjProperty(corpse, "curado") )
 		SendSysMessage(ghost, "Voce foi curado e acordara em 2 segundos!");
 		EraseObjProperty(corpse, "prolongardesmaio");

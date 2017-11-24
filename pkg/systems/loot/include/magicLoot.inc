@@ -55,10 +55,8 @@ endfunction
 function SetMagicTemplateBonus(item, parsed)
 
 	var cfg := ReadConfigFile(":loot:config/templates");
-	var elem := FindConfigElem(cfg, parsed.template);
-	print("cfg: "+ cfg);
-print("elem: "+ elem);
-	printtextabove(item, "elem " + elem + " cfg " + cfg + " elemname " + parsed.template);
+	var elem := FindConfigElem(cfg, parsed.template());
+	printtextabove(item, "elem " + elem + " cfg " + cfg + " elemname " + parsed.template());
 
 	if (!elem)
 		return elem;

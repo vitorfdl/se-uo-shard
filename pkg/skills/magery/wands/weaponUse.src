@@ -13,7 +13,7 @@ program useWeapon(who, weapon)
       who          := who[1];
    endif
 
-   var weapon_owner = GetObjProperty(weapon, "owner");
+   var weapon_owner := GetObjProperty(weapon, "owner");
    if (who.cmdlevel > 1 || !HaveSkill(who, "Arcanismo"))
 		SendSysMessageEx("Voce nao tem conhecimento arcano.", SSM_FAIL);
 		return;

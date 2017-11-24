@@ -9,7 +9,6 @@ include "include/say";
 include "include/arrays";
 
 function CanInsertScroll(book, scroll)
-	var booktype := GetBookType(book);
 	var cfg := ReadConfigFile(":magery:recipes");
 	if ( !cfg[scroll.objtype] )
 		return 0;

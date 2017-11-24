@@ -2,9 +2,6 @@
 use uo;
 
 function DoObjective();
-  
-  lookAround();
-  
 	var dest := GetObjProperty(me, "objloc");
 	var path;
   if (dest == error)

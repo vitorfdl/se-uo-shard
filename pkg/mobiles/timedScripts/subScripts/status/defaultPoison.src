@@ -5,10 +5,13 @@
 use uo;
 use os;
 use util;
+use math;
 
 include "include/client";
+include "include/damage";
 include ":timedscripts:timedScripts";
 include "include/say";
+include ":attributes:vitals";
 
 function StartScript(mobile, attacker := 0, level := 0)
 	if ( !level )
@@ -29,23 +32,23 @@ function StartScript(mobile, attacker := 0, level := 0)
    var i;
 	var dmg := 0;
    for (i := 0; i < loops; i +=1)
-      dmg := Cint(AP_GetVital(who, "Hits"))*rand;
+      dmg := Cint(AP_GetVital(mobile, "Hits"))*rand;
       if (dmg < min_dmg)
-         dmg = min_dmg;
+         dmg := min_dmg;
       elseif (dmg > max_dmg)
-         dmg = max_dmg;
+         dmg := max_dmg;
       endif
 
-		damageFLS(who, cint(dmg), DMG_FORCED, attacker);
+		damageFLS(mobile, cint(dmg), DMG_FORCED, attacker);
 
-		if (who.dead)
+		if (mobile.dead)
 			break;
 		endif
 
       sleep(time);
    endfor
 	
-	TS_LowerDuration(who, "defaultPoison", -1);
+	TS_LowerDuration(mobile, "defaultPoison", -1);
    return 1;
 endfunction
 
@@ -70,5 +73,5 @@ program TimedScriptInit(params)
       endif
    endif
 
-   return StartScript(mobile, type, level)
+   return StartScript(mobile, type, level);
 endprogram

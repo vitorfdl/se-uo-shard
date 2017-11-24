@@ -26,7 +26,7 @@ program UsePlough(who, plough)
 			return;
 		elseif ( CoordinateDistance(plough.x, plough.y, targ.x, targ.y) > 4 )
 			SendSysMessage(who, "Muito longe da ferramenta.");
-		elseif ( !repeatable && Distance(me.x, me.y, targ.x, targ.y) > 1)
+		elseif ( !repeatable && Distance(who, targ) > 1)
 			SendSysMessage(who, "Muito voce esta muito longe.");
 			return;
 		elseif ( !CheckLOSAt(who, targ.x, targ.y, targ.z) )
@@ -69,7 +69,7 @@ endfunction
 
 function PloughDelay(who)
 	var i;
-	for (i:=1; o <= 3; i+=1)
+	for (i:=1; i <= 3; i+=1)
 		SendSysMessage(who, "Voce comecou a arar a terra...");
 		PlaySoundEffect(who, PLOUGH_SOUND);
 		sleep(2);

@@ -16,7 +16,7 @@ program ArmorHitScript(params)
 	
    var point := RandomPlace(defender, 2);
    var item := CreateItemAtLocation(point.x, point.y, defender.z, 0x0F80, 1, defender.realm);
-   PrintTextAboveUC(item, "*decepado do moriquendi*");
+   PrintText(item, "*decepado do moriquendi*");
    var power := cint(GetObjProperty(defender, "power")) - 1;
    if (power < 1)
       power := 1;

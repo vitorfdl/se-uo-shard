@@ -140,7 +140,7 @@ function SubtractMoney(container, qty := array{})
 	endforeach
 
 	var check := 1;
-	var change_back = array{0, 0, 0};
+	var change_back := array{0, 0, 0};
 	var i;
 	for (i := 1; i <= 3; i++)
 		if (qty[i] < money[i]) check := 0;

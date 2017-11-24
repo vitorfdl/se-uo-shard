@@ -27,7 +27,7 @@ program UseLeech(who, leech)
 
 	if ( test > 13 )
 		SendSysMessage(who, "Voce aplicou a sanguessuga em "+targ.name);
-		TS_CurePoison(targ, CInt(healing*2), "P", 1);
+		TS_CurePoison(targ, Floor(test/3), "P", 1);
 	else
 		SendSysMessage(who, "As sanguessugas parecem fazer pouco efeito em "+targ.name);
 	endif

@@ -113,10 +113,6 @@ program createchar(who)
 endprogram
 
 function construirgump(byref gump, back := 0) //monta a aparência da gump
-	if (who.cmdlevel < 2) 
-		GFClosable(gump, 0);
-	endif
-	
 	GFDisposable(gump, 0);
 	GFSetID(gump, GUMPID_CREATECHAR);//9260
 	GFGumpPic(gump, 50,80, 10421);
@@ -640,9 +636,9 @@ endfunction
 function SetProfessions(who, chardata);
 	var background := chardata.background;
 	var cfg        := ReadConfigFile(":charactercreation:config/antecedentes")[background];
-	var skills   := GetConfigStringArray(cfg, "Pericia")
-	var items    := GetConfigStringArray(cfg, "Item")
-	var recipess := GetConfigStringArray(cfg, "Recipe")
+	var skills   := GetConfigStringArray(cfg, "Pericia");
+	var items    := GetConfigStringArray(cfg, "Item");
+	var recipes := GetConfigStringArray(cfg, "Recipe");
 
 	foreach skill in skills
 		AP_SetTrueSkill(who, skill, 1);
@@ -657,7 +653,7 @@ function SetProfessions(who, chardata);
 
 	foreach recipe in recipes
 		var obj := CreateItemInBackpack(who, 0xef1f);
-		SetObjProperty(obj, "objtype", hex(recipe))
+		SetObjProperty(obj, "objtype", hex(recipe));
 		sleepms(2);
 	endforeach
 endfunction

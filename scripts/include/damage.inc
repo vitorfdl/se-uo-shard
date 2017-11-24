@@ -188,7 +188,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		var cleric_healing := GetObjProperty(source, "cleric_heal");
 		if (cleric_healing && dmg >= 2)
 			var targ := SystemFindObjectBySerial(cleric_healing);
-			if (source !== targ && Distance(source, targ) > 8)
+			if (source != targ && Distance(source, targ) > 8)
 				targ := source;
 				SetObjProperty(source, "cleric_heal", source.serial);
 			endif

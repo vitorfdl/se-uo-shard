@@ -8,10 +8,10 @@ include":merchants:crafthelp";
 include ":ghaia:ghaiaUtil";
 include ":gumps:gumps";
 
-var BUY_SPEECH := array{"artigo", "compra", "ver"};
-const GF_STDCOLOR    := 1890;
-const MOEDAS:= 47715;
-var item_cfg := ReadConfigFile(":*:itemdesc");
+const GF_STDCOLOR := 1890;
+const MOEDAS      := 47715;
+var BUY_SPEECH    := array{"artigo", "compra", "ver"};
+var item_cfg      := ReadConfigFile(":*:itemdesc");
 var npc;
 
 program HandleMerchant(params)
@@ -68,9 +68,9 @@ endfunction
 function SendItemView(player)
 	var items_sold := GetItemsSoldList(npc);	
 	foreach serial in items_sold
-		var cost_info      := GetItemSoldInfo(npc, serial);
+		var cost_info := GetItemSoldInfo(npc, serial);
 		var item      := cost_info[2];
-		cost_info := cost_info[1];
+		cost_info     := cost_info[1];
 		var donoDoItem := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
 		
 		//print("removendo item do vendor de char deletado.");
@@ -112,7 +112,7 @@ function Purchase(npc, player, input)
 		if ( purchased == error )
 			SendSysMessage(player, "Error - Unable to create item! ->"+purchased.errortext);
 		else
-			AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+			AI_Speak(npc, "Vou deixar sua compra aqui no chao.");
 		endif
 	endif
 endfunction

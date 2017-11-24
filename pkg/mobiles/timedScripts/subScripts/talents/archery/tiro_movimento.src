@@ -19,8 +19,6 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-	var mobile := params[1];
-
 	RevokePrivilege(mobile, "firewhilemoving");
 	mobile.disable("firewhilemoving");	
 	SendSystemReport(mobile, "*Tiro em movimento acabou*");
@@ -42,5 +40,5 @@ program TimedScriptInit(params)
       endif
    endif
 
-   return StartScript(mobile, type, level)
+   return StartScript(mobile, type, level);
 endprogram

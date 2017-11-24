@@ -2,7 +2,7 @@
  * PlayCraftWork(who, craftSound, loops:=0, delay:=2, craftAction:=0, fastcraft := 0)
  * GetRecipe(objtype, elem)
  * GetRecipeList(who, recipe_cfg, search := "")
- * MaterialSelection(who, craft_skill, type, chk)
+ * MaterialSelection(who, type, chk)
  * CraftItem(who, craft_skill, tool, objtype, amt, canFix, anvil, more := 0)
  * SubtractMaterial(who, targ_materials, amountMod)
  * AddItemDescription(who, item)
@@ -118,8 +118,17 @@ endfunction
 // to check the item for. This is used for example, for boards that
 // was originally colored logs. The colored log objtype is stored
 // in the cprop, and is used to get it's "ResourceList" reference.
-function MaterialSelection(who, craft_skill, type, chk)
- 	SendSysMessageEx(who, "Escolha o "+lower(type)+" que voce deseja trabalhar.");
+function MaterialSelection(who, type, chk)
+	var name;
+	if (type["monsterpart"])
+		name := "parte de criatura";
+	elseif (type["demonbone"])
+		name := "osso de demônio";
+	else
+		name := type;
+	endif
+
+ 	SendSysMessageEx(who, "Escolha o "+lower(name)+" que voce deseja trabalhar.");
 	var material := Target(who);
 
 	if(!material)
@@ -202,10 +211,10 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 	var targ_materials   := GetBagList(who, materials.Keys());
 	var choosed_material := 0;
 	var material_color   := 0;
-	var material_cprops = struct{};
+	var material_cprops := struct{};
 	foreach thing in (materials.keys())
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "ossodemonio"} || thing["monsterpart"])
-			var ret := MaterialSelection(who, craft_skill, thing, 0);
+			var ret := MaterialSelection(who, thing, 0);
 			if (!ret)
 				SendSysMessageEx(who, "Voce nao possui os materiais necessarios.", SSM_FAIL);
 				return OUT_OF_MATERIALS;
@@ -216,10 +225,10 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
             SendSysMessageEx(who, "Voce nao pode fabricar estas flechas com a ponta escolhida." , SSM_FAIL);
             return OUT_OF_MATERIALS;
 			elseif (thing == "ossodemonio")
-				material_cprops["magicslot"] = GetObjProperty(thing, "power")+2;
+				material_cprops["magicslot"] := GetObjProperty(thing, "power");
 			elseif (thing["monsterpart"])
-				material_cprops["element"] = GetObjProperty(thing, "element");
-				material_cprops["elementpower"] = GetObjProperty(thing, "elementpower");
+				material_cprops["element"] := GetObjProperty(thing, "element");
+				material_cprops["elementpower"] := GetObjProperty(thing, "elementpower");
          else
             targ_materials[ret[1].objtype] := materials[thing];
             if (thing == main_material)
@@ -322,7 +331,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 				SendSysMessageEx(who, "Voce nao tem espaco suficiente na sua mochila!", SSM_FAIL);
 				return theitems;
 			endif
-			// CheckToolWear(who, tool, craft_skill); TODO: Solve This
+			// CheckToolWear(who, tool, craft_skill);
 			theitem.movable := 1;
 
 			//passando a cor pra materiais coloridos que nao tem Id proprio (como madeira)

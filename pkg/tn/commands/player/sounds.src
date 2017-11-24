@@ -4,7 +4,7 @@ use uo;
 use util;
 use os;
 include ":fls_core:fls_characters";
-include ":tn:sounds";
+include "include/sounds";
 
 program sound(who, text)
    var layout := array(

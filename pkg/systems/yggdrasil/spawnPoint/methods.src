@@ -323,7 +323,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
       SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
       SetObjProperty(spawned, "spawnspot", config.spot_serial);
-      SetObjProperty(spawned, "spawngroup", config.);
+      SetObjProperty(spawned, "spawngroup", config.spawngroup);
       SetObjProperty(spawned, "range", config.range);
       success := 1;
 

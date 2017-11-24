@@ -1,3 +1,5 @@
+include "objective";
+
 function genericControl()
 	var ev;
 	var wanders;
@@ -30,7 +32,7 @@ function genericControl()
 			ev := os::wait_for_event(10);
 		endif
 		
-		resolveEvent(ev);
+		resolveEvent(ev, wanders);
 
 		lookAround();
 		sleepms(5);
@@ -38,7 +40,7 @@ function genericControl()
 endfunction
 
 
-function resolveEvent(ev)
+function resolveEvent(ev, byref wanders)
 	if (!ev) return; endif;
 
 	case(ev.type)

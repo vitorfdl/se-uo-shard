@@ -16,14 +16,16 @@ program usaPergaminho(who, scroll)
 	var input := SendGump(who, scroll);
 	if (input[0] == 99)
 		var recipes := ReadConfigFile(":*:recipes");
-		var objtype := Hex(RequestGump(who, "Item objtype:"));
+		var objtype := RequestGump(who, "Item objtype:");
 		if (!FindConfigElem(recipes, objtype))
-			SendSysMessageEx(who, "Receita para o objtype {} nao encontrado.", SSM_FAIL);
+			SendSysMessageEx(who, "Receita para o objtype {} nao encontrado.".format(objtype), SSM_FAIL);
 			return;
 		endif
 
 		SetObjProperty(scroll, "objtype", objtype);
 		Run_Script( ":crafting:recipes/oncreate", scroll );
+	elseif (input[0] == 12)
+		LearnRecipe(who, scroll);
 	endif
 endprogram
 
@@ -70,13 +72,15 @@ function SendGump(who, scroll)
 
 	if (!(objtype in GetObjProperty(who, "recipes")))
 		if (!FindConfigElem(book_recipes, objtype))
-			var charge_list    := GetObjProperty(recipe, "learning");
+			var charge_list    := GetObjProperty(scroll, "learning");
+			print("chargelist>"+charge_list);
 			var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
+			print(my_charges);
 			var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(remain_charges));
 			
 			GFTextLine(gump, 205, 182, 995, "Aprender");
-			GFAddButton(gump, 265, 18q6, 2224, 248, GF_CLOSE_BTN, 0);
+			GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
 		else
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
 		endif

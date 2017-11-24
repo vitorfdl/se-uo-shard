@@ -9,6 +9,7 @@ use util;
 include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
+include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
 
@@ -45,5 +46,5 @@ program TimedScriptInit(params)
       endif
    endif
 
-   return StartScript(mobile, type, level)
+   return StartScript(mobile, type, level);
 endprogram

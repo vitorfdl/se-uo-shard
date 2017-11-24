@@ -30,7 +30,7 @@ program skill_Stealing(mobile)
 	SendSysMessageEx(mobile, "Selecione que pessoa ou item voce deseja roubar.", SSM_REQUEST);
 	var targ := Target(mobile);
 	
-	var npc_category := lower(getnpccategory( targ.template ));
+	var npc_category := lower(getnpccategory( targ.my_template() ));
 	if (targ == mobile)
 		SendSysMessageEx(mobile, "Espertao voce hein..?", SSM_FAIL);
 		return 0;

@@ -37,5 +37,5 @@ program TimedScriptInit(params)
       endif
    endif
 
-   return StartScript(mobile, type, level)
+   return StartScript(mobile, type, level);
 endprogram

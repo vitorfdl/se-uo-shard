@@ -41,7 +41,7 @@ function GetFeatList(who)
 endfunction
 
 function HaveFeat(who, feat)
-	var feat_list = GetFeatList(who);
+	var feat_list := GetFeatList(who);
 	if (feat in feat_list)
 		return 1;
 	endif
@@ -67,7 +67,7 @@ function LearnFeat(who, feat)
 	foreach give_parse in (feat.give)
 		give_parse := SplitWords(give_parse);
 		if (give_parse[1] == "item")
-			createiteminBackpack(who, give_parse[2], give_parse[3])
+			createiteminBackpack(who, give_parse[2], give_parse[3]);
 		else
 			AP_SetTrueSkill(who, give_parse[2], 1);
 		endif
@@ -91,7 +91,7 @@ function GetNewFeatsList(who)
 
 		var pass := 1;
 		foreach req in (feat.requirements)
-			req := SplitWords(requirement, " ");
+			req := SplitWords(req, " ");
 
 			if (req[1] == "achievement")
 				if(who.GetAchievement(req[2]) < req[3])

@@ -17,7 +17,7 @@ var align;
 var areasize;
 var mystate := INITIALIZING;
 var flee_point := 0.1;
-var throwinfo;
+var throwinfo, spells;
 
 program NPCMonitor()
 	genericControl();
@@ -54,10 +54,10 @@ function CloseDistance(opponent)
 	return 0;
 endfunction
 
-function lookAround(spells)
+function lookAround()
   foreach npc in ListMobilesInLineOfSight(me, areasize)
     if( CanFight(me, npc) )
-         SpellFight(npc, spells);
+         Fight(npc, spells);
     endif
     sleepms(2);
   endforeach

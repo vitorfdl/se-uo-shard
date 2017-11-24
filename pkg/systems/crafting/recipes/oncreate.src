@@ -17,7 +17,7 @@ program ScrollCreate(scroll)
       "Ferraria"   := 0x0E35,
       "Marcenaria" := 0x0E36,
       "Cozinha"    := 0x0EF9,
-      "Alquimia"   := 0x46B2,
+      "Alquimia"   := 0x46B2
       // "Runas"      := 0x46AE
    };
 

@@ -74,8 +74,11 @@ endfunction
  *
  */
 function NPC_GetNPCConfig(template)
-	if ( !template.package )
-		template:= SplitWords(pet.npctemplate, ":")[2];
+	if (template.isA(POLCLASS_MOBILE))
+		template := struct{ "package" := template.package(), "my_template" := template.my_template};
+	else
+		var splited := SplitWords(template, ":");
+		template := struct{ "package" := splited[2], "my_template" := splited[3]};
 	endif
 
 	var npc_cfg := ReadConfigFile(":"+template.package+":npcdesc");
@@ -83,9 +86,9 @@ function NPC_GetNPCConfig(template)
 		return error{"errortext":="Error::NPC_GetNPCConfig() - Could not open :"+template.package+":npcdesc ->"+npc_cfg.errortext};
 	endif
 
-	var cfg_elem := npc_cfg[template.template];
+	var cfg_elem := npc_cfg[template.my_template];
 	if ( cfg_elem.errortext )
-		return error{"errortext":="Error::NPC_GetNPCConfig() - Could not find elem ["+template.template+"] ->"+cfg_elem.errortext};
+		return error{"errortext":="Error::NPC_GetNPCConfig() - Could not find elem ["+template.my_template+"] ->"+cfg_elem.errortext};
 	endif
 
 	return cfg_elem;

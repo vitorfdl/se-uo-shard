@@ -107,7 +107,7 @@ function CanFight(me, mobile)
    endif
 
    foreach enemy in enemies
-      if ( enemy == mobile.template)
+      if ( enemy == mobile.my_template() )
          return 1;
       endif
    endforeach
@@ -116,14 +116,14 @@ endfunction
 function AlertAllies(me, opponent)
    var player_allies := array;
    var myallies := array;
-   var creatures_near := ListMobilesNearLocation(opponent.x, opponent.y, opponent.z, 12;
+   var creatures_near := ListMobilesNearLocation(opponent.x, opponent.y, opponent.z, 12);
    foreach mobile in creatures_near
       if (!mobile.npctemplate)
       //if (CheckLineOfSight(mobile, me))
          player_allies.append(mobile);
       //endif
-      else if (mobile != me.serial)
-         myallies.append(realmob);
+      elseif (mobile != me.serial)
+         myallies.append(mobile);
       endif
       sleep(1);
    endforeach 
@@ -151,7 +151,7 @@ function GetAlliesNear(me)
    var myallies := array{};
    foreach mobile in ListMobilesNearLocation(me.x, me.y, me.z, 5)
       if (mobile.npctemplate)
-         if ( mobile.template in allies)
+         if ( mobile.my_template() in allies)
                myallies.append(mobile);
          endif
       else
@@ -174,7 +174,7 @@ function GetEnemiesNear(me)
       endif
 
       if (mobile.npctemplate)
-         if ( mobile.template in enemies)
+         if ( mobile.my_template() in enemies)
                myenemies.append(mobile);
          endif
       else
@@ -297,17 +297,17 @@ function LookForFood()
 	var food;
 	foreach item in ListItemsNearLocationWithFlag(me.x, me.y, me.z, 5, 0x00000800)
 		var found := FindConfigElem(foods, item.objtype);
-		if (found && found.script === "eat" && found.foodtype == npccfgfile.foodtype)
+		if (found && found.script == "eat" && found.foodtype == npccfgfile.foodtype)
 			food := item;
 		endif
 		sleep(1);
 	endforeach
 
-	if (!food) return;
+	if (!food) return; endif;
 
 	if (Distance(me, food) <= 1)
 		UseItem(food, me);
-		SetCooldown(me, "peacemade", cint(food.foodvalue * 120);
+		SetCooldown(me, "peacemade", cint(food.foodvalue * 120));
 		SetPeaceMade();
 	else
 		WalkToward(food);

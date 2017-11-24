@@ -388,7 +388,7 @@ function TS_StartTimer(mobile, timer_name, duration, level:=0, attacker:=0, mant
 	return process.SendEvent(event);
 endfunction
 
-function TS_StartCooldown(mobile, timer_name, duration, attacker := 0)
+function TS_StartCooldown(mobile, timer_name, duration, attacker := 0, report_end := 0)
 	duration := CInt(duration);
 	if ( duration < 1 )
 		return error{"errortext":="Error::TS_StartTimer() - Duration must be greater than 0."};
@@ -400,6 +400,7 @@ function TS_StartCooldown(mobile, timer_name, duration, attacker := 0)
 	event.+name      := CStr(timer_name);
 	event.+amount    := duration;
 	event.+attacker  := attacker;
+	event.+report    := report_end;
 
 	var process := TS_GetControllerProcess(mobile, START_CONTROLLER);
 	return process.SendEvent(event);

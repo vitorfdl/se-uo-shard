@@ -113,7 +113,7 @@ function GetSpellDuration(skill)
 endfunction
 
 function WriteMagic(who, spell_id)
-	var items_bag = EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
+	var items_bag := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
 	if (who.cmdlevel > 1 || !HaveSkill(who, "Arcanismo"))
 		SendSysMessageEx("Voce nao tem conhecimento de magia", SSM_FAIL);
 		return;
@@ -125,9 +125,11 @@ function WriteMagic(who, spell_id)
 	SendSysMessageEx("Escolha o objeto para inscrever a magia.", SSM_INFO);
 	var targ := Target(who);
 
-	var magic_slot := GetObjProperty(targ, "magicslot");
-	var spell_list := GetObjProperty(targ, "spell_list");
-	var magic_user := GetObjProperty(targ, "magic_user");
+	var magic_slot   := GetObjProperty(targ, "magicslot");
+	var spell_list   := GetObjProperty(targ, "spell_list");
+	var magic_user   := GetObjProperty(targ, "magic_user");
+	var element      := GetObjProperty(targ, "element");
+	var elementpower := GetObjProperty(targ, "elementpower");
 	if (!targ.isA(POLCLASS_ITEM))
 		SendSysMessageEx("Voce deve escolher um objeto!", SSM_FAIL);
 		return;
@@ -151,7 +153,7 @@ function WriteMagic(who, spell_id)
 			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto". SSM_FAIL);
 			return;
 		endif
-		PrintTextAboveUC(who, "*inscrevendo em {}*".format(targ.desc));
+		PrintTextAboveUC(who, "*inscrevendo em {}*".format(targ.desc), who);
 		PlaySoundEffect(who, 0x002b);
 		sleep(2);
 	endfor
@@ -160,7 +162,11 @@ function WriteMagic(who, spell_id)
 	if (!WriteSpellInfo(spellinfo))
 		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia". SSM_FAIL);
 		return;
+	elseif ((spellinfo.type != "Controle" && spellinfo.type != element) || (spellinfo.circle > elementpower))
+		SendSysMessageEx(who, "Asinscricao nao reage aos elementos da varinha". SSM_FAIL);
+		return;
 	endif
+
 	var dice_roll := rollAttrDice(who, INTELLIGENCE);
 	if (dice_roll <= spellinfo.Difficulty+3)
 		SendSysMessageEx(who, "Parece que você errou durante a copia. O espaço ficou inutilizado.". SSM_FAIL);

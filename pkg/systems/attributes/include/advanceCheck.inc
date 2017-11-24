@@ -127,7 +127,7 @@ function CheckExpUp(who)
 		who.SetExp(exp);
 		who.setLevel(level+1);
 		IncreaseVitalPoints(who);
-		var levelup_cfg = ReadConfigFile("levelup")[level+1];
+		var levelup_cfg := ReadConfigFile("levelup")[level+1];
 
 		if (cint(levelup_cfg.AttributePoints))
 			who.SetPoints(who.GetPoints()+1);

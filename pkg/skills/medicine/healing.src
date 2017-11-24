@@ -99,7 +99,7 @@ program UseBandage(mobile, bandage)
 	if (targ.isTamable())
 		SendSysMessageEX(mobile, "Voce nao tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
-	elseif (isBloodied(targ) && ((heal_skill == MEDICINA && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") )))
+	elseif (isBloodied(targ) && ((heal_skill == MEDICINA && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") ))))
 		SendSysMessageEx(mobile, "Voce nao tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
 	endif
@@ -157,7 +157,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 		return 0;
 	endif
 
-	var roll = rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, heal_skill);
+	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, heal_skill);
 	if ( roll <= 14 ) //SkillCheck(mobile, MEDICINA, -1)
 		heal_amt := heal_amt / 2;
 	endif
@@ -170,8 +170,9 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	PrintText(mobile, "*parou de aplicar bandagens*");
 	detach();
 	SendSysMessage(targ, "Aguarde enquanto a cura faz efeito.");
+
 	var i;
-	var q := 20 - Floor(aux_skill/10);
+	var q := 10;
 	var resto := heal_amt/q - CInt(heal_amt/q);
 	var r := 0;
 	SetObjProperty(targ, "curando", ReadGameClock()+q);
@@ -274,14 +275,14 @@ function GetHealingAmt(heal_skill)
 endfunction
 
 function apllyHerbs(mobile, bandage, targ)
-	var allowed_objtypes = array{0xF85, 0x26b7, 0xF83, 0xF7B};
+	var allowed_objtypes := array{0xF85, 0x26b7, 0xF83, 0xF7B};
 	if (!(targ.objtype in allowed_objtypes))
 		return SendSysMessageEx(mobile, "Cancelado.");
 	elseif (targ.amount != bandage.amount)
 		return SendSysMessageEx(mobile, "Voce precisa da mesma quantidade de {}.".format(targ.desc), SSM_FAIL);
 	endif
 
-	var roll = rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, MEDICINA);
+	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, MEDICINA);
 	
 	if (targ.objtype == 0xF85 && roll >= 15 ) //se for ginseng
 		SetObjProperty(bandage, "ginseng", 1);

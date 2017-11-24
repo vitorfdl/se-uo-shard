@@ -111,17 +111,13 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	return dice;
 endfunction
 
-function getProficiencyBonus(mobile, skill := 0)
-	if (typeof(skill) != "Array") 
-		skill := array{skill};
+function getProficiencyBonus(mobile, skills := 0)
+	if (skills)
+		if (typeof(skills) != "Array") 
+			skills := array{skills};
+		endif
+		if (!HaveSkill(mobile, skills)) return 0; endif
 	endif
-
-	var have_skill;
-	foreach skill_n in skill
-		if (!HaveSkill(mobile, skill)) continue; endif
-		have_skill := 1; break;
-	endforeach
-	if (!have_skill) return 0; endif
 
 	var proficiency := 0;
 	var level := 1;
@@ -184,7 +180,7 @@ function HaveSkill(mobile, skill)
 	endif
 
 	foreach name in skill
-		if (AP_GetTrueSkill(mobile, skill) == 1)
+		if (AP_GetTrueSkill(mobile, name) == 1)
 			return 1;
 		endif
 	endforeach

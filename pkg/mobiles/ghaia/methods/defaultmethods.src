@@ -2,7 +2,11 @@
 use uo;
 use basic;
 
-exported function template(pet)
+program Install()
+    return 1;
+endprogram
+
+exported function my_template(pet)
 	var npctemplate := SplitWords(pet.npctemplate, ":");
    return npctemplate[3];
 endfunction

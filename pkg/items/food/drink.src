@@ -5,10 +5,11 @@ use os;
 include ":food:drink";
 include ":timedScripts:poisonUtil";
 include "include/client";
+include "include/damage";
 
-Const SOUND_DRINK_LIQUID		:= 0x31;
-Const SOUND_DRINK_ALCOHOL	:= 0x32;
-Const ACTION_DRINK	:= 0x0022;
+const SOUND_DRINK_LIQUID		:= 0x31;
+const SOUND_DRINK_ALCOHOL	:= 0x32;
+const ACTION_DRINK	:= 0x0022;
 
 program drink ( character, drink )
 
@@ -37,7 +38,8 @@ program drink ( character, drink )
 			EraseObjProperty(drink, "poisonInfo");
 		else //se ainda tiver atualiza na arma
 			SetObjProperty(drink, "poisonInfo", poisonInfo);
-			if (!IsPoisonImune(character, poisonInfo.name) )
+			var roll := rollResistDice(character, CONSTITUTION);
+			if (!checkImmunity(character, DMG_POISON) && roll <= poisonInfo.difficulty )
 				PrintTextAbovePrivate(character, "Algo comeca a queimar no seu pescoco", character);
 				TS_StartTimer(character, poisonInfo.name, poisonInfo.time, poisonInfo.level, character);
 			endif
@@ -48,14 +50,14 @@ program drink ( character, drink )
 
 		var the_glass := CreateItemInBackpack (character, 0x1f81 );
 
-		if (GetObjProperty (drink, "EmptyName"))
-			the_glass.name := GetObjProperty (drink, "EmptyName");
+		if (GetObjProperty(drink, "EmptyName"))
+			the_glass.name := GetObjProperty(drink, "EmptyName");
 		endif
 	
-		SubtractAmount (drink, 1);
+		SubtractAmount(drink, 1);
 
 	else
-		reduce_container_fullness (character, drink);
+		reduce_container_fullness(character, drink);
 	endif
 	
 	if (drink_emote)
@@ -73,7 +75,7 @@ program drink ( character, drink )
 
 	if (!drunkness)
 		SetObjProperty( character , "#proof", drink_proof );
-		send_drunkness_message (character, drink_proof);
+		send_drunkness_message(character, drink_proof);
 		start_script( "drunk", character );
 	else
 		if (drunkness + drink_proof > 20)
@@ -81,14 +83,10 @@ program drink ( character, drink )
 		else
 			drunkness := drink_proof + drunkness;
 		endif
-		send_drunkness_message (character, drunkness);
-		SetObjProperty (character , "#proof", drunkness);
+		send_drunkness_message(character, drunkness);
+		SetObjProperty(character , "#proof", drunkness);
 	endif
-
 endprogram
-
-
-
 
 function send_drunkness_message (character, drunkness)
 	if (drunkness > 4 and drunkness <= 8)

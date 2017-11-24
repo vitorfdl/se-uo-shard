@@ -50,9 +50,8 @@ function sendCraftGump(who, params)
 
         if (!input[0] || input[0] == 1)
             not_closed := 0;
-        else
+        elseif (input[0] != BTN_SEARCH)
             var recipe := player_recipes[input[0]-BTN_CRAFTIT];
-            print(params.qty);
             CraftItem(who, params.type, params.tool, recipe, params.qty, 1);
             sleepms(10);
             params.bag := GetBagList(who);
@@ -71,37 +70,37 @@ function createGump(who, recipes, params)
 
     //Background
     if (params.filter)
-	    GFResizePic(gump, 311, 48, 30546, 184, 140); //filter
-        GFHTMLArea(gump, 385, 52, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Filtros");
+	    GFResizePic(gump, 328, 48, 30546, 184, 140); //filter
+        GFHTMLArea(gump, 337, 52, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Filtros");
         foreach filter in (params.filter)
-            GFAddButton(gump, 326, 83, filter.button, 40015, GF_CLOSE_BTN, BTN_FILTER+_filter_iter);
-            GFTextLine(gump, 355, 83, 1149, filter.name);
+            GFAddButton(gump, 343, 83, filter.button, 40015, GF_CLOSE_BTN, BTN_FILTER+_filter_iter);
+            GFTextLine(gump, 372, 83, 1149, filter.name);
         endforeach
     endif
     
     if (params.bonus)
-	    GFResizePic(gump, 308, 186, 30546, 187, 140); //bonus
-        GFHTMLArea(gump, 385, 190, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Bonus");
+	    GFResizePic(gump, 324, 186, 30546, 187, 140); //bonus
+        GFHTMLArea(gump, 402, 190, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Bonus");
     endif
     
-	GFResizePic(gump, 308, 324, 30546, 135, 88); //options
-	GFResizePic(gump, 13, 36, 40000, 304, 521);
+	GFResizePic(gump, 328, 324, 30546, 135, 88); //options
+	GFResizePic(gump, 13, 36, 40000, 324, 521);
 
     //Search
-	GFResizePic(gump, 31, 50, 30546, 264, 25);
+	GFResizePic(gump, 31, 50, 30546, 288, 25);
     search_entry := GFTextEntry(gump, 37, 52, 225, 20, 1101, params.search);
-	GFAddButton(gump, 268, 51, 9011, 9011, GF_CLOSE_BTN, BTN_SEARCH);
+	GFAddButton(gump, 288, 51, 9011, 9011, GF_CLOSE_BTN, BTN_SEARCH);
     
     //Crafting Options
-	GFTextLine(gump, 323, 333, 1149, "Quantidade");
+	GFTextLine(gump, 343, 333, 1149, "Quantidade");
     GFToolTip(gump, 1062951);
-	GFResizePic(gump, 406, 332, 30546, 31, 22);
-    qty_entry := GFTextEntry(gump, 411, 334, 24, 20, 1101, ""+params.qty);
+	GFResizePic(gump, 426, 332, 30546, 31, 22);
+    qty_entry := GFTextEntry(gump, 431, 334, 24, 20, 1101, ""+params.qty);
     GFToolTip(gump, 1062951);
-	GFTextLine(gump, 323, 360, 1149, "Fazer Ultimo");
-	GFAddButton(gump, 406, 360, 40017, 40027, GF_CLOSE_BTN, 0);
-	GFTextLine(gump, 323, 384, 1149, "Consertar");
-	GFAddButton(gump, 406, 385, 40017, 40027, GF_CLOSE_BTN, 0);
+	GFTextLine(gump, 343, 360, 1149, "Fazer Ultimo");
+	GFAddButton(gump, 426, 360, 40017, 40027, GF_CLOSE_BTN, 0);
+	GFTextLine(gump, 343, 384, 1149, "Consertar");
+	GFAddButton(gump, 426, 385, 40017, 40027, GF_CLOSE_BTN, 0);
 
     //Recipes
     var r_x := 90;
@@ -129,7 +128,7 @@ function createGump(who, recipes, params)
         var m_y := r_y+8;
         foreach material in (recipe.materials.Keys())
             if (_material_iter == 3)
-                m_x += 93;
+                m_x += 110;
                 m_y := r_y+8;
             endif
 
@@ -146,7 +145,14 @@ function createGump(who, recipes, params)
                 color := 1271;
             endif
 
-            var material_text := "{}|{} {}".format(material_req, material_have, TruncatePlural(material));
+            var name := TruncatePlural(material);
+            if (name == "ossodemonio")
+                name := "osso de demônio";
+            elseif (name["monsterpart"])
+                name["monsterpart"] := "";
+                name := "criatura "+name;
+            endif
+            var material_text := "{}/{} {}".format(material_have, material_req, name);
             GFTextLine(gump, m_x, m_y, color, material_text);
             // GFHTMLArea(gump, m_x, m_y, 90, 20, material_text);
             m_y += 14;

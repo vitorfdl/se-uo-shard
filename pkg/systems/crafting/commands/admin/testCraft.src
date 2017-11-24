@@ -10,7 +10,7 @@ program testCraft(who)
         "type"       := "Ferraria",
         "recipe_cfg" := ReadConfigFile(":metalworking:recipes")
     };
-    SetObjProperty(who, "recipes", array{ 0x1451, 0xe76, 0x9B0, 0x13EC });
+    SetObjProperty(who, "recipes", array{ 0x0DF2, 0x0DF3, 0x9B0, 0x13EC });
     SendCraftGump(who, params);
     return 1;
 endprogram

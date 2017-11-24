@@ -261,233 +261,233 @@ endfunction
 //essa funcao determina qual spell o npc vai castar
 //define se cura ou ataca alguem
 
-function CastSpellNPC(opponent)
-  var allies := GetAlliesNear(me);
-  var enemies := GetEnemiesNear(me);
+function CastSpellNPC(opponent, spell_list)
+//   var allies := GetAlliesNear(me);
+//   var enemies := GetEnemiesNear(me);
 
-   var speech := GetConfigStringArray( npccfgfile, "CastCombatSpeech" );
-   if (speech.size() > 0)
-		Say(speech[RandomInt(speech.size()+1)]);
-   endif
+//    var speech := GetConfigStringArray( npccfgfile, "CastCombatSpeech" );
+//    if (speech.size() > 0)
+// 		Say(speech[RandomInt(speech.size()+1)]);
+//    endif
 
-  //se sabe magia de heal
-  if ( "heal" in spell_list)
+//   //se sabe magia de heal
+//   if ( "heal" in spell_list)
  
-    if ((AP_GetVital(me, HITS) /AP_GetVitalMaximumValue(me, HITS) < 0.2))
-      SetCooldown(me, "npcspell", 5);
-      CastHeal(me, me);
-      return;
-    endif
+//     if ((AP_GetVital(me, HITS) /AP_GetVitalMaximumValue(me, HITS) < 0.2))
+//       SetCooldown(me, "npcspell", 5);
+//       CastHeal(me, me);
+//       return;
+//     endif
     
-    if ( alert_allies == 1)
-        foreach ally in allies
-          if ((AP_GetVital(ally, HITS) /AP_GetVitalMaximumValue(ally, HITS) < 0.2))
-            CastHeal(me, ally);
-            SetCooldown(me, "npcspell", 5);
-            return;
-          endif
-        endforeach
-    endif
+//     if ( alert_allies == 1)
+//         foreach ally in allies
+//           if ((AP_GetVital(ally, HITS) /AP_GetVitalMaximumValue(ally, HITS) < 0.2))
+//             CastHeal(me, ally);
+//             SetCooldown(me, "npcspell", 5);
+//             return;
+//           endif
+//         endforeach
+//     endif
     
-  endif
+//   endif
 
-	//contra varios
-	var pilargelo := "Pilares de Gelo"in spell_list;
-	var sonho := "Sonho macabro"in spell_list;
-	var tornadofogo := "Tornado de Fogo" in spell_list;
-	//gravemente ferido
-	var drenarvida := "Drenar vida" in spell_list;
-	//utilidades
-	var envenenarespirito := "Envenenar espirito" in spell_list;
-	var banimento := "Banimento arcano"in spell_list;
-	//primeiro spell que sempre usa
-	var retribuicao := "Retribuicao profana" in spell_list;
-	//debuff
-	var horror := "Horror" in spell_list;
-	var enfraquecer := "Enfraquecer" in spell_list;
-	//matar o oponente
-	var ampliardor := "Ampliar dor" in spell_list;
-	var envenenar := "Envenenar" in spell_list;
-	var envelhecer := "Envelhecer" in spell_list;
-	var boladefogo := "Bola de Fogo" in spell_list;
+// 	//contra varios
+// 	var pilargelo := "Pilares de Gelo"in spell_list;
+// 	var sonho := "Sonho macabro"in spell_list;
+// 	var tornadofogo := "Tornado de Fogo" in spell_list;
+// 	//gravemente ferido
+// 	var drenarvida := "Drenar vida" in spell_list;
+// 	//utilidades
+// 	var envenenarespirito := "Envenenar espirito" in spell_list;
+// 	var banimento := "Banimento arcano"in spell_list;
+// 	//primeiro spell que sempre usa
+// 	var retribuicao := "Retribuicao profana" in spell_list;
+// 	//debuff
+// 	var horror := "Horror" in spell_list;
+// 	var enfraquecer := "Enfraquecer" in spell_list;
+// 	//matar o oponente
+// 	var ampliardor := "Ampliar dor" in spell_list;
+// 	var envenenar := "Envenenar" in spell_list;
+// 	var envelhecer := "Envelhecer" in spell_list;
+// 	var boladefogo := "Bola de Fogo" in spell_list;
 
-	if (retribuicao)
-		if (enemies.size() >= 1)
-			if (GetCooldown(me, "retribuicao") == 0)
-				start_script(":magery:mesum/retribuicao", array{me, me});
-				SetCooldown(me, "npcspell", 5);
-				SetCooldown(me, "retribuicao", 60);
-			endif
-		endif
-	endif
+// 	if (retribuicao)
+// 		if (enemies.size() >= 1)
+// 			if (GetCooldown(me, "retribuicao") == 0)
+// 				start_script(":magery:mesum/retribuicao", array{me, me});
+// 				SetCooldown(me, "npcspell", 5);
+// 				SetCooldown(me, "retribuicao", 60);
+// 			endif
+// 		endif
+// 	endif
 
-	if ( pilargelo || sonho || tornadofogo )
-		if (enemies.size() > 2)
-			if ( pilargelo && sonho )
-				if (GetCooldown(me, "pilargelo") == 0 ) //talvez colocar um random
-					start_script(":magery:demonistas/pilardegelo", array{me, enemies.randomEntry()});
-					SetCooldown(me, "pilargelo", 10);
-					SetCooldown(me, "npcspell", 5);
-				endif
+// 	if ( pilargelo || sonho || tornadofogo )
+// 		if (enemies.size() > 2)
+// 			if ( pilargelo && sonho )
+// 				if (GetCooldown(me, "pilargelo") == 0 ) //talvez colocar um random
+// 					start_script(":magery:demonistas/pilardegelo", array{me, enemies.randomEntry()});
+// 					SetCooldown(me, "pilargelo", 10);
+// 					SetCooldown(me, "npcspell", 5);
+// 				endif
 	
-				if (GetCooldown(me, "sonho") == 0)
-					SetCooldown(me, "sonho", 20);
-					start_script(":magery:mesum/sonhomacabro", array{me, enemies.randomEntry()}); //escolher: melee maior dano
-					SetCooldown(me, "npcspell", 5);
-				endif
+// 				if (GetCooldown(me, "sonho") == 0)
+// 					SetCooldown(me, "sonho", 20);
+// 					start_script(":magery:mesum/sonhomacabro", array{me, enemies.randomEntry()}); //escolher: melee maior dano
+// 					SetCooldown(me, "npcspell", 5);
+// 				endif
 
-			elseif (pilargelo )
-				if (GetCooldown(me, "pilargelo") == 0 ) //talvez colocar um random
-					start_script(":magery:demonistas/pilardegelo", array{me, enemies.randomEntry()});
-					SetCooldown(me, "pilargelo", 10);
-					SetCooldown(me, "npcspell", 5);
-				endif
-			elseif (sonho)
-				if (GetCooldown(me, "sonho") == 0)
-					SetCooldown(me, "sonho", 20);
-					start_script(":magery:demonistas/sonhomacabro", array{me, enemies.randomEntry()}); //escolher: melee maior dano
-					SetCooldown(me, "npcspell", 5);
-				endif
-			elseif(tornadofogo)
-				if (GetCooldown(me, "tornadofogo") == 0)
-					SetCooldown(me, "tornadofogo", 20);
-					start_script(":magery:demonistas/firewhirl", array{me, enemies.randomEntry()}); //escolher: melee maior dano
-					SetCooldown(me, "npcspell", 5);
-				endif
-			endif
-		endif
-	endif
+// 			elseif (pilargelo )
+// 				if (GetCooldown(me, "pilargelo") == 0 ) //talvez colocar um random
+// 					start_script(":magery:demonistas/pilardegelo", array{me, enemies.randomEntry()});
+// 					SetCooldown(me, "pilargelo", 10);
+// 					SetCooldown(me, "npcspell", 5);
+// 				endif
+// 			elseif (sonho)
+// 				if (GetCooldown(me, "sonho") == 0)
+// 					SetCooldown(me, "sonho", 20);
+// 					start_script(":magery:demonistas/sonhomacabro", array{me, enemies.randomEntry()}); //escolher: melee maior dano
+// 					SetCooldown(me, "npcspell", 5);
+// 				endif
+// 			elseif(tornadofogo)
+// 				if (GetCooldown(me, "tornadofogo") == 0)
+// 					SetCooldown(me, "tornadofogo", 20);
+// 					start_script(":magery:demonistas/firewhirl", array{me, enemies.randomEntry()}); //escolher: melee maior dano
+// 					SetCooldown(me, "npcspell", 5);
+// 				endif
+// 			endif
+// 		endif
+// 	endif
 
-	if (sonho && GetCooldown(me, "sonho") < 10)
-		foreach mob in enemies
-			if ( cint(GetObjProperty(mob, "#sleep")) )
-				start_script(":magery:mesum/pesadelo", array{me, mob });
-				SetCooldown(me, "npcspell", 5);
-				break;
-			endif
-		endforeach
-	endif
+// 	if (sonho && GetCooldown(me, "sonho") < 10)
+// 		foreach mob in enemies
+// 			if ( cint(GetObjProperty(mob, "#sleep")) )
+// 				start_script(":magery:mesum/pesadelo", array{me, mob });
+// 				SetCooldown(me, "npcspell", 5);
+// 				break;
+// 			endif
+// 		endforeach
+// 	endif
 
-	if ( (AP_GetVital(me, HITS) / AP_GetVitalMaximumValue(me, HITS) < 0.5) )
-		if (drenarvida)
-			start_script(":magery:demonistas/drenarvida", array{me, me.opponent}); //escolher: melee mais perto do life maximo sugado
-			SetCooldown(me, "npcspell", 5);
-		endif
-	endif
+// 	if ( (AP_GetVital(me, HITS) / AP_GetVitalMaximumValue(me, HITS) < 0.5) )
+// 		if (drenarvida)
+// 			start_script(":magery:demonistas/drenarvida", array{me, me.opponent}); //escolher: melee mais perto do life maximo sugado
+// 			SetCooldown(me, "npcspell", 5);
+// 		endif
+// 	endif
 
-	//tem duas opcoes, ou ataca o opponent atual ou neutraliza alguem
-	if ( (enfraquecer || horror) || (ampliardor || envenenar || envelhecer || boladefogo))
-		if (randomint(2) == 0) //ataca oponente
-			if (envelhecer)
-				if ( GetObjPRoperty(me.opponent, "#lentidao") != error ) //se o alvo nao ta sob o efeito ainda
-					start_script(":magery:demonistas/envelhecer", array{me, me.opponent});
-					setCooldown(me, "npcspell", 5);
-				endif
-			endif
+// 	//tem duas opcoes, ou ataca o opponent atual ou neutraliza alguem
+// 	if ( (enfraquecer || horror) || (ampliardor || envenenar || envelhecer || boladefogo))
+// 		if (randomint(2) == 0) //ataca oponente
+// 			if (envelhecer)
+// 				if ( GetObjPRoperty(me.opponent, "#lentidao") != error ) //se o alvo nao ta sob o efeito ainda
+// 					start_script(":magery:demonistas/envelhecer", array{me, me.opponent});
+// 					setCooldown(me, "npcspell", 5);
+// 				endif
+// 			endif
 
-			if (envenenar)
-				var timers :=  TS_GetTimerNames(me.opponent);
-				if ( !("defaultPoison" in timers)  ) //se o alvo nao ta envenenado
-					start_script(":magery:mesum/envenenar", array{me, me.opponent});
-					setCooldown(me, "npcspell", 5);
-				endif
-			endif
+// 			if (envenenar)
+// 				var timers :=  TS_GetTimerNames(me.opponent);
+// 				if ( !("defaultPoison" in timers)  ) //se o alvo nao ta envenenado
+// 					start_script(":magery:mesum/envenenar", array{me, me.opponent});
+// 					setCooldown(me, "npcspell", 5);
+// 				endif
+// 			endif
 
-			if ( ampliardor)
-				if ( GetObjProperty(me.opponent, "apodrecer") == error )
-					start_script(":magery:mesum/ampliardor", array{me, me.opponent});
-					setCooldown(me, "npcspell", 5);
-				endif
-			endif
+// 			if ( ampliardor)
+// 				if ( GetObjProperty(me.opponent, "apodrecer") == error )
+// 					start_script(":magery:mesum/ampliardor", array{me, me.opponent});
+// 					setCooldown(me, "npcspell", 5);
+// 				endif
+// 			endif
 			
-			if ( boladefogo )
-				start_script(":magery:demonistas/fireball", array{me, me.opponent});
-				setCooldown(me, "npcspell", 5);
-			endif
+// 			if ( boladefogo )
+// 				start_script(":magery:demonistas/fireball", array{me, me.opponent});
+// 				setCooldown(me, "npcspell", 5);
+// 			endif
 			
-			//se ele chegou aqui entao vai testar algum dos utilities spells
-		else
+// 			//se ele chegou aqui entao vai testar algum dos utilities spells
+// 		else
 
-			if (horror)
-				var possiveis := array;
-				foreach m in enemies
-					if ( GetObjProperty(m, "#dmgreductionspell") == error )
-						possiveis.append(m);
-					endif
-				endforeach
-				start_script(":magery:demonistas/horror", array{me, possiveis[RandomInt(possiveis.size()+1)]});
-				setCooldown(me, "npcspell", 5);
-			endif
+// 			if (horror)
+// 				var possiveis := array;
+// 				foreach m in enemies
+// 					if ( GetObjProperty(m, "#dmgreductionspell") == error )
+// 						possiveis.append(m);
+// 					endif
+// 				endforeach
+// 				start_script(":magery:demonistas/horror", array{me, possiveis[RandomInt(possiveis.size()+1)]});
+// 				setCooldown(me, "npcspell", 5);
+// 			endif
 
-			if (enfraquecer)
-				var possiveis := array;
-				foreach m in enemies
-					if ( GetObjProperty(m, "#WeakenMod") == error )
-						possiveis.append(m);
-					endif
-				endforeach
-				start_script(":magery:demonistas/enfraquecer", array{me, possiveis[RandomInt(possiveis.size()+1)]});
-				setCooldown(me, "npcspell", 5);
+// 			if (enfraquecer)
+// 				var possiveis := array;
+// 				foreach m in enemies
+// 					if ( GetObjProperty(m, "#WeakenMod") == error )
+// 						possiveis.append(m);
+// 					endif
+// 				endforeach
+// 				start_script(":magery:demonistas/enfraquecer", array{me, possiveis[RandomInt(possiveis.size()+1)]});
+// 				setCooldown(me, "npcspell", 5);
 
-			endif
+// 			endif
 
-		endif
-	endif 
+// 		endif
+// 	endif 
 
 
-	if ( envenenarespirito)
-		foreach mob in enemies
-			if ( GetObjProperty(mob, "classe") == "Sabio" )
-				if ( AP_GetVital(mob, MANA)/AP_GetVitalMaximumValue(mob, MANA) > 0.5 ) //pode acabar usando 2x no mesmo target
-					start_script(":magery:mesum/envenenarespirito", array{me, mob});
-					setCooldown(me, "npcspell", 5);
-					break;
-				endif
-			endif
-		endforeach
-	endif
+// 	if ( envenenarespirito)
+// 		foreach mob in enemies
+// 			if ( GetObjProperty(mob, "classe") == "Sabio" )
+// 				if ( AP_GetVital(mob, MANA)/AP_GetVitalMaximumValue(mob, MANA) > 0.5 ) //pode acabar usando 2x no mesmo target
+// 					start_script(":magery:mesum/envenenarespirito", array{me, mob});
+// 					setCooldown(me, "npcspell", 5);
+// 					break;
+// 				endif
+// 			endif
+// 		endforeach
+// 	endif
 
-	if (banimento)
-		foreach mob in enemies
-			if (GetObjProperty(mob, "summoned") == 1)
-				start_script(":magery:mesum/banimentoarcano", array{me, mob});
-				setCooldown(me, "npcspell", 5);
-				break;
-			endif
-		endforeach
-	endif
+// 	if (banimento)
+// 		foreach mob in enemies
+// 			if (GetObjProperty(mob, "summoned") == 1)
+// 				start_script(":magery:mesum/banimentoarcano", array{me, mob});
+// 				setCooldown(me, "npcspell", 5);
+// 				break;
+// 			endif
+// 		endforeach
+// 	endif
 
 	
   
-  //se tem mtos inimigos perto casta magia de summon ou de area
-if (RandomInt(4) == 0) // 25% de chance
-  var area_spells := GetAreaSpells(spell_list);
-  if (area_spells.size() >= 1)
-    if ( enemies.size() >= (allies.size()+2) )
-      var randomspell := area_spells[RandomInt(area_spells.size()) + 1];
-      SetCooldown(me, "npcspell", 10);
-      case (randomspell)
-	"summonundead":
-	"summonfire" :
-	"summonwater" :
-	"summonair" :
-	"summonice" :
-	"summonearth":  CastSummon(me, randomspell); break;
-	"fireexplosion": CastArea(me, "fireexplosion", enemies); break;
-      endcase
-      return;
-    endif
-  endif
-endif
+//   //se tem mtos inimigos perto casta magia de summon ou de area
+// if (RandomInt(4) == 0) // 25% de chance
+//   var area_spells := GetAreaSpells(spell_list);
+//   if (area_spells.size() >= 1)
+//     if ( enemies.size() >= (allies.size()+2) )
+//       var randomspell := area_spells[RandomInt(area_spells.size()) + 1];
+//       SetCooldown(me, "npcspell", 10);
+//       case (randomspell)
+// 	"summonundead":
+// 	"summonfire" :
+// 	"summonwater" :
+// 	"summonair" :
+// 	"summonice" :
+// 	"summonearth":  CastSummon(me, randomspell); break;
+// 	"fireexplosion": CastArea(me, "fireexplosion", enemies); break;
+//       endcase
+//       return;
+//     endif
+//   endif
+// endif
 
   
-  //se tem so um inimigo casta alguma de magia de ataque nele
-  var directspells := GetDirectSpells(spell_list);
-  if (directspells.size() >= 1)
-    if (directspells.size() >= 1) //tem q testar 2x :(
-      CastDirect(me, opponent, directspells[randomint(directspells.size()+1)]);
-    endif
-  endif
+//   //se tem so um inimigo casta alguma de magia de ataque nele
+//   var directspells := GetDirectSpells(spell_list);
+//   if (directspells.size() >= 1)
+//     if (directspells.size() >= 1) //tem q testar 2x :(
+//       CastDirect(me, opponent, directspells[randomint(directspells.size()+1)]);
+//     endif
+//   endif
 
 endfunction
 

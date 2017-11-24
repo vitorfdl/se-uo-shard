@@ -282,32 +282,32 @@ endfunction
 //  * Returns the name for the item of the objtype passed.
 //
 function TruncatePlural(objtype, add_S := 0)
-    var obj_type := CInt(objtype);
-    if (!obj_type)
+   var obj_type := CInt(objtype);
+   if (!obj_type)
       return objtype;
-    endif
-    var config := itemdesc_cfg[obj_type];
+   endif
+   
+   var config := itemdesc_cfg[obj_type];
+   var name;
+   if (config.desc)
+      name := config.desc;
+   elseif (config.name)
+      name := config.name;
+   else
+      return error{"errortext":="Invalid Objtype : " + hex(obj_type) + "."};
+   endif
 
-    var name;
-    if (config.desc)
-        name := config.desc;
-    elseif (config.name)
-        name := config.name;
-    else
-        return error{"errortext":="Invalid Objtype : " + hex(obj_type) + "."};
-    endif
-
-    if ( !name["%"] )
-            if ( add_S == 0 )
-                    return name;
-            endif
-            if ( name[len(name)] in array{"s"} )
-                    return name;
-            elseif ( name[len(name)] in array{"h","j","x","z"} )
-                    return name + "es";
-            endif
-            return name + "s";
-    endif
+   if ( !name["%"] )
+         if ( add_S == 0 )
+            return name;
+         endif
+         if ( name[len(name)] in array{"s"} )
+            return name;
+         elseif ( name[len(name)] in array{"h","j","x","z"} )
+            return name + "es";
+         endif
+         return name + "s";
+   endif
 
     // Will deal with:
     //
@@ -316,48 +316,48 @@ function TruncatePlural(objtype, add_S := 0)
     //      Lump%s% of Coal
     //      Loa%ves/f% of Bread
     //
-    var first  := find(name, "%", 1);
-    var slash  := find(name, "/", first);
-    var second := find(name, "%", first + 1);
-    if ( slash && !second )
-            // Force-append a % if a '/' exists!
-            name := name + "%";
-            second := len(name);
-    elseif ( !slash )
-            slash := second;
-    endif
+   var first  := find(name, "%", 1);
+   var slash  := find(name, "/", first);
+   var second := find(name, "%", first + 1);
+   if ( slash && !second )
+         // Force-append a % if a '/' exists!
+      name := name + "%";
+      second := len(name);
+   elseif ( !slash )
+      slash := second;
+   endif
 
     // wwwww%xx[/yy]%[zzzzz]
     // 12345678     9 01234
     // 12345678 901 2 34567
 
-    var s_plur := name[first+1, slash-(first+1)];
-    var s_sing := "";
-    if ( slash != first )
-            s_sing := name[slash+1, second-(slash+1)];
-    endif
+   var s_plur := name[first+1, slash-(first+1)];
+   var s_sing := "";
+   if ( slash != first )
+         s_sing := name[slash+1, second-(slash+1)];
+   endif
 
-    var s_first := name[1, first-1];
-    var s_middle := s_plur;
-    var s_last := "";
+   var s_first := name[1, first-1];
+   var s_middle := s_plur;
+   var s_last := "";
 
-    if ( len(name) > second )
-            s_last := name[second+1, len(name)-second];
-    endif
+   if ( len(name) > second )
+         s_last := name[second+1, len(name)-second];
+   endif
 
-    if ( add_S == 0 )
-            s_middle := s_sing;
-    endif
+   if ( add_S == 0 )
+         s_middle := s_sing;
+   endif
 
-    if ( !s_first )
-            s_first := "";
-    endif
-    if ( !s_middle )
-            s_middle := "";
-    endif
-    if ( !s_last )
-            s_last := "";
-    endif
-    return s_first + s_middle + s_last;
+   if ( !s_first )
+         s_first := "";
+   endif
+   if ( !s_middle )
+         s_middle := "";
+   endif
+   if ( !s_last )
+         s_last := "";
+   endif
+   return s_first + s_middle + s_last;
 
 endfunction

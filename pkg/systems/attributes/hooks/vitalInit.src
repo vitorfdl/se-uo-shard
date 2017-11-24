@@ -140,7 +140,6 @@ function GetNPCVitalSetting(mobile, vital)
 		// No prior setup took place - get information from the npcdesc.cfg
 		var npc_cfg := NPC_GetNPCConfig(mobile.npctemplate);
 		value := GetConfigString(npc_cfg, vital);
-
 		if ( !value )
 			return 0;
 		endif

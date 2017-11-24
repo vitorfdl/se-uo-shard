@@ -6,6 +6,7 @@ include "include/say";
 include "include/sysEvent";
 include ":attributes:attributes";
 include ":yggdrasil:boss";
+var foods := ReadConfigFile(":cooking:itemdesc") + ReadConfigFile(":cooking:itemdesc");
 
 function hasSpecial(me)
     if (npccfgfile.Special && !GetCooldown(me, npccfgfile.Special))
@@ -147,12 +148,12 @@ function Flee(opponent)
       sleep(2);
       return;
    else
-      var speech := GetConfigStringArray( npccfgfile, "FleeSpeech" );
-      if (speech.size() > 0)
-         if (RandomInt(100)  < 30) //sempre 30% de chance de falar
-               SayUC((speech[RandomInt(speech.size()+1)]));
-         endif
-      endif
+      // var speech := GetConfigStringArray( npccfgfile, "FleeSpeech" );
+      // if (speech.size() > 0)
+      //    if (RandomInt(100)  < 30) //sempre 30% de chance de falar
+      //          SayUC((speech[RandomInt(speech.size()+1)]));
+      //    endif
+      // endif
 
       var numflees := GetObjProperty(me,"#flees");
       if (!numflees)
@@ -179,11 +180,12 @@ function Flee(opponent)
               opponent := ev.source;
               SetOpponent(opponent);
             endif
-         endcase
+         endif 
 
          if(chk)
             break;
          endif
+
       endwhile
    endif
 endfunction
