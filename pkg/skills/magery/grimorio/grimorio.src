@@ -10,7 +10,6 @@ include ":attributes:attributes";
 include ":containers:containers";
 include ":itemutils:itemdesc";
 include "include/client";
-include "include/sounds";
 include ":charactercreation:habilidades";
 include "include/facings";
 include ":tn:cooldown";
@@ -67,9 +66,9 @@ function CopyRecipe(who, recipe)
 		SendSysMessageEx(who, "Voce fez uma copia do pergaminho.", SSM_INFO);
 		printtext(who, "*escrevendo pergaminho*");
 		return;
-	endif
+	endif 
 	
-	SendSysMessageEx(who, "Voce copiou o pergaminho sem cuidados e ela esta ilegivel.", SSM_FAIL);
+	SendSysMessageEx(who, "Voce copiou o pergaminho sem cuidados e ele ficou ilegivel.", SSM_FAIL);
 endfunction
 
 

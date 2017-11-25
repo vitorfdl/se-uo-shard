@@ -19,21 +19,6 @@ function GetBookType(book)
 
 endfunction 
 
-function CanInsertScroll(book, scroll)
-	var booktype := GetBookType(book);
-	var cfg := ReadConfigFile(":magery:itemdesc");
-	var scrolltype := cfg[scroll.objtype].SpellType;
-
-	//printtextabove(book, " " + bookcfg[booktype].spelltype + " " + scrolltype);
-
-	if ( lower(GetBookType(book)) == lower(scrolltype))
-		return 1;
-	else
-		return 0;
-	endif
-
-endfunction
-
 program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	amt            := amt;
 	existing_stack := existing_stack;
@@ -48,60 +33,46 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 		MoveItemToContainer(item, who.backpack);
 		SendSysMessage(who, "O livro esta em uso.");
 		return 0;
-	else
-
-		if (!CanInsertScroll(book, item))
-			SendSysMessageEx(who, "Esse nao e o livro certo para esse tipo de pergaminho." , SSM_FAIL);
-			MoveItemToContainer(item, who.backpack);
-			return 0;
-		endif
-
-		var spell_list := GetObjProperty(book, "spells");
-		var spellid   := GetObjProperty(item, "spellinfo");
-		if (FindInArray(spell_list, spellid))
-				SendSysMessageEX(who,"O grimorio ja possui esta magia.", SSM_FAIL);
-				MoveItemToContainer(item, who.backpack);
-				return 0;
-		endif
-
-		if( GetObjProperty(item, "spellinfo") )
-			if ( addScroll(who, book, item) == 1)
-				DestroyItem(item);
-			endif
-		else
-			SendSysMessage(who, "Este nao parece um pergaminho de magia.");
-			MoveItemToContainer(item, who.backpack);
-			return 0;
-		endif
 	endif
-	
-	return 1;
+
+	addScroll(who, book, item) == 1 )
+return 1;
 endprogram
 
-
-function addScroll(who, book, rune)
+function addScroll(who, book, scroll)
+	var spell_id    := GetObjProperty(scroll, "spellinfo");
 	var spell_list := GetObjProperty(book, "spells");
 	if (spell_list == error)
 		spell_list := array;
+	endif
+	
+	if (!spellid)
+		SendSysMessage(who, "Este nao parece um pergaminho de magia.");
+		MoveItemToContainer(item, who.backpack);
+		return 0;
 	elseif( spell_list.Size() > 15 )
 		SendSysMessage(who,"Este livro ja esta cheio.");
-		MoveItemToContainer(rune, who.backpack);
+		MoveItemToContainer(scroll, who.backpack);
 		return 0;
-	elseif( !ReserveItem(rune) )
+	elseif( !ReserveItem(scroll) )
 		SendSysMessage(who,"Cancelado");
-		MoveItemToContainer(rune, who.backpack);
+		MoveItemToContainer(scroll, who.backpack);
+		return 0;
+	elseif (FindInArray(spell_list, spell_id))
+		SendSysMessageEX(who,"O grimorio ja possui esta magia.", SSM_FAIL);
+		MoveItemToContainer(item, who.backpack);
 		return 0;
 	endif
 	
 	Set_Critical(1);
 
-	spell_list.Append(GetObjProperty(rune, "spellinfo"));
+	spell_list.Append(spell_id);
 
 	SetObjProperty(book, "spells", spell_list);
 
 	SendSysMessage(who, "Voce adicionou o pergaminho no livro.");
-	ReleaseItem(rune);
-	DestroyItem(rune);
+	ReleaseItem(scroll);
+	DestroyItem(scroll);
 	Set_Critical(0);
 
 	return 1;

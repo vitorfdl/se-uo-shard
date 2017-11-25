@@ -103,7 +103,10 @@ function LearnRecipe(who, recipe)
       DestroyItem(recipe);
       return 1;
    endif
-
-   SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
-   SendSysMessageEx(who, "Sera possivel ler uma receita novamente em 60 minutos.", SSM_INFO);
+   SendLearnMessage(who);
 endfunction
+
+function SendLearnMessage(who)
+   SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
+   SendSysMessageEx(who, "Sera possivel ler uma receita novamente em 30 minutos.", SSM_INFO);
+endif

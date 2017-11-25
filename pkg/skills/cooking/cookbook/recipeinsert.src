@@ -46,7 +46,7 @@ function addScroll(who, book, recipe)
 	endif
 
 	var new_recipe  := GetObjProperty(recipe, "objtype");
-	var potions_cfg := ReadConfigFile(":alchemy:recipes");
+	var potions_cfg := ReadConfigFile(":cooking:recipes");
 	if(!potions_cfg[new_recipe]);
 		SendSysMessageEx(who, "Receita invalida!", SSM_FAIL);
 		MoveItemTocontainer(recipe, who.backpack);

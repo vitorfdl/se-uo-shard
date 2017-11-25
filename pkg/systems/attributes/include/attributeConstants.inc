@@ -20,6 +20,15 @@ enum STATS
 	WISDOM	       := "Wisdom",
 endenum
 
+enum DIFFICULTIES
+	DIFF_VERYEASY   := 8,
+	DIFF_EASY       := 10,
+	DIFF_MEDIUM     := 14,
+	DIFF_HARD       := 17,
+	DIFF_VERYHARD   := 20,
+	DIFF_IMPOSSIBLE := 23,
+endenum
+
 enum SKILLS
 	ALQUIMIA           := "Alquimia",
 	ARMA_SIMPLES       := "Arma Simples",

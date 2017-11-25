@@ -92,8 +92,15 @@ program use_MapmakersPen(who, tool)
 			endif
 
 			PrintText(who, "*copiando um livro*");
-			PlaySoundEffect( who, 0x24a );
-			sleep(5);
+			if (!WaitForCopy(who))
+				return;
+			endif
+
+			var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, array{PRESTIDIGITACAO, PESQUISA});
+			if (roll <= 14)
+				SendSysMessageEx(who, "Falhou em copiar o livro.", SSM_FAIL);
+				return;
+			endif
 
 			copy.SetContents(content.Contents);
 			copy.SetAuthor(content.Author);
@@ -101,42 +108,58 @@ program use_MapmakersPen(who, tool)
 
 			SendSysMessageEx(who, "Voce terminou de copiar o livro.", SSM_INFO);
 			return;
-		elseif (!YesNo(who, "Deseja lacrar o livro?"))
+		elseif (YesNo(who, "Deseja lacrar o livro?"))
+			targ.ReadOnly(1);
+			SendSysMessageEx(who, "O livro esta lacrado.", SSM_INFO);
 			return;
 		endif
-
-		targ.ReadOnly(1);
-		SendSysMessageEx(who, "O livro esta lacrado.", SSM_INFO);
 		return;
-	elseif (GetObjProperty(targ, "rune_id"))
-		SendSysMessageEx(who, "Para qual papel voce deseja transcrever esta runa?", SSM_REQUEST);
-		var paper := Target(who);
-		if (!paper || !paper.isA(POLCLASS_ITEM) || paper.objtype != 0x111 )
-			SendSysMessageEx(who, "Este nao e um papel valido.", SSM_FAIL);
+	elseif (GetObjProperty(targ, "rune_name"))
+		SendSysMessageEx(who, "Para qual livro voce deseja transcrever esta runa?", SSM_REQUEST);
+		var book := Target(who);
+		if (!book || !book.isA(POLCLASS_ITEM) || book.objtype != 0x6101 )
+			SendSysMessageEx(who, "Este nao e um livro valido.", SSM_FAIL);
 			return;
 		endif
 
-		var rune_id := GetObjProperty(targ, "rune_id");
+		var rune_list := GetObjProperty(book, "runes");
+		if (rune_list == error)
+			rune_list := array;
+		elseif( rune_list.Size() > 15 )
+			SendSysMessage(who,"Este livro ja esta cheio.");
+			return 0;
+		endif
+
+		var rune_name := GetObjProperty(targ, "rune_name");
+
+		PrintText(who, "*copiando runa de {}*".format(targ.desc));
+		if (!WaitForCopy(who))
+			return;
+		endif
 
 		var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, INSCRICAO_RUNICA);
 		if (roll <= 14)
-			SendSysMessageEx(who, "Falhou em copiar a runa.", SSM_FAIL);
+			SendSysMessageEx(who, "Falhou em transcrever a runa.", SSM_FAIL);
 			return;
 		endif
 
-		var theitem := CreateItemInBackpack(who, 0xef1f, 1);
-		if (theitem)
-			SendSysMessageEx(who, "Sem espaco na sua mochila, voce perdeu o papel.", SSM_FAIL);
-			return;
-		endif
-
-		SetObjProperty(theitem, "objtype", rune_id);
-		SendSysMessageEx(who, "Voce transcreveu a runa para o papel.", SSM_INFO);
+		rune_list.Append(rune_name);
+		SetObjProperty(book, "runes", rune_list);
+		SendSysMessageEx(who, "Voce transcreveu a runa para o livro.", SSM_INFO);
 		return ;
 	endif
 	SendSysMessageEx(who, "Voce nao pode fazer nada com isto.", SSM_FAIL);
 endprogram
 
+function WaitForCopy(who)
+	PlaySoundEffect( who, 0x24a );
+	if (!Wait(who, 5))
+		SendSysMessageEx(who, "Voce se moveu e parou de transcrever a runa.", SSM_FAIL);
+		return;
+	endif
+
+	return 1;
+endfunction
 
 function makeCartographyMap(who, map_objtype, amount, tool)
 	var blank_array := array{ 0xE34, 0xEF3, 0x14EB, 0x14EC };
