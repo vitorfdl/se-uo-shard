@@ -1,14 +1,18 @@
 use uo;
 use os;
+use os;
 
 include ":timeutils:time";
 include "include/say";
 include ":attributes:advanceCheck";
 include ":gumps:gumps";
 
-program oafeatures_sendpacket(who)
-   var targ := Target(who);
-   Print(targ.my_template() );
+program oafeatures_sendpacket(who, text)
+   var pid := GetProcess(cint(text));
+   printtext(who, ""+pid);
+   // var targ := Target(who);
+   // Print(targ.my_template() );
+
 
 	// var gump := GFCreateGump();
 	
@@ -19,24 +23,24 @@ program oafeatures_sendpacket(who)
 
    // var i;
    // var x := 48;
-   // var y := 66;
-   // for (i := 0; i < 15; i+=1)
-   //    if (Floor(i / 5.1) >= 1)
+   // for (i := 1; i < 16; i+=1)
+   //    var pos := Floor(i / 5.1);
+   //    if (i % 5 == 1)
    //       x := 48;
-   //       y := 66;
    //    endif
-   //    x += 135;
-   //    y += 167;
-	//    GFGumpPic(gump, x, y, 40010, 0);
-   // endfor
+   //    var y := 66 + (pos * 170);
 
-	// GFGumpPic(gump, 53, 184, 40032, 0);
-	// GFGumpPic(gump, 49, 198, 40023, 0);
-	// GFTextLine(gump, 83, 101, 0, "Item Name"); //name
-	// GFTextLine(gump, 84, 67, 0, "Item Desc"); //desc
-   // GFTilePic(gump, 90, 144, 0x58, 0); //objtype
-	// GFTextLine(gump, 75, 189, 0, "Unidade");
-	// GFResizePic(gump, 72, 208, 30546, 93, 19);
+	//    GFGumpPic(gump, x, y, 40010, 0);
+   //    GFGumpPic(gump, x+4, y+118, 40032, 0);
+   //    GFGumpPic(gump, x+1, y+132, 40023, 0);
+   //    GFTextLine(gump, x+35, y+35, 0, "Item Name"); //name
+   //    GFTextLine(gump, x+34, y+1, 0, "Item Desc"); //desc
+   //    GFTilePic(gump, x+42, y+78, 0x58, 0); //objtype
+   //    GFTextLine(gump, x+27, y+123, 0, "Unidade");
+   //    GFResizePic(gump, x+25, y+142, 30546, 93, 19);
+   //    GFTextLine(gump, x+27, y+142, 1051, "1,450 moedas");
+   //    x += 140;
+   // endfor
 
 	// GFSendGump(who, gump);
 
@@ -46,5 +50,5 @@ program oafeatures_sendpacket(who)
    // endif
 
    // print(typeof(RandomDiceRoll("1d100")));
-   who.attack_once();
+   // who.attack_once();
 endprogram

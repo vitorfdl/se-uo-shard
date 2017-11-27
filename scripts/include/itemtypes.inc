@@ -1004,7 +1004,7 @@ function IsOfAppropriateRace(byref who, byref item)
 			return 1;
 		elseif (IsJewelry(item))
 			return 1;
-    elseif (IsWand(item))
+    elseif (item.isMagicWeapon())
       return 1;
     elseif (item.graphic >= 0x1f03 and item.graphic <= 0x1f04)
       return 1;
@@ -1024,12 +1024,5 @@ function IsOfAppropriateRace(byref who, byref item)
 		return 1;
 	endif
 	return 0;
-endfunction
-
-function IsWand(byref item)
-	if(item.graphic >= 0x0df2 and item.graphic <= 0x0df5)
-		return 1;
-  endif
-  return 0;
 endfunction
 

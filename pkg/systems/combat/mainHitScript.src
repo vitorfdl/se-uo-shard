@@ -57,8 +57,6 @@ program MainHitScript( params )
 	//calcula os danos
 	base_damage := CalculateTotalDamageBonus(base_damage, attacker, defender);
 
-
-
 	// Chain Of Pain
 	// TODO: reaproveitar depois
 
@@ -73,7 +71,7 @@ program MainHitScript( params )
 	if (base_damage < 1)
 		base_damage := 1;
 	endif
-	
+
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critical);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical);
 

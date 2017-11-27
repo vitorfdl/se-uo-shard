@@ -37,7 +37,7 @@ function SendGump(who, scroll)
 	endif
 
 	var skill_name := GetObjProperty(scroll, "pericia");
-	var book_recipes := ReadConfigFile(":alchemy:recipes") + ReadConfigFile(":magery:recipes");
+	var book_recipes := ReadConfigFile(":alchemy:recipes") + ReadConfigFile(":cooking:recipes");
 	var itemdesc     := ReadConfigFile(":*:itemdesc");
 	var recipe_list  := ReadConfigFile(":*:recipes");
 	var item   := FindConfigElem(itemdesc, objtype);

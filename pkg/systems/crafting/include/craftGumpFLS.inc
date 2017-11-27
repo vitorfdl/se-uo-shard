@@ -93,10 +93,10 @@ function createGump(who, recipes, params)
     
     //Crafting Options
 	GFTextLine(gump, 343, 333, 1149, "Quantidade");
-    GFToolTip(gump, 1062951);
+    // GFToolTipText(gump, 1062951);
 	GFResizePic(gump, 426, 332, 30546, 31, 22);
     qty_entry := GFTextEntry(gump, 431, 334, 24, 20, 1101, ""+params.qty);
-    GFToolTip(gump, 1062951);
+    // GFToolTipText(gump, 1062951);
 	GFTextLine(gump, 343, 360, 1149, "Fazer Ultimo");
 	GFAddButton(gump, 426, 360, 40017, 40027, GF_CLOSE_BTN, 0);
 	GFTextLine(gump, 343, 384, 1149, "Consertar");

@@ -5,6 +5,7 @@ use os;
 include "include/client";
 include "include/sysEvent";
 include "include/say";
+include ":magery:tnmagery";
 
 program clericPowerWords(parms)
    detach();
@@ -21,7 +22,12 @@ program clericPowerWords(parms)
       event := wait_for_event( 120 );
       if (event && event.type == SYSEVENT_SPEECH && event.source ==  who && !who.dead)
          var cleric_list := GetObjProperty(who, "cleric_list");
-         if (!cleric_list || cleric_list.size() < 1 || GetObjProperty(who, "#Casting"))
+         if (!cleric_list) cleric_list := array{}; endif;
+         var auto := 1;
+         WriteSpellInfo(auto, ":magery:config/cleric");
+         cleric_list := array{auto} + cleric_list;
+
+         if (cleric_list.size() < 1 || GetObjProperty(who, "#Casting"))
             continue;
          endif
 

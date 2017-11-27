@@ -89,9 +89,11 @@ exported function SetProps( spawnpoint, data := struct{});
    endif
 
    if (data.mob_number)
-      var group_data := GetSpotGroupData(old_data.spotgroup);
-      var group_mobs := cint(group_data.mob_number) - old_data.mob_number + cint(data.mob_number);
-      SetSpotGroupData(old_data.spotgroup, struct{ "mob_number" := group_mobs});
+      var group_data := GetSpotGroupData(old_data.spotgroup, 0);
+      if (group_data)
+        var group_mobs := cint(group_data.mob_number) - old_data.mob_number + cint(data.mob_number);
+        SetSpotGroupData(old_data.spotgroup, struct{ "mob_number" := group_mobs});
+      endif
       old_data.mob_number := cint(data.mob_number);
    endif
 
@@ -248,10 +250,9 @@ exported function FillQueue(spawnpoint)
       endforeach
 
       if (spawn_list.size() < 1)
-         print("size < 1");
          return; 
       endif
-
+      
       if (config.type.size() > 1)
          var preference := "melee";
 
@@ -267,12 +268,14 @@ exported function FillQueue(spawnpoint)
          var calc_pref := Ceil(config.mob_number * 0.6);
          if (calc_pref < types[preference])
             spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := preference });
-         elseif ("spellcaster" in config.type && types["spellcaster"] < Ceil(config.mob_number * 0.2))
-            spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := "spellcaster" });
+         // elseif ("spellcaster" in config.type && types["spellcaster"] < Ceil(config.mob_number * 0.2))
+         //    print("here2");
+         //    spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := "spellcaster" });
          endif
       endif
 
       var mob := spawn_list.RandomEntry();
+      if (!mob) continue; endif;
       var to_spawn := struct{
          "template" := mob.name,
          "type"     := mob.type,
@@ -320,6 +323,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
          continue;
       endif
 
+        print(monster);
       spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
       SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
       SetObjProperty(spawned, "spawnspot", config.spot_serial);

@@ -6,7 +6,6 @@ include "include/say";
 include "include/sysEvent";
 include ":attributes:attributes";
 include ":yggdrasil:boss";
-var foods := ReadConfigFile(":cooking:itemdesc") + ReadConfigFile(":cooking:itemdesc");
 
 function hasSpecial(me)
     if (npccfgfile.Special && !GetCooldown(me, npccfgfile.Special))

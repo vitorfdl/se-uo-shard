@@ -129,7 +129,7 @@ exported function isTamable(pet)
 endfunction
 
 exported function rollPetDice(pet, command, tame_difficulty)
-   if ((pet.master).cmdlevel >= 2) return 1; endif;
+   if ((pet.master).cmdlevel >= 2 || GetObjProperty(pet, "summoned")) return 1; endif;
 
    var props := GetPetProperties(pet);
    if (!props.commands) return; endif;

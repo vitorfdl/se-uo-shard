@@ -26,7 +26,7 @@ const EVID_PET_ATTACK := 0x91000002;
 const EVID_PET_GUARD  := 0x91000003;
 const EVID_PET_PATROL := 0x91000004;
 
-const EVID_SPEECH          := 0x0001;
+const EVID_SPEAK           := 0x92000001;
 const EVID_ENGAGED         := 0x0002;
 const EVID_DISENGAGED      := 0x0004;
 const EVID_DAMAGED         := 0x0008;

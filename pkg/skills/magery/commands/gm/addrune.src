@@ -1,0 +1,25 @@
+use uo;
+use os;
+use cfgfile;
+include "include/say";
+include "include/arrays";
+include ":tn:tngumps";
+
+program monge_book(who, params )
+	params := splitwords(params);
+		
+	SendSysMessageEX(who, "Selecione o objeto", SSM_INFO);
+	var targ := target(who);
+	// if (!targ.IsA(POLCLASS_EQUIPMENT))
+	// 	return;
+	// endif
+
+   var spellcfg   := ReadConfigFile(":magery:config/runes");
+   var keys       := GetConfigStringKeys(spellcfg);
+   var prompt := RadioGump(who, 300, 100+(keys.size() * 20), "Escolha a Runa:", keys);
+   if (prompt)
+      SetObjProperty(targ, "rune_name", prompt);
+   endif
+
+	SendSysMessageEX(who, "Objeto criado com sucesso");
+endprogram

@@ -30,7 +30,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	endif
 
 	if( GetObjProperty(item, "objtype") )
-		return addScroll(who, book, item);
+		return addScrollOnBook(who, book, item);
 	endif
 
 	SendSysMessageEx(who, "Voce nao pode colocar isto no livro.", SSM_FAIL);
@@ -39,7 +39,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 endprogram
 
 
-function addScroll(who, book, recipe)
+function addScrollOnBook(who, book, recipe)
 	var recipe_list := GetObjProperty(book, "recipes");
 	if (recipe_list == error)
 		recipe_list := array;
@@ -68,7 +68,7 @@ function addScroll(who, book, recipe)
 		SendSysMessageEx(who,"Cancelado", SSM_INFO);
 		MoveItemToContainer(recipe, who.backpack);
 		return 0;
-	if (TS_GetCooldown(who, "learning_recipe"))
+	elseif (TS_GetCooldown(who, "learning_recipe"))
       SendSysMessageEx(who, "Sua mente ainda esta absorvendo a ultima receita que leu.", SSM_FAIL);
       return 0;
 	elseif (!CheckCharges(who, recipe, diff))

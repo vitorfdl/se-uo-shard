@@ -71,8 +71,8 @@ endfunction
 
 
 function IsDungeon( x, y )
-    if ( (x >= 5120) && (x <= 6143) )
-        if ( (y >= 0) && (y <= 2303) )
+    if ( (x >= 4395) && (x <= 6143) )
+        if ( (y >= 0) && (y <= 4086) )
             return 1;
         endif
     endif

@@ -86,6 +86,7 @@ program command_newAccount(who)
 		else
 			account.addcharacter(0);
 			var character := account.getcharacter(0);
+			MoveObjectToLocation(character, 4756, 3541, 1, character.realm, MOVEOBJECT_FORCELOCATION);
 			SetObjProperty(character, "criandochar", 1);
 			GumpPrompt(who, "Account created successfully.");	
 			return 1;

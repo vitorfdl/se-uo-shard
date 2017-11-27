@@ -9,7 +9,6 @@ use cfgfile;
 
 include ":attributes:attributes";
 include ":magery:tnmagery";
-include ":charactercreation:habilidades";
 include ":yggdrasil:boss";
 
 const OFFSET_OBJECT_SERIAL   := 0x05;
@@ -18,8 +17,8 @@ const OFFSET_LENGTH_ID       := 0x13;
 const OFFSET_UNICODE_TEXT    := 0x14;
 
 const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
-const RED    := "<BASEFONT COLOR=#FF0000>";
-const BLUE   := "<BASEFONT COLOR=#3232ff>";
+const RED    := "<BASEFONT COLOR=#FF4C4C>";
+const BLUE   := "<BASEFONT COLOR=#4169E1>";
 const ORANGE := "<BASEFONT COLOR=#FFA500>";
 
 function TranslateAtt(attribute)
@@ -229,19 +228,7 @@ exported function MegaCliloc( who, byref packet )
 		// into one string.
 		var xDesc  := "";
 		var desc   := GetObjProperty(item, "description");
-
-		if (GetObjProperty(item,"magic"))
-			if (temHabilidade(who, "Detectar Item Magico"))
-				xDesc += BLUE + "Mágico<br>";
-			endif
-		endif
-		
-		if (GetObjProperty(item, "SpecialCraft"))
-			xDesc += "{}Feito com {}<br>".format(GetObjProperty(item, "SpecialCraft"));
-		endif
-
-		
-		 var descmods := GetObjProperty(item, "descmod");
+		var descmods := GetObjProperty(item, "descmod");
 
 		if((descmods!=error) && (desc == error))
 			 desc:="";
@@ -265,17 +252,14 @@ exported function MegaCliloc( who, byref packet )
 			var deathpoint_max := AP_GetVitalMaximumValue(item, "DP");
 			var xy;
 			for (xy := deathpoint_max; xy > deathpoint ; xy-=10);
-				xDesc += "{}Gravement Ferido<br>".format(WHITE);
+				xDesc += "{}Gravemente Ferido<br>".format(WHITE);
 			endfor
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
 			var cond := GetCondition(item);
-			if (cond != "Boa")
-	 			xDesc += "Condição: {}<br>".format(cond);
-			endif
-			
+			xDesc += "Condição: {}<br>".format(cond);
 			xDesc += "Qualidade: {}<br>".format(getQuality(item.quality));
 
-			var cfg := ReadConfigFile(":*:itemdesc");
+			var cfg  := ReadConfigFile(":*:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);
 			if (elem.DamageType)
 				xDesc += "Tipo: " + elem.DamageType + "<br>";
@@ -312,7 +296,7 @@ exported function MegaCliloc( who, byref packet )
 			endif
 		endif
 
-		var pplmage := GetObjProperty(item, "magicwho"); //magic lore
+		var pplmage := GetObjProperty(item, "magicwho"); //research
 		if ( pplmage != error)
 			if (who.serial in pplmage)
 				if (GetObjProperty(item, "pocaoname"))
@@ -327,9 +311,9 @@ exported function MegaCliloc( who, byref packet )
 				if (item.dmg_mod > 0 )
 					xDesc += BLUE + "Bônus Dano";
 				endif
-				if (item.hp_mod > 0)
-					xDesc += BLUE + "Bônus Item PVs";
-				endif
+				// if (item.hp_mod > 0)
+				// 	xDesc += BLUE + "Bônus Item PVs";
+				// endif
 				var hitsscripts := GetObjProperty(item, "HitScripts");
 				if (hitsscripts != error)
 					foreach hits in hitsscripts
@@ -344,7 +328,8 @@ exported function MegaCliloc( who, byref packet )
 				endif
 
 				var spell_list := GetObjProperty(item, "spell_list");
-				if (spell_list != error)
+				if (spell_list != error && spell_list.size() > 0)
+					xDesc += "<br>{} Magias".format(ORANGE);
 					var active_spell := GetObjProperty(item, "active_spell");
 					foreach spell in spell_list
 						if (spell == 0)
@@ -357,44 +342,12 @@ exported function MegaCliloc( who, byref packet )
 							xDesc += BLUE;
 						endif
 
-						xDesc += "<br>{} I".format(GetSpellName(spell));
+						xDesc += "<br>{}".format(GetSpellName(spell));
 					endforeach
 				endif
 			endif
 		endif
 		
-		var craftproperty := GetObjProperty(item, "craftproperty");
-		if (craftproperty)
-			var properties := cint(GetObjProperty(item, "identificado"));
-			if (properties)
-				if (craftproperty.tipo)
-					xDesc += WHITE + "Fundir: " + craftproperty.tipo;
-				endif
-				if (craftproperty.veste)
-					xDesc += " " + craftproperty.veste +"<br>";
-				else
-					xDesc += "<br>";
-				endif
-				if (craftproperty.equipamentos)
-					var equipamentos := "";
-					foreach equipamento in (craftproperty.equipamentos)
-						equipamentos := equipamentos + equipamento + " ";
-					endforeach
-					xDesc += "Peças: " + equipamentos +"<br>";
-				endif
-			endif
-			var i := 1;
-			for(i:=1;i<=properties;i+=1)
-				var bonus := craftproperty.bonus[i];
-				xDesc += ORANGE + "+" + getbonusname(bonus.name) + "<br>";
-			endfor
-
-			if (i <= craftproperty.bonus.size())
-				xDesc += BLUE + "+Não Identificado<br>";
-			endif
-			
-		endif
-
 		xDesc := CAscZ(xDesc);
 
 		if ( xDesc.Size() > 0 )

@@ -27,6 +27,8 @@ enum STATES
    FLEEING := 6
 endenum
 
+var foods := ReadConfigFile(":cooking:itemdesc")+ReadConfigFile(":food:itemdesc");
+
 //alinhamento pra determinar se o player é inimigo ou nao pra IA.
 //outros inimigos pra IA é definido com a tag enemy
 const ALIGN_EVIL := 1;
@@ -226,7 +228,7 @@ function InitializeNpc(mobile)
          var monster := monsters["monster"+GetObjProperty(me, "spawnpointtype")];
          var range := cint(monster.range);
          if (!range)
-               range := 6;
+            range := 6;
          endif
          SetObjProperty(mobile, "anchor", array{ spawnpoint.x , spawnpoint.y , spawnpoint.z});
          SetObjProperty(mobile, "range", range);
@@ -258,7 +260,7 @@ function InitializeNpc(mobile)
 //    GenerateRecipeLoot(mobile);
    SetupAmmo(mobile);
    SetObjProperty(mobile, "started", 1);
-   mobile.InitPetProperties();
+   mobile.InitPetProperties(0);
 endfunction
 
 //substitui o antigo wander() basicamente checa se tem anchor
@@ -290,27 +292,28 @@ endfunction
 
 
 function LookForFood()
-	if (!npccfgfile.TameDifficulty || isBoss(me))
+	if (!me.isTamable())
 		return;
 	endif
-	
 	var food;
 	foreach item in ListItemsNearLocationWithFlag(me.x, me.y, me.z, 5, 0x00000800)
-		var found := FindConfigElem(foods, item.objtype);
-		if (found && found.script == "eat" && found.foodtype == npccfgfile.foodtype)
+		var found := foods[item.objtype];
+		if (found && found.foodtype == npccfgfile.foodtype)
 			food := item;
 		endif
-		sleep(1);
+		sleepms(2);
 	endforeach
 
 	if (!food) return; endif;
 
+   WalkToward(food);
+   WalkToward(food);
+
 	if (Distance(me, food) <= 1)
-		UseItem(food, me);
-		SetCooldown(me, "peacemade", cint(food.foodvalue * 120));
+		DestroyItem(food);
+		SetCooldown(me, "peacemade", (cint(food.foodvalue)+1) * 120);
 		SetPeaceMade();
-	else
-		WalkToward(food);
+      Say("*comendo*");
 	endif
 
 	return 1;

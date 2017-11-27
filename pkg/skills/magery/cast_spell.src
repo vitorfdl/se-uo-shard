@@ -155,6 +155,8 @@ program SpellStarter(params)
       if (e == error)
          Print(mobile + ": " + spellinfo);
          FailSpell(mobile);
+      elseif (!e)
+         FailSpell(mobile);
       endif
    else
       Print(mobile + ": " + spellinfo);

@@ -128,7 +128,7 @@ program death(params)
 		endif
 
 		if (tempo % 60 == 0 && tempo != 0)
-			SendSystemReport(ghost, "Voce acordara em "+(tempo/10)+" minuto(s).");
+			SendSystemReport(ghost, "Voce acordara em "+(tempo/60)+" minuto(s).");
 		elseif (tempo <= 10)
 			SendSystemReport(ghost, "Voce acordara em "+(tempo)+" segundo(s).");
 		endif

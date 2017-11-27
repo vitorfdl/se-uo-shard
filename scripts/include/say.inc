@@ -1,7 +1,7 @@
 use uo;
 use unicode;
 
-const SSM_FAIL      := 39;
+const SSM_FAIL      := 41;
 const SSM_REQUEST   := 168;
 const SSM_INFO      := 91;
 const SSM_HELPFU    := 168;
@@ -20,7 +20,7 @@ CONST SPEAK_TEXTTYPE_YELL   := "yell";
 CONST SPEAK_DOEVENT_DISABLE := 0x0;
 CONST SPEAK_DOEVENT_ENABLE  := 0x1;
 
-CONST SYSTEM_REPORT := 117;
+CONST SYSTEM_REPORT := 493;
 CONST SYSTEM_HEAL := 117;
 
 function SendSysMessageEX(who, message, SSM_TYPE := _DEFAULT_TEXT_COLOR, font_number := _DEFAULT_TEXT_FONT)
@@ -34,9 +34,7 @@ function SendSysMessageUNI(who, uc_text, color:=_DEFAULT_UCCOLOR, font:=_DEFAULT
 
   var theUCtext := array{111, 108, 225};
 
-  print(cAscZ("olá"));
   var foi := SendSysMessageUC(who, theUCtext, langcode, 4, 55);
-  print(foi);
   return SendSysMessageUC(who, theUCtext, langcode, 4, 55);
 endfunction
 
@@ -66,9 +64,9 @@ function SendSystemReport(above_object, text, color := SYSTEM_REPORT, character 
   endif
 
   if (character == "all")
-    return PrintTextAbove(above_object, text, 9, 2027);
+    return PrintTextAbove(above_object, text, 9, color);
   endif
-  return PrintTextAbovePrivate(above_object, text, character, 9, 2027);
+  return PrintTextAbovePrivate(above_object, text, character, 9, color);
 endfunction
 
 function UC(strs)

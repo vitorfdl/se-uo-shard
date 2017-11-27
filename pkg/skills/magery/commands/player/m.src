@@ -24,7 +24,6 @@ program useMagic(who, spellname)
 
 		var cfg := ReadConfigFile(":magery:config/mage");
 		var spell := FindSpell(cfg, spellname);
-
 		if (!(spell in spell_list))
 			SendSysMEssageEx(who, "A magia " + spellname + " nao existe.", SSM_FAIL);
 			return;
@@ -35,10 +34,10 @@ program useMagic(who, spellname)
 endprogram
 
 
-function FindSpell(spell_name, cfg)
+function FindSpell(cfg, spell_name)
 	var id := 0;
 	foreach spell in ( GetConfigIntKeys(cfg) )
-		var elem := FindConfigElem(cfg, spell_name);
+		var elem := FindConfigElem(cfg, spell);
 		if (spell_name == lower(elem.Name))
 			id := spell;
 			break;

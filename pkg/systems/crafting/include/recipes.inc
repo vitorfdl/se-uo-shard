@@ -109,4 +109,4 @@ endfunction
 function SendLearnMessage(who)
    SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
    SendSysMessageEx(who, "Sera possivel ler uma receita novamente em 30 minutos.", SSM_INFO);
-endif
+endfunction

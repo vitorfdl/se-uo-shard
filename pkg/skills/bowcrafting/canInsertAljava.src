@@ -1,0 +1,61 @@
+/* $Id$
+ *
+ */
+use uo;
+use os;
+use cfgfile;
+
+include "include/say";
+
+program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
+
+	amt            := amt;
+	existing_stack := existing_stack;
+	movetype       := movetype;
+	inserttype     := inserttype;
+
+	//se for projetil ok
+	if ( item.graphic == 0x1bfb || item.graphic == 0xf3f  )
+
+	else //se nao for projetil
+
+		if (book.objtype == 0x3bd7 ) //mas for uma aljava com bainha
+			if ( item.usescript == ":combat:useScript/bladed" ) // pode por uma espada
+				var items := enumerateitemsincontainer(book);
+				foreach weap in (items)
+					if (weap.isa(POLCLASS_WEAPON))
+						SendSysMessageEx(who, "Ja existe uma arma nesta bainha.", SSM_FAIL);
+						return 0;
+					endif
+				endforeach
+				return 1;
+			endif			
+		else // se nao retorna
+			SendSysMessageEx(who, "Voce nao pode guardar isto na aljava.", SSM_FAIL);
+			MoveItemToContainer(item, who.backpack);
+			return 0;
+		endif
+
+	endif
+
+//	var items := EnumerateItemsInContainer( book );
+
+	
+
+	if( book.movable == 0 )
+		SendSysMessage(who, "Cancelado.");
+		MoveItemToContainer(item, who.backpack);
+		return 0;
+	elseif( !ReserveItem(book) || !ReserveItem(item) )
+		MoveItemToContainer(item, who.backpack);
+		SendSysMessage(who, "A Aljava esta em uso.");
+		return 0;
+	else
+			return 1;
+	endif
+
+	return 1;
+endprogram
+
+
+

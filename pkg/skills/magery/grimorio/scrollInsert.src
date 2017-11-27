@@ -35,20 +35,20 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 		return 0;
 	endif
 
-	addScroll(who, book, item) == 1 )
-return 1;
+	addScroll(who, book, item);
+	return 1;
 endprogram
 
 function addScroll(who, book, scroll)
-	var spell_id    := GetObjProperty(scroll, "spellinfo");
+	var spell_id    := GetObjProperty(scroll, "spell_id");
 	var spell_list := GetObjProperty(book, "spells");
 	if (spell_list == error)
 		spell_list := array;
 	endif
 	
-	if (!spellid)
+	if (!spell_id)
 		SendSysMessage(who, "Este nao parece um pergaminho de magia.");
-		MoveItemToContainer(item, who.backpack);
+		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	elseif( spell_list.Size() > 15 )
 		SendSysMessage(who,"Este livro ja esta cheio.");
@@ -60,7 +60,7 @@ function addScroll(who, book, scroll)
 		return 0;
 	elseif (FindInArray(spell_list, spell_id))
 		SendSysMessageEX(who,"O grimorio ja possui esta magia.", SSM_FAIL);
-		MoveItemToContainer(item, who.backpack);
+		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	endif
 	

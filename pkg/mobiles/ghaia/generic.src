@@ -23,10 +23,9 @@ endprogram
 
 function CloseDistance( opponent )
 	if (cint(npccfgfile.Ranged) || me.weapon.isBow())
-		CloseDistanceArcher(opponent);
+		return CloseDistanceArcher(opponent);
 	endif
-
-	CloseDistanceMeele(opponent);
+	return CloseDistanceMeele(opponent);
 endfunction
 
 function CloseDistanceMeele( opponent )
@@ -142,7 +141,6 @@ function Fight(opponent, alerted := 0)
                sleepms(100);
             endwhile
          endif
-
          break;
       endif
 
@@ -192,10 +190,9 @@ function Fight(opponent, alerted := 0)
          waittime := 1;
       endif
       
-      checkFlee(opponent);
+      // checkFlee(opponent); //uncomment later
       
       ev := wait_for_event(waittime);
-      //    printtextabove(self(), "event " + ev);
       if(ev.type == SYSEVENT_SPEECH)
          continue;
       endif
@@ -206,7 +203,7 @@ function Fight(opponent, alerted := 0)
             //se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente nao estiver acessivel
             /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/
             if (ev.source && (!CheckLineOfSight(me, opponent) || !opponent))
-               if ( (opponent) && RandomInt(4) == 1 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
+               if ( (opponent) && RandomInt(5) == 1 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
                   opponent := ev.source;
                   SetOpponent(opponent);
                   TurnToward(opponent);
@@ -236,10 +233,10 @@ function Fight(opponent, alerted := 0)
                Flee(ev.source);
             endif
 
-         EVID_PEACEMADE:
-         //	sendsysmessage(ev.source, "peacemade");
-            SetPeaceMade();
-            return;
+        //  EVID_PEACEMADE:
+        //  //	sendsysmessage(ev.source, "peacemade");
+        //     SetPeaceMade();
+        //     return;
          EVID_COMBAT_MOVE:
             RunTowardLocation( ev.x, ev.y );
             if (CoordinateDistance(me.x, me.y, ev.x, ev.y) <= 1)

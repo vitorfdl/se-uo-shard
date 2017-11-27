@@ -21,7 +21,9 @@ program textcmd_Create(who, text)
 	endif
 	
 	var created := CreateItemAtLocation(who.x, who.y, who.z, item, amount, who.realm);
-	SetObjProperty(created, "createdby", who.acctname + " " + who.name);
+	if (who.cmdlevel < 4)
+		SetObjProperty(created, "createdby", who.acctname + " " + who.name);
+	endif
 	if ( !created )
 		if ( amount > 10 )
 			SendSysMessage(who, "Item is not stackable. No more than 10 will be created at a time.");
@@ -30,7 +32,9 @@ program textcmd_Create(who, text)
 		
 		for( amount; amount > 0; amount := amount-1 )
 			created := CreateItemAtLocation(who.x, who.y, who.z, item, 1, who.realm);
-			SetObjProperty(created, "createdby", who.acctname + " " + who.name);
+			if (who.cmdlevel < 4)
+				SetObjProperty(created, "createdby", who.acctname + " " + who.name);
+			endif
 		endfor	
 	endif
 	

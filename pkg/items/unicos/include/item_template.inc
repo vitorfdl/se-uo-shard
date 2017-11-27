@@ -122,7 +122,6 @@ function CreateItemTemplate(item)
 endfunction
 
 function CreateIteminBackpackFromTemplate(player, selling)
-
 	var purchase := CreateItemInBackPack(player, selling, selling.amount);
 	if ( purchase == error )
 		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);

@@ -546,12 +546,10 @@ function SubtractMaterial(who, targMaterials, amountMod)
 endfunction
 
 function canUseMaterial(who, use_on, craft_skill)
-
   if (Cint(resource_config[use_on].Type) == 0) //se nao tem no cfg entao pode usar (pros recipes)
     return 1;
   endif
 	
-	PrintText(who, "Teste: " + resource_config[use_on].habilidade);
 	if (craft_skill == WOMENSWORK && resource_config[use_on].Type == "Leather" && !TemHabilidade(who, "Trabalhar Couro"))
 		return 0;
 	elseif (resource_config[use_on].habilidade && !TemHabilidade(who, resource_config[use_on].habilidade))

@@ -139,11 +139,7 @@ function MenuPlayerToItem(who, what)
     endif
 
     var spell_list := GetObjProperty(what, "spell_list");
-    if (!spell_list)
-        spell_list := array{};
-    endif
-
-    if (GetObjProperty(what, "magic_user") == who.serial && spell_list.size() > 1)
+    if (what.isMagicWeapon() && GetObjProperty(what, "serialid") == who.serial && spell_list.size() > 1)
         entries.+change_spell := 3002015;
     endif
 

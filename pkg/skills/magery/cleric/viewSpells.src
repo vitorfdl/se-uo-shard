@@ -19,6 +19,7 @@ program clericPowerWords(who)
    var cleric_slots := char_level+2;
    var cleric_list  := GetObjProperty(who, "cleric_list");
    if (!cleric_list) cleric_list := array{}; endif
+   cleric_list := array{ struct{ "id":= 1, "used" := 0, "time" := 0} } + cleric_list;
    var slots_used := 0;
    foreach spell in cleric_list
       var new_spell := spell.id;
@@ -28,7 +29,9 @@ program clericPowerWords(who)
       cleric_list.Erase(_spell_iter);
       cleric_list.Insert(_spell_iter, new_spell);
 
-      slots_used += spell.circle;
+      if (new_spell.id != 1)
+         slots_used += spell.circle;
+      endif
 
       sleepms(2);
    endforeach
@@ -80,7 +83,6 @@ function CreateClericGump(who, cleric_list, available_slots)
 
       if (not_empty == 0)
          GFAddButton(gump, 431, y+2, 22150, 22151, GF_CLOSE_BTN, 200+_spell_iter);
-	      GFTooltip(gump, 1030297);
       endif
 
       y += 26;
@@ -90,13 +92,15 @@ function CreateClericGump(who, cleric_list, available_slots)
 endfunction
 
 function isNotEmpty(spell)
-   if(spell.time < polcore().systime && spell.used)
-      return 3;
+   if (spell.id == 1)
+      return 2; //cannot remove
+   elseif(spell.time < polcore().systime && spell.used)
+      return 3; // can remove and already used
    elseif (spell.time < polcore().systime)
-      return 0;
+      return 0; //can remove
    elseif(spell.used)
-      return 1;
+      return 1; // already used
    endif
 
-   return 2;
+   return 2; //cannot remove
 endfunction

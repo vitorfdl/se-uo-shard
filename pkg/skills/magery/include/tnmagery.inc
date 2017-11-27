@@ -54,7 +54,6 @@ function TNCheckReagents(who, byref spellinfo, item)
 	if ( item.isa(POLCLASS_ITEM) && spellinfo.charges )
 		var charges := GetObjProperty(item, "charges");
 		if (charges < spellinfo.charges)
-			SendSysMessageEx(who, "Não há cargas suficientes para a magia.", SSM_FAIL);
 			return 0;
 		endif
 		charges -= spellinfo.charges;
@@ -114,72 +113,79 @@ endfunction
 
 function WriteMagic(who, spell_id)
 	var items_bag := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
-	if (who.cmdlevel > 1 || !HaveSkill(who, "Arcanismo"))
-		SendSysMessageEx("Voce nao tem conhecimento de magia", SSM_FAIL);
+	if (who.cmdlevel < 2 && who.isClass("Mago"))
+		SendSysMessageEx(who, "Voce nao tem conhecimento de magia", SSM_FAIL);
 		return;
-	elseif (SearchArrayOfModel("objtype", 0x10e4, EnumerateItemsInContainer(who.backpack))) 
-		SendSysMessageEx("Voce precisa de uma faca para entalhar", SSM_FAIL);
+	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
+		SendSysMessageEx(who, "Voce precisa de uma faca para entalhar", SSM_FAIL);
 		return;
 	endif
 
-	SendSysMessageEx("Escolha o objeto para inscrever a magia.", SSM_INFO);
+	SendSysMessageEx(who, "Escolha o objeto para inscrever a magia.", SSM_INFO);
 	var targ := Target(who);
 
 	var magic_slot   := GetObjProperty(targ, "magicslot");
 	var spell_list   := GetObjProperty(targ, "spell_list");
-	var magic_user   := GetObjProperty(targ, "magic_user");
+	if (!spell_list)
+		spell_list := array{};
+	endif
+	var magic_user   := GetObjProperty(targ, "serialid");
 	var element      := GetObjProperty(targ, "element");
 	var elementpower := GetObjProperty(targ, "elementpower");
 	if (!targ.isA(POLCLASS_ITEM))
-		SendSysMessageEx("Voce deve escolher um objeto!", SSM_FAIL);
+		SendSysMessageEx(who, "Voce deve escolher um objeto!", SSM_FAIL);
 		return;
 	elseif (!magic_slot)
-		SendSysMessageEx("Este objeto nao tem poder magico!", SSM_FAIL);
+		SendSysMessageEx(who, "Este objeto nao tem poder magico!", SSM_FAIL);
 		return;
-	elseif (spell_list && spell_list.size() >= magic_slot)
-		SendSysMessageEx("Este objeto nao possui mais espaco para magias!", SSM_FAIL);
+	elseif (GetObjProperty(targ, "serialid") && GetObjProperty(targ, "serialid") != who.serial)
+		return;
+	elseif (spell_list.size() >= magic_slot)
+		SendSysMessageEx(who, "Este objeto nao possui mais espaco para magias!", SSM_FAIL);
 		return;
 	elseif (spell_id in spell_list)
-		SendSysMessageEx("O equipamento ja tem essa magia!", SSM_FAIL);
+		SendSysMessageEx(who, "O equipamento ja tem essa magia!", SSM_FAIL);
 		return;
 	elseif(magic_user && magic_user != who.serial)
-		SendSysMessageEx("Voce nao e capaz de alterar inscricoes feitas por outras pessoas", SSM_FAIL);
+		SendSysMessageEx(who, "Voce nao pode gravar em itens de outra pessoa!", SSM_FAIL);
 		return;
 	endif
-	
+
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
 		if (who.x != loc[1] && who.y != loc[2])
-			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto". SSM_FAIL);
+			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto", SSM_FAIL);
 			return;
 		endif
-		PrintTextAboveUC(who, "*inscrevendo em {}*".format(targ.desc), who);
+		PrintText(who, "*inscrevendo em {}*".format(targ.desc));
 		PlaySoundEffect(who, 0x002b);
 		sleep(2);
 	endfor
 
 	var spellinfo := struct{ id := spell_id };
 	if (!WriteSpellInfo(spellinfo))
-		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia". SSM_FAIL);
+		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia", SSM_FAIL);
 		return;
-	elseif ((spellinfo.type != "Controle" && spellinfo.type != element) || (spellinfo.circle > elementpower))
-		SendSysMessageEx(who, "Asinscricao nao reage aos elementos da varinha". SSM_FAIL);
+	endif
+	printtext(who, spellinfo.type);
+	if ((spellinfo.type != "Comando" && spellinfo.type != element) || (spellinfo.circle > elementpower))
+		SendSysMessageEx(who, "A inscricao nao reage aos elementos da varinha", SSM_FAIL);
 		return;
 	endif
 
-	var dice_roll := rollAttrDice(who, INTELLIGENCE);
-	if (dice_roll <= spellinfo.Difficulty+3)
-		SendSysMessageEx(who, "Parece que você errou durante a copia. O espaço ficou inutilizado.". SSM_FAIL);
+	var dice_roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, ARCANISMO);
+	if (dice_roll <= spellinfo.Difficulty+3 && who.cmdlevel < 4)
+		SendSysMessageEx(who, "Parece que você errou durante a copia. O espaço ficou inutilizado.", SSM_FAIL);
 		spell_list.append(0);
 		SetObjProperty(targ, "spell_list", spell_list);
 		return;
 	endif
 
 	spell_list.append(spell_id);
-	SetObjProperty(targ, "magic_user", who.serial);
+	SetObjProperty(targ, "serialid", who.serial);
 	SetObjProperty(targ, "spell_list", spell_list);
 	SetObjProperty(targ, "magicwho", array{ who.serial });
-	SendSysMessageEx(who, "Voce inscreveu com sucesso a magia na arma.". SSM_FAIL);
+	SendSysMessageEx(who, "Voce inscreveu com sucesso a magia na arma.", SSM_INFO);
 endfunction
 
 function dispel(targ);

@@ -76,7 +76,9 @@ function buildGump(who)
 			GFAddButton(gump, s_x, s_y, 2224, 2224, GF_CLOSE_BTN, id); //Use Skill
 		endif
 		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
-		GFTextLine(gump, s_x+18, s_y-3, 1152, skill);
+		var skill_name := skill;
+		skill_name["_"] := " ";
+		GFTextLine(gump, s_x+18, s_y-3, 1152, skill_name);
 		s_y += 30;
 		sleepms(5);
 	endforeach
@@ -90,14 +92,18 @@ function buildGump(who)
 	var f_x := 395;
 	var f_y := 53;
 	foreach feat in feat_list
-		var feat_info := FeatInfo(feat);
+		var feat_info := feat;
+		if (feat.name != "Nenhum")
+			feat_info := FeatInfo(feat);
+		endif
+		
 		if (feat_info.type == 1)
 			GFAddButton(gump, f_x, f_y, 2224, 2224, GF_CLOSE_BTN, 100+_feat_iter); //Usar Talento
 		endif
 		GFGumpPic(gump, f_x+14, f_y-5, 40135, 0);
 		GFTextLine(gump, f_x+18, f_y-3, 1152, feat_info.name);
 		if (feat.desc)
-			GFTooltip(gump, feat_info.desc);
+			GFTooltipText(gump, feat_info.desc);
 		endif
 		// GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 0); // Info
 		sleepms(2);

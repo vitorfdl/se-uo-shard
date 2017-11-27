@@ -15,13 +15,14 @@ include "include/facings";
 include ":tn:cooldown";
 include "include/arrays";
 
-var rune_cfg := ReadConfigFile("runes");
+var rune_cfg := ReadConfigFile(":magery:config/runes");
 
 function getRune(rune)
    var rune_info := FindConfigElem(rune_cfg, rune);
    if (!rune_info) return 0; endif;
 
 	var obj := struct{
+		"name":= "Runa {}".format(rune),
 		"desc":= rune_info.desc,
 		"diff":= cint(rune_info.Difficulty),
 		"usos":= GetConfigStringArray(rune_info, "Uso"),
@@ -37,7 +38,7 @@ program book(who, book)
 
 	if (result[0])
 		var rune := result[0] - 100;
-		var runes   := GetObjProperty(book, "runes");
+		var runes    := GetObjProperty(book, "runes");
 		var serialid := GetObjProperty(book, "serialid");
 		if (serialid != error && serialid != who.serial)
 			SendSysMessageEx(who, "Voce nao entende as anotacoes do livro.", SSM_FAIL);
@@ -62,8 +63,9 @@ function CreateBookGump(book, can_read := 0)
 	endif
 
 	var book_gump := GFCreateGump();
+	GFSetId(book_gump, GUMPID_RUNEBOOK);
 // Begin Page 0 Setup
-	GFGumpPic(book_gump, 100, 10, 2200);
+	GFGumpPic(book_gump, 70, 5, 0x2B29);
 	GFGumpPic(book_gump, 125, 50, 57);
 	GFGumpPic(book_gump, 145, 50, 58);
 	GFGumpPic(book_gump, 160, 50, 58);
@@ -84,13 +86,14 @@ function CreateBookGump(book, can_read := 0)
 // Begin Page 1 Setup
 	GFPage(book_gump, 1);
 	//GFAddButton(book_gump, 125, 15, 2472, 2473, GF_CLOSE_BTN, 50);
-	GFHTMLArea(book_gump, 135, 24, 130, 18, "<i>Livro de Runas</i>");
+	GFHTMLArea(book_gump, 139, 28, 130, 18, "<i>Livro de Runas</i>");
 	GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, 2);
 
 	var pOX       := 130;
 	var pOY       := 65;
 	foreach rune in rune_list
 		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+_rune_iter);
+		GFTooltipText(book_gump, "<BASEFONT color=#ADD8E6>Inscrever");
 		pOY+=15;
 		if (pOY >180)
 			pOY := 65;
@@ -103,15 +106,20 @@ function CreateBookGump(book, can_read := 0)
 	pOY      := 60;
 
 	for i := 2 to 9
+		var pos := i;
+		if (i == 2)
+			pos := 1;
+		endif
+
 		GFPage(book_gump, i);
 
-		GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, (i-1));
+		GFAddButton(book_gump, 116, 14, 2205, 2205, GF_PAGE_BTN, (i-1));
 		if(i != 9)
 			GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, (i+1));
 		endif
 
-		GenerateSide(book_gump, rune_list, i, 1, pOX, pOY, i-1);
-		GenerateSide(book_gump, rune_list, i, 2, pOX, pOY, i-1);
+		GenerateSide(book_gump, rune_list, i, 1, pOX, pOY, pos);
+		GenerateSide(book_gump, rune_list, i, 2, pOX, pOY, pos+1);
 
 		SleepMS(2);
 	endfor
@@ -123,18 +131,17 @@ endfunction
 // Generate every page of the book. And the button for the First page.
 // Inside generate empty page too
 //-----------------
-function GenerateSide(byref book_gump, rune_list, i, side, byref pOX, byref pOY, byref rune_pos)
-	var sOX := 160;
+function GenerateSide(byref book_gump, rune_list, i, side, byref pOX, byref pOY, rune_pos)
+	var sOX := 158;
 	if (side == 2)
-		sOX := 300;
+		sOX := 302;
 	endif
 
 	var rune_entry := getRune(rune_list[rune_pos]);
-
-	rune_entry.description := "<BASEFONT COLOR=#000066>{}<br><br> <BASEFONT COLOR=#330000> Tipos <br>".format(cstr(rune_entry.description));
+	rune_entry.desc := "<BASEFONT COLOR=#000066>{}<br><br> <BASEFONT COLOR=#330000> Tipos <br>".format(cstr(rune_entry.desc));
 
 	foreach r in (rune_entry.usos)
-		rune_entry.description := "{}{}<br>".format(rune_entry.description, cstr( r ));
+		rune_entry.desc := "{}{}<br>".format(rune_entry.desc, cstr( r ));
 	endforeach
 
 	if( TypeOf(rune_entry) == "Struct" )
@@ -142,17 +149,17 @@ function GenerateSide(byref book_gump, rune_list, i, side, byref pOX, byref pOY,
 			// This puts the rune in page 1's list.
 			GFPage(book_gump, 1);
 			GFTextCrop(book_gump, pOX,  pOY, 115, 17, 995, rune_entry.name);
+			
 			GFPage(book_gump, i);
-
 			GFTextCrop(book_gump, sOX,  15, 100, 18, 995, rune_entry.name);
-			GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Inscrever");
-			GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 100+rune_pos);
+			// GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Inscrever");
+			// GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 100+rune_pos);
 
 			//Fix description position by side
 			if (side == 1)
-				GFHTMLArea(book_gump, sOX-20, 60, 120,  140, cstr(rune_entry.description), 0, 1);
+				GFHTMLArea(book_gump, sOX-20, 60, 120,  140, cstr(rune_entry.desc), 0, 1);
 			else
-				GFHTMLArea(book_gump, sOX, 60, 120,  140, cstr(rune_entry.description), 0, 1);
+				GFHTMLArea(book_gump, sOX, 60, 120,  140, cstr(rune_entry.desc), 0, 1);
 			endif
 
 		endif
@@ -160,7 +167,6 @@ function GenerateSide(byref book_gump, rune_list, i, side, byref pOX, byref pOY,
 		GenerateEmptySide(book_gump, side, pOX, pOY, i);
 	endif
 
-	rune_pos := rune_pos + 1;
 	pOY := pOY + 15;
 	if( pOY > 165 )
 		pOY := 60;
@@ -185,10 +191,11 @@ function GenerateEmptySide(byref book_gump, side, pOX, pOY, page_num)
 endfunction
 
 function WriteRune(who, rune_entry)
+	rune_entry := getRune(rune_entry);
 	if( TypeOf(rune_entry) != "Struct" )
-		return SendSysMessageEx("Algo esta errado com seu livro.", SSM_FAIL);
-	elseif (SearchArrayOfModel("objtype", 0x10e4, EnumerateItemsInContainer(who.backpack))) 
-		SendSysMessageEx("Voce precisa de uma faca para entalhar", SSM_FAIL);
+		return SendSysMessageEx(who, "Algo esta errado com seu livro.", SSM_FAIL);
+	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
+		SendSysMessageEx(who, "Voce precisa de uma faca para entalhar", SSM_FAIL);
 		return;
 	endif
 
@@ -196,45 +203,46 @@ function WriteRune(who, rune_entry)
 	var item := Target(who);
 
 	if (GetObjProperty(item, "inscripted"))
-		return SendSysMessageEx("Uma runa ja esta gravada neste item.", SSM_FAIL);
+		return SendSysMessageEx(who, "Uma runa ja esta gravada neste item.", SSM_FAIL);
 	endif
 
 	var item_type;
 	
 	if (item.isA(POLCLASS_ARMOR))
-		item_type := "Armadura";
+		item_type := "Armaduras";
 	elseif (item.isBow())
-		item_type := "Arco";
+		item_type := "Arcos";
 	elseif (item.isA(POLCLASS_WEAPON))
-		item_type := "Arma";
+		item_type := "Armas";
 	elseif (item.isA(POLCLASS_EQUIPMENT))
 		item_type := "Joias";
 	elseif (item.isA(POLCLASS_CONTAINER))
-		item_type := "Container";
+		item_type := "Containers";
 	endif
 
 	if (!item_type || !(item_type in rune_entry.usos))
-		return SendSysMessageEx("Objeto invalido para esta runa.", SSM_FAIL);
+		return SendSysMessageEx(who, "Objeto invalido para esta runa.", SSM_FAIL);
 	elseif (item.hp <= (item.maxhp / 3))
-		return SendSysMessageEx("Este objeto esta muito danificado para receber uma runa..", SSM_FAIL);
+		return SendSysMessageEx(who, "Este objeto esta muito danificado para receber uma runa..", SSM_FAIL);
 	endif
 
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
 		if (who.x != loc[1] && who.y != loc[2])
-			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto". SSM_FAIL);
+			SendSysMessageEx(who, "Voce se moveu e parou de gravar no objeto", SSM_FAIL);
 			return;
 		endif
-		PrintTextAboveUC(who, "*inscrevendo em {}*".format(item.desc), who);
+		PrintText(who, "*inscrevendo em {}*".format(item.desc), who);
 		PlaySoundEffect(who, 0x002b);
 		sleep(2);
 	endfor
 
 	var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, INSCRICAO_RUNICA);
+	printtext(who, rune_entry.diff);
 	if (roll <= rune_entry.diff)
 		item.hp -= Floor(item.maxhp / 4);
 		SetName(item, item.desc);
-		return SendSysMessageEx("Voce falhou em inscrever a runa e danificou o objeto.", SSM_FAIL);
+		return SendSysMessageEx(who, "Voce falhou em inscrever a runa e danificou o objeto.", SSM_FAIL);
 	endif
 
 	foreach set in (rune_entry.sets.Keys())
@@ -256,5 +264,5 @@ function WriteRune(who, rune_entry)
 
 	SetObjProperty(item, "inscripted", rune_entry.name);
 
-	SendSysMessageEx("Voce gravou a runa.", SSM_FAIL);
+	SendSysMessageEx(who, "Voce gravou a runa.", SSM_FAIL);
 endfunction

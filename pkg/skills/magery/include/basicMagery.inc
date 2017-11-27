@@ -66,7 +66,7 @@ function EquipmentCheck(who)
 
 	foreach equip in equips
 		var elem := FindConfigElem( cfg, equip.objtype );
-		if (elem && elem.Pericia && HaveSkill(who, elem.Pericia))
+		if (elem && elem.Pericia && !HaveSkill(who, elem.Pericia))
 			return 0;
 		endif
 	endforeach

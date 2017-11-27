@@ -16,7 +16,7 @@ program core_logoffTest(who)
 	TS_LogOff(who);
 
 	if ( (FindAccount(who.acctname).defaultcmdlevel > 1) || who.cmdlevel > 1 || (GetObjProperty(who,"Delete")) 
-		|| (who.x > 6005 && who.y > 42 && who.x < 6029 && who.y < 92 ))
+		|| (who.x > 3991 && who.y > 2589 && who.x < 4074 && who.y < 2645 ))
 		// Let staff or characters being deleted/banned logout immediately.
 		return 0;
 	endif

@@ -400,12 +400,6 @@ endfunction
  * No return value.
  *
  */
-function GFTooltip(byref gump, cliloc_id)
- var text := "Tooltip " + CStr(CInt(cliloc_id)) + "'";
- (gump.layout).Append(text);
-
- return 1;
-endfunction
 
 function GFTooltipText(byref gump, entrytext)
  var text := "Tooltip 1114057 @" + entrytext + "@'";

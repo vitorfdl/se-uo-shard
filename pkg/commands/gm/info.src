@@ -271,14 +271,14 @@ function DisplayAttributes(targ, byref gump, byref entry, byref y_pos)
 			var value := AP_GetTrueSkill(targ, attrib_name);
 			var mod_value := AP_GetSkillMod(targ, attrib_name);
 			var colors := array{2100, 2100};
-			if (value > 0) colors[1] := 1989; endif
-			if (mod_value < 0) colors[2] := 1980;
-			elseif (mod_value > 0) colors[2] := 1989; endif
+			if (value > 0) colors[1] := 61; endif
+			if (mod_value < 0) colors[2] := 39;
+			elseif (mod_value > 0) colors[2] := 61; endif
 			
 			if (gm.acctname in gmParedes && (!targ.npctemplate))
 				GFTextRight(gump, 465, y_pos, 2100, "=x");
 			else
-				GFTextRight(gump, 465, y_pos, colors[1], "{}".format(value));
+				GFTextRight(gump, 445, y_pos, colors[1], "{}".format(value));
 				GFTextRight(gump, 475, y_pos, colors[2], "({})".format(mod_value));
 			endif
 			y_pos := y_pos+20;

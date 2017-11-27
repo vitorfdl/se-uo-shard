@@ -27,9 +27,9 @@ var g_scripts := dictionary; // "script type"->value{.flags, .script}
 function EnableMerchantEvents()
    var setting_list := GetConfigStringDictionary(npccfgfile, "ghaiaSettings");
    DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
-   EnableEvents(SYSEVENT_DOUBLECLICKED, cint(setting_list.DblClickRange));
-   EnableEvents(SYSEVENT_SPEECH, cint(setting_list.HearSpeech));
-   EnableEvents(SYSEVENT_ENTEREDAREA, cint(setting_list.LookingRange));
+   EnableEvents(SYSEVENT_DOUBLECLICKED, unpack(setting_list.DblClickRange));
+   EnableEvents(SYSEVENT_SPEECH, unpack(setting_list.HearSpeech));
+   EnableEvents(SYSEVENT_ENTEREDAREA, unpack(setting_list.LookingRange));
    EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN, areasize);
 endfunction
 
@@ -43,7 +43,6 @@ program Merchant()
 
     InitializeNpc(me);
     set_critical(0);
-
     SetWarMode( 0 );
     ev := os::wait_for_event(0);
     EnableMerchantEvents();
@@ -56,18 +55,10 @@ program Merchant()
          ev := os::wait_for_event(10);
       endif
 
-      var occupied := GetObjProperty(me, "occupied");
-      if (occupied)
-         var person := SystemFindObjectBySerial(occupied);
-         if (Distance(person, me) > cint(g_settings["HearSpeech"]) || !person.connected)
-            EraseObjProperty(me, "occupied");
-         endif
-      endif
-
       if(ev)
          case(ev.type)
             SYSEVENT_ENTEREDAREA:
-              if (g_scripts["SeeEvent"])
+               if (g_scripts["SeeEvent"])
                   HandleSeeEvent(ev);
                endif
                break;
@@ -93,6 +84,9 @@ program Merchant()
                if (ev.destiny)
                   wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
                endif
+            EVID_SPEAK:
+               print(ev);
+              SayUC(UC(ev.text), ev.texttype, ev.doevent);
             // EVID_ALERT_ALLIES:  wanders := 0; Fight(ev.opponent, 1);
             // EVID_HERDING:       herd(ev);
             // EVID_TAUNT:
@@ -125,6 +119,12 @@ function HandleSeeEvent(byref event)
 endfunction
 
 function ItemGivenEvent(byref event)
+   var occupied := GetObjProperty(me, "#occupied");
+   if (occupied && GetProcess(occupied))
+      SayUC(UC("Desculpe, estou atendendo outra pessoa agora"));
+      return;
+   endif
+
    var packed := struct{
      "source" := event.source,
      "me"     := me,
@@ -150,6 +150,14 @@ function ItemGivenEvent(byref event)
 endfunction
 
 function HandleSpeech(byref event)
+   var occupied := GetObjProperty(me, "#occupied");
+   if (event.source.serial == me.serial)
+      return;
+   elseif (occupied && GetProcess(occupied))
+      SayUC(UC("Desculpe, estou atendendo outra pessoa agora"));
+      return;
+   endif
+   
    var packed := struct{
      "source" := event.source,
      "me"     := me,
@@ -157,21 +165,14 @@ function HandleSpeech(byref event)
      "type"   := "SpeechEvent"
    };
 
-   PrintTextAbove(event.source, "Test");
-   print(g_settings);
-   print(cint(g_settings["HearSpeech"]));
-   if (GetObjProperty(me, "occupied"))
-      return PrintTextPrivate(me, "Desculpe, estou atendendo outra pessoa agora", event.source);
-   elseif (Distance(event.source, me) > cint(g_settings["HearSpeech"]))
+   if (Distance(event.source, me) > cint(g_settings["HearSpeech"]))
       return 0;
    endif
 
-   SetObjProperty(me, "occupied", event.source.serial);
    var process := start_script(g_scripts["TalkEvent"], packed);
 
    if ( process.errortext )
       var errmsg := "Error::TalkEvent() - ['Listen'] [{}] failed to start! ->{}".format(g_scripts["TalkEvent"], process.errortext);
-      Print(errmsg);
       NPC_ErrorSysLog(me, errmsg);
       return error{"errortext":=errmsg};
    endif
@@ -184,6 +185,12 @@ function DblClickScript(event)
       return 1;
    elseif ( Distance(event.source, me) > g_settings["DblClickRange"])
       return 0;
+   endif
+
+   var occupied := GetObjProperty(me, "#occupied");
+   if (occupied && GetProcess(occupied))
+      SayUC(UC("Desculpe, estou atendendo outra pessoa agora"));
+      return;
    endif
 
    var process := start_script(g_scripts["DblClick"], array{me, event});

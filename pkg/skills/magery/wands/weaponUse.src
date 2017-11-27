@@ -13,22 +13,21 @@ program useWeapon(who, weapon)
       who          := who[1];
    endif
 
-   var weapon_owner := GetObjProperty(weapon, "owner");
-   if (who.cmdlevel > 1 || !HaveSkill(who, "Arcanismo"))
-		SendSysMessageEx("Voce nao tem conhecimento arcano.", SSM_FAIL);
+   var weapon_owner := GetObjProperty(weapon, "serialid");
+   if (who.cmdlevel < 2 && !HaveSkill(who, "Arcanismo"))
+		SendSysMessageEx(who, "Voce nao tem conhecimento arcano.", SSM_FAIL);
 		return;
    elseif (who.weapon != weapon)
-		SendSysMessageEx("Precisa estar segurando a arma para usar magias.", SSM_FAIL);
+		SendSysMessageEx(who, "Precisa estar segurando a arma para usar magias.", SSM_FAIL);
 		return;
    elseif (weapon_owner && weapon_owner != who.serial)
-		SendSysMessageEx("Voce nao sabe usar equipamentos magicos de outra pessoa.", SSM_FAIL);
+		SendSysMessageEx(who, "Voce nao sabe usar equipamentos magicos de outra pessoa.", SSM_FAIL);
 		return;
    endif
 
    if (!active_spell)
       active_spell := GetObjProperty(weapon, "active_spell");
    endif
-   
    
    var spell_list := GetObjProperty(weapon, "spell_list");
    if (!(active_spell in spell_list))

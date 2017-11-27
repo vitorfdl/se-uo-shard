@@ -224,13 +224,15 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			elseif (thing == "pontaflecha" && cint(GetObjProperty(ret[1], "material")) != recipe.arrowtype)
             SendSysMessageEx(who, "Voce nao pode fabricar estas flechas com a ponta escolhida." , SSM_FAIL);
             return OUT_OF_MATERIALS;
-			elseif (thing == "ossodemonio")
-				material_cprops["magicslot"] := GetObjProperty(thing, "power");
-			elseif (thing["monsterpart"])
-				material_cprops["element"] := GetObjProperty(thing, "element");
-				material_cprops["elementpower"] := GetObjProperty(thing, "elementpower");
          else
             targ_materials[ret[1].objtype] := materials[thing];
+				if (thing == "ossodemonio")
+					material_cprops["magicslot"] := GetObjProperty(ret[1], "power");
+				elseif (thing["monsterpart"])
+					material_cprops["element"] := GetObjProperty(ret[1], "element");
+					material_cprops["elementpower"] := GetObjProperty(ret[1], "elementpower");
+				endif
+				
             if (thing == main_material)
                material_color   := ret[1].color;
                choosed_material := ret[1].objtype;
@@ -321,7 +323,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
       endif
 
 		var check := rollAttrDice(who, "Intelligence") + bonus;
-		if(check > recipe.difficulty)
+		if(check > recipe.difficulty || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials, 1+more))
 				SendSysMessageEx(who, "Voce nao possui todos os materiais.", SSM_FAIL);
 				return theitems;
@@ -337,8 +339,9 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			//passando a cor pra materiais coloridos que nao tem Id proprio (como madeira)
 			// AddMaterialMod(who, theitem, choosed_material, material_color);
 			// CraftExceptional(who, theitem, craft_skill);
+			print(material_cprops);
 			foreach key in (material_cprops.Keys())
-				SetObjProperty(theitem, "key", material_cprops[key]);
+				SetObjProperty(theitem, key, material_cprops[key]);
 			endforeach
 			CraftLockable(who, theitem);
 

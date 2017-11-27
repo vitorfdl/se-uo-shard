@@ -75,7 +75,7 @@ endfunction
  */
 function NPC_GetNPCConfig(template)
 	if (template.isA(POLCLASS_MOBILE))
-		template := struct{ "package" := template.package(), "my_template" := template.my_template};
+		template := struct{ "package" := template.package(), "my_template" := template.my_template()};
 	else
 		var splited := SplitWords(template, ":");
 		template := struct{ "package" := splited[2], "my_template" := splited[3]};
@@ -161,11 +161,12 @@ endfunction
 
 function AI_Speak(npc, text, text_type:=SPEAK_TEXTTYPE_DEFAULT, do_event:=SPEAK_DOEVENT_DISABLE)
 	var ev      := struct;
-	ev.+type    := SYSEVENT_SPEECH;
-	ev.+text    := text;
-	ev.+texttype:= text_type;
-	ev.+doevent := do_event;
-	ev.+process := GetProcess(GetPid());
+	ev.+type     := EVID_SPEAK;
+	ev.+text     := text;
+	ev.+texttype := text_type;
+	ev.+doevent  := do_event;
+	ev.+source   := npc;
+	ev.+process  := GetProcess(GetPid());
 
 	return SendEvent(npc, ev);
 endfunction

@@ -18,7 +18,7 @@ include ":timeutils:time";
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
 	PlayMusic(who, 8);
-	sleepms(200);
+	sleepms(600);
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
 
@@ -31,6 +31,11 @@ program createchar(who)
 	endif
 
 	SetObjProperty(who, "criandochar", 1);
+
+	if (!who.backpack)
+		var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
+		EquipItem(who, mochila);
+	endif
 
 	//destroi todos os itens equipados e na bag
 	if (who.cmdlevel < 2)
@@ -48,6 +53,8 @@ program createchar(who)
 		equiped := 0;
 	endif
 
+
+
 	//zeras as skills
 	foreach attrib in AP_ListAttributesByType()
 		AP_SetTrueSkill(who, attrib, 0);
@@ -57,6 +64,20 @@ program createchar(who)
 	//Gumps
 	var chardata := struct;
 	ShowCreateGumps(who, chardata);
+
+	if (chardata.raca["Humano"])
+		chardata.inte += 1;
+		chardata.str += 1;
+		chardata.dex += 1;
+		chardata.wis += 1;
+		chardata.con += 1;
+	elseif (chardata.raca["Meio-Elfo"])
+		chardata.dex += 2;
+		chardata.inte += 1;
+	else
+		chardata.inte += 2;
+		chardata.dex += 1;
+	endif
 
 	//Status
 	AP_SetTrueStat(who, "Strength", chardata.str);
@@ -72,6 +93,9 @@ program createchar(who)
 	chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
 
 	foreach skill in (chardata.skills)
+		skill[" "] := "_";
+		skill[" "] := "_";
+		skill[" "] := "_";
 		AP_SetTrueSkill(who, skill, 1);
 	endforeach
 
@@ -92,12 +116,12 @@ program createchar(who)
 
 	/*=====  End of Section comment block  ======*/
 
-	SetProfessions(who, chardata);
-
 	//Mudar Aparência
 	LookGump(who, chardata);
 
-	MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
+	SetProfessions(who, chardata);
+
+	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
 	AP_SetVital(who, "Hunger", 1);
 
@@ -248,17 +272,8 @@ function RaceGump(who, byref  chardata)
 		foreach thing in (input.keys)
 			case (thing)
 				2: chardata.raca := "Humano";
-				   chardata.inte += 1;
-				   chardata.str += 1;
-				   chardata.dex += 1;
-				   chardata.wis += 1;
-				   chardata.con += 1;
 				3: chardata.raca := "Elfo";
-				   chardata.inte += 2;
-				   chardata.dex += 1;
 				4: chardata.raca := "Meio-Elfo";
-				   chardata.dex += 2;
-				   chardata.inte += 1;
 
 				5: chardata.classe := "Guerreiro";
 				6: chardata.classe := "Ladino";
@@ -635,10 +650,10 @@ endfunction
 
 function SetProfessions(who, chardata);
 	var background := chardata.background;
-	var cfg        := ReadConfigFile(":charactercreation:config/antecedentes")[background];
-	var skills   := GetConfigStringArray(cfg, "Pericia");
-	var items    := GetConfigStringArray(cfg, "Item");
-	var recipes := GetConfigStringArray(cfg, "Recipe");
+	var cfg        := ReadConfigFile("config/antecedentes")[background];
+	var skills     := GetConfigStringArray(cfg, "Pericia");
+	var items      := GetConfigStringArray(cfg, "Item");
+	var recipes    := GetConfigStringArray(cfg, "Recipe");
 
 	foreach skill in skills
 		AP_SetTrueSkill(who, skill, 1);
@@ -646,14 +661,31 @@ function SetProfessions(who, chardata);
 
 	foreach item in items
 		item := SplitWords(item);
-		var obj := CreateItemInBackpack(who, hex(item[1]), item[2]);
-		SetObjProperty(obj, "OnCreation", 1);
+		var name := item[1];
+		var qty := cint(item[2]);
+
+		if (name["/"])
+			var sex_choose := SplitWords(name, "/");
+			if (who.gender == 0)
+				name := sex_choose[1];
+			else
+				name := sex_choose[2];
+			endif
+		endif
+		
+		var objtype := GetObjtypeByName(name);
+		if (!objtype)
+			objtype := item[1];
+		endif
+
+		var obj := CreateItemInBackpack(who, cint(objtype), qty);
+		SetObjProperty(obj, "serialid", who.serial);
 		sleepms(2);
 	endforeach
 
 	foreach recipe in recipes
 		var obj := CreateItemInBackpack(who, 0xef1f);
-		SetObjProperty(obj, "objtype", hex(recipe));
+		SetObjProperty(obj, "objtype", recipe);
 		sleepms(2);
 	endforeach
 endfunction

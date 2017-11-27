@@ -194,7 +194,7 @@ endfunction
  * Returns 0 if 'find_what' was not found.
  *
  */
-function FindAllElemInArray(byref the_array, find_what)
+function FindAllElemInArray(byref the_array, find_what, return_index := 0)
     if ( Lower(TypeOf(the_array)) != "array" )
         return error{"errortext":="Object passed was not an array."};
     endif
@@ -204,7 +204,11 @@ function FindAllElemInArray(byref the_array, find_what)
         if ((TypeOf(find_what) == "Struct" || TypeOf(index) == "Struct") || (TypeOf(index) == "Dictionary" || TypeOf(find_what) == "Dictionary"))
             foreach key in (find_what.Keys())
                 if (index.Exists(key) && find_what[key] == index[key])
-                    to_return.append(index);
+					if (return_index)
+                   		to_return.append(_index_iter);
+					else
+                   		to_return.append(index);
+					endif
                 endif
                 sleepms(2);
             endforeach
@@ -346,9 +350,12 @@ endfunction
 
 function SearchArrayOfModel(search_for, equal, to_search)
     var counter;
-      
 	foreach item in to_search
-		if ( item[search_for] == equal)
+		var item_prop := item[search_for];
+		if (search_for == "objtype")
+			item_prop := item.objtype;
+		endif
+		if ( item_prop == equal)
 			counter := 1;
 		endif
 	endforeach

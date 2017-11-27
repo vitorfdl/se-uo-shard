@@ -49,10 +49,10 @@ function HealFLS(targ, amt, show_heal := 1)
 	if (!show_heal)	
 		return;
 	endif
-
-	SendSystemReport(targ, amt, targ, SYSTEM_HEAL);
+	SendSystemReport(targ, amt, SYSTEM_HEAL, targ);
 	if (show_heal.isA(POLCLASS_MOBILE))
-		SendSystemReport(targ, amt, show_heal, SYSTEM_HEAL);
+		PrintText(targ, "sys");
+		SendSystemReport(targ, amt, SYSTEM_HEAL, show_heal);
 	endif
 endfunction
 
@@ -122,13 +122,13 @@ endfunction
 function CalculateTotalDamageBonus(dmg, who, defender)
 	dmg := cint(dmg);
 	var attr_bonus := 0;
-	if (!who.npctemplate)
-		if (who.weapon && who.weapon.Attribute != "Versatil")
-			attr_bonus := GetBonusAttr(AP_GetStat(who, who.weapon.Attribute));
-		else
-			attr_bonus := GetBonusAttr(AP_GetStat(who, STRENGTH));
-		endif
-	endif
+	// if (!who.npctemplate)
+	// 	if (who.weapon && who.weapon.Attribute != "Versatil")
+	// 		attr_bonus := GetBonusAttr(AP_GetStat(who, who.weapon.Attribute));
+	// 	else
+	// 		attr_bonus := GetBonusAttr(AP_GetStat(who, STRENGTH));
+	// 	endif
+	// endif
 /*	if (temHabilidade(who, "Ataques Precisos"))
 		stat := DEXTERITY;
 	endif
@@ -185,12 +185,12 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	if (source)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
-		var cleric_healing := GetObjProperty(source, "cleric_heal");
+		var cleric_healing := GetObjProperty(source, "cleric_spell");
 		if (cleric_healing && dmg >= 2)
 			var targ := SystemFindObjectBySerial(cleric_healing);
 			if (source != targ && Distance(source, targ) > 8)
 				targ := source;
-				SetObjProperty(source, "cleric_heal", source.serial);
+				SetObjProperty(source, "cleric_spell", source.serial);
 			endif
 			HealFLS(targ, Floor(dmg/2), source);
 		endif

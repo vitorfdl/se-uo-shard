@@ -21,7 +21,7 @@ program doubleClick(who, item)
    endif
 
 
-   if (alvo.isWand())
+   if (alvo.isMagicWeapon())
       var charges := cint(GetObjProperty(item, "charges"));
       charges += power;
 	   SendSysMessageEx(who, "O osso se esfarela ao tocar no objeto.", SSM_INFO);

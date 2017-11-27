@@ -63,8 +63,7 @@ program Logon(who)
 
 	LogonPets(who);
 
-	if ((!GetObjProperty(who, "criandochar") || !GetObjProperty(who, "chardata")))
-		CloseGump(who, GUMPID_CREATECHAR);
+	if (GetObjProperty(who, "criandochar") || !GetObjProperty(who, "chardata"))
 		start_script(":charactercreation:gumpcriacao", who);
 	endif
 	return 1;
@@ -83,9 +82,7 @@ function IsGm(who)
 	endif
 endfunction
 
-Function TestClientInfo(who)
-
-
+function TestClientInfo(who)
 	Var info:=who.clientinfo;
 
 

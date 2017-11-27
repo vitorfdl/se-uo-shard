@@ -123,6 +123,9 @@ function FeatInfo(feat, plus := 0)
 	var habcfg := ReadConfigFile(":charactercreation:feats");
 	var elem   := FindConfigElem( habcfg, feat );
 
+	if (!elem)
+		return feat;
+	endif
 	var feat_info := struct{
 		"name" := feat,
 		"desc" :=   GetConfigString( elem, "Description" ),

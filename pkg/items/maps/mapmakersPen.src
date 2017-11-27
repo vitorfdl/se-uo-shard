@@ -117,7 +117,7 @@ program use_MapmakersPen(who, tool)
 	elseif (GetObjProperty(targ, "rune_name"))
 		SendSysMessageEx(who, "Para qual livro voce deseja transcrever esta runa?", SSM_REQUEST);
 		var book := Target(who);
-		if (!book || !book.isA(POLCLASS_ITEM) || book.objtype != 0x6101 )
+		if (!book || !book.isA(POLCLASS_ITEM) || book.objtype != 0x2D9D )
 			SendSysMessageEx(who, "Este nao e um livro valido.", SSM_FAIL);
 			return;
 		endif
@@ -138,7 +138,7 @@ program use_MapmakersPen(who, tool)
 		endif
 
 		var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, INSCRICAO_RUNICA);
-		if (roll <= 14)
+		if (roll <= DIFF_MEDIUM && who.cmdlevel < 3)
 			SendSysMessageEx(who, "Falhou em transcrever a runa.", SSM_FAIL);
 			return;
 		endif

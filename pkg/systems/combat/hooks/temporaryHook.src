@@ -220,9 +220,9 @@ function GetDefenderCA(defender, armor)
 			CA := armor.ar_base; //se é armadura pesada, n tem dex
 
 			var armor_elem := GetItemCFGInfo(defender, armor);
-			if (armor_elem.pericia == "Armadura Leve")
+			if (armor_elem.pericia == ARMADURA_LEVE)
 				CA += GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
-			elseif (armor_elem.pericia == "Armadura Média")
+			elseif (armor_elem.pericia == ARMADURA_MEDIA)
 				var mod := GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
 				if (mod > 2) //max de mod é 2 pra média
 					mod := 2;
@@ -243,9 +243,14 @@ function GetDefenderCA(defender, armor)
 		CA := cint(npcelem.AR);
 	endif
 
-	//nao ta em warmode, 100% de chance
+	var ca_bonus := cint(GetObjProperty(defender, "bonus_ca"));
+	if (ca_bonus)
+		CA += ca_bonus;
+	endif
+
+	//nao ta em warmode, 95% de chance
 	if (defender.acctname && !defender.warmode)
-		CA := 0;
+		CA := 5;
 	endif
 
 	return CA;

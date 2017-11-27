@@ -44,7 +44,7 @@ function resolveEvent(ev, byref wanders)
 	if (!ev) return; endif;
 
 	case(ev.type)
-		SYSEVENT_ENTEREDAREA:   
+		SYSEVENT_ENTEREDAREA:
 			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
 				wanders := 0;
 				Fight(ev.source);

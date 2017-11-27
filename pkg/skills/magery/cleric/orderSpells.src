@@ -29,11 +29,12 @@ program orderSpells(who)
    foreach spell in (GetConfigIntKeys(cfg))
       sleepms(2);
       WriteSpellInfo(spell, ":magery:config/cleric");
-
-      var spell_found := FindInArray(cleric_list, struct{ id := spell.id });
+      var spell_found := FindAllElemInArray(cleric_list, struct{ id := spell.id }, 1);
       if (spell_found)
-         slots_used += cint(spell.circle);
-         cleric_list[spell_found].circle := spell.circle;
+         slots_used += cint(spell.circle * spell_found.size());
+         foreach i in spell_found
+            cleric_list[spell_found].circle := spell.circle;
+         endforeach
       endif
 
       if(spell.circle == 2 && char_level < 4)
@@ -69,7 +70,6 @@ program orderSpells(who)
 endprogram
 
 function CreateClericGump(who, spell_list, available_slots)
-   print(available_slots);
    var gump := GFCreateGump();
    var size := spell_list.Size() - 7;
    if (size >= 1)
@@ -94,6 +94,7 @@ function CreateClericGump(who, spell_list, available_slots)
    foreach spell in spell_list
       GFHTMLArea(gump, 63, y, 192, 24, "{}".format(spell.name), 1, 0);
       GFHTMLArea(gump, 259, y, 34, 24, "<center>{}".format(spell.circle), 1, 0);
+      print("circle "+spell.circle);
       if (available_slots >= spell.circle)
 	      GFAddButton(gump, 319, y+4, 10006, 10006, GF_CLOSE_BTN, 200+_spell_iter);
       else
@@ -123,5 +124,6 @@ function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
    available_slots -= spellinfo.circle;
    cleric_list.append(new_spell);
    SetObjProperty(who, "cleric_list", cleric_list);
+   SendSysMessageEx(who, "Obteu a bencao de Anar.", SSM_INFO);
    return 1;
 endfunction

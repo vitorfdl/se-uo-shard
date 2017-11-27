@@ -28,10 +28,8 @@ program book(who, book)
 		if (spells[spell])
 			CopyRecipe(who, spells[spell]);
 		endif
-	else
-
-		var spell := result[0] - 100;
-
+	elseif (result[0] > 100)
+		var spell    := result[0] - 100;
 		var spells   := GetObjProperty(book, "spells");
 		var serialid := GetObjProperty(book, "serialid");
 		if (serialid != error && serialid != who.serial)
@@ -41,7 +39,7 @@ program book(who, book)
 			SendSysMessageEx(who, "Algum erro ocorreu com sua magia, avise um GM.", SSM_FAIL);
 			return 1;
 		endif
-			WriteMagic(who, spells[spell]);
+		WriteMagic(who, spells[spell]);
 	endif
 
 endprogram
@@ -80,6 +78,7 @@ function CreateBookGump(book, can_read := 0)
 	endif
 
 	var book_gump := GFCreateGump();
+	GFSetId(book_gump, GUMPID_GRIMORIO);
 // Begin Page 0 Setup
 	GFGumpPic(book_gump, 100, 10, 2200);
 	GFGumpPic(book_gump, 125, 50, 57);
@@ -102,7 +101,7 @@ function CreateBookGump(book, can_read := 0)
 // Begin Page 1 Setup
 	GFPage(book_gump, 1);
 	//GFAddButton(book_gump, 125, 15, 2472, 2473, GF_CLOSE_BTN, 50);
-	GFHTMLArea(book_gump, 135, 24, 130, 18, "<i>Livro de Magia</i>");
+	GFHTMLArea(book_gump, 138, 26, 130, 18, "<i>Livro de Magia</i>");
 	GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, 2);
 
 	var pOX       := 130;
@@ -121,15 +120,19 @@ function CreateBookGump(book, can_read := 0)
 	pOY      := 60;
 
 	for i := 2 to 9
+		var pos := i;
+		if (i == 2)
+			pos := 1;
+		endif
 		GFPage(book_gump, i);
 
 		GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, (i-1));
 		if(i != 9)
 			GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, (i+1));
 		endif
-
-		GenerateFilledSide(book_gump, spell_list, i, 1, pOX, pOY, i-1);
-		GenerateFilledSide(book_gump, spell_list, i, 2, pOX, pOY, i-1);
+ 
+		GenerateFilledSide(book_gump, spell_list, i, 1, pOX, pOY, pos);
+		GenerateFilledSide(book_gump, spell_list, i, 2, pOX, pOY, pos+1);
 
 		SleepMS(2);
 	endfor
@@ -141,7 +144,7 @@ endfunction
 // Generate every page of the book. And the button for the First page.
 // Inside generate empty page too
 //-----------------
-function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, byref spell_pos)
+function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, spell_pos)
 	var sOX := 160;
 	if (side == 2)
 		sOX := 300;
@@ -180,7 +183,6 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 		GenerateEmptySide(book_gump, side, pOX, pOY, i);
 	endif
 
-	spell_pos := spell_pos + 1;
 	pOY := pOY + 15;
 	if( pOY > 165 )
 		pOY := 60;

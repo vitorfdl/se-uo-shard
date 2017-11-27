@@ -28,7 +28,7 @@ const BKGND_STONESLAB		:= 9200;  // Gray stone slab background
 const BKGND_BLUESLAB		:= 3600;  // Raised edge (blocky)
 const GF_STDCOLOR		:= 1890;
 
-const MOEDAS			:= 47715;
+const MOEDAS			:= 0xeed;
 
 //var item_cfg := ReadConfigFile(":*:itemdesc");
 

@@ -1,0 +1,69 @@
+use uo;
+use os;
+use cfgfile;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include ":attributes:attributes";
+include ":tn:npcutil";
+include ":ghaia:ghaiaUtil";
+include ":ghaia:ghaia";
+include ":magery:summon";
+include ":taming:taming";
+include ":charactercreation:habilidades";
+include ":unicos:item_template";
+
+program animateSword(params)
+	var who := params[1];
+	var roll_dice := params[2].roll_dice;
+	var targ := params[3];
+	params := 0; // No longer needed
+	
+	while (1)
+      if (Distance(who, targ) > 4 && targ.objtype in array{5049, 3934, 3936} && targ.hp >= 5)
+			break;
+		elseif (!targ)
+			return 1;
+      else
+			SendSysMessage(who, "Essa nao e uma espada valida ou esta muito longe. Escolha outra",3,28);
+			targ := target(who);
+		endif
+		sleepms(2);
+	endwhile
+
+	
+	//sendsysmessage(who, " " + GetNumPets(who) );
+	if (GetMaxPEts(who) <= GetNumPets(who) )
+		SendSysMessageEx(who, "Voce tem " + GetNumPets(who) + " criaturas sob seu comando e o maximo sao : " + GetMaxPEts(who)  + "  . "  , SSM_FAIL);
+		return 1;
+	endif
+	
+	// PlayMovingEffect(who, sword, 0x483E, 10, 3);
+	sleepms(500);
+	
+	var summoned;
+   if (targ.objtype == ) 
+      summoned := summon(":ghaia:lightsword", sword, who);
+   endif
+
+	if (summoned)
+      targ.hp := 0;
+		PrintTextAbove(summoned, "*A arma ganha vida*", 3,191);
+		AddPet(who, summoned.serial);
+
+      MoveItemToContainer(targ, summoned.backpack);
+		
+		var duration := cint(AP_GetStat(who, INTELLIGENCE)/2);
+		SetObjProperty(summoned, "Espada", sword.serial);
+		
+		SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
+		var mobile := target(who);
+		TS_StartTimer(summoned, "bladedance", duration, sword.objtype, mobile, 0 );	
+		
+	endif
+	return 1;
+
+endprogram

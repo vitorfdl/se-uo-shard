@@ -8,14 +8,7 @@ use cfgfile;
 include "include/say";
 include "include/arrays";
 
-function CanInsertScroll(book, scroll)
-	var cfg := ReadConfigFile(":magery:recipes");
-	if ( !cfg[scroll.objtype] )
-		return 0;
-	endif
-	return 1;
-endfunction
-
 program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
+	MoveItemToContainer(item, who.backpack);
 	return 0;
 endprogram
