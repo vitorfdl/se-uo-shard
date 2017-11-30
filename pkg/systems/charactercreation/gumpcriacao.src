@@ -121,6 +121,12 @@ program createchar(who)
 
 	SetProfessions(who, chardata);
 
+	if (chardata.raca == "Elfo" || chardata.classe == "Mago")
+		LearnFeat(who, "Linguagem Élfica", 0);
+	elseif (chardata.classe == "Clérigo")
+		LearnFeat(who, "Linguagem Rúnica", 0);
+	endif
+
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
 	AP_SetVital(who, "Hunger", 1);
@@ -162,24 +168,24 @@ function construirgump(byref gump, back := 0) //monta a aparência da gump
 	endif
 endfunction
 
-function rollBaseDice(sum := 0) 
-	var dices := array{ RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6") };
-	RemoveLowest(dices);
+// function rollBaseDice(sum := 0) 
+// 	var dices := array{ RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6") };
+// 	RemoveLowest(dices);
 
-	var final_dice := ArraySum(dices) + sum;
-	return final_dice;
-endfunction
+// 	var final_dice := ArraySum(dices) + sum;
+// 	return final_dice;
+// endfunction
 
 function ShowCreateGumps(who, byref chardata)
 	while (who.connected)
 		chardata := struct;
 		chardata.+Skills := dictionary;
-		chardata.+str  := rollBaseDice();
-		chardata.+dex  := rollBaseDice();
-		chardata.+inte := rollBaseDice();
-		chardata.+con  := rollBaseDice();
-		chardata.+wis  := rollBaseDice();
-		chardata.+char := rollBaseDice();
+		chardata.+str  := 14;
+		chardata.+dex  := 13;
+		chardata.+inte := 12;
+		chardata.+con  := 10;
+		chardata.+wis  := 8;
+		chardata.+char := 15;
 		chardata.+antecedente := "";
 
 		if (RaceGump(who,chardata))

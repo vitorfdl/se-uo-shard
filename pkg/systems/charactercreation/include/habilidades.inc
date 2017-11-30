@@ -75,6 +75,6 @@ function IsBloodied(mobile)
 		return 1;
 	endif*/
 
-	return 1;
+	return 0;
 
 endfunction

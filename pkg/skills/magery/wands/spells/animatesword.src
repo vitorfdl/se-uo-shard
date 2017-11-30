@@ -23,7 +23,7 @@ program animateSword(params)
 	params := 0; // No longer needed
 	
 	while (1)
-      if (Distance(who, targ) > 4 && targ.objtype in array{5049, 3934, 3936} && targ.hp >= 5)
+      if (Distance(who, targ) > 4 && targ.objtype in array{0x0F60, 0x13b9} && targ.hp >= 5)
 			break;
 		elseif (!targ)
 			return 1;
@@ -46,23 +46,33 @@ program animateSword(params)
 	
 	var summoned;
    if (targ.objtype == ) 
-      summoned := summon(":ghaia:lightsword", sword, who);
+      summoned := summon(":ghaia:longsword", summoned, who);
    endif
 
 	if (summoned)
-      targ.hp := 0;
-		PrintTextAbove(summoned, "*A arma ganha vida*", 3,191);
+		if (targ.objtype == 0x13b9)
+			summoned.graphic := 0x13b9;
+		endif
+
+		PrintTextAbove(summoned, "*A espada ganha vida*", 3,191);
 		AddPet(who, summoned.serial);
+		summoned.script := "ghaia:follower";
+		RestartScript(summoned);
 
       MoveItemToContainer(targ, summoned.backpack);
 		
-		var duration := cint(AP_GetStat(who, INTELLIGENCE)/2);
-		SetObjProperty(summoned, "Espada", sword.serial);
+		var duration := AP_GetStat(who, INTELLIGENCE);
+		if (duration <= 1)
+			duration := 2;
+		endif
+		duration := duration * 2;
+
+		SetObjProperty(targ, "animatesword", summoned.serial);
+		SetObjProperty(summoned, "animatesword", targ.serial);
 		
-		SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
-		var mobile := target(who);
-		TS_StartTimer(summoned, "bladedance", duration, sword.objtype, mobile, 0 );	
-		
+		// SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
+		// var mobile := target(who);
+		TS_StartTimer(summoned, "animatedweapon", duration);	
 	endif
 	return 1;
 

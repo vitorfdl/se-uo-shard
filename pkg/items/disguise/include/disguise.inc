@@ -50,10 +50,11 @@ function mainGump(who, byref disfarce, byref choice)
     
 	if (choice.menu == 1)
         var opts := struct{
-            "type"  := "head",
+            "type"  := choice.race,
             "param" := "cabelo",
             "gender" := gender
         };
+
         buildHairGump(gump, disfarce, opts);
 	elseif (choice.menu == 2)
         var opts := struct{
@@ -65,13 +66,15 @@ function mainGump(who, byref disfarce, byref choice)
 	elseif (choice.menu == 3)
         var opts := struct{
             "param" := "corcabelo",
-            "text" := "Cabelo"
+            "text" := "Cabelo",
+			"race" := choice.race
         };
         buildColor(gump, disfarce, opts);
 	elseif (choice.menu == 4)
         var opts := struct{
             "param" := "corpele",
-            "text" := "Pele"
+            "text" := "Pele",
+			"race" := choice.race
         };
         buildColor(gump, disfarce, opts);
 	endif
@@ -124,6 +127,7 @@ function buildHairGump(byref gump, byref disfarce, opt := struct{})
 		hairnames.append(hairname);
 		GFHTMLArea(gump, x_pos-4, y_pos+49, 98, 20, "<BASEFONT SIZE=2 COLOR=#ffffff><center>{}".format(hairname));
 		if (hairgraphic != HAIR_BALD)
+			GFAddButton(gump, x_pos-50, y_pos-34, 30061, 30061, GF_CLOSE_BTN, hairgraphic);
 			GFGumpPic(gump, x_pos-50, y_pos-34, gumppic);
 		endif
 

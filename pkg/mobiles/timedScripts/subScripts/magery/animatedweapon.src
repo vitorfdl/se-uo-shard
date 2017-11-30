@@ -12,8 +12,6 @@ include "include/say";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   SetObjProperty(mobile, "summon", 1);
-   SetObjProperty(summoned, "GuardKill", 1);
    return 1;
 endfunction
 

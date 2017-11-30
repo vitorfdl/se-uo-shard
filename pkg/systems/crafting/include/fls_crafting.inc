@@ -322,7 +322,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
          bonus := cint(getProficiencyBonus(who));
       endif
 
-		var check := rollAttrDice(who, "Intelligence") + bonus;
+		var check := rollAttrDice(who, WISDOM) + bonus;
 		if(check > recipe.difficulty || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials, 1+more))
 				SendSysMessageEx(who, "Voce nao possui todos os materiais.", SSM_FAIL);
@@ -339,12 +339,12 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			//passando a cor pra materiais coloridos que nao tem Id proprio (como madeira)
 			// AddMaterialMod(who, theitem, choosed_material, material_color);
 			// CraftExceptional(who, theitem, craft_skill);
-			print(material_cprops);
 			foreach key in (material_cprops.Keys())
 				SetObjProperty(theitem, key, material_cprops[key]);
 			endforeach
 			CraftLockable(who, theitem);
 
+			ExpGain(who, recipe.difficulty, check);
 			SendSysMessageEx(who, "Voce criou o item o colocou na mochila.", SSM_INFO);
 		
 			// TODO: Gravar feitos para talentos

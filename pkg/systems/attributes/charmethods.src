@@ -38,6 +38,16 @@ exported function isClass(who, class)
 	return 0;
 endfunction
 
+exported function isRace(who, race)
+	var chardata := GetObjProperty(who, "chardata");
+
+	if (Lower(chardata.raca) == Lower(race))
+		return 1;
+	endif
+
+	return 0;
+endfunction
+
 exported function SkillList(who)
 	var attributes := AP_ListAttributesByType("Skill");
 	var skill_list := array{};

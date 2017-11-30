@@ -250,12 +250,15 @@ function ProcessDoubleClick(ev)
       GFTextLine(gump, 30, 15, 2100, "Guarda ");
       GFAddButton(gump, 15, 17, 2117, 2118, 1, 10);
 
-      GFTextLine(gump, 30, 35, 2100, "Segue ");
-      GFAddButton(gump, 15, 37, 2117, 2118, 1, 20);
 
-      if (targ.mobile.serial != owner.serial)
-         GFTextLine(gump, 30, 55, 2100, "Ataca ");
-         GFAddButton(gump, 15, 57, 2117, 2118, 1, 30);
+      if(!GetObjProperty(me, "animatesword"))
+         GFTextLine(gump, 30, 35, 2100, "Segue ");
+         GFAddButton(gump, 15, 37, 2117, 2118, 1, 20);
+
+         if (targ.mobile.serial != owner.serial)
+            GFTextLine(gump, 30, 55, 2100, "Ataca ");
+            GFAddButton(gump, 15, 57, 2117, 2118, 1, 30);
+         endif
       endif
 
       var input := GFSendGump(owner, gump);
@@ -282,6 +285,8 @@ function ProcessDoubleClick(ev)
    elseif (!Cint(targ.mobile) && !Cint(targ.item))//se nao for nem item nem mobile anda ate la
       if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+         return;
+      elseif(GetObjProperty(me, "animatesword"))
          return;
       endif
       PetGoTo(targ, "run");
@@ -457,6 +462,8 @@ function ResolveSpeech(ev)
       if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
          return;
+      elseif(GetObjProperty(me, "animatesword"))
+         return;
       endif
       if (!targ)
          targ := target(ev.source);
@@ -466,7 +473,7 @@ function ResolveSpeech(ev)
 
    /// New Master Command
    elseif (text["novo dono"])
-      if (GetObjProperty(me, "summon") == 1)
+      if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
          SendSysMessage(owner, "Outros nao podem controlar criaturas invocadas por voce.");
          return;
       endif
@@ -485,13 +492,8 @@ function ResolveSpeech(ev)
 
    /// Release Command
    elseif (text["livre"])
-      if (GetObjProperty(me, "summon") == 1)
+      if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
          SendSysMessage(owner, "Criaturas invocadas nao podem ser libertadas normalmente.");
-         return;
-      elseif (GetObjProperty(owner, "companheiro") == me.serial)
-         SendSysMessage(owner, "Seu companheiro animal nao quer deixar voce.");
-         return;
-      elseif (GetObjProperty(me, "faccao"))
          return;
       endif
       

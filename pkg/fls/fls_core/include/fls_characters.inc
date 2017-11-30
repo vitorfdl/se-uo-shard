@@ -2,6 +2,7 @@
 use uo;
 use cfgfile;
 
+include "include/dungeons";
 include ":ghaia:ghaiaUtil";
 include ":attributes:attributes";
 include ":fls_core:fls_chargumps_ex";
@@ -42,7 +43,6 @@ function checkGender(object)
 endfunction
 
 function IsInDungeon(player)
-
 	if (player.x >= 3749 && player.y >= 0 && player.x <= 6141 && player.y <= 4000)
 		return 1;
 	endif
@@ -52,10 +52,9 @@ function IsInDungeon(player)
 endfunction
 
 function HaveReverseVision(who)
+	var chardata := GetObjProperty(who, "chardata");
 
-	if (GetObjProperty(who, "raca") == "Drow")
-		return 1;
-	elseif (cint(GetObjProperty(who, "reversevision")) == 1)
+	if (chardata.raca["Elfo"])
 		return 1;
 	else
 		return 0;
@@ -78,13 +77,11 @@ function ReverseLight(player)
 
 	var light := cint(getglobalproperty("lightlevel"));
 
-	if (player.x >= 3749 && player.y >= 0 && player.x <= 6141 && player.y <= 4000)
-		player.setlightlevel(0, 9000); // Is in a dungeon
+	if (light < 20)
+		player.setlightlevel(20, 9000);
 	else
-		var newlight := abs(darkness - light);
-		player.setlightlevel(newlight, 9000);
+		player.setlightlevel(light, 9000);
 	endif
-
 endfunction
 
 function maolivre(mobile, qtd, checkmount := 1)

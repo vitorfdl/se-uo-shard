@@ -49,20 +49,31 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
-function LearnFeat(who, feat)
-	var chardata := GetObjProperty(who, "chardata");
-	var feat_list := chardata.Feats;
+function LearnFeat(who, feat, minus_point := 1)
+	if (typeof(feat) != "Struct")
+		feat := FeatInfo(feat, 1);
+	endif
 
-	if (feat in feat_list)
+	if (!feat)
+		Print(">>>>> ERROR OCURRED, NO FEAT FOUND");
 		return 0;
 	endif
 
-	feat_list += feat;
+	var chardata := GetObjProperty(who, "chardata");
+	var feat_list := chardata.Feats;
+	if (feat.name in feat_list)
+		return 0;
+	endif
+
+	feat_list += feat.name;
 	chardata.Feats := feat_list;
-	var talent_points := who.GetTalentPoints();
-	talent_points -= 1;
-	who.SetTalentPoints(talent_points);
 	SetObjProperty(who, "chardata", chardata);
+	
+	if (minus_point)
+		var talent_points := who.GetTalentPoints();
+		talent_points -= 1;
+		who.SetTalentPoints(talent_points);
+	endif
 
 	foreach give_parse in (feat.give)
 		give_parse := SplitWords(give_parse);
@@ -129,7 +140,6 @@ function FeatInfo(feat, plus := 0)
 	var feat_info := struct{
 		"name" := feat,
 		"desc" :=   GetConfigString( elem, "Description" ),
-		"active" := GetConfigInt( elem, "Active" ),
 		"script" := GetConfigString( elem, "Script" ),
 
 		"mana" := GetConfigInt( elem, "Mana" ),

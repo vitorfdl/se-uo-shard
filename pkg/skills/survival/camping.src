@@ -90,17 +90,12 @@ program UseWood( who, wood )
 						continuehealing := 0;
 						PrintText(campfire, "Algo atrapalha o acampamento.");
 					endif
+					sleepms(2);
 				endforeach
+
 				if (continuehealing == 1)
 					foreach char in (nearbypeople)
-						if (isBloodied(char) && TemHabilidade(who, "Hábil Escoteiro") && randomint(3) == 2)
-							var newhealpoints := healpoints/5;
-							healFLS(char, newhealpoints);
-						else
-							if (!isBloodied(char))
-								healFLS(char, healpoints);
-							endif
-						endif
+						healFLS(char, healpoints);
 					endforeach
 				endif
 			endif
@@ -119,8 +114,8 @@ program UseWood( who, wood )
 		endif
 
 	else
-                PrintText( who, "*acendendo uma fogueira*");
-                sleep(3);
+		PrintText( who, "*acendendo uma fogueira*");
+		sleep(3);
 		SendSysMessageEx( who, "Voce nao conseguiu acender o fogo", SSM_FAIL );
 	endif
 

@@ -12,10 +12,10 @@ include ":timeutils:time";
 include ":attributes:attributes";
 
 program core_onDelete(who)
-	var create_time := who.createdat;
+	// var create_time := who.createdat;
 	var age := polcore().systime - create_time;
 
-	if ( who.cmdlevel )
+	// if ( who.cmdlevel )
 		var followers := Getobjproperty(who, "followers");
 		foreach pet in followers
 			SetObjProperty(pet, "GuardKill", 1);
@@ -23,17 +23,17 @@ program core_onDelete(who)
 		endforeach
 
 		return 1;
-	elseif ( age >= SECONDS_IN_WEEK )
-		SysLog("Account ["+who.acctname+"] deleting character "+who.name+" ("+who.serial+")");
+	// elseif ( age >= SECONDS_IN_WEEK )
+	// 	SysLog("Account ["+who.acctname+"] deleting character "+who.name+" ("+who.serial+")");
 		
-		var followers := Getobjproperty(who, "followers");
-		foreach pet in followers
-			SetObjProperty(pet, "GuardKill", 1);
-			ApplyRawDamage(pet, 9999);
-		endforeach
+	// 	var followers := Getobjproperty(who, "followers");
+	// 	foreach pet in followers
+	// 		SetObjProperty(pet, "GuardKill", 1);
+	// 		ApplyRawDamage(pet, 9999);
+	// 	endforeach
 
-		return 1;
-	else
-		return 0;
-	endif
+		// return 1;
+	// else
+	// 	return 0;
+	// endif
 endprogram

@@ -12,8 +12,27 @@ program DeathScript(params)
 	var corpse := params[1];
 	//var npc_cfg := params[2];
 	params := 0; // Not needed anymore
+   PrintTextAbove(corpse, "*a espada para de se mover*");
 
-   PrintTextAbove(corpse, "*a arma para de semover*");
+	var sword;
+	foreach item in (EnumerateItemsInContainer(corpse))
+		if (GetObjProperty(item, "animatesword"))
+			sword := item;
+			break;
+		endif
+	endforeach
+
+	if (!sword)
+		sword := CreateItemAtLocation(corpse.x, corpse.y, corpse.z, 0x0F60);
+	endif
+
+	MoveObjectToLocation(sword, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION);
+	var newhp := sword.hp - 20;
+	if (new_hp < 0)
+		new_hp := 0;
+	endif
+
+	sword.hp := 0;
 
 	return 1;
 endprogram
