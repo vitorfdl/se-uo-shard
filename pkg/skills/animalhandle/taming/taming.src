@@ -190,6 +190,7 @@ function TameLoop(who, targ, byref info)
 		SendSysMessageEx(who, ""+targ.name+" parece interessado em voce.", SSM_INFO);
 		ghaiaObjective(targ, info.x, 1);
 		ExpGain(who, info.difficulty, dice);
+		who.SetAchievement("taming", 1);
 		return 1;
 	endif
 	var dist := Distance(who, targ);

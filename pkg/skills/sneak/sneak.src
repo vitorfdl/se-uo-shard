@@ -38,6 +38,7 @@ program skill_Hide(who)
 		
 		if( check >= 18 )
 			ExpGain(who, "minor");
+			who.SetAchievement("sneak", 1);
 			SendSysMessageEx(who, "Voce se escondeu.", SSM_INFO);
 			who.hidden := 1;
 			var a := start_script(":FURTIVIDADE:stealthmode", array{who});

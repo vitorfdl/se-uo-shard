@@ -150,6 +150,13 @@ program SpellStarter(params)
    endif
 
    spellinfo.dice_roll := rollAttrDice(mobile, attribute) + getProficiencyBonus(mobile);
+   if (spellinfo.type)
+      mobile.SetAchievement("spell_{}".format(lower(spellinfo.type)), 1);
+   elseif (spellinfo.pericia)
+      var bless_type := SplitWords(spellinfo.pericia)[3];
+      mobile.SetAchievement("bless_{}".format(lower(bless_type)), 1);
+   endif
+
    if (spellinfo.script != error)
       var e := Start_Script(spellinfo.script, array{mobile, spellinfo, targ});
       if (e == error)
@@ -157,6 +164,8 @@ program SpellStarter(params)
          FailSpell(mobile);
       elseif (!e)
          FailSpell(mobile);
+      else
+         ExpGain(mobile, "minor");
       endif
    else
       Print(mobile + ": " + spellinfo);

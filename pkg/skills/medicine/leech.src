@@ -26,6 +26,7 @@ program UseLeech(who, leech)
 	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MEDICINA);
 
 	if ( test > 13 )
+		who.SetAchievement("leech", 1);
 		SendSysMessage(who, "Voce aplicou a sanguessuga em "+targ.name);
 		TS_CurePoison(targ, Floor(test/3), "P", 1);
 	else

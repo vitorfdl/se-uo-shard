@@ -132,6 +132,13 @@ program Attack(params)
 		PlayHitSounds(attacker, defender);
 		var dmg := CalculateRawDamage(attacker);
 		ExpGain(attacker, defender_CA, attack_chance);
+
+		if (!defender.npctemplate && defender.shield)
+			defender.SetAchievement("shield", 1);
+		endif
+
+	
+
 		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, dmg, wpn_a_elem });
 
 	else //ERROU O ATAQUE
@@ -141,7 +148,7 @@ program Attack(params)
 
 		EraseObjProperty(attacker, "movement");
 
-      if (defender.shield)
+      if (!defender.npctemplate && defender.shield)
          WearDownArmor(defender, defender.shield);
       elseif (!defender.npctemplate && armor)
 		   WearDownArmor(defender, armor);
@@ -169,9 +176,21 @@ function GetAttackerChance(attacker, defender)
 		endif
 	endif
 
-	if (GetObjProperty(attacker, "#attackbonus" ) || GetObjProperty(attacker, "hitbonus") || !IsFacing(defender, attacker.x, attacker.y) )
+	if (GetObjProperty(attacker, "#attackbonus" ) || GetObjProperty(attacker, "hitbonus") )
 		dice_gain += 1;
 	endif
+
+	if (!IsFacing(defender, attacker.x, attacker.y))
+		dice_gain += 1;
+		if (!defender.npctemplate)
+			defender.SetAchievement("backstabed", 1);
+		endif
+
+		if (!attacker.npctemplate)
+			attacker.SetAchievement("backstab", 1);
+		endif
+	endif
+
 
 	var attribute := "Strength";
 	var bonus := 0;
@@ -236,7 +255,7 @@ function GetDefenderCA(defender, armor)
 		endif
 
 		if (defender.shield)
-			CA += defender.shield.ar_base;   
+			CA += defender.shield.ar_base;
 		endif
 	else
 		var npcelem := NPC_GetNPCConfig(defender.npctemplate);

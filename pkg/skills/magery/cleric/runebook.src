@@ -262,7 +262,8 @@ function WriteRune(who, rune_entry)
 		endif
 	endforeach
 
+	ExpGain(who,roll, rune_entry.diff);
+	who.SetAchievement("rune_inscription", 1);
 	SetObjProperty(item, "inscripted", rune_entry.name);
-
 	SendSysMessageEx(who, "Voce gravou a runa.", SSM_FAIL);
 endfunction

@@ -39,6 +39,8 @@ program MainHitScript( params )
 		return 0;
 	elseif ( attacker.hidden )
 		attacker.hidden := 0;
+		attacker.SetAchievement("sneak_attack", 1);
+		ExpGain(attacker, "minor");
 	elseif ( defender.hidden )
 		return 0;
 	elseif ( !attacker.npctemplate && defender.npctemplate && defender.master )
@@ -123,9 +125,9 @@ function FacingChecks(attacker, defender)
 		return 0;
 	endif
 	
-	if ( IsBehind(defender, attacker.x, attacker.y)  )
-		SetObjProperty(attacker, "#backstab", 2);
-	endif
+	// if ( IsBehind(defender, attacker.x, attacker.y)  )
+	// 	SetObjProperty(attacker, "#backstab", 2);
+	// endif
 	
 	return 1;
 endfunction

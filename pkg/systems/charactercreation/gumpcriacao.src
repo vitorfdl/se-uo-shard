@@ -241,8 +241,11 @@ function RaceGump(who, byref  chardata)
 	GFTextLine(gump, choice_x+1,295,1153,"Escolha sua raça");
 
 	GFTextLine(gump, choice_x+25,315,2103,"Humano");
+	GFTooltipText(gump, "+1 todos atributos<br/>+ 8 meses de vida");
 	GFTextLine(gump, choice_x+25,335,2103,"Elfo");
+	GFTooltipText(gump, "+2 inteligência<br/>+1 dextreza<br/>+ visão na penumbra<br/>+ 10 meses de vida");
 	GFTextLine(gump, choice_x+25,355,2103,"Meio-Elfo");
+	GFTooltipText(gump, "+2 dextreza<br/>+1 inteligência<br/>+ visão na penumbra<br/>+ 10 meses de vida");
 	GFRadioButton(gump, choice_x, 315, 0x9C4E, 0x9C4F, 1, 2);
 	GFRadioButton(gump, choice_x, 335, 0x9C4E, 0x9C4F, 0, 3);
 	GFRadioButton(gump, choice_x, 355, 0x9C4E, 0x9C4F, 0, 4);
@@ -353,7 +356,7 @@ function ChooseGod(who, byref chardata)
 		if (input[0] == 7)
 			case (chardata.raca)
 				"Elfo":
-					SendSysMessageEx(who, "Elfos servem somente a Seredhiel.", SSM_FAIL);
+					SendSysMessageEx(who, "Elfos louvam somente a Seredhiel.", SSM_FAIL);
 					god_choose := "Seredhiel";
 				"Humano":
 				"Meio-Elfo":

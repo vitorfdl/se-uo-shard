@@ -167,6 +167,7 @@ program skill_Stealing(mobile)
 			
 			SendSysMessageEx(mobile, "Voce roubou "+steal.desc+".", SSM_INFO);
 			ExpGain(mobile, diff, check);
+			mobile.SetAchievement("pickpocket", 1);
 		else
 			SendSysMessageEx(mobile, "Voce nao conseguiu roubar "+steal.desc+".", SSM_FAIL);
 			if ( dice_roll.critical == -1 )

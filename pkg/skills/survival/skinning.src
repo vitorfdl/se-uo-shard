@@ -134,6 +134,8 @@ program skinning(parms)
 				i := i + 1;
 			endforeach
 			if (found)
+				ExpGain(mobile, "minor");
+				mobile.SetAchievement("skinning", 1);
 				SendSysMessage(who, "Escalpelou o corpo.");
 			else
 				SendSysMessage(who, "Nada foi aproveitado.");

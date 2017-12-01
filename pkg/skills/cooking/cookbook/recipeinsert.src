@@ -55,7 +55,6 @@ function addScrollOnBook(who, book, recipe)
 
 	var diff := GetConfigInt(potions_cfg[new_recipe], "difficulty");
 	
-
 	if (FindInArray(recipe_list, new_recipe))
 		SendSysMessageEx(who, "Este livro ja contem esta receita.", SSM_FAIL);
 		MoveItemTocontainer(recipe, who.backpack);

@@ -73,14 +73,13 @@ function SendGump(who, scroll)
 	if (!(objtype in GetObjProperty(who, "recipes")))
 		if (!FindConfigElem(book_recipes, objtype))
 			var charge_list    := GetObjProperty(scroll, "learning");
-			print("chargelist>"+charge_list);
 			var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
-			print(my_charges);
 			var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(remain_charges));
-			
-			GFTextLine(gump, 205, 182, 995, "Aprender");
-			GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
+			if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
+				GFTextLine(gump, 205, 182, 995, "Aprender");
+				GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
+			endif
 		else
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
 		endif

@@ -1,3 +1,10 @@
+FEATS:
+backstab
+backstabbed
+rune_inscription
+
+
+
 //----------  Character Creation  ----------*/
     "Pontos de Mana"   : 10 + Magia + 1d6
     "Mana por Nivel"   : 1d6 + Magia 

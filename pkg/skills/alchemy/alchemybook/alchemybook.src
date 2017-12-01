@@ -161,6 +161,7 @@ function MakePotion ( pot, who)
 		SetObjProperty(thing, "crafterskill", AP_GetSkill(who, ALQUIMIA) );
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
 		SendSysMessageEx(who, "Voce fez a pocao e a guardou na sua mochila.", SSM_INFO);
+		who.SetAchievement("potion", 1);
 		ExpGain(who, difficulty, dice_roll.dice);
 		return 1;
 	else

@@ -302,7 +302,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			MoveObjectToLocation(forja.x, forja.y, (forja.z+7), forja.realm);
 		endif
 
-
 		playCraftWork(who, craft_sound, craft_loops, craft_delay, craft_action, recipe.fastcraft);
 
 		if (item)
@@ -317,12 +316,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			endif
 		endforeach
 
-      var bonus := 0;
-      if (HaveSkill(who, craft_skill))
-         bonus := cint(getProficiencyBonus(who));
-      endif
-
-		var check := rollAttrDice(who, WISDOM) + bonus;
+		var check := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, craft_skill);
 		if(check > recipe.difficulty || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials, 1+more))
 				SendSysMessageEx(who, "Voce nao possui todos os materiais.", SSM_FAIL);
@@ -345,6 +339,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			CraftLockable(who, theitem);
 
 			ExpGain(who, recipe.difficulty, check);
+			who.SetAchievement("craft_".format(lower(craft_skill)), 1);
 			SendSysMessageEx(who, "Voce criou o item o colocou na mochila.", SSM_INFO);
 		
 			// TODO: Gravar feitos para talentos

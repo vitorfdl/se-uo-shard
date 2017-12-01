@@ -170,7 +170,9 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	PrintText(mobile, "*parou de aplicar bandagens*");
 	detach();
 	SendSysMessage(targ, "Aguarde enquanto a cura faz efeito.");
-
+	ExpGain(mobile, "minor");
+	mobile.SetAchievement("bandages", 1);
+	
 	var i;
 	var q := 10;
 	var resto := heal_amt/q - CInt(heal_amt/q);
@@ -231,6 +233,8 @@ function HealCorpse(mobile, targ, restauraDP)
 	if ( !GetObjProperty(targ,"morto") )
 		return;
 	elseif ( roll >= 16 )
+		ExpGain(mobile, "major");
+		mobile.SetAchievement("heal_corpse", 1);
 		SendSysMessage(mobile, "Voce estabilizou "+name);
 		SetObjProperty(targ, "curado", 1);
 		var owner := SystemFindObjectBySerial(targ.ownerserial);
