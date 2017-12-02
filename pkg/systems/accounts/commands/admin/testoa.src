@@ -6,19 +6,15 @@ include ":timeutils:time";
 include "include/say";
 include ":attributes:advanceCheck";
 include ":gumps:gumps";
+include ":gumps:gumps_ex";
 
 program oafeatures_sendpacket(who, text)
-   var pid := GetProcess(cint(text));
-   printtext(who, ""+pid);
+   // var pid := GetProcess(cint(text));
+   // printtext(who, ""+pid);
    // var targ := Target(who);
    // Print(targ.my_template() );
 
-
-	// var gump := GFCreateGump();
-	
-	// GFPage(gump, 0);
 	// GFGumpPic(gump, 11, 29, 40009, 0); //borders
-	// GFGumpPicTiled(gump, 42, 59, 700, 513, 30540); //background
 	// GFTextLine(gump, 319, 34, 0, "Vendedor de Poções");
 
    // var i;
@@ -42,7 +38,6 @@ program oafeatures_sendpacket(who, text)
    //    x += 140;
    // endfor
 
-	// GFSendGump(who, gump);
 
    // var res := SendPacket(who, "FC0015A001000000000003F9C30000000007FFFFFF");
    // if (!res)

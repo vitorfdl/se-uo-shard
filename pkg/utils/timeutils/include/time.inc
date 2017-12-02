@@ -271,7 +271,7 @@ function GetTimeStamp(what := 0, timestamp := "<DAY>/<MON>/<YY> <HH>:<MM>:<SS>")
 	endif
 	var ts := GetTimeStruct(what);
 
-	return(FormatTime(ts, ));
+	return(FormatTime(ts, timestamp));
 endfunction
 
 /*

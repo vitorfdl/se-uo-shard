@@ -9,7 +9,8 @@ use math;
 include ":worldsaver:saver";
 include ":worldsaver:settings";
 include ":worldsaver:report";
-
+include "include/client";
+include ":timeutils:time";
 
 program WorldSaver()
 	SVR_ReportText("---=[ WORLD SAVER HAS STARTED UP ]=---", SAVER_REPORT_SYSLOG);
@@ -44,6 +45,13 @@ program WorldSaver()
 endprogram
 
 function DoTheSave()
+	var date := GetTimeStamp();
+	foreach player in enumerateonlinecharacters()
+		start_script( ":worldsaver:savegump", struct{ "player" := player, "date" := date} );
+		sleepms(2);
+	endforeach
+	sleep(1);
+
 	var save_result := SaveWorldState();
 
 	if ( save_result == error )
@@ -60,6 +68,11 @@ function DoTheSave()
 		SVR_ReportText("Finished world save. ("+save_time+")", SAVER_REPORT_ALL);
 		SVR_ReportText("Saver - CleanObjects["+save_result.CleanObjects+"] DirtyObjects["+save_result.DirtyObjects+"]", SAVER_REPORT_SYSLOG);
 	endif
+
+	foreach player in enumerateonlinecharacters()
+		CloseGump(player, GUMPID_WORLDSAVE);
+		sleepms(2);
+	endforeach
 
 	return 1;
 endfunction

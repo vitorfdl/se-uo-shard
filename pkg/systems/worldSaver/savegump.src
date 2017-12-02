@@ -1,0 +1,23 @@
+use uo;
+use os;
+
+include "include/client";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+
+program sendSaveGump(param)
+   var x := 400;
+   var y := 300;
+	var gump := GFCreateGump();
+   GFSetID(gump, GUMPID_WORLDSAVE);
+	GFResizePic(gump, x, y,  GFCfgConst("Backgrounds", "GOLDTRIM"), 233, 90); //background
+   GFAddAlphaRegion(gump, x+3, y+4, 225, 112);
+   GFTextLine(gump, x+20, y+5, 143, "Salvando Estado Atual do Mundo");
+	GFHtmlShadowed(gump, x+60, y+25, 250, 20, "#FFFFFF", "Aguarde um instante...", 2);
+
+	GFHtmlShadowed(gump, x+40, y+60, 200, 20, "#DDDDDD", param.date);
+	GFTilePic(gump, x+5, y+25, 0x0A08, 0);
+	GFTilePic(gump, x+185, y+25, 0x0A0D, 0);
+   
+	GFSendGump(param.player, gump);
+endprogram

@@ -33,6 +33,9 @@ program core_skillWin(who)
 	if (who.dead)
 		SendSystemReport(who, "Estou morto e impossibilitado de realizar qualquer atividade.");
 		return;
+	elseif (GetObjProperty(who, "criandochar"))
+		SendSystemReport(who, "Voce deve terminar de criar seu personagem.");
+		return;
 	endif
 	
 	skillWindow(who);

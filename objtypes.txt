@@ -1220,10 +1220,10 @@
 # 0x1859 - 0x1865 unused
 0x1866 dishing stump alchemy
 # 0x1867 - 0x1875 unused
-0x1876 ironwire metalworking
-0x1877 silverwire metalworking
-0x1878 goldwire metalworking
-0x1879 copperwire metalworking
+0x1876 ironwire tinkering
+0x1877 silverwire tinkering
+0x1878 goldwire tinkering
+0x1879 copperwire tinkering
 # 0x187a - 0x18dd unused
 0x18de mandrakeplant2 tn
 # 0x18df unused
@@ -1426,9 +1426,9 @@
 0x1eb6 caixadeferramentas woodworking
 0x1eb7 caixadeferramentas2 woodworking
 # 0x1eb8 unused
-0x1eb9 TinkerTools2 metalworking
+0x1eb9 TinkerTools2 tinkering
 # 0x1eba - 0x1ebb unused
-0x1ebc TinkerTools metalworking
+0x1ebc TinkerTools tinkering
 0x1ebd wheatsheaf cooking
 # 0x1ebe - 0x1efc unused
 0x1efd FancyShirt womenswork

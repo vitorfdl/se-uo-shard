@@ -44,10 +44,7 @@ program animateSword(params)
 	// PlayMovingEffect(who, sword, 0x483E, 10, 3);
 	sleepms(500);
 	
-	var summoned;
-   if (targ.objtype == ) 
-      summoned := summon(":ghaia:longsword", summoned, who);
-   endif
+	var summoned := summon(":ghaia:longsword", summoned, who);
 
 	if (summoned)
 		if (targ.objtype == 0x13b9)

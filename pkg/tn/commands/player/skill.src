@@ -22,6 +22,10 @@ program start_skill(who, skillname)
 			return;
 		endif
 	endif
+
+	skillname[" "] := "_";
+	skillname[" "] := "_";
+	skillname[" "] := "_";
 	
 	if(!AP_GetAttributeCfgElem(skillname))
 		SendSysMessage(who, "Pericia inexistente!");

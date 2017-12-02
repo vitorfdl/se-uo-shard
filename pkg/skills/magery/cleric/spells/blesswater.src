@@ -5,7 +5,7 @@ include "include/say";
 include "include/sounds";
 
 program blessWater(info)
-   var mobile := info[1];
+   var who := info[1];
    var dice_roll := info[2].dice_roll;
    var targ := info[3];
    info := 0;

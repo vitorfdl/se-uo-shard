@@ -22,15 +22,13 @@ program createchar(who)
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
 
-	if (GetObjProperty(who, "criandochar") == 1 && who.cmdlevel < 1)
+	if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
 		SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
 		return 1;
 	elseif (GetObjProperty(who, "delete") == 1)
 		SendSysMessageEx(who, "Voce nao pode ter mais de um personagem por conta.", SSM_FAIL);
 		return 1;
 	endif
-
-	SetObjProperty(who, "criandochar", 1);
 
 	if (!who.backpack)
 		var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
@@ -130,6 +128,7 @@ program createchar(who)
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
 	AP_SetVital(who, "Hunger", 1);
+	EraseObjProperty(who, "criandochar");
 
 	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser lhe comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para lhe deixar mensangens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Bom Jogo!"} );
 	// if (getNotaRP(who) == 2)
@@ -241,14 +240,14 @@ function RaceGump(who, byref  chardata)
 	GFTextLine(gump, choice_x+1,295,1153,"Escolha sua raça");
 
 	GFTextLine(gump, choice_x+25,315,2103,"Humano");
-	GFTooltipText(gump, "+1 todos atributos<br/>+ 8 meses de vida");
 	GFTextLine(gump, choice_x+25,335,2103,"Elfo");
-	GFTooltipText(gump, "+2 inteligência<br/>+1 dextreza<br/>+ visão na penumbra<br/>+ 10 meses de vida");
 	GFTextLine(gump, choice_x+25,355,2103,"Meio-Elfo");
-	GFTooltipText(gump, "+2 dextreza<br/>+1 inteligência<br/>+ visão na penumbra<br/>+ 10 meses de vida");
 	GFRadioButton(gump, choice_x, 315, 0x9C4E, 0x9C4F, 1, 2);
+	GFTooltipText(gump, "<right>+1 Todos atributos <br/>+ 8 Meses de vida");
 	GFRadioButton(gump, choice_x, 335, 0x9C4E, 0x9C4F, 0, 3);
+	GFTooltipText(gump, "<right>+2 Inteligência<br/>+1 Dextreza<br/>+ Visão na Penumbra<br/>+ 10 Meses de vida");
 	GFRadioButton(gump, choice_x, 355, 0x9C4E, 0x9C4F, 0, 4);
+	GFTooltipText(gump, "<right>+2 Dextreza<br/>+1 Inteligência<br/>+ Visão na Penumbra<br/>+ 10 Meses de vida");
 
 	GFSetRadioGroup(gump, 2);
 	GFTextLine(gump, choice_x+131, 295,1153,"Escolha seu sexo");
@@ -400,6 +399,8 @@ function AttributeGump(who, byref  chardata)
 		GFTextLine(gump, x+3, y+50, 1150,"Inteligência:");
 		GFTextLine(gump, x+3, y+75, 1150,"Constituição:");
 		GFTextLine(gump, x+3, y+100, 1150,"Sabedoria:");
+
+		GFHtmlShadowed(gump, x-70, y+200, 300, 20, "#FFFFFF", "<i>Selecione dois atributos para inverter os valores", 2);
 
 		GFResizePic(gump, x+80, y, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
 		GFResizePic(gump, x+80, y+25, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
