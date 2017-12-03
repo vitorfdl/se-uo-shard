@@ -2,7 +2,19 @@ use os;
 use uo;
 use cfgfile;
 
-program ScrollCreate(scroll)
+program scroll(item)
+	var last_objtype;
+	while (item)
+		if (last_objtype != GetObjProperty(item, "objtype"))
+			scrollCreate(item);
+			last_objtype := GetObjProperty(item, "objtype");
+			return;
+		endif
+		sleep(10);
+	endwhile
+endprogram
+
+function ScrollCreate(scroll)
    var recipes_list := struct{
       "Costura"    := ReadConfigFile(":womenswork:recipes"),
       "Ferraria"   := ReadConfigFile(":metalworking:recipes"),
@@ -28,11 +40,11 @@ program ScrollCreate(scroll)
       foreach cfg_name in (recipes_list.keys())
       var cfg := recipes_list[cfg_name];
       if (FindConfigElem(cfg, objtype))
-            scroll.graphic := recipe_graphic[cfg_name];
-            SetObjProperty(scroll, "pericia", cfg_name);
-            break;
+         scroll.graphic := recipe_graphic[cfg_name];
+         SetObjProperty(scroll, "pericia", cfg_name);
+         break;
       endif
       endforeach
    endif
 
-endprogram
+endfunction

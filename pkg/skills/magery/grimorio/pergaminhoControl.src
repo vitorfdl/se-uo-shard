@@ -1,12 +1,22 @@
 use uo;
 use cfgfile;
 use util;
+use os;
 
-var spellcfg;
+var spellcfg := ReadConfigFile(":magery:config/mage");
 
-program scrollCreate(item)
-	spellcfg := ReadConfigFile(":magery:config/mage");
+program scroll(item)
+	var last_objtype;
+	while (item)
+		if (last_objtype != GetObjProperty(item, "spell_id"))
+			scrollCreate(item);
+			last_objtype := GetObjProperty(item, "spell_id");
+		endif
+		sleep(10);
+	endwhile
+endprogram
 
+function scrollCreate(item)
 	if (GetObjProperty(item, "spell_id") != error)
 		setGraphic(item);
 		return 1;
@@ -36,7 +46,7 @@ program scrollCreate(item)
 	SetObjProperty(item, "spell_id", spell_id);
 
 	return 1;
-endprogram
+endfunction
 
 function setGraphic(item)
 	var spell_id := GetObjProperty(item, "spell_id");

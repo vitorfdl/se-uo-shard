@@ -141,28 +141,26 @@ function PlayAttackAnimation(attacker, weapon_elem)
 	
 //	//Otherwise, if they're not mounted, use the animation defined in the itemdesc.cfg file
 //	//or a default animation if one isn't defined
-//	var anim := weapon_elem.Anim;
+	// var anim := weapon_elem.Anim;
 	// if (anim)
 	// 	PerformAction(attacker, anim, 7);
 	// 	return;
 	// endif
 //	PerformAction (attacker, 0x09, 7);
-	var newanim := 0;
-	case (Hex(anim))
-		0x09:  newanim := 4;
-		0x0A: newanim := 5;
-		0x0B: newanim := 3;
-		0x0C: newanim := 6;
-		0x0D: newanim := 7;
-		0x0E: newanim := 8;
-		0x12: newanim := 1;
-		0x13: newanim := 2;
-		0x1A: newanim := 7;
-		default: newanim := anim;
+	case (cint(anim))
+		9: anim := 4;
+		10: anim := 5;
+		11: anim := 3;
+		12: anim := 6;
+		13: anim := 7;
+		14: anim := 8;
+		18: anim := 1;
+		19: anim := 2;
+		26: anim := 7;
+		default: anim := anim;
 	endcase
-	PerformAction(attacker, anim, 5);
-	printtext(attacker, newanim);
-	// NewPerformAction(attacker, 0, newanim, RandomInt(4));
+	// PerformAction(attacker, anim, 5);
+	NewPerformAction(attacker, 0, anim, RandomInt(4));
 	return;
 endfunction
   

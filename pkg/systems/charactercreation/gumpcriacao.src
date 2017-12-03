@@ -121,8 +121,16 @@ program createchar(who)
 
 	if (chardata.raca == "Elfo" || chardata.classe == "Mago")
 		LearnFeat(who, "Linguagem Élfica", 0);
+		if (chardata.classe == "Mago")
+			CreateItemInBackpack(who, 0x0DF2);
+			CreateItemInBackpack(who, 0x6100);
+			var rec := CreateItemInBackpack(who, 0x6116);
+			SetObjProperty(rec, "spell_id", 0x1);
+		endif
 	elseif (chardata.classe == "Clérigo")
 		LearnFeat(who, "Linguagem Rúnica", 0);
+		CreateItemInBackpack(who, 0x2D9D, 1);
+		start_script( ":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".clerigo\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
 	endif
 
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
@@ -130,7 +138,7 @@ program createchar(who)
 	AP_SetVital(who, "Hunger", 1);
 	EraseObjProperty(who, "criandochar");
 
-	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser lhe comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para lhe deixar mensangens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Bom Jogo!"} );
+	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser lhe comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para lhe deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Bom Jogo!"} );
 	// if (getNotaRP(who) == 2)
 	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
 	// 	CreateItemInBackpack(who, 0xba63, 200); //dinheiro
@@ -239,9 +247,9 @@ function RaceGump(who, byref  chardata)
 	GFSetRadioGroup(gump, 1);
 	GFTextLine(gump, choice_x+1,295,1153,"Escolha sua raça");
 
-	GFTextLine(gump, choice_x+25,315,2103,"Humano");
-	GFTextLine(gump, choice_x+25,335,2103,"Elfo");
-	GFTextLine(gump, choice_x+25,355,2103,"Meio-Elfo");
+	GFTextLine(gump, choice_x+25,315,2103,"Núros");
+	GFTextLine(gump, choice_x+25,335,2103,"Valas");
+	GFTextLine(gump, choice_x+25,355,2103,"Alayárz");
 	GFRadioButton(gump, choice_x, 315, 0x9C4E, 0x9C4F, 1, 2);
 	GFTooltipText(gump, "<right>+1 Todos atributos <br/>+ 8 Meses de vida");
 	GFRadioButton(gump, choice_x, 335, 0x9C4E, 0x9C4F, 0, 3);
@@ -622,7 +630,7 @@ endfunction
  
 function LookGump(who, chardata, aparencia := 0)
 	var params := struct{
-		"raca"  := chardata.raca,
+		"race"  := chardata.raca,
 		"barba" := (chardata.raca == "Humano")
 	};
 
@@ -694,8 +702,12 @@ function SetProfessions(who, chardata);
 	endforeach
 
 	foreach recipe in recipes
+		if (Hex(recipe))
+			recipe := hex(recipe);
+		endif
 		var obj := CreateItemInBackpack(who, 0xef1f);
 		SetObjProperty(obj, "objtype", recipe);
+		Run_Script( ":crafting:recipes/oncreate", recipe );
 		sleepms(2);
 	endforeach
 endfunction

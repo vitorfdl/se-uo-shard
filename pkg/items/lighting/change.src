@@ -68,7 +68,6 @@ function Destilar(balao, beker, who, item)
    sleep(3);
    
    var extrato := CINT(GetObjProperty(balao, "extrato"));
-   print(extrato);
    case (extrato)
       61249:
             SetObjProperty(beker, "pocao", 0xef46);

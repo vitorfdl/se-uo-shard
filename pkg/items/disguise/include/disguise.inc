@@ -94,7 +94,7 @@ function buildHairGump(byref gump, byref disfarce, opt := struct{})
 	var styles := GetConfigStringDictionary(config[opt.type], "style");
     if (opt.type == "facialhair")
 	    styles["Liso"] := HAIR_BALD;
-    elseif (opt.type == "head")
+    elseif (opt.type["head"])
         styles["Careca"] := HAIR_BALD;
     endif
 
@@ -127,7 +127,7 @@ function buildHairGump(byref gump, byref disfarce, opt := struct{})
 		hairnames.append(hairname);
 		GFHTMLArea(gump, x_pos-4, y_pos+49, 98, 20, "<BASEFONT SIZE=2 COLOR=#ffffff><center>{}".format(hairname));
 		if (hairgraphic != HAIR_BALD)
-			GFAddButton(gump, x_pos-50, y_pos-34, 30061, 30061, GF_CLOSE_BTN, hairgraphic);
+			// GFAddButton(gump, x_pos-50, y_pos-34, 30061, 30061, GF_CLOSE_BTN, hairgraphic);
 			GFGumpPic(gump, x_pos-50, y_pos-34, gumppic);
 		endif
 

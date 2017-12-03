@@ -12,6 +12,10 @@ include "include/say";
 include ":containers:containers";
 include ":charactercreation:habilidades";
 include ":attributes:attributes";
+include ":crafting:fls_crafting";
+
+var recipe_cfg := ReadConfigFile(":alchemy:recipes");
+var item_desc := ReadConfigFile(":*:itemdesc");
 
 program book(who, book)
 	//Edmond - 15/02/2012
@@ -23,7 +27,7 @@ program book(who, book)
 		endif
 	endif
 
-	var book_gump := CreateRunebookGump(book, who);
+	var book_gump := CreaterecipebookGump(book, who);
 	var result := GFSendGump(who, book_gump);
 
 	var potion := result[0] - 100;
@@ -172,16 +176,17 @@ function MakePotion ( pot, who)
 endfunction
 
 
-function CreateRunebookGump(book, who)
-	var rune_list := GetObjProperty(book, "recipes");
-	if( TypeOf(rune_list) != "Array" )
-		rune_list := array{};
-		SetObjProperty(book, "recipes", rune_list);
+function CreaterecipebookGump(book, can_read := 0)
+	var recipe_list := GetObjProperty(book, "recipes");
+	if( TypeOf(recipe_list) != "Array" )
+		recipe_list := array{};
+		SetObjProperty(book, "recipes", recipe_list);
 	endif
 
 	var book_gump := GFCreateGump();
+	GFSetId(book_gump, GUMPID_ALCHEMYBOOk);
 // Begin Page 0 Setup
-	GFGumpPic(book_gump, 72, 5, 11055);
+	GFGumpPic(book_gump, 70, 5, 11055);
 	GFGumpPic(book_gump, 125, 50, 57);
 	GFGumpPic(book_gump, 145, 50, 58);
 	GFGumpPic(book_gump, 160, 50, 58);
@@ -199,132 +204,116 @@ function CreateRunebookGump(book, who)
 	GFGumpPic(book_gump, 385, 50, 58);
 	GFGumpPic(book_gump, 395, 50, 59);
 
-	/*GFAddButton(book_gump, 130, 187, 2225, 2225, GF_PAGE_BTN, 2);
-	GFAddButton(book_gump, 165, 187, 2226, 2226, GF_PAGE_BTN, 3);
-	GFAddButton(book_gump, 200, 187, 2227, 2227, GF_PAGE_BTN, 4);
-	GFAddButton(book_gump, 235, 187, 2228, 2228, GF_PAGE_BTN, 5);
-	GFAddButton(book_gump, 300, 187, 2229, 2229, GF_PAGE_BTN, 6);
-	GFAddButton(book_gump, 335, 187, 2230, 2230, GF_PAGE_BTN, 7);
-	GFAddButton(book_gump, 370, 187, 2231, 2231, GF_PAGE_BTN, 8);
-	GFAddButton(book_gump, 405, 187, 2232, 2232, GF_PAGE_BTN, 9);*/
-//	GFHTMLArea(book_gump,  140, 40, 80, 18, "Charges:");
-//	GFHTMLArea(book_gump,  300, 40, 100, 18, "Max Charges:");
-//	GFHTMLArea(book_gump,  220, 40, 80, 18, charges);
-//	GFHTMLArea(book_gump,  400, 40, 100, 18, max_charges);
-// End Page 0 Setup
-
 // Begin Page 1 Setup
 	GFPage(book_gump, 1);
 	//GFAddButton(book_gump, 125, 15, 2472, 2473, GF_CLOSE_BTN, 50);
-	GFHTMLArea(book_gump, 135, 22, 100, 18, "Solve Et Coagula");
+	GFHTMLArea(book_gump, 139, 28, 130, 18, "<i>Solve Et Coagula</i>");
 	GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, 2);
-	
-	var pOX := 130;
-	var pOY := 70;
-	var rune_pos         := 1;
-	foreach rune in rune_list
-		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+rune_pos);
-		rune_pos+=1;
+
+	var pOX       := 130;
+	var pOY       := 65;
+	foreach recipe in recipe_list
+		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+_recipe_iter);
+		// GFTooltipText(book_gump, "<BASEFONT color=#ADD8E6>Inscrever");
 		pOY+=15;
-		if (pOY >165)
-			pOY := 70;
+		if (pOY >180)
+			pOY := 65;
 			pOX := 290;
 		endif
 	endforeach
-	
 // End Page 1 Setup
 
-// Below you will notice in the loop, there are entries put BACK into page
-// 1. Do not worry, we run an Optimize function on the gump to put all
-// of those BACK into the initial Page 1 section we just made to keep our
-// gump's arrays looking nice and clean.
-
-	pOX := 145;
-	pOY := 65;
-	rune_pos         := 1;
+	pOX      := 145;
+	pOY      := 60;
 
 	for i := 2 to 9
+		var pos := i;
+		if (i == 2)
+			pos := 1;
+		endif
+
 		GFPage(book_gump, i);
-		GFAddButton(book_gump, 120, 14, 2205, 2205, GF_PAGE_BTN, (i-1));
+
+		GFAddButton(book_gump, 116, 14, 2205, 2205, GF_PAGE_BTN, (i-1));
 		if(i != 9)
 			GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, (i+1));
 		endif
 
-		var rune_entry := rune_list[rune_pos];
-		//WriteSpellInfo(rune_entry);
-		rune_entry.description := "<BASEFONT COLOR=#000066>" +  cstr(rune_entry.description) ;
-		if( TypeOf(rune_entry) == "Struct" )
-			if( rune_entry.name )
-				// This puts the rune in page 1's list.
-				GFPage(book_gump, 1);
-				GFTextCrop(book_gump, pOX,  pOY, 115, 17, 995, rune_entry.name);
-				GFPage(book_gump, i);
-
-				//GFHTMLArea(book_gump, 160, 15, 100, 18, rune_entry.name);
-				GFTextCrop(book_gump, 145, 31, 100, 18, 995, rune_entry.name);
-				GFHTMLArea(book_gump, 140, 68, 120,  130, cstr(rune_entry.description), 0, 1);
-
-			endif
-		else
-			GenerateEmptySide(book_gump, 1, pOX, pOY, i);
-		endif
-                rune_pos := rune_pos + 1;
-		pOY := pOY + 15;
-		if( pOY > 165 )
-			pOY := 65;
-			pOX := 305;
-		endif
-
-		rune_entry := rune_list[rune_pos];
-		//WriteSpellInfo(rune_entry);
-		 rune_entry.description := "<BASEFONT COLOR=#000066>" +  cstr(rune_entry.description);
-
-		if( TypeOf(rune_entry) == "Struct" )
-			if( rune_entry.name )
-				// This puts the rune in page 1's list.
-				GFPage(book_gump, 1);
-				GFTextCrop(book_gump, pOX,  pOY, 115, 17, 995, rune_entry.name);
-				GFPage(book_gump, i);
-				
-				//GFHTMLArea(book_gump, 300, 15, 100, 18, rune_entry.name);
-				GFTextCrop(book_gump, 297, 31, 115, 17, 995, rune_entry.name);
-				GFHTMLArea(book_gump, 300, 68, 120,  130, cstr(rune_entry.description), 0, 1);
-
-			endif
-		else
-			GenerateEmptySide(book_gump, 2, pOX, pOY, i);
-		endif
-
-                rune_pos := rune_pos + 1;
-		pOY := pOY + 15;
-		if( pOY > 165 )
-			pOY := 65;
-			pOX := 305;
-		endif
+		GenerateSide(book_gump, recipe_list, i, 1, pOX, pOY, pos);
+		GenerateSide(book_gump, recipe_list, i, 2, pOX, pOY, pos+1);
 
 		SleepMS(2);
 	endfor
 
-//	GFOptimizeGump(book_gump);
-
 	return book_gump;
 endfunction
 
+//----------------------------
+// Generate every page of the book. And the button for the First page.
+// Inside generate empty page too
+//-----------------
+function GenerateSide(byref book_gump, recipe_list, i, side, byref pOX, byref pOY, recipe_pos)
+	var sOX := 158;
+	if (side == 2)
+		sOX := 302;
+	endif
+	
+	var elem := FindConfigElem(recipe_cfg, recipe_list[recipe_pos]);
+	var recipe_entry := struct{
+		name := elem.name,
+		desc := elem.desc,
+		reg := getConfigStringArray(elem, "Reg")
+	};
+	recipe_entry.desc := "<BASEFONT COLOR=#000066>{}<br><br> <BASEFONT COLOR=#330000> Reagentes <br>".format(cstr(recipe_entry.desc));
+
+	foreach r in (recipe_entry.reg)
+		r := SplitWords(r);
+		var obj := item_desc[r[1]];
+		recipe_entry.desc := "{}{} - {}<br>".format(recipe_entry.desc, r[2], obj.desc);
+	endforeach
+
+	if( TypeOf(recipe_entry) == "Struct" )
+		if( recipe_entry.name )
+			// This puts the recipe in page 1's list.
+			GFPage(book_gump, 1);
+			GFTextCrop(book_gump, pOX,  pOY, 115, 17, 995, recipe_entry.name);
+			
+			GFPage(book_gump, i);
+			GFTextCrop(book_gump, sOX,  15, 100, 18, 995, recipe_entry.name);
+			// GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Inscrever");
+			// GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 100+recipe_pos);
+
+			//Fix description position by side
+			if (side == 1)
+				GFHTMLArea(book_gump, sOX-20, 60, 120,  140, cstr(recipe_entry.desc), 0, 1);
+			else
+				GFHTMLArea(book_gump, sOX, 60, 120,  140, cstr(recipe_entry.desc), 0, 1);
+			endif
+
+		endif
+	else
+		GenerateEmptySide(book_gump, side, pOX, pOY, i);
+	endif
+
+	pOY := pOY + 15;
+	if( pOY > 165 )
+		pOY := 60;
+		pOX := 305;
+	endif
+endfunction
 
 function GenerateEmptySide(byref book_gump, side, pOX, pOY, page_num)
-
 	if( side == 1)
-		// This puts the rune in page 1's list.
+		// This puts the recipe in page 1's list.
 		GFPage(book_gump, 1);
 		GFTextCrop(book_gump, pOX,  pOY, 115, 17, 10, "");
 		GFPage(book_gump, page_num);
 		GFTextCrop(book_gump, 145, 60, 115, 17, 10, "");
 	else
-		// This puts the rune in page 1's list.
+		// This puts the recipe in page 1's list.
 		GFPage(book_gump, 1);
 		GFTextCrop(book_gump, pOX,  pOY, 115, 17, 10, "");
 		GFPage(book_gump, page_num);
 		GFTextCrop(book_gump, 305, 60, 115, 17, 10, "");
 	endif
-
 endfunction

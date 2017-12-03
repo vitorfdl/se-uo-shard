@@ -54,7 +54,6 @@ program usaPergaminho(who, scroll)
 		if (index)
 			var spell_id := keys[index];
 			SetObjProperty(scroll, "spell_id", spell_id);
-			Start_Script("grimorio/pergaminhoCreate", scroll);
 		endif
 	endif
 endprogram

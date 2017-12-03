@@ -23,7 +23,7 @@ program animateSword(params)
 	params := 0; // No longer needed
 	
 	while (1)
-      if (Distance(who, targ) > 4 && targ.objtype in array{0x0F60, 0x13b9} && targ.hp >= 5)
+      if (Distance(who, targ) < 4 && targ.objtype in array{0x0F60, 0x13b9} && targ.hp >= 5)
 			break;
 		elseif (!targ)
 			return 1;
@@ -44,8 +44,7 @@ program animateSword(params)
 	// PlayMovingEffect(who, sword, 0x483E, 10, 3);
 	sleepms(500);
 	
-	var summoned := summon(":ghaia:longsword", summoned, who);
-
+	var summoned := CreateNpcFromTemplate(":ghaia:longsword", targ.x, targ.y, targ.z);
 	if (summoned)
 		if (targ.objtype == 0x13b9)
 			summoned.graphic := 0x13b9;
@@ -53,9 +52,14 @@ program animateSword(params)
 
 		PrintTextAbove(summoned, "*A espada ganha vida*", 3,191);
 		AddPet(who, summoned.serial);
-		summoned.script := "ghaia:follower";
+		summoned.SetMaster(who);
+		summoned.script := ":ghaia:follower";
 		RestartScript(summoned);
 
+		if (!summoned.backpack)
+			var mochila := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, 0x9b2, 1, summoned.realm);
+			EquipItem(summoned, mochila);
+		endif
       MoveItemToContainer(targ, summoned.backpack);
 		
 		var duration := AP_GetStat(who, INTELLIGENCE);

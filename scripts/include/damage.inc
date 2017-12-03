@@ -51,7 +51,6 @@ function HealFLS(targ, amt, show_heal := 1)
 	endif
 	SendSystemReport(targ, amt, SYSTEM_HEAL, targ);
 	if (show_heal.isA(POLCLASS_MOBILE))
-		PrintText(targ, "sys");
 		SendSystemReport(targ, amt, SYSTEM_HEAL, show_heal);
 	endif
 endfunction

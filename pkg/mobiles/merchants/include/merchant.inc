@@ -163,8 +163,6 @@ function AddItemForSale(merchant, seller, item, cost_type, cost_name, cost_amt, 
 	data_elem.SetProp("LastNum", new_num);
 	new_num := CStr(new_num);
 	
-	print(desc);
-
 	var cost_info := struct;
 	cost_info.+seller := CInt(seller.serial);
 	cost_info.+cost_type := CInt(cost_type);
