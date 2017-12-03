@@ -160,8 +160,8 @@ function PlayAttackAnimation(attacker, weapon_elem)
 		0x1A: newanim := 7;
 		default: newanim := anim;
 	endcase
-	PerformAction(attacker, anim, 5);
-	printtext(attacker, newanim);
+	// PerformAction(attacker, anim, 5);
+	NewPerformAction(attacker, 0, newanim, RandomInt(4));
 	// NewPerformAction(attacker, 0, newanim, RandomInt(4));
 	return;
 endfunction

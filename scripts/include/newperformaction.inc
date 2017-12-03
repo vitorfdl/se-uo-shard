@@ -5,12 +5,12 @@ include "include/client";
 
 function NewPerformAction(who, animation, action, subaction)
 	var outpkt := CreatePacket(0xE2, 10);
-	outpkt.SetInt32(1, who.serial);
+  	outpkt.SetInt32(1, who.serial);
 	outpkt.SetInt16(5, animation);
 	outpkt.SetInt16(7, action);
 	outpkt.SetInt8(9, subaction);
 	outpkt.SendAreaPacket(who.x, who.y, 18, who.realm);
-	return 0;
+  return 0;
 endfunction 
 
 function OldPerformAction(who, action, frame_count := 5, rpeat := 1, fwd := 0, rpeat_flag := 0, frame_delay := 1)
