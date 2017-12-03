@@ -50,7 +50,7 @@ function mainGump(who, byref disfarce, byref choice)
     
 	if (choice.menu == 1)
         var opts := struct{
-            "type"  := choice.race,
+            "type"  := "{}_head".format(choice.race),
             "param" := "cabelo",
             "gender" := gender
         };
@@ -58,7 +58,7 @@ function mainGump(who, byref disfarce, byref choice)
         buildHairGump(gump, disfarce, opts);
 	elseif (choice.menu == 2)
         var opts := struct{
-            "type" := "facialhair",
+            "type" := "{}_facialhair".format(choice.race),
             "param" := "barba",
             "gender" := gender
         };
