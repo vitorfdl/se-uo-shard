@@ -54,7 +54,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 
 	// Rolagem de dados
 	var dice := RandomDiceRoll("1d20");
-	var param_return := {};
+	var param_return := struct{};
 
 	// Aplica penalidades comums
 	if (GetObjProperty(mobile, "ArmorPenalty"))

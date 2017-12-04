@@ -33,6 +33,6 @@ program DeathScript(params)
 	endif
 
 	sword.hp := new_hp;
-
+	SetName(sword, sword.desc);
 	return 1;
 endprogram

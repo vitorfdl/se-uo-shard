@@ -41,7 +41,7 @@ function PlayCustomSound(who, number)
    if (!sound_array) return; endif
    
    who.hidden := 0;
-   if (CheckGender(who) == 1)
+   if (CheckGender(who) == 0)
       PlaySoundEffect( who, sound_array[2] );
    else
       PlaySoundEffect( who, sound_array[3] );

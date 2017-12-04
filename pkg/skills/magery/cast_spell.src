@@ -64,9 +64,8 @@ program SpellStarter(params)
          FailSpell(mobile);
          return 0;
       elseif ( !TNCheckReagents(mobile, spellinfo, item) && mobile.cmdlevel < 3)
-         SendSysMessageEx(mobile, "Voce nao possui os componentes materiais necessarios para invocacao desta magia arcana.", SSM_FAIL);
-         HealMana(mobile, cint(spellinfo.mana*0.5));
-         FailSpell(mobile);
+         HealMana(mobile, cint(spellinfo.mana));
+      //    FailSpell(mobile);
          return 0;
       endif
    endif
@@ -160,15 +159,12 @@ program SpellStarter(params)
    if (spellinfo.script != error)
       var e := Start_Script(spellinfo.script, array{mobile, spellinfo, targ});
       if (e == error)
-         Print(mobile + ": " + spellinfo);
          FailSpell(mobile);
       elseif (!e)
          FailSpell(mobile);
       else
          ExpGain(mobile, "minor");
       endif
-   else
-      Print(mobile + ": " + spellinfo);
    endif
    SetClericSpellUsed(mobile, spellinfo);
    SetCooldown(mobile, spellinfo.name, spellinfo.cooldown);

@@ -52,8 +52,9 @@ endfunction
 
 function TNCheckReagents(who, byref spellinfo, item)
 	if ( item.isa(POLCLASS_ITEM) && spellinfo.charges )
-		var charges := GetObjProperty(item, "charges");
+		var charges := cint(GetObjProperty(item, "charges"));
 		if (charges < spellinfo.charges)
+			SendSysMessageEx(who, "Cargas insuficientes na varinha: {} cargas".format(charges), SSM_FAIL);
 			return 0;
 		endif
 		charges -= spellinfo.charges;
@@ -113,7 +114,7 @@ endfunction
 
 function WriteMagic(who, spell_id)
 	var items_bag := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
-	if (who.cmdlevel < 2 && who.isClass("Mago"))
+	if (who.cmdlevel < 2 && !who.isClass("Mago"))
 		SendSysMessageEx(who, "Voce nao tem conhecimento de magia", SSM_FAIL);
 		return;
 	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
@@ -167,7 +168,6 @@ function WriteMagic(who, spell_id)
 		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia", SSM_FAIL);
 		return;
 	endif
-	printtext(who, spellinfo.type);
 	if ((spellinfo.type != "Comando" && spellinfo.type != element) || (spellinfo.circle > elementpower))
 		SendSysMessageEx(who, "A inscricao nao reage aos elementos da varinha", SSM_FAIL);
 		return;
@@ -186,6 +186,7 @@ function WriteMagic(who, spell_id)
 	SetObjProperty(targ, "serialid", who.serial);
 	SetObjProperty(targ, "spell_list", spell_list);
 	SetObjProperty(targ, "magicwho", array{ who.serial });
+	SetName(targ, targ.desc);
 	SendSysMessageEx(who, "Voce inscreveu com sucesso a magia na arma.", SSM_INFO);
 endfunction
 

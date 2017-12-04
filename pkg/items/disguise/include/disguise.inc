@@ -177,6 +177,10 @@ function buildColor(byref gump, byref disfarce, opts)
 	var colors := GetConfigStringArray(index_elem, "Color");
 	var y_pos := 80;
 	var x_pos := 195;
+
+	if (!opts.param)
+		opts.param := colors[1];
+	endif
 	// Build category buttons on the left first
     GFPage(gump, gump.cur_page+1);
 	foreach color in colors;

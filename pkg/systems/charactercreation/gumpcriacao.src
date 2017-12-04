@@ -21,6 +21,7 @@ program createchar(who)
 	sleepms(600);
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
+	AP_SetVital(who, "Hunger", 4);
 
 	if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
 		SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
@@ -124,20 +125,21 @@ program createchar(who)
 		if (chardata.classe == "Mago")
 			CreateItemInBackpack(who, 0x0DF2);
 			CreateItemInBackpack(who, 0x6100);
+			CreateItemInBackpack(who, 0x10e4);
 			var rec := CreateItemInBackpack(who, 0x6116);
 			SetObjProperty(rec, "spell_id", 0x1);
 		endif
 	elseif (chardata.classe == "Clérigo")
 		LearnFeat(who, "Linguagem Rúnica", 0);
-		CreateItemInBackpack(who, 0x2D9D, 1);
-		start_script( ":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".clerigo\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
+		Start_Script(":magery:cleric/powerWords", array{who});
+		start_script(":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".clerigo\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
 	endif
 
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
-	AP_SetVital(who, "Hunger", 1);
+	AP_SetVital(who, "Hunger", 4);
 	EraseObjProperty(who, "criandochar");
-
+	
 	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser lhe comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para lhe deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Bom Jogo!"} );
 	// if (getNotaRP(who) == 2)
 	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
@@ -657,7 +659,7 @@ function LookGump(who, chardata, aparencia := 0)
 	EquipItem(who, newhair);
 
 	if (aparencia.corpele == -1 || aparencia.corcabelo == -1)
-		SendSysMessageEx(who, "Escolha uma cor para os cabelos!", SSM_FAIL);
+		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
 		LookGump(who, chardata, aparencia);
 	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
 		return 1;
@@ -702,7 +704,7 @@ function SetProfessions(who, chardata);
 	endforeach
 
 	foreach recipe in recipes
-		if (Hex(recipe))
+		if (Hex(recipe) != error && cint(Hex(recipe)) != 0)
 			recipe := hex(recipe);
 		endif
 		var obj := CreateItemInBackpack(who, 0xef1f);

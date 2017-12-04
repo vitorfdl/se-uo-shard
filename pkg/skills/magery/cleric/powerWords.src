@@ -55,7 +55,6 @@ program clericPowerWords(parms)
          endforeach
 
          if (spell_id)
-            PrintText(who, "Casting");
             Start_Script(":magery:cast_spell", {who, spell_id, 0, 0, ":magery:config/cleric"});
          endif
       endif		

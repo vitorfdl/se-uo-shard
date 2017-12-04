@@ -48,8 +48,10 @@ function sendCraftGump(who, params)
             params.qty := 1;
         endif
 
-        if (!input[0] || input[0] == 1)
+        if (!input[0] || input[0] == 0 || input[0] == 1)
             not_closed := 0;
+        elseif (input[0] == BTN_REPAIR)
+            doRepair(who, params.type, recipe_cfg);
         elseif (input[0] != BTN_SEARCH)
             var recipe := player_recipes[input[0]-BTN_CRAFTIT];
             CraftItem(who, params.type, params.tool, recipe, params.qty, 1);
@@ -74,7 +76,7 @@ function createGump(who, recipes, params)
         GFHTMLArea(gump, 337, 52, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Filtros");
         foreach filter in (params.filter)
             GFAddButton(gump, 343, 83, filter.button, 40015, GF_CLOSE_BTN, BTN_FILTER+_filter_iter);
-            GFTextLine(gump, 372, 83, 1149, filter.name);
+            GFTextLine(gump, 372, 83, 1153, filter.name);
         endforeach
     endif
     
@@ -92,15 +94,15 @@ function createGump(who, recipes, params)
 	GFAddButton(gump, 288, 51, 9011, 9011, GF_CLOSE_BTN, BTN_SEARCH);
     
     //Crafting Options
-	GFTextLine(gump, 343, 333, 1149, "Quantidade");
+	GFTextLine(gump, 343, 333, 1153, "Quantidade");
     // GFToolTipText(gump, 1062951);
 	GFResizePic(gump, 426, 332, 30546, 31, 22);
     qty_entry := GFTextEntry(gump, 431, 334, 24, 20, 1101, ""+params.qty);
     // GFToolTipText(gump, 1062951);
-	GFTextLine(gump, 343, 360, 1149, "Fazer Ultimo");
-	GFAddButton(gump, 426, 360, 40017, 40027, GF_CLOSE_BTN, 0);
-	GFTextLine(gump, 343, 384, 1149, "Consertar");
-	GFAddButton(gump, 426, 385, 40017, 40027, GF_CLOSE_BTN, 0);
+	GFTextLine(gump, 343, 360, 1153, "Fazer Ultimo");
+	GFAddButton(gump, 426, 360, 40017, 40027, GF_CLOSE_BTN, BTN_MAKELAST);
+	GFTextLine(gump, 343, 384, 1153, "Consertar");
+	GFAddButton(gump, 426, 385, 40017, 40027, GF_CLOSE_BTN, BTN_REPAIR);
 
     //Recipes
     var r_x := 90;

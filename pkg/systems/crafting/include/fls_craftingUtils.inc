@@ -102,32 +102,32 @@ endfunction
 
 function doRepair(who, craft_skill, recipe_cfg)
    SendSysMessage(who, "Escolha o item para consertar..");
-   var use_on := Target(who);
-   if(use_on.movable == 0)
+   var what := Target(who);
+   if(what.movable == 0)
       SendSysMessage(who, "Voce nao pode consertar isto.");
       return;
-   elseif((!Accessible(who, use_on)) or (distance(who, use_on) > 2))
+   elseif((!Accessible(who, what)) or (distance(who, what) > 2))
       SendSysMessage(who, "Voce nao alcanca o item.");
       return;
    endif
 
-   // if(CInt(use_on.objtype) == CInt(0xe34))
+   // if(CInt(what.objtype) == CInt(0xe34))
    //    case(CInt(craft_skill))
-   //       METALWORKING:reateRepairDeed(who, use_on, craft_skill);
-   //       //    BOWCRAFT_FLETCHING:    CreateRepairDeed(who, use_on, craft_skill);
-   //       //  CARPENTRY:   		 CreateRepairDeed(who, use_on, craft_skill);
-   //       //TAILORING:   		 CreateRepairDeed(who, use_on, craft_skill);
+   //       METALWORKING:reateRepairDeed(who, what, craft_skill);
+   //       //    BOWCRAFT_FLETCHING:    CreateRepairDeed(who, what, craft_skill);
+   //       //  CARPENTRY:   		 CreateRepairDeed(who, what, craft_skill);
+   //       //TAILORING:   		 CreateRepairDeed(who, what, craft_skill);
    //       endcase
    //    return;
    // endif
 
-   var elem := FindConfigElem(recipe_cfg, use_on.objtype);
-   if (!elem) 
+   var recipe_elem := FindConfigElem(recipe_cfg, what.objtype);
+   if (!recipe_elem) 
       SendSysMessage(who, "Voce nao pode consertar isso.");	
    endif
 
-   var combatcfg := ReadConfigFile(":combat:itemdesc");
-   var elem := FindConfigElem(combatcfg, what);
+   var combatcfg  := ReadConfigFile(":combat:itemdesc") + ReadConfigFile(":womenswork:itemdesc");
+   var elem       := FindConfigElem(combatcfg, what.objtype);
    var repairable := GetConfigInt(elem, "repairable");
    if (!repairable)
       SendSysMessage(who, "So pode consertar armas ou armaduras.");
@@ -165,7 +165,7 @@ function doRepair(who, craft_skill, recipe_cfg)
    var reparos := GetObjProperty(what,"reparos");
 
    if (reparos == error)
-      reparos:= 2 + GetBonusAttr(AP_GetTrueStat(mobile, "Intelligence"));
+      reparos:= 2 + GetBonusAttr(AP_GetStat(who, WISDOM));
       SetObjProperty(what,"reparos",reparos);
    endif
 
@@ -173,31 +173,31 @@ function doRepair(who, craft_skill, recipe_cfg)
    SetName(what, GetObjProperty(what, "realdesc"));
   
    if(what.hp == what.maxhp)
-      SendSysMessage(character, "O item nao esta danificado.");
+      SendSysMessage(who, "O item nao esta danificado.");
       return;
    endif
   
    if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-      SendSysMessage(character, "O fragil material quebrou quando voce manipulou ele.");
+      SendSysMessage(who, "O fragil material quebrou quando voce manipulou ele.");
       DestroyItem(what);
       return;
    endif
   
-   if(what.quality <= damageamount)
-      SendSysMessage(character, "O fragil material quebrou quando voce manipulou ele.");
-      DestroyItem(what);
-      return;
-   endif
-
-   var skill        := GetBonusAttr(AP_GetTrueStat(mobile, "Intelligence")) + getProficiencyBonus(mobile, craft_skill);
-   var damageamount := (2 * (1 + skill)/3000.0;
+   var skill        := GetBonusAttr(AP_GetStat(who, WISDOM)) + getProficiencyBonus(who, craft_skill);
+   var damageamount := (2 * (3 + skill)/3000.0);
    if (damageamount > 0)
       damageamount := damageamount * -1;
    endif
    what.quality -= damageamount;
+
+   if(what.quality <= damageamount)
+      SendSysMessage(who, "O fragil material quebrou quando voce manipulou ele.");
+      DestroyItem(what);
+      return;
+   endif
   
    if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-      SendSysMessage(character, "O fragil material quebrou quando voce manipulou ele.");
+      SendSysMessage(who, "O fragil material quebrou quando voce manipulou ele.");
       DestroyItem(what);
       return;
    endif
@@ -205,31 +205,35 @@ function doRepair(who, craft_skill, recipe_cfg)
    var maxhp     := cint(what.maxhp * what.quality);
    var damaged   := maxhp - what.hp;
    var advantage := 0;
-   if (recipe.objtype in GetObjProperty(mobile, recipes))
+   if (recipe.objtype in GetObjProperty(who, "recipes"))
       advantage += 1;
    endif
-   var dice_result := rollAttrDice(who, "Intelligence", advantage) + getProficiencyBonus(mobile, craft_skill);
+
+   var thehp := what.hp;
+   var dice_result := rollAttrDice(who, "Intelligence", advantage) + getProficiencyBonus(who, craft_skill);
    if (dice_result > recipe.difficulty - 1)
       var repaired_amount := cint((skill+2)*2);
-      //SendSysMessage(character, "rep"+repaired_amount);
-      //SendSysMessage(character, "hisskill: "+((randomint(hisskill) + 1))/2);
+      //SendSysMessage(who, "rep"+repaired_amount);
+      //SendSysMessage(who, "hisskill: "+((randomint(hisskill) + 1))/2);
       
       if (damaged == 1)
          repaired_amount := 1;
       endif
-      
+
+
       if (thehp + repaired_amount > what.maxhp)
          what.hp := what.maxhp;
          EraseObjProperty(what, "swings");
-         SendSysMessage(character, "Voce consertou o item completamente.");
+         SendSysMessage(who, "Voce consertou o item completamente.");
       else
          what.hp := thehp + repaired_amount;
-         SendSysMessage(character, "Voce consertou o item.");
+         SendSysMessage(who, "Voce consertou o item.");
       endif
+      who.SetAchievement(who, "repair", 1);
       SetName( what, what.desc ); //Update the Item
       
       if ((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-         SendSysMessage(character, "O fragil material quebrou quando voce manipulou ele.");
+         SendSysMessage(who, "O fragil material quebrou quando voce manipulou ele.");
          DestroyItem(what);
          return;
       endif
@@ -239,7 +243,7 @@ function doRepair(who, craft_skill, recipe_cfg)
       
       if (thehp <= damage_amount)
          DestroyItem(what);
-         SendSysMessage(character, "Voce falhou e destruiu o item.");
+         SendSysMessage(who, "Voce falhou e destruiu o item.");
       endif
       
       thehp := thehp - damage_amount;
@@ -251,15 +255,15 @@ function doRepair(who, craft_skill, recipe_cfg)
       
       if(thehp <= 0)
          DestroyItem(what);
-         SendSysMessage(character, "Voce falhou e destruiu o item.");
+         SendSysMessage(who, "Voce falhou e destruiu o item.");
       else
-         SendSysMessage(character, "Voce falhou e danificou o item.");
+         SendSysMessage(who, "Voce falhou e danificou o item.");
       endif
       
       SetName( what, what.desc ); //Update the Item
       
       if ((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-         SendSysMessage(character, "O fragil material quebrou quando voce manipulou ele.");
+         SendSysMessage(who, "O fragil material quebrou quando voce manipulou ele.");
          DestroyItem(what);
          return;
       endif
@@ -274,6 +278,132 @@ function doRepair(who, craft_skill, recipe_cfg)
    //    reparos:= (reparos  -(11 - (hisskill / 11)));
    //    SetObjProperty(what,"reparos",reparos);
    // endif
+endfunction
+
+function makeTinkeringItems(who, what, amt, tool)
+	// if (what == 0x1085 || what == 0x1086 || what == 0x1087 || what == 0x1088 || what == 0x1089 || what == 0x108a || what == 0x2b6e || what == 0x2b6f || what == 0x2b70 || what ==  4001 || what == 0x376a || what == 0xff97 || what == 0xff98)
+	// 	amt := 1;
+	// endif
+
+	foreach theitem in (theitems)
+      if (theitem.graphic in array{0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70})
+
+			var gem;
+			var gems := dictionary;
+			var gemprop;
+			while(1)
+				if (YesNo(who, "Voce deseja incrustar alguma gema na joia?") )
+					SendSysMessageEx(who, "Escolha a pedra preciosa.", SSM_REQUEST);
+					var gemtarg := target(who);
+					if (gemtarg.isGem())
+						theitem.color := gemtarg.getGemColor();
+						//sendsysmessage(who, "name " + gemtarg.getGemName() );
+						var gemname := gemtarg.GetGemName();
+						gemprop := GetObjProperty(gemtarg,"tamanho");
+						if (gemprop != error)
+							gemprop := gemprop + " " + GetObjProperty(gemtarg,"brilho");
+							gemname := gemname + gemprop;
+						endif
+						gems[gemname] := gemtarg.amount;
+						gem := 1;
+						DestroyITem(gemtarg);
+					endif
+				else
+					break;
+				endif
+			endwhile
+
+			if (gem)
+				SetupGemName(theitem, gems);
+				//sendsysmessage(who, " " + gems);
+				if (YesNo(who, "Voce deseja adicionar uma descricao na joia?") )
+					AddItemDescription(who, theitem);
+				endif
+				increvision(theitem);
+			endif
+
+		elseif (theitem.objtype == 4001) // Fechadura
+			var key := CreateItemInBackpack(who, "ironkey", 1);
+			var lvl := Floor(AP_GetSkill(who, INTELLIGENCE)/20);
+			var lockid := AllocLockId();
+			if (lvl < 1)
+				lvl := 1;
+			endif
+			SetObjProperty(theitem, "LockId", lockid);
+			SetObjProperty(key, "LockId", lockid);
+			SetObjProperty(theitem, "level", lvl);
+			SendSysMessageEx(who, "Voce fez a fechadura e a chave.", SSM_INFO);
+		// elseif ( theitem.objtype == 0x367a)
+		// 	SendSysMessageEx(who, "Escolha a pocao do gas venenoso.", SSM_REQUEST);
+		// 	var pot := Target(who);
+		// 	if (!pot)
+		// 		SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+		// 		DestroyItem(theitem);
+		// 		return;
+		// 	else
+		// 		if ( (pot.objtype == 0xbf0f) || (pot.objtype == 0xbf10) || (pot.objtype == 0xbf11) )
+		// 			var level := Cint(AP_GetSkill(who, METALWORKING)/20);
+		// 			if (pot.objtype == 0xbf0f)
+		// 				if (level > 2)
+		// 					level := 2;
+		// 				endif
+		// 				SetObjProperty(theitem, "traplevel", level);
+		// 			elseif ( pot.objtype == 0xbf10)
+		// 				if (level > 4)
+		// 					level := 4;
+		// 				endif
+		// 				SetObjProperty(theitem, "traplevel", level);
+		// 			elseif ( pot.objtype == 0xbf11 )
+		// 				SetObjProperty(theitem, "traplevel", level);
+		// 			endif
+		// 			DestroyItem(pot);
+		// 		else
+		// 			SendSysMessageEx(who, "Esta nao e a pocao certa.", SSM_FAIL);
+		// 			DestroyItem(theitem);
+		// 			return;
+		// 		endif
+		// 	endif
+		// elseif ( theitem.objtype == 0xff97 )
+		// 	SendSysMessageEx(who, "Escolha a pocao de explosao.", SSM_REQUEST);
+		// 	var pot := Target(who);
+		// 	if (!pot)
+		// 		SendSysMessageEx(who, "Cancelado", SSM_FAIL);
+		// 		DestroyItem(theitem);
+		// 		return;
+		// 	else
+		// 		if ( (pot.objtype == 0xdc08) || (pot.objtype == 0xef60) || (pot.objtype == 0xef61) || (pot.objtype == 0xef62) )
+		// 			var level := Cint(AP_GetSkill(who, METALWORKING)/20);
+		// 			if (pot.objtype == 0xdc08)
+		// 				if (level > 1)
+		// 					level := 1;
+		// 				endif
+		// 				SetObjProperty(theitem, "traplevel", level);
+		// 			elseif ( pot.objtype == 0xef60)
+		// 				if (level > 3)
+		// 					level := 3;
+		// 				endif
+		// 				SetObjProperty(theitem, "traplevel", level);
+		// 			elseif ( pot.objype == 0xef61)
+		// 				if (level > 4)
+		// 					level := 4;
+		// 				endif
+		// 				SetObjProperty(theitem, "traplevel", level);
+		// 			elseif ( pot.objtype == 0xbf62 )
+		// 				SetObjProperty(theitem, "traplevel", level);
+		// 			endif
+		// 			DestroyItem(pot);
+		// 		else
+		// 			SendSysMEssageEx(who, "Esta nao e a pocao certa.", SSM_FAIL);
+		// 			DestroyItem(theitem);
+		// 			return;
+		// 		endif
+		// 	endif
+		// elseif (theitem.objtype == 0xff98)
+		// 	SetObjProperty(theitem, "traplevel", Cint( AP_GetSkill(who, INTELLIGENCE)/20 ));
+		// endif
+	endforeach
+
+	return 0;
 endfunction
 
 //

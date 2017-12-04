@@ -69,7 +69,7 @@ program PopUpMenu( who, what )
     elseif (input == "erguer")
         return;
     elseif (input == "change_spell")
-        Start_Script(":magery:wands/changeSpell", who);
+        Start_Script(":magery:wands/changeSpell", array{who, what});
     elseif (input == "ficharp_rate")
         Start_Script(":fls_core:ficharp_rating", array{ who, what });
     endif
@@ -139,9 +139,10 @@ function MenuPlayerToItem(who, what)
     endif
 
     var spell_list := GetObjProperty(what, "spell_list");
-    if (what.isMagicWeapon() && GetObjProperty(what, "serialid") == who.serial && spell_list.size() > 1)
+    if (what.isMagicWeapon() && GetObjProperty(what, "serialid") == who.serial && spell_list.size() >= 1)
         entries.+change_spell := 3002015;
     endif
+    print(entries);
 
     if (what.isA(POLCLASS_CORPSE) && CoordinateDistance(what.x, what.y, who.x, who.y) <= 2)
         entries.+arrastar := struct{ cliloc := 3002013};

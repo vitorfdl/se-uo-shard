@@ -60,13 +60,18 @@ exported function GetManaMaximumValue(mobile)
 	var mana_points := GetNPCVitalSetting(mobile, "MANA");
 
 	if ( !mana_points )
-		var intelligence := CInt(AP_GetTrueStat(mobile, "Intelligence"));
-		var chardata     := GetObjProperty(mobile, "chardata");
-		mana_points      := (cint(chardata.manapoints) + GetBonusAttr(intelligence)) * 100;
+		var chardata := GetObjProperty(mobile, "chardata");
+		var bonus    := AP_GetStat(mobile, INTELLIGENCE, 1);
+
+		if (bonus < 1)
+			bonus := 1;
+		endif
+
+		mana_points := (cint(chardata.manapoints) + (bonus * 4)) * 100;
 	endif
 
-	mana_points := mana_points + ((Cint( GetObjProperty(mobile, "manamod") ) + Cint( GetObjProperty(mobile, "#manamod")))*100);
-	return mana_points;
+	mana_points += (Cint(GetObjProperty(mobile, "manamod") ) + Cint( GetObjProperty(mobile, "#manamod")))*100;
+	return cint(mana_points);
 endfunction
 
 // *****

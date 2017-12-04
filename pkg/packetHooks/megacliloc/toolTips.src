@@ -302,12 +302,19 @@ exported function MegaCliloc( who, byref packet )
 				if (GetObjProperty(item, "pocaoname"))
 					xDesc += WHITE + GetObjProperty(item, "pocaoname");
 				endif
+
+				if (item.ismagicWeapon())
+					var charges := cint(GetObjProperty(item, "charges"));
+					xDesc += WHITE + "Cargas: {}<br>".format(charges);
+				endif
+
 				var mods := GetObjProperty(item, "equip");
 				if (mods != error)
 					foreach mod in (mods.keys())
 						xDesc += BLUE + getbonusname(mod) + "<br>";
 					endforeach
 				endif
+
 				if (item.dmg_mod > 0 )
 					xDesc += BLUE + "Bônus Dano";
 				endif

@@ -38,6 +38,8 @@ program core_logoffTest(who)
 		EraseObjProperty(who, "#delete");
 		logout_delay := 1;
 	// elseif ( IsInHouse(who) )
+	elseif ( CInt(GetObjProperty(who, "criandochar")) == 1)
+		logout_delay := 0;
 	endif
 	return logout_delay;
 endprogram

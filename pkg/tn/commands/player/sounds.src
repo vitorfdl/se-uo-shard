@@ -121,9 +121,6 @@ program sound(who, text)
       "33. Gritar"
    );
 
-
-	text := splitwords(text);
-
 	var input  := array;
 //	sendsysmessage(who, " " + text.size());
 
@@ -132,13 +129,14 @@ program sound(who, text)
 	var repeatflag  := 0;
 
 	if (!text)
-		input := SendDialogGump( who, Layout, Data );
-		if ( input[0] == 0 )
-			SendSysMessage(who, "Cancelado.");
-			return;
-		endif
+      input := SendDialogGump( who, layout, data );
+      if ( input[0] == 0 )
+            SendSysMessage(who, "Cancelado.");
+            return;
+      endif
 
       var i;
+
       for (i := 1; i <= 33; i+=1)
          if (input[i])
             PlayCustomSound(who, i);

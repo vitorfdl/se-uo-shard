@@ -27,22 +27,26 @@ program change(who, item )
   endif
 
   foreach balao in ListItemsNearLocation(item.x, item.y, item.z, 1)
-    if ( !(balao.objtype in array[6194, 6195, 6196]) )
+    if ( !(balao.objtype in array{6194, 6195, 6196}) )
       continue;
     endif
     
     foreach beker in ListItemsNearLocation(item.x, item.y, item.z, 1)
-      if ( beker.objtype in array[6192, 6193] )
+      if ( beker.objtype in array{6192, 6193} )
           Destilar(balao, beker, who, item);
       endif
     endforeach
     break;
   endforeach
+
   item.graphic := item.objtype;
 endprogram
 
 function Destilar(balao, beker, who, item)
-
+  var extrato := CINT(GetObjProperty(balao, "extrato"));
+  if (!extrato)
+    SendSysmessageEx(who, "Nenhum extrato no balao.", SSM_FAIL);
+  endif
    item.movable := 0;
    balao.movable := 0;
    beker.movable := 0;
@@ -57,7 +61,6 @@ function Destilar(balao, beker, who, item)
    sleep(10);
    PrintText(beker, "O liquido esta no beker.");
    
-   var extrato := CINT(GetObjProperty(balao, "extrato"));
    SetObjProperty(beker, "pocao", extrato);
    SetObjProperty(beker, "strength",  cint(GetObjProperty(balao, "strength")));
    

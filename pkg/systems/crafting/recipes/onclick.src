@@ -68,13 +68,16 @@ function SendGump(who, scroll)
 	if (!tilepic)
 		tilepic := objtype;
 	endif
-	GFTilePic(gump, 127, 91, tilepic);
+	
+	if (Hex(tilepic))
+		GFTilePic(gump, 127, 91, tilepic);
+	endif
 
 	if (!(objtype in GetObjProperty(who, "recipes")))
+		var charge_list    := GetObjProperty(scroll, "learning");
+		var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
+		var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
 		if (!FindConfigElem(book_recipes, objtype))
-			var charge_list    := GetObjProperty(scroll, "learning");
-			var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
-			var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(remain_charges));
 			if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
 				GFTextLine(gump, 205, 182, 995, "Aprender");
@@ -82,12 +85,13 @@ function SendGump(who, scroll)
 			endif
 		else
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
+			GFHTMLArea(gump, 150, 182, 180, 20, "<BASEFONT SIZE=2><CENTER>Restam {} leituras.".format(remain_charges));
 		endif
 	else
 		GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");
 	endif
 
-	if (who.cmdlevel > 4)
+	if (who.cmdlevel >= 4)
 		GFTextCrop(gump, 67, 182, 100, 17, 995, "Trocar Receita");
 		GFAddButton(gump, 47, 184, 1209, 1209, GF_CLOSE_BTN, 99);
 	endif

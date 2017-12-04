@@ -17,7 +17,7 @@ program LogOff(who)
 	return 1;
 endprogram
 
-Function IsGm(who)
+function IsGm(who)
 	If (who.cmdlevel >= 1)
 		var GmsOnlines := GetGlobalProperty("GmsOnlines");
 		if (GmsOnlines)

@@ -158,6 +158,9 @@ function sendFichaRp(who, targ, edit := 0)
 		
 		var input := GFSendGump(who, gump);
 		if (!input[0] || input[0] == 1)
+			if (who.serial == targ.serial && CheckFichaRPComplete(ficharp_elem))
+				SetObjProperty(who, "ficharp_complete", 1);
+			endif
 			break;
 		elseif (input[0] == 98)
 			var notarp := getNotaRP(targ);
@@ -220,6 +223,14 @@ function fichaSetProp(who, prop, value)
 	
 	return setvalue;
 	
+endfunction
+
+function CheckFichaRPComplete(ficharp_elem)
+	var valores := ficharp_elem.GetProp("Ficha");
+	if (valores["Caracteristicas"].size() >= 3)
+		return 1;
+	endif
+	return 0;
 endfunction
 
 function OrganizarTexto(ficharp_elem, prop)

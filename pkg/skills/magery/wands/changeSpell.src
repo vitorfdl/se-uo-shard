@@ -4,18 +4,20 @@ include "include/say";
 include "include/arrays";
 include ":magery:tnmagery";
 
-program changeSpell(item)
+program changeSpell(params)
+   var who  := params[1];
+   var item := params[2];
    var spell_list := GetObjProperty(item, "spell_list");
    if (!spell_list)
-      SendSysMessageEx("Nao foi encontrar magias para trocar", SSM_FAIL);
+      SendSysMessageEx(who, "Nao foi encontrado magias para trocar", SSM_FAIL);
    endif
 
    var new_spell;
-   var actual_spell := GetObjProperty(item, "actual_spell");
-   if (!actual_spell || spell_list.size() == 1)
-      actual_spell := spell_list[0];
+   var active_spell := GetObjProperty(item, "active_spell");
+   if (!active_spell || spell_list.size() == 1)
+      new_spell := spell_list[1];
    else
-      var spell_index := FindInArray(spell_list, actual_spell);
+      var spell_index := FindInArray(spell_list, active_spell);
 
       for tries := 1 to 3
          var new_index := spell_index + tries;
@@ -23,7 +25,7 @@ program changeSpell(item)
             new_index -= spell_list.size();
          endif
 
-         if (spell_list[new_index] != 0 && spell_list[new_index] != actual_spell)
+         if (spell_list[new_index] != 0 && spell_list[new_index] != active_spell)
             new_spell := spell_list[new_index];
             break;
          endif
@@ -31,11 +33,11 @@ program changeSpell(item)
       endfor
    endif
 
-   if (!new_spell || new_spell == actual_spell)
-      SendSysMessageEx("Nao foi encontrado encanto novo para mudar.", SSM_FAIL);
+   if (!new_spell || new_spell == active_spell)
+      SendSysMessageEx(who, "Nao foi encontrado encanto novo para mudar.", SSM_FAIL);
       return;
    endif
 
-   SetObjProperty(item, "actual_spell", new_spell);
-   SendSysMessageEx("Voce alterou o encanto ativo no equipamento.", SSM_INFO);
+   SetObjProperty(item, "active_spell", new_spell);
+   SendSysMessageEx(who, "Voce alterou o encanto ativo no equipamento.", SSM_INFO);
 endprogram

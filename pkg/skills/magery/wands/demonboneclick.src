@@ -24,6 +24,7 @@ program doubleClick(who, item)
    if (alvo.isMagicWeapon())
       var charges := cint(GetObjProperty(item, "charges"));
       charges += power;
+      SetObjProperty(item, "charges", charges);
 	   SendSysMessageEx(who, "O osso se esfarela ao tocar no objeto.", SSM_INFO);
       DestroyItem(item);
    else

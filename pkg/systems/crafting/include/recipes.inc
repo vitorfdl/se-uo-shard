@@ -61,6 +61,10 @@ function CheckCharges(who, recipe, charges_to_learn)
       return 0;
    endif
 
+   if (charges+1 >= charges_to_learn)
+      return 1;
+   endif
+   
    var me_learning := struct{ "person" := who.serial, "charges" := 1};
    charge_list.append(me_learning);
    SetObjProperty(recipe, "learning", charge_list);

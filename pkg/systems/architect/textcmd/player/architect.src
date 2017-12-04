@@ -41,7 +41,7 @@ var undo:= array{};
 program architect_gump(who)
 
   if (who.cmdlevel < STAFFMODELEVEL)
-	return 0;
+	  return 0;
   else
     staffmode:= 1;
     SendSysMessage (who, "*running in staff mode*");
@@ -615,6 +615,7 @@ program architect_gump(who)
                   tbm.movable:= 1;
                   var passed := MoveObjectToLocation (tbm, tbm.x + delta[1], tbm.y + delta[2], tbm.z + delta[3], who.realm, MOVEOBJECT_FORCELOCATION);
                   tbm.movable:= 0;
+                  tbm.decayat:= 0;
                 set_critical (0);
               endforeach
             endif
@@ -639,6 +640,7 @@ program architect_gump(who)
               tbm.movable:= 1;
               MoveObjectToLocation (tbm, tbm.x + delta[1], tbm.y + delta[2], tbm.z + delta[3], who.realm, MOVEOBJECT_FORCELOCATION);
               tbm.movable:= 0;
+              tbm.decayat:= 0;
             set_critical (0);
           endif
 
@@ -660,7 +662,7 @@ program architect_gump(who)
           19: choice[7]:= choice[7] - 10;
           endcase
 
-          if ((choice[7] < 0) ||
+          if ((choice[7] < -100) ||
               (choice[7] > 120))
             choice[7]:= 0;
           endif
@@ -1477,6 +1479,7 @@ function create_marked(who, x, y, z, type)
 
   var created:= CreateItemAtLocation (x, y, z, type);
   created.movable:= 0;
+  created.decayat:= 0;
 //  created.saveonexit:= 0;
 //  created.usescript:= ":architect:cantuse";
   SetObjProperty (created, "#built_by_architect", who.serial);

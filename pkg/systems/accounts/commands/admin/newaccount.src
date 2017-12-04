@@ -10,6 +10,7 @@ include ":accounts:settings";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:gumpprompt";
+include "include/say";
 
 const CANCEL_BTN	:= 0xC00;
 const OKAY_BTN		:= 0xC01;
@@ -18,6 +19,8 @@ const PASS_TEXT_POS	:= 0xD02;
 const EMAIL_TEXT_POS	:= 0xD03;
 const CMD_TEXT_POS	:= 0xD04;
 const EXPANSION_START	:= 0xE00;
+
+set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
 program command_newAccount(who)
 	var gump := GFCreateGump(who);
@@ -84,10 +87,17 @@ program command_newAccount(who)
 			GumpPrompt(who, "Error Creating Account [P] "+account.errortext);
 			return 0;
 		else
-			account.addcharacter(0);
-			var character := account.getcharacter(0);
-			MoveObjectToLocation(character, 4756, 3541, 1, character.realm, MOVEOBJECT_FORCELOCATION);
-			SetObjProperty(character, "criandochar", 1);
+			// account.addcharacter(0);
+			// sleepms(2);
+			// var character := account.getcharacter(1);
+
+			// if (character)
+			// 	SetObjProperty(character, "criandochar", 1);
+			// 	MoveObjectToLocation(character, 4756, 3541, 4, _DEFAULT_REALM, MOVEOBJECT_FORCELOCATION);
+			// else
+			// 	SendSysMessageEx(who, "Error on creating character for the account", SSM_FAIL);
+			// endif
+
 			GumpPrompt(who, "Account created successfully.");	
 			return 1;
 		endif
