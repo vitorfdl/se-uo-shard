@@ -165,7 +165,7 @@ function SendItemView(npc, player)
 	return GFSendGump(player, gump);
 endfunction
 
-function removeItemmerchant(npc, player, input)
+function removeItemMerchant(npc, player, input)
 	var info := GetItemSoldInfo(npc, input);
 	var cost := info[1];
 	var selling := info[2];
@@ -197,7 +197,7 @@ function removeItemmerchant(npc, player, input)
 		
 	endif
 
-	RemoveItemForSale(npc, input, 1);
+	RemoveItemForSale(npc, input, confiscar);
 	var purchase := CreateItemInBackPack(player, selling, selling.amount);
 	if ( purchase == error )
 		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
@@ -227,19 +227,19 @@ function DoPurchase(npc, player, input)
 		SendSysMessage(player, "Escolha "+cost_desc+" que voce quer usar para pagar. Voce deve mais ["+owed+"].");
 		var targ := Target(player);
 		if ( !targ )
-			SendSysMessage(player, "Cancelado");
+			SendSysMessage(player, "Cancelado", SSM_INFO);
 			return;
 		elseif ( targ in pay_list )
-			SendSysMessage(player, "Voce ja esta pagando com isto.");
+			SendSysMessageEx(player, "Voce ja esta pagando com isto.", SSM_FAIL);
 		elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-			SendSysMessage(player, "Essa nao eh sua bolsa.");
+			SendSysMessageEx(player, "Essa nao eh sua bolsa.");
 		elseif ( targ.objtype == cost.cost_type )
 			if ( !ReserveItem(targ) )
-				SendSysMessage(player, "Voce nao pode pagar com isto.");
+				SendSysMessageEx(player, "Voce nao pode pagar com isto.", SSM_FAIL);
 			else
 				if ( cost.specialProp != error)
 					if (cost.specialProp.value != GetObjProperty(targ, cost.specialProp.name))
-						SendSysMessage(player, "item invalido");
+						SendSysMessageEx(player, "item invalido", SSM_FAIL);
 					else
 						owed := owed - targ.amount;
 						pay_list.Append(targ);
@@ -250,10 +250,11 @@ function DoPurchase(npc, player, input)
 				endif
 			endif
 		else
-			SendSysMessage(player, "Item escolhido nao eh "+cost_desc+".");
+			SendSysMessageEx(player, "Item escolhido nao eh "+cost_desc+".", SSM_FAIL);
 		endif
 	until ( owed <= 0 );
 
+	owed := cost.cost_amt;
 	foreach item in pay_list
 		ReleaseItem(item);
 		var amount := item.amount;
@@ -275,28 +276,28 @@ function DoPurchase(npc, player, input)
 		sleepms(2);
 	endforeach
 
-	RemoveItemForSale(npc, input, 0);
+	RemoveItemForSale(npc, input);
 	CreateItemInBackpackFromTemplate(player, selling);
 endfunction
 
-function RemoveItem(npc, player, input)
-	var info    := GetItemSoldInfo(npc, input);
-	var cost    := info[1];
-	var selling := info[2];
-	var cost_desc := AddArticle(GetName(cost.cost_type));
+// function RemoveItem(npc, player, input)
+// 	var info    := GetItemSoldInfo(npc, input);
+// 	var cost    := info[1];
+// 	var selling := info[2];
+// 	var cost_desc := AddArticle(GetName(cost.cost_type));
 	
-	AI_Speak(npc, "Certo. Aqui esta seu produto.");
-	RemoveItemForSale(npc, input);
-	var purchased := CreateItemInBackPack(player, selling, selling.amount);
-	if ( purchased == error )
-		purchased := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
-		if ( purchased == error )
-			SendSysMessage(player, "Error - Unable to create item! ->"+purchased.errortext);
-		else
-			AI_Speak(npc, "Vou deixar sua compra aqui no chao.");
-		endif
-	endif
-endfunction
+// 	AI_Speak(npc, "Certo. Aqui esta seu produto.");
+// 	RemoveItemForSale(npc, input);
+// 	var purchased := CreateItemInBackPack(player, selling, selling.amount);
+// 	if ( purchased == error )
+// 		purchased := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
+// 		if ( purchased == error )
+// 			SendSysMessage(player, "Error - Unable to create item! ->"+purchased.errortext);
+// 		else
+// 			AI_Speak(npc, "Vou deixar sua compra aqui no chao.");
+// 		endif
+// 	endif
+// endfunction
 
 
 function AddItemToSell(npc, player, item)

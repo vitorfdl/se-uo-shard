@@ -171,20 +171,16 @@ function AddItemForSale(merchant, seller, item, cost_type, cost_name, cost_amt, 
 	cost_info.+commission := commission;
 	cost_info.+desc := desc;
 	cost_info.+time := polcore().systime;
+	cost_info.infinite := cint(infiniteAmount);
 	if (specialProp)
 		cost_info.+specialProp := specialProp;
 	endif
 
 	//sendsysmessage(seller, "cost_info" + cost_info);
 	
-	var sale_info := array{};
-	sale_info.Append(cost_info);
-	sale_info.Append(template);
-	sale_info.Append(infiniteAmount);
+	var sale_info := array{cost_info, template};
 			
 	data_elem.SetProp(new_num, sale_info);
-  //data_elem.SetProp("infinite", infiniteAmount);
-		
 	DestroyItem(item);
 	
 	return new_num;
@@ -225,7 +221,7 @@ function RemoveItemForSale(merchant, item_num, confiscar := 0)
   var selling_info := data_elem.GetProp(Cstr(item_num));  
  // printtextabove(merchant, " " + selling_info);
   
-  if ( selling_info[3] == 1 && confiscar == 0)
+  if ( selling_info[1].infinite == 1 && confiscar == 1)
     return 1;
   else
     return data_elem.EraseProp(CStr(item_num));

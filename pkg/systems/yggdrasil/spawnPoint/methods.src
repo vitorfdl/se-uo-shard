@@ -213,18 +213,18 @@ exported function FillQueue(spawnpoint)
    var spawn_size := monsters.size() + spawn_queue.size();
 
    if (spawn_size >= config.mob_number)
-      print("Max Spawn size " + spawn_size);
+      // print("Max Spawn size " + spawn_size);
       return; // Don't need to queue anything
    endif
 
    var spotgroup  := GetSpotGroupData(config.spotgroup, 0);
    if (!spotgroup.activegroup)
-      print("no active in spotgroup");
+      print(spawnpoint.serial"+ no active spotgroup");
       return; //no active group
    endif
    var spawngroup := GetSpawnGroupData(spotgroup.activegroup, 0);
    if (!spawngroup)
-      print("no active group");
+      print(spawnpoint.serial"+ no active group");
       return; //no active group
    endif
 
@@ -254,33 +254,37 @@ exported function FillQueue(spawnpoint)
       endif
       
       if (config.type.size() > 1)
-         var preference := "melee";
+         if ("boss" in config.type && 1 < types["boss"])
+            spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := "boss" });
+         else
+            var preference := "melee";
+            var spot := SystemFindObjectBySerial(config.spot_serial);
+            var z_diff := spot.z - spawnpoint.z;
+            if (spot.z < 0 && z_diff < 0)
+               z_diff := z_diff * -1;
+            endif
+            if (z_diff >= 10 && "ranged" in config.type)
+               preference := "ranged";
+            endif
 
-         var spot := SystemFindObjectBySerial(config.spot_serial);
-         var z_diff := spot.z - spawnpoint.z;
-         if (spot.z < 0 && z_diff < 0)
-            z_diff := z_diff * -1;
-         endif
-         if (z_diff >= 10 && "ranged" in config.type)
-            preference := "ranged";
-         endif
-
-         var calc_pref := Ceil(config.mob_number * 0.6);
-         if (calc_pref < types[preference])
-            spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := preference });
-         // elseif ("spellcaster" in config.type && types["spellcaster"] < Ceil(config.mob_number * 0.2))
-         //    print("here2");
-         //    spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := "spellcaster" });
+            var calc_pref := Ceil(config.mob_number * 0.6);
+            if (calc_pref < types[preference])
+               spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := preference });
+            // elseif ("spellcaster" in config.type && types["spellcaster"] < Ceil(config.mob_number * 0.2))
+            //    print("here2");
+            //    spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := "spellcaster" });
+            endif
          endif
       endif
 
       var mob := spawn_list.RandomEntry();
       if (!mob) continue; endif;
       var to_spawn := struct{
-         "template" := mob.name,
-         "type"     := mob.type,
-         "level"    := mob.power,
-         "daytime" := mob.daytime
+         "template"   := mob.name,
+         "type"       := mob.type,
+         "level"      := mob.power,
+         "daytime"    := mob.daytime,
+         "bossParams" := mob.bossParams
       };
       
       spawn_queue += to_spawn;
@@ -323,12 +327,16 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
          continue;
       endif
 
-        print(monster);
       spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
       SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
       SetObjProperty(spawned, "spawnspot", config.spot_serial);
       SetObjProperty(spawned, "spawngroup", config.spawngroup);
       SetObjProperty(spawned, "range", config.range);
+      
+      if (monster.bossParams)
+         SetBoss(spawned, monster.bossParams);
+      endif
+
       success := 1;
 
 		sleepms(5);

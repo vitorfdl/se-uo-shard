@@ -18,14 +18,14 @@ function GetBossStruct(targ)
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
 	var monsters   := GetObjProperty(spawnpoint, "monsters");
 	var me         := FindElemInArray(monsters, struct{ "serial" := targ.serial });
-	return me.uniquestat;
+	return me.bossParams;
 endfunction
 
 function isBoss(targ)
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
 	var monsters   := GetObjProperty(spawnpoint, "monsters");
 	var me         := FindElemInArray(monsters, struct{ "serial" := targ.serial });
-	if (me.uniquestat)
+	if (me.bossParams)
 		return 1;
 	endif
 
@@ -49,7 +49,7 @@ function CreateBossStructGump(who, byref boss)
 	GFClosable( chargump, 0 );
 	GFResizePic( chargump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 450, 605 );
 	GFResizePic( chargump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 420, 25 );
-	// GFResizePic( chargump, 15, 45, GFCfgConst( "Defaults", "ForeGround" ), 420, 540 );
+	GFResizePic( chargump, 15, 45, GFCfgConst( "Defaults", "ForeGround" ), 420, 540 );
 
 	// GFResizePic(chargump, 0, 25, 3700, 500, 500);
 	// GFResizePic(chargump, 15, 40, 0x13BE, 470, 470);
@@ -68,7 +68,7 @@ function CreateBossStructGump(who, byref boss)
 		boss.name := "-";
 	endif
 	GFTextLine(chargump, x_pos, y_pos+18, 1153, "Nome: ");
-	nome := GFTextEntry( chargump, x_pos+60, y_pos+18, 100, 20, 1150, boss.name);
+	nome := GFTextEntry( chargump, x_pos+60, y_pos+18, 120, 20, 1150, boss.name);
 
 	GFTextLine(chargump, x_pos, y_pos+(18*2), 1153, "Cor: ");
 	cor := GFTextEntry( chargump, x_pos+60, y_pos+(18*2), 100, 20, 1150, cint(boss.color) + "");
@@ -409,9 +409,6 @@ function CreateBossStructGump(who, byref boss)
 	CreateBossStructGump(who, boss);
 	//return 0;
 endfunction
-
-
-
 
   //transforma um npc em boss
 function SetBoss(npc, boss)

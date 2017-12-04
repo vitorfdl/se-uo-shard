@@ -132,7 +132,7 @@ program core_npcDeath(params)
 	//printtextabove(corpse, "spawnpoint " + spawnpoint);
 	if (GetObjProperty(corpse, "spawnkill") == error)
 		if (spawnpoint && GetObjProperty(spawnpoint, "unique") == 1)
-			var boss := GetObjProperty(spawnpoint, "uniquestat");
+			var boss := GetObjProperty(spawnpoint, "bossParams");
 			if (boss.deathevent)
 				foreach nevent in (boss.deathevent)
 				//	printtextabove(corpse, " " + nevent.type);
