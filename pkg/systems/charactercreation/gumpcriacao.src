@@ -227,8 +227,6 @@ endfunction
 
 function RaceGump(who, byref  chardata)
 	var first_name, last_name;
-	first_name := "eeeeeee";
-	last_name := "wwww";
 
 	var gump := GFCreateGump();
 	construirgump(gump, 1); //monta a aparência da gump
@@ -489,7 +487,7 @@ function ChooseBackground(who, byref chardata)
 		endif
 		
 		foreach req in (reqs.keys())
-			var value := cint(reqs[req])
+			var value := cint(reqs[req]);
 			if (chardata[req] < value)
 				canadd := 0;
 			endif

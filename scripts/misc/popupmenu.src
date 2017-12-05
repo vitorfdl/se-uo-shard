@@ -142,7 +142,6 @@ function MenuPlayerToItem(who, what)
     if (what.isMagicWeapon() && GetObjProperty(what, "serialid") == who.serial && spell_list.size() >= 1)
         entries.+change_spell := 3002015;
     endif
-    print(entries);
 
     if (what.isA(POLCLASS_CORPSE) && CoordinateDistance(what.x, what.y, who.x, who.y) <= 2)
         entries.+arrastar := struct{ cliloc := 3002013};

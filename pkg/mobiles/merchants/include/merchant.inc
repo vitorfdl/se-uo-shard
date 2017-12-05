@@ -219,9 +219,7 @@ function RemoveItemForSale(merchant, item_num, confiscar := 0)
 	var data_elem := GetMerchantDataElem(Hex(merchant.serial)+"-ItemsSelling");
 	
   var selling_info := data_elem.GetProp(Cstr(item_num));  
- // printtextabove(merchant, " " + selling_info);
-  
-  if ( selling_info[1].infinite == 1 && confiscar == 1)
+  if ( cint(selling_info[1].infinite) == 1 && !confiscar)
     return 1;
   else
     return data_elem.EraseProp(CStr(item_num));

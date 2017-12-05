@@ -24,7 +24,6 @@ use basic;
 program music ( character , text )
 
     var music_id := cint(text);
-    print(text);
     PlayMusic(character, music_id);
 endprogram
 

@@ -136,7 +136,7 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 				var minerio := CreateItemInBackPack(who, ore_type, amt);
 				minerio.movable := 1;
 				who.SetAchievement("oremining", 1);
-				ExpGain(who, dice_roll, difficulty);
+				ExpGain(who, difficulty, dice_roll);
 				SendSysMessage(who, "Voce pegou alguns minerios. " );
 				if (TemHabilidade(who, "Garimpeiro"))
 					Garimpeiro(who);

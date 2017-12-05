@@ -49,6 +49,7 @@ function CheckCharges(who, recipe, charges_to_learn)
    endif
 
    var already_learning := FindInArray(charge_list, struct{ person := who.serial });
+   
    if (already_learning)
       var charges := charge_list[already_learning].charges;
       if (charges+1 >= charges_to_learn)
@@ -61,6 +62,7 @@ function CheckCharges(who, recipe, charges_to_learn)
       return 0;
    endif
 
+   var charges := 0;
    if (charges+1 >= charges_to_learn)
       return 1;
    endif

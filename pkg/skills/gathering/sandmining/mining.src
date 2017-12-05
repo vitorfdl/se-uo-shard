@@ -82,7 +82,7 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 		CreateItemInBackPack(who, SCOOP_OF_SAND, 1);
 		SendSysMessageEx(who, "Voce pegou um pouco de areia.", SSM_INFO);
 		who.SetAchievement("oremining", 1);
-		ExpGain(who, dice_roll, difficulty);
+		ExpGain(who, difficulty, dice_roll);
 		return 1;
 	else
 		SendSysMessageEx(who, "Voce e incapaz de pegar areia aqui.", SSM_FAIL);

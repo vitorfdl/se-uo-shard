@@ -7,7 +7,7 @@ include ":magery:tnmagery";
 program doubleClick(who, item)
    if(!item.movable) return; endif
 
-   var power := GetObjProperty(item, "power");
+   var power := cint(GetObjProperty(item, "power"));
    if (!power) power := 5; endif
 
 	var alvo := Target(who, TGTOPT_CHECK_LOS);
@@ -22,11 +22,12 @@ program doubleClick(who, item)
 
 
    if (alvo.isMagicWeapon())
-      var charges := cint(GetObjProperty(item, "charges"));
+      var charges := cint(GetObjProperty(alvo, "charges"));
       charges += power;
-      SetObjProperty(item, "charges", charges);
+      SetObjProperty(alvo, "charges", charges);
 	   SendSysMessageEx(who, "O osso se esfarela ao tocar no objeto.", SSM_INFO);
-      DestroyItem(item);
+      SetName(alvo, alvo.desc);
+      SubtractAmount(item, 1);
    else
 		SendSysMessage(who, "Nada aconteceu.");
    endif

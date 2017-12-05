@@ -85,7 +85,6 @@ program Merchant()
                   wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
                endif
             EVID_SPEAK:
-               print(ev);
               SayUC(UC(ev.text), ev.texttype, ev.doevent);
             // EVID_ALERT_ALLIES:  wanders := 0; Fight(ev.opponent, 1);
             // EVID_HERDING:       herd(ev);
@@ -110,7 +109,6 @@ function HandleSeeEvent(byref event)
 
    if ( process.errortext )
       var errmsg := "Error::ghaiaSeeEvent() - ['SeeEvent'] [{}] failed to start! ->{}".format(g_scripts["SeeEvent"], process.errortext);
-      Print(errmsg);
       NPC_ErrorSysLog(me, errmsg);
       return error{"errortext":=errmsg};
    endif
@@ -137,7 +135,6 @@ function ItemGivenEvent(byref event)
 
       if ( process.errortext )
          var errmsg := "Error::ghaiaItemGivenEvent() - ['ItemGiven'] [{}] failed to start! ->{}".format(g_scripts["ItemGivenEvent"], process.errortext);
-         Print(errmsg);
          NPC_ErrorSysLog(me, errmsg);
          return error{"errortext":=errmsg};
       endif
@@ -197,7 +194,6 @@ function DblClickScript(event)
 
    if ( process.errortext )
       var errmsg := "Error::ghaiaDblClick() - ['DblClick'] [{}] failed to start! ->{}".format(g_scripts["DblClick"], process.errortext);
-      Print(errmsg);
       NPC_ErrorSysLog(me, errmsg);
       return error{"errortext":=errmsg};
    endif

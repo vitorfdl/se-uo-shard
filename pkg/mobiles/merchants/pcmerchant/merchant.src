@@ -18,7 +18,6 @@ var item_cfg      := ReadConfigFile(":*:itemdesc");
 var npc;
 
 program HandleMerchant(params)
-	print("text");
 	SetObjProperty(params.me, "#occupied", GetPid());
 	case (params.type)
 		"ItemGivenEvent": 
@@ -51,6 +50,7 @@ function HandleItemGiven(npc, player, item)
 		return;
 	endif
 
+	PrintText(player, "*vendendo item*");
 	var result := AddItemToSell(npc, player, item);
 	return result;
 endfunction

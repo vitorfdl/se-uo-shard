@@ -65,6 +65,7 @@ program SpellStarter(params)
          return 0;
       elseif ( !TNCheckReagents(mobile, spellinfo, item) && mobile.cmdlevel < 3)
          HealMana(mobile, cint(spellinfo.mana));
+         EraseObjProperty(mobile, "#Casting");
       //    FailSpell(mobile);
          return 0;
       endif

@@ -128,7 +128,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 			return 0;
 		else
 			who.SetAchievement("oremining", 1);
-			ExpGain(who, dice_roll, difficulty);
+			ExpGain(who, difficulty, dice_roll);
 			SendSysMessage(who, "Voce colocou a madeira na sua mochila.");
 			return 1;
 		endif

@@ -181,7 +181,7 @@ function WriteMagic(who, spell_id)
 		return;
 	endif
 
-	ExpGain(who, dice_roll, spellinfo.difficulty+3);
+	ExpGain(who, spellinfo.difficulty+3, dice_roll);
 	spell_list.append(spell_id);
 	SetObjProperty(targ, "serialid", who.serial);
 	SetObjProperty(targ, "spell_list", spell_list);
