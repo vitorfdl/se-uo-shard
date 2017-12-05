@@ -123,7 +123,8 @@ program createchar(who)
 	if (chardata.raca == "Elfo" || chardata.classe == "Mago")
 		LearnFeat(who, "Linguagem Élfica", 0);
 		if (chardata.classe == "Mago")
-			CreateItemInBackpack(who, 0x0DF2);
+			var wand := CreateItemInBackpack(who, 0x0DF2);
+			SetObjProperty(wand, "charges", 5);
 			CreateItemInBackpack(who, 0x6100);
 			CreateItemInBackpack(who, 0x10e4);
 			var rec := CreateItemInBackpack(who, 0x6116);

@@ -175,7 +175,7 @@ function WriteMagic(who, spell_id)
 
 	var dice_roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, ARCANISMO);
 	if (dice_roll <= spellinfo.difficulty+3 && who.cmdlevel < 4)
-		SendSysMessageEx(who, "Parece que você errou durante a copia. O espaço ficou inutilizado.", SSM_FAIL);
+		SendSysMessageEx(who, "Parece que voce errou durante a copia. O espaco ficou inutilizado.", SSM_FAIL);
 		spell_list.append(0);
 		SetObjProperty(targ, "spell_list", spell_list);
 		return;
