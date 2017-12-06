@@ -13,7 +13,7 @@ function genericControl()
 	EnableMainEvents();
 	Set_Event_Queue_Size(50);
 	while(me)
-		//se tem objetivo, anda na direcao dele, se nao tem so wander
+		//se tem objetivo, anda na direcao dele, se não tem so wander
 		if (GetObjProperty(me, "objloc") != error)
 			wanders := 0;
 			DoObjective();

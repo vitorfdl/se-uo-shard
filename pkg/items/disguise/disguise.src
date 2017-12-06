@@ -16,7 +16,7 @@ CONST CANCEL_BTN	:= 0xA00001;
 program disguise(who, kit)
 
 // 	if (!TemHabilidade(who, "Toque Perfeito") && who.cmdlevel < 3)
-// 		SendSysMessageEx(who, "Voce nao sabe usar isto.", SSM_FAIL);
+// 		SendSysMessageEx(who, "Você não sabe usar isto.", SSM_FAIL);
 // 		return 1;
 // 	elseif (GetObjProperty(who, "Toque Perfeito"))
 // 		SendSysMessageEx(who, "Caso deseje remover o disfarce digite .removerdisfarce", SSM_INFO);
@@ -78,25 +78,25 @@ function criaDisfarceTarget(who, kit)
 // 	var targ := target(who);
 
 // 	if (targ.npctemplate)
-// 		SendSysMessageEx(who, "Este nao e um alvo valido.", SSM_FAIL);
+// 		SendSysMessageEx(who, "Este não e um alvo valido.", SSM_FAIL);
 // 		return;
 // 	endif
 
 // 	if (!targ.connected)
-// 		SendSysMessageEx(who, "Este nao e um alvo valido.", SSM_FAIL);
+// 		SendSysMessageEx(who, "Este não e um alvo valido.", SSM_FAIL);
 // 		return;
 // 	endif
 
 // 	if (who.trueobjtype != targ.trueobjtype)
 // 		if (!temHabilidade(who, "Disfarce Aprimorado"))
-// 			SendSysMessageEx(who, "Voce nao pode se disfarcar de pessoas de outro sexo.", SSM_FAIL);
+// 			SendSysMessageEx(who, "Você não pode se disfarcar de pessoas de outro sexo.", SSM_FAIL);
 // 			return;
 // 		endif
 // 	endif
 
 // 	if (GetObjProperty(who, "raca") != GetObjProperty(targ, "raca"))
 // 		if (!temHabilidade(who, "Disfarce Aprimorado"))
-// 			SendSysMessageEx(who, "Voce nao pode se disfarcar de pessoas de outra raca.", SSM_FAIL);
+// 			SendSysMessageEx(who, "Você não pode se disfarcar de pessoas de outra raca.", SSM_FAIL);
 // 			return;
 // 		endif
 // 	endif
@@ -129,17 +129,17 @@ function criaDisfarceTarget(who, kit)
 // function usarDisfarce(who, disfarce)
 
 // 	if (TemHabilidade(who, "Disfarcar Outro"))
-// 		SendSysMessageEx(who, "Quem voce deseja disfarcar?", SSM_REQUEST);
+// 		SendSysMessageEx(who, "Quem você deseja disfarcar?", SSM_REQUEST);
 // 		var targ := target(who);
 // 		if (!targ)
 // 			sendsysmessageex(who, "Cancelado");
 // 			return;
 // 		elseif (targ.connected && targ != who)
-// 			var pode := YesNo(targ, "Voce permite "+who.name+" disfarcar voce?");
+// 			var pode := YesNo(targ, "Você permite "+who.name+" disfarcar você?");
 // 			if (pode)
 // 				who := targ;
 // 			else
-// 				SendSysMessageEx(who, targ.name+" nao permitiu ser disfarcado.", SSM_FAIL);
+// 				SendSysMessageEx(who, targ.name+" não permitiu ser disfarcado.", SSM_FAIL);
 // 				return;
 // 			endif
 // 		endif
@@ -149,7 +149,7 @@ function criaDisfarceTarget(who, kit)
 // 		SendSysMessageEx(who, who.name+" ja esta disfarcado.", SSM_FAIL);
 // 		return;
 // 	elseif (who.name == "Desconhecido")
-// 		SendSysMessageEx(who, who.name+" nao pode ser disfarcado com o rosto coberto.", SSM_FAIL);
+// 		SendSysMessageEx(who, who.name+" não pode ser disfarcado com o rosto coberto.", SSM_FAIL);
 // 		return;
 // 	endif
 
@@ -340,7 +340,7 @@ function criaDisfarceTarget(who, kit)
 // 		foreach key in ( input2.keys )
 // 			if ( key > 2 )
 // 				disfarce.corcabelo := key;
-// 				SendSysMessageEx(who, "Voce escolheu a cor do cabelo.", SSM_INFO);
+// 				SendSysMessageEx(who, "Você escolheu a cor do cabelo.", SSM_INFO);
 // 				break;
 // 			endif
 // 			sleepms(2);
@@ -358,7 +358,7 @@ function criaDisfarceTarget(who, kit)
 // 		foreach key in ( input2.keys )
 // 			if ( key > 2 )
 // 				disfarce.corbarba := key;
-// 				SendSysMessageEx(who, "Voce escolheu a cor da barba.", SSM_INFO);
+// 				SendSysMessageEx(who, "Você escolheu a cor da barba.", SSM_INFO);
 // 				break;
 // 			endif
 // 			sleepms(2);
@@ -373,7 +373,7 @@ function criaDisfarceTarget(who, kit)
 // 			disfarce.aparencia := "";
 // 			SendSysMessageEx(who, "Cancelado", SSM_FAIL);
 // 		else
-// 			SendSysMessageEx(who, "Voce alterou sua aparencia.", SSM_INFO);
+// 			SendSysMessageEx(who, "Você alterou sua aparencia.", SSM_INFO);
 // 		endif
 // 		disguiseSelf(who, kit, disfarce);
 // 	elseif( input[0] == 16)
@@ -381,10 +381,10 @@ function criaDisfarceTarget(who, kit)
 // 		var sexo := RadioGump(who, 250, 330, "Escolha o sexo do disfarce.", {"Masculino", "Feminino"});
 // 		if (sexo == "Masculino")
 // 			disfarce.sexo := 400;
-// 			SendSysMessageEx(who, "Voce escolheu o sexo para o disfarce.", SSM_INFO);
+// 			SendSysMessageEx(who, "Você escolheu o sexo para o disfarce.", SSM_INFO);
 // 		elseif (sexo == "Feminino")
 // 			disfarce.sexo := 401;
-// 			SendSysMessageEx(who, "Voce escolheu o sexo para o disfarce.", SSM_INFO);
+// 			SendSysMessageEx(who, "Você escolheu o sexo para o disfarce.", SSM_INFO);
 // 		else
 // 			SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
 // 		endif
@@ -392,10 +392,10 @@ function criaDisfarceTarget(who, kit)
 // 	elseif (input[0] == 17)
 // 		var myraca := GetObjProperty(who, "raca");
 // 		if (myraca == "Anao")
-// 			SendSysMessageEx(who, "Voce nao pode criar disfarce de outras racas.", SSM_FAIL);
+// 			SendSysMessageEx(who, "Você não pode criar disfarce de outras racas.", SSM_FAIL);
 // 		else
 // 			var raca := RadioGump(who, 250, 330, "Escolha o sexo do disfarce.", {"Humano", "Elfo"});
-// 			SendSysMessageEx(who, "Voce escolheu a raca para o disfarce.", SSM_INFO);
+// 			SendSysMessageEx(who, "Você escolheu a raca para o disfarce.", SSM_INFO);
 // 			disfarce.raca := raca;
 // 		endif
 // 		disguiseSelf(who, kit, disfarce);

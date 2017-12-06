@@ -32,16 +32,16 @@ program SpellStarter(params)
 		PrintTextPrivate(mobile, "'Magia em Cooldown!'", mobile, SSM_FAIL);
 		return 1;
 	elseif ( !Attach(mobile) )
-		SendSysMessageEx(mobile, "Voce ja esta fazendo alguma coisa.", SSM_FAIL);
+		SendSysMessageEx(mobile, "Você ja esta fazendo alguma coisa.", SSM_FAIL);
 		return 0;
 	endif
 
 	// Already casting?
 	if ( GetObjProperty(mobile, "#Casting") )
-		SendSysMessageEx(mobile, "Voce nao pode invocar um encanto agora.", SSM_FAIL);
+		SendSysMessageEx(mobile, "Você não pode invocar um encanto agora.", SSM_FAIL);
 		return 0;
 	elseif ( mobile.frozen )
-      SendSysMessageEx(mobile, "Voce nao pode invocar um encanto paralisado.", SSM_FAIL);
+      SendSysMessageEx(mobile, "Você não pode invocar um encanto paralisado.", SSM_FAIL);
       EraseObjProperty(mobile, "#Casting");
       return 0;
    endif
@@ -52,7 +52,7 @@ program SpellStarter(params)
    // consume mana and reagents
    if (!mobile.npctemplate)
       if ( mobile.squelched && spellinfo.powerwords )
-         SendSysMessageEx(mobile, "Voce precisa falar devido os componentes verbais da magia.", SSM_FAIL);
+         SendSysMessageEx(mobile, "Você precisa falar devido os componentes verbais da magia.", SSM_FAIL);
          FailSpell(mobile);
          return 0;
       elseif ( !EquipmentCheck(mobile) )
@@ -60,7 +60,7 @@ program SpellStarter(params)
          FailSpell(mobile);
          return 0;
       elseif ( !TS_ConsumeMana(mobile, spellinfo.mana) )
-         SendSysMessageEx(mobile, "Voce nao possui energia arcana suficiente em seu corpo para invocar esta magia!", SSM_FAIL);
+         SendSysMessageEx(mobile, "Você não possui energia arcana suficiente em seu corpo para invocar esta magia!", SSM_FAIL);
          FailSpell(mobile);
          return 0;
       elseif ( !TNCheckReagents(mobile, spellinfo, item) && mobile.cmdlevel < 3)
@@ -85,14 +85,14 @@ program SpellStarter(params)
    while(cycles)
       // If mobile is injured and does not have the protection spell on, fail the spell
       if ( orig_hp > AP_GetVital(mobile, "Hits") && randomdiceroll("1d100") < 75)
-         SendSysMessageEx(mobile, "Voce esta tendo problemas para se concentrar na magia.", SSM_FAIL);
+         SendSysMessageEx(mobile, "Você está tendo problemas para se concentrar na magia.", SSM_FAIL);
          cycles += 1;
       endif
       orig_hp := AP_GetVital(mobile, "Hits");
 
       // Check if we recieved an event from moveCheck_script, which means the mobile moved while targetting
       if ( Events_Waiting() )
-         SendSysMessageEx(mobile, "Voce nao conseguiu se concentrar o suficiente para invocar esta magia.", SSM_FAIL);
+         SendSysMessageEx(mobile, "Você não conseguiu se concentrar o suficiente para invocar esta magia.", SSM_FAIL);
          FailSpell(mobile);
          HealMana(mobile, cint(spellinfo.mana*0.5));
          return 0;
@@ -126,19 +126,19 @@ program SpellStarter(params)
    if (!targ)
       targ := ChooseTarget(mobile, spellinfo);
       if (!targ)
-         SendsysMessageEx(mobile, "Voce cancelou a magia.", SSM_FAIL);
+         SendsysMessageEx(mobile, "Você cancelou a magia.", SSM_FAIL);
          FailSpell(mobile);
          return ;
       endif
    endif	
 
    if (spellinfo.alvo != "Area" && !CheckLineOfSight(mobile, targ)) //checa se nï¿½o ï¿½ magia em ï¿½rea
-      SendsysMessageEx(mobile, "Voce nao ve o alvo.", SSM_FAIL);
+      SendsysMessageEx(mobile, "Você não vê o alvo.", SSM_FAIL);
       FailSpell(mobile);
       return 1;
    else //senï¿½o
       if (!CheckLOSAt(mobile, targ.x, targ.y, targ.z)) //verifica se o ponto ï¿½ vï¿½sivel
-         SendsysMessageEx(mobile, "O ponto que voce selecionou esta fora da sua linha de visao.", SSM_FAIL);
+         SendsysMessageEx(mobile, "O ponto que você selecionou esta fora da sua linha de visao.", SSM_FAIL);
          FailSpell(mobile);
          return 1;
       endif
@@ -176,7 +176,6 @@ endprogram
 
 function ChooseTarget(mobile, spellinfo)
    var targ;
-   printtext(mobile, ""+spellinfo);
    if (spellinfo.alvo == "Self")
       targ := mobile;
    elseif (spellinfo.alvo == "Unico")
@@ -204,7 +203,7 @@ function ChooseTarget(mobile, spellinfo)
          elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < spellinfo.radius)
             break;
          else
-            SendSysMessageEx(mobile, "Muito Distante!", SSM_FAIL);
+            SendSysMessageEx(mobile, "Muito distante!", SSM_FAIL);
          endif
       endwhile
    endif

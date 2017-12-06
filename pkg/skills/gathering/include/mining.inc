@@ -15,7 +15,7 @@ function Garimpeiro(who)
 		var cfg := ReadConfigFile(":gems:itemdesc");
 		var keys := GetConfigStringKeys( cfg );
 
-		SendSysMessageEx(who, "Voce achou uma pedra preciosa!", SSM_INFO);
+		SendSysMessageEx(who, "Você achou uma pedra preciosa!", SSM_INFO);
 		CreateItemInBackPack(who, keys[RandomInt(keys.size()+1)], 1);
 
 	endif
@@ -70,12 +70,12 @@ function DigForMap(who, targ, map)
 	var chestz := GetWorldHeight(chestx, chesty);
 
 	if((!chestx) || (!chesty))
-		SendSysMessage( who, "Este nao parece ser um mapa de tesouro.", SSM_FAIL );
+		SendSysMessage( who, "Este não parece ser um mapa de tesouro.", SSM_FAIL );
 		return;
 	endif
 
 	if(!CheckLosAt( who, targ.x, targ.y, targ.z ) );
-		SendSysMessageEx( who, "Voce nao ve o alvo.", SSM_FAIL );
+		SendSysMessageEx( who, "Você não vê o alvo.", SSM_FAIL );
 		return;
 	endif
 
@@ -88,15 +88,15 @@ function DigForMap(who, targ, map)
 	var mobiles := ListMobilesNearLocation(targ.x, targ.y, targ.z, 0, who.realm);
 
 	if(distn > maxrange)
-		SendSysMessageEx(who,"Voce parece muito distante.", SSM_INFO);
+		SendSysMessageEx(who,"Você parece muito distante.", SSM_INFO);
 		return;
 
 	elseif((distn > range) && (distn <= maxrange))
-		SendSysMessage(who,"Voce cavou e cavou mas nao encontrou nenhum tesouro.", SSM_INFO);
+		SendSysMessage(who,"Você cavou e cavou mas não encontrou nenhum tesouro.", SSM_INFO);
 		return;
 
 	elseif((distn < range) && (len(mobiles) > 0))
-		SendSysMessageEx(who,"voce patou de cavar porque algo esta sobre o tesouro.");
+		SendSysMessageEx(who,"você patou de cavar porque algo esta sobre o tesouro.");
 		return;
 	else
 
@@ -174,7 +174,7 @@ function DigForMap(who, targ, map)
           			endforeach
         		endif
 			if((who.x != mex) || (who.y != mey))
-				SendSysMessageEx(who,"Voce deve ficar parado enquanto cava.", SSM_FAIL);
+				SendSysMessageEx(who,"Você deve ficar parado enquanto cava.", SSM_FAIL);
 				DestroyItem(chest);
 		        	return;
 		      	endif
@@ -338,7 +338,7 @@ function DetermineOreType(who, where)
 	endforeach
 	
 	if (!achou)
-		SendSysMessage(who, "Nao tem o minerio que voce procura aqui.");
+		SendSysMessage(who, "Não tem o minerio que você procura aqui.");
 		return 0;
 	endif
 	
@@ -350,7 +350,7 @@ function DetermineOreType(who, where)
 		endif
 		return oreid;
 	else
-		SendSysMessage(who, "Voce nao conseguiu achar o minerio que procura.");
+		SendSysMessage(who, "Você não conseguiu achar o minerio que procura.");
 		return 999;
 	endif
 
@@ -383,7 +383,7 @@ function DetermineMiningDifficulty(oretype)
 		0x8852: return 30; //arenito
 		0x5001: return 5; //id de stone
 
-		0x6305: return 40; //golden <- nao faz nada
+		0x6305: return 40; //golden <- não faz nada
 		
 		default: return 100;
 	endcase
@@ -474,16 +474,16 @@ endfunction
 
 function CheckLoop(who, tool, my_x, my_y, my_facing)
 	if ( who.hidden )
-		SendSysMessage(who, "Voce parou de minerar para ficar escondido.");
+		SendSysMessage(who, "Você parou de minerar para ficar escondido.");
 		return 0;
 	elseif ( (who.x != my_x) || (who.y != My_y) )
-		SendSysMessage(who, "Voce saiu de onde estava.");
+		SendSysMessage(who, "Você saiu de onde estava.");
 		return 0;
 	elseif ( who.facing != my_facing )
-		SendSysMessage(who, "Voce virou sua atencao para outra coisa.");
+		SendSysMessage(who, "Você virou sua atencao para outra coisa.");
 		return 0;
 	elseif ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessage(who, "Voce nao pode minerar montado.");
+		SendSysMessage(who, "Você não pode minerar montado.");
 		return 0;
 	elseif (!tool)
 		return 0;

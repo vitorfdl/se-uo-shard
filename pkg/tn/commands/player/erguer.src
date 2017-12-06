@@ -14,38 +14,38 @@ program erguer(who)
 	endif
 
 	if (!Accessible(who, alvo))
-		SendSysMessageEx(who, "Voce nao alcanca o alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não alcanca o alvo.", SSM_FAIL);
 		return 0;
 	endif
 
 	if ( Distance(who, alvo) > 2)
-		SendSysMessageEx(who, "Voce esta muito distante do alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito distante do alvo.", SSM_FAIL);
 		return 0;
 	endif
 	
 	if (GetObjProperty(alvo, "canfix") != 1)
-		SendSysMessageEx(who, "Voce nao pode erguer este item.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode erguer este item.", SSM_FAIL);
 		return 0;
 	endif
 	
 	if (alvo.movable == 0)
-		SendSysMessageEx(who, "Voce voce precisa desfixar o objeto para poder ergue-lo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você você precisa desfixar o objeto para poder ergue-lo.", SSM_FAIL);
 	endif
 
 	if (  TypeOf(alvo.container) == "ItemRef")
-		SendSysMessageEx(who, "Voce nao pode erguer itens dentro de containers.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode erguer itens dentro de containers.", SSM_FAIL);
 		return 0;
 	endif
 	
 	if (!GetObjProperty(alvo, "erguido"))
 		SetObjProperty(alvo, "erguido", 1);
 		MoveObjectToLocation(alvo, alvo.x, alvo.y, alvo.z+5, alvo.realm, MOVEOBJECT_FORCELOCATION);
-		SendSysMEssageEx(who, "Voce ergueu o objeto. Para abaixar use o .erguer novamente.", SSM_INFO);
+		SendSysMEssageEx(who, "Você ergueu o objeto. Para abaixar use o .erguer novamente.", SSM_INFO);
 		PrintText(who, "*Ergue o objeto" + alvo.name + "*");
 	elseif (GetObjProperty(alvo, "erguido") == 1)
 		EraseObjProperty(alvo, "erguido");
 		MoveObjectToLocation(alvo, alvo.x, alvo.y, alvo.z-5, alvo.realm, MOVEOBJECT_FORCELOCATION);
-		SendSysMEssageEx(who, "Voce abaixou o objeto.", SSM_INFO);
+		SendSysMEssageEx(who, "Você abaixou o objeto.", SSM_INFO);
 		PrintText(who, "*Abaixa o objeto" + alvo.name + "*");
 	endif
 	

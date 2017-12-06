@@ -36,7 +36,7 @@ program usekeg(who, item)
 				SetName(item, name);
 				return 1;
 			else
-				SendSysMEssageEx(who, "O vinho ainda nao esta pronto.", SSM_FAIL);
+				SendSysMEssageEx(who, "O vinho ainda não esta pronto.", SSM_FAIL);
 				return 1;
 			endif 
 		elseif (bebida.type == "cidra incompleta")
@@ -50,11 +50,11 @@ program usekeg(who, item)
 					SubtractAmount(levedura, 1);
 					bebida.+levedura := 1;
 					SetObjProperty(item, "bebida", bebida);
-					SendSysMessageEx(who, "Voce adicionou a levedura.", SSM_INFO);
+					SendSysMessageEx(who, "Você adicionou a levedura.", SSM_INFO);
 					return 1;
 				endif
 			elseif  (bebida.agua == error || bebida.agua < 10)
-				SendSysMessageEx(who, "Voce precisa por " + (10 - cint(bebida.agua)) + " jarras de agua.", SSM_INFO);
+				SendSysMessageEx(who, "Você precisa por " + (10 - cint(bebida.agua)) + " jarras de agua.", SSM_INFO);
 				var agua := target(who);
 				if  (agua.objtype == 0x1f9e)
 					if  (bebida.agua == error)
@@ -90,11 +90,11 @@ program usekeg(who, item)
 					SubtractAmount(levedura, 1);
 					bebida.+levedura := 1;
 					SetObjProperty(item, "bebida", bebida);
-					SendSysMessageEx(who, "Voce adicionou a levedura.", SSM_INFO);
+					SendSysMessageEx(who, "Você adicionou a levedura.", SSM_INFO);
 					return 1;
 				endif
 			elseif  (bebida.agua == error || bebida.agua < 10)
-				SendSysMessageEx(who, "Voce precisa por " +(10 - cint(bebida.agua)) + " jarras de agua.", SSM_INFO);
+				SendSysMessageEx(who, "Você precisa por " +(10 - cint(bebida.agua)) + " jarras de agua.", SSM_INFO);
 				var agua := target(who);
 				if  (agua.objtype == 0x1f9e)
 					if  (bebida.agua == error)
@@ -116,13 +116,13 @@ program usekeg(who, item)
 					SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
 					return 1;
 				//elseif (lupulo.amount < 5)
-				//	SendSysMessageEx(who, "Voce precisa de 5 porcoes de lupulo.", SSM_FAIL);
+				//	SendSysMessageEx(who, "Você precisa de 5 porcoes de lupulo.", SSM_FAIL);
 				//	return 1;
 				else
 					SubtractAmount(lupulo, 1);
 					bebida.+lupulo := 1;
 					SetObjProperty(item, "bebida", bebida);
-					SendSysMessageEx(who, "Voce adicionou o lupulo.", SSM_INFO);
+					SendSysMessageEx(who, "Você adicionou o lupulo.", SSM_INFO);
 					return 1;
 				endif
 			endif
@@ -147,7 +147,7 @@ program usekeg(who, item)
 				SetName(item, name);
 				return 1;
 			else
-				SendSysMEssageEx(who, "A cidra ainda nao esta pronta.", SSM_FAIL);
+				SendSysMEssageEx(who, "A cidra ainda não esta pronta.", SSM_FAIL);
 				return 1;
 			endif 
 		elseif (bebida.type == "cerveja fermentando")
@@ -162,7 +162,7 @@ program usekeg(who, item)
 				SetName(item, name);
 				return 1;
 			else
-				SendSysMEssageEx(who, "A cerveja ainda nao esta pronta.", SSM_FAIL);
+				SendSysMEssageEx(who, "A cerveja ainda não esta pronta.", SSM_FAIL);
 				return 1;
 			endif 
 		else
@@ -173,7 +173,7 @@ program usekeg(who, item)
 				subDrink(who, item);
 			endif
 		endif
-	else //se nao tem prop
+	else //se não tem prop
 		SendSysMessageEx(who, "O barril esta vazio, deseja guardar alguma bebida?", SSM_REQUEST);
 		addDrink(who, item);
 	endif
@@ -192,12 +192,12 @@ function addDrink(who, item)
 	if ( (targ.graphic == 3849) || (targ.graphic == 0x09C7) || (targ.graphic == 0x099b) || (targ.graphic == 0x099F) || (targ.graphic == 0x09c8) || (targ.graphic == 0xC960)  ||
 	(targ.graphic == 0xC961) || (targ.graphic == 0xC962) || (targ.graphic == 0xC964) )
 		if (GetObjProperty(targ, "fullness") != error)
-			SendSysMEssageEx(who, "Voce so pode armazenar garrafas cheias.", SSM_FAIL);
+			SendSysMEssageEx(who, "Você so pode armazenar garrafas cheias.", SSM_FAIL);
 			return 1;
 		endif
 	elseif (targ.objtype == 0x09d0 )
 		if (targ.amount < 10)
-			SendSysMessageEx(who, "Voce precisa de no minimo 10 frutas");
+			SendSysMessageEx(who, "Você precisa de no minimo 10 frutas");
 			return 1;
 		endif
 
@@ -206,12 +206,12 @@ function addDrink(who, item)
 		bebida.+macas := 10;
 		SetObjProperty(item, "bebida", bebida);
 		SubtractAmount(targ, 10);
-		SendSysMessageEx(who, "Voce precisa colocar 10 jarras de agua e levedura.", SSM_INFO);
+		SendSysMessageEx(who, "Você precisa colocar 10 jarras de agua e levedura.", SSM_INFO);
 		return 1;
 	elseif (targ.objtype == 0x1ebd )
 
 		if (targ.amount < 10)
-			SendSysMessageEx(who, "Voce precisa de no minimo 10 feixes");
+			SendSysMessageEx(who, "Você precisa de no minimo 10 feixes");
 			return 1;
 		endif
 
@@ -220,7 +220,7 @@ function addDrink(who, item)
 		bebida.+trigo := 10;
 		SetObjProperty(item, "bebida", bebida);
 		SubtractAmount(targ, 10);
-		SendSysMessageEx(who, "Voce precisa colocar 10 jarras de agua e levedura.", SSM_INFO);
+		SendSysMessageEx(who, "Você precisa colocar 10 jarras de agua e levedura.", SSM_INFO);
 		return 1;
 	else 
 		SendSysMEssageEx(who, "Alvo invalido.", SSM_FAIL);
@@ -242,7 +242,7 @@ function addDrink(who, item)
 		bebida.+doses := targ.amount*dosesMod;
 	else
 		if ( bebida.objtype != targ.objtype)
-			SendSysMessageEx(who, "Voce nao pode misturar essas bebidas.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não pode misturar essas bebidas.", SSM_FAIL);
 			return;
 		else
 			bebida.doses := bebida.doses + targ.amount*dosesMod;
@@ -278,7 +278,7 @@ function subDrink(who, item)
 		var bottle :=  Target(who);
 
 		if (bottle.objtype != 0xF0E)
-			SendSysMessageEx(who, "Isso nao parece uma garrafa vazia.", SSM_FAIL);
+			SendSysMessageEx(who, "Isso não parece uma garrafa vazia.", SSM_FAIL);
 			return;
 		endif
 
@@ -289,19 +289,19 @@ function subDrink(who, item)
 
 		//if ( isPotion(bebida.objtype))
 		//	if (bottle.objtype != 3854)
-		//		SendSysMessageEx(who, "Voce so pode armazenar esse liquido  em garrafas.", SSM_FAIL);
+		//		SendSysMessageEx(who, "Você so pode armazenar esse liquido  em garrafas.", SSM_FAIL);
 		//		endif
 		//	endif
 		//	dosesMod := 1; //pocao semrpe sai 1
 		//else
-		//	if (!dosesMod) //se nao for pot e nao achou dosesmod tira 3
+		//	if (!dosesMod) //se não for pot e não achou dosesmod tira 3
 		//		dosesMod := 3;
 		//	endif
 		//endif
 
 
 		if (bebida.doses < dosesMod)
-			SendSysMessageEx(who, "O barril nao tem liquido suficiente para encher este recipiente.", SSM_FAIL);
+			SendSysMessageEx(who, "O barril não tem liquido suficiente para encher este recipiente.", SSM_FAIL);
 			return 1;
 		endif
 		SubtractAmount(bottle, 1);

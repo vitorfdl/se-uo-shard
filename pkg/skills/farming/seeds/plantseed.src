@@ -22,7 +22,7 @@ program PlantSeed(who, seed)
 	endforeach	
 
 	if (canplant == 0)
-		SendSysMessage(who, "Voce nao pode plantar aqui.");
+		SendSysMessage(who, "Você não pode plantar aqui.");
 		return 1;
 	endif	
 
@@ -52,7 +52,7 @@ program PlantSeed(who, seed)
 	if ( test > difficulty )
 		var grower := CreateItemAtLocation(who.x, who.y, who.z+1, GROWTH_UNIT, 1);
 		grower.SetGrowerType(seed.objtype);
-		SendSysMessage(who, "Voce plantou a semente.");
+		SendSysMessage(who, "Você plantou a semente.");
 		grower.SetWaterAmount(100);
 		grower.SetGrowStep(0);
 		var maxAmt := grower.GetDefaultMaxProduceAmount();
@@ -63,7 +63,7 @@ program PlantSeed(who, seed)
 		
 		if ( who.cmdlevel >= 1 )
 			if (!YesNo(who, "(GM) Deseja que esta planta precise ser regada?", "Sim.", "Nao."))
-				SendSysMessage(who, "Esta planta nao precisa de agua.");
+				SendSysMessage(who, "Esta planta não precisa de agua.");
 				SetObjProperty(grower, "gmplant", 1);
 			endif
 		endif
@@ -74,7 +74,7 @@ program PlantSeed(who, seed)
 		endif
 
 	else
-		SendSysMessage(who, "Voce nao sabe se essa semente vai crescer.");
+		SendSysMessage(who, "Você não sabe se essa semente vai crescer.");
 	endif
 	SubtractAmount(seed, 1);
 endprogram

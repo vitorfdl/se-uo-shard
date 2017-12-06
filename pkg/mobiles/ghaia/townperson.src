@@ -36,7 +36,7 @@ program ghaghaia()
       SYSEVENT_SPEECH: var text := lower(ev.text);
 				//printtextabove(me, " " + text);
 				if (text["rumor"] || text["aventura"] || text["aventuras"] || text["rumores"] )
-					//mostra apenas as quests que nao estao executando
+					//mostra apenas as quests que não estao executando
 					var myquests := GetObjProperty(me, "quests");
 					var running := TS_GetCooldownList(me);
 					//printtextabove(me, "myquests: " + myquests + " running: " + running);
@@ -59,24 +59,24 @@ program ghaghaia()
 					else
 						var resp := RandomInt(5)+1;
 						case (resp)
-							1: Say( "Nao sei de nenhum rumor!");
-							2: Say( "Nao sei de nenhuma aventura.");
-							3: Say( "Nao acontece nada de novo por aqui.");
+							1: Say( "Não sei de nenhum rumor!");
+							2: Say( "Não sei de nenhuma aventura.");
+							3: Say( "Não acontece nada de novo por aqui.");
 							4: Say( "As coisas andam muito calmas por estas paragens.");
-							5: Say( "Nao ouvi falar de nenhuma aventura.");
+							5: Say( "Não ouvi falar de nenhuma aventura.");
 						endcase
 					endif
 				endif
 
     endcase
-   /* nao precisa mais desse codigo, agora mostra sempre todas as quests e ela eh inicializada quando alguem escolhe
+   /* não precisa mais desse codigo, agora mostra sempre todas as quests e ela eh inicializada quando alguem escolhe
 	 if (ReadGameClock() >= next_wander)
       //wander();
       //printtextabove(me, "wander");
       if (GetObjProperty(me, "runningquest") == error)
 	var nextQuest := Cint(GetObjProperty(me, "nextQuest"));
 	if (!nextQuest)
-		//printtextabove(me, "nao quest");
+		//printtextabove(me, "não quest");
 		if (GetObjProperty(me, "quests") != error) //se tem quests no npc, prepara pra fazer uma em breve
 			var questTime := cint(GetObjProperty(me, "questcycle"));
 			if (!questTime)

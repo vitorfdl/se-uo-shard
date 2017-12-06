@@ -9,14 +9,12 @@ program changeSpell(params)
    var item := params[2];
    var spell_list := GetObjProperty(item, "spell_list");
    if (!spell_list)
-      SendSysMessageEx(who, "Nao foi encontrado magias para trocar", SSM_FAIL);
+      SendSysMessageEx(who, "Não foi encontrado magias para trocar", SSM_FAIL);
    endif
 
    var new_spell;
    var active_spell := GetObjProperty(item, "active_spell");
-   if (!active_spell || spell_list.size() == 1)
-      new_spell := spell_list[1];
-   else
+
       var spell_index := FindInArray(spell_list, active_spell);
 
       for tries := 1 to 3
@@ -31,13 +29,12 @@ program changeSpell(params)
          endif
          sleepms(2);
       endfor
-   endif
 
    if (!new_spell || new_spell == active_spell)
-      SendSysMessageEx(who, "Nao foi encontrado encanto novo para mudar.", SSM_FAIL);
+      SendSysMessageEx(who, "Não foi encontrado encanto novo para mudar.", SSM_FAIL);
       return;
    endif
 
    SetObjProperty(item, "active_spell", new_spell);
-   SendSysMessageEx(who, "Voce alterou o encanto ativo no equipamento.", SSM_INFO);
+   SendSysMessageEx(who, "Você alterou o encanto ativo no equipamento.", SSM_INFO);
 endprogram

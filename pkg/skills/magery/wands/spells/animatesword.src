@@ -28,7 +28,7 @@ program animateSword(params)
 		elseif (!targ)
 			return 1;
       else
-			SendSysMessage(who, "Essa nao e uma espada valida ou esta muito longe. Escolha outra",3,28);
+			SendSysMessage(who, "Essa não e uma espada valida ou esta muito longe. Escolha outra",3,28);
 			targ := target(who);
 		endif
 		sleepms(2);
@@ -37,7 +37,7 @@ program animateSword(params)
 	
 	//sendsysmessage(who, " " + GetNumPets(who) );
 	if (GetMaxPEts(who) <= GetNumPets(who) )
-		SendSysMessageEx(who, "Voce tem " + GetNumPets(who) + " criaturas sob seu comando e o maximo sao : " + GetMaxPEts(who)  + "  . "  , SSM_FAIL);
+		SendSysMessageEx(who, "Você tem " + GetNumPets(who) + " criaturas sob seu comando e o maximo sao : " + GetMaxPEts(who)  + "  . "  , SSM_FAIL);
 		return 1;
 	endif
 	

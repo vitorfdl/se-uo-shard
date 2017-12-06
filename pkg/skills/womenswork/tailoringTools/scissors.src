@@ -23,13 +23,13 @@ program use_scissors( who, scissors )
 		SendSysMessage(who, "Cancelado.");
 		return;
 	elseif(!Accessible(who, cloth))
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return;
 	elseif(cloth.movable == 0)
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return;
 	elseif(cloth in ListEquippedItems(who))
-		SendSysMessage(who, "Voce nao pode cortar algo que esta vestindo!");
+		SendSysMessage(who, "Você não pode cortar algo que esta vestindo!");
 		return;
 	endif
 
@@ -51,10 +51,10 @@ program use_scissors( who, scissors )
 			endif
 			CheckToolWear (who, scissors, COSTURA);
 			PlaySoundEffect(who, 0x0249);
-			SendSysMessage(who, "Voce usou a tesoura para cortar o material.");
+			SendSysMessage(who, "Você usou a tesoura para cortar o material.");
 			return;
 		else
-			SendSysMessage(who, "Voce nao pode cortar isto.");
+			SendSysMessage(who, "Você não pode cortar isto.");
 			return;
 		endif
 	else
@@ -69,7 +69,7 @@ program use_scissors( who, scissors )
 			leftover := 0x1067;
 			
 			if(!material)
-				SendSysMessage (who, "Voce nao pode usar as tesouras nisso.");
+				SendSysMessage (who, "Você não pode usar as tesouras nisso.");
 				return;
 			endif
 		endif
@@ -95,7 +95,7 @@ endprogram
 
 function MakeCartoes (who, papel)
 	if (!ReserveItem (papel))
-		SendSysMessage (who, "Voce nao pode usar este item!");
+		SendSysMessage (who, "Você não pode usar este item!");
 		return;
 	endif
 
@@ -108,7 +108,7 @@ function MakeCartoes (who, papel)
 		endfor
 
 		if (!SubtractAmount (papel, 1))
-			PrintTextAbovePrivate (who, "*Voce nao pode usar estes pergaminhos!*", who);
+			PrintTextAbovePrivate (who, "*Voce não pode usar estes pergaminhos!*", who);
 			return;
 		endif
 
@@ -118,14 +118,14 @@ function MakeCartoes (who, papel)
 				return;
 			endif
 
-			SendSysMessage (who, "Voce fez os cartoes.");
+			SendSysMessage (who, "Você fez os cartoes.");
 
 		if (!papel)
-			SendSysMessage (who, "Voce nao tem mais pergaminhos");
+			SendSysMessage (who, "Você não tem mais pergaminhos");
 			return;
 		endif
 	until (who.x != sx or who.y != sy);
 
-	SendSysMessage (who, "Voce parou de fazer.");
+	SendSysMessage (who, "Você parou de fazer.");
 endfunction
 

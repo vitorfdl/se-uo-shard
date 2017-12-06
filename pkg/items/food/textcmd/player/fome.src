@@ -11,13 +11,13 @@ program fome(who)
    var msg;
 
    case (total)
-	6 : msg := "Voce esta correndo perigo de vida";
-	5 : msg := "Voce esta faminto.";
-	4 : msg := "Voce esta com fome.";
-	3 : msg := "Voce esta satisfeito.";
-	2 : msg := "Voce esta cheio.";
-	1 : msg := "Voce esta muito bem alimentado.";
-	0 : msg := "Voce esta muito bem alimentado.";
+	6 : msg := "Você esta correndo perigo de vida";
+	5 : msg := "Você esta faminto.";
+	4 : msg := "Você esta com fome.";
+	3 : msg := "Você esta satisfeito.";
+	2 : msg := "Você esta cheio.";
+	1 : msg := "Você esta muito bem alimentado.";
+	0 : msg := "Você esta muito bem alimentado.";
    endcase
 
    SendSysMessageEx(who, " " + msg, SSM_INFO);

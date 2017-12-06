@@ -11,7 +11,7 @@ const SPELL_BTN := 200;
 program clericPowerWords(who)
 	detach();
    if (!who.isClass("Clérigo"))
-      SendSysMessageEx(who, "Este menu nao e acessivel para sua classe", SSM_FAIL);
+      SendSysMessageEx(who, "Este menu não e acessivel para sua classe", SSM_FAIL);
       return;
    endif
 

@@ -1,10 +1,10 @@
 /*
 1- so quem tem tag pode por coisa pra vender OK
 2- cada coisa q vc colocou la tem seu id OK
-3- voce pode setar o preço das coisas OK
-4- voce pode remover coisas  OK
+3- você pode setar o preço das coisas OK
+4- você pode remover coisas  OK
 5- quando o npc vende o dinheiro vai pro seu id (uma prop) e 10% vai pro npc  OK
-6- player comuns (sem tag)so podem comprar e nao vende OK
+6- player comuns (sem tag)so podem comprar e não vende OK
 */
 
 use uo;
@@ -47,7 +47,7 @@ program MerchantMenu(params)
 
 	if (escondido)
 		player.hidden := 0;
-		SendSysMessageEx (player, "Voce se revelou ao mercador.", SSM_FAIL);
+		SendSysMessageEx (player, "Você se revelou ao mercador.", SSM_FAIL);
 	endif
 	while(1)
 		// variaveis de controle do gump

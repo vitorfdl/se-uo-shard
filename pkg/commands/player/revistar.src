@@ -16,7 +16,7 @@ program textcmd_openPack(who)
 	endif
 
 	if (!targ)
-		SendSysMessageEx(who, "Selecione o personagem que voce deseja revistar.", SSM_REQUEST);
+		SendSysMessageEx(who, "Selecione o personagem que você deseja revistar.", SSM_REQUEST);
 		targ := Target(who);
 	endif
 	
@@ -27,10 +27,10 @@ program textcmd_openPack(who)
 		SendSysMessageEx(who, "Alvo invalido.", SSM_FAIL);
 		return 0;
 	elseif ( targ.npctemplate )
-		SendSysMessageEx(who, "Voce so pode revistar jogadores.", SSM_FAIL);
+		SendSysMessageEx(who, "Você so pode revistar jogadores.", SSM_FAIL);
 		return 0;
 	elseif ( !targ.backpack )
-		SendSysMessageEx(who, "Alvo nao possui uma bolsa.", SSM_FAIL);
+		SendSysMessageEx(who, "Alvo não possui uma bolsa.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, targ) > 1 )
 		SendSysMessageEx(who, "Muito longe.", SSM_FAIL);
@@ -40,11 +40,11 @@ program textcmd_openPack(who)
 	var perm := YesNo(targ, "Você permite que "+who.name+" lhe reviste?" , "Sim.", "Não.");
 
 	if (!perm)	
-		SendSysMessageEx(who, targ.name+" nao permitiu que voce o revistasse.", SSM_INFO);
+		SendSysMessageEx(who, targ.name+" não permitiu que você o revistasse.", SSM_INFO);
 	else
 		var item;
 		if (TemHabilidade(targ, "Ocultar Objeto") && !GetObjProperty(targ, "ocultando"))
-			var esconde := YesNo(targ, "Voce deseja esconder algum objeto?" , "Sim.", "Não.");
+			var esconde := YesNo(targ, "Você deseja esconder algum objeto?" , "Sim.", "Não.");
 			if (esconde)
 				item := Target(targ);
 				var ok := 0;
@@ -78,7 +78,7 @@ program textcmd_openPack(who)
 			item := SystemFindObjectBySerial(GetObjProperty(targ, "ocultando"));
 			item.invisible := 0;
 			item.movable := 1;
-			SendSysMessageEx(targ, who.name+" parou a revista, "+item.desc+" nao esta mais oculto.", SSM_INFO);
+			SendSysMessageEx(targ, who.name+" parou a revista, "+item.desc+" não esta mais oculto.", SSM_INFO);
 			EraseObjProperty(targ, "ocultando");
 		endif
 	endif

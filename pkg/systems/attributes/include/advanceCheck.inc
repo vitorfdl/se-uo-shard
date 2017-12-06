@@ -70,11 +70,11 @@ function ExpGain(mobile, difficulty, value := 0)
    endif
   
 	var settings := AP_GetSettingsCfgElem("Skills");
-	//verifica se ja nao subiu skills em 30 segundos
+	//verifica se ja não subiu skills em 30 segundos
 	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 10;
 	if ( next_check > ReadGameClock() )
-	//	printtextabove(mobile, "nao posso subir skill agora");
-		SkillDbgMsg(mobile, "Nao pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
+	//	printtextabove(mobile, "não posso subir skill agora");
+		SkillDbgMsg(mobile, "Não pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
 		return 0;
 	endif
 

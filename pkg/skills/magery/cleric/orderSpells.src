@@ -12,7 +12,7 @@ const SPELL_BTN := 200;
 
 program orderSpells(who)
    if (!who.isClass("Clérigo"))
-      SendSysMessageEx(who, "Voce presta homenagem a Anar", SSM_INFO);
+      SendSysMessageEx(who, "Você presta homenagem a Anar", SSM_INFO);
       return;
    endif
 
@@ -94,7 +94,6 @@ function CreateClericGump(who, spell_list, available_slots)
    foreach spell in spell_list
       GFHTMLArea(gump, 63, y, 192, 24, "{}".format(spell.name), 1, 0);
       GFHTMLArea(gump, 259, y, 34, 24, "<center>{}".format(spell.circle), 1, 0);
-      print("circle "+spell.circle);
       if (available_slots >= spell.circle)
 	      GFAddButton(gump, 319, y+4, 10006, 10006, GF_CLOSE_BTN, 200+_spell_iter);
       else

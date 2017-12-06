@@ -20,7 +20,7 @@ program changeSkill(who, text)
 	
 	
 	if (!user)
-		SendSysMessageEX(who, "Serial nao existe", SSM_FAIL);
+		SendSysMessageEX(who, "Serial não existe", SSM_FAIL);
 		return;
 	endif
 	

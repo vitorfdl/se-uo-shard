@@ -27,6 +27,10 @@ exported function handleUCOutgoing( character, byref packet )
 	var message_txt := packet.GetUnicodeString(48, length_of_text);
 	message_txt := CChrZ(message_txt);
 
+	if (type == 0x00 || type == 0x06)
+		return 0;
+	endif
+
 	if (GetObjProperty(source, "metamorfose") || GetObjProperty(source, "mudo") || GetObjProperty(source, "#sleep"))
 		if  (type != EMOTE_SPEECH)
 			return 1;

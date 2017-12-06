@@ -26,7 +26,7 @@ program troncoAlgema(who, item)
 		endif
 			
 		if (!targ.ip) // Se for player e tiver on
-			SendSysMessage(who, "Você nao pode algemar isto.");
+			SendSysMessage(who, "Você não pode algemar isto.");
 			return 0;
 		endif
 
@@ -47,7 +47,7 @@ program troncoAlgema(who, item)
 			PlaySoundEffect(targ,0x04B);
 			SetName(targ, targ.name + " [ALGEMADO AO POSTE]" );
 		else
-			var ok := YesNo(who, "Voce deseja soltar "+targ.name+"?" , "Sim.", "Nao.");
+			var ok := YesNo(who, "Você deseja soltar "+targ.name+"?" , "Sim.", "Nao.");
 			if (ok)
 				EraseObjProperty(targ,"algemado");
 				targ.frozen := 0;

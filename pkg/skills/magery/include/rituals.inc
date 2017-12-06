@@ -13,7 +13,7 @@ function CheckIngredients(master, ritualid)
 
 	var elem := FindConfigElem(cfg, ritualid);
 	if (!elem)
-		SendSysMessageEx(who, "spellid nao encontrado " + spellinfo.id, SSM_FAIL);
+		SendSysMessageEx(who, "spellid não encontrado " + spellinfo.id, SSM_FAIL);
 		return 0;
 	endif
 
@@ -47,7 +47,7 @@ function CheckIngredients(master, ritualid)
 			endif
 		endforeach
 		if (!found)
-			SendSysMessageEx(master, "Voce nao tem todos os componentes materiais.", SSM_FAIL);
+			SendSysMessageEx(master, "Você não tem todos os componentes materiais.", SSM_FAIL);
 			return 0;
 		endif
 	endforeach
@@ -61,7 +61,7 @@ function CheckIngredients(master, ritualid)
 	var ritualmages := array;
 	foreach mob in mobs
 		if ( mob != master)
-			var yes := YesNo(mob, "Voce vai participar do ritual?");
+			var yes := YesNo(mob, "Você vai participar do ritual?");
 			if (yes)
 				mages := mages + 1;
 				ritualmages.append(mob);
@@ -90,12 +90,12 @@ function CheckIngredients(master, ritualid)
 	endforeach
 
 	if (skill < minskill )
-		SendSysMessageEx(master, "Os magos nao possuem o conhecimento arcano necessario para executar o ritual.", SSM_FAIL);
+		SendSysMessageEx(master, "Os magos não possuem o conhecimento arcano necessario para executar o ritual.", SSM_FAIL);
 		return 0;
 	endif
 
 	if ( mana < minmana )
-		SendSysMessageEx(master, "Os magos nao possuem a energia arcana necessaria para executar o ritual.", SSM_FAIL);
+		SendSysMessageEx(master, "Os magos não possuem a energia arcana necessaria para executar o ritual.", SSM_FAIL);
 		return 0;
 	endif
 

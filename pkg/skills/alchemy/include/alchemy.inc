@@ -8,7 +8,7 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
    if(!Accessible(character, potion))
       return 0;
    elseif (!potion.movable)
-      SendSysMessageEx(character, "Voce nao pode beber isto.", SSM_FAIL);
+      SendSysMessageEx(character, "Você não pode beber isto.", SSM_FAIL);
       return 0;
    endif
 
@@ -18,16 +18,16 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
    var cfg           := ReadConfigFile(":*:itemdesc");
    var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
    if (equippedright and equippedleft || twohanded)
-      SendSysMessage(character, "Voce precisa de pelo menos uma mao livre!");
+      SendSysMessage(character, "Você precisa de pelo menos uma mao livre!");
       return 0;
    elseif (GetObjProperty(character, "noheal") && type == "healingpot")
-      SendSysMessageEx(character, "Essa pocao nao fara efeito nas atuais circunstacias", SSM_FAIL);
+      SendSysMessageEx(character, "Essa pocao não fara efeito nas atuais circunstacias", SSM_FAIL);
       return 0;    
    endif
 
    if((type != "red") and (type != "green_potion") and type)
       if(TS_GetCooldown(character, type))
-         SendSysMessage(character, "Voce deve esperar um pouco antes de beber outra pocao!");
+         SendSysMessage(character, "Você deve esperar um pouco antes de beber outra pocao!");
          return 0;
       elseif (cooldown > 0 )
          TS_StartCooldown(character, type, cooldown);
@@ -72,7 +72,7 @@ function EmptyBottle(character, potion, potiontype := 0)
   
 endfunction
 
-//essa funcao so se mantem pra checar os kindlings. se nao quiser checar isso use .isReagent();
+//essa funcao so se mantem pra checar os kindlings. se não quiser checar isso use .isReagent();
 function isotherreagent(what)
 	case(what.objtype)
       0xf7a:  return 1;
@@ -212,28 +212,28 @@ function do_poison(who, potion)
       else
          TS_StartTimer(who, "defaultPoison", 120, 1);
       endif
-      SendSysMessage(who, "Voce foi envenenado", 3, 40);
+      SendSysMessage(who, "Você foi envenenado", 3, 40);
    0xbf01:
 	   TS_StartTimer(who, "strPoison", 120, 2);
-		SendSysMessage(who, "Voce foi envenenado", 3, 40);
+		SendSysMessage(who, "Você foi envenenado", 3, 40);
    0xbf02:
 		TS_StartTimer(who, "staminaPoison", 120, 2);
-		SendSysMessage(who, "Voce foi envenenado", 3, 40);
+		SendSysMessage(who, "Você foi envenenado", 3, 40);
    0xbf03:
 		TS_StartTimer(who, "paralyzePoison", 120, 2);
-		SendSysMessage(who, "Voce foi envenenado", 3, 40);
+		SendSysMessage(who, "Você foi envenenado", 3, 40);
    0xbf04:
 		TS_StartTimer(who, "defaultPoison", 120, 3);
-		SendSysMessage(who, "Voce foi envenenado", 3, 40);
+		SendSysMessage(who, "Você foi envenenado", 3, 40);
    0xbf06:
 		TS_StartTimer(who, "manaPoison", 120, 5);
-		SendSysMessage(who, "Voce foi envenenado", 3, 40);
+		SendSysMessage(who, "Você foi envenenado", 3, 40);
    0xbf05:
 		TS_StartTimer(who, "defaultPoison", 120, 5);
-		SendSysMessage(who, "Voce foi envenenado", 3, 40);
+		SendSysMessage(who, "Você foi envenenado", 3, 40);
    0xdc04:
 		TS_StartTimer(who, "defaultPoison", 120, 2);
-		SendSysMessage(who, "Voce foi envenenado", 2, 40);
+		SendSysMessage(who, "Você foi envenenado", 2, 40);
    endcase
 
 endfunction

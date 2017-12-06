@@ -1,0 +1,30 @@
+use uo;
+use os;
+
+include "include/say";
+include "include/sounds";
+
+program divineOrientation(info)
+   var who := info[1];
+   var dice_roll := info[2].dice_roll;
+   var targ := info[3];
+   info := 0;
+   
+	while (1)
+      if (!targ)
+			SendSysMessageEX(who, "Cancelado", SSM_FAIL);
+         return 1;
+      elseif (!targ.isA(POLCLASS_MOBILE) )
+			SendSysMessageEX(who, "Você deve escolher um alvo vivo.", SSM_FAIL);
+      else
+         break;
+		endif
+		targ := target(who);
+      sleepms(2);
+	endwhile
+
+   PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
+   PlaySoundEffect(targ, SFX_1EA);
+   SendSystemReport(who, "O alvo foi abençoado.", SSM_HELPFUL);
+   return 1;
+endprogram

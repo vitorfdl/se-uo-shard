@@ -29,7 +29,7 @@ function examinarAlvo(who)
 			name := name+" "+last_name;
 		endif
 		SendSysMessageEx(who, "Você descobriu que "+targ.name+" é, na verdade, "+name+".", SSM_INFO);
-		SendSysMessageEx(who, "ATENCAO: Se voce nao conhece esse personagem, ignore o fato de saber o nome dele.", SSM_INFO);
+		SendSysMessageEx(who, "ATENCAO: Se você não conhece esse personagem, ignore o fato de saber o nome dele.", SSM_INFO);
 	elseif ( GetObjProperty(targ, "TrapList") )
 		var failed := GetObjProperty(targ, "#awareness_fail");
 		if (who.serial in failed)
@@ -120,13 +120,13 @@ function examinarArea(who)
 			ExpGain(who, "minor");
 			found := found+1;
 			item.invisible := 0;
-			SendSysMessageEx(who, "Voce encontrou "+item.desc+".", SSM_INFO);
+			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);
 		elseif (GetObjProperty(item, "FindDiff") && dice_roll >= CInt(GetObjProperty(item, "FindDiff")))
 			ExpGain(who, CInt(GetObjProperty(item, "FindDiff")), dice_roll);
 			found := found+1;
 			item.invisible := 0;
-			SendSysMessageEx(who, "Voce encontrou "+item.desc+".", SSM_INFO);
+			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);						
 		endif
 	endforeach

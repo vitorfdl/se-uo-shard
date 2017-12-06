@@ -40,7 +40,7 @@ endenum
 
 function HealFLS(targ, amt, show_heal := 1)
 	if (GetObjProperty(targ, "noheal"))
-		SendSysMessageEx(targ, "Voce nao pode ser curado.", SSM_FAIL);
+		SendSysMessageEx(targ, "Você não pode ser curado.", SSM_FAIL);
 		return;
 	endif
 

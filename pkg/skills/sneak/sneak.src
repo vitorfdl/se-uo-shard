@@ -21,13 +21,13 @@ program skill_Hide(who)
 	elseif ( !CanHide(who, orig_x, orig_y) )
 		return;
 	elseif ( GetProcess(CInt(GetObjProperty(who, "#HidePid"))) )
-		SendSysMessageEx(who, "Voce ja esta tentando se esconder.", SSM_FAIL);
+		SendSysMessageEx(who, "Você ja esta tentando se esconder.", SSM_FAIL);
 		return;
 	else
 		SetObjProperty(who, "#HidePid", GetPid());
 	endif
 
-	SendSysMessageEx(who, "Voce comecou a tentar se esconder...", SSM_INFO);
+	SendSysMessageEx(who, "Você comecou a tentar se esconder...", SSM_INFO);
 	while ( 1 )
 		sleep(2);
 		
@@ -39,7 +39,7 @@ program skill_Hide(who)
 		if( check >= 18 )
 			ExpGain(who, "minor");
 			who.SetAchievement("sneak", 1);
-			SendSysMessageEx(who, "Voce se escondeu.", SSM_INFO);
+			SendSysMessageEx(who, "Você se escondeu.", SSM_INFO);
 			who.hidden := 1;
 			var a := start_script(":FURTIVIDADE:stealthmode", array{who});
 			//sendsysmessage(who, " "+ a);
@@ -49,7 +49,7 @@ program skill_Hide(who)
 			endif
 			break;
 		elseif (check >= 14)
-			SendSysMessageEx(who, "Voce falhou ao tentar se esconder.", SSM_FAIL);
+			SendSysMessageEx(who, "Você falhou ao tentar se esconder.", SSM_FAIL);
 			who.hidden := 0;
 		else // Falha Crítica
 			PrintText(who, "*tentando se esconder*");
@@ -73,13 +73,13 @@ function HidingParty(who)
 		if (member.serial != who.serial)
 			if (Distance(who, member) < 8)
 				if (CanHide(member, member.x, member.y, skill))
-					SendSysMessageEx(member, "Voce esta preparando a emboscada!", SSM_INFO);
+					SendSysMessageEx(member, "Você esta preparando a emboscada!", SSM_INFO);
 					member.hidden := 1;
 					start_script(":FURTIVIDADE:stealthmode", array{who});
 					SetObjProperty(member, "#overridehiding", skill);
 				else
-					SendSysMessageEx(member, "Voce nao pode se esconder!", SSM_FAIL);
-					SendSysMessageEx(who, member.name +" nao consegue se esconder!", SSM_FAIL);
+					SendSysMessageEx(member, "Você não pode se esconder!", SSM_FAIL);
+					SendSysMessageEx(who, member.name +" não consegue se esconder!", SSM_FAIL);
 				endif
 			endif
 		endif
@@ -89,16 +89,16 @@ endfunction
 
 function CanHide(who, orig_x, orig_y, override_hiding := 0)
 	if ( who.warmode )
-		SendSysMessageEx(who, "Voce nao pode se esconder em posicao de combate.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode se esconder em posicao de combate.", SSM_FAIL);
 		return 0;
 	elseif ( who.x != orig_x || who.y != orig_y )
-		SendSysMessageEx(who, "Voce parou de tentar se esconder.", SSM_FAIL);
+		SendSysMessageEx(who, "Você parou de tentar se esconder.", SSM_FAIL);
 		return 0;
 	elseif ( GetEquipmentByLayer(who, 0x19) ) // Equip de Montaria
-		SendSysMessageEx(who, "Voce nao pode fazer isto montado.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode fazer isto montado.", SSM_FAIL);
 		return 0;
 	elseif ( who.frozen )
-		SendSysMessageEx(who, "Voce nao pode fazer isto.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode fazer isto.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -116,12 +116,12 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 
 	var hostiles := ListHostiles(who, 6);
 	if ( hostiles[1] )
-		SendSysMessageEx(who, "Voce nao pode se esconder enquanto " + hostiles[1].name + " esta atacando voce.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode se esconder enquanto " + hostiles[1].name + " esta atacando você.", SSM_FAIL);
 		return 0;
 	endif
 	
 
-	//Caso queira colocar novamente aquele esquema de nao se esconder com pessoas OLHANDO
+	//Caso queira colocar novamente aquele esquema de não se esconder com pessoas OLHANDO
 	if (!TemHabilidade(who, "Guerreiro das Sombras"))
 		var num_watching := GetWatchingPeople(who);
 		var skill := cint(AP_GetSkill(who, FURTIVIDADE) / 10);
@@ -131,7 +131,7 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 		endif	
 
 		if ( num_watching > skill )
-			SendSysMessageEx(who, "Existem muitas pessoas olhando voce se esconder aqui.", SSM_FAIL);
+			SendSysMessageEx(who, "Existem muitas pessoas olhando você se esconder aqui.", SSM_FAIL);
 			return 0;
 		endif
 	endif

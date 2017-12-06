@@ -12,21 +12,21 @@ program montar(who, item)
 	EraseObjProperty(who, "HealTimer");
 
 	if(!Accessible(who, item))
-		SendSysMessage(who, "Voce nao alcanca o alvo.");
+		SendSysMessage(who, "Você não alcanca o alvo.");
 		return;
 	endif
 	if(!ReserveItem(item))
 		SendSysMessage(who, "Este item ja esta em uso.");
 		return;
 	endif
-	SendSysMessage(who, "Onde voce deseja usar isto? ");
+	SendSysMessage(who, "Onde você deseja usar isto? ");
 	var use_on := Target(who);
 	if(!use_on)
 		SendSysMessage(who, "Cancelado.");
 		return;
 	endif
 	if(!Accessible(who, use_on))
-		SendSysMessage(who, "Voce nao alcanca o alvo.");
+		SendSysMessage(who, "Você não alcanca o alvo.");
 		return;
 	endif
 	var checkme := use_on.objtype;

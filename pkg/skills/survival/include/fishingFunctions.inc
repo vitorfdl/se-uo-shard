@@ -23,11 +23,11 @@ function CarveFish(who, blade, use_on)
 	var steak;
 	var num_steaks;
 	if( (!Accessible(who, use_on)) or (!CheckLineOfSight(who, use_on)) or (distance(who, use_on) > 2) )
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	if( (!ReserveItem(use_on)) || (use_on.movable == 0) )
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	
@@ -48,7 +48,7 @@ function CarveFish(who, blade, use_on)
 	elseif (use_on.graphic == 0xdd6) pesostack := (2 + RandomInt(1)); steak :=  "0x9976";
 	endif	
 
-	//IF para nao dar erro se stackarem os peixes (perdem o peso no nome)
+	//IF para não dar erro se stackarem os peixes (perdem o peso no nome)
 	if (use_on.amount > 1)
 		num_steaks := Cint(((pesostack / 2) * use_on.amount));
 	endif
@@ -114,13 +114,13 @@ function IsValidFishingSpot(who, targetsquare, locinfo)
 
 	var retval := 1;
 	if(!IsWater(targetsquare, locinfo))
-		SendSysMessage(who, "Voce nao pode pescar aqui!");
+		SendSysMessage(who, "Você não pode pescar aqui!");
 		retval := 0;
 	elseif(!IsInRange(who, targetsquare.x, targetsquare.y, targetsquare.z))
 		SendSysMessage(who, "Isto esta muito longe.");
 		retval := 0;
 	elseif(!CheckLosAt(who, targetsquare.x, targetsquare.y, targetsquare.z))
-		SendSysMessage(who, "Este lugar nao esta na sua linha de visao!");
+		SendSysMessage(who, "Este lugar não esta na sua linha de visao!");
 		retval := 0;
 	endif
 
@@ -233,9 +233,9 @@ function GetSOSTreasure(who, targetsquare, sosmsg)
 			endif
 			SetName(it, (oldname + " [Recuperado de um navio submerso]"));
 			it.movable := 1;
-			SendSysMessage(who, "Voce achou alguma coisa interessante!");
+			SendSysMessage(who, "Você achou alguma coisa interessante!");
 		else
-			SendSysMessage(who, "Voce achou um tesouro submerso!");
+			SendSysMessage(who, "Você achou um tesouro submerso!");
 			var chest := CreateItemInBackpack(who, 0x9e40, 1);
 			case(RandomInt(4) + 1)
 				1: chest.graphic := 0xe40;

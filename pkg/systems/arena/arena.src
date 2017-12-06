@@ -168,11 +168,11 @@ function DoBasicPVPBattle (character, arena_stone)
 		return;
 	endif
 	if (!opponent.acctname)
-		SendSysMessage (character, "Isso nao e um jogador!");
+		SendSysMessage (character, "Isso não e um jogador!");
 		return;
 	endif
 	if (opponent.dead)
-		SendSysMessage (character, "Ele nao poder aceitar o desafio, considerando que esta morto..");
+		SendSysMessage (character, "Ele não poder aceitar o desafio, considerando que esta morto..");
 		return;
 	endif
 	if (opponent == character)

@@ -235,7 +235,7 @@ function ProcessDoubleClick(ev)
 
    if (targ.mobile == me && me.graphic in pack_animals)
       if ((EnumerateItemsInContainer(me.backpack)).size() > 0)
-         SendSysMessage(ev.source, "Voce precisa esvaziar a mochila antes de remove-la.");
+         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
          return;
       endif
       PrintText(ev.source, "*remove a mochila de "+me.name+"*");
@@ -282,7 +282,7 @@ function ProcessDoubleClick(ev)
          endif
          Fight(targ.mobile);
       endif
-   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se nao for nem item nem mobile anda ate la
+   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se não for nem item nem mobile anda ate la
       if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
          return;
@@ -344,7 +344,7 @@ function Transfer(targ)
    endif
 
    if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) ) 
-      Say("*" + me.name+ " nao aceita " + targ.name + "como dono.");
+      Say("*" + me.name+ " não aceita " + targ.name + "como dono.");
       return;
    endif
 
@@ -474,7 +474,7 @@ function ResolveSpeech(ev)
    /// New Master Command
    elseif (text["novo dono"])
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
-         SendSysMessage(owner, "Outros nao podem controlar criaturas invocadas por voce.");
+         SendSysMessage(owner, "Outros não podem controlar criaturas invocadas por você.");
          return;
       endif
 
@@ -482,7 +482,7 @@ function ResolveSpeech(ev)
       // var cfg := ReadConfigFile(":ghaia:npcdesc")[me.my_template()];
 
       // if (me.alignment == "evil")
-         // SendSysMessage(owner, "A criatura nao aceita o alvo como novo dono.");
+         // SendSysMessage(owner, "A criatura não aceita o alvo como novo dono.");
          // return;
       if ( !targ.acctname )
          return;
@@ -493,7 +493,7 @@ function ResolveSpeech(ev)
    /// Release Command
    elseif (text["livre"])
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
-         SendSysMessage(owner, "Criaturas invocadas nao podem ser libertadas normalmente.");
+         SendSysMessage(owner, "Criaturas invocadas não podem ser libertadas normalmente.");
          return;
       endif
       
@@ -514,7 +514,7 @@ function TakeItem(ev)
       PrintTextAbovePrivate(me,"*O animal parece feliz*", ev.source);
    elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
       if ((EnumerateItemsInContainer(ev.item)).size() > 0)
-         SendSysMessage(ev.source, "Voce precisa esvaziar a mochila antes de coloca-la na montaria.");
+         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
          return;
       elseif ( me.my_template() == "Horse3" )
          SetObjProperty(me, "beforepack", me.graphic);
@@ -533,7 +533,7 @@ function TakeItem(ev)
       //    mount := 0;
       //endif
    else
-      SendSysMessage(ev.source, "Nao pode dar esse item!");
+      SendSysMessage(ev.source, "Não pode dar esse item!");
    endif    
 endfunction
 

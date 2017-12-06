@@ -6,7 +6,7 @@ function CreateHabObject(who, habilidade)
 	var hab_objects := GetConfigStringArray( elem, "createobject" );
 	foreach item in hab_objects
 		var novoitem := CreateItemInBackpack(who, cint(item), 1); 
-		SendSysMessage(who, "Voce recebeu " + novoitem.desc);
+		SendSysMessage(who, "Você recebeu " + novoitem.desc);
 	endforeach
 
 endfunction
@@ -29,7 +29,7 @@ function TemRequisito(who, habilidade, msg := 1)
 
 	if (erro && requisitos[1])
 		if (msg == 1)
-			SendSysMessageEx(who, "Voce nao possui o pre requisito: " + erromsg, SSM_FAIL);
+			SendSysMessageEx(who, "Você não possui o pre requisito: " + erromsg, SSM_FAIL);
 		endif
 		return 0;
 	endif

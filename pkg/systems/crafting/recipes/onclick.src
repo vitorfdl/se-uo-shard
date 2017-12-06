@@ -18,7 +18,7 @@ program usaPergaminho(who, scroll)
 		var recipes := ReadConfigFile(":*:recipes");
 		var objtype := RequestGump(who, "Item objtype:");
 		if (!FindConfigElem(recipes, objtype))
-			SendSysMessageEx(who, "Receita para o objtype {} nao encontrado.".format(objtype), SSM_FAIL);
+			SendSysMessageEx(who, "Receita para o objtype {} não encontrado.".format(objtype), SSM_FAIL);
 			return;
 		endif
 

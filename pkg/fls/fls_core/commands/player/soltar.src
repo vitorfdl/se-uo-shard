@@ -7,13 +7,13 @@ include ":charactercreation:habilidades";
 
 program soltar(me)
 	if (!GetObjProperty(me, "corda"))
-		SendSysMessage(me, "Esse comando nao ira lhe ajudar em nada.");
+		SendSysMessage(me, "Esse comando não ira lhe ajudar em nada.");
 		return;
 	elseif (me.dead)
-		SendSysMessage(me, "Voce esta morto...");
+		SendSysMessage(me, "Você esta morto...");
 		return;
 	elseif (AP_GetVital(me, "Stamina") < 10)
-		SendSysMessage(me, "Voce esta cansado demais para tentar algo...");
+		SendSysMessage(me, "Você esta cansado demais para tentar algo...");
 		return;
 	endif
 
@@ -29,7 +29,7 @@ program soltar(me)
 
 	if (check >= diff)
 		if (dice_roll.critical == 1)
-			SendSysMessage(me, "Voce conseguiu se soltar discretamente...");
+			SendSysMessage(me, "Você conseguiu se soltar discretamente...");
 			var corda := CreateItemInBackpack (me, "rope");
 			SetObjProperty(corda, "diff", GetObjProperty(me, "corda"));
 		else
@@ -40,7 +40,7 @@ program soltar(me)
 	elseif (dice_roll.critical == -1)
 		PrintText(me, "*tentando se soltar*");
 	else
-		SendSysMessageEx(me, "Voce falhou...", SSM_FAIL);
+		SendSysMessageEx(me, "Você falhou...", SSM_FAIL);
 	endif
 
 	ConsumeVital(me, "Stamina", 2000);

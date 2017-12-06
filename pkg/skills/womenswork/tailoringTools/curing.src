@@ -12,49 +12,49 @@ var carregar := GetObjProperty(item, "#uso");
 var temitem := GetObjProperty(item, "#item");
 
 if (carregar == "1" )
-   SendSysMessage(who, "Voce nao pode usar este item agora!");
+   SendSysMessage(who, "Você não pode usar este item agora!");
    return;
 
 else
    if (temitem == "1" )
       if (GetObjProperty(item, "#itemtype") == "string" )
-         SendSysMessage(who, "Voce pegou a corda pra arco");
+         SendSysMessage(who, "Você pegou a corda pra arco");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee47 , 1);
          PlaySoundEffect (who, 0x49);
       elseif (GetObjProperty(item, "#itemtype") == "couro")
-         SendSysMessage(who, "Voce pegou o couro curtido");
+         SendSysMessage(who, "Você pegou o couro curtido");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee45, 1);
          PlaySoundEffect (who, 0x49);
       elseif (GetObjProperty(item, "#itemtype") == "pelebege")
-         SendSysMessage(who, "Voce pegou a pele curtida");
+         SendSysMessage(who, "Você pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee57, 1);
          PlaySoundEffect (who, 0x49);
       elseif (GetObjProperty(item, "#itemtype") == "pelecinza")
-         SendSysMessage(who, "Voce pegou a pele curtida");
+         SendSysMessage(who, "Você pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee55, 1);
          PlaySoundEffect (who, 0x49);
       elseif (GetObjProperty(item, "#itemtype") == "pelemarrom")
-         SendSysMessage(who, "Voce pegou a pele curtida");
+         SendSysMessage(who, "Você pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee56, 1);
          PlaySoundEffect (who, 0x49);
       elseif (GetObjProperty(item, "#itemtype") == "pelebranca")
-         SendSysMessage(who, "Voce pegou a pele curtida");
+         SendSysMessage(who, "Você pegou a pele curtida");
          EraseObjProperty(item, "#item");
          EraseObjProperty(item, "#itemtype");
          CreateItemInBackpack(who, 0xee58, 1);
          PlaySoundEffect (who, 0x49);
       else
-         SendSysMessage(who, "Nao a nada aqui para pegar");
+         SendSysMessage(who, "Não a nada aqui para pegar");
       endif
    else
          EraseObjProperty(who, "IsMeditating");
@@ -62,7 +62,7 @@ else
          if(!Accessible(who, item))
            return;
          endif
-         SendSysMessage(who, "Escolha o que voce deseja usar aqui.");
+         SendSysMessage(who, "Escolha o que você deseja usar aqui.");
          var useon := Target(who);
          if (!useon)
            return;
@@ -122,7 +122,7 @@ else
              UsarCuringCouroDraconiano(who, useon);
              return;
           else
-             SendSysMessage(who,"Voce so pode usar couro aqui");
+             SendSysMessage(who,"Você so pode usar couro aqui");
              return;
           endif
    endif
@@ -146,7 +146,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -162,7 +162,7 @@ repeat
  CreateItemInBackpack(who, 0xed29, 1);
  PlaySoundEffect (who, 0x49);
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -185,7 +185,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -207,7 +207,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -229,7 +229,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -251,7 +251,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -273,7 +273,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -295,7 +295,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -317,7 +317,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -339,7 +339,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -361,7 +361,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -383,7 +383,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -405,7 +405,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -427,7 +427,7 @@ function UsarCuringPeleCinza(who, useon)
     //   SetObjProperty(item, "#item", "1");
     //   SetObjProperty(item, "#itemtype", "couro");
     else
-      SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+      SendSysMessage(who, "Você não tem mais material para usar aqui");
       break;
     endif
   until (who.x != characterx or who.y != charactery);
@@ -449,7 +449,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);
@@ -471,7 +471,7 @@ repeat
 //   SetObjProperty(item, "#item", "1");
 //   SetObjProperty(item, "#itemtype", "couro");
  else
-   SendSysMessage(who, "Voce nao tem mais material para usar aqui");
+   SendSysMessage(who, "Você não tem mais material para usar aqui");
    break;
  endif
 until (who.x != characterx or who.y != charactery);

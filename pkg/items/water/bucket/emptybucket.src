@@ -13,7 +13,7 @@ const PLANT_ISDEAD	:= "isdead";
 const PLANT_SALTED	:= "salted";
 
 program EmptyBucket(who, bucket)
-	SendSysMessage(who, "Onde voce quer usar isso?");
+	SendSysMessage(who, "Onde você quer usar isso?");
 	var targ := target(who);
 	if ( !targ )
 		SendSysMessage(who, "Cancelled");
@@ -37,7 +37,7 @@ endprogram
 
 function IrrigateFarm(who, bucket, scarecrow)
 	if ( Distance(who, scarecrow) > 1 )
-		SendSysMessage(who, "Voce precisa estar perto para por agua ali.");
+		SendSysMessage(who, "Você precisa estar perto para por agua ali.");
 		return;
 	endif
 	
@@ -64,7 +64,7 @@ function IrrigateFarm(who, bucket, scarecrow)
 		PLANT_SALTED	-> 0 
 	};
 
-	SendSysMessage(who, "Voce distribui o conteudo do bucket para cada planta da fazenda.");
+	SendSysMessage(who, "Você distribui o conteudo do bucket para cada planta da fazenda.");
 	PlaySoundEffect(who, SOUND_POUR2); // since it's not done in WaterPlant() due to "sendmsg:=0"
 	foreach plant in plant_list
 		var ret := WaterPlant(who, bucket, plant, water_per, 0); // no messages!
@@ -75,13 +75,13 @@ function IrrigateFarm(who, bucket, scarecrow)
 	// No message for watering properly.
 	// Salted or NoEffect messages
 	if ( result[PLANT_SALTED] > 0 )
-		SendSysMessage(who, "As plantas nao parecem muito felizes.");
+		SendSysMessage(who, "As plantas não parecem muito felizes.");
 	elseif ( result[PLANT_DONOTHING] > 0 )
-		SendSysMessage(who, "Voce duvida que isso tenha ajudado as plantas em algo.");
+		SendSysMessage(who, "Você duvida que isso tenha ajudado as plantas em algo.");
 	endif
 	// Are any of the plants dead?
 	if ( result[PLANT_ISDEAD] > 0 )
-		SendSysMessage(who, "Voce percebe que algumas plantas estao mortas e nao reagem a agua.");
+		SendSysMessage(who, "Você percebe que algumas plantas estao mortas e não reagem a agua.");
 	endif
 	return 1;
 endfunction
@@ -95,12 +95,12 @@ function WaterPlant(who, bucket, targ, amount:=0, sendmsg:=0)
 	endif
 
 	if (sendmsg)
-		SendSysMessage(who, "Voce regou "+ targ.desc);
+		SendSysMessage(who, "Você regou "+ targ.desc);
 		PlaySoundEffect(targ, SOUND_POUR2);
 	endif
 	if ( bucket.objtype == SALT_WATER_BUCKET )
 		if (sendmsg)
-			SendSysMessage(who, "A planta nao parece muito feliz.");
+			SendSysMessage(who, "A planta não parece muito feliz.");
 		endif
 		targ.SetWaterAmount(0);
 		return PLANT_SALTED;
@@ -121,7 +121,7 @@ function WaterPlant(who, bucket, targ, amount:=0, sendmsg:=0)
 	// If we get here, it's milk! :-)
 	// (which does the plant no good whatsoever!)
 	if (sendmsg)
-		SendSysMessage(who, "Voce acha que nao regou muito bem.");
+		SendSysMessage(who, "Você acha que não regou muito bem.");
 	endif
 	return PLANT_DONOTHING;
 endfunction

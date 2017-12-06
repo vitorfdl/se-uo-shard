@@ -17,23 +17,23 @@ program skill_animal_lore( who )
    EraseObjProperty(who, "IsMeditating");
    EraseObjProperty(who, "HealTimer");
 
-   SendSysMessage(who, "Qual animal voce deseja examinar?");
+   SendSysMessage(who, "Qual animal você deseja examinar?");
    var creature := Target(who, TGTOPT_CHECK_LOS);
 
    if( GetObjProperty(creature, "Blocked") || creature.frozen )
       SendSysMessage(who, "O raciocinio por tras da sua analise esta incorreto.");
       return 0;
    elseif( creature.serial == who.serial )
-      SendSysMessage(who, "Esse nao pode ser um alvo valido.");
+      SendSysMessage(who, "Esse não pode ser um alvo valido.");
       return 0;
    elseif( !creature.isA(POLCLASS_NPC) )
-      SendSysMessage(who, "Esse nao pode ser um alvo valido.");
+      SendSysMessage(who, "Esse não pode ser um alvo valido.");
       return 0;
    elseif( (creature.graphic == 0x190) or (creature.graphic == 0x191) or (creature.graphic == 309) or (creature.graphic == 307) or (creature.graphic == 14) )
-      SendSysMessage(who, "Esse nao pode ser um alvo valido.");
+      SendSysMessage(who, "Esse não pode ser um alvo valido.");
       return 0;
    elseif ( !creature.isTamable() )
-		SendSysMessage(who, "Esse nao pode ser um alvo valido.");
+		SendSysMessage(who, "Esse não pode ser um alvo valido.");
 		return 0;
 	endif
 
@@ -44,13 +44,13 @@ program skill_animal_lore( who )
    endif
 
    var roll := rollAttrDice(who, WISDOM, penalty) + getProficiencyBonus(who, TRATO_ANIMAIS);
-	if( roll > 14 )
+	if( roll > 14 || who.cmdlevel >= 3)
       // If the player succeeds, send the gump.
       // Create the Gump
       var al_Gump := AL_LoadGump(who, creature);
       var input := GFSendGump(who, al_Gump);
    else
-      PrintTextAbovePrivate(creature, "Voce falha em conseguir examinar este animal.", who);
+      PrintTextAbovePrivate(creature, "Você falha em conseguir examinar este animal.", who);
    endif
 
    return 0;
@@ -138,14 +138,14 @@ function AL_LoadGump(who, creature)
    GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Combate");
    GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Defesa");
    GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+ar+"</div>");
-   GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Resistência a Fogo");
-   GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+arf+"</div>");
-   GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Resistência a Frio");
-   GFHTMLArea(gump, 320, 204,  35, 18, "<basefont color=#4A3929><div align=right>"+arc+"</div>");
-   GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Resistência a Energia");
-   GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+are+"</div>");
-   GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Resistência a Veneno");
-   GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+arp+"</div>");
+//    GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Resistência a Fogo");
+//    GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+arf+"</div>");
+//    GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Resistência a Frio");
+//    GFHTMLArea(gump, 320, 204,  35, 18, "<basefont color=#4A3929><div align=right>"+arc+"</div>");
+//    GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Resistência a Energia");
+//    GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+are+"</div>");
+//    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Resistência a Veneno");
+//    GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+arp+"</div>");
    GFGumpPic(gump, 128, 278, 2086);
    // GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Combate");
    GFHTMLArea(gump, 153, 294, 160, 18, "<basefont color=#4A3929>Ataque");
@@ -159,15 +159,15 @@ function AL_LoadGump(who, creature)
    GFGumpPic(gump, 128, 152, 2086);
    GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Danos");
    GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Físico");
-   GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+dar+"</div>");
-   GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Fogo");
-   GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+darf+"</div>");
-   GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Frio");
-   GFHTMLArea(gump, 320, 204,  35, 18, "<basefont color=#4A3929><div align=right>"+darc+"</div>");
-   GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Energia");
-   GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+dare+"</div>");
-   GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Veneno");
-   GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+darp+"</div>");
+//    GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+dar+"</div>");
+//    GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Fogo");
+//    GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+darf+"</div>");
+//    GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Frio");
+//    GFHTMLArea(gump, 320, 204,  35, 18, "<basefont color=#4A3929><div align=right>"+darc+"</div>");
+//    GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Energia");
+//    GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+dare+"</div>");
+//    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Veneno");
+//    GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+darp+"</div>");
    GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, 2);
 
    return gump;

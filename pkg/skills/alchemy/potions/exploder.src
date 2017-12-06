@@ -70,7 +70,7 @@ function FlameEffect(who, potion, lvl)
 		if (CheckLineOfSight(potion, critter))
 			if ( critter.hidden  )
 				critter.hidden := 0;
-				SendSysMessage(critter, "Voce foi revelado na explosao!");
+				SendSysMessage(critter, "Você foi revelado na explosao!");
 			endif
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);
@@ -91,7 +91,8 @@ function HalluEffect(who, potion, lvl)
 			TS_StartTimer(critter, "hallucination", 120, lvl);
 		endif
 	endforeach
-
+
+
 endfunction
 
 function PoisonEffect(who, potion, lvl)
@@ -101,7 +102,8 @@ function PoisonEffect(who, potion, lvl)
 			TS_StartTimer(critter, "defaultPoison", 30, lvl);
 		endif
 	endforeach
-
+
+
 endfunction
 
 function GlueEffect(who, potion)
@@ -124,11 +126,12 @@ function GlueEffect(who, potion)
 		if (CheckLineOfSight(potion, critter))
 			if ( critter.hidden && critter.acct )
 				critter.hidden := 0;
-				SendSysMessage(critter, "Voce foi revelado pela teia!");
+				SendSysMessage(critter, "Você foi revelado pela teia!");
 			endif
 		endif
 	endforeach
-
+
+
 endfunction
 
 function ExplosionEffect(who, potion, dmg)
@@ -139,7 +142,7 @@ function ExplosionEffect(who, potion, dmg)
 		if (checkLineOfSight(potion, critter))
 			if ( critter.hidden)
 				critter.hidden := 0;
-				SendSysMessage(critter, "Voce foi revelado na explosao!");
+				SendSysMessage(critter, "Você foi revelado na explosao!");
 			endif
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);
@@ -149,7 +152,8 @@ function ExplosionEffect(who, potion, dmg)
 	endforeach
 
 	efeitocascata(potion, who);
-        
+
+        
 endfunction
 
 function EfeitoCascata(potion, who)

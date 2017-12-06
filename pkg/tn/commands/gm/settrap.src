@@ -19,17 +19,17 @@ program settrap(who)
 
 		if ( "Setas" in traps)
 			AddTrap(targ, "Needle", level);
-			SendSysMessage(who, "Voce colocou uma armadilha de setas no item.", SSM_INFO);
+			SendSysMessage(who, "Você colocou uma armadilha de setas no item.", SSM_INFO);
 		endif
 
 		if ( "Veneno" in traps)
 			AddTrap(targ, "PoisonGas", level);
-			SendSysMessage(who, "Voce colocou uma armadilha de veneno no item.", SSM_INFO);
+			SendSysMessage(who, "Você colocou uma armadilha de veneno no item.", SSM_INFO);
 		endif
 
 		if ( "Explosao" in traps)
 			AddTrap(targ, "Explosion", level);
-			SendSysMessage(who, "Voce colocou uma armadilha de explosao no item.", SSM_INFO);
+			SendSysMessage(who, "Você colocou uma armadilha de explosao no item.", SSM_INFO);
 		endif
 	endif
 

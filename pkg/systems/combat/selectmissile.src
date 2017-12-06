@@ -8,18 +8,18 @@ program select( who, item)
 	if (item.objtype in array{0x13B2, 0xe137, 0x26CC, 0xe139, 0x2D2A, 0x2D2B, 0x27A5}) //bows
 		if ( (alvo.graphic == 11058) || (alvo.graphic == 3903) )
 			SetObjProperty(item, "ammo", alvo.objtype);
-			SendSysMessageEX(who, "Voce selecionou a municao que vai usar com este arco.", SSM_INFO);
+			SendSysMessageEX(who, "Você selecionou a municao que vai usar com este arco.", SSM_INFO);
 			return 1;
 		endif
-		SendSysMessageEX(who, "Isto nao parece uma flecha.", SSM_FAIL);
+		SendSysMessageEX(who, "Isto não parece uma flecha.", SSM_FAIL);
 		return 1;
 	elseif (item.objtype in array{0x0f4f, 0x13fd, 0x26CD})
 		if (alvo.graphic != 7163 )//11061 )
-			SendSysMessageEX(who, "Isto nao parece um virote.", SSM_FAIL);
+			SendSysMessageEX(who, "Isto não parece um virote.", SSM_FAIL);
 			return 1;
 		endif
 		SetObjProperty(item, "ammo", alvo.objtype);
-		SendSysMessageEX(who, "Voce selecionou a municao que vai usar com esta besta.", SSM_INFO);
+		SendSysMessageEX(who, "Você selecionou a municao que vai usar com esta besta.", SSM_INFO);
 		return 1;
 	endif
 endprogram

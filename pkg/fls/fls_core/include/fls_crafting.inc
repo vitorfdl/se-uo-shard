@@ -123,7 +123,7 @@ function AmountInPack(mobile, obj_type, color:=0)
     return amount;
 endfunction
 
-//Check for nails nao pode usar a funcao acima :/ pq ele precisa checar a Prop "qt" em cada caida
+//Check for nails não pode usar a funcao acima :/ pq ele precisa checar a Prop "qt" em cada caida
 //de prego
 function CheckForNails(who)
 

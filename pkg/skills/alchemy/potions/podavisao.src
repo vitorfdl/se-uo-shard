@@ -13,7 +13,7 @@ program poDaVisao(who, potion)
 
 	EmptyBottle(who, potion);
 
-	SendSysMessageEX(who, "Voce espalhou o po ao redor.", SSM_INFO);
+	SendSysMessageEX(who, "Você espalhou o po ao redor.", SSM_INFO);
 	PrintText(who, "*espalha um fino pó ao redor de si*");
 	PlaySoundEffect(who, 0x0248);
 	sleepms(200);
@@ -29,7 +29,7 @@ program poDaVisao(who, potion)
 	foreach coord in rect
 		foreach mobile in ListMobilesNearLocationEX(coord.x, coord.y, who.z, 2, LISTEX_FLAG_HIDDEN)
 			if (who.hidden)
-				SendSysMessage(mobile, "A poeira revelou voce.");
+				SendSysMessage(mobile, "A poeira revelou você.");
 				mobile.hidden := 0;
 				TS_StartCooldown(mobile, "revealed", 15);
 			endif

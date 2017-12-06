@@ -19,7 +19,7 @@ Const MAX_PER_HIVE	:= 10;
 
 program harvest_honey (character, beehive)
 	if (Distance (character, beehive) > 1)
-		sendsysmessage (character, "Voce esta muito distante!", 3, 40);
+		sendsysmessage (character, "Você esta muito distante!", 3, 40);
 		return;
 	endif
 
@@ -31,7 +31,7 @@ program harvest_honey (character, beehive)
 		return;
 	endif
 
-	SendSysmessage (character, "Voce comecou a mecher colmeia.", 3, 90);
+	SendSysmessage (character, "Você comecou a mecher colmeia.", 3, 90);
 	var characterx := character.x;
 	var charactery := character.y;
 	repeat
@@ -67,9 +67,9 @@ program harvest_honey (character, beehive)
 		endif
 		
 		if (already_harvested_amount >= MAX_PER_HIVE)
-			SendSysmessage (character, "Nao ha mais nada para ser retirado daqui.", 3, 40);
+			SendSysmessage (character, "Não há mais nada para ser retirado daqui.", 3, 40);
 			return;
 		endif
 	until (character.x != characterx or character.y != charactery);
-	SendSysMessage (character, "Voce parou de mecher na colmeia.", 3, 90);
+	SendSysMessage (character, "Você parou de mecher na colmeia.", 3, 90);
 endprogram

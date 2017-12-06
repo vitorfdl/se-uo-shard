@@ -27,7 +27,7 @@ function DoObjective();
     sleepms(50);
   endwhile
   
-	if ( CoordinateDistance(me.x, me.y, cint(dest[1]), cint(dest[2])) <= 2 ) //se chegou no objetivo, nao tem mais objetivo.
+	if ( CoordinateDistance(me.x, me.y, cint(dest[1]), cint(dest[2])) <= 2 ) //se chegou no objetivo, não tem mais objetivo.
 		EraseObjProperty(me, "objloc");
     // SetObjProperty(me, "anchor", array{me.x, me.y});
 	endif

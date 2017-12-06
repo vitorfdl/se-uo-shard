@@ -15,22 +15,22 @@ program smelt_that_ore (who, item)
     return;
   endif
   
-  SendSysMessage(who, "O que voce deseja fazer com isto?");
+  SendSysMessage(who, "O que você deseja fazer com isto?");
   var use_on := Target(who, TGTOPT_CHECK_LOS);
   if(!use_on)
     SendSysMessage(who, "Cancelado.");
     return;
   endif
   if(!Accessible(who, use_on))
-    SendSysMessage(who, "Voce nao pode usar isto.");
+    SendSysMessage(who, "Você não pode usar isto.");
     return;
   endif
   if(!Accessible(who, use_on) || !ReserveItem( use_on ))
-    SendSysMessage(who, "Voce nao pode usar isto.");
+    SendSysMessage(who, "Você não pode usar isto.");
     return;
   endif
   if(!CheckForForge(who))
-     SendSysMessage(who, "Voce precisa estar perto da forja para usar este item.");
+     SendSysMessage(who, "Você precisa estar perto da forja para usar este item.");
      return;
   endif
   
@@ -40,7 +40,7 @@ program smelt_that_ore (who, item)
   //elseif ((use_on.isa(POLCLASS_WEAPON)) || (use_on.isa(POLCLASS_ARMOR) || (use_on.objtype == 0x5101)))
    //  SmeltItem(who, item, use_on);
   else
-     SendSysMessage(who,"Voce nao pode derreter isto.");
+     SendSysMessage(who,"Você não pode derreter isto.");
   endif
   
 endprogram
@@ -56,7 +56,7 @@ endprogram
      return;
     endif
     if(!Accessible(who, ore))
-      SendSysMessage(who,"Voce nao alcanca isto.");
+      SendSysMessage(who,"Você não alcanca isto.");
       return;
     endif
 
@@ -65,12 +65,12 @@ endprogram
       return;
     endif
     if(!Accessible(who, ore))
-      SendSysMessage(who,"Voce nao alcanca isto.");
+      SendSysMessage(who,"Você não alcanca isto.");
       return;
     endif
     
     if (!GetObjProperty(ore, "ingType"))
-      SendSysMessage(who,"Voce nao pode derreter isto.");
+      SendSysMessage(who,"Você não pode derreter isto.");
       return;
     endif
 
@@ -83,13 +83,13 @@ endprogram
       var amt := GetObjProperty(ore, "size");
       if(DestroyItem(ore))
          if(skcheck(who, EXTRACAO, 20, 0))
-           SendSysMessage(who, "Voce conseguiu derreter e aproveitar parte do material.", FONT_NORMAL, 90 );
+           SendSysMessage(who, "Você conseguiu derreter e aproveitar parte do material.", FONT_NORMAL, 90 );
            SetObjProperty(item, "numMetal", 1);
            SetObjProperty(item, "oreObj1",ingot);
            SetObjProperty(item, "amt1", amt);
            item.color := 0x486;
          else
-           SendSysMessage(who, "Voce falhou e destruiu o item!", FONT_NORMAL, 40);
+           SendSysMessage(who, "Você falhou e destruiu o item!", FONT_NORMAL, 40);
          endif
          return;
        endif
@@ -104,7 +104,7 @@ endprogram
         endif
       endforeach
             if((!skill) || (!amt))
-        SendSysMessage(who, "Voce nao pode derreter isto.", FONT_NORMAL, 40);
+        SendSysMessage(who, "Você não pode derreter isto.", FONT_NORMAL, 40);
         return;
       endif
       amt := CInt((amt * GetEffectiveSkill(who,SKILLID_MINING) * 75 ) / 10000);
@@ -118,13 +118,13 @@ endprogram
       var ingot := GetObjProperty(ore, "ingType");
       if(DestroyItem(ore))
          if(CheckSkill(who, SKILLID_BLACKSMITHY, skill, 10))
-           SendSysMessage(who, "Voce conseguiu derreter e aproveitar parte do material.", FONT_NORMAL, 90 );
+           SendSysMessage(who, "Você conseguiu derreter e aproveitar parte do material.", FONT_NORMAL, 90 );
            SetObjProperty(item, "numMetal", 1);
            SetObjProperty(item, "oreObj1",ingot);
            SetObjProperty(item, "amt1", amt);
            item.color := 0x486;
          else
-           SendSysMessage(who, "Voce falhou e destruiu o item!", FONT_NORMAL, 40);
+           SendSysMessage(who, "Você falhou e destruiu o item!", FONT_NORMAL, 40);
          endif
          return;
        endif
@@ -139,7 +139,7 @@ function SmeltOre(who, item, ore)
   if(!ReserveItem(ore))
     return;
   elseif(!Accessible(who, ore))
-    SendSysMessage(who,"Voce nao alcanca isto.", FONT_NORMAL, 40);
+    SendSysMessage(who,"Você não alcanca isto.", FONT_NORMAL, 40);
     return;
   endif
 
@@ -165,12 +165,12 @@ function SmeltOre(who, item, ore)
 	0x6301: ingot := 0x630a; //diamante
 	
     
-    //esses dois nao sao mais usados
+    //esses dois não sao mais usados
     0x6303:  ingot := 0x630c; //sinque
     0x6304:  ingot := 0x630d; //figin
      
     0x6075:  dif := 5; ingot := 0x1be3; //areia*
-    default: SendSysMessage(who,"Voce nao pode derreter isto.", FONT_NORMAL, 40); return 1;
+    default: SendSysMessage(who,"Você não pode derreter isto.", FONT_NORMAL, 40); return 1;
   endcase
 
   
@@ -179,12 +179,12 @@ function SmeltOre(who, item, ore)
       var num := CINT(GetObjProperty(item, "amt1"));
       var nummetal := Cint(GetObjProperty(item, "numMetal"));
       if (num != ore.amount)
-         SendSysMessage(who, "Voce precisa colocar " + num + " minerios aqui.", FONT_NORMAL, 40);
+         SendSysMessage(who, "Você precisa colocar " + num + " minerios aqui.", FONT_NORMAL, 40);
          return;
       endif
 
       if(dice_roll > dif)
-         SendSysMessage(who, "Voce fez a fusao entre os metais.", FONT_NORMAL, 90);
+         SendSysMessage(who, "Você fez a fusao entre os metais.", FONT_NORMAL, 90);
          PlaySoundEffect(who, 0x22);
          sleep(4);
          SetObjProperty(item, "numMetal", nummetal+1);
@@ -197,12 +197,12 @@ function SmeltOre(who, item, ore)
             perdamt := ore.amount;
          endif
          SubtractAmount(ore, perdamt);
-         SendSysMessage(who, "Voce perdeu parte dos minerios.", FONT_NORMAL, 40);
+         SendSysMessage(who, "Você perdeu parte dos minerios.", FONT_NORMAL, 40);
          return;
       endif
    else 
      if(dice_roll > dif)
-        SendSysMessage(who, "Voce derreteu o minerio e retirou as impurezas.", FONT_NORMAL, 90);
+        SendSysMessage(who, "Você derreteu o minerio e retirou as impurezas.", FONT_NORMAL, 90);
         PlaySoundEffect(who, 0x22);
         sleep(4);
         item.color := 0x486;
@@ -216,7 +216,7 @@ function SmeltOre(who, item, ore)
             perdamt := ore.amount;
          endif
          SubtractAmount(ore, perdamt);
-         SendSysMessage(who, "Voce perdeu parte dos minerios.", FONT_NORMAL, 40);
+         SendSysMessage(who, "Você perdeu parte dos minerios.", FONT_NORMAL, 40);
          return;
       endif
    endif

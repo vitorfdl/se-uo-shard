@@ -17,7 +17,7 @@ program pswd(who, text)
 		acc.setpassword(tokens[2]);
 		acc.setprop("novasenha", 1);
 	else
-		SendSysMessageEx(who, "Voce errou sua senha atual.", SSM_FAIL);
+		SendSysMessageEx(who, "Você errou sua senha atual.", SSM_FAIL);
 		return;
 	endif
 		

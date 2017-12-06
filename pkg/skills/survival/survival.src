@@ -96,14 +96,14 @@ function MobileTracking(who)
 		PrintText(who, "*Estudando o local a sua volta*");
 
 		if(len(mobiles) < 1)
-			SendSysMessage(who, "Nao ha nenhuma criatura ao seu redor para ser seguida", 3, 660);
+			SendSysMessage(who, "Não há nenhuma criatura ao seu redor para ser seguida", 3, 660);
 			return;
 		endif
 
 		TrackGump(who, mobiles);
 
 	else
-  		SendSysMessage(who, " Voce falhou ao estudar o local ", 3, 38);
+  		SendSysMessage(who, " Você falhou ao estudar o local ", 3, 38);
   	endif
 endfunction
 
@@ -122,14 +122,14 @@ function ItemTracking(who)
 		PrintText(who, "*Estudando o local a sua volta*");
 
 		if(len(items) < 1)
-			SendSysMessage(who, "Nao ha itens para serem rastreados", 3, 660);
+			SendSysMessage(who, "Não há itens para serem rastreados", 3, 660);
 			return;
 		endif
 
 		ItemTrackGump(who, items);
 
 	else
-		SendSysMessage(who, " Voce falhou ao estudar o local ", 3, 38);
+		SendSysMessage(who, " Você falhou ao estudar o local ", 3, 38);
   	endif
 endfunction
 
@@ -183,7 +183,7 @@ function TrackGump(who, mobiles)
 	if (ifres[0] != 0)
 		var mobontrack := mobiles[ifres[0]];
 		var mobname := mobarray[ifres[0]];
-		SendSysMessage(who, "Voce agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 3, 191);
+		SendSysMessage(who, "Você agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 3, 191);
 		CreatureTrack(who, mobontrack,mobname);
 	endif
 
@@ -233,7 +233,7 @@ function ItemTrackGump(who, items)
 	endforeach
 
 	if (!temcoisa)
-		SendSysMessage(who, "Nao ha itens para serem rastreados", 3, 660);
+		SendSysMessage(who, "Não há itens para serem rastreados", 3, 660);
 		return;
 	endif
 	var ifres := GFSendGump(who, gump);	
@@ -341,9 +341,9 @@ function CreatureTrack(who, mobontrack, mobname)
 				pin.+name := RequestGump(who, "Escreva o nome dessa marca.");
 				pininfo[targmap.getpins().size()] := pin;
 				SetObjProperty(targmap, "pininfo", pininfo);
-				SendSysMessageEx(who, "Voce marcou a localizacao no mapa.", SSM_INFO);
+				SendSysMessageEx(who, "Você marcou a localizacao no mapa.", SSM_INFO);
 			else
-				SendSysMessageEx(who, "O alvo nao esta na regiao deste mapa.", SSM_INFO);
+				SendSysMessageEx(who, "O alvo não esta na regiao deste mapa.", SSM_INFO);
 			endif
 		endif
 	elseif (ifres[0] == 0)
@@ -529,7 +529,7 @@ endfunction
 function DistanceCheck(who, mobontrack)
 	var dist := MobDistance(who, mobontrack);
 	if (dist == "perdeu")
-		SendSysMessage(who, "Voce nao consegue mais identificar os rastros desse alvo", 3, 28);
+		SendSysMessage(who, "Você não consegue mais identificar os rastros desse alvo", 3, 28);
 		return 1;
 	else
 		return 0;
@@ -557,6 +557,6 @@ function BandVerify(who, mobname, mobontrack)
 	elseif (x >= 3)
 		return "Talvez o alvo esteja em bando.";
 	else
-		return "Voce tem quase certeza que nao existe um bando.";
+		return "Você tem quase certeza que não existe um bando.";
 	endif
 endfunction

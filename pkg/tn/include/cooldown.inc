@@ -1,5 +1,5 @@
 
-//se tiver passado o tempo retorna 0, se nao retorna o tempo que falta
+//se tiver passado o tempo retorna 0, se não retorna o tempo que falta
 function getCooldown(who, hability)
 
 	hability := "#"+hability;
@@ -17,7 +17,7 @@ function getCooldown(who, hability)
 
 endfunction
 	
-//verifica se ta em cooldown ainda, se tiber retorna o tempo que falta, se nao tiver seta e retorna 0
+//verifica se ta em cooldown ainda, se tiber retorna o tempo que falta, se não tiver seta e retorna 0
 function setCooldown(who, hability, time)
 	
 	hability := "#" + hability;

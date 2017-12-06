@@ -10,7 +10,7 @@ include ":attributes:attributes";
 include ":traps:traps";
 
 program UseKey(who, key)
-	SendSysMessageEx(who, "Onde voce deseja usar a chave magica?", SSM_REQUEST);
+	SendSysMessageEx(who, "Onde você deseja usar a chave magica?", SSM_REQUEST);
 	var targ := Target(who);
 	
 	if ( !targ.IsA(POLCLASS_ITEM) )
@@ -20,7 +20,7 @@ program UseKey(who, key)
 		SendSysMessageEx(who, "Esta chave so pode ser usada em portas", SSM_FAIL);
 		return 0;
 	elseif ( !GetObjProperty(targ, "time") || !GetObjProperty(targ, "level") )
-		SendSysMessageEx(who, "Isto nao parece uma porta de dungeon.", SSM_FAIL);
+		SendSysMessageEx(who, "Isto não parece uma porta de dungeon.", SSM_FAIL);
 		return 0;
 	elseif ( targ.locked == 0 )
 		SendSysMessageEx(who, "Essa porta nÃ£o esta trancada.", SSM_FAIL);
@@ -29,10 +29,10 @@ program UseKey(who, key)
 		RenameKey(who, key);
 		return 1;
 	elseif ( !KP_IsLockable(targ) )
-		SendSysMessageEx(who, "Isto nao pode ser trancado.", SSM_FAIL);
+		SendSysMessageEx(who, "Isto não pode ser trancado.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, targ) > 1 )
-		SendSysMessageEx(who, "Voce esta muito longe do alvo!", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito longe do alvo!", SSM_FAIL);
 		return;
 	endif
 	

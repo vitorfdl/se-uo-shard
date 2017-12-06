@@ -189,7 +189,7 @@ function Flee(opponent)
    endif
 endfunction
     
-//no sleep mode ele o waitfor event fica 30 secs e ele nao fica mais fazendo lookarounds o tempo todo
+//no sleep mode ele o waitfor event fica 30 secs e ele não fica mais fazendo lookarounds o tempo todo
 function sleepmode()
    var speech := GetConfigStringArray( npccfgfile, "SleepSpeech" );
    if (speech.size() > 0)
@@ -257,7 +257,7 @@ endfunction
 
 function Opendoors(me)
   foreach door in (ListItemsNearLocation(me.x, me.y, me.z, 1))
-    if  ((door.isa(POLCLASS_DOOR)) and (!door.locked)) //se nao ta trancada
+    if  ((door.isa(POLCLASS_DOOR)) and (!door.locked)) //se não ta trancada
         if ( cint(GetObjProperty(me, "ignoredoor")) == 1)
           PrintText(me, "*atravessa a porta*");
           MoveObjectToLocation(me, door.x, door.y, door.z, door.realm, MOVEOBJECT_FORCELOCATION);
@@ -291,9 +291,9 @@ function CalcPathAndMove(me, opponent, sleepdelay)
       PrintText(me, "*fatigado*");
     endif
     sleep(1);
-	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || (opponent.z != me.z && ListStaticsNearLocation(me.x, me.y, me.z, 1))) //se nao consegue correr direto
+	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || (opponent.z != me.z && ListStaticsNearLocation(me.x, me.y, me.z, 1))) //se não consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
-		if (path == error) //se nao calculou
+		if (path == error) //se não calculou
 			var flags := FP_IGNORE_MOBILES;
 			if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
 				flags := flags| FP_IGNORE_DOORS;
@@ -330,7 +330,7 @@ function CalcPathAndMove(me, opponent, sleepdelay)
 					else
 						EraseObjProperty(me, "path");
 					endif
-				else // se nao consegue chegar na coord 
+				else // se não consegue chegar na coord 
 					if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
                   print("{} tento a mais de 5 segundo".format(me.name));
 						EraseObjProperty(me, "path"); //deleta o path atual

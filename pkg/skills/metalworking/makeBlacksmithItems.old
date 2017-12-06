@@ -19,12 +19,12 @@ program use_SmithTool(who, tool)
 		return 0;
 	endif
 	if((!tool.movable) or !ReserveItem(tool))
-		SendSysMessageEx(who, "Voce nao pode usar isto.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
 		return 0;
 	endif
 	if(!tool in ListEquippedItems(who))
 		if( !(tool in EnumerateItemsInContainer(who.backpack)) )
-			SendSysMessageEx(who, "O item nao esta na sua mochila nem equipado.", SSM_FAIL);
+			SendSysMessageEx(who, "O item não esta na sua mochila nem equipado.", SSM_FAIL);
 			return 0;
 		endif
 	endif
@@ -75,7 +75,7 @@ function makeBlacksmithItems(who, what, amt, tool )
 		endif
 	endforeach
 	if(anvil_near == 0)
-		SendSysMessageEx(who, "Voce precisa estar perto de uma bigorna para forjar itens.", SSM_FAIL);
+		SendSysMessageEx(who, "Você precisa estar perto de uma bigorna para forjar itens.", SSM_FAIL);
 		return 0;
 	endif
 

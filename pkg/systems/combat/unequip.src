@@ -63,7 +63,7 @@ program unequipweapon(who, item)
 		endif
 		if (GetObjProperty(who, "movement"))
 			EraseObjproperty(who, "movement");
-			SendSysMessage(who, "Voce perdeu seu movimento especial");
+			SendSysMessage(who, "Você perdeu seu movimento especial");
 		endif
 		
 	endif

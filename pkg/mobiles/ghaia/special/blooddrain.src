@@ -30,7 +30,7 @@ program loko(params)
 			endwhile
 			who.frozen := 0;
 			if (randomint(100) < 5)
-				SendSysMessageEx(who.opponent, "Voce esta muito fraco com a perda de sangue.", SSM_FAIL);
+				SendSysMessageEx(who.opponent, "Você esta muito fraco com a perda de sangue.", SSM_FAIL);
 				TS_StartTimer(who.opponent,  "weaken", 360, 40, who, 1);
 			endif
 		endif

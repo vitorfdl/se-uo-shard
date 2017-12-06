@@ -8,7 +8,7 @@ program forja(who, item)
         var alvo := target(who);
         if (alvo.graphic == 7133)
            if (alvo.amount > 10)
-              SendSysMessage(who, "Voce pode colocar no maximo 10 toras de madeira pro vez.");
+              SendSysMessage(who, "Você pode colocar no maximo 10 toras de madeira pro vez.");
               return;
            else
               var parms := {};
@@ -19,7 +19,7 @@ program forja(who, item)
               start_script("forgestat", parms);
            endif
         else
-           SendSysMessage(who, "Esse nao e um bom combustivel!");
+           SendSysMessage(who, "Esse não e um bom combustivel!");
            return;
         endif
    else

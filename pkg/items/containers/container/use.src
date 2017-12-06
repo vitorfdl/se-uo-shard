@@ -35,7 +35,7 @@ function ContainerIsLocked(mobile, container)
 		// Nothing to worry about.
 		return 0;
 	elseif ( KP_HasKeyForLock(mobile, container) )
-		SendSysMessage(mobile, "Voce abre o container com a chave.");
+		SendSysMessage(mobile, "Você abre o container com a chave.");
 		return 0;
 	else
 		PrintTextAbovePrivate(container, "*Isto esta trancado.*", mobile);

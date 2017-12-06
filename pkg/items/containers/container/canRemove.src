@@ -15,10 +15,10 @@ program canRemove(mobile, container, item, move_type)
 		return 1;
 	elseif ( CP_RootContainerLocked(item) )
 	//	print("root locked");
-		SendSysMessage(mobile, "Voce nao pode tirar items de baus trancados.");
+		SendSysMessage(mobile, "Você não pode tirar items de baus trancados.");
 		return 0;
 	elseif ( GetProcess(CInt(GetObjProperty(mobile, "#PickPid"))) )
-		SendSysMessage(mobile, "Voce esta ocupado demais tentando roubar alguem.");
+		SendSysMessage(mobile, "Você esta ocupado demais tentando roubar alguem.");
 		return 0;
 	endif
 
@@ -41,7 +41,7 @@ program canRemove(mobile, container, item, move_type)
 			
 			if (mobile.frozen || mobile.paralyzed)
 			//	print("frozen");
-				SendSysMessage(mobile, "Voce esta paralizado.");
+				SendSysMessage(mobile, "Você esta paralizado.");
 				return 0;
 			endif
 		endif

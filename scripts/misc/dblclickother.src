@@ -20,8 +20,12 @@ function HasPDGraphic(clicked)
 	case ( clicked.graphic )
 		400:	return 1; break; // Male
 		401:	return 1; break; // Female
+		605:	return 1; break; // Male elf
+		606:	return 1; break; // Female elf
 		402:	return 1; break; // Male ghost
 		403:	return 1; break; // Female ghost
+		607:	return 1; break; // Male ghost
+		608:	return 1; break; // Female ghost
 		987:	return 1; break; // GM robe
 	endcase
 	

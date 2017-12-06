@@ -23,7 +23,7 @@ function CreateItemTemplate(item)
 		sleepms(2);
 	endforeach
 
-	//precisa por as props que nao ficam em cfgs manualmente
+	//precisa por as props que não ficam em cfgs manualmente
 	if (item.xeast != error)
 		template["xeast"] := item.xeast;
 	endif

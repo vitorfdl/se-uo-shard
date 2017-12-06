@@ -15,7 +15,7 @@ program makedungeondoor(who)
 	endif
 	
 	if (!door.IsDoor())
-		SendSysMessage(who, "Isto nao parece uma porta.");
+		SendSysMessage(who, "Isto não parece uma porta.");
 		return;
 	endif
 	

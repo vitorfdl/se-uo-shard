@@ -19,13 +19,13 @@ program cogumelo(who, item)
 	endcase
 
 	case (type)
-		"venenoso": TS_StartTimer(who, "defaultPoison", 60, 2); SendSysMessage(who, "Voce comeu um cogumelo venenoso!");
+		"venenoso": TS_StartTimer(who, "defaultPoison", 60, 2); SendSysMessage(who, "Você comeu um cogumelo venenoso!");
 	
-		"forca": TS_StartTimer(who, "strength", (360), 20);  SendSysMessage(who, "Voce se sente mais forte!");
+		"forca": TS_StartTimer(who, "strength", (360), 20);  SendSysMessage(who, "Você se sente mais forte!");
 	
 		"inteligencia": TS_StartTimer(who, "intelligence", (360), 20); SendSysMessage(who, "Seu cerebro esta fervilhando de ideias!");
 	
-		"alucinogeno": TS_StartTimer(who, "hallucination", 60, 1); SendSysMessage(who, "Voce comeu um cogumelo alucinogeno!");
+		"alucinogeno": TS_StartTimer(who, "hallucination", 60, 1); SendSysMessage(who, "Você comeu um cogumelo alucinogeno!");
 	
 	endcase
 	

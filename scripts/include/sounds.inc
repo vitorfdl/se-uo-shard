@@ -33,9 +33,9 @@ function PlayCustomSound(who, number)
    sounds[28] := array{"*Roncando*", 0x334, 0x446};
    sounds[29] := array{"*Cuspindo*", 0x335, 0x447};
    sounds[30] := array{"*Assobiando*", 0x336, 0x448};
-   sounds[31] := array{"*Yeah*", 0x337, 0x44A};
-   sounds[32] := array{"*Gritando*", 0x338, 0x41A};
-   sounds[33] := array{"**", 0x339, 0x44B};
+   sounds[32] := array{"*Yeah*", 0x337, 0x44A};
+   sounds[31] := array{"*Bocejando*", 0x338, 0x41A};
+   sounds[33] := array{"*Gritando*", 0x339, 0x44B};
 
    var sound_array := sounds[number];
    if (!sound_array) return; endif

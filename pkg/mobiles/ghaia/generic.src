@@ -200,14 +200,14 @@ function Fight(opponent, alerted := 0)
       case (ev.type)
          EVID_OPPONENTHEALED:
          SYSEVENT_DAMAGED: 
-            //se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente nao estiver acessivel
+            //se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente não estiver acessivel
             /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/
             if (ev.source && (!CheckLineOfSight(me, opponent) || !opponent))
                if ( (opponent) && RandomInt(5) == 1 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
                   opponent := ev.source;
                   SetOpponent(opponent);
                   TurnToward(opponent);
-               elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se nao tiver mais o oponent entao 100% de chance de mudar de alvo
+               elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se não tiver mais o oponent entao 100% de chance de mudar de alvo
                   opponent := ev.source;
                   SetOpponent(opponent);
                   TurnToward(opponent);

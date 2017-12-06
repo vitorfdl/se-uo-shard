@@ -17,7 +17,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	//se for projetil ok
 	if ( item.graphic == 0x1bfb || item.graphic == 0xf3f  )
 
-	else //se nao for projetil
+	else //se não for projetil
 
 		if (book.objtype == 0x3bd7 ) //mas for uma aljava com bainha
 			if ( item.usescript == ":combat:useScript/bladed" ) // pode por uma espada
@@ -30,8 +30,8 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 				endforeach
 				return 1;
 			endif			
-		else // se nao retorna
-			SendSysMessageEx(who, "Voce nao pode guardar isto na aljava.", SSM_FAIL);
+		else // se não retorna
+			SendSysMessageEx(who, "Você não pode guardar isto na aljava.", SSM_FAIL);
 			MoveItemToContainer(item, who.backpack);
 			return 0;
 		endif
@@ -43,12 +43,12 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	
 
 	if( book.movable == 0 )
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessage(who, "Cancelado.", SSM_FAIL);
 		MoveItemToContainer(item, who.backpack);
 		return 0;
 	elseif( !ReserveItem(book) || !ReserveItem(item) )
 		MoveItemToContainer(item, who.backpack);
-		SendSysMessage(who, "A Aljava esta em uso.");
+		SendSysMessage(who, "A Aljava esta em uso.", SSM_FAIL);
 		return 0;
 	else
 			return 1;

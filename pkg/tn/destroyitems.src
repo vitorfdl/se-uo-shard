@@ -31,7 +31,7 @@ program destroyitems(parms)
 	*/
 	
 	if((arma.objtype == 0x0f51) || (arma.objtype ==0x13f6) || (arma.objtype ==0x0ec2) || (arma.objtype == 0x0ec4) || (arma.objtype ==11565))
-		SendSysMessageEx(who,"Voce nao pode quebrar " + item.desc + " com isto.",SSM_FAIL);
+		SendSysMessageEx(who,"Você não pode quebrar " + item.desc + " com isto.",SSM_FAIL);
 		return 0;
 	endif
 
@@ -62,7 +62,7 @@ endfunction
 function fBreak(who,item)
 
 if(AP_GetVital(who, "Stamina") < 15)
-	SendSysMessageEx(who, "Voce esta cansado demais.",SSM_FAIL);
+	SendSysMessageEx(who, "Você esta cansado demais.",SSM_FAIL);
 	return 0;
 endif
 	var cfg := ReadConfigFile(":destroyable:destroyitems");

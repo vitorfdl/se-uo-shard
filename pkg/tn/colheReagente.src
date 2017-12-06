@@ -6,7 +6,7 @@ include ":charactercreation:habilidades";
 program colheReagente(who, item)
 
 	if (!Accessible(who, item))
-		SendSysMessage(who, "Voce nao alcanca este item.");
+		SendSysMessage(who, "Você não alcanca este item.");
 		return 1;
 	endif
 	
@@ -39,10 +39,10 @@ program colheReagente(who, item)
 	
 	
 	if (!item)
-		SendSysMessage(who, "Voce nao tem espaço na sua mochila.");
+		SendSysMessage(who, "Você não tem espaço na sua mochila.");
 		return;
 	else
-		SendSysMessage(who, "Voce colheu a planta");
+		SendSysMessage(who, "Você colheu a planta");
 		DestroyItem(item);
 	endif
 

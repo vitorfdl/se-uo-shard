@@ -60,7 +60,7 @@ program core_npcDeath(params)
 	endif
 
 		
-	//nao existe mais		
+	//não existe mais		
 	/*if (getobjProperty(corpse, "devoraralma"))
 		var necroserial := getobjProperty(corpse, "devoraralma");
 		var necro := SystemFindObjectBySerial(necroserial);
@@ -204,7 +204,7 @@ function NoLootCheck(corpse, npc_cfg)
 		sleepms(2);
 	endforeach
 	//printtextabove(corpse, "no loot check");
-	//no loot  nao destroi o corpo, so NoCorpse
+	//no loot  não destroi o corpo, so NoCorpse
 	//DestroyItem(corpse);
 	
 	return 1;

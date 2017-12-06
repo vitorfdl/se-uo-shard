@@ -49,7 +49,7 @@ program UniqueItemsMenu(player)
 					item := SystemFindObjectBySerial(input, 3);
 					if( !item )
 						GetItemsDataFile().DeleteElement(Hex(input));
-						SendSysMessage(player, "Este item nao existe mais e foi removido da lista.");	
+						SendSysMessage(player, "Este item não existe mais e foi removido da lista.");	
 					else
 						ShowItemInfo(gump, player, item);
 					endif
@@ -83,22 +83,22 @@ program UniqueItemsMenu(player)
 					sleepms(2);
 				endwhile
 				MoveObjectToLocation(player, cont.x, cont.y, cont.z, cont.realm, MOVEOBJECT_FORCELOCATION);
-				SendSysMessage(player, "Voce se teleportou para o item com sucesso.");
+				SendSysMessage(player, "Você se teleportou para o item com sucesso.");
 				return 1;
 			DESTROY_BTN:
 				RemoveItemOfTheList(item);
 				DestroyItem(item);
-				SendSysMessage(player, "Voce destruiu o item com sucesso.");
+				SendSysMessage(player, "Você destruiu o item com sucesso.");
 				return 1;
 			GET_BTN:
 				item.movable := 1;
 				MoveItemToContainer(item, player.backpack);
-				SendSysMessage(player, "Voce moveu o item para sua bag.");
+				SendSysMessage(player, "Você moveu o item para sua bag.");
 				return 1;
 			REMOVE_BTN:
 				RemoveItemOfTheList(item);
 				EraseObjProperty(item, "itemunico");
-				SendSysMessage(player, "Voce removeu o item da lista.");
+				SendSysMessage(player, "Você removeu o item da lista.");
 				return 1;
 		endcase
 	endwhile
@@ -227,7 +227,7 @@ function ShowItemInfo(byref gump, player, item)
 endfunction
 
 function AddItem(player)
-	SendSysMessage(player, "Qual item voce quer seja unico?");
+	SendSysMessage(player, "Qual item você quer seja unico?");
 	var targ := target(player);
 	if ( !targ.IsA(POLCLASS_ITEM) )
 		SendSysMessage(player, "Cancelado.");
@@ -323,7 +323,7 @@ function ClearList(player)
 		return 0;
 	endif
 	RemoveAllofTheList();
-	SendSysMessage(player, "Voce limpou a lista, mas os itens ainda possuem a prop de unicos. Normal...");
+	SendSysMessage(player, "Você limpou a lista, mas os itens ainda possuem a prop de unicos. Normal...");
 endfunction
 
 

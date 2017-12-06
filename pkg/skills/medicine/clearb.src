@@ -19,11 +19,11 @@ program UseBloodyBandage(mobile, bandage)
 	endif
 	var locinfo := GetMapInfo( targ.x, targ.y, mobile.realm );
 	if (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) > 2)
-		SendSysMessage(mobile, "Voce esta muito longe de onde deseja lavar as bandagens.");
+		SendSysMessage(mobile, "Você esta muito longe de onde deseja lavar as bandagens.");
 	elseif (/*IsCleanWater(targ)*/ IsWater(targ, locinfo))
 		while (bandage)
 			if (!Wait(mobile, 2))
-				SendSysMessage(mobile, "Voce parou de lavar as bandagens.");
+				SendSysMessage(mobile, "Você parou de lavar as bandagens.");
 				break;
 			endif
 			SubtractAmount(bandage, 1);
@@ -32,7 +32,7 @@ program UseBloodyBandage(mobile, bandage)
 			PrintText(mobile, "*lavando bandagem*");
 		endwhile
 	else
-		SendSysMessage(mobile, "Voce precisa de agua para limpar o sangue.");
+		SendSysMessage(mobile, "Você precisa de agua para limpar o sangue.");
 	endif
 endprogram
 

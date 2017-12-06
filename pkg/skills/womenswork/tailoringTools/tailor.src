@@ -13,7 +13,7 @@ program use_yarn(who, yarn)
     return;
   endif
   if(yarn.movable == 0)
-    SendSysMessageEx(who, "Voce nao pode usar isto.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
     return;
   endif
   if(!ReserveItem(yarn))
@@ -26,7 +26,7 @@ program use_yarn(who, yarn)
   endif
   var obj_type := GetObjType(use_on);
   if((obj_type < UOBJ_LOOM_START) || (obj_type > UOBJ_LOOM_END))
-    SendSysMessageEx(who, "Voce precisa de um tear.", SSM_FAIL);
+    SendSysMessageEx(who, "Você precisa de um tear.", SSM_FAIL);
   else
     MakeCloth(who, yarn);
   endif
@@ -34,7 +34,7 @@ endprogram
 
 function MakeCloth(who, yarn)
   if(!Accessible(who, yarn))
-    SendSysMessageEx(who, "Voce nao possui mais material!", SSM_FAIL);
+    SendSysMessageEx(who, "Você não possui mais material!", SSM_FAIL);
     return;
   endif
   if(yarn.amount >= 5)
@@ -43,10 +43,10 @@ function MakeCloth(who, yarn)
         var cloth := CreateItemInBackpack(who, UOBJ_CLOTH, 1);
       endif
     else
-       SendSysMessageEx(who, "Voce nao possui material suficiente para fazer o tecido", SSM_FAIL);
+       SendSysMessageEx(who, "Você não possui material suficiente para fazer o tecido", SSM_FAIL);
     endif
   else
-    SendSysMessageEx(who, "Voce nao possui material suficiente para fazer o tecido.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não possui material suficiente para fazer o tecido.", SSM_FAIL);
   endif
 endfunction
 

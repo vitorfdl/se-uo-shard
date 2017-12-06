@@ -12,20 +12,20 @@ program useMagic(who, spellname)
 
 	if (who.isClass("Mago"))
 		if (!who.weapon)
-			SendSysMEssageEx(who, "Voce nao tem um objeto magico para usar magias.", SSM_FAIL);
+			SendSysMEssageEx(who, "Você não tem um objeto magico para usar magias.", SSM_FAIL);
 			return 0;
 		endif
 
 		var spell_list := GetObjProperty(who.weapon, "spell_list");
 		if (!spell_list)
-			SendSysMEssageEx(who, "Voce nao tem um objeto magico para usar magias.", SSM_FAIL);
+			SendSysMEssageEx(who, "Você não tem um objeto magico para usar magias.", SSM_FAIL);
 			return 0;
 		endif
 
 		var cfg := ReadConfigFile(":magery:config/mage");
 		var spell := FindSpell(cfg, spellname);
 		if (!(spell in spell_list))
-			SendSysMEssageEx(who, "A magia " + spellname + " nao existe.", SSM_FAIL);
+			SendSysMEssageEx(who, "A magia " + spellname + " não existe.", SSM_FAIL);
 			return;
 		endif
 
@@ -63,7 +63,7 @@ endfunction
 // 	endforeach
 
 // 	if (!achou)
-// 		SendSysMEssageEx(who, "A magia " + spellname + " nao existe.", SSM_FAIL);
+// 		SendSysMEssageEx(who, "A magia " + spellname + " não existe.", SSM_FAIL);
 // 		return;
 // 	endif
 
@@ -135,7 +135,7 @@ endfunction
 // 	endif   
 
 // 	if ( !spellbook)
-// 		SendSysMessageEx(who, "Voce nao possui a magia " + spellname + " nos seu grimorio.", SSM_FAIL);
+// 		SendSysMessageEx(who, "Você não possui a magia " + spellname + " nos seu grimorio.", SSM_FAIL);
 // 		return;
 // 	elseif (spellbook == 2 || spellbook.objtype == 0x2253)
 // 		spellbook == 0;

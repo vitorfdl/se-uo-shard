@@ -15,7 +15,7 @@ program textcmd_possess( me )
 		sendsysmessage(me, "That is not an npc!");
 		return;
 	endif
-	if (YesNo(me, "Voce deseja ativar o ignorenpcs (mobs nao te atacam)?", "Sim.", "Nao."))
+	if (YesNo(me, "Você deseja ativar o ignorenpcs (mobs não te atacam)?", "Sim.", "Nao."))
 		SetObjProperty(me, "ignorenpcs", 1);
 	endif
 	

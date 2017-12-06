@@ -60,7 +60,7 @@ program walkOn(who, altar)
 	if (item.objtype == 0x790c)
 		var spells := GetObjProperty(item, "spellids");
 		if (runetype.SpellId in spells)
-			SendSysMessageEX(who, "Voce ja conhece essa magia", SSM_FAIL);
+			SendSysMessageEX(who, "Você ja conhece essa magia", SSM_FAIL);
 		else
 			spells.append(runetype.SpellId);
 			PrintTextPrivate(who, "*você aprendeu " +runetype.name+ "*", who, SSM_INFO);

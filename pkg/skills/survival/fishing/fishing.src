@@ -27,14 +27,14 @@ program use_FishingPole(who, fishingpole)
 		return 0;
 	endif
 	if( fishingpole.movable == 0 )
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	if( !ReserveItem(fishingpole) )
 		return 0;
 	endif
 	if( !IsFishingPoleEquipped(who, fishingpole) )
-		SendSysMessage(who, "Voce tem que equipar a vara de pescar.");
+		SendSysMessage(who, "Você tem que equipar a vara de pescar.");
 		return 0;
 	endif
 
@@ -57,9 +57,9 @@ program use_FishingPole(who, fishingpole)
 		return 0;
 	endif
 	if ((isca.objtype == 0x9980) || (isca.objtype == 0x9981) || (isca.objtype == 0x9982) || (isca.objtype == 0x9983) || (isca.objtype == 0x9984) || (isca.objtype == 0xdd7) || (isca.objtype == 0xdd6) || (isca.graphic == 0x0C82)  || (isca.graphic == 0x1CEF))
-		SendSysMessage(who, "Voce escolheu " + isca.desc + " para pescar.",FONT_NORMAL,400);
+		SendSysMessage(who, "Você escolheu " + isca.desc + " para pescar.",FONT_NORMAL,400);
 	else
-		SendSysMessage(who, "Isso nao pode ser usado de Isca.",FONT_NORMAL,38);
+		SendSysMessage(who, "Isso não pode ser usado de Isca.",FONT_NORMAL,38);
 		return 1;
 	endif
 
@@ -108,7 +108,7 @@ program use_FishingPole(who, fishingpole)
 		set_critical(0);
 		sleepms(2000);
 		if( (px != who.x) or (py != who.y) )
-			SendSysMessage(who,"Voce parou de pescar.");
+			SendSysMessage(who,"Você parou de pescar.");
 			return 0;
 		endif
 
@@ -129,7 +129,7 @@ program use_FishingPole(who, fishingpole)
 				difficulty := GetHarvestDifficulty("fish", targetsquare.x, targetsquare.y, locinfo.landtile, who.realm);
 			endif
 			if( difficulty == error )
-				SendSysMessage(who, "Eles nao parecem estar mordendo a isca hoje.",FONT_NORMAL,0);
+				SendSysMessage(who, "Eles não parecem estar mordendo a isca hoje.",FONT_NORMAL,0);
 				CreateItemInBackpack(who, iscausada, 1);
 				return 0;
 			endif
@@ -154,18 +154,18 @@ program use_FishingPole(who, fishingpole)
 						var peixemorto := CreateItemAtLocation(who.x, who.y, who.z, 0x3B0C, 1, who.realm);
 						var newname := pretfish + " morto";
 						Setname(peixemorto, newname );
-						SendSysMessage(who,"Voce pescou um(a) belo(a) " + pretfish + " comido por outro peixe." ,FONT_NORMAL,66);
+						SendSysMessage(who,"Você pescou um(a) belo(a) " + pretfish + " comido por outro peixe." ,FONT_NORMAL,66);
 						return 1;
 					endif
 					var peixecriado := CreateItemAtLocation(who.x, who.y, who.z, peixepego, 1, who.realm);
 					var newname := pretfish + " [ Peso: " + fishcatch + " ]";
 					Setname(peixecriado, newname );
-					SendSysMessage(who,"Voce pescou um(a) belo(a) " + pretfish + " ." ,FONT_NORMAL,66);
+					SendSysMessage(who,"Você pescou um(a) belo(a) " + pretfish + " ." ,FONT_NORMAL,66);
 					return 1;
 				endif
 				if (fishcatch == 0)
 					PrintTextAbove(who, "*linha estoura*",FONT_NORMAL,36);
-					SendSysMessage(who,"A linha nao aguentou toda a tensao e o peixe escapou." ,FONT_NORMAL,36);
+					SendSysMessage(who,"A linha não aguentou toda a tensao e o peixe escapou." ,FONT_NORMAL,36);
 					return 1;
 				endif		
 				
@@ -174,7 +174,7 @@ program use_FishingPole(who, fishingpole)
 				if( RandomInt(100) == 0 )
 					CriticalFailure(who, targetsquare);
 				else
-					SendSysMessage(who, "Eles nao parecem estar mordendo a isca hoje.",FONT_NORMAL,0);
+					SendSysMessage(who, "Eles não parecem estar mordendo a isca hoje.",FONT_NORMAL,0);
 					CreateItemInBackpack(who, iscausada, 1);
 				endif
 			endif
@@ -197,21 +197,21 @@ function OtherChances(who, targetsquare, fishingpole)
 		if(currentskill >= 10)
 			var bootarray := array(0x170b, 0x1711, 0x170f, 0x170d);
 			fishtype := bootarray[RandomInt(4)+ 1];
-			SendSysMessage(who, "Voce achou um calcado velho!",FONT_NORMAL,0);
+			SendSysMessage(who, "Você achou um calcado velho!",FONT_NORMAL,0);
 		else
 			return 0;
 		endif
 	elseif(thisone <= 99)
 		if(RandomInt(currentskill) >= 16)
 			fishtype := "level" +(RandomInt(2)+ 1)+ "map";
-			SendSysMessage(who, "Voce achou um mapa do tesouro!",FONT_NORMAL,0);
+			SendSysMessage(who, "Você achou um mapa do tesouro!",FONT_NORMAL,0);
 		else
 			return 0;
 		endif
 	else
 		if(currentskill >= 19)
 			fishtype := "sosbottle";
-			SendSysMessage(who, "Voce achou uma garrafa!",FONT_NORMAL,0);
+			SendSysMessage(who, "Você achou uma garrafa!",FONT_NORMAL,0);
 		else
 			return 0;
 		endif
@@ -249,7 +249,7 @@ function CriticalFailure(who, targetsquare)
 
 	var it := CreateNpcFromTemplate("seaserpent", targetsquare.x, targetsquare.y, targetsquare.z, 0, who.realm);
 	if(it)
-		SendSysMessage(who, "Oops, isto nao parece um peixe!");
+		SendSysMessage(who, "Oops, isto não parece um peixe!");
 		var ev := {};
 		ev.+type := SYSEVENT_ENGAGED;
 		ev.+source := who;

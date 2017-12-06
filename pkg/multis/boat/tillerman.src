@@ -17,15 +17,15 @@ program renameboat(you, tillerman)
 		if (destname)
 			foreach dest in destinos
 				if (destname == (dest.name + " [" + dest.cost + " moedas]"))
-					SendSysMessage(you, "Voce deve pagar " + dest.cost + " moedas por essa viagem.");
+					SendSysMessage(you, "Você deve pagar " + dest.cost + " moedas por essa viagem.");
 					var moedas := target(you);
 					if ( moedas.objtype == 47715)
 						if (moedas.amount >= cint(dest.cost))
 							if (!SubtractAmount(moedas, cint(dest.cost)))
-								PrintTextAbove(tillerman, "Voce nao tem moedas necessarias.");
+								PrintTextAbove(tillerman, "Você não tem moedas necessarias.");
 							endif
 						else
-							PrintTextAbove(tillerman, "Voce nao tem moedas necessarias.");
+							PrintTextAbove(tillerman, "Você não tem moedas necessarias.");
 							return;
 						endif
 					else

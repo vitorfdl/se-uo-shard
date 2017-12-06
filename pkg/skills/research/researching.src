@@ -30,7 +30,7 @@ program skill_armslore(who)
 			var entry := cfg[item.objtype];
 			if (entry)
 				SetObjProperty(item, "pocaoname", entry.Type);
-				SendSysMessageEx(who, "Voce identificou o liquido do frasco: " + entry.Type, SSM_INFO);
+				SendSysMessageEx(who, "Você identificou o liquido do frasco: " + entry.Type, SSM_INFO);
 			endif
 			cfg := 0;
 			entry := 0;
@@ -47,7 +47,7 @@ program skill_armslore(who)
 			SetName(item, item.desc);
 			AddAmount(item, backup-1);
 		else
-			SendSysMessageEx(who, "Voce nao esta certo..", SSM_FAIL);
+			SendSysMessageEx(who, "Você não esta certo..", SSM_FAIL);
 		endif
 	else
 		PrintText(who, "*analisando um item*");
@@ -83,7 +83,7 @@ program skill_armslore(who)
 				endforeach
 				
 			
-				SendSysMessageEx(who, "Esta semente nao brota no :" + seed_estacao, SSM_INFO);
+				SendSysMessageEx(who, "Esta semente não brota no :" + seed_estacao, SSM_INFO);
 				SendSysMessageEx(who, "Parece exigir habilidades em: " + seed_habilidade, SSM_INFO);
 				SendSysMessageEx(who, "Sua dificuldade e: " + seed_difficulty, SSM_INFO);
 			endif
@@ -98,7 +98,7 @@ program skill_armslore(who)
 					setobjproperty(item, "cargas", cargas);
 				endif
 				
-				SendSysMessageEx(who, "Voce identificou encantamentos nesse item.", SSM_INFO);
+				SendSysMessageEx(who, "Você identificou encantamentos nesse item.", SSM_INFO);
 				var whos := GetObjProperty(item, "magicwho");
 				if (whos == error)
 					whos := array;
@@ -122,13 +122,13 @@ program skill_armslore(who)
 				var craftproperty := GetObjProperty(item, "craftproperty");
 				var properties := cint(GetObjProperty(item, "identificado"));
 				if (properties >= craftproperty.bonus.size())
-					SendSysMessageEx(who, "Voce ja identificou o maximo de propriedades deste item.", SSM_FAIL);
+					SendSysMessageEx(who, "Você ja identificou o maximo de propriedades deste item.", SSM_FAIL);
 					return;
 				elseif(properties == 1 && AP_GetSkill(who, PESQUISA) < 40)
-					SendSysMessageEx(who, "Este item parece muito complexo para voce.", SSM_FAIL);
+					SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
 					return;	
 				elseif(properties == 2 && AP_GetSkill(who, PESQUISA) < 80)
-					SendSysMessageEx(who, "Este item parece muito complexo para voce.", SSM_FAIL);
+					SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
 					return;	
 				endif		
 				
@@ -138,13 +138,13 @@ program skill_armslore(who)
 				
 				properties+=1;
 				SetObjProperty(item, "identificado", properties);
-				SendSysMessageEx(who, "Voce identificou novas propriedades para artificie neste item.", SSM_INFO);
+				SendSysMessageEx(who, "Você identificou novas propriedades para artificie neste item.", SSM_INFO);
 				SetName(item, item.desc);
 			else
-				SendSysMessageEx(who, "Este item nao possui propriedades magicas a serem ativadas.", SSM_INFO);
+				SendSysMessageEx(who, "Este item não possui propriedades magicas a serem ativadas.", SSM_INFO);
 			endif
 		else
-			SendSysMessageEx(who, "Voce nao descobriu nada.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não descobriu nada.", SSM_FAIL);
 		endif
 
 	endif

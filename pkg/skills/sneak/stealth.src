@@ -16,7 +16,7 @@ program skill_Stealth( who )
 	endif
 
 	// if (!temHabilidade(who, "Movimento Acolchoado"))
-	// 	SendSysMessageEx(who, "Voce nao consegue se mover furtivamente!", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Você não consegue se mover furtivamente!", SSM_FAIL);
 	// 	return 0;		
 	// endif
 	
@@ -51,14 +51,14 @@ program skill_Stealth( who )
 		if (temHabilidade(who, "Furtividade Aprimorada"))
 			var bonus := cint(who.stealthsteps * 0.5);
 			who.stealthsteps := who.stealthsteps + bonus;
-			SendSysMessageEx(who, "Voce ganhou " + bonus + " passos por sua furtividade aprimorada", SSM_INFO);
+			SendSysMessageEx(who, "Você ganhou " + bonus + " passos por sua furtividade aprimorada", SSM_INFO);
 		endif
 		*/
-		SendSysMessageEx(who, "Voce esta se movendo silenciosamente.", SSM_INFO);
+		SendSysMessageEx(who, "Você esta se movendo silenciosamente.", SSM_INFO);
 		SetObjProperty(who, "#steathsteps", atual_steps + 1);
 		return 1;
 	elseif (check >= diff-5)
-		SendSysMessageEx(who, "Voce falhou mas se manteve escondido.", SSM_FAIL);
+		SendSysMessageEx(who, "Você falhou mas se manteve escondido.", SSM_FAIL);
 		return 0;
 	else
 		if (who.hidden)

@@ -50,8 +50,8 @@ function SetEquipmentMods(who, item)
 	var item_e := itemdesc[item.objtype];
 
 	var restrict := Cint(item_e.GenderSpecific);
-	if((restrict == 1) and (CheckGender(who) == 2))
-		SendSysMessage(who, "Apenas mulheres podem vestir isto.");
+	if((restrict == 1) and (CheckGender(who) != 2))
+		SendSysMessageEx(who, "Apenas mulheres podem vestir isto.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -103,7 +103,7 @@ function SetEquipmentMods(who, item)
 		elseif (mod == "stammod")
 			SetObjProperty(who, "#stammod", Cint(GetObjProperty(who, "#stammod")) + Cint( mods["stammod"] ) );
 			RecalcVitals(who);
-		else // se nao eh nada acima eh skillmod ou error :p
+		else // se não eh nada acima eh skillmod ou error :p
 			AP_ModifySkillMod(who, mod, Cint(mods[mod]));
 		endif
 	endforeach

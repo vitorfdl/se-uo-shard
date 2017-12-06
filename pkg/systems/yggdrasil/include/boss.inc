@@ -314,7 +314,7 @@ function CreateBossStructGump(who, byref boss)
 				if (!retitem)
 					SendSysMessageEx(who, "erro: " + retitem);
 				endif
-				SendSysMessageEx(who, "Voce criou o item na sua mochila."); 
+				SendSysMessageEx(who, "Você criou o item na sua mochila."); 
 			elseif (opt == "Alterar Chance")
 				boss.loot[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
 			endif 
@@ -579,7 +579,7 @@ function CreateBoss(boss, x, y, z, realm)
 	var npc := CreateNpcFromTemplate(boss.npctemplate, x, y, z, 0 , realm);
 	if (npc == error)
     //print("createboss " + npc + " " + boss.npctemplate);
-		return error{"errortext":="Nao foi possivel criar o boss em x " + x + " y " + y + " z  " + z};
+		return error{"errortext":="Não foi possivel criar o boss em x " + x + " y " + y + " z  " + z};
 	endif
 	
 	SetBoss(npc, boss);
@@ -593,7 +593,7 @@ function ConfigureCombatEvent(who, event := 0)
 		event.+name := RequestGump(who, "Digite o nome desse evento de combate", "Ex.: Ataque Multiplo", "", 1);
 		event.+cd := cint(RequestGump(who, "De quanto em quanto tempo o npc realiza esse evento?", "", "", 1));
 		event.+onlybloodied := cint(YesNo(who, "O NPC so faz esse evento se tiver bloodied?"));
-		event.+dist := cint(RequestGump(who, "Qual a distancia que o npc precisa estar do alvo?", "0 para nao checar distancia", "", 1));
+		event.+dist := cint(RequestGump(who, "Qual a distancia que o npc precisa estar do alvo?", "0 para não checar distancia", "", 1));
 
 		event.+steps := array;
 	endif
@@ -771,7 +771,7 @@ function CombatEventsOptions(who, state)
 			var vitals := CheckBoxGump(who, 230, 180, "Qual tipo de vital sera afetado pelo dano?", array{"Stam", "Hits", "Mana"});
 			state.+vitals := vitals;
 		elseif ( opt == "Create Items")
-			SendSysMessage(who, "Nao implementado");
+			SendSysMessage(who, "Não implementado");
 		elseif (opt == "Summon Npcs")
         	        state.+amount := Cint(RequestGump(who, "Quantos npcs vao ser spawnados:", "", "", 1));
 	                var loc := RequestGump(who, "Digite o x y z onde eles vao aparecer:", "Escreva 6 6 6 se for para aparecer onde o boss esta", "", 1);
@@ -784,7 +784,7 @@ function CombatEventsOptions(who, state)
 					state.+tempo := Cint(RequestGump(who, "Coloque o tempo de vida do monstro(2 minutos default):", "", "", 1));
 
 		elseif (opt == "Custom HitScript")
-			SendSysMessage(who, "Nao implementado");
+			SendSysMessage(who, "Não implementado");
 		endif
 		return state;
 endfunction

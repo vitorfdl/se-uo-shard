@@ -10,7 +10,7 @@ include ":charactercreation:characters";
 program start_skill(who, skillname)
 
 	if (who.dead)
-		SendSysMessage(who, "Voce esta morto e nao pode fazer isto.");
+		SendSysMessage(who, "Você esta morto e não pode fazer isto.");
 		return;
 	endif
 
@@ -18,7 +18,7 @@ program start_skill(who, skillname)
 	SetObjProperty(who, "delayskill", ReadGameClock() + 5);
 	if(delay)
 		if(delay > ReadGameClock())
-			SendSysMessage(who, "Voce ainda esta fazendo outra coisa.");
+			SendSysMessage(who, "Você ainda esta fazendo outra coisa.");
 			return;
 		endif
 	endif
@@ -48,9 +48,9 @@ program start_skill(who, skillname)
 			start_script( script, who );
 		endif
 	//else
-	//	SendSysMessage(who, "Voce nao possui essa skill.");
+	//	SendSysMessage(who, "Você não possui essa skill.");
 	//endif
   else
-	SendSysMessage(who, "Essa skill nao existe.");
+	SendSysMessage(who, "Essa skill não existe.");
   endif
 endprogram

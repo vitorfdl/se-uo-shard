@@ -19,14 +19,14 @@ var resource_data_file := DFOpenDataFile("MiscResources", DF_CREATE);
 
 program SandMining(who, scoop)
 	
-	SendSysMessage(who, "Onde voce deseja minerar pedras?");
+	SendSysMessage(who, "Onde você deseja minerar pedras?");
 	var targ := TargetCoordinates(who);
 	
 	if ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 2 )
 		SendSysMessage(who, "Muito longe.");
 		return;
 	elseif ( !CanMine(targ, "Stone") )
-		SendSysMessage(who, "Voce nao pode minerar pedras aqui.");
+		SendSysMessage(who, "Você não pode minerar pedras aqui.");
 		return;
 	endif
 	
@@ -45,7 +45,7 @@ program SandMining(who, scoop)
 		endif
 		sleep(3);
 	endfor
-	SendSysMessage(who, "Voce parou de minerar.");
+	SendSysMessage(who, "Você parou de minerar.");
 endprogram
 
 function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
@@ -66,7 +66,7 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	var resource_amount := ResourceAmount( resource_type, location_elem );
 		
 	if (resource_amount <= 0)
-		SendSysMessage(who, "Parece nao existir pedra utilizavel por aqui.");
+		SendSysMessage(who, "Parece não existir pedra utilizavel por aqui.");
 		return 0;
 	endif
 	
@@ -76,10 +76,10 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, BLOCK_OF_STONE, 1);
-		SendSysMessage(who, "Voce minerou um bloco de pedra.");
+		SendSysMessage(who, "Você minerou um bloco de pedra.");
 		return 1;
 	else
-		SendSysMessage(who, "Voce e incapaz de minerar pedras.");
+		SendSysMessage(who, "Você e incapaz de minerar pedras.");
 		return 0;
 	endif
 endfunction

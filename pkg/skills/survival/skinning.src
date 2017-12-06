@@ -27,27 +27,27 @@ program skinning(parms)
 		var equippedleft := GetEquipmentByLayer(who, 0x02);
 		var twohanded := Cint(cfg[equippedleft.objtype].TwoHanded);
 		if (equippedright || equippedleft || twohanded)
-			SendSysMessage(who, "Voce precisa das duas maos livres!");
+			SendSysMessage(who, "Você precisa das duas maos livres!");
 			return 0;
 		endif
 	endif
 
 	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessage(who, "Voce nao pode fazer cortar o corpo montado.");
+		SendSysMessage(who, "Você não pode fazer cortar o corpo montado.");
 		return 0;
 	endif
 
 	if((!Accessible(who, cadaver)) || (!CheckLineOfSight(who, cadaver)))
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return;
 	endif
 	if(Distance(who, cadaver) > 2)
-		SendSysMessage(who, "Voce nao esta perto o bastante do alvo.");
+		SendSysMessage(who, "Você não esta perto o bastante do alvo.");
 		return;
 	endif
 	detach();
 	if(GetObjProperty(cadaver, "cut") == "1")
-		SendSysMessage( who, "Voce nao pode pegar mais coisas desse corpo." );
+		SendSysMessage( who, "Você não pode pegar mais coisas desse corpo." );
 		foreach thing in EnumerateItemsInContainer(cadaver)
 			MoveObjectToLocation(thing, cadaver.x, cadaver.y, cadaver.z, cadaver.realm, MOVEOBJECT_FORCELOCATION);
 		endforeach
@@ -57,7 +57,7 @@ program skinning(parms)
 
 	elseif((GetObjProperty(cadaver,"npctemplate")== error) && (GetObjProperty(cadaver, "morto")!=1))
 		if (FindAccount(who.acctname).getprop("nota") == 2 || cadaver.ownerserial in GetObjProperty(who,"PodeMatar")) 
-			if (YesNo(who, "Voce deseja mesmo matar o alvo?", "Sim: o alvo morrera e voce perdera 1 DP permanentemente.", "Nao: nenhuma consequencia.")) //quer matar mesmo
+			if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo morrera e você perdera 1 DP permanentemente.", "Nao: nenhuma consequencia.")) //quer matar mesmo
 				DesmembreCorpse(cadaver);
 				if (!(cadaver.ownerserial in GetObjProperty(who,"PodeMatar"))) //retira 1 dp
 					var dpmod := cint(GetObjProperty(who, "dpmod"));
@@ -85,7 +85,7 @@ program skinning(parms)
 		SetObjProperty(cadaver, "morto",1);
 		if(cadaver.corpsetype == 223)
 			CreateItemInContainer(cadaver, 0x9f1, 2);
-			SendSysMessage(who, "Voce colocou os itens no corpo.");
+			SendSysMessage(who, "Você colocou os itens no corpo.");
 			MakeBleed(cadaver);
 			return;
 		endif

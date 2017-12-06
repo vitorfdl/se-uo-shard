@@ -489,7 +489,7 @@ function DoTreasureList(who, input)
 				if (!retitem)
 					SendSysMessageEx(who, "erro: " + retitem);
 				endif
-				SendSysMessageEx(who, "Voce criou o item na sua mochila."); 
+				SendSysMessageEx(who, "Você criou o item na sua mochila."); 
 			elseif (opt == "Alterar Chance")
 				treasure.loots[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
             endif 

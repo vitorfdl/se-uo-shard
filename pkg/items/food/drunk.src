@@ -50,10 +50,10 @@ program drunk (character)
 
 			//some sysmessages to inform the character of when they feel better
 			case (drunkness)
-				4:	SendSysmessage (character, "Voce se sente sobrio.", FONT_NORMAL, 90);
-				8:	SendSysmessage (character, "Voce nao se sente mais bebado.", FONT_NORMAL, 90);
-				12:	SendSysmessage (character, "Voce se sente menos bebado.", FONT_NORMAL, 90);
-				16:	SendSysmessage (character, "Voce se sente melhor.", FONT_NORMAL, 90);
+				4:	SendSysmessage (character, "Você se sente sobrio.", FONT_NORMAL, 90);
+				8:	SendSysmessage (character, "Você não se sente mais bebado.", FONT_NORMAL, 90);
+				12:	SendSysmessage (character, "Você se sente menos bebado.", FONT_NORMAL, 90);
+				16:	SendSysmessage (character, "Você se sente melhor.", FONT_NORMAL, 90);
 			endcase;
 		else
 			drunkness := 0;
@@ -127,7 +127,7 @@ function do_drunk_stuff ( character, drunkness )
 		sleep(3);
 		if ( GetEquipmentByLayer( character, 25 ) )
 			Dismount (character, 0);
-			SendSysmessage (character, "Voce caiu do cavalo.", FONT_NORMAL, 90);
+			SendSysmessage (character, "Você caiu do cavalo.", FONT_NORMAL, 90);
 		else
 			PerformAction( character, ACTION_FALL );
 		endif

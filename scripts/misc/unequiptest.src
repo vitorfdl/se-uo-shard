@@ -8,7 +8,7 @@ program UnequipTest(mobile, item)
 	var retval := 1;
 
 	if ( (mobile.frozen) || (mobile.paralyzed))
-		SendSysMessage(mobile, "Voce esta incapaz de se mover para desequipar isso.");
+		SendSysMessage(mobile, "Você esta incapaz de se mover para desequipar isso.");
 		retval := 0;
 	elseif ("cursed" in (GetObjProperty(item, "equip")))
 		retval := 0;
@@ -17,7 +17,7 @@ program UnequipTest(mobile, item)
 	if (mobile.hidden)
 		var zones := CS_GetArmorZone(item);
 		if ("Body" IN zones || "Arms" IN zones || "Legs/feet" IN zones)
-			SendSysMessage(mobile, "Voce apareceu ao colocar "+item.desc+".");
+			SendSysMessage(mobile, "Você apareceu ao colocar "+item.desc+".");
 			mobile.hidden := 0;
 			PrintText(mobile, "*aparece*");
 		endif

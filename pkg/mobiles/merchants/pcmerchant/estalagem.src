@@ -31,7 +31,7 @@ program MerchantMenu(params)
 
 	if (player.hidden)
 		player.hidden := 0;
-		SendSysMessageEx (player, "Voce se revelou ao mercador.", SSM_FAIL);
+		SendSysMessageEx (player, "Você se revelou ao mercador.", SSM_FAIL);
 	endif
 
 	var gump := GFCreateGump(0, 0);
@@ -155,7 +155,7 @@ program MerchantMenu(params)
 				bank_region := CP_DEFAULT_AREA;
 			endif
 			if ( (!getgoldpayment(player, 100)) )
-				SendSysMEssageEx(player, "Voce nao tem moedas o suficiente.", SSM_FAIL);
+				SendSysMEssageEx(player, "Você não tem moedas o suficiente.", SSM_FAIL);
 			else
 				var lockid := AllocLockId();
 				var key := CreateItemInBackpack( player, "ironkey", 1 );
@@ -192,7 +192,7 @@ program MerchantMenu(params)
 		quartos[meuquarto].+alert := 0;
 		quartos[meuquarto].data := polcore().systime;
 		setobjproperty(npc, "quartos", quartos);
-		SendSysMessageEx(player, "Voce pagou o aluguel para a proxima semana.");
+		SendSysMessageEx(player, "Você pagou o aluguel para a proxima semana.");
 
 	elseif (input[0] == 700) //adicionar na global
 		var innkeepers := getglobalproperty("InnKeeper");
@@ -218,15 +218,15 @@ program MerchantMenu(params)
 		SetObjProperty(npc, "confiscados", confiscados);
 		if (mypack != error)
 			MoveItemToContainer( mypack, player.backpack);
-			SendSysMessageEx(player, "Voce recebe seus objetos de volta.",SSM_INFO);
+			SendSysMessageEx(player, "Você recebe seus objetos de volta.",SSM_INFO);
 		else
-			SendSysMessageEx(player, "Algo deu errado, voce nao recebe seus objetos de volta.",SSM_FAIL);
+			SendSysMessageEx(player, "Algo deu errado, você não recebe seus objetos de volta.",SSM_FAIL);
 		endif
 	
 	elseif (input[0] < 100 && input[0] >= 1) //alugar quarto
 		
 		if (souInquilino)
-			SendSysMEssageEx(player, "Voce ja tem um quarto.");
+			SendSysMEssageEx(player, "Você ja tem um quarto.");
 			return 1;
 		endif
 		
@@ -291,10 +291,10 @@ program MerchantMenu(params)
 			endif
 		endif
 		
-		var yes := yesNo(player, "Voce deseja alugar esse quarto por " +  quartos[input[0]].custo +" moedas");
+		var yes := yesNo(player, "Você deseja alugar esse quarto por " +  quartos[input[0]].custo +" moedas");
 		if (yes)
 			if ( !getgoldpayment(player, cint(quartos[input[0]].custo)) )
-				SendSysMessageEx(player, "Voce nao tem moedas suficiente para pagar o aluguel.", SSM_FAIL);
+				SendSysMessageEx(player, "Você não tem moedas suficiente para pagar o aluguel.", SSM_FAIL);
 			else //cria a chave
 				quartos[input[0]].inquilino := player.serial;
 				quartos[input[0]].data := polcore().systime;
@@ -320,15 +320,15 @@ function getgoldpayment(player, amount)
 			SendSysMessage(player, "Cancelado.");
 			return 0;
 		elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-			SendSysMessage(player, "Nao esta na sua bolsa.");
+			SendSysMessage(player, "Não esta na sua bolsa.");
 		elseif ( GetObjProperty(targ, "stealed") )
 			SendSysMessage(player, "Objeto foi roubado!");
 		elseif ( targ.objtype == MOEDAS )
 			if ( !ReserveItem(targ) )
-				SendSysMessage(player, "Voce nao pode pagar com isto.");
+				SendSysMessage(player, "Você não pode pagar com isto.");
 			else
 				if (targ.amount < amount)
-					SendSysMessage(player, "Voce nao pode pagar com isto.");
+					SendSysMessage(player, "Você não pode pagar com isto.");
 				else
 					SubtractAmount(targ, amount);
 					pay := 1;
@@ -336,7 +336,7 @@ function getgoldpayment(player, amount)
 				endif
 			endif
 		else
-			SendSysMessage(player, "Voce deve indicar moedas de cobre.");
+			SendSysMessage(player, "Você deve indicar moedas de cobre.");
 		endif
 	dowhile ( !pay );
 	return pay;

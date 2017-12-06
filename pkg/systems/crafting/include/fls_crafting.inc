@@ -128,7 +128,7 @@ function MaterialSelection(who, type, chk)
 		name := type;
 	endif
 
- 	SendSysMessageEx(who, "Escolha o "+lower(name)+" que voce deseja trabalhar.");
+ 	SendSysMessageEx(who, "Escolha o "+lower(name)+" que você deseja trabalhar.");
 	var material := Target(who);
 
 	if(!material)
@@ -137,13 +137,13 @@ function MaterialSelection(who, type, chk)
 	endif
 	
 	if(material.container.serial != who.backpack.serial)
-		SendSysMessage(who, "O material nao esta na sua mochila.");
+		SendSysMessageEx(who, "O material não esta na sua mochila.");
 		return 0;
 	endif
 	
 	if( (!Accessible(who, material)) || (Distance(who, material) > 2)
        || (material.movable == 0) || (!ReserveItem(material)))
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	
@@ -159,7 +159,7 @@ function MaterialSelection(who, type, chk)
 	endif
 	
 	// if(!canUseMaterial(who, materialobjtype, craft_skill))
-	// 	SendSysMessage(who, "Voce nao possui conhecimento suficiente para fazer algo com isso.");
+	// 	SendSysMessageEx(who, "Você não possui conhecimento suficiente para fazer algo com isso.");
 	// 	return 0;
 	// endif
 	
@@ -170,7 +170,7 @@ function MaterialSelection(who, type, chk)
 	endif
 
 	if(materialchk == 0)
-	   SendSysMessage(who, "Esse nao e o material certo.");
+	   SendSysMessageEx(who, "Esse não e o material certo.");
 	   return 0;
 	endif
 	
@@ -216,13 +216,13 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "ossodemonio"} || thing["monsterpart"])
 			var ret := MaterialSelection(who, thing, 0);
 			if (!ret)
-				SendSysMessageEx(who, "Voce nao possui os materiais necessarios.", SSM_FAIL);
+				SendSysMessageEx(who, "Você não possui os materiais necessarios.", SSM_FAIL);
 				return OUT_OF_MATERIALS;
 			elseif (ret[1].amount < materials[thing] )
-            SendSysMessageEx(who, "Voce nao possui os materiais necessarios." , SSM_FAIL);
+            SendSysMessageEx(who, "Você não possui os materiais necessarios." , SSM_FAIL);
             return OUT_OF_MATERIALS;			
 			elseif (thing == "pontaflecha" && cint(GetObjProperty(ret[1], "material")) != recipe.arrowtype)
-            SendSysMessageEx(who, "Voce nao pode fabricar estas flechas com a ponta escolhida." , SSM_FAIL);
+            SendSysMessageEx(who, "Você não pode fabricar estas flechas com a ponta escolhida." , SSM_FAIL);
             return OUT_OF_MATERIALS;
          else
             targ_materials[ret[1].objtype] := materials[thing];
@@ -242,7 +242,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 		endif
 
       if ( targ_materials[thing] < (materials[thing] + more))
-         SendSysMessageEx(who, "Voce nao possui os materiais necessarios." , SSM_FAIL);
+         SendSysMessageEx(who, "Você não possui os materiais necessarios." , SSM_FAIL);
          return OUT_OF_MATERIALS;
       else
          targ_materials[thing] := materials[thing];
@@ -258,7 +258,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 	while (counter < amt)
 		counter := counter + 1;
 		if ( (who.x != initialX) || (who.y != initialY) )
-			SendSysMessageEx(who, "Voce parou de se concentrar no que estava fazendo.", SSM_FAIL);
+			SendSysMessageEx(who, "Você parou de se concentrar no que estava fazendo.", SSM_FAIL);
 			return 1;
 		endif
 
@@ -274,7 +274,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
          if (req_found)
             found[group] := req_found;
          else 
-			   SendSysMessageEx(who, "Voce precisa estar perto de um {} para fazer isso.".format(group), SSM_FAIL);
+			   SendSysMessageEx(who, "Você precisa estar perto de um {} para fazer isso.".format(group), SSM_FAIL);
             return 1;
          endif
          sleepms(2);
@@ -319,18 +319,18 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 		var check := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, craft_skill);
 		if(check > recipe.difficulty || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials, 1+more))
-				SendSysMessageEx(who, "Voce nao possui todos os materiais.", SSM_FAIL);
+				SendSysMessageEx(who, "Você não possui todos os materiais.", SSM_FAIL);
 				return theitems;
 			endif
 			theitem := CreateItem(who, recipe.objtype, more);
 			if(!theitem)
-				SendSysMessageEx(who, "Voce nao tem espaco suficiente na sua mochila!", SSM_FAIL);
+				SendSysMessageEx(who, "Você não tem espaço suficiente na sua mochila!", SSM_FAIL);
 				return theitems;
 			endif
 			// CheckToolWear(who, tool, craft_skill);
 			theitem.movable := 1;
 
-			//passando a cor pra materiais coloridos que nao tem Id proprio (como madeira)
+			//passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
 			// AddMaterialMod(who, theitem, choosed_material, material_color);
 			// CraftExceptional(who, theitem, craft_skill);
 			foreach key in (material_cprops.Keys())
@@ -340,7 +340,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 
 			ExpGain(who, recipe.difficulty, check);
 			who.SetAchievement("craft_".format(lower(craft_skill)), 1);
-			SendSysMessageEx(who, "Voce criou o item o colocou na mochila.", SSM_INFO);
+			SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
 		
 			// TODO: Gravar feitos para talentos
 			if (theitem.isa(POLCLASS_WEAPON) || theitem.isa(POLCLASS_ARMOR))	
@@ -363,7 +363,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			theitems.append( theitem);
 		else
 			SubtractMaterial(who, targ_materials, 0.5); //consome metade do material
-			SendSysMessageEx(who, "Voce falhou ao fazer o item e perdeu material." , SSM_FAIL);
+			SendSysMessageEx(who, "Você falhou ao fazer o item e perdeu material." , SSM_FAIL);
 			//return 0;
 		endif
 		sleepms(100);
@@ -376,26 +376,26 @@ endfunction
 
 function SubtractMaterial(who, targ_materials, amountMod)
 	foreach thing in (targ_materials.keys() )
-		//sendsysmessage(who, " materiais antes " + thing + " " +  targ_materials[thing] );
+		//sendsysmessageEx(who, " materiais antes " + thing + " " +  targ_materials[thing] );
 		targ_materials[thing] := Cint( cint(targ_materials[thing])*amountMod);
 		if (targ_materials[thing] == 0 )
 			targ_materials[thing] := 1;
 		endif
       sleepms(2);
-		//sendsysmessage(who, " materiais depois " + thing + " " +  targ_materials[thing] );
+		//sendsysmessageEx(who, " materiais depois " + thing + " " +  targ_materials[thing] );
 	endforeach
 
-	//sendsysmessage(who, " targmaterial " + targ_materials.keys() );
+	//sendsysmessageEx(who, " targmaterial " + targ_materials.keys() );
 
 	//no loop anterior procurou os materiais, agora consome.
 	foreach thing in (targ_materials.keys())
 	      foreach item in (EnumerateItemsInContainer(who.backpack))
 				if (cint(item.objtype) == thing)
 					if (item.amount >= targ_materials[thing] )
-						//sendsysmessage(who, " " + item + " " + cint(targ_materials[thing]) + " " + thing);
+						//sendsysmessageEx(who, " " + item + " " + cint(targ_materials[thing]) + " " + thing);
 						var chk := SubtractAmount(item, cint(targ_materials[thing]));
 						if (!chk )
-							SendSysMessage(who, "chk " + chk);
+							SendSysMessageEx(who, "chk " + chk);
 							return 0;
 						endif
 						targ_materials[thing] := 0;
@@ -442,13 +442,13 @@ endfunction
  function AddItemDescription(who, item)
 	var repeating := 1;
 	var str;
-	SendSysMessage(who, "Utilize apenas 3 linhas do gump.");
+	SendSysMessageEx(who, "Utilize apenas 3 linhas do gump.");
 	while (repeating)
 		str := SmallRequestGump(who, "Descreva o item", 1);
 		if (len(str) < 84)
 			break;
 		endif
-		SendSysMessage(who, "Voce excedeu o numero maximo de caracteres! Utilize apenas 3 linhas do gump");
+		SendSysMessageEx(who, "Você excedeu o numero maximo de caracteres! Utilize apenas 3 linhas do gump");
 	endwhile
 	SetObjProperty(item, "description", str);
 endfunction

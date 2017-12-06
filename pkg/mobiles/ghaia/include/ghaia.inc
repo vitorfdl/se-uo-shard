@@ -17,7 +17,7 @@ include ":awareness:awareness";
 include ":yggdrasil:boss";
 
 // estados do npc, todos comecam no INIT, depois podem ir pro WANDER, 
-// apos algum tempo no wander se nao for interrompido eles vao pro SLEEP. do WANDER e do SLEEP podem ir pro FIGHT e desse pro VICTORY
+// apos algum tempo no wander se não for interrompido eles vao pro SLEEP. do WANDER e do SLEEP podem ir pro FIGHT e desse pro VICTORY
 enum STATES
    INITIALIZING := 1,
    WANDERING:= 2,
@@ -29,7 +29,7 @@ endenum
 
 var foods := ReadConfigFile(":cooking:itemdesc")+ReadConfigFile(":food:itemdesc");
 
-//alinhamento pra determinar se o player é inimigo ou nao pra IA.
+//alinhamento pra determinar se o player é inimigo ou não pra IA.
 //outros inimigos pra IA é definido com a tag enemy
 const ALIGN_EVIL := 1;
 const ALIGN_GOOD := 2;
@@ -47,7 +47,7 @@ function CanFight(me, mobile)
    // if ( SkillCheck(me, AWARENESS, dif) > 0 )
    //    mobile.hidden := 0;
    //    PrintText(mobile, "*aparece*");
-   //    SendSysMessage(me, "Voce encontrou "+mobile.name+".");
+   //    SendSysMessage(me, "Você encontrou "+mobile.name+".");
    //    SendSysMessage(mobile, me.name+" te encontrou!");
    //    if ( GetObjProperty(me, "attackhiddenenemy" ))
    //          return 1;
@@ -60,7 +60,7 @@ function CanFight(me, mobile)
    elseif ( GetObjProperty(mobile, "#fantasma") == 1)
       return 0;
    elseif ( Cint(GetCooldown(mobile, "deathtime" )) > 0  )
-   //printtextabove(me, "nao vou atacar" + mobile.name);
+   //printtextabove(me, "não vou atacar" + mobile.name);
       return 0;
    endif
 
@@ -92,7 +92,7 @@ function CanFight(me, mobile)
          // endif
          return 1;
       else 
-         //npcs bons ou neutrals nao atacam
+         //npcs bons ou neutrals não atacam
          return 0;
       endif
    endif

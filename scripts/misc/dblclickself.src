@@ -35,7 +35,7 @@ program core_dblClickSelf(who)
 			if (op == 2)
 				var cd := GetCooldown(who, "unicornteleport");
 				if ( cd > 0)
-					SendSysMessage(who, "Ainda faltam " + cd + " segundos para voce usar essa habilidade novamente.");
+					SendSysMessage(who, "Ainda faltam " + cd + " segundos para você usar essa habilidade novamente.");
 					return;
 				else
 					teleport(who);
@@ -86,7 +86,7 @@ function teleport(who)
 	endif
 
 	if ( !CheckLosAt(who, loc.x, loc.y, loc.z) )
-		SendSysMessageEx(who, "Voce nao ve o alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não vê o alvo.", SSM_FAIL);
 		return 0;
 	endif
 

@@ -10,7 +10,7 @@ program potionColor(who, potion)
   if(!Accessible(who, potion))
     return;
   elseif(potion.movable == 0)
-    SendSysMessage(who, "Voce nao pode usar isto.");
+    SendSysMessage(who, "Você não pode usar isto.");
     return;
   endif
 
@@ -20,7 +20,7 @@ program potionColor(who, potion)
     SendSysMessage(who, "Cancelado");
     return;
   elseif (what.objtype != 0x0FAB)
-    SendSysMessage(who, "Voce precisa usar no balde de tintas");
+    SendSysMessage(who, "Você precisa usar no balde de tintas");
     return;
   endif
 

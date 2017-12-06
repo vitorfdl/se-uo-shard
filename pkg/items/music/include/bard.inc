@@ -293,7 +293,7 @@ var bardgump := GFCreateGump();
 		    tempo := Requestgump(who,"Qual e o tempo entre as notas?","","",0);
 		endif
 		while (cint(tempo) > 2000)
-		    tempo := Requestgump(who,"O tempo nao pode ser tao grande, escolha um menor:","","",0);
+		    tempo := Requestgump(who,"O tempo não pode ser tao grande, escolha um menor:","","",0);
 		endwhile
 		if (what == 1)		
 		tocarsound(who,item,notas,notas2,tempo,letra,magica);
@@ -309,13 +309,13 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 
 	if ( magica) 
 		if (who.cmdlevel < 3)
-			SendSysMessageEx(who, "Voce nao entende essa partitura.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não entende essa partitura.", SSM_FAIL);
 			return 0;
 		endif
 	endif
 
 	if( Cint(GetObjProperty(who, "#MagicaMusic")) > ReadGameClock() )
-		SendSysMessage(who, "Voce deve esperar um momento antes de tocar uma musica magica novamente.",3,38);
+		SendSysMessage(who, "Você deve esperar um momento antes de tocar uma musica magica novamente.",3,38);
 		return 0;
 	endif
 		
@@ -539,7 +539,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
 		if (AP_GetStat(who, "Intelligence")+(randomint(20)) >= difskill)
 			printtextabove(who, "*Escrevendo a partitura*",3,0);
 		else 
-			SendSysMessage(who, "Voce arruinou a partitura",3,0);
+			SendSysMessage(who, "Você arruinou a partitura",3,0);
 			printtextabove(who, "*Erra ao escrever as notas*",3,38);
 			DestroyItem(item);
 			var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
@@ -556,7 +556,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
 		if (AP_GetStat(who, "Intelligence")+(randomint(40)) >= difskill)
 			printtextabove(who, "*Escrevendo a partitura*",3,0);
 		else 
-			SendSysMessage(who, "Voce arruinou a partitura",3,0);
+			SendSysMessage(who, "Você arruinou a partitura",3,0);
 			printtextabove(who, "*Erra ao escrever as notas*",3,38);
 			DestroyItem(item);
 			var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
@@ -570,7 +570,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
 
 		sleepms(5000);
 		printtextabove(who, "*Escreve a ultima nota*",3,0);
-		SendSysMessage(who, "Voce terminou de escrever a partitura",3,191);
+		SendSysMessage(who, "Você terminou de escrever a partitura",3,191);
 		DestroyItem(item);
 		var partitura := CreateItemInBackPack(who, 0x9924, 1);
 

@@ -15,21 +15,21 @@ program useBook(who,book)
 	
 	//check pra cartas
 	If (GetObjProperty(book, "Selado") == "sim")
-		var alterar := YesNo(who, "Esta carta esta selada. Para abri-la, voce precisara romper o selo. Deseja fazer isso?" , "Sim.", "Nao.");
+		var alterar := YesNo(who, "Esta carta esta selada. Para abri-la, você precisara romper o selo. Deseja fazer isso?" , "Sim.", "Nao.");
 		if (!alterar)
 			if (who.cmdlevel > 1)
-				var GM := YesNo(who, "Como GM, voce pode optar por nao romper o selo e ainda ler a carta. Deseja faze-lo?" , "Sim.", "Nao.");
+				var GM := YesNo(who, "Como GM, você pode optar por não romper o selo e ainda ler a carta. Deseja faze-lo?" , "Sim.", "Nao.");
 				if (GM)
 					SendOpenBook(who, book);
 				endif
 			endif
 			if (TemHabilidade(who, "Falsificar Aprimorado"))
-				var GM := YesNo(who, "Voce pode optar por nao romper o selo e ainda ler a carta. Deseja faze-lo?" , "Sim.", "Nao.");
+				var GM := YesNo(who, "Você pode optar por não romper o selo e ainda ler a carta. Deseja faze-lo?" , "Sim.", "Nao.");
 				if (GM)
 					SendOpenBook(who, book);
 				endif
 			endif
-			SendSysMessage(who, "Voce optou por nao romper o selo");
+			SendSysMessage(who, "Você optou por não romper o selo");
 			return;
 		endif
 		PrintTextAbove(book, "Rompe o selo", who);
@@ -47,7 +47,7 @@ program useBook(who,book)
 		if (temHabilidade(who, "Arqueologo"))
 			SendOpenBook(who, book);
 		else
-			SendSysMessageEx(who, "Voce nao conhece essa lingua: " + linguagem);
+			SendSysMessageEx(who, "Você não conhece essa lingua: " + linguagem);
 		endif
 	else
 		SendOpenBook(who, book);

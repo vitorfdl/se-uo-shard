@@ -17,7 +17,7 @@ program textcmd_sayspy(who, player)
 			return 1;
 		elseif(player[1] == "remove")
 			if (!player[2] in sayspy)
-				SendSysMessage(who, "Este nome nao esta em seu sayspy.");
+				SendSysMessage(who, "Este nome não esta em seu sayspy.");
 				return 1;
 			endif
 			var i;
@@ -57,7 +57,7 @@ program textcmd_sayspy(who, player)
 			SendSysMessage(who, "Este alvo jÃ¡ esta no seu SaySpy");
 			return 1;
 		elseif(!targ.acctname)
-			SendSysMessage(who, "Voce so pode espionar jogadores");
+			SendSysMessage(who, "Você so pode espionar jogadores");
 			return 1;
 		endif
 		

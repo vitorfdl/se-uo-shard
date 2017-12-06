@@ -18,15 +18,15 @@ program use_Bedroll( who, bedroll )
 		return 0;
 	endif
 	if(bedroll.movable == 0)
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	var items := ListItemsNearLocationOfType( who.x,who.y,who.z, 2, UOBJECT_CAMPFIRE, who.realm );
 	if( len(items) == 0 )
-		SendSysMessage( who, "Voce precisa de um acampamento proximo para usar isto." );
+		SendSysMessage( who, "Você precisa de um acampamento proximo para usar isto." );
 		return 0;
 	else
-		SendSysMessage( who, "Voce deve permanecer aqui para preparar o acampamento." );
+		SendSysMessage( who, "Você deve permanecer aqui para preparar o acampamento." );
 	endif
 
 	var x := who.x;
@@ -37,10 +37,10 @@ program use_Bedroll( who, bedroll )
 
 	while( ttl > 0 )
 		if( (who.x != x) || (who.y != y) || (who.z != z) )
-			SendSysMessage( who, "Voce abandonou suas preparacoes para o acampamento.");
+			SendSysMessage( who, "Você abandonou suas preparacoes para o acampamento.");
 			return 0;
 		endif
-		SendSysMessage( who, "Voce deve esperar " + ttl + " segundos para deslogar." );
+		SendSysMessage( who, "Você deve esperar " + ttl + " segundos para deslogar." );
 		ttl := ttl - 5;
 		sleep(5);
 	endwhile

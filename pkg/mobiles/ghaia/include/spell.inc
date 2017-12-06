@@ -209,7 +209,7 @@ function Boss2Fight(opponent ,alerted := 0)
 			case (ev.type)
 				SYSEVENT_DAMAGED: 
 
-			//se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente nao estiver acessivel
+			//se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente não estiver acessivel
 				if( /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/ (!CheckLineOfSight(me, opponent)) || (!opponent))
 					if ( (opponent) && RandomInt(4) == 0 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
 						if (ev.source)
@@ -217,7 +217,7 @@ function Boss2Fight(opponent ,alerted := 0)
 							SetOpponent(opponent);
 							TurnToward(opponent);
 						endif
-					elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se nao tiver mais o oponent entao 100% de chance de mudar de alvo
+					elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se não tiver mais o oponent entao 100% de chance de mudar de alvo
 						if (ev.source)
 							opponent := ev.source;
 							SetOpponent(opponent);
@@ -379,7 +379,7 @@ function CastSpellNPC(opponent, spell_list)
 // 	if ( (enfraquecer || horror) || (ampliardor || envenenar || envelhecer || boladefogo))
 // 		if (randomint(2) == 0) //ataca oponente
 // 			if (envelhecer)
-// 				if ( GetObjPRoperty(me.opponent, "#lentidao") != error ) //se o alvo nao ta sob o efeito ainda
+// 				if ( GetObjPRoperty(me.opponent, "#lentidao") != error ) //se o alvo não ta sob o efeito ainda
 // 					start_script(":magery:demonistas/envelhecer", array{me, me.opponent});
 // 					setCooldown(me, "npcspell", 5);
 // 				endif
@@ -387,7 +387,7 @@ function CastSpellNPC(opponent, spell_list)
 
 // 			if (envenenar)
 // 				var timers :=  TS_GetTimerNames(me.opponent);
-// 				if ( !("defaultPoison" in timers)  ) //se o alvo nao ta envenenado
+// 				if ( !("defaultPoison" in timers)  ) //se o alvo não ta envenenado
 // 					start_script(":magery:mesum/envenenar", array{me, me.opponent});
 // 					setCooldown(me, "npcspell", 5);
 // 				endif
@@ -499,7 +499,7 @@ function CastDirect(caster, cast_on, spellname)
   
   if (GetObjProperty(cast_on, "kit") == "abascanto")
 	if (RandomInt(100) < 24)
-		SendSysMessageEx(cast_on, "A magia falha em voce.", SSM_INFO);
+		SendSysMessageEx(cast_on, "A magia falha em você.", SSM_INFO);
 		dmg := 0;
   endif
   endif

@@ -170,7 +170,7 @@ function ConversationPlayer(who, npc, conversation)
 					input := item.result2;
 					break;
 				elseif (targ.amount < item.amount)
-					SendSysMessageEx(who, "Voce nao tem a quantidade requisitada.", SSM_FAIL);
+					SendSysMessageEx(who, "Você não tem a quantidade requisitada.", SSM_FAIL);
 					input := item.result2;
 					break;
 				elseif (item.specialprop && !GetObjProperty(targ, item.specialprop))
@@ -262,7 +262,7 @@ function ConversationGM(who, npc, conversation)
 	elseif (input[0] == 200)
 		var theanswer := RequestGump(who, "Escreva a Resposta");
 		var newconv := allconversations(who, npcelem, conversation);
-		var newint := cint(RequestGump(who, "Coloque o Minimo de Int (deixe em branco para nao checar)"));
+		var newint := cint(RequestGump(who, "Coloque o Minimo de Int (deixe em branco para não checar)"));
 		var newsong := cint(RequestGump(who, "Coloque o Som que o Npc fara ao trocar a resposta (deixe em branco para nenhum)"));
 		var newanswer := struct;
 		newanswer.+result := newconv;
@@ -302,7 +302,7 @@ function ConversationGM(who, npc, conversation)
 	elseif (input[0])
 		var question := RadioGump(who, 300, 410, "O que deseja mudar/adicionar?", array{"Texto da Resposta", "Resultado da Resposta","Inteligencia Minima",
 																		"Alterar Som de Resposta","Checar se Possui Habilidade","Desaparecer",
-																		"Checar Se Possui Kit","Nao Mostrar Novamente","Fazer Evento","Pedir Itens","Dar Itens", "Remover Resposta",
+																		"Checar Se Possui Kit","Não Mostrar Novamente","Fazer Evento","Pedir Itens","Dar Itens", "Remover Resposta",
 																		"Restaurar Vital","Pacto Demonista", "Acessar Conversa do Resultado","Cancelar"});
 		var elementpos := input[0];
 
@@ -320,7 +320,7 @@ function ConversationGM(who, npc, conversation)
 				answers[elementpos].demonistaMagery := cint(RequestGump(who, "Entre com o Magery mínimo para estabelecer um contrato"));
 				SendSysMessageEx(who, "Novo Contrato estabelecido com sucesso!", SSM_INFO);
 			else
-				SendSysMessageEx(who, "Voce removeu o contrato desta resposta: "+ answers[elementpos].demonista, SSM_INFO);
+				SendSysMessageEx(who, "Você removeu o contrato desta resposta: "+ answers[elementpos].demonista, SSM_INFO);
 				answers[elementpos].-demonista;
 				answers[elementpos].-demonistaMagery;
 			endif
@@ -329,14 +329,14 @@ function ConversationGM(who, npc, conversation)
 			if (!answers[elementpos].curar)
 				answers[elementpos].curar := RadioGump(who, 200, 100+60, "Escolha a vitals:", array{"hits", "stam", "mana"});
 				answers[elementpos].curaamt := Cint(RequestGump(who, "Quanto sera curado? (use 99 para restaurar bloodied)"));
-				SendSysMessageEx(who, "Voce adicionou cura nesta resposta: "+ answers[elementpos].curar, SSM_INFO);
+				SendSysMessageEx(who, "Você adicionou cura nesta resposta: "+ answers[elementpos].curar, SSM_INFO);
 			else
 				answers[elementpos].-curar;
 				answers[elementpos].-curaamt;
-				SendSysMessageEx(who, "Voce removeu cura desta resposta: "+ answers[elementpos].curar, SSM_INFO);
+				SendSysMessageEx(who, "Você removeu cura desta resposta: "+ answers[elementpos].curar, SSM_INFO);
 			endif
 			npcelem.SetProp(conversation + "Options", answers);
-		elseif (question == "Nao Mostrar Novamente")
+		elseif (question == "Não Mostrar Novamente")
 			question := RadioGump(who, 260, 200, "Escolha o tipo de Resultado", array{"Ao Jogador","Durante um tempo","Remover","Cancelar"});
 			if (question == "Ao Jogador")
 				answers[elementpos].noagain := struct;
@@ -353,7 +353,7 @@ function ConversationGM(who, npc, conversation)
 				npcelem.EraseProp(conversation+"Players"+answers[elementpos].ID);
 			endif
 			npcelem.SetProp(conversation + "Options", answers);
-			SendSysMessageEx(who, "Alterado Nao Mostrar Novamente", SSM_INFO);	
+			SendSysMessageEx(who, "Alterado Não Mostrar Novamente", SSM_INFO);	
 		elseif (question == "Desaparecer")
 			if (!answers[elementpos].noshow)
 				var tempo := cint(RequestGump(who, "Escreva o tempo que o npc ficara invisivel"));
@@ -361,7 +361,7 @@ function ConversationGM(who, npc, conversation)
 				SendSysMessageEx(who, "O NPC desaparecera apos a resposta.", SSM_INFO);
 			else
 				answers[elementpos].-noshow;
-				SendSysMessageEx(who, "O NPC nao desaparecera mais.", SSM_INFO);
+				SendSysMessageEx(who, "O NPC não desaparecera mais.", SSM_INFO);
 			endif
 			npcelem.SetProp(conversation + "Options", answers);
 				
@@ -388,7 +388,7 @@ function ConversationGM(who, npc, conversation)
 			SendSysMessageEx(who, "Alterado Dar Itens", SSM_INFO);	
 		elseif (question == "Pedir Itens")		
 			if (!answers[elementpos].requestitem)
-				var result2 := allconversations(who, npcelem, conversation, "Se o jogador nao tiver os itens, para qual conversa ira?");
+				var result2 := allconversations(who, npcelem, conversation, "Se o jogador não tiver os itens, para qual conversa ira?");
 				SendSysMessage(who, "Escolha o item que sera pedido.");
 				var targ := Target(who);
 				var item := array{};
@@ -473,7 +473,7 @@ function ConversationGM(who, npc, conversation)
 			SendSysMessageEx(who, "Resultado da resposta alterado", SSM_INFO);
 			
 		elseif (question == "Inteligencia Minima")
-			answers[elementpos].int := cint(RequestGump(who, "Coloque o Minimo de Int (0 para nao checar)"));
+			answers[elementpos].int := cint(RequestGump(who, "Coloque o Minimo de Int (0 para não checar)"));
 			npcelem.SetProp(conversation + "Options", answers); 
 			SendSysMessageEx(who, "Inteligencia Minima Alterada", SSM_INFO);
 		elseif (question == "Remover Resposta")
@@ -535,14 +535,14 @@ function contrato(who, element)
 	endif
 	foreach enemy in (GetConfigStringArray(elem, "inimigo"))
 		if (enemy in contratos)
-			SendSysMessage(who, "Voce nao pode realizar este contrato pois ja possui com:" + enemy );
+			SendSysMessage(who, "Você não pode realizar este contrato pois ja possui com:" + enemy );
 			return;
 		endif
 	endforeach
 	
 	foreach contract in contratos
 		if (contract == element.demonista)
-			SendSysMessage(who, "Voce ja possui contrato com:" + contract);
+			SendSysMessage(who, "Você ja possui contrato com:" + contract);
 			return;
 		endif
 	endforeach
@@ -572,6 +572,6 @@ function contrato(who, element)
 	
 	SetObjProperty(targ, "spells", book_spells);
 	SetObjProperty(who, "contratos", contratos);
-	SendSysMessage(who, "Voce fez um novo contrato!");
+	SendSysMessage(who, "Você fez um novo contrato!");
 	
 endfunction

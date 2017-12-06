@@ -46,13 +46,13 @@ function CreateAdvancedRecipes()
 	var spellinfo4 := struct;
 	spellinfo4.+name := "Poção da invisibilidade fraca";
         spellinfo4.+id := 0xbf09;
-	spellinfo4.+description := "Olhos de salamandra podem fazer voce desaparecer, uns dizem que quem bebe essa Poção ganha propiedades mimetizantes das salamandras outros dizem que voce emana uma energia mistica que faz com que os outros nao o enxergeum. Use dois olhos. O efeito dura apenas alguns segundos. Dificuldade um pouco alta.";
+	spellinfo4.+description := "Olhos de salamandra podem fazer você desaparecer, uns dizem que quem bebe essa Poção ganha propiedades mimetizantes das salamandras outros dizem que você emana uma energia mistica que faz com que os outros não o enxergeum. Use dois olhos. O efeito dura apenas alguns segundos. Dificuldade um pouco alta.";
 	x.append(spellinfo4);
 
 	var spellinfo5 := struct;
  	spellinfo5.+name := "Po da visao";
         spellinfo5.+id := 0xbf0c;
-	spellinfo5.+description := "Com duas cinzas vulcanicas e dois olhos de salamandra voce pode fazer um po muito fino que revela pessoas escondidas ou invisiveis na area. Dificuldade baixa.";
+	spellinfo5.+description := "Com duas cinzas vulcanicas e dois olhos de salamandra você pode fazer um po muito fino que revela pessoas escondidas ou invisiveis na area. Dificuldade baixa.";
 	x.append(spellinfo5);
 
 	var spellinfo6 := struct;

@@ -26,7 +26,7 @@ program textcmd_flip (me)
    var flip_graphic;
 
    if(!flip_config)
-      SysLog("Error: "+FLIP_CONFIG_FILE+" nao existe!");
+      SysLog("Error: "+FLIP_CONFIG_FILE+" não existe!");
       return 0;
    endif
 
@@ -45,7 +45,7 @@ program textcmd_flip (me)
    endif
 
    if( !(object.isA(POLCLASS_ITEM)) )
-      SendSysMessage(who, "Voce nao pode girar isso!");
+      SendSysMessage(who, "Você não pode girar isso!");
       return 0;
    endif
    

@@ -7,7 +7,7 @@ include ":timedscripts:timedScripts";
 
 program textcmd_AddTimer(who, params)
 	params := SplitWords(params);
-	
+	// addBuff(int icon_id, int duration, int cliloc_name, int cliloc_descr, array arguments)
 	if (params[1] != "rem")
 		SendSysMessage(who, "timer added");
 		who.addBuff(cint(params[6]), cint(params[2]), cint(params[3]), cint(params[4]), cAscZ(params[5]));

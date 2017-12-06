@@ -1,10 +1,10 @@
 /*
 1- so quem tem tag pode por coisa pra vender OK
 2- cada coisa q vc colocou la tem seu id OK
-3- voce pode setar o preço das coisas OK
-4- voce pode remover coisas  OK
+3- você pode setar o preço das coisas OK
+4- você pode remover coisas  OK
 5- quando o npc vende o dinheiro vai pro seu id (uma prop) e 10% vai pro npc  OK
-6- player comuns (sem tag)so podem comprar e nao vende OK
+6- player comuns (sem tag)so podem comprar e não vende OK
 */
 
 use uo;
@@ -63,7 +63,7 @@ program MerchantMenu(params)
 	var escondido:= player.hidden;
 	if (escondido)
 		player.hidden := 0;
-		SendSysMessageEx (player, "Voce se revelou ao mercador.", SSM_FAIL);
+		SendSysMessageEx (player, "Você se revelou ao mercador.", SSM_FAIL);
 	endif
 	
 	MAIN_LOOP: while ( 1 )
@@ -181,7 +181,7 @@ function DoPurchase(npc, player, input)
 	info := array{}; // Cleanup
 	if ( !confiscar )
 		if ( AmountInPack(player, cost.cost_type) < CInt(cost.cost_amt) )
-			SendSysMessage(player, "Voce nao tem "+GetName(cost.cost_type, 1)+ " suficiente para comprar isto.");
+			SendSysMessage(player, "Você não tem "+GetName(cost.cost_type, 1)+ " suficiente para comprar isto.");
 			return 0;
 		endif
 	endif
@@ -191,18 +191,18 @@ function DoPurchase(npc, player, input)
 	var pay_list := array{};
 	if ( !confiscar )
 		repeat
-			SendSysMessage(player, "Escolha "+cost_desc+" que voce quer usar para pagar. Voce deve mais ["+owed+"].");
+			SendSysMessage(player, "Escolha "+cost_desc+" que você quer usar para pagar. Você deve mais ["+owed+"].");
 			var targ := Target(player);
 			if ( !targ )
 				SendSysMessage(player, "Cancelado");
 				return;
 			elseif ( targ in pay_list )
-				SendSysMessage(player, "Voce ja esta pagando com isto.");
+				SendSysMessage(player, "Você ja esta pagando com isto.");
 			elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-				SendSysMessage(player, "Essa nao eh sua bolsa.");
+				SendSysMessage(player, "Essa não eh sua bolsa.");
 			elseif ( targ.objtype == cost.cost_type )
 				if ( !ReserveItem(targ) )
-					SendSysMessage(player, "Voce nao pode pagar com isto.");
+					SendSysMessage(player, "Você não pode pagar com isto.");
 				else
 					if ( cost.specialProp != error)
 						if (cost.specialProp.value != GetObjProperty(targ, cost.specialProp.name))
@@ -217,7 +217,7 @@ function DoPurchase(npc, player, input)
 					endif
 				endif
 			else
-				SendSysMessage(player, "Item escolhido nao eh "+cost_desc+".");
+				SendSysMessage(player, "Item escolhido não eh "+cost_desc+".");
 			endif
 		until ( owed <= 0 );
 	
@@ -278,7 +278,7 @@ function DoPurchase(npc, player, input)
 		if ( purchase == error )
 			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
 		else
-			AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+			AI_Speak(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 		endif
 	endif
 	if (selling.amount == 1)
@@ -369,7 +369,7 @@ endfunction
 function AddItemToSell(npc, player)
 
 	if ( (cint(GetObjProperty(npc, "onlygmsells")) == 1 ) && player.cmdlevel < 3 )
-		SendSysMessage(player, "Voce nao pode colocar itens a venda nesse vendedor.");
+		SendSysMessage(player, "Você não pode colocar itens a venda nesse vendedor.");
 		return;
 	endif
 	
@@ -387,13 +387,13 @@ function AddItemToSell(npc, player)
 			return;
 		endif
 	endif
-	SendSysMessage(player, "O que voce deseja dar para o mercador vender?");
+	SendSysMessage(player, "O que você deseja dar para o mercador vender?");
 	var targ := target(player);
 
 	var serialid:=GetObjProperty(targ,"serialid");
 
 	if (serialid != error)
-		SendSysMessageEx(player,"Voce nao pode vender isto.",SSM_FAIL);
+		SendSysMessageEx(player,"Você não pode vender isto.",SSM_FAIL);
 		return 0;
 	endif
 
@@ -401,7 +401,7 @@ function AddItemToSell(npc, player)
 		SendSysMessage(player, "Cancelado.");
 		return;
 	elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-		SendSysMessage(player, "Esta nao é sua bolsa.");
+		SendSysMessage(player, "Esta não é sua bolsa.");
 		return;
 	elseif ( (targ.objtype == 0xba63 || targ.objtype == 0xba64 || targ.objtype == 0xba65 ) && player.cmdlevel < 3)
 		SendSysMessage(player, "Você não pode vender moedas");
@@ -419,8 +419,8 @@ function AddItem(npc, player, targ)
 	var specialProp := struct;
 	if (player.cmdlevel > 2)
 
-		AI_Speak(npc, "O que voce gostaria que eu cobrasse por "+targ.desc+"?");
-		SendSysMessage(player, "Selecione um objeto para mostrar ao mercador o que voce deseja cobrar por este item.");
+		AI_Speak(npc, "O que você gostaria que eu cobrasse por "+targ.desc+"?");
+		SendSysMessage(player, "Selecione um objeto para mostrar ao mercador o que você deseja cobrar por este item.");
 		cost_type := target(player);
 		if ( !cost_type.IsA(POLCLASS_ITEM) )
 			SendSysMessage(player, "Cancelado.");
@@ -458,8 +458,8 @@ function AddItem(npc, player, targ)
 			endforeach
 		endif
 		cost_type := cost_type.objtype;
-		AI_Speak(npc, "Quantos '"+cost_name+"' voce quer que eu cobre?");
-		cost_amt := RequestGump(player, "Quantos '"+cost_name+"' voce quer que o mercador cobre?", "1 - "+cost_limit+limit_reason, 1, 1);
+		AI_Speak(npc, "Quantos '"+cost_name+"' você quer que eu cobre?");
+		cost_amt := RequestGump(player, "Quantos '"+cost_name+"' você quer que o mercador cobre?", "1 - "+cost_limit+limit_reason, 1, 1);
 		cost_amt := CInt(cost_amt);
 		if ( !cost_amt || cost_amt > cost_limit || cost_amt == 0 )
 			SendSysMessage(player, "Cancelado");
@@ -492,15 +492,15 @@ function AddItem(npc, player, targ)
 			SendSysMessage(player, "Cancelado");
 			return;
 		elseif (cost_amt > cost_limit)
-			SendSysMessage(player, "Voce ultrapassou o limite maximo de "+cost_limit+" moedas.");
+			SendSysMessage(player, "Você ultrapassou o limite maximo de "+cost_limit+" moedas.");
 			return;
-		elseif (GetObjProperty(npc, "taverneiro")); // Nao verifica as 10 moedas mínimas a grana pra pagar.
+		elseif (GetObjProperty(npc, "taverneiro")); // Não verifica as 10 moedas mínimas a grana pra pagar.
 		elseif ((cost_amt < 10) && (player.cmdlevel < 2))
 			SendSysMessage(player, "Valor minimo de 10 moedas de cobre.");
 			return;
 		elseif ( AmountInPack(player, MOEDAS) < CInt(cost_amt * 0.1) )
 			if (!TemHabilidade(player, "Mercador Reconhecido"))
-				SendSysMessage(player, "Voce nao tem moedas suficiente para pagar o vendedor pelo seu servico.");
+				SendSysMessage(player, "Você não tem moedas suficiente para pagar o vendedor pelo seu servico.");
 				return 0;
 			endif
 		endif
@@ -516,7 +516,7 @@ function AddItem(npc, player, targ)
 	var infinite := 0;
 	var dezperc := CInt(cost_amt * 0.1);
 	if (player.cmdlevel > 2)
-		infinite := YesNo(player, "Voce deseja deixar esse item infinito?");
+		infinite := YesNo(player, "Você deseja deixar esse item infinito?");
 	elseif (!GetObjProperty(npc, "taverneiro"))
 		if (!TemHabilidade(player, "Mercador Reconhecido"))
 		var pay := 0;
@@ -527,22 +527,22 @@ function AddItem(npc, player, targ)
 				SendSysMessage(player, "Cancelado.");
 				return;
 			elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-				SendSysMessage(player, "Nao esta na sua bolsa.");
+				SendSysMessage(player, "Não esta na sua bolsa.");
 			elseif ( GetObjProperty(targ, "stealed") )
 				SendSysMessage(player, "Objeto foi roubado!");
 			elseif ( targ.objtype == MOEDAS )
 				if ( !ReserveItem(targ) )
-					SendSysMessage(player, "Voce nao pode pagar com isto.");
+					SendSysMessage(player, "Você não pode pagar com isto.");
 				else
 					if (!SubtractAmount(targ, dezperc))
-						SendSysMessage(player, "Voce nao pode pagar com isto.");
+						SendSysMessage(player, "Você não pode pagar com isto.");
 					else
 						pay := 1;
 						SendSysMessage(player, "Pagamento efetuado com sucesso!");
 					endif
 				endif
 			else
-				SendSysMessage(player, "Voce deve indicar moedas de cobre.");
+				SendSysMessage(player, "Você deve indicar moedas de cobre.");
 			endif
 		dowhile ( !pay );
 		endif
@@ -552,7 +552,7 @@ function AddItem(npc, player, targ)
 		AI_Speak(npc, "Tudo certo. Colocarei seu item a venda.");
 		SendSysMessage(player, "O item foi adicionado com sucesso.");
 	else
-		AI_Speak(npc, "Me desculpe mas nao poderei vender isto para voce, tome seu dinheiro de volta.");
+		AI_Speak(npc, "Me desculpe mas não poderei vender isto para você, tome seu dinheiro de volta.");
 		if (!GetObjProperty(npc, "taverneiro"))
 			CreateItemInBackpack(player, MOEDAS, dezperc);
 		endif
@@ -642,7 +642,7 @@ function DoRemove(npc, player, input)
 		if ( purchase == error )
 			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
 		else
-			AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+			AI_Speak(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 		endif
 	endif
 endfunction
@@ -684,7 +684,7 @@ function DoWithdraw(npc, player)
 			if ( withdraw == error )
 				SendSysMessage(player, "Error - Unable to create item! ->"+withdraw.errortext);
 			else
-				AI_Speak(npc, "Eu nao fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+				AI_Speak(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 			endif
 		endif
 		sleepms(2);

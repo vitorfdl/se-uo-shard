@@ -14,11 +14,11 @@ program use_SOSMessage( who, message )
 		return 0;
 	endif
 	if( message.movable == 0 )
-		SendSysMessage(who, "Voce nao pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	if( !(message in EnumerateItemsInContainer(who.backpack)) )
-		SendSysMessage(who, "Este item nao esta na sua mochila.");
+		SendSysMessage(who, "Este item não esta na sua mochila.");
 		return 0;
 	endif
 

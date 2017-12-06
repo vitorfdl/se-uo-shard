@@ -15,18 +15,18 @@ var craft_config     := ReadConfigFile(":metalworking:blacksmithy");
 program use_amolador(who, tool)
 
 	// if(Distance(who,tool) > 1)
-	// 	SendSysMessageEx(who, "Voce esta muito distante.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
 	// 	return 0;
 	// endif
 	// if(!ReserveItem(tool))
-	// 	SendSysMessageEx(who, "Voce nao pode usar isto.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
 	// 	return 0;
 	// endif
 
 	// EraseObjProperty(who, "IsMeditating");
 	// EraseObjProperty(who, "HealTimer");
 	
-	// SendSysMessageEx(who, "Qual arma voce deseja melhorar?", SSM_INFO);
+	// SendSysMessageEx(who, "Qual arma você deseja melhorar?", SSM_INFO);
 	// var item := target(who);
 	// if (!item || !item.ISA(POLCLASS_WEAPON))
 	// 	SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
@@ -35,10 +35,10 @@ program use_amolador(who, tool)
 	// 	SendSysMessageEx(who, "A arma precisa estar na sua bolsa.", SSM_FAIL);
 	// 	return;
 	// elseif (!FindConfigElem( craft_config, item.objtype) || !craft_config[item.objtype].Exceptional)
-	// 	SendSysMessageEx(who, "Esta arma nao pode ser melhorada com habilidades de Ferreiro.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Esta arma não pode ser melhorada com habilidades de Ferreiro.", SSM_FAIL);
 	// 	return;
 	// elseif (craft_config[item.objtype].habilidade && !TemHabilidade(who, craft_config[item.objtype].habilidade))
-	// 	SendSysMessageEx(who, "Voce nao sabe trabalhar este tipo de arma.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Você não sabe trabalhar este tipo de arma.", SSM_FAIL);
 	// 	return;
 	// elseif (item.quality > 1)
 	// 	SendSysMessageEx(who, "Esta arma ja esta na qualidade excepcional.", SSM_FAIL);

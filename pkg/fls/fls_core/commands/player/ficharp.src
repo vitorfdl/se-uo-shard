@@ -187,9 +187,9 @@ function sendFichaRp(who, targ, edit := 0)
 			if (YesNo(who, "Tem certeza que deseja apagar " + apagar + "?", "Sim", "Não"))
 				var value := ficharp_elem.GetProp("Ficha");
 				if (len(value[input]) < apagar)
-					SendSysMessageEx(who, "Este valor nao existe", SSM_FAIL);
+					SendSysMessageEx(who, "Este valor não existe", SSM_FAIL);
 				elseif (typeof(apagar) != "Integer")
-					SendSysMessageEx(who, "Este valor nao existe.", SSM_FAIL);
+					SendSysMessageEx(who, "Este valor não existe.", SSM_FAIL);
 				else
 					value[input].erase(apagar);
 					var teste := fichaSetProp(targ, "Ficha", value);

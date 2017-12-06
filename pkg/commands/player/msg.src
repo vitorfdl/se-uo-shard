@@ -107,7 +107,7 @@ function SendMessage(who, name_text, is_reply:=0)
 		return 0;
 	endif
 	
-	var message_txt := RequestInput(who, who.backpack, "Qual mensagem voce deseja enviar para "+name_text+"? (hit escape to cancel)");
+	var message_txt := RequestInput(who, who.backpack, "Qual mensagem você deseja enviar para "+name_text+"? (hit escape to cancel)");
 	if ( !message_txt )
 		SendSysMessage(who, "Cancelado.");
 		return 0;
@@ -120,14 +120,14 @@ function SendMessage(who, name_text, is_reply:=0)
 	foreach player in EnumerateOnlineCharacters()
 		if ( player.name == name_text )
 			SendSysMessage(player, "Mensagem de "+who.name+" : "+message_txt);
-			SendSysMessage(who, "Voce enviou a mensagem para ["+player.name+"]: "+message_txt);
+			SendSysMessage(who, "Você enviou a mensagem para ["+player.name+"]: "+message_txt);
 
 			var rcvr_settings := GetMessageSettings(player);
 			rcvr_settings["reply"] := who.name;
 			SetObjProperty(player, ".msg", rcvr_settings);
 
 			if( sndr_settings.Exists("disabled") )
-				SendSysMessage(who, "Lembrete: Voce esta invisivel no mensageiro");
+				SendSysMessage(who, "Lembrete: Você esta invisivel no mensageiro");
 				SendSysMessage(player, "Lembrete: "+who.name+" esta invisivel no mensageiro. Use .msg reply.");
 			endif
 		elseif ( player.cmdlevel > who.cmdlevel )

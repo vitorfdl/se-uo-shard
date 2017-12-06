@@ -4,7 +4,7 @@ use unicode;
 const SSM_FAIL      := 41;
 const SSM_REQUEST   := 168;
 const SSM_INFO      := 91;
-const SSM_HELPFU    := 168;
+const SSM_HELPFUL   := 168;
 const SSM_HARMFUL   := 37;
 const SSM_INFO_IC   := 55;
 const SSM_INFO_OOC  := 91;
@@ -24,19 +24,17 @@ CONST SYSTEM_REPORT := 493;
 CONST SYSTEM_HEAL := 117;
 
 function SendSysMessageEX(who, message, SSM_TYPE := _DEFAULT_TEXT_COLOR, font_number := _DEFAULT_TEXT_FONT)
-	SendSysMessage(who, ""+message, font_number, SSM_TYPE);
+	SendSysMessageUNI(who, ""+message, font_number, SSM_TYPE);
 endfunction
 
-function SendSysMessageUNI(who, uc_text, color:=_DEFAULT_UCCOLOR, font:=_DEFAULT_UCFONT, langcode := "ENU")
+function SendSysMessageUNI(character, uc_text, font := _DEFAULT_UCFONT, color := 1153, langcode := "ENG")
   if (uc_text == error)
 	  return;
   endif
 
-  var theUCtext := array{111, 108, 225};
-
-  var foi := SendSysMessageUC(who, theUCtext, langcode, 4, 55);
-  return SendSysMessageUC(who, theUCtext, langcode, 4, 55);
+  return SendSysMessageUC(character, UC(uc_text), langcode, font, color);
 endfunction
+
 
 function PrintText(above_object, uc_text, color := _DEFAULT_UCCOLOR, font := _DEFAULT_UCFONT, langcode := "ENG")
   if (uc_text == error)
@@ -64,9 +62,9 @@ function SendSystemReport(above_object, text, color := SYSTEM_REPORT, character 
   endif
 
   if (character == "all")
-    return PrintTextAbove(above_object, text, 9, color);
+    return PrintText(above_object, text, 9, color);
   endif
-  return PrintTextAbovePrivate(above_object, text, character, 9, color);
+  return PrintTextAbovePrivateUC(above_object, UC(text), "ENG", character, 0x10, color);
 endfunction
 
 function UC(strs)

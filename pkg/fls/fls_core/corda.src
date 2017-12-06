@@ -15,7 +15,7 @@ program corda(who, item)
 		SendSysMessage(who, "Cancelado.");
 		return;
 	elseif (Distance(who, alvo) > 2)
-		SendSysMessage(who, "Voce esta muito longe!");
+		SendSysMessage(who, "Você esta muito longe!");
 		return;
 	elseif (GetObjProperty(alvo, "corda"))
 		SendSysMessage(who, "Este alvo ja esta amarrado!");
@@ -32,7 +32,7 @@ program corda(who, item)
 		var char := SystemFindObjectBySerial(alvo.ownerserial);
 
 		if (!char)
-			SendSysMessage(who, "Voce nao pode usar corda nesse corpo!");
+			SendSysMessage(who, "Você não pode usar corda nesse corpo!");
 			return;	
 		endif
 
@@ -42,11 +42,11 @@ program corda(who, item)
 		SetObjProperty (char, "corda", diff+mod);
 	elseif (alvo.ip) // Se for player e tiver on
 		if (!alvo.connected)
-			SendSysMessage(who, "Nao pode amarrar um jogador deslogado.");
+			SendSysMessage(who, "Não pode amarrar um jogador deslogado.");
 			return;
 		endif
 
-		var ok := YesNo(alvo, "Voce permite ser amarrado por "+who.name+"?" , "Sim, permito.", "Não.");
+		var ok := YesNo(alvo, "Você permite ser amarrado por "+who.name+"?" , "Sim, permito.", "Não.");
 		if (ok)
 			PrintText(who, "*amarra "+alvo.name+"*");
 			SubtractAmount(item, 1);
@@ -56,7 +56,7 @@ program corda(who, item)
 			SendSysMessage(who, alvo.name+" evitou sua tentativa de amarra-lo!");
 		endif
 	else
-		SendSysMessage(who, "Voce nao pode amarrar isso!");
+		SendSysMessage(who, "Você não pode amarrar isso!");
 		return;
 	endif
 endprogram

@@ -19,10 +19,10 @@ const MINING_SOUND	:= 0x126;
 program OreMining(who, tool)
 
 	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessage(who, "Voce nao pode minerar montado.");
+		SendSysMessage(who, "Você não pode minerar montado.");
 		return;
 	endif
-	SendSysMessageEx(who, "Onde voce deseja minerar?", SSM_REQUEST);
+	SendSysMessageEx(who, "Onde você deseja minerar?", SSM_REQUEST);
 	var targ := TargetCoordinates(who);
 	
 
@@ -44,7 +44,7 @@ program OreMining(who, tool)
 			DigForMap(who, targ, map);
 			return;
 		else
-			SendSysMessageEx(who, "Voce nao pode minerar aqui.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não pode minerar aqui.", SSM_FAIL);
 			return;
 		endif
 	
@@ -58,7 +58,7 @@ program OreMining(who, tool)
 
 
 	if (!CheckLoop(who, tool, my_x, my_y, my_facing))
-		SendsysMessage(who, "Voce parou de minerar.");
+		SendsysMessage(who, "Você parou de minerar.");
 		return;
 	endif
 
@@ -67,14 +67,14 @@ program OreMining(who, tool)
 		if (!CheckLoop(who, tool, my_x, my_y, my_facing))
 			break;
 		elseif (AP_GetVital(who, "Stamina") < 5)
-			SendSysMessage(who, "Voce esta muito cansado para minerar.");
+			SendSysMessage(who, "Você esta muito cansado para minerar.");
 			break;
 		endif
 		AP_ConsumeVital(who, "Stamina", 5);
 		sleep(3);
 	endwhile
 	
-	SendSysMessage(who, "Voce parou de minerar.");
+	SendSysMessage(who, "Você parou de minerar.");
 	
 endprogram
 
@@ -108,15 +108,15 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 		if ( SkillCheck(who, EXTRACAO, difficulty) > 0 )
 			var minerio := CreateItemInBackPack(who, ore_type, 1);
 			minerio.movable := 1;
-			SendSysMessage(who, "Voce pegou alguns minerios. " );
+			SendSysMessage(who, "Você pegou alguns minerios. " );
 		else
-			SendSysMessage(who, "Voce falhou em pegar minerios.");
+			SendSysMessage(who, "Você falhou em pegar minerios.");
 		endif
 		return 1;*/
 	endif
 
 	if ( ore_amount > 0 )
-		if (ore_type != 999) //999 eh quando nao passou na chance de raridade do minerio
+		if (ore_type != 999) //999 eh quando não passou na chance de raridade do minerio
 			var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 			if ( dice_roll > difficulty )
 				var amt := AP_GetStat(who, STRENGTH, RETURN_BONUS);
@@ -137,16 +137,16 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 				minerio.movable := 1;
 				who.SetAchievement("oremining", 1);
 				ExpGain(who, difficulty, dice_roll);
-				SendSysMessage(who, "Voce pegou alguns minerios. " );
+				SendSysMessage(who, "Você pegou alguns minerios. " );
 				if (TemHabilidade(who, "Garimpeiro"))
 					Garimpeiro(who);
 				endif
 			else
-				SendSysMessage(who, "Voce falhou em pegar minerios.");
+				SendSysMessage(who, "Você falhou em pegar minerios.");
 			endif
 		endif
 	else
-		SendSysMessage(who, "Parece nao ter mais minerios aqui.");
+		SendSysMessage(who, "Parece não ter mais minerios aqui.");
 		return 0;
 	endif
 

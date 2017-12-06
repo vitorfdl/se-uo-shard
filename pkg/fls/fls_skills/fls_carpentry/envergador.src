@@ -14,7 +14,7 @@ program envergador(who, item)
  endif
   
   if (!GetObjProperty(item2, "tratada"))
-     sendsysmessage(who, "Voce precisa usar madeira lixada.");
+     sendsysmessage(who, "Você precisa usar madeira lixada.");
      return;
   endif
   
@@ -29,7 +29,7 @@ program envergador(who, item)
      sleep(2);
      PlaySoundEffect(who, 0x23e);
      sleep(2);
-     SendSysMessage(who, "Voce envergou uma tabua.");
+     SendSysMessage(who, "Você envergou uma tabua.");
      var barrelstaves := CreateItemInBackpack(who, 0x1eb2, 1);
      barrelstaves.movable := 1;
    endif

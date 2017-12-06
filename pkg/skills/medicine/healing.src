@@ -29,11 +29,11 @@ program UseBandage(mobile, bandage)
 	var equippedleft  := GetEquipmentByLayer(mobile, 0x02);
 	var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
 	if (equippedright || equippedleft || twohanded)
-	  SendSysMessageEx(mobile, "Voce precisa das duas maos livres para usar as ataduras!", SSM_FAIL);
+	  SendSysMessageEx(mobile, "Você precisa das duas maos livres para usar as ataduras!", SSM_FAIL);
 	  return 0;
 	endif
 
-	SendSysMessageEx(mobile, "Onde voce deseja usar as ataduras?", SSM_REQUEST);
+	SendSysMessageEx(mobile, "Onde você deseja usar as ataduras?", SSM_REQUEST);
 	var targ := Target(mobile, TGTOPT_CHECK_LOS+TGTOPT_HELPFUL);
 	var heal_skill := MEDICINA;
 
@@ -47,10 +47,10 @@ program UseBandage(mobile, bandage)
 		SendSysMessageEx(mobile, "Alvo ja esta completamente curado.", SSM_INFO);
 		return;
 	elseif(GetObjProperty(targ, "noheal"))
-		SendSysMessageEx(mobile, "Nao ha nada que voce possa fazer pelo alvo nas atuais circunstacias", 3, SSM_FAIL);
+		SendSysMessageEx(mobile, "Não há nada que você possa fazer pelo alvo nas atuais circunstacias", 3, SSM_FAIL);
 		return;	
 	elseif ( targ.warmode )
-		SendSysMessageEx(mobile, "Voce nao pode tratar um alvo que esta muito agitado", SSM_INFO);
+		SendSysMessageEx(mobile, "Você não pode tratar um alvo que esta muito agitado", SSM_INFO);
 		return;
 	elseif ( GetObjProperty(targ, "curando") > ReadGameClock() )
 		SendSysMessageEx(mobile, "O alvo ja esta enfaixado", SSM_INFO);
@@ -71,7 +71,7 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "Alvo ja foi curado.", SSM_INFO);
 			return 0;
 		elseif (bandage.amount < 5)
-			SendSysMessageEx(mobile, "Voce precisa de 5 bandagens.", SSM_FAIL);
+			SendSysMessageEx(mobile, "Você precisa de 5 bandagens.", SSM_FAIL);
 			return 0;
 		endif
 
@@ -97,10 +97,10 @@ program UseBandage(mobile, bandage)
 	endif
 
 	if (targ.isTamable())
-		SendSysMessageEX(mobile, "Voce nao tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
+		SendSysMessageEX(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
 	elseif (isBloodied(targ) && ((heal_skill == MEDICINA && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") ))))
-		SendSysMessageEx(mobile, "Voce nao tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
+		SendSysMessageEx(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
 	endif
 
@@ -148,7 +148,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	endif
 
 	if ( !Wait(mobile, 5) )
-		SendSysMessage(mobile, "Voce interrompeu a cura.");
+		SendSysMessage(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -182,10 +182,10 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	for ( i := 0 ; i < q ; i := i + 1 )
 		Sleep(1);
 		if (x != targ.x || y != targ.y)
-			SendSysMessage(targ, "Voce interrompeu a cura.");
+			SendSysMessage(targ, "Você interrompeu a cura.");
 			return 1;
 		elseif (AP_GetVital(targ, "hits") >= AP_GetVitalMaximumValue(targ, "hits"))
-			SendSysMessage(targ, "Voce esta completamente curado.");
+			SendSysMessage(targ, "Você esta completamente curado.");
 			return 1;
 		endif
 
@@ -223,7 +223,7 @@ function HealCorpse(mobile, targ, restauraDP)
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
 	if ( !Wait(mobile, 10) )
-		SendSysMessage(mobile, "Voce interrompeu a cura.");
+		SendSysMessage(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -235,14 +235,14 @@ function HealCorpse(mobile, targ, restauraDP)
 	elseif ( roll >= 16 )
 		ExpGain(mobile, "major");
 		mobile.SetAchievement("heal_corpse", 1);
-		SendSysMessage(mobile, "Voce estabilizou "+name);
+		SendSysMessage(mobile, "Você estabilizou "+name);
 		SetObjProperty(targ, "curado", 1);
 		var owner := SystemFindObjectBySerial(targ.ownerserial);
 		if (restauraDP && owner)
 			AP_SetVital(owner, "DP", AP_GetVital(owner, "DP")+10);
 		endif
 	else
-		SendSystemReport(mobile, "Voce nao conseguiu estabilizar "+name+".");
+		SendSystemReport(mobile, "Você não conseguiu estabilizar "+name+".");
 	endif
 
 	return 1;
@@ -254,7 +254,7 @@ function HealNpcCorpse(mobile, targ)
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
 	if ( !Wait(mobile, 10) )
-		SendSysMessage(mobile, "Voce interrompeu a cura.");
+		SendSysMessage(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -264,10 +264,10 @@ function HealNpcCorpse(mobile, targ)
 	if (  !GetObjProperty(targ,"morto") )
 		return;
 	elseif ( roll >= 16 ) // SkillCheck(mobile, MEDICINA, diff) SkillCheck(mobile, , diff)
-		SendSysMessage(mobile, "Voce estabilizou "+name);
+		SendSysMessage(mobile, "Você estabilizou "+name);
 		ghaiaRessurect(targ);
 	else
-		SendSysMessage(mobile, "Voce nao conseguiu estabilizar "+name+".");
+		SendSysMessage(mobile, "Você não conseguiu estabilizar "+name+".");
 	endif
 
 	return 1;
@@ -283,7 +283,7 @@ function apllyHerbs(mobile, bandage, targ)
 	if (!(targ.objtype in allowed_objtypes))
 		return SendSysMessageEx(mobile, "Cancelado.");
 	elseif (targ.amount != bandage.amount)
-		return SendSysMessageEx(mobile, "Voce precisa da mesma quantidade de {}.".format(targ.desc), SSM_FAIL);
+		return SendSysMessageEx(mobile, "Você precisa da mesma quantidade de {}.".format(targ.desc), SSM_FAIL);
 	endif
 
 	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, MEDICINA);
@@ -301,12 +301,12 @@ function apllyHerbs(mobile, bandage, targ)
 		SetObjProperty(bandage, "blood", 1);
 		bandage.color := 1229;
 	else
-		SendSysMessageEx(mobile, "Voce estragou algumas ataduras.", SSM_INFO);
+		SendSysMessageEx(mobile, "Você estragou algumas ataduras.", SSM_INFO);
 		SubtractAmount(bandage, cint(bandage.amount*0.7));
 		SubtractAmount(targ, cint(targ.amount*0.7));
 		return;
 	endif
 
-	SendSysMessageEx(mobile, "Voce passou o extrato de {} nas ataduras.".format(targ.desc), SSM_INFO);
+	SendSysMessageEx(mobile, "Você passou o extrato de {} nas ataduras.".format(targ.desc), SSM_INFO);
 	DestroyITem(targ);
 endfunction

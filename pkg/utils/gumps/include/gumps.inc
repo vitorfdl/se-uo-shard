@@ -34,7 +34,7 @@ use os;
 use basic;
 
 //ADDED by gha
-//pra nao ter q ler um cfg
+//pra não ter q ler um cfg
 CONST DEFAULT_BACKGROUND := 0x13BE;
 CONST DEFAULT_FOREGROUND := 0x2486;
 

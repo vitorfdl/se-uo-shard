@@ -25,7 +25,7 @@ program core_reconnect(who)
 			if (count > maxChars)
 				SetObjProperty(who, "delete", 1);
 				SetObjProperty(who, "#delete", 1);
-				SendSysMessage(who, "Voce nao pode criar mais personagens na sua conta!");
+				SendSysMessage(who, "Você não pode criar mais personagens na sua conta!");
 				sleep(1);
 				DisconnectClient(who);
 				sleep(2);

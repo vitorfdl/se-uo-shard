@@ -26,12 +26,12 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	inserttype     := inserttype;
 
 	if( book.movable == 0 )
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		MoveItemToContainer(item, who.backpack);
 		return 0;
 	elseif( !ReserveItem(book) || !ReserveItem(item) )
 		MoveItemToContainer(item, who.backpack);
-		SendSysMessage(who, "O livro esta em uso.");
+		SendSysMessageEx(who, "O livro esta em uso.");
 		return 0;
 	endif
 
@@ -47,15 +47,15 @@ function addScroll(who, book, scroll)
 	endif
 	
 	if (!spell_id)
-		SendSysMessage(who, "Este nao parece um pergaminho de magia.");
+		SendSysMessageEx(who, "Este não parece um pergaminho de magia.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	elseif( spell_list.Size() > 15 )
-		SendSysMessage(who,"Este livro ja esta cheio.");
+		SendSysMessageEx(who,"Este livro ja esta cheio.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	elseif( !ReserveItem(scroll) )
-		SendSysMessage(who,"Cancelado");
+		SendSysMessageEx(who,"Cancelado", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	elseif (FindInArray(spell_list, spell_id))
@@ -70,7 +70,7 @@ function addScroll(who, book, scroll)
 
 	SetObjProperty(book, "spells", spell_list);
 
-	SendSysMessage(who, "Voce adicionou o pergaminho no livro.");
+	SendSysMessageEx(who, "Você adicionou o pergaminho no livro.", SSM_INFO);
 	ReleaseItem(scroll);
 	DestroyItem(scroll);
 	Set_Critical(0);

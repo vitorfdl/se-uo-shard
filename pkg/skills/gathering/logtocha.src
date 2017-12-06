@@ -21,14 +21,14 @@ program turnLogIntoTorch(who, item)
 	endif
 
 	if(!Accessible(who, trg))
-		SendSysMessage(who, "Voce nao alcanca isto.");
+		SendSysMessage(who, "Você não alcanca isto.");
 		return 0;
 	endif
 
 	if(isHeatSource(trg))
 		logToTorch(who, item);
 	else
-		SendSysMessage(who, "Isto nao serve.");
+		SendSysMessage(who, "Isto não serve.");
 	endif
 endprogram
 
@@ -61,9 +61,9 @@ function logToTorch(who, item)
 	if(SubtractAmount(item, 1))
 		newitem := CreateItemInBackpack(who, LITTORCH_OBJTYPE);
 		if(newitem)
-			SendSysMessage(who, "Voce guardou o item na sua mochila");
+			SendSysMessage(who, "Você guardou o item na sua mochila");
 		else
-			SendSysMessage(who, "Voce nao tem espaco na mochila.");
+			SendSysMessage(who, "Você não tem espaço na mochila.");
 		endif
 	endif
 	return 1;

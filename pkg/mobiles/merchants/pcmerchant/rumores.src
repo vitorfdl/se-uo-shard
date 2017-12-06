@@ -31,7 +31,7 @@ program MerchantMenu(params)
 
 	if (player.hidden)
 		player.hidden := 0;
-		SendSysMessageEx (player, "Voce se revelou.", SSM_FAIL);
+		SendSysMessageEx (player, "Você se revelou.", SSM_FAIL);
 	endif
 
 	var gump := GFCreateGump(0, 0);
@@ -102,10 +102,10 @@ program MerchantMenu(params)
 				if ( moedas.objtype == 47715)
 					if (moedas.amount >= cint(rumores[id].custo))
 						if (!SubtractAmount(moedas, cint(rumores[id].custo)))
-							PrintText(npc, "Voce nao tem moedas necessarias.");
+							PrintText(npc, "Você não tem moedas necessarias.");
 						endif
 					else
-						PrintTextAbove(npc, "Voce nao tem moedas necessarias.");
+						PrintTextAbove(npc, "Você não tem moedas necessarias.");
 						return;
 					endif
 				else

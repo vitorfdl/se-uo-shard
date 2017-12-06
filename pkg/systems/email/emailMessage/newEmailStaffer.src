@@ -14,11 +14,12 @@ use os;
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:htmlgump";
+include "include/say";
 
 program EmailMessage( params )
 	var mobile := params[1];
 	var serial := params[2];
-        SendSysMessage( mobile, "Foi recebido uma nova page." );
+        SendSysMessageEx( mobile, "Foi recebido uma nova page." );
         
 	if( GetProcess( CInt( GetObjProperty( mobile, "#EmailMessagePid" ))))
 		return 0;
@@ -47,7 +48,7 @@ program EmailMessage( params )
         if( input[0x20] )
                 var script := start_script( ":email:email", array{mobile, serial} );
                 if( script.errortext )
-                        SendSysMessage( mobile, "Error starting script <:email:email> -->"+script.errortext );
+                        SendSysMessageEx( mobile, "Error starting script <:email:email> -->"+script.errortext );
                         return 0;
                 endif
         endif

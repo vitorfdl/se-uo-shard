@@ -76,7 +76,7 @@ program Attack(params)
 	if (attacker.acctname)
 		if (!attacker.warmode)
 			if(GetObjProperty(attacker, "#attackmsg") <= polcore().systime)
-				SendSysMessageEx(attacker, "Voce precisa estar em modo de combate para ameacar alguem.", SSM_FAIL);
+				SendSysMessageEx(attacker, "Você precisa estar em modo de combate para ameacar alguem.", SSM_FAIL);
 				SetObjProperty(attacker, "#attackmsg", polcore().systime+15);
 			endif
 			return 1;
@@ -86,7 +86,7 @@ program Attack(params)
 	wpn_a_elem := GetItemCFGInfo(attacker, weapon);
 
 	if ( (attacker.paralyzed) || (attacker.frozen) )
-		SendSysMessage(attacker, "Voce nao consegue atacar.");
+		SendSysMessage(attacker, "Você não consegue atacar.");
 		return 1;
 	elseif ( (attacker.concealed) && (attacker.cmdlevel == 0) )
 		attacker.concealed := 0;
@@ -267,7 +267,7 @@ function GetDefenderCA(defender, armor)
 		CA += ca_bonus;
 	endif
 
-	//nao ta em warmode, 95% de chance
+	//não ta em warmode, 95% de chance
 	if (defender.acctname && !defender.warmode)
 		CA := 5;
 	endif
@@ -355,7 +355,7 @@ function AmmoCheck(attacker, defender)
 	var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
 	var ammo   := GetObjProperty(weapon, "ammo");
 	if (!ammo)
-		SendSysMessageEX(attacker, "Voce nao definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]", SSM_FAIL);
+		SendSysMessageEX(attacker, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]", SSM_FAIL);
 		return 0;
 	endif
 	if ( ConsumeSubstance( aljava, ammo, 1 ) )
@@ -389,7 +389,7 @@ function FacingChecks(attacker, defender)
 			TurnObjectToward(attacker, defender.x, defender.y);
 		else
 			if ( IsBehind(attacker, defender.x, defender.y) )
-				SendSysMessage(attacker, "Voce esta de costas para o inimigo!");
+				SendSysMessage(attacker, "Você esta de costas para o inimigo!");
 				retval := 0;
 			endif
 		endif

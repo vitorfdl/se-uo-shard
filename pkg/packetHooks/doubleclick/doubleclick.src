@@ -15,7 +15,7 @@ exported function HandleDoubleClick( who, byref packet )
 
 	var defender := SystemFindObjectBySerial(packet.GetInt32(BYTE_DEFENDER));
 
-	//nao sei como, mas as vezes vem sem, entao deixa o pol tratar
+	//não sei como, mas as vezes vem sem, entao deixa o pol tratar
 	if (!defender)
 		return 0;
 	elseif (defender == who.backpack)
@@ -35,15 +35,15 @@ exported function HandleDoubleClick( who, byref packet )
 	endwhile
 
 	if( Distance(who, defender) > 15 )
-		SendSysMessageEx(who, "Voce esta muito distante.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
 		return 1;
 	endif
 	if ( abs(who.z - defender.z ) > 10 && defender.isa(POLCLASS_MOBILE))
-		SendSysMessageEx(who, "Voce esta muito distance.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito distance.", SSM_FAIL);
 		return 1;
 	endif
 	if(!CheckLineOfSight(who, defender))
-		SendSysMessageEx(who, "Voce não enxerga o alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não enxerga o alvo.", SSM_FAIL);
 		return 1;
 	endif
 

@@ -17,7 +17,7 @@ endprogram
 exported function HandleItemPickup( who, byref packet )
 
  	if ( GetProcess(CInt(GetObjProperty(who, "#PickPid"))) )
-		SendSysMessageEx(who, "Voce esta ocupado roubando alguem");
+		SendSysMessageEx(who, "Você esta ocupado roubando alguem");
 		SendPacket(who, "2700");
 		return 1;
 	endif
@@ -34,7 +34,7 @@ exported function HandleItemPickup( who, byref packet )
 		if (!maoLivre(who, 1))
 			//var newpacket := CreatePacket(0x27, 2);	
 			//newpacket.SendPacket(who);
-			//SendSysMessage(who, "Voce precisa de uma mao livre.");
+			//SendSysMessage(who, "Você precisa de uma mao livre.");
 			SendPacket(who, "2700");
 			return 1;
 		else

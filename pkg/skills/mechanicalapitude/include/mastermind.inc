@@ -172,7 +172,7 @@ while(who.connected)
 		foreach key in (Res.keys)
 			if(key > 100 && key < 106)
 				if (stones[res[0]-10] in stands)
-					SendSysMessageEx(who, "Nao e possível usar os mesmos cilindros!", SSM_FAIL);
+					SendSysMessageEx(who, "Não e possível usar os mesmos cilindros!", SSM_FAIL);
 				else
 					stands[key-100] := stones[res[0]-10];
 				endif

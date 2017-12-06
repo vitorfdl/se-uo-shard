@@ -15,7 +15,7 @@ program Arrastar(who)
 	if (!maolivre(who, 2))
 		return 0;
 	elseif (AP_GetVital(who, "Stamina") < 10)
-		SendSysMessage(who, "Voce esta cansado demais para arrastar algo...");
+		SendSysMessage(who, "Você esta cansado demais para arrastar algo...");
 		return;
 	endif
 	
@@ -32,7 +32,7 @@ program Arrastar(who)
 	elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"))
 		type := "corpo";
 	else
-		SendSysMessage(who, "Voce nao pode arrastar isto.");
+		SendSysMessage(who, "Você não pode arrastar isto.");
 		return;
 	endif
 
@@ -57,13 +57,13 @@ program Arrastar(who)
 	if (!maolivre(who, 2))
 		return 0;
 	elseif (AP_GetVital(who, "Stamina") < 10)
-		SendSysMessage(who, "Voce esta cansado demais para arrastar algo...");
+		SendSysMessage(who, "Você esta cansado demais para arrastar algo...");
 		return;
 	endif
 
 
 	if( !MoveObjectToLocation(targ, who.x, who.y, who.z ));
-		SendSysMessage( who, "Nao eh possivel arrastar o "+type); 
+		SendSysMessage( who, "Não eh possivel arrastar o "+type); 
 		return;
 	else	
 		var mob := SystemFindObjectBySerial(targ.ownerserial);

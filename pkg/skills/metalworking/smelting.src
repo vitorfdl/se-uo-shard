@@ -16,12 +16,12 @@ program smelthing(who, tool)
 	// 	return 0;
 	// endif
 	// if((!tool.movable) or !ReserveItem(tool))
-	// 	SendSysMessageEx(who, "Voce nao pode usar isto.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
 	// 	return 0;
 	// endif
 	// if(!tool in ListEquippedItems(who))
 	// 	if( !(tool in EnumerateItemsInContainer(who.backpack)) )
-	// 		SendSysMessageEx(who, "A ferramenta nao esta na sua mochila.", SSM_FAIL);
+	// 		SendSysMessageEx(who, "A ferramenta não esta na sua mochila.", SSM_FAIL);
 	// 		return 0;
 	// 	endif
 	// endif
@@ -29,10 +29,10 @@ program smelthing(who, tool)
 	// EraseObjProperty(who, "IsMeditating");
 	// EraseObjProperty(who, "HealTimer");
 	
-	// SendSysMessageEx(who, "O que voce deseja esmeltar?", SSM_REQUEST);
+	// SendSysMessageEx(who, "O que você deseja esmeltar?", SSM_REQUEST);
 	// var what := Target(who);
 	// if (!FindConfigElem( craft_config, what.objtype))
-	// 	SendSysMessageEx(who, "Este objeto nao pode ser esmaltado.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Este objeto não pode ser esmaltado.", SSM_FAIL);
 	// 	return;
 	// endif
 		
@@ -52,7 +52,7 @@ program smelthing(who, tool)
 	// endforeach
 	
 	// if (materials.size() <= 0)
-	// 	SendSysMessageEx(who, "Voce nao conseguira recuperar nada deste objeto", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Você não conseguira recuperar nada deste objeto", SSM_FAIL);
 	// 	return;
 	// endif
 	
@@ -84,7 +84,7 @@ program smelthing(who, tool)
 	// 		endif
 	// 	endforeach
 	// 	if(anvil_near == 0)
-	// 		SendSysMessageEx(who, "Voce precisa estar proximo a uma forja para esmeltar itens.", SSM_FAIL);
+	// 		SendSysMessageEx(who, "Você precisa estar proximo a uma forja para esmeltar itens.", SSM_FAIL);
 	// 		return 0;
 	// 	endif
 	// 	PlaySoundEffect(who, 0x22);

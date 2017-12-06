@@ -122,7 +122,7 @@ endfunction
 // 	var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
 // 	var ammo   := GetObjProperty(attacker.weapon, "ammo");
 // 	if (!ammo)
-// 		SendSysMessage(attacker, "Voce nao definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
+// 		SendSysMessage(attacker, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
 // 		return 0;
 // 	endif
 // 	if ( ConsumeSubstance( aljava, ammo, 1 ) )
@@ -162,7 +162,7 @@ endfunction
 // 			TurnObjectToward(attacker, defender.x, defender.y);
 // 		else
 // 			if ( IsBehind(attacker, defender.x, defender.y) )
-// 				SendSysMessage(attacker, "Voce esta de costas para o inimigo!");
+// 				SendSysMessage(attacker, "Você esta de costas para o inimigo!");
 // 				retval := 0;
 // 			endif
 // 		endif

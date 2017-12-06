@@ -27,7 +27,7 @@ program createchar(who)
 		SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
 		return 1;
 	elseif (GetObjProperty(who, "delete") == 1)
-		SendSysMessageEx(who, "Voce nao pode ter mais de um personagem por conta.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode ter mais de um personagem por conta.", SSM_FAIL);
 		return 1;
 	endif
 
@@ -227,7 +227,8 @@ function ShowCreateGumps(who, byref chardata)
 endfunction
 
 function RaceGump(who, byref  chardata)
-	var first_name, last_name;
+	var first_name := "";
+	var last_name := "";
 
 	var gump := GFCreateGump();
 	construirgump(gump, 1); //monta a aparência da gump
@@ -282,7 +283,7 @@ function RaceGump(who, byref  chardata)
 		first_name := GFExtractData( input, 99);
 		last_name := GFExtractData( input, 98);
 		if (len(first_name) < 3 || cint(len(first_name) + len(last_name)) > 17)
-			SendSysMessageEX(who, "A combinacao do seu nome com sobrenome nao pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
+			SendSysMessageEX(who, "A combinacao do seu nome com sobrenome não pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
 			RaceGump(who, chardata);
 		endif
 

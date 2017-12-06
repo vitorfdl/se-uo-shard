@@ -13,26 +13,26 @@ program skill_Anatomy(who)
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 
-	SendSysMessageEx(who, "Quem voce deseja examinar?", SSM_REQUEST);
+	SendSysMessageEx(who, "Quem você deseja examinar?", SSM_REQUEST);
 	var subject := Target(who);
 	// target checks begin here
 	if(!subject)
 		return 0;
 	elseif(subject.serial == who.serial)
-		//PrintTextAbovePrivate(who, "Voce ja conhece o bastante de si mesmo.", who);
-//		PrintTextAbovePrivate(subject, "Voce esta " + DPMsg(subject)+".", who);
+		//PrintTextAbovePrivate(who, "Você ja conhece o bastante de si mesmo.", who);
+//		PrintTextAbovePrivate(subject, "Você esta " + DPMsg(subject)+".", who);
 			var hunger := CInt(AP_GetVital(subject, "Hunger") / 10);
 			PrintTextAbovePrivate(subject, "Niveis de fome: " + hunger , who);
 		return 0;
 	elseif(subject.graphic == 0x2006)
 		if (!TemHabilidade(who, "Necropsia"))
-			SendSysMessageEX(who, "Parece morto para voce.", SSM_INFO);
+			SendSysMessageEX(who, "Parece morto para você.", SSM_INFO);
 			return;
 		endif
 		PrintText(who, "*examinando o corpo*");
 		if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
 			if (GetObjProperty(subject, "morto") == 1)
-				SendSysMessageEx(who, "Parece morto para voce.", SSM_INFO);
+				SendSysMessageEx(who, "Parece morto para você.", SSM_INFO);
 				if (40 == 40); //valorInicial(who, MEDICINE)
 					if (GetObjProperty(subject, "WeaponKill"))
 						SendSysMessageEx(who, "O corpo foi morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
@@ -49,7 +49,7 @@ program skill_Anatomy(who)
 				var mob := SystemFindObjectBySerial(subject.ownerserial);
 				if (mob)
 					if (mob.concealed)
-						SendSysMessageEx(who, "Parece morto para voce.", SSM_INFO);
+						SendSysMessageEx(who, "Parece morto para você.", SSM_INFO);
 						return 0;
 					endif
 				endif
@@ -57,17 +57,17 @@ program skill_Anatomy(who)
 				return 0;
 			endif
 		else
-			SendSysMessageEx(who, "Voce nao tem certeza...", SSM_FAIL);
+			SendSysMessageEx(who, "Você não tem certeza...", SSM_FAIL);
 			return 0;
 		endif
 	elseif(subject.objtype == 0xEFFF)
 		if (!TemHabilidade(who, "Necropsia"))
-			SendSysMessageEX(who, "Parece morto para voce.", SSM_INFO);
+			SendSysMessageEX(who, "Parece morto para você.", SSM_INFO);
 			return;
 		endif
 		PrintText(who, "*examinando os ossos*");
 		if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
-			SendSysMessageEx(who, "Parece inanimado para voce.", SSM_INFO);
+			SendSysMessageEx(who, "Parece inanimado para você.", SSM_INFO);
 			if (40 == 40)//valorInicial(who, MEDICINE)				
 				if (GetObjProperty(subject, "WeaponKill"))
 					SendSysMessageEx(who, "O corpo foi morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
@@ -83,7 +83,7 @@ program skill_Anatomy(who)
 				endif
 			endif
 		else
-			SendSysMessageEx(who, "Voce nao tem certeza...", SSM_FAIL);
+			SendSysMessageEx(who, "Você não tem certeza...", SSM_FAIL);
 			return 0;
 		endif
 		return;
@@ -96,14 +96,14 @@ program skill_Anatomy(who)
 	endif
 	
 	if (!TemHabilidade(who, "Observar Fisionomia"))
-		SendSysMessageEX(who, "Parece uma criatura normal para voce.", SSM_INFO);
+		SendSysMessageEX(who, "Parece uma criatura normal para você.", SSM_INFO);
 		return;
 	endif
 	PrintTextPrivate(who, "*tentando examinar " + subject.name + "*", who);
 	if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
 		AN_SendGump(who, subject);
 	else
-		PrintTextPrivate(who, "Voce falha em examinar a criatura", who);
+		PrintTextPrivate(who, "Você falha em examinar a criatura", who);
 	endif
 
 endprogram
@@ -261,13 +261,13 @@ exported function tempoMorto(character, tipo)// para 10000 deu 292 segundos 300
     var tempoDevida:= tempoAgora - criadoEm;
     var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
 	if (dias <= 2)
-		dias := "Ha pouco tempo";
+		dias := "Há pouco tempo";
 	elseif (dias > 2 && dias <= 8)
-		dias := "Ha algum tempo";
+		dias := "Há algum tempo";
 	elseif (dias > 8 && dias <= 15)
-		dias := "Ha muito tempo";
+		dias := "Há muito tempo";
 	else
-		dias := "Ha um ano ou mais";
+		dias := "Há um ano ou mais";
 	endif
     return dias;
 endfunction

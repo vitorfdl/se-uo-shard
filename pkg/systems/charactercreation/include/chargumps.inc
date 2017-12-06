@@ -21,7 +21,7 @@ function ItemPickerGump(who, byref chardata)
 	GFResizePic(chargump, 0, 25, 3600, 600, 480);
 	GFResizePic(chargump, 15, 40, 0x13BE, 570, 450);
 	GFTextMid(chargump, 15, 45, 600, 1153, "Defina seus Itens Iniciais");
-	GFTextMid(chargump, 15, 60, 600, 1153, "Voce tem " + chardata.Credits + " creditos.");
+	GFTextMid(chargump, 15, 60, 600, 1153, "Você tem " + chardata.Credits + " creditos.");
 	GFAddButton(chargump, 510, 450, 4502, 4502, 1, 999 );
 	GFTextLine(chargump, 450, 460, 1153, "Termina");
 
@@ -92,7 +92,7 @@ function ItemPickerGump(who, byref chardata)
 			CreateItemInBackpack( who, buyitem, amt );
 			ItemPickerGump(who, chardata);
 		else
-			SendSysMessage(who, "Voce nao tem creditos para comprar isto.");
+			SendSysMessage(who, "Você não tem creditos para comprar isto.");
 			ItemPickerGump(who, chardata);
 		endif
 	endif

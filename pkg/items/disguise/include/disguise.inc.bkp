@@ -12,7 +12,7 @@ function removeDisguise(who)
 	var original := GetObjProperty(who, "disfarce");
 //	printtextabove(who, "original " + original);
 	if (original == error)
-		sendsysmessage(who, "Nao foi possivel achar sua configuracao inicial.");
+		sendsysmessage(who, "Não foi possivel achar sua configuracao inicial.");
 		return 1;
 	endif
 
@@ -88,7 +88,7 @@ function removedisfarce(who)
 
 	var original := GetObjProperty(who, "disfarce");
 	if (original == error)
-		SendSysMessageEx(who, "Voce nao esta disfarcado.", SSM_INFO);
+		SendSysMessageEx(who, "Você não esta disfarcado.", SSM_INFO);
 		return 1;
 	endif
 
@@ -165,7 +165,7 @@ function escolherCabelo(who, byref disfarce, raca := 0)
 	GfAddButton(gump, 25, y_pos+25, 2117, 2118, 1, 10);
 	var input := GFSendGump(who, gump);
 	if (input[0] == 10)
-		SendSysMessageEx(who, "Voce escolheu o cabelo. ", SSM_INFO);
+		SendSysMessageEx(who, "Você escolheu o cabelo. ", SSM_INFO);
 		foreach key in (input.keys)
 			if (key != 10)
 				disfarce.cabelo := key;
@@ -194,7 +194,7 @@ function escolheCorCabelo(who, byref disfarce, cordocabelo :=  0, povo :=0, reto
 		if ( key > 2 )
 			disfarce.corcabelo := key;
       selected := 1;
-			//SendSysMessageEx(who, "Voce escolheu a cor do cabelo.", SSM_INFO);
+			//SendSysMessageEx(who, "Você escolheu a cor do cabelo.", SSM_INFO);
 			break;
 		endif
 		sleepms(2);
@@ -254,7 +254,7 @@ function escolherBarba(who, byref disfarce)
 	GfAddButton(gump, 25, y_pos+87, 2117, 2118, 1, 10);
 	var input := GFSendGump(who, gump);
 	if (input[0] == 10)
-		SendSysMessageEx(who, "Voce escolheu a barba. ", SSM_INFO);
+		SendSysMessageEx(who, "Você escolheu a barba. ", SSM_INFO);
 		foreach key in (input.keys)
 			if (key != 10)
 				disfarce.barba := key;
@@ -388,7 +388,7 @@ function SkinGump(who, byref new_look, povo := 0, sempreretorna := 0)
 
 	var input := GFSendGump(who, gump);
 	if (input[0] == 10)
-		SendSysMessageEx(who, "Voce escolheu da pele. " + input.keys, SSM_INFO);
+		SendSysMessageEx(who, "Você escolheu da pele. " + input.keys, SSM_INFO);
     var selected := 0;
 		foreach key in (input.keys)
 			if (key != 10 && key != 0 )
