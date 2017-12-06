@@ -1,0 +1,48 @@
+use uo;
+use os;
+use cfgfile;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include ":attributes:attributes";
+include ":tn:npcutil";
+include ":ghaia:ghaiaUtil";
+include ":ghaia:ghaia";
+include ":magery:summon";
+include ":taming:taming";
+include ":charactercreation:habilidades";
+
+program esferadeluz(params)
+	var who := params[1];
+	var roll_dice := params[2].roll_dice;
+	var targ := params[3];
+	params := 0; // No longer needed
+	
+	var summoned := CreateNpcFromTemplate(":ghaia:orb", targ.x, targ.y, targ.z);
+	if (summoned)
+		PrintTextAbove(summoned, "*Uma orbe de fogo se forma*", 3,191);
+		summoned.SetMaster(who);
+
+		if (!summoned.backpack)
+			var mochila := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, 0x9b2, 1, summoned.realm);
+			EquipItem(summoned, mochila);
+		endif
+		
+		var duration := AP_GetStat(who, INTELLIGENCE);
+		if (duration <= 1)
+			duration := 2;
+		endif
+		duration := duration * 4;
+
+		SetObjProperty(summoned, "owner", targ.serial);
+		
+		// SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
+		// var mobile := target(who);
+		TS_StartTimer(summoned, "summon", duration);	
+	endif
+	return 1;
+
+endprogram

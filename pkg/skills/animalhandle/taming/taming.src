@@ -137,7 +137,7 @@ function taming(who)
 			SendSysMessageEx(who, "Você deixou "+targ.name+" irritado.", SSM_INFO);
 			break;
 		elseif ( dice.dice > 0 )
-			SendSysMessageEx(who, "Você ganhou a confianca de "+targ.name+".", SSM_INFO);
+			SendSysMessageEx(who, "Você ganhou a confiança de "+targ.name+".", SSM_INFO);
 			targ.SetMaster(who);
 			who.SetAchievement("taming", 1);
 			EraseObjProperty(targ, "anchor");

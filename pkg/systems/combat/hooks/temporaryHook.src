@@ -132,6 +132,9 @@ program Attack(params)
 		PlayHitSounds(attacker, defender);
 		var dmg := CalculateRawDamage(attacker);
 		ExpGain(attacker, defender_CA, attack_chance);
+      if (attacker.master)
+         attacker.SetExp(2);
+      endif
 
 		if (!defender.npctemplate && defender.shield)
 			defender.SetAchievement("shield", 1);
@@ -179,6 +182,10 @@ function GetAttackerChance(attacker, defender)
 	if (GetObjProperty(attacker, "#attackbonus" ) || GetObjProperty(attacker, "hitbonus") )
 		dice_gain += 1;
 	endif
+
+   if (GetObjProperty(attacker, "#attack_disadvantage") || GetObjProperty(attacker, "#blinded"))
+		dice_gain -= 1;
+   endif
 
 	if (!IsFacing(defender, attacker.x, attacker.y))
 		dice_gain += 1;

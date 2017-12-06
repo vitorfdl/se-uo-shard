@@ -12,7 +12,6 @@ include ":tn:cooldown";
 include ":ghaia:ghaia";
 include "include/sysEvent";
 
-
 program skill_animal_lore( who )
    EraseObjProperty(who, "IsMeditating");
    EraseObjProperty(who, "HealTimer");
@@ -43,12 +42,20 @@ program skill_animal_lore( who )
       penalty := 1;
    endif
 
+   var cfg := ReadConfigFile(":ghaia:npcdesc");
+   cfg := cfg[creature.my_template()];
+
+   var diff := 16;
+   if (cfg.TameDifficulty)
+      diff := cint(TameDifficulty-2);
+   endif
+
    var roll := rollAttrDice(who, WISDOM, penalty) + getProficiencyBonus(who, TRATO_ANIMAIS);
 	if( roll > 14 || who.cmdlevel >= 3)
       // If the player succeeds, send the gump.
       // Create the Gump
-      var al_Gump := AL_LoadGump(who, creature);
-      var input := GFSendGump(who, al_Gump);
+      var al_Gump := AL_LoadGump(who, creature, cfg);
+      var input := GFSendGump(who, al_Gump,);
    else
       PrintTextAbovePrivate(creature, "Você falha em conseguir examinar este animal.", who);
    endif
@@ -73,9 +80,7 @@ function GetDif(diff)
 	return "Não-Domável";
 endfunction
 
-
-function AL_LoadGump(who, creature)
-
+function AL_LoadGump(who, creature, cfg)
 	who := who;
    // Declare the variables for use with the data array.
    // There is BOUND to be a retardedly more simple way of doing this,
@@ -86,12 +91,9 @@ function AL_LoadGump(who, creature)
    var mana := ""+GetVital(creature, "Mana")/100+"/"+AP_GetVitalMaximumValue(creature, "Mana")+"";
    var str := ""+AP_GetStat(creature, STRENGTH)+"";
    var dex := ""+AP_GetStat(creature, DEXTERITY)+"";
-   var int := ""+AP_GetStat(creature, INTELLIGENCE)+"";
-   var cons := ""+AP_GetStat(creature, CONSTITUTION)+"";
-   var ar := ""+creature.AR+"%";
-
-   var cfg := ReadConfigFile(":ghaia:npcdesc");
-   cfg := cfg[creature.my_template()];
+   // var int := ""+AP_GetStat(creature, INTELLIGENCE)+"";
+   // var cons := ""+AP_GetStat(creature, CONSTITUTION)+"";
+   // var ar := ""+creature.AR+"%";
 
    var diftype := GetDif(cfg.TameDifficulty);
 
@@ -102,7 +104,18 @@ function AL_LoadGump(who, creature)
       loyalty := "Nenhum";
    endif
 
+   var foodtype := cfg.foodtype;
+   if (!foodtype)
+      foodtype := "Desconhecido";
+   endif
+
+   var pet_properties = creature.GetPetProperties();
+
    var gump := GFCreateGump();
+   gump.base_x := 0; // Propriedade customizada, n existe.
+   gump.base_y := 0; // Propriedade customizada, n existe.
+
+
    GFGumpPic(gump, 100, 100, 2080);
    GFGumpPic(gump, 118, 137, 2081);
    GFGumpPic(gump, 118, 207, 2081);
@@ -126,39 +139,44 @@ function AL_LoadGump(who, creature)
    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Destreza");
    GFHTMLArea(gump, 280, 240,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(dex)+"</div>");
    GFGumpPic(gump, 128, 278, 2086);
-   GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Trato de Animais");
-   GFHTMLArea(gump, 147, 294, 160, 18, "<basefont color=#4A3929>Mestre");
-   GFHTMLArea(gump, 280, 294, 160, 18, "<basefont color=#4A3929>"+loyalty);
-   GFHTMLArea(gump, 147, 312, 160, 18, "<basefont color=#4A3929>Dificuldade");
-   GFHTMLArea(gump, 280, 312, 160, 18, "<basefont color=#4A3929>"+diftype);
-   GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, 2);
+   GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Detalhes");
+   GFHTMLArea(gump, 147, 294, 160, 18, "<basefont color=#4A3929>Personalidade");
+   GFHTMLArea(gump, 280, 294, 160, 18, "<basefont color=#4A3929>"+pet_properties.personality);
+   GFHTMLArea(gump, 147, 312, 160, 18, "<basefont color=#4A3929>Lealdade");
+   GFHTMLArea(gump, 280, 312, 160, 18, "<basefont color=#4A3929>"+pet_properties.loyalt);
+   GFHTMLArea(gump, 147, 312, 160, 18, "<basefont color=#4A3929>Comida Preferida");
+   GFHTMLArea(gump, 280, 312, 160, 18, "<basefont color=#4A3929>"+Upper(foodtype));
 
-   GFPage(gump, 2);
-   GFGumpPic(gump, 128, 152, 2086);
-   GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Combate");
-   GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Defesa");
-   GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+ar+"</div>");
-//    GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Resistência a Fogo");
-//    GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+arf+"</div>");
-//    GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Resistência a Frio");
-//    GFHTMLArea(gump, 320, 204,  35, 18, "<basefont color=#4A3929><div align=right>"+arc+"</div>");
-//    GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Resistência a Energia");
-//    GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+are+"</div>");
-//    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Resistência a Veneno");
-//    GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+arp+"</div>");
-   GFGumpPic(gump, 128, 278, 2086);
-   // GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Combate");
-   GFHTMLArea(gump, 153, 294, 160, 18, "<basefont color=#4A3929>Ataque");
-   // GFHTMLArea(gump, 320, 294,  35, 18, "<basefont color=#4A3929><div align=right>"+wrestStr+"</div>");
-   // GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>Táticas");
-   // GFHTMLArea(gump, 320, 312,  35, 18, "<basefont color=#4A3929><div align=right>"+tactStr+"</div>");
-   GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, 1);
-   GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, 3);
+   if (creature.master.serial == who.serial)
+      GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, cur_page+1);
+      GFPage(gump, gump.cur_page+1);
+      GFGumpPic(gump, 128, 152, 2086);
+      GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Trato de Animais");
+      GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Atacar");
+      GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+command_attack+"</div>");
+      GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Defender");
+      GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+command_defense+"</div>");
+      GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Seguir/Ir");
+      GFHTMLArea(gump, 320, 204,  35, 18, "<basefont color=#4A3929><div align=right>"+command_follow+"</div>");
+      GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Parar");
+      GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+command_stop+"</div>");
+      // GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>");
+      // GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+arp+"</div>");
+      GFGumpPic(gump, 128, 278, 2086);
+      GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Detalhes");
+      GFHTMLArea(gump, 153, 294, 160, 18, "<basefont color=#4A3929>Pontos");
+      GFHTMLArea(gump, 320, 294,  35, 18, "<basefont color=#4A3929><div align=right>"+creature.points+"</div>");
+      // GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>Táticas");
+      // GFHTMLArea(gump, 320, 312,  35, 18, "<basefont color=#4A3929><div align=right>"+tactStr+"</div>");
+      GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, cur_page-1);
+   endif
 
-   GFPage(gump, 3);
-   GFGumpPic(gump, 128, 152, 2086);
-   GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Danos");
-   GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Físico");
+   // GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, 3);
+
+   // GFPage(gump, 3);
+   // GFGumpPic(gump, 128, 152, 2086);
+   // GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Danos");
+   // GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Físico");
 //    GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+dar+"</div>");
 //    GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Fogo");
 //    GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+darf+"</div>");
@@ -168,8 +186,7 @@ function AL_LoadGump(who, creature)
 //    GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+dare+"</div>");
 //    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Veneno");
 //    GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+darp+"</div>");
-   GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, 2);
+   // GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, 2);
 
    return gump;
-
 endfunction

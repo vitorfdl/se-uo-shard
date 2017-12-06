@@ -21,7 +21,7 @@ program eat_food(who, food)
 		return;
 	endif
 
-        var hungerlvl := AP_GetVital(who, "Hunger");
+   var hungerlvl := AP_GetVital(who, "Hunger");
 	if(hungerlvl <= 10)
 		SendSysMessageEx(who, "Você esta muito cheio para comer mais.", SSM_FAIL);
 		return;

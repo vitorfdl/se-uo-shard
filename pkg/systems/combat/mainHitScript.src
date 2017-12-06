@@ -48,8 +48,6 @@ program MainHitScript( params )
 	endif
 
 	FacingChecks(attacker, defender);
-	
-	PlayHurtSound(defender);
 
 	// TODO: Rever depois para montar o exp gain
 	// SkillChecks(attacker, defender, weapon, critical);
@@ -62,25 +60,31 @@ program MainHitScript( params )
 	// Chain Of Pain
 	// TODO: reaproveitar depois
 
-	var damage_type := GetDamageType(wpn_a_elem);
-	var resist := checkResist(defender, damage_type);
-	if (resist > 0)
-		base_damage := Floor(base_damage / 2); 
-	elseif (resist < 0)
-		base_damage := Floor(base_damage * 2); 
-	endif
-
-	if (base_damage < 1)
-		base_damage := 1;
-	endif
-
-	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critical);
-	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical);
-
 	// TODO: Verificar depois
 	// CriticalHitScripts(attacker, defender, weapon, armor, base_damage, total);
 
 	PoisonChecks(attacker, defender, weapon);
+
+	var damage_type := GetDamageType(wpn_a_elem);
+
+	SetLastDamageInfo(defender, base_damage, 0, attacker); //Log 
+   if (defender.my_template() == "orb")
+      var serial := GetObjProperty(defender, "damage_transfer");
+      if (serial)
+         var mob := SystemFindObjectBySerial(serial);
+         DamageFLS(mob, base_damage/2, damage_type, attacker);
+         PlayMovingEffect(defender, mob, , 10, 10);
+         PlayHurtSound(mob);
+      endif
+      return 1;
+   endif
+
+	PlayHurtSound(defender);
+	DamageFLS(defender, base_damage, damage_type, attacker);
+	EraseObjProperty(attacker, "#backstab");
+
+	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critical);
+	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical);
 
 	if( GetObjProperty(defender, "#chain_damage") != error && cint(GetObjProperty(defender, "#chain_damage")) > readgameclock() )
 		var cop_mobs   := GetObjProperty(defender, "#chain_serials");
@@ -96,11 +100,6 @@ program MainHitScript( params )
 			endif
 		endforeach
 	endif
-
-	SetLastDamageInfo(defender, base_damage, 0, attacker); //Log 
-
-	DamageFLS(defender, base_damage, DMG_FORCED, attacker);
-	EraseObjProperty(attacker, "backstab");
 
 	return 1;
 endprogram
@@ -142,34 +141,8 @@ function PlayHurtSound(defender)
 endfunction
 
 function SkillChecks(attacker, defender, weapon, critical)
-	if (defender.npctemplate && attacker.connected)
-		//se a skill do atacante for maior que a do defender +10, não sobe
-		var skillDefender := cint(AP_GetSkill(defender,defender.weapon.attribute)) + 10;
-		var skillAttacker := cint(AP_GetSkill(defender, attacker.weapon.attribute));
-		if ( skillDefender < skillAttacker )
-			//printtextabove(attacker, "return " + skillDefender);
-			return 0;
-		endif
-	endif
-
-	var can_gain := 0;
-	var next_gain := CInt(GetObjProperty(attacker, "#CS_GainTime"));
-	if ( ReadGameClock() >= next_gain )
-		if ( CS_GetSettingsCfgElem("General").PvPGains )
-			can_gain := 1;
-		elseif ( defender.IsA(POLCLASS_NPC) )
-			can_gain := 1;
-		endif
-	endif
-
-	if ( can_gain )
-		var gain_wait := CInt(CS_GetSettingsCfgElem("General").GainWait);
-		SetObjProperty(attacker, "#CS_GainTime", ReadGameClock()+gain_wait);
-		if ( critical > 0 )
-			SkillCheck(attacker, weapon.attribute, -1);
-			SkillCheck(attacker, TACTICS, -1);
-		endif
-	endif
+   // Não fazer expGain
+   // Fazer os achievments
 endfunction
 
 function ArrowRecovery(defender, weapon)

@@ -6,7 +6,6 @@ include ":itemutils:canAccess";
 include ":timeutils:time";
 include ":death:death";
 include "include/say";
-include ":charactercreation:habilidades";
 include "include/damage";
 
 //const UOBJ_LIGHTSOURCE := 0x1647;
@@ -25,7 +24,7 @@ program UseWood( who, wood )
 		SendSysMessageEx( who, "Você não alcanca isto!", SSM_FAIL );
 		return 0;
 	elseif( wood.container )
-		SendSysMessageEx( who, "Coloque no chao primeiro!", SSM_FAIL );
+		SendSysMessageEx( who, "Coloque no chão primeiro!", SSM_FAIL );
 		return 0;
 	endif
 	// var camptimer := 0;//GetObjProperty(who, "CampTimer");
@@ -70,16 +69,13 @@ program UseWood( who, wood )
 		var tempocura := 0;
 		var continuehealing := 1;
 		var healpoints := 3;
-		if (TemHabilidade(who, "Hábil Escoteiro"))
-			healpoints := healpoints+2;
-		endif
 
 		while( time > 0 )
-			if (GetObjProperty(campfire, "encantado") == 1)
-				time := time + 30;
-				healpoints := healpoints+2;
-				EraseObjProperty(campfire, "encantado");
-			endif
+			// if (GetObjProperty(campfire, "encantado") == 1)
+			// 	time := time + 30;
+			// 	healpoints := healpoints+2;
+			// 	EraseObjProperty(campfire, "encantado");
+			// endif
 			time := time - 1;
 			tempocura := tempocura + 1;
 			if (tempocura == 5)
@@ -112,7 +108,6 @@ program UseWood( who, wood )
 		if( (campfire.x == x) && (campfire.y == y) )
 			DestroyItem(campfire);
 		endif
-
 	else
 		PrintText( who, "*acendendo uma fogueira*");
 		sleep(3);

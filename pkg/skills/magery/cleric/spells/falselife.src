@@ -4,6 +4,7 @@ use os;
 include "include/say";
 include "include/sounds";
 include ":timedScripts:timedScripts";
+include ":attributes:attributes";
 
 program divineOrientation(info)
    var who := info[1];
@@ -24,9 +25,16 @@ program divineOrientation(info)
       sleepms(2);
 	endwhile
 
+   var level := AP_GetStat(who, WISDOM, RETURN_BONUS);
+   if (level > 5)
+      level := 5;
+   elseif (level < 1)
+      level := 1;
+   endif
+
    PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
    PlaySoundEffect(targ, SFX_1EA);
    SendSystemReport(who, "O alvo foi abençoado.", SSM_HELPFUL);
-   TS_StartTimer(targ, "divineorientation", 300);	
+   TS_StartTimer(targ, "falselife", 600, level);	
    return 1;
 endprogram

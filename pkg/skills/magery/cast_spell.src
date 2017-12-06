@@ -127,19 +127,19 @@ program SpellStarter(params)
       targ := ChooseTarget(mobile, spellinfo);
       if (!targ)
          SendsysMessageEx(mobile, "Você cancelou a magia.", SSM_FAIL);
-         FailSpell(mobile);
+         FailSpell(mobile, 1);
          return ;
       endif
    endif	
 
    if (spellinfo.alvo != "Area" && !CheckLineOfSight(mobile, targ)) //checa se nï¿½o ï¿½ magia em ï¿½rea
       SendsysMessageEx(mobile, "Você não vê o alvo.", SSM_FAIL);
-      FailSpell(mobile);
+      FailSpell(mobile, 1);
       return 1;
    else //senï¿½o
       if (!CheckLOSAt(mobile, targ.x, targ.y, targ.z)) //verifica se o ponto ï¿½ vï¿½sivel
-         SendsysMessageEx(mobile, "O ponto que você selecionou esta fora da sua linha de visao.", SSM_FAIL);
-         FailSpell(mobile);
+         SendsysMessageEx(mobile, "O ponto que você selecionou esta fora da sua linha de visão.", SSM_FAIL);
+         FailSpell(mobile, 1);
          return 1;
       endif
    endif
@@ -186,15 +186,24 @@ function ChooseTarget(mobile, spellinfo)
       elseif (spellinfo.align == "Helpful")
          noto := TGTOPT_HELPFUL;
       endif
+
       targ := Target(mobile, noto);
       if (GetCooldown(targ, "repeal") > 0)
          SendSysMessageEx(mobile, "O alvo esta invulneravel a magias.", SSM_FAIL);
          return 0;
+      elseif (spellinfo.targettype)
+         if (spellinfo.targettype == "Mobile" && !targ.isA(POLCLASS_MOBILE))
+            SendSysMessageEx(mobile, "Você deve escolher uma criatura como alvo.", SSM_FAIL);
+            return 0;            
+         elseif (spellinfo.targettype == "Item" && !targ.isA(POLCLASS_ITEM))
+            SendSysMessageEx(mobile, "Você deve escolher um objeto como alvo", SSM_FAIL);
+            return 0;    
+         endif
       endif
       TurnObjectToward(mobile, targ.x, targ.y);
    elseif (spellinfo.alvo == "Area")
       while (1)
-         PrintTextPrivate(mobile, "'Escolha o Ponto Alvo.'", mobile, SSM_INFO);
+         PrintTextPrivate(mobile, "'Escolha o ponto alvo.'", mobile, SSM_INFO);
 //   		SendSysMessageEx(mobile, "Escolha o ponto onde a magia sera castada.", SSM_REQUEST);
          targ := TargetCoordinates(mobile);
          TurnObjectToward(mobile, targ.x, targ.y);

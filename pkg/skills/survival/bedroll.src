@@ -6,6 +6,7 @@ use uo;
 use os;
 
 include ":itemutils:canAccess";
+include "include/say";
 
 CONST LOGOUT_WAIT 	:= 30;
 CONST UOBJECT_CAMPFIRE  := 0xde3;
@@ -23,10 +24,10 @@ program use_Bedroll( who, bedroll )
 	endif
 	var items := ListItemsNearLocationOfType( who.x,who.y,who.z, 2, UOBJECT_CAMPFIRE, who.realm );
 	if( len(items) == 0 )
-		SendSysMessage( who, "Você precisa de um acampamento proximo para usar isto." );
+		SendSysMessageEx( who, "Você precisa de um acampamento proximo para usar isto.", SSM_FAIL );
 		return 0;
 	else
-		SendSysMessage( who, "Você deve permanecer aqui para preparar o acampamento." );
+		SendSysMessageEx( who, "Você deve permanecer aqui para preparar o acampamento.", SSM_FAIL );
 	endif
 
 	var x := who.x;
@@ -37,10 +38,10 @@ program use_Bedroll( who, bedroll )
 
 	while( ttl > 0 )
 		if( (who.x != x) || (who.y != y) || (who.z != z) )
-			SendSysMessage( who, "Você abandonou suas preparacoes para o acampamento.");
+			SendSysMessageEx( who, "Você abandonou suas preparacoes para o acampamento.", SSM_FAIL);
 			return 0;
 		endif
-		SendSysMessage( who, "Você deve esperar " + ttl + " segundos para deslogar." );
+		SendSysMessageEx( who, "Você deve esperar " + ttl + " segundos para deslogar.", SSM_FAIL );
 		ttl := ttl - 5;
 		sleep(5);
 	endwhile

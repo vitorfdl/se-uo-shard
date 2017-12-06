@@ -1,0 +1,28 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+
+program animateSword(params)
+	var who := params[1];
+	var roll_dice := params[2].roll_dice;
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var item := CreateItemAtLocation(targ.x, targ.y, targ.z);
+   var mobiles := ListMobilesInLineOfSight( item, 5);
+
+   foreach mob in mobiles
+      if (rollResistDice(mob, DEXTERITY) <= roll_dice)
+         SendSystemReport(mob, "*cegado*", SSM_HARMFUL, who);
+         TS_StartTimer(targ, "blinded", 5);	
+      endif
+   endforeach
+
+	return 1;
+endprogram

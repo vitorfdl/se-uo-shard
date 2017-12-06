@@ -119,12 +119,12 @@ function CheckReagents(who, byref spell_elem, scroll)
 	return 1;
 endfunction
 
-function FailSpell(who)
+function FailSpell(who, no_sound := 0)
 	// Simple function for handling effects when a caster
 	// fails the casting.
 	EraseObjProperty(who, "#medding");
 	EraseObjProperty(who, "#Casting");
-	if (!GetObjProperty(who, "#magiasilenciosa"));
+	if (!GetObjProperty(who, "#magiasilenciosa") && !no_sound);
 		PlaySoundEffect(who, SFX_SPELL_FAIL);
 		PlayObjectCenteredEffect(who, GFX_FIZZLE, 5, 50);
 	endif

@@ -1,0 +1,51 @@
+use uo;
+use os;
+use npc;
+use util;
+
+include ":attributes:attributes";
+include "include/sysEvent";
+include "include/say";
+include ":mounts:mounts";
+include ":taming:taming";
+include ":tn:cooldown";
+include ":ghaia:generic";
+include ":ghaia:objective";
+
+var me        := self();
+var wait_time := 1;
+
+program NPCMonitor()
+   set_critical(1);
+   SetWarMode( 0 );
+   me.enable( "invul" );
+
+   while (me)
+      sleep(wait_time);
+      if (me.master && !GetObjProperty(me, "no_follow"))
+         Follow(me.master);
+      endif
+      sleepms(2);
+   endwhile
+endprogram
+
+function Follow(character := 0)
+   if ( character == me || !character.IsA(POLCLASS_MOBILE) || character.hidden || character.concealed )
+      return;
+   endif
+
+   var dist := Distance(me, following);
+
+   if( dist <= 2 )
+      wait_time := 1;
+   elseif( dist > 25 )
+      following := 0;
+      wait_time := 10;
+   elseif ( dist > 4 )
+      RunToward(following);
+      wait_time := 0;
+   else
+      WalkToward(following);
+      wait_time := 0;
+   endif
+endfunction

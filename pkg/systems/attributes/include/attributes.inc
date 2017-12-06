@@ -98,6 +98,11 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 		dice += mod;
 	endif
 	
+   if (GetObjProperty(mobile, "#divineorientation"))
+      dice += RandomDiceRoll("1d4");
+   endif
+
+
 	if (dice < 1)
 		dice := 1;
 	endif

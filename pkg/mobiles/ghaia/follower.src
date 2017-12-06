@@ -16,7 +16,7 @@ set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
 var pack_animals   := array(291, 292); 
 var me             := self();
-var idlesnd1, idlesnd2, personality;
+var idlesnd1, idlesnd2, personality, foodtype;
 var following, fighting, guarding, patrolling;
 var wait_time := 10;
 var tame_difficulty := 0;
@@ -329,8 +329,9 @@ function Setup()
 
    personality     := me.GetPetProperties().personality;
    
-   var npc_cfg     := ReadConfigFile(":*:npcdesc");
-   tame_difficulty := cint(npc_cfg[me.my_template()].TameDifficulty);
+   var npc_cfg     := ReadConfigFile(":*:npcdesc")[me.my_template()];
+   tame_difficulty := cint(npc_cfg.TameDifficulty);
+   foodtype := npc_cfg.foodtype;
 
    me.facing := me.facing+1;
    TurnToward(me.master);
@@ -508,14 +509,25 @@ endfunction
 function TakeItem(ev)
    var cfg := ReadConfigFile(":*:itemdesc");
    var item_props := cfg[(ev.item).objtype];
-   if ( item_props.script["eat"] )
+   if ( item_props.script["eat"])
+      if (AP_GetVital(me, "Hunger") <= 10))
+         MoveItemToContainer(ev.item, ev.source.backpack);
+         return PrintTextAbove(me, "*recusa comida*");
+      elseif (item_props.foodtype != foodtype)
+         MoveItemToContainer(ev.item, ev.source.backpack);
+         return PrintTextAbove(me, "*parece não gostar da comida*");
+      endif
+
+      PrintTextAbove(me, "*comendo*");
       PlaySoundEffect(me, CInt(0x3b)+ RandomInt(3));
       DestroyItem(ev.item);
       PrintTextAbovePrivate(me,"*O animal parece feliz*", ev.source);
+      me.SetExp((cint(item_props.foodvalue) + 1) * 5);
+      return;
    elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
       if ((EnumerateItemsInContainer(ev.item)).size() > 0)
+         MoveItemToContainer(ev.item, ev.source.backpack);
          SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
-         return;
       elseif ( me.my_template() == "Horse3" )
          SetObjProperty(me, "beforepack", me.graphic);
          me.graphic := 291;
@@ -527,14 +539,16 @@ function TakeItem(ev)
          DestroyItem(ev.item);
          PrintText(ev.source,"*prende uma mochila na llama*");
       endif
+
+      return;
+   endif
       //if(IsMountable(me.graphic))
       //    mount := 1;
       //else
       //    mount := 0;
       //endif
-   else
-      SendSysMessage(ev.source, "Não pode dar esse item!");
-   endif    
+   SendSysMessageEx(ev.source, "Não pode dar esse item!", SSM_FAIL);
+   MoveItemToContainer(ev.item, ev.source.backpack);
 endfunction
 
 function CanFight(me, mob)

@@ -12,16 +12,23 @@ include "include/say";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   SetObjProperty(mobile, "#divineorientation", 1);
+   var hitsmod := cint(GetObjProperty(mobile, "#hitsmod"));
+   hitsmod += (level*4);
+   SetObjProperty(mobile, "#hitsmod", hitsmod);
+   SendSystemMessage(mobile, "Você sente seu sangue esquentar!", SSM_HARMFUL);
    return 1;
 endfunction
 
-function EndScript(mobile)
-   EraseObjProperty(mobile, "#divineorientation");
-   return 1;
-endfunction
+function EndScript(mobile, level)
+   var hitsmod := cint(GetObjProperty(mobile, "#hitsmod"));
+   hitsmod -= (level * 4);
 
-function LogOffScript(mobile)
+   if (hitsmod <= 0)
+      EraseObjProperty(mobile, "#hitsmod");
+   else
+      SetObjProperty(mobile, "#hitsmod", hitsmod);
+   endif
+
    return 1;
 endfunction
 
@@ -32,9 +39,9 @@ program TimedScriptInit(params)
 
    if (typeof(type) == "String")
       if (type == "End")
-         return EndScript(mobile);
+         return EndScript(mobile, level);
       elseif (type == "LogOff")
-         return LogOffScript(mobile);
+         return EndScript(mobile, level);
       endif
    endif
 

@@ -132,17 +132,19 @@ function AP_GetVitalRegenRate(mobile, vital_name)
 endfunction
 
 function HealMana(mobile, amount)
-  AP_SetVital(mobile, MANA, cint(AP_GetVital(mobile, MANA)+amount));
-  if (AP_GetVital(mobile, MANA) >  AP_GetVitalMaximumValue(mobile, MANA))
-    AP_SetVital(mobile, MANA, AP_GetVitalMaximumValue(mobile, MANA));
+  if (AP_GetVital(mobile, MANA)+amount >  AP_GetVitalMaximumValue(mobile, MANA))
+    return AP_SetVital(mobile, MANA, AP_GetVitalMaximumValue(mobile, MANA));
   endif
+
+  AP_SetVital(mobile, MANA, cint(AP_GetVital(mobile, MANA)+amount));
 endfunction
 
 function HealStamina(mobile, amount)
-  AP_SetVital(mobile, STAMINA, cint(AP_GetVital(mobile, STAMINA)+amount));
-  if (AP_GetVital(mobile, STAMINA) >  AP_GetVitalMaximumValue(mobile, STAMINA))
-    AP_SetVital(mobile, STAMINA, AP_GetVitalMaximumValue(mobile, STAMINA));
+  if (AP_GetVital(mobile, STAMINA)+amount >  AP_GetVitalMaximumValue(mobile, STAMINA))
+    return AP_SetVital(mobile, STAMINA, AP_GetVitalMaximumValue(mobile, STAMINA));
   endif
+  
+  AP_SetVital(mobile, STAMINA, cint(AP_GetVital(mobile, STAMINA)+amount));
 endfunction
 
 /*

@@ -144,13 +144,7 @@ function LogOff(mobile, byref timer_list, byref cooldowns)
 		
 		mobile.delBuff(elem_info.Icon);
 		if( elem_info.Script )
-			var script := Start_Script(elem_info.Script, array{mobile, "LogOff"});
-			if( script.errortext )
-				print("Error::LogOff() - ["+elem_info.Script+"] "+script.errortext);
-			endif
-		elseif ( elem_info.Script )
-			SetObjProperty(mobile, "prop", timer);
-			var script := Start_Script(elem_info.Script, array{mobile, "End"});
+			var script := Start_Script(elem_info.Script, array{mobile, "LogOff", timer.level});
 			if( script.errortext )
 				print("Error::LogOff() - ["+elem_info.Script+"] "+script.errortext);
 			endif
@@ -484,7 +478,7 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 		Set_Critical(1);
 		var info := TS_GetTimerInfo(mobile, timer_name);
 		SetObjProperty(mobile, "prop", info.level);
-		var script := Start_Script(elem_info.Script, array{mobile, "End"});
+		var script := Start_Script(elem_info.Script, array{mobile, "End", info.level});
 		Set_Critical(0);
 		if( script.errortext )
 			print("Error::EndTimedScript() - "+script.errortext);

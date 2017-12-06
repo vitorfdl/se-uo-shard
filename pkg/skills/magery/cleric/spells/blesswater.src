@@ -14,7 +14,7 @@ program blessWater(info)
       if (!targ)
 			SendSysMessageEX(who, "Cancelado", SSM_FAIL);
          return 1;
-      elseif (!targ.isA(POLCLASS_ITEM) && !(targ.objtype in array{0x1f9e, 0x1F91}) && Cint(GetObjProperty(targ, "doses")) <= 0 )
+      elseif (!targ.isA(POLCLASS_ITEM) || !(targ.objtype in array{0x1f9e, 0x1F91}) || Cint(GetObjProperty(targ, "doses")) <= 0 )
 			SendSysMessageEX(who, "Você deve escolher um objeto que contenha agua", SSM_FAIL);
       else
          break;

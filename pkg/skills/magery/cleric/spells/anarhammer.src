@@ -1,0 +1,51 @@
+use uo;
+use os;
+
+include "include/say";
+include "include/sounds";
+include ":attributes:attributes";
+
+program blessWater(info)
+   var who := info[1];
+   var dice_roll := info[2].dice_roll;
+   var targ := info[3];
+   info := 0;
+
+   var itemdesc := ReadConfigFile(":combat:itemdesc") + ReadConfigFile(":womenswork:itemdesc");
+   
+	while (1)
+      if (!targ)
+			SendSysMessageEX(who, "Cancelado", SSM_FAIL);
+         return 1;
+      elseif (!targ.isA(POLCLASS_ITEM) || !itemdesc[targ.objtype] )
+			SendSysMessageEX(who, "Você deve escolher uma arma ou armadura!", SSM_FAIL);
+      else
+         break;
+		endif
+		targ := target(who);
+      sleepms(2);
+	endwhile
+
+   var level := AP_GetStat(who, WISDOM, RETURN_BONUS);
+   if (level > 5)
+      level := 5;
+   elseif (level < 1)
+      level := 1;
+   endif
+
+   level := dice_roll + level;
+   if (targ.hp + level > targ.maxhp)
+      targ.hp := targ.maxhp;
+   else
+      targ.hp += level;
+   endif
+   SetName(targ, targ.desc);
+
+   if (!targ.container)
+      PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
+   endif
+
+   PlaySoundEffect(targ, SFX_SPELL_CREATE_FOOD);
+   SendSystemReport(targ, "*Você restaura o equipamento*", SSM_HELPFUL);
+   return 1;
+endprogram

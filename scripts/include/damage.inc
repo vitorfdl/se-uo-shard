@@ -44,7 +44,7 @@ function HealFLS(targ, amt, show_heal := 1)
 		return;
 	endif
 
-	HealDamage(targ, amt);
+	HealDamage(targ, cint(amt));
 	
 	if (!show_heal)	
 		return;
@@ -184,7 +184,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	if (source)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
-		var cleric_healing := GetObjProperty(source, "cleric_spell");
+		var cleric_healing := Hex(GetObjProperty(source, "cleric_spell"));
 		if (cleric_healing && dmg >= 2)
 			var targ := SystemFindObjectBySerial(cleric_healing);
 			if (source != targ && Distance(source, targ) > 8)
@@ -196,7 +196,6 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	endif
 
 	return dmg;
-
 endfunction
 
 function checkResist(defender, damage_type)
