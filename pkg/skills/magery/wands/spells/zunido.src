@@ -22,7 +22,10 @@ program animateSword(params)
          SendSystemReport(mob, "*cegado*", SSM_HARMFUL, who);
          TS_StartTimer(targ, "blinded", 5);	
       endif
+      sleepms(2);
    endforeach
 
+   sleep(2);
+   DestroyItem(item);
 	return 1;
 endprogram

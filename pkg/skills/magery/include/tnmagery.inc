@@ -41,6 +41,7 @@ function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
 	spellinfo.+charges     := GetConfigInt( elem, "Charges" );
 	spellinfo.+radius      := GetConfigInt( elem, "Radius" );
 	spellinfo.+pericia     := GetConfigInt( elem, "Percia" );
+	spellinfo.+targettype     := GetConfigInt( elem, "TargetType" );
 	if (spellinfo.flavortext == error)
 		spellinfo.flavortext := "";
 	else
@@ -58,6 +59,7 @@ function TNCheckReagents(who, byref spellinfo, item)
 			return 0;
 		endif
 		charges -= spellinfo.charges;
+      SetName(item, item.desc);
 		SetObjProperty(item, "charges", charges);
 		return 1;
 	endif

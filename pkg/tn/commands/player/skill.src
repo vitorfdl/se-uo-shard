@@ -10,7 +10,7 @@ include ":charactercreation:characters";
 program start_skill(who, skillname)
 
 	if (who.dead)
-		SendSysMessage(who, "Você esta morto e não pode fazer isto.");
+		SendSysMessageEx(who, "Você está morto e não pode fazer isto.");
 		return;
 	endif
 
@@ -18,7 +18,7 @@ program start_skill(who, skillname)
 	SetObjProperty(who, "delayskill", ReadGameClock() + 5);
 	if(delay)
 		if(delay > ReadGameClock())
-			SendSysMessage(who, "Você ainda esta fazendo outra coisa.");
+			SendSysMessageEx(who, "Você ainda está fazendo outra coisa.");
 			return;
 		endif
 	endif
@@ -28,7 +28,7 @@ program start_skill(who, skillname)
 	skillname[" "] := "_";
 	
 	if(!AP_GetAttributeCfgElem(skillname))
-		SendSysMessage(who, "Pericia inexistente!");
+		SendSysMessageEx(who, "Pericia inexistente!");
 		return;
 	endif
 	// var translatedname := GetUntranslatedName(txt, who);
@@ -48,9 +48,9 @@ program start_skill(who, skillname)
 			start_script( script, who );
 		endif
 	//else
-	//	SendSysMessage(who, "Você não possui essa skill.");
+	//	SendSysMessageEx(who, "Você não possui essa skill.");
 	//endif
   else
-	SendSysMessage(who, "Essa skill não existe.");
+	SendSysMessageEx(who, "Essa perícia não existe.");
   endif
 endprogram

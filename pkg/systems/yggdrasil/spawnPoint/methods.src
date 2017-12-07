@@ -284,6 +284,7 @@ exported function FillQueue(spawnpoint)
          "type"       := mob.type,
          "level"      := mob.power,
          "daytime"    := mob.daytime,
+         "isBoss"    := mob.isBoss,
          "bossParams" := mob.bossParams
       };
       
@@ -333,7 +334,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       SetObjProperty(spawned, "spawngroup", config.spawngroup);
       SetObjProperty(spawned, "range", config.range);
       
-      if (monster.bossParams)
+      if (monster.bossParams && monster.bossParams.size() >= 1)
          SetBoss(spawned, monster.bossParams);
       endif
 

@@ -17,7 +17,6 @@ include ":charactercreation:habilidades";
 
 program animateSword(params)
 	var who := params[1];
-	var roll_dice := params[2].roll_dice;
 	var targ := params[3];
 	params := 0; // No longer needed
 	

@@ -33,7 +33,6 @@ program AuxService(connection)
 	
 		var event := Wait_For_Event(5);
 		if ( event ) // New account to be made?
-			print(event);
 			var username  := event[1];
 			var password  := event[2];
 			var cmd_lvl   := event[3];

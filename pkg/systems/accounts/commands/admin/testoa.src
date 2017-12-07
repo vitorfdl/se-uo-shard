@@ -3,6 +3,7 @@ use os;
 use os;
 
 include ":timeutils:time";
+include ":yggdrasil:boss";
 include "include/say";
 include "include/client";
 include ":attributes:advanceCheck";
@@ -10,7 +11,9 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 
 program oafeatures_sendpacket(who, text)
-   SendSystemReport(who, text);
+   var targ := Target(who);
+   Print("aa "+isBoss(targ));
+   // SendSystemReport(who, text);
    // var pid := GetProcess(cint(text));
    // printtext(who, ""+pid);
    // var targ := Target(who);

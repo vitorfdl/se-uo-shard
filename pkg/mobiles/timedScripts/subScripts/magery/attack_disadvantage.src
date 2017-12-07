@@ -1,4 +1,4 @@
-div	/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
  *
  */
 
@@ -13,6 +13,7 @@ include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
    SetObjProperty(mobile, "#attack_disadvantage", 1);
+   SendSystemReport(mobile, "*sente uma onda de frio*");
    return 1;
 endfunction
 

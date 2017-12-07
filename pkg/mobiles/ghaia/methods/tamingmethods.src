@@ -13,11 +13,11 @@ exported function GetPetProperties(pet)
    var props := GetObjProperty(pet, "info");
 
    var return_obj := dictionary{
-      "loyalt" -> props["loyalt"],
+      "loyalt" -> cint(props["loyalt"]),
       "personality" -> props["personality"],
       "commands" -> props["commands"],
       "talents" -> props["talents"],
-      "exp" -> props["exp"],
+      "exp" -> cint(props["exp"]),
       "points" -> cint(props["points"])
    };
 
@@ -26,6 +26,9 @@ endfunction
 
 exported function SetPetProperties(pet, new_props)
    var props := GetObjProperty(pet, "info");
+   if (!props || props == error)
+      props := struct{};
+   endif
 
    if (new_props["loyalt"] && cint(new_props["loyalt"]))
       props["loyalt"] := cint(new_props["loyalt"]);
@@ -43,8 +46,8 @@ exported function SetPetProperties(pet, new_props)
       props["talents"] := new_props["talents"];
    endif 
 
-   if (new_props["personality"] && cint(new_props["personality"]))
-      props["personality"] := cint(new_props["personality"]);
+   if (new_props["personality"] && new_props["personality"] in personalities)
+      props["personality"] := new_props["personality"];
    endif
 
    if (new_props["exp"] && cint(new_props["exp"]))
@@ -56,11 +59,9 @@ endfunction
 
 exported function InitPetProperties(pet, reset := 0)
    var old_props := GetObjProperty(pet, "info");
-   if (old_props && !reset) return; endif;
+   if (old_props && old_props != error && !reset) return; endif;
 
-	var npctemplate := pet.npctemplate;
-	npctemplate := npctemplate[10, len(npctemplate)-9];
-
+	var npctemplate := my_template(pet);
 	var cfg := ReadConfigFile(":taming:pets");
 	var pet_elem := cfg[npctemplate];
    if (!pet_elem)
@@ -70,13 +71,17 @@ exported function InitPetProperties(pet, reset := 0)
    var props := dictionary{};
 
    props.personality := personalities.randomentry();
-   if (old_props)
+   if (old_props && old_props.personality)
       props.personality := old_props.personality;
    endif
    props.commands := GetConfigStringDictionary(pet_elem, "command");
+   foreach command in (props.commands.keys())
+      props.commands[command] := cint(props.commands[command]);
+      sleepms(2);
+   endforeach
    props.loyalt := 0;
    props.points := 0;
-   props.exp := 0;
+   props.exp    := 0;
    props.talents := array{};
    if (old_props)
       props.personality := old_props.personality;
@@ -112,7 +117,7 @@ exported function SetExp(pet, amount := 1)
    if (props.loyalt >= 10) return; endif
 
    var new_exp := props.exp + amount;
-   var max_exp := (props.loyalt + 1) * 50);
+   var max_exp := (props.loyalt + 1) * 50;
 
    var new_prop := struct{ };
    if (new_exp >= max_exp)
@@ -130,7 +135,7 @@ endfunction
 exported function SetCommand(pet, command, amount := 1)
    var props := GetObjProperty(pet, "info");
    var command_list := props.commands;
-   if (!command_list[command] || command_list[command] >= 5) return 0; endif;
+   if (!command_list[command] || command_list[command] >= 5 || command_list[command] < 0) return 0; endif;
    
    command_list[command] += amount;
    var update := struct{ "commands" := command_list };
@@ -151,6 +156,7 @@ exported function isTamable(pet)
    if (isBoss(pet))
       return 0;
    endif
+   
    return 1;
 endfunction
 

@@ -34,18 +34,17 @@ function Follow(character := 0)
       return;
    endif
 
-   var dist := Distance(me, following);
+   var dist := Distance(me, character);
 
    if( dist <= 2 )
       wait_time := 1;
    elseif( dist > 25 )
-      following := 0;
       wait_time := 10;
    elseif ( dist > 4 )
-      RunToward(following);
+      RunToward(character);
       wait_time := 0;
    else
-      WalkToward(following);
+      WalkToward(character);
       wait_time := 0;
    endif
 endfunction

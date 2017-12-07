@@ -1,5 +1,16 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+
+program animateSword(params)
 	var who := params[1];
-	var targ := params[2];
+	var targ := params[3];
 	params := 0; // No longer needed
 
 	if (!targ.isa(POLCLASS_MOBILE))
@@ -18,6 +29,7 @@
 		who.frozen := 1;
 	endif
 	
+   var amt := 4;
 	while  (time < 10)
 
 		if ( (who.x != oldx) || (who.y != oldy))

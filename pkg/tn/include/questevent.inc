@@ -135,10 +135,8 @@ function ExecuteEvent(evento)
 	    	endwhile
 	endif
 	elseif (evento.type == "Criar Itens")
-		print("CRIAR ITEMS " + evento.items);
 		foreach iteminfo in (evento.items)
 			var item := CreateItemAtLocationFromTemplate( cint(iteminfo.x), cint(iteminfo.y), cint(iteminfo.z), _DEFAULT_REALM ,iteminfo.item );
-			print("ITEM " + item);
 		endforeach
 	endif
 

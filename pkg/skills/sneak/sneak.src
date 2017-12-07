@@ -41,7 +41,7 @@ program skill_Hide(who)
 			who.SetAchievement("sneak", 1);
 			SendSysMessageEx(who, "Você se escondeu.", SSM_INFO);
 			who.hidden := 1;
-			var a := start_script(":FURTIVIDADE:stealthmode", array{who});
+			var a := start_script(":sneak:stealthmode", array{who});
 			//sendsysmessage(who, " "+ a);
 			EraseObjProperty(who, "#steathsteps");
 			if (GetCooldown(who, "partyhiding") > 0) // Se tiver usado habilidade de Emboscada
@@ -75,7 +75,7 @@ function HidingParty(who)
 				if (CanHide(member, member.x, member.y, skill))
 					SendSysMessageEx(member, "Você esta preparando a emboscada!", SSM_INFO);
 					member.hidden := 1;
-					start_script(":FURTIVIDADE:stealthmode", array{who});
+					start_script(":sneak:stealthmode", array{who});
 					SetObjProperty(member, "#overridehiding", skill);
 				else
 					SendSysMessageEx(member, "Você não pode se esconder!", SSM_FAIL);

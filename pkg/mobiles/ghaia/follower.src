@@ -510,7 +510,7 @@ function TakeItem(ev)
    var cfg := ReadConfigFile(":*:itemdesc");
    var item_props := cfg[(ev.item).objtype];
    if ( item_props.script["eat"])
-      if (AP_GetVital(me, "Hunger") <= 10))
+      if (AP_GetVital(me, "Hunger") <= 10)
          MoveItemToContainer(ev.item, ev.source.backpack);
          return PrintTextAbove(me, "*recusa comida*");
       elseif (item_props.foodtype != foodtype)

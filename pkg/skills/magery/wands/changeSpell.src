@@ -15,20 +15,20 @@ program changeSpell(params)
    var new_spell;
    var active_spell := GetObjProperty(item, "active_spell");
 
-      var spell_index := FindInArray(spell_list, active_spell);
+   var spell_index := FindInArray(spell_list, active_spell);
 
-      for tries := 1 to 3
-         var new_index := spell_index + tries;
-         if (new_index > spell_list.size())
-            new_index -= spell_list.size();
-         endif
+   for tries := 1 to 5
+      var new_index := spell_index + tries;
+      if (new_index > spell_list.size())
+         new_index -= spell_list.size();
+      endif
 
-         if (spell_list[new_index] != 0 && spell_list[new_index] != active_spell)
-            new_spell := spell_list[new_index];
-            break;
-         endif
-         sleepms(2);
-      endfor
+      if (spell_list[new_index] != 0 && spell_list[new_index] != active_spell)
+         new_spell := spell_list[new_index];
+         break;
+      endif
+      sleepms(2);
+   endfor
 
    if (!new_spell || new_spell == active_spell)
       SendSysMessageEx(who, "Não foi encontrado encanto novo para mudar.", SSM_FAIL);

@@ -1,4 +1,4 @@
-div	/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
  *
  */
 
@@ -15,7 +15,7 @@ function StartScript(mobile, attacker := 0, level := 0)
    var hitsmod := cint(GetObjProperty(mobile, "#hitsmod"));
    hitsmod += (level*4);
    SetObjProperty(mobile, "#hitsmod", hitsmod);
-   SendSystemMessage(mobile, "Você sente seu sangue esquentar!", SSM_HARMFUL);
+   SendSysmessageEx(mobile, "Você sente seu sangue esquentar!", SSM_HARMFUL);
    return 1;
 endfunction
 

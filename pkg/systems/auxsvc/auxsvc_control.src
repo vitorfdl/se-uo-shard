@@ -12,9 +12,9 @@ program auxtest( connection )
 		endif
 
 		ev := wait_for_event( 5 );
-		print(ev);
+		// print(ev);
 		if (ev)
-			print(ev.value);
+			// print(ev.value);
 		endif
 	endwhile
 	

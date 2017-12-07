@@ -4,19 +4,19 @@ use cfgfile;
 
 include "include/client";
 include "include/sounds";
+include "include/damage";
 include "include/say";
 include ":attributes:attributes";
 include ":timedScripts:timedScripts";
 
 program animateSword(params)
 	var who := params[1];
-	var roll_dice := params[2].roll_dice;
 	var targ := params[3];
 	params := 0; // No longer needed
 
 
-   PlayObjectCenteredEffect( targ, 0x3728, 1, 2 );
-   var dice := "1d6"
+   PlayObjectCenteredEffect( targ, 0x3728, 1, 10 );
+   var dice := "1d6";
    if (who.getLevel() >= 17)
       dice := "4d6";
    elseif (who.getLevel() >= 11)
@@ -27,7 +27,7 @@ program animateSword(params)
 
    var roll_dice := RandomDiceRoll(dice);
    DamageFLS(targ, roll_dice, "Gelo", who);
-   PlaySoundEffect(item, 0x209);
-   TS_StartTimer(targ, "attack_disadvantage", 4);	
+   PlaySoundEffect(targ, 0x5BF);
+   TS_StartTimer(targ, "attack_disadvantage", 6);	
 	return 1;
 endprogram

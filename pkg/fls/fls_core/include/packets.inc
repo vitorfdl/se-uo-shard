@@ -499,7 +499,6 @@ function SetQuestArrow( who, active, xLoc, yLoc )
     var packetString := "BA" + fixPacketLength(active,1);
     packetString := packetString + fixPacketLength(hex(xLoc),2);
     packetString := packetString + fixPacketLength(hex(yLoc),2);
-    print( packetString );
     return SendPacket(who,packetString);
 endfunction
 

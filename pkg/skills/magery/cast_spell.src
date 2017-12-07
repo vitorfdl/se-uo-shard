@@ -160,15 +160,16 @@ program SpellStarter(params)
    if (spellinfo.script != error)
       var e := Start_Script(spellinfo.script, array{mobile, spellinfo, targ});
       if (e == error)
+         SysLog("Can't reach spell {} : {}".format(spellinfo.name, e));
          FailSpell(mobile);
       elseif (!e)
          FailSpell(mobile);
       else
+         SetClericSpellUsed(mobile, spellinfo);
          ExpGain(mobile, "minor");
       endif
    endif
-   SetClericSpellUsed(mobile, spellinfo);
-   SetCooldown(mobile, spellinfo.name, spellinfo.cooldown);
+   // SetCooldown(mobile, spellinfo.name, spellinfo.cooldown);
 
    EraseObjProperty(mobile, "#magiasilenciosa");
    EraseObjProperty(mobile, "#Casting");

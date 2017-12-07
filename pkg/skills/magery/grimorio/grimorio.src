@@ -119,20 +119,23 @@ function CreateBookGump(book, can_read := 0)
 	pOX      := 145;
 	pOY      := 60;
 
-	for i := 2 to 9
-		var pos := i;
-		if (i == 2)
-			pos := 1;
-		endif
-		GFPage(book_gump, i);
+   var i;
+	for (i := 1; i <= 9; i += 1)
+      var side := 1;
+      if (i % 2 == 0)
+         side := 2;
+      endif
 
-		GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, (i-1));
-		if(i != 9)
-			GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, (i+1));
-		endif
- 
-		GenerateFilledSide(book_gump, spell_list, i, 1, pOX, pOY, pos);
-		GenerateFilledSide(book_gump, spell_list, i, 2, pOX, pOY, pos+1);
+      if (side == 2)
+         if(i != 9)
+            GFAddButton(book_gump, 393, 14, 2206, 2206, GF_PAGE_BTN, book_gump.cur_page+1);
+         endif
+      else
+         GFPage(book_gump, book_gump.cur_page+1);
+         GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, book_gump.cur_page-1);
+      endif
+      
+		GenerateFilledSide(book_gump, spell_list, book_gump.cur_page, side, pOX, pOY, i);
 
 		SleepMS(2);
 	endfor
@@ -149,7 +152,7 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 	if (side == 2)
 		sOX := 300;
 	endif
-
+   // print(spell_pos);
 	var spell_entry := spell_list[spell_pos];
 	WriteSpellInfo(spell_entry);
 

@@ -80,12 +80,12 @@ function CloseDistanceArcher(opponent)
 endfunction
 
 function lookAround()
-  foreach npc in ListMobilesInLineOfSight(me, areasize)
-    if( CanFight(me, npc) )
+   foreach npc in ListMobilesInLineOfSight(me, areasize)
+      if( CanFight(me, npc) )
          Fight(npc);
-    endif
-    sleepms(2);
-  endforeach
+      endif
+      sleepms(2);
+   endforeach
 endfunction
 
 

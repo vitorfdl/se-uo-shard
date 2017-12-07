@@ -73,7 +73,7 @@ program MainHitScript( params )
       if (serial)
          var mob := SystemFindObjectBySerial(serial);
          DamageFLS(mob, base_damage/2, damage_type, attacker);
-         PlayMovingEffect(defender, mob, , 10, 10);
+         PlayMovingEffect(defender, mob, 0x22C6, 10, 10);
          PlayHurtSound(mob);
       endif
       return 1;

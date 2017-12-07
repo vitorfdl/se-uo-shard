@@ -97,6 +97,4 @@ program command_CopyLook(who)
 endprogram
 
 function prof(params)
-
-print(params[1]);
 endfunction

@@ -37,6 +37,7 @@ include ":charactercreation:habilidades";
 include "include/arrays";
 include ":ghaia:ghaiaUtil";
 include ":charactercreation:characters";
+include ":timedScripts:timedScripts";
 
 const BASE_DIFFICULTY := 19;
 
@@ -100,6 +101,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	
    if (GetObjProperty(mobile, "#divineorientation"))
       dice += RandomDiceRoll("1d4");
+      TS_LowerDuration(mobile, "divineorientation", -1);
    endif
 
 

@@ -134,7 +134,7 @@ function LogOff(mobile, byref timer_list, byref cooldowns)
 
 	foreach timer in ( timer_list )
 		timer := timer; // So the compiler doesn't warn.
-		KillTimedScript(mobile, timer_list.pid, timer_list, _timer_iter);
+		KillTimedScript(mobile, timer.pid, timer_list, _timer_iter);
 
 		var elem_info := TS_GetCfgElem(_timer_iter);
 		if ( elem_info.errortext )
@@ -142,7 +142,8 @@ function LogOff(mobile, byref timer_list, byref cooldowns)
 			continue;
 		endif
 		
-		mobile.delBuff(elem_info.Icon);
+      print(elem_info.Icon);
+		mobile.delBuff(cint(elem_info.Icon));
 		if( elem_info.Script )
 			var script := Start_Script(elem_info.Script, array{mobile, "LogOff", timer.level});
 			if( script.errortext )
@@ -208,7 +209,9 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 					text := "";
 				endif
 				//SendSysMessage(mobile, "te " + text);
-				mobile.addBuff(elem_info.Icon, event.amount, elem_info.cliloc1, elem_info.cliloc2, text);
+            print(event);
+            print("New buff User: {}, Amount: {}, Text: {}".format(mobile.name, event.amount, text));
+				mobile.addBuff(cint(elem_info.Icon), cint(event.amount), cint(elem_info.cliloc1), cint(elem_info.cliloc2), cAscZ(text));
 			endif
 		endif
 		//SendSysMessage(mobile, "AddNewTimer");
@@ -479,6 +482,7 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 		var info := TS_GetTimerInfo(mobile, timer_name);
 		SetObjProperty(mobile, "prop", info.level);
 		var script := Start_Script(elem_info.Script, array{mobile, "End", info.level});
+      mobile.delBuff(cint(elem_info.Icon));
 		Set_Critical(0);
 		if( script.errortext )
 			print("Error::EndTimedScript() - "+script.errortext);
