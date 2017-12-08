@@ -52,6 +52,10 @@ function sendCraftGump(who, params)
             not_closed := 0;
         elseif (input[0] == BTN_REPAIR)
             doRepair(who, params.type, recipe_cfg);
+        elseif (input[0] == BTN_MAKELAST)
+            //nothing
+        elseif (input[0] == BTN_FILTER)
+            //nothing
         elseif (input[0] != BTN_SEARCH)
             var recipe := player_recipes[input[0]-BTN_CRAFTIT];
             CraftItem(who, params.type, params.tool, recipe, params.qty, 1);
@@ -134,7 +138,7 @@ function createGump(who, recipes, params)
                 m_y := r_y+8;
             endif
 
-            var color := 2058;
+            var color := 1271;
             var material_req  := recipe.materials[material];
             var material_have := params.bag[cint(material)];
             if (!material_have) 
@@ -144,7 +148,7 @@ function createGump(who, recipes, params)
             if (!material_have)
                 material_have := 0;
             elseif (material_have >= recipe.materials[material])
-                color := 1271;
+                color := 1936;
             endif
 
             var name := TruncatePlural(material);

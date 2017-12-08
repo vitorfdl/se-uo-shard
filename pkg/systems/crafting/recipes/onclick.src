@@ -23,7 +23,7 @@ program usaPergaminho(who, scroll)
 		endif
 
 		SetObjProperty(scroll, "objtype", objtype);
-		Run_Script( ":crafting:recipes/oncreate", scroll );
+		Run_Script( ":crafting:recipes/control", scroll );
 	elseif (input[0] == 12)
 		LearnRecipe(who, scroll);
 	endif
@@ -69,8 +69,11 @@ function SendGump(who, scroll)
 		tilepic := objtype;
 	endif
 	
-	if (Hex(tilepic))
+	if (cint(tilepic))
 		GFTilePic(gump, 127, 91, tilepic);
+   else
+	   GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>Um kit lhe permite aprender várias");
+	   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>receitas de uma vez");
 	endif
 
 	if (!(objtype in GetObjProperty(who, "recipes")))

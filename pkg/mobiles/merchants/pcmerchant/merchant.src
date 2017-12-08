@@ -359,40 +359,40 @@ function AddItemToSell(npc, player, item)
 	if (player.cmdlevel < 3)
 		var pay := 0;
 		do
-			SendSysMessage(player, "Escolha o montante de moedas para que seu item seja colocado a venda.");
+			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda.", SSM_FAIL);
 			var targ := Target(player);
 			if ( !targ )
-				SendSysMessage(player, "Cancelado.");
+				SendSysMessageEx(player, "Cancelado.");
 				return;
 			elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-				SendSysMessage(player, "Não esta na sua bolsa.");
+				SendSysMessageEx(player, "Não esta na sua bolsa.", SSM_FAIL);
 			elseif ( GetObjProperty(targ, "stealed") )
-				SendSysMessage(player, "Objeto foi roubado!");
+				SendSysMessageEx(player, "Objeto foi roubado!", SSM_FAIL);
 			elseif ( targ.objtype == MOEDAS )
 				if ( !ReserveItem(targ) )
-					SendSysMessage(player, "Você não pode pagar com isto.");
+					SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
 				else
 					if (!SubtractAmount(targ, dezperc))
-						SendSysMessage(player, "Você não pode pagar com isto.");
+						SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
 					else
 						pay := 1;
-						SendSysMessage(player, "Pagamento efetuado com sucesso!");
+						SendSysMessageEx(player, "Pagamento efetuado com sucesso!", SSM_FAIL);
 					endif
 				endif
 			else
-				SendSysMessage(player, "Você deve indicar moedas de cobre.");
+				SendSysMessageEx(player, "Você deve indicar moedas de cobre.", SSM_FAIL);
 			endif
 		dowhile ( !pay );
 	endif
 	
 	var result := AddItemForSale(npc, player, item, cost_type, desc, cost_amt, "", infinite, 0);
 	if ( result != error )
-		AI_Speak(npc, "Tudo certo. Colocarei seu item a venda.");
-		SendSysMessage(player, "O item foi adicionado com sucesso.");
+		PrintText(npc, "Tudo certo. Colocarei seu item a venda.");
+		SendSysMessageEx(player, "O item foi adicionado com sucesso.", SSM_FAIL);
 		return 1;
 	endif
 
-	AI_Speak(npc, "Me desculpe mas não poderei vender isto para você, tome seu dinheiro de volta.");
+	PrintText(npc, "Me desculpe mas não poderei vender isto para você, tome seu dinheiro de volta.", SSM_FAIL);
 	CreateItemInBackpack(player, MOEDAS, dezperc);
-	SendSysMessage(player, "Error =>"+result.errortext);
+	SendSysMessageEx(player, "Error =>"+result.errortext);
 endfunction

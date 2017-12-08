@@ -14,12 +14,14 @@ include ":ghaia:objective";
 
 set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
-var pack_animals   := array(291, 292); 
+var pack_animals   := array(291, 292);
 var me             := self();
 var idlesnd1, idlesnd2, personality, foodtype;
 var following, fighting, guarding, patrolling;
 var wait_time := 10;
 var tame_difficulty := 0;
+var follow_tries := 0;
+var last_loc := array{};
 
 //Custom events
 const FOLLOW_CMD     := 0xA001;
@@ -50,7 +52,7 @@ program NPCMonitor()
       PetGuard();
       var ev := Wait_For_Event(wait_time);
       case(ev.type)
-         SYSEVENT_ENGAGED:	
+         SYSEVENT_ENGAGED:
          SYSEVENT_DAMAGED:
             Fight(ev.source);
          // EVID_HERDING:
@@ -142,7 +144,7 @@ function Fight(opponent := 0, force := 1)
       SetWarMode(0);
       return;
    endif
-   
+
    var dist := CoordinateDistance(me.x, me.y, fighting.x, fighting.y);
    if (dist > 1)
       CalcPathAndMove(me, fighting, 275 - me.run_speed);
@@ -173,6 +175,29 @@ function PetFollow(character := 0)
       wait_time := 120;
    elseif ( dist > 4 )
       RunToward(following);
+      if ((me.x == last_loc[1].x && me.y == last_loc[1].y ) || me.x == last_loc[2].x && me.y == last_loc[2].y )
+         follow_tries +=1;
+      else
+         follow_tries := 0;
+      endif
+
+      if (follow_tries >= 5)
+         printtext(me, "calculating best path");
+         var path := FindPath(  me.x, me.y, me.z, following.x, following.y, following.z, me.realm, FP_IGNORE_MOBILES, 15);
+         RunTowardLocation( path[1].x, path[1].y );
+         sleepms(200);
+         RunTowardLocation( path[2].x, path[2].y );
+         sleepms(200);
+         RunTowardLocation( path[3].x, path[3].y );
+         sleepms(200);
+         RunTowardLocation( path[4].x, path[4].y );
+      endif
+      
+      last_loc.append(struct{ x:= me.x, y := me.y});
+      if (last_loc.size() > 2)
+         last_loc.erase(1);
+      endif
+      // RunTowardLocation( following.x, following.y );
       wait_time := 0;
    else
       WalkToward(following);
@@ -245,7 +270,7 @@ function ProcessDoubleClick(ev)
    elseif (targ.mobile)
       var gump := GFCreateGump(220, 70);
       //GFGumpPic(gump, 0, 0, 0x254E);
-      GFResizePic(gump, 0, 0, 0x254E, 100, 100);    
+      GFResizePic(gump, 0, 0, 0x254E, 100, 100);
 
       GFTextLine(gump, 30, 15, 2100, "Guarda ");
       GFAddButton(gump, 15, 17, 2117, 2118, 1, 10);
@@ -310,6 +335,7 @@ function DisablePetMainEvents()
 endfunction
 
 function Setup()
+   me.use_adjustments := 1;
    var owner := me.master;
    var owner_property := GetObjProperty(me, "owner");
 
@@ -328,7 +354,7 @@ function Setup()
    endif
 
    personality     := me.GetPetProperties().personality;
-   
+
    var npc_cfg     := ReadConfigFile(":*:npcdesc")[me.my_template()];
    tame_difficulty := cint(npc_cfg.TameDifficulty);
    foodtype := npc_cfg.foodtype;
@@ -344,7 +370,7 @@ function Transfer(targ)
       return;
    endif
 
-   if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) ) 
+   if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) )
       Say("*" + me.name+ " não aceita " + targ.name + "como dono.");
       return;
    endif
@@ -385,7 +411,7 @@ function UnTame()
    EraseObjproperty(me, "script");
    // EraseObjProperty(me, "spawnpoint");
    // EraseObjProperty(me, "spawnpointtype");
-   
+
    RestartScript(me);
 endfunction
 
@@ -409,7 +435,7 @@ function ResolveSpeech(ev)
    var owner := me.master;
    var text := lower(ev.text);
    var name := lower(me.name);
-    
+
    if ( ((ev.source).serial != (me.master).serial))
       return;
    elseif(!text[name] && !text["todos"])
@@ -497,7 +523,7 @@ function ResolveSpeech(ev)
          SendSysMessage(owner, "Criaturas invocadas não podem ser libertadas normalmente.");
          return;
       endif
-      
+
       UnTame();
    endif
 

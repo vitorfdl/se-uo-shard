@@ -86,9 +86,9 @@ function GetRecipeList(who, recipe_cfg, search := "")
 	
 	var recipelist := array{}; //lista temp pra veriicar se os items sao da skill do menu
 	foreach recipe in (items)
-		var elem        := FindConfigElem(recipe_cfg, recipe);
-		var recipe_type := GetConfigString(elem, "type");
-		if (recipe_type == "recipe")
+		var elem        := FindConfigElem(recipe_cfg, cstr(Hex(recipe)));
+		var recipe_type := GetConfigString(elem, "Type");
+		if (recipe_type == "Recipe")
          recipe := GetRecipe(recipe, elem);
          var found := Lower(recipe.name).find(Lower(search));
          if (search == "" || found)

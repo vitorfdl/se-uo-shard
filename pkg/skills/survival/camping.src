@@ -68,7 +68,7 @@ program UseWood( who, wood )
 		DestroyItem(wood);
 		var tempocura := 0;
 		var continuehealing := 1;
-		var healpoints := 3;
+		var healpoints := 2;
 
 		while( time > 0 )
 			// if (GetObjProperty(campfire, "encantado") == 1)
@@ -91,11 +91,11 @@ program UseWood( who, wood )
 
 				if (continuehealing == 1)
 					foreach char in (nearbypeople)
-						healFLS(char, healpoints);
+						healFLS(char, healpoints, 0);
 					endforeach
 				endif
 			endif
-			sleep(1);
+			sleep(5);
 			continuehealing := 1;
 		endwhile
 		DestroyItem(campfire);

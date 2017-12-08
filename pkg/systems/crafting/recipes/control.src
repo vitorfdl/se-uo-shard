@@ -17,8 +17,8 @@ endprogram
 function ScrollCreate(scroll)
    var recipes_list := struct{
       "Costura"    := ReadConfigFile(":womenswork:recipes"),
-      "Ferraria"   := ReadConfigFile(":metalworking:recipes"),
-      "Marcenaria" := ReadConfigFile(":woodworking:recipes"),
+      "Ferraria"   := ReadConfigFile(":metalworking:recipes") + ReadConfigFile(":tinkering:recipes"),
+      "Marcenaria" := ReadConfigFile(":woodworking:recipes") + ReadConfigFile(":bowcrafting:recipes"),
       "Cozinha"    := ReadConfigFile(":cooking:recipes"),
       "Alquimia"   := ReadConfigFile(":alchemy:recipes")
       // "Runas"      := ReadConfigFile(":magery:recipes")

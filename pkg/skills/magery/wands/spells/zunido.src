@@ -14,7 +14,7 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var item := CreateItemAtLocation(targ.x, targ.y, targ.z);
+   var item := CreateItemAtLocation(0x777, targ.x, targ.y, targ.z);
    var mobiles := ListMobilesInLineOfSight( item, 5);
 
    foreach mob in mobiles

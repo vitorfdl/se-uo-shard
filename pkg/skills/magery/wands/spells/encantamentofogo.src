@@ -16,8 +16,7 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var items_near := ListItemsNearLocationWithFlag( targ.x, targ.y, targ.z, 4, TILEDATA_FLAG_LIGHTSOURCE);
-   items_near += ListItemsNearLocationWithFlag( who.x, who.y, who.z, 3, TILEDATA_FLAG_LIGHTSOURCE);
+   var items_near := ListItemsNearLocationWithFlag( who.x, who.y, who.z, 4, TILEDATA_FLAG_LIGHTSOURCE);
 	
    var item;
    foreach item_n in items_near
@@ -27,6 +26,17 @@ program animateSword(params)
       sleepms(2);
    endforeach
 
+   if (!item)
+      items_near := ListMobilesNearLocationEx( who.x, who.y, who.z, 5, LISTEX_FLAG_NORMAL);
+      foreach item_n in items_near
+         if (item_n.my_template() == "orb")
+            item := item_n;
+            break;
+         endif
+         sleepms(2);
+      endforeach
+   endif
+   
    if (!item)
       SendSysMessageEx(who, "Você ou o alvo precisa estar próximo de algum fogo", SSM_FAIL);
       return 0;

@@ -27,7 +27,7 @@ enum STATES
    FLEEING := 6
 endenum
 
-var foods := ReadConfigFile(":cooking:itemdesc")+ReadConfigFile(":food:itemdesc");
+var foods;
 
 //alinhamento pra determinar se o player é inimigo ou não pra IA.
 //outros inimigos pra IA é definido com a tag enemy
@@ -292,12 +292,17 @@ endfunction
 
 
 function LookForFood()
+   if (!foods)
+      foods := ReadConfigFile(":food:itemdesc") + ReadConfigFile(":cooking:itemdesc");
+   endif
 	if (!me.isTamable())
 		return;
 	endif
+
 	var food;
-	foreach item in ListItemsNearLocationWithFlag(me.x, me.y, me.z, 5, 0x00000800)
-		var found := foods[item.objtype];
+   var food_list := ListItemsNearLocationWithFlag(me.x, me.y, me.z, 5, 0x00000800);
+	foreach item in food_list
+		var found := FindConfigElem(foods, hex(item.objtype));
 		if (found && found.foodtype == npccfgfile.foodtype)
 			food := item;
 		endif

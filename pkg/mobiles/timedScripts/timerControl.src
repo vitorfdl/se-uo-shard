@@ -149,6 +149,11 @@ function LogOff(mobile, byref timer_list, byref cooldowns)
 			if( script.errortext )
 				print("Error::LogOff() - ["+elem_info.Script+"] "+script.errortext);
 			endif
+
+			script := Start_Script(elem_info.Script, array{mobile, "End", timer.level});
+			if( script.errortext )
+				print("Error::LogOff() - ["+elem_info.Script+"] "+script.errortext);
+			endif
 		endif
 	endforeach
 	Set_Critical(0);
