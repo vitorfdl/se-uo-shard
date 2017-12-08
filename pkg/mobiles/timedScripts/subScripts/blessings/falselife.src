@@ -13,22 +13,23 @@ include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
    var hitsmod := cint(GetObjProperty(mobile, "#hitsmod"));
-   hitsmod += (level*4);
+   hitsmod += (level*5);
    SetObjProperty(mobile, "#hitsmod", hitsmod);
    SendSysmessageEx(mobile, "Você sente seu sangue esquentar!", SSM_HARMFUL);
+   RecalcVitals(mobile, RECALC_NO_INTRINSIC_MOD);
    return 1;
 endfunction
 
 function EndScript(mobile, level)
    var hitsmod := cint(GetObjProperty(mobile, "#hitsmod"));
-   hitsmod -= (level * 4);
+   hitsmod -= (level * 5);
 
    if (hitsmod <= 0)
       EraseObjProperty(mobile, "#hitsmod");
    else
       SetObjProperty(mobile, "#hitsmod", hitsmod);
    endif
-
+   RecalcVitals(mobile, RECALC_NO_INTRINSIC_MOD);
    return 1;
 endfunction
 

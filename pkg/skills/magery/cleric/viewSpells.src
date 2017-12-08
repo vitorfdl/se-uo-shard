@@ -44,6 +44,13 @@ program clericPowerWords(who)
 
       if (!input[0])
          canceled := 1;
+      elseif (input[0] >= 200)
+         var slot := input[0] - 200 - 1;
+         cleric_list := GetObjProperty(who, "cleric_list");
+         cleric_list.Erase(slot);
+         SetObjProperty(who, "cleric_list", cleric_list);
+         SendSysMessageEx(who, "Você abandonou o milagre.", SSM_INFO);
+         canceled := 1;
       endif
    endwhile
 endprogram
@@ -79,10 +86,12 @@ function CreateClericGump(who, cleric_list, available_slots)
       endif
 
       GFHTMLArea(gump, 52, y, 192, 24, "{}".format(spellname), 1, 0);
+      GFToolTipText(gump, spell.description);
       GFHTMLArea(gump, 253, y, 174, 24, "{}".format(powerwords), 1, 0);
 
       if (not_empty == 0 || not_empty == 3)
          GFAddButton(gump, 431, y+2, 22150, 22151, GF_CLOSE_BTN, SPELL_BTN+_spell_iter);
+         GFToolTipText(gump, "Esquecer milagre");
       endif
 
       y += 26;

@@ -96,7 +96,7 @@ program use_MapmakersPen(who, tool)
 				return;
 			endif
 
-			var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, array{PRESTIDIGITACAO, PESQUISA});
+			var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, array{PRESTIDIGITACAO, ESCRIBA});
 			if (roll <= 14)
 				SendSysMessageEx(who, "Falhou em cópiar o livro.", SSM_FAIL);
 				return;

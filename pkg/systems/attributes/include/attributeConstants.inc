@@ -43,7 +43,7 @@ enum SKILLS
 	ESCUDO             := "Escudo",
 	MEDICINA           := "Medicina",
 	VENEFICIO          := "Venefício",
-	PESQUISA           := "Pesquisa",
+	ESCRIBA           := "Escriba",
 	PERCEPCAO          := "Percepção",
 	SOBREVIVENCIA      := "Sobrevivência",
 	PLANTACAO          := "Plantação",

@@ -53,25 +53,24 @@ program skill_armslore(who)
 		PrintText(who, "*analisando um item*");
 		
 		if (15 > 0) //SkillCheck(who, PESQUISA, -1)
-			
 			if (item_config[item.objtype].PlantName)
 				var seed_habilidade, seed_estacao := "";
 				var seed_estacao_list := GetConfigStringArray( FindConfigElem(item_config, item.objtype) , "DestroyIn" );
 				var seed_difficulty := item_config[item.objtype].PlantDifficulty;
 				
-				if (seed_difficulty >= 90)
-					seed_habilidade := "Agricultura de Reagentes";
-					seed_difficulty := "Alta";
-				elseif (seed_difficulty >= 65)
-					seed_habilidade := "Agricultura Avancada";
-					seed_difficulty := "Média";
-				elseif (seed_difficulty >= 20)
-					seed_habilidade := "Agricultura Basica";
-					seed_difficulty := "Baixa";
-				else
-					seed_habilidade := "Nada";
-					seed_difficulty := "Facilissimo";
-				endif
+				// if (seed_difficulty >= 90)
+				// 	seed_habilidade := "Agricultura de Reagentes";
+				// 	seed_difficulty := "Alta";
+				// elseif (seed_difficulty >= 65)
+				// 	seed_habilidade := "Agricultura Avancada";
+				// 	seed_difficulty := "Média";
+				// elseif (seed_difficulty >= 20)
+				// 	seed_habilidade := "Agricultura Basica";
+				// 	seed_difficulty := "Baixa";
+				// else
+				// 	seed_habilidade := "Nada";
+				// 	seed_difficulty := "Facilissimo";
+				// endif
 				
 				foreach estacao in seed_estacao_list
 					case (cint(estacao))
@@ -84,62 +83,62 @@ program skill_armslore(who)
 				
 			
 				SendSysMessageEx(who, "Esta semente não brota no :" + seed_estacao, SSM_INFO);
-				SendSysMessageEx(who, "Parece exigir habilidades em: " + seed_habilidade, SSM_INFO);
-				SendSysMessageEx(who, "Sua dificuldade e: " + seed_difficulty, SSM_INFO);
+				// SendSysMessageEx(who, "Parece exigir habilidades em: " + seed_habilidade, SSM_INFO);
+				SendSysMessageEx(who, "Sua dificuldade é: " + seed_difficulty, SSM_INFO);
 			endif
 		
-			if (GetObjProperty(item, "magic") != error)
-				if (GetObjProperty(item, "equip"))
-					ActivateMagicItem(item);
-				endif
-				var cargas := Cint(GetObjProperty(item, "cargas"));
-				if (cargas)
-					cargas := cargas + cargas* (AP_GetSkill(who, PESQUISA)/120.0 );
-					setobjproperty(item, "cargas", cargas);
-				endif
+			// if (GetObjProperty(item, "magic") != error)
+			// 	if (GetObjProperty(item, "equip"))
+			// 		ActivateMagicItem(item);
+			// 	endif
+			// 	var cargas := Cint(GetObjProperty(item, "cargas"));
+			// 	if (cargas)
+			// 		cargas := cargas + cargas* (AP_GetSkill(who, PESQUISA)/120.0 );
+			// 		setobjproperty(item, "cargas", cargas);
+			// 	endif
 				
-				SendSysMessageEx(who, "Você identificou encantamentos nesse item.", SSM_INFO);
-				var whos := GetObjProperty(item, "magicwho");
-				if (whos == error)
-					whos := array;
-				endif
-				if ( !(who.serial in whos))
-					whos.append(who.serial) ;
-					SetObjProperty(item, "magicwho", whos);
-				endif
-				var cfg := ReadConfigFile(":magery:config/allspells");
-				var elem := FindConfigElem(cfg, whos[1]);
-				var name := GetConfigString(elem, "Name");
-				if (name)
-					SetObjProperty(item, "swordmage", name);
-				endif
-				var backup := GetAmount(item);
-				SubtractAmount(item, backup-1);
-				SetName(item, item.desc);
-				AddAmount(item, backup-1);
+			// 	SendSysMessageEx(who, "Você identificou encantamentos nesse item.", SSM_INFO);
+			// 	var whos := GetObjProperty(item, "magicwho");
+			// 	if (whos == error)
+			// 		whos := array;
+			// 	endif
+			// 	if ( !(who.serial in whos))
+			// 		whos.append(who.serial) ;
+			// 		SetObjProperty(item, "magicwho", whos);
+			// 	endif
+			// 	var cfg := ReadConfigFile(":magery:config/allspells");
+			// 	var elem := FindConfigElem(cfg, whos[1]);
+			// 	var name := GetConfigString(elem, "Name");
+			// 	if (name)
+			// 		SetObjProperty(item, "swordmage", name);
+			// 	endif
+			// 	var backup := GetAmount(item);
+			// 	SubtractAmount(item, backup-1);
+			// 	SetName(item, item.desc);
+			// 	AddAmount(item, backup-1);
 				
-			elseif(GetObjProperty(item, "craftproperty") != error)
-				var craftproperty := GetObjProperty(item, "craftproperty");
-				var properties := cint(GetObjProperty(item, "identificado"));
-				if (properties >= craftproperty.bonus.size())
-					SendSysMessageEx(who, "Você ja identificou o maximo de propriedades deste item.", SSM_FAIL);
-					return;
-				elseif(properties == 1 && AP_GetSkill(who, PESQUISA) < 40)
-					SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
-					return;	
-				elseif(properties == 2 && AP_GetSkill(who, PESQUISA) < 80)
-					SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
-					return;	
-				endif		
+			// elseif(GetObjProperty(item, "craftproperty") != error)
+			// 	var craftproperty := GetObjProperty(item, "craftproperty");
+			// 	var properties := cint(GetObjProperty(item, "identificado"));
+			// 	if (properties >= craftproperty.bonus.size())
+			// 		SendSysMessageEx(who, "Você ja identificou o maximo de propriedades deste item.", SSM_FAIL);
+			// 		return;
+			// 	elseif(properties == 1 && AP_GetSkill(who, ESCRIBA) < 40)
+			// 		SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
+			// 		return;	
+			// 	elseif(properties == 2 && AP_GetSkill(who, ESCRIBA) < 80)
+			// 		SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
+			// 		return;	
+			// 	endif		
 				
-				if (!properties)
-					properties := 0;
-				endif
+			// 	if (!properties)
+			// 		properties := 0;
+			// 	endif
 				
-				properties+=1;
-				SetObjProperty(item, "identificado", properties);
-				SendSysMessageEx(who, "Você identificou novas propriedades para artificie neste item.", SSM_INFO);
-				SetName(item, item.desc);
+			// 	properties+=1;
+			// 	SetObjProperty(item, "identificado", properties);
+			// 	SendSysMessageEx(who, "Você identificou novas propriedades para artificie neste item.", SSM_INFO);
+			// 	SetName(item, item.desc);
 			else
 				SendSysMessageEx(who, "Este item não possui propriedades magicas a serem ativadas.", SSM_INFO);
 			endif

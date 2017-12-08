@@ -93,6 +93,7 @@ function CreateClericGump(who, spell_list, available_slots)
    var y := 121;
    foreach spell in spell_list
       GFHTMLArea(gump, 63, y, 192, 24, "{}".format(spell.name), 1, 0);
+      GFToolTipText(gump, spell.description);
       GFHTMLArea(gump, 259, y, 34, 24, "<center>{}".format(spell.circle), 1, 0);
       if (available_slots >= spell.circle)
 	      GFAddButton(gump, 319, y+4, 10006, 10006, GF_CLOSE_BTN, 200+_spell_iter);
@@ -116,13 +117,13 @@ function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
       "id"         := spellinfo.id,
       "powerwords" := spellinfo.powerwords,
       "circle"     := spellinfo.circle,
-      "time"       := AddTimeTo(polcore().systime, 2, "hours"),
+      "time"       := AddTimeTo(polcore().systime, 40, "minutes"),
       "used"       := 0
    };
 
    available_slots -= spellinfo.circle;
    cleric_list.append(new_spell);
    SetObjProperty(who, "cleric_list", cleric_list);
-   SendSysMessageEx(who, "Obteu a bencao de Anar.", SSM_INFO);
+   SendSysMessageEx(who, "Obteu a benção de Anar.", SSM_INFO);
    return 1;
 endfunction

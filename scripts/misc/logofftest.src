@@ -14,6 +14,7 @@ include ":timedscripts:timedScripts";
 program core_logoffTest(who)
 	// Send event to the 'timed scripts' package to run log off scripts.
 	TS_LogOff(who);
+   sleep(1);
 
 	if ( (FindAccount(who.acctname).defaultcmdlevel > 1) || who.cmdlevel > 1 || (GetObjProperty(who,"Delete")) 
 		|| (who.x > 3991 && who.y > 2589 && who.x < 4074 && who.y < 2645 ))

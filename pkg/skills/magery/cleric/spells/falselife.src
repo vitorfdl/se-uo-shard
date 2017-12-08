@@ -25,10 +25,9 @@ program divineOrientation(info)
       sleepms(2);
 	endwhile
 
-   var level := AP_GetStat(who, WISDOM, RETURN_BONUS);
-   if (level > 5)
-      level := 5;
-   elseif (level < 1)
+   var level := who.getLevel();
+   level := Ceil(level / 4);
+   if (level < 1)
       level := 1;
    endif
 

@@ -124,6 +124,19 @@ function WriteMagic(who, spell_id)
 		return;
 	endif
 
+	var spellinfo := struct{ id := spell_id };
+	if (!WriteSpellInfo(spellinfo))
+		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia. Chame um GM.", SSM_FAIL);
+		return;
+	endif
+
+   var char_level := who.getLevel();
+   if ((spellinfo.circle == 2 && char_level < 4) || (spellinfo.circle == 3 && char_level < 6) || (spellinfo.circle == 4 && char_level < 14) 
+     || (spellinfo.circle == 5 && char_level < 18) || (spellinfo.circle == 6 && char_level < 20))
+		SendSysMessageEx(who, "Você não tem conhecimento o suficiente para inscrever esta magia.", SSM_FAIL);
+		return;
+   endif
+
 	SendSysMessageEx(who, "Escolha o objeto para inscrever a magia.", SSM_INFO);
 	var targ := Target(who);
 
@@ -165,11 +178,6 @@ function WriteMagic(who, spell_id)
 		sleep(2);
 	endfor
 
-	var spellinfo := struct{ id := spell_id };
-	if (!WriteSpellInfo(spellinfo))
-		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia", SSM_FAIL);
-		return;
-	endif
 	if ((spellinfo.type != "Comando" && spellinfo.type != element) || (spellinfo.circle > elementpower))
 		SendSysMessageEx(who, "A inscrição não reage aos elementos da varinha", SSM_FAIL);
 		return;

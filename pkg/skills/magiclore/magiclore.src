@@ -91,31 +91,6 @@ program skill_armslore(who)
 				return 1;
 			endif
 
-			var priestrune := cint(GetObjProperty(item, "runatype"));
-			if (priestrune)
-				var cfg := ReadConfigFile(":magery:config/allspells");
-				var elem := FindConfigElem(cfg, priestrune);
-				var name := GetConfigString(elem, "Name");
-				var desc := GetConfigString(elem, "Desc");
-				SendSysMEssageEx(who, "Esta runa magica possui energia para: " + name, SSM_INFO);
-				SendSysMessageEx(who, "Descricao: " + desc, SSM_INFO);
-				SetObjProperty(item, "swordmage", name);
-				var whos := GetObjProperty(item, "magicwho");
-				if (whos == error)
-					whos := array;
-					if (TemHabilidade(who, "Essencia de Zhark"))
-						SetObjProperty(item, "cargas", 30);	
-					endif
-				endif
-				if ( !(who.serial in whos))
-					whos.append(who.serial) ;
-					SetObjProperty(item, "magicwho", whos);
-				endif
-				SetName(item, item.desc);
-
-				return 1;
-			endif
-
 			if (GetObjProperty(item, "magic") != error)
 				if (GetObjProperty(item, "equip"))
 					ActivateMagicItem(item);
