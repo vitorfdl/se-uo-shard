@@ -10,6 +10,7 @@ include "include/say";
 include "include/damage";
 include ":timedscripts:timedScripts";
 include ":charactercreation:habilidades";
+include ":traps:traps";
 
 program trapScript(params)
 	var mobile := params[1];
@@ -22,27 +23,30 @@ program trapScript(params)
 	PlaysoundEffect(object, sounds.randomentry() );
 	PlayStationaryEffect(object.x, object.y, object.z, GFX_POISON_GAS, 10,10, 0, object.realm);
 
-	var range := trap_info.Strength;
-	if (range < 1)
-		range := 1;
-	endif 
-	range := range*3;
+   var strength := trap_info.strength;
+   var danger   := trap_info.danger;
+   if (!strength)
+      strength := 1;
+   endif
+   if (!danger)
+      danger := 1;
+   endif
 
-	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, range, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL);
+   var diff     := GetTrapAC(danger);
+   var dmgfinal := getTrapDamage(strength, danger);
 
+	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, 3, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL);
 	foreach mobile in mobiles
+		if (!mobile.master)
+			var poisonLvl := trap_info.strength;
 
-		if (!mobile.npctemplate)
-			var poisonLvl := trap_info.Strength;
-
-			if (CheckResist(mobile, CONSTITUTION))
+			if (rollResistDice(mobile, CONSTITUTION) >= diff)
 				SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
 				continue;
 			else
-				TS_StartTimer(mobile, "defaultPoison", 120, poisonLvl);
+				TS_StartTimer(mobile, "defaultPoison", 120, danger);
 			endif
 		endif
-
 	endforeach
 	
 	return 1;

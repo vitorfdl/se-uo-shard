@@ -5,6 +5,7 @@ use os;
 include ":timeutils:time";
 include ":yggdrasil:boss";
 include "include/say";
+include "include/damage";
 include "include/client";
 include ":attributes:advanceCheck";
 include ":gumps:gumps";
@@ -12,7 +13,7 @@ include ":gumps:gumps_ex";
 
 program oafeatures_sendpacket(who, text)
    var targ := Target(who);
-   RestartScript(targ);
+   restartScript(targ);
    // SendSystemReport(who, text);
    // var pid := GetProcess(cint(text));
    // printtext(who, ""+pid);

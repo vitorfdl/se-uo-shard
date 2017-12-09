@@ -60,84 +60,66 @@ endfunction
 
 
 function MobileTracking(who)
-	var diff := 1;
-	if (TemHabilidade(who, "Rastrear Aprimorado"))
-		diff := -30;
-	endif
-	//SendSysMessage(who, "dif: "+diff);
-	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, SOBREVIVENCIA);
-	if(test > diff)
-		var tracker := ReadGameClock();
-		SetObjProperty(who, "TrackingCounter", tracker);
-		var range := CInt((AP_GetSkill(who, SOBREVIVENCIA)*1.5));
-		if (range < 20)
-			range:= 20;
-		endif
-		if (TemHabilidade(who, "Rastrear Aprimorado 3"))
-			range+= 15;
-		elseif (TemHabilidade(who, "Rastrear Aprimorado 2"))
-			range+= 10;
-		elseif (TemHabilidade(who, "Rastrear Aprimorado"))
-			range+= 5;
-		endif
-		var nmobiles := ListMobilesNearLocationEX(who.x,who.y, LIST_IGNORE_Z, range, 0x03, who.realm);
-		var mobiles := array;
+	var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, SOBREVIVENCIA);
+   var tracker := ReadGameClock();
+   SetObjProperty(who, "TrackingCounter", tracker);
+   var range := 18;
 
-		foreach mob in nmobiles
-			if (!temHabilidade(mob, "Rastros Fantasmas") && mob != who)
-				if (mob.hidden && !temHabilidade(who, "Rastreamento Preciso"))
-					continue;
-				endif
-				mobiles.append(mob);
-			endif
-		endforeach
+   var nmobiles := ListMobilesNearLocationEX(who.x,who.y, LIST_IGNORE_Z, range, 0x03, who.realm);
+   var mobiles := array;
 
+   foreach mob in nmobiles
+      var diff := rollAttrDice(mob, DEXTERITY) + getProficiencyBonus(mob, FURTIVIDADE);
+      if ( mob != who && roll > diff )
+         mobiles.append(mob);
+      endif
+      sleepms(2);
+   endforeach
 
-		PrintText(who, "*Estudando o local a sua volta*");
+   PrintText(who, "*Estudando o local a sua volta*");
 
-		if(len(mobiles) < 1)
-			SendSysMessage(who, "Não há nenhuma criatura ao seu redor para ser seguida", 3, 660);
-			return;
-		endif
+   if(len(mobiles) < 1)
+      SendSysMessageEx(who, "Não encontrou nenhum rastro ao redor para ser perseguido.", 3, 660);
+      return;
+   endif
 
-		TrackGump(who, mobiles);
-
-	else
-  		SendSysMessage(who, " Você falhou ao estudar o local ", 3, 38);
-  	endif
+   TrackGump(who, mobiles);
 endfunction
 
 
 function ItemTracking(who)
-	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, SOBREVIVENCIA);
-	if(test > 10)
-		var tracker := ReadGameClock();
-		SetObjProperty(who, "TrackingCounter", tracker);
-		var range := CInt((AP_GetSkill(who, SOBREVIVENCIA)/3));
-		if (range < 25)
-			range := 25;
-		endif
-		var items :=  listitemsnearlocation(who.x, who.y, LIST_IGNORE_Z, range, who.realm);
+	var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, SOBREVIVENCIA);
+   SetObjProperty(who, "TrackingCounter", ReadGameClock());
+   var range := 15;
+   var items :=  listitemsnearlocation(who.x, who.y, LIST_IGNORE_Z, range, who.realm);
+   var items_found := array{};
 
-		PrintText(who, "*Estudando o local a sua volta*");
+   foreach item in items
+      var diff := Distance(item, who) / 2;
+      if (diff < 8)
+         diff := 8;
+      endif
 
-		if(len(items) < 1)
-			SendSysMessage(who, "Não há itens para serem rastreados", 3, 660);
-			return;
-		endif
+      if ( roll > diff )
+         items_found.append(item);
+      endif
+      sleepms(2);
+   endforeach
 
-		ItemTrackGump(who, items);
+   PrintText(who, "*Estudando o local a sua volta*");
 
-	else
-		SendSysMessage(who, " Você falhou ao estudar o local ", 3, 38);
-  	endif
+   if(len(items_found) < 1)
+      SendSysMessageEx(who, "Você não encontrou traços de item algum.", 3, 660);
+      return;
+   endif
+
+   ItemTrackGump(who, items_found);
 endfunction
 
 
 
 //gump da lista de mobs
 function TrackGump(who, mobiles)
-
 	var gump := GFCreateGump(50, 25);
 
 	var mobdesc;
@@ -183,11 +165,9 @@ function TrackGump(who, mobiles)
 	if (ifres[0] != 0)
 		var mobontrack := mobiles[ifres[0]];
 		var mobname := mobarray[ifres[0]];
-		SendSysMessage(who, "Você agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 3, 191);
+		SendSysMessageEx(who, "Você agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 3, 191);
 		CreatureTrack(who, mobontrack,mobname);
 	endif
-
-
 endfunction
 
 
@@ -233,7 +213,7 @@ function ItemTrackGump(who, items)
 	endforeach
 
 	if (!temcoisa)
-		SendSysMessage(who, "Não há itens para serem rastreados", 3, 660);
+		SendSysMessageEx(who, "Não há itens para serem rastreados", 3, 660);
 		return;
 	endif
 	var ifres := GFSendGump(who, gump);	
@@ -250,7 +230,6 @@ endfunction
 
 //gump individual
 function CreatureTrack(who, mobontrack, mobname)
-	
 	var local;
 	var end := 0;
 
@@ -293,7 +272,7 @@ function CreatureTrack(who, mobontrack, mobname)
 		end := DistanceCheck(who, mobontrack);
 		if (end != 1)
 			var local := MobLocalizate(who, mobontrack);
-			SendSysMessage(who, "" + local, 3, 191);
+			SendSysMessageEx(who, "" + local, 3, 191);
 		endif
 	elseif (ifres[0] == 2)
 		end := DistanceCheck(who, mobontrack);
@@ -301,7 +280,7 @@ function CreatureTrack(who, mobontrack, mobname)
 			var parar := 0;
 			while (parar < 5)
 				var local := MobLocalizate(who, mobontrack);
-				SendSysMessage(who, "" + local, 3, 191);
+				SendSysMessageEx(who, "" + local, 3, 191);
 				sleepms(5000);
 				parar := parar + 1;
 			endwhile
@@ -310,7 +289,7 @@ function CreatureTrack(who, mobontrack, mobname)
 		end := DistanceCheck(who, mobontrack);
 		if (end != 1)
 			var dist := MobDistance(who, mobontrack);
-			SendSysMessage(who, "" + dist, 3, 660);
+			SendSysMessageEx(who, "" + dist, 3, 660);
 		endif
 	elseif (ifres[0] == 4)
 		end := DistanceCheck(who, mobontrack);
@@ -355,51 +334,42 @@ function CreatureTrack(who, mobontrack, mobname)
 endfunction
 
 function MobDistance(who, mobontrack)
-
-	var relx,rely;
-	relx := mobontrack.x - who.x;
-	rely := mobontrack.y - who.y;
-	var dist := sqrt(pow(relx, 2) + pow(rely, 2));
-//	sendsysmessage(who, "dist " + dist + " " + mobontrack.x + " " + mobontrack.y);
-	if (dist > 100) return "perdeu";
-		elseif (dist > 80) return "O rastro parece estar quase sumindo";
-		elseif (dist > 64) return "O rastro e muito superficial";
-		elseif (dist > 48) return "O rastro e superficial";
-		elseif (dist > 32) return "O rastro comeca a ficar definido";
-		elseif (dist > 24) return "O rastro e bem definido";
-		elseif (dist > 12) return "O rastro e recente e cheio de detalhes";
+	var dist := Distance(who, mobontrack);
+//	sendsysmessageEx(who, "dist " + dist + " " + mobontrack.x + " " + mobontrack.y);
+	if (dist > 70) return "perdeu";
+		elseif (dist > 60) return "O rastro parece estar quase sumindo";
+		elseif (dist > 50) return "O rastro é muito superficial";
+		elseif (dist > 40) return "O rastro é superficial";
+		elseif (dist > 30) return "O rastro começa a ficar definido";
+		elseif (dist > 20) return "O rastro é bem definido";
+		elseif (dist > 10) return "O rastro é recente e cheio de detalhes";
 		elseif (dist > 1) return "A criatura com esse rastro deve estar bem perto";
 	endif
 
 endfunction
 
 function MobDistanceColor(who, mobontrack)
-
-	var relx,rely;
-	relx := mobontrack.x - who.x;
-	rely := mobontrack.y - who.y;
-	var dist := sqrt(pow(relx, 2) + pow(rely, 2));
-//	sendsysmessage(who, "dist " + dist + " " + mobontrack.x + " " + mobontrack.y);
-	if (dist > 100) return 833;
-		elseif (dist > 90) return 733;
-		elseif (dist > 80) return 633;
-		elseif (dist > 64) return 533;
-		elseif (dist > 48) return 433;
-		elseif (dist > 32) return 333;
-		elseif (dist > 24) return 233;
-		elseif (dist > 12) return 133;
+	var dist := Distance(who, mobontrack);
+//	sendsysmessageEx(who, "dist " + dist + " " + mobontrack.x + " " + mobontrack.y);
+	if (dist > 80) return 833;
+		elseif (dist > 70) return 733;
+		elseif (dist > 60) return 633;
+		elseif (dist > 50) return 533;
+		elseif (dist > 40) return 433;
+		elseif (dist > 30) return 333;
+		elseif (dist > 20) return 233;
+		elseif (dist > 10) return 133;
 		elseif (dist > 1) return 33;
 	endif
 
 endfunction
 
 function MobLocalizate(who, critter)
-
 	var ns_desc:="";
 	var ew_desc:="";
 	var ret_val:="";
 
-	//sendsysmessage(who, " "+ critter.desc + " " + critter.x +  " " + critter.y);
+	//sendsysmessageEx(who, " "+ critter.desc + " " + critter.x +  " " + critter.y);
 
 	if ( critter.y < who.y )
 		ns_desc := "norte ";
@@ -428,7 +398,7 @@ function MobLocalizateSigla(who, critter)
 	var ew_desc:="";
 	var ret_val:="";
 
-	//sendsysmessage(who, " "+ critter.desc + " " + critter.x +  " " + critter.y);
+	//sendsysmessageEx(who, " "+ critter.desc + " " + critter.x +  " " + critter.y);
 
 	if ( critter.y < who.y )
 		ns_desc := "N";
@@ -452,7 +422,6 @@ endfunction
 
 
 function GetMobDesc(who, mobile)
-
 if (CheckGender(who))
 	var itemonmobile := ListEquippedItems( mobile );
 	foreach item in itemonmobile
@@ -493,43 +462,43 @@ if (CheckGender(who))
 		else
 			return "Humanoide Descalço"+ " [" + MobLocalizateSigla(who, mobile) + "]";
 		endif	
-	
-elseif (mobile.graphic == 1) return "Ogro" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 776) return "Sahagin Pequeno" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 795) return "Sahagin" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 796) return "Sahagin Gigante"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 999) return "Sahagin Gigante" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 35) return "Homem Lagarto"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 36) return "Homem Lagarto"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 43) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 44) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 42) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 17) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 7) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 41) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 245) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 255) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 253) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 200) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 291) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 226) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 204) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 228) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-elseif (mobile.graphic == 6) return "Passaro"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-endif
+      
+   elseif (mobile.graphic == 1) return "Ogro" + " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 776) return "Sahagin Pequeno" + " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 795) return "Sahagin" + " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 796) return "Sahagin Gigante"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 999) return "Sahagin Gigante" + " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 35) return "Homem Lagarto"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 36) return "Homem Lagarto"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 43) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 44) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 42) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 17) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 7) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 41) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 245) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 255) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 253) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 200) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 291) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 226) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 204) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 228) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   elseif (mobile.graphic == 6) return "Passaro"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   endif
 
-if (mobile.isa(POLCLASS_MOBILE))
-return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-else
-return mobile.desc + " [" + MobLocalizateSigla(who, mobile) + "]";;
-endif
+   if (mobile.isa(POLCLASS_MOBILE))
+      return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   else
+      return mobile.desc + " [" + MobLocalizateSigla(who, mobile) + "]";;
+   endif
 
 endfunction
 
 function DistanceCheck(who, mobontrack)
 	var dist := MobDistance(who, mobontrack);
 	if (dist == "perdeu")
-		SendSysMessage(who, "Você não consegue mais identificar os rastros desse alvo", 3, 28);
+		SendSysMessageEx(who, "Você não consegue mais identificar os rastros desse alvo", 3, 28);
 		return 1;
 	else
 		return 0;
@@ -537,8 +506,6 @@ function DistanceCheck(who, mobontrack)
 endfunction
 
 function BandVerify(who, mobname, mobontrack)
-
-
 	var mobdesc;
 	var x := 0;
    	var mobiles := ListMobilesNearLocation(mobontrack.x,mobontrack.y, LIST_IGNORE_Z, 10);
@@ -553,7 +520,7 @@ function BandVerify(who, mobname, mobontrack)
 	endforeach
 
 	if (x >= 7)
-		return "E muito provavel que o alvo esteja em bando.";
+		return "É muito provavel que o alvo esteja em bando.";
 	elseif (x >= 3)
 		return "Talvez o alvo esteja em bando.";
 	else

@@ -17,6 +17,8 @@ use cfgfile;
 use os;
 use uo;
 
+include "include/say";
+
 CONST FLIP_CONFIG_FILE := ("::flip");
 
 program textcmd_flip (me)
@@ -35,22 +37,22 @@ program textcmd_flip (me)
       who := me[1];
    else
       who := me;
-      SendSysMessage(who, "Girar o que?");
+      SendSysMessageEx(who, "Girar o que?");
       object := Target(who);
    endif
 
    if( !object )
-      SendSysMessage(who, "Cancelado.");
+      SendSysMessageEx(who, "Cancelado.");
       return 0;
    endif
 
    if( !(object.isA(POLCLASS_ITEM)) )
-      SendSysMessage(who, "Você não pode girar isso!");
+      SendSysMessageEx(who, "Você não pode girar isso!");
       return 0;
    endif
    
    if( object.movable == 0 )
-      SendSysMessage(who, "O objeto esta fixo.");
+      SendSysMessageEx(who, "O objeto esta fixo.");
       return 0;
    endif
 
@@ -64,20 +66,25 @@ program textcmd_flip (me)
          new_obj_graphic := object_graphic;
       endif
       new_obj_graphic := flip_config[CInt(new_obj_graphic)].ChangeTo;
-      if(new_obj_graphic != object_graphic)
+      if(new_obj_graphic && new_obj_graphic != object_graphic)
          graphic_array[i] := new_obj_graphic;
          i := i+1;
       endif
    endwhile
+
+   if (graphic_array.size() == 0)
+      SendSysMessageEx(who, "Não é possível girar isso.", SSM_FAIL);
+   endif
 
    var flip_menu := CreateMenu("Selecione a nova orientacao:");
    var j;
    for(j:=1;j<i;j:=j+1)
       AddMenuItem(flip_menu,CInt(graphic_array[j]),object.name);
    endfor
+
    var selection := SelectMenuItem2(who,flip_menu);
    if(!selection)
-      SendSysMessage(who, "Cancelado.");
+      SendSysMessageEx(who, "Cancelado.");
       return 0;
    endif
    flip_graphic := CInt(selection.graphic);

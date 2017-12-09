@@ -1,0 +1,23 @@
+	// var gump := array {
+	// 	"page 0",
+	// 	"resizepic 29 26 9380 364 319",
+	// 	"gumppic 60 241 52 Ultima.Hue",
+	// 	"button 60 240 92 248 1 0 0",
+	// 	"gumppic 199 182 52 Ultima.Hue",
+	// 	"button 199 182 92 248 1 0 0",
+	// 	"gumppic 275 235 5592 Ultima.Hue",
+	// 	"text 68 75 Ultima.Hue 0"
+	// };
+
+const BTN_
+program contract(item, mobile)
+
+endprogram
+
+function contractSign()
+
+endfunction
+
+function contractDestroy()
+
+endfunction

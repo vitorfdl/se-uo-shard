@@ -57,8 +57,9 @@ program installtrap(who, trap)
 				//SendSysMessageEx(mobile, "A armadilha disparou!", SSM_FAIL);
 				var trap_list := array;
 				var trap_info := struct;
-				trap_info.+Name := traptype;
-				trap_info.+Strength := level;
+				trap_info.+name := traptype;
+				trap_info.+strength := level;
+				trap_info.+danger := 1;
 				trap_list.Append(trap_info);
 				RunTrapEffect(trap_list, mobile);
 			endforeach

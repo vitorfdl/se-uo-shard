@@ -27,7 +27,7 @@ program healpotion(who, potion)
 
 	SendSysMessageEx(who, "Seus ferimentos estao cicatrizando...", SSM_INFO);
 	for i := 0 to healed
-		HealFLS(who, 1);
+		HealFLS(who, 1, 0);
 		//HealDamage(who,  1 );
 		RecalcVitals(who);
 		sleepms(550);

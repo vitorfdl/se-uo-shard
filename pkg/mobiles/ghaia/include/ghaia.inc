@@ -47,7 +47,7 @@ function CanFight(me, mobile)
    // if ( SkillCheck(me, AWARENESS, dif) > 0 )
    //    mobile.hidden := 0;
    //    PrintText(mobile, "*aparece*");
-   //    SendSysMessage(me, "Você encontrou "+mobile.name+".");
+   //    SendSysMessa'e(me, "Você encontrou "+mobile.name+".");
    //    SendSysMessage(mobile, me.name+" te encontrou!");
    //    if ( GetObjProperty(me, "attackhiddenenemy" ))
    //          return 1;
@@ -232,7 +232,7 @@ function InitializeNpc(mobile)
          endif
          SetObjProperty(mobile, "anchor", array{ spawnpoint.x , spawnpoint.y , spawnpoint.z});
          SetObjProperty(mobile, "range", range);
-         SetAnchor(spawnpoint.x, spawnpoint.y, range, 90);
+         SetAnchor(spawnpoint.x, spawnpoint.y, range, areasize);
          //print("drop anchor " + e);
       endif
    endif

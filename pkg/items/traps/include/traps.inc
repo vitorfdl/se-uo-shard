@@ -82,7 +82,8 @@ function AddTrap(object, trap_name, strength, count:=0)
 	
 	var trap := struct;
 	trap.+Name := trap_name;
-	trap.+Strength := strength;
+	trap.+strength := strength;
+	// trap.+danger := danger;
 	trap.+Count := count;
 	
 	trap_list.Append(trap);
@@ -190,8 +191,44 @@ function RunTrapEffect(trap_list, mobile)
 	return 1;
 endfunction
 
-
 function TrapFound(object, founder)
-	SetName(object, object.desc+" [trapped]");
+	SetName(object, object.desc+" [armadilha]");
 	SetObjProperty(object, "trapSpoted", founder.serial);
+endfunction
+
+function getTrapDamage(strength, danger)
+   case (danger)
+      3:
+         case (strength)
+            4: RandomDiceRoll("24d10");
+            3: RandomDiceRoll("18d10");
+            2: RandomDiceRoll("10d10");
+            default: RandomDiceRoll("4d10");
+         endcase
+      2: 
+         case (strength)
+            4: RandomDiceRoll("18d10");
+            3: RandomDiceRoll("10d10");
+            2: RandomDiceRoll("4d10");
+            default: RandomDiceRoll("2d10");
+         endcase
+      default: 
+         case (strength)
+            4: RandomDiceRoll("10d10");
+            3: RandomDiceRoll("4d10");
+            2: RandomDiceRoll("2d10");
+            default: RandomDiceRoll("1d10");
+         endcase
+   endcase
+
+   return RandomDiceRoll("1d10");
+endfunction
+
+function getTrapAC(danger)
+   case (danger)
+      3: return RandomIntMinMax(16,21);
+      2: return RandomIntMinMax(13,16);
+      default: return RandomIntMinMax(10,12);
+   endcase
+   return RandomIntMinMax(10,12);
 endfunction

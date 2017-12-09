@@ -42,7 +42,7 @@ program UseKey(who, key)
 			RemoveTrap(targ, 1);
 			targ.usescript := "";
 			var name := targ.desc;
-			name[" [trapped]"] := "";
+			name[" [armadilha]"] := "";
 			SetName(targ, name);
 		endif
 	endif

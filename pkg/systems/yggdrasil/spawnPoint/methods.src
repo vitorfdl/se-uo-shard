@@ -33,20 +33,24 @@ endprogram
 exported function GetProps( spawnpoint )
    var data         := struct{};
    data.+spot_serial := GetObjProperty(spawnpoint, "spot_serial");
-   data.+level      := GetObjProperty(spawnpoint, "level");
-   data.+type       := GetObjProperty(spawnpoint, "type");
-   data.+range      := GetObjProperty(spawnpoint, "range");
-   data.+mob_number := GetObjProperty(spawnpoint, "mob_number");
-   data.+spotgroup  := GetObjProperty(spawnpoint, "spotgroup");
-   data.+monsters   := GetObjProperty(spawnpoint, "monsters");
-   data.+spawnqueue := GetObjProperty(spawnpoint, "spawnqueue");
-   data.+spotgroup := GetObjProperty(spawnpoint, "spotgroup");
+   data.+level       := GetObjProperty(spawnpoint, "level");
+   data.+type        := GetObjProperty(spawnpoint, "type");
+   data.+range       := GetObjProperty(spawnpoint, "range");
+   data.+mob_number  := GetObjProperty(spawnpoint, "mob_number");
+   data.+spotgroup   := GetObjProperty(spawnpoint, "spotgroup");
+   data.+monsters    := GetObjProperty(spawnpoint, "monsters");
+   data.+spawnqueue  := GetObjProperty(spawnpoint, "spawnqueue");
+   data.+spotgroup   := GetObjProperty(spawnpoint, "spotgroup");
+   data.+groups      := GetObjProperty(spawnpoint, "groups");
 
    if (!data.monsters)
       data.monsters := array{};
    endif
    if (!data.spawnqueue)
       data.spawnqueue := array{};
+   endif
+   if (!data.groups)
+      data.groups := array{0};
    endif
 
    data.+yggdrasil := GetObjProperty(spawnpoint, "yggdrasil");
@@ -86,6 +90,10 @@ exported function SetProps( spawnpoint, data := struct{});
 
    if (data.level)
       old_data.level := cint(data.level);
+   endif
+
+   if (data.groups)
+      old_data.groups := data.groups;
    endif
 
    if (data.mob_number)
@@ -154,6 +162,10 @@ function ModelSpawnPoint( data := struct{})
    if (TypeOf(data.yggdrasil) != "Struct")
       data.yggdrasil := struct{};
    endif
+
+  if (TypeOf(data.groups) != "Array")
+      data.groups := array{0};
+   endif 
 
    return data;
 endfunction
@@ -242,6 +254,8 @@ exported function FillQueue(spawnpoint)
          elseif (!(mob_config.daytime in array{ "always", "lua nova"}) && daytime != mob_config.daytime)
             continue;
          elseif (mob_config.daytime == "lua nova" && (moonfase != "nova" || daytime != "noite"))
+            continue;
+         elseif( !(cint(mob_config.mobgroup) in config.groups))
             continue;
          endif
 

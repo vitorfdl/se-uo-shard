@@ -47,6 +47,10 @@ function ModelMobListData(entry := struct{})
         entry.+name := "Missing Name";
     endif
 
+    if (!entry.mobgroup)
+        entry.+mobgroup := 0;
+    endif
+
     return entry;
 endfunction
 

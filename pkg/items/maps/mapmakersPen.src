@@ -41,7 +41,7 @@ program use_MapmakersPen(who, tool)
 		return;
 	endif
 
-	var blank_array := array{ 0xE34, 0xEF3, 0x14EB, 0x14EC };
+	var blank_array := array{ 0xEF3, 0x14EB, 0x14EC };
 	if (targ.objtype in blank_array)
 		//var rinfo := sendCraftGump(who, "Cartography");
 
@@ -75,6 +75,9 @@ program use_MapmakersPen(who, tool)
 
 		makeCartographyMap(who, the_objtype, amt, tool);
 		return 1;
+   elseif (targ.objtype == 0xE34)
+      run_script(":contract:paper/newContract", array{who, targ});
+      return 1;
 	elseif (targ.isBook())
 		if (!targ.isWritable() )
 			var content := targ.ExtractInfo();

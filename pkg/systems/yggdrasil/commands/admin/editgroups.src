@@ -23,12 +23,13 @@ const GF_DELMOB_BTN     := 900;
 const GF_SELECTMOB_BTN := 200;
 
 //Mobinfo menu
-var mob_name, mob_power, mob_daytime, mob_bossparams, mob_type;
+var mob_name, mob_power, mob_daytime, mob_bossparams, mob_type, mob_group;
 const INPUT_ISBOSS   := 20;
 const GF_BOSS_BTN    := 30;
 const GF_POWER_BTN   := 31;
 const GF_DAYTIME_BTN := 32;
 const GF_TYPE_BTN    := 33;
+const GF_MGROUP_BTN := 34;
 const GF_UPDATE_BTN  := 29;
 
 var selected_elem := ""; //Name of the Elem
@@ -214,7 +215,7 @@ endfunction
 
 function constructMobInfo(byref gump)
     GFPage(gump, 0);
-    GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 220, 150);
+    GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 220, 168);
     GFTextLine(gump, 490, 28, 555, "Mob Configuration");
     var group_data := GetSpawnGroupData(selected_elem).mob_list;
     var mob_info := group_data[selected_mob];
@@ -226,6 +227,7 @@ function constructMobInfo(byref gump)
     mob_power      := mob_info.power;
     mob_daytime    := mob_info.daytime;
     mob_type       := mob_info.type;
+    mob_group       := cint(mob_info.mobgroup);
 
     GFTextLine(gump, sx, sy, 1153, "Nome:");
     mob_name := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, mob_info.name);
@@ -246,7 +248,11 @@ function constructMobInfo(byref gump)
     GFCheckBox(gump, 527+60, 45+18+20, 2360, 2361, mob_info.isBoss, INPUT_ISBOSS);
     GFAddButton(gump, 542+60, 45+18+20, 2362, 2362, 1, GF_BOSS_BTN);
 
-    GFAddButton(gump, 500, 45+18+20+20+20, 0xEF, 0xF0, 1, GF_UPDATE_BTN);
+    GFTextLine(gump, sx, sy+18+18+18+18, 1153, "Grupo:");
+    GFTextLine(gump, sx+40, sy+18+18+18+18, 2103, mob_group);
+    GFAddButton(gump, sx-15, sy+18+21+18+18, 2103, 2104, GF_CLOSE_BTN, GF_MGROUP_BTN);
+
+    GFAddButton(gump, 500, 45+18+20+20+20+18, 0xEF, 0xF0, 1, GF_UPDATE_BTN);
 endfunction
 
 function MobSetConfigs(byref who, byref input)
@@ -270,6 +276,9 @@ function MobSetConfigs(byref who, byref input)
         GF_TYPE_BTN:
             mob_type := lower(RadioGump(who, 190, 180, "Tipo de Monstro:", array{"Melee", "Ranged", "Spellcaster", "Boss"}));
             break;
+         GF_MGROUP_BTN:
+            mob_group := cint(RadioGump(who, 150, 185, "Grupo:", array{"0", "1", "2", "3"}));
+            break;
     endcase
 
     mob_entry.+name       := GFExtractData(input, mob_name);
@@ -278,6 +287,7 @@ function MobSetConfigs(byref who, byref input)
     mob_entry.+isBoss     := input[INPUT_ISBOSS];
     mob_entry.+bossParams  := mob_bossparams;
     mob_entry.+type       := mob_type;
+    mob_entry.+mobgroup       := mob_group;
 
     UpdateGroupMobData(selected_elem, mob_entry, selected_mob);
 

@@ -9,48 +9,37 @@ include "include/client";
 include "include/say";
 include "include/damage";
 include ":charactercreation:habilidades";
+include ":traps:traps";
 
 program trapScript(params)
 	var mobile := params[1];
 	var object := params[2];
 	var trap_info := params[3];
 	//var trap_index := params[4];
-	var dmg := CINT(trap_info.Strength);
-	if (!dmg)
-		dmg := 1;
-	endif
-	params := 0; // Not needed anymore.
+   var strength := trap_info.strength;
+   var danger   := trap_info.danger;
+   if (!strength)
+      strength := 1;
+   endif
+   if (!danger)
+      danger := 1;
+   endif
 
-	var dmgfinal := 15*dmg;
+   var diff     := GetTrapAC(danger);
+   var dmgfinal := getTrapDamage(strength, danger);
 
-	var range := trap_info.Strength;
-	if (range < 1)
-		range := 1;
-	endif 
-	range := range*3;
-
-	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, range, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL, object.realm);
+	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, 3, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL, object.realm);
 
 	PlaySoundEffect(object, 0x208);
 	foreach mobile in mobiles
-		if (!mobile.npctemplate)
+		if (!mobile.master)
 			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha.", SSM_FAIL);
 			PlayObjectCenteredEffect(mobile, GFX_EXPLODE_3, 10, 10);
 
-			if (CheckResist(mobile, DEXTERITY))
-				if (temHabilidade(mobile, "Evasao"))
-					SendSysMessageEx(mobile, "Você escapou completamente da armadilha.", SSM_INFO);
-					mobile.hidden := 0;
-					continue;
-				else
-					SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-					dmgfinal := CInt(dmgfinal * 0.5);
-				endif
-			else
-				if (temHabilidade(mobile, "Evasao Aprimorada"))
-					SendSysMessageEx(mobile, "Por instinto você se livrou um pouco da armadilha.", SSM_INFO);
-					dmgfinal := CInt(dmgfinal * 0.5);
-				endif
+			if (rollResistDice(mobile, DEXTERITY) >= diff)
+            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
+            SendSystemReport(mobile, "*esquivou*", SSM_FAIL, "all");
+            dmgfinal := CInt(dmgfinal * 0.5);
 			endif
 
 			DamageFLS(mobile, dmgfinal);

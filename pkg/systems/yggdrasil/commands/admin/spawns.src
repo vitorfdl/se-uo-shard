@@ -54,6 +54,7 @@ var spawnpoint_name, spawnpoint_mobnumber, spawnpoint_range;
 const GF_SPAWN_LEVEL_BTN    := 930;
 const GF_SPAWN_TELEPORT_BTN := 931;
 const GF_SPAWN_TYPE_BTN     := 932;
+const GF_SPAWN_MGROUP_BTN    := 933;
 
 //Treasure Menu
 var treasure_name;
@@ -288,6 +289,28 @@ function DoSelectedGroupList(byref who, input)
             RemoveSpawnGroupInSpotGroup(selected_group, selected_spawngroup);
             SetSelectGroupButton(0, "spawngroup");
             break;
+         GF_GROUP_FORCESPAWN_BTN:
+            var group_data  := GetSpotGroupData(selected_group);
+            var spots := group_data.spots;
+            foreach spot in spots
+               spot := SystemFindObjectBySerial(spot);
+               if (spot)
+                  spot.ForceSpawn();
+               endif
+               sleepms(2);
+            endforeach
+            break;
+         GF_GROUP_FORCEKILL_BTN:
+            var group_data  := GetSpotGroupData(selected_group);
+            var spots := group_data.spots;
+            foreach spot in spots
+               spot := SystemFindObjectBySerial(spot);
+               if (spot)
+                  spot.ForceKill();
+               endif
+               sleepms(2);
+            endforeach
+            break;
         default:
             var spotgroup_data := GetSpotGroupData(selected_group);
             if (input[0] < 350)
@@ -377,6 +400,9 @@ function DoSpawnPointList(who, input)
             break;
         GF_SPAWN_TYPE_BTN:
             model_update.+type := CheckBoxGump(who, 150, 190, "Types:", array{"melee", "ranged", "spellcaster", "boss"});
+            break;
+         GF_SPAWN_MGROUP_BTN:
+            model_update.+groups := CheckBoxGump(who, 150, 165, "Grupos do spawn:", array{"0", "1", "2", "3"});
             break;
     endcase
     spawnpoint.SetProps(model_update);
@@ -744,7 +770,7 @@ function ConstructSpawnPointConfig(byref gump)
     var data          := spawnpoint.GetProps();
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 145);
+    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 155);
     GFTextMid(gump, basex, 28, 260, 555, "SpawnPoint Configuration");
 
     var sx := basex+30;
@@ -757,19 +783,23 @@ function ConstructSpawnPointConfig(byref gump)
     GFTextLine(gump, sx+40, sy+18, 2103, data.level);
     GFAddButton(gump, sx-15, sy+21, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_LEVEL_BTN);
 
-    GFTextLine(gump, sx+80, sy+18, 1153, "Max_Mobs:");
-    spawnpoint_mobnumber := GFTextEntry(gump, sx+145, sy+18, 30, 18, 2103, data.mob_number);
+    GFTextLine(gump, sx+80+15, sy+18, 1153, "Max_Mobs:");
+    spawnpoint_mobnumber := GFTextEntry(gump, sx+145+15, sy+18, 30, 18, 2103, data.mob_number);
 
-    GFTextLine(gump, sx, sy+18+18, 1153, "Range Spawn:");
-    spawnpoint_range := GFTextEntry(gump, sx+80, sy+18+18, 30, 18, 2103, data.range);
+    GFTextLine(gump, sx, sy+18+18, 1153, "Grupos:");
+    GFTextLine(gump, sx+40, sy+18+18, 2103, data.groups);
+    GFAddButton(gump, sx-15, sy+21+18, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_MGROUP_BTN);
 
-    GFTextLine(gump, sx, sy+54, 1153, "Level:");
-    GFTextLine(gump, sx+40, sy+54, 2103, data.type);
-    GFAddButton(gump, sx-15, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TYPE_BTN);
+    GFTextLine(gump, sx, sy+18+18+18, 1153, "Range Spawn:");
+    spawnpoint_range := GFTextEntry(gump, sx+80, sy+18+18+18, 30, 18, 2103, data.range);
 
-    GFTextLine(gump, sx, sy+54+20, 1153, "Location:");
-    GFTextLine(gump, sx+54, sy+54+20, 2103, "{}, {}, {}".format(spawnpoint.x, spawnpoint.y, spawnpoint.z));
-    GFAddButton(gump, sx-15, sy+60+20, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TELEPORT_BTN);
+    GFTextLine(gump, sx, sy+54+18, 1153, "Tipos:");
+    GFTextLine(gump, sx+40, sy+54+18, 2103, data.type);
+    GFAddButton(gump, sx-15, sy+60+18, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TYPE_BTN);
+
+    GFTextLine(gump, sx, sy+54+20+18, 1153, "Location:");
+    GFTextLine(gump, sx+54, sy+54+20+18, 2103, "{}, {}, {}".format(spawnpoint.x, spawnpoint.y, spawnpoint.z));
+    GFAddButton(gump, sx-15, sy+60+20+18, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TELEPORT_BTN);
 endfunction
 
 function ConstructTreasureConfig(byref gump)
