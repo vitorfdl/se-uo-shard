@@ -284,67 +284,71 @@ function ChooseAnotherOpponent(me)
 endfunction
 
 function CalcPathAndMove(me, opponent, sleepdelay)
-  if (AP_GetVital(me, STAMINA) < 1)
-    var last_msg := GetObjProperty(me, "#fatigue");
-    if (!last_msg || last_msg < ReadGameClock())
-      SetObjProperty(me, "#fatigue", ReadGameClock()+15);
-      PrintText(me, "*fatigado*");
-    endif
-    sleep(1);
-	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || (opponent.z != me.z && ListStaticsNearLocation(me.x, me.y, me.z, 1))) //se não consegue correr direto
+   if (AP_GetVital(me, STAMINA) < 1)
+      var last_msg := GetObjProperty(me, "#fatigue");
+      if (!last_msg || last_msg < ReadGameClock())
+         SetObjProperty(me, "#fatigue", ReadGameClock()+15);
+         PrintText(me, "*fatigado*");
+      endif
+      sleep(1);
+	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || (opponent.z != me.z && ListStaticsNearLocation(me.x, me.y, me.z, 1, TILEDATA_FLAG_IMPASSABLE).size() > 0)) //se não consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
-		if (path == error) //se não calculou
-			var flags := FP_IGNORE_MOBILES;
-			if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
-				flags := flags| FP_IGNORE_DOORS;
-			endif
-			path := FindPath(  me.x, me.y, me.z, opponent.x, opponent.y, opponent.z, me.realm, flags, 15); //calcula o path
-			
-			if (!path[1] || !path || path == error)
-				Flee(opponent);
-				sleepms(sleepdelay);
-				ChooseAnotherOpponent(me);
-          if (CoordinateDistance(me.x, me.y, opponent.x, opponent.y) > 14)
-              SetOpponent(0);
-          endif
-			else
-				SetObjProperty(me, "path", path);
-			endif
-			
-			sleepms(sleepdelay);
-		else
-			var coord := path[1]; //pega a primeira coordenada
-			if (coord) 
-        var coordtry := GetObjProperty(me, "#coordtry");
-        if (coordtry != error && coordtry[1] != coord)
-          SetObjProperty(me, "#coordtry", array{coord, ReadGameClock()+5}); 
-        endif
-
-				RunTowardLocation( coord.x, coord.y ); //anda na direcao
-				sleepms(sleepdelay);
-				Opendoors(me); //tenta abrir possiveis portas
-				if (CoordinateDistance(me.x, me.y, coord.x, coord.y) <= 1) //se chegou onde devia 
-					path.erase(1); //deleta a coordenada e vai pra proxima
-					if (path[1])
-						SetObjProperty(me, "path", path);
-					else
-						EraseObjProperty(me, "path");
-					endif
-				else // se não consegue chegar na coord 
-					if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
-                  print("{} tento a mais de 5 segundo".format(me.name));
-						EraseObjProperty(me, "path"); //deleta o path atual
-						ChooseAnotherOpponent(me);
-					endif
-				endif
-			else
-				RunToward( opponent );
-				sleepms(sleepdelay);
-			endif
+		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
+		
+      if (path == error || ( last_loc && !(opponent in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se não calculou
+         var flags := FP_IGNORE_MOBILES;
+         if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
+            flags := flags| FP_IGNORE_DOORS;
+         endif
+         path := FindPath(  me.x, me.y, me.z, opponent.x, opponent.y, opponent.z, me.realm, flags, 15); //calcula o path
+         
+         if (!path[1] || !path || path == error)
+            Flee(opponent);
+            sleepms(sleepdelay);
+            ChooseAnotherOpponent(me);
+            if (CoordinateDistance(me.x, me.y, opponent.x, opponent.y) > 14)
+               SetOpponent(0);
+            endif
+         else
+            RunTowardLocation( path[1].x, path[1].y ); //anda na direcao
+				path.erase(1); //deleta a coordenada e vai pra proxima
+            set_critical(1);
+            SetObjProperty(me, "path", path);
+            SetObjProperty(me, "#enemy_last_loc", array{opponent.x, opponent.y, opponent.z});
+            set_critical(0);
+         endif
 		endif
-	else
-    EraseObjProperty(me, "path");
-    RunToward( opponent );
-    sleepms(sleepdelay);
+
+      var coord := path[1]; //pega a primeira coordenada
+      if (coord); 
+         var coordtry := GetObjProperty(me, "#coordtry");
+         if (coordtry != error && coordtry[1] != coord)
+            SetObjProperty(me, "#coordtry", array{coord, ReadGameClock()+5 }); 
+         endif
+         RunTowardLocation( coord.x, coord.y ); //anda na direcao
+         sleepms(sleepdelay);
+         Opendoors(me); //tenta abrir possiveis portas
+         if (CoordinateDistance(me.x, me.y, coord.x, coord.y) <= 1) //se chegou onde devia 
+            path.erase(1); //deleta a coordenada e vai pra proxima
+            if (path[1])
+               SetObjProperty(me, "path", path);
+            else
+               EraseObjProperty(me, "path");
+            endif
+         else // se não consegue chegar na coord 
+            if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
+               EraseObjProperty(me, "path"); //deleta o path atual
+               ChooseAnotherOpponent(me);
+            endif
+         endif
+      else
+         RunToward( opponent );
+         sleepms(sleepdelay);
+      endif
+   else
+      EraseObjProperty(me, "path");
+      EraseObjProperty(me, "#enemy_last_loc");
+      RunToward( opponent );
+      sleepms(sleepdelay);
 	endif
 endfunction

@@ -31,7 +31,6 @@ function criargump(byref gump)
 	
 	GFTextLine(gump, 302, 62, 600, "Avaliações" );
 	
-	
 	//Conteudo
 	GFPage(gump, 1);
 	GFAddButton(gump, 75, 65, 30008, 30008, GF_PAGE_BTN, 1);
@@ -150,11 +149,11 @@ function sendFichaRp(who, targ, edit := 0)
 		GFPage(gump, 3);
 		texto := OrganizarTexto(ficharp_elem, "Avaliacoes");
 		GFHTMLArea(gump, 70, 106, 305, 282, texto, 0, 1);
-		if (edit == 2)
-			GFResizePic(gump, 315, 81, 9350, 45, 23);
-			GFAddButton(gump, 320, 84, 56, 56, GF_CLOSE_BTN, 204);
-			GFAddButton(gump, 340, 84, 55, 55, GF_CLOSE_BTN, 104);
-		endif
+		// if (edit == 2)
+		// 	GFResizePic(gump, 315, 81, 9350, 45, 23);
+		// 	GFAddButton(gump, 320, 84, 56, 56, GF_CLOSE_BTN, 204);
+		// 	GFAddButton(gump, 340, 84, 55, 55, GF_CLOSE_BTN, 104);
+		// endif
 		
 		var input := GFSendGump(who, gump);
 		if (!input[0] || input[0] == 1)
@@ -162,24 +161,24 @@ function sendFichaRp(who, targ, edit := 0)
 				SetObjProperty(who, "ficharp_complete", 1);
 			endif
 			break;
-		elseif (input[0] == 98)
-			var notarp := getNotaRP(targ);
-			if (notarp >= 2)
-				SendSysMessage(who, "Nota ja atingiu o maximo!");
-			else
-				setNotaRP(targ, notarp+1);
-				PrintTextPrivate(targ, "*Sua NotaRP foi aumentada!*", targ, SSM_INFO);
-				PrintTextPrivate(targ, "*Sua NotaRP foi aumentada!*", who, SSM_INFO);
-			endif
-		elseif (input[0] == 99)
-			var notarp := getNotaRP(targ);
-			if (notarp <= 0)
-				SendSysMessage(who, "Nota ja esta no minimo!");
-			else
-				setNotaRP(targ, notarp-1);
-				PrintTextPrivate(targ, "*Sua NotaRP foi diminuida!*", targ, SSM_FAIL);
-				PrintTextPrivate(targ, "*Sua NotaRP foi diminuida!*", who, SSM_FAIL);
-			endif
+		// elseif (input[0] == 98)
+		// 	var notarp := getNotaRP(targ);
+		// 	if (notarp >= 2)
+		// 		SendSysMessage(who, "Nota ja atingiu o maximo!");
+		// 	else
+		// 		setNotaRP(targ, notarp+1);
+		// 		PrintTextPrivate(targ, "*Sua NotaRP foi aumentada!*", targ, SSM_INFO);
+		// 		PrintTextPrivate(targ, "*Sua NotaRP foi aumentada!*", who, SSM_INFO);
+		// 	endif
+		// elseif (input[0] == 99)
+		// 	var notarp := getNotaRP(targ);
+		// 	if (notarp <= 0)
+		// 		SendSysMessage(who, "Nota ja esta no minimo!");
+		// 	else
+		// 		setNotaRP(targ, notarp-1);
+		// 		PrintTextPrivate(targ, "*Sua NotaRP foi diminuida!*", targ, SSM_FAIL);
+		// 		PrintTextPrivate(targ, "*Sua NotaRP foi diminuida!*", who, SSM_FAIL);
+		// 	endif
 		elseif (input[0] >= 200)
 			input := cint(input[0] - 200) +1;
 			input := tips[input];
@@ -196,16 +195,13 @@ function sendFichaRp(who, targ, edit := 0)
 				endif
 			endif
 		elseif (input[0] >= 100)
-			input := cint(input[0] - 100) +1;
+			input := cint(input[0] - 100) +1;r
 			input := tips[input];
 			var value := ficharp_elem.GetProp("Ficha");
 			value[input].append(PegarResposta(who));
 			var teste := fichaSetProp(targ, "Ficha", value);
 			
-			if (input == "Avaliacoes")
-				PrintTextPrivate(targ, "*Você foi avaliado!*", targ, SSM_INFO);
-				PrintTextPrivate(targ, "*Você foi avaliado!*", who, SSM_INFO);
-			elseif (input == "Feitos")
+         if (input == "Feitos")
 				PrintTextPrivate(targ, "*Você recebeu um novo Grande Feito!*", targ, SSM_INFO);
 				PrintTextPrivate(targ, "*Você recebeu um novo Grande Feito!*", who, SSM_INFO);			
 			endif
@@ -305,14 +301,14 @@ function PegarResposta(who)
 	endif
 endfunction
 
-function getNotaRP(who)
-	var nota := cint(FindAccount(who.acctname).getprop("nota"));
-	if (!nota)
-		setNotaRP(who, 0);
-	endif
-	return nota;
-endfunction
+// function getNotaRP(who)
+// 	var nota := cint(FindAccount(who.acctname).getprop("nota"));
+// 	if (!nota)
+// 		setNotaRP(who, 0);
+// 	endif
+// 	return nota;
+// endfunction
 
-function setNotaRP(who, nota)
-	return findAccount(who.acctname).setProp("nota", nota);
-endfunction
+// function setNotaRP(who, nota)
+// 	return findAccount(who.acctname).setProp("nota", nota);
+// endfunction
