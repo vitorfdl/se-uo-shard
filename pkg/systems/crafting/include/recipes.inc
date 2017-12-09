@@ -33,6 +33,9 @@ endfunction
 
 function AddRecipe(who, objtype)
    var recipes := GetObjProperty(who, "recipes");
+   if (!recipes)
+      recipes := array{};
+   endif
    if (HaveRecipe(who, objtype))
       return 0;
    endif
@@ -95,8 +98,9 @@ function LearnRecipe(who, recipe)
    var charges_to_learn := RecipeCharges(difficulty);
 
    if (CheckCharges(who, recipe, charges_to_learn))
-      if (type == "group")
-         var recipes := GetConfigStringArray(obj, "Recipes");
+      print(type);
+      if (type == "group" || type == "kit")
+         var recipes := GetConfigStringArray(obj, "Recipe");
          foreach obj_type in recipes
             AddRecipe(who, obj_type);
             sleepms(2);

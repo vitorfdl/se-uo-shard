@@ -29,12 +29,17 @@ program esferadeluz(params)
 			var mochila := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, 0x9b2, 1, summoned.realm);
 			EquipItem(summoned, mochila);
 		endif
+
+		var torch := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, Hex(2578), 1, summoned.realm);
+      EquipItem(summoned, torch);
+      summoned.color := 1939;
 		
+      SetName(summoned, "Esfera de Fogo");
 		var duration := AP_GetStat(who, INTELLIGENCE);
 		if (duration <= 1)
 			duration := 2;
 		endif
-		duration := duration * 4;
+		duration := duration * 30;
 
 		SetObjProperty(summoned, "owner", targ.serial);
 		

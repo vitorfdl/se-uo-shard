@@ -32,12 +32,12 @@ program Logon(who)
 		recorde := 0;
 	endif
 
-	var players := EnumerateOnlineCharacters();
-	var total := players.size();
-	if (total > recorde)
-		BroadCast("Novo recorde do shard de players online batido! Total: " + total + "!", FONT_BOLD, SSM_INFO);
-		SetGlobalPRoperty("maxonline", total);
-	endif
+	// var players := EnumerateOnlineCharacters();
+	// var total := players.size();
+	// if (total > recorde)
+	// 	BroadCast("Novo recorde do shard de players online batido! Total: " + total + "!", FONT_BOLD, SSM_INFO);
+	// 	SetGlobalPRoperty("maxonline", total);
+	// endif
 
 	var acc := who.acct;
 	var ips := acc.GetProp("IP");
@@ -70,7 +70,7 @@ program Logon(who)
 endprogram
 
 function IsGm(who)
-	If (who.cmdlevel >= 1)
+	if (who.cmdlevel >= 1)
 		var GmsOnlines := GetGlobalProperty("GmsOnlines");
         Start_Script(":fls_core:gmmenu", who);
 		if (GmsOnlines)

@@ -37,6 +37,11 @@ function Follow(character := 0)
    var dist := Distance(me, character);
 
    if( dist <= 2 )
+      if (RandomInt(5) == 1)
+         PerformAction(me, 0x0f);
+      elseif (RandomInt(5) == 1)
+         PerformAction(me, 0x10);
+      endif
       wait_time := 1;
    elseif( dist > 25 )
       wait_time := 10;

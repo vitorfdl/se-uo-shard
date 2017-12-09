@@ -139,9 +139,9 @@ program skill_armslore(who)
 			// 	SetObjProperty(item, "identificado", properties);
 			// 	SendSysMessageEx(who, "Você identificou novas propriedades para artificie neste item.", SSM_INFO);
 			// 	SetName(item, item.desc);
-			else
-				SendSysMessageEx(who, "Este item não possui propriedades magicas a serem ativadas.", SSM_INFO);
-			endif
+			// else
+			// 	SendSysMessageEx(who, "Este item não possui propriedades magicas a serem ativadas.", SSM_INFO);
+			// endif
 		else
 			SendSysMessageEx(who, "Você não descobriu nada.", SSM_FAIL);
 		endif

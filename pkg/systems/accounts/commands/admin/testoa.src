@@ -12,7 +12,7 @@ include ":gumps:gumps_ex";
 
 program oafeatures_sendpacket(who, text)
    var targ := Target(who);
-   Print("aa "+isBoss(targ));
+   RestartScript(targ);
    // SendSystemReport(who, text);
    // var pid := GetProcess(cint(text));
    // printtext(who, ""+pid);

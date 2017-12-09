@@ -1,4 +1,5 @@
 use uo;
+include ":timedscripts:timedScripts";
 
 function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
@@ -122,7 +123,7 @@ function LogoutPets(who)
 endfunction
 
 //pega os pets da pessoa na area
-function ListPetsNEar(who,  range)
+function ListPetsNear(who,  range)
 	var pets := array;
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )

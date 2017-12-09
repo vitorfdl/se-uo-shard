@@ -23,7 +23,7 @@ program use_tool(who, tool)
 
     var params := struct{
         "type"       := "Costura",
-        "recipe_cfg" := ReadConfigFile(":womenswork:recipes")
+        "recipe_cfg" := ReadConfigFile(":womenswork:config/recipes")
     };
 
 	var rinfo := SendCraftGump(who, params);

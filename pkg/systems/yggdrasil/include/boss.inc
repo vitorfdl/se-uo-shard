@@ -25,7 +25,6 @@ function isBoss(targ)
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
 	var monsters   := GetObjProperty(spawnpoint, "monsters");
 	var me         := FindElemInArray(monsters, struct{ "serial" := targ.serial });
-   print(targ.name+" "+me);
 	if (me.isBoss == 1)
 		return 1;
 	endif

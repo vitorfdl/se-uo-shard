@@ -67,6 +67,8 @@ program Attack(params)
 	if ( attacker == defender )
 		ApplyRawDamage(attacker, 5000);
 		return 1;
+   elseif (attacker.my_template() == "orb")
+      return 1;
 	elseif ( !CheckLineOfSight(attacker, defender) )
 		return 1;
 	elseif ( GetObjProperty(attacker, "#Casting") )

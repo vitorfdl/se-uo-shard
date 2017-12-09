@@ -20,7 +20,7 @@ program daynightsystem()
 		SeasonRotate();  //muda o dia do ano e estaçao
       MoonFase();      // muda a fase da lua
                // Temperature();   //mmuda a temperatura local
-		BroadCastUC("O sol esta nascendo.");
+		BroadCast("O sol esta nascendo.");
 		SetGlobalProperty("dia", "dia");
 		darkness := GeTMoonLightMod();
 		ApplyHalfDay(darkness);
@@ -29,7 +29,7 @@ program daynightsystem()
 		sleep(daylength);
 		ApplyHalfDay(darkness);
   
-		BroadCastUC("O sol esta se pondo.");
+		BroadCast("O sol esta se pondo.");
       SetGlobalProperty("dia", "noite");
 
 

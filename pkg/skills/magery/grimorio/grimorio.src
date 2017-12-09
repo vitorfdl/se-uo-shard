@@ -155,7 +155,6 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
    // print(spell_pos);
 	var spell_entry := spell_list[spell_pos];
 	WriteSpellInfo(spell_entry);
-
 	spell_entry.description := "<BASEFONT COLOR=#000066>{}<br>{}<br><br> <BASEFONT COLOR=#330000> Componentes <br>".format(cstr(spell_entry.description), cstr(spell_entry.flavortext));
 
 	var regkeys := spell_entry.reagents.keys();
