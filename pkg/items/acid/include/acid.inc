@@ -65,6 +65,7 @@ function DealAcidDamage(npc, mobile, acid_pool, acid_damage:=0)
 	if( TypeOf(acid_dice) != "String" )
 		acid_dice := GetAcidDiceFromItem(acid_pool);
 	endif
+   
 	if( acid_damage )
 		acid_damage := RandomDiceRoll(acid_damage);
 	elseif( TypeOf(acid_dice) == "String" )
@@ -72,6 +73,12 @@ function DealAcidDamage(npc, mobile, acid_pool, acid_damage:=0)
 	else
 		return 0;
 	endif
+
+   var acid_diff := GetObjProperty(npc, "AcidDiff");
+   if (!acid_diff)
+      acid_diff := 13;
+   endif
+
 	DamageFLS(mobile, acid_damage, DMG_POISON, npc);
 	var equipped_items := ListEquippedItems(mobile);
 	if( RandomInt(10) > 5 )

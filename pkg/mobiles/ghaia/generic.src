@@ -7,6 +7,7 @@ include ":ghaia:generic";
 include ":ghaia:ghaia";
 include ":ghaia:objective";
 include ":ghaia:genericControl";
+include ":ghaia:habs";
 
 var me         := self();
 var npccfgfile := NPC_GetNPCConfig(me);
@@ -163,6 +164,8 @@ function Fight(opponent, alerted := 0)
          DoCombatSpecial(me); ////////////// SPECIALL
       endif
 
+      UseHabs(me);
+
       // if ( (dist > 6) && ( CInt(npccfgfile.teleport) ) )
       //    teleport(me, opponent);
       // endif
@@ -190,7 +193,7 @@ function Fight(opponent, alerted := 0)
          waittime := 1;
       endif
       
-      // checkFlee(opponent); //uncomment later
+      checkFlee(opponent); //uncomment later
       
       ev := wait_for_event(waittime);
       if(ev.type == SYSEVENT_SPEECH)

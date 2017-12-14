@@ -1,54 +1,169 @@
+include "include/utils";
+include "include/facings";
 
-
-function throwItem(npc, opponent, dist)
-   if ( dist < 3 || dist > 15 )
-      return 0;
-   elseif ( !CheckLineOfSight(npc, opponent) )
-      return 0;
-   elseif ( CInt( GetCooldown(npc, "throws" )) != 0 )
-      return 0;
+function UseHabs()
+   var habs := GetConfigStringArray(npccfgfile, "EspecialAttack");
+   if (!habs || !habs[1])
+      return;
    endif
 
-   npc.frozen := 1;
-   sleepms(50);
+   foreach hab in habs
+      hab := SplitWords(hab);
+      var hab_name     := hab[1];
+      var hab_cooldown := cint(hab[2]);
+      var hab_dice     := hab[3];
+      var hab_target   := hab[4];
+      var hab_special   := hab[5];
 
-   if (throwinfo.anim)
-      PerformAction(npc, throwinfo.anim);
-   else
-      PerformAction(npc, 4);
-   endif
-
-   sleep(1);
-
-   PlayMovingEffect(npc, opponent, throwinfo.item, 15);
-   npc.frozen := 0;
-
-   var item := CreateItemAtLocation(opponent.x, opponent.y, opponent.z, throwinfo.item, 1);
-   item.movable := 1;
-
-
-   var chance := GetAttribute(npc, "Dexterity") - GetAttribute(opponent, "Dexterity") / 3;
-
-   if (RandomInt(100) > chance) // Errou!
-
-      if (throwinfo.misssound)
-         PlaySoundEffect(npc, throwinfo.misssound);
+      if (hab_dice["no_roll"])
+      elseif (hab_dice["d"])
+         hab_dice := RandomDiceRoll(hab_dice);
       else
-         PlaySoundEffect(npc, 0x137);
+         hab_dice := cint(hab_dice);
       endif
-   else
-      DamageFLS(opponent, RandomDiceRoll(throwinfo.damage), DMG_PHYSICAL, npc);
-      PlaySoundEffect(npc, throwinfo.hitdamage);
+
+      PlaySpecialHab(hab_name, hab_cooldown, hab_dice, hab_target, hab_special);
+      sleepms(2);
+   endforeach
+endfunction
+
+function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target := "Enemy", hab_special := 0)
+   if (GetCooldown(me, hab_name))
+      return;
    endif
 
-   SetCooldown(npc, "throws", throwinfo.delay);
+   if (hab_target == "Enemy")
+      hab_target = me.opponent;
+   elseif (hab_target == "RandomEnemy")
+      foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 5);
+         if (CanFight(enemy))
+            hab_target := enemy;
+            break;
+         endif
+      endforeach
+   elseif (hab_target == "Ally")
+      foreach ally in ListMobilesNearLocation(me.x, me.y, me.z, 8);
+         if (GetObjProperty(ally, "spawnpoint") == GetObjProperty(me, "spawnpoint"))
+            hab_target := ally;
+            break;
+         endif
+      endforeach
+   elseif (hab_target == "AllyUnderAttack")
+   elseif (hab_target == "Self")
+      hab_target := me;
+   endif
 
+   var res;
+   case (hab_name)
+      "summon": res := SummonCreature(hab_dice, hab_special); break;
+      "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target); break;
+      // "cançãoSedutora": CancaoSedutora(hab_dice); break;
+      "furtividade": res := Furtividade(); break;
+      "roubar": res := Roubar(hab_target); break;
+      "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
+      "rajada_acida": res := RajadaAcida(hab_dice, hab_target, hab_special); break;
+      "teia": res := SpitWeb(hab_dice, hab_target, hab_special); break;
+      "teleport": res := teleport(hab_target, hab_special); break;
+      default:
+         Print("{} npc hab not exist".format(hab_name));
+         break;
+   endcase
+
+   if (hab_cooldown && res)
+      SetCooldown(me, hab_name, CInt(hab_cooldown));
+   endif
+endfunction
+
+function summonCreature(qty, creatures)
+   creatures := SplitWords(creatures);
+   for i := 1 to qty
+      var rad := GetPointsInRadius(me.x, me.y, 5);
+      var summoned := CreateNpcFromTemplate(":ghaia:{}".format(creatures.randomentry()), rad.x, rad.y, rad.z, 0, me.realm);
+      TS_StartTimer(summoned, "summon", 60);
+   endfor
 
    return 1;
 endfunction
 
-function Firebreath(npc, opponent, byref dist)
+function NPC_Agarrar(difficulty, target)
+   PrintTexT(me, "*tenta agarrar {}*".format(target.name));
+   TS_StartTimer(target, "agarrar", -1);
 
+   return 1;
+endfunction
+
+function Furtividade()
+   me.hidden := 1;
+   me.stealthsteps := 8;
+endfunction
+
+function Roubar(target)
+   if (!IsBehind(target, me.x, me.y) || Distance(me, target) > 1)
+      return 0;
+   endif
+   
+   return 1;
+endfunction
+
+function RajadaAcida(damage, target, difficulty)
+   var phase_coords := GetCoordsInLine(me.x, me.y, target.x, target.y);
+   foreach coord in phase_coords
+      var acid := CreateItemAtLocation(coord.x, coord.y, coord.z, 0xA370);
+      SetObjProperty(acid, "AcidDice", damage);
+      SetObjProperty(acid, "AcidDiff", difficulty);
+      sleepms(300);
+   endforeach
+endfunction
+
+// function throwItem(target)
+//    if ( dist < 3 || dist > 15 )
+//       return 0;
+//    elseif ( !CheckLineOfSight(npc, opponent) )
+//       return 0;
+//    elseif ( CInt( GetCooldown(npc, "throws" )) != 0 )
+//       return 0;
+//    endif
+
+//    npc.frozen := 1;
+//    sleepms(50);
+
+//    if (throwinfo.anim)
+//       PerformAction(npc, throwinfo.anim);
+//    else
+//       PerformAction(npc, 4);
+//    endif
+
+//    sleep(1);
+
+//    PlayMovingEffect(npc, opponent, throwinfo.item, 15);
+//    npc.frozen := 0;
+
+//    var item := CreateItemAtLocation(opponent.x, opponent.y, opponent.z, throwinfo.item, 1);
+//    item.movable := 1;
+
+
+//    var chance := GetAttribute(npc, "Dexterity") - GetAttribute(opponent, "Dexterity") / 3;
+
+//    if (RandomInt(100) > chance) // Errou!
+
+//       if (throwinfo.misssound)
+//          PlaySoundEffect(npc, throwinfo.misssound);
+//       else
+//          PlaySoundEffect(npc, 0x137);
+//       endif
+//    else
+//       DamageFLS(opponent, RandomDiceRoll(throwinfo.damage), DMG_PHYSICAL, npc);
+//       PlaySoundEffect(npc, throwinfo.hitdamage);
+//    endif
+
+//    SetCooldown(npc, "throws", throwinfo.delay);
+
+
+//    return 1;
+// endfunction
+
+
+function Firebreath(npc, opponent, byref dist)
    if ( dist < 5 || dist > 15 )
       return 0;
    elseif ( CInt( GetCooldown(npc, "breath" )) != 0 )
@@ -76,7 +191,6 @@ function Firebreath(npc, opponent, byref dist)
       var field := CreateItemAtLocation(coord.x, coord.y, npc.z, "FireField_NS", 1);
       field.SetDuration(0);
       sleepms(105);
-
    endforeach
 
    foreach coord in GetCoordsInSquare(opponent.x, opponent.y, CInt(npccfgfile.BreathRadius))
@@ -118,62 +232,59 @@ function Firebreath(npc, opponent, byref dist)
    return 1;
 endfunction
 
-function SpitWeb(npc, opponent, byref dist)
-    if ( dist < 3 || dist > 10 )
-        return 0;
-    elseif (Abs(npc.z - opponent.z) >= 15)
-        return 0;
-    elseif ( !CheckLineOfSight(npc, opponent) )
-        return 0;
-    elseif ( opponent.frozen )
-        return 0;
-    elseif (GetEquipmentByLayer(opponent, 0x19))
-        return 0;
-    elseif ( CInt( GetCooldown(npc, "web" )) != 0 )
-        return 0;
-    endif
+function SpitWeb(difficulty, target, range)
+   range := cint(range);
+   if (!target || Distance(me, target) > range )
+      return 0;
+   elseif ( !CheckLineOfSight(npc, target) )
+      return 0;
+   elseif ( target.frozen )
+      return 0;
+   elseif (GetEquipmentByLayer(target, 0x19))
+      return 0;
+   endif
 
-    npc.frozen := 1;
-    sleepms(50);
+   me.frozen := 1;
+   sleepms(50);
 
-    var web;
-    case( RandomInt(4) )
-        0: web := 3811; break;
-        1: web := 3812; break;
-        2: web := 3813; break;
-        3: web := 3814; break;
-    endcase
+   var web;
+   case( RandomInt(4) )
+      0: web := 3811; break;
+      1: web := 3812; break;
+      2: web := 3813; break;
+      3: web := 3814; break;
+   endcase
 
-    PlayMovingEffect(npc, opponent, web, 10);
+   PlayMovingEffect(npc, target, web, 10);
 
-    npc.frozen := 0;
-    TS_StartTimer(opponent, "paralysis", 5);
+   me.frozen := 0;
+   TS_StartTimer(target, "paralysis", 5);
 
-    var preso1 := CreateItemAtLocation(opponent.x, opponent.y, opponent.z+1, 4317, 1);
-    var preso2 := CreateItemAtLocation(opponent.x, opponent.y, opponent.z+1, 4314, 1);
-    sleepms(5);
+   var preso1 := CreateItemAtLocation(target.x, target.y, target.z+1, 4317, 1);
+   var preso2 := CreateItemAtLocation(target.x, target.y, target.z+1, 4314, 1);
+   sleepms(5);
 
-    //AI_Move(npc, opponent, NEMOVE_TOWARD, NEMOVE_RUN, WAKEUP, dist);
-    RunTowardLocation( opponent.x, opponent.y );
-    DestroyItem(preso1);
-    DestroyItem(preso2);
-    sleepms(50);
-    SetCooldown(npc, "web", 15);
+   //AI_Move(npc, target, NEMOVE_TOWARD, NEMOVE_RUN, WAKEUP, dist);
+   RunTowardLocation( target.x, target.y );
+   DestroyItem(preso1);
+   DestroyItem(preso2);
+   sleepms(50);
+   SetCooldown(npc, "web", 15);
 
-    return 1;
+   return 1;
 endfunction
 
-function teleport(npc, opponent)
-    var phase_coords := GetCoordsInLine(npc.x, npc.y, opponent.x, opponent.y);
+function teleport(target, effect := 0x3728)
+    var phase_coords := GetCoordsInLine(me.x, me.y, target.x, target.y);
     phase_coords.Erase(phase_coords.Size()); 
-    TurnObjectToward(npc, opponent.x, opponent.y);
-    PlaySoundEffect(npc, CInt(npccfgfile.teleportSound));
+    TurnObjectToward(me, target.x, target.y);
+    PlaySoundEffect(me, 0x1FF);
 
     foreach coord in phase_coords
-        PlayStationaryEffect(npc.x, npc.y, npc.z, CInt(npccfgfile.teleportEffect), 5, 5, 0);
+        PlayStationaryEffect(me.x, me.y, me.z, effect, 5, 5, 0);
         //PlayStationaryEffectHuefx( npc.x, npc.y, npc.z, CInt(npccfgfile.teleportEffect), 5, 5,  0, CInt(npccfgfile.teleportColor), CInt(npccfgfile.teleportAlpha));
         var z := GetWorldHeight(coord.x, coord.y, npc.realm);
-        MoveObjectToLocation(npc, coord.x, coord.y, z, npc.realm, MOVEOBJECT_NORMAL);
+        MoveObjectToLocation(me, coord.x, coord.y, z, me.realm, MOVEOBJECT_NORMAL);
         sleepms(20);
     endforeach
   

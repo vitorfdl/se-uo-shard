@@ -1,0 +1,26 @@
+["Caverna do Rio Morto"]
+Level: 1
+
+["Caverna da Travessia"]
+Level: 2
+
+["Rainha Harpia"]
+Level: 2
+
+["Cidade Orc"]
+Level: 8
+
+["Pântano do Dragão Negro"]
+Level: 8
+
+["Masmorra dos Cultistas"]
+Level: 5
+
+["Cidade Alayarz Perdida"]
+Level: 10
+
+["Caverna do Demonio"]
+Level: 10
+
+["Floresta dos Mortos"]
+Level: 3
