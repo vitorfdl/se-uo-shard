@@ -1,0 +1,39 @@
+use uo;
+
+include "include/say";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+
+program writeRock(who, item)
+
+endprogram
+
+function getNames()
+   var names_writed := GetObjProperty(item, "writed");
+   if (!names_writed)
+      names_writed := Array{};
+   endif
+
+   return names_writed.join("<br/>");
+endfunction
+
+function writeName(who, item)
+   var names_writed := GetObjProperty(item, "writed");
+   if (!names_writed)
+      names_writed := Array{};
+   endif
+
+   var name := who.name;
+   if (lower(name)["desconhecido"])
+      name := GetObjProperty(who, "realname");
+   endif
+
+   if (name in names_writed)
+      SendSysMessageEx(who, "Seu nome já foi gravado na pedra", SSM_FAIL);
+      return;
+   endif
+
+   names_writed.append(name)
+   SetObjProperty(item, "writed", names_writed);
+   PrintText(who, "*gravando nome na pedra*");
+endfunction

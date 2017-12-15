@@ -3,13 +3,29 @@
  */
  
 use uo;
+include "include/say";
 
 program GetCProp(who, prop_name)
 	var targ := Target(who);
 	
 	var prop := GetObjProperty(targ, prop_name);
+   if (typeof(prop) == "Array")
+      var to_show := "";
+      foreach item in prop
+         to_show += ",{}".format(item);
+         if (_item_ter % 5)
+	         SendSysMessageEx(who, to_show);
+         endif
+         sleepms(2);
+      endforeach
+	   return SendSysMessageEx(who, to_show);
+   elseif (typeof(prop) == "Struct" || typeof(prop) == "Dictionary")
+      foreach key in (prop.keys())
+         SendSysMessageEx(who, "{}:{}".format(key, prop[key]));
+         sleepms(2);
+      endforeach
+	   return;
+   endif
 	
-	SendSysMessage(who, prop_name+" = "+prop);
-	
-	return 1;
+	SendSysMessageEx(who, prop_name+" = "+prop);
 endprogram

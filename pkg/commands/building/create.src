@@ -4,6 +4,7 @@
  */
 
 use uo;
+include "include/utils";
 
 program textcmd_Create(who, text)
 	text := SplitWords(text);
@@ -20,25 +21,5 @@ program textcmd_Create(who, text)
 		amount := 1;
 	endif
 	
-	var created := CreateItemAtLocation(who.x, who.y, who.z, item, amount, who.realm);
-	if (who.cmdlevel < 4)
-		SetObjProperty(created, "createdby", who.acctname + " " + who.name);
-	endif
-	if ( !created )
-		if ( amount > 10 )
-			SendSysMessage(who, "Item is not stackable. No more than 10 will be created at a time.");
-			amount := 10;
-		endif
-		
-		for( amount; amount > 0; amount := amount-1 )
-			created := CreateItemAtLocation(who.x, who.y, who.z, item, 1, who.realm);
-			if (who.cmdlevel < 4)
-				SetObjProperty(created, "createdby", who.acctname + " " + who.name);
-			endif
-		endfor	
-	endif
-	
-	if ( !created )
-		SendSysMessage(who, "Error: Could not create "+Hex(item));
-	endif
+	FLSCreateItem(who, item, amount);
 endprogram

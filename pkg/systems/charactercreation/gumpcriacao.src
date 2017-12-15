@@ -17,11 +17,10 @@ include ":timeutils:time";
 
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
-	PlayMusic(who, 8);
 	sleepms(600);
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
-	AP_SetVital(who, "Hunger", 4);
+	AP_SetVital(who, "Hunger", 0);
 
 	if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
 		SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
@@ -138,7 +137,7 @@ program createchar(who)
 
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
-	AP_SetVital(who, "Hunger", 4);
+	AP_SetVital(who, "Hunger", 0);
 	EraseObjProperty(who, "criandochar");
 	
 	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser lhe comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para lhe deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Bom Jogo!"} );

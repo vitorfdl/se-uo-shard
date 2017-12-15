@@ -65,9 +65,9 @@ function ICP_CreateItem(who, object)
 	var item := 0;
 
 	if ( create_method )
-		item := CreateItemInBackPack(who, object, 1);
+		item := FLSCreateItemBackpack(who, object);
 	else
-		item := CreateItemAtLocation(who.x, who.y, who.z, object, 1);
+		item := FLSCreateItem(who, object);
 	endif
 
 	if ( !item )

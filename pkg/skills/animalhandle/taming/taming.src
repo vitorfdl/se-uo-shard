@@ -132,8 +132,12 @@ function taming(who)
 	while( TameLoop(who, targ, info) )
 		SetObjProperty(who, "#tamewait", ReadGameClock()+15);
 		sleep(3);
-		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1, "failure" := 5}) + getProficiencyBonus(who, TRATO_ANIMAIS);
+		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2, "failure" := 5}) + getProficiencyBonus(who, TRATO_ANIMAIS);
 		if (dice.critical == -1)
+         if (targ.alignment == 1)
+            var event := struct{"type":=SYSEVENT_ENGAGED, "source":=targ2};
+            SendEvent(targ, event);
+         endif
 			SendSysMessageEx(who, "Você deixou "+targ.name+" irritado.", SSM_INFO);
 			break;
 		elseif ( dice.dice > 0 )
