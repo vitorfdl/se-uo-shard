@@ -83,9 +83,8 @@ function MenuSelf(who)
         entries.+soltar := struct{ "cliloc" := 3002026, color := YELLOW_COLOR };
     endif
 
-    var chardata := GetObjProperty(who, "chardata");
-    if (chardata.classe == "Clérigo")
-        entries.+blessings := 3002028;
+    if (who.isClass("Clérigo"))
+        entries.+blessings := 3002030;
     endif
 
     return entries;

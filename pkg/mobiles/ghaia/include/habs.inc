@@ -33,10 +33,10 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    endif
 
    if (hab_target == "Enemy")
-      hab_target = me.opponent;
+      hab_target := me.opponent;
    elseif (hab_target == "RandomEnemy")
       foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 5);
-         if (CanFight(enemy))
+         if (CanFight(me, enemy))
             hab_target := enemy;
             break;
          endif
@@ -58,9 +58,9 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "summon": res := SummonCreature(hab_dice, hab_special); break;
       "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target); break;
       // "cançãoSedutora": CancaoSedutora(hab_dice); break;
-      "furtividade": res := Furtividade(); break;
+      "furtividade": res := NPC_Sneak(); break;
       "roubar": res := Roubar(hab_target); break;
-      "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
+      // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       "rajada_acida": res := RajadaAcida(hab_dice, hab_target, hab_special); break;
       "teia": res := SpitWeb(hab_dice, hab_target, hab_special); break;
       "teleport": res := teleport(hab_target, hab_special); break;
@@ -85,28 +85,28 @@ function summonCreature(qty, creatures)
    return 1;
 endfunction
 
-function NPC_Agarrar(difficulty, target)
-   PrintTexT(me, "*tenta agarrar {}*".format(target.name));
-   TS_StartTimer(target, "agarrar", -1);
+function NPC_Agarrar(difficulty, targ)
+   PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
+   TS_StartTimer(targ, "agarrar", -1);
 
    return 1;
 endfunction
 
-function Furtividade()
+function NPC_Sneak()
    me.hidden := 1;
    me.stealthsteps := 8;
 endfunction
 
-function Roubar(target)
-   if (!IsBehind(target, me.x, me.y) || Distance(me, target) > 1)
+function Roubar(targ)
+   if (!IsBehind(targ, me.x, me.y) || Distance(me, targ) > 1)
       return 0;
    endif
    
    return 1;
 endfunction
 
-function RajadaAcida(damage, target, difficulty)
-   var phase_coords := GetCoordsInLine(me.x, me.y, target.x, target.y);
+function RajadaAcida(damage, targ, difficulty)
+   var phase_coords := GetCoordsInLine(me.x, me.y, targ.x, targ.y);
    foreach coord in phase_coords
       var acid := CreateItemAtLocation(coord.x, coord.y, coord.z, 0xA370);
       SetObjProperty(acid, "AcidDice", damage);
@@ -115,7 +115,7 @@ function RajadaAcida(damage, target, difficulty)
    endforeach
 endfunction
 
-// function throwItem(target)
+// function throwItem(targ)
 //    if ( dist < 3 || dist > 15 )
 //       return 0;
 //    elseif ( !CheckLineOfSight(npc, opponent) )
@@ -232,15 +232,15 @@ function Firebreath(npc, opponent, byref dist)
    return 1;
 endfunction
 
-function SpitWeb(difficulty, target, range)
+function SpitWeb(difficulty, targ, range)
    range := cint(range);
-   if (!target || Distance(me, target) > range )
+   if (!targ || Distance(me, targ) > range )
       return 0;
-   elseif ( !CheckLineOfSight(npc, target) )
+   elseif ( !CheckLineOfSight(me, targ) )
       return 0;
-   elseif ( target.frozen )
+   elseif ( targ.frozen )
       return 0;
-   elseif (GetEquipmentByLayer(target, 0x19))
+   elseif (GetEquipmentByLayer(targ, 0x19))
       return 0;
    endif
 
@@ -255,35 +255,35 @@ function SpitWeb(difficulty, target, range)
       3: web := 3814; break;
    endcase
 
-   PlayMovingEffect(npc, target, web, 10);
+   PlayMovingEffect(me, targ, web, 10);
 
    me.frozen := 0;
-   TS_StartTimer(target, "paralysis", 5);
+   TS_StartTimer(targ, "paralysis", 5);
 
-   var preso1 := CreateItemAtLocation(target.x, target.y, target.z+1, 4317, 1);
-   var preso2 := CreateItemAtLocation(target.x, target.y, target.z+1, 4314, 1);
+   var preso1 := CreateItemAtLocation(targ.x, targ.y, targ.z+1, 4317, 1);
+   var preso2 := CreateItemAtLocation(targ.x, targ.y, targ.z+1, 4314, 1);
    sleepms(5);
 
-   //AI_Move(npc, target, NEMOVE_TOWARD, NEMOVE_RUN, WAKEUP, dist);
-   RunTowardLocation( target.x, target.y );
+   //AI_Move(me, targ, NEMOVE_TOWARD, NEMOVE_RUN, WAKEUP, dist);
+   RunTowardLocation( targ.x, targ.y );
    DestroyItem(preso1);
    DestroyItem(preso2);
    sleepms(50);
-   SetCooldown(npc, "web", 15);
+   SetCooldown(me, "web", 15);
 
    return 1;
 endfunction
 
-function teleport(target, effect := 0x3728)
-    var phase_coords := GetCoordsInLine(me.x, me.y, target.x, target.y);
+function teleport(targ, effect := 0x3728)
+    var phase_coords := GetCoordsInLine(me.x, me.y, targ.x, targ.y);
     phase_coords.Erase(phase_coords.Size()); 
-    TurnObjectToward(me, target.x, target.y);
+    TurnObjectToward(me, targ.x, targ.y);
     PlaySoundEffect(me, 0x1FF);
 
     foreach coord in phase_coords
         PlayStationaryEffect(me.x, me.y, me.z, effect, 5, 5, 0);
         //PlayStationaryEffectHuefx( npc.x, npc.y, npc.z, CInt(npccfgfile.teleportEffect), 5, 5,  0, CInt(npccfgfile.teleportColor), CInt(npccfgfile.teleportAlpha));
-        var z := GetWorldHeight(coord.x, coord.y, npc.realm);
+        var z := GetWorldHeight(coord.x, coord.y, me.realm);
         MoveObjectToLocation(me, coord.x, coord.y, z, me.realm, MOVEOBJECT_NORMAL);
         sleepms(20);
     endforeach

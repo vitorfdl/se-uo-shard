@@ -6,8 +6,8 @@ include ":gumps:gumps_ex";
 // include ":gumps:yesno";
 var gumpid := 0x99B7;
 
-var upMenu   := array{"[mTele", "[mDestroy", "[nSight", "[conceal", "[gmpage"};
-var downMenu := array{"[teleto", "[Info", "[fichaRP", "[Propedit", "[players"};
+var upMenu   := array{"[mTele", "[mDestroy", "[nSight", "[conceal", "[gmpage", "[decayat0"};
+var downMenu := array{"[teleto", "[Info", "[fichaRP", "[Propedit", "[players", "[movable"};
 //UpMenu is 100+i
 //Downmenu is 200+i
 
@@ -34,6 +34,9 @@ program start_gmMeny(who)
             105://gmpage
                 start_script(":email:commands/gm/gmpage", who);
                 break;
+            106://decayat
+                start_script(":commands:props/setprop", array{who, "decayat 0"});
+                break;
             201://teleto
                  start_script(":commands:seer/teleto", who);
                 break;
@@ -48,6 +51,9 @@ program start_gmMeny(who)
                 break;
             205://players
                  start_script(":fls_core:commands/gm/players", who);
+                break;
+            206://decayat
+                start_script(":commands:props/setprop", array{who, "movable 0"});
                 break;
             default:
                 closed := 1;

@@ -5,7 +5,10 @@ use uo;
 use os;
 
 program SetProperties(who, text)
-	
+   if (typeof(who) == "Array")
+      text := who[2];
+      who := who[1];
+   endif
 	var ref := GetProcess(GetPid());
 	SendSysMessage(who, "->"+ref.name);
 	

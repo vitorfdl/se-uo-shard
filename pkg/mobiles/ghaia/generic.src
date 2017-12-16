@@ -164,7 +164,7 @@ function Fight(opponent, alerted := 0)
          DoCombatSpecial(me); ////////////// SPECIALL
       endif
 
-      UseHabs(me);
+      UseHabs();
 
       // if ( (dist > 6) && ( CInt(npccfgfile.teleport) ) )
       //    teleport(me, opponent);

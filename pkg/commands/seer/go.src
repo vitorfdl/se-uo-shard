@@ -75,7 +75,6 @@ var yg_pos;
 var zg_pos;
 
 program command_go( who, text )
-
 	Go_CheckInit(who);
 
 	// See if there is an element in the DataFile that matches their
@@ -102,6 +101,5 @@ program command_go( who, text )
 		2: Go_LocationIndex(who, who.acctname);
 		default: Go_LocationIndex(who);
 	endcase
-
 
 endprogram
