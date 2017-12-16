@@ -89,3 +89,54 @@ function PushBack(who, dist, delay, invert := 0)
 		endif
 	endfor
 endfunction
+
+
+function FLSCreateItem(who, item, amount := 1)
+   var created := CreateItemAtLocation(who.x, who.y, who.z, item, amount, who.realm);
+	if (who.cmdlevel < 4)
+		SetObjProperty(created, "gm_createdby", who.acctname + " " + who.name);
+	endif
+   
+	if ( !created )
+		if ( amount > 10 )
+			SendSysMessage(who, "Item is not stackable. No more than 10 will be created at a time.");
+			amount := 10;
+		endif
+		
+		for( amount; amount > 0; amount := amount-1 )
+			created := CreateItemAtLocation(who.x, who.y, who.z, item, 1, who.realm);
+			if (who.cmdlevel < 4)
+				SetObjProperty(created, "gm_createdby", who.acctname + " " + who.name);
+			endif
+		endfor	
+	endif
+	
+	if ( !created )
+		SendSysMessage(who, "Error: Could not create "+Hex(item));
+	endif
+endfunction
+
+function FLSCreateItemBackpack(who, item, amount := 1)
+   var created := CreateItemInBackPack(who, item, amount);
+	if (who.cmdlevel < 4)
+		SetObjProperty(created, "gm_createdby", who.acctname + " " + who.name);
+	endif
+   
+	if ( !created )
+		if ( amount > 10 )
+			SendSysMessage(who, "Item is not stackable. No more than 10 will be created at a time.");
+			amount := 10;
+		endif
+		
+		for( amount; amount > 0; amount := amount-1 )
+			created := CreateItemInBackPack(who, item, amount);
+			if (who.cmdlevel < 4)
+				SetObjProperty(created, "gm_createdby", who.acctname + " " + who.name);
+			endif
+		endfor	
+	endif
+	
+	if ( !created )
+		SendSysMessage(who, "Error: Could not create "+Hex(item));
+	endif
+endfunction

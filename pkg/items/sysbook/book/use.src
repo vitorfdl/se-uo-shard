@@ -40,16 +40,16 @@ program useBook(who,book)
 	endif
 	//fim do check pra cartas
 
-	var linguagem := GetObjProperty(book, "lingua");
+	// var linguagem := GetObjProperty(book, "lingua");
 //	var linguas := GetObjProperty(who, "linguas");
 
-	if (linguagem != error)
-		if (temHabilidade(who, "Arqueologo"))
-			SendOpenBook(who, book);
-		else
-			SendSysMessageEx(who, "Você não conhece essa lingua: " + linguagem);
-		endif
-	else
+	// if (linguagem != error)
+	// 	if (temHabilidade(who, "Arqueologo"))
+	// 		SendOpenBook(who, book);
+	// 	else
+	// 		SendSysMessageEx(who, "Você não conhece essa lingua: " + linguagem);
+	// 	endif
+	// else
 		SendOpenBook(who, book);
-	endif
+	// endif
 endprogram

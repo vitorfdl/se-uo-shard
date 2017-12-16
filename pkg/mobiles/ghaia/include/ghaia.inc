@@ -116,19 +116,20 @@ function CanFight(me, mobile)
 endfunction
 
 function AlertAllies(me, opponent)
-   var player_allies := array;
-   var myallies := array;
-   var creatures_near := ListMobilesNearLocation(opponent.x, opponent.y, opponent.z, 12);
-   foreach mobile in creatures_near
-      if (!mobile.npctemplate)
+   var player_allies  := array;
+   var myallies       := array;
+   var creatures_near := ListMobilesNearLocation(opponent.x, opponent.y, opponent.z, 15);
+   var my_spot        := GetObjProperty(me, "spawnpoint");
+   foreach mobile in creatures_near      
+      if (!mobile.npctemplate || (mobile.master && !mobile.master.cmdlevel)
       //if (CheckLineOfSight(mobile, me))
          player_allies.append(mobile);
       //endif
-      elseif (mobile != me.serial)
+      elseif (mobile != me.serial && my_spot == GetObjProperty(mobile, "spawnpoint"))
          myallies.append(mobile);
       endif
-      sleep(1);
-   endforeach 
+      sleepms(2);
+   endforeach
 
 
    foreach mob in myallies
@@ -137,6 +138,7 @@ function AlertAllies(me, opponent)
       ev.source := me;
       ev.opponent := player_allies[RandomInt(player_allies.size())+1];
       SendEvent(mob, ev);
+      sleepms(2);
    endforeach
 endfunction
 
@@ -149,17 +151,16 @@ endfunction
   
 //pega a lista de aliados proximos. se o npc for good, os players serao allies pra ele tbm
 function GetAlliesNear(me)
-   var allies := GetConfigStringArray( npccfgfile, "ally" );
+   var spawnpointserial := GetObjProperty(mobile, "spawnpoint");
+   var spawnpoint       := SystemFindObjectBySerial(spawnpointserial);
+   spawnpoint := spawnpoint.GetProps();
+   
    var myallies := array{};
    foreach mobile in ListMobilesNearLocation(me.x, me.y, me.z, 5)
-      if (mobile.npctemplate)
-         if ( mobile.my_template() in allies)
-               myallies.append(mobile);
-         endif
-      else
-         if (me.alignment == ALIGN_GOOD)
-               myallies.append(mobile);
-         endif
+      if (mobile.npctemplate && FindElemInArray(spawnpoint.monsters, struct{ "serial" := mobile.serial}))
+         myallies.append(mobile);
+      elseif (me.alignment == ALIGN_GOOD && !(me in mobile.aggressorto))
+         myallies.append(mobile);
       endif
    endforeach
 
@@ -280,7 +281,7 @@ function MoveAround(byref wanders)
    elseif (CoordinateDistance(me.x, me.y, anchor[1], anchor[2]) > range)
       TurnTowardLocation( anchor[1], anchor[2] );
       WalkTowardLocation( anchor[1], anchor[2] );
-      if (wanders == 12)
+      if (wanders == 29)
          MoveObjectToLocation(me, anchor[1], anchor[2], anchor[3], me.realm, MOVEOBJECT_FORCELOCATION);
       endif
    else
@@ -316,7 +317,7 @@ function LookForFood()
 
 	if (Distance(me, food) <= 1)
 		DestroyItem(food);
-		SetCooldown(me, "peacemade", (cint(food.foodvalue)+1) * 120);
+		SetCooldown(me, "peacemade", (cint(food.foodvalue)+1) * 80);
 		SetPeaceMade();
       Say("*comendo*");
 	endif

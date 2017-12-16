@@ -16,7 +16,7 @@ program PopUpMenu( who, what )
         foreach menu in (menuplayer.Keys())
             entries[menu] := menuplayer[menu];
         endforeach
-    elseif (what.isa(POLCLASS_MOBILE) && who != what)
+    elseif (what.isa(POLCLASS_MOBILE) && who != what && !who.warmode)
         entries := MenuPlayerToPlayer(who, what);
     elseif (what == who)
         entries := MenuSelf(who);

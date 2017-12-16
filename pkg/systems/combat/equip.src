@@ -43,9 +43,11 @@ endprogram
 
 
 function SetEquipmentMods(who, item)
-
-	//SendSysMessage(who, "equip");
-
+   if (GetObjProperty(item, "gm_createdby") && !GetObjProperty(item, "gm_allowed"))
+		SendSysMessageEx(who, "Você não pode vestir um item criado por GM.", SSM_FAIL);
+      return 0;
+   endif
+   
 	var itemdesc := ReadConfigFile("::itemdesc");
 	var item_e := itemdesc[item.objtype];
 
