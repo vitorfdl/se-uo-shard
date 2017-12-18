@@ -195,7 +195,7 @@ function sendFichaRp(who, targ, edit := 0)
 				endif
 			endif
 		elseif (input[0] >= 100)
-			input := cint(input[0] - 100) +1;r
+			input := cint(input[0] - 100) +1;
 			input := tips[input];
 			var value := ficharp_elem.GetProp("Ficha");
 			value[input].append(PegarResposta(who));

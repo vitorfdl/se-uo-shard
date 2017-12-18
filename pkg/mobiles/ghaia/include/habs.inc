@@ -95,6 +95,7 @@ endfunction
 function NPC_Sneak()
    me.hidden := 1;
    me.stealthsteps := 8;
+   return 1;
 endfunction
 
 function Roubar(targ)

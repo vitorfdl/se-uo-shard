@@ -27,7 +27,7 @@ function GetMapsInBackpack(who)
 	var items := EnumerateItemsInContainer(who.backpack);
 	var maps := array;
     	foreach item in items
-		//sendsysmessage(who, " " + isTreasureMap(item) + " " + item.objtype);
+		//sendsysmessageEx(who, " " + isTreasureMap(item) + " " + item.objtype);
 		if ( isTreasureMap(item) )
 			if ( !isSolved(item) )
 				maps.append(item);
@@ -70,7 +70,7 @@ function DigForMap(who, targ, map)
 	var chestz := GetWorldHeight(chestx, chesty);
 
 	if((!chestx) || (!chesty))
-		SendSysMessage( who, "Este não parece ser um mapa de tesouro.", SSM_FAIL );
+		SendSysMessageEx( who, "Este não parece ser um mapa de tesouro.", SSM_FAIL );
 		return;
 	endif
 
@@ -92,7 +92,7 @@ function DigForMap(who, targ, map)
 		return;
 
 	elseif((distn > range) && (distn <= maxrange))
-		SendSysMessage(who,"Você cavou e cavou mas não encontrou nenhum tesouro.", SSM_INFO);
+		SendSysMessageEx(who,"Você cavou e cavou mas não encontrou nenhum tesouro.", SSM_INFO);
 		return;
 
 	elseif((distn < range) && (len(mobiles) > 0))
@@ -109,14 +109,14 @@ function DigForMap(who, targ, map)
 
 		var chest;
 		chestz := chestz - 8;
-		sendsysmessage(who, " " + chestz);
+		sendsysmessageEx(who, " " + chestz);
 		var chests := CreateTreasureChests(maplevel, 1, 0, chestx, chesty, chestz, who.realm, loot);
 		chest := chests[1];
 		if (GetObjProperty(map, "tesouroescondido") == 1)
 			Loot_Generate(chest, loot);
 		endif
 		var ret := MoveObjectToLocation(chest, chest.x, chest.y, chestz, who.realm,  MOVEOBJECT_FORCELOCATION);
-//		sendsysmessage(who, " " + ret);
+//		sendsysmessageEx(who, " " + ret);
 
 		chest.movable := 0;
 
@@ -304,7 +304,6 @@ function GetResourceId(oreToSearch)
 endfunction
 
 function DetermineOreType(who, where)
-
 	var cfg := ReadConfigFile(":gathering:config/miningspots");
 	var ores := cfg[where].Ores;
 	var percent := cfg[where].Rarity;
@@ -314,6 +313,7 @@ function DetermineOreType(who, where)
     ores := elem.GetProp("Ores");
     percent := elem.GetProp("Rarity");
   endif
+
 	var i := 1;
 	ores := SplitWords(ores);
 	percent := SplitWords(percent);
@@ -322,7 +322,8 @@ function DetermineOreType(who, where)
 	var skill := AP_GetSkill(who, EXTRACAO);
 	
 	if (GetObjProperty(who, "searchore") == error)
-		oreToSearch := "pedras";
+      SendSysMessageEx(who, "Você deve selecionar um minério para procurar. Use .skill extração", SSM_FAIL);
+		return 0;
 	else
 		oreToSearch := GetObjProperty(who, "searchore");
 	endif
@@ -338,7 +339,7 @@ function DetermineOreType(who, where)
 	endforeach
 	
 	if (!achou)
-		SendSysMessage(who, "Não tem o minerio que você procura aqui.");
+		SendSysMessageEx(who, "Não tem o minerio que você procura aqui. Mude em .skill extração", SSM_FAIL);
 		return 0;
 	endif
 	
@@ -348,33 +349,29 @@ function DetermineOreType(who, where)
 		if (oreid == 0x6666)
 			return 0x5001;
 		endif
+
 		return oreid;
 	else
-		SendSysMessage(who, "Você não conseguiu achar o minerio que procura.");
+		SendSysMessageEx(who, "Você não conseguiu achar o minerio que procura.", SSM_FAIL);
 		return 999;
 	endif
-
-
 endfunction
 
 //dificuldade de PEGAR o minerio
 function DetermineMiningDifficulty(oretype)
-
-	case (oretype)
-	
-	
+	case (cint(oretype))
 		0xBD11: return 0;  //pedra pequena
 		0xBD11: return 0;  //pedra media
 		0xBD11: return 0;  //pedra grande
 		0xee99: return 0;  //calcario
 
-		0x4079: return 10; //diamantemagico
-		0x6300: return 0;  //iron ore
+		// 0x4079: return 10; //diamantemagico
+		0x6300: return 14;  //iron ore
 		0x6992: return 80; //cristal
-		0x6301: return 80; //adamant
+		0x6301: return 21; //adamant
 
-		0x6992: return 50; //prata 
- 		0x6990: return 30; //estanho 
+		0x6992: return 19; //prata 
+ 		0x6990: return 17; //estanho 
 
 		0x6075:  return 5; //areia
 		
@@ -383,7 +380,7 @@ function DetermineMiningDifficulty(oretype)
 		0x8852: return 30; //arenito
 		0x5001: return 5; //id de stone
 
-		0x6305: return 40; //golden <- não faz nada
+		0x6305: return 16; //golden <- não faz nada
 		
 		default: return 100;
 	endcase
@@ -474,16 +471,16 @@ endfunction
 
 function CheckLoop(who, tool, my_x, my_y, my_facing)
 	if ( who.hidden )
-		SendSysMessage(who, "Você parou de minerar para ficar escondido.");
+		SendSysMessageEx(who, "Você parou de minerar para ficar escondido.");
 		return 0;
 	elseif ( (who.x != my_x) || (who.y != My_y) )
-		SendSysMessage(who, "Você saiu de onde estava.");
+		SendSysMessageEx(who, "Você saiu de onde estava.");
 		return 0;
 	elseif ( who.facing != my_facing )
-		SendSysMessage(who, "Você virou sua atencao para outra coisa.");
+		SendSysMessageEx(who, "Você virou sua atencao para outra coisa.");
 		return 0;
 	elseif ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessage(who, "Você não pode minerar montado.");
+		SendSysMessageEx(who, "Você não pode minerar montado.");
 		return 0;
 	elseif (!tool)
 		return 0;

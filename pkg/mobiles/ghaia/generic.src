@@ -68,10 +68,15 @@ function CloseDistanceArcher(opponent)
 		return 0; //se estiver em cima de torres, não se move do lugar
 	endif
 
-	if (dist < 3 )
+   var max_range := cint(npccfgfile.AttackMaxRange);
+   var min_range := cint(npccfgfile.AttackMinRange);
+   if (!max_range) max_range := 6; endif;
+   if (!min_range) min_range := 3; endif;
+
+	if (min_range != 1 && dist < cint(npccfgfile.AttackMinRange) )
 		RunAwayFrom(opponent);
 		sleepms(sleepdelay);
-	elseif (dist > 10)
+	elseif (dist > max_range)
 		CalcPathAndMove(me, opponent, sleepdelay);
 	else
 		return 1;

@@ -249,14 +249,18 @@ function GetDefenderCA(defender, armor)
 
 			var armor_elem := GetItemCFGInfo(defender, armor);
 			if (armor_elem.pericia == ARMADURA_LEVE)
+            defender.SetAchievement("lightarmor", 1);
 				CA += GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
 			elseif (armor_elem.pericia == ARMADURA_MEDIA)
+            defender.SetAchievement("mediumarmor", 1);
 				var mod := GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
 				if (mod > 2) //max de mod é 2 pra média
 					mod := 2;
 				endif
 
 				CA += mod;
+         elseif (armor_elem.pericia == ARMADURA_PESADA)
+            defender.SetAchievement("heavyarmor", 1);
 			endif
 		else
 			// Se n tem armadura, usa defesa
@@ -349,15 +353,21 @@ endfunction
 
 // Checa por munição ou faz efeito do npc arqueiro
 function AmmoCheck(attacker, defender)
+   var cfgfile := NPC_GetNPCConfig(attacker.npctemplate);
 	if (weapon.isMagicWeapon())
+      attacker.SetAchievement("magicweapon", 1);
 		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
 		return 1;
-	elseif ( !weapon.isBow() )
+	elseif ( !weapon.isBow() && !cfgfile.Ranged)
 		return 1;
 	endif
 
 	if(attacker.npctemplate)
-		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+      if (wpn_a_elem.ProjectileAnim)
+		   PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+      else
+		   PlayMovingEffectXYZHued(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(cfgfile.ProjectileColor));
+      endif
 		return 1;
 	endif
 

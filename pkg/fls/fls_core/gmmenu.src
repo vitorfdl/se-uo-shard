@@ -35,7 +35,7 @@ program start_gmMeny(who)
                 start_script(":email:commands/gm/gmpage", who);
                 break;
             106://decayat
-                start_script(":commands:props/setprop", array{who, "decayat 0"});
+                start_script(":commands:props/setprop", array{who, "decayat 0", 1});
                 break;
             201://teleto
                  start_script(":commands:seer/teleto", who);
@@ -53,12 +53,13 @@ program start_gmMeny(who)
                  start_script(":fls_core:commands/gm/players", who);
                 break;
             206://decayat
-                start_script(":commands:props/setprop", array{who, "movable 0"});
+                start_script(":commands:props/setprop", array{who, "movable 0", 1});
                 break;
             default:
                 closed := 1;
                 break;
         endcase
+         sleepms(2);
     dowhile (closed == 0);
 endprogram
 

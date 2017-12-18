@@ -291,7 +291,7 @@ endfunction
 function output(msgtext)
 	foreach player in enumerateonlinecharacters()
 		if (player.cmdlevel)
-			SendSysMessage(player, "Weather debug:" + msgtext, 3, 87);
+			SendSysMessageEx(player, "Weather debug:" + msgtext, 3, 87);
 		endif
 	endforeach
 	print("Weather debug:" + msgtext);

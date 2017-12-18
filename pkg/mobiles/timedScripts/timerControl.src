@@ -13,6 +13,8 @@ include ":fls_core:packets";
 include "include/say";
 include ":magery:tnmagery";
 
+set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
+
 program TimerControl(mobile)
 	if ( !mobile.IsA(POLCLASS_MOBILE) )
 		mobile := mobile[1];
@@ -27,6 +29,10 @@ program TimerControl(mobile)
 	StartUp(mobile, timer_list, cooldowns, num_poisons);
 
 	while ( 1 )
+      if(!mobile.connected)
+         mobile := SystemFindObjectBySerial(mobile.serial, SYSFIND_SEARCH_OFFLINE_MOBILES);
+      endif
+
 		mobile.SetPoisoned((num_poisons > 0));
 
 		var event;
@@ -46,7 +52,7 @@ program TimerControl(mobile)
 		elseif( event.type == EVENT_PLAYER_DIED )
 			PlayerDeath(mobile, timer_list, num_poisons);
 		elseif ( event.type == EVENT_LOGOFF)
-			LogOff(mobile, timer_list, cooldowns);
+			LogOff(mobile.serial, timer_list, cooldowns);
 			break;
 		endif
 
@@ -127,15 +133,15 @@ function StartUp(mobile, byref timer_list, byref cooldowns, byref num_poisons)
 	return 1;
 endfunction
 
-function LogOff(mobile, byref timer_list, byref cooldowns)
+function LogOff(serial, byref timer_list, byref cooldowns)
 	//On Logout, save the status of timers. Then stop the scripts.
-
+   var mobile := SystemFindObjectBySerial(serial, SYSFIND_SEARCH_OFFLINE_MOBILES);
 	Set_Critical(1);
 	SaveState(mobile, timer_list, cooldowns);
 
 	foreach timer in ( timer_list )
 		timer := timer; // So the compiler doesn't warn.
-		KillTimedScript(mobile, timer.pid, timer_list, _timer_iter);
+		KillTimedScript(mobile, timer.pid, timer_list, _timer_iter, 1);
 
 		var elem_info := TS_GetCfgElem(_timer_iter);
 		if ( elem_info.errortext )
@@ -213,6 +219,9 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 					text := "";
 				endif
 				//SendSysMessage(mobile, "te " + text);
+            if (cint(event.amount) <= 0)
+               event.amount := 0;
+            endif
             print("<> New buff User: {}, Amount: {}, Text: {}".format(mobile.name, event.amount, text));
 				mobile.addBuff(cint(elem_info.Icon), cint(event.amount), cint(elem_info.cliloc1), cint(elem_info.cliloc2), cAscZ(text));
 			endif
@@ -494,15 +503,17 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 
 endfunction
 
-function KillTimedScript(mobile, byref pid, byref timer_list, byref timer_name)
+function KillTimedScript(mobile, byref pid, byref timer_list, byref timer_name, no_save := 0)
 	var script := GetProcess(CInt(pid));
 	if ( script )
 		script.Kill();
 	endif
 
-	var e := timer_list.Erase(timer_name);
+   if (!no_save)
+      var e := timer_list.Erase(timer_name);
 
-	SaveState(mobile, timer_list, NO_COOLDOWNS);
+      SaveState(mobile, timer_list, NO_COOLDOWNS);
+   endif
 
 	return 1;
 endfunction

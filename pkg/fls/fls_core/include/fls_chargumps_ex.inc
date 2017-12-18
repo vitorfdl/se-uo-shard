@@ -165,11 +165,8 @@ function FLHairGump(who, byref new_look)
 	var y_pos := 65;
 	foreach style in GetConfigStringArray(hair, "style")
 		style := splitwords(style);
-		var hairname := style[1];
+		var hairname := StrReplace(style[1], "_", " ");
 		var hairgraphic := cint(style[2]);
-		while (hairname["_"])
-			hairname["_"] := " ";
-		endwhile
 
 		if (hairgraphic == new_look.HairStyle)
 			GFRadioButton(hairgump, 20, y_pos, 2151, 2154, 1, hairgraphic);
@@ -235,11 +232,8 @@ function FLBeardGump(who, byref new_look)
 	var y_pos := 65;
 	foreach style in GetConfigStringArray(hair, "style")
 		style := splitwords(style);
-		var hairname := style[1];
+		var hairname := StrReplace(style[1], "_", " ");
 		var hairgraphic := cint(style[2]);
-		while (hairname["_"])
-			hairname["_"] := " ";
-		endwhile
 
 		if (hairgraphic == new_look.BeardStyle)
 			GFRadioButton(beardgump, 20, y_pos, 2151, 2154, 1, hairgraphic);
@@ -273,7 +267,8 @@ function FLBeardGump(who, byref new_look)
 				break;
 			endif
 		endforeach
-	endif
+	endif
+
 endfunction
 
 

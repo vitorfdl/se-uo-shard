@@ -1,0 +1,371 @@
+
+use uo;
+use os;
+
+include ":containers:storageAreas";
+include ":containers:containers";
+include ":gumps:include/requestgump";
+include ":gumps:gumps";
+include ":gumps:yesno";
+include "include/say";   
+include ":keys:key";
+include ":tn:tngumps";
+
+//Gump Constants
+const BKGND_STONESLAB		:= 9200;  // Gray stone slab background
+const BKGND_BLUESLAB		:= 3600;  // Raised edge (blocky)
+const GF_STDCOLOR		:= 1890;
+
+const MOEDAS			:= 47715;
+
+var item_cfg := ReadConfigFile(":*:itemdesc");
+
+
+program MerchantMenu(params)
+	if (!getglobalproperty("InnKeeper"))
+		SetGlobalProperty("InnKeeper", array{});
+	endif
+	var npc := params[1];
+	var player := params[2];
+//	var npc := player;
+
+	if (player.hidden)
+		player.hidden := 0;
+		SendSysMessageEx (player, "Você se revelou ao mercador.", SSM_FAIL);
+	endif
+
+	var gump := GFCreateGump(0, 0);
+	GFPage(gump, 0);
+	GFResizePic(gump, 0, 0, BKGND_BLUESLAB, 640, 480);
+	GFResizePic(gump, 15, 15, BKGND_STONESLAB, 150, 450);
+
+	var quartos := GetObjProperty(npc, "quartos");
+	var souInquilino := 0;
+	var meuquarto := -1;
+	var j := 1;
+	foreach quarto in quartos
+		if (quarto.inquilino == player.serial)
+			souInquilino := 1;
+			meuquarto := j;
+			break;
+		endif
+		j := j + 1;
+	endforeach
+
+	GFAddButton(gump, 20, 33, 2117, 2118, GF_CLOSE_BTN,  200);
+	GFTextLine(gump, 40, 30, GF_STDCOLOR, "Listar Quartos");
+	
+
+	if (souInquilino)
+		GFAddButton(gump, 20, 83, 2117, 2118, GF_CLOSE_BTN, 100);
+		GFTextLine(gump, 40, 80, GF_STDCOLOR, "Trocar Fechadura");
+
+		GFAddButton(gump, 20, 133, 2117, 2118, GF_CLOSE_BTN, 400);
+		GFTextLine(gump, 40, 130, GF_STDCOLOR, "Entregar Quarto");
+		
+		if ( CalcularDias(quartos[meuquarto].data) >= 6)
+			GFAddButton(gump, 20, 183, 2117, 2118, GF_CLOSE_BTN, 500);
+			GFTextLine(gump, 40, 180, GF_STDCOLOR, "Pagar Aluguel");
+		endif
+		
+	endif
+	
+	if (GetObjProperty(npc, "confiscados").Exists(""+player.serial))
+		GFAddButton(gump, 20, 233, 2117, 2118, GF_CLOSE_BTN,  800);
+		GFTextLine(gump, 40, 230, GF_STDCOLOR, "Objetos Confiscados");
+	endif
+
+	if (player.cmdlevel > 1)
+		GFAddButton(gump, 20, 333, 2117, 2118, GF_CLOSE_BTN,  300);
+		GFTextLine(gump, 40, 330, GF_STDCOLOR, "Adicionar Quarto");
+		
+		if (!(npc.serial in getglobalproperty("InnKeeper")))
+			GFAddButton(gump, 20, 383, 2117, 2118, GF_CLOSE_BTN,  700);
+			GFTextLine(gump, 40, 380, GF_STDCOLOR, "Cobrar Automatico");
+		endif
+	endif
+	
+	var y_pos := 45;
+	var i := 1;
+	foreach quarto in quartos 
+		var dono := SystemFindObjectBySerial(quarto.inquilino, SYSFIND_SEARCH_OFFLINE_MOBILES);
+		if (dono == error) //checa por via das duvidas pra ver se deletaram 
+			quarto.inquilino := 0;
+			SetObjProperty(npc, "quartos", quartos);
+		endif
+		if (quarto.inquilino == error || quarto.inquilino == 0 || player.cmdlevel >=3)
+			GFAddButton(gump, 175, y_pos+3, 2117, 2118, 1, i);
+		endif
+		var color := 666;
+		if (quarto.inquilino == error || quarto.inquilino == 0) //se for desocupado fica cor 195, alugado fica cor 2449
+			color := GF_STDCOLOR;
+		endif
+		if (player.cmdlevel >= 3) //se for gm mostra quem alugou, caso esteja alugado.
+			if (quarto.inquilino == error || quarto.inquilino == 0)
+				GFTextLine(gump, 195, y_pos,  color,  "" + quarto.name + " [" + quarto.custo + " moedas]");
+			else
+				dono := SystemFindObjectBySerial(quarto.inquilino, SYSFIND_SEARCH_OFFLINE_MOBILES);
+				var dononame := dono.name;
+				if (dononame == "Desconhecido")
+					dononame := GetObjProperty(dono, "realname");
+				endif
+				GFTextLine(gump, 195, y_pos, color,  "" + quarto.name + " [" + quarto.custo + " moedas] ["  + dononame + "]" );
+			endif
+		else
+			GFTextLine(gump, 195, y_pos, color,  "" + quarto.name + " [" + quarto.custo + " moedas]");
+		endif
+		y_pos := y_pos + 15;
+		i := i + 1;
+	endforeach
+		
+	var input := GFSendGump(player, gump);
+	
+	if (input[0] == 300) //adicionar quarto
+		SendSysMessageEx(player, "Escolha a PORTA do quarto.", SSM_REQUEST);
+		var porta := Target(player);
+	
+		if (!porta.isDoor())
+			SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
+		else
+			var room := struct;
+			room.+door := porta.serial;
+			SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do quarto.");
+			var cent := TargetCoordinates(player);
+			room.+centro := { cent.x, cent.y, cent.z };
+			if ( YesNo(player, "Existe um centro em Z diferente?") )
+				SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do novo Z.",SSM_INFO);
+				var cent2 := TargetCoordinates(player);
+				room.+centro := { cent.x, cent.y, cent.z, cent2.x, cent2.y, cent2.z };
+			endif
+			room.+custo := cint(RequestGump(player, "Quanto vai ser cobrado em moedas de cobre?", 0, 1));
+			room.+name := cstr(RequestGump(player, "Qual o nome do quarto?"));
+			SendSysMessage(player, "O quarto foi cadastrado.");
+			var quartos := GetObjProperty(npc, "quartos");
+			if (quartos == error)
+				quartos := array;
+			endif
+			quartos.append(room);
+			SetObjProperty(npc, "quartos", quartos);
+		endif
+	elseif (input[0] == 100 ) //trocar fechadura
+		var yes := yesno(player, "O chaveiro vai cobrar 100 moedas, deseja continuar? " );
+		if (yes)
+			var bank_region := GetObjProperty(npc, "City");
+			if ( !bank_region )
+				bank_region := CP_DEFAULT_AREA;
+			endif
+			if ( (!getgoldpayment(player, 100)) )
+				SendSysMEssageEx(player, "Você não tem moedas o suficiente.", SSM_FAIL);
+			else
+				var lockid := AllocLockId();
+				var key := CreateItemInBackpack( player, "ironkey", 1 );
+				var door := SystemFindObjectBySerial(quartos[meuquarto].door);
+				SetObjProperty(door, "LockId", lockid);
+				door.locked := 1;
+				SetObjProperty( key, "LockId", lockid );
+			endif
+		endif
+	elseif (input[0] == 400)//entregar quarto
+	
+		var yes := yesno(player, "Deseja devolver o quarto?  Seus itens serão deletados." );
+		var quarto := quartos[meuquarto];
+		if (yes)
+			var cent := quarto.centro;
+			if (cent[1])
+				DestroyRentItens(cent[1], cent[2], cent[3], npc.realm);
+				if (cent[4])
+					DestroyRentItens(cent[4], cent[5], cent[6], npc.realm);
+				endif
+			endif		
+			var door := SystemFindObjectBySerial(quarto.door);
+			Eraseobjproperty(door, "LockId");
+			quartos[meuquarto].inquilino := 0;
+			SetObjProperty(npc, "quartos", quartos);
+
+		endif
+	
+	elseif (input[0] == 500) //linkar mural
+		SendSysMessage(player, "Escolha o montante de moedas para pagar o aluguel.");
+		if (!getgoldpayment(player,quartos[meuquarto].custo))
+			return;
+		endif
+		quartos[meuquarto].+alert := 0;
+		quartos[meuquarto].data := polcore().systime;
+		setobjproperty(npc, "quartos", quartos);
+		SendSysMessageEx(player, "Você pagou o aluguel para a proxima semana.");
+
+	elseif (input[0] == 700) //adicionar na global
+		var innkeepers := getglobalproperty("InnKeeper");
+		if (innkeepers == error)
+			innkeepers := array;
+		endif
+		if (npc.serial in innkeepers)
+			SendSysMessageEx(player, "NPC ja existe.", SSM_FAIL);
+		else
+			innkeepers.Append(npc.serial);
+			setglobalproperty("InnKeeper",innkeepers);
+			SendSysMessageEx(player, "NPC adicionado.", SSM_INFO);
+		endif
+	elseif (input[0] == 800) //objetos confiscados
+		var bank_region := GetObjProperty(npc, "City");
+		if ( !bank_region )
+			bank_region := CP_DEFAULT_AREA;
+		endif
+		var confiscados := GetObjProperty(npc, "confiscados");
+		var mypack := confiscados["" + player.serial];
+		mypack := SystemFindObjectBySerial(mypack);
+		confiscados.Erase(""+player.serial);
+		SetObjProperty(npc, "confiscados", confiscados);
+		if (mypack != error)
+			MoveItemToContainer( mypack, player.backpack);
+			SendSysMessageEx(player, "Você recebe seus objetos de volta.",SSM_INFO);
+		else
+			SendSysMessageEx(player, "Algo deu errado, você não recebe seus objetos de volta.",SSM_FAIL);
+		endif
+	
+	elseif (input[0] < 100 && input[0] >= 1) //alugar quarto
+		
+		if (souInquilino)
+			SendSysMEssageEx(player, "Você ja tem um quarto.");
+			return 1;
+		endif
+		
+		if (player.cmdlevel >=3) //opcao de gm de remover quarto
+			var gmmenu :=  RadioGump(player, 250, 325, "Escolha uma opção", array{"Mudar Nome","Mudar Pre~co","Remover Quarto", "Mudar Centro", "Mudar Porta", "Teleportar na Porta","Informacoes"});
+
+			if (gmmenu == "Remover Quarto")
+				quartos.erase(input[0]);
+				setobjproperty(npc, "quartos", quartos);
+				SendSysMessageEx(player, "Quarto removido, caso ja tenha sido alugado apague a prop da porta e remova os itens nos baus.", SSM_INFO);
+				return 1;
+			elseif (gmmenu == "Mudar Nome")
+				quartos[input[0]].name := cstr(RequestGump(player, "Qual o nome do quarto?"));
+				setobjproperty(npc, "quartos", quartos);
+				SendSysMessageEx(player, "Nome Alterado para: " +quartos[input[0]].name ,SSM_INFO);
+				return 1;
+			elseif (gmmenu == "Mudar Preco")
+				quartos[input[0]].custo := cint(RequestGump(player, "Quanto vai ser cobrado em moedas de cobre?", 0, 1));
+				setobjproperty(npc, "quartos", quartos);
+				SendSysMessageEx(player, "Preco Alterado para" +quartos[input[0]].custo,SSM_INFO);
+				return 1;
+			elseif (gmmenu == "Informacoes")
+				var inq := SystemFindObjectBySerial(quartos[input[0]].inquilino, SYSFIND_SEARCH_OFFLINE_MOBILES);
+				SendSysMessageEx(player, " Inquilino "+ inq.name + " Conta: " + inq.acctname);
+				
+			elseif (gmmenu == "Mudar Centro")
+				SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do quarto.",SSM_INFO);
+				var cent := TargetCoordinates(player);
+				quartos[input[0]].centro := { cent.x, cent.y, cent.z };
+				if ( YesNo(player, "Existe um centro em Z diferente?") )
+					SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do novo Z.",SSM_INFO);
+					var cent2 := TargetCoordinates(player);
+					quartos[input[0]].centro := { cent.x, cent.y, cent.z, cent2.x, cent2.y, cent2.z };
+				endif
+				
+				setobjproperty(npc, "quartos", quartos);	
+				SendSysMessageEx(player, "Centro Alterado.",SSM_INFO);
+				return 1;
+			elseif (gmmenu == "Mudar Porta")
+				SendSysMessageEx(player, "Escolha a PORTA do quarto.", SSM_REQUEST);
+				var porta := Target(player);
+			
+				if (!porta.isDoor())
+					SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
+					return 1;
+				else
+					quartos[input[0]].door := porta.serial;
+				endif
+			
+				Setobjproperty(npc, "quartos", quartos);
+				SendSysMessageEx(player, "Porta Alterada.",SSM_INFO);
+				return 1;
+			elseif (gmmenu == "Teleportar na Porta")
+				var porta := SystemFindObjectBySerial(quartos[input[0]].door);
+				if (!porta)
+					SendSysMessageEx(player, "Porta Inexistente.",SSM_FAIL);
+				else
+					MoveObjectToLocation(player, porta.x, porta.y, porta.z, player.realm, MOVEOBJECT_FORCELOCATION);
+					SendSysMessageEx(player, "Teleportado.",SSM_INFO);
+				endif
+				return 1;
+			endif
+		endif
+		
+		var yes := yesNo(player, "Você deseja alugar esse quarto por " +  quartos[input[0]].custo +" moedas");
+		if (yes)
+			if ( !getgoldpayment(player, cint(quartos[input[0]].custo)) )
+				SendSysMessageEx(player, "Você não tem moedas suficiente para pagar o aluguel.", SSM_FAIL);
+			else //cria a chave
+				quartos[input[0]].inquilino := player.serial;
+				quartos[input[0]].data := polcore().systime;
+				quartos[input[0]].alert := 0;
+				SetObjProperty(npc, "quartos", quartos); //seta prop
+				var lockid := AllocLockId();
+				var key := CreateItemInBackpack( player, "ironkey", 1 );
+				SetObjProperty(quartos[input[0]].door, "LockId", lockid);
+				var porta := SystemFindObjectBySerial(quartos[input[0]].door);
+				porta.locked := 1;
+				SetObjProperty( key, "LockId", lockid );
+			endif
+		endif
+		
+	endif
+endprogram
+
+function getgoldpayment(player, amount)
+	var pay := 0;
+	do
+		var targ := Target(player);
+		if ( !targ )
+			SendSysMessage(player, "Cancelado.");
+			return 0;
+		elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+			SendSysMessage(player, "Não esta na sua bolsa.");
+		elseif ( GetObjProperty(targ, "stealed") )
+			SendSysMessage(player, "Objeto foi roubado!");
+		elseif ( targ.objtype == MOEDAS )
+			if ( !ReserveItem(targ) )
+				SendSysMessage(player, "Você não pode pagar com isto.");
+			else
+				if (targ.amount < amount)
+					SendSysMessage(player, "Você não pode pagar com isto.");
+				else
+					SubtractAmount(targ, amount);
+					pay := 1;
+					SendSysMessage(player, "Pagamento efetuado com sucesso!");
+				endif
+			endif
+		else
+			SendSysMessage(player, "Você deve indicar moedas de cobre.");
+		endif
+	dowhile ( !pay );
+	return pay;
+	
+endfunction
+
+function DestroyRentItens(x, y, z, r)
+	var objects := ListItemsNearLocation( x, y, z, 10, r);
+	foreach obj in objects
+		if (CheckLosBetween( x, y, z, obj.x, obj.y, obj.z, r))
+			if (GetObjProperty(obj, "crafterserial"))
+				DestroyItem(obj);
+			elseif (KP_IsLockable(obj))
+				var container := EnumerateItemsInContainer( obj, ENUMERATE_IGNORE_LOCKED );
+				foreach item in container
+					DestroyItem(item);
+					sleepms(20);
+				endforeach
+			endif
+		endif
+		sleepms(20);
+	endforeach
+	return 1;
+endfunction
+
+function CalcularDias(data)
+    var criadoEm := cint(data);
+    var tempoAgora := polcore().systime;// segundos
+    var tempoDevida:= tempoAgora - criadoEm;
+    var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
+    return dias;
+endfunction

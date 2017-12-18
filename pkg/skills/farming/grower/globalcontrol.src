@@ -64,16 +64,23 @@ function GrowthChecks()
 				grower.SetProduceAmount(produce_amt);
 			endif
 		endif
-		
+
+      var vased := GetObjProperty(grower, "vaseplant");
+      if (vased)
+         vased := SystemFindObjectBySerial(cint(vased));
+         if (!vased || vased.x != grower.x || vased.y != grower.y)
+            DestroyItem(grower);
+         endif
+      endif
 		sleepms(30);
 	endforeach
 endfunction
 
 function DestroyPlant(grower, candestroy:=0)
-	var cfgestacao:=ReadConfigFile(":farming:itemdesc");
-	var elemestacao := FindConfigElem(cfgestacao, grower.GetGrowerType());
-	var destroyestacao:= GetConfigStringArray( elemestacao, "DestroyIn" );
-	var estacao := cstr(getglobalproperty("season"));
+	var cfgestacao     := ReadConfigFile(":farming:itemdesc");
+	var elemestacao    := FindConfigElem(cfgestacao, grower.GetGrowerType());
+	var destroyestacao := GetConfigStringArray( elemestacao, "DestroyIn" );
+	var estacao        := cstr(getglobalproperty("season"));
 	if ( estacao in destroyestacao )
 		if (candestroy == 0)
 			return 1;

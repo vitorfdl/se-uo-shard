@@ -42,26 +42,23 @@ const EVID_ALERT_ALLIES := 0x00000013;
 //essa funcao determina se o npc vai enfrentar o alvo ou nao
 function CanFight(me, mobile)
    EraseObjProperty(me, "path");
-   if (mobile.hidden )
-   // var dif := CalculateDhDiff(me, mobile);
-   // if ( SkillCheck(me, AWARENESS, dif) > 0 )
-   //    mobile.hidden := 0;
-   //    PrintText(mobile, "*aparece*");
-   //    SendSysMessa'e(me, "Você encontrou "+mobile.name+".");
-   //    SendSysMessage(mobile, me.name+" te encontrou!");
-   //    if ( GetObjProperty(me, "attackhiddenenemy" ))
-   //          return 1;
-   //    endif
-   // else
-      return 0;
-   // endif
-   elseif  ( mobile.concealed || GetObjProperty(mobile, "ignorenpcs") || GetCooldown(me, "peacemade") > 0)
+   if ( mobile.concealed || GetObjProperty(mobile, "ignorenpcs") || GetCooldown(me, "peacemade") > 0)
       return 0;
    elseif ( GetObjProperty(mobile, "#fantasma") == 1)
       return 0;
    elseif ( Cint(GetCooldown(mobile, "deathtime" )) > 0  )
    //printtextabove(me, "não vou atacar" + mobile.name);
       return 0;
+   endif
+
+   if (mobile.hidden && mobile.npctemplate && !mobile.master)
+      var diff := CalculateDhDiff(me, mobile);
+      var roll := rollAttrDice(me, WISDOM) + getProficiencyBonus(me, FURTIVIDADE);
+      if ( roll > diff )
+         mobile.hidden := 0;
+         PrintText(mobile, "*aparece*");
+         SendSysMessageEx(mobile, "{} te encontrou!".format(me.name), SSM_FAIL);
+      endif
    endif
 
 //    var mycategory := lower(getnpccategory( mytemplate ));
@@ -120,8 +117,8 @@ function AlertAllies(me, opponent)
    var myallies       := array;
    var creatures_near := ListMobilesNearLocation(opponent.x, opponent.y, opponent.z, 15);
    var my_spot        := GetObjProperty(me, "spawnpoint");
-   foreach mobile in creatures_near      
-      if (!mobile.npctemplate || (mobile.master && !mobile.master.cmdlevel)
+   foreach mobile in creatures_near   
+      if (!mobile.npctemplate || (mobile.master && !mobile.master.cmdlevel))
       //if (CheckLineOfSight(mobile, me))
          player_allies.append(mobile);
       //endif
@@ -136,7 +133,7 @@ function AlertAllies(me, opponent)
       var ev := struct;
       ev.type := EVID_ALERT_ALLIES;
       ev.source := me;
-      ev.opponent := player_allies[RandomInt(player_allies.size())+1];
+      ev.opponent := player_allies.randomentry();
       SendEvent(mob, ev);
       sleepms(2);
    endforeach
@@ -223,11 +220,10 @@ function InitializeNpc(mobile)
    
    if (spawnpointserial)
       var spawnpoint := SystemFindObjectBySerial(spawnpointserial);
-
       if (spawnpoint)
-         var monsters := GetObjProperty(spawnpoint, "Monsters");
-         var monster := monsters["monster"+GetObjProperty(me, "spawnpointtype")];
-         var range := cint(monster.range);
+         var props := spawnpoint.GetProps();
+
+         var range := cint(props.range);
          if (!range)
             range := 6;
          endif
@@ -276,7 +272,7 @@ function MoveAround(byref wanders)
       range := 6;
    endif
    
-   if (anchor == error)
+   if (anchor == error && !me.hidden)
       wander();
    elseif (CoordinateDistance(me.x, me.y, anchor[1], anchor[2]) > range)
       TurnTowardLocation( anchor[1], anchor[2] );
@@ -284,7 +280,7 @@ function MoveAround(byref wanders)
       if (wanders == 29)
          MoveObjectToLocation(me, anchor[1], anchor[2], anchor[3], me.realm, MOVEOBJECT_FORCELOCATION);
       endif
-   else
+   elseif (!me.hidden)
       wander();
    endif
    

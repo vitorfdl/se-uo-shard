@@ -14,8 +14,8 @@ exported function GetLevel( who )
 	var charlevel := chardata["level"];
 
 	if (charlevel == error || !charlevel)
-		SetLevel(who, 0);
-		charlevel := 0;
+		SetLevel(who, 1);
+		charlevel := 1;
 	endif
 
 	return charlevel;

@@ -87,6 +87,7 @@ function PickTreasureChest(me, lockpick, chest)
 	var dice_roll := rollAttrDice(me, DEXTERITY) + getProficiencyBonus(me, "Arrombar Fechaduras");
 	if ( dice_roll > diff )
 		SucessLockPick(me, chest);
+      ExpGain(me, diff, dice_roll);
 	else
 		SendSysMessageEx(me, "Você falhou em arrombar a fechadura.", SSM_FAIL);
 		PlaySoundEffect(chest,0xef);

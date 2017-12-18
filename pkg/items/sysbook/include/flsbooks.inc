@@ -72,7 +72,7 @@ endfunction
  * Returns a config file elem.
  *
  */
-function SysBook_ParseFLSCfgElem(elem_name, byref cfg_file)
+function SysBook_ParseFLSCfgElem(elem_name, byref cfg_file := 0)
 	if ( !cfg_file )
 		cfg_file := SysBook_GetFLSCfgFile();
 	endif
@@ -90,24 +90,24 @@ function SysBook_ParseFLSCfgElem(elem_name, byref cfg_file)
 
 	var raw_content := GetConfigStringArray(cfg_elem, "pl");
    var book_content := array;
-   foreach paragraph in (raw_content.size())
-      var lines := GFWordWrap(paragraph, 20);
+   foreach paragraph in raw_content
+      var lines := GFWordWrap(paragraph, 180);
       foreach line in lines
-         raw_content.append(line);
+         book_content.append(line);
          sleepms(2);
       endforeach
 
-      if (_paragraph_iter !== raw_content.size())
-         raw_content.append("");
-      endif
+      // if (_paragraph_iter != raw_content.size())
+      //    book_content.append("");
+      // endif
    endforeach
 	
    book_info.+Contents := book_content;
 	return book_info;
 endfunction
 
-function SysBook_CreateBook(bag, book)
-   var book_info := SysBook_ParseFLSCfgElem(book);
+function SysBook_CreateBook(bag, book_int)
+   var book_info := SysBook_ParseFLSCfgElem(book_int);
    if (!book_info)
       return;
    endif
@@ -126,7 +126,7 @@ function SysBook_CreateBook(bag, book)
 		sleepms(2);
 	endforeach
 
-   var page_num := Ceil(book_info.Contents.size()/8);
+   var page_num := Floor(book_info.Contents.size()/7);
 
    book.SetNumPages(page_num);
    book.ReadOnly(1);

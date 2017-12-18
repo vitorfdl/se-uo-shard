@@ -51,7 +51,7 @@ program textcmd_flip (me)
       return 0;
    endif
    
-   if( object.movable == 0 )
+   if( object.movable == 0 && who.cmdlevel < 3)
       SendSysMessageEx(who, "O objeto esta fixo.");
       return 0;
    endif

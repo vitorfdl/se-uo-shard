@@ -31,17 +31,6 @@ program skill_LumberJack(who,tool)
 		return 0;
 	endif
 
-	if ((targ.item.objtype == 0xec24) || (targ.item.objtype == 0xec25) || (targ.item.objtype == 0xec26) || (targ.item.objtype == 0xFF04)||(targ.item.objtype == 0xec27) || (targ.item.objtype == 0xec28))  
-		if ((!CheckLineOfSight(who, targ.item)) or (Distance(who, targ.item) > 1))
-			SendSysMessage(who, "O alvo esta distante.");
-			return;
-		else
-			var parms;
-			var script := start_script (":tn:destroyitems", {who, targ.item, tool});
-			return 1;
-		endif
-	endif 
-
 	if ( !LJ_IsTree(targ.objtype) )
 		SendSysMessage(who, "Isto não e uma arvore.");
 		return 0;
@@ -137,6 +126,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 	SendSysMessage(who, "Você e incapaz de conseguir madeira usavel dessa arvore.");
 	return 0;
 endfunction
+
 function CanChop(who, axe, targ, orig_x, orig_y)
 	if ( who.hidden )
 		SendSysMessage(who, "Você parou de cortar a arvore para ficar escondido.");

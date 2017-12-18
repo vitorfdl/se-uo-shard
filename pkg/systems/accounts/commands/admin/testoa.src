@@ -7,11 +7,14 @@ include ":yggdrasil:boss";
 include "include/say";
 include "include/damage";
 include "include/client";
-include ":attributes:advanceCheck";
+include ":sysbook:flsbooks";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 
 program oafeatures_sendpacket(who, text)
+   // var item := GetEquipmentByLayer(who, LAYER_HAIR);
+   // item.color := cint(text);
+
    var targ := Target(who);
    restartScript(targ);
    // SendSystemReport(who, text);
@@ -21,7 +24,7 @@ program oafeatures_sendpacket(who, text)
    // Print(targ.my_template() );
 
 	// GFGumpPic(gump, 11, 29, 40009, 0); //borders
-	// GFTextLine(gump, 319, 34, 0, "Vendedor de Poções");
+	// GFTextLine(gump, 319, 34, 0, "Vendedor de PoÃ§Ãµes");
 
    // var i;
    // var x := 48;

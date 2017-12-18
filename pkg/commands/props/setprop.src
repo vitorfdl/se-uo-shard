@@ -5,9 +5,11 @@ use uo;
 use os;
 
 program SetProperties(who, text)
+   var repeatable;
    if (typeof(who) == "Array")
       text := who[2];
       who := who[1];
+      repeatable := who[3];
    endif
 	var ref := GetProcess(GetPid());
 	SendSysMessage(who, "->"+ref.name);
@@ -20,35 +22,41 @@ program SetProperties(who, text)
 		return;
 	endif
 
-	var targ := target(who);
-	if ( !targ )
-		SendSysMessage(who, "Cancelled");
-		return;
-	endif
+	var targ;
+   while(1)
+	   targ := target(who);
+      if ( !targ )
+         SendSysMessage(who, "Cancelled");
+         return;
+      endif
 
-	var property := Lower(param[1]);
-	var pos := Find(text, param[2], Len(param[1])+1);
-	var value := text[pos, Len(text)];
+      var property := Lower(param[1]);
+      var pos := Find(text, param[2], Len(param[1])+1);
+      var value := text[pos, Len(text)];
 
-	// Useful for clearing something like 'mobile.guild_title'.
-	if ( value == "NULL" )
-		value := "";
-	endif
-	var old_val := targ.get_member(property);
-	var old_type := Lower(TypeOf(old_val));
-	case ( old_type )
-		"integer"	: value := CInt(value); break;
-		"string"	: value := CStr(value); break;
-		"double"	: value := CDbl(value); break;
-		default:
-			SendSysMessage(who, "Original data-type '"+old_type+"' not supported. No changes can be made.");
-			return 0;
-	endcase
-	SendSysMessage(who, "Old Value->"+old_val);
+      // Useful for clearing something like 'mobile.guild_title'.
+      if ( value == "NULL" )
+         value := "";
+      endif
+      var old_val := targ.get_member(property);
+      var old_type := Lower(TypeOf(old_val));
+      case ( old_type )
+         "integer"	: value := CInt(value); break;
+         "string"	: value := CStr(value); break;
+         "double"	: value := CDbl(value); break;
+         default:
+            SendSysMessage(who, "Original data-type '"+old_type+"' not supported. No changes can be made.");
+            return 0;
+      endcase
+      SendSysMessage(who, "Old Value->"+old_val);
 
-	ProcessInput(who, targ,property, value);
+      ProcessInput(who, targ,property, value);
 
-	SendSysMessage(who, "New Value->"+targ.get_member(property));
+      SendSysMessage(who, "New Value->"+targ.get_member(property));
+      if (!repeatable)
+         return;
+      endif
+   endwhile
 endprogram
 
 

@@ -119,7 +119,8 @@ endfunction
 function ItemGivenEvent(byref event)
    var occupied := GetObjProperty(me, "#occupied");
    if (occupied && GetProcess(occupied))
-      SayUC(UC("Desculpe, estou atendendo outra pessoa agora"));
+      SayUC(UC("*observa {}*".format(event.source.name)));
+      SendSysMessageEx(event.source, "O mercador parece ocupado agora.", SSM_INFO);
       return;
    endif
 
@@ -151,7 +152,8 @@ function HandleSpeech(byref event)
    if (event.source.serial == me.serial)
       return;
    elseif (occupied && GetProcess(occupied))
-      SayUC(UC("Desculpe, estou atendendo outra pessoa agora"));
+      SayUC(UC("*observa {}*".format(event.source.name)));
+      SendSysMessageEx(event.source, "O mercador parece ocupado agora.", SSM_INFO);
       return;
    endif
    
@@ -186,7 +188,8 @@ function DblClickScript(event)
 
    var occupied := GetObjProperty(me, "#occupied");
    if (occupied && GetProcess(occupied))
-      SayUC(UC("Desculpe, estou atendendo outra pessoa agora"));
+      SayUC(UC("*observa {}*".format(event.source.name)));
+      SendSysMessageEx(event.source, "O mercador parece ocupado agora.", SSM_INFO);
       return;
    endif
 

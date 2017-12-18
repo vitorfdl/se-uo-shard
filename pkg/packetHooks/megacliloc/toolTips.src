@@ -184,10 +184,8 @@ exported function MegaCliloc( who, byref packet )
 				Object_Name := Object_Name  + " [" + raca + "]";
 			endif
 			
-			if (item.npctemplate)
-				if (IsBoss(item))
-					Object_Name :=  "<BASEFONT COLOR=#CBA300>" + Object_Name;
-				endif
+			if (item.npctemplate && IsBoss(item))
+            Object_Name :=  "<BASEFONT COLOR=#CBA300>" + Object_Name;
 			endif
 			
 			// Let's get the characters hightlight color.
@@ -249,11 +247,9 @@ exported function MegaCliloc( who, byref packet )
 
 		if (item.IsA(POLCLASS_MOBILE))
 			var deathpoint := AP_GetVital(item, "DP");
-			var deathpoint_max := AP_GetVitalMaximumValue(item, "DP");
-			var xy;
-			for (xy := deathpoint_max; xy > deathpoint ; xy-=10);
-				xDesc += "{}Gravemente Ferido<br>".format(WHITE);
-			endfor
+         if (deathpoint < 30)
+            xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((30-deathpoint)/10));
+         endif
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
 			var cond := GetCondition(item);
 			xDesc += "Condição: {}<br>".format(cond);

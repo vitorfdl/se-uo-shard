@@ -286,8 +286,10 @@ function DoSelectedGroupList(byref who, input)
             UpdateSpawnGroupInSpotGroup(selected_group, struct{"name":=spawngroup_name});
             break;
         GF_GROUP_REMSPAWNGROUP_BTN:
-            RemoveSpawnGroupInSpotGroup(selected_group, selected_spawngroup);
-            SetSelectGroupButton(0, "spawngroup");
+            if (YesNo(who, "Deseja mesmo remover esse spawngroup?", "Sim", "Não"))
+               RemoveSpawnGroupInSpotGroup(selected_group, selected_spawngroup);
+               SetSelectGroupButton(0, "spawngroup");
+            endif
             break;
          GF_GROUP_FORCESPAWN_BTN:
             var group_data  := GetSpotGroupData(selected_group);
@@ -402,7 +404,7 @@ function DoSpawnPointList(who, input)
             model_update.+type := CheckBoxGump(who, 150, 190, "Types:", array{"melee", "ranged", "spellcaster", "boss"});
             break;
          GF_SPAWN_MGROUP_BTN:
-            model_update.+groups := CheckBoxGump(who, 150, 165, "Grupos do spawn:", array{"0", "1", "2", "3"});
+            model_update.+groups := CheckBoxGump(who, 150, 210, "Grupos do spawn:", array{"0", "1", "2", "3"});
             break;
     endcase
     spawnpoint.SetProps(model_update);
@@ -473,7 +475,7 @@ function DoTreasureList(who, input)
                     var loot_list := GetConfigStringKeys(loot_cfg);
                     var list      := RadioGump(who, 230, 120+(loot_list.Size()*18), "Escolha o loot-index?:", loot_list);
                     if (list == "Cancelar")
-                        break; 
+                        break;
                     endif
                     var loot := struct{
                         "by_group":= list

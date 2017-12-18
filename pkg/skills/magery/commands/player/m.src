@@ -10,6 +10,24 @@ include ":charactercreation:characters";
 program useMagic(who, spellname)
 	spellname := lower(spellname);
 
+   if (who.cmdlevel > 4)
+      var cfg_name := ":magery:config/mage";
+      var cfg := ReadConfigFile(":magery:config/mage");
+		var spell := FindSpell(cfg, spellname);
+		if (!spell)
+         cfg_name := ":magery:config/cleric";
+         cfg := ReadConfigFile(cfg_name);
+         spell := FindSpell(cfg, spellname);
+         if (!spell)
+            SendSysMEssageEx(who, "A magia " + spellname + " não existe.", SSM_FAIL);
+            return;
+         endif
+		endif
+      
+      start_Script(":magery:cast_spell", array{who, spell, 0, 0, cfg_name});
+      return;
+   endif
+
 	if (who.isClass("Mago"))
 		if (!who.weapon)
 			SendSysMEssageEx(who, "Você não tem um objeto magico para usar magias.", SSM_FAIL);

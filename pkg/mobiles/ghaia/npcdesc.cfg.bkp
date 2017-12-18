@@ -132,8 +132,6 @@ NPCTemplate humanmale
 	EnergyResist	0
 	PoisonResist	0
 	PhysicalResist	10
-
-
 }
 
 NPCTemplate humanfemale

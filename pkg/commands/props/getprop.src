@@ -17,5 +17,5 @@ program propertyinfo(who, property)
 		SendSysMessage(who, "Cancelled");
 		return;
 	endif
-	SendSysMessageEx(who, "Property "+property+": "+targ.get_member(property));
+	SendSysMessageEx(who, "Property "+property+": "+targ.get_member(property), SSM_INFO);
 endprogram

@@ -16,6 +16,7 @@ use util;
 include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":datafile:datafile";
+include "include/say";
 
 program command_Message(who, text)
 	if ( CommandIssued(who, text) )
@@ -63,7 +64,7 @@ function MessageGump(who)
 	input := input[0];
 	
 	if ( !input )
-		SendSysMessage(who, "Cancelado");
+		SendSysMessageEx(who, "Cancelado");
 		return 0;
 	else
 		names_list := names_list.keys();
@@ -103,13 +104,13 @@ function SendMessage(who, name_text, is_reply:=0)
 	endif
 	
 	if ( !can_msg )
-		SendSysMessage(who, name_text+" is not online.");
+		SendSysMessageEx(who, name_text+" is not online.");
 		return 0;
 	endif
 	
-	var message_txt := RequestInput(who, who.backpack, "Qual mensagem você deseja enviar para "+name_text+"? (hit escape to cancel)");
+	var message_txt := RequestInput(who, who.backpack, "Qual mensagem você deseja enviar para "+name_text+"? (aperte esc para cancelar)");
 	if ( !message_txt )
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return 0;
 	endif
 	
@@ -119,16 +120,16 @@ function SendMessage(who, name_text, is_reply:=0)
 	
 	foreach player in EnumerateOnlineCharacters()
 		if ( player.name == name_text )
-			SendSysMessage(player, "Mensagem de "+who.name+" : "+message_txt);
-			SendSysMessage(who, "Você enviou a mensagem para ["+player.name+"]: "+message_txt);
+			SendSysMessageEx(player, "Mensagem de "+who.name+" : "+message_txt);
+			SendSysMessageEx(who, "Você enviou a mensagem para ["+player.name+"]: "+message_txt);
 
 			var rcvr_settings := GetMessageSettings(player);
 			rcvr_settings["reply"] := who.name;
 			SetObjProperty(player, ".msg", rcvr_settings);
 
 			if( sndr_settings.Exists("disabled") )
-				SendSysMessage(who, "Lembrete: Você esta invisivel no mensageiro");
-				SendSysMessage(player, "Lembrete: "+who.name+" esta invisivel no mensageiro. Use .msg reply.");
+				SendSysMessageEx(who, "Lembrete: Você esta invisivel no mensageiro");
+				SendSysMessageEx(player, "Lembrete: "+who.name+" esta invisivel no mensageiro. Use .msg reply.");
 			endif
 		elseif ( player.cmdlevel > who.cmdlevel )
 			var rcvr_settings := GetMessageSettings(player);
@@ -137,7 +138,7 @@ function SendMessage(who, name_text, is_reply:=0)
 				if (sender == "Desconhecido")
 					sender := GetObjProperty(who, "realname");
 				endif
-				SendSysMessage(player, "[SPY] De:"+sender+" Para:"+name_text+": "+message_txt);
+				SendSysMessageEx(player, "[SPY] De:"+sender+" Para:"+name_text+": "+message_txt);
 			endif
 		endif
 		
@@ -151,12 +152,12 @@ function CommandIssued(who, text)
 	if ( text == "off" )
 		msg_settings["disabled"] := 1;
 		SetObjProperty(who, ".msg", msg_settings);
-		SendSysMessage(who, "Seu nome foi removido da lista de mensagens.");
+		SendSysMessageEx(who, "Seu nome foi removido da lista de mensagens.");
 		return 1;
 	elseif ( text == "on" )
 		msg_settings.Erase("disabled");
 		SetObjProperty(who, ".msg", msg_settings);
-		SendSysMessage(who, "Seu nome foi colocado novamente na lista de mensagens.");
+		SendSysMessageEx(who, "Seu nome foi colocado novamente na lista de mensagens.");
 		return 1;
 	elseif ( text == "reply" )
 		SendMessage(who, msg_settings["reply"], 1);
@@ -170,24 +171,24 @@ function CommandIssued(who, text)
 	if ( text == "spy on" )
 		if (who.cmdlevel > 1)
 			msg_settings["spy"] := 1;
-			SendSysMessage(who, "Private message viewing is enabled.");
+			SendSysMessageEx(who, "Private message viewing is enabled.");
 			SetObjProperty(who, ".msg", msg_settings);
 			return 1;
 		endif
 	elseif ( text == "spy off" )
 		msg_settings.Erase("spy");
-		SendSysMessage(who, "Private message viewing is disabled.");
+		SendSysMessageEx(who, "Private message viewing is disabled.");
 		SetObjProperty(who, ".msg", msg_settings);
 		return 1;
 	elseif ( text == "visible on" )
 		msg_settings["visible"] := 1;
 		msg_settings.Erase("visible");
-		SendSysMessage(who, "Players can now message you while concealed.");
+		SendSysMessageEx(who, "Players can now message you while concealed.");
 		SetObjProperty(who, ".msg", msg_settings);
 		return 1;
 	elseif ( text == "visible off" )
 		msg_settings.Erase("visible");
-		SendSysMessage(who, "Players can no longer message you while concealed.");
+		SendSysMessageEx(who, "Players can no longer message you while concealed.");
 		SetObjProperty(who, ".msg", msg_settings);
 		return 1;
 	else

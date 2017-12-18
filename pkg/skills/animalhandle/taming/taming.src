@@ -17,7 +17,6 @@ const BACKGROUND   := 0xBB8;
 const FOREGROUND   := 0xDAC;
 const INIT_DET_PAGE:= 10;
 
-var template;
 var index_list;
 var info_cfg;
 var entries_list:= dictionary;
@@ -135,7 +134,7 @@ function taming(who)
 		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2, "failure" := 5}) + getProficiencyBonus(who, TRATO_ANIMAIS);
 		if (dice.critical == -1)
          if (targ.alignment == 1)
-            var event := struct{"type":=SYSEVENT_ENGAGED, "source":=targ2};
+            var event := struct{"type":=SYSEVENT_ENGAGED, "source":=targ};
             SendEvent(targ, event);
          endif
 			SendSysMessageEx(who, "Você deixou "+targ.name+" irritado.", SSM_INFO);

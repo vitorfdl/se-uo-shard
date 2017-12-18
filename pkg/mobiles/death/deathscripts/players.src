@@ -74,13 +74,19 @@ program death(params)
 		if (!killer.npctemplate || !killer.script["follower"])  //se for tamed não tira dp
 			ghost.ReduceLifeTime(2, "day");
 
-			if (randomint(11) <= 5 && AP_GetVital(ghost, "DP") >= 10)
-				if (AP_GetVital(ghost, "DP") <= 20) 
-					ghost.ReduceLifeTime(2, "day"); // + 2 days
-				endif 
+         if (rollResistDice(ghost, CONSTITUTION) < 16+(30-AP_GetVital(ghost, "DP")/10))
 				AP_ConsumeVital(ghost, "DP", 10);
 				SendSystemReport(ghost, "Você sofreu uma fratura!");
+            if (AP_GetVital(ghost, "DP") <= 19)
+               TS_StartTimer(ghost, "fraturaexposta", 1);
+            endif
+         else
+            SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair");
 			endif
+
+			if (AP_GetVital(ghost, "DP") <= 0 && ghost.cmdlevel < 3)
+            SetObjProperty(ghost, "morto", 1);
+         endif
 		endif
 
 		if ( CInt(GetObjProperty(ghost, "morto")) )

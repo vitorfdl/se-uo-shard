@@ -262,10 +262,10 @@ function DisplayAttributes(targ, byref gump, byref entry, byref y_pos)
 		endif
 
 		foreach attrib_name in ( group )
-			if (!(gm.acctname in gmParedes) && targ.npctemplate)
+			// if (!(gm.acctname in gmParedes) && targ.npctemplate)
 				var btn_id := GFAddButton(gump, 150, (y_pos+3), 2117, 2118, GF_CLOSE_BTN);
 				RegisterButton(btn_id, attrib_name, "attribEdit");
-			endif
+			// endif
 
 			GFTextLine(gump, 175, y_pos, 2100, attrib_name);
 			var value := AP_GetTrueSkill(targ, attrib_name);
@@ -410,12 +410,7 @@ function DisplayWeaponInfo(targ, byref gump, byref entry, byref y_pos)
 endfunction
 
 function ParseEntryName(entry_name)
-	while ( entry_name["_"] )
-		entry_name["_"] := " ";
-		SleepMS(2);
-	endwhile
-	
-	return entry_name;
+	return StrReplace(entry_name, "_", " ");;
 endfunction
 
 function ParseMembers(targ, members, new_val:=error)
@@ -463,7 +458,7 @@ function GetCustom(targ, property)
 		"gotten_item_serial":
 			return targ.GetGottenItem().serial;
 		"experiência":
-			return targ.GetExp() + " / " + (targ.getLevel() + 1) * 1000;
+			return targ.GetExp() + " / " + targ.getLevel() * 1000;
 		"data_de_criação":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
 	endcase

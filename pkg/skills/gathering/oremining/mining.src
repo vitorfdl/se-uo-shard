@@ -19,7 +19,7 @@ const MINING_SOUND	:= 0x126;
 program OreMining(who, tool)
 
 	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessage(who, "Você não pode minerar montado.");
+		SendSysMessageEx(who, "Você não pode minerar montado.");
 		return;
 	endif
 	SendSysMessageEx(who, "Onde você deseja minerar?", SSM_REQUEST);
@@ -27,11 +27,11 @@ program OreMining(who, tool)
 	
 
 	if ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 2 )
-		SendSysMessage(who, "Muito longe.");
+		SendSysMessageEx(who, "Muito longe.");
 		return;
 	elseif ( !CanMine(targ, "Stone") )
 		var maps := GetMapsInBackpack(who);
-		//sendsysmessage(who, " " + maps);
+		//sendsysmessageEx(who, " " + maps);
 		if (maps.size() > 0)
 			var map := maps[1];
 			if (maps.size() > 1)
@@ -50,7 +50,7 @@ program OreMining(who, tool)
 	
 	endif
 
-//	sendsysmessage(who, CanMine(targ, "Stone") + " " );
+//	sendsysmessageEx(who, CanMine(targ, "Stone") + " " );
 
 	var my_x := who.x;
 	var my_y := who.y;
@@ -58,7 +58,7 @@ program OreMining(who, tool)
 
 
 	if (!CheckLoop(who, tool, my_x, my_y, my_facing))
-		SendsysMessage(who, "Você parou de minerar.");
+		SendsysMessageEx(who, "Você parou de minerar.");
 		return;
 	endif
 
@@ -67,14 +67,14 @@ program OreMining(who, tool)
 		if (!CheckLoop(who, tool, my_x, my_y, my_facing))
 			break;
 		elseif (AP_GetVital(who, "Stamina") < 5)
-			SendSysMessage(who, "Você esta muito cansado para minerar.");
+			SendSysMessageEx(who, "Você esta muito cansado para minerar.");
 			break;
 		endif
 		AP_ConsumeVital(who, "Stamina", 5);
 		sleep(3);
 	endwhile
 	
-	SendSysMessage(who, "Você parou de minerar.");
+	SendSysMessageEx(who, "Você parou de minerar.");
 	
 endprogram
 
@@ -96,10 +96,10 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 	var difficulty := DetermineMiningDifficulty(ore_type); // feita
 
 	if (who.cmdlevel > 2)
-		SendSysMessage(who, "ore " + ore_type);
-		SendSysMessage(who, "region " + miningregion);
-		SendSysMessage(who, "amount " + ore_amount);
-		SendSysMessage(who, "difficulty " + difficulty);
+		SendSysMessageEx(who, "ore " + ore_type);
+		SendSysMessageEx(who, "region " + miningregion);
+		SendSysMessageEx(who, "amount " + ore_amount);
+		SendSysMessageEx(who, "difficulty " + difficulty);
 	endif
 
 	if (!ore_type)
@@ -108,9 +108,9 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 		if ( SkillCheck(who, EXTRACAO, difficulty) > 0 )
 			var minerio := CreateItemInBackPack(who, ore_type, 1);
 			minerio.movable := 1;
-			SendSysMessage(who, "Você pegou alguns minerios. " );
+			SendSysMessageEx(who, "Você pegou alguns minerios. " );
 		else
-			SendSysMessage(who, "Você falhou em pegar minerios.");
+			SendSysMessageEx(who, "Você falhou em pegar minerios.");
 		endif
 		return 1;*/
 	endif
@@ -119,37 +119,33 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 		if (ore_type != 999) //999 eh quando não passou na chance de raridade do minerio
 			var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 			if ( dice_roll > difficulty )
-				var amt := AP_GetStat(who, STRENGTH, RETURN_BONUS);
+				var amt := 1 + AP_GetStat(who, STRENGTH, RETURN_BONUS);
 				if (amt <= 0)
-					amt := 1;
+					amt := 2;
 				endif
-				if (ore_type == 0x4079)
-					if (amt >= 2)
-						amt := 1;
-					endif
-				endif
+
 				ore_amount := ore_amount - amt;
 				if (ore_amount < 0)
 					ore_amount := AP_GetStat(who, STRENGTH, RETURN_BONUS);
 				endif
+
 				SetOreAmount(who.realm, targx, targy, ore_amount); //feita
-				var minerio := CreateItemInBackPack(who, ore_type, amt);
+				var minerio := CreateItemInBackPack(who, cint(ore_type), cint(amt));
 				minerio.movable := 1;
 				who.SetAchievement("oremining", 1);
 				ExpGain(who, difficulty, dice_roll);
-				SendSysMessage(who, "Você pegou alguns minerios. " );
+				SendSysMessageEx(who, "Você pegou alguns minerios. " );
 				if (TemHabilidade(who, "Garimpeiro"))
 					Garimpeiro(who);
 				endif
 			else
-				SendSysMessage(who, "Você falhou em pegar minerios.");
+				SendSysMessageEx(who, "Você falhou em pegar minerios.");
 			endif
 		endif
 	else
-		SendSysMessage(who, "Parece não ter mais minerios aqui.");
+		SendSysMessageEx(who, "Parece não ter mais minerios aqui.");
 		return 0;
 	endif
-
 
 	return 1;
 endfunction

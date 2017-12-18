@@ -49,6 +49,7 @@ function HealFLS(targ, amt, show_heal := 1)
 	if (!show_heal)	
 		return;
 	endif
+
 	SendSystemReport(targ, amt, SYSTEM_HEAL, targ);
 	if (show_heal.isA(POLCLASS_MOBILE))
 		SendSystemReport(targ, amt, SYSTEM_HEAL, show_heal);
@@ -181,13 +182,13 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		MakeBleed(defender);
 	endif
 
-	if (source)
+	if (source && type != DMG_FORCED && RandomInt(3) == 1)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
-		var cleric_healing := Hex(GetObjProperty(source, "cleric_spell"));
-		if (cleric_healing && dmg >= 2)
+		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));
+		if (cleric_healing && dmg >= 1)
 			var targ := SystemFindObjectBySerial(cleric_healing);
-			if (source != targ && Distance(source, targ) > 8)
+			if (source != targ && Distance(source, targ) > 8 && targ.connected && !targ.dead)
 				targ := source;
 				SetObjProperty(source, "cleric_spell", source.serial);
 			endif

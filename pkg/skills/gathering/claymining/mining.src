@@ -109,11 +109,12 @@ function EnterrarCorpo(who, scoop, targ)
 	SendSysMessage(who, "Selecione o lugar que deseja enterrar o corpo.");
 	var lugar := TargetCoordinates(who);
 	var land_scape := CStr( GetMapInfo(lugar.x, lugar.y).landtile );
+   print(targ.item);
 	if (!lugar)
 		return;
-	elseif (!IsPlayerCorpse(targ.item) && !GetObjProperty(targ.item, "enterrado"))
-		SendSysMessageEX(who, "Somente e possivel enterrar corpos de jogadores.", SSM_FAIL);
-		return;
+	// elseif (!IsPlayerCorpse(targ.item) && !GetObjProperty(targ.item, "enterrado"))
+	// 	SendSysMessageEX(who, "Somente e possivel enterrar corpos de jogadores.", SSM_FAIL);
+	// 	return;
 	elseif (GetObjProperty(targ.item, "enterrado"))
 		var tempo := polcore().systime +600;
 		if (GetObjProperty(targ.item, "enterrado") < tempo)
@@ -190,7 +191,7 @@ function EnterrarCorpo(who, scoop, targ)
 endfunction
 
 function DesenterrarCorpo(who, scoop, targ)
-	if (!YesNo(who, "Você deseja mesmo desenterrar este tumulo?", "Sim: Você não podera enterrar novamente pelos proximos 10 minutos.", "Nao: nenhuma consequencia."))
+	if (!YesNo(who, "Você deseja mesmo desenterrar este tumulo?", "Sim: Você não podera enterrar novamente pelos proximos 10 minutos.", "Não: nenhuma consequência."))
 		return;
 	endif
 	
@@ -209,7 +210,7 @@ function DesenterrarCorpo(who, scoop, targ)
 		endif
 	endfor
 	if (!targ.item)
-		SendSysMessageEX(who, "Algo aconteceu com o tumulo e você não conseguiu desenterra-lo", SSM_FAIL);
+		SendSysMessageEX(who, "Algo aconteceu com o tumulo e você não conseguiu desenterrá-lo", SSM_FAIL);
 		return;
 	endif
 	var dirth := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x0914);

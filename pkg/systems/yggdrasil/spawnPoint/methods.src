@@ -49,6 +49,7 @@ exported function GetProps( spawnpoint )
    if (!data.spawnqueue)
       data.spawnqueue := array{};
    endif
+
    if (!data.groups)
       data.groups := array{0};
    endif
@@ -118,6 +119,7 @@ exported function SetProps( spawnpoint, data := struct{});
    SetObjProperty(spawnpoint, "spot_serial", old_data.spot_serial);
    SetObjProperty(spawnpoint, "type", old_data.type);
    SetObjProperty(spawnpoint, "level", old_data.level);
+   SetObjProperty(spawnpoint, "groups", old_data.groups);
    SetObjProperty(spawnpoint, "range", old_data.range);
    SetObjProperty(spawnpoint, "mob_number", old_data.mob_number);
    SetObjProperty(spawnpoint, "evententry", old_data.evententry);
@@ -163,8 +165,12 @@ function ModelSpawnPoint( data := struct{})
       data.yggdrasil := struct{};
    endif
 
-  if (TypeOf(data.groups) != "Array")
+   if (TypeOf(data.groups) != "Array")
       data.groups := array{0};
+   else
+      foreach g in (data.groups)
+         data.groups[_g_iter] := cint(g);
+      endforeach
    endif 
 
    return data;
@@ -298,9 +304,12 @@ exported function FillQueue(spawnpoint)
          "type"       := mob.type,
          "level"      := mob.power,
          "daytime"    := mob.daytime,
-         "isBoss"    := mob.isBoss,
          "bossParams" := mob.bossParams
       };
+
+      if (mob.isBoss)
+         to_spawn.+isBoss := mob.isBoss;
+      endif
       
       spawn_queue += to_spawn;
       SetObjProperty(spawnpoint, "spawnqueue", spawn_queue);

@@ -12,7 +12,7 @@ program mining(who)
 	var where := GetMiningRegion(who.x, who.y);
 	var cfg := ReadconfigFile(":gathering:config/miningspots");
 	var ores := cfg[where].Ores;
-		var raridades := SplitWords(cfg[where].Rarity);
+	var raridades := SplitWords(cfg[where].Rarity);
 	if (ores == error)
 		var df := opendatafile(":gathering:miningspots");
 		var elem := df.FindElement(where);
@@ -25,7 +25,7 @@ program mining(who)
 	var i := 1;
 	var k := 1;
 	
-	var skill := AP_GetSkill(who, EXTRACAO);
+	var skill := AP_GetSkill(who, WISDOM);
 	
 	foreach thing in ores 
 		var dif := DetermineMiningDifficulty( GetResourceId(thing) );

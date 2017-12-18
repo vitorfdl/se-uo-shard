@@ -8,7 +8,25 @@ include ":timedscripts:timedScripts";
 program textcmd_AddTimer(who, params)
 	params := SplitWords(params);
 	// addBuff(int icon_id, int duration, int cliloc_name, int cliloc_descr, array arguments)
-	if (params[1] != "rem")
+   if (params[1] == "all1")
+      for i := 1020 to 1060 
+         who.addBuff(i, 10, 1075829, 1075834, cAscZ(""+i));
+         sleepms(2);
+      endfor
+		SendSysMessage(who, "timer added");
+   elseif (params[1] == "all2")
+      for i := 1061 to 1099 
+         who.addBuff(i, 10, 1075829, 1075834, cAscZ(""+i));
+         sleepms(2);
+      endfor
+		SendSysMessage(who, "timer added");
+	elseif (params[1] == "remall")
+      for i := 1020 to 1099 
+         who.delBuff(i);
+         sleepms(2);
+      endfor
+		SendSysMessage(who, "timer removed");
+	elseif (params[1] != "rem")
 		SendSysMessage(who, "timer added");
 		who.addBuff(cint(params[6]), cint(params[2]), cint(params[3]), cint(params[4]), cAscZ(params[5]));
 	else

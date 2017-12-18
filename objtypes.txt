@@ -940,7 +940,7 @@
 # 0x11a1 - 0x11ab unused
 0x11ac FloorSawTrap traps
 # 0x11ad - 0x11af unused
-0x11b0 [n/a] fls_carpentry
+0x11b0 serradeira fls_carpentry
 0x11b1 FloorSawTrap2 traps
 # 0x11b2 - 0x11c5 unused
 0x11c6 SmallFlowerPot farming
@@ -972,9 +972,7 @@
 0x1219 stonechai2
 0x121a stonechai3
 0x121b stonechair4
-# 0x121c - 0x1224 unused
-0x1225 anaraltar magery
-# 0x1226 - 0x1229 unused
+# 0x121c - 0x1229 unused
 0x122a blood blood
 # 0x122b - 0x122c unused
 0x122d bloodvial alchemy
@@ -1533,7 +1531,9 @@
 0x26b5 quitina survival
 # 0x26b6 unused
 0x26b7 cogumelocurativo medicine
-# 0x26b8 - 0x26bf unused
+# 0x26b8 unused
+0x26b9 plantbowl farming
+# 0x26ba - 0x26bf unused
 0x26c0 KnightLance combat
 # 0x26c1 - 0x26c4 unused
 0x26c5 ShortScythe combat
@@ -1681,7 +1681,19 @@
 0x4044 ornamentedmirror woodworking
 # 0x4045 unused
 0x4046 floormirror woodworking
-# 0x4047 - 0x468b unused
+# 0x4047 - 0x41c1 unused
+0x41c2 [n/a] doors
+0x41c3 [n/a] doors
+0x41c4 [n/a] doors
+0x41c5 [n/a] doors
+# 0x41c6 - 0x41ce unused
+0x41cf [n/a] doors
+0x41d0 [n/a] doors
+0x41d1 [n/a] doors
+0x41d2 [n/a] doors
+# 0x41d3 - 0x44f1 unused
+0x44f2 plantbowl farming
+# 0x44f3 - 0x468b unused
 0x468c jellybeans food
 # 0x468d - 0x469e unused
 0x469f merrycake food
@@ -1695,7 +1707,16 @@
 0x5103 coolingWater gathering
 # 0x5104 - 0x5106 unused
 0x5107 smeltingpot gathering
-# 0x5108 - 0x6000 unused
+# 0x5108 - 0x5141 unused
+0x5142 [n/a] doors
+0x5143 [n/a] doors
+0x5144 [n/a] doors
+0x5145 [n/a] doors
+0x5146 [n/a] doors
+0x5147 [n/a] doors
+0x5148 [n/a] doors
+0x5149 [n/a] doors
+# 0x514a - 0x6000 unused
 0x6001 blankmap2 cartography
 # 0x6002 unused
 0x6003 level1map cartography
@@ -1876,7 +1897,9 @@
 0x7022 top farming
 # 0x7023 unused
 0x7024 pearSeed farming
-# 0x7025 - 0x7027 unused
+# 0x7025 unused
+0x7026 tomatoseed farming
+# 0x7027 unused
 0x7028 tapetedeed womenswork
 # 0x7029 unused
 0x702a peachSeed farming
@@ -1901,7 +1924,9 @@
 0x70b3 dontcreateme_gamepiece games
 # 0x70b4 - 0x7104 unused
 0x7105 HairDye hair
-# 0x7106 - 0x790e unused
+# 0x7106 - 0x790c unused
+0x790d runespells magery
+# 0x790e unused
 0x790f Nothing tn
 # 0x7910 - 0x791b unused
 0x791c aljava bowcrafting
@@ -1986,7 +2011,9 @@
 0x9c30 fletchingmachine bowcrafting
 # 0x9c31 - 0x9e3f unused
 0x9e40 soschest containers
-# 0x9e41 - 0xa1ff unused
+# 0x9e41 - 0x9e80 unused
+0x9e81 anaraltar magery
+# 0x9e82 - 0xa1ff unused
 0xa200 arenastone arena
 # 0xa201 - 0xa35f unused
 0xa360 sosbottle sosbottles
@@ -2039,7 +2066,9 @@
 0xb011 cama woodworking
 # 0xb012 - 0xb019 unused
 0xb01a Elvenbed woodworking
-# 0xb01b - 0xbd10 unused
+# 0xb01b - 0xb78e unused
+0xb78f tomato food
+# 0xb790 - 0xbd10 unused
 0xbd11 pedrapequena gathering
 0xbd12 pedramedia gathering
 0xbd13 pedragrande gathering
@@ -2160,7 +2189,7 @@
 # 0xee00 unused
 0xee01 restile walkon
 # 0xee02 - 0xee22 unused
-0xee23 cartoes fls_core
+0xee23 etiqueta fls_core
 # 0xee24 unused
 0xee25 kindling3 survival
 0xee26 kindling4 survival
@@ -2332,4 +2361,6 @@
 0x1ff02 WornItemsContainer containers
 # 0x1ff03 - 0xff992 unused
 0xff993 olhonegro tn
-# 0xff994 - 0xffffffff unused
+# 0xff994 - 0x9995bb unused
+0x9995bc writerock tn
+# 0x9995bd - 0xffffffff unused

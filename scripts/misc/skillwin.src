@@ -80,7 +80,8 @@ function buildGump(who)
 		endif
 		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
 		var skill_name := skill;
-		skill_name["_"] := " ";
+		skill_name := StrReplace(skill_name, "_", " ");
+      skill_name["Necromância"] := "Necrom.";
 		GFTextLine(gump, s_x+18, s_y-3, 1152, skill_name);
 		s_y += 30;
 		sleepms(5);
@@ -126,7 +127,7 @@ function AttrGump(who, byref gump)
 	// Attributes
 	// GFHTMLArea(gump, 20, 11, 185, 20, "<BASEFONT SIZE=4 COLOR=#D3D3D3><center>Atributos");
 	GFResizePic(gump, 6, 7, 5170, 219, 216);
-	GFHTMLArea(gump, 52, 37, 131, 20, "<BASEFONT SIZE=5 COLOR=#4c4ca6>Status");
+	GFHTMLArea(gump, 52, 37, 131, 20, "<BASEFONT SIZE=5 COLOR=#4c4ca6>Status Lv.{}".format(who.getLevel()));
 	GFGumpPic(gump, 153, 35, 5411, 0);
 
 	var attr_points := who.getPoints();

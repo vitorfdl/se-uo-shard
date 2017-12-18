@@ -3,6 +3,7 @@
  */
  
 use uo;
+use os;
 include "include/say";
 
 program GetCProp(who, prop_name)
@@ -13,19 +14,24 @@ program GetCProp(who, prop_name)
       var to_show := "";
       foreach item in prop
          to_show += ",{}".format(item);
-         if (_item_ter % 5)
-	         SendSysMessageEx(who, to_show);
+         if (_item_iter % 5)
+	         SendSysMessageEx(who, to_show, SSM_INFO);
+            to_show := "";
          endif
          sleepms(2);
       endforeach
-	   return SendSysMessageEx(who, to_show);
+
+      if (!to_show != "")
+         SendSysMessageEx(who, to_show);
+      endif
+	   return;
    elseif (typeof(prop) == "Struct" || typeof(prop) == "Dictionary")
       foreach key in (prop.keys())
-         SendSysMessageEx(who, "{}:{}".format(key, prop[key]));
+         SendSysMessageEx(who, "{}:{}".format(key, prop[key]), SSM_INFO);
          sleepms(2);
       endforeach
 	   return;
    endif
 	
-	SendSysMessageEx(who, prop_name+" = "+prop);
+	SendSysMessageEx(who, prop_name+" = "+prop, SSM_INFO);
 endprogram

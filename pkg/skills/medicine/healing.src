@@ -135,8 +135,7 @@ endprogram
 
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	var x := targ.x, y := targ.y;
-	var heal_amt := GetHealingAmt(2 + GetProficiencyBonus(mobile, heal_skill)) + bonus;
-
+	var heal_amt := GetHealingAmt(GetProficiencyBonus(mobile, heal_skill)) + bonus + RandomDiceRoll("1d5");
 	if (mobile == targ)
 		heal_amt := heal_amt / 2;
 		PrintText(mobile, "*usando ataduras em si mesmo*");

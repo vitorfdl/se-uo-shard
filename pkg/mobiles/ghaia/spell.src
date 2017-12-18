@@ -139,9 +139,9 @@ function Fight(opponent, alerted := 0)
       break;
     endif
 
-    if ( (dist > throwinfo.range) && (throwinfo.canthrow == 1) )
-	throwItem(me, opponent, dist);
-    endif
+   //  if ( (dist > throwinfo.range) && (throwinfo.canthrow == 1) )
+	// throwItem(me, opponent, dist);
+   //  endif
 
     if ( (dist > 6) && ( CInt(npccfgfile.teleport) ) )
 	teleport(me, opponent);

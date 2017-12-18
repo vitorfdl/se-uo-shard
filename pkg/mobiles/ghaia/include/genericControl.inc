@@ -25,6 +25,10 @@ function genericControl()
 		if (ListMobilesNearLocationEx(me.x, me.y, me.z, 20, LISTEX_FLAG_PLAYERS_ONLY)[1])
 			wanders := 0;
 		elseif (wanders >= 30)
+         if (npccfgfile.CustomBehavior == "camuflar" && RandomInt(4) == 1)
+            me.hidden := 1;
+            me.stealthsteps := 10;
+         endif
 			wanders := 0;
 			lookAround();
 			ev := sleepmode();

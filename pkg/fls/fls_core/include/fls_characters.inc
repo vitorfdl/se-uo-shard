@@ -56,10 +56,8 @@ function HaveReverseVision(who)
 
 	if (chardata.raca["Elfo"])
 		return 1;
-	else
-		return 0;
 	endif
-
+	return 0;
 endfunction
 
 function ApllyLightLevel()
@@ -77,7 +75,7 @@ function ReverseLight(player)
 
 	var light := cint(getglobalproperty("lightlevel"));
 
-	if (light < 20)
+	if (light > 20)
 		player.setlightlevel(20, 9000);
 	else
 		player.setlightlevel(light, 9000);

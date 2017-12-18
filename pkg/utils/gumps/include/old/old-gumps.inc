@@ -887,7 +887,7 @@ var aGFTlength := struct;
          "il1[]]]]]]]]]\""+//  5
          "bcejotî(){}==="+//  6
          "adfpqrszIÑ~~~~"+//  7
-         "ghnuvyÅ <>----"+//  8
+         "ghnuvyù <>----"+//  8
          "xJ578$?+++++++"+//  9
          "kCE2369^/**** "+// 10
          "mwABDFOPéô40%%"+// 11
@@ -962,10 +962,7 @@ function WordWrap(text, max_letters := 50)
 			word := "";
 		endif
 		
-		while(cur_line["  "]) // Remove double spaces
-			cur_line["  "] := " ";
-			SleepMS(2);
-		endwhile
+      cur_line := StrReplace(cur_line[1], "  ", " ");
 		
 		while (cur_line[1] == " ") // Remove leading spaces
 			cur_line[1] := "";

@@ -65,7 +65,7 @@ endfunction
 
 function Loot_CreateItem(container, line, type := 0)
 	var parsed := Loot_ParseString(line);
-
+   print(parsed);
 	if ( Loot_ChanceCheck(parsed.chance) )
 		var i;
 		for ( i:=1; i<= parsed.amount; i:=i+1 )
@@ -81,9 +81,16 @@ function Loot_CreateItem(container, line, type := 0)
 					SetName(item, item.desc+" [danificado]");
 				endif
 			elseif (type == "recipe")
+            print("recipe "+parsed);
 				var objtype := parsed.name;
+
 				if (!Hex(objtype))
 					objtype := GetObjtypeByName(parsed.name);
+               if (!objtype)
+                  objtype := parsed.name;
+               endif
+            else
+               objtype := Hex(objtype);
 				endif
 
 				if (!objtype)
@@ -96,7 +103,8 @@ function Loot_CreateItem(container, line, type := 0)
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
 				endif
-				// start_script(":magery:grimorio/pergaminhoCreate", item);
+            
+				run_script(":crafting:recipes/oncreate", item);
 			endif
 			sleepms(2);
 		endfor
@@ -132,18 +140,27 @@ function Loot_CreateRandom(container, line)
 	
 	if ( Loot_ChanceCheck(parsed.chance) )
 		var items := GetConfigStringArray(groups_elem, "Item");
-		var num_items := items.size();
-		var i;
-		for ( i:=1; i<=parsed.amount; i:=i+1 )
-			Loot_CreateItem(container, items[RandomInt(num_items)+1]);
-			sleepms(2);
-		endfor
+		var recipes := GetConfigStringArray(groups_elem, "Recipe");
+
+      var num_items := items.size() + recipes.size();
+      var i;
+      for ( i:=1; i<=parsed.amount; i:=i+1 )
+         var random := RandomInt(num_items)+1;
+         if (random > items.size())
+            random := random - items.size();
+            print("recipe "+recipes[random]);
+            Loot_CreateItem(container, recipes[random], "recipe");
+         else
+            Loot_CreateItem(container, items[random]);
+         endif
+         sleepms(2);
+      endfor
 	endif
 	
 	return 1;
 endfunction
 
-function Loot_ChanceCheck(chance)
+function Loot_ChanceCheck(chance := 1)
 	if ( RandomInt(1000)+1 <= CInt(CDbl(chance)*10.0) )
 		return 1;
 	else
@@ -157,7 +174,11 @@ function Loot_ParseString(line)
 	var name := CStr(line[1]);
 	
 	var amount := CStr(line[2]);
-	amount := RandomDiceRoll(amount);
+   if(!amount || amount["error"])
+      amount := 1;
+   else
+	   amount := RandomDiceRoll(amount);
+   endif
 	
 	var chance := CDbl(line[3]);
 	if ( !chance )

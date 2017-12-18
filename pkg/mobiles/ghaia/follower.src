@@ -49,6 +49,11 @@ program NPCMonitor()
       Fight();
       PetFollow();
       PetGuard();
+
+      if (!following && !fighting && !guarding)
+         wait_time := 30;
+      endif
+
       var ev := Wait_For_Event(wait_time);
       case(ev.type)
          SYSEVENT_ENGAGED:
@@ -301,6 +306,8 @@ function EnablePetMainEvents()
    EnableEvents(SYSEVENT_DAMAGED);
    EnableEvents(SYSEVENT_DOUBLECLICKED, 5);
    EnableEvents(SYSEVENT_ITEM_GIVEN, 2);
+   DisableEvents(SYSEVENT_OPPONENT_MOVED);
+   DisableEvents(SYSEVENT_ENTEREDAREA);
 endfunction
 
 function DisablePetMainEvents()
@@ -309,6 +316,8 @@ function DisablePetMainEvents()
    DisableEvents(SYSEVENT_DAMAGED);
    DisableEvents(SYSEVENT_ITEM_GIVEN);
    DisableEvents(SYSEVENT_DOUBLECLICKED);
+   DisableEvents(SYSEVENT_OPPONENT_MOVED);
+   DisableEvents(SYSEVENT_ENTEREDAREA);
 endfunction
 
 function Setup()

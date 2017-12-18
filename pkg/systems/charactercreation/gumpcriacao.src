@@ -14,6 +14,7 @@ include ":charactercreation:createchar";
 include ":gumps:yesno";
 include ":datafile:datafile";
 include ":timeutils:time";
+include ":sysbook:flsbooks";
 
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
@@ -24,9 +25,11 @@ program createchar(who)
 
 	if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
 		SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
+      who.frozen := 1;
 		return 1;
 	elseif (GetObjProperty(who, "delete") == 1)
 		SendSysMessageEx(who, "Você não pode ter mais de um personagem por conta.", SSM_FAIL);
+      who.frozen := 1;
 		return 1;
 	endif
 
@@ -128,8 +131,10 @@ program createchar(who)
 			CreateItemInBackpack(who, 0x10e4);
 			var rec := CreateItemInBackpack(who, 0x6116);
 			SetObjProperty(rec, "spell_id", 0x1);
+         SysBook_CreateBook(who.backpack, "magia1");
 		endif
 	elseif (chardata.classe == "Clérigo")
+      SysBook_CreateBook(who.backpack, "clerigo1");
 		LearnFeat(who, "Linguagem Rúnica", 0);
 		Start_Script(":magery:cleric/powerWords", array{who});
 		start_script(":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".milagres\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
@@ -308,8 +313,8 @@ function RaceGump(who, byref  chardata)
 					who.gender 		:= 0;
 				12: 
 					if (chardata.raca == "Humano")
-						who.graphic 	:= 402;
-						who.trueobjtype := 402;
+						who.graphic 	:= 401;
+						who.trueobjtype := 401;
 					else
 						who.graphic 	:= 606;
 						who.trueobjtype := 606;
@@ -364,7 +369,7 @@ function ChooseGod(who, byref chardata)
 		if (input[0] == 7)
 			case (chardata.raca)
 				"Elfo":
-					SendSysMessageEx(who, "Elfos louvam somente a Seredhiel.", SSM_FAIL);
+					SendSysMessageEx(who, "Elfos veneram somente a Seredhiel.", SSM_FAIL);
 					god_choose := "Seredhiel";
 				"Humano":
 				"Meio-Elfo":
@@ -375,6 +380,12 @@ function ChooseGod(who, byref chardata)
 							god_choose := "Seredhiel";
 					endcase
 			endcase
+
+         case (chardata.classe)
+            "Clérigo":
+					SendSysMessageEx(who, "Clérigos veneram somente a Anar.", SSM_FAIL);
+					god_choose := "Anar";
+         endcase
 		elseif (input[0] == 200)
 			chardata.god := god_choose;
 			break;
@@ -640,7 +651,7 @@ endfunction
 function LookGump(who, chardata, aparencia := 0)
 	var params := struct{
 		"race"  := chardata.raca,
-		"barba" := (chardata.raca == "Humano")
+		"barba" := (chardata.raca != "Elfo")
 	};
 
 	aparencia := disguiseGump(who, params, aparencia);
@@ -665,7 +676,7 @@ function LookGump(who, chardata, aparencia := 0)
 	newhair.color := aparencia.corcabelo;
 	EquipItem(who, newhair);
 
-	if (aparencia.corpele == -1 || aparencia.corcabelo == -1)
+	if (!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1)
 		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
 		LookGump(who, chardata, aparencia);
 	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
@@ -681,6 +692,7 @@ function SetProfessions(who, chardata);
 	var skills     := GetConfigStringArray(cfg, "Pericia");
 	var items      := GetConfigStringArray(cfg, "Item");
 	var recipes    := GetConfigStringArray(cfg, "Recipe");
+	var books    := GetConfigStringArray(cfg, "Book");
 
 	foreach skill in skills
 		AP_SetTrueSkill(who, skill, 1);
@@ -719,6 +731,10 @@ function SetProfessions(who, chardata);
 		Run_Script( ":crafting:recipes/oncreate", recipe );
 		sleepms(2);
 	endforeach
+
+   foreach book in books
+      SysBook_CreateBook(who.backpack, book);
+   endforeach
 endfunction
 
 function getNotaRP(who)

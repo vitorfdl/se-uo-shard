@@ -10,7 +10,7 @@ include ":tn:tngumps";
 
 const SPELL_BTN := 200;
 
-program orderSpells(who)
+program orderSpells(who, item)
    if (!who.isClass("Clérigo"))
       SendSysMessageEx(who, "Você presta homenagem a Anar", SSM_INFO);
       return;
@@ -62,7 +62,13 @@ program orderSpells(who)
 
       if (input[0] >= 200)
          var spell := spell_list[input[0]-200];
-         StoreSpell(who, spell, cleric_list, available_slots);
+         var ret := StoreSpell(who, spell, cleric_list, available_slots);
+         if (ret)
+            item.graphic := 0x9DF2;
+            sleep(2);
+            item.graphic := 0x9E81;
+         endif
+         // play 0x9DF2
       elseif (!input[0])
          canceled := 1;
       endif
@@ -92,8 +98,12 @@ function CreateClericGump(who, spell_list, available_slots)
 
    var y := 121;
    foreach spell in spell_list
-      GFHTMLArea(gump, 63, y, 192, 24, "{}".format(spell.name), 1, 0);
-      GFToolTipText(gump, spell.description);
+      var color := "f9dd46";
+      if (!spell.pericia["Cura"])
+         color := "a745a7";
+      endif
+      GFHTMLArea(gump, 63, y, 192, 24, "<BASEFONT color=#{}>{}".format(color, spell.name), 1, 0);
+      GFToolTipText(gump, "<BASEFONT color=#{}>{}<br><BASEFONT color=#FFFFFF>{}".format(color, strreplace(spell.pericia, "_", " "), spell.description));
       GFHTMLArea(gump, 259, y, 34, 24, "<center>{}".format(spell.circle), 1, 0);
       if (available_slots >= spell.circle)
 	      GFAddButton(gump, 319, y+4, 10006, 10006, GF_CLOSE_BTN, 200+_spell_iter);
@@ -117,7 +127,7 @@ function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
       "id"         := spellinfo.id,
       "powerwords" := spellinfo.powerwords,
       "circle"     := spellinfo.circle,
-      "time"       := AddTimeTo(polcore().systime, 40, "minutes"),
+      "time"       := AddTimeTo(polcore().systime, 25, "minutes"),
       "used"       := 0
    };
 

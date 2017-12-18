@@ -74,9 +74,9 @@ program SpellStarter(params)
    mobile.hidden := 0;
    
    // start casting
-   if (spellinfo.powerwords && !GetObjProperty(mobile, "#magiasilenciosa") ) //checa powerwords
-      PrintText(mobile, spellinfo.powerwords);
-   endif
+   // if (spellinfo.powerwords && !GetObjProperty(mobile, "#magiasilenciosa") ) //checa powerwords
+   //    PrintText(mobile, spellinfo.powerwords);
+   // endif
 
    var moveCheck := Start_Script(":magery:moveCheck", array{mobile, Getpid()});
    var orig_hp := AP_GetVital(mobile, "Hits");

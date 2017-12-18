@@ -243,12 +243,8 @@ exported function GetDifficulty(grower)
 	var settings := FarmingGetSettingsCfgElem("GrowthUnit");
 	var max_amt := CInt(settings.MaxProduce);
 	var cur_amt := GetProduceAmount(grower);
-	var diff_mod := CfgInfo(grower).DiffMod;
-	if ( !diff_mod )
-		diff_mod := 1.0;
-	endif
 
-	var difficulty := CfgInfo(grower).PlantDifficulty; //CInt(diff_mod * (100 - (100 * cur_amt / max_amt)));
+	var difficulty := CfgInfo(grower).PlantDifficulty;
 
 	return difficulty;
 endfunction

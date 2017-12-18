@@ -60,7 +60,7 @@ function HandleSpeech(npc, player, text)
 	text := lower(text);
    if (text["artigo"] || text["compra"] || text["ver"])
       while(!canceled)
-			AI_Speak(npc, "O que deseja comprar?");
+			PrintText(npc, "O que deseja comprar?");
          var input := SendItemView(npc, player);
          if (!input[0])
             break;
@@ -301,6 +301,11 @@ endfunction
 
 
 function AddItemToSell(npc, player, item)
+   var items_sold := GetItemsSoldList(npc);
+   if (items_sold.size() >= 15)
+      PrintText(npc, "Desculpe, não posso vender mais coisas no momento. Venha outra hora.");
+   endif
+
 	var gump := GFCreateGump();
 	var infinite;
 	GFPage(gump, 0);
@@ -359,7 +364,7 @@ function AddItemToSell(npc, player, item)
 	if (player.cmdlevel < 3)
 		var pay := 0;
 		do
-			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda.", SSM_FAIL);
+			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda. Pressione ESC para cancelar.", SSM_REQUEST);
 			var targ := Target(player);
 			if ( !targ )
 				SendSysMessageEx(player, "Cancelado.");
@@ -372,7 +377,7 @@ function AddItemToSell(npc, player, item)
 				if ( !ReserveItem(targ) )
 					SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
 				else
-					if (!SubtractAmount(targ, dezperc))
+					if (dezperc > 0 && !SubtractAmount(targ, dezperc))
 						SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
 					else
 						pay := 1;

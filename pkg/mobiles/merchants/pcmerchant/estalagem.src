@@ -1,6 +1,12 @@
 
 use uo;
 use os;
+use cfgfile;
+use math;
+include "include/string";
+include":merchants:crafthelp";
+include ":ghaia:ghaiaUtil";
+include ":gumps:gumps_ex";
 
 include ":containers:storageAreas";
 include ":containers:containers";
@@ -11,29 +17,71 @@ include "include/say";
 include ":keys:key";
 include ":tn:tngumps";
 
-//Gump Constants
 const BKGND_STONESLAB		:= 9200;  // Gray stone slab background
 const BKGND_BLUESLAB		:= 3600;  // Raised edge (blocky)
 const GF_STDCOLOR		:= 1890;
 
-const MOEDAS			:= 47715;
+const MOEDAS      := 0xeed;
+var item_cfg      := ReadConfigFile(":*:itemdesc");
+var npc;
 
-var item_cfg := ReadConfigFile(":*:itemdesc");
-
-
-program MerchantMenu(params)
+program HandleMerchant(params)
 	if (!getglobalproperty("InnKeeper"))
 		SetGlobalProperty("InnKeeper", array{});
 	endif
-	var npc := params[1];
-	var player := params[2];
-//	var npc := player;
 
-	if (player.hidden)
-		player.hidden := 0;
-		SendSysMessageEx (player, "Você se revelou ao mercador.", SSM_FAIL);
-	endif
+	SetObjProperty(params.me, "#occupied", GetPid());
+	case (params.type)
+		// "ItemGivenEvent": 
+		// 	if (!HandleItemGiven(params.me, params.source, params.item))
+		// 		MoveItemToContainer(params.item, params.source.backpack);
+		// 	endif
+		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+		"Default": return;
+	endcase
 
+	EraseObjProperty(params.me, "#occupied");
+endprogram
+
+// function HandleItemGiven(npc, player, item)
+// 	var onlyplayersells := GetObjProperty(npc, "oneplayersells");
+// 	if ( (cint(GetObjProperty(npc, "onlygmsells")) == 1 ) && player.cmdlevel < 3 )
+// 		SendSysMessageEX(player, "Você não pode colocar itens a venda nesse vendedor.",SSM_FAIL);
+// 		return;
+// 	elseif (onlyplayersells && onlyplayersells != player.name)
+// 		SendSysMessage(player, "Perdao, somente " + onlyplayersells + " pode fazer vendas comigo");
+// 		return;
+// 	// elseif (serialid != error)
+// 	// 	SendSysMessageEx(player,"Você não pode vender isto.",SSM_FAIL);
+// 	// 	return;
+// 	elseif ( !item.IsA(POLCLASS_ITEM) )
+// 		SendSysMessageEX(player, "Cancelado.",SSM_FAIL);
+// 		return;
+// 	elseif ( (item.objtype == 0xba63 || item.objtype == 0xba64 || item.objtype == 0xba65 ) && player.cmdlevel < 3)
+// 		SendSysMessageEX(player, "Você não pode vender moedas",SSM_FAIL);
+// 		return;
+// 	endif
+
+// 	PrintText(player, "*vendendo item*");
+// 	var result := AddItemToSell(npc, player, item);
+// 	return result;
+// endfunction
+
+function HandleSpeech(npc, player, text)
+   var canceled := 0;
+	text := lower(text);
+   if (text["alugar"] || text["quarto"] || text["ver"])
+      while(!canceled)
+			Printtext(npc, "Em que posso ajuda-lo?");
+         var input := SendRoomGump(npc, player);
+         if (!input[0])
+            break;
+         endif
+      endwhile
+   endif
+endfunction
+
+function SendRoomGump(npc, player)
 	var gump := GFCreateGump(0, 0);
 	GFPage(gump, 0);
 	GFResizePic(gump, 0, 0, BKGND_BLUESLAB, 640, 480);
@@ -81,7 +129,7 @@ program MerchantMenu(params)
 		
 		if (!(npc.serial in getglobalproperty("InnKeeper")))
 			GFAddButton(gump, 20, 383, 2117, 2118, GF_CLOSE_BTN,  700);
-			GFTextLine(gump, 40, 380, GF_STDCOLOR, "Cobrar Automatico");
+			GFTextLine(gump, 40, 380, GF_STDCOLOR, "Cobrar Automático");
 		endif
 	endif
 	
@@ -148,13 +196,13 @@ program MerchantMenu(params)
 			SetObjProperty(npc, "quartos", quartos);
 		endif
 	elseif (input[0] == 100 ) //trocar fechadura
-		var yes := yesno(player, "O chaveiro vai cobrar 100 moedas, deseja continuar? " );
+		var yes := yesno(player, "O chaveiro vai cobrar 25 moedas, deseja continuar? " );
 		if (yes)
 			var bank_region := GetObjProperty(npc, "City");
 			if ( !bank_region )
 				bank_region := CP_DEFAULT_AREA;
 			endif
-			if ( (!getgoldpayment(player, 100)) )
+			if ( (!getgoldpayment(player, 25)) )
 				SendSysMEssageEx(player, "Você não tem moedas o suficiente.", SSM_FAIL);
 			else
 				var lockid := AllocLockId();
@@ -166,7 +214,7 @@ program MerchantMenu(params)
 			endif
 		endif
 	elseif (input[0] == 400)//entregar quarto
-	
+      Printtext(npc, "Quer mesmo devolver o seu quarto?");
 		var yes := yesno(player, "Deseja devolver o quarto?  Seus itens serão deletados." );
 		var quarto := quartos[meuquarto];
 		if (yes)
@@ -192,7 +240,7 @@ program MerchantMenu(params)
 		quartos[meuquarto].+alert := 0;
 		quartos[meuquarto].data := polcore().systime;
 		setobjproperty(npc, "quartos", quartos);
-		SendSysMessageEx(player, "Você pagou o aluguel para a proxima semana.");
+		SendSysMessageEx(player, "Você pagou o aluguel para a próxima semana.");
 
 	elseif (input[0] == 700) //adicionar na global
 		var innkeepers := getglobalproperty("InnKeeper");
@@ -200,7 +248,7 @@ program MerchantMenu(params)
 			innkeepers := array;
 		endif
 		if (npc.serial in innkeepers)
-			SendSysMessageEx(player, "NPC ja existe.", SSM_FAIL);
+			SendSysMessageEx(player, "NPC já existe.", SSM_FAIL);
 		else
 			innkeepers.Append(npc.serial);
 			setglobalproperty("InnKeeper",innkeepers);
@@ -218,20 +266,20 @@ program MerchantMenu(params)
 		SetObjProperty(npc, "confiscados", confiscados);
 		if (mypack != error)
 			MoveItemToContainer( mypack, player.backpack);
-			SendSysMessageEx(player, "Você recebe seus objetos de volta.",SSM_INFO);
+			SendSysMessageEx(player, "Você recebeu seus items de volta.",SSM_INFO);
 		else
-			SendSysMessageEx(player, "Algo deu errado, você não recebe seus objetos de volta.",SSM_FAIL);
+			SendSysMessageEx(player, "Algo deu errado, não foi possível devolver seus items.",SSM_FAIL);
 		endif
 	
 	elseif (input[0] < 100 && input[0] >= 1) //alugar quarto
 		
 		if (souInquilino)
-			SendSysMEssageEx(player, "Você ja tem um quarto.");
+         Printtext(npc, "Tem muita gente precisando de onde morar, não vou alugar dois quartos para você.");
 			return 1;
 		endif
 		
 		if (player.cmdlevel >=3) //opcao de gm de remover quarto
-			var gmmenu :=  RadioGump(player, 250, 325, "Escolha uma opcao", array{"Mudar Nome","Mudar Preco","Remover Quarto", "Mudar Centro", "Mudar Porta", "Teleportar na Porta","Informacoes"});
+			var gmmenu :=  RadioGump(player, 250, 325, "Escolha uma opção", array{"Mudar Nome","Mudar Pre~co","Remover Quarto", "Mudar Centro", "Mudar Porta", "Teleportar na Porta","Informacoes"});
 
 			if (gmmenu == "Remover Quarto")
 				quartos.erase(input[0]);
@@ -310,7 +358,7 @@ program MerchantMenu(params)
 		endif
 		
 	endif
-endprogram
+endfunction
 
 function getgoldpayment(player, amount)
 	var pay := 0;

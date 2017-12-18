@@ -32,6 +32,9 @@ function examinarAlvo(who)
 		SendSysMessageEx(who, "ATENCAO: Se você não conhece esse personagem, ignore o fato de saber o nome dele.", SSM_INFO);
 	elseif ( GetObjProperty(targ, "TrapList") )
 		var failed := GetObjProperty(targ, "#awareness_fail");
+      if (!failed)
+         failed := array{};
+      endif
 		if (who.serial in failed)
 			return 0;
 		elseif ( GetObjProperty(targ, "trapSpoted") )
@@ -77,7 +80,7 @@ function CalculateDHDiff(who, mobile, insneak := 0)
 
 	difficulty += Distance(who, mobile);
 
-	if (IsBehind(mobile, who.x, who.y) && !insneak)
+	if (IsBehind(who, mobile.x, mobile.y) && !insneak)
 		difficulty := difficulty +4;
 	elseif (!IsBehind(mobile, who.x, who.y) && insneak)
 		difficulty := difficulty +4;

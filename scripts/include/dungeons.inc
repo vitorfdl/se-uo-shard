@@ -19,7 +19,7 @@ endfunction
 function InDungeon(coord) // retorna 1 se tiver numa caverna
 	if ( coord.x > 3768 && coord.y > 1141 && coord.x < 4326 && coord.y < 2461 )
 		return 1;
-	elseif ( coord.x > 3757 && coord.y > 0 && coord.x < 4982 && coord.y < 1078 )
+	elseif ( coord.x > 4388 && coord.y > 0 && coord.x < 3168 && coord.y < 4104 )
 		return 1;
 	elseif ( coord.x > 4392 && coord.y > 0 && coord.x < 6131 && coord.y < 4086 )
 		return 1;

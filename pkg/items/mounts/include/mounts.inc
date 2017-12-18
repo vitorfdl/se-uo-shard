@@ -224,11 +224,11 @@ function MP_Unmount(mobile)
 	var mount_piece := GetEquipmentByLayer(mobile, LAYER_MOUNT);
 
 	if ( !mount_piece )
-		SendSysMessage(mobile, "Não tem a mount piece");
+		// SendSysMessage(mobile, "Não tem a mount piece");
 		return error{"errortext":="Mobile does not have a mount item."};
 	elseif ( Lower(mount_piece.desc) == "mount piece" )
 		// Mount piece exists, but contains no npc information.
-		SendSysMEssage(mobile, "mount piece desc errada");
+		// SendSysMEssage(mobile, "mount piece desc errada");
 		DestroyItem(mount_piece);
 		return 0;
 	else

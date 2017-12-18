@@ -1,4 +1,5 @@
 include "include/say";
+include "include/client";
 include ":disguise:disguise";
 include ":attributes:attributes";
 include ":gumps:gumps";
@@ -10,10 +11,11 @@ const HAIR_BALD     := 0x999999;
 
 function mainGump(who, byref disfarce, byref choice)
 	var menus    := array{9762, 9762, 9762, 9762, 9762};
-    var gump 	 := GFCreateGump();
+   var gump 	 := GFCreateGump();
 	var gender   := CheckGender(who);
 
 	GFPage(gump, 0);
+   GFSetID(gump, GUMPID_DISGUISE);
 	GFResizePic(gump, 25, 8, 5120, 591, 340); //background
 	GFResizePic(gump, 37, 27, 9350, 572, 33); //top paper
 
@@ -33,7 +35,7 @@ function mainGump(who, byref disfarce, byref choice)
 	// GFAddButton(gump, 44, 163, menus[5], 9763, GF_CLOSE_BTN, 5);
 	GFAddButton(gump, 66, 190, 247, 248, GF_CLOSE_BTN, RES_BTN_OK); //OKAY
 
-	if (gender != 2 && choice.beard)
+	if (gender != 2 && choice.barba)
 		GFTextLine(gump, 65, 100, 1101, "Barbas");
 		GFAddButton(gump, 44, 103, menus[2], 9763, GF_CLOSE_BTN, 2);
 	endif
@@ -100,12 +102,8 @@ function buildHairGump(byref gump, byref disfarce, opt := struct{})
 
 	GFPage(gump, gump.cur_page+1);
 	foreach style in (styles.Keys())
-		var hairname    := style;
+		var hairname := StrReplace(style, "_", " ");
 		var hairgraphic := cint(styles[style]);
-
-		while (hairname["_"])															
-			hairname["_"] := " ";
-		endwhile
         
 		if (hairgraphic == disfarce[opt.param])
 			GFResizePic(gump, x_pos, y_pos, 9500, 85, 72);

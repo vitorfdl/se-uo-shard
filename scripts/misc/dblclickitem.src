@@ -11,9 +11,15 @@
  */
 use uo;
 use basic;
+use os;
 
+include "include/say";
 
 program core_skillWin(who, item)
   EraseObjProperty(who, "IsMeditating");
   EraseObjProperty(who, "HealTimer");
+
+  if (GetObjProperty(item, "breakable") && who.warmode && Distance(who, item) <= 1)
+      start_script(":tn:destroyitems", {who, item, who.weapon});
+  endif
 endprogram
