@@ -66,6 +66,9 @@ function EnableMainEvents(type := 0)
         DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
         EnableEvents(SYSEVENT_DOUBLECLICKED, 20);
         EnableEvents(SYSEVENT_SPEECH + SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN + SYSEVENT_ENTEREDAREA, areasize);
+        EnableEvents(EVID_ALERT_ALLIES);
+        EnableEvents(EVID_HERDING);
+        EnableEvents(EVID_TAUNT);
       default:
         DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
         EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ENTEREDAREA, areasize);
@@ -136,7 +139,7 @@ function NpcGoTo(destiny, move_type)
 			else
 				RunTowardLocation( coord.x, coord.y ); //anda na direcao
 			endif
-      Opendoors(me);
+         Opendoors(me);
 			sleepms(sleepdelay);
 		endforeach
 	endif
@@ -224,22 +227,22 @@ function sleepmode()
 
          case (ev.type)
           SYSEVENT_ENGAGED:    
-            if (me.hidden)
-              me.hidden := 0;
-            endif
+            // if (me.hidden)
+            //   me.hidden := 0;
+            // endif
             EnableMainEvents();
             return ev;
           SYSEVENT_DAMAGED:
-            if (me.hidden)
-              me.hidden := 0;
-            endif
+            // if (me.hidden)
+            //   me.hidden := 0;
+            // endif
             EnableMainEvents();
             return ev;
           SYSEVENT_ENTEREDAREA: 
             if (CanFight(me, ev.source))
-              if(me.hidden)
-                  me.hidden := 0;
-              endif
+            //   if(me.hidden)
+            //       me.hidden := 0;
+            //   endif
               EnableMainEvents();
               return ev;
             endif

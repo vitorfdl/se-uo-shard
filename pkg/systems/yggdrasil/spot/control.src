@@ -32,7 +32,9 @@ endfunction
 function ResetTreasures(treasures)
    foreach item in treasures
       var treasure := SystemFindObjectBySerial(item.serial);
-      SpawnTreasure(treasure, item);
+      if (cint(GetObjProperty(treasure, "spawned_time")) >= ReadGameClock())
+         SpawnTreasure(treasure, item);
+      endif
       sleepms(2);
    endforeach
 endfunction

@@ -50,58 +50,58 @@ function fBreak(who,item)
    if(AP_GetVital(who, "Stamina") < 15)
       SendSysMessageEx(who, "Você esta cansado demais.",SSM_FAIL);
       return 0;
+   elseif (item.desc["Quebrado"] || who.weapon.isBow() )
+      return 0;
    endif
-      var cfg := ReadConfigFile(":destroyable:destroyitems");
-      var elem:=FindConfigElem( cfg, item.objtype);
-      var normal:=GetConfigString( elem, "normal");
-      var quebrado:=GetConfigString( elem, "quebrado");
-      var hits:= GetObjProperty(item,"hits");
-      var porta := array{};
 
-      if( item.isA(POLCLASS_DOOR) && (hits > 0))
-      
-      var mobiles:=ListMobilesNearLocation( item.x, item.y, item.z, 20, realm := _DEFAULT_REALM );
+   var cfg      := ReadConfigFile(":destroyable:destroyitems");
+   var elem     := FindConfigElem( cfg, item.objtype);
+   var normal   := GetConfigString( elem, "normal");
+   var quebrado := GetConfigString( elem, "quebrado");
+   var hits     := cint(GetObjProperty(item,"hits"));
+   var porta := array{};
 
-         porta.append(item.x);
-         porta.append(item.y);
-         var ev := struct;
-         ev.+type := EVID_HERDING;
-         ev.+data := porta;
+   var mobiles:= ListMobilesNearLocation( item.x, item.y, item.z, 20, LISTEX_FLAG_NPC_ONLY );
+   var ev := struct;
+   ev.+type := EVID_HERDING;
+   ev.+data := array{item.x, item.y};
 
-      foreach mob in mobiles
-         SendEvent(mob, ev);
-      endforeach
+   foreach mob in mobiles
+      SendEvent(mob, ev);
+      SendEvent(mob, ev);
+      sleepms(2);
+   endforeach
       
-      PlayAttackAnimation(who, who.weapon);
-      sleepms(600);
-      PlaySoundEffect(who, FLS_SFX_SKILL_LUMBERJACK);
-      PlayStationaryEffect(item.x, item.y, item.z, FX_SMOKE, 2, 4);
-      ConsumeVital( who, STAMINA, 2000 );
-      
+   PlayAttackAnimation(who, who.weapon);
+   sleepms(600);
+   PlaySoundEffect(who, FLS_SFX_SKILL_LUMBERJACK);
+   PlayStationaryEffect(item.x, item.y, item.z, FX_SMOKE, 2, 4);
+   ConsumeVital( who, STAMINA, 2000 );
+
+   hits -= 1;
+   SetObjProperty(item, "hits", hits);
+
+   if( item.isA(POLCLASS_DOOR) && (hits > 0))
       PrintText(item, "*A " +item.desc+ " começa a ceder*");
-      SetObjProperty(item,"hits",hits-1);
+   endif
 
-   else
-
-      PlayAttackAnimation(who, who.weapon);
-      sleepms(600);
-      PlaySoundEffect(who, FLS_SFX_SKILL_LUMBERJACK);
-      PlayStationaryEffect(item.x, item.y, item.z, FX_SMOKE, 2, 4);
-      ConsumeVital( who, STAMINA, 2000 );
-      
+   if (hits <= 0)
       item.graphic:=Cint(quebrado);
       SetObjProperty(item,"hits",3);
       
-      
       PrintText(who, "*Quebra " +item.desc+ "*");
-      SetName(item,item.desc + " [Quebrado] ");
+      SetName(item, item.desc + " [Quebrado]");
 
-      var itens := GetObjProperty(item,"itens");
-      foreach itemarray in itens
-         var itemcriado:=CreateItemAtLocation(item.x, item.y, item.z,itemarray , itemarray.amount, realm := _DEFAULT_REALM);
-         SetName(itemcriado, itemarray.name);
-      endforeach
-      return 1;
-      
+      if (item.isA(POLCLASS_CONTAINER))
+         var container_items := EnumerateItemsInContainer(item);
+         foreach citem in container_items
+            if (RandomInt(3) == 1)
+               MoveObjectToLocation(citem, item.x, item.y, item.z, item.realm, MOVEOBJECT_FORCELOCATION);
+            else
+               DestroyItem(citem);
+            endif
+            sleepms(2);
+         endforeach
+      endif
    endif
 endfunction

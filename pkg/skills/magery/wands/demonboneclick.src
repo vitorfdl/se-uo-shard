@@ -23,7 +23,7 @@ program doubleClick(who, item)
 
    if (alvo.isMagicWeapon())
       var charges := cint(GetObjProperty(alvo, "charges"));
-      charges += power;
+      charges += (power+1) * 3;
       SetObjProperty(alvo, "charges", charges);
 	   SendSysMessageEx(who, "O osso se esfarela ao tocar no objeto.", SSM_INFO);
       SetName(alvo, alvo.desc);

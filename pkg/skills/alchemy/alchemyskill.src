@@ -1,0 +1,51 @@
+use cfgfile;
+use uo;
+include ":attributes:attributes";
+include "include/say";
+include ":timedscripts:timedScripts";
+//include "include/damage";
+
+var item_config     := ReadConfigFile(":*:itemdesc");
+
+program alchemy(who)
+	SendSysMessageEx(who, "Escolha uma poção para identificar.", SSM_REQUEST);
+	var item := Target(who, TGTOPT_CHECK_LOS);
+
+	if (!item)
+		SendSysMEssageEx(who, "Cancelado.", SSM_FAIL);
+		return;
+	endif
+
+	if ( !item.isa(POLCLASS_ITEM) )
+		return;
+	endif
+
+	if (item.graphic != 3849)
+      SendSysMessageEx(who, "Isso não é uma poção", SSM_FAIL);
+      return;
+   endif
+
+	PrintText(who, "*analisando um frasco*");
+   var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, ALQUIMIA);
+   if (15 > 0) //SkillCheck(who, PESQUISA, -1)
+      SendSysMessageEx(who, "Você não esta certo..", SSM_FAIL);
+   endif
+      
+   var cfg := ReadConfigFile(":alchemy:itemdesc");
+   var entry := cfg[item.objtype];
+   if (entry)
+      SetObjProperty(item, "pocaoname", entry.Type);
+      SendSysMessageEx(who, "Você identificou o liquido do frasco: " + entry.Type, SSM_INFO);
+   endif
+   cfg := 0;
+   entry := 0;
+   var whos := GetObjProperty(item, "magicwho");
+   if (whos == error)
+      whos := array;
+   endif
+   if ( !(who.serial in whos))
+      whos.append(who.serial) ;
+      SetObjProperty(item, "magicwho", who);
+   endif
+   SetName(item, item.desc);
+endif

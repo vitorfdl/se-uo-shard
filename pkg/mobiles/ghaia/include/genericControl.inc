@@ -56,7 +56,7 @@ function resolveEvent(ev, byref wanders)
 		SYSEVENT_ENGAGED:	
 		SYSEVENT_DAMAGED:	
 			wanders := 0; Fight(ev.source);
-		EVID_ALERT_ALLIES:
+		EVID_ALERT_ALLIES: 
 			wanders := 0; Fight(ev.opponent, 1);
 		EVID_HERDING:
 			herd(ev);

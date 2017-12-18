@@ -52,7 +52,7 @@ endfunction
 
 function ghaiaObjective(npc, destiny, move_type)
 	var ev      := struct;
-	ev.type     := EVID_DOOBJECTIVE; // ajetra isso
+	ev.type     := EVID_DOOBJECTIVE;
 	ev.destiny  := destiny;
 	ev.move_type:= move_type;
 	// ev.move_direction:=

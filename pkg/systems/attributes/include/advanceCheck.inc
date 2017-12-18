@@ -144,8 +144,8 @@ function IncreaseVitalPoints(who)
 	var chardata  := GetObjProperty(who, "chardata");
 	var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
 
-	var increase_hitpoint := RandomDiceRoll("1d{}".format(class_cfg.HITS)) + GetBonusAttr(AP_GetTrueStat(who, CONSTITUTION));
-	var increase_manapoint := RandomDiceRoll("1d{}".format(class_cfg.MANA)) + GetBonusAttr(AP_GetTrueStat(who, INTELLIGENCE));
+	var increase_hitpoint := RandomDiceRoll("1d{}+5".format(class_cfg.HITS/2)) + GetBonusAttr(AP_GetTrueStat(who, CONSTITUTION));
+	var increase_manapoint := RandomDiceRoll("1d{}+5".format(class_cfg.MANA/2)) + GetBonusAttr(AP_GetTrueStat(who, INTELLIGENCE));
 	// var increase_stampoint := RandomDiceRoll("1d{}".format(class_cfg.STAM)) + GetBonusAttr(AP_GetTrueStat(who, DEXTERITY));
 
 	chardata.hitpoints  += increase_hitpoint;
@@ -153,4 +153,5 @@ function IncreaseVitalPoints(who)
 	// chardata.stampoints += increase_stampoint;
 
 	SetObjProperty(who, "chardata", chardata);
+   RecalcVitals(who);
 endfunction

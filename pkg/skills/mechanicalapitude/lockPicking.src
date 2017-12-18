@@ -12,13 +12,7 @@ include "include/say";
 include ":charactercreation:habilidades";
 include ":gumps:yesno";
 
-var stones := array{6255, 6250, 6251, 6252, 6253, 6254, 6249, 6256};
-var stands := array{"", "", "", "", ""};
-var last   := array{};
-var enigma := array{};
-
 program skill_lockpicking( me, lockpick )
-
 	EraseObjProperty(me, "IsMeditating");
 	EraseObjProperty(me, "HealTimer");
 	var inhidden;

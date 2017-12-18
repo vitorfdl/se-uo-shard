@@ -24,8 +24,6 @@ include "include/say";
 include "include/dungeons";
 include "include/damage";
 include "include/utils";
-// include ":charactercreation:habilidades";
-// include ":tn:cooldown";
 include ":timedscripts:timedScripts";
 include ":combat:settings";
 include ":fls_core:fls_characters";
@@ -98,6 +96,8 @@ program Attack(params)
 		return 1;
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
+   elseif ( attacker.hidden && attacker.isA(POLCLASS_NPC))
+      attacker.hidden := 0;
 	endif
 
 	var attack_chance := GetAttackerChance(attacker, defender);
@@ -122,6 +122,10 @@ program Attack(params)
 	endif
 
 	PlayAttackAnimation(attacker, wpn_a_elem);
+
+   if (wpn_a_elem.WeaponType)
+      attacker.SetAchievement(wpn_a_elem.WeaponType, 1);
+   endif
 
 	//ACERTOU
 	if ( attack_chance > defender_CA )

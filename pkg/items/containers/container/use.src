@@ -6,18 +6,24 @@ use cfgfile;
 
 include ":keys:key";
 include ":traps:traps";
+include "include/say";
 
 program useContainer(mobile, container)
 	var item_cfg := ReadConfigFile(":*:itemdesc");
 	item_cfg := item_cfg[container.graphic];
 	
 	if ( mobile.cmdlevel )
-		SendSysMessage(mobile, "Command level is present - container is skipping locks, traps, etc.");
+		SendSysMessageEx(mobile, "Command level is present - container is skipping locks, traps, etc.");
 		SendViewContainer(mobile, container);
+   elseif (who.warmode && GetObjProperty(item, "breakable") && ContainerIsLocked(mobile, container) && Distance(who, item) <= 1)
+      start_script(":tn:destroyitems", {who, container});
+      return 0;
 	elseif ( ContainerIsLocked(mobile, container) ) 
 		return 0;
 	elseif ( GetObjProperty(container, "TrapList") != error )
-		RunTraps(container, mobile);
+		if (RunTraps(container, mobile))
+         PrintText(mobile, "*dispara armadilha*");
+      endif
 		return 0;
 	endif
 	
@@ -35,10 +41,10 @@ function ContainerIsLocked(mobile, container)
 		// Nothing to worry about.
 		return 0;
 	elseif ( KP_HasKeyForLock(mobile, container) )
-		SendSysMessage(mobile, "Você abre o container com a chave.");
+		SendSysMessageEx(mobile, "Você abre o container com a chave.");
 		return 0;
 	else
-		PrintTextAbovePrivate(container, "*Isto esta trancado.*", mobile);
+		PrintText(container, "*Isto esta trancado.*", mobile);
 		return 1;
 	endif
 endfunction

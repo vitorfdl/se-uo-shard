@@ -65,7 +65,6 @@ endfunction
 
 function Loot_CreateItem(container, line, type := 0)
 	var parsed := Loot_ParseString(line);
-   print(parsed);
 	if ( Loot_ChanceCheck(parsed.chance) )
 		var i;
 		for ( i:=1; i<= parsed.amount; i:=i+1 )
@@ -81,7 +80,6 @@ function Loot_CreateItem(container, line, type := 0)
 					SetName(item, item.desc+" [danificado]");
 				endif
 			elseif (type == "recipe")
-            print("recipe "+parsed);
 				var objtype := parsed.name;
 
 				if (!Hex(objtype))

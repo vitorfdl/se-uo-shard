@@ -53,6 +53,10 @@ function possess (me, npc)
 	oldbody.frozen := 1;
 	me.Disable("invul");
 	me.Disable("losany");
+
+   // if (!(cint(npc.graphic) in array{400, 401, 600,601}))
+   //    SetObjProperty(who, "dicedmg", )
+   // endif
 	
 	if ((GetObjProperty(npc,"npchero"))!=error)
 		SetObjProperty(me,"npchero",1);
@@ -125,7 +129,9 @@ function unpossess(me, freeze :=1)
 	else
 		oldnpc.frozen := 1;
 	endif
-	
+
+   EraseObjProperty(me, "metamorfose");
+
 	AP_RefreshVitals(me);
 	EraseObjProperty(me, "npchero");
 	EraseObjProperty(me, "oldmeserial");

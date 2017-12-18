@@ -142,7 +142,7 @@ endfunction
 function RunTraps(object, mobile)
 	var trap_list := GetObjProperty(object, "TrapList");
 	if ( trap_list == error )
-		return 1;
+		return 0;
 	endif
 	
 	foreach trap_info in ( trap_list )
