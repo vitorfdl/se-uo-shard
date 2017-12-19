@@ -33,17 +33,9 @@ exported function PartyMessageSpy( who, byref packet )
 			if (GetObjProperty(player, "PartySpyOn") == "on")
 				leader := splitwords(leader);
 				leader := leader[1];
-				if (GetGlobalProperty("onlyuni"))
-					SendSysMessageUNI(player, "[Party-"+leader+"]["+sender+"]: "+message_txt, 0x003e);
-				else
-					SendSysMessage(player, "[Party-"+leader+"]["+sender+"]: "+message_txt, _DEFAULT_TEXT_FONT , 0x003e);
-				endif
+            SendSysMessageEx(player, "[Party-"+leader+"]["+sender+"]: "+message_txt, _DEFAULT_TEXT_FONT , 0x003e);
 			elseif(GetObjProperty(player, "PartySpyOn") == leader)
-				if (GetGlobalProperty("onlyuni"))
-					SendSysMessageUNI(player, "[PT-SPY]["+sender+"]: "+message_txt, 0x003e);
-				else
-					SendSysMessage(player, "[PT-SPY]["+sender+"]: "+message_txt, _DEFAULT_TEXT_FONT , 0x003e);
-				endif
+            SendSysMessageEx(player, "[PT-SPY]["+sender+"]: "+message_txt, _DEFAULT_TEXT_FONT , 0x003e);
 			endif
 			
 		endif

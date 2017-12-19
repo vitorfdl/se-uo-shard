@@ -61,7 +61,7 @@ function CheckCharges(who, recipe, charges_to_learn)
 
       charge_list[already_learning].charges += charges;
       SetObjProperty(recipe, "learning", charge_list);
-      TS_StartCooldown(who, "learning_recipe", 60);
+      TS_StartCooldown(who, "learning_recipe", 60*30);
       return 0;
    endif
 
@@ -98,7 +98,6 @@ function LearnRecipe(who, recipe)
    var charges_to_learn := RecipeCharges(difficulty);
 
    if (CheckCharges(who, recipe, charges_to_learn))
-      print(type);
       if (type == "group" || type == "kit")
          var recipes := GetConfigStringArray(obj, "Recipe");
          foreach obj_type in recipes

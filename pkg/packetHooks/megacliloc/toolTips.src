@@ -294,11 +294,11 @@ exported function MegaCliloc( who, byref packet )
 
 		var pplmage := GetObjProperty(item, "magicwho"); //research
 		if ( pplmage != error)
-			if (who.serial in pplmage)
-				if (GetObjProperty(item, "pocaoname"))
-					xDesc += WHITE + GetObjProperty(item, "pocaoname");
-				endif
+         if (GetObjProperty(item, "pocaoname" && (who in pplmage || HaveFeat(who, "Noção Quimica")))
+            xDesc += WHITE + GetObjProperty(item, "pocaoname");
+         endif
 
+			if (who.serial in pplmage)
 				if (item.ismagicWeapon())
 					var charges := cint(GetObjProperty(item, "charges"));
 					xDesc += WHITE + "Cargas: {}<br>".format(charges);
@@ -346,6 +346,7 @@ exported function MegaCliloc( who, byref packet )
 						endif
 
 						xDesc += "<br>{}".format(GetSpellName(spell));
+                  sleepms(2);
 					endforeach
 				endif
 			endif

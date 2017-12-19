@@ -36,6 +36,7 @@ program mining(who)
 			i := i + 1;
 		endif
 		k := k + 1;
+      sleepms(2);
 	endforeach
 
 	var gump := GFCreateGump();
@@ -52,6 +53,7 @@ program mining(who)
 		GFAddButton(gump, 20, y+2, 2117, 2118, 1, 400+i);
 		i := i + 1;
 		y := y + 20;
+      sleepms(2);
 	endforeach
 
 	var input := GFSendGump(who, gump);

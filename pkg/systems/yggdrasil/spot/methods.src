@@ -141,6 +141,7 @@ exported function ForceSpawn( spot )
     foreach serial in (data.spawnpoints)
         var spawnpoint := SystemFindObjectBySerial(serial);
         spawnpoint.SpawnAll();
+        sleepms(2);
     endforeach
 endfunction
 
@@ -149,6 +150,7 @@ exported function ForceKill( spot )
     foreach serial in (data.spawnpoints)
         var spawnpoint := SystemFindObjectBySerial(serial);
         spawnpoint.KillAll();
+        sleepms(2);
     endforeach
 endfunction
 

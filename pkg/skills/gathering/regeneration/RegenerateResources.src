@@ -54,7 +54,7 @@ function UpOreAmounts()
 			data_file.DeleteElement(vein_serial);
 		endif
 	
-		sleep(1);
+		sleep(2);
 	endforeach
 	
 	//SysLog("Finished ore regeneration cycle.");
@@ -98,7 +98,7 @@ function UpMiscAmounts()
 				SetResource(resource_type, coordinate_info, resource_amount);
 			endif
 
-			sleepms(2);
+			sleepms(50);
 		endforeach
 
 		resources := coordinate_info.propnames();
@@ -108,7 +108,7 @@ function UpMiscAmounts()
 			data_file.DeleteElement(coordinate);
 		endif
 
-		sleep(1);
+		sleep(2);
 	endforeach
 
 	//SysLog("Finished mining-resources regeneration cycle.");

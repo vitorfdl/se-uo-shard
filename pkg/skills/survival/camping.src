@@ -46,12 +46,14 @@ program UseWood( who, wood )
 		var x := wood.x;
 		var y := wood.y;
 		var z := wood.z;
-                var itemnearby := ListItemsNearLocation( x, y, z, 8 );
+      var itemnearby := ListItemsNearLocation( x, y, z, 8 );
+
 		foreach item in itemnearby
 			if ( (item.graphic == 3555) )
 				SendSysMessageEx(who, "Já existe outro acampamento pronto por perto.", SSM_FAIL );
 				return;
 			endif
+         sleepms(2);
 		endforeach  
 
 		Detach();

@@ -20,7 +20,7 @@ program clericPowerWords(parms)
       EnableEvents( SYSEVENT_SPEECH, 1 );
 
       event := wait_for_event( 120 );
-      if (event && event.type == SYSEVENT_SPEECH && event.source ==  who && !who.dead)
+      if ( event && !who.dead && event.source ==  who && event.type == SYSEVENT_SPEECH)
          var cleric_list := GetObjProperty(who, "cleric_list");
          if (!cleric_list) cleric_list := array{}; endif;
          var auto := 1;
@@ -58,6 +58,6 @@ program clericPowerWords(parms)
             Start_Script(":magery:cast_spell", {who, spell_id, 0, 0, ":magery:config/cleric"});
          endif
       endif
-      sleepms(2);
+      sleepms(10);
    endwhile
 endprogram 

@@ -113,6 +113,7 @@ function CreateBookGump(book, can_read := 0)
 			pOY := 65;
 			pOX := 290;
 		endif
+      sleepms(2);
 	endforeach
 // End Page 1 Setup
 
@@ -160,6 +161,7 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 	var regkeys := spell_entry.reagents.keys();
 	foreach r in (regkeys)
 		spell_entry.description := "{}{} {}<br>".format(spell_entry.description, cstr( r ), cstr(spell_entry.reagents[cstr(r)]));
+      sleepms(2);
 	endforeach
 	spell_entry.description := "{}Mana: {}".format(spell_entry.description, spell_entry.mana);
 	if( TypeOf(spell_entry) == "Struct" )

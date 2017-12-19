@@ -1,0 +1,11 @@
+use os;
+
+include "include/say";
+include ":timedScripts:timedScripts";
+
+program magiaSilenciosa(param)
+   var who := param[1];
+   SetObjProperty(who, "#magiasilenciosa", 1);
+   SendSysMessageEx(who, "Sua próxima magia não executara gestos arcanos", SSM_INFO);
+   return 1;
+endprogram

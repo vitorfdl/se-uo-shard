@@ -21,6 +21,7 @@ function RemoveUsedSpells(who, byref cleric_list, byref available_slots)
          cleric_list.Erase(index);
          available_slots += spell.circle;
       endif
+      sleepms(2);
    endforeach
 
    SetObjProperty(who, "cleric_list", cleric_list);

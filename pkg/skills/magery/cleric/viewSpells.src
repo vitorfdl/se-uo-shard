@@ -95,6 +95,7 @@ function CreateClericGump(who, cleric_list, available_slots)
       endif
 
       y += 26;
+      sleepms(2);
    endforeach
 
    return GFSendGump(who, gump);

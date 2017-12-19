@@ -1,0 +1,30 @@
+use os;
+
+include "include/say";
+include ":timedScripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+include ":fls_core:fls_characters";
+
+program mestreLaminas(param)
+   var who := param[1];
+   if (!who.shield)
+      SendSysMessageEx(who, "Você precisa estar equipado com um escudo para usar este talento.");
+      return;
+   endif
+
+   PrintText(who, "*bate no escudo*")
+	if (CheckGender(who) == 2)
+		PlaySoundEffect( who, 0x339 );
+	else
+		PlaySoundEffect( who, 0x44B );
+	endif
+
+	PerformAction(who, ANIM_HIT);
+   var nearby := ListMobilesNearLocation( who.x ,who.y, who.z, 8);
+   foreach char in nearby
+      ghaiaAttack(who, char);
+      sleepms(2);
+   endforeach
+
+   return 1;
+endprogram

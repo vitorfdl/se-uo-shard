@@ -3,7 +3,7 @@ use os;
 use util;
 
 program andou(quem)
-var galera := ListMobilesNearLocation( cint(quem.x), cint(quem.y), cint(quem.z), 18);
+   var galera := ListMobilesNearLocation( cint(quem.x), cint(quem.y), cint(quem.z), 18);
 	PlaySoundEffect(quem, 0x567);
 	printtextabove(quem, "*gesticula ferozmente*");
 	foreach criolo in galera

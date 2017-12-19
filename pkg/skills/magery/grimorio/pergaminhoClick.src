@@ -47,6 +47,7 @@ program usaPergaminho(who, scroll)
 		var name_array := array{};
 		foreach key in keys
 			name_array.append(GetConfigString(FindconfigElem(spellcfg, key), "Name"));
+         sleepms(2);
 		endforeach
 
 		var prompt := RadioGump(who, 210, 100+(name_array.size() * 20), "Escolha a Magia:", name_array);

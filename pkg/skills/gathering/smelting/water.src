@@ -93,10 +93,11 @@ function EsfriarLiga(user, item)
              var hasbottle:= 0;
               foreach item in EnumerateItemsInContainer(user.backpack)
                 if(item.objtype == UOBJECT_EMPTY_BOTTLE)
-                SubtractAmount(item, 1);
-                hasbottle := 1;
-                break;
+                  SubtractAmount(item, 1);
+                  hasbottle := 1;
+                  break;
                 endif
+                sleepms(2);
               endforeach
               if (hasbottle)
                 CreateItemInBackpack(user, ingot, amt);
@@ -137,6 +138,7 @@ function DeterminaLiga(metals, who)
 	      25347: metais.append("sinque");
 	      25348: metais.append("figin");	
            endcase
+                sleepms(2);
         endforeach
 
 

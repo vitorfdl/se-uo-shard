@@ -39,6 +39,7 @@ program core_skillWin(who)
 	endif
 	
 	skillWindow(who);
+   return 0;
 endprogram
 
 function skillWindow(who)
@@ -144,6 +145,7 @@ function AttrGump(who, byref gump)
 		endif
 
 		attr_y += 24;
+      sleepms(2);
 	endforeach
 
 	if (attr_points)

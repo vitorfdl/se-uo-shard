@@ -87,6 +87,7 @@ program destroyitems(parms)
             endif
             sleepms(2);
          endforeach
+         SendSysMessageEx(who, "Itens do container foram perdidos ao quebra-lo.", SSM_FAIL);
       endif
    endif
 endprogram

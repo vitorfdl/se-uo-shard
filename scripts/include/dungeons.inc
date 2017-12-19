@@ -34,6 +34,7 @@ function HasPlayerNear(x, y, realm := 0)
 		if (mob.acctname ) //se for player e priv de player
 			return 1;
 		endif
+      sleepms(2);
 	endforeach
 	return 0;
 endfunction

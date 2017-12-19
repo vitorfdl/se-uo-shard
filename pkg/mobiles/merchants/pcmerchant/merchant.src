@@ -430,7 +430,7 @@ function DoWithdraw(npc, player)
       return PrintText(npc, "Desculpe, parece que nada vendeu ainda.");
    endif
 
-   PrintText(npc, "Ah, aqui estão os lucros de sua venda");
+   PrintText(npc, "Aqui estão os lucros de sua venda");
 	foreach item in account
 		var withdraw := CreateItemInBackPack(player, item, item.amount);
 		if( withdraw == error )

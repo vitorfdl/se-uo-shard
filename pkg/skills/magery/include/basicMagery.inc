@@ -69,6 +69,7 @@ function EquipmentCheck(who)
 		if (elem && elem.Pericia && !HaveSkill(who, elem.Pericia))
 			return 0;
 		endif
+      sleepms(2);
 	endforeach
 
 	return 1;

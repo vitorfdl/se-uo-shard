@@ -40,13 +40,14 @@ function ScrollCreate(scroll)
    var objtype := GetObjProperty(scroll, "objtype");
    if (objtype)
       foreach cfg_name in (recipes_list.keys())
-      var cfg := recipes_list[cfg_name];
-      if (FindConfigElem(cfg, objtype))
-         cfg_name["2"] := "";
-         scroll.graphic := recipe_graphic[cfg_name];
-         SetObjProperty(scroll, "pericia", cfg_name);
-         break;
-      endif
+         var cfg := recipes_list[cfg_name];
+         if (FindConfigElem(cfg, objtype))
+            cfg_name["2"] := "";
+            scroll.graphic := recipe_graphic[cfg_name];
+            SetObjProperty(scroll, "pericia", cfg_name);
+            break;
+         endif
+         sleepms(2);
       endforeach
    endif
 

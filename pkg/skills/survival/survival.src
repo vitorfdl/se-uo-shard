@@ -210,6 +210,7 @@ function ItemTrackGump(who, items)
 		endif
 		temcoisa := 1;
 	   endif
+      sleepms(2);
 	endforeach
 
 	if (!temcoisa)
@@ -456,6 +457,7 @@ if (CheckGender(who))
 				return "Humanoide com Calça de Placas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
 			endif
 		endif
+      sleepms(2);
 	endforeach
 		if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
 			return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";
@@ -517,6 +519,7 @@ function BandVerify(who, mobname, mobontrack)
 				x := x + 1;
 			endif
 		endif
+      sleepms(2);
 	endforeach
 
 	if (x >= 7)

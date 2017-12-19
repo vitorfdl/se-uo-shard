@@ -40,6 +40,7 @@ function RemoveSpotGroupData(name)
         var spot := SystemFindObjectBySerial(serial);
         SetObjProperty(spot, "GM_FLAG", 1);
         DestroyItem(spot);
+        sleepms(2);
     endforeach
     
     df.DeleteElement(name);
@@ -51,6 +52,7 @@ function SetSpotGroupData(name, spotGroup)
     if (spotGroup.spawngroup_list)
         foreach entry in (spotGroup.spawngroup_list)
             entry := ModelSpawnGroupData(entry);
+            sleepms(2);
         endforeach
         elem.SetProp("spawngroup_list", spotGroup.spawngroup_list);
     endif

@@ -9,6 +9,7 @@ program trash(who, item)
       if(trashitem.container == item)
         DestroyItem(trashitem);
       endif
+      sleepms(2);
     endforeach
   sleep(300);
   endwhile

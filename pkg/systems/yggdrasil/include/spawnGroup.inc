@@ -60,6 +60,7 @@ function SetSpawnGroupData(name, data := struct{})
     if (data.mob_list)
         foreach entry in (data.mob_list)
             entry := ModelMobListData(entry);
+            sleepms(2);
         endforeach
         elem.SetProp("mob_list", data.mob_list);
     endif

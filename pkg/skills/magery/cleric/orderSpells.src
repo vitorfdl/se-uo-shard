@@ -34,6 +34,7 @@ program orderSpells(who, item)
          slots_used += cint(spell.circle * spell_found.size());
          foreach i in spell_found
             cleric_list[spell_found].circle := spell.circle;
+            sleepms(2);
          endforeach
       endif
 
@@ -52,6 +53,7 @@ program orderSpells(who, item)
       endif
       
       spell_list.append(spell);
+      sleepms(2);
    endforeach
 
    var available_slots := cleric_slots - slots_used;

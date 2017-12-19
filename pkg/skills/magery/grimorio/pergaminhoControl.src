@@ -40,6 +40,7 @@ function scrollCreate(item)
 		if (spelllvl == lvl && spelltype == type)
 			randomspells.append(key);
 		endif
+      sleepms(2);
 	endforeach
 
 	var spell_id := randomspells.randomEntry();

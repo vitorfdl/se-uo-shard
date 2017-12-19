@@ -50,6 +50,7 @@ program skinning(parms)
 		SendSysMessage( who, "Você não pode pegar mais coisas desse corpo." );
 		foreach thing in EnumerateItemsInContainer(cadaver)
 			MoveObjectToLocation(thing, cadaver.x, cadaver.y, cadaver.z, cadaver.realm, MOVEOBJECT_FORCELOCATION);
+         sleepms(2);
 		endforeach
 		//DestroyItem(cadaver);
 		return;
@@ -132,6 +133,7 @@ program skinning(parms)
 					found := 1;
 				endif
 				i := i + 1;
+            sleepms(2);
 			endforeach
 			if (found)
 				ExpGain(who, "minor");

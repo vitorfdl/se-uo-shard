@@ -218,12 +218,14 @@ exported function FillQueue(spawnpoint)
    foreach item in spawn_queue
       types[item.type]   := cint(types[item.type]) + 1;
       levels[item.level] := cint(levels[item.level]) + 1;
+      sleepms(2);
    endforeach
 
    // Remove dead monsters and set the property
    index_rem.Reverse(); //cheat for pol
    foreach index in index_rem
       monsters.erase(index);
+      sleepms(2);
    endforeach
    SetObjProperty(spawnpoint, "monsters", monsters);
 
@@ -424,6 +426,7 @@ exported function KillAll(spawnpoint)
    
    foreach m in monsters
       KillSpawn(spawnpoint, (monsters.size()+1) - _m_iter);
+      sleepms(2);
    endforeach
 
    SetObjProperty(spawnpoint, "monsters", array{});

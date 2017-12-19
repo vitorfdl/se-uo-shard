@@ -190,6 +190,7 @@ function HaveSkill(mobile, skill)
 		if (AP_GetTrueSkill(mobile, name) == 1)
 			return 1;
 		endif
+      sleepms(2);
 	endforeach
 
 	return 0; //n tem skill

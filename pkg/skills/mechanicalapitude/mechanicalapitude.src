@@ -44,6 +44,7 @@ program skillremoveTrap(who)
 				SendSysMessageEx(who, "Você não sabe desarmar essa armadilha.", SSM_FAIL);
 				return 1;
 			endif
+         sleepms(2);
 		endforeach
 
 		PrintText(who, "*desarmando armadilha*");

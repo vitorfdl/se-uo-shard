@@ -6,7 +6,7 @@ use os;
 include ":attributes:attributes";
 
 
-Program attributeCache()
+program attributeCache()
 	var data_elem := AP_GetAttributeDataElem("Categories");
 	
 	// Clear out old cache

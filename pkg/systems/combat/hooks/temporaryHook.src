@@ -194,7 +194,9 @@ function GetAttackerChance(attacker, defender)
    endif
 
 	if (!IsFacing(defender, attacker.x, attacker.y))
-		dice_gain += 1;
+      if (!HaveFeat(defender, "Reflexos Rápidos"))
+		   dice_gain += 1;
+      endif
 		if (!defender.npctemplate)
 			defender.SetAchievement("backstabed", 1);
 		endif
@@ -204,6 +206,7 @@ function GetAttackerChance(attacker, defender)
 		endif
 	endif
 
+   dice_gain += GetAttackerFeatPenalty(attacker, defender);
 
 	var attribute := "Strength";
 	var bonus := 0;
@@ -221,6 +224,8 @@ function GetAttackerChance(attacker, defender)
 		endif
 		bonus := cint(wpn_a_elem.hitbonus);
 	endif
+
+   bonus += GetAttackerFeatBonus(attacker);
 	
 	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
 	return dice;
@@ -423,4 +428,37 @@ function FacingChecks(attacker, defender)
 	endif
 
 	return retval;
+endfunction
+
+function GetAttackerFeatPenalty(attacker, defender)
+   var bonus := 0;
+   if (defender.acctname && attacker.npctemplate) //mob vs player
+      var mobiles_near := ListMobilesNearLocationEx(defender.x, defender.y, defender.z, 2, LISTEX_FLAG_PLAYERS_ONLY);
+      foreach mob in mobiles_near
+         if (HaveFeat(mob, "Presença Imponente"))
+            bonus -= 1;
+            break;
+         endif
+      endif
+   endif
+
+   return bonus;
+endfunction
+
+function GetAttackerFeatBonus(attacker)
+   var bonus := 0;
+
+   if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))
+      bonus += 1;
+   elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+      bonus += 1;
+   elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+      bonus += 1;
+   elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+      bonus += 1;
+   elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+      bonus += 1;
+   endif
+      
+   return bonus;
 endfunction

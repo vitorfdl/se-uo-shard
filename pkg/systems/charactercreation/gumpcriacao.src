@@ -45,11 +45,13 @@ program createchar(who)
 			if (item != who.backpack && item.layer != LAYER_HAIR && item.layer != LAYER_BEARD)
 				DestroyItem(item);
 			endif
+         sleepms(2);
 		endforeach
 
 		equiped := enumerateitemsincontainer(who.backpack);
 		foreach item in equiped
 			DestroyItem(item);
+         sleepms(2);
 		endforeach
 		equiped := 0;
 	endif
@@ -59,7 +61,7 @@ program createchar(who)
 	//zeras as skills
 	foreach attrib in AP_ListAttributesByType()
 		AP_SetTrueSkill(who, attrib, 0);
-		sleepms(10);
+		sleepms(2);
 	endforeach
 
 	//Gumps
@@ -94,10 +96,9 @@ program createchar(who)
 	chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
 
 	foreach skill in (chardata.skills)
-		skill[" "] := "_";
-		skill[" "] := "_";
-		skill[" "] := "_";
+      xkill := StrReplace(skill, " ", "_" );
 		AP_SetTrueSkill(who, skill, 1);
+      sleepms(2);
 	endforeach
 
 	if (chardata.raca == "Humano")
@@ -324,6 +325,7 @@ function RaceGump(who, byref  chardata)
 
 			chardata.nome := first_name;
 			chardata.nomefinal := last_name;
+         sleepms(2);
 		endforeach
 	else
 		RaceGump(who, chardata);
@@ -696,6 +698,7 @@ function SetProfessions(who, chardata);
 
 	foreach skill in skills
 		AP_SetTrueSkill(who, skill, 1);
+      sleepms(2);
 	endforeach
 
 	foreach item in items
@@ -734,6 +737,7 @@ function SetProfessions(who, chardata);
 
    foreach book in books
       SysBook_CreateBook(who.backpack, book);
+      sleepms(2);
    endforeach
 endfunction
 

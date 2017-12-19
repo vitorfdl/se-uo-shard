@@ -98,6 +98,7 @@ function SendRoomGump(npc, player)
 			break;
 		endif
 		j := j + 1;
+      sleepms(2);
 	endforeach
 
 	GFAddButton(gump, 20, 33, 2117, 2118, GF_CLOSE_BTN,  200);
@@ -164,6 +165,7 @@ function SendRoomGump(npc, player)
 		endif
 		y_pos := y_pos + 15;
 		i := i + 1;
+      sleepms(2);
 	endforeach
 		
 	var input := GFSendGump(player, gump);

@@ -33,9 +33,9 @@ program skill_Stealth( who )
 		endif
 	endif*/
 
-	var base_steps := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE) + 2);
-	if (base_steps < 3)
-		base_steps := 3;
+	var base_steps := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE));
+	if (base_steps < 0)
+		return SendSysMessageEx(who, "Você é incapaz de se mover furtivamente.", SSM_INFO);
 	endif
 
 	var advantage := 0;
@@ -55,6 +55,7 @@ program skill_Stealth( who )
 			SendSysMessageEx(who, "Você ganhou " + bonus + " passos por sua furtividade aprimorada", SSM_INFO);
 		endif
 		*/
+      who.setAchievement("stealth", 1);
 		SendSysMessageEx(who, "Você esta se movendo silenciosamente.", SSM_INFO);
 		SetObjProperty(who, "#steathsteps", atual_steps + 1);
 		return 1;

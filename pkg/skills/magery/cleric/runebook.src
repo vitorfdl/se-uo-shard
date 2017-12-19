@@ -99,6 +99,7 @@ function CreateBookGump(book, can_read := 0)
 			pOY := 65;
 			pOX := 290;
 		endif
+      sleepms(2);
 	endforeach
 // End Page 1 Setup
 
@@ -144,6 +145,7 @@ function GenerateSide(byref book_gump, rune_list, i, side, byref pOX, byref pOY,
 
 	foreach r in (rune_entry.usos)
 		rune_entry.desc := "{}{}<br>".format(rune_entry.desc, cstr( r ));
+      sleepms(2);
 	endforeach
 
 	if( TypeOf(rune_entry) == "Struct" )
@@ -262,6 +264,7 @@ function WriteRune(who, rune_entry)
 		else
 			SetObjProperty(item, set, value);
 		endif
+      sleepms(2);
 	endforeach
 
 	ExpGain(who,roll, rune_entry.diff);

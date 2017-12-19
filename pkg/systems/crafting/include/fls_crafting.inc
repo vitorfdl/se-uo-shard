@@ -261,7 +261,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 	while (counter < amt)
 		counter := counter + 1;
 		if ( (who.x != initialX) || (who.y != initialY) )
-			SendSysMessageEx(who, "você parou de se concentrar no que estava fazendo.", SSM_FAIL);
+			SendSysMessageEx(who, "Você parou de se concentrar no que estava fazendo.", SSM_FAIL);
 			return 1;
 		endif
 
@@ -343,8 +343,8 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			CraftLockable(who, theitem);
 
 			ExpGain(who, recipe.difficulty, check);
-			who.SetAchievement("craft_".format(lower(craft_skill)), 1);
-			SendSysMessageEx(who, "você criou o item o colocou na mochila.", SSM_INFO);
+			who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
+			SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
 		
 			// TODO: Gravar feitos para talentos
 			if (theitem.isa(POLCLASS_WEAPON) || theitem.isa(POLCLASS_ARMOR))	

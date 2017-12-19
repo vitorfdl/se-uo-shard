@@ -31,7 +31,7 @@ program canInsert(mobile, container, item, move_type, insert_type, adding_item, 
 			endif
 
 			if (mobile.frozen || mobile.paralyzed)
-				SendSysMessage(mobile, "Você esta paralizado.");
+				SendSysMessageEx(mobile, "Você está paralizado.");
 				return 0;
 			endif
 		endif

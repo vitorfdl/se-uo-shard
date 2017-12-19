@@ -81,6 +81,7 @@ function createGump(who, recipes, params)
         foreach filter in (params.filter)
             GFAddButton(gump, 343, 83, filter.button, 40015, GF_CLOSE_BTN, BTN_FILTER+_filter_iter);
             GFTextLine(gump, 372, 83, 1153, filter.name);
+            sleepms(2);
         endforeach
     endif
     
@@ -162,9 +163,11 @@ function createGump(who, recipes, params)
             GFTextLine(gump, m_x, m_y, color, material_text);
             // GFHTMLArea(gump, m_x, m_y, 90, 20, material_text);
             m_y += 14;
+            sleepms(2);
         endforeach
 
         r_y += 50;
+        sleepms(2);
     endforeach
 
 	return GFSendGump(who, gump);

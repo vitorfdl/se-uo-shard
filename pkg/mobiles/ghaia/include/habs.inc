@@ -122,6 +122,12 @@ function RajadaAcida(dmg, targ, difficulty)
       sleepms(50);
    endforeach
 
+   if (rollResistDice(targ, DEXTERITY) <= difficulty)
+      DamageFLS(targ, dmg, DMG_POISON, me);
+   else
+      DamageFLS(targ, dmg/2, DMG_POISON, me);
+   endif
+
    return 1;
 endfunction
 

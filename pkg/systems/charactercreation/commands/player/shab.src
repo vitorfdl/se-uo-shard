@@ -107,6 +107,7 @@ function ProccessHab(who, hab)
 		if (!people.npctemplate && TemHabilidade(people, "Observar Movimentos"))
 			PrintTextPrivate(who, "*Habilidade Ativada*", people, SSM_HELPFUL);
 		endif
+      sleepms(2);
 	endforeach
 
 	if (duracao == "1 ataque")
