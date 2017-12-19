@@ -32,6 +32,12 @@ program HandleMerchant(params)
 endprogram
 
 function HandleItemGiven(npc, player, item)
+   var items_inside := GetSellerAccount(npc, player.serial);
+   if (items_inside.size() >= 5)
+      PrintText(npc, "Desculpe, mas já estou vendendo muitas mercadorais sua.");
+      return;
+   endif
+
 	var onlyplayersells := GetObjProperty(npc, "oneplayersells");
 	if ( (cint(GetObjProperty(npc, "onlygmsells")) == 1 ) && player.cmdlevel < 3 )
 		SendSysMessageEX(player, "Você não pode colocar itens a venda nesse vendedor.",SSM_FAIL);
@@ -60,7 +66,9 @@ function HandleSpeech(npc, player, text)
 	text := lower(text);
    if (text["artigo"] || text["compra"] || text["ver"])
       while(!canceled)
-			PrintText(npc, "O que deseja comprar?");
+         if (!player.concealed)
+			   PrintText(npc, "O que deseja comprar?");
+         endif
          var input := SendItemView(npc, player);
          if (!input[0])
             break;
@@ -73,6 +81,8 @@ function HandleSpeech(npc, player, text)
             break;
          endif
       endwhile
+   elseif (text["minhas vendas"])
+      DoWithdraw(npc, player);
    endif
 endfunction
 
@@ -183,17 +193,19 @@ function removeItemMerchant(npc, player, input)
 		endif
 		ItensRevogados.Insert(cost.seller, 1);
 		if (ItensRevogados == error)
-			AI_Speak(npc, "Error" + ItensRevogados);
+			Printtext(npc, "Error" + ItensRevogados);
 		else
 			SetObjProperty(npc, "ItensRevogados", itensRevogados);
 		endif
 		
-		AI_Speak(npc, "Aqui esta o objeto confiscado, avisarei o dono assim que ele aparecer por aqui.");
+      if (!player.concealed)
+		   Printtext(npc, "Aqui esta o objeto confiscado, avisarei o dono assim que ele aparecer por aqui.");
+      endif
 	else
 		if ( !YesNo(player, "Você deseja mesmo pegar este item de volta?") )
 			return;
 		endif
-		AI_Speak(npc, "Certo. Aqui esta seu produto.");
+		Printtext(npc, "Certo. Aqui esta seu produto.");
 		
 	endif
 
@@ -204,7 +216,7 @@ function removeItemMerchant(npc, player, input)
 		if ( purchase == error )
 			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
 		else
-			AI_Speak(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 		endif
 	endif
 endfunction
@@ -224,7 +236,7 @@ function DoPurchase(npc, player, input)
 	var owed := cost.cost_amt;
 	var pay_list := array{};
 	repeat
-		SendSysMessage(player, "Escolha "+cost_desc+" que você quer usar para pagar. Você deve mais ["+owed+"].");
+		SendSysMessageEx(player, "Escolha "+cost_desc+" que você quer usar para pagar. Você deve mais ["+owed+"].");
 		var targ := Target(player);
 		if ( !targ )
 			SendSysMessage(player, "Cancelado", SSM_INFO);
@@ -286,7 +298,7 @@ endfunction
 // 	var selling := info[2];
 // 	var cost_desc := AddArticle(GetName(cost.cost_type));
 	
-// 	AI_Speak(npc, "Certo. Aqui esta seu produto.");
+// 	Printtext(npc, "Certo. Aqui esta seu produto.");
 // 	RemoveItemForSale(npc, input);
 // 	var purchased := CreateItemInBackPack(player, selling, selling.amount);
 // 	if ( purchased == error )
@@ -294,7 +306,7 @@ endfunction
 // 		if ( purchased == error )
 // 			SendSysMessage(player, "Error - Unable to create item! ->"+purchased.errortext);
 // 		else
-// 			AI_Speak(npc, "Vou deixar sua compra aqui no chao.");
+// 			Printtext(npc, "Vou deixar sua compra aqui no chao.");
 // 		endif
 // 	endif
 // endfunction
@@ -303,7 +315,7 @@ endfunction
 function AddItemToSell(npc, player, item)
    var items_sold := GetItemsSoldList(npc);
    if (items_sold.size() >= 15)
-      PrintText(npc, "Desculpe, não posso vender mais coisas no momento. Venha outra hora.");
+      return PrintText(npc, "Desculpe, não posso vender mais coisas no momento. Venha outra hora.");
    endif
 
 	var gump := GFCreateGump();
@@ -354,6 +366,10 @@ function AddItemToSell(npc, player, item)
 	infinite := GFExtractData(input, infinite);
 	var dezperc := CInt(cost_amt * 0.1);
 	var desc := "";
+
+   if (dezperc <= 1)
+      dezperc := 1;
+   endif
 	// var desc := RequestGump(player, "Entre com uma pequena descriçao do produto.", "Isso é opcional", "", 1);
 	// if ( !desc )
 	// 	desc := "";
@@ -361,7 +377,7 @@ function AddItemToSell(npc, player, item)
 	// 	desc := desc[0,300]+"...";
 	// endif
 
-	if (player.cmdlevel < 3)
+	if (player.cmdlevel < 3 && dezperc != 0)
 		var pay := 0;
 		do
 			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda. Pressione ESC para cancelar.", SSM_REQUEST);
@@ -392,12 +408,41 @@ function AddItemToSell(npc, player, item)
 	
 	var result := AddItemForSale(npc, player, item, cost_type, desc, cost_amt, "", infinite, 0);
 	if ( result != error )
-		PrintText(npc, "Tudo certo. Colocarei seu item a venda.");
+      if (!player.concelaed)
+		   PrintText(npc, "Tudo certo. Colocarei seu item a venda.");
+      endif
 		SendSysMessageEx(player, "O item foi adicionado com sucesso.", SSM_FAIL);
 		return 1;
 	endif
 
-	PrintText(npc, "Me desculpe mas não poderei vender isto para você, tome seu dinheiro de volta.", SSM_FAIL);
+   if (!player.concelaed)
+	   PrintText(npc, "Me desculpe mas não poderei vender isto para você, tome seu dinheiro de volta.", SSM_FAIL);
+   endif
 	CreateItemInBackpack(player, MOEDAS, dezperc);
 	SendSysMessageEx(player, "Error =>"+result.errortext);
+endfunction
+
+function DoWithdraw(npc, player)
+	var data_elem := GetPaymentsDataElem(Hex(npc.serial));
+	var account := data_elem.GetProp(Hex(player.serial));
+   
+   if (!account.size())
+      return PrintText(npc, "Desculpe, parece que nada vendeu ainda.");
+   endif
+
+   PrintText(npc, "Ah, aqui estão os lucros de sua venda");
+	foreach item in account
+		var withdraw := CreateItemInBackPack(player, item, item.amount);
+		if( withdraw == error )
+			withdraw := CreateItemAtLocation(player.x, player.y, player.z, item, item.amount);
+			if ( withdraw == error )
+				SendSysMessage(player, "Error - Unable to create item! ->"+withdraw.errortext);
+			else
+				PrintText(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
+			endif
+		endif
+		sleepms(2);
+	endforeach
+
+	data_elem.EraseProp(Hex(player.serial));
 endfunction

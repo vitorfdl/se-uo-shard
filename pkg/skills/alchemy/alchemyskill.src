@@ -27,8 +27,9 @@ program alchemy(who)
 
 	PrintText(who, "*analisando um frasco*");
    var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, ALQUIMIA);
-   if (15 > 0) //SkillCheck(who, PESQUISA, -1)
+   if (roll < 15) //SkillCheck(who, PESQUISA, -1)
       SendSysMessageEx(who, "Você não esta certo..", SSM_FAIL);
+      return;
    endif
       
    var cfg := ReadConfigFile(":alchemy:itemdesc");
@@ -44,8 +45,11 @@ program alchemy(who)
       whos := array;
    endif
    if ( !(who.serial in whos))
-      whos.append(who.serial) ;
+      whos.append(who.serial);
       SetObjProperty(item, "magicwho", who);
    endif
+   var backup := GetAmount(item);
+   SubtractAmount(item, backup-1);
    SetName(item, item.desc);
-endif
+   AddAmount(item, backup-1);
+endprogram

@@ -17,10 +17,8 @@ include "include/objtype";
 include "include/sounds";
 
 program destroyitems(parms)
-
 	var who:=parms[1];
 	var item:=parms[2];
-	var arma:=parms[3];
 
 	/*
 		0x0f51	dagger
@@ -29,37 +27,22 @@ program destroyitems(parms)
 		0x0ec4	SkinningKnife 
 		11565	karda
 	*/
-   cfg := ReadConfigFile(":destroyable:destroyitems");
+   var cfg := ReadConfigFile(":destroyable:destroyitems");
 	var cfgitems := GetConfigStringKeys( cfg);
-	var elem := FindConfigElem( cfg, item.objtype);
+	var elem := FindConfigElem( cfg, item.graphic);
 
 	var normal := GetConfigString( elem, "normal");
 	var quebrado := GetConfigString( elem, "quebrado");
 	
-	if(Hex(item.graphic) == Hex(normal))
-		fBreak(who,item);
-		return 1;
-	elseif(Hex(item.graphic)==Hex(quebrado))
+	if( Hex(item.graphic) == Hex(quebrado) || item.desc["[Quebrado]"])
 		SendSysMessageEx(who,"Isto ja parece estar quebrado.",SSM_FAIL);
 		return 0;
-	endif
-
-endfunction
-
-function fBreak(who,item)
-   if(AP_GetVital(who, "Stamina") < 15)
+	elseif(AP_GetVital(who, "Stamina") < 15)
       SendSysMessageEx(who, "Você esta cansado demais.",SSM_FAIL);
       return 0;
-   elseif (item.desc["Quebrado"] || who.weapon.isBow() )
+   elseif ( who.weapon.isBow() )
       return 0;
    endif
-
-   var cfg      := ReadConfigFile(":destroyable:destroyitems");
-   var elem     := FindConfigElem( cfg, item.objtype);
-   var normal   := GetConfigString( elem, "normal");
-   var quebrado := GetConfigString( elem, "quebrado");
-   var hits     := cint(GetObjProperty(item,"hits"));
-   var porta := array{};
 
    var mobiles:= ListMobilesNearLocation( item.x, item.y, item.z, 20, LISTEX_FLAG_NPC_ONLY );
    var ev := struct;
@@ -72,6 +55,7 @@ function fBreak(who,item)
       sleepms(2);
    endforeach
       
+   var hits     := cint(GetObjProperty(item,"hits"));
    PlayAttackAnimation(who, who.weapon);
    sleepms(600);
    PlaySoundEffect(who, FLS_SFX_SKILL_LUMBERJACK);
@@ -86,6 +70,7 @@ function fBreak(who,item)
    endif
 
    if (hits <= 0)
+      SetObjProperty(item, "original_graphic", item.graphic);
       item.graphic:=Cint(quebrado);
       SetObjProperty(item,"hits",3);
       
@@ -95,7 +80,7 @@ function fBreak(who,item)
       if (item.isA(POLCLASS_CONTAINER))
          var container_items := EnumerateItemsInContainer(item);
          foreach citem in container_items
-            if (RandomInt(3) == 1)
+            if (RandomInt(100) < 35)
                MoveObjectToLocation(citem, item.x, item.y, item.z, item.realm, MOVEOBJECT_FORCELOCATION);
             else
                DestroyItem(citem);
@@ -104,4 +89,4 @@ function fBreak(who,item)
          endforeach
       endif
    endif
-endfunction
+endprogram

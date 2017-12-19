@@ -128,13 +128,13 @@ function LJ_GetWoodType(tree)
          0xce6:
                 return 0xee39; //salgueiro
          0xcf8:
-                return 0xee3a; //sipestre
+                return 0x1bdd; //sipestre
          0xcfb:
-                return 0xee3a;
+                return 0x1bdd;
          0xcfe:
-                return 0xee3a;
+                return 0x1bdd;
          0xd01:
-                return 0xee3a;
+                return 0x1bdd;
          default: 
                 return 0x1bdd;
     endcase
@@ -157,13 +157,13 @@ function LJ_GetWoodDif(tree)
          0xce6:
                 return 0xee39; //salgueiro
          0xcf8:
-                return 0xee3a; //sipestre
+                return 0x1bdd; //sipestre
          0xcfb:
-                return 0xee3a;
+                return 0x1bdd;
          0xcfe:
-                return 0xee3a;
+                return 0x1bdd;
          0xd01:
-                return 0xee3a;
+                return 0x1bdd;
          default: 
                 return 0x1bdd;
     endcase

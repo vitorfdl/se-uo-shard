@@ -31,8 +31,10 @@ program equipweapon(who, item)
 
 	set_critical(1);
 	var hostiles := ListHostiles( who );
-	if (hostiles.size() > 0 && !AP_ConsumeVital(who, STAMINA, 4))
-		return 0;
+	if (hostiles.size() > 0 || who.warmode)
+      if (!AP_ConsumeVital(who, STAMINA, 4))
+		   return 0;
+      endif
 	endif
 
 	var ret := SetEquipmentMods(who, item);

@@ -367,6 +367,11 @@ function ShowItemSoldInfo(byref gump, npc, player, input, special := 0)
 endfunction
 
 function AddItemToSell(npc, player)
+   var items_inside := GetSellerAccount(npc, player.serial);
+   if (items_inside >= 5)
+      PrintText(npc, "Desculpe, mas já estou vendendo muitas mercadorais sua.");
+      return;
+   endif
 
 	if ( (cint(GetObjProperty(npc, "onlygmsells")) == 1 ) && player.cmdlevel < 3 )
 		SendSysMessage(player, "Você não pode colocar itens a venda nesse vendedor.");
@@ -412,13 +417,11 @@ function AddItemToSell(npc, player)
 endfunction
 
 function AddItem(npc, player, targ)
-	
 	var cost_amt;
 	var cost_type;
 	var cost_name;
 	var specialProp := struct;
 	if (player.cmdlevel > 2)
-
 		AI_Speak(npc, "O que você gostaria que eu cobrasse por "+targ.desc+"?");
 		SendSysMessage(player, "Selecione um objeto para mostrar ao mercador o que você deseja cobrar por este item.");
 		cost_type := target(player);

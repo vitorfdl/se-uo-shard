@@ -178,7 +178,6 @@ endfunction
 
 
 function CheckForAnvil(who)
-
     foreach itm in ListItemsNearLocation(who.x, who.y, who.z, 1, who.realm);
         if(itm.objtype == UOBJ_ANVIL1 or itm.objtype == UOBJ_ANVIL2)
             return 1;

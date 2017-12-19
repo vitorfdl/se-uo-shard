@@ -10,6 +10,9 @@ function UseHabs()
    foreach hab in habs
       hab := SplitWords(hab);
       var hab_name     := hab[1];
+      if (GetCooldown(me, hab_name))
+         return;
+      endif
       var hab_cooldown := cint(hab[2]);
       var hab_dice     := hab[3];
       var hab_target   := hab[4];
@@ -28,10 +31,6 @@ function UseHabs()
 endfunction
 
 function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target := "Enemy", hab_special := 0)
-   if (GetCooldown(me, hab_name))
-      return;
-   endif
-
    if (hab_target == "Enemy")
       hab_target := me.opponent;
    elseif (hab_target == "RandomEnemy")
@@ -71,6 +70,8 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
 
    if (hab_cooldown && res)
       SetCooldown(me, hab_name, CInt(hab_cooldown));
+   else
+      SetCooldown(me, hab_name, 4);
    endif
 endfunction
 
@@ -93,6 +94,7 @@ function NPC_Agarrar(difficulty, targ)
 endfunction
 
 function NPC_Sneak()
+   PrintText(me, "*esconde*");
    me.hidden := 1;
    me.stealthsteps := 8;
    return 1;
@@ -106,14 +108,21 @@ function Roubar(targ)
    return 1;
 endfunction
 
-function RajadaAcida(damage, targ, difficulty)
+function RajadaAcida(dmg, targ, difficulty)
+   if (!targ || Distance(me, targ) < 3  || !CheckLineOfSight(me, targ))
+      return;
+   endif
+
+   PrintText(me, "*cospe ácido*");
    var phase_coords := GetCoordsInLine(me.x, me.y, targ.x, targ.y);
    foreach coord in phase_coords
-      var acid := CreateItemAtLocation(coord.x, coord.y, coord.z, 0xA370);
-      SetObjProperty(acid, "AcidDice", damage);
+      var acid := CreateItemAtLocation(coord.x, coord.y, me.z, 0xA370);
+      SetObjProperty(acid, "AcidDice", dmg);
       SetObjProperty(acid, "AcidDiff", difficulty);
-      sleepms(300);
+      sleepms(50);
    endforeach
+
+   return 1;
 endfunction
 
 // function throwItem(targ)

@@ -32,6 +32,8 @@ endfunction
 function CloseDistanceMeele( opponent )
 	if ( GetObjProperty(me, "noclosecombat") == 1)
 		return 0;
+   elseif (me.hidden && Distance(me, opponent) <= 1)
+      me.hidden := 0;
 	endif
 
 	var sleepdelay := 275 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
@@ -179,14 +181,11 @@ function Fight(opponent, alerted := 0)
       //    FireBreath(me, opponent, dist);
       // endif
 
-      // if ( (npccfgfile.WebRange) && (dist > npccfgfile.WebRange) )
-      //    SpitWeb(me, opponent, dist);
-      // endif
       if (me.my_template()["moriquendi"])
         var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
         if (last_autoheal <= ReadGameClock())
-          SetObjProperty(me, "demon_heal", ReadGameClock() + 10);
-          HealFLS(me, 20);
+          SetObjProperty(me, "demon_heal", ReadGameClock() + 4);
+          HealFLS(me, 25);
         endif
       endif
    

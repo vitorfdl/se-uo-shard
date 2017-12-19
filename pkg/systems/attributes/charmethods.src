@@ -99,27 +99,32 @@ exported function GetPoints(who)
 endfunction
 
 exported function SetPoints(who, points)
+   set_critical(1);
 	var chardata := GetObjProperty(who, "chardata");
 	chardata["attpoints"] := points;
 	SetObjProperty(who, "chardata", chardata);
 	return 1;
+   set_critical(0);
 endfunction
 
 exported function GetTalentPoints(who)
 	var chardata := GetObjProperty(who, "chardata");
 	var talentpoints := chardata["talentpoints"];
 	if (talentpoints == error || !talentpoints)
-		SetPoints(who, 0);
+		SetTalentPoints(who, 0);
 		talentpoints := 0;
 	endif
+
 	return talentpoints;
 endfunction
 
 exported function SetTalentPoints(who, points)
+   set_critical(1);
 	var chardata := GetObjProperty(who, "chardata");
 	chardata["talentpoints"] := points;
 	SetObjProperty(who, "chardata", chardata);
 	return 1;
+   set_critical(0);
 endfunction
 
 exported function GetAchievement(who, select := 0)
@@ -139,7 +144,7 @@ exported function GetAchievement(who, select := 0)
 	return achievements;
 endfunction
 
-exported function SetAchievement(who, achievement, plus)
+exported function SetAchievement(who, achievement, plus := 1)
 	var achievements := GetObjProperty(who, "achievements");
 	if (achievements == error || !achievements)
 		achievements := struct;

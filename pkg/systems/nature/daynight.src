@@ -22,31 +22,38 @@ program daynightsystem()
                // Temperature();   //mmuda a temperatura local
 		BroadCast("O sol esta nascendo.");
 		SetGlobalProperty("dia", "dia");
-		darkness := GeTMoonLightMod();
 		ApplyHalfDay(darkness);
 
 		SetGlobalProperty("halfdaytime", ReadGameClock());
-		sleep(daylength);
-		ApplyHalfDay(darkness);
-  
+
+  		darkness := GeTMoonLightMod();
+		ApplyHalfDay(darkness, 1);
 		BroadCast("O sol esta se pondo.");
       SetGlobalProperty("dia", "noite");
-
 
 		SetGlobalProperty("halfdaytime", ReadGameClock());
 		sleep(nightlength);
 	endwhile
 endprogram
 
-function ApplyHalfDay(darkness)
+function ApplyHalfDay(darkness, invert := 0)
 	var transspeed := cint(config.transspeed);
 	var i;
-	for (i:=darkness;i>=0;i:=i-1)
-		Setregionlightlevel("Background", i);
-		Setglobalproperty("lightlevel", i);
-		ApllyLightLevel();
-		sleepms(transspeed);
-	endfor
+   if (!invert) //claro
+      for (i:=darkness; i>=0; i:=i-1)
+         Setregionlightlevel("Background", i);
+         Setglobalproperty("lightlevel", i);
+         ApllyLightLevel();
+         sleepms(transspeed);
+      endfor
+   else
+      for (i:=0; i<=darkness; i:=i+1) //noite
+         Setregionlightlevel("Background", i);
+         Setglobalproperty("lightlevel", i);
+         ApllyLightLevel();
+         sleepms(transspeed);
+      endfor
+   endif
 
 	return 1;
 endfunction

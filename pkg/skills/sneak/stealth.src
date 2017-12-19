@@ -33,9 +33,9 @@ program skill_Stealth( who )
 		endif
 	endif*/
 
-	var base_steps := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE) + 2;
-	if (base_steps < 4)
-		base_steps := 4;
+	var base_steps := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE) + 2);
+	if (base_steps < 3)
+		base_steps := 3;
 	endif
 
 	var advantage := 0;
@@ -45,7 +45,8 @@ program skill_Stealth( who )
 
 	var check := rollAttrDice(who, DEXTERITY, advantage) + getProficiencyBonus(who, FURTIVIDADE);
 	if (check >= diff)
-		who.stealthsteps := base_steps;
+      SendSysMessageEx(who, base_steps);
+		who.stealthsteps := cint(base_steps);
 		/*
 		Removido pois agora Furtividade Aprimorada é como se fosse pra habilitar Stealth e não mais dar bonus
 		if (temHabilidade(who, "Furtividade Aprimorada"))

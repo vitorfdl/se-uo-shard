@@ -96,7 +96,7 @@ program Attack(params)
 		return 1;
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
-   elseif ( attacker.hidden && attacker.isA(POLCLASS_NPC))
+   elseif ( attacker.hidden && attacker.npctemplate)
       attacker.hidden := 0;
 	endif
 

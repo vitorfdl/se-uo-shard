@@ -12,11 +12,12 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 
 program oafeatures_sendpacket(who, text)
+   // PrintText(who, GetHP(who));
    // var item := GetEquipmentByLayer(who, LAYER_HAIR);
    // item.color := cint(text);
-
-   var targ := Target(who);
-   restartScript(targ);
+   Setregionlightlevel("Background", 30);
+   // var targ := Target(who);
+   // print(ListHostiles( targ ));
    // SendSystemReport(who, text);
    // var pid := GetProcess(cint(text));
    // printtext(who, ""+pid);

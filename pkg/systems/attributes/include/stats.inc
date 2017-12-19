@@ -16,7 +16,7 @@ const RETURN_BONUS := 1;
 
 function GetBonusAttr(number)
 	var modifier := Floor((number - 10) / 2);
-	return modifier;
+	return cint(modifier);
 endfunction
 
 /*
@@ -39,7 +39,7 @@ function AP_GetStat(who, stat_name, bonus := 0)
 		result := GetBonusAttr(result);
 	endif
 
-	return result;
+	return cint(result);
 endfunction
 
 /*

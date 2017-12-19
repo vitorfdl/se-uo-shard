@@ -66,12 +66,15 @@ function EnableMainEvents(type := 0)
         DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
         EnableEvents(SYSEVENT_DOUBLECLICKED, 20);
         EnableEvents(SYSEVENT_SPEECH + SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN + SYSEVENT_ENTEREDAREA, areasize);
+      default:
+        DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
+        EnableEvents(SYSEVENT_ENTEREDAREA, areasize);
+        EnableEvents(SYSEVENT_DAMAGED, areasize);
+        EnableEvents(SYSEVENT_ENGAGED, areasize);
         EnableEvents(EVID_ALERT_ALLIES);
         EnableEvents(EVID_HERDING);
         EnableEvents(EVID_TAUNT);
-      default:
-        DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
-        EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ENTEREDAREA, areasize);
+        EnableEvents(EVID_DOOBJECTIVE);
     endcase
 endfunction
 

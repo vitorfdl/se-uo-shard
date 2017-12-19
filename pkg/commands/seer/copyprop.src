@@ -1,0 +1,22 @@
+/*
+ * $Id: copyskills
+ *
+ */
+
+use os;
+use uo;
+
+include ":attributes:attributes";
+include ":attributes:stats";
+include ":gumps:requestgump";
+
+program copyprop(who, text)
+   var targ := Target(who);
+   if (!targ) return; endif
+
+   var prop := GetObjProperty(targ, text);
+   SetObjProperty(who, text, prop);
+
+	SendSysMessage(who, "Done.");
+	return 1;
+endprogram

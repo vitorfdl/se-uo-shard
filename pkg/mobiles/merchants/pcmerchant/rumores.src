@@ -31,7 +31,7 @@ program MerchantMenu(params)
 
 	if (player.hidden)
 		player.hidden := 0;
-		SendSysMessageEx (player, "Você se revelou.", SSM_FAIL);
+		SendSysMessageEx(player, "Você se revelou.", SSM_FAIL);
 	endif
 
 	var gump := GFCreateGump(0, 0);

@@ -10,6 +10,7 @@ program textcmd_Create(who, text)
 	text := SplitWords(text);
 	var item := text[1];
 	var amount := CInt(text[2]);
+	var mov := CInt(text[3]);
 	
 	if ( GetObjTypeByName(text[1]) )
 		item := GetObjTypeByName(text[1]);
@@ -20,6 +21,11 @@ program textcmd_Create(who, text)
 	if (amount < 1)
 		amount := 1;
 	endif
+
+	var creat := FLSCreateItem(who, item, amount);
+   
+   if (mov)
+      creat.movable := 0;
+   endif
 	
-	FLSCreateItem(who, item, amount);
 endprogram

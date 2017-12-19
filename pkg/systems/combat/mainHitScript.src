@@ -234,7 +234,7 @@ function ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critica
 	armor_scripts := armor_scripts + body_scripts + others_scripts;
 	
 	foreach hitscript in armor_scripts
-		var script := start_script(hitscript, array{attacker, defender, weapon, armor, base_damage, critical});
+		var script := start_script("armorHitScripts/"+hitscript, array{attacker, defender, weapon, armor, base_damage, critical});
 		if ( script.errortext )
 			SendSysMessage(attacker, "*Defender* armor script error starting ["+hitscript+"] :" + script.errortext);
 			SendSysMessage(defender, "*Defender* armor script error starting ["+hitscript+"] :" + script.errortext);

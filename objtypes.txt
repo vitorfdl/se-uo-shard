@@ -2175,12 +2175,7 @@
 0xe0e2 ambiencerune ambience
 # 0xe0e3 - 0xe806 unused
 0xe807 chestspawner chestspawn
-# 0xe808 - 0xec23 unused
-0xec24 barril lacrado destroyable
-0xec25 portaemperrada destroyable
-0xec26 portaemperrada2 destroyable
-0xec27 Caixa pequena lacrada destroyable
-0xec28 Caixa media lacrada destroyable
+# 0xe808 - 0xec28 unused
 0xec29 alchemybook alchemy
 # 0xec2a - 0xed1f unused
 0xed20 courodraconiano survival
@@ -2305,9 +2300,7 @@
 0xf125 wool womenswork
 # 0xf126 - 0xfddd unused
 0xfdde bandages2 medicine
-# 0xfddf - 0xff03 unused
-0xff04 Caixa grande lacrada destroyable
-# 0xff05 - 0xff96 unused
+# 0xfddf - 0xff96 unused
 0xff97 armadilhafogo traps
 0xff98 armadilhaflecha traps
 0xff99 atrairinimigo traps

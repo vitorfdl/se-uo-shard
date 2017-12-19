@@ -35,10 +35,6 @@ const ALIGN_EVIL := 1;
 const ALIGN_GOOD := 2;
 const ALIGN_NEUTRAL := 0;
 
-//novos eventos
-
-const EVID_ALERT_ALLIES := 0x00000013;
-
 //essa funcao determina se o npc vai enfrentar o alvo ou nao
 function CanFight(me, mobile)
    EraseObjProperty(me, "path");
@@ -198,6 +194,8 @@ function PlayIdleSound()
 endfunction
 
 function InitializeNpc(mobile)
+   GrantPrivilege(mobile, "runwhilestealth");
+   mobile.enable("runwhilestealth");
    //inicializa algumas variaveis que todos os npcs tem
    var elem     := npccfgfile; //TODO: Too Ugly, fix that
    var sounds   := GetConfigStringArray(elem, "IdleSound");

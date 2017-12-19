@@ -381,10 +381,12 @@ function GetHP(mobile)
 	if (chardata != error && chardata.hitpoints)
 		hp := chardata.hitpoints;
 	endif
-	hp := (hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+   
 	if (hp < 1) 
 		hp := 1;
 	endif
-                      
-	return hp;
+
+	hp := (hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+
+	return cint(hp);
 endfunction

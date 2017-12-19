@@ -15,24 +15,23 @@ include "include/objtype";
 include "include/sounds";
 
 program skill_LumberJack(who,tool)
-
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
-	SendSysMessage(who, "Escolha a arvore para cortar.");
+	SendSysMessageEx(who, "Escolha a árvore para cortar.", SSM_REQUEST);
 	var targ := TargetCoordinates(who);
 	
 	if ( !targ )
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return 0;
 	endif
 
 	if ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 1 )
-		SendSysMessage(who, "Muito longe.");
+		SendSysMessageEx(who, "Muito longe.");
 		return 0;
 	endif
 
 	if ( !LJ_IsTree(targ.objtype) )
-		SendSysMessage(who, "Isto não e uma arvore.");
+		SendSysMessageEx(who, "Isto não e uma árvore.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -52,12 +51,12 @@ program skill_LumberJack(who,tool)
 		CheckToolWear(who, tool, EXTRACAO );
 		sleep(1);
 		if (LJ_GetWoodAmount(who.realm, targ.x, targ.y)== 0 )
-			PrinttextAbove(who, "*derruba a arvore*");
+			PrinttextAbove(who, "*derruba a árvore*");
 			break;
 		endif
 	endwhile
 
-	SendSysMessage(who, "Você parou de cortar a arvore.");
+	SendSysMessageEx(who, "Você parou de cortar a árvore.", SSM_INFO);
 endprogram
 
 function ChopTree(who, tool, targ, orig_x, orig_y)
@@ -67,7 +66,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 			return 0;
 		endif
 
-		PerformAction(who, ANIM_ATTACK_2HAND_WIDE);
+		PerformAction(who, 0x0c);
 		PlaySoundEffect(who, FLS_SFX_SKILL_LUMBERJACK);
 		sleepms(1200);
 	endfor
@@ -80,26 +79,28 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 	
 	//var difficulty := CInt(105 - (100 * wood_amount / max_wood));
 
-	var more_dif := CInt(0 + (max_wood - wood_amount)*3);
+		SendSysMessageEx(who, "max_wood="+max_wood+"    wood_amount="+wood_amount);
+	var more_dif := CInt(0 + (max_wood - wood_amount));
 
-	if (more_dif > 30)
-		more_dif := 20;
+	if (more_dif > 5)
+		more_dif := 5;
 	endif
 	
 	var difficulty := cint(GetWoodDif(targ) + more_dif);
 	
-	if (difficulty > 100)
-		difficulty := 100;
+	if (difficulty > 22)
+		difficulty := 22;
 	endif
 	
+	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 	if ( who.cmdlevel )
-		SendSysMessage(who, "MaxWood="+max_wood+"    CurWood="+wood_amount);
-		SendSysMessage(who, "Difficulty ->"+difficulty);
+		SendSysMessageEx(who, "more_dif="+more_dif);
+		SendSysMessageEx(who, "MaxWood="+max_wood+"    CurWood="+wood_amount);
+		SendSysMessageEx(who, "Difficulty ->"+difficulty+"    dice_roll="+dice_roll);
 	endif
 
-	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
-		var amt := AP_GetStat(who, STRENGTH, RETURN_BONUS);
+		var amt := cint(AP_GetStat(who, STRENGTH, RETURN_BONUS));
 		if (amt <= 0)
 			amt := 1;
 		endif
@@ -111,43 +112,43 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 		if (wood_amount < 0)
 			wood_amount := 0;
 		endif
-		var item := CreateItemInBackPack(who, wood_type, amt);
+		var item := CreateItemInBackPack(who, cint(wood_type), 1);
 		if ( item.errortext )
-			SendSysMessage(who, "Não foi possivel criar: "+wood_type+" ->"+item.errortext);
+			SendSysMessageEx(who, "Não foi possivel criar: "+wood_type+" ->"+item.errortext);
 			return 0;
 		else
 			who.SetAchievement("oremining", 1);
 			ExpGain(who, difficulty, dice_roll);
-			SendSysMessage(who, "Você colocou a madeira na sua mochila.");
+			SendSysMessageEx(who, "Você colocou a madeira na sua mochila.");
 			return 1;
 		endif
 	endif
 
-	SendSysMessage(who, "Você e incapaz de conseguir madeira usavel dessa arvore.");
+	SendSysMessageEx(who, "Você é incapaz de conseguir madeira usavel dessa árvore.", SSM_FAIL);
 	return 0;
 endfunction
 
 function CanChop(who, axe, targ, orig_x, orig_y)
 	if ( who.hidden )
-		SendSysMessage(who, "Você parou de cortar a arvore para ficar escondido.");
+		SendSysMessageEx(who, "Você parou de cortar a árvore para ficar escondido.", SSM_INFO);
 		return 0;
 	elseif ( who.x != orig_x || who.y != orig_y )
-		SendSysMessage(who, "Você parou de cortar a arvore.");
+		SendSysMessageEx(who, "Você parou de cortar a árvore.", SSM_INFO);
 		return 0;
         elseif ( !IsFacing(who, targ.x, targ.y)  )
-               SendSysMessage(who, "Você precisa estar virado para a arvore.");
+               SendSysMessageEx(who, "Você precisa estar virado para a árvore.", SSM_INFO);
                return 0;
 	elseif ( !(axe in ListEquippedItems(who)) )
-		SendSysMessage(who, "Você parou de cortar a arvore.");
+		SendSysMessageEx(who, "Você parou de cortar a árvore.", SSM_INFO);
 		return 0;
 	elseif ( LJ_GetWoodAmount(who.realm, targ.x, targ.y) <= 0 )
-		SendSysMessage(who, "Esta arvore ja esta derrubada.");
+		SendSysMessageEx(who, "Esta árvore ja esta derrubada.", SSM_FAIL);
 		return 0;
 	elseif ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessage(who, "Você não pode cortar arvore montado.");
+		SendSysMessageEx(who, "Você não pode cortar árvore montado.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, targ) > 1 )
-		SendSysMessage(who, "Você não pode cortar de tao longe.");
+		SendSysMessageEx(who, "Você não pode cortar de tão longe.", SSM_FAIL);
 		return 0;
 	endif
 	return 1;
@@ -156,27 +157,27 @@ endfunction
 function GetWoodDif(tree)
     case (tree.objtype)
          0xcd6:
-               return 60; //pinheiro
+               return 20; //pinheiro
          0xcd8:
-                return 60;
+                return 18;
          0xcda:
-                return 35; //carvalho
+                return 14; //carvalho
          0xcdd:
-                return 35;
+                return 18;
          0xce0:
-                return 80; //nogueira
+                return 22; //nogueira
          0xce3:
-                return 80;
+                return 22;
          0xce6:
                 return 70; //salgueiro
          0xcf8:
-                return 35;
+                return 18;
          0xcfb:
-                return 35;
+                return 18;
          0xcfe:
-                return 35;
+                return 18;
          0xd01:
-                return 35;
+                return 18;
 	 0x3fef:
 	 0x3ff0:
 	 0x3ff1:
@@ -185,7 +186,7 @@ function GetWoodDif(tree)
 	 0x3ff4:
 	 0x3ff5:
 	 0x3ff6:
-		return 90;
+		return 22;
 	 0x2c0c:
 	 0x2c0d:
 	 0x2c10:
@@ -198,9 +199,9 @@ function GetWoodDif(tree)
 	 0x2c1c:
 	 0x2c1f:
 	 0x2c23:
-		return 80;
-         default: 
-                return 10;
+		return 22;
+    default: 
+         return 10;
     endcase
 endfunction
 

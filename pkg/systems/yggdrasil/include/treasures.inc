@@ -35,6 +35,10 @@ function ModelTreasure( data := struct{} )
         data.serial := 0x0;
     endif
 
+    if (!data.breakable)
+        data.breakable := 0;
+    endif
+
     if (TypeOf(data.yggdrasil) != "Struct")
         data.yggdrasil := struct{};
     endif
@@ -53,6 +57,7 @@ function CleanTreasure(treasure)
     EraseObjProperty(treasure, "TrapList");
     EraseObjProperty(treasure, "level");
     EraseObjProperty(treasure, "protected");
+    EraseObjProperty(treasure, "breakable");
 
     foreach item in (EnumerateItemsInContainer( treasure ))
         DestroyItem( item );
@@ -64,6 +69,16 @@ function SpawnTreasure(treasure, config)
    if(!treasure.isA(POLCLASS_CONTAINER))
       SysLog("SpawnTreasure used on a not container object " + treasure.serial);
       return;
+   endif
+
+   if (treasure.desc["[Quebrado]"])
+      var old_name := treasure.desc; 
+      old_name[" [Quebrado]"] := "";
+      SetName(treasure, old_name);
+      var graph := GetObjProperty(treasure, "original_graphic");
+      treasure.graphic := graph;
+
+      SetObjproperty(treasure, "hits", 1+config.level);
    endif
 
    CleanTreasure(treasure);
@@ -78,6 +93,9 @@ function SpawnTreasure(treasure, config)
       SetObjProperty(treasure, "protected", treasure.protected);
    endif
 
+   if (config.breakable)
+      SetObjProperty(treasure, "breakable", 1);
+   endif
 
    if (config.trapped)
       var trap := RandomInt(3)+1;
@@ -98,6 +116,6 @@ function SpawnTreasure(treasure, config)
       sleepms(2);
    endforeach
 
-   var time_respawn = AddTimeTo(ReadGameClock(), 40+RandomDiceRoll("2d20"), "minutes");
+   var time_respawn := AddTimeTo(ReadGameClock(), 40+RandomDiceRoll("2d20"), "minutes");
    SetObjProperty(treasure, "spawned_time", time_respawn);
 endfunction

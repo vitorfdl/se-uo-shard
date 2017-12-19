@@ -34,11 +34,11 @@ program core_logoffTest(who)
 		EraseObjProperty(who, "#camped");
 		logout_delay := 0;
 	// Check if prop exists
-	elseif ( CInt(GetObjProperty(who, "#delete")) == 1)
+	elseif (CInt(GetObjProperty(who, "#delete"))  == 1)
 		EraseObjProperty(who, "#delete");
 		logout_delay := 1;
 	// elseif ( IsInHouse(who) )
-	elseif ( CInt(GetObjProperty(who, "criandochar")) == 1)
+	elseif ( CInt(GetObjProperty(who, "criandochar")) == 1  || CInt(GetObjProperty(who, "morto")))
 		logout_delay := 0;
 	endif
 	return logout_delay;

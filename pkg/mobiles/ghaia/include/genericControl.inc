@@ -48,6 +48,10 @@ function resolveEvent(ev, byref wanders)
 	if (!ev) return; endif;
 
 	case(ev.type)
+		EVID_DOOBJECTIVE:
+			if (ev.destiny)
+				wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
+			endif
 		SYSEVENT_ENTEREDAREA:
 			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
 				wanders := 0;
@@ -67,10 +71,6 @@ function resolveEvent(ev, byref wanders)
 		EVID_FLEE:
 			if (ev.source)
 				flee(ev.source);
-			endif
-		EVID_DOOBJECTIVE:
-			if (ev.destiny)
-				wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
 			endif
 	endcase
 endfunction

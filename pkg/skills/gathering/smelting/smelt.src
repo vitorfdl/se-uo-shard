@@ -30,7 +30,7 @@ program smelt_that_ore(who, item)
      return;
   endif
 
-   if (!(use_on.graphic in array{0x19B9, 0x1bf2, 0x1bf5, 0x6075, 0x5738}))
+   if (!(use_on.graphic in array{0x19B9, 0x1bf2, 0x1bf5, 0x6075, 0x5738, 3879}))
       return SendSysMessageEx(who,"Você não pode derreter isto.");
   //elseif ((use_on.isa(POLCLASS_WEAPON)) || (use_on.isa(POLCLASS_ARMOR) || (use_on.objtype == 0x5101)))
    //  SmeltItem(who, item, use_on);
@@ -163,7 +163,7 @@ function SmeltOre(who, item, ore)
     0x6303:  ingot := 0x630c; //sinque
     0x6304:  ingot := 0x630d; //figin
      
-    0x6075:  dif := 5; ingot := 0x1be3; //areia*
+    0x6075:  dif := 16; ingot := 0x1be3; //areia*
     default: SendSysMessageEx(who,"Você não pode derreter isto.", FONT_NORMAL, 40); return 1;
   endcase
 
@@ -173,12 +173,12 @@ function SmeltOre(who, item, ore)
       var num := CINT(GetObjProperty(item, "amt1"));
       var nummetal := Cint(GetObjProperty(item, "numMetal"));
       if (num != ore.amount)
-         SendSysMessageEx(who, "Você precisa colocar " + num + " minerios aqui.", FONT_NORMAL, 40);
+         SendSysMessageEx(who, "Você precisa colocar " + num + " minerios aqui.", SSM_FAIL);
          return;
       endif
 
       if(dice_roll > dif)
-         SendSysMessageEx(who, "Você fez a fusao entre os metais.", FONT_NORMAL, 90);
+         SendSysMessageEx(who, "Você fez a fusão entre os metais.", SSM_INFO);
          PlaySoundEffect(who, 0x22);
          sleep(4);
          SetObjProperty(item, "numMetal", nummetal+1);
@@ -191,12 +191,12 @@ function SmeltOre(who, item, ore)
             perdamt := ore.amount;
          endif
          SubtractAmount(ore, perdamt);
-         SendSysMessageEx(who, "Você perdeu parte dos minerios.", FONT_NORMAL, 40);
+         SendSysMessageEx(who, "Você perdeu parte dos minerios.", SSM_FAIL);
          return;
       endif
    else 
      if(dice_roll > dif)
-        SendSysMessageEx(who, "Você derreteu o minerio e retirou as impurezas.", FONT_NORMAL, 90);
+        SendSysMessageEx(who, "Você derreteu o minerio e retirou as impurezas.", SSM_INFO);
         PlaySoundEffect(who, 0x22);
         sleep(4);
         item.color := 0x486;

@@ -56,7 +56,7 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	
 	var i;
 	for (i:=0; i < RandomDiceRoll("1d2"); i := i+1)
-		PerformAction(who, MINING_ANIMATION);
+		PerformAction(who, 0x0d);
 		PlaySoundEffect(who, MINING_SOUND);
 		sleep(1);
 		if (!CheckLoop(who, scoop, my_x, my_y, my_facing))

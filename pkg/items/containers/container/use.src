@@ -15,10 +15,11 @@ program useContainer(mobile, container)
 	if ( mobile.cmdlevel )
 		SendSysMessageEx(mobile, "Command level is present - container is skipping locks, traps, etc.");
 		SendViewContainer(mobile, container);
-   elseif (who.warmode && GetObjProperty(item, "breakable") && ContainerIsLocked(mobile, container) && Distance(who, item) <= 1)
-      start_script(":tn:destroyitems", {who, container});
+   elseif (mobile.warmode && GetObjProperty(container, "breakable") && ContainerIsLocked(mobile, container) && Distance(mobile, container) <= 1)
+      start_script(":tn:destroyitems", array{mobile, container});
       return 0;
 	elseif ( ContainerIsLocked(mobile, container) ) 
+      PrintText(container, "*Isto esta trancado.*");
 		return 0;
 	elseif ( GetObjProperty(container, "TrapList") != error )
 		if (RunTraps(container, mobile))
@@ -44,7 +45,6 @@ function ContainerIsLocked(mobile, container)
 		SendSysMessageEx(mobile, "Você abre o container com a chave.");
 		return 0;
 	else
-		PrintText(container, "*Isto esta trancado.*", mobile);
 		return 1;
 	endif
 endfunction

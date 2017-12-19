@@ -10,11 +10,11 @@ program ArmorHitScript(params)
 	var defender	:= params[2];
 	params := 0; // Not needed anymore.
 	
-   if (RandomInt(100) > 15)
+   if (RandomInt(60) > 15)
       return 1;
    endif
 	
-   var point := RandomPlace(defender, 2);
+   var point := RandomPlace(defender, 4);
    var item := CreateItemAtLocation(point.x, point.y, defender.z, 0x0F80, 1, defender.realm);
    PrintText(item, "*decepado do moriquendi*");
    var power := cint(GetObjProperty(defender, "power")) - 1;

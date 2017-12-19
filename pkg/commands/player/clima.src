@@ -108,7 +108,6 @@ var climamodtemp;
 endprogram
 
 function InRect(who, x_pos, y_pos, rect)
-
 	rect := SplitWords(rect);
 	var x1 := CInt(rect[1]);
 	var y1 := CInt(rect[2]);
@@ -119,13 +118,10 @@ function InRect(who, x_pos, y_pos, rect)
 endfunction
 
 function GetTempRegion(diaounoite, who, x, y)
-
 	var cfg := ReadConfigFile(":commands:config/tempregions");
 	var elems := GetconfigStringKeys(cfg);
 
-	
 	foreach elem in elems
-	
 		var region := FindConfigElem(cfg, elem);
 		var rect := GetConfigString(region, "Rect");
 		if ( InRect(who, x, y, rect) )
@@ -135,13 +131,14 @@ function GetTempRegion(diaounoite, who, x, y)
 			if ((diaounoite == "noite") && ((elem == "adesertointerior") || (elem == "adesertointerior2") || (elem == "desertolitoral"))) 
 				tempmod := (tempmod - 16);
 			endif
+         
 			if (elem == "regiaodungeons")
 				SendSysMessageEx(who, "Esse comando não pode ser usado dentro de Dungeons ou Cavernas.");
 				return 999;
 			endif
 			return tempmod;
 		endif 
-		
+		sleepms(2);
 	endforeach
 	
 	return 0;

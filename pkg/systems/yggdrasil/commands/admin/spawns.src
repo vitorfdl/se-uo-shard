@@ -68,7 +68,8 @@ const GF_TREASURE_ADDITEM_BTN      := 1006;
 const GF_TREASURE_REMITEM_BTN      := 1007;
 const GF_TREASURE_LOCKED_SWITCH    := 1008;
 const GF_TREASURE_SPAWN_BTN        := 1009;
-const GF_TREASURE_ITEM_BTN         := 1010;
+const GF_TREASURE_BREAKABLE_SWITCH := 1010;
+const GF_TREASURE_ITEM_BTN         := 1020;
 
 
 //Basic
@@ -144,6 +145,7 @@ program spotGroups(params)
             treasure.protected := GFExtractData(input, GF_TREASURE_PROTECTED_SWITCH);
             treasure.active    := GFExtractData(input, GF_TREASURE_ACTIVE_SWITCH);
             treasure.trapped   := GFExtractData(input, GF_TREASURE_TRAP_SWITCH);
+            treasure.breakable := GFExtractData(input, GF_TREASURE_BREAKABLE_SWITCH);
             spot.UpdateTreasure(selected_treasure, treasure);
         endif
 
@@ -449,6 +451,14 @@ function DoTreasureList(who, input)
                 treasure.protected := 0;
             else
                 treasure.protected := 1;
+            endif
+            spot.UpdateTreasure(selected_treasure, treasure);
+            break;
+        GF_TREASURE_BREAKABLE_SWITCH:
+            if (treasure.breakable == 1)
+                treasure.breakable := 0;
+            else
+                treasure.breakable := 1;
             endif
             spot.UpdateTreasure(selected_treasure, treasure);
             break;
@@ -811,7 +821,7 @@ function ConstructTreasureConfig(byref gump)
     var treasure_cont := SystemFindObjectBySerial(treasure.serial);
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 180+(treasure.loots.Size()*18));
+    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 210+(treasure.loots.Size()*18));
     GFTextMid(gump, basex-10, 28, 260, 555, "Treasure Configuration");
 
     var sx := basex+30;
@@ -839,12 +849,15 @@ function ConstructTreasureConfig(byref gump)
     GFTextLine(gump, sx+80, sy+54, 1153, "Force Spawn:");
     GFAddButton(gump, sx+160, sy+21+38, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_SPAWN_BTN);
 
-    GFTextLine(gump, sx, sy+72, 1153, "Location:");
-    GFTextLine(gump, sx+65, sy+72, 2103, "{}, {}, {}".format(treasure_cont.x, treasure_cont.y, treasure_cont.z));
-    GFAddButton(gump, sx+52, sy+72+6, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_TELEPORT_BTN);
+    GFTextLine(gump, sx, sy+36+18+18, 1153, "Breakable:");
+    GFCheckBox(gump, sx+60, sy+36+5+18+18, 2360, 2361, treasure.breakable, GF_TREASURE_BREAKABLE_SWITCH);
+    
+    GFTextLine(gump, sx, sy+72+18, 1153, "Location:");
+    GFTextLine(gump, sx+65, sy+72+18, 2103, "{}, {}, {}".format(treasure_cont.x, treasure_cont.y, treasure_cont.z));
+    GFAddButton(gump, sx+52, sy+72+6+18, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_TELEPORT_BTN);
 
-    GFTextLine(gump, sx, sy+96, 1153, "Loots:");
-    sy := 159;
+    GFTextLine(gump, sx, sy+96+18, 1153, "Loots:");
+    sy := 159+18;
     for i:=0 to treasure.loots.Size();
         var loot := treasure.loots[i];
         if (loot)
@@ -857,8 +870,8 @@ function ConstructTreasureConfig(byref gump)
             sy += 18;
         endif
     endfor
-    GFTextLine(gump, sx+100, sy, 1153, "Adicionar");
-    GFAddButton(gump, sx+100-14, sy+5, 0x939, 0x939, GF_CLOSE_BTN, GF_TREASURE_ADDITEM_BTN);
+    GFTextLine(gump, sx+100, sy+18, 1153, "Adicionar");
+    GFAddButton(gump, sx+100-14, sy+5+18, 0x939, 0x939, GF_CLOSE_BTN, GF_TREASURE_ADDITEM_BTN);
 endfunction
 
 function ConstructSpawnGroupConfig(byref gump)

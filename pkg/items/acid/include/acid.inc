@@ -127,7 +127,6 @@ function GetAcidDiceFromItem(acid_pool)
 endfunction
 
 function isAcidImune(mobile)
-
 	if (Cint(GetObjProperty(mobile, "AcidImune")))
 		return 1;
 	endif

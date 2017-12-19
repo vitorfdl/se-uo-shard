@@ -91,16 +91,17 @@ function sendToSpy(source, message_txt)
 
 	foreach player in GetGlobalProperty("GmsOnlines")
 		player := SystemFindObjectBySerial(Cint(player));
-		if ( GetObjProperty(player, "SaySpyOn") && player.cmdlevel >= 3 && player != source)
+      var sayspy := GetObjProperty(player, "SaySpyOn");
+		if ( sayspy && player.cmdlevel >= 3 && player != source)
 			var sender := source.name;
 			if (sender == "Desconhecido")
 				sender := GetObjProperty(source, "realname");
 			endif
 
-			if (GetObjProperty(player, "SaySpyOn") == "on")
-				SendSysMessage(player, "["+sender+"]: "+message_txt);
-			elseif(sender in GetObjProperty(player, "SaySpyOn"))
-				SendSysMessage(player, "["+sender+"]: "+message_txt);
+			if (sayspy == "on")
+				SendSysMessageEx(player, "["+sender+"]: "+message_txt);
+			elseif(sender in sayspy)
+				SendSysMessageEx(player, "["+sender+"]: "+message_txt);
 			endif
 		endif
 		Sleepms(2); 
