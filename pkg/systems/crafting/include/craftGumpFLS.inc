@@ -43,10 +43,11 @@ function sendCraftGump(who, params)
         if (!params.search)
             params.search := "";
         endif
-        params.qty := cint(GFExtractData(input, qty_entry));
-        if (!params.qty || params.qty == 0 || params.qty > 10)
-            params.qty := 1;
-        endif
+      //   params.qty := cint(GFExtractData(input, qty_entry));
+      //   if (!params.qty || params.qty == 0 || params.qty > 10)
+      //       params.qty := 1;
+      //   endif
+         params.qty := 1;
 
         if (!input[0] || input[0] == 0 || input[0] == 1)
             not_closed := 0;

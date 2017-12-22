@@ -38,16 +38,19 @@ program alchemy(who)
       SetObjProperty(item, "pocaoname", entry.Type);
       SendSysMessageEx(who, "Você identificou o liquido do frasco: " + entry.Type, SSM_INFO);
    endif
+
    cfg := 0;
    entry := 0;
    var whos := GetObjProperty(item, "magicwho");
-   if (whos == error)
-      whos := array;
+   if (!whos || whos == error)
+      whos := array{};
    endif
-   if ( !(who.serial in whos))
+
+   if ( !(who.serial in whos) )
       whos.append(who.serial);
-      SetObjProperty(item, "magicwho", who);
+      item.setProp("magicwho", whos);
    endif
+
    var backup := GetAmount(item);
    SubtractAmount(item, backup-1);
    SetName(item, item.desc);

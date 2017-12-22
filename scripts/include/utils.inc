@@ -4,11 +4,11 @@ use math;
 
 function randomPlace(loc, radius := 1)
 	var y, x;
-   case (RandomInt(radius+1))
-      1: y := RandomInt(3) * -1; x := RandomInt(3);
-      2: y := RandomInt(3); 		x := RandomInt(3) * -1;
-      3: y := RandomInt(3) * -1; x := RandomInt(3) * -1;
-      4: y := RandomInt(3); 		x := RandomInt(3);
+   case (RandomInt(3)+1)
+      1: y := RandomInt(radius) * -1; x := RandomInt(radius);
+      2: y := RandomInt(radius); 		x := RandomInt(radius) * -1;
+      3: y := RandomInt(radius) * -1; x := RandomInt(radius) * -1;
+      4: y := RandomInt(radius); 		x := RandomInt(radius);
    endcase
 
 	var new_loc := struct{

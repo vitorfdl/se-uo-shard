@@ -35,7 +35,7 @@ function resolveGroup(spot_g)
    var ninity_percent := yggdrasil.mob_number * 0.9;
    if (ygg_struct.killed >= ninity_percent) 
       var new_spawngroup := yggdrasil.spawngroup_list.randomentry();
-      SetSpawnGroupData(spot_g, struct{ "activegroup" := new_spawngroup });
+      spot_g.SetProps(struct{ "activegroup" := new_spawngroup });
       ygg_struct.killed := 0;
 
       if (ygg_index)

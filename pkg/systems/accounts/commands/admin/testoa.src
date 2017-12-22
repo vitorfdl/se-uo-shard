@@ -5,23 +5,48 @@ use os;
 include ":timeutils:time";
 include ":yggdrasil:boss";
 include "include/say";
+include "include/facings";
 include "include/damage";
 include "include/client";
 include ":sysbook:flsbooks";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
+include ":timeUtils:time";
+include ":merchants:crafthelp";
 
 program oafeatures_sendpacket(who, text)
+   sendsysmessageex(who, GetTimeStamp(polcore().systime));
+   var targ := Target(who);
+   targ.SetTalentPoints(-1);
+
+   // var test2 := ListStaticsNearLocation(who.x, who.y, who.z, 5);
+   // var mobs := ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
+   // sendsysmessageex(who, mobs.size()+" "+mobs[1].name);
+   // sendsysmessageex(who, test2.size()+" 2+ "+test2);
+   // SendNewUnicode(who, "balablabla", 0x06, 2, 1300);
    // PrintText(who, GetHP(who));
    // var item := GetEquipmentByLayer(who, LAYER_HAIR);
    // item.color := cint(text);
-   Setregionlightlevel("Background", 30);
-   // var targ := Target(who);
+   // var test := LearnFeat(who, "Linguagem Élfica", 0);
+   // sendsysmessageex(who, ""+test);
+   // var item := TargetCoordinates(who);
+   // var face := GetFacing(who.x, who.y, item.x, item.y);
+   // item.SetPoints(0);
+   // var owed := 2;
+   // var nam := GetName(item.objtype);
+
+   // SendSysMessageTest(who, "wejrweariwer");
+   // SendSysMessageEx(who, ""+face);
+   // var dd := dictionary{ 2 -> "a"};
+   // sendsysmessageex(who, ""+dd.keys());
+   // sendsysmessageex(who, ""+dd[2]);
+   // targ.squelch(0);
+   // PlaySoundEffectXYZ(targ.x, targ.y, targ.z, cint(text));	
+   // Setregionlightlevel("Background", 30);
    // print(ListHostiles( targ ));
    // SendSystemReport(who, text);
    // var pid := GetProcess(cint(text));
    // printtext(who, ""+pid);
-   // var targ := Target(who);
    // Print(targ.my_template() );
 
 	// GFGumpPic(gump, 11, 29, 40009, 0); //borders

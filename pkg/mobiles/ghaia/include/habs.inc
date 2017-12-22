@@ -96,7 +96,7 @@ endfunction
 function NPC_Sneak()
    PrintText(me, "*esconde*");
    me.hidden := 1;
-   me.stealthsteps := 8;
+   me.stealthsteps := 15;
    return 1;
 endfunction
 

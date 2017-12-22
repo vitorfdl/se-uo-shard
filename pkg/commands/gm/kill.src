@@ -15,7 +15,7 @@ program textcmd_Kill(who)
 		return 0;
 	endif
 	
-	if (who.cmdlevel < targ.cmdlevel && lower(targ.acctname) != "duttones" && who != targ)
+	if (who.cmdlevel < targ.cmdlevel && who != targ)
 		SendSysMessage(who, "Você não pode usar este comando.");
 		return 1;
 	endif

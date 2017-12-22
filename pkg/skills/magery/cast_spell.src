@@ -55,7 +55,7 @@ program SpellStarter(params)
          SendSysMessageEx(mobile, "Você precisa falar devido os componentes verbais da magia.", SSM_FAIL);
          FailSpell(mobile);
          return 0;
-      elseif ( !EquipmentCheck(mobile) )
+      elseif ( !EquipmentCheck(mobile) && mobile.cmdlevel < 3 )
          SendSysMessageEx(mobile, "Suas maos precisam estar livres para gesticular os componentes gestuais necessarios para a magia.", SSM_FAIL);
          FailSpell(mobile);
          return 0;
@@ -145,7 +145,7 @@ program SpellStarter(params)
    endif
 
    var attribute := INTELLIGENCE;
-   if (spellinfo.use_wisdom)
+   if (spellinfo.pericia["Milagre"])
       attribute := WISDOM;
    endif
 

@@ -1,0 +1,92 @@
+use uo;
+use os;
+use vitals;
+
+include "include/say";
+include ":tn:cooldown";
+include ":charactercreation:habilidades";
+include "include/damage";
+include "include/tileEffects";
+include "include/client";
+include "include/sounds";
+include ":magery:tnmagery";
+include "include/utils";
+include "include/sysEvent";
+
+program walkOn(who, trap)
+	var spell := GetObjProperty(trap, "spell");
+	
+	if (who.concealed)
+		return;
+	endif
+	
+	case (spell)
+		1: HealAndDestroy(who, trap);
+		2: ParalyzeAll(who, trap);
+      default: ForceDirection(who, 0);
+	endcase
+	/*
+	if (GetObjProperty(who, "spelluser") == "Demonista")
+		var criador := SystemFindObjectBySerial(GetObjProperty(trap, "criador"));
+		var dano := cint(AP_GetSkill(criador, ARCANISMO)/2);
+		PlayStationaryEffect(who.x, who.y, who.z, FX_CURSE_EFFECT, 5, 2);
+		ApplyRawDamage( who, dano );
+		var destro := DestroyItem(trap);
+	endif*/
+endprogram
+
+function ParalyzeAll(who, trap)
+	PrintText(who, "*ativa a runa de paralização*");
+	var mobiles := ListMobilesNearLocation(who.x, who.y, who.z, 2, who.realm);
+	mobiles.append(ListMobilesNearLocationEx( who.x, who.y, who.z, 2, LISTEX_FLAG_HIDDEN, who.realm ));
+	foreach mobile in mobiles
+		TS_StartTimer(mobile, "paralysis", 8);
+		PlayStationaryEffect(mobile.x, mobile.y, mobile.z, FX_PARA_F_EW, 0, 5);
+		sleepms(5);
+	endforeach
+	var destro := DestroyItem(trap);
+endfunction
+
+function HealAndDestroy(who, trap)
+	if (who.serial == GetObjProperty(trap, "criador"))
+		return;
+	elseif (GetVital( who, HITS ) == GetVitalMaximumValue( who, HITS ))
+		return;
+	elseif (who.npctemplate && !who.master)
+		return;
+	endif
+	
+	PlayStationaryEffect(who.x, who.y, who.z, FX_SPARK_EFFECT, 0, 5);
+	PlaySoundEffect(who, SFX_SPELL_HEAL);
+
+	var healed := GetObjProperty(trap, "healamount");
+	var caster := GetObjProperty(trap, "criador");
+   var mob;
+   if (caster)
+      mob := SystemFindObjectBySerial(caster);
+   endif
+
+	healFLS(who, healed, mob);
+
+	var stamheal := GetObjProperty(trap, "staminamount");
+	if (stamheal)
+		HealStamina(who, stamheal);
+	endif
+
+	recalcvitals(who);
+	SendSysMessage(who, "Você foi curado!", SSM_INFO);
+	
+	var destro := DestroyItem(trap);
+endfunction
+
+function ForceDirection(mobile, back := 0)
+   if (!mobile.my_template() || !mobile.my_template()["moriquendi"])
+      return;
+   endif
+
+   PushBack(mobile, 2, 300, back);
+   var ev := struct{
+		type := EVID_PEACEMADE
+   };
+   SendEvent(mobile, ev);
+endfunction

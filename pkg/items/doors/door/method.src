@@ -1,7 +1,3 @@
-/* $Id$
- *
- */
- 
 use uo;
 use os;
 use cfgfile;
@@ -18,7 +14,7 @@ exported function IsDoor(door)
 	return 1;
 endfunction
 
-exported function Toggle(door)
+exported function doToggle(door)
 	if ( IsOpen(door) )
 		Close(door);
 	else
@@ -34,7 +30,6 @@ exported function Open(door)
 	endif
 	
 	ChangeDoor(door);
-	
 	SetObjProperty(door, "Open", 1);	
 	
 	case ( Lower(ConfigInfo(door).DoorType) )
@@ -98,12 +93,12 @@ endfunction
  *
  **********/
  
- function Occupied(x, y, z)
+exported function Occupied(x, y, z)
 	// Used to prevent a door slamming closed if a character is in the way.
 	return ListMobilesNearLocationEX(x, y, z, 0, LISTEX_FLAG_HIDDEN+LISTEX_FLAG_NORMAL);
 endfunction
 
-function ChangeDoor(door)
+exported function ChangeDoor(door)
 	if ( door.container )
 		return 0;
 	endif
@@ -112,10 +107,10 @@ function ChangeDoor(door)
 	var door_info := ConfigInfo(door);
 		
 	Set_Critical(1);	
-	
+   
 	door.movable := 1;
 	door.graphic := door_info.ChangeTo;
-	
+   
 	var result := MoveObjectToLocation(door, door.x+CInt(door_info.xmod), door.y+CInt(door_info.ymod), door.z, door.realm, MOVEOBJECT_FORCELOCATION);
 	if ( result.errortext )
 		PrintTextAbove(door, "Error moving door -"+result.errortext);
@@ -128,7 +123,7 @@ function ChangeDoor(door)
 	return 1;
 endfunction
 
-function ConfigInfo(door)
+exported function ConfigInfo(door)
 	var config := ReadConfigFile(":*:itemdesc");
 	return config[Hex(door.graphic)];
 endfunction

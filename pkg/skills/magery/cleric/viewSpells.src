@@ -15,6 +15,8 @@ program clericPowerWords(who)
       return;
    endif
 
+   CloseGump(who, GUMPID_CLERICSPELL);
+
    var char_level   := who.GetLevel();
    var cleric_slots := char_level+2;
    var cleric_list  := GetObjProperty(who, "cleric_list");
@@ -85,8 +87,20 @@ function CreateClericGump(who, cleric_list, available_slots)
          powerwords := ", ".join(spell.powerwords);
       endif
 
-      GFHTMLArea(gump, 52, y, 192, 24, "{}".format(spellname), 1, 0);
-      GFToolTipText(gump, spell.description);
+      var color := "";
+      if (not_empty == 3 || not_empty == 1)
+         color := "<BASEFONT color=#b20000>";
+         powerwords := "{}Milagre usado.".format(color);
+      endif
+
+      GFHTMLArea(gump, 52, y, 192, 24, "{}{}".format(color, spellname), 1, 0);
+      if (spell.time)
+         var time := GetTimeBetween(polcore().systime, spell.time, "minutes");
+         if (time > 0)
+            GFToolTipText(gump, "Pode esquecer em: {} minuto(s)".format());
+         endif
+      endif
+
       GFHTMLArea(gump, 253, y, 174, 24, "{}".format(powerwords), 1, 0);
 
       if (not_empty == 0 || not_empty == 3)
@@ -102,7 +116,7 @@ function CreateClericGump(who, cleric_list, available_slots)
 endfunction
 
 function isNotEmpty(spell)
-   if (spell.id == 1)
+   if (spell.id == 1 || !spell.time)
       return 2; //cannot remove
    elseif(spell.time < polcore().systime && spell.used)
       return 3; // can remove and already used

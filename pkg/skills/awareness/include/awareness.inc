@@ -4,6 +4,7 @@ include ":itemUtils:itemdesc";
 include ":gumps:yesno";
 include ":traps:traps";
 include ":charactercreation:habilidades";
+include ":timedScripts:timedScripts";
 include "include/facings";
 
 function examinarAlvo(who)
@@ -17,24 +18,27 @@ function examinarAlvo(who)
 		return 0;
 	endif
 
-	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, "Percepção");
+	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PERCEPCAO);
 	if ( GetObjProperty(targ, "Disfarcado") )
 		if ( dice_roll < 20 )
 			return 0;
 		endif
+      
 		var char := GetObjProperty(targ, "chardata");
 		var name := char.FirstName;
 		var last_name := char.LastName;
 		if (last_name)
 			name := name+" "+last_name;
 		endif
+
 		SendSysMessageEx(who, "Você descobriu que "+targ.name+" é, na verdade, "+name+".", SSM_INFO);
-		SendSysMessageEx(who, "ATENCAO: Se você não conhece esse personagem, ignore o fato de saber o nome dele.", SSM_INFO);
+		SendSysMessageEx(who, "ATENÇÃO: Se você não conhece esse personagem, ignore o fato de saber o nome dele.", SSM_INFO);
 	elseif ( GetObjProperty(targ, "TrapList") )
 		var failed := GetObjProperty(targ, "#awareness_fail");
       if (!failed)
          failed := array{};
       endif
+
 		if (who.serial in failed)
 			return 0;
 		elseif ( GetObjProperty(targ, "trapSpoted") )
@@ -59,6 +63,7 @@ function examinarAlvo(who)
 			return 0;
 		endif
 
+      who.SetAchievement("found_item", 1);
 		var revelar := YesNo(who, "Você descobriu uma armadilha, deseja revelá-la?", "Sim.", "Não, deixarei a armadilha escondida.");
 		ExpGain(who, diff, dice_roll);
 		if (revelar)
@@ -70,34 +75,42 @@ function examinarAlvo(who)
 	return 1;
 endfunction
 
-function CalculateDHDiff(who, mobile, insneak := 0)
-	var difficulty := 9 + AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, "Furtividade");
+function CalculateDHDiff(who, mobile,)
+   // if (TS_GetTimerInfo(mobile, "amor_das_sombras") && (GetRegionName(mobile)["floresta"] || ListMobilesNearLocationEX(who.x, who.y, who.z, 1, TILEDATA_FLAG_WALL).size() > 0) )
+   //    return 20;
+   // endif
 
+	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(mobile, FURTIVIDADE);
 	//sendsysmessage(mobile, "dificuldade de  "  + who.name + "te achar " + mobile_skill);
 	if (GetObjProperty(mobile, "#overridehiding") != error)
 		difficulty := cint(GetObjProperty(mobile, "#overridehiding"));
 	endif
 
-	difficulty += Distance(who, mobile);
-
-	if (IsBehind(who, mobile.x, mobile.y) && !insneak)
-		difficulty := difficulty +4;
-	elseif (!IsBehind(mobile, who.x, who.y) && insneak)
+	difficulty += cint(Distance(who, mobile) / 1.5);
+   // if (HaveLightNear(mobile))
+   //    difficulty -= 2;
+   // endif
+	if (IsBehind(who, mobile.x, mobile.y))
 		difficulty := difficulty +4;
 	endif
 
-	return CInt(difficulty);
+	return difficulty;
 endfunction
 
 function examinarArea(who)
-	var range := AP_GetStat(who, WISDOM, RETURN_BONUS) + 4;
-	var dice_roll := rollAttrDice(who, WISDOM) +  + getProficiencyBonus(who, "Percepção");
-	
+	var range := 5 + AP_GetStat(who, WISDOM, RETURN_BONUS) + getProficiencyBonus(who, PERCEPCAO) ;
+	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PERCEPCAO);
+   if (range < 1)
+      range := 1;
+   endif
+   
 	var found := 0;
 	foreach mobile in ListMobilesNearLocationEX(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN)
 		if ( mobile == who ); // Do Nothing
+         continue;
 		elseif ( mobile.npctemplate && !GetObjProperty(who, "IgnoreHidden") ); // Do Nothing
-		elseif ( CheckLineOfSight(who, mobile) && Distance(mobile, who) < range )
+         continue;
+		elseif ( CheckLineOfSight(who, mobile) )
 			var difficulty := CalculateDHDiff(who, mobile);
 			
 			if ( dice_roll >= difficulty )
@@ -107,6 +120,7 @@ function examinarArea(who)
 				PrintText(mobile, "*aparece*");
 				SendSystemReport(who, "Você encontrou "+mobile.name+".", SSM_INFO);
 				SendSystemReport(mobile, who.name+" te encontrou!", SSM_FAIL, mobile);
+            who.SetAchievement("found_mobile", 1);
 			elseif ( dice_roll >= difficulty-2 )
 				SendSystemReport(who, "*Você se sente observado*", SSM_INFO);
 			endif
@@ -125,12 +139,14 @@ function examinarArea(who)
 			item.invisible := 0;
 			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);
+         who.SetAchievement("found_item", 1);
 		elseif (GetObjProperty(item, "FindDiff") && dice_roll >= CInt(GetObjProperty(item, "FindDiff")))
 			ExpGain(who, CInt(GetObjProperty(item, "FindDiff")), dice_roll);
 			found := found+1;
 			item.invisible := 0;
 			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);						
+         who.SetAchievement("found_mobile", 1);
 		endif
 	endforeach
 

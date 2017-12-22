@@ -20,7 +20,7 @@ program Hunger(chr)
 			SendSysMessageEx(chr, "Você esta muito faminto e correndo perigo de vida.",  SSM_INFO);
 		elseif (hunger == 6 && !chr.dead && !(chr.x > 6005 && chr.y > 42 && chr.x < 6029 && chr.y < 92 ))
 			SendSysMessageEx(chr, "Você esta muito faminto e correndo perigo de vida!!",  SSM_INFO);
-			if (!GetObjProperty(chr, "criandochar") && randomint(5) == 1)
+			if (!GetObjProperty(chr, "criandochar") && rollResistDice(chr, CONSTITUTION) < 8)
 				if (AP_GetVital(chr, "DP") >= 20)
 					SendSysMessageEx(chr, "Você desmaiou de fome!!",  SSM_FAIL);
 					ApplyRawDamage(chr, CInt(AP_GetVitalMaximumValue(chr, "Hits")));
@@ -30,7 +30,12 @@ program Hunger(chr)
 		endif
 
 		RecalcVitals(chr);
+      
+      var players := ListMobilesNearLocationEx(chr.x, chr.y, chr.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+      if (players.size() >= 1)
+         ExpGain(chr, "major");
+      endif
 
-		Sleep(90 * 10); //15 min
+		Sleep(900); //15 min
 	endwhile
 endprogram

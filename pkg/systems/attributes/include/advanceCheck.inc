@@ -130,11 +130,11 @@ function CheckExpUp(who)
 		var levelup_cfg := ReadConfigFile(":attributes:config/levelup");
       levelup_cfg := levelup_cfg[level+1];
 		if (cint(levelup_cfg.AttributePoints))
-			who.SetPoints(who.GetPoints()+1);
+			who.SetPoints(1);
 		endif
 
 		if (cint(levelup_cfg.TalentPoints))
-			who.SetTalentPoints(who.GetTalentPoints()+1);
+			who.SetTalentPoints(1);
 		endif
 
 	endif

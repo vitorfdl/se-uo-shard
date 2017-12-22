@@ -387,7 +387,12 @@ function GetHP(mobile)
 		hp := 1;
 	endif
 
-	hp := (hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+	hp := (5 + hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
 
 	return cint(hp);
+endfunction
+
+function CalcSuccessPercent(AC, MOD)
+   var result := (cdbl(20) - (cdbl(AC) - cdbl(MOD))) /cdbl(20);
+   return result * 100;
 endfunction

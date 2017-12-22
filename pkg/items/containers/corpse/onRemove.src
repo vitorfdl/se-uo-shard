@@ -17,10 +17,15 @@ program onRemove(character, container, item, item_amount, move_type)
 			PrintText(character, "*Pegou "+ item.desc +" do "+ container.desc +"*", 41);
 		endif
 	endif
-	var hostiles := ListHostiles( character, 8, LH_FLAG_LOS);
-	if (hostiles.size() >= 1)
-		TS_StartTimer(character, "paralysis", 6);
-	endif
+
+	// var hostiles := ListHostiles( character, 8, LH_FLAG_LOS);
+	// if (hostiles.size() >= 1)
+   //    print(character);
+   //    print(item.desc);
+   //    print(character.name);
+	// 	TS_StartTimer(character, "paralysis", 6);
+	// endif
+
 	if (cint(GetObjProperty(container, "looteado")) == 0)
 		if (item.objtype == 0xba63)
 			SetObjProperty(character, "lootmoedas", cint(GetObjProperty(character, "lootmoedas")) + item_amount );

@@ -29,24 +29,24 @@ program OreMining(who, tool)
 	if ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 2 )
 		SendSysMessageEx(who, "Muito longe.");
 		return;
-	elseif ( !CanMine(targ, "Stone") )
-		var maps := GetMapsInBackpack(who);
-		//sendsysmessageEx(who, " " + maps);
-		if (maps.size() > 0)
-			var map := maps[1];
-			if (maps.size() > 1)
-				SendSysMessageEx(who, "Escolha o mapa que quer procurar.", SSM_REQUEST);
-				map := target(who);
-				if (!(isTreasureMap(map)))
-					return;
-				endif
-			endif
-			DigForMap(who, targ, map);
-			return;
-		else
-			SendSysMessageEx(who, "Você não pode minerar aqui.", SSM_FAIL);
-			return;
-		endif
+	// elseif ( !CanMine(targ, "Stone") )
+	// 	var maps := GetMapsInBackpack(who);
+	// 	//sendsysmessageEx(who, " " + maps);
+	// 	if (maps.size() > 0)
+	// 		var map := maps[1];
+	// 		if (maps.size() > 1)
+	// 			SendSysMessageEx(who, "Escolha o mapa que quer procurar.", SSM_REQUEST);
+	// 			map := target(who);
+	// 			if (!(isTreasureMap(map)))
+	// 				return;
+	// 			endif
+	// 		endif
+	// 		DigForMap(who, targ, map);
+	// 		return;
+	// 	else
+	// 		SendSysMessageEx(who, "Você não pode minerar aqui.", SSM_FAIL);
+	// 		return;
+	// 	endif
 	
 	endif
 

@@ -54,9 +54,11 @@ program skill_Stealing(mobile)
 		return 0;
 	endif
 
-	VAR advantage := (getglobalproperty("dia") == "noite")*-1;
-	var diff := rollAttrDice(targ, WISDOM, advantage) + GetProficiencyBonus(targ, PERCEPCAO);
-
+	var advantage := (getglobalproperty("dia") == "noite")*-1;
+   if (HaveLightNear(targ))
+      advantage += 1;
+   endif
+	var diff := 2 + rollAttrDice(targ, WISDOM, advantage) + GetProficiencyBonus(targ, PERCEPCAO);
 	// foreach people in ListMobilesNearLocationEx( mobile.x, mobile.y, mobile.z, 5, LISTEX_FLAG_HIDDEN, mobile.realm )
 	// 	if (!people.npctemplate && TemHabilidade(people, "Vigilante"))
 	// 		diff += 5;

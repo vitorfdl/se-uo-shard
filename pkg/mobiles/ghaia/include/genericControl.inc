@@ -12,7 +12,16 @@ function genericControl()
 	wanders := 0;
 	EnableMainEvents();
 	Set_Event_Queue_Size(50);
+   var loops := 0;
 	while(me)
+		sleepms(15);
+      if (npccfgfile.Category == "moriquendi")
+         if (GetGlobalProperty("dia") == "dia")
+            ApplyRawDamage(me, 200);
+            ApplyRawDamage(me, 200);
+         endif
+      endif
+
 		//se tem objetivo, anda na direcao dele, se não tem so wander
 		if (GetObjProperty(me, "objloc") != error)
 			wanders := 0;
@@ -22,15 +31,20 @@ function genericControl()
 		endif
 		
 		wanders := wanders +1;
-		if (ListMobilesNearLocationEx(me.x, me.y, me.z, 20, LISTEX_FLAG_PLAYERS_ONLY)[1])
-			wanders := 0;
-		elseif (wanders >= 30)
-         if (npccfgfile.CustomBehavior == "camuflar" && RandomInt(4) == 1)
+		if (wanders > 20 && RandomInt(2) == 1)
+         if (ListMobilesNearLocationEx(me.x, me.y, me.z, 20, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 0)
+			   wanders := 0;
+         endif
+      endif
+
+		if (wanders >= 30)
+         if (npccfgfile.CustomBehavior == "camuflar" && RandomInt(8) == 1)
             me.hidden := 1;
-            me.stealthsteps := 10;
+            me.stealthsteps := 5;
          endif
 			wanders := 0;
 			lookAround();
+         loops := 0;
 			ev := sleepmode();
 		else
 			ev := os::wait_for_event(10);
@@ -39,7 +53,10 @@ function genericControl()
 		resolveEvent(ev, wanders);
 
 		lookAround();
-		sleepms(5);
+      loops += 1;
+      if (loops >= 150)
+         print(me.serial+" "+me.name);
+      endif
 	endwhile
 endfunction
 
@@ -55,17 +72,21 @@ function resolveEvent(ev, byref wanders)
 		SYSEVENT_ENTEREDAREA:
 			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
 				wanders := 0;
+            me.setAggro(ev.source.serial, 20);
 				Fight(ev.source);
 			endif
-		SYSEVENT_ENGAGED:	
-		SYSEVENT_DAMAGED:	
+		SYSEVENT_ENGAGED:
+		SYSEVENT_DAMAGED:
+         me.setAggro(ev.opponent, cint(ev.damage/2)+1);
 			wanders := 0; Fight(ev.source);
 		EVID_ALERT_ALLIES: 
+         me.setAggro(ev.opponent, 5);
 			wanders := 0; Fight(ev.opponent, 1);
 		EVID_HERDING:
 			herd(ev);
 		EVID_TAUNT:
 			if(ev.source)
+            me.setAggro(ev.source, 15);
 				wanders := 0; Fight(ev.opponent, 1);
 			endif
 		EVID_FLEE:

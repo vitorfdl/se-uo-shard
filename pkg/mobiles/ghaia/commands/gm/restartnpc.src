@@ -1,0 +1,7 @@
+use uo;
+use os;
+
+program oafeatures_sendpacket(who, text)
+   var targ := Target(who);
+   RestartScript(targ);
+endprogram

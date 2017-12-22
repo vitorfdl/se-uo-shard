@@ -38,7 +38,7 @@ program UseBandage(mobile, bandage)
 	var heal_skill := MEDICINA;
 
 	if ( !targ.IsA(POLCLASS_MOBILE) && !targ.IsA(POLCLASS_CORPSE) )
-		if (HaveFeat(mobile, "Misturar Ervas"))
+		if (HaveFeat(mobile, "Herbalismo"))
 			return apllyHerbs(mobile, bandage, targ);
 		endif
 		SendSysMessageEx(mobile, "Cancelado.", SSM_FAIL);

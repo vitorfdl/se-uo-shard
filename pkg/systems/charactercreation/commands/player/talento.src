@@ -1,0 +1,83 @@
+use uo;
+use vitals;
+use math;
+
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include ":charactercreation:feats";
+include "include/say";
+
+program habilidade(who, text)
+   if (!text)
+      text := who[2];
+      who := who[1];
+   endif
+   print(text);
+
+   if (!text || text == "")
+      return;
+   endif
+
+//	if (who.cmdlevel < 3)
+//		return;
+//	endif
+
+	if (who.dead)
+		return 1;
+	endif
+
+	if (!HaveFeat(who, text) && (who.cmdlevel < 2))
+		SendSysMessageEx(who, "Você não possui esse talento. Tente corrigir os acentos e letras maiusculas.", SSM_FAIL);
+		return 0;
+	endif
+		
+	ProccessHab(who, text);
+endprogram
+		
+
+function ProccessHab(who, hab)
+   var feat := FeatInfo(hab);
+   if (typeof(feat) != "Struct")
+      SendSysMessageEx(who, "Algo errado com o seu talento. Chame um GM.", SSM_FAIL);
+      return 0;
+   endif
+   
+	if (!feat.script)
+		SendSysMessageEx(who, "Talento não ativável.", SSM_FAIL);
+		return;
+	endif
+
+	if ( TS_GetCooldown(who, hab) != error && who.cmdlevel < 3)
+		SendSystemReport(who, "'Talento em Cooldown!'", SSM_FAIL);
+		return 1;
+	endif
+	
+	var stam := cint(feat.stam);
+	if (stam != error)
+		if (!AP_ConsumeVital(who, STAMINA, stam))
+			SendSystemReport(who, "'Stamina Insuficiente!'", SSM_FAIL);
+			return 1;
+		endif
+	endif
+
+	var mana := cint(feat.mana);
+	if (mana != error)
+		if (!AP_ConsumeVital(who, MANA, mana))
+			SendSystemReport(who, "'Mana Insuficiente!'", SSM_FAIL);
+			return 1;
+		endif
+	endif
+	
+	// foreach people in ListMobilesNearLocationEx( who.x, who.y, who.z, 5, LISTEX_FLAG_HIDDEN, who.realm )
+	// 	if (!people.npctemplate && TemHabilidade(people, "Observar Movimentos"))
+	// 		PrintTextPrivate(who, "*Habilidade Ativada*", people, SSM_HELPFUL);
+	// 	endif
+   //    sleepms(2);
+	// endforeach
+
+	var e := start_script("feats/{}".format(feat.script), array{who} );
+   if (e == error)
+      return SendSysMessageEx(who, "Script do talento não encontrado.", SSM_FAIL);
+   endif
+	TS_StartCooldown(who, hab, feat.cooldown);
+endfunction

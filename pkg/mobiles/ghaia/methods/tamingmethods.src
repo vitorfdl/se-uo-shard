@@ -2,6 +2,7 @@ use os;
 use uo;
 
 include ":yggdrasil:boss";
+include ":ghaia:npcmethods";
 
 var personalities := array{"Agressivo", "Medroso", "Calmo"};
 
@@ -192,4 +193,36 @@ endfunction
 exported function package(pet)
 	var npctemplate := SplitWords(pet.npctemplate, ":");
    return npctemplate[2];
+endfunction
+
+exported function listAggro(creature)
+   return core_listAggro(creature);
+endfunction
+
+exported function getAggro(creature, serial)
+   core_getAggro(creature, serial);
+endfunction
+
+exported function remAggro(creature, serial)
+   core_remAggro(creature, serial);
+endfunction
+
+exported function setAggro(creature, serial, number := 1)
+   core_setAggro(creature, serial, number);
+endfunction
+
+// exported function getHighestAggro(creature)
+//    core_getHighestAggro(creature);
+// endfunction
+
+exported function getLowestAggro(creature)
+   core_getLowestAggro(creature);
+endfunction
+
+exported function aggroProp(creature)
+   core_aggroProp(creature);
+endfunction
+
+exported function setAggroProp(creature, aggro_prop)
+   core_setAggroProp(creature, aggro_prop);
 endfunction

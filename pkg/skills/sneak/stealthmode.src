@@ -2,6 +2,7 @@ use uo;
 
 include ":awareness:awareness";
 include "include/colormap";
+include ":attributes:attributes";
 
 program showdfdiff(params)
 	var who := params[1];
@@ -10,8 +11,10 @@ program showdfdiff(params)
 		var mobs := ListMobilesInLineOfSight(who, 11);
 		foreach mob in mobs
 			if (!mob.hiding)
-				// var dif := CalcSuccessPercent(mob, AWARENESS, cdbl(CalculateDHDiff(mob, who, 1)),  AP_GetTrueSkill(mob, AWARENESS));
-				// PrintTextAbovePrivate(mob, "" + dif, who, _DEFAULT_TEXT_FONT, GetMagentaMap(cint(dif/10)) );
+            var AC  := cint(CalculateDHDiff(mob, who));
+            var MOD := cint(AP_GetStat(mob, WISDOM, RETURN_BONUS) + GetProficiencyBonus(mob, PERCEPCAO));   
+				var dif := CalcSuccessPercent(AC, MOD);
+				PrintTextPrivate(mob, "" + dif, who, GetMagentaMap(cint(dif/10)) );
 			endif
 			sleepms(2);
 		endforeach

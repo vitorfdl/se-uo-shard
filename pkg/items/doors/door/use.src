@@ -10,6 +10,7 @@ use os;
 
 include ":keys:key";
 include ":traps:traps";
+include "include/say";
 
 program useScript(mobile, door)
 
@@ -26,7 +27,7 @@ program useScript(mobile, door)
 		GetProcess(pid).SendEvent("stop");
 	endif
 
-	door.Toggle();
+	door.doToggle();
 	
 	Detach();
 	
@@ -43,13 +44,13 @@ function DoorIsLocked(mobile, door)
 		// Allow an open door to always be closed.
 		return 0;
 	elseif ( door.IsInside(mobile) )
-		SendSysMessage(mobile, "You open the door from the inside.");
+		SendSysMessageEx(mobile, "Você abre a porta por dentro.", SSM_INFO);
 		return 0;
 	elseif ( KP_HasKeyForLock(mobile, door) )
-		SendSysMessage(mobile, "You use your key to open the door.");
+		SendSysMessageEx(mobile, "Você usou a chave para abrir a porta.", SSM_INFO);
 		return 0;
 	elseif ( mobile.Enabled("ignoredoors") )
-		SendSysMessage(mobile, "You open the door with GM previlegies.");
+		SendSysMessageEx(mobile, "You open the door with GM previlegies.", SSM_INFO);
 		return 0;
 	else
 		PrintTextAbovePrivate(door, "That is locked.", mobile);

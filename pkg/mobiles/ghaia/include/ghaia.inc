@@ -46,10 +46,11 @@ function CanFight(me, mobile)
    //printtextabove(me, "não vou atacar" + mobile.name);
       return 0;
    endif
-
-   if (mobile.hidden && mobile.npctemplate && !mobile.master)
+ 
+   if (mobile.hidden && (!mobile.npctemplate || !mobile.master))
       var diff := CalculateDhDiff(me, mobile);
-      var roll := rollAttrDice(me, WISDOM) + getProficiencyBonus(me, FURTIVIDADE);
+      var roll := rollAttrDice(me, WISDOM) + getProficiencyBonus(me, PERCEPCAO);
+
       if ( roll > diff )
          mobile.hidden := 0;
          PrintText(mobile, "*aparece*");
@@ -118,7 +119,7 @@ function AlertAllies(me, opponent)
       //if (CheckLineOfSight(mobile, me))
          player_allies.append(mobile);
       //endif
-      elseif (mobile != me.serial && my_spot == GetObjProperty(mobile, "spawnpoint"))
+      elseif (mobile.serial != me.serial && my_spot == GetObjProperty(mobile, "spawnpoint"))
          myallies.append(mobile);
       endif
       sleepms(2);
@@ -202,8 +203,8 @@ function InitializeNpc(mobile)
    idlesnd1     := cint(sounds[1]); //CInt(npccfgfile.idlesound1);
    idlesnd2     := cint(sounds[2]); //CInt(npccfgfile.idlesound2);
    flee_point   := CInt(npccfgfile.FleeLevel)/100.0;
-   alert_allies := CInt(npccfgfile.AlertAllies);
    areasize     := CInt(npccfgfile.AreaSize);
+
 
    // if (GetObjPRoperty(mobile, "championspawn") == 2)
    //     SetObjProperty(mobile, "#championspawn", 1);

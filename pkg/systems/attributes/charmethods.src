@@ -101,7 +101,20 @@ endfunction
 exported function SetPoints(who, points)
    set_critical(1);
 	var chardata := GetObjProperty(who, "chardata");
-	chardata["attpoints"] := points;
+   if (!chardata)
+      return;
+   endif
+
+	if (!chardata["attpoints"])
+      chardata.attpoints := 0;
+	endif
+
+	chardata["attpoints"] += points;
+   if (chardata.attpoints < 0)
+      chardata.attpoints := 0;
+      Syslog("User "+who.name+" Got -1 Attribute Points");
+   endif
+
 	SetObjProperty(who, "chardata", chardata);
 	return 1;
    set_critical(0);
@@ -118,10 +131,22 @@ exported function GetTalentPoints(who)
 	return talentpoints;
 endfunction
 
-exported function SetTalentPoints(who, points)
+exported function SetTalentPoints(who, points := 1)
    set_critical(1);
 	var chardata := GetObjProperty(who, "chardata");
-	chardata["talentpoints"] := points;
+   if (!chardata)
+      return;
+   endif
+
+	if (!chardata["talentpoints"])
+      chardata.talentpoints := 0;
+	endif
+
+	chardata["talentpoints"] += points;
+   if (chardata.talentpoints < 0)
+      chardata.talentpoints := 0;
+      Syslog("User "+who.name+" Got -1 Talent Points");
+   endif
 	SetObjProperty(who, "chardata", chardata);
 	return 1;
    set_critical(0);

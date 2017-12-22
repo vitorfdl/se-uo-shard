@@ -128,3 +128,17 @@ function GetPointsByFacing(x_pos, y_pos, facing, dist)
 		
 	return coord_list;
 endfunction
+
+function GetFacingToDest(tgt_mob, locx, locy)
+	if (tgt_mob.x == locx && tgt_mob.y == locy)
+		return 0;
+	endif
+
+	var frot := Abs(((tgt_mob.facing)%8)-GetFacing(tgt_mob.x,tgt_mob.y,locx,locy));
+   SendSysMessageEx(tgt_mob, ""+frot);
+	if (frot > 4)
+		frot := 8-frot;
+	endif
+
+	return (frot < 2);
+endfunction

@@ -14,7 +14,6 @@ var npccfgfile := NPC_GetNPCConfig(me);
 var idlesnd1;
 var idlesnd2;
 var areasize;
-var alert_allies := 0;
 var flee_point   := 0.1;
 var mystate      := INITIALIZING;
 
@@ -59,13 +58,9 @@ function CloseDistanceArcher(opponent)
 
 	var dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
 	
-	if (me.z > cint(opponent.z+15)) //checa se esta em cima de alguma torre
-		if (!CheckLineofSight(me, opponent)) //IA para torres: Verifica se tem visão do oponente
-			if (RandomInt(4) == 0 ) //se não tiver visão, tem 25% de mudar de alvo
-				sleepms(sleepdelay);
-				ChooseAnotherOpponent(me);
-			endif
-		endif
+	if (me.z > cint(opponent.z+15) && !CheckLineofSight(me, opponent)) //checa se esta em cima de alguma torre
+      me.setAggro(opponent.serial, -10);
+      ChooseHighestOpponent(me, opponent);
 		sleepms(sleepdelay);
 		return 0; //se estiver em cima de torres, não se move do lugar
 	endif
@@ -88,7 +83,7 @@ function CloseDistanceArcher(opponent)
 endfunction
 
 function lookAround()
-   foreach npc in ListMobilesInLineOfSight(me, areasize)
+   foreach npc in ListMobilesNearLocationEx(me.x, me.y, me.z, areasize, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL);
       if( CanFight(me, npc) )
          Fight(npc);
       endif
@@ -114,7 +109,7 @@ function Fight(opponent, alerted := 0)
    var waittime := 0;
    var ev;
 
-   if (!alerted && alert_allies) 
+   if (!alerted) 
       AlertAllies(me, opponent); 
    endif
 
@@ -128,27 +123,26 @@ function Fight(opponent, alerted := 0)
 
    var dist;
    while( me && loops <= 140)
+      sleepms(15);
       if (me.dead || !opponent || opponent.concealed || opponent.hidden)
+         // me.remAggro(opponent.serial);
          break;
       elseif (opponent.dead)
-         var exist_enemies := 0;
+         //Somente checa se tem mais inimigo, se n se afsata do corpo.
          foreach npc in ListMobilesInLineOfSight(me, areasize + 2)
             if( CanFight(me, npc) )
-               exist_enemies := 1;
                break;
             endif
             sleepms(2);
          endforeach
 
          // Pra se afastar do corpo e o cara poder correr
-         if (!exist_enemies)
-            var corpo := opponent.GetCorpse();
-            var end   := ReadGameClock() + 10;
-            while (CoordinateDistance(me.x, me.y, corpo.x, corpo.y) < areasize + 5 && end > ReadGameClock())
-               RunAwayFromLocation(corpo.x, corpo.y);
-               sleepms(100);
-            endwhile
-         endif
+         var corpo := opponent.GetCorpse();
+         var end   := ReadGameClock() + 10;
+         while (CoordinateDistance(me.x, me.y, corpo.x, corpo.y) < areasize + 5 && end > ReadGameClock())
+            RunAwayFromLocation(corpo.x, corpo.y);
+            sleepms(100);
+         endwhile
          break;
       endif
 
@@ -181,7 +175,7 @@ function Fight(opponent, alerted := 0)
       //    FireBreath(me, opponent, dist);
       // endif
 
-      if (me.my_template()["moriquendi"])
+      if (npccfgfile.Category == "moriquendi")
         var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
         if (last_autoheal <= ReadGameClock())
           SetObjProperty(me, "demon_heal", ReadGameClock() + 4);
@@ -197,60 +191,65 @@ function Fight(opponent, alerted := 0)
          waittime := 1;
       endif
       
-      checkFlee(opponent); //uncomment later
-      
+      // checkFlee(opponent);
+
       ev := wait_for_event(waittime);
       if(ev.type == SYSEVENT_SPEECH)
          continue;
       endif
-
+      
       case (ev.type)
          EVID_OPPONENTHEALED:
-         SYSEVENT_DAMAGED: 
-            //se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente não estiver acessivel
-            /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/
-            if (ev.source && (!CheckLineOfSight(me, opponent) || !opponent))
-               if ( (opponent) && RandomInt(5) == 1 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
-                  opponent := ev.source;
-                  SetOpponent(opponent);
-                  TurnToward(opponent);
-               elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se não tiver mais o oponent entao 100% de chance de mudar de alvo
-                  opponent := ev.source;
-                  SetOpponent(opponent);
-                  TurnToward(opponent);
-               endif
+            if (!ev.source)
+               continue;
             endif
 
-         SYSEVENT_ENGAGED: 
-            if(ev.source && RandomInt(6) == 1)
-               opponent := ev.source;
-               SetOpponent(opponent);
-               TurnToward(opponent);
+            if (ev.target == opponent)
+               me.setAggro(ev.source.serial, 5);
             endif
+            ChooseHighestOpponent(me, opponent, ev.source);
+         SYSEVENT_DAMAGED: 
+            if (!ev.source)
+               continue;
+            endif
+            me.setAggro(ev.source.serial, cint(ev.damage/2)+1);
+            ChooseHighestOpponent(me, opponent, ev.source);
+            /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/
+            // if (ev.source && (!CheckLineOfSight(me, opponent) || !opponent))
+            //    if ( (opponent) && RandomInt(5) == 1 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
+            //       opponent := ev.source;
+            //       SetOpponent(opponent);
+            //       TurnToward(opponent);
+            //    elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se não tiver mais o oponent entao 100% de chance de mudar de alvo
+            //       opponent := ev.source;
+            //       SetOpponent(opponent);
+            //       TurnToward(opponent);
+            //    endif
+            // endif
+
+         SYSEVENT_ENGAGED:
+            me.setAggro(ev.source.serial, 5);
+            ChooseHighestOpponent(me, opponent, ev.source);
 
          EVID_TAUNT:
-            if(ev.source)
-               opponent := ev.source;
-               SetOpponent(opponent);
-               TurnToward(opponent);		
-            endif
+            me.setAggro(ev.source.serial, 20);
+            ChooseHighestOpponent(me, opponent, ev.source);
 
          EVID_FLEE:
             if (ev.source)
                Flee(ev.source);
             endif
 
-        //  EVID_PEACEMADE:
-        //  //	sendsysmessage(ev.source, "peacemade");
-        //     SetPeaceMade();
-        //     return;
+         EVID_PEACEMADE:
+         //	sendsysmessage(ev.source, "peacemade");
+            SetPeaceMade();
+            return;
          EVID_COMBAT_MOVE:
             RunTowardLocation( ev.x, ev.y );
             if (CoordinateDistance(me.x, me.y, ev.x, ev.y) <= 1)
                clear_event_queue();
             endif
       endcase
-      sleepms(5);
    endwhile
 
    DisableCombatEvents();

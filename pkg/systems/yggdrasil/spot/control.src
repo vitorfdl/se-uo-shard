@@ -16,8 +16,7 @@ program Install(spot)
          FillSpawnQueue(config.spawnpoints);
          ResetTreasures(config.treasures);
       endif
-      var sleepwait := cint(config.timeinterval) * 60;
-      sleep(sleepwait);
+      sleep(400);
    endwhile
 endprogram
 

@@ -40,11 +40,11 @@ program destroyitems(parms)
 	elseif(AP_GetVital(who, "Stamina") < 15)
       SendSysMessageEx(who, "Você esta cansado demais.",SSM_FAIL);
       return 0;
-   elseif ( who.weapon.isBow() )
+   elseif ( who.weapon.isBow() || who.weapon.isMagicWeapo())
       return 0;
    endif
 
-   var mobiles:= ListMobilesNearLocation( item.x, item.y, item.z, 20, LISTEX_FLAG_NPC_ONLY );
+   var mobiles:= ListMobilesNearLocation( item.x, item.y, item.z, 20, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY );
    var ev := struct;
    ev.+type := EVID_HERDING;
    ev.+data := array{item.x, item.y};
@@ -80,7 +80,7 @@ program destroyitems(parms)
       if (item.isA(POLCLASS_CONTAINER))
          var container_items := EnumerateItemsInContainer(item);
          foreach citem in container_items
-            if (RandomInt(100) < 35)
+            if (RandomInt(100) < 25)
                MoveObjectToLocation(citem, item.x, item.y, item.z, item.realm, MOVEOBJECT_FORCELOCATION);
             else
                DestroyItem(citem);

@@ -80,15 +80,13 @@ function Loot_CreateItem(container, line, type := 0)
 					SetName(item, item.desc+" [danificado]");
 				endif
 			elseif (type == "recipe")
-				var objtype := parsed.name;
+				var objtype := GetObjtypeByName(parsed.name);
 
-				if (!Hex(objtype))
-					objtype := GetObjtypeByName(parsed.name);
+				if (!objtype)
+					objtype := Hex(parsed.name);
                if (!objtype)
                   objtype := parsed.name;
                endif
-            else
-               objtype := Hex(objtype);
 				endif
 
 				if (!objtype)
@@ -146,7 +144,6 @@ function Loot_CreateRandom(container, line)
          var random := RandomInt(num_items)+1;
          if (random > items.size())
             random := random - items.size();
-            print("recipe "+recipes[random]);
             Loot_CreateItem(container, recipes[random], "recipe");
          else
             Loot_CreateItem(container, items[random]);

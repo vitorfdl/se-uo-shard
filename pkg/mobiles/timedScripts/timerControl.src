@@ -92,6 +92,7 @@ function SaveState(mobile, byref timer_list, byref cooldowns)
 			save_timer.+duration := timer.endtime - ReadGameClock();
 			save_timer.+timerType := EVENT_TYPE_COOLDOWN;
 			save_timer.+endtime := timer.endtime;
+         save_timer.+endMessage := timer.endMessage;
 	
 			cooldowns_dict[_timer_iter] := save_timer;
 		endforeach
@@ -124,6 +125,7 @@ function StartUp(mobile, byref timer_list, byref cooldowns, byref num_poisons)
 		var event := struct;
 		event.+name := _timer_iter;
 		event.+amount := timer.duration;
+		event.+endMessage := timer.endMessage;
 		event.+timerType := EVENT_TYPE_COOLDOWN;
 
 		AddTimer(mobile, event, timer_list, cooldowns, num_poisons);
@@ -222,6 +224,11 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
             if (cint(event.amount) <= 0)
                event.amount := 0;
             endif
+
+            if (elem_info.IndicatePoison)
+               num_poisons += 1;
+            endif
+
             print("<> New buff User: {}, Amount: {}, Text: {}".format(mobile.name, event.amount, text));
 				mobile.addBuff(cint(elem_info.Icon), cint(event.amount), cint(1075834), cint(elem_info.cliloc2), cAscZ(text));
 			endif
@@ -481,7 +488,7 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 	endif
 
 	if( elem_info.EndMessage )
-		SendSysMessage(mobile, elem_info.EndMessage);
+		SendSysMessageEx(mobile, elem_info.EndMessage);
 	endif
 
  	if ( elem_info.Icon )

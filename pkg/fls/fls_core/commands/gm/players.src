@@ -45,7 +45,9 @@ function PlayersGump(who)
 		if (charname == "Desconhecido" || charname == "Fantasminha")
 			charname := GetObjProperty(char, "realname");
 		endif
-		GFTextLine(gump, 25, y_pos, name_color, acc + " - "+char.title_race+" ["+charname + "]"  );
+      
+      var chardata := char.getprop("chardata");
+		GFTextLine(gump, 25, y_pos, name_color, "{} - [{}] - {} Lv.{}".format(acc, charname, chardata.classe, char.getLevel()) );
 		GFAddButton(gump, 260, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter);
 		GFAddButton(gump, 308, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+200);
 		GFAddButton(gump, 360, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+400);

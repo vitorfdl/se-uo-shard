@@ -81,6 +81,12 @@ function SpawnTreasure(treasure, config)
       SetObjproperty(treasure, "hits", 1+config.level);
    endif
 
+   if (treasure.desc["[Armadilha]"])
+      var old_name := treasure.desc; 
+      old_name[" [Armadilha]"] := "";
+      SetName(treasure, old_name);
+   endif
+
    CleanTreasure(treasure);
    SetObjProperty(treasure, "level", config.level);
    treasure.movable := 0;

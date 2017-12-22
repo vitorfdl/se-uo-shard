@@ -4,7 +4,6 @@ use cfgfile;
 include ":attributes:attributes";
 include "include/client";
 include "include/say";
-include ":chestspawn:treasurechest";
 
 const MAX_RESOURCE_AMOUNT := 10;
 
@@ -59,143 +58,139 @@ function isSolved(map)
     endif
 endfunction
 
-function DigForMap(who, targ, map)
+// function DigForMap(who, targ, map)
 
-	if (!reserveItem(map))
-		return;
-	endif
+// 	if (!reserveItem(map))
+// 		return;
+// 	endif
 
-	var chestx := Cint(GetObjProperty( map, "chestx" ));
-	var chesty := Cint(GetObjProperty( map, "chesty" ));
-	var chestz := GetWorldHeight(chestx, chesty);
+// 	var chestx := Cint(GetObjProperty( map, "chestx" ));
+// 	var chesty := Cint(GetObjProperty( map, "chesty" ));
+// 	var chestz := GetWorldHeight(chestx, chesty);
 
-	if((!chestx) || (!chesty))
-		SendSysMessageEx( who, "Este não parece ser um mapa de tesouro.", SSM_FAIL );
-		return;
-	endif
+// 	if((!chestx) || (!chesty))
+// 		SendSysMessageEx( who, "Este não parece ser um mapa de tesouro.", SSM_FAIL );
+// 		return;
+// 	endif
 
-	if(!CheckLosAt( who, targ.x, targ.y, targ.z ) );
-		SendSysMessageEx( who, "Você não vê o alvo.", SSM_FAIL );
-		return;
-	endif
+// 	if(!CheckLosAt( who, targ.x, targ.y, targ.z ) );
+// 		SendSysMessageEx( who, "Você não vê o alvo.", SSM_FAIL );
+// 		return;
+// 	endif
 
-	PerformAction(who, 0x0b);
-	PlaySoundEffect(who, 0x126);
+// 	PerformAction(who, 0x0b);
+// 	PlaySoundEffect(who, 0x126);
 
-	var range := 5; //GetRange( who );
-	var distn := coordinatedistance( targ.x, targ.y, chestx, chesty );
-	var maxrange := 20;
-	var mobiles := ListMobilesNearLocation(targ.x, targ.y, targ.z, 0, who.realm);
+// 	var range := 5; //GetRange( who );
+// 	var distn := coordinatedistance( targ.x, targ.y, chestx, chesty );
+// 	var maxrange := 20;
+// 	var mobiles := ListMobilesNearLocation(targ.x, targ.y, targ.z, 0, who.realm);
 
-	if(distn > maxrange)
-		SendSysMessageEx(who,"Você parece muito distante.", SSM_INFO);
-		return;
+// 	if(distn > maxrange)
+// 		SendSysMessageEx(who,"Você parece muito distante.", SSM_INFO);
+// 		return;
 
-	elseif((distn > range) && (distn <= maxrange))
-		SendSysMessageEx(who,"Você cavou e cavou mas não encontrou nenhum tesouro.", SSM_INFO);
-		return;
+// 	elseif((distn > range) && (distn <= maxrange))
+// 		SendSysMessageEx(who,"Você cavou e cavou mas não encontrou nenhum tesouro.", SSM_INFO);
+// 		return;
 
-	elseif((distn < range) && (len(mobiles) > 0))
-		SendSysMessageEx(who,"você patou de cavar porque algo esta sobre o tesouro.");
-		return;
-	else
+// 	elseif((distn < range) && (len(mobiles) > 0))
+// 		SendSysMessageEx(who,"você patou de cavar porque algo esta sobre o tesouro.");
+// 		return;
+// 	else
 
-		var i := 1;
-		var mex := who.x;
-		var mey := who.y;
-		var parts := {};
-		var maplevel := CInt(GetObjProperty(map, "level") );
-		var loot := "treasuremap" + maplevel;
+// 		var i := 1;
+// 		var mex := who.x;
+// 		var mey := who.y;
+// 		var parts := {};
+// 		var maplevel := CInt(GetObjProperty(map, "level") );
+// 		var loot := "treasuremap" + maplevel;
 
-		var chest;
-		chestz := chestz - 8;
-		sendsysmessageEx(who, " " + chestz);
-		var chests := CreateTreasureChests(maplevel, 1, 0, chestx, chesty, chestz, who.realm, loot);
-		chest := chests[1];
-		if (GetObjProperty(map, "tesouroescondido") == 1)
-			Loot_Generate(chest, loot);
-		endif
-		var ret := MoveObjectToLocation(chest, chest.x, chest.y, chestz, who.realm,  MOVEOBJECT_FORCELOCATION);
-//		sendsysmessageEx(who, " " + ret);
+// 		var chest;
+// 		chestz := chestz - 8;
+// 		sendsysmessageEx(who, " " + chestz);
+// 		var chests := CreateTreasureChests(maplevel, 1, 0, chestx, chesty, chestz, who.realm, loot);
+// 		chest := chests[1];
+// 		if (GetObjProperty(map, "tesouroescondido") == 1)
+// 			Loot_Generate(chest, loot);
+// 		endif
+// 		var ret := MoveObjectToLocation(chest, chest.x, chest.y, chestz, who.realm,  MOVEOBJECT_FORCELOCATION);
+// //		sendsysmessageEx(who, " " + ret);
 
-		chest.movable := 0;
+// 		chest.movable := 0;
 
-		while((i <= 9) && (who.x == mex) && (who.y == mey))
-			if((who.x != mex) && (who.y != mey))
-				foreach thing in parts
-					DestroyItem(thing);
-				endforeach
-				break;
-			endif
+// 		while((i <= 9) && (who.x == mex) && (who.y == mey))
+// 			if((who.x != mex) && (who.y != mey))
+// 				foreach thing in parts
+// 					DestroyItem(thing);
+// 				endforeach
+// 				break;
+// 			endif
 
-			PerformAction(who, 0x0b);
-			PlaySoundEffect(who, 0x126);
-			sleep(1);
+// 			PerformAction(who, 0x0b);
+// 			PlaySoundEffect(who, 0x126);
+// 			sleep(1);
 
-			if(i == 2)
-          			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2321, 1, who.realm);
-          			patch.movable := 0;
-		          	parts.append(patch);
-        		elseif(i == 3)
-          			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2322, 1, who.realm);
-          			patch.movable := 0;
-          			parts.append(patch);
-        		elseif(i == 4)
-          			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2323, 1, who.realm);
-          			patch.movable := 0;
-          			parts.append(patch);
-        		elseif(i == 5)
-          			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2324, 1, who.realm);
-          			patch.movable := 0;
-          			parts.append(patch);
-          			chest.movable := 1;
-          			MoveObjectToLocation(chest, chest.x, chest.y, (chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
-          			chest.movable := 0;
-        		elseif(i == 6)
-          			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2324, 1, who.realm);
-          			patch.movable := 0;
-          			parts.append(patch);
-          			chest.movable := 1;
-          			MoveObjectToLocation(chest, chest.x, chest.y, (chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
-          			chest.movable := 0;
-        		elseif(i == 7)
-          			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2324, 1, who.realm);
-          			patch.movable := 0;
-          			parts.append(patch);
-          			chest.movable := 1;
-          			MoveObjectToLocation(chest, chest.x, chest.y,( chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
-          			chest.movable := 0;
-        		elseif(i == 8)
-          			chest.movable := 1;
-          			MoveObjectToLocation(chest, chest.x, chest.y, (chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
-          			chest.movable := 0;
-          			foreach thing in parts
-            				DestroyItem(thing);
-          			endforeach
-        		endif
-			if((who.x != mex) || (who.y != mey))
-				SendSysMessageEx(who,"Você deve ficar parado enquanto cava.", SSM_FAIL);
-				DestroyItem(chest);
-		        	return;
-		      	endif
+// 			if(i == 2)
+//           			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2321, 1, who.realm);
+//           			patch.movable := 0;
+// 		          	parts.append(patch);
+//         		elseif(i == 3)
+//           			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2322, 1, who.realm);
+//           			patch.movable := 0;
+//           			parts.append(patch);
+//         		elseif(i == 4)
+//           			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2323, 1, who.realm);
+//           			patch.movable := 0;
+//           			parts.append(patch);
+//         		elseif(i == 5)
+//           			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2324, 1, who.realm);
+//           			patch.movable := 0;
+//           			parts.append(patch);
+//           			chest.movable := 1;
+//           			MoveObjectToLocation(chest, chest.x, chest.y, (chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
+//           			chest.movable := 0;
+//         		elseif(i == 6)
+//           			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2324, 1, who.realm);
+//           			patch.movable := 0;
+//           			parts.append(patch);
+//           			chest.movable := 1;
+//           			MoveObjectToLocation(chest, chest.x, chest.y, (chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
+//           			chest.movable := 0;
+//         		elseif(i == 7)
+//           			var patch := CreateItemAtLocation(chestx, chesty, chestz, 2324, 1, who.realm);
+//           			patch.movable := 0;
+//           			parts.append(patch);
+//           			chest.movable := 1;
+//           			MoveObjectToLocation(chest, chest.x, chest.y,( chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
+//           			chest.movable := 0;
+//         		elseif(i == 8)
+//           			chest.movable := 1;
+//           			MoveObjectToLocation(chest, chest.x, chest.y, (chest.z+2), who.realm,  MOVEOBJECT_FORCELOCATION);
+//           			chest.movable := 0;
+//           			foreach thing in parts
+//             				DestroyItem(thing);
+//           			endforeach
+//         		endif
+// 			if((who.x != mex) || (who.y != mey))
+// 				SendSysMessageEx(who,"Você deve ficar parado enquanto cava.", SSM_FAIL);
+// 				DestroyItem(chest);
+// 		        	return;
+// 		      	endif
 
-        		i := i + 1;
+//         		i := i + 1;
 
-		endwhile
+// 		endwhile
 
-		chest.movable := 1;
-      		EraseObjProperty(map, "level");
-      		EraseObjProperty(map, "chestx");
-      		EraseObjProperty(map, "chesty");
-      		SetObjProperty(map, "Solved", 1);
-      		map.name := "mapa de tesouro [completado por " + who.name + "]";
+// 		chest.movable := 1;
+//       		EraseObjProperty(map, "level");
+//       		EraseObjProperty(map, "chestx");
+//       		EraseObjProperty(map, "chesty");
+//       		SetObjProperty(map, "Solved", 1);
+//       		map.name := "mapa de tesouro [completado por " + who.name + "]";
 
-    endif
-
-
-
-
-endfunction
+//     endif
+// endfunction
 
 function GetRange( who );
 

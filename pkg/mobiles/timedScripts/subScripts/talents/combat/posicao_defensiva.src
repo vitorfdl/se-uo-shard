@@ -1,10 +1,20 @@
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
    var bonus_ca := cint(GetObjProperty(mobile, "bonus_ca"));
    bonus_ca += 1;
    SetObjProperty(mobile, "bonus_ca", bonus_ca);
    SendSysmessageEx(mobile, "Você está em posição defensiva", SSM_INFO);
-   RecalcVitals(mobile, RECALC_NO_INTRINSIC_MOD);
    return 1;
 endfunction
 

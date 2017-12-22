@@ -2,8 +2,8 @@ use uo;
 
 include "include/say";
 include ":unicos:item_template";
-include ":yggdrasil:boss";
 include ":timedscripts:timedScripts";
+include ":yggdrasil:boss";
 
 function ConfigureEvent(who)
 	var evento := struct;

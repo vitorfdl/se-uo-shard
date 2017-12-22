@@ -8,7 +8,7 @@ program scroll(item)
 		if (last_objtype != GetObjProperty(item, "objtype"))
 			scrollCreate(item);
 			last_objtype := GetObjProperty(item, "objtype");
-			return;
+			break;
 		endif
 		sleep(10);
 	endwhile
@@ -47,7 +47,7 @@ function ScrollCreate(scroll)
             SetObjProperty(scroll, "pericia", cfg_name);
             break;
          endif
-         sleepms(2);
+         sleep(1);
       endforeach
    endif
 

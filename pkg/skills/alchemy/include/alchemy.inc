@@ -18,16 +18,16 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
    var cfg           := ReadConfigFile(":*:itemdesc");
    var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
    if (equippedright and equippedleft || twohanded)
-      SendSysMessage(character, "Você precisa de pelo menos uma mao livre!");
+      SendSysMessageEx(character, "Você precisa de pelo menos uma mão livre!");
       return 0;
    elseif (GetObjProperty(character, "noheal") && type == "healingpot")
-      SendSysMessageEx(character, "Essa pocao não fara efeito nas atuais circunstacias", SSM_FAIL);
+      SendSysMessageEx(character, "Essa poção não fará efeito nas atuais circunstâcias", SSM_FAIL);
       return 0;    
    endif
 
    if((type != "red") and (type != "green_potion") and type)
       if(TS_GetCooldown(character, type))
-         SendSysMessage(character, "Você deve esperar um pouco antes de beber outra pocao!");
+         SendSysMessageEx(character, "Você deve esperar um pouco antes de beber outra poção!", SSM_FAIL);
          return 0;
       elseif (cooldown > 0 )
          TS_StartCooldown(character, type, cooldown);
@@ -40,7 +40,7 @@ endfunction
 
 function EmptyBottle(character, potion, potiontype := 0)
    PlaySoundEffect(character, DRINK_SOUND);
-   PrintText(character, "*usa uma pocao*");
+   PrintText(character, "*usa uma poção*");
    var goles;
    if (!GetObjProperty(potion, "goles"))
       goles := 3;

@@ -49,41 +49,49 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
-function LearnFeat(who, feat, minus_point := 1)
+function LearnFeat(who, feat, minus_point := 1, gives := 1)
 	if (typeof(feat) != "Struct")
 		feat := FeatInfo(feat, 1);
 	endif
 
-	if (!feat)
+	if (typeof(feat) != "Struct")
 		Print(">>>>> ERROR OCURRED, NO FEAT FOUND");
 		return 0;
 	endif
 
 	var chardata := GetObjProperty(who, "chardata");
 	var feat_list := chardata.Feats;
+   if (!feat_list)
+      feat_list := array{};
+   endif
+   
 	if (feat.name in feat_list)
 		return 0;
 	endif
 
-	feat_list += feat.name;
+	feat_list.append(feat.name);
 	chardata.Feats := feat_list;
 	SetObjProperty(who, "chardata", chardata);
 	
 	if (minus_point)
-		var talent_points := who.GetTalentPoints();
-		talent_points -= 1;
-		who.SetTalentPoints(talent_points);
+		who.SetTalentPoints(-1);
 	endif
 
-	foreach give_parse in (feat.give)
-		give_parse := SplitWords(give_parse);
-		if (give_parse[1] == "item")
-			createiteminBackpack(who, give_parse[2], give_parse[3]);
-		else
-			AP_SetTrueSkill(who, give_parse[2], 1);
-		endif
-		sleepms(2);
-	endforeach
+   if (gives)
+      foreach give_parse in (feat.give)
+         give_parse := SplitWords(give_parse);
+         if (give_parse[1] == "item")
+            createiteminBackpack(who, give_parse[2], give_parse[3]);
+         elseif (give_parse[1] == "stat")
+            AP_SetTrueStat(who, give_parse[2], AP_GetTrueStat(who, give_parse[2]) + cint(give_parse[3]));
+         else
+            AP_SetTrueSkill(who, give_parse[2], 1);
+         endif
+         sleepms(2);
+      endforeach
+   endif
+
+   return 1;
 endfunction
 
 function GetNewFeatsList(who)
@@ -102,10 +110,10 @@ function GetNewFeatsList(who)
 
 		var pass := 1;
 		foreach req in (feat.requirements)
-			req := SplitWords(req, " ");
+			req := SplitWords(req);
 
 			if (req[1] == "achievement")
-				if(who.GetAchievement(req[2]) < req[3])
+				if(who.GetAchievement(req[2]) < cint(req[3]))
 					pass := 0;
 					break;
 				endif
@@ -116,6 +124,11 @@ function GetNewFeatsList(who)
 				endif
 			elseif (req[1] == "skill")
 				if(!HaveSkill(who, req[2]))
+					pass := 0;
+					break;
+				endif
+			elseif (req[1] == "stat")
+				if(!who.GetStat(req[2]) < cint(req[3]))
 					pass := 0;
 					break;
 				endif
@@ -137,6 +150,7 @@ function FeatInfo(feat, plus := 0)
 	if (!elem)
 		return feat;
 	endif
+   
 	var feat_info := struct{
 		"name" := feat,
 		"desc" :=   GetConfigString( elem, "Description" ),
@@ -144,6 +158,8 @@ function FeatInfo(feat, plus := 0)
 
 		"mana" := GetConfigInt( elem, "Mana" ),
 		"stam" := GetConfigInt( elem, "Stam" ),
+
+		"cooldown" := GetConfigInt( elem, "Cooldown" ),
 
 		"level" := GetConfigInt( elem, "Level" )
 	};
