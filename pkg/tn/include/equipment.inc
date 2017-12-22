@@ -56,10 +56,21 @@ function RemoveEquipmentMods(who, item)
 	foreach skill in penalty_list
 		AP_ModifySkillMod(who, skill, 1);
 	endforeach
+   
+   var item_e := itemdesc[item.objtype];
+	if (item_e.Pericia)
+      if (!HaveSkill(who, item_e.Pericia))
+         var value := cint(GetObjProperty(who, "ArmorPenalty")) -1;
+         SetObjProperty(who, "ArmorPenalty", value);
+      endif
 
-	if (itemdesc[item.objtype].Pericia && !HaveSkill(who, itemdesc[item.objtype].Pericia))
-		var value := cint(GetObjProperty(who, "ArmorPenalty")) -1;
-		SetObjProperty(who, "ArmorPenalty", value);
+      if (item_e.Pericia["Pesada"])
+         who.setToughness(-3);
+      elseif (item_e.Pericia["Média"])
+         who.setToughness(-2);
+      elseif (item_e.Pericia["Leve"])
+         who.setToughness(-1);
+      endif
 	endif
 	
 	var mods := GetObjProperty(item, "equip");
@@ -86,6 +97,8 @@ function RemoveEquipmentMods(who, item)
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) - Cint( mods["manamod"] ));
 			RecalcVitals(who);
+      elseif (mod == "toughmod")
+         who.setToughness(cint(mods["toughmod"])*(-1));
 		elseif (mod == "hitsmod")
 			var hitswho := Cint(GetObjProperty(who, "#hitsmod"));
 			var hitsitem :=  Cint( mods["hitsmod"] );

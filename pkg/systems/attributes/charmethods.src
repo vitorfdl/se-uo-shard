@@ -186,3 +186,12 @@ exported function ReduceLifeTime(who, time, type)
 	return 1;
 endfunction
 
+exported function getToughness(who, plus := 1)
+	return cint(GetObjProperty(who, "toughness"));
+endfunction
+
+exported function setToughness(who, plus := 1)
+	var toughness := cint(GetObjProperty(who, "toughness"));
+   toughness += plus;
+   SetObjProperty(who, "toughness", toughness);
+endfunction

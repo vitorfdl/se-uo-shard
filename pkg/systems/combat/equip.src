@@ -59,9 +59,19 @@ function SetEquipmentMods(who, item)
 		return 0;
 	endif
 
-	if (item_e.Pericia && !HaveSkill(who, item_e.Pericia))
-		var value := cint(GetObjProperty(who, "ArmorPenalty")) +1;
-		SetObjProperty(who, "ArmorPenalty", value);
+	if (item_e.Pericia)
+      if (!HaveSkill(who, item_e.Pericia))
+         var value := cint(GetObjProperty(who, "ArmorPenalty")) +1;
+         SetObjProperty(who, "ArmorPenalty", value);
+      endif
+
+      if (item_e.Pericia["Pesada"])
+         who.setToughness(3);
+      elseif (item_e.Pericia["Média"])
+         who.setToughness(2);
+      elseif (item_e.Pericia["Leve"])
+         who.setToughness(1);
+      endif
 	endif
 
 	// if (item.isa(POLCLASS_ARMOR))
@@ -99,7 +109,8 @@ function SetEquipmentMods(who, item)
 			EraseObjProperty(who, "#" + GetObjProperty(item, "propname"));
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) + Cint( mods["manamod"] ));
-			RecalcVitals(who);
+      elseif (mod == "toughmod")
+         who.setToughness(cint(mods["toughmod"]));
 		elseif (mod == "hitsmod")
 			var prevhits := Cint(GetObjProperty(who, "#hitsmod"));
 			SetObjProperty(who, "#hitsmod",  prevhits + Cint(mods["hitsmod"] ) );
