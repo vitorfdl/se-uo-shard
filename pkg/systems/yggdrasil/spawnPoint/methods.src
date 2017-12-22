@@ -40,7 +40,6 @@ exported function GetProps( spawnpoint )
    data.+spotgroup   := GetObjProperty(spawnpoint, "spotgroup");
    data.+monsters    := GetObjProperty(spawnpoint, "monsters");
    data.+spawnqueue  := GetObjProperty(spawnpoint, "spawnqueue");
-   data.+spotgroup   := GetObjProperty(spawnpoint, "spotgroup");
    data.+groups      := GetObjProperty(spawnpoint, "groups");
 
    if (!data.monsters)
@@ -52,6 +51,10 @@ exported function GetProps( spawnpoint )
 
    if (!data.groups)
       data.groups := array{0};
+   endif
+
+  if (!data.diedmonsters)
+      data.diedmonsters := array{};
    endif
 
    data.+yggdrasil := GetObjProperty(spawnpoint, "yggdrasil");
@@ -97,6 +100,10 @@ exported function SetProps( spawnpoint, data := struct{});
       old_data.groups := data.groups;
    endif
 
+   if (data.diedmonsters)
+      old_data.diedmonsters := data.diedmonsters;
+   endif
+
    if (data.mob_number)
       var group_data := GetSpotGroupData(old_data.spotgroup, 0);
       if (group_data)
@@ -126,6 +133,7 @@ exported function SetProps( spawnpoint, data := struct{});
    SetObjProperty(spawnpoint, "spawnqueue", old_data.spawnqueue);
    SetObjProperty(spawnpoint, "monsters", old_data.monsters);
    SetObjProperty(spawnpoint, "spotgroup", old_data.spotgroup);
+   SetObjProperty(spawnpoint, "diedmonsters", old_data.diedmonsters);
 endfunction
 
 function ModelSpawnPoint( data := struct{})
@@ -221,17 +229,29 @@ exported function FillQueue(spawnpoint)
       sleepms(2);
    endforeach
 
-   // Remove dead monsters and set the property
-   index_rem.Reverse(); //cheat for pol
-   foreach index in index_rem
-      monsters.erase(index);
-      sleepms(2);
-   endforeach
+   removeIndexes(monsters, index_rem);
    SetObjProperty(spawnpoint, "monsters", monsters);
 
-   // Spawn
    var spawn_size := monsters.size() + spawn_queue.size();
 
+   // count recent died monsters
+   var spot := SystemFindObjectBySerial(config.spot_serial);
+   var spot_time := cint(GetObjProperty(spot, "timeinterval"));
+   index_rem := array{};
+   var diedmonsters := config.diedmonsters;
+   foreach died in diedmonsters
+      if (died.time + spot_time >= polcore().systime)
+         index_rem.append(_died_iter);
+      else
+         spawn_size += 1;
+      endif
+      sleepms(2);
+   endforeach
+
+   removeIndexes(diedmonsters, index_rem);
+   SetObjProperty(spawnpoint, "diedmonsters", diedmonsters);
+
+   // Spawn
    if (spawn_size >= config.mob_number)
       // print("Max Spawn size " + spawn_size);
       return; // Don't need to queue anything
@@ -280,7 +300,6 @@ exported function FillQueue(spawnpoint)
             spawn_list := FindAllElemInArray(spawn_list, struct{ "type" := "boss" });
          else
             var preference := "melee";
-            var spot := SystemFindObjectBySerial(config.spot_serial);
             var z_diff := spot.z - spawnpoint.z;
             if (spot.z < 0 && z_diff < 0)
                z_diff := z_diff * -1;
@@ -327,7 +346,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
    var monster := config.spawnqueue[1];
    if (!monster)
       return 1;
-   elseif (!pass && HasPlayerNear(spawnpoint.x, spawnpoint.y, spawnpoint.ream))
+   elseif (!pass && HasPlayerNear(spawnpoint.x, spawnpoint.y, spawnpoint.realm))
       return 1;
    endif
 
@@ -411,6 +430,7 @@ exported function SpawnAll(spawnpoint)
       KillSpawn(spawnpoint, (monsters.size()+1) - _m_iter);
    endforeach
    SetObjProperty(spawnpoint, "monsters", array{});
+   SetObjProperty(spawnpoint, "diedmonsters", array{});
 
    FillQueue(spawnpoint);
    var queue := GetObjProperty(spawnpoint, "spawnqueue");

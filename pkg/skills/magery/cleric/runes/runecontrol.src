@@ -1,0 +1,13 @@
+use uo;
+use os;
+
+program controlRune(trap)
+	sleep(5);
+	var runetimemax := GetObjProperty(trap, "timeexpire");
+	while (trap && runetimemax)
+      if (polcore().systime >= runetimemax)
+         var destro := DestroyItem(trap);
+		endif
+		sleep(10);
+	endwhile
+endprogram

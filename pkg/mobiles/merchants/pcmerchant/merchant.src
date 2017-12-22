@@ -181,11 +181,7 @@ function removeItemMerchant(npc, player, input)
 	var selling := info[2];
 	
 	var confiscar;
-	if ( player.cmdlevel >= 3 )
-		if ( !YesNo(player, "Você deseja confiscar este objeto?") )
-			return;
-		endif
-
+	if ( player.cmdlevel >= 3 && YesNo(player, "Você deseja confiscar este objeto?") )
 		confiscar := 1;
 		var ItensRevogados := dictionary;
 		if ( GetObjProperty(npc, "ItensRevogados") )

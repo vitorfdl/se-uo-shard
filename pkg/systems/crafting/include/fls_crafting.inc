@@ -78,6 +78,7 @@ function GetRecipe(objtype, elem)
       "mark"        := GetConfigInt(elem, "mark"),
       "exceptional" := GetConfigInt(elem, "exceptional"),
       "delay"       := GetConfigInt(elem, "delay"),
+      "more"       := GetConfigInt(elem, "more"),
       "materials"  := materials,
       "requires"   :=  GetConfigStringArray(elem, "requires")
    };
@@ -89,7 +90,8 @@ function GetRecipeList(who, recipe_cfg, search := "")
 	
 	var recipelist := array{}; //lista temp pra veriicar se os items sao da skill do menu
 	foreach recipe in (items)
-		var elem        := FindConfigElem(recipe_cfg, cstr(Hex(recipe)));
+		var elem        := FindConfigElem(recipe_cfg, Hex(recipe));
+      if (!elem) elem := FindConfigElem(recipe_cfg, recipe); endif
 		var recipe_type := GetConfigString(elem, "Type");
 		if (recipe_type == "Recipe")
          recipe := GetRecipe(recipe, elem);
@@ -197,7 +199,7 @@ function MaterialSelection(who, type, chk)
 	return retarray;
 endfunction
 
-function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
+function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 	var craft_sound  := menu_config[craft_skill].CraftSound;
 	var craft_delay  := menu_config[craft_skill].CraftDelay;
 	var craft_action := menu_config[craft_skill].CraftAnim;
@@ -209,6 +211,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
  	craft_loops := cint(craft_loops);
 
 	var materials     := recipe.materials;
+	var more     := recipe.more;
 	var main_material := recipe.main_material;
 	//verifica se tem os objtypes na bag
 	var targ_materials   := GetBagList(who, materials.Keys());
@@ -319,7 +322,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix, more := 0)
 			endif
 		endforeach
 
-      print(craft_skill);
 		var check := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, craft_skill);
 		if(check > recipe.difficulty || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials, 1+more))

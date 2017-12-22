@@ -68,13 +68,16 @@ endprogram
 // endfunction
 
 function HandleSpeech(npc, player, text)
-   var canceled := 0;
 	text := lower(text);
    if (text["alugar"] || text["quarto"] || text["ver"])
-      while(!canceled)
-			Printtext(npc, "Em que posso ajuda-lo?");
+      var onlyclass := GetObjProperty(npc, "onlyclass");
+      if (onlyclass && !player.isClass(onlyclass) && player.cmdlevel < 3)
+         PrintText(npc, "Desculpe, não posso alugar quartos para você.");
+      endif
+		Printtext(npc, "Em que posso ajuda-lo?");
+      while(1)
          var input := SendRoomGump(npc, player);
-         if (!input[0])
+         if (!input)
             break;
          endif
       endwhile
@@ -197,6 +200,7 @@ function SendRoomGump(npc, player)
 			quartos.append(room);
 			SetObjProperty(npc, "quartos", quartos);
 		endif
+      return 1;
 	elseif (input[0] == 100 ) //trocar fechadura
 		var yes := yesno(player, "O chaveiro vai cobrar 25 moedas, deseja continuar? " );
 		if (yes)
@@ -215,6 +219,7 @@ function SendRoomGump(npc, player)
 				SetObjProperty( key, "LockId", lockid );
 			endif
 		endif
+      return 1;
 	elseif (input[0] == 400)//entregar quarto
       Printtext(npc, "Quer mesmo devolver o seu quarto?");
 		var yes := yesno(player, "Deseja devolver o quarto?  Seus itens serão deletados." );
@@ -234,6 +239,7 @@ function SendRoomGump(npc, player)
 
 		endif
 	
+      return 1;
 	elseif (input[0] == 500) //linkar mural
 		SendSysMessage(player, "Escolha o montante de moedas para pagar o aluguel.");
 		if (!getgoldpayment(player,quartos[meuquarto].custo))
@@ -358,7 +364,11 @@ function SendRoomGump(npc, player)
 				SetObjProperty( key, "LockId", lockid );
 			endif
 		endif
-		
+      return 1;
+   elseif (input[0] == 200)
+      return 1;
+   else
+      return 0;
 	endif
 endfunction
 

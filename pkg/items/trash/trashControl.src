@@ -9,6 +9,7 @@ program trash(item)
         count := count + 1;
         DestroyItem(trashitem);
       endif
+      sleepms(2);
     endforeach
     if(count)
       PrintTextAbove(item, "Destroying items in trash.");

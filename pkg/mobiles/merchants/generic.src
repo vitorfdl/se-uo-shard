@@ -46,13 +46,13 @@ program Merchant()
     SetWarMode( 0 );
     ev := os::wait_for_event(0);
     EnableMerchantEvents();
-    Set_Event_Queue_Size(1000);
+    Set_Event_Queue_Size(10);
     while(me)
       if(wanders >= 30)
          wanders := 0;
          ev := sleepmode();
       else
-         ev := os::wait_for_event(10);
+         ev := os::wait_for_event(50);
       endif
 
       if(ev)
@@ -76,7 +76,7 @@ program Merchant()
                 DblClickScript(ev);
                 break;
             SYSEVENT_SPEECH:
-               if (g_scripts["TalkEvent"])
+               if (g_scripts["TalkEvent"] && CheckLineOfSight(me, ev.source))
                   HandleSpeech(ev);
                endif
                break;
@@ -94,6 +94,7 @@ program Merchant()
 
          endcase
       endif   
+      wanders += 1;
       sleepms(5);
     endwhile
 endprogram

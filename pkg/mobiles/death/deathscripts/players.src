@@ -15,7 +15,7 @@ include ":charactercreation:habilidades";
 
 program death(params)
 	var corpse := params[1];
-	var ghost := params[2];
+	var ghost  := params[2];
 	
 	corpse.decayat := 0;
 
@@ -23,8 +23,8 @@ program death(params)
 		return 1;
 	endif
 	
-	var lastHit := GetObjProperty(ghost, "lastHit");
-	var killer := SystemFindObjectBySerial(lastHit.attacker);
+	var lastHit := GetObjProperty(ghost, "LastDamage");
+	var killer := SystemFindObjectBySerial(lastHit.serial);
 	var dmg := lastHit.amount;
 
 	var protecao := Cint(GetObjProperty(ghost, "protecaomorte"));
@@ -33,6 +33,11 @@ program death(params)
 		protecao := 1;
 		save := 1;
 	endif
+
+   if (!killer.acctname && dmg > AP_GetVitalMaximumValue(ghost, HITS))
+      SendSystemReport(ghost, "Seu corpo foi dilacerado com um golpe mortal.");
+      SetObjProperty(ghost, "morto", 1);
+   endif
 
 	//Check no Chain Of Pain, para retirar 1 do copnumber se for o caso.
 	// if (getObjProperty(corpse, "chainofpain"))
@@ -45,26 +50,27 @@ program death(params)
 	// 	endforeach
 	// endif
 
-	if (corpse.x >= 4855 && corpse.y >= 879) //kepohaéessa?
-		if ( corpse.x <= 4869 && corpse.y <=  890)
-			corpse.movable := 1;
-			var e := MoveObjectToLocation(corpse, 4859, 876, 1, corpse.realm, MOVEOBJECT_FORCELOCATION);
-			corpse.movable := 0;
-		//	sendsysmessage(ghost, " " + e);
-		endif
-	endif
+	// if (corpse.x >= 4855 && corpse.y >= 879) //kepohaéessa?
+	// 	if ( corpse.x <= 4869 && corpse.y <=  890)
+	// 		corpse.movable := 1;
+	// 		MoveObjectToLocation(corpse, 4859, 876, 1, corpse.realm, MOVEOBJECT_FORCELOCATION);
+	// 		corpse.movable := 0;
+	// 	//	sendsysmessage(ghost, " " + e);
+	// 	endif
+	// endif
 
-	if (corpse.x >= 4919 && corpse.y >= 1044) //kepohaéessa?
-		if ( corpse.x <= 4933 && corpse.y <=  1066)
-			corpse.movable := 1;
-			var e := MoveObjectToLocation(corpse, 4893, 1014, 1, corpse.realm, MOVEOBJECT_FORCELOCATION);
-			corpse.movable := 0;
-		//	sendsysmessage(ghost, " " + e);
-		endif
-	endif
+	// if (corpse.x >= 4919 && corpse.y >= 1044) //kepohaéessa?
+	// 	if ( corpse.x <= 4933 && corpse.y <=  1066)
+	// 		corpse.movable := 1;
+	// 		MoveObjectToLocation(corpse, 4893, 1014, 1, corpse.realm, MOVEOBJECT_FORCELOCATION);
+	// 		corpse.movable := 0;
+	// 	//	sendsysmessage(ghost, " " + e);
+	// 	endif
+	// endif
 
 	if (getObjProperty(corpse, "oldbodyserial"))
 		KataWakeUp(ghost, corpse);
+      return 1;
 	endif
 
 	if (protecao) // Proteção Contra Morte
@@ -74,28 +80,22 @@ program death(params)
 		if (!killer.npctemplate || !killer.script["follower"])  //se for tamed não tira dp
 			ghost.ReduceLifeTime(2, "day");
 
-         if (rollResistDice(ghost, CONSTITUTION) < 16+(30-AP_GetVital(ghost, "DP")/10))
+         if (rollResistDice(ghost, CONSTITUTION) <= 15)
 				AP_ConsumeVital(ghost, "DP", 10);
 				SendSystemReport(ghost, "Você sofreu uma fratura!");
             if (AP_GetVital(ghost, "DP") <= 19)
                TS_StartTimer(ghost, "fraturaexposta", 1);
             endif
          else
-            SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair");
+            SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
 			endif
 
-			if (AP_GetVital(ghost, "DP") <= 0 && ghost.cmdlevel < 3)
+			if (AP_GetVital(ghost, "DP") < 0 )
             SetObjProperty(ghost, "morto", 1);
          endif
 		endif
 
-		if ( CInt(GetObjProperty(ghost, "morto")) )
-			SendSystemReport(ghost, "Você morreu permanentemente.");
-			SetObjProperty(corpse, "morto", 1);
-			SetObjProperty(ghost, "morto", 1);
-			SetObjProperty(corpse, "charname", GetObjProperty(ghost, "realname"));
-			
-			SetObjProperty(corpse, "deathtimer", polcore().systime);
+		if ( checkIfDead(corpse, ghost) )
 			sleep(5);
 			return 1;
 		endif
@@ -110,7 +110,7 @@ program death(params)
 
 	var tempo := 2*60; // em segundos
 	if ( dmg > CInt(AP_GetVitalMaximumValue(ghost, HITS)/5) )
-		tempo := tempo * 2;
+		tempo += 60;
 	endif
 	// if ( temhabilidade(ghost, "Instinto de Sobrevivência"))
 	// 	tempo := tempo /2;
@@ -182,16 +182,22 @@ function DeathProperties(ghost, corpse, byref tempo, i)
 		EraseObjProperty(corpse, "prolongardesmaio");
 		SetObjProperty(corpse, "japrolongou", 1);
 		tempo := tempo * 2;
-	elseif ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) )
-		SendSysMessage(ghost, "Algo aconteceu... Você morreu.");
-		SetObjProperty(corpse, "morto", 1);
-		SetObjProperty(ghost, "morto", 1);
-		SetObjProperty(corpse, "deathtimer", polcore().systime);
-		SetObjProperty(corpse, "charname", GetObjProperty(ghost, "realname"));
+	elseif ( checkIfDead(corpse, ghost) )
 		return 2;
 	endif
 	
 	if (i == "curado" || !ghost.GetCorpse())
 		return 1;
 	endif
+endfunction
+
+function checkIfDead(corpse, ghost := 0)
+   if ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) )
+		SendSysMessage(ghost, "Algo aconteceu... Você morreu.");
+		SetObjProperty(corpse, "morto", 1);
+		SetObjProperty(ghost, "morto", 1);
+		SetObjProperty(corpse, "deathtimer", polcore().systime);
+		SetObjProperty(corpse, "charname", GetObjProperty(ghost, "realname"));
+      return 1;
+   endif
 endfunction

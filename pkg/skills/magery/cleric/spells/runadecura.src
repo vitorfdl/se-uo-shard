@@ -1,0 +1,40 @@
+use uo;
+use os;
+use vitals;
+use util;
+
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include "include/tileEffects";
+include ":charactercreation:habilidades";
+include ":ghaia:ghaiaUtil";
+include ":magery:tnmagery";
+
+program SpellScript(params)
+	var who := params[1];
+   var targ := params[3];
+	params := 0; // No longer needed
+
+	var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x790d);
+	if (!item)
+		SendSysMessageEX(who, "Nao foi possivel criar a runa", SSM_FAIL);
+		return;
+	endif
+	item.graphic := 0x4880;
+	SetObjProperty(item, "spell", 1);
+	SetObjProperty(item, "criador", who.serial);
+	SetObjProperty(item, "timeexpire", polcore().systime+30);
+	
+	PrintText(item, "*Surge aos poucos*");
+   var level := who.getLevel();
+   level := Ceil(level / 4);
+   if (level < 1)
+      level := 1;
+   endif
+
+   var dice := "{}d8".format(level);
+	var healed := RandomDiceRoll(dice);
+
+	SetObjProperty(item, "healamount", healed);
+endprogram

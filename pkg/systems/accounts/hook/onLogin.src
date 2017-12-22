@@ -38,11 +38,16 @@ exported function LoginHook(who, byref packet)
 	who := who; // Avoid compiler warnings.
 	var username := Packet.GetString(OFFSET_ACCOUNT_NAME, INFO_LEN);
 	var password := Packet.GetString(OFFSET_ACCOUNT_PASS, INFO_LEN);
-	var isRazor  := Packet.GetString(OFFSET_ACCOUNT_ALLOW, 1);
-	// print(isRazor);
+	// var isRazor  := Packet.GetString(OFFSET_ACCOUNT_ALLOW, 1);
+	// var isRazor2  := Packet.GetString(0x3C, 1);
+	// var isRazor3  := Packet.GetString(0x3E, 1);
+   // print(username+": "+isRazor+" "+isRazor2+" "+isRazor3+" ");
+   // print(username+": password: "+password);
+	// // print(isRazor);
 	// if (isRazor != "D")
 	// 	return 1;
-
+   // endif
+   
 	if ( !username )
 		SysLog( "Account/GetString Error: "+username.errortext );
 		return 0;

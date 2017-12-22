@@ -88,12 +88,12 @@ function maolivre(mobile, qtd, checkmount := 1)
 
 	if (qtd == 1)
 		if (rightHand && leftHand)
-			SendSysMessageEx(mobile, "Você precisa de uma mao livre.", SSM_INFO);
+			SendSysMessageEx(mobile, "Você precisa de uma mão livre.", SSM_INFO);
 	    		return 0;
 		endif
 	elseif (qtd == 2)
 		if (rightHand || leftHand)
-			SendSysMessageEx(mobile, "Você precisa das duas maos livres.", SSM_INFO);
+			SendSysMessageEx(mobile, "Você precisa das duas mãos livres.", SSM_INFO);
 	    		return 0;
 		endif
 	endif

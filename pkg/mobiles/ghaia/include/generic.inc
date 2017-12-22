@@ -60,29 +60,19 @@ function doSpecial(me)
 
 endfunction
 
-function EnableMainEvents(type := 0)
-    case (type)
-      "merchant":
-        DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
-        EnableEvents(SYSEVENT_DOUBLECLICKED, 20);
-        EnableEvents(SYSEVENT_SPEECH + SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN + SYSEVENT_ENTEREDAREA, areasize);
-      default:
-        DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
-        EnableEvents(SYSEVENT_ENTEREDAREA, areasize);
-        EnableEvents(SYSEVENT_DAMAGED, areasize);
-        EnableEvents(SYSEVENT_ENGAGED, areasize);
-        EnableEvents(EVID_ALERT_ALLIES);
-        EnableEvents(EVID_HERDING);
-        EnableEvents(EVID_TAUNT);
-        EnableEvents(EVID_DOOBJECTIVE);
-    endcase
+function EnableMainEvents()
+   DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
+   EnableEvents(SYSEVENT_ENTEREDAREA, areasize);
+   EnableEvents(SYSEVENT_DAMAGED, areasize);
+   EnableEvents(SYSEVENT_ENGAGED, areasize);
+   EnableEvents(EVID_ALERT_ALLIES);
+   EnableEvents(EVID_HERDING);
+   EnableEvents(EVID_TAUNT);
+   EnableEvents(EVID_DOOBJECTIVE);
 endfunction
 
 function DisableMainEvents(type := 0)
-    case (type)
-        "merchant": DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_DOUBLECLICKED + SYSEVENT_ENTEREDAREA + SYSEVENT_ITEM_GIVEN + SYSEVENT_SPEECH);
-        default: DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ENTEREDAREA);
-    endcase
+   DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ENTEREDAREA);
 endfunction
 
 
@@ -101,6 +91,7 @@ function CloseIn(me, lx, ly, mode := 0 )
 endfunction
 
 function SetPeaceMade()
+   EraseObjProperty(me, "aggros");
    SetWarMode( 0 );
    SetOpponent( 0 );
    sleep(1);
@@ -197,34 +188,25 @@ endfunction
     
 //no sleep mode ele o waitfor event fica 30 secs e ele não fica mais fazendo lookarounds o tempo todo
 function sleepmode()
-   var speech := GetConfigStringArray( npccfgfile, "SleepSpeech" );
-   if (speech.size() > 0)
-      if (RandomInt(100)  < 30) //sempre 30% de chance de falar
-         SayUC(UC(speech[RandomInt(speech.size()+1)]));
-      endif
-   endif
-
+   // var speech := GetConfigStringArray( npccfgfile, "SleepSpeech" );
+   // if (speech.size() > 0)
+   //    if (RandomInt(100)  < 30) //sempre 30% de chance de falar
+   //       SayUC(UC(speech[RandomInt(speech.size()+1)]));
+   //    endif
+   // endif
+   EraseObjProperty(me, "aggros");
    EraseObjProperty(me,"#flees");
    DisableMainEvents();
 
    //TODO se tiver skill hiding, usar
-   EnableEvents(SYSEVENT_ENTEREDAREA, areasize);
+   EnableEvents(SYSEVENT_ENTEREDAREA, 25);
    EnableEvents(SYSEVENT_ENGAGED);
    EnableEvents(SYSEVENT_DAMAGED);
    var ev;
    while (1)
       ev := os::wait_for_event(30);
       repeat
-         //npcs criam ovos ou outras coisas
-         if ( (GetCooldown(me, "dropitem" ) == 0) && (CInt(npccfgfile.DropDelay) > 0) )
-            CreateItemAtLocation(me.x, me.y, me.z, CStr(npccfgfile.DropItem), 1, me.realm);
-            SetCooldown(me, "dropitem", CInt(npccfgfile.DropDelay));
-         endif
-
-         //se for carneiro
-         if ( me.graphic == 223 && GetCooldown(me, "wool") == 0)
-            me.graphic := 207;
-         endif
+         CreateAnimalitems();
 
          PlayIdleSound();
 
@@ -236,29 +218,41 @@ function sleepmode()
             EnableMainEvents();
             return ev;
           SYSEVENT_DAMAGED:
-            // if (me.hidden)
-            //   me.hidden := 0;
-            // endif
+            if (me.hidden)
+               me.hidden := 0;
+            endif
             EnableMainEvents();
             return ev;
           SYSEVENT_ENTEREDAREA: 
-            if (CanFight(me, ev.source))
-            //   if(me.hidden)
-            //       me.hidden := 0;
-            //   endif
-              EnableMainEvents();
-              return ev;
+            if (ev.source && ev.source.connected)
+               EnableMainEvents();
+               return ev;
             endif
           EVID_HERDING:
           EVID_FLEE:
           EVID_DOOBJECTIVE:
           EVID_ALERT_ALLIES:	
           EVID_TAUNT:
+          SYSEVENT_ITEM_GIVEN:
+          SYSEVENT_SPEECH:
             EnableMainEvents(); 
             return ev;
          endcase
       until(!(ev := os::wait_for_event(30)));
    endwhile
+endfunction
+
+function CreateAnimalitems()
+   //npcs criam ovos ou outras coisas
+   if ( (GetCooldown(me, "dropitem" ) == 0) && (CInt(npccfgfile.DropDelay) > 0) )
+      CreateItemAtLocation(me.x, me.y, me.z, CStr(npccfgfile.DropItem), 1, me.realm);
+      SetCooldown(me, "dropitem", CInt(npccfgfile.DropDelay));
+   endif
+
+   //se for carneiro
+   if ( me.graphic == 223 && GetCooldown(me, "wool") == 0)
+      me.graphic := 207;
+   endif
 endfunction
 
 function Opendoors(me)
@@ -289,7 +283,53 @@ function ChooseAnotherOpponent(me)
   endforeach
 endfunction
 
+function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
+   if (!opponent && new_opponent)
+      opponent := new_opponent;
+      SetOpponent(new_opponent);
+      TurnToward(new_opponent);
+      return;
+   elseif (opponent && !CheckLineOfSight(me, opponent))
+      me.setAggro(opponent.serial, -10);
+   endif
+
+   var highest_aggro := getHighestAggro(me);
+   if (highest_aggro && (!opponent || highest_aggro != opponent.serial))
+      highest_aggro := SystemFindObjectBySerial(highest_aggro);
+      opponent := highest_aggro;
+      SetOpponent(highest_aggro);
+      TurnToward(highest_aggro);
+   endif
+endfunction
+
+function getHighestAggro(creature)
+   var aggros := creature.core_aggroProp();
+   var highest := array{0, -9999999};
+   foreach serial in (aggros.keys())
+      if (aggros[serial] >= highest[2])
+         highest := array{serial, aggros[serial]};
+      endif
+      sleepms(2);
+   endforeach
+
+   return highest[1];
+endfunction
+
+function getFacingString(me_face)
+   case (cint(me_face))
+      0:default: return "N";
+      1: return "S";
+      2: return "E";
+      3: return "W";
+      4: return "NW";
+      5: return "NE";
+      6: return "SW";
+      7: return "SE";
+   endcase
+endfunction
+
 function CalcPathAndMove(me, opponent, sleepdelay)
+   var face_str := getFacingString(GetFacing(me.x, me.y, opponent.x, opponent.y));
    if (AP_GetVital(me, STAMINA) < 1)
       var last_msg := GetObjProperty(me, "#fatigue");
       if (!last_msg || last_msg < ReadGameClock())
@@ -297,7 +337,7 @@ function CalcPathAndMove(me, opponent, sleepdelay)
          PrintText(me, "*fatigado*");
       endif
       sleep(1);
-	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || (opponent.z != me.z && ListStaticsNearLocation(me.x, me.y, me.z, 1, TILEDATA_FLAG_IMPASSABLE).size() > 0)) //se não consegue correr direto
+	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || !CanMove(face_str)) //se não consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
 		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
 		
@@ -313,7 +353,8 @@ function CalcPathAndMove(me, opponent, sleepdelay)
             sleepms(sleepdelay);
             ChooseAnotherOpponent(me);
             if (CoordinateDistance(me.x, me.y, opponent.x, opponent.y) > 14)
-               SetOpponent(0);
+               me.remAggro(opponent);
+               ChooseHighestOpponent(me, opponent);
             endif
          else
             RunTowardLocation( path[1].x, path[1].y ); //anda na direcao

@@ -5,7 +5,7 @@ function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
 
 	var mobs := array;
-	foreach mob in ListMobilesNearLocationEx(x, y, z, range, LISTEX_FLAG_NPC_ONLY, realm)
+	foreach mob in ListMobilesNearLocationEx(x, y, z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY, realm)
 		if (mob.isTamable())
 			mobs.append(mob);
 		endif

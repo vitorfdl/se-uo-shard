@@ -177,3 +177,24 @@ function SpawnAllSpots(name)
         sleepms(2);
     endforeach
 endfunction
+
+/*===========================================
+=            Spawnpoint Monster Code        =
+===========================================*/
+
+
+function removeFromSpawn(spawnpoint)
+   spawnpoint := SystemFindObjectBySerial(spawnpoint);
+   if (!spawnpoint)
+      return;
+   endif
+
+   var diedmonsters := GetObjProperty(spawnpoint, "diedmonsters");
+   if (!diedmonsters)
+      diedmonsters := array{};
+   endif
+
+   diedmonsters.append(struct{"time":= polcore().systime});
+
+   spawnpoint.setProps(struct{ "diedmonsters" := diedmonsters });
+endfunction

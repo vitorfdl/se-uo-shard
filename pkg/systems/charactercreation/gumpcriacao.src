@@ -96,7 +96,7 @@ program createchar(who)
 	chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
 
 	foreach skill in (chardata.skills)
-      xkill := StrReplace(skill, " ", "_" );
+      skill := StrReplace(skill, " ", "_" );
 		AP_SetTrueSkill(who, skill, 1);
       sleepms(2);
 	endforeach
@@ -124,7 +124,7 @@ program createchar(who)
 	SetProfessions(who, chardata);
 
 	if (chardata.raca == "Elfo" || chardata.classe == "Mago")
-		LearnFeat(who, "Linguagem Élfica", 0);
+		LearnFeat(who, "Linguagem Élfica", 0, 0);
 		if (chardata.classe == "Mago")
 			var wand := CreateItemInBackpack(who, 0x0DF2);
 			SetObjProperty(wand, "charges", 5);
@@ -136,7 +136,7 @@ program createchar(who)
 		endif
 	elseif (chardata.classe == "Clérigo")
       SysBook_CreateBook(who.backpack, "clerigo1");
-		LearnFeat(who, "Linguagem Rúnica", 0);
+		LearnFeat(who, "Linguagem Rúnica", 0, 0);
 		Start_Script(":magery:cleric/powerWords", array{who});
 		start_script(":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".milagres\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
 	endif
@@ -193,6 +193,7 @@ endfunction
 
 function ShowCreateGumps(who, byref chardata)
 	while (who.connected)
+      sleepms(2);
 		chardata := struct;
 		chardata.+Skills := dictionary;
 		chardata.+str  := 14;
@@ -288,7 +289,7 @@ function RaceGump(who, byref  chardata)
 		first_name := GFExtractData( input, 99);
 		last_name := GFExtractData( input, 98);
 		if (len(first_name) < 3 || cint(len(first_name) + len(last_name)) > 17)
-			SendSysMessageEX(who, "A combinacao do seu nome com sobrenome não pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
+			SendSysMessageEX(who, "A combinação do seu nome com sobrenome não pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
 			RaceGump(who, chardata);
 		endif
 
@@ -327,6 +328,10 @@ function RaceGump(who, byref  chardata)
 			chardata.nomefinal := last_name;
          sleepms(2);
 		endforeach
+      if (chardata.classe == "Clérigo" && chardata.raca == "Elfo")
+         SendSysMessageEx(who, "Clérigos não podem ser elfos!", SSM_FAIL);
+         RaceGump(who, chardata);
+      endif
 	else
 		RaceGump(who, chardata);
 	endif
@@ -469,6 +474,7 @@ function AttributeGump(who, byref  chardata)
 				last_attr := 0;
 			endif
 		endif
+      sleepms(2);
 	endwhile
 endfunction
 
@@ -590,6 +596,7 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
 		else
 			selectedkit := ret[0];
 		endif
+      sleepms(2);
 	endwhile
 endfunction
 
@@ -647,6 +654,7 @@ function SkillGump(who, byref  chardata)
 		elseif (input[0] == 201)
 			return 1;
 		endif
+      sleepms(2);
 	endwhile
 endfunction
  

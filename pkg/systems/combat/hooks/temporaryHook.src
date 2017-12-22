@@ -38,6 +38,9 @@ var weapon;
 function CalculateRawDamage(attacker)
 	if (attacker.npctemplate)
 		var dmg       := wpn_a_elem.dicedmg;
+      if (GetObjProperty(attacker, "dicedmg"))
+         dmg := GetObjProperty(attacker, "dicedmg");
+      endif
 		var attribute := wpn_a_elem.Attribute;
 		return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
 	else
@@ -50,7 +53,7 @@ function CalculateRawDamage(attacker)
 			var attribute := GetObjProperty(attacker, "attrdmg");
 			dmg := RandomDiceRoll( dmg ) + AP_GetStat(attacker, attribute, RETURN_BONUS);
 		else
-			dmg :=  RandomDiceRoll(cstr(weaponelem.Damage)) + AP_GetStat(attacker, attribute, RETURN_BONUS);
+			dmg :=  RandomDiceRoll(cstr(weaponelem.Damage)) + AP_GetStat(attacker, attribute, RETURN_BONUS) + GetAttackerDMGBonus(attacker);
 		endif
 		
 		return ( dmg + weapon.dmg_mod );
@@ -76,7 +79,7 @@ program Attack(params)
 	if (attacker.acctname)
 		if (!attacker.warmode)
 			if(GetObjProperty(attacker, "#attackmsg") <= polcore().systime)
-				SendSysMessageEx(attacker, "Você precisa estar em modo de combate para ameacar alguem.", SSM_FAIL);
+				SendSysMessageEx(attacker, "Você precisa estar em modo de combate para ameaçar alguém.", SSM_FAIL);
 				SetObjProperty(attacker, "#attackmsg", polcore().systime+15);
 			endif
 			return 1;
@@ -225,7 +228,7 @@ function GetAttackerChance(attacker, defender)
 		bonus := cint(wpn_a_elem.hitbonus);
 	endif
 
-   bonus += GetAttackerFeatBonus(attacker);
+   // bonus += GetAttackerFeatBonus(attacker);
 	
 	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
 	return dice;
@@ -417,7 +420,7 @@ function FacingChecks(attacker, defender)
 			TurnObjectToward(attacker, defender.x, defender.y);
 		else
 			if ( IsBehind(attacker, defender.x, defender.y) )
-				SendSysMessage(attacker, "Você esta de costas para o inimigo!");
+				SendSysMessageEx(attacker, "Você esta de costas para o inimigo!", SSM_FAIL);
 				retval := 0;
 			endif
 		endif
@@ -433,19 +436,19 @@ endfunction
 function GetAttackerFeatPenalty(attacker, defender)
    var bonus := 0;
    if (defender.acctname && attacker.npctemplate) //mob vs player
-      var mobiles_near := ListMobilesNearLocationEx(defender.x, defender.y, defender.z, 2, LISTEX_FLAG_PLAYERS_ONLY);
+      var mobiles_near := ListMobilesNearLocationEx(defender.x, defender.y, defender.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
       foreach mob in mobiles_near
          if (HaveFeat(mob, "Presença Imponente"))
             bonus -= 1;
             break;
          endif
-      endif
+      endforeach
    endif
 
    return bonus;
 endfunction
 
-function GetAttackerFeatBonus(attacker)
+function GetAttackerDMGBonus(attacker)
    var bonus := 0;
 
    if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))

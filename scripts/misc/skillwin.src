@@ -37,7 +37,15 @@ program core_skillWin(who)
 		SendSystemReport(who, "Você deve terminar de criar seu personagem.");
 		return;
 	endif
-	
+
+	var delay := GetObjProperty(who, "#skillwindow");
+	if(delay && delay > ReadGameClock())
+      SendSysMessageEx(who, "Você ainda está fazendo outra coisa.");
+      return;
+	endif
+	SetObjProperty(who, "#skillwindow", ReadGameClock() + 3);
+
+	CloseGump(who, GUMPID_SKILLLIST);
 	skillWindow(who);
    return 0;
 endprogram
@@ -45,19 +53,26 @@ endprogram
 function skillWindow(who)
 	var gump  := buildGump(who);
 	var input := GFSendGump(who, gump);
-
 	if (input[0] >= 1 && input[0] <= 50)
 		Start_Script( AP_GetSkillScript( GetSkillNameByID( input[0] ) ) , who);
-	elseif (input[0] > 80)
-		var attr := attr_list[input[0] - 80];
-		AP_SetTrueStat(who, attr, AP_GetTrueStat(who, attr) + 1);
-		who.SetPoints(who.GetPoints() - 1);
-	elseif(input[0] == 70)
-		BuyTalents(who);
 	elseif (input[0] > 100)
 		var feat_list := GetFeatList(who);
 		var feat := feat_list[input[0] - 100];
 		feat := FeatInfo(feat);
+      if (!feat.script)
+         return SendSysMessageEx(who, "Este talento não é ativável.");
+      endif
+      print(feat.name);
+      start_script(":charactercreation:commands/player/talento", array{who, feat.name});
+	elseif (input[0] > 80)
+      if (who.getPoints() < 0)
+         return who.SetPoints(0);
+      endif
+		var attr := attr_list[input[0] - 80];
+		AP_SetTrueStat(who, attr, AP_GetTrueStat(who, attr) + 1);
+		who.SetPoints(-1);
+	elseif(input[0] == 70)
+		BuyTalents(who);
 		//use feat
 	endif
 endfunction
@@ -110,13 +125,14 @@ function buildGump(who)
 		if (feat.desc)
 			GFTooltipText(gump, "{}".format(feat_info.desc));
 		endif
-		// GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 0); // Info
+      f_y += 30;
+		// GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 70); // Info
 		sleepms(2);
 	endforeach
 
 	// GFGumpPic(gump, 581, 55, 4033, 1259);
 	// GFGumpPic(gump, 577, 59, 4033, 1259);
-	GFAddButton(gump, 579, 57, 4033, 4033, GF_CLOSE_BTN, 0); //Comprar Talento
+	GFAddButton(gump, 579, 57, 4033, 4033, GF_CLOSE_BTN, 70); //Comprar Talento
 	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponíveis");
 
 	AttrGump(who, gump);
@@ -155,7 +171,7 @@ endfunction
 
 function BuyTalents(who)
 	if (!who.GetTalentPoints())
-		SendSysMessageEx(who, "Sem pontos de talento disponiveis.", SSM_FAIL);
+		return SendSysMessageEx(who, "Sem pontos de talento disponiveis.", SSM_FAIL);
 	endif
 
 	var feat_list := GetNewFeatsList(who);
@@ -168,23 +184,31 @@ function BuyTalents(who)
 	GFGumpPicTiled(gump, 22, 36, 671, 11, 2091); //top decoration
 	GFGumpPicTiled(gump, 23, 463, 671, 11, 2091); //bottom decoration
 	
+	GFPage(gump, 1);
+   var x := 39;
+   var y := 91;
 	foreach feat in feat_list
-		GFAddButton(gump, 39, 73, 2151, 248, GF_CLOSE_BTN, _feat_iter+100);
-		GFTextLine(gump, 77, 76, 0, feat.name);
-		GFHTMLArea(gump, 263, 62, 413, 70, feat.desc);
+		GFAddButton(gump, x, y, 2151, 2152, GF_CLOSE_BTN, _feat_iter+100);
+      GFHTMLArea(gump, x+40, y+5, 150, 20, "<BASEFONT size=5>{}".format(feat.name));
+		GFHTMLArea(gump, x+224, y-18, 413, 70, feat.desc, 1);
 
-		if (_feat_iter % 5 != 4)
-			GFGumpPic(gump, 26, 132, 57);
-			GFGumpPicTiled(gump, 50, 132, 609, 11, 58); //divisoria
-			GFGumpPic(gump, 658, 132, 59);
+		if (_feat_iter % 5 != 0)
+			GFGumpPic(gump, x-13, y+50, 57);
+			GFGumpPicTiled(gump, x+11, y+50, 609, 11, 58); //divisoria
+			GFGumpPic(gump, x+619, y+50, 59);
+
+         y += 80;
 		elseif (feat_list[_feat_iter+1])
-			GFAddButton(gump, 651, 490, 2509, 248, GF_CLOSE_BTN, 0); //next
+			GFAddButton(gump, 651, 490, 2509, 2509, GF_PAGE_BTN, gump.cur_page+1); //next
 			GFPage(gump, gump.cur_page+1);
-			GFAddButton(gump, 45, 490, 2508, 248, GF_CLOSE_BTN, 0); //previous
+			GFAddButton(gump, 45, 490, 2508, 2508, GF_PAGE_BTN, gump.cur_page-1); //previous
+         y := 91;
 		endif
 
 		sleepms(2);
 	endforeach
+
+	GFHTMLArea(gump, 0, 485, 750, 20, "<BASEFONT size=0><center>Você tem {} pontos de talento.".format(who.GetTalentPoints()));
 
 	var input := GFSendGump(who, gump);
 

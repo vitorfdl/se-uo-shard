@@ -1,0 +1,24 @@
+use uo;
+use os;
+use os;
+
+include ":timeutils:time";
+include ":yggdrasil:boss";
+include "include/utils";
+include "include/say";
+include "include/damage";
+include "include/client";
+include ":sysbook:flsbooks";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":merchants:crafthelp";
+
+program oafeatures_sendpacket(who, text)
+   SendSysMessage(who, "Invocando");
+   for i := 1 to cint(text)
+      var point := RandomPlace(who, 15);
+      var item := CreateItemAtLocation(point.x, point.y, GetWorldheight(point.x, point.y), 0x9DAC);
+      item.movable := 0;
+      sleep(1);
+   endfor
+endprogram

@@ -16,12 +16,12 @@ include ":containers:merchantUtil";
 include ":timedscripts:timedScripts";
 include ":death:death";
 include ":mounts:mounts";
-include ":taming:taming";
-include ":tn:questevent";
 include ":attributes:vitals";
 include ":combat:hitscripts";
 include "include/say";
 include "include/damage";
+include ":yggdrasil:spawnspot";
+include ":yggdrasil:boss";
 
 //include ":spawnnet:spawnnet";
 //include ":spawnregion:spawn";
@@ -29,88 +29,40 @@ include "include/damage";
 program core_npcDeath(params)
 	var corpse := params[1];
 
-	var lastHit := GetObjProperty(corpse, "lastHit"); 
+	var lastHit := GetObjProperty(corpse, "LastDamage"); 
 	if (":combat:weaponHitScripts/generic" in lastHit.hitscript)
-		var attacker := SystemFindObjectBySerial(lastHit.attacker);
+		var attacker := SystemFindObjectBySerial(lastHit.serial);
 		if (attacker != error)
 			execonkill(attacker, corpse);
 		endif
 	endif
+   
+	// if (getObjProperty(corpse, "owner")) //se for tamed, atualiza a prop tamedpets do master
+	// 	var masterserial := getObjProperty(corpse, "owner");
+	// 	var master := SystemFindObjectBySerial(masterserial);
+	// endif
 
-	if (cint(GetObjProperty(corpse, "soulstone")) == 1)
-		CreateItemInContainer(corpse, "soulstone", 1);
-	endif
-
-	if (getObjProperty(corpse, "owner")) //se for tamed, atualiza a prop tamedpets do master
-		var masterserial := getObjProperty(corpse, "owner");
-		var master := SystemFindObjectBySerial(masterserial);
-		if(!GetObjProperty(corpse, "Necro"))
-			GetNumPets(master);
-		else
-			var numbersummons := Cint(GetObjProperty(master, "NecroSummons"));
-			SetObjProperty(master, "NecroSummons", (numbersummons - 1));
-		endif			
-	endif
-
-	if (getObjProperty(corpse, "oldbodydominio"))
-		var masterserial := getObjProperty(corpse, "oldbodydominio");
-		var master := SystemFindObjectBySerial(masterserial);
-		SetObjProperty(master, "oldbodymorto", 1);
-		EraseObjProperty(master, "oldbodyserial");
-	endif
-
+	// foreach mob in (ListMobilesNearLocation(corpse.x, corpse.y, corpse.z, 5, corpse.realm))
+	// 	if (cint(GetObjProperty(mob, "#satisfacaosadica")))
+	// 		if (cint(GetObjProperty(mob, "#satisfacaosadica")) > readgameclock())
+	// 			PlayMovingEffect( corpse, mob, 14202, 5, 1,  0 );
+	// 			PlaySoundEffect(mob, 383);
+	// 			HealFLS(mob, 5);
+	// 			recalcvitals(mob);
+	// 		endif
+	// 	endif
 		
-	//não existe mais		
-	/*if (getobjProperty(corpse, "devoraralma"))
-		var necroserial := getobjProperty(corpse, "devoraralma");
-		var necro := SystemFindObjectBySerial(necroserial);
-		var maxhp := Cint(getobjProperty(corpse, "maxhp"));
-		var souls := Cint(getobjProperty(necro, "souls"));
-		souls := souls + 1;
-		SetobjProperty(necro, "souls", souls);
-		var hprecupera := maxhp / 10;
-		var hpnow := AP_GetVital(necro, "hits");
-		var amount := hpnow + hprecupera;
-		AP_SetVital(necro, "hits", amount);
-		PlayMovingEffect( corpse, necro, 14202, 5, 0,  0 );
-		PlaySoundEffect(necro, 383);
-	endif*/
-
-	foreach mob in (ListMobilesNearLocation(corpse.x, corpse.y, corpse.z, 5, corpse.realm))
-		//printtextabove(corpse, "procurando mobs " + mob.name);
-		if (cint(GetObjProperty(mob, "#satisfacaosadica")))
-		//	printtextabove(corpse, "tem satisfacao " + cint(GetObjProperty(mob, "#satisfacaosadica")) + " " + readgameclock() );
-			if (cint(GetObjProperty(mob, "#satisfacaosadica")) > readgameclock())
-		//		printtextabove(corpse, "ta no time ");
-		//		var souls := Cint(getobjProperty(mob, "souls"));
-		//		souls := souls + 1;
-		//		SetobjProperty(mob, "souls", souls);
-				PlayMovingEffect( corpse, mob, 14202, 5, 1,  0 );
-				PlaySoundEffect(mob, 383);
-				HealFLS(mob, 5);
-				recalcvitals(mob);
-			endif
-		endif
-		
-		if ( (GetObjProperty(mob, "#presenteespiritual") != error) )
-			if (GetObjProperty(mob, "#presenteespiritual") > readgameclock())
-				var souls := Cint(getobjProperty(mob, "souls"));
-				souls := souls + 1;
-				SetobjProperty(mob, "souls", souls);
-				PlayMovingEffect( corpse, mob, 14202, 5, 1,  0 );
-				PlaySoundEffect(mob, 383);
-				HealMana(mob, 10);
-				//var mymana := AP_GetVital(mob, MANA) + 10;
-				//var maxmana := AP_GetVitalMaximumValue(mob, MANA);
-
-				//if (mymana > maxmana)
-				//	mymana := maxmana;
-				//endif
-
-				//AP_SetVital(mob, MANA, mymana);
-			endif
-		endif
-	endforeach
+	// 	if ( (GetObjProperty(mob, "#presenteespiritual") != error) )
+	// 		if (GetObjProperty(mob, "#presenteespiritual") > readgameclock())
+	// 			var souls := Cint(getobjProperty(mob, "souls"));
+	// 			souls := souls + 1;
+	// 			SetobjProperty(mob, "souls", souls);
+	// 			PlayMovingEffect( corpse, mob, 14202, 5, 1,  0 );
+	// 			PlaySoundEffect(mob, 383);
+	// 			HealMana(mob, 10);
+	// 		endif
+	// 	endif
+	// endforeach
 
 	TS_Death(corpse); // Will still get the PID from the corpse.
 
@@ -121,30 +73,30 @@ program core_npcDeath(params)
 	
 	var template := GetObjProperty(corpse, "npctemplate"); // Set by the core.
 	var npc_cfg := NPC_GetNPCConfig(template);
-	var death_script := npc_cfg.DeathScript;
 
-	var speech := GetConfigStringArray( npc_cfg[template], "diespeech" );
-	if (speech.size() > 0 && RandomInt(100)  < 30) //sempre 30% de chance de falar
-		PrintTextAbove(corpse, speech[RandomInt(speech.size()+1)]);
-	endif
+	// var speech := GetConfigStringArray( npc_cfg[template], "diespeech" );
+	// if (speech.size() > 0 && RandomInt(100)  < 30) //sempre 30% de chance de falar
+	// 	PrintTextAbove(corpse, speech[RandomInt(speech.size()+1)]);
+	// endif
 
-	var spawnpoint := SystemFindObjectBySerial(GetObjProperty(corpse, "spawnpoint"));	
 	//printtextabove(corpse, "spawnpoint " + spawnpoint);
+
+
+	var death_script := npc_cfg.DeathScript;
 	if (GetObjProperty(corpse, "spawnkill") == error)
-		if (spawnpoint && GetObjProperty(spawnpoint, "unique") == 1)
-			var boss := GetObjProperty(spawnpoint, "bossParams");
-			if (boss.deathevent)
-				foreach nevent in (boss.deathevent)
-				//	printtextabove(corpse, " " + nevent.type);
-					if ( (nevent.type == "Criar Npcs") && (cint(nevent.x) == 6) && (cint(nevent.y) == 6) && (cint(nevent.z) == 6)  )
-						nevent.x := corpse.x;
-						nevent.y := corpse.y;
-						nevent.z := corpse.z;
-						//printtextabove(corpse, "mudei o evento");
-					endif
-					ExecuteEvent(nevent);				
-				endforeach
-			endif
+      removeFromSpawn(getobjProperty(corpse, "spawnpoint"));
+	   var boss := GetBossStruct(corpse);	
+		if (boss && boss.deathevent)
+         foreach nevent in (boss.deathevent)
+         //	printtextabove(corpse, " " + nevent.type);
+            if ( (nevent.type == "Criar Npcs") && (cint(nevent.x) == 6) && (cint(nevent.y) == 6) && (cint(nevent.z) == 6)  )
+               nevent.x := corpse.x;
+               nevent.y := corpse.y;
+               nevent.z := corpse.z;
+               //printtextabove(corpse, "mudei o evento");
+            endif
+            ExecuteEvent(nevent);				
+         endforeach
 		endif
 
 		if ( death_script )

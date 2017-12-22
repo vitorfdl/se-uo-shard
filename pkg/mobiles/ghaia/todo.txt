@@ -1,3 +1,32 @@
+Aggro System
+
+-> Focus in the more Though player
+      Though is decided by armor
+         when equipped
+            Skill of the armor define the thoughness.
+               +3 for Heavy armor
+               +2 for Medium armor
+               +1 for Light armor
+         runes to increase thoughness
+      Though can be increased by talents
+
+-> Mobile picks the first target, adding highest aggro to him
+   Picking a treasure add's aggro to every monster around.
+      +5
+   Healing adds aggro for inteligent monters
+      +2
+   Taunt highly increases aggro
+      +5 +thoughness
+   Damaging adds aggro
+      +1 +thoughness
+   Lowest Level
+      +10 aggro
+
+-> Special Conditions
+
+
+
+
 Create NPC Config
 Name
 Script

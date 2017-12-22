@@ -19,6 +19,8 @@ include ":gumps:requestgump";
 include ":gumps:yesno";
 include ":containers:storageAreas";
 include ":combat:weaponInfo";
+include ":timeutils:time";
+include ":charactercreation:feats";
 include ":charactercreation:characters";
 include "include/arrays";
 
@@ -323,7 +325,7 @@ function DisplayPrivileges(targ, byref gump, byref y_pos)
 endfunction
 
 function DisplayHabs(targ, byref gump, byref y_pos)
-	var habilidades := GetObjProperty(targ, "myhabs");
+	var habilidades := GetFeatList(targ);
 	var num_habs := habilidades.Size();
 	
 	GFResizePic(gump, 145, y_pos, GFCfgConst("Defaults", "ForeGround"), 340, (num_habs*20));
@@ -461,6 +463,9 @@ function GetCustom(targ, property)
 			return targ.GetExp() + " / " + targ.getLevel() * 1000;
 		"data_de_criação":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
+      "tempo_de_vida":
+         var chardata := getObjProperty(targ, "chardata");
+         return GetTimeStamp((polcore().systime + cint(chardata.lifetime)) - cint(chardata.lifetime_penalty));
 	endcase
 
 	return "Unknown custom type!";

@@ -21,7 +21,7 @@ program animateSword(params)
 	params := 0; // No longer needed
 	
 	while (1)
-      if (Distance(who, targ) < 4 && targ.objtype in array{0x0F60, 0x13b9} && targ.hp >= 5)
+      if (Distance(who, targ) < 4 && targ.objtype in array{0x0F60, 0x13b9, 0xf51, 0x1440, 0x1401} && targ.hp >= 5)
 			break;
 		elseif (!targ)
 			return 1;
@@ -44,9 +44,17 @@ program animateSword(params)
 	
 	var summoned := CreateNpcFromTemplate(":ghaia:longsword", targ.x, targ.y, targ.z);
 	if (summoned)
-		if (targ.objtype == 0x13b9)
-			summoned.graphic := 0x13b9;
-		endif
+      var itemcfg := ReadConfigFile(":combat:itemdesc");
+      if (itemcfg[hex(targ.objtype)])
+         SetObjProperty(summoned, "dicedmg", targ.Damage);
+      endif
+      case (targ.objtype)
+         0x13b9: summoned.graphic:= 643;
+         0xf51: summoned.graphic:= 622;
+         0x1440: summoned.graphic:= 623;
+         0x1401: summoned.graphic:= 630;
+      endcase
+
 
 		PrintTextAbove(summoned, "*A espada ganha vida*", 3,191);
 		AddPet(who, summoned.serial);

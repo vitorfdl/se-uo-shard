@@ -265,13 +265,12 @@ endfunction
  * Transform a polsys time to timestamp
  *
  */
-function GetTimeStamp(what := 0, timestamp := "<DAY>/<MON>/<YY> <HH>:<MM>:<SS>")
+function GetTimeStamp(what := 0, timestamp := "%d/%m/%Y %H:%M:%S")
 	if(!what)
 		what := GetTime();
 	endif
-	var ts := GetTimeStruct(what);
-
-	return(FormatTime(ts, timestamp));
+	var ts := StrFormatTime(timestamp, what);
+	return ts;
 endfunction
 
 /*

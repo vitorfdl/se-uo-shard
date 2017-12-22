@@ -10,6 +10,7 @@ include "include/say";
 include "include/client";
 include ":taming:taming";
 include ":gumps:gumpprompt";
+include ":charactercreation:feats"; // remove later
 
 program Logon(who)
 	EraseObjProperty(who, "#pegueiesse"); // evitar bugs no stealing.
@@ -27,10 +28,19 @@ program Logon(who)
 		ReverseLight(who);
 	endif
 
-	var recorde := GetGlobalProperty("maxonline");
-	if (!recorde)
-		recorde := 0;
-	endif
+   if (who.isClass("Mago"))
+      LearnFeat(who, "Linguagem Élfica", 0, 0);
+   elseif (who.isClass("Clérigo"))
+      LearnFeat(who, "Linguagem Rúnica", 0, 0);
+   endif
+   
+   if (who.getPoints() < 0)
+      who.setpoints(0);
+   endif
+	// var recorde := GetGlobalProperty("maxonline");
+	// if (!recorde)
+	// 	recorde := 0;
+	// endif
 
 	// var players := EnumerateOnlineCharacters();
 	// var total := players.size();
@@ -66,6 +76,7 @@ program Logon(who)
 	if (GetObjProperty(who, "criandochar") || !GetObjProperty(who, "chardata"))
 		start_script(":charactercreation:gumpcriacao", who);
 	endif
+   
 	return 1;
 endprogram
 

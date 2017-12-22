@@ -6,6 +6,9 @@ include ":containers:settings";
 
 program control_Corpse(corpse)
 	if ( corpse.NPCTemplate() )
+      if (corpse.NPCTemplate()["moriquendi"] && GetGlobalProperty("dia") != "noite")
+         DestroyItem(corpse);
+      endif
 		return 0;
 	endif
 

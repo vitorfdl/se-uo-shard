@@ -12,9 +12,6 @@ function getnpccategory(template)
 	else
 		return category;
 	endif
-	
-	unloadConfigFile(":ghaia:npcdesc");
-
 endfunction
 
 function getnpcname(who, template)
@@ -24,8 +21,4 @@ function getnpcname(who, template)
 	var name := CStr(npccfgfile[template].Name);	
 	
 	return name;
-
-	
-	unloadConfigFile(":ghaia:npcdesc");
-
 endfunction

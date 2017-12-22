@@ -16,7 +16,7 @@ set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
 var pack_animals   := array(291, 292);
 var me             := self();
-var idlesnd1, idlesnd2, personality, foodtype;
+var idlesnd1, idlesnd2, personality, foodtype, npccfgfile;
 var following, fighting, guarding, patrolling;
 var wait_time := 10;
 var tame_difficulty := 0;
@@ -36,7 +36,7 @@ program NPCMonitor()
    SetWarMode( 0 );
    Set_Event_Queue_Size(20);
    wait_time := 10;
-
+   SetAnchor(0, 0, 0, 0);
    while (me)
       if (GetObjProperty(me, "objloc") != error)
          DoObjective();
@@ -92,7 +92,7 @@ program NPCMonitor()
          SYSEVENT_ITEM_GIVEN:
             TakeItem(ev);
 
-         //Custom events
+         // Custom events
          FOLLOW_CMD:
             PetFollow(ev.targ);
          ATTACK_CMD:
@@ -102,7 +102,8 @@ program NPCMonitor()
       endcase
 
       wait_time := 5;
-      sleepms(2);
+      CreateAnimalitems();
+      sleepms(10);
    endwhile
 endprogram
 
@@ -169,7 +170,6 @@ function PetFollow(character := 0)
    elseif (fighting)
       return;
    endif
-
    var dist := Distance(me, following);
 
    if( dist <= 2 )
@@ -178,11 +178,10 @@ function PetFollow(character := 0)
       following := 0;
       wait_time := 120;
    elseif ( dist > 4 )
-      PetMovement(following, 2);
-      // RunTowardLocation( following.x, following.y );
+      RunTowardLocation( following.x, following.y );
       wait_time := 0;
    else
-      PetMovement(following, 1);
+      WalkTowardLocation( following.x, following.y );
       wait_time := 0;
    endif
 endfunction
@@ -321,7 +320,6 @@ function DisablePetMainEvents()
 endfunction
 
 function Setup()
-   me.use_adjustments := 1;
    var owner := me.master;
    var owner_property := GetObjProperty(me, "owner");
 
@@ -344,6 +342,7 @@ function Setup()
    var npc_cfg     := ReadConfigFile(":*:npcdesc")[me.my_template()];
    tame_difficulty := cint(npc_cfg.TameDifficulty);
    foodtype := npc_cfg.foodtype;
+   npccfgfile := npc_cfg;
 
    me.facing := me.facing+1;
    TurnToward(me.master);
@@ -428,7 +427,6 @@ function ResolveSpeech(ev)
       return;
    endif
 
-   var cmd;
    var targ;
 
    if (text["-me"])
@@ -577,8 +575,8 @@ function CanFight(me, mob)
    return 0;
 endfunction
 
-function PetMovement(me, move_mode)
-   if (!CheckLosAt(me, following.x, following.y, following.z) || (following.z != me.z && ListStaticsNearLocation(me.x, me.y, me.z, 1, TILEDATA_FLAG_IMPASSABLE).size() > 0)) //se não consegue correr direto
+function PetMovement(move_mode)
+   if (!CheckLosAt(me, following.x, following.y, following.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se não consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
 		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
 		
@@ -645,7 +643,6 @@ function PetMovement(me, move_mode)
       EraseObjProperty(me, "path");
       EraseObjProperty(me, "#enemy_last_loc");
       if (move_mode == 2)
-         RunToward( following );
       else
          WalkToward( following );
       endif

@@ -8,49 +8,30 @@ include ":charactercreation:characters";
 //TODO seria mais facil olhar o skills.cfg que possuem script e executar ele
 
 program start_skill(who, skillname)
-
 	if (who.dead)
 		SendSysMessageEx(who, "Você está morto e não pode fazer isto.");
 		return;
 	endif
 
 	var delay := GetObjProperty(who, "delayskill");
+	if(delay && delay > ReadGameClock())
+      SendSysMessageEx(who, "Você ainda está fazendo outra coisa.");
+      return;
+	endif
+
 	SetObjProperty(who, "delayskill", ReadGameClock() + 5);
-	if(delay)
-		if(delay > ReadGameClock())
-			SendSysMessageEx(who, "Você ainda está fazendo outra coisa.");
-			return;
-		endif
-	endif
-
-	skillname[" "] := "_";
-	skillname[" "] := "_";
-	skillname[" "] := "_";
+   skillname := StrReplace(skillname, " ", "_");
 	
-	if(!AP_GetAttributeCfgElem(skillname))
-		SendSysMessageEx(who, "Pericia inexistente!");
-		return;
-	endif
-	// var translatedname := GetUntranslatedName(txt, who);
-	// if (translatedname)
-	// 	skillname := translatedname;
-	// elseif(AP_GetAttributeCfgElem(txt))
-	// 	skillname := txt;
-	// endif
-	
+   if (!skillname)
+      return;
+   endif
 
-//no sistema de skillcap todos tem todas skills
-  if( skillname )
-	//var chardata := GetObjProperty(who, "chardata");
-	//if (chardata.Skills[skillname])
-		var script := AP_GetAttributeCfgElem(skillname).Script;
-		if( script )
-			start_script( script, who );
-		endif
-	//else
-	//	SendSysMessageEx(who, "Você não possui essa skill.");
-	//endif
-  else
-	SendSysMessageEx(who, "Essa perícia não existe.");
-  endif
+   var cfg := AP_GetAttributesCfgFile();
+   var script := cfg[skillname].Script;
+   if( script )
+      start_script( script, who );
+   else
+      return SendSysMessageEx(who, "Pericia inexistente!");
+   endif
+
 endprogram

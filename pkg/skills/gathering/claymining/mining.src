@@ -109,7 +109,6 @@ function EnterrarCorpo(who, scoop, targ)
 	SendSysMessage(who, "Selecione o lugar que deseja enterrar o corpo.");
 	var lugar := TargetCoordinates(who);
 	var land_scape := CStr( GetMapInfo(lugar.x, lugar.y).landtile );
-   print(targ.item);
 	if (!lugar)
 		return;
 	// elseif (!IsPlayerCorpse(targ.item) && !GetObjProperty(targ.item, "enterrado"))

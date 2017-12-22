@@ -1,6 +1,5 @@
 
 function GetMagentaMap(value)
-
 	case (value)
 		0: return 933;
 		1: return 833;

@@ -10,7 +10,7 @@ include ":timedScripts:timedScripts";
 include "include/damage";
 
 program healpotion(who, potion)
-	if (!CheckIfCanDrink(who, potion, "healingpot", 20))
+	if (!CheckIfCanDrink(who, potion, "healingpot", 10))
 		return 1;
 	endif
 

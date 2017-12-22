@@ -4,7 +4,7 @@ use os;
 program trash(who, item)
 
   who := who;
-  while(1)
+  while(item)
     foreach trashitem in EnumerateItemsInContainer(item)
       if(trashitem.container == item)
         DestroyItem(trashitem);

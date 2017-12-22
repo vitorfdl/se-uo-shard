@@ -23,7 +23,7 @@ program HitScript(params)
    endif
 
    if (rollResistDice(defender, CONSTITUTION) <= diff)
-      HealDamage(attacker, rawdamage);
+      HealDamage(attacker, basedamage/2);
       PlayObjectCenteredEffect(attacker, GFX_BLUE_SPARKLE_SWIRL, 7, 16);
    endif
    

@@ -294,7 +294,7 @@ exported function MegaCliloc( who, byref packet )
 
 		var pplmage := GetObjProperty(item, "magicwho"); //research
 		if ( pplmage != error)
-         if (GetObjProperty(item, "pocaoname" && (who in pplmage || HaveFeat(who, "Noção Quimica")))
+         if (GetObjProperty(item, "pocaoname") && (who.serial in pplmage || HaveFeat(who, "Noção Quimica")))
             xDesc += WHITE + GetObjProperty(item, "pocaoname");
          endif
 

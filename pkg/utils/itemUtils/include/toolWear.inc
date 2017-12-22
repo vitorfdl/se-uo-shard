@@ -1,44 +1,16 @@
 include ":attributes:attributes_ex";
 
-function CheckToolWear (who, tool, skillid)
-  var swings := GetObjProperty(tool,"swings");
-  if(!swings)
-    var mods := GetObjProperty(tool, "durability");
-    var bonus := 0;
-    case(mods)
-      "durable":        bonus := 10;
-      "substantial":    bonus := 20;
-      "massive":        bonus := 30;
-      "fortified":      bonus := 40;
-      "indestructable": bonus := 50;
-    endcase
-    swings := Cint(50 * tool.quality) + bonus;
-    SetObjProperty(tool,"swings", swings);
-  endif
+function CheckToolWear (who, tool, skill)
+   var swings := GetObjProperty(tool,"swings");
+   if (!swings)
+      swings := Cint(50 * tool.quality);
+      SetObjProperty(tool,"swings", swings);
+   endif
+
   if(swings <= 0)
     DestroyItem(tool);
-    SendSysMessage(who,"Sua ferramenta quebrou.");
-  else
-    var skill := GetAttribute(who, AP_SkillIdToAttributeName(skillid));
-    if(skill > 80)
-      skill := 80;
-    elseif(skill < 20)
-      skill := 20;
-    endif
-    if((RandomInt(100)+1) > skill)
-      if(tool.isa(POLCLASS_WEAPON))
-        if(tool.hp > 1)
-          SetObjProperty(tool,"swings", (swings - 1));
-          tool.hp := tool.hp - 1;
-        elseif((tool.hp > tool.maxhp) or (tool.hp == 1))
-          SendSysMessage(who,"Sua ferramenta quebrou.");
-          DestroyItem(tool);
-        endif
-      else
-        SetObjProperty(tool,"swings", (swings - 1));
-      endif   
-    endif
-  endif
+    SendSysMessageEx(who,"Sua ferramenta quebrou.");
+   endif
 endfunction 
 
 function SetToolDurability(who, tool, skillid)

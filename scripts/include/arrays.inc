@@ -366,3 +366,11 @@ function SearchArrayOfModel(search_for, equal, to_search)
 
 	return 1;
 endfunction
+
+function removeIndexes(byref the_array, index_array)
+   index_array.Reverse(); //cheat for pol
+   foreach index in index_array
+      the_array.erase(index);
+      sleepms(2);
+   endforeach
+endfunction

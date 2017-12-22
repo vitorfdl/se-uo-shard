@@ -33,19 +33,19 @@ program skill_Stealth( who )
 		endif
 	endif*/
 
-	var base_steps := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE));
+	var base_steps :=  (AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE)) - RandomDiceRoll("1d2");
+   SendSysMessageEx(who, base_steps);
 	if (base_steps < 0)
 		return SendSysMessageEx(who, "Você é incapaz de se mover furtivamente.", SSM_INFO);
 	endif
 
 	var advantage := 0;
-	if (Lower(GetGlobalProperty("dia")) == "noite")
+	if (Lower(GetGlobalProperty("dia")) == "noite" || InDungeon(who))
 		advantage += 1;
 	endif
 
 	var check := rollAttrDice(who, DEXTERITY, advantage) + getProficiencyBonus(who, FURTIVIDADE);
 	if (check >= diff)
-      SendSysMessageEx(who, base_steps);
 		who.stealthsteps := cint(base_steps);
 		/*
 		Removido pois agora Furtividade Aprimorada é como se fosse pra habilitar Stealth e não mais dar bonus

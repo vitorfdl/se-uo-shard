@@ -53,6 +53,7 @@ function HealFLS(targ, amt, show_heal := 1)
 	SendSystemReport(targ, amt, SYSTEM_HEAL, targ);
 	if (show_heal.isA(POLCLASS_MOBILE))
 		SendSystemReport(targ, amt, SYSTEM_HEAL, show_heal);
+      var mobs := ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY);
 	endif
 endfunction
 
@@ -182,7 +183,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		MakeBleed(defender);
 	endif
 
-	if (source && type != DMG_FORCED && RandomInt(3) == 1)
+	if (source && type != DMG_FORCED)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
 		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));

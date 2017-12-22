@@ -2,11 +2,12 @@ use uo;
 use util;
 use os;
 include ":charactercreation:habilidades";
+include "include/say";
 
 program colheReagente(who, item)
 
 	if (!Accessible(who, item))
-		SendSysMessage(who, "Você não alcanca este item.");
+		SendSysMessageEX(who, "Você não alcança este item.", SSM_FAIL);
 		return 1;
 	endif
 	
@@ -39,10 +40,10 @@ program colheReagente(who, item)
 	
 	
 	if (!item)
-		SendSysMessage(who, "Você não tem espaço na sua mochila.");
+		SendSysMessageEX(who, "Você não tem espaço na sua mochila.", SSM_FAIL);
 		return;
 	else
-		SendSysMessage(who, "Você colheu a planta");
+		SendSysMessageEX(who, "Você colheu a planta", SSM_INFO);
 		DestroyItem(item);
 	endif
 
