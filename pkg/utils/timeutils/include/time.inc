@@ -10,7 +10,7 @@ use uo;
 use math;
 use util;
 
-include "timeUtilssettings";
+include ":timeUtils:settings";
 
 enum TIME_UNITS
 	// Base unit: Millisecond
