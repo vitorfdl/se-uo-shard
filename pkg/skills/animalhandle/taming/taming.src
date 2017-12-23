@@ -9,7 +9,7 @@ include ":taming:taming";
 include ":mounts:mounts";
 include ":charactercreation:characters";
 include ":yggdrasil:boss";
-include ":yggdrasil:spawnspot";
+include ":yggdrasil:spawnSpot";
 include ":ghaia:ghaiaUtil";
 
 const START_Y      := 91;

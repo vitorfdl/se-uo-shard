@@ -2,7 +2,7 @@ use uo;
 use os;
 use os;
 
-include ":timeutils:time";
+include "timeUtilstime";
 include ":yggdrasil:boss";
 include "include/utils";
 include "include/say";

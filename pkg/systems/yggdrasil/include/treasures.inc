@@ -3,7 +3,7 @@ use math;
 
 include ":loot:include/lootParser";
 include ":traps:traps";
-include ":timeutils:time";
+include "timeUtilstime";
 include ":unicos:item_template";
 
 function ModelTreasure( data := struct{} )

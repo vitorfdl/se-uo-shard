@@ -9,7 +9,7 @@ include ":datafile:datafile";
 include ":accounts:accounts";
 include ":accounts:settings";
 include ":accounts:report";
-include ":timeutils:time";
+include "timeUtilstime";
 
 program GlobalControl()
 	SetGlobalProperty("#AcctWatcherPId", GetPid());

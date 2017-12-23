@@ -15,7 +15,7 @@ use os;
 use util;
 
 include ":charactercreation:characters";
-include ":timeutils:time";
+include "timeUtilstime";
 
 function GetCharAge(character, factor := "days")
 	var create_date := cint(GetObjProperty(character, "createdate"));
