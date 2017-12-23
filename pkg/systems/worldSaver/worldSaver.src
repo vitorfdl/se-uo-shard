@@ -10,7 +10,7 @@ include ":worldsaver:saver";
 include ":worldsaver:settings";
 include ":worldsaver:report";
 include "include/client";
-include ":timeutils:time";
+include "timeUtilstime";
 
 program WorldSaver()
 	SVR_ReportText("---=[ WORLD SAVER HAS STARTED UP ]=---", SAVER_REPORT_SYSLOG);

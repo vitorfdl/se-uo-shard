@@ -2,7 +2,7 @@ use uo;
 use os;
 use os;
 
-include ":timeutils:time";
+include "timeUtilstime";
 include ":yggdrasil:boss";
 include "include/say";
 include "include/facings";
@@ -11,7 +11,7 @@ include "include/client";
 include ":sysbook:flsbooks";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
-include ":timeUtils:time";
+include "timeUtilstime";
 include ":merchants:crafthelp";
 
 program oafeatures_sendpacket(who, text)

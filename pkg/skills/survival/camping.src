@@ -3,7 +3,7 @@ include ":attributes:attributeConstants";
 include ":attributes:attributes";
 include "include/objtype";
 include ":itemutils:canAccess";
-include ":timeutils:time";
+include "timeUtilstime";
 include ":death:death";
 include "include/say";
 include "include/damage";

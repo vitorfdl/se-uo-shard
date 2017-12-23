@@ -20,7 +20,7 @@ include ":attributes:vitals";
 include ":combat:hitscripts";
 include "include/say";
 include "include/damage";
-include ":yggdrasil:spawnspot";
+include ":yggdrasil:spawnSpot";
 include ":yggdrasil:boss";
 
 //include ":spawnnet:spawnnet";
