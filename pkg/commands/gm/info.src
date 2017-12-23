@@ -19,7 +19,7 @@ include ":gumps:requestgump";
 include ":gumps:yesno";
 include ":containers:storageAreas";
 include ":combat:weaponInfo";
-include "timeUtils:time";
+include ":timeUtils:time";
 include ":charactercreation:feats";
 include ":charactercreation:characters";
 include "include/arrays";

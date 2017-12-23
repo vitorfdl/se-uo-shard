@@ -27,7 +27,7 @@ use os;
 
 include ":datafile:datafile";
 include ":gumps:include/old/old-gumps";
-include "timeUtils:time";
+include ":timeUtils:time";
 
 const ADD_POST_BTN := 1000;
 const DELETE_BTN := 1001;

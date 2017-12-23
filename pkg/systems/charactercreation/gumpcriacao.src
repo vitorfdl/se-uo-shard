@@ -13,7 +13,7 @@ include ":disguise:disguise";
 include ":charactercreation:createchar";
 include ":gumps:yesno";
 include ":datafile:datafile";
-include "timeUtils:time";
+include ":timeUtils:time";
 include ":sysbook:flsbooks";
 
 //cores: 1153 -> 2103 -> 2105
