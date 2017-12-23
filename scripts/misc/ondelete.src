@@ -14,11 +14,9 @@ include ":attributes:attributes";
 program core_onDelete(who)
 	var create_time := who.createdat;
    var acc := FindAccount(who.acctname);
-	var age := GetObjProperty(who, "createdate");
-   print(StrFormatTime(create_time));
+	var age := cint(GetObjProperty(who, "createdate"));
 
 	if ( who.cmdlevel || acc.defaultcmdlevel > 0 )
-      print("test");
 		var followers := Getobjproperty(who, "followers");
 		foreach pet in followers
 			SetObjProperty(pet, "GuardKill", 1);
@@ -26,8 +24,7 @@ program core_onDelete(who)
 		endforeach
 
 		return 1;
-	elseif ( age >= SECONDS_IN_WEEK || Getobjproperty(who, "morto") )
-      print("test2");
+	elseif ( age >= SECONDS_IN_WEEK || Getobjproperty(who, "morto") || who.acctname == "test" )
 		SysLog("Account ["+who.acctname+"] deleting character "+who.name+" ("+who.serial+")");
 		
 		var followers := Getobjproperty(who, "followers");
