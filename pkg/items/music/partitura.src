@@ -15,9 +15,7 @@ include ":gumps:yesno";
 var config;
 
 program partitura(who, item)
-
 	PartituraGump(who,item);
-
 endprogram
 
 function PartituraGump(who,item)
@@ -59,15 +57,11 @@ function PartituraGump(who,item)
 endfunction
 
 function LetraDaMusica(who,item, letra, compositor)
-
 	var gump := GFCreateGump(140, 100);
 	GFClosable(gump, 1);
 	GFResizePic(gump, 0, 0, 0x9D8, 240, 260);
 
-
-
 	GFTextLine(gump, 40, 10, 0, "Letra de " + item.name);
-
 
 	GFHTMLArea( gump, 34, 40, 180, 160, letra,3,1);
 
@@ -81,6 +75,4 @@ function LetraDaMusica(who,item, letra, compositor)
 	if (retv[0] == 99)
 		PartituraGump(who,item);
 	endif
-
-
 endfunction

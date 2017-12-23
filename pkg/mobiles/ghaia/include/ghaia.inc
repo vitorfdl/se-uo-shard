@@ -38,7 +38,7 @@ const ALIGN_NEUTRAL := 0;
 //essa funcao determina se o npc vai enfrentar o alvo ou nao
 function CanFight(me, mobile)
    EraseObjProperty(me, "path");
-   if ( mobile.concealed || GetObjProperty(mobile, "ignorenpcs") || GetCooldown(me, "peacemade") > 0)
+   if ( mobile.concealed || GetObjProperty(mobile, "ignorenpcs") || TS_GetCooldown(me, "peacemade"))
       return 0;
    elseif ( GetObjProperty(mobile, "#fantasma") == 1)
       return 0;
@@ -295,11 +295,20 @@ function LookForFood()
 		return;
 	endif
 
+   var foodvalue = 0;
+   if (cint(npccfgfile.TameDifficulty) >= 20)
+      foodvalue := 4;
+   elseif (cint(npccfgfile.TameDifficulty) >= 18)
+      foodvalue := 3;
+   elseif (cint(npccfgfile.TameDifficulty) >= 14)
+      foodvalue := 2;
+   endif
+
 	var food;
    var food_list := ListItemsNearLocationWithFlag(me.x, me.y, me.z, 5, 0x00000800);
 	foreach item in food_list
 		var found := FindConfigElem(foods, hex(item.objtype));
-		if (found && found.foodtype == npccfgfile.foodtype)
+		if (found && found.foodtype == npccfgfile.foodtype && cint(found.foodvalue) >= foodvalue)
 			food := item;
 		endif
 		sleepms(2);
@@ -312,7 +321,7 @@ function LookForFood()
 
 	if (Distance(me, food) <= 1)
 		DestroyItem(food);
-		SetCooldown(me, "peacemade", (cint(food.foodvalue)+1) * 80);
+		TS_StartCooldown(me, "peacemade", (cint(food.foodvalue)+1) * 80);
 		SetPeaceMade();
       Say("*comendo*");
 	endif

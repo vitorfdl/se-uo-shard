@@ -57,30 +57,15 @@ program skinning(parms)
 		
 
 	elseif((GetObjProperty(cadaver,"npctemplate")== error) && (GetObjProperty(cadaver, "morto")!=1))
-		if (FindAccount(who.acctname).getprop("nota") == 2 || cadaver.ownerserial in GetObjProperty(who,"PodeMatar")) 
-			if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo morrera e você perdera 1 DP permanentemente.", "Nao: nenhuma consequencia.")) //quer matar mesmo
-				DesmembreCorpse(cadaver);
-				if (!(cadaver.ownerserial in GetObjProperty(who,"PodeMatar"))) //retira 1 dp
-					var dpmod := cint(GetObjProperty(who, "dpmod"));
-					dpmod := dpmod - 10;
-					SetObjProperty(who, "dpmod", dpmod);
-				endif
-				PrintText( who, "*Corta a cabeça*");
-				SetObjProperty(cadaver, "description", "[Decaptado]");
-				SetObjProperty(cadaver, "WeaponKill", blade.desc);
-				SetObjProperty(cadaver, "charname", cadaver.name);
-				SetObjProperty(cadaver, "deathtime", polcore().systime);
-				SetName(cadaver, "Corpo Irreconhecivel");
-				SetObjProperty(cadaver, "morto",1);
-				
-			endif
-		endif
+      if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo poderá negar o pedido e não pode sair de perto do corpo", "Nao: nenhuma consequencia.")) //quer matar mesmo
+
+      endif
 		//DesmembreCorpse(cadaver);
 	
 	elseif ((CheckGender(cadaver)) && (GetObjProperty(cadaver, "morto")!=1))
-				DesmembreCorpse(cadaver);
-				PrintTextAbove( who, "*Corta a cabeca*", font := _DEFAULT_TEXT_FONT, color := _DEFAULT_TEXT_COLOR, journal_print := JOURNAL_PRINT_NAME);	
-				SetObjProperty(cadaver, "morto",1);
+      DesmembreCorpse(cadaver);
+      PrintTextAbove( who, "*Corta a cabeca*", font := _DEFAULT_TEXT_FONT, color := _DEFAULT_TEXT_COLOR, journal_print := JOURNAL_PRINT_NAME);	
+      SetObjProperty(cadaver, "morto",1);
 	else
 		PrintText(who, "*escalpelando "+cadaver.desc+"*");
 		SetObjProperty(cadaver, "morto",1);

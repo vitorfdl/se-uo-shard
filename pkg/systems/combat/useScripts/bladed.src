@@ -110,22 +110,8 @@ function CarveItems(who, tool, item)
 	elseif (item.objtype == 0x172a)
 		CutLime(who, item);
 	elseif ( (item.objtype == 0x1078) || (item.objtype == 0x1079) )
-		MakeBlankScrolls (who, item);
-
-	// Alterado por Edmond - Script para quebrar barril.
-	elseif ((item.objtype == 0xec24) || (item.objtype == 0xec25) || (item.objtype == 0xec26) || (item.objtype == 0xFF04)||(item.objtype == 0xec27) || (item.objtype == 0xec28)) 
-		if ((!CheckLineOfSight(who, item)) or (Distance(who, item) > 1))
-			SendSysMessage(who, "O alvo esta distante.");
-			return;
-		else
-			var parms;
-			var script := start_script (":tn:destroyitems", {who, item, tool});
-			return 1;
-		endif
-	//--------------------------------------------------------------------------------------
-
+		MakeBlankScrolls(who, item);
 	elseif ( isfish(item.objtype) )
-
 		if((!Accessible(who, item)) or (!CheckLineOfSight(who, item)) or (Distance(who, item) > 2))
 			SendSysMessage(who, "Você não pode usar isto.");
 			return;
