@@ -230,7 +230,7 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
             endif
 
             print("<> New buff User: {}, Amount: {}, Text: {}".format(mobile.name, event.amount, text));
-				mobile.addBuff(cint(elem_info.Icon), cint(event.amount), cint(1075834), cint(elem_info.cliloc2), cAscZ(text));
+				mobile.addBuff(cint(elem_info.Icon), cint(event.amount), cint(elem_info.cliloc1), cint(1075834), cAscZ(text));
 			endif
 		endif
 		//SendSysMessage(mobile, "AddNewTimer");
