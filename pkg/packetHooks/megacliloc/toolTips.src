@@ -20,6 +20,7 @@ const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
 const RED    := "<BASEFONT COLOR=#FF4C4C>";
 const BLUE   := "<BASEFONT COLOR=#4169E1>";
 const ORANGE := "<BASEFONT COLOR=#FFA500>";
+const ORANGE := "<BASEFONT COLOR=#d3d3d3>";
 
 function TranslateAtt(attribute)
 	case (attribute.lower())
@@ -33,7 +34,6 @@ function TranslateAtt(attribute)
 endfunction
 
 function getQuality(num)
-
 	if (num >= 1.1)
 		return "Excepcional";
 	elseif(num  > 0.8)
@@ -41,11 +41,9 @@ function getQuality(num)
 	else
 		return "Ruim";
 	endif
-
 endfunction
 
 function getCondition(item)
-
 	var c := cdbl(item.hp) / cdbl(item.maxhp);
 
 	if (c > 0.9)
@@ -77,7 +75,6 @@ endfunction
 
 
 function GetCriticalInfo(entry)
-
 	var criticals := GetconfigStringArray(entry, "CriticalHitScripts");
 
 	var critstr := "";
@@ -89,7 +86,6 @@ function GetCriticalInfo(entry)
 	endforeach
 
 	return critstr;
-
 endfunction
 
 function TranslateHit(crit)
@@ -336,6 +332,7 @@ exported function MegaCliloc( who, byref packet )
 					var active_spell := GetObjProperty(item, "active_spell");
 					foreach spell in spell_list
 						if (spell == 0)
+					      xDesc += "<br>SLOT PERDIDO".format(GRAY);
 							continue;
 						elseif (xDesc.search(GetSpellName(spell)))
 							xDesc += "I";

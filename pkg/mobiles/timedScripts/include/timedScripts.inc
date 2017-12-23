@@ -407,11 +407,9 @@ function TS_StartCooldown(mobile, timer_name, duration, attacker := 0, endMessag
 endfunction
 
 function TS_GetCooldown(mobile, cooldown)
-
 	var timers := TS_GetCooldownList(mobile);
 
 	return timers[cooldown];
-
 endfunction
 
 /*

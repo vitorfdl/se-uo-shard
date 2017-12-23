@@ -8,37 +8,21 @@ include ":attributes:attributes";
 include "include/say";
 include ":charactercreation:habilidades";
 
-program skill_Anatomy(who)
-	return 1;
-	EraseObjProperty(who, "IsMeditating");
-	EraseObjProperty(who, "HealTimer");
-
+program medicineSkill(who)
 	SendSysMessageEx(who, "Quem você deseja examinar?", SSM_REQUEST);
 	var subject := Target(who);
-	// target checks begin here
-	if(!subject)
-		return 0;
-	elseif(subject.serial == who.serial)
-		//PrintTextAbovePrivate(who, "Você ja conhece o bastante de si mesmo.", who);
-//		PrintTextAbovePrivate(subject, "Você esta " + DPMsg(subject)+".", who);
-			var hunger := CInt(AP_GetVital(subject, "Hunger") / 10);
-			PrintTextAbovePrivate(subject, "Niveis de fome: " + hunger , who);
-		return 0;
-	elseif(subject.graphic == 0x2006)
-		if (!TemHabilidade(who, "Necropsia"))
-			SendSysMessageEX(who, "Parece morto para você.", SSM_INFO);
-			return;
-		endif
-		PrintText(who, "*examinando o corpo*");
-		if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
+
+   var rolldice := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(who, MEDICINA);
+   if (subject.graphic == 0x2006)
+		if( rolldice > 12 ) //SkillCheck(who, MEDICINE, -1)
 			if (GetObjProperty(subject, "morto") == 1)
 				SendSysMessageEx(who, "Parece morto para você.", SSM_INFO);
-				if (40 == 40); //valorInicial(who, MEDICINE)
-					if (GetObjProperty(subject, "WeaponKill"))
-						SendSysMessageEx(who, "O corpo foi morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
-					endif
+				if ( rolldice > 18 ); //valorInicial(who, MEDICINE)
 					if (GetObjProperty(subject, "deathtimer"))
-						SendSysMessageEx(who, "Foi morto a: " + tempoMorto(subject, "deathtimer"), SSM_INFO);
+						SendSysMessageEx(who, "Parece morto há: " + tempoMorto(subject, "deathtimer"), SSM_INFO);
+					endif
+					if (GetObjProperty(subject, "WeaponKill"))
+						SendSysMessageEx(who, "Parece ter sido morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
 					endif
 					if (GetObjProperty(subject, "deathdetails"))
 						SendSysMessageEx(who, "Detalhes: " + GetObjProperty(subject, "deathdetails"), SSM_INFO);
@@ -47,218 +31,214 @@ program skill_Anatomy(who)
 				return 0;
 			else
 				var mob := SystemFindObjectBySerial(subject.ownerserial);
-				if (mob)
-					if (mob.concealed)
-						SendSysMessageEx(who, "Parece morto para você.", SSM_INFO);
-						return 0;
-					endif
+				if (mob && mob.concealed)
+               SendSysMessageEx(who, "Parece morto para você.", SSM_INFO);
+               return 0;
 				endif
-				SendSysMessageEx(who, "Esta desacordado.", SSM_INFO);
+				SendSysMessageEx(who, "Está desacordado.", SSM_INFO);
 				return 0;
 			endif
 		else
 			SendSysMessageEx(who, "Você não tem certeza...", SSM_FAIL);
 			return 0;
-		endif
-	elseif(subject.objtype == 0xEFFF)
-		if (!TemHabilidade(who, "Necropsia"))
-			SendSysMessageEX(who, "Parece morto para você.", SSM_INFO);
-			return;
-		endif
+	   endif
+
+   elseif (subject.objtype == 0xEFFF)
 		PrintText(who, "*examinando os ossos*");
-		if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
-			SendSysMessageEx(who, "Parece inanimado para você.", SSM_INFO);
-			if (40 == 40)//valorInicial(who, MEDICINE)				
-				if (GetObjProperty(subject, "WeaponKill"))
-					SendSysMessageEx(who, "O corpo foi morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
-				endif
-				if (GetObjProperty(subject, "deathtimer"))
-					SendSysMessageEx(who, "Foi morto a: " + tempoMorto(subject, "deathtimer"), SSM_INFO);
-				endif
-				if (GetObjProperty(subject, "enterrado"))
-					SendSysMessageEx(who, "Foi enterrado a: " + tempoMorto(subject, "enterrado"), SSM_INFO);
-				endif
-				if (GetObjProperty(subject, "deathdetails"))
-					SendSysMessageEx(who, "Detalhes: " + GetObjProperty(subject, "deathdetails"), SSM_INFO);
-				endif
-			endif
+		if( rolldice > 18 ) //SkillCheck(who, MEDICINE, -1)
+         if (GetObjProperty(subject, "WeaponKill"))
+            SendSysMessageEx(who, "O corpo foi morto por: " + GetObjProperty(subject, "WeaponKill"), SSM_INFO);
+         endif
+         if (GetObjProperty(subject, "deathtimer"))
+            SendSysMessageEx(who, "Foi morto a: " + tempoMorto(subject, "deathtimer"), SSM_INFO);
+         endif
+         if (GetObjProperty(subject, "enterrado"))
+            SendSysMessageEx(who, "Foi enterrado a: " + tempoMorto(subject, "enterrado"), SSM_INFO);
+         endif
+         if (GetObjProperty(subject, "deathdetails"))
+            SendSysMessageEx(who, "Detalhes: " + GetObjProperty(subject, "deathdetails"), SSM_INFO);
+         endif
 		else
-			SendSysMessageEx(who, "Você não tem certeza...", SSM_FAIL);
+			SendSysMessageEx(who, "Parece inanimado para você.", SSM_INFO);
 			return 0;
 		endif
-		return;
-	elseif(!subject.isA(POLCLASS_MOBILE))
-		SendSysMessageEx(who, "Alvo invalido.", SSM_FAIL);
-		return 0;
-	elseif( GetObjProperty(subject, "Blocked") || subject.frozen )
-        SendSysMessage(who, "O raciocinio por tras da sua analise esta incorreto.");
-        return 0;
-	endif
-	
-	if (!TemHabilidade(who, "Observar Fisionomia"))
-		SendSysMessageEX(who, "Parece uma criatura normal para você.", SSM_INFO);
-		return;
-	endif
-	PrintTextPrivate(who, "*tentando examinar " + subject.name + "*", who);
-	if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
-		AN_SendGump(who, subject);
-	else
-		PrintTextPrivate(who, "Você falha em examinar a criatura", who);
-	endif
 
+   else
+      SendSysMessageEx(who, "Cancelado.", SSM_INFO);
+   endif
 endprogram
 
-function AN_SendGump(who, creature)
-        var hits := ""+GetVital(creature, "Hits")/100+"/"+AP_GetVitalMaximumValue(creature, "Hits")+"";
-        var stamina := ""+GetVital(creature, "Stamina")/100+"/"+AP_GetVitalMaximumValue(creature, "Stamina")+"";
+// 	elseif(!subject.isA(POLCLASS_MOBILE))
+// 		SendSysMessageEx(who, "Alvo invalido.", SSM_FAIL);
+// 		return 0;
+// 	elseif( GetObjProperty(subject, "Blocked") || subject.frozen )
+//         SendSysMessage(who, "O raciocinio por tras da sua analise esta incorreto.");
+//         return 0;
+// 	endif
+	
+// 	if (!TemHabilidade(who, "Observar Fisionomia"))
+// 		SendSysMessageEX(who, "Parece uma criatura normal para você.", SSM_INFO);
+// 		return;
+// 	endif
+// 	PrintTextPrivate(who, "*tentando examinar " + subject.name + "*", who);
+// 	if( 15 > 0 ) //SkillCheck(who, MEDICINE, -1)
+// 		AN_SendGump(who, subject);
+// 	else
+// 		PrintTextPrivate(who, "Você falha em examinar a criatura", who);
+// 	endif
 
-        var str := ""+GetStrValue(creature)+"";
-        var dex := ""+GetDexValue(creature)+"";
+// endprogram
+
+// function AN_SendGump(who, creature)
+//         var hits := ""+GetVital(creature, "Hits")/100+"/"+AP_GetVitalMaximumValue(creature, "Hits")+"";
+//         var stamina := ""+GetVital(creature, "Stamina")/100+"/"+AP_GetVitalMaximumValue(creature, "Stamina")+"";
+
+//         var str := ""+GetStrValue(creature)+"";
+//         var dex := ""+GetDexValue(creature)+"";
 		
-        var ar := ""+GetTextValue(creature.resist_physical)+"";
-        var arf := ""+GetTextValue(creature.resist_fire)+"";
-        var arc := ""+GetTextValue(creature.resist_cold)+"";
-		var are := ""+GetTextValue(creature.resist_poison)+"";
-		var arp := ""+GetTextValue(creature.resist_energy)+"";
+//         var ar := ""+GetTextValue(creature.resist_physical)+"";
+//         var arf := ""+GetTextValue(creature.resist_fire)+"";
+//         var arc := ""+GetTextValue(creature.resist_cold)+"";
+// 		var are := ""+GetTextValue(creature.resist_poison)+"";
+// 		var arp := ""+GetTextValue(creature.resist_energy)+"";
 		
-		var danificio := "Sem Informações";
-		var dmg,dmgf,dmgc,dmge,dmgp;
-		if (creature.weapon.attribute != "Wrestling" && !creature.npctemplate)
-			dmg := ""+GetTextValue(creature.weapon.damage_physical)+"";
-			dmgf := ""+GetTextValue(creature.weapon.damage_fire+creature.weapon.damage_fire_mod)+"";
-			dmgc := ""+GetTextValue(creature.weapon.damage_cold+creature.weapon.damage_cold_mod)+"";
-			dmge := ""+GetTextValue(creature.weapon.damage_energy+creature.weapon.damage_energy_mod)+"";
-			dmgp := ""+GetTextValue(creature.weapon.damage_poison+creature.weapon.damage_poison_mod)+"";
-		else
-			var cTemplate := NPC_GetNPCConfig(creature.npctemplate);
-			dmg := ""+GetTextValue(cTemplate.PhysicalDamage)+"";
-			dmgf := ""+GetTextValue(cTemplate.FireDamage)+"";
-			dmgc := ""+GetTextValue(cTemplate.ColdDamage)+"";
-			dmge := ""+GetTextValue(cTemplate.EnergyDamage)+"";
-			dmgp := ""+GetTextValue(cTemplate.PoisonDamage)+"";
-		endif
+// 		var danificio := "Sem Informações";
+// 		var dmg,dmgf,dmgc,dmge,dmgp;
+// 		if (creature.weapon.attribute != "Wrestling" && !creature.npctemplate)
+// 			dmg := ""+GetTextValue(creature.weapon.damage_physical)+"";
+// 			dmgf := ""+GetTextValue(creature.weapon.damage_fire+creature.weapon.damage_fire_mod)+"";
+// 			dmgc := ""+GetTextValue(creature.weapon.damage_cold+creature.weapon.damage_cold_mod)+"";
+// 			dmge := ""+GetTextValue(creature.weapon.damage_energy+creature.weapon.damage_energy_mod)+"";
+// 			dmgp := ""+GetTextValue(creature.weapon.damage_poison+creature.weapon.damage_poison_mod)+"";
+// 		else
+// 			var cTemplate := NPC_GetNPCConfig(creature.npctemplate);
+// 			dmg := ""+GetTextValue(cTemplate.PhysicalDamage)+"";
+// 			dmgf := ""+GetTextValue(cTemplate.FireDamage)+"";
+// 			dmgc := ""+GetTextValue(cTemplate.ColdDamage)+"";
+// 			dmge := ""+GetTextValue(cTemplate.EnergyDamage)+"";
+// 			dmgp := ""+GetTextValue(cTemplate.PoisonDamage)+"";
+// 		endif
 		
-        var gump := GFCreateGump();
-        GFGumpPic(gump, 100, 100, 2080);
-        GFGumpPic(gump, 118, 137, 2081);
-        GFGumpPic(gump, 118, 207, 2081);
-        GFGumpPic(gump, 118, 277, 2081);
-        GFGumpPic(gump, 118, 347, 2083);
-        GFHTMLArea(gump,  147, 108, 210, 18, "<center><i>"+CStr(creature.name)+"</i></center>");
-        GFAddButton(gump, 240, 77, 2093, 2093, GF_CLOSE_BTN, 2);
+//         var gump := GFCreateGump();
+//         GFGumpPic(gump, 100, 100, 2080);
+//         GFGumpPic(gump, 118, 137, 2081);
+//         GFGumpPic(gump, 118, 207, 2081);
+//         GFGumpPic(gump, 118, 277, 2081);
+//         GFGumpPic(gump, 118, 347, 2083);
+//         GFHTMLArea(gump,  147, 108, 210, 18, "<center><i>"+CStr(creature.name)+"</i></center>");
+//         GFAddButton(gump, 240, 77, 2093, 2093, GF_CLOSE_BTN, 2);
 		
-        GFGumpPic(gump, 140, 138, 2091);
-        GFGumpPic(gump, 140, 335, 2091);
+//         GFGumpPic(gump, 140, 138, 2091);
+//         GFGumpPic(gump, 140, 335, 2091);
 		
-        GFPage(gump, 1);
-        GFGumpPic(gump, 128, 152, 2086);
-        GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Atributos");
-        GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Hits");
-        GFHTMLArea(gump, 280, 168,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(hits)+"</div>");
-        GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Stamina");
-        GFHTMLArea(gump, 280, 186,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(stamina)+"</div>");
-        GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Força");
-        GFHTMLArea(gump, 280, 204,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(str)+"</div>");
-        GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Destreza");
-        GFHTMLArea(gump, 280, 222,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(dex)+"</div>");
-        GFGumpPic(gump, 128, 240, 2086);
-        GFHTMLArea(gump, 147, 240, 160, 18, "<basefont color=#A52A2A>Resistencias");
+//         GFPage(gump, 1);
+//         GFGumpPic(gump, 128, 152, 2086);
+//         GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Atributos");
+//         GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Hits");
+//         GFHTMLArea(gump, 280, 168,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(hits)+"</div>");
+//         GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Stamina");
+//         GFHTMLArea(gump, 280, 186,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(stamina)+"</div>");
+//         GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Força");
+//         GFHTMLArea(gump, 280, 204,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(str)+"</div>");
+//         GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Destreza");
+//         GFHTMLArea(gump, 280, 222,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(dex)+"</div>");
+//         GFGumpPic(gump, 128, 240, 2086);
+//         GFHTMLArea(gump, 147, 240, 160, 18, "<basefont color=#A52A2A>Resistencias");
 
-        GFHTMLArea(gump, 153, 258, 160, 18, "<basefont color=#4A3929>Fisica");
-        GFHTMLArea(gump, 280, 258,  75, 18, "<basefont color=#4A3929><div align=right>"+ar+"</div>");
-        GFHTMLArea(gump, 153, 276, 160, 18, "<basefont color=#4A3929>Fogo");
-        GFHTMLArea(gump, 280, 276,  75, 18, "<basefont color=#4A3929><div align=right>"+arf+"</div>");
-        GFHTMLArea(gump, 153, 294, 160, 18, "<basefont color=#4A3929>Frio");
-        GFHTMLArea(gump, 280, 294,  75, 18, "<basefont color=#4A3929><div align=right>"+arc+"</div>");
-        GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>Energia");
-        GFHTMLArea(gump, 280, 312,  75, 18, "<basefont color=#4A3929><div align=right>"+are+"</div>");
-        GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, 2);
+//         GFHTMLArea(gump, 153, 258, 160, 18, "<basefont color=#4A3929>Fisica");
+//         GFHTMLArea(gump, 280, 258,  75, 18, "<basefont color=#4A3929><div align=right>"+ar+"</div>");
+//         GFHTMLArea(gump, 153, 276, 160, 18, "<basefont color=#4A3929>Fogo");
+//         GFHTMLArea(gump, 280, 276,  75, 18, "<basefont color=#4A3929><div align=right>"+arf+"</div>");
+//         GFHTMLArea(gump, 153, 294, 160, 18, "<basefont color=#4A3929>Frio");
+//         GFHTMLArea(gump, 280, 294,  75, 18, "<basefont color=#4A3929><div align=right>"+arc+"</div>");
+//         GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>Energia");
+//         GFHTMLArea(gump, 280, 312,  75, 18, "<basefont color=#4A3929><div align=right>"+are+"</div>");
+//         GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, 2);
 		
-		GFPage(gump, 2);
-        GFHTMLArea(gump, 153, 150, 160, 18, "<basefont color=#4A3929>Veneno");
-        GFHTMLArea(gump, 280, 150,  75, 18, "<basefont color=#4A3929><div align=right>"+arp+"</div>");
-        GFGumpPic(gump, 128, 168, 2086);
-        GFHTMLArea(gump, 147, 168, 160, 18, "<basefont color=#A52A2A>Danifício");
-		GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Físico");
-		GFHTMLArea(gump, 280, 186,  75, 18, "<basefont color=#4A3929><div align=right>"+dmg+"</div>");
-		GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Fogo");
-		GFHTMLArea(gump, 280, 204,  75, 18, "<basefont color=#4A3929><div align=right>"+dmgf+"</div>");
-		GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Frio");
-		GFHTMLArea(gump, 280, 222,  75, 18, "<basefont color=#4A3929><div align=right>"+dmgc+"</div>");
-		GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Energia");
-		GFHTMLArea(gump, 280, 240,  75, 18, "<basefont color=#4A3929><div align=right>"+dmge+"</div>");
-		GFHTMLArea(gump, 153, 258, 160, 18, "<basefont color=#4A3929>Veneno");
-		GFHTMLArea(gump, 280, 258,  75, 18, "<basefont color=#4A3929><div align=right>"+dmgp+"</div>");
+// 		GFPage(gump, 2);
+//         GFHTMLArea(gump, 153, 150, 160, 18, "<basefont color=#4A3929>Veneno");
+//         GFHTMLArea(gump, 280, 150,  75, 18, "<basefont color=#4A3929><div align=right>"+arp+"</div>");
+//         GFGumpPic(gump, 128, 168, 2086);
+//         GFHTMLArea(gump, 147, 168, 160, 18, "<basefont color=#A52A2A>Danifício");
+// 		GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Físico");
+// 		GFHTMLArea(gump, 280, 186,  75, 18, "<basefont color=#4A3929><div align=right>"+dmg+"</div>");
+// 		GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Fogo");
+// 		GFHTMLArea(gump, 280, 204,  75, 18, "<basefont color=#4A3929><div align=right>"+dmgf+"</div>");
+// 		GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Frio");
+// 		GFHTMLArea(gump, 280, 222,  75, 18, "<basefont color=#4A3929><div align=right>"+dmgc+"</div>");
+// 		GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Energia");
+// 		GFHTMLArea(gump, 280, 240,  75, 18, "<basefont color=#4A3929><div align=right>"+dmge+"</div>");
+// 		GFHTMLArea(gump, 153, 258, 160, 18, "<basefont color=#4A3929>Veneno");
+// 		GFHTMLArea(gump, 280, 258,  75, 18, "<basefont color=#4A3929><div align=right>"+dmgp+"</div>");
 
-        GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, 1);
+//         GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, 1);
 		
-		GFSendGump(who, gump);
+// 		GFSendGump(who, gump);
 		
-endfunction
+// endfunction
 
 
-function GetStrValue(creature)
-	var value := AP_GetStat(creature, STRENGTH);
-	if(value >= 120)
-		return "Heróico";
-	elseif (value >= 75)
-		return "Fortíssimo";
-	elseif (value >= 50)
-		return "Forte";
-	elseif (value >= 30)
-		return "Fraco";
-	endif
-	return "Fraquissimo";	
-endfunction
+// function GetStrValue(creature)
+// 	var value := AP_GetStat(creature, STRENGTH);
+// 	if(value >= 120)
+// 		return "Heróico";
+// 	elseif (value >= 75)
+// 		return "Fortíssimo";
+// 	elseif (value >= 50)
+// 		return "Forte";
+// 	elseif (value >= 30)
+// 		return "Fraco";
+// 	endif
+// 	return "Fraquissimo";	
+// endfunction
 
-function GetDexValue(creature)
-	var value := AP_GetStat(creature, DEXTERITY);
-	if(value >= 120)
-		return "Heróico";
-	elseif (value >= 80)
-		return "Velozíssimo";
-	elseif (value >= 60)
-		return "Veloz";
-	elseif (value >= 30)
-		return "Lento";
-	endif
-	return "Lentissimo";	
-endfunction
+// function GetDexValue(creature)
+// 	var value := AP_GetStat(creature, DEXTERITY);
+// 	if(value >= 120)
+// 		return "Heróico";
+// 	elseif (value >= 80)
+// 		return "Velozíssimo";
+// 	elseif (value >= 60)
+// 		return "Veloz";
+// 	elseif (value >= 30)
+// 		return "Lento";
+// 	endif
+// 	return "Lentissimo";	
+// endfunction
 
-function GetTextValue(value)
-	if (value >= 110)
-		return "Altíssimo";
-	elseif (value >= 70)
-		return "Alto";
-	elseif (value >= 50)
-		return "Médio";
-	elseif (value >= 30)
-		return "Baixo";
-	endif
-	return "Baixíssimo";
-endfunction
+// function GetTextValue(value)
+// 	if (value >= 110)
+// 		return "Altíssimo";
+// 	elseif (value >= 70)
+// 		return "Alto";
+// 	elseif (value >= 50)
+// 		return "Médio";
+// 	elseif (value >= 30)
+// 		return "Baixo";
+// 	endif
+// 	return "Baixíssimo";
+// endfunction
 
-function DPMsg(who)
-	if (GetObjProperty(who, "morto"))
-		return "morto";
-	endif
-	var DPs := CInt(AP_GetVital(who, "DP") / 10);
-	case (DPs)
-		0: return "morto";
-		1: return "quase morto";
-		2: return "mal";
-		3: return "relativamente bem";
-		4: return "bastante disposto";
-		default: return "bastante disposto";
-		//5: return "preparado para tudo";
-		//6: 7: 8: return "mais do que preparado";
-	endcase	
-endfunction
+// function DPMsg(who)
+// 	if (GetObjProperty(who, "morto"))
+// 		return "morto";
+// 	endif
+// 	var DPs := CInt(AP_GetVital(who, "DP") / 10);
+// 	case (DPs)
+// 		0: return "morto";
+// 		1: return "quase morto";
+// 		2: return "mal";
+// 		3: return "relativamente bem";
+// 		4: return "bastante disposto";
+// 		default: return "bastante disposto";
+// 		//5: return "preparado para tudo";
+// 		//6: 7: 8: return "mais do que preparado";
+// 	endcase	
+// endfunction
 
-exported function tempoMorto(character, tipo)// para 10000 deu 292 segundos 300
+function tempoMorto(character, tipo)// para 10000 deu 292 segundos 300
     var criadoEm := cint(GetObjProperty(character, tipo));
-    var tempoAgora := polcore().systime;// segundos
-    var tempoDevida:= tempoAgora - criadoEm;
+    var tempoDevida:= polcore().systime - criadoEm;
     var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
 	if (dias <= 2)
 		dias := "Há pouco tempo";
