@@ -3,8 +3,6 @@ include ":attributes:attributes";
 include ":taming:taming";
 
 program animallorelogon(who)
-
 	who.followers_max := cint(GetMaxPets(who));
 	who.followers := cint(GetNumPets(who));
-
 endprogram

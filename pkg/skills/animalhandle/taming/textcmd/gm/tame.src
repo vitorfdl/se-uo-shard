@@ -2,6 +2,8 @@ use uo;
 use cfgfile;
 use os;
 
+include ":taming:taming";
+
 program Tame(who)
 	var targ := target(who);
 	
@@ -17,6 +19,7 @@ program Tame(who)
 			
 		targ.script := ":ghaia:follower";
 		RestartScript(targ);
+      AddPet(who, targ.serial);
 		targ.SetMaster(who);
 		
 		Run_Script_To_Completion(":death:npcdeath", {targ});

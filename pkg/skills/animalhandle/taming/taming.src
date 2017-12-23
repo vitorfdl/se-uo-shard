@@ -123,6 +123,16 @@ function taming(who)
 	info.+facing := who.facing;
 	info.+difficulty := cfg.TameDifficulty;
 
+   var chr_level := who.getLevel();
+
+   if (info.difficulty > 21 && chr_level < 10)
+	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+   elseif (info.difficulty > 18 && chr_level < 4)
+	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+   elseif (info.difficulty > 14 && chr_level < 2)
+	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+   endif
+
 	// if (CInt(info.difficulty) > CInt(skill + 15))
 	// 	SendSysMessageEx(who, "Você não pode tentar adestrar "+targ.name+" ainda.");
 	// 	return 0;
@@ -135,6 +145,7 @@ function taming(who)
 		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2, "failure" := 5}) + getProficiencyBonus(who, TRATO_ANIMAIS);
 		if (dice.critical == -1)
          if (targ.alignment == 1)
+            TS_LowerDuration(targ, "peacemade", -1);
             var event := struct{"type":=SYSEVENT_ENGAGED, "source":=targ};
             SendEvent(targ, event);
          endif
@@ -158,7 +169,7 @@ function taming(who)
 			RestartScript(targ);
 			
 			Run_Script_To_Completion(":death:npcdeath", {targ});
-			AddPet(who, targ);	
+			AddPet(who, targ.serial);	
 			break;
 		endif
 		
