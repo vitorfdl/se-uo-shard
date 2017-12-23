@@ -218,5 +218,8 @@ endfunction
 exported function setToughness(who, plus := 1)
 	var toughness := cint(GetObjProperty(who, "toughness"));
    toughness += plus;
+   if (toughness < 0)
+      toughness := 0;
+   endif
    SetObjProperty(who, "toughness", toughness);
 endfunction

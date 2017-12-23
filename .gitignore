@@ -10,3 +10,5 @@ data/*
 realm/*
 log/*
 pol.exe'
+data.zip
+tgit rs --had 0e5

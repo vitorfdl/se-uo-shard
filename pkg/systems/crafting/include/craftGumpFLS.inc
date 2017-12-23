@@ -43,18 +43,25 @@ function sendCraftGump(who, params)
         if (!params.search)
             params.search := "";
         endif
-      //   params.qty := cint(GFExtractData(input, qty_entry));
-      //   if (!params.qty || params.qty == 0 || params.qty > 10)
-      //       params.qty := 1;
-      //   endif
-         params.qty := 1;
+
+        params.qty := cint(GFExtractData(input, qty_entry));
+        if (!params.qty || params.qty == 0 || params.qty > 10)
+            params.qty := 1;
+        endif
 
         if (!input[0] || input[0] == 0 || input[0] == 1)
             not_closed := 0;
         elseif (input[0] == BTN_REPAIR)
             doRepair(who, params.type, recipe_cfg);
         elseif (input[0] == BTN_MAKELAST)
-            //nothing
+            var craft_last := GetObjProperty(who, "#craft_last");
+            craft_last := FindElemInArray(player_recipes, struct{ "objtype" := craft_last });
+            if (craft_last)
+               SendSysMessageEx(who, "Fazendo ultimo item: {}".format(craft_last.name), SSM_INFO);
+               CraftItem(who, params.type, params.tool, craft_last, params.qty, 1);
+            else
+               SendSysMessageEx(who, "Você precisa fazer algum item antes de usar essa opção.", SSM_FAIL);
+            endif
         elseif (input[0] == BTN_FILTER)
             //nothing
         elseif (input[0] != BTN_SEARCH)

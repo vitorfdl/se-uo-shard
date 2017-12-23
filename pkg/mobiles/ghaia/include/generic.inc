@@ -300,6 +300,8 @@ function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
       SetOpponent(highest_aggro);
       TurnToward(highest_aggro);
    endif
+
+   return opponent;
 endfunction
 
 function getHighestAggro(creature)

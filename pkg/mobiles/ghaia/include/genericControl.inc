@@ -71,17 +71,26 @@ function resolveEvent(ev, byref wanders)
 			endif
 		SYSEVENT_ENTEREDAREA:
 			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
-				wanders := 0;
-            if (((me.listAggro()).keys()).size() < 1)
-               me.setAggro(ev.source.serial, 20);
-            else
-               me.setAggro(ev.source.serial, 15);
-            endif
+				// wanders := 0;
+            // if (((me.listAggro()).keys()).size() < 1)
+            //    me.setAggro(ev.source.serial, 20);
+            // else
+            //    me.setAggro(ev.source.serial, 15);
+            // endif
+            var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
+            foreach mob in mobs
+               if (mob == ev.source)
+                  me.setAggro(mob.serial, mob.getToughness()+12);
+               elseif (CanFight(me, mob))
+                  me.setAggro(mob.serial, mob.getToughness()+10);
+               endif
+               sleepms(2);
+            endforeach
 				Fight(ev.source);
 			endif
 		SYSEVENT_ENGAGED:
 		SYSEVENT_DAMAGED:
-         me.setAggro(ev.opponent, cint(ev.damage/2)+1);
+         me.setAggro(ev.source.serial, cint(ev.damage/2)+1+cint(ev.source.getToughness()));
 			wanders := 0; Fight(ev.source);
 		EVID_ALERT_ALLIES: 
          me.setAggro(ev.opponent, 5);

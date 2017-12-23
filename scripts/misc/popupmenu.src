@@ -4,6 +4,7 @@ use os;
 const GREEN_COLOR  := 0xff1;
 const YELLOW_COLOR := 0xffff2a;
 
+include ":timeUtils:time";
 program PopUpMenu( who, what )
    var entries;
    if (what.isA(POLCLASS_ITEM))

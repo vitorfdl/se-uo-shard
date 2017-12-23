@@ -144,6 +144,10 @@ program SpellStarter(params)
       endif
    endif
 
+   if (targ.isA(POLCLASS_NPC))
+      targ.setAggro(mobile.serial, 12);
+   endif
+
    var attribute := INTELLIGENCE;
    if (spellinfo.pericia["Milagre"])
       attribute := WISDOM;

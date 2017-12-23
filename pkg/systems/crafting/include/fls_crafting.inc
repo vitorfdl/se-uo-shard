@@ -345,6 +345,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 			CraftLockable(who, theitem);
 
 			ExpGain(who, recipe.difficulty, check);
+         SetObjProperty(who, "#craft_last", recipe.objtype);
 			who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
 			SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
 		
