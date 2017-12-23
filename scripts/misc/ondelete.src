@@ -8,7 +8,7 @@ use uo;
 use os;
 use storage;
 
-include "timeUtilstime";
+include "timeUtils:time";
 include ":attributes:attributes";
 
 program core_onDelete(who)
