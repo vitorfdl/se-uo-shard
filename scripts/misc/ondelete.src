@@ -14,7 +14,7 @@ include ":attributes:attributes";
 program core_onDelete(who)
 	var create_time := who.createdat;
    var acc := FindAccount(who.acctname);
-	var age := polcore().systime - create_time;
+	var age := GetObjProperty(who, "createdate");
    print(StrFormatTime(create_time));
 
 	if ( who.cmdlevel || acc.defaultcmdlevel > 0 )

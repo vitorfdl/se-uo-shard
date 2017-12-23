@@ -109,10 +109,13 @@ function MenuPlayerToPlayer(who, what)
    endif
 
    var last_rates := GetObjProperty(who, "ficharp_rates");
-   if (last_rates && what.serial in last_rates && last_rates[what.serial] <= ReadGameClock())
-      entries.+ficharp_rate := 3002029;
+   var createdate := GetObjProperty(who, "createdate");
+   if ((polcore().systime - createdate) >= SECONDS_IN_DAY*2)
+      if (last_rates && (!(what.serial in last_rates) || last_rates[what.serial] <= ReadGameClock()))
+         entries.+ficharp_rate := 3002029;
+      endif
    endif
-
+   
    return entries;
 endfunction
 

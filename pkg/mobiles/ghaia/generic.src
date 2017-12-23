@@ -212,7 +212,7 @@ function Fight(opponent, alerted := 0)
             if (!ev.source)
                continue;
             endif
-            me.setAggro(ev.source.serial, cint(ev.damage/2)+1);
+            me.setAggro(ev.source.serial, cint(ev.damage/2)+1+cint(opponent.getToughness()));
             ChooseHighestOpponent(me, opponent, ev.source);
             /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/
             // if (ev.source && (!CheckLineOfSight(me, opponent) || !opponent))

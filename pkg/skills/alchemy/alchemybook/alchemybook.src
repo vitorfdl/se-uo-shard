@@ -118,25 +118,17 @@ function MakePotion (pot, who)
 		proficiency := GetProficiencyBonus(who, ALQUIMIA);
 	endif
 
-	var dice_roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1}) + proficiency;
-	if(dice_roll.dice >= difficulty) 
-		var hasbottle:= 0;
-		set_critical(1);
-		foreach item in EnumerateItemsInContainer(who.backpack)
-			if((item.objtype == UOBJECT_EMPTY_BOTTLE) && (item.container.objtype != 0x1940))
-				if(SubtractAmount(item, 1))
-					hasbottle := 1;
-					break;
-				endif
-			endif
-		endforeach
-		set_critical(0);
+	var dice_roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2}) + proficiency;
+   if (dice_roll.critical == -1)
+		PlaySoundEffect(who, SOUND_EFFECT_POUR);
+      if (ConsumeFlask(who))
+		   SendSysMessageEx(who, "Você quebrou o frasco ao tentar fazer o extrato e perdeu os ingredientes..", SSM_FAIL);
+      endif
+		return;
+   endif
 
-		if(!hasbottle)
-			SendSysMessageEx(who, "Você não tem frascos.", SSM_FAIL);
-			return;
-		endif
-
+	if(dice_roll.dice >= difficulty)
+      ConsumeFlask(who);
 		var thing;
 		if (!magic)//se não tiver o flag magic como as tintas, cria o item
 			thing := CreateItemInBackpack(who, pot, 1);
@@ -158,7 +150,7 @@ function MakePotion (pot, who)
 		endif
 		SetObjProperty(thing, "crafterskill", AP_GetSkill(who, ALQUIMIA) );
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
-		SendSysMessageEx(who, "Você fez a pocao e a guardou na sua mochila.", SSM_INFO);
+		SendSysMessageEx(who, "Você fez a poção e a guardou na sua mochila.", SSM_INFO);
 		who.SetAchievement("potion", 1);
 		ExpGain(who, difficulty, dice_roll.dice);
 		return 1;
@@ -243,6 +235,22 @@ function CreaterecipebookGump(book, can_read := 0)
 
 	return book_gump;
 endfunction
+
+function ConsumeFlask(who)
+   set_critical(1);
+   foreach item in EnumerateItemsInContainer(who.backpack)
+      if((item.objtype == UOBJECT_EMPTY_BOTTLE) && (item.container.objtype != 0x1940))
+         if(SubtractAmount(item, 1))
+            return 1;
+         endif
+      endif
+   endforeach
+   set_critical(0);
+
+   SendSysMessageEx(who, "Você não tem frascos.", SSM_FAIL);
+   return 0;
+endfunction
+
 
 //----------------------------
 // Generate every page of the book. And the button for the First page.

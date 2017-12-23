@@ -72,7 +72,11 @@ function resolveEvent(ev, byref wanders)
 		SYSEVENT_ENTEREDAREA:
 			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
 				wanders := 0;
-            me.setAggro(ev.source.serial, 20);
+            if (((me.listAggro()).keys()).size() < 1)
+               me.setAggro(ev.source.serial, 20);
+            else
+               me.setAggro(ev.source.serial, 15);
+            endif
 				Fight(ev.source);
 			endif
 		SYSEVENT_ENGAGED:
