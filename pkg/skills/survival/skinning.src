@@ -57,15 +57,16 @@ program skinning(parms)
 		
 
 	elseif((GetObjProperty(cadaver,"npctemplate")== error) && (GetObjProperty(cadaver, "morto")!=1))
-      if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo poderá negar o pedido e não pode sair de perto do corpo", "Nao: nenhuma consequencia.")) //quer matar mesmo
-
+      if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo poderá negar o pedido e você não pode sair de perto do corpo", "Nao: nenhuma consequencia.")) //quer matar mesmo
+         start_script(":death:permadeath/permanentdeath", array{who, cadaver, blade});
+         SendSysMessageEx(who, "Aguarde até que o alvo responda. Afaste-se do corpo para cancelar a ação.", SSM_FAIL);
       endif
 		//DesmembreCorpse(cadaver);
 	
-	elseif ((CheckGender(cadaver)) && (GetObjProperty(cadaver, "morto")!=1))
-      DesmembreCorpse(cadaver);
-      PrintTextAbove( who, "*Corta a cabeca*", font := _DEFAULT_TEXT_FONT, color := _DEFAULT_TEXT_COLOR, journal_print := JOURNAL_PRINT_NAME);	
-      SetObjProperty(cadaver, "morto",1);
+	// elseif ((CheckGender(cadaver)) && (GetObjProperty(cadaver, "morto")!=1))
+   //    DesmembreCorpse(cadaver);
+   //    PrintTextAbove( who, "*Corta a cabeca*", font := _DEFAULT_TEXT_FONT, color := _DEFAULT_TEXT_COLOR, journal_print := JOURNAL_PRINT_NAME);	
+   //    SetObjProperty(cadaver, "morto",1);
 	else
 		PrintText(who, "*escalpelando "+cadaver.desc+"*");
 		SetObjProperty(cadaver, "morto",1);

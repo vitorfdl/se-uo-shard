@@ -295,7 +295,7 @@ function LookForFood()
 		return;
 	endif
 
-   var foodvalue = 0;
+   var foodvalue := 0;
    if (cint(npccfgfile.TameDifficulty) >= 20)
       foodvalue := 4;
    elseif (cint(npccfgfile.TameDifficulty) >= 18)

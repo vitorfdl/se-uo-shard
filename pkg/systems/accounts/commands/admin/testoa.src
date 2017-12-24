@@ -16,6 +16,7 @@ include ":merchants:crafthelp";
 
 program oafeatures_sendpacket(who, text)
    who.followers := cint(text);
+   // start_script(":death:permadeath/permadeath", {who, });
    // sendsysmessageex(who, GetTimeStamp(polcore().systime));
    // var targ := Target(who);
    // targ.SetTalentPoints(-1);

@@ -145,7 +145,7 @@ function taming(who)
 		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2, "failure" := 5}) + getProficiencyBonus(who, TRATO_ANIMAIS);
 		if (dice.critical == -1)
          if (targ.alignment == 1)
-            TS_LowerDuration(targ, "peacemade", -1);
+            TS_LowerDuration(targ, "peacemade", -1, 1);
             var event := struct{"type":=SYSEVENT_ENGAGED, "source":=targ};
             SendEvent(targ, event);
          endif

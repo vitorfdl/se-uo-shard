@@ -1,216 +1,216 @@
-use uo;
-use npc;
-use cfgfile;
+// use uo;
+// use npc;
+// use cfgfile;
 
-include ":ghaia:generic";
-include ":ghaia:genericControl";
-include ":ghaia:ghaia";
-include ":ghaia:spell";
+// include ":ghaia:generic";
+// include ":ghaia:genericControl";
+// include ":ghaia:ghaia";
+// include ":ghaia:spell";
 
-var npccfgfile := NPC_GetNPCConfig(self());
-var spell_list := GetConfigStringArray(npccfgfile, "spell");
-var me := self();
-var idlesnd1;
-var idlesnd2;
-var alert_allies := 0;
-var align;
-var areasize;
-var mystate := INITIALIZING;
-var flee_point := 0.1;
-var throwinfo, spells;
+// var npccfgfile := NPC_GetNPCConfig(self());
+// var spell_list := GetConfigStringArray(npccfgfile, "spell");
+// var me := self();
+// var idlesnd1;
+// var idlesnd2;
+// var alert_allies := 0;
+// var align;
+// var areasize;
+// var mystate := INITIALIZING;
+// var flee_point := 0.1;
+// var throwinfo, spells;
 
-program NPCMonitor()
-	genericControl();
-endprogram
+// program NPCMonitor()
+// 	genericControl();
+// endprogram
 
-function CloseDistance(opponent)
-	var sleepdelay := 275 - me.run_speed;
+// function CloseDistance(opponent)
+// 	var sleepdelay := 275 - me.run_speed;
 
-	if (sleepdelay < 0)
-		sleepdelay := 0;
-	endif
+// 	if (sleepdelay < 0)
+// 		sleepdelay := 0;
+// 	endif
 	
-	if ( GetObjProperty(me, "GetDistance") )
-		var dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
-		if (dist < 3 )
-			RunAwayFrom(opponent);
-			sleepms(sleepdelay);
-		elseif (dist > 6)
-			CalcPathAndMove(me, opponent, sleepdelay);
-		else
-			return 1;
-		endif
-	else
-		case (CoordinateDistance( me.x, me.y, opponent.x, opponent.y ))
-			1:
-			0:
-				return 1;
-			default:
-				CalcPathAndMove(me, opponent, sleepdelay);
-				return 0;
-		endcase
-	endif
+// 	if ( GetObjProperty(me, "GetDistance") )
+// 		var dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
+// 		if (dist < 3 )
+// 			RunAwayFrom(opponent);
+// 			sleepms(sleepdelay);
+// 		elseif (dist > 6)
+// 			CalcPathAndMove(me, opponent, sleepdelay);
+// 		else
+// 			return 1;
+// 		endif
+// 	else
+// 		case (CoordinateDistance( me.x, me.y, opponent.x, opponent.y ))
+// 			1:
+// 			0:
+// 				return 1;
+// 			default:
+// 				CalcPathAndMove(me, opponent, sleepdelay);
+// 				return 0;
+// 		endcase
+// 	endif
 	
-	return 0;
-endfunction
+// 	return 0;
+// endfunction
 
-function lookAround()
-  foreach npc in ListMobilesInLineOfSight(me, areasize)
-    if( CanFight(me, npc) )
-         Fight(npc, spells);
-    endif
-    sleepms(2);
-  endforeach
-endfunction
+// function lookAround()
+//   foreach npc in ListMobilesInLineOfSight(me, areasize)
+//     if( CanFight(me, npc) )
+//          Fight(npc, spells);
+//     endif
+//     sleepms(2);
+//   endforeach
+// endfunction
 
 
-function Fight(opponent, alerted := 0)
-  if((opponent.serial == me.serial))
-    SetWarMode(0);
-    opponent := 0;
-    return;
-  endif
+// function Fight(opponent, alerted := 0)
+//   if((opponent.serial == me.serial))
+//     SetWarMode(0);
+//     opponent := 0;
+//     return;
+//   endif
     
-  var oldprio := set_priority(50);
-  SetOpponent(opponent);
-  DisableMainEvents();
-  EnableCombatEvents();
-  TurnToward(opponent);
-  var loops := 0;
-  var ev;
-  var waittime := 0;
+//   var oldprio := set_priority(50);
+//   SetOpponent(opponent);
+//   DisableMainEvents();
+//   EnableCombatEvents();
+//   TurnToward(opponent);
+//   var loops := 0;
+//   var ev;
+//   var waittime := 0;
   
-  if (!alerted) //se ele ja não foi alertado por outro aliado
-    if (alert_allies) //se esse npc eh do tipo que alerta
-      AlertAllies(me, opponent); 
-    endif
-  endif
+//   if (!alerted) //se ele ja não foi alertado por outro aliado
+//     if (alert_allies) //se esse npc eh do tipo que alerta
+//       AlertAllies(me, opponent); 
+//     endif
+//   endif
 
-   var speech := GetConfigStringArray( npccfgfile, "InitCombatSpeech" );
-   if (speech.size() > 0)
-	if (RandomInt(100)  < 30) //sempre 30% de chance de falar
-		Say(speech[RandomInt(speech.size()+1)]);
-	endif
-   endif
+//    var speech := GetConfigStringArray( npccfgfile, "InitCombatSpeech" );
+//    if (speech.size() > 0)
+// 	if (RandomInt(100)  < 30) //sempre 30% de chance de falar
+// 		Say(speech[RandomInt(speech.size()+1)]);
+// 	endif
+//    endif
 
-  SetCooldown(me, "npcspell", 3);
-  var dist;
+//   SetCooldown(me, "npcspell", 3);
+//   var dist;
  
-  while(me)
+//   while(me)
 
-    if  (me.dead)
-	break;
-    endif
+//     if  (me.dead)
+// 	break;
+//     endif
 
-    if (!opponent)
-      break;
-    endif
+//     if (!opponent)
+//       break;
+//     endif
   
-    if (opponent.dead)
-	var temnego := 0;
-	foreach npc in ListMobilesInLineOfSight(me, areasize + 2)
-		if( CanFight(me, npc) )
-			temnego := 1;
-			break;
-		endif
-		sleepms(2);
-	endforeach
-	if (!temnego)
-		var corpo := opponent.GetCorpse();
-		var end := ReadGameClock() + 10;
-		while (CoordinateDistance(me.x, me.y, corpo.x, corpo.y) < areasize + 5 && end > ReadGameClock())
-			RunAwayFromLocation(corpo.x, corpo.y);
-			sleepms(100);
-		endwhile
-	endif
-	break;
-    endif
+//     if (opponent.dead)
+// 	var temnego := 0;
+// 	foreach npc in ListMobilesInLineOfSight(me, areasize + 2)
+// 		if( CanFight(me, npc) )
+// 			temnego := 1;
+// 			break;
+// 		endif
+// 		sleepms(2);
+// 	endforeach
+// 	if (!temnego)
+// 		var corpo := opponent.GetCorpse();
+// 		var end := ReadGameClock() + 10;
+// 		while (CoordinateDistance(me.x, me.y, corpo.x, corpo.y) < areasize + 5 && end > ReadGameClock())
+// 			RunAwayFromLocation(corpo.x, corpo.y);
+// 			sleepms(100);
+// 		endwhile
+// 	endif
+// 	break;
+//     endif
 
-    if (opponent.concealed)
-      break;
-    endif
+//     if (opponent.concealed)
+//       break;
+//     endif
 
-    if (opponent.hidden)
-	break;
-    endif
+//     if (opponent.hidden)
+// 	break;
+//     endif
 
-    dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
-    if ( dist > 20)
-      break;
-    endif
+//     dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
+//     if ( dist > 20)
+//       break;
+//     endif
 
-   //  if ( (dist > throwinfo.range) && (throwinfo.canthrow == 1) )
-	// throwItem(me, opponent, dist);
-   //  endif
+//    //  if ( (dist > throwinfo.range) && (throwinfo.canthrow == 1) )
+// 	// throwItem(me, opponent, dist);
+//    //  endif
 
-    if ( (dist > 6) && ( CInt(npccfgfile.teleport) ) )
-	teleport(me, opponent);
-    endif
+//     if ( (dist > 6) && ( CInt(npccfgfile.teleport) ) )
+// 	teleport(me, opponent);
+//     endif
   
-	if(!CloseDistance(opponent))
-	  loops := loops + 1;
-	  waittime := 0;
-	else
-	  loops := 0;
-	  waittime := 1;
-	endif
+// 	if(!CloseDistance(opponent))
+// 	  loops := loops + 1;
+// 	  waittime := 0;
+// 	else
+// 	  loops := 0;
+// 	  waittime := 1;
+// 	endif
 
-    //se pode castar spell, manda v
-  if (CheckLineOfSight(me, opponent))
-    if (GetCooldown(me, "npcspell") == 0)
-      if ( (opponent.weapon.attribute == "Archery") || (dist <= 8) )
-         sleepms(500);
-         CastSpellNPC(opponent, spell_list);
-      endif
-    endif
-  endif
+//     //se pode castar spell, manda v
+//   if (CheckLineOfSight(me, opponent))
+//     if (GetCooldown(me, "npcspell") == 0)
+//       if ( (opponent.weapon.attribute == "Archery") || (dist <= 8) )
+//          sleepms(500);
+//          CastSpellNPC(opponent, spell_list);
+//       endif
+//     endif
+//   endif
 
-	  if (hasCombat())
+// 	  if (hasCombat())
 
-    DoCombatSpecial(me); ////////////// SPECIALL
+//     DoCombatSpecial(me); ////////////// SPECIALL
 
-  endif
+//   endif
 	
-	checkFlee(opponent);
+// 	checkFlee(opponent);
 	
-	ev := wait_for_event(waittime);
-	if(ev.type != SYSEVENT_SPEECH)
-	  case (ev.type)
-		SYSEVENT_DAMAGED: 
-      //if((ev.source.npctemplate) and (CheckLineOfSight(me, ev.source)))
-       //   opponent := ev.source;
-			 // 		        SetOpponent(opponent);
-			//		        TurnToward(opponent);
-			//se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente não estiver acessivel
-       if( /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/ (!CheckLineOfSight(me, opponent)) || (!opponent))
-					if ( (opponent) && RandomInt(4) == 0 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
-                if (ev.source)
-					        opponent := ev.source;
-                  SetOpponent(opponent);
-					        TurnToward(opponent);
-                endif
-           elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se não tiver mais o oponent entao 100% de chance de mudar de alvo
-                if (ev.source)
-					        opponent := ev.source;
-                  SetOpponent(opponent);
-					        TurnToward(opponent);
-                endif
-					endif
-        endif
-		SYSEVENT_ENGAGED: if(ev.source)
-						if(RandomInt(6) == 1)
-							opponent := ev.source;
-							SetOpponent(opponent);
-							TurnToward(opponent);
-						endif
-			              endif
-	  endcase
-	endif
-  endwhile
+// 	ev := wait_for_event(waittime);
+// 	if(ev.type != SYSEVENT_SPEECH)
+// 	  case (ev.type)
+// 		SYSEVENT_DAMAGED: 
+//       //if((ev.source.npctemplate) and (CheckLineOfSight(me, ev.source)))
+//        //   opponent := ev.source;
+// 			 // 		        SetOpponent(opponent);
+// 			//		        TurnToward(opponent);
+// 			//se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente não estiver acessivel
+//        if( /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/ (!CheckLineOfSight(me, opponent)) || (!opponent))
+// 					if ( (opponent) && RandomInt(4) == 0 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
+//                 if (ev.source)
+// 					        opponent := ev.source;
+//                   SetOpponent(opponent);
+// 					        TurnToward(opponent);
+//                 endif
+//            elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se não tiver mais o oponent entao 100% de chance de mudar de alvo
+//                 if (ev.source)
+// 					        opponent := ev.source;
+//                   SetOpponent(opponent);
+// 					        TurnToward(opponent);
+//                 endif
+// 					endif
+//         endif
+// 		SYSEVENT_ENGAGED: if(ev.source)
+// 						if(RandomInt(6) == 1)
+// 							opponent := ev.source;
+// 							SetOpponent(opponent);
+// 							TurnToward(opponent);
+// 						endif
+// 			              endif
+// 	  endcase
+// 	endif
+//   endwhile
   
-  DisableCombatEvents();
-  EnableMainEvents();
-  SetWarMode(0);
-  SetOpponent(0);
-  sleep(1);
-endfunction
+//   DisableCombatEvents();
+//   EnableMainEvents();
+//   SetWarMode(0);
+//   SetOpponent(0);
+//   sleep(1);
+// endfunction

@@ -166,10 +166,10 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critic
 		if (!weapon_scripts)
 			weapon_scripts := array{};
 		endif
-		// var other_scripts := GetConfigStringArray(item_cfg[weapon.objtype], "HitScripts");
-		// foreach script in other_scripts
-		// 	weapon_scripts.Append(script);
-		// endforeach
+		var other_scripts := GetConfigStringArray(item_cfg[weapon.objtype], "HitScripts");
+		foreach script in other_scripts
+			weapon_scripts.Append(script);
+		endforeach
 	endif
 
 	var hitopt;
@@ -191,14 +191,14 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critic
 		hitopt := GetObjProperty(weapon, "generichit");
 	endif
 
-	// foreach hitscript in weapon_scripts
-	// 	var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, critical, hitopt});
-	// 	if ( !script || script.errortext )
-	// 		SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-	// 		SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-	// 	endif
-	// 	sleepms(2);
-	// endforeach
+	foreach hitscript in weapon_scripts
+		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, critical, hitopt});
+		if ( !script || script.errortext )
+			SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+			SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+		endif
+		sleepms(2);
+	endforeach
 
 	return 1;
 endfunction

@@ -76,8 +76,10 @@ function examinarAlvo(who)
 endfunction
 
 function CalculateDHDiff(who, mobile,)
-   if (TS_GetTimerInfo(mobile, "amor_das_sombras") && (GetRegionName(mobile)["floresta"] || ListStaticsNearLocationEX(who.x, who.y, who.z, 1, TILEDATA_FLAG_WALL).size() > 0) )
-      return 30;
+   if (TS_GetTimerInfo(mobile, "amor_das_sombras") )
+      if (GetRegionName(mobile)["floresta"] || ListItemsNearLocationWithFlag(who.x, who.y, who.z, 1, TILEDATA_FLAG_WALL).size() > 0)
+         return 30;
+      endif
    endif
 
 	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(mobile, FURTIVIDADE);
