@@ -42,7 +42,7 @@ enum SKILLS
 	DESARMADO          := "Desarmado",
 	ESCUDO             := "Escudo",
 	MEDICINA           := "Medicina",
-	VENEFICIO          := "Veneício",
+	VENEFICIO          := "Venefício",
 	ESCRIBA           := "Escriba",
 	PERCEPCAO          := "Percepção",
 	SOBREVIVENCIA      := "Sobrevivência",
