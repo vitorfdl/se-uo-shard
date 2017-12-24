@@ -428,9 +428,9 @@ function DoWithdraw(npc, player)
 
    PrintText(npc, "Aqui estão os lucros de sua venda");
 	foreach item in account
-		var withdraw := CreateItemInBackPack(player, item, item.amount);
+		var withdraw := CreateItemInBackPack(player, item.ObjType, item.amount);
 		if( withdraw == error )
-			withdraw := CreateItemAtLocation(player.x, player.y, player.z, item, item.amount);
+			withdraw := CreateItemAtLocation(player.x, player.y, player.z, item.ObjType, item.amount);
 			if ( withdraw == error )
 				SendSysMessage(player, "Error - Unable to create item! ->"+withdraw.errortext);
 			else

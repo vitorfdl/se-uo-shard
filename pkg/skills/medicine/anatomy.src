@@ -12,7 +12,7 @@ program medicineSkill(who)
 	SendSysMessageEx(who, "Quem você deseja examinar?", SSM_REQUEST);
 	var subject := Target(who);
 
-   var rolldice := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(who, MEDICINA);
+   var rolldice := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MEDICINA);
    if (subject.graphic == 0x2006)
 		if( rolldice > 12 ) //SkillCheck(who, MEDICINE, -1)
 			if (GetObjProperty(subject, "morto") == 1)

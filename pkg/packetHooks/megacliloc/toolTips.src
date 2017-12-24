@@ -20,7 +20,7 @@ const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
 const RED    := "<BASEFONT COLOR=#FF4C4C>";
 const BLUE   := "<BASEFONT COLOR=#4169E1>";
 const ORANGE := "<BASEFONT COLOR=#FFA500>";
-const ORANGE := "<BASEFONT COLOR=#d3d3d3>";
+const LIGHTGRAY := "<BASEFONT COLOR=#D3D3D3>";
 
 function TranslateAtt(attribute)
 	case (attribute.lower())
@@ -81,7 +81,6 @@ function GetCriticalInfo(entry)
 	
 	var str;
 	foreach crit in criticals
-		str := ParseScriptString(crit);
 		critstr := critstr + TranslateCritical(lower(str)) + "<br>";
 	endforeach
 
@@ -112,14 +111,11 @@ function GetHitsInfo(entry)
 	var criticals := GetconfigStringArray(entry, "HitScripts");
 	var critstr := "";
 	
-	var str;
 	foreach crit in criticals
-		str := ParseScriptString(crit);
-		critstr := critstr + TranslateHit(lower(str)) + "<br>";
+		critstr := critstr + TranslateHit(lower(crit)) + "<br>";
 	endforeach
 
 	return critstr;
-
 endfunction
 
 function getVelStringDesc(elem, item)
@@ -138,23 +134,6 @@ function getVelStringDesc(elem, item)
 	else
 		return "Extremamente Lenta";
 	endif
-endfunction
-
-
-function ParseScriptString(crit)
-	var str := "";
-	var i := 1;
-	
-	while(crit[i] != "/")
-		i := i + 1;
-	endwhile
-	i := i +1;
-	while (crit[i])
-		str := str + crit[i];
-		i := i + 1;
-	endwhile
-
-	return str;
 endfunction
 
 
@@ -241,7 +220,7 @@ exported function MegaCliloc( who, byref packet )
 			xDesc += "{}{}<br>".format(WHITE, desc);
 		endif
 
-		if (item.IsA(POLCLASS_MOBILE))
+		if (item.IsA(POLCLASS_MOBILE) && item.acctname)
 			var deathpoint := AP_GetVital(item, "DP");
          if (deathpoint < 30)
             xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((30-deathpoint)/10));
@@ -266,11 +245,11 @@ exported function MegaCliloc( who, byref packet )
 					xDesc += "Velocidade: " + cstr(elem.speed) + "<br>";
 				endif
 				xDesc += "Atributo: " + TranslateAtt(cstr(item.attribute)) + "<br>";
-//				xDesc += "Velocidade: " + GetVelStringDesc(elem, item) + "<br>";
-				// var crits := GetCriticalInfo(elem);
-				// if (crits != "")
-				// 	xDesc += RED + crits;
-				// endif
+				// xDesc += "Velocidade: " + GetVelStringDesc(elem, item) + "<br>";
+				var crits := GetCriticalInfo(elem);
+				if (crits != "")
+					xDesc += RED + crits;
+				endif
 
 				var hits :=  GetHitsInfo(elem);
 				if (hits != "")
@@ -289,9 +268,10 @@ exported function MegaCliloc( who, byref packet )
 		endif
 
 		var pplmage := GetObjProperty(item, "magicwho"); //research
-		if ( pplmage != error)
-         if (GetObjProperty(item, "pocaoname") && (who.serial in pplmage || HaveFeat(who, "Noção Quimica")))
-            xDesc += WHITE + GetObjProperty(item, "pocaoname");
+		if ( pplmage != error && typeof(pplmage) == "Array")
+         var pocaoname := GetObjProperty(item, "pocaoname");
+         if (pocaoname && (who.serial in pplmage))
+            xDesc +="{}{}".format(WHITE, pocaoname);
          endif
 
 			if (who.serial in pplmage)
@@ -310,9 +290,9 @@ exported function MegaCliloc( who, byref packet )
 				if (item.dmg_mod > 0 )
 					xDesc += BLUE + "Bônus Dano";
 				endif
-				// if (item.hp_mod > 0)
-				// 	xDesc += BLUE + "Bônus Item PVs";
-				// endif
+				if (item.hp_mod > 0)
+					xDesc += BLUE + "Bônus Item PVs";
+				endif
 				var hitsscripts := GetObjProperty(item, "HitScripts");
 				if (hitsscripts != error)
 					foreach hits in hitsscripts
@@ -332,7 +312,7 @@ exported function MegaCliloc( who, byref packet )
 					var active_spell := GetObjProperty(item, "active_spell");
 					foreach spell in spell_list
 						if (spell == 0)
-					      xDesc += "<br>SLOT PERDIDO".format(GRAY);
+					      xDesc += "<br>{}SLOT PERDIDO".format(LIGHTGRAY);
 							continue;
 						elseif (xDesc.search(GetSpellName(spell)))
 							xDesc += "I";

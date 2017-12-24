@@ -228,7 +228,7 @@ function GetAttackerChance(attacker, defender)
 		bonus := cint(wpn_a_elem.hitbonus);
 	endif
 
-   bonus += GetAttackerFeatBonus(attacker);
+   bonus += GetAttackerFeatBonus(attacker, 0);
 	
 	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
 	return dice;

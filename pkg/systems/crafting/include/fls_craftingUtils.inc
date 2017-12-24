@@ -33,13 +33,10 @@ function CreateItem(who, objtype, more:=0)
 	var cfg           := ReadConfigFile(":crafting:stackingitens");
 	var elem          := FindConfigElem(cfg, "stacks");
 	var stackingitens := ListConfigElemProps( elem );
-	if(cstr(objtype) in stackingitens)
-		var stacknow := FindObjtypeInContainer( who.backpack, objtype );
-		if (objtype == 7124 || objtype == 0x9087)
-			more := more + 4;
-		endif
+	if(cstr(cint(objtype)) in stackingitens)
+		var stacknow := FindObjtypeInContainer( who.backpack, cint(objtype) );
 		if ( stacknow )
-			AddAmount (stacknow, 1+more);
+			AddAmount(stacknow, 1+more);
 			theitem := stacknow;
 		else
 			theitem := CreateItemInBackpack(who, objtype, cint(1+more));
@@ -47,8 +44,9 @@ function CreateItem(who, objtype, more:=0)
 	else
 		theitem := CreateItemInBackpack(who, objtype, cint(1+more));
 		//theitem.quality := 0.6;
-		theitem.name := theitem.desc;
+		// theitem.name := theitem.desc;
 	endif
+
 	return theitem;
 endfunction
 

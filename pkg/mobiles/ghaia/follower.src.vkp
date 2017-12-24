@@ -410,7 +410,7 @@ function Transfer(targ)
 
    SetObjProperty(me, "owner", targ.serial);
    ErasePet(me.master, me.serial);
-   AddPet(targ, me.serial);
+   AddPet(targ, me);
 
    me.SetMaster(targ);
    me.InitPetProperties(1);

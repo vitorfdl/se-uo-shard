@@ -16,10 +16,11 @@ endfunction
 //ve quantos slots custa o npc
 function GetPetCost(pet)
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
-	var npctemplate := pet.npctemplate;
-	npctemplate := npctemplate[10, len(npctemplate)-9];
+	var npctemplate := pet.my_template();
+   print(npctemplate);
 	cfg := cfg[npctemplate];
-	if (!Cint(cfg.petslot))
+   print(cfg.petslot);
+	if (cfg.petslot == error)
 		return 1;
 	else
 		return Cint(cfg.petslot);
@@ -68,14 +69,14 @@ function ErasePet(who, myserial)
 		if ( myserial == serial )
 			MP_Unmount(who);
 			tamed.erase(_serial_iter);
-			SetObjProperty(who, "followers", tamed);
 			var pet := SystemFindObjectBySerial(serial);
-			who.followers := who.followers - GetPetCost(pet);
-			return;
+			who.followers -= GetPetCost(pet);
+			break;
 		endif
 		sleepms(2);
 	endforeach
 
+   SetObjProperty(who, "followers", tamed);
 endfunction
 
 //adiciona o serial do pet 
@@ -84,6 +85,7 @@ function AddPet(who, serial)
 	if ( !tamed )
 		tamed := array;
 	endif
+   
 	tamed.append(serial);
 	SetObjProperty(who, "followers", tamed);
 
@@ -94,9 +96,10 @@ endfunction
 
 //numero maximo de pets que alguem pode ter
 function GetMaxPets(who)
-	var skill := AP_GetStat(who, WISDOM);
-	var maxpets := 1 + skill;
+	// var skill := AP_GetStat(who, WISDOM);
+	var maxpets := 5;
 	maxpets += cint( GetObjProperty(who, "extrapets") );
+
 	return maxpets;
 endfunction
 

@@ -128,7 +128,9 @@ function MakePotion (pot, who)
    endif
 
 	if(dice_roll.dice >= difficulty)
-      ConsumeFlask(who);
+      if (!ConsumeFlask(who))
+         return;
+      endif
 		var thing;
 		if (!magic)//se não tiver o flag magic como as tintas, cria o item
 			thing := CreateItemInBackpack(who, pot, 1);

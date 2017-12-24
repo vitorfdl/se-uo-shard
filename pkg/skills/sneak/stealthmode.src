@@ -15,7 +15,7 @@ program showdfdiff(params)
             var MOD := cint(AP_GetStat(mob, WISDOM, RETURN_BONUS) + GetProficiencyBonus(mob, PERCEPCAO));   
 				var dif := CalcSuccessPercent(AC, MOD);
             if (AC >= 30)
-               dof := 0;
+               dif := 0;
             endif
             
 				PrintTextPrivate(mob, "" + dif, who, GetMagentaMap(cint(dif/10)) );

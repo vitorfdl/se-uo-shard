@@ -15,9 +15,11 @@ include ":timeUtils:time";
 include ":merchants:crafthelp";
 
 program oafeatures_sendpacket(who, text)
-   sendsysmessageex(who, GetTimeStamp(polcore().systime));
-   var targ := Target(who);
-   targ.SetTalentPoints(-1);
+   who.followers := cint(text);
+   // start_script(":death:permadeath/permadeath", {who, });
+   // sendsysmessageex(who, GetTimeStamp(polcore().systime));
+   // var targ := Target(who);
+   // targ.SetTalentPoints(-1);
 
    // var test2 := ListStaticsNearLocation(who.x, who.y, who.z, 5);
    // var mobs := ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
