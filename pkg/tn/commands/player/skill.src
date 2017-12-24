@@ -32,4 +32,5 @@ program start_skill(who, skillname)
    else
       return SendSysMessageEx(who, "Pericia inexistente ou não ativável!");
    endif
+   
 endprogram

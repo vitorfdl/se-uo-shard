@@ -153,13 +153,13 @@ function SendItemView(npc, player)
 			GFAddButton(gump, x+96, y+116, 0x9C4F, 0x9C4F, GF_CLOSE_BTN, 90000+cint(serial));
 		endif
   		GFHTMLArea(gump, x+20, y+1, 90, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(item.desc));
-		GFTooltipText(gump, item.desc);
 		GFTilePic(gump, x+42, y+75, item.graphic, 0); //objtype
+      if (cost_info.desc)
+		   GFTooltipText(gump, "{}".format(cost_info.desc));
+      endif
 		GFTextLine(gump, x+24, y+120, 1051, "Unidade");
 		GFResizePic(gump, x+25, y+138, 30546, 96, 19);
-		GFGumpPic(gump, x+27, y+140, 40022, 0); //objtype
-		// print(cost_info.desc);
-		// GFTooltipText(gump, cost_info.desc);
+		GFGumpPic(gump, x+27, y+140, 40022, 0);
       GFTextLine(gump, x+50, y+138, 1153, "{}".format(cost_info.cost_amt));
 
 		x += 140;
@@ -361,17 +361,16 @@ function AddItemToSell(npc, player, item)
 
 	infinite := GFExtractData(input, infinite);
 	var dezperc := CInt(cost_amt * 0.1);
-	var desc := "";
 
    if (dezperc <= 1)
       dezperc := 1;
    endif
-	// var desc := RequestGump(player, "Entre com uma pequena descri¿ao do produto.", "Isso ¿ opcional", "", 1);
-	// if ( !desc )
-	// 	desc := "";
-	// elseif ( Len(desc) > 300 )
-	// 	desc := desc[0,300]+"...";
-	// endif
+	var desc := RequestGump(player, "Entre com uma pequena descrição do produto.", "Isso é opcional", "", 1);
+	if ( !desc )
+		desc := "";
+	elseif ( Len(desc) > 300 )
+		desc := desc[0,300]+"...";
+	endif
 
 	if (player.cmdlevel < 3 && dezperc != 0)
 		var pay := 0;
@@ -402,7 +401,7 @@ function AddItemToSell(npc, player, item)
 		dowhile ( !pay );
 	endif
 	
-	var result := AddItemForSale(npc, player, item, cost_type, desc, cost_amt, "", infinite, 0);
+	var result := AddItemForSale(npc, player, item, cost_type, item.desc, cost_amt, desc, infinite);
 	if ( result != error )
       if (!player.concelaed)
 		   PrintText(npc, "Tudo certo. Colocarei seu item a venda.");

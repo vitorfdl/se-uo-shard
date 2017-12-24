@@ -351,13 +351,11 @@ endfunction
 function SearchArrayOfModel(search_for, equal, to_search)
     var counter;
 	foreach item in to_search
-		var item_prop := item[search_for];
-		if (search_for == "objtype")
-			item_prop := item.objtype;
-		endif
+		var item_prop := item.get_member(search_for);
 		if ( item_prop == equal)
 			counter := 1;
 		endif
+      sleepms(2);
 	endforeach
 
 	if (!counter)
@@ -365,6 +363,19 @@ function SearchArrayOfModel(search_for, equal, to_search)
 	endif
 
 	return 1;
+endfunction
+
+function FindObjInModel(search_for, equal, to_search)
+    var counter;
+	foreach item in to_search
+		var item_prop := item.get_member(search_for);
+		if ( item_prop == equal)
+			return item;
+		endif
+      sleepms(2);
+	endforeach
+
+	return 0;
 endfunction
 
 function removeIndexes(byref the_array, index_array)

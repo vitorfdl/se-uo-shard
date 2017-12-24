@@ -129,7 +129,7 @@ function taming(who)
 	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
    elseif (info.difficulty > 18 && chr_level < 4)
 	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
-   elseif (info.difficulty > 14 && chr_level < 2)
+   elseif (info.difficulty > 15 && chr_level < 2)
 	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
    endif
 

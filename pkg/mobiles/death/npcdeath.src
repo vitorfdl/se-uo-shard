@@ -37,10 +37,11 @@ program core_npcDeath(params)
 		endif
 	endif
    
-	// if (getObjProperty(corpse, "owner")) //se for tamed, atualiza a prop tamedpets do master
-	// 	var masterserial := getObjProperty(corpse, "owner");
-	// 	var master := SystemFindObjectBySerial(masterserial);
-	// endif
+	if (getObjProperty(corpse, "owner")) //se for tamed, atualiza a prop tamedpets do master
+		var masterserial := getObjProperty(corpse, "owner");
+		var master := SystemFindObjectBySerial(masterserial);
+      master.followers := cint(GetNumPets(master));
+	endif
 
 	// foreach mob in (ListMobilesNearLocation(corpse.x, corpse.y, corpse.z, 5, corpse.realm))
 	// 	if (cint(GetObjProperty(mob, "#satisfacaosadica")))

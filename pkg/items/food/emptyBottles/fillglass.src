@@ -29,11 +29,13 @@ program fillpitcher (who, pitcher)
   if(check_for_water(who, targetted))
     PlaySoundEffect(who, 0x0026);
     DestroyItem(pitcher);
-    CreateItemInBackpack(who, 0x1f91, 1);
+    var item := CreateItemInBackpack(who, 0x1f91, 1);
+    SetObjProperty(item, "doses", 1);
   elseif(check_for_cows(who, targetted))
     PlaySoundEffect(who, 0x007a);
     DestroyItem(pitcher);
-    CreateItemInBackpack(who, 0x1f89, 1);
+    var item := CreateItemInBackpack(who, 0x1f89, 1);
+   SetObjProperty(item, "doses", 1);
   elseif (toCreate!= error)
     reduce_container_fullness (who, targetted.item);
     PlaySoundEffect(who,  0x241);

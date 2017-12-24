@@ -221,6 +221,7 @@ exported function MegaCliloc( who, byref packet )
 		endif
 
 		if (item.IsA(POLCLASS_MOBILE) && item.acctname)
+      
 			var deathpoint := AP_GetVital(item, "DP");
          if (deathpoint < 30)
             xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((30-deathpoint)/10));

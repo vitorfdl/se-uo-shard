@@ -196,19 +196,29 @@ endfunction
 
 function WriteRune(who, rune_entry)
 	rune_entry := getRune(rune_entry);
+   var my_backpack := EnumerateItemsInContainer(who.backpack);
 	if( TypeOf(rune_entry) != "Struct" )
 		return SendSysMessageEx(who, "Algo esta errado com seu livro.", SSM_FAIL);
-	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
+	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), my_backpack)) 
 		SendSysMessageEx(who, "Você precisa de uma faca para entalhar", SSM_FAIL);
 		return;
 	endif
+
+   var water := FindObjInModel("objtype", 0x1f9e, my_backpack);
+   if (!water || !GetObjProperty(water, "blessed"))
+      water := FindObjInModel("objtype", 0x1F91, my_backpack);
+      if (!water || !GetObjProperty(water, "blessed"))
+         SendSysMessageEx(who, "Você precisa de uma água purificada.", SSM_FAIL);
+         return;
+      endif
+   endif
 
 	SendSystemReport(who, "*Onde deseja inscrever?*");
 	var item := Target(who);
 
 	if (GetObjProperty(item, "inscripted"))
 		return SendSysMessageEx(who, "Uma runa ja esta gravada neste item.", SSM_FAIL);
-	endif
+   endif
 
 	var item_type;
 	
@@ -230,6 +240,14 @@ function WriteRune(who, rune_entry)
 		return SendSysMessageEx(who, "Este objeto esta muito danificado para receber uma runa..", SSM_FAIL);
 	endif
 
+   if (!ReserveItem(water))
+      SendSysMessageEx(who, "Você não pode usar esta agua.", SSM_FAIL);
+      return;
+   elseif (!ReserveItem(item))
+      SendSysMessageEx(who, "Você não pode gravar neste item.", SSM_FAIL);
+      return;
+   endif
+
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
 		if (who.x != loc[1] && who.y != loc[2])
@@ -241,13 +259,28 @@ function WriteRune(who, rune_entry)
 		sleep(2);
 	endfor
 
+   ReleaseItem(water);
+   ReleaseItem(item);
+
 	var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, INSCRICAO_RUNICA);
-	printtext(who, rune_entry.diff);
 	if (roll <= rune_entry.diff)
 		item.hp -= Floor(item.maxhp / 4);
 		SetName(item, item.desc);
 		return SendSysMessageEx(who, "Você falhou em inscrever a runa e danificou o objeto.", SSM_FAIL);
 	endif
+
+   var doses := cint(GetObjProperty(water, "doses")) -1;
+   if (doses <= 0)
+      if (water.objtype == 0x1f9e)
+         CreateItemInbackpack(who, 0x9a7);
+      elseif (water.objtype == 0x1F91)
+         CreateItemInbackpack(who, 0x1f81);
+      endif
+
+      DestroyItem(water);
+   else
+      SetObjProperty(water, "doses", doses);
+   endif
 
 	foreach set in (rune_entry.sets.Keys())
 		var value := rune_entry.sets[set];

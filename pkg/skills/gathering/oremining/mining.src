@@ -7,7 +7,7 @@ include "include/client";
 include ":datafile:datafile";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":crafting:toolWear";
+include ":itemUtils:toolWear";
 include ":gathering:mining";
 include "include/say";
 include ":charactercreation:habilidades";

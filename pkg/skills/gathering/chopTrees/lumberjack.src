@@ -7,7 +7,7 @@ include ":attributes:attributes";
 include ":datafile:datafile";
 include ":gathering:settings";
 include ":gathering:lumberJack";
-include ":crafting:toolWear";
+include ":itemUtils:toolWear";
 include "include/client";
 include "include/facings";
 include "include/say";

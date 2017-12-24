@@ -1,5 +1,6 @@
 use uo;
 include ":timedscripts:timedScripts";
+include "include/arrays";
 
 function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
@@ -17,9 +18,7 @@ endfunction
 function GetPetCost(pet)
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
 	var npctemplate := pet.my_template();
-   print(npctemplate);
 	cfg := cfg[npctemplate];
-   print(cfg.petslot);
 	if (cfg.petslot == error)
 		return 1;
 	else
@@ -35,6 +34,7 @@ function GetNumPets(who)
 		return 0;
 	endif
 
+   var remove_indexes := array{};
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
 	foreach serial in tamed
 		var pet := SystemFindObjectBySerial(serial);
@@ -48,10 +48,12 @@ function GetNumPets(who)
 				num_tamed := Cint(pet_cfg.petslot);
 			endif
 		elseif ( !pet || pet.master !=who )
-			tamed.erase(_serial_iter);
+			remove_indexes.append(_serial_iter);
 		endif
 		sleepms(2);
 	endforeach
+
+   removeIndexes(tamed, remove_indexes);
 	
 	SetObjProperty(who, "followers", tamed);
 	who.followers := num_tamed;
@@ -91,7 +93,7 @@ function AddPet(who, serial)
 
 	var pet := SystemFindObjectBySerial(serial);
 	who.followers := who.followers + GetPetCost(pet);
-	pet.InitPetProperties();
+	pet.InitPetProperties(0);
 endfunction
 
 //numero maximo de pets que alguem pode ter

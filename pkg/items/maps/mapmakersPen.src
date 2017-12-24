@@ -6,7 +6,7 @@ use os;
 
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":crafting:toolWear";
+include ":itemUtils:toolWear";
 include ":gumps:requestgump";
 include ":itemutils:canAccess";
 include "include/say";
