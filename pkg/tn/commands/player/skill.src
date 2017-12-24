@@ -9,13 +9,13 @@ include ":charactercreation:characters";
 
 program start_skill(who, skillname)
 	if (who.dead)
-		SendSysMessageEx(who, "Você está morto e não pode fazer isto.");
+		SendSysMessageEx(who, "VocÃª estÃ¡ morto e nÃ£o pode fazer isto.");
 		return;
 	endif
 
 	var delay := GetObjProperty(who, "delayskill");
 	if(delay && delay > ReadGameClock())
-      SendSysMessageEx(who, "Você ainda está fazendo outra coisa.");
+      SendSysMessageEx(who, "VocÃª ainda estÃ¡ fazendo outra coisa.");
       return;
 	endif
 
@@ -33,5 +33,4 @@ program start_skill(who, skillname)
    else
       return SendSysMessageEx(who, "Pericia inexistente!");
    endif
-
 endprogram

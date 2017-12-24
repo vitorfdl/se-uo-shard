@@ -10,7 +10,7 @@
         "*.exe": true
     },
     // The default character set encoding to use when reading and writing files.
-    "files.encoding": "windows1252",
+    "files.encoding": "utf8",
 
     "files.associations": {
         "**/*.cfg": "cfgpol"

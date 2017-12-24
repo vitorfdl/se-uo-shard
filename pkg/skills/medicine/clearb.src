@@ -14,25 +14,25 @@ include "include/say";
 program UseBloodyBandage(mobile, bandage)
 	var targ := TargetCoordinates(mobile);
 	if( !targ )
-		SendSysMessage(mobile, "Cancelado.");
+		SendSysMessageEx(mobile, "Cancelado.", SSM_FAIL);
 		return 0;
 	endif
 	var locinfo := GetMapInfo( targ.x, targ.y, mobile.realm );
 	if (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) > 2)
-		SendSysMessage(mobile, "Você esta muito longe de onde deseja lavar as bandagens.");
+		SendSysMessageEx(mobile, "Você esta muito longe de onde deseja lavar as bandagens.", SSM_FAIL);
 	elseif (/*IsCleanWater(targ)*/ IsWater(targ, locinfo))
 		while (bandage)
 			if (!Wait(mobile, 2))
-				SendSysMessage(mobile, "Você parou de lavar as bandagens.");
+				SendSysMessageEx(mobile, "Você parou de lavar as bandagens.", SSM_INFO);
 				break;
 			endif
 			SubtractAmount(bandage, 1);
 			CreateItemInBackpack(mobile, 0xE21, 1);
 			PlaySoundEffect(mobile, 0x26);
-			PrintText(mobile, "*lavando bandagem*");
+			PrintText(mobile, "*lavando ataduras*");
 		endwhile
 	else
-		SendSysMessage(mobile, "Você precisa de agua para limpar o sangue.");
+		SendSysMessageEx(mobile, "Você precisa de água para limpar o sangue.", SSM_FAIL);
 	endif
 endprogram
 

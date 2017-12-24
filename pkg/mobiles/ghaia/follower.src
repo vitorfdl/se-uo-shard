@@ -241,7 +241,7 @@ function ProcessDoubleClick(ev)
 
    if (targ.mobile == me && me.graphic in pack_animals)
       if ((EnumerateItemsInContainer(me.backpack)).size() > 0)
-         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
+         SendSysMessage(ev.source, "Vocï¿½ precisa esvaziar a mochila antes de remove-la.");
          return;
       endif
       PrintText(ev.source, "*remove a mochila de "+me.name+"*");
@@ -288,7 +288,7 @@ function ProcessDoubleClick(ev)
          endif
          Fight(targ.mobile);
       endif
-   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se não for nem item nem mobile anda ate la
+   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se nï¿½o for nem item nem mobile anda ate la
       if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
          return;
@@ -356,7 +356,7 @@ function Transfer(targ)
    endif
 
    if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) )
-      Say("*" + me.name+ " não aceita " + targ.name + "como dono.");
+      Say("*" + me.name+ " nï¿½o aceita " + targ.name + "como dono.");
       return;
    endif
 
@@ -395,7 +395,6 @@ function UnTame()
    EraseObjProperty(me, "name");
    EraseObjproperty(me, "script");
    // EraseObjProperty(me, "spawnpoint");
-   // EraseObjProperty(me, "spawnpointtype");
 
    RestartScript(me);
 endfunction
@@ -485,7 +484,7 @@ function ResolveSpeech(ev)
    /// New Master Command
    elseif (text["novo dono"])
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
-         SendSysMessage(owner, "Outros não podem controlar criaturas invocadas por você.");
+         SendSysMessage(owner, "Outros nï¿½o podem controlar criaturas invocadas por vocï¿½.");
          return;
       endif
 
@@ -493,7 +492,7 @@ function ResolveSpeech(ev)
       // var cfg := ReadConfigFile(":ghaia:npcdesc")[me.my_template()];
 
       // if (me.alignment == "evil")
-         // SendSysMessage(owner, "A criatura não aceita o alvo como novo dono.");
+         // SendSysMessage(owner, "A criatura nï¿½o aceita o alvo como novo dono.");
          // return;
       if ( !targ.acctname )
          return;
@@ -504,7 +503,7 @@ function ResolveSpeech(ev)
    /// Release Command
    elseif (text["livre"])
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
-         SendSysMessage(owner, "Criaturas invocadas não podem ser libertadas normalmente.");
+         SendSysMessage(owner, "Criaturas invocadas nï¿½o podem ser libertadas normalmente.");
          return;
       endif
 
@@ -525,7 +524,7 @@ function TakeItem(ev)
          return PrintTextAbove(me, "*recusa comida*");
       elseif (item_props.foodtype != foodtype)
          MoveItemToContainer(ev.item, ev.source.backpack);
-         return PrintTextAbove(me, "*parece não gostar da comida*");
+         return PrintTextAbove(me, "*parece nï¿½o gostar da comida*");
       endif
 
       PrintTextAbove(me, "*comendo*");
@@ -537,7 +536,7 @@ function TakeItem(ev)
    elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
       if ((EnumerateItemsInContainer(ev.item)).size() > 0)
          MoveItemToContainer(ev.item, ev.source.backpack);
-         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
+         SendSysMessage(ev.source, "Vocï¿½ precisa esvaziar a mochila antes de coloca-la na montaria.");
       elseif ( me.my_template() == "Horse3" )
          SetObjProperty(me, "beforepack", me.graphic);
          me.graphic := 291;
@@ -557,7 +556,7 @@ function TakeItem(ev)
       //else
       //    mount := 0;
       //endif
-   SendSysMessageEx(ev.source, "Não pode dar esse item!", SSM_FAIL);
+   SendSysMessageEx(ev.source, "Nï¿½o pode dar esse item!", SSM_FAIL);
    MoveItemToContainer(ev.item, ev.source.backpack);
 endfunction
 
@@ -576,11 +575,11 @@ function CanFight(me, mob)
 endfunction
 
 function PetMovement(move_mode)
-   if (!CheckLosAt(me, following.x, following.y, following.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se não consegue correr direto
+   if (!CheckLosAt(me, following.x, following.y, following.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se nï¿½o consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
 		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
 		
-      if (path == error || ( last_loc && !(following in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se não calculou
+      if (path == error || ( last_loc && !(following in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se nï¿½o calculou
          var flags := FP_IGNORE_MOBILES;
          if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
             flags := flags| FP_IGNORE_DOORS;
@@ -624,7 +623,7 @@ function PetMovement(move_mode)
             else
                EraseObjProperty(me, "path");
             endif
-         else // se não consegue chegar na coord 
+         else // se nï¿½o consegue chegar na coord 
             if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
                EraseObjProperty(me, "path"); //deleta o path atual
                following := 0;

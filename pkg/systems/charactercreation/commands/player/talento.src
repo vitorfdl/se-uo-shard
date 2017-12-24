@@ -12,7 +12,6 @@ program habilidade(who, text)
       text := who[2];
       who := who[1];
    endif
-   print(text);
 
    if (!text || text == "")
       return;
@@ -27,7 +26,7 @@ program habilidade(who, text)
 	endif
 
 	if (!HaveFeat(who, text) && (who.cmdlevel < 2))
-		SendSysMessageEx(who, "Você não possui esse talento. Tente corrigir os acentos e letras maiusculas.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o possui esse talento. Tente corrigir os acentos e letras maiusculas.", SSM_FAIL);
 		return 0;
 	endif
 		
@@ -43,7 +42,7 @@ function ProccessHab(who, hab)
    endif
    
 	if (!feat.script)
-		SendSysMessageEx(who, "Talento não ativável.", SSM_FAIL);
+		SendSysMessageEx(who, "Talento nÃ£o ativÃ¡vel.", SSM_FAIL);
 		return;
 	endif
 
@@ -77,7 +76,7 @@ function ProccessHab(who, hab)
 
 	var e := start_script("feats/{}".format(feat.script), array{who} );
    if (e == error)
-      return SendSysMessageEx(who, "Script do talento não encontrado.", SSM_FAIL);
+      return SendSysMessageEx(who, "Script do talento nÃ£o encontrado.", SSM_FAIL);
    endif
 	TS_StartCooldown(who, hab, feat.cooldown);
 endfunction
