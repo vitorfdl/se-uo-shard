@@ -459,7 +459,7 @@ function ResolveSpeech(ev)
 
    /// Stop Command
    elseif (text["pare"])
-      if (me.IsTamable() && !me.rollPetDice("Stop", tame_difficulty))
+      if (me.IsTamable() && !me.rollPetDice("Hold", tame_difficulty))
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
          return;
       endif
