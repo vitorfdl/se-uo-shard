@@ -13,9 +13,9 @@ bolsa.name:="Bolsa de reagentes";
 
 if (!quantos)
 quantos:=80;
-sendsysmessage(who, "VocÃª pode usar o comando com numero");
+sendsysmessage(who, "Você pode usar o comando com numero");
 sendsysmessage(who, "Para definir quantos reagentes quer criar");
-sendsysmessage(who, "Sem especificacao vou criar 80 reagentes de cada para vocÃª");
+sendsysmessage(who, "Sem especificacao vou criar 80 reagentes de cada para você");
 endif
 foreach coisa in reagentes
 CreateItemInContainer( bolsa, coisa, amount := quantos );

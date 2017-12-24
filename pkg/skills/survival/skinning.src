@@ -27,27 +27,27 @@ program skinning(parms)
 		var equippedleft := GetEquipmentByLayer(who, 0x02);
 		var twohanded := Cint(cfg[equippedleft.objtype].TwoHanded);
 		if (equippedright || equippedleft || twohanded)
-			SendSysMessage(who, "VocÃª precisa das duas maos livres!");
+			SendSysMessage(who, "Você precisa das duas maos livres!");
 			return 0;
 		endif
 	endif
 
 	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessage(who, "VocÃª nÃ£o pode fazer cortar o corpo montado.");
+		SendSysMessage(who, "Você não pode fazer cortar o corpo montado.");
 		return 0;
 	endif
 
 	if((!Accessible(who, cadaver)) || (!CheckLineOfSight(who, cadaver)))
-		SendSysMessage(who, "VocÃª nÃ£o pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return;
 	endif
 	if(Distance(who, cadaver) > 2)
-		SendSysMessage(who, "VocÃª nÃ£o esta perto o bastante do alvo.");
+		SendSysMessage(who, "Você não esta perto o bastante do alvo.");
 		return;
 	endif
 	detach();
 	if(GetObjProperty(cadaver, "cut") == "1")
-		SendSysMessage( who, "VocÃª nÃ£o pode pegar mais coisas desse corpo." );
+		SendSysMessage( who, "Você não pode pegar mais coisas desse corpo." );
 		foreach thing in EnumerateItemsInContainer(cadaver)
 			MoveObjectToLocation(thing, cadaver.x, cadaver.y, cadaver.z, cadaver.realm, MOVEOBJECT_FORCELOCATION);
          sleepms(2);
@@ -57,9 +57,9 @@ program skinning(parms)
 		
 
 	elseif((GetObjProperty(cadaver,"npctemplate")== error) && (GetObjProperty(cadaver, "morto")!=1))
-      if (YesNo(who, "VocÃª deseja mesmo matar o alvo?", "Sim: o alvo poderÃ¡ negar o pedido e vocÃª nÃ£o pode sair de perto do corpo", "Nao: nenhuma consequencia.")) //quer matar mesmo
+      if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo poderá negar o pedido e você não pode sair de perto do corpo", "Nao: nenhuma consequencia.")) //quer matar mesmo
          start_script(":death:permadeath/permanentdeath", array{who, cadaver, blade});
-         SendSysMessageEx(who, "Aguarde atÃ© que o alvo responda. Afaste-se do corpo para cancelar a aÃ§Ã£o.", SSM_FAIL);
+         SendSysMessageEx(who, "Aguarde até que o alvo responda. Afaste-se do corpo para cancelar a ação.", SSM_FAIL);
       endif
 		//DesmembreCorpse(cadaver);
 	
@@ -72,7 +72,7 @@ program skinning(parms)
 		SetObjProperty(cadaver, "morto",1);
 		if(cadaver.corpsetype == 223)
 			CreateItemInContainer(cadaver, 0x9f1, 2);
-			SendSysMessage(who, "VocÃª colocou os itens no corpo.");
+			SendSysMessage(who, "Você colocou os itens no corpo.");
 			MakeBleed(cadaver);
 			return;
 		endif

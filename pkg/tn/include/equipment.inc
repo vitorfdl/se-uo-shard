@@ -66,7 +66,7 @@ function RemoveEquipmentMods(who, item)
 
       if (item_e.Pericia["Pesada"])
          who.setToughness(-3);
-      elseif (item_e.Pericia["MÃ©dia"])
+      elseif (item_e.Pericia["Média"])
          who.setToughness(-2);
       elseif (item_e.Pericia["Leve"])
          who.setToughness(-1);

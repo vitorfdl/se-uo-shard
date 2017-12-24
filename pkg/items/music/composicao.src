@@ -20,7 +20,7 @@ program composicaoscript(who, item)
 	EraseObjProperty(who, "IsMeditating");
 
 	if( Cint(GetObjProperty(who, "#LastMusic")) > ReadGameClock() )
-		SendSysMessage(who, "VocÃª deve esperar um momento antes de compor");
+		SendSysMessage(who, "Você deve esperar um momento antes de compor");
 		return 0;
 	endif
 
@@ -29,7 +29,7 @@ program composicaoscript(who, item)
 	endif
 
 
-	SendSysMessage(who, "VocÃª comeca a compor uma musica",3,191);
+	SendSysMessage(who, "Você comeca a compor uma musica",3,191);
 	printtextabove(who, "*Compondo uma musica*",3,0);
 
 

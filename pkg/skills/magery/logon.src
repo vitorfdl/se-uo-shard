@@ -7,7 +7,7 @@ include ":taming:taming";
 include ":gumps:gumpprompt";
 
 program Logon(who)
-   if (who.isClass("ClÃ©rigo") && !GetProcess(GetObjProperty(who, "#clericpid")))
+   if (who.isClass("Clérigo") && !GetProcess(GetObjProperty(who, "#clericpid")))
       Start_Script(":magery:cleric/powerWords", array{who});
    endif
 endprogram

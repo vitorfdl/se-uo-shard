@@ -8,7 +8,7 @@ include ":timedscripts:timedScripts";
 var item_config     := ReadConfigFile(":*:itemdesc");
 
 program alchemy(who)
-	SendSysMessageEx(who, "Escolha uma po√ß√£o para identificar.", SSM_REQUEST);
+	SendSysMessageEx(who, "Escolha uma poÁ„o para identificar.", SSM_REQUEST);
 	var item := Target(who, TGTOPT_CHECK_LOS);
 
 	if (!item)
@@ -21,14 +21,14 @@ program alchemy(who)
 	endif
 
 	if (item.graphic != 3849)
-      SendSysMessageEx(who, "Isso n√£o √© uma po√ß√£o", SSM_FAIL);
+      SendSysMessageEx(who, "Isso n„o È uma poÁ„o", SSM_FAIL);
       return;
    endif
 
 	PrintText(who, "*analisando um frasco*");
    var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, ALQUIMIA);
    if (roll < 15) //SkillCheck(who, PESQUISA, -1)
-      SendSysMessageEx(who, "Voc√™ n√£o esta certo..", SSM_FAIL);
+      SendSysMessageEx(who, "VocÍ n„o esta certo..", SSM_FAIL);
       return;
    endif
       
@@ -36,7 +36,7 @@ program alchemy(who)
    var entry := cfg[item.objtype];
    if (entry)
       SetObjProperty(item, "pocaoname", entry.Type);
-      SendSysMessageEx(who, "Voc√™ identificou o liquido do frasco: " + entry.Type, SSM_INFO);
+      SendSysMessageEx(who, "VocÍ identificou o liquido do frasco: " + entry.Type, SSM_INFO);
    endif
 
    cfg := 0;

@@ -2,7 +2,7 @@ include ":disguise:disguise";
 
 program command_remdis(who)
 	if (who.name == "Desconhecido")
-		SendSysMessageEx(who, "VocÃª nÃ£o pode remover o disfarce com o rosto coberto", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode remover o disfarce com o rosto coberto", SSM_FAIL);
 		return;
 	endif
 	// removeDisfarce(who);

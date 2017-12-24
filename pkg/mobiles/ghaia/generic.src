@@ -62,7 +62,7 @@ function CloseDistanceArcher(opponent)
       me.setAggro(opponent.serial, -10);
       ChooseHighestOpponent(me, opponent);
 		sleepms(sleepdelay);
-		return 0; //se estiver em cima de torres, n√£o se move do lugar
+		return 0; //se estiver em cima de torres, n„o se move do lugar
 	endif
 
    var max_range := cint(npccfgfile.AttackMaxRange);
@@ -220,7 +220,7 @@ function Fight(opponent, alerted := 0)
             //       opponent := ev.source;
             //       SetOpponent(opponent);
             //       TurnToward(opponent);
-            //    elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se n√£o tiver mais o oponent entao 100% de chance de mudar de alvo
+            //    elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se n„o tiver mais o oponent entao 100% de chance de mudar de alvo
             //       opponent := ev.source;
             //       SetOpponent(opponent);
             //       TurnToward(opponent);

@@ -88,7 +88,7 @@ program action(who, text)
 		
 		var data := array(
 		
-			"esclha sua aÃ§ao:",
+			"esclha sua açao:",
 			"1. Walk (UnArmed)",
 			"2. Walk (Armed)",
 			"3. Walk (Warmode)",

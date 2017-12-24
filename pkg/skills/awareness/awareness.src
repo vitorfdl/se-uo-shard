@@ -11,7 +11,7 @@ include ":awareness:awareness";
 
 program skill_Alertness(who)
 	if ( CInt(GetobjProperty(who, "#Alertness")) > ReadGameClock() )
-		SendSysMessageEx(who, "VocÃª precisa esperar para usar essa pericia novamente.", SSM_INFO);
+		SendSysMessageEx(who, "Você precisa esperar para usar essa pericia novamente.", SSM_INFO);
 		return;
 	else
 		SetObjProperty(who, "#Alertness", ReadGameClock()+1);
@@ -23,12 +23,12 @@ program skill_Alertness(who)
 	var menu := choose(who);
 	if (menu == 1)
 		if ( !examinarAlvo(who) )
-			SendSysMessageEx(who, "VocÃª nÃ£o encontrou nada de diferente.", SSM_INFO);
+			SendSysMessageEx(who, "Você não encontrou nada de diferente.", SSM_INFO);
 		endif
 	elseif (menu == 2)
 		PrintText(who, "*procurando algo*");
 		if ( !examinarArea(who) )
-			SendSysMessageEx(who, "VocÃª nÃ£o encontrou nada de diferente.", SSM_INFO);
+			SendSysMessageEx(who, "Você não encontrou nada de diferente.", SSM_INFO);
 		endif
 	else
 		var ignore := GetObjProperty(who, "IgnoreHidden");
@@ -50,13 +50,13 @@ function Choose(mobile)
 	GFResizePic(yn_gump, 15, 15, GFCfgConst("Defaults", "ForeGround"), 370, 150); //175);
 	
 	var y_pos := 20;
-	GFTextLine(yn_gump, 20, y_pos, 1153, "Escolha uma opÃ§Ã£o.");
+	GFTextLine(yn_gump, 20, y_pos, 1153, "Escolha uma opção.");
 	y_pos := y_pos+40;
 	GFAddButton(yn_gump, 20, (y_pos+3), 2117, 2118, GF_CLOSE_BTN, 1);
-	GFTextLine(yn_gump, 40, y_pos, 1153, "Examinar algo especÃ­fico.");
+	GFTextLine(yn_gump, 40, y_pos, 1153, "Examinar algo específico.");
 	y_pos := y_pos+40;
 	GFAddButton(yn_gump, 20, (y_pos+3), 2117, 2118, GF_CLOSE_BTN, 2);
-	GFTextLine(yn_gump, 40, y_pos, 1153, "Examinar a Ã¡rea que estou.");
+	GFTextLine(yn_gump, 40, y_pos, 1153, "Examinar a área que estou.");
 	y_pos := y_pos+40;
 	GFAddButton(yn_gump, 20, (y_pos+3), 2117, 2118, GF_CLOSE_BTN, 3);
 	var ignore := GetObjProperty(mobile, "IgnoreHidden");

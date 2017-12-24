@@ -10,8 +10,8 @@ const SPELL_BTN := 200;
 
 program clericPowerWords(who)
 	detach();
-   if (!who.isClass("ClÃ©rigo"))
-      SendSysMessageEx(who, "Este menu nÃ£o e acessivel para sua classe", SSM_FAIL);
+   if (!who.isClass("Clérigo"))
+      SendSysMessageEx(who, "Este menu não e acessivel para sua classe", SSM_FAIL);
       return;
    endif
 
@@ -51,7 +51,7 @@ program clericPowerWords(who)
          cleric_list := GetObjProperty(who, "cleric_list");
          cleric_list.Erase(slot);
          SetObjProperty(who, "cleric_list", cleric_list);
-         SendSysMessageEx(who, "VocÃª abandonou o milagre.", SSM_INFO);
+         SendSysMessageEx(who, "Você abandonou o milagre.", SSM_INFO);
          canceled := 1;
       endif
    endwhile
@@ -63,13 +63,13 @@ function CreateClericGump(who, cleric_list, available_slots)
    GFSetId(gump, GUMPID_CLERICSPELL);
 	GFClosable(gump, 1);
 	GFResizePic(gump, 10, 26, 9390, 463, 284);
-	GFHTMLArea(gump, 180, 65, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de BenÃ§Ã£os", 0, 0); //shadow
-	GFHTMLArea(gump, 182, 67, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de BenÃ§Ã£os", 0, 0);
-	GFHTMLArea(gump, 181, 66, 192, 20, "<BASEFONT Size=5 Color=#ffffff >Lista de BenÃ§Ã£os", 0, 0); //shadow
+	GFHTMLArea(gump, 180, 65, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0); //shadow
+	GFHTMLArea(gump, 182, 67, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0);
+	GFHTMLArea(gump, 181, 66, 192, 20, "<BASEFONT Size=5 Color=#ffffff >Lista de Bençãos", 0, 0); //shadow
 	GFGumpPic(gump, 139, 84, 1469);
-	// GFTextLine(gump, 187, 66, 0, "Lista de BenÃ§Ã£os");
+	// GFTextLine(gump, 187, 66, 0, "Lista de Bençãos");
 	GFGumpPic(gump, 31, 98, 9773, 0);
-	GFTextLine(gump, 56, 95, 1445, "BenÃ§Ã£os");
+	GFTextLine(gump, 56, 95, 1445, "Bençãos");
 	GFTextLine(gump, 255, 96, 1445, "Palavras de Poder");
 
    for i := 1 to available_slots

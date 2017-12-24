@@ -70,11 +70,11 @@ function ExpGain(mobile, difficulty, value := 0)
    endif
   
 	var settings := AP_GetSettingsCfgElem("Skills");
-	//verifica se ja nÃ£o subiu skills em 30 segundos
+	//verifica se ja não subiu skills em 30 segundos
 	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 10;
 	if ( next_check > ReadGameClock() )
-	//	printtextabove(mobile, "nÃ£o posso subir skill agora");
-		SkillDbgMsg(mobile, "NÃ£o pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
+	//	printtextabove(mobile, "não posso subir skill agora");
+		SkillDbgMsg(mobile, "Não pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
 		return 0;
 	endif
 
@@ -145,7 +145,7 @@ function IncreaseVitalPoints(who)
 	var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
 
    var hit_dice := RandomDiceRoll("1d{}+5".format(class_cfg.HITS/2));
-   if (HaveFeat(who, "ResiliÃªncia"))
+   if (HaveFeat(who, "Resiliência"))
       var dice2 := RandomDiceRoll("1d{}+5".format(class_cfg.HITS/2));
       if (hit_dice < dice2)
          hit_dice := dice2;

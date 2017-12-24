@@ -16,7 +16,7 @@ program textcmd_Kill(who)
 	endif
 	
 	if (who.cmdlevel < targ.cmdlevel && who != targ)
-		SendSysMessage(who, "VocÃª nÃ£o pode usar este comando.");
+		SendSysMessage(who, "Você não pode usar este comando.");
 		return 1;
 	endif
 

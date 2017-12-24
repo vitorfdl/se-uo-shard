@@ -9,7 +9,7 @@ include ":charactercreation:habilidades";
 include ":attributes:attributes";
 
 program UseKey(who, key)
-	SendSysMessageEx(who, "Onde vocÃª deseja usar a chave?", SSM_REQUEST);
+	SendSysMessageEx(who, "Onde você deseja usar a chave?", SSM_REQUEST);
 	var targ := Target(who);
 	
 	if ( !targ.IsA(POLCLASS_ITEM) )
@@ -22,17 +22,17 @@ program UseKey(who, key)
 		CopyKey(who, key, targ);
 		return 1;
 	elseif ( !KP_IsLockable(targ) )
-		SendSysMessageEx(who, "Isto nÃ£o pode ser trancado.", SSM_FAIL);
+		SendSysMessageEx(who, "Isto não pode ser trancado.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, targ) > 1 )
-		SendSysMessageEx(who, "VocÃª esta muito longe do alvo!", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito longe do alvo!", SSM_FAIL);
 		return;
 	endif
 	
 	if ( key.KeyMatchesLock(targ) )
 		KP_ToggleLock(targ, who);
 	else
-		SendSysMessageEX(who, "Essa chave nÃ£o combina com a fechadura.", SSM_FAIL);
+		SendSysMessageEX(who, "Essa chave não combina com a fechadura.", SSM_FAIL);
 	endif
 	
 	return 1;
@@ -65,25 +65,25 @@ function CopyKey(who, key, targ)
 	
 	var key_id := key.GetLockId();
 	if ( !key_id )
-		SendSysMessageEx(who, "VocÃª nÃ£o pode cÃ³piar essa chave.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode cópiar essa chave.", SSM_FAIL);
 		return 0;
 	elseif ( targ.GetLockId() )
-		SendSysMessageEx(who, "A chave destino nÃ£o pode ser cÃ³piada.", SSM_FAIL);
+		SendSysMessageEx(who, "A chave destino não pode ser cópiada.", SSM_FAIL);
 		return 0;
 	elseif ( Cint(GetObjProperty(key, "uncopy")) == 1)
-		SendSysMessageEx(who, "Esta chave nÃ£o pode ser cÃ³piada.", SSM_FAIL);
+		SendSysMessageEx(who, "Esta chave não pode ser cópiada.", SSM_FAIL);
 		return 0;
 	endif
 	
 	var test := rollAttrDice(who, WISDOM, penalty := 0, params := struct{}) + getProficiencyBonus(who, FERRARIA);
 	if (test > 12)
 		targ.SetLockId(key_id);
-		SendSysMessageEx(who, "VocÃª copiou a chave.", SSM_INFO);
+		SendSysMessageEx(who, "Você copiou a chave.", SSM_INFO);
 		if (!TemHabilidade(who, "Chave de Cera"))
-			PrintText(who, "*cÃ³pia uma chave*");
+			PrintText(who, "*cópia uma chave*");
 		endif
 	else
-		SendSysMessageEx(who, "VocÃª quebrou a chave.", SSM_FAIL);
+		SendSysMessageEx(who, "Você quebrou a chave.", SSM_FAIL);
 		DestroyItem(targ);
 	endif
 	

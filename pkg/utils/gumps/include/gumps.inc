@@ -34,7 +34,7 @@ use os;
 use basic;
 
 //ADDED by gha
-//pra nÃ£o ter q ler um cfg
+//pra não ter q ler um cfg
 CONST DEFAULT_BACKGROUND := 0x13BE;
 CONST DEFAULT_FOREGROUND := 0x2486;
 
@@ -365,7 +365,7 @@ endfunction
 function GFTextEntryLimited(byref gump, x, y, width, height, txt_color, ini_text:="", txt_id:=0,lentxt := 0)
 
 	if (lentxt == 0)
-		lentxt := cint((width * 22) / 20); //trÃªs simples
+		lentxt := cint((width * 22) / 20); //três simples
 	endif
 
 	gump.data.Append(""+CStr(ini_text)); 

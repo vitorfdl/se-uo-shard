@@ -9,7 +9,7 @@ include "include/client";
 program mestreLaminas(param)
    var who := param[1];
    if (!who.shield)
-      SendSysMessageEx(who, "VocÃª precisa estar equipado com um escudo para usar este talento.");
+      SendSysMessageEx(who, "Você precisa estar equipado com um escudo para usar este talento.");
       return;
    endif
 

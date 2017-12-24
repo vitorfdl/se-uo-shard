@@ -29,8 +29,8 @@ program fazersuco(who, item)
 				passos := (i +1);
 				SetObjProperty(item, "passos", passos);
 			endif
-		else // se nÃ£o ta carregado coloca as uvas
-			SendSysMessage(who, "VocÃª precisa por as 50 uvas no balde, este balde esta vazio!");
+		else // se não ta carregado coloca as uvas
+			SendSysMessage(who, "Você precisa por as 50 uvas no balde, este balde esta vazio!");
 		endif
 	else //balde ta cheio
 		SendSysMessage(who, "Ei! Ainda tem suco aqui! Esvazie o balde!");

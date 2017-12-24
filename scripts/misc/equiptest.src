@@ -23,7 +23,7 @@ program EquipTest(mobile, item, start_up)
 		retval := 1;
 	elseif ( (mobile.frozen) || (mobile.paralyzed) )
 		// Frozen players cant equip stuff
-		SendSysMessage(mobile, "VocÃª esta incapaz de se movimentar para equipar isso.");
+		SendSysMessage(mobile, "Você esta incapaz de se movimentar para equipar isso.");
 		return 0;
 	else
 		retval := 1;
@@ -32,30 +32,30 @@ program EquipTest(mobile, item, start_up)
 	if ( item.graphic IN array{9920, 9930} )
 		var mounted := GetEquipmentByLayer(mobile, 0x19);
 		if ( !mounted )
-			SendSysMessage(mobile, "VocÃª nÃ£o pode equipar essa arma desmontado.");
+			SendSysMessage(mobile, "Você não pode equipar essa arma desmontado.");
 			return 0;
 		endif
 	endif
 
 	if (GetObjProperty(item, "broken") == 1)
-		SendSysMessageEx(mobile, "VocÃª nÃ£o pode equipar um item danificado.", SSM_FAIL);
+		SendSysMessageEx(mobile, "Você não pode equipar um item danificado.", SSM_FAIL);
 		return 0;
 	endif
 
 	if (mobile.hidden)
 		var zones := CS_GetArmorZone(item);
 		if ("Body" IN zones || "Arms" IN zones || "Legs/feet" IN zones)
-			SendSysMessage(mobile, "VocÃª apareceu ao colocar "+item.desc+".");
+			SendSysMessage(mobile, "Você apareceu ao colocar "+item.desc+".");
 			mobile.hidden := 0;
 			PrintText(mobile, "*aparece*");
 		endif
 	endif
 	
 	if (TS_GetCooldown(mobile, "metamorfosedruida"))
-		SendSysMessageEx(mobile, "VocÃª nÃ£o pode equipar itens enquanto estiver metamorfoseado.", SSM_FAIL);
+		SendSysMessageEx(mobile, "Você não pode equipar itens enquanto estiver metamorfoseado.", SSM_FAIL);
 		return 0;
 	elseif (GetObjProperty(mobile, "desarmar") && item.isa(POLCLASS_WEAPON))
-		SendSysMessageEx(mobile, "VocÃª esta incapaz de armar-se.", SSM_FAIL);
+		SendSysMessageEx(mobile, "Você esta incapaz de armar-se.", SSM_FAIL);
 		return 0;		
 	endif
 

@@ -25,11 +25,11 @@ function criargump(byref gump)
 	//GFAddButton(gump, 185, 395, 2128, 2129, GF_CLOSE_BTN, 1);
 	// GFResizePic(gump, 270, 392, 9550, 100, 29); //notarp
 	
-	GFTextLine(gump, 95, 62, 600, "CaracterÃ­sticas" );
+	GFTextLine(gump, 95, 62, 600, "Características" );
 	
-	GFTextLine(gump, 215, 62, 600, "HistÃ³rico" );
+	GFTextLine(gump, 215, 62, 600, "Histórico" );
 	
-	GFTextLine(gump, 302, 62, 600, "AvaliaÃ§Ãµes" );
+	GFTextLine(gump, 302, 62, 600, "Avaliações" );
 	
 	//Conteudo
 	GFPage(gump, 1);
@@ -37,7 +37,7 @@ function criargump(byref gump)
 	GFAddButton(gump, 195, 65, 30009, 30008, GF_PAGE_BTN, 2);
 	GFAddButton(gump, 282, 65, 30009, 30008, GF_PAGE_BTN, 3);
 	
-	GFTextLine(gump, 65, 85, 2103, "CaracterÃ­sticas Comportamentais:" );
+	GFTextLine(gump, 65, 85, 2103, "Características Comportamentais:" );
 	GFResizePic(gump, 65, 105, 9350, 295, 135);
 	
 	GFTextLine(gump, 65, 250, 2103, "Objetivos:" );
@@ -50,14 +50,14 @@ function criargump(byref gump)
 	GFTextLine(gump, 65, 85, 2103, "Feitos Importantes (GM)" );
 	GFResizePic(gump, 65, 105, 9350, 295, 105);
 	
-	GFTextLine(gump, 65, 220, 2103, "AnotaÃ§Ãµes do Jogador:" );
+	GFTextLine(gump, 65, 220, 2103, "Anotações do Jogador:" );
 	GFResizePic(gump, 65, 240, 9350, 295, 150);
 	
 	GFPage(gump, 3);
 	GFAddButton(gump, 75, 65, 30009, 30008, GF_PAGE_BTN, 1);
 	GFAddButton(gump, 195, 65, 30009, 30008, GF_PAGE_BTN, 2);
 	GFAddButton(gump, 282, 65, 30008, 30008, GF_PAGE_BTN, 3);
-	GFTextLine(gump, 65, 85, 2103, "AvaliaÃ§Ãµes:" );
+	GFTextLine(gump, 65, 85, 2103, "Avaliações:" );
 	GFResizePic(gump, 65, 105, 9350, 295, 285);
 	
 endfunction
@@ -182,13 +182,13 @@ function sendFichaRp(who, targ, edit := 0)
 		elseif (input[0] >= 200)
 			input := cint(input[0] - 200) +1;
 			input := tips[input];
-			var apagar := cint(RequestGump(who, "Entre com o nÃºmero que deseja apagar."));
-			if (YesNo(who, "Tem certeza que deseja apagar " + apagar + "?", "Sim", "NÃ£o"))
+			var apagar := cint(RequestGump(who, "Entre com o número que deseja apagar."));
+			if (YesNo(who, "Tem certeza que deseja apagar " + apagar + "?", "Sim", "Não"))
 				var value := ficharp_elem.GetProp("Ficha");
 				if (len(value[input]) < apagar)
-					SendSysMessageEx(who, "Este valor nÃ£o existe", SSM_FAIL);
+					SendSysMessageEx(who, "Este valor não existe", SSM_FAIL);
 				elseif (typeof(apagar) != "Integer")
-					SendSysMessageEx(who, "Este valor nÃ£o existe.", SSM_FAIL);
+					SendSysMessageEx(who, "Este valor não existe.", SSM_FAIL);
 				else
 					value[input].erase(apagar);
 					var teste := fichaSetProp(targ, "Ficha", value);
@@ -202,8 +202,8 @@ function sendFichaRp(who, targ, edit := 0)
 			var teste := fichaSetProp(targ, "Ficha", value);
 			
          if (input == "Feitos")
-				PrintTextPrivate(targ, "*VocÃª recebeu um novo Grande Feito!*", targ, SSM_INFO);
-				PrintTextPrivate(targ, "*VocÃª recebeu um novo Grande Feito!*", who, SSM_INFO);			
+				PrintTextPrivate(targ, "*Você recebeu um novo Grande Feito!*", targ, SSM_INFO);
+				PrintTextPrivate(targ, "*Você recebeu um novo Grande Feito!*", who, SSM_INFO);			
 			endif
 			
 		endif
@@ -260,7 +260,7 @@ function PegarResposta(who)
 	GFResizePic(gump, 0, 0, 3600, 420, 405);
 	GFResizePic(gump, 15, 15, 0x13BE, 390, 55);
 	GFTextMid(gump, 15, 20, 390, 1153, "Descreva a nova linha");
-	GFTextMid(gump, 15, 40, 390, 1153, "VocÃª pode usar <i> para itÃ¡lico e <b> para negrito!");
+	GFTextMid(gump, 15, 40, 390, 1153, "Você pode usar <i> para itálico e <b> para negrito!");
 	GFAddButton(gump, 325, 45, 2128, 2129, GF_CLOSE_BTN, 20);
 	GFResizePic(gump, 15, 70, 0xA3C, 390, 320);
 	for ( i:=1; i<=num_lines; i:=i+1 )

@@ -50,7 +50,7 @@ program death(params)
 	// 	endforeach
 	// endif
 
-	// if (corpse.x >= 4855 && corpse.y >= 879) //kepohaï¿½essa?
+	// if (corpse.x >= 4855 && corpse.y >= 879) //kepoha¿essa?
 	// 	if ( corpse.x <= 4869 && corpse.y <=  890)
 	// 		corpse.movable := 1;
 	// 		MoveObjectToLocation(corpse, 4859, 876, 1, corpse.realm, MOVEOBJECT_FORCELOCATION);
@@ -59,7 +59,7 @@ program death(params)
 	// 	endif
 	// endif
 
-	// if (corpse.x >= 4919 && corpse.y >= 1044) //kepohaï¿½essa?
+	// if (corpse.x >= 4919 && corpse.y >= 1044) //kepoha¿essa?
 	// 	if ( corpse.x <= 4933 && corpse.y <=  1066)
 	// 		corpse.movable := 1;
 	// 		MoveObjectToLocation(corpse, 4893, 1014, 1, corpse.realm, MOVEOBJECT_FORCELOCATION);
@@ -73,21 +73,21 @@ program death(params)
       return 1;
 	endif
 
-	if (protecao) // Proteï¿½ï¿½o Contra Morte
+	if (protecao) // Prote¿¿o Contra Morte
 		EraseObjProperty(ghost, "protecaomorte");
 	elseif (!killer.acctname || ghost.cmdlevel)
 		//if (getCoolDown(ghost, "deathtime") == 0 )
-		if (!killer.npctemplate || !killer.script["follower"])  //se for tamed nï¿½o tira dp
+		if (!killer.npctemplate || !killer.script["follower"])  //se for tamed n¿o tira dp
 			ghost.ReduceLifeTime(2, "day");
 
          if (rollResistDice(ghost, CONSTITUTION) <= 15)
 				AP_ConsumeVital(ghost, "DP", 10);
-				SendSystemReport(ghost, "VocÃª sofreu uma fratura!");
+				SendSystemReport(ghost, "Você sofreu uma fratura!");
             if (AP_GetVital(ghost, "DP") <= 19)
                TS_StartTimer(ghost, "fraturaexposta", 1);
             endif
          else
-            SendSystemReport(ghost, "VocÃª conseguiu evitar uma fratura ao cair.");
+            SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
 			endif
 
 			if (AP_GetVital(ghost, "DP") < 0 )
@@ -101,7 +101,7 @@ program death(params)
 		endif
 	endif
 
-	SendSystemReport(ghost, "VocÃª desmaiou.");
+	SendSystemReport(ghost, "Você desmaiou.");
 
 	var pacto := PactoSepulturaCheck(ghost, corpse);
 	if (pacto == 1)
@@ -112,7 +112,7 @@ program death(params)
 	if ( dmg > CInt(AP_GetVitalMaximumValue(ghost, HITS)/5) )
 		tempo += 60;
 	endif
-	// if ( temhabilidade(ghost, "Instinto de Sobrevivï¿½ncia"))
+	// if ( temhabilidade(ghost, "Instinto de Sobreviv¿ncia"))
 	// 	tempo := tempo /2;
 	// endif
 	if (save)
@@ -134,9 +134,9 @@ program death(params)
 		endif
 
 		if (tempo % 60 == 0 && tempo != 0)
-			SendSystemReport(ghost, "VocÃª acordara em "+(tempo/60)+" minuto(s).");
+			SendSystemReport(ghost, "Você acordara em "+(tempo/60)+" minuto(s).");
 		elseif (tempo <= 10)
-			SendSystemReport(ghost, "VocÃª acordara em "+(tempo)+" segundo(s).");
+			SendSystemReport(ghost, "Você acordara em "+(tempo)+" segundo(s).");
 		endif
 
 		tempo -= 1;
@@ -158,7 +158,7 @@ function PactoSepulturaCheck(ghost, corpse)
 		ApplyDamage(targ, dmg);
 		var targhp := AP_GetVital(targ, "hits");
 		if (targhp <= 0)
-			SendSysMessage(ghost, "VocÃª voltara a vida com o pacto de sepultura.", 3, 191);
+			SendSysMessage(ghost, "Você voltara a vida com o pacto de sepultura.", 3, 191);
 			sleepms(1500);
 			KataWakeUp(ghost, corpse);
 			pacto := 1;
@@ -173,12 +173,12 @@ endfunction
 
 function DeathProperties(ghost, corpse, byref tempo, i)
 	if ( GetObjProperty(corpse, "curado") )
-		SendSysMessage(ghost, "VocÃª foi curado e acordara em 2 segundos!");
+		SendSysMessage(ghost, "Você foi curado e acordara em 2 segundos!");
 		EraseObjProperty(corpse, "prolongardesmaio");
 		sleep(2);
 		return 1;
 	elseif ( GetObjProperty(corpse, "prolongardesmaio") )
-		SendSysMessage(ghost, "Seus batimentos cardiacos se reduzem, e VocÃª tem mais dificuldade em recobrar a consciencia.",3 , 0);
+		SendSysMessage(ghost, "Seus batimentos cardiacos se reduzem, e Você tem mais dificuldade em recobrar a consciencia.",3 , 0);
 		EraseObjProperty(corpse, "prolongardesmaio");
 		SetObjProperty(corpse, "japrolongou", 1);
 		tempo := tempo * 2;
@@ -193,7 +193,7 @@ endfunction
 
 function checkIfDead(corpse, ghost := 0)
    if ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) )
-		SendSysMessage(ghost, "Algo aconteceu... VocÃª morreu.");
+		SendSysMessage(ghost, "Algo aconteceu... Você morreu.");
 		SetObjProperty(corpse, "morto", 1);
 		SetObjProperty(ghost, "morto", 1);
 		SetObjProperty(corpse, "deathtimer", polcore().systime);

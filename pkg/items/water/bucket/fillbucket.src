@@ -13,7 +13,7 @@ program FillBucket(who, bucket)
 		return;
 	endif
 	
-	SendSysMessage(who, "Onde vocÃª deseja usar isto?");
+	SendSysMessage(who, "Onde você deseja usar isto?");
 	var targ := TargetCoordinates(who);
 	
 	if ( targ.mobile )
@@ -41,7 +41,7 @@ function MilkIt(who, mobile, bucket)
 		PlaySoundEffect(mobile, 0x7B);
 		sleep(3);
 		PlaySoundEffect(mobile, 0x7A);
-		SendSysMessage(who, "VocÃª encheu o balde de leite.");
+		SendSysMessage(who, "Você encheu o balde de leite.");
 		
 		ReleaseItem(bucket);
 		var new_bucket := bucket.FillBucket(MILK_BUCKET);
@@ -49,14 +49,14 @@ function MilkIt(who, mobile, bucket)
 			SendSysMessage(who, "Unable to create filled bucket ->"+new_bucket.errortext);
 		endif
 	else
-		SendSysMessage(who, "Esta criatura nÃ£o da leite.");
+		SendSysMessage(who, "Esta criatura não da leite.");
 		return;
 	endif
 endfunction
 
 function GetWater(who, targ, bucket)
 	if ( !IsWater(targ) )
-		SendSysMessage(who, "Esta nÃ£o e uma boa fonte de agua!");
+		SendSysMessage(who, "Esta não e uma boa fonte de agua!");
 		return;
 	elseif ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 3 )
 		SendSysMessage(who, "O alvo esta muito distante.");
@@ -100,11 +100,11 @@ function GetWater(who, targ, bucket)
 	
 	var new_bucket;
 	if ( is_fresh )
-		SendSysMessage(who, "VocÃª encheu o balde com agua doce.");
+		SendSysMessage(who, "Você encheu o balde com agua doce.");
 		ReleaseItem(bucket);
 		new_bucket := bucket.FillBucket(FRESH_WATER_BUCKET);
 	else
-		SendSysMessage(who, "VocÃª encheu o balde com agua salgada.");
+		SendSysMessage(who, "Você encheu o balde com agua salgada.");
 		ReleaseItem(bucket);
 		new_bucket := bucket.FillBucket(SALT_WATER_BUCKET);
 	endif

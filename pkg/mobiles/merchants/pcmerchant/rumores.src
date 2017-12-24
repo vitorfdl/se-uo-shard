@@ -31,7 +31,7 @@ program MerchantMenu(params)
 
 	if (player.hidden)
 		player.hidden := 0;
-		SendSysMessageEx(player, "VocÃª se revelou.", SSM_FAIL);
+		SendSysMessageEx(player, "Você se revelou.", SSM_FAIL);
 	endif
 
 	var gump := GFCreateGump(0, 0);
@@ -87,7 +87,7 @@ program MerchantMenu(params)
 		//SendSysMessage(player, " " + rumores[input[0]-200].desc);
 		var id := input[0]-200;
 		if (player.cmdlevel >= 3)
-			var result := RadioGump(player, 300, 200, "OpÃ§Ãµes de GM", {"Ler", "Apagar"});
+			var result := RadioGump(player, 300, 200, "Opções de GM", {"Ler", "Apagar"});
 			if (result == "Apagar")
 				rumores.Erase(id);
 				SetObjProperty(npc, "rumores", rumores);
@@ -102,10 +102,10 @@ program MerchantMenu(params)
 				if ( moedas.objtype == 47715)
 					if (moedas.amount >= cint(rumores[id].custo))
 						if (!SubtractAmount(moedas, cint(rumores[id].custo)))
-							PrintText(npc, "VocÃª nÃ£o tem moedas necessarias.");
+							PrintText(npc, "Você não tem moedas necessarias.");
 						endif
 					else
-						PrintTextAbove(npc, "VocÃª nÃ£o tem moedas necessarias.");
+						PrintTextAbove(npc, "Você não tem moedas necessarias.");
 						return;
 					endif
 				else

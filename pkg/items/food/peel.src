@@ -9,7 +9,7 @@ program peel(who, fruit)
 	elseif (fruit.objtype == 0x1720)
 		peeled := 0x171e;
 	endif
-	SendSysMessage(who, "VocÃª descasca a banana.");
+	SendSysMessage(who, "Você descasca a banana.");
 	playsoundeffect (who, 0x5a);
 	if (!fruit.container)
 		createitematlocation(fruit.x, fruit.y, fruit.z, peeled, 1);

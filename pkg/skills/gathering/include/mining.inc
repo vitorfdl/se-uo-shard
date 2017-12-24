@@ -14,7 +14,7 @@ function Garimpeiro(who)
 		var cfg := ReadConfigFile(":gems:itemdesc");
 		var keys := GetConfigStringKeys( cfg );
 
-		SendSysMessageEx(who, "VocÃª achou uma pedra preciosa!", SSM_INFO);
+		SendSysMessageEx(who, "Você achou uma pedra preciosa!", SSM_INFO);
 		CreateItemInBackPack(who, keys[RandomInt(keys.size()+1)], 1);
 
 	endif
@@ -69,12 +69,12 @@ endfunction
 // 	var chestz := GetWorldHeight(chestx, chesty);
 
 // 	if((!chestx) || (!chesty))
-// 		SendSysMessageEx( who, "Este nÃ£o parece ser um mapa de tesouro.", SSM_FAIL );
+// 		SendSysMessageEx( who, "Este não parece ser um mapa de tesouro.", SSM_FAIL );
 // 		return;
 // 	endif
 
 // 	if(!CheckLosAt( who, targ.x, targ.y, targ.z ) );
-// 		SendSysMessageEx( who, "VocÃª nÃ£o vÃª o alvo.", SSM_FAIL );
+// 		SendSysMessageEx( who, "Você não vê o alvo.", SSM_FAIL );
 // 		return;
 // 	endif
 
@@ -87,15 +87,15 @@ endfunction
 // 	var mobiles := ListMobilesNearLocation(targ.x, targ.y, targ.z, 0, who.realm);
 
 // 	if(distn > maxrange)
-// 		SendSysMessageEx(who,"VocÃª parece muito distante.", SSM_INFO);
+// 		SendSysMessageEx(who,"Você parece muito distante.", SSM_INFO);
 // 		return;
 
 // 	elseif((distn > range) && (distn <= maxrange))
-// 		SendSysMessageEx(who,"VocÃª cavou e cavou mas nÃ£o encontrou nenhum tesouro.", SSM_INFO);
+// 		SendSysMessageEx(who,"Você cavou e cavou mas não encontrou nenhum tesouro.", SSM_INFO);
 // 		return;
 
 // 	elseif((distn < range) && (len(mobiles) > 0))
-// 		SendSysMessageEx(who,"vocÃª patou de cavar porque algo esta sobre o tesouro.");
+// 		SendSysMessageEx(who,"você patou de cavar porque algo esta sobre o tesouro.");
 // 		return;
 // 	else
 
@@ -173,7 +173,7 @@ endfunction
 //           			endforeach
 //         		endif
 // 			if((who.x != mex) || (who.y != mey))
-// 				SendSysMessageEx(who,"VocÃª deve ficar parado enquanto cava.", SSM_FAIL);
+// 				SendSysMessageEx(who,"Você deve ficar parado enquanto cava.", SSM_FAIL);
 // 				DestroyItem(chest);
 // 		        	return;
 // 		      	endif
@@ -317,7 +317,7 @@ function DetermineOreType(who, where)
 	var skill := AP_GetSkill(who, EXTRACAO);
 	
 	if (GetObjProperty(who, "searchore") == error)
-      SendSysMessageEx(who, "VocÃª deve selecionar um minÃ©rio para procurar. Use .skill extraÃ§Ã£o", SSM_FAIL);
+      SendSysMessageEx(who, "Você deve selecionar um minério para procurar. Use .skill extração", SSM_FAIL);
 		return 0;
 	else
 		oreToSearch := GetObjProperty(who, "searchore");
@@ -334,7 +334,7 @@ function DetermineOreType(who, where)
 	endforeach
 	
 	if (!achou)
-		SendSysMessageEx(who, "NÃ£o tem o minerio que vocÃª procura aqui. Mude em .skill extraÃ§Ã£o", SSM_FAIL);
+		SendSysMessageEx(who, "Não tem o minerio que você procura aqui. Mude em .skill extração", SSM_FAIL);
 		return 0;
 	endif
 	
@@ -347,7 +347,7 @@ function DetermineOreType(who, where)
 
 		return oreid;
 	else
-		SendSysMessageEx(who, "VocÃª nÃ£o conseguiu achar o minerio que procura.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não conseguiu achar o minerio que procura.", SSM_FAIL);
 		return 999;
 	endif
 endfunction
@@ -375,7 +375,7 @@ function DetermineMiningDifficulty(oretype)
 		0x8852: return 30; //arenito
 		0x5001: return 5; //id de stone
 
-		0x6305: return 16; //golden <- nÃ£o faz nada
+		0x6305: return 16; //golden <- não faz nada
 		
 		default: return 100;
 	endcase
@@ -466,16 +466,16 @@ endfunction
 
 function CheckLoop(who, tool, my_x, my_y, my_facing)
 	if ( who.hidden )
-		SendSysMessageEx(who, "VocÃª parou de minerar para ficar escondido.");
+		SendSysMessageEx(who, "Você parou de minerar para ficar escondido.");
 		return 0;
 	elseif ( (who.x != my_x) || (who.y != My_y) )
-		SendSysMessageEx(who, "VocÃª saiu de onde estava.");
+		SendSysMessageEx(who, "Você saiu de onde estava.");
 		return 0;
 	elseif ( who.facing != my_facing )
-		SendSysMessageEx(who, "VocÃª virou sua atencao para outra coisa.");
+		SendSysMessageEx(who, "Você virou sua atencao para outra coisa.");
 		return 0;
 	elseif ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessageEx(who, "VocÃª nÃ£o pode minerar montado.");
+		SendSysMessageEx(who, "Você não pode minerar montado.");
 		return 0;
 	elseif (!tool)
 		return 0;

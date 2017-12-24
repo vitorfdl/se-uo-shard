@@ -17,7 +17,7 @@ function StartScript(mobile, attacker := 0, level := 0)
    var hitsmod := cint(GetObjProperty(mobile, "hitsmod"));
    hitsmod += (level*5);
    SetObjProperty(mobile, "hitsmod", hitsmod);
-   SendSysmessageEx(mobile, "VocÃª sente seu sangue esquentar!", SSM_HARMFUL);
+   SendSysmessageEx(mobile, "Você sente seu sangue esquentar!", SSM_HARMFUL);
    RecalcVitals(mobile, RECALC_NO_INTRINSIC_MOD);
    return 1;
 endfunction

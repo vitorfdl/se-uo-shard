@@ -19,22 +19,22 @@ program fix(who)
 		SendSysMessage(who, "Cancelado", SSM_FAIL);
 		return 0;
 	elseif (!Accessible(who, alvo))
-		SendSysMessageEx(who, "VocÃª nÃ£o alcanca o alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não alcanca o alvo.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, alvo) > 2)
-		SendSysMessageEx(who, "VocÃª esta muito distante do alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito distante do alvo.", SSM_FAIL);
 		return 0;
 	elseif (GetObjPRoperty(alvo, "canfix") != 1)
-		SendSysMessageEx(who, "VocÃª nÃ£o pode fixar este item.");
+		SendSysMessageEx(who, "Você não pode fixar este item.");
 		return 0;
 	elseif ( GetObjProperty(alvo, "crafterserial") == error)
 		// Edmond - Atualizado para uso do script de placas.
 		if ((alvo.objtype != 1111) || (alvo.objtype != 1112) || (alvo.objtype != 1113) ||  (alvo.objtype != 1114) || (alvo.objtype != 1115) || (alvo.objtype != 1118))
-			SendSysMessageEx(who, "VocÃª so pode fixar itens que foram criados por algum player.", SSM_FAIL);
+			SendSysMessageEx(who, "Você so pode fixar itens que foram criados por algum player.", SSM_FAIL);
 			return 0;
 		endif
 	elseif (  TypeOf(alvo.container) == "ItemRef")
-		SendSysMessageEx(who, "VocÃª nÃ£o pode fixar itens dentro de containers.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode fixar itens dentro de containers.", SSM_FAIL);
 		return 0;
 	endif
 	
@@ -43,7 +43,7 @@ program fix(who)
 		if (alvo.movable == 1)
 			SetObjProperty(alvo, "fixer", who.serial);
 			alvo.movable := 0;
-			SendSysMEssageEx(who, "O item esta imovel agora e somente vocÃª podera solta-lo.", SSM_INFO);
+			SendSysMEssageEx(who, "O item esta imovel agora e somente você podera solta-lo.", SSM_INFO);
 		else
 			if (CInt(GetObjProperty(alvo, "crafterserial")) == who.serial)
 				alvo.movable := 1;
@@ -51,7 +51,7 @@ program fix(who)
 				SetObjProperty(alvo, "fixer", who.serial);
 				GetDeed(who, alvo);
 			else
-				SendSysMessageEx(who, "VocÃª nÃ£o pode soltar esse item", SSM_INFO);
+				SendSysMessageEx(who, "Você não pode soltar esse item", SSM_INFO);
 			endif
 		endif
 	else
@@ -65,7 +65,7 @@ program fix(who)
 				SendSysMessage(who, "O item esta imovel.");
 			endif
 		else
-			SendSysMessage(who, "VocÃª nÃ£o pode usar esse comando no item");
+			SendSysMessage(who, "Você não pode usar esse comando no item");
 		endif
   	endif
    return 1;

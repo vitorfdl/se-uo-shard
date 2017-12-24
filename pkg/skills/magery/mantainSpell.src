@@ -83,13 +83,13 @@ program spell(params)
 
 	if ( SpellYesNo(mage, spellname,  targ.name ) )
 	        if (!AP_ConsumeVital(mage, MANA, mana))
-		                SendSysMessageEx(mage, "VocÃª nÃ£o possui mana suficiente para manter esse encantamento.", SSM_FAIL);
+		                SendSysMessageEx(mage, "Você não possui mana suficiente para manter esse encantamento.", SSM_FAIL);
 				return 1;
 		endif
 
 		TS_StartTimer(targ, name, duration, level, mage, 1) ;
 	else
-		SendSysMessageEx(mage, "VocÃª desistiu de manter o encantamento.", SSM_INFO);
+		SendSysMessageEx(mage, "Você desistiu de manter o encantamento.", SSM_INFO);
 	endif
 
 endprogram

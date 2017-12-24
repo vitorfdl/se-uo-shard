@@ -38,11 +38,11 @@ program animateSword(params)
    endif
    
    if (!item)
-      SendSysMessageEx(who, "VocÃª ou o alvo precisa estar prÃ³ximo de algum fogo", SSM_FAIL);
+      SendSysMessageEx(who, "Você ou o alvo precisa estar próximo de algum fogo", SSM_FAIL);
       return 0;
    endif
 
-   PrintText(item, "*Fogo se move de forma nÃ£o natural*");
+   PrintText(item, "*Fogo se move de forma não natural*");
    var shards := 3 + cint(spellinfo.slots_used);
 
    var i;

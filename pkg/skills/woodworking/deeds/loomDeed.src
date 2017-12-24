@@ -22,7 +22,7 @@ program place_deed(who, deed)
   EraseObjProperty(who, "HealTimer");
 
   if(!Accessible(who, deed))
-    SendSysMessageEx(who, "VocÃª nÃ£o alcanca o alvo.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não alcanca o alvo.", SSM_FAIL);
     return;
   endif
 
@@ -33,19 +33,19 @@ program place_deed(who, deed)
   var cfg := ReadConfigFile(":carpentry:itemdesc");
   var element := FindConfigElem(cfg, deed.objtype);
   if(!element)
-    SendSysMessageEx(who, "VocÃª nÃ£o pode fazer nada com isto.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode fazer nada com isto.", SSM_FAIL);
     return;
   endif
   var items := SplitWords(element.ObjList);
   if(!len(items))
-    SendSysMessageEx(who, "VocÃª nÃ£o pode fazer nada com este item.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode fazer nada com este item.", SSM_FAIL);
     return;
   endif
-  SendSysMessageEx(who, "Onde vocÃª deseja por item?", SSM_REQUEST);
+  SendSysMessageEx(who, "Onde você deseja por item?", SSM_REQUEST);
 
   var start := TargetCoordinates(who);
   if(!CheckLosAt(who, CInt(start.x), CInt(start.y), CInt(start.z)))
-    SendSysMessageEx(who, "VocÃª nÃ£o pode ver o alvo.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode ver o alvo.", SSM_FAIL);
     return;
   endif
 
@@ -126,7 +126,7 @@ program place_deed(who, deed)
   endfor
 
   if(failed == 1)
-    SendSysMessageEx(who, "VocÃª nÃ£o pode posicionar o item aqui.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode posicionar o item aqui.", SSM_FAIL);
     return;
 
   endif

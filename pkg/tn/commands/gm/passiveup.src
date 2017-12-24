@@ -27,7 +27,7 @@ program reset(who, value)
 	
 	if (value >= 1)
 		value := polcore().systime;
-		SendSysMessage(who, "Conta " + acctname + " agora receber√° up passivo.");
+		SendSysMessage(who, "Conta " + acctname + " agora receber· up passivo.");
 	else
 		SendSysMessage(who, "Conta " + acctname + " perdeu o up passivo.");
 	endif

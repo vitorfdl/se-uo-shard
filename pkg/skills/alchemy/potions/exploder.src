@@ -70,7 +70,7 @@ function FlameEffect(who, potion, lvl)
 		if (CheckLineOfSight(potion, critter))
 			if ( critter.hidden  )
 				critter.hidden := 0;
-				SendSysMessage(critter, "VocÃª foi revelado na explosao!");
+				SendSysMessage(critter, "Você foi revelado na explosao!");
 			endif
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);
@@ -126,7 +126,7 @@ function GlueEffect(who, potion)
 		if (CheckLineOfSight(potion, critter))
 			if ( critter.hidden && critter.acct )
 				critter.hidden := 0;
-				SendSysMessage(critter, "VocÃª foi revelado pela teia!");
+				SendSysMessage(critter, "Você foi revelado pela teia!");
 			endif
 		endif
 	endforeach
@@ -142,7 +142,7 @@ function ExplosionEffect(who, potion, dmg)
 		if (checkLineOfSight(potion, critter))
 			if ( critter.hidden)
 				critter.hidden := 0;
-				SendSysMessage(critter, "VocÃª foi revelado na explosao!");
+				SendSysMessage(critter, "Você foi revelado na explosao!");
 			endif
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);

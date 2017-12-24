@@ -6,15 +6,15 @@ use util;
 program click_pregos(who, item)
 
    if (!Accessible (who, item))
-	SendSysMessage (who, "VocÃª nÃ£o alcanca isto!");
+	SendSysMessage (who, "Você não alcanca isto!");
 	return;
    endif
    if (!item.movable)
-	SendSysMessage (who, "VocÃª nÃ£o pode usar isto.");
+	SendSysMessage (who, "Você não pode usar isto.");
 	return;
    endif
    if (!ReserveItem (item))
-	SendSysMessage (who, "VocÃª nÃ£o pode usar isto agora.");
+	SendSysMessage (who, "Você não pode usar isto agora.");
 	return;
    endif
    

@@ -28,7 +28,7 @@ program usaPergaminho(who, scroll)
 	// 	lang := "SIZE=3 Face=Runic";
 	// endif
 	GFHtmlShadowed(gump, 70, 80, 290, 170, "#c3c3c3", "<BASEFONT {}><center>Nome: {}".format(lang, spellinfo.name));
-	var text := "<BASEFONT {} COLOR=#330000>Tipo: {} <br<br>CÃ­rculo: {} <br><br>{}".format(lang,spellinfo.type,spellinfo.circle,spellinfo.description);
+	var text := "<BASEFONT {} COLOR=#330000>Tipo: {} <br<br>Círculo: {} <br><br>{}".format(lang,spellinfo.type,spellinfo.circle,spellinfo.description);
 	var scrollbar := 0;
 	if (text.size() > 200)
 		scrollbar := 1;

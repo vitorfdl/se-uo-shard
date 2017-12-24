@@ -18,7 +18,7 @@ program blessWater(info)
 			SendSysMessageEX(who, "Cancelado", SSM_FAIL);
          return 1;
       elseif (!targ.isA(POLCLASS_ITEM) || !itemdesc[targ.objtype] )
-			SendSysMessageEX(who, "VocÃª deve escolher uma arma ou armadura!", SSM_FAIL);
+			SendSysMessageEX(who, "Você deve escolher uma arma ou armadura!", SSM_FAIL);
       else
          break;
 		endif
@@ -46,6 +46,6 @@ program blessWater(info)
    endif
 
    PlaySoundEffect(targ, SFX_SPELL_CREATE_FOOD);
-   SendSystemReport(targ, "*VocÃª restaura o equipamento*", SSM_HELPFUL);
+   SendSystemReport(targ, "*Você restaura o equipamento*", SSM_HELPFUL);
    return 1;
 endprogram

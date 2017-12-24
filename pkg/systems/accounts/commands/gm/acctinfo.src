@@ -164,7 +164,7 @@ function GeneralInfoGump(account, byref gump)
 	GFResizePic(gump, 205, 195, GFCfgConst("Defaults", "ForeGround"), 420, 90);
 	var email := account.GetProp("IPShare");
 	if ( !email )
-		email := "NÃ£o Divide";
+		email := "Não Divide";
 	endif
 	GFTextRight(gump, 335, 208, 2100, "Divide IP");
 	GFAddButton(gump, 350, 205, 0x476, 0x476, GF_CLOSE_BTN, CHANGE_EMAIL);

@@ -80,7 +80,7 @@
 //   var ev;
 //   var waittime := 0;
   
-//   if (!alerted) //se ele ja n√£o foi alertado por outro aliado
+//   if (!alerted) //se ele ja n„o foi alertado por outro aliado
 //     if (alert_allies) //se esse npc eh do tipo que alerta
 //       AlertAllies(me, opponent); 
 //     endif
@@ -181,7 +181,7 @@
 //        //   opponent := ev.source;
 // 			 // 		        SetOpponent(opponent);
 // 			//		        TurnToward(opponent);
-// 			//se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente n√£o estiver acessivel
+// 			//se ele receber dano de alguem mais proximo que o oponente ou se receber dano de alguem e o oponente n„o estiver acessivel
 //        if( /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/ (!CheckLineOfSight(me, opponent)) || (!opponent))
 // 					if ( (opponent) && RandomInt(4) == 0 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
 //                 if (ev.source)
@@ -189,7 +189,7 @@
 //                   SetOpponent(opponent);
 // 					        TurnToward(opponent);
 //                 endif
-//            elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se n√£o tiver mais o oponent entao 100% de chance de mudar de alvo
+//            elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se n„o tiver mais o oponent entao 100% de chance de mudar de alvo
 //                 if (ev.source)
 // 					        opponent := ev.source;
 //                   SetOpponent(opponent);

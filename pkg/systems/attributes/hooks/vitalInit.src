@@ -47,9 +47,9 @@ exported function GetManaRegenRate(mobile)
 	//if(!mobile.npctemplate)
 	//	base_regen := 0;
 	//endif
-	if (TemHabilidade(mobile, "MeditaÃ§Ã£o 2"))
+	if (TemHabilidade(mobile, "Meditação 2"))
 		base_regen := base_regen + base_regen;
-	elseif (TemHabilidade(mobile, "MeditaÃ§Ã£o"))
+	elseif (TemHabilidade(mobile, "Meditação"))
 		base_regen := base_regen + cint(base_regen * 0.5);
 	endif
 

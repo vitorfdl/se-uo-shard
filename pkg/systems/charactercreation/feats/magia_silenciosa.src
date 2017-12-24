@@ -6,6 +6,6 @@ include ":timedScripts:timedScripts";
 program magiaSilenciosa(param)
    var who := param[1];
    SetObjProperty(who, "#magiasilenciosa", 1);
-   SendSysMessageEx(who, "Sua pr√≥xima magia n√£o executara gestos arcanos", SSM_INFO);
+   SendSysMessageEx(who, "Sua prÛxima magia n„o executara gestos arcanos", SSM_INFO);
    return 1;
 endprogram

@@ -21,7 +21,7 @@ program usehousedeed(character, deed)
 	endif
   
 	if(deed.movable == 0)
-		SendSysMessageEx(character, "VocÃª nÃ£o pode usar isto.", SSM_FAIL);
+		SendSysMessageEx(character, "Você não pode usar isto.", SSM_FAIL);
 		return;
 	endif
 
@@ -46,7 +46,7 @@ function Buildhouse(character, deed)
 	var housetype := GetHouseObjtype(deed);
 	Sendsysmessage(character," " + housetype);
  	if(housetype == error)
-		SendSysMessageEx(character, "Este item nÃ£o funciona.", SSM_FAIL);
+		SendSysMessageEx(character, "Este item não funciona.", SSM_FAIL);
 		return;
 	endif
 	var where := TargetMultiPlacement(character, housetype);
@@ -56,7 +56,7 @@ function Buildhouse(character, deed)
   	endif
 
 	if (Distance(character,where) > 50)
-		SendSysMEssageEx(character, "VocÃª esta muito distante.", SSM_FAIL);
+		SendSysMEssageEx(character, "Você esta muito distante.", SSM_FAIL);
 		return;
 	endif
 

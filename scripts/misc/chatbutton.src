@@ -39,8 +39,8 @@ var gflayout := {
 
 var gfdata := {
 		"Forgotten Lore Shard", //0
-		"PrÃ³ximo", //1
-		"RealizaÃ§Ãµes" //2
+		"Próximo", //1
+		"Realizações" //2
 		};
 
 
@@ -52,8 +52,8 @@ var gfdata := {
 	var accounts := listaccounts();
 	//sendsysmessage(who, " " + GetObjProperty(who, "lootmoedas"));
 	if (cint(GetObjProperty(who, "lootmoedas")) > 100000)
-		gfdata.append("LadrÃ£o de Cadaveres");
-		gfdata.append("VocÃª Ã© um grande Looter e nÃ£o deixa os bolsos dos desmaiados em paz. Porcentagem de jogadores: " + ( GetAchievements(who, "LadrÃ£o de Cadaveres")/cdbl(accounts.size())*100 ));
+		gfdata.append("Ladrão de Cadaveres");
+		gfdata.append("Você é um grande Looter e não deixa os bolsos dos desmaiados em paz. Porcentagem de jogadores: " + ( GetAchievements(who, "Ladrão de Cadaveres")/cdbl(accounts.size())*100 ));
 		text := text + 1;
 		gflayout.append("text " + x + " " + y + " 2105 " + text);
 		text := text + 1;
@@ -63,7 +63,7 @@ var gfdata := {
 		count := count + 1;
 	elseif ( cint(GetObjProperty(who, "mortes" )) > 100 )
 		gfdata.append("");
-		gfdata.append("VocÃª Ã© um grande Looter e nÃ£o deixa os bolsos dos desmaiados em paz. Porcentagem de jogadores: " + ( GetAchievements(who, "LadrÃ£o de Cadaveres")/cdbl(accounts.size())*100 ));
+		gfdata.append("Você é um grande Looter e não deixa os bolsos dos desmaiados em paz. Porcentagem de jogadores: " + ( GetAchievements(who, "Ladrão de Cadaveres")/cdbl(accounts.size())*100 ));
 		text := text + 1;
 		gflayout.append("text " + x + " " + y + " 2105 " + text);
 		text := text + 1;

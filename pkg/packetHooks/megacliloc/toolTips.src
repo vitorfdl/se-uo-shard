@@ -24,11 +24,11 @@ const LIGHTGRAY := "<BASEFONT COLOR=#D3D3D3>";
 
 function TranslateAtt(attribute)
 	case (attribute.lower())
-		"strength": return "For莽a";
+		"strength": return "For鏰";
 		"dexterity": return "Destreza";
-		"intelligence": return "Intelig锚ncia";
+		"intelligence": return "Intelig阯cia";
 		"wisdom": return "Sabedoria";
-		"constitution": return "Constitui莽茫o";
+		"constitution": return "Constitui玢o";
 		default: return attribute;
 	endcase
 endfunction
@@ -53,7 +53,7 @@ function getCondition(item)
 	elseif (c > 0.3)
 		return "Bastante Danificada";
 	else
-		return "Quebradi莽a";
+		return "Quebradi鏰";
 	endif
 endfunction
 
@@ -93,11 +93,11 @@ function TranslateHit(crit)
 	elseif (crit == "chargehit")
 		return "Carga";
 	elseif (crit == "concussionhit")
-		return "Concuss茫o";
+		return "Concuss鉶";
 	elseif ( crit == "freearmorhit")
 		return "Movimento Livre";
 	elseif (crit == "heighthit")
-		return "Diferen莽a de Altura";
+		return "Diferen鏰 de Altura";
 	elseif ( crit == "QueimaRoupa")
 		return "Tiro a Queima Roupa";
 	elseif ( crit == "pushback")
@@ -227,7 +227,7 @@ exported function MegaCliloc( who, byref packet )
          endif
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
 			var cond := GetCondition(item);
-			xDesc += "Condi莽茫o: {}<br>".format(cond);
+			xDesc += "Condi玢o: {}<br>".format(cond);
 			xDesc += "Qualidade: {}<br>".format(getQuality(item.quality));
 
 			var cfg  := ReadConfigFile(":*:itemdesc");
@@ -238,7 +238,7 @@ exported function MegaCliloc( who, byref packet )
 
 			if (item.isA(POLCLASS_WEAPON))
 				if (elem.strrequired)
-					xDesc += "For莽a M铆nima: " + elem.strrequired + "<br>";
+					xDesc += "For鏰 M韓ima: " + elem.strrequired + "<br>";
 				endif
 				if (who.cmdlevel > 3)
 					xDesc += "Dano: " + cstr(elem.damage) + "<br>";
@@ -258,7 +258,7 @@ exported function MegaCliloc( who, byref packet )
 
 			elseif (item.isA(POLCLASS_ARMOR))
 				if (cint(elem.strrequired) > 0)
-					xDesc += "For莽a M铆nima: " + elem.strrequired + "<br>";
+					xDesc += "For鏰 M韓ima: " + elem.strrequired + "<br>";
 				endif
 
 				if (who.cmdlevel > 3)
@@ -288,10 +288,10 @@ exported function MegaCliloc( who, byref packet )
 				endif
 
 				if (item.dmg_mod > 0 )
-					xDesc += BLUE + "B么nus Dano";
+					xDesc += BLUE + "B鬾us Dano";
 				endif
 				if (item.hp_mod > 0)
-					xDesc += BLUE + "B么nus Item PVs";
+					xDesc += BLUE + "B鬾us Item PVs";
 				endif
 				var hitsscripts := GetObjProperty(item, "HitScripts");
 				if (hitsscripts != error)
@@ -355,19 +355,19 @@ endfunction
 
 function getbonusname(mod)
 	if (mod == "strmod")
-		return "B么nus For";
+		return "B鬾us For";
 	elseif (mod == "dexmod")
-		return "B么nus Des";
+		return "B鬾us Des";
 	elseif (mod == "intmod")
-		return "B么nus Int";
+		return "B鬾us Int";
 	elseif (mod == "conmod")
-		return "B么nus Cons";
+		return "B鬾us Cons";
 	elseif (mod == "hitsmod")
-		return "B么nus HP";
+		return "B鬾us HP";
 	elseif (mod == "manamod")
-		return "B么nus Mana";
+		return "B鬾us Mana";
 	elseif (mod == "stammod")
-		return "B么nus Stam";
+		return "B鬾us Stam";
 	elseif (mod == "PhysicalResistMod")
 		return "Resistencia Fisica";
 	elseif (mod == "ColdResistMod")
@@ -387,7 +387,7 @@ function getbonusname(mod)
 	elseif (mod == "PoisonDamageMod")
 		return "Dano por Veneno";
 	elseif (mod == "hp_mod")
-		return "B么nus Item PVs";
+		return "B鬾us Item PVs";
 	else
 		return "Bonus " + mod;
 	endif

@@ -15,6 +15,6 @@ program WalkOn(mobile, plant)
 			return;
 		endif
 		PrintTextAbove(plant, "*crunch*");
-		SendSysMessage(mobile, "VocÃª escuta a planta quebrar quando caminha por cima dela.");
+		SendSysMessage(mobile, "Você escuta a planta quebrar quando caminha por cima dela.");
 	endif
 endprogram

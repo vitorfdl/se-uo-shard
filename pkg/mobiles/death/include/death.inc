@@ -90,7 +90,7 @@ function KataWakeUp(ghost, corpse)
 		endif
 	endforeach
 
-	// if (TemHabilidade(ghost, "Instinto de SobrevivÃªncia") )
+	// if (TemHabilidade(ghost, "Instinto de Sobrevivência") )
 	// 	SetVital(ghost, "hits", CInt(GetVitalMaximumValue(ghost, "hits")*0.9));
 	// else
 //		printtextabove(ghost, " " + GetHP(ghost));

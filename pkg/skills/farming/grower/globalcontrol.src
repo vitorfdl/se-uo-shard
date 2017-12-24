@@ -48,7 +48,7 @@ function GrowthChecks()
 			water_amt := water_amt - 1;
 			grower.SetWaterAmount(water_amt);
 			if ( water_amt <= 10 )
-				DestroyPlant(grower, 1); //checa se esta fora da estaÃ§Ã£o e destroi
+				DestroyPlant(grower, 1); //checa se esta fora da estação e destroi
 			endif
 		endif
 		//descomentado
@@ -56,7 +56,7 @@ function GrowthChecks()
 		var produce_amt := grower.GetProduceAmount();
 		max_produce := grower.GetMaxProduceAmount();
 		if ( produce_amt < max_produce )
-			if (!DestroyPlant(grower, 0)) //checa se esta fora da estaÃ§Ã£o
+			if (!DestroyPlant(grower, 0)) //checa se esta fora da estação
 				produce_amt := produce_amt + 1;
 				if (water_amt >= 10)
 					produce_amt := produce_amt + 2;

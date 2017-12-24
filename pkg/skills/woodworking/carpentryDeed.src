@@ -22,7 +22,7 @@ program place_deed(who, deed)
   EraseObjProperty(who, "HealTimer");
 
   if(!Accessible(who, deed))
-    SendSysMessageEx(who, "VocÃª nÃ£o alcanca isto.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não alcanca isto.", SSM_FAIL);
     return;
   endif
 
@@ -35,21 +35,21 @@ program place_deed(who, deed)
   var element := FindConfigElem(cfg, deed.objtype);
   
   if(!element)
-    SendSysMessageEX(who, "VocÃª nÃ£o pode fazer nada com isto.", SSM_FAIL);
+    SendSysMessageEX(who, "Você não pode fazer nada com isto.", SSM_FAIL);
     return;
   endif
 
   var items := SplitWords(element.ObjList);
  
   if(!len(items))
-    SendSysMessageEx(who, "VocÃª nÃ£o pode fazer nada com isto.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode fazer nada com isto.", SSM_FAIL);
     return;
   endif
 
-  SendSysMessageEx(who, "Onde vocÃª deseja posicionar o item?", SSM_REQUEST);
+  SendSysMessageEx(who, "Onde você deseja posicionar o item?", SSM_REQUEST);
   var start := TargetCoordinates(who);
   if(!CheckLosAt(who, CInt(start.x), CInt(start.y), CInt(start.z)))
-    SendSysMessageEx(who, "VocÃª nÃ£o enxerga o alvo.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não enxerga o alvo.", SSM_FAIL);
     return;
   endif
 
@@ -142,7 +142,7 @@ program place_deed(who, deed)
     created.append(the_item);
   endfor
   if(failed == 1)
-    SendSysMessageEx(who, "VocÃª nÃ£o pode posicionar o item aqui.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode posicionar o item aqui.", SSM_FAIL);
     return;
   endif
 

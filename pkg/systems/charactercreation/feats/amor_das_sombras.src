@@ -6,6 +6,6 @@ include ":timedScripts:timedScripts";
 program magiaSilenciosa(param)
    var who := param[1];
    TS_StartCooldown(who, "amordassombras", 10);
-   SendSysMessageEx(who, "As sombras lhe acolhem enquanto estiver prÃ³ximo a Ã¡rvores e construÃ§Ãµes", SSM_INFO);
+   SendSysMessageEx(who, "As sombras lhe acolhem enquanto estiver próximo a árvores e construções", SSM_INFO);
    return 1;
 endprogram

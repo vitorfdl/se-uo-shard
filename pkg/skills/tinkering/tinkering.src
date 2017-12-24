@@ -11,10 +11,10 @@ program use_SmithTool(who, tool)
 	if(!can_access(who, tool))
 		return 0;
 	elseif((!tool.movable) or !ReserveItem(tool))
-		SendSysMessageEx(who, "VocÃª nÃ£o pode usar isto.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
 		return 0;
 	elseif(!tool in ListEquippedItems(who) && !(tool in EnumerateItemsInContainer(who.backpack)))
-		SendSysMessageEx(who, "O item nÃ£o esta na sua mochila nem equipado.", SSM_FAIL);
+		SendSysMessageEx(who, "O item não esta na sua mochila nem equipado.", SSM_FAIL);
 		return 0;
 	endif
 

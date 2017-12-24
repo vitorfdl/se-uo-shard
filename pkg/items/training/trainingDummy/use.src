@@ -27,7 +27,7 @@ program PracticeDummy(who, dummy)
 	var weapon_attribute := CS_GetWeaponInfo(weapon, "Attribute");
 	var weapon_skill := CS_GetWeaponInfo(weapon, "Pericia");
 	if ( weapon.isBow() )
-		SendSysMessage(who, "VocÃª deveria usar o alvo de arquerismo.");
+		SendSysMessage(who, "Você deveria usar o alvo de arquerismo.");
 		return 0;
 	endif
 	

@@ -6,12 +6,12 @@ program freezeAll(who, text)
 		SendSysMessage(who, "Range muito alto.");
 		return 0;
 	elseif( range < 0 )
-		SendSysMessage(who, "Range zero nÃ£o pode.");
+		SendSysMessage(who, "Range zero não pode.");
 		return 0;
 	endif
 
 	if ( range == 0 )
-		SendSysMessage(who, "Escolha quem vocÃª vai dexar mudo e frozen.");
+		SendSysMessage(who, "Escolha quem você vai dexar mudo e frozen.");
 		var targ := Target(who);
 		if( targ.isa(POLCLASS_MOBILE) )
 			if (!targ.cmdlevel)

@@ -7,7 +7,7 @@ include ":fls_core:fls_crafting";
 program usar_etiqueta(who, the_item)
 
 	if (!CheckForPen(who.backpack, 0))
-		SendSysMessage(who, "VocÃª nÃ£o possui uma pena e o tinteiro para escrever.");
+		SendSysMessage(who, "Você não possui uma pena e o tinteiro para escrever.");
 		return;
 	endif
 
@@ -20,11 +20,11 @@ program usar_etiqueta(who, the_item)
 	var use_on := Target(who);
 
 	if(use_on.movable == 0)
-		SendSysMessage(who, "VocÃª nÃ£o pode banhar isto.");
+		SendSysMessage(who, "Você não pode banhar isto.");
 		return;
 	endif
 	if(!Accessible(who, use_on))
-		SendSysMessage(who, "VocÃª nÃ£o alcanca isto.");
+		SendSysMessage(who, "Você não alcanca isto.");
 		return;
 	endif
 
@@ -32,7 +32,7 @@ program usar_etiqueta(who, the_item)
 		 SetName(use_on, itemdesc); //
 		 use_on.color := the_item.color;
 	else
-		SendSysMessage(who, "Este item nÃ£o pode ser rotulado.");
+		SendSysMessage(who, "Este item não pode ser rotulado.");
 	endif
 
 

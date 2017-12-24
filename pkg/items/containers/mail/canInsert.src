@@ -12,7 +12,7 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 		return 0;
 	endif
 	if (mobile.frozen || mobile.paralyzed)
-		SendSysMessage(mobile, "VocÃª esta paralizado.");
+		SendSysMessage(mobile, "Você esta paralizado.");
 		return 0;
 	endif
 	var valid :=	{0xba63, 0xba64, 0xba65, // moedas
@@ -26,7 +26,7 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 		return 1;
 	endif
 
-	SendSysMessageEx(mobile, "VocÃª nÃ£o pode inserir esse item na caixa!", SSM_FAIL);
+	SendSysMessageEx(mobile, "Você não pode inserir esse item na caixa!", SSM_FAIL);
 
 	return 0;
 endprogram

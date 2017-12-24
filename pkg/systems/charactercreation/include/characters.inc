@@ -7,9 +7,9 @@ include ":charactercreation:feats";
 //Traduz o nome da skill
 function translateAttribute(attr)
 	attr["Wisdom"]       := "Sabedoria";
-	attr["Strength"]     := "ForÃ§a";
-	attr["Intelligence"] := "InteligÃªncia";
-	attr["Constitution"] := "ConstituiÃ§Ã£o";
+	attr["Strength"]     := "Força";
+	attr["Intelligence"] := "Inteligência";
+	attr["Constitution"] := "Constituição";
 	attr["Dexterity"]    := "Destreza";
 
 	return attr;

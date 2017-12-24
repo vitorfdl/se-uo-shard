@@ -151,7 +151,7 @@ function NewLetter( who, send_to:=" ", subject:=" ", message:=array{} )
         GFAddAlphaRegion( gump, 0, 0, 640, 480 );
 
 	var input_send;
-	GFTextLine( gump, 25, 23, 1720, "DestinatÃ¡rio :" );
+	GFTextLine( gump, 25, 23, 1720, "Destinatário :" );
 	if  (cint(send_to) == 999999998)
 		GFGumpPic( gump, 100, 20, 1141 );
 		GFTextLine( gump, 110, 22, 2100, "GM Page System" );
@@ -168,8 +168,8 @@ function NewLetter( who, send_to:=" ", subject:=" ", message:=array{} )
 	var input_subject := GFTextEntry( gump, 110, 47, 250, 20, 2100, subject );
 
 	if (who.cmdlevel >= 3)
-		GFTextLine( gump, 25, 70, 2100, "Note: Para enviar a multiplos endereÃ§os, separe cada box com espaÃ§o." );
-		GFTextLine( gump, 415, 23, 1720, "EndereÃ§os" );
+		GFTextLine( gump, 25, 70, 2100, "Note: Para enviar a multiplos endereços, separe cada box com espaço." );
+		GFTextLine( gump, 415, 23, 1720, "Endereços" );
 		GFAddButton( gump, 380, 23, 4008, 4009, GF_CLOSE_BTN, ADDRESS_BOOK );
 	endif
 
@@ -264,7 +264,7 @@ function ReadMail( who, number )
       box_account := "[Acct:"+SystemFindObjectBySerial( CInt( mail_info.from_box ), SYSFIND_SEARCH_OFFLINE_MOBILES ).acctname+"]";
    endif
 		
-	GFTextLine( gump, 25, 20, 1720, "DÃª: "+mail_info.from_name+""+box_info+""+box_account );
+	GFTextLine( gump, 25, 20, 1720, "Dê: "+mail_info.from_name+""+box_info+""+box_account );
 	GFTextLine( gump, 25, 40, 1720, "Assunto: "+mail_info.subject );
 
         var time := StrFormatTime( "%m-%d-%Y %I:%M:%S %p", CInt( mail_info.time ));
@@ -473,10 +473,10 @@ function SendMail( who, send_to, subject, msg_array )
          track_serial := SystemFindObjectBySerial( CInt( box_number ), SYSFIND_SEARCH_OFFLINE_MOBILES );
 
          if((!track_serial.IsA( POLCLASS_MOBILE ) || track_serial.IsA( POLCLASS_NPC )) && cint(box_number) != 999999998 && cint(box_number) != 999999999 )
-            GumpPrompt( who, "Box number "+box_number+" nÃ£o existe." );
+            GumpPrompt( who, "Box number "+box_number+" não existe." );
             return NewLetter( who );
          elseif( CheckBlocked( user_serial, box_number ))
-            GumpPrompt( who, "NÃ£o foi possÃ­vel enviar mensagem para "+box_number+"." );
+            GumpPrompt( who, "Não foi possível enviar mensagem para "+box_number+"." );
             return NewLetter( who );
          endif
 
@@ -513,7 +513,7 @@ function SendMail( who, send_to, subject, msg_array )
 
    GFAddAlphaRegion( gump, 0, 0, 640, 480 );
 
-	GFTextMid( gump, 15, 15, 620, 1720, "InformaÃ§Ãµes sobre Email" );
+	GFTextMid( gump, 15, 15, 620, 1720, "Informações sobre Email" );
 
  	GFAddButton( gump, 495, 425, 0xFA7, 0xFA6, GF_CLOSE_BTN, SEND_EMAIL );
 	GFTextLine( gump, 530, 425, 1720, "Continuar" );
@@ -541,10 +541,10 @@ function SendMail( who, send_to, subject, msg_array )
 		foreach box_number in send_to
 			var mail_box := DFFindElement( email_data_file, Hex( box_number ));
 			if( !mail_box )
-				GFTextLine( gump, 20, y_pos, 2100, "Box number "+box_number+" nÃ£o existe." );
+				GFTextLine( gump, 20, y_pos, 2100, "Box number "+box_number+" não existe." );
 				y_pos += 20;
 			elseif( CheckBlocked( user_serial, box_number ))
-				GFTextLine( gump, 20, y_pos, 2100, "NÃ£o foi possÃ­vel enviar mensagem para "+box_number );
+				GFTextLine( gump, 20, y_pos, 2100, "Não foi possível enviar mensagem para "+box_number );
 				y_pos += 20;
 			else
 				var box_number_name := box_number;

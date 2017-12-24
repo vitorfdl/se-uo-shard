@@ -16,7 +16,7 @@ program use_Carimbo(who, tool)
 		return 0;
 	endif
 	if((!tool.movable) or !ReserveItem(tool))
-		SendSysMessageEx(who, "Voc√™ n√£o pode usar isto.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÍ n„o pode usar isto.", SSM_FAIL);
 		return 0;
 	endif
 	if( !(tool in EnumerateItemsInContainer(who.backpack)) )
@@ -25,7 +25,7 @@ program use_Carimbo(who, tool)
 	endif
 	
 	if (!GetObjProperty(tool, "selo"))
-		var CarimboChoice := YesNo(who, "Este Sinente n√£o possui um selo, deseja atribuir algum?");
+		var CarimboChoice := YesNo(who, "Este Sinente n„o possui um selo, deseja atribuir algum?");
 		if (!CarimboChoice)
 			var SeloComum := YesNo(who, "Deseja usar um Selo Comum?");
 			if (!SeloComum)
@@ -50,10 +50,10 @@ program use_Carimbo(who, tool)
 			SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
 			return;
 		elseif (anel.objtype != 0x108a)
-			SendSysMessageEx(who, "Isto n√£o e um anel.", SSM_FAIL);
+			SendSysMessageEx(who, "Isto n„o e um anel.", SSM_FAIL);
 			return;
 		elseif (!GetObjProperty(anel, "familia"))
-			SendSysMessageEx(who, "Este n√£o e um anel de familia nobre.", SSM_FAIL);
+			SendSysMessageEx(who, "Este n„o e um anel de familia nobre.", SSM_FAIL);
 			return;
 		endif
 		
@@ -74,7 +74,7 @@ program use_Carimbo(who, tool)
 		SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
 		return;
 	elseif ((vela.objtype != 5171) && (vela.objtype != 0x0A0F) && (vela.objtype != 0x0A26) && (vela.objtype != 0x0A29) && (vela.objtype != 0x142C) && (vela.objtype != 0x1853) && (vela.objtype != 0x1854) && (vela.objtype != 0x1856) && (vela.objtype != 0x1C14))
-		SendSysMessageEx(who, "Isto n√£o e uma vela acesa.", SSM_FAIL);
+		SendSysMessageEx(who, "Isto n„o e uma vela acesa.", SSM_FAIL);
 		return;
 	endif
 	
@@ -94,9 +94,9 @@ program use_Carimbo(who, tool)
 		SendSysMessageEx(who, "Esta carta ja esta selada.", SSM_FAIL);
 		return;
 	elseif (targ.isBook())
-		var yes := YesNo(who, "Deseja mesmo carimbar esta carta? Ela n√£o podera sofrer alteracoes depois disso.");
+		var yes := YesNo(who, "Deseja mesmo carimbar esta carta? Ela n„o podera sofrer alteracoes depois disso.");
 		if (!yes)
-			SendSysMessageEx(who, "Voc√™ optou por n√£o carimbar a carta.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÍ optou por n„o carimbar a carta.", SSM_FAIL);
 			return;
 		endif
 		targ.ReadOnly(1);
@@ -108,7 +108,7 @@ program use_Carimbo(who, tool)
 		SetName(targ, targ.desc);
 		return 1;
 	else
-		SendSysMessageEx(who, "Voc√™ n√£o pode fazer nada com isto.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÍ n„o pode fazer nada com isto.", SSM_FAIL);
 		return;
 	endif
 

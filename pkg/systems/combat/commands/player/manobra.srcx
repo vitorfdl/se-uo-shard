@@ -9,17 +9,17 @@ include "include/say";
 program manobra(who, name)
 
 	if (GetObjProperty(who, name) == error)
-		SendSysMessage(who, "VocÃª nÃ£o conhece esta manobra.");
+		SendSysMessage(who, "Você não conhece esta manobra.");
 		return 1;
 	endif
 
 	if (!who.warmode)
-		SendSysMessage(who, "VocÃª nÃ£o esta atacando ninguem.");
+		SendSysMessage(who, "Você não esta atacando ninguem.");
 		return 1;
 	endif
 	
 	if (!who.opponent)
-		SendSysMessage(who, "VocÃª nÃ£o esta atacando ninguem.");
+		SendSysMessage(who, "Você não esta atacando ninguem.");
 		return 1;
 	endif
 
@@ -27,7 +27,7 @@ program manobra(who, name)
 	
 	if (lastTime)
 		if (lastTime + 180 >  ReadGameClock())
-			SendSysMessage(who, "VocÃª nÃ£o pode fazer outra manobra de combate agora.");
+			SendSysMessage(who, "Você não pode fazer outra manobra de combate agora.");
 			return 1;
 		endif
 	endif
@@ -37,7 +37,7 @@ program manobra(who, name)
 	if (name == "tiromultiplo")
 		var ammo := GetObjProperty(who.weapon, "ammo");
 		if (ammo == error)
-			SendSysMessageEx(who, "VocÃª precisa escolher o tipo de projetil dessa arma.", SSM_FAIL);
+			SendSysMessageEx(who, "Você precisa escolher o tipo de projetil dessa arma.", SSM_FAIL);
 			return 1;
 		endif
 	endif
@@ -46,14 +46,14 @@ program manobra(who, name)
 		if (GetVital(who, MANA) > 40)
 			AP_ConsumeVital(who, MANA, 40);
 		else
-			SendSysMessage(who, "VocÃª nÃ£o consegue fazer esta manobra.");
+			SendSysMessage(who, "Você não consegue fazer esta manobra.");
 			return 1;
 		endif
-		SendSysMessage(who, "VocÃª tenta executar a manobra.");
+		SendSysMessage(who, "Você tenta executar a manobra.");
 		SetObjProperty(who, "movement",  ":combat:movementScripts/"+name);
 		SetObjProperty(who, "#lastmovement", ReadGameClock());
 	else
-		SendSysMessage(who, "VocÃª deve digitar a manobra de combate: tiromultiplo, desarmar, fintar, duplo ou giratorio.");
+		SendSysMessage(who, "Você deve digitar a manobra de combate: tiromultiplo, desarmar, fintar, duplo ou giratorio.");
 	endif
 		
 	return 1;

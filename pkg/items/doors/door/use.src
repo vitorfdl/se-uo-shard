@@ -44,10 +44,10 @@ function DoorIsLocked(mobile, door)
 		// Allow an open door to always be closed.
 		return 0;
 	elseif ( door.IsInside(mobile) )
-		SendSysMessageEx(mobile, "VocÃª abre a porta por dentro.", SSM_INFO);
+		SendSysMessageEx(mobile, "Você abre a porta por dentro.", SSM_INFO);
 		return 0;
 	elseif ( KP_HasKeyForLock(mobile, door) )
-		SendSysMessageEx(mobile, "VocÃª usou a chave para abrir a porta.", SSM_INFO);
+		SendSysMessageEx(mobile, "Você usou a chave para abrir a porta.", SSM_INFO);
 		return 0;
 	elseif ( mobile.Enabled("ignoredoors") )
 		SendSysMessageEx(mobile, "You open the door with GM previlegies.", SSM_INFO);

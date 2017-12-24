@@ -45,7 +45,7 @@ function reagentsChoice(who)
 		
 		if (input == 100)
 			var nome := RequestGump(who, "Escolha o nome do Group");
-			var item := RequestGump(who, "Coloque o nome ou objtype dos reagentes, separando por espa√ßo.");
+			var item := RequestGump(who, "Coloque o nome ou objtype dos reagentes, separando por espaÁo.");
 			
 			var region := GetGroupDataElem(""+nome);
 			region.setprop("name", nome);
@@ -75,7 +75,7 @@ function reagentsChoice(who)
 				SendSysMessage(who, "Group deletado.");
 			elseif (input2 == 200)
 			
-				var item := RequestGump(who, "Coloque o nome ou objtype dos reagentes, separando por espa√ßo.","",elem.getprop("item"));
+				var item := RequestGump(who, "Coloque o nome ou objtype dos reagentes, separando por espaÁo.","",elem.getprop("item"));
 				
 				elem.setprop("item", item);
 			endif
@@ -116,10 +116,10 @@ function regionsChoice(who)
 		input := input[0];
 		
 		if (input == 100)
-			var nome := RequestGump(who, "Escolha o nome da regi√£o");
+			var nome := RequestGump(who, "Escolha o nome da regi„o");
 			var groups := SelectGroups(who);
 			var density := RequestGump(who, "Descreva a raridade para cada group adicionado anteriormente  (de 0 a 100)");
-			var rect :=  RequestGump(who, "Qual o rect da regi√£o?");
+			var rect :=  RequestGump(who, "Qual o rect da regi„o?");
 			
 			var region := GetReagentDataElem(""+nome);
 			
@@ -140,9 +140,9 @@ function regionsChoice(who)
 			GFTextLine(gump2, 45, 35, 2100, "Groups: "+elem.getprop("groups"));
 			GFTextLine(gump2, 45, 55, 2100, "Density: "+elem.getprop("density"));
 			GFTextLine(gump2, 45, 70, 2100, "Rect: "+elem.getprop("rect"));
-			GFTextLine(gump2, 45,  85, 2100, "Deletar Regi√£o");
+			GFTextLine(gump2, 45,  85, 2100, "Deletar Regi„o");
 			GFAddButton(gump2, 20, 87, 2117, 2118, 1, 100);
-			GFTextLine(gump2, 45, 100, 2100, "Editar Regi√£o");
+			GFTextLine(gump2, 45, 100, 2100, "Editar Regi„o");
 			GFAddButton(gump2, 20, 102, 2117, 2118, 1, 200);
 			
 			var input2 := GFSendGump(who, gump2);
@@ -150,12 +150,12 @@ function regionsChoice(who)
 			
 			if (input2 == 100)
 				reagents.deleteelement(reagents.keys()[index]);
-				SendSysMessage(who, "Regi√£o deletada.");
+				SendSysMessage(who, "Regi„o deletada.");
 			elseif (input2 == 200)
 			
 				var groups := SelectGroups(who, elem.getprop("groups"));
 				var density := RequestGump(who, "Descreva a raridade para cada group adicionado anteriormente  (de 0 a 100)","",elem.getprop("density"));
-				var rect :=  RequestGump(who, "Qual o rect da regi√£o?","",elem.getprop("rect"));
+				var rect :=  RequestGump(who, "Qual o rect da regi„o?","",elem.getprop("rect"));
 				
 				elem.setprop("groups", groups);
 				elem.setprop("density", density);

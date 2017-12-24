@@ -17,7 +17,7 @@ program FillBalde(who, bucket)
 		return;
 	endif
 	
-	SendSysMessage(who, "Onde vocÃª deseja usar isto?");
+	SendSysMessage(who, "Onde você deseja usar isto?");
 	var targ := TargetCoordinates(who);
 	
 	if ( targ.mobile )
@@ -29,13 +29,13 @@ endprogram
 
 function GetWater(who, targ, bucket)
 	if ( !IsWater(targ) )
-		SendSysMessage(who, "Esta nÃ£o e uma boa fonte de agua!");
+		SendSysMessage(who, "Esta não e uma boa fonte de agua!");
 		return;
 	elseif ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 3 )
 		SendSysMessage(who, "O alvo esta muito distante.");
 		return;
 	elseif ( targ.movable == 0)
-		SendSysMessage(who, "VocÃª nÃ£o pode enxer baldes fixados no mapa.");
+		SendSysMessage(who, "Você não pode enxer baldes fixados no mapa.");
 		return;
 	endif
 
@@ -43,7 +43,7 @@ function GetWater(who, targ, bucket)
 	PlayStationaryEffect(targ.x, targ.y, targ.z, 13613, 10, 10, 1);
 	
 	var new_bucket;
-	SendSysMessage(who, "VocÃª encheu o balde com agua doce.");
+	SendSysMessage(who, "Você encheu o balde com agua doce.");
 	ReleaseItem(bucket);
 	new_bucket := FillBucket(bucket);
 

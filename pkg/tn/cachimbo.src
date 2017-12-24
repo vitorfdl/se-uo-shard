@@ -12,7 +12,7 @@ SendSysMessage( player, "Selecione o fumo:" );
 var targ := target(player);
 if (PodeFumar(targ))
 SetObjProperty (cachimbo, "preenchido", 1);
-SendSysMessage( player, "VocÃª colocou o fumo no cachimbo" );
+SendSysMessage( player, "Você colocou o fumo no cachimbo" );
 DestroyItem(targ);
 return;
 endif

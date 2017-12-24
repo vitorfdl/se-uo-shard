@@ -1,5 +1,5 @@
 /**
- * Lista de FunÃ§Ãµes
+ * Lista de Funções
  * GetBagList(who, materials := 0)
  * TruncatePlural(objtype, add_S := 0)
  * CreateItem(who, objtype, more:=0)
@@ -73,7 +73,7 @@ function CraftLockable(who, theitem)
 		endif
 
 		if (KP_IsLockable(theitem ))
-			var fechadura := YesNo(who, "VocÃª deseja por uma fechadura nesse item?");
+			var fechadura := YesNo(who, "Você deseja por uma fechadura nesse item?");
 			if (fechadura)
 				SendSysMessageEx(who, "Escolha a fechadura para por neste item.", SSM_REQUEST);
 				var targ := Target(who);
@@ -89,9 +89,9 @@ function CraftLockable(who, theitem)
 						var lockid := CInt(GetObjProperty(targ, "LockId"));
 						SetObjProperty(theitem, "LockId", lockid);
 						DestroyItem(targ);
-						SendSysMessageEx(who, "VocÃª instalou a fechadura com sucesso.", SSM_INFO);
+						SendSysMessageEx(who, "Você instalou a fechadura com sucesso.", SSM_INFO);
 					else
-						SendSysMessageEx(who, "Isto nÃ£o parece uma fechadura.", SSM_FAIL);
+						SendSysMessageEx(who, "Isto não parece uma fechadura.", SSM_FAIL);
 					endif
 				endif
 			endif
@@ -102,10 +102,10 @@ function doRepair(who, craft_skill, recipe_cfg)
    SendSysMessageEx(who, "Escolha o item para consertar..");
    var what := Target(who);
    if(what.movable == 0)
-      SendSysMessageEx(who, "VocÃª nÃ£o pode consertar isto.");
+      SendSysMessageEx(who, "Você não pode consertar isto.");
       return;
    elseif((!Accessible(who, what)) or (distance(who, what) > 2))
-      SendSysMessageEx(who, "VocÃª nÃ£o alcanca o item.");
+      SendSysMessageEx(who, "Você não alcanca o item.");
       return;
    endif
 
@@ -121,7 +121,7 @@ function doRepair(who, craft_skill, recipe_cfg)
 
    var recipe_elem := FindConfigElem(recipe_cfg, what.objtype);
    if (!recipe_elem) 
-      SendSysMessageEx(who, "VocÃª nÃ£o pode consertar isso.");	
+      SendSysMessageEx(who, "Você não pode consertar isso.");	
    endif
 
    var combatcfg  := ReadConfigFile(":combat:itemdesc");
@@ -149,13 +149,13 @@ function doRepair(who, craft_skill, recipe_cfg)
       if (req_found)
          found[group] := req_found;
       else 
-         SendSysMessageEx(who, "VocÃª precisa estar perto de um {} para fazer isso.".format(group), SSM_FAIL);
+         SendSysMessageEx(who, "Você precisa estar perto de um {} para fazer isso.".format(group), SSM_FAIL);
          return 1;
       endif
       sleepms(2);
    endforeach
 
-   var work_items := array{"Maquina de Costura", "Maquina de TensÃ£o", "Maquina de Marcenaria"};
+   var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Maquina de Marcenaria"};
    foreach work_item in work_items
       if (work_item in found.Keys())
          var machine := found[work_item];
@@ -174,12 +174,12 @@ function doRepair(who, craft_skill, recipe_cfg)
    SetName(what, GetObjProperty(what, "realdesc"));
   
    if(what.hp == what.maxhp)
-      SendSysMessageEx(who, "O item nÃ£o esta danificado.");
+      SendSysMessageEx(who, "O item não esta danificado.");
       return;
    endif
   
    if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-      SendSysMessageEx(who, "O fragil material quebrou quando vocÃª manipulou ele.");
+      SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
       DestroyItem(what);
       return;
    endif
@@ -192,13 +192,13 @@ function doRepair(who, craft_skill, recipe_cfg)
    what.quality -= damageamount;
 
    if(what.quality <= damageamount)
-      SendSysMessageEx(who, "O fragil material quebrou quando vocÃª manipulou ele.");
+      SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
       DestroyItem(what);
       return;
    endif
   
    if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-      SendSysMessageEx(who, "O fragil material quebrou quando vocÃª manipulou ele.");
+      SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
       DestroyItem(what);
       return;
    endif
@@ -225,16 +225,16 @@ function doRepair(who, craft_skill, recipe_cfg)
       if (thehp + repaired_amount > what.maxhp)
          what.hp := what.maxhp;
          EraseObjProperty(what, "swings");
-         SendSysMessageEx(who, "VocÃª consertou o item completamente.");
+         SendSysMessageEx(who, "Você consertou o item completamente.");
       else
          what.hp := thehp + repaired_amount;
-         SendSysMessageEx(who, "VocÃª consertou o item.");
+         SendSysMessageEx(who, "Você consertou o item.");
       endif
       who.SetAchievement("repair", 1);
       SetName( what, what.desc ); //Update the Item
       
       if ((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-         SendSysMessageEx(who, "O frÃ¡gil material quebrou quando vocÃª manipulou ele.");
+         SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
          DestroyItem(what);
          return;
       endif
@@ -244,7 +244,7 @@ function doRepair(who, craft_skill, recipe_cfg)
       
       if (thehp <= damage_amount)
          DestroyItem(what);
-         SendSysMessageEx(who, "VocÃª falhou e destruiu o item.");
+         SendSysMessageEx(who, "Você falhou e destruiu o item.");
       endif
       
       thehp := thehp - damage_amount;
@@ -256,15 +256,15 @@ function doRepair(who, craft_skill, recipe_cfg)
       
       if(thehp <= 0)
          DestroyItem(what);
-         SendSysMessageEx(who, "VocÃª falhou e destruiu o item.");
+         SendSysMessageEx(who, "Você falhou e destruiu o item.");
       else
-         SendSysMessageEx(who, "VocÃª falhou e danificou o item.");
+         SendSysMessageEx(who, "Você falhou e danificou o item.");
       endif
       
       SetName( what, what.desc ); //Update the Item
       
       if ((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-         SendSysMessageEx(who, "O fragil material quebrou quando vocÃª manipulou ele.");
+         SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
          DestroyItem(what);
          return;
       endif
@@ -293,7 +293,7 @@ function makeTinkeringItems(who, what, amt, tool)
 			var gems := dictionary;
 			var gemprop;
 			while(1)
-				if (YesNo(who, "VocÃª deseja incrustar alguma gema na joia?") )
+				if (YesNo(who, "Você deseja incrustar alguma gema na joia?") )
 					SendSysMessageEx(who, "Escolha a pedra preciosa.", SSM_REQUEST);
 					var gemtarg := target(who);
 					if (gemtarg.isGem())
@@ -317,7 +317,7 @@ function makeTinkeringItems(who, what, amt, tool)
 			if (gem)
 				SetupGemName(theitem, gems);
 				//sendsysmessageEx(who, " " + gems);
-				if (YesNo(who, "VocÃª deseja adicionar uma descricao na joia?") )
+				if (YesNo(who, "Você deseja adicionar uma descricao na joia?") )
 					AddItemDescription(who, theitem);
 				endif
 				increvision(theitem);
@@ -333,7 +333,7 @@ function makeTinkeringItems(who, what, amt, tool)
 			SetObjProperty(theitem, "LockId", lockid);
 			SetObjProperty(key, "LockId", lockid);
 			SetObjProperty(theitem, "level", lvl);
-			SendSysMessageEx(who, "VocÃª fez a fechadura e a chave.", SSM_INFO);
+			SendSysMessageEx(who, "Você fez a fechadura e a chave.", SSM_INFO);
 		// elseif ( theitem.objtype == 0x367a)
 		// 	SendSysMessageEx(who, "Escolha a pocao do gas venenoso.", SSM_REQUEST);
 		// 	var pot := Target(who);
@@ -359,7 +359,7 @@ function makeTinkeringItems(who, what, amt, tool)
 		// 			endif
 		// 			DestroyItem(pot);
 		// 		else
-		// 			SendSysMessageEx(who, "Esta nÃ£o e a pocao certa.", SSM_FAIL);
+		// 			SendSysMessageEx(who, "Esta não e a pocao certa.", SSM_FAIL);
 		// 			DestroyItem(theitem);
 		// 			return;
 		// 		endif
@@ -394,7 +394,7 @@ function makeTinkeringItems(who, what, amt, tool)
 		// 			endif
 		// 			DestroyItem(pot);
 		// 		else
-		// 			SendSysMEssageEx(who, "Esta nÃ£o e a pocao certa.", SSM_FAIL);
+		// 			SendSysMEssageEx(who, "Esta não e a pocao certa.", SSM_FAIL);
 		// 			DestroyItem(theitem);
 		// 			return;
 		// 		endif

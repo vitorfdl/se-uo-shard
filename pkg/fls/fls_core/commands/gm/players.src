@@ -147,11 +147,11 @@ function SendMessage(who, name_text, is_reply:=0)
 	endif
 	
 	if ( !can_msg )
-		SendSysMessage(who, name_text+" nÃ£o esta online.");
+		SendSysMessage(who, name_text+" não esta online.");
 		return 0;
 	endif
 	
-	var message_txt := RequestInput(who, who.backpack, "Qual mensagem vocÃª quer enviar para "+name_text+"? (esc para cancelar)");
+	var message_txt := RequestInput(who, who.backpack, "Qual mensagem você quer enviar para "+name_text+"? (esc para cancelar)");
 	if ( !message_txt )
 		SendSysMessage(who, "Cancelado.");
 		return 0;
@@ -160,7 +160,7 @@ function SendMessage(who, name_text, is_reply:=0)
 	foreach player in EnumerateOnlineCharacters()
 		if ( player.acctname == name_text )
 			SendSysMessage(player, "Mensagem da Staff: "+message_txt);
-			SendSysMessage(who, "VocÃª enviou uma mensagem para ["+player.name+"]: "+message_txt);
+			SendSysMessage(who, "Você enviou uma mensagem para ["+player.name+"]: "+message_txt);
 		endif
 		
 		SleepMS(2);

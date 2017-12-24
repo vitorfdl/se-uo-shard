@@ -14,7 +14,7 @@ function StartScript(mobile, attacker := 0, level := 0)
    var bonus_ca := cint(GetObjProperty(mobile, "bonus_ca"));
    bonus_ca += 1;
    SetObjProperty(mobile, "bonus_ca", bonus_ca);
-   SendSysmessageEx(mobile, "VocÃª estÃ¡ em posiÃ§Ã£o defensiva", SSM_INFO);
+   SendSysmessageEx(mobile, "Você está em posição defensiva", SSM_INFO);
    return 1;
 endfunction
 

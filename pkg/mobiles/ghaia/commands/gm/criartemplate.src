@@ -127,7 +127,7 @@ program command_NPCCreation( who, cmd )
 	// 	SendSysMessage( who, "Error cannot open <:ghaia:createNPC> --> "+config.errortext );
 	// 	return 0;
 	// endif
-	SendSysMessageUNI( who, "Testando l√£");
+	SendSysMessageUNI( who, "Testando l„");
 	
 	if (cmd)
 		npc_data := GetVariables(cmd);
@@ -394,7 +394,7 @@ function mainGump(who)
 	GFResizePic( gump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 450, 605 );
 	GFResizePic( gump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 420, 25 );
 	
-	GFTextMid( gump, 15, 17, 470, 1720, "Cria√ß√£o de Templates" );
+	GFTextMid( gump, 15, 17, 470, 1720, "CriaÁ„o de Templates" );
 	
 	GFResizePic( gump, 15, 45, GFCfgConst( "Defaults", "ForeGround" ), 420, 540 );
 	

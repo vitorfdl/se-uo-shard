@@ -18,7 +18,7 @@ program usaPergaminho(who, scroll)
 		var recipes := ReadConfigFile(":*:recipes");
 		var objtype := RequestGump(who, "Item objtype:");
 		if (!FindConfigElem(recipes, objtype) && !FindConfigElem(recipes, cint(objtype)) && !FindConfigElem(recipes, hex(objtype)))
-			SendSysMessageEx(who, "Receita para o objtype {} nÃ£o encontrado.".format(objtype), SSM_FAIL);
+			SendSysMessageEx(who, "Receita para o objtype {} não encontrado.".format(objtype), SSM_FAIL);
 			return;
 		endif
 
@@ -72,7 +72,7 @@ function SendGump(who, scroll)
 	if (cint(tilepic))
 		GFTilePic(gump, 127, 91, tilepic);
    else
-	   GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>Um kit lhe permite aprender vÃ¡rias");
+	   GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>Um kit lhe permite aprender várias");
 	   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>receitas de uma vez");
 	endif
 
@@ -81,7 +81,7 @@ function SendGump(who, scroll)
 		var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
 		var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
 		if (!FindConfigElem(book_recipes, objtype))
-			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>VocÃª ainda deve ler esse pergaminho {} vezes".format(remain_charges));
+			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(remain_charges));
 			if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
 				GFTextLine(gump, 205, 182, 995, "Aprender");
 				GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
@@ -91,7 +91,7 @@ function SendGump(who, scroll)
 			GFHTMLArea(gump, 150, 182, 180, 20, "<BASEFONT SIZE=2><CENTER>Restam {} leituras.".format(remain_charges));
 		endif
 	else
-		GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>VocÃª jÃ¡ aprendeu esta receita.");
+		GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");
 	endif
 
 	if (who.cmdlevel >= 4)

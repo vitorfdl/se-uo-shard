@@ -365,9 +365,9 @@ function CheckTimerStatus(mobile, byref timer_list, byref cooldowns, byref num_p
 		endif
 
 		if ( Cint(cfg_info.StopOnEnd) )
-			//printtextabove(mobile, "nÃ£o stop on end " + timer);
+			//printtextabove(mobile, "não stop on end " + timer);
 			if ( !GetProcess(timer.pid) )
-				//printtextabove(mobile, "nÃ£o get process " + timer);
+				//printtextabove(mobile, "não get process " + timer);
 				var event := struct;
 				event.+name := _timer_iter;
 				event.+amount := -1;
@@ -394,7 +394,7 @@ function LowerDuration(mobile, byref event, byref timer_list, byref cooldowns, b
 	if (event.timerType == EVENT_TYPE_COOLDOWN)
 		var timer_info := cooldowns[event.name];
 
-		// SendSysMessageEx(mobile, "VocÃª pode usar " + event.name + " novamente.", SSM_INFO);
+		// SendSysMessageEx(mobile, "Você pode usar " + event.name + " novamente.", SSM_INFO);
 
 		if ( event.amount == -1 )
 			var e := cooldowns.Erase(event.name);

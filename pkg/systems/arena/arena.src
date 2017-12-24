@@ -137,13 +137,13 @@ function DoBasicPVMBattle (character, arena_stone)
 	sleep(5);
 	while (1)
 		if (!character or !character.ip or character.dead or LeftTheArena (character))
-			SendSysMessage (character, "Boa sorte na prÃ³xima vez.");
+			SendSysMessage (character, "Boa sorte na próxima vez.");
 			MoveObjectToLocation( character.ghost, 1389, 1384, 1);
 			KillNPC (opponent);
 			return;
 		endif
 		if (!opponent or opponent.dead or LeftTheArena (opponent))
-			PrintText (character, "ParabÃ©ns! VocÃª venceu!");
+			PrintText (character, "Parabéns! Você venceu!");
 			KillNPC (opponent);
 			return;
 		endif
@@ -168,11 +168,11 @@ function DoBasicPVPBattle (character, arena_stone)
 		return;
 	endif
 	if (!opponent.acctname)
-		SendSysMessage (character, "Isso nÃ£o e um jogador!");
+		SendSysMessage (character, "Isso não e um jogador!");
 		return;
 	endif
 	if (opponent.dead)
-		SendSysMessage (character, "Ele nÃ£o poder aceitar o desafio, considerando que esta morto..");
+		SendSysMessage (character, "Ele não poder aceitar o desafio, considerando que esta morto..");
 		return;
 	endif
 	if (opponent == character)
@@ -182,7 +182,7 @@ function DoBasicPVPBattle (character, arena_stone)
 
 	SendSysMessage (character, "Desafiando oponente:");
 	SendSysMessage (opponent, character.name + " te desafiou para um duelo.");
-	if (!YesNo (opponent,  character.name + " Te desafiou. Deseja Aceitar?", "Sim","NÃ£o"))
+	if (!YesNo (opponent,  character.name + " Te desafiou. Deseja Aceitar?", "Sim","Não"))
 		SendSysMessage (character, "seu oponente recusou o duelo.");
 		return;
 	endif
@@ -199,13 +199,13 @@ function DoBasicPVPBattle (character, arena_stone)
 	
 	while (1)
 		if (!character or !character.ip or character.dead or LeftTheArena (character))
-			PrintText (opponent, "ParabÃ©ns! VocÃª venceu!");
+			PrintText (opponent, "Parabéns! Você venceu!");
 			SendSysMessage (character, "Boa sorte na proxima vez.");
 			MoveObjectToLocation( character.ghost, 1389, 1384, 1);
 			return;
 		endif
 		if (!opponent or !opponent.ip or opponent.dead or LeftTheArena (opponent))
-			PrintText (character, "ParabÃ©ns! VocÃª venceu!");
+			PrintText (character, "Parabéns! Você venceu!");
 			SendSysMessage (opponent, "Boa sorte na proxima vez.");
 			MoveObjectToLocation( opponent.ghost, 1389, 1384, 1);
 			return;

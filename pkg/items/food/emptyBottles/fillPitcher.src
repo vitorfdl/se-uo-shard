@@ -9,7 +9,7 @@ program fillpitcher (who, pitcher)
     return;
   endif
   ReserveItem(pitcher);
-  SendSysMessage(who, "Com o que vocÃª quer encher o recipiente?", FONT_NORMAL, 90);
+  SendSysMessage(who, "Com o que você quer encher o recipiente?", FONT_NORMAL, 90);
   var targetted := TargetCoordinates(who);
   if(!targetted)
     SendSysMessage(who, "Cancelado.", FONT_NORMAL, 90);
@@ -19,7 +19,7 @@ program fillpitcher (who, pitcher)
 //    return;
 //  endif
   if(!check_accessible(who, targetted.x, targetted.y, targetted.z))
-    SendSysMessage(who,"VocÃª nÃ£o alcanca.", FONT_NORMAL, 90);
+    SendSysMessage(who,"Você não alcanca.", FONT_NORMAL, 90);
     return;
   endif
   if(check_for_water(targetted))
@@ -31,7 +31,7 @@ program fillpitcher (who, pitcher)
     DestroyItem(pitcher);
     CreateItemInBackpack(who, 0x09ad, 1);
   else
-    SendSysMessage(who,"VocÃª nÃ£o pode encher o recipiente aqui.", FONT_NORMAL, 90);
+    SendSysMessage(who,"Você não pode encher o recipiente aqui.", FONT_NORMAL, 90);
     return;
   endif
 endprogram

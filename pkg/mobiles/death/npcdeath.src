@@ -156,7 +156,7 @@ function NoLootCheck(corpse, npc_cfg)
 		sleepms(2);
 	endforeach
 	//printtextabove(corpse, "no loot check");
-	//no loot  n√£o destroi o corpo, so NoCorpse
+	//no loot  n„o destroi o corpo, so NoCorpse
 	//DestroyItem(corpse);
 	
 	return 1;

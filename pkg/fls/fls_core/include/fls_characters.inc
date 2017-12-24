@@ -88,12 +88,12 @@ function maolivre(mobile, qtd, checkmount := 1)
 
 	if (qtd == 1)
 		if (rightHand && leftHand)
-			SendSysMessageEx(mobile, "VocÃª precisa de uma mÃ£o livre.", SSM_INFO);
+			SendSysMessageEx(mobile, "Você precisa de uma mão livre.", SSM_INFO);
 	    		return 0;
 		endif
 	elseif (qtd == 2)
 		if (rightHand || leftHand)
-			SendSysMessageEx(mobile, "VocÃª precisa das duas mÃ£os livres.", SSM_INFO);
+			SendSysMessageEx(mobile, "Você precisa das duas mãos livres.", SSM_INFO);
 	    		return 0;
 		endif
 	endif
@@ -102,7 +102,7 @@ function maolivre(mobile, qtd, checkmount := 1)
 		var mounted := GetEquipmentByLayer(mobile, 0x19);
 
 		if (mounted)
-			SendSysMessageEx(mobile, "VocÃª nÃ£o pode fazer isto montado.", SSM_INFO);
+			SendSysMessageEx(mobile, "Você não pode fazer isto montado.", SSM_INFO);
 			return 0;
 		endif
 	endif

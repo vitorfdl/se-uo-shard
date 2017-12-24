@@ -10,14 +10,14 @@ include ":timedScripts:timedScripts";
 program usenarguile(who, item)
 	if (item.objtype == 0x9958)
 
-		Sendsysmessage(who, "Escolha a base de Narguile que vocÃª vai preencher com a erva mentolada",3,191);
+		Sendsysmessage(who, "Escolha a base de Narguile que você vai preencher com a erva mentolada",3,191);
 		var narguile := target(who);
 		if (!narguile)
 			return 0;
 		endif
 
 		if (narguile.objtype == 0x9959)
-			Sendsysmessage(who, "VocÃª deve preencher a base do Narguile com a Erva!",3,28);
+			Sendsysmessage(who, "Você deve preencher a base do Narguile com a Erva!",3,28);
 		endif
 		
 		if (narguile.objtype == 0x9956)
@@ -35,12 +35,12 @@ program usenarguile(who, item)
 	if (item.objtype == 0x9956)
 		var replace;
 		if (Getobjproperty(item, "tragadas") == 0)
-			Sendsysmessage(who, "Esse Narguile nÃ£o possui ervas para tragar",3,28);
+			Sendsysmessage(who, "Esse Narguile não possui ervas para tragar",3,28);
 			return 0;
 		endif
 
 		if (!Getobjproperty(item, "tragadas"))
-			Sendsysmessage(who, "Esse Narguile nÃ£o possui ervas para tragar",3,28);
+			Sendsysmessage(who, "Esse Narguile não possui ervas para tragar",3,28);
 			return 0;
 		endif
 
@@ -55,7 +55,7 @@ program usenarguile(who, item)
 		endforeach
 
 		if (x == 0)
-			Sendsysmessage(who, "VocÃª precisa do Narguile para tragar a erva",3,28);
+			Sendsysmessage(who, "Você precisa do Narguile para tragar a erva",3,28);
 			return 0;
 		endif
 

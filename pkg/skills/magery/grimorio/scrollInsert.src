@@ -47,7 +47,7 @@ function addScroll(who, book, scroll)
 	endif
 	
 	if (!spell_id)
-		SendSysMessageEx(who, "Este nÃ£o parece um pergaminho de magia.", SSM_FAIL);
+		SendSysMessageEx(who, "Este não parece um pergaminho de magia.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	elseif( spell_list.Size() > 15 )
@@ -70,7 +70,7 @@ function addScroll(who, book, scroll)
 
 	SetObjProperty(book, "spells", spell_list);
 
-	SendSysMessageEx(who, "VocÃª adicionou o pergaminho no livro.", SSM_INFO);
+	SendSysMessageEx(who, "Você adicionou o pergaminho no livro.", SSM_INFO);
 	ReleaseItem(scroll);
 	DestroyItem(scroll);
 	Set_Critical(0);

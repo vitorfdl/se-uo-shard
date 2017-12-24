@@ -9,10 +9,10 @@ include ":mounts:mounts";
 program cabelo(who)
 
 	if (who.hidden)
-		SendSysMessageEx(who, "VocÃª nÃ£o pode fazer isso escondido.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode fazer isso escondido.", SSM_FAIL);
 		return 0;
 	elseif (GetEquipmentByLayer(who, 0x19))
-		SendSysMessageEx(who, "VocÃª nÃ£o consegue fazer isso montado.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não consegue fazer isso montado.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -24,7 +24,7 @@ program cabelo(who)
 	endif
 
 	if (CoordinateDistance(who.x, who.y, targ.x, targ.y) > 1 || abs(who.z-targ.z) > 10)
-		SendSysMessageEx(who, "VocÃª esta muito longe disto.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito longe disto.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -40,7 +40,7 @@ program cabelo(who)
 
 	if (grafico IN {947, 948, 949, 2101, 2102, 2103, 2140, 2141, 2142, 2143, 2144, 2145, 2146, 2147, 2148, 2149, 2167, 2168, 2186, 2187, 8657, 8658, 8659, 8660})
 		if (GetVital(who, "Stamina") < GetVitalMaximumValue(who, "Stamina"))
-			SendSysMessageEx(who, "VocÃª precisa estar bastante disposto para fazer isto.", SSM_FAIL);
+			SendSysMessageEx(who, "Você precisa estar bastante disposto para fazer isto.", SSM_FAIL);
 			return 0;
 		endif
 		SetVital(who, "Stamina", 0);
@@ -51,7 +51,7 @@ program cabelo(who)
 		MoveObjectToLocation(who, targ.x, targ.y, targ.z, who.realm, MOVEOBJECT_FORCELOCATION);
 		PrintText(who, "*pulou a cerca*");
 	else
-		SendSysMessageEx(who, "VocÃª nÃ£o pode pular isto.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode pular isto.", SSM_FAIL);
 		return 0;
 	endif
 

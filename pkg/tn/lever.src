@@ -210,7 +210,7 @@ endfunction
 
 function SetElevator(who, item)
 
-	var maxz := Cint(RequestGump(who, "Qual o valor que vocÃª deseja subir ou descer os itens"));
+	var maxz := Cint(RequestGump(who, "Qual o valor que você deseja subir ou descer os itens"));
 	
 	if (!maxz)
 		SendSysMessage(who, "Cancelado");
@@ -354,7 +354,7 @@ function doElevator(who, item)
 	var startz := 0;
 	var items := GetObjProperty(item, "items");
 	if (items == error)
-		SendSysMessage(who, "nÃ£o foi possivel localizar os itens");
+		SendSysMessage(who, "não foi possivel localizar os itens");
 		return;
 	endif
 	
@@ -437,10 +437,10 @@ function trappedswitch(who, item, mid, stt, snd)
   case (traptype)
     1:   PlaySoundEffect(who, 0x0224);
          var dmg :=(RandomInt(20) + CInt(trapstrength));
-         PrintTextAbovePrivate(who, "VocÃª ativou uma armadilha de dardos!", who);
+         PrintTextAbovePrivate(who, "Você ativou uma armadilha de dardos!", who);
          DamageFLS(who, dmg);
     2:   PlaySoundEffect(who, 0x0232);
-         PrintTextAbovePrivate(who, "VocÃª ativou uma armadilha de gas venenoso!", who);
+         PrintTextAbovePrivate(who, "Você ativou uma armadilha de gas venenoso!", who);
          PlayObjectCenteredEffect( who, FX_POISON_GAS, 10,10);
 		 var range := 3;
 		 var poisonLvl := 2;
@@ -450,7 +450,7 @@ function trappedswitch(who, item, mid, stt, snd)
 
 			 if (!mobile.npctemplate)
 		 		 if (CheckResist(mobile, STRENGTH))
-		 			 SendSysMessageEx(mobile, "VocÃª resistiu ao veneno.", SSM_INFO);
+		 			 SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
 		 			 continue;
 		 		 else
 		 			 TS_StartTimer(mobile, "defaultPoison", 120, poisonLvl);
@@ -460,7 +460,7 @@ function trappedswitch(who, item, mid, stt, snd)
 		 endforeach
 		 
     3:   PlaySoundEffect(who, 0x0208);
-         PrintTextAbovePrivate(who, "VocÃª ativou uma armadilha explosiva!", who);
+         PrintTextAbovePrivate(who, "Você ativou uma armadilha explosiva!", who);
          PlayObjectCenteredEffect( who, FX_EXPLODE_3, 10,10);
          var dmg :=(RandomInt(20) + CInt(trapstrength));
          DamageFLS(who, dmg);

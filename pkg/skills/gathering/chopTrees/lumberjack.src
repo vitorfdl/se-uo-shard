@@ -17,7 +17,7 @@ include "include/sounds";
 program skill_LumberJack(who,tool)
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
-	SendSysMessageEx(who, "Escolha a Ã¡rvore para cortar.", SSM_REQUEST);
+	SendSysMessageEx(who, "Escolha a árvore para cortar.", SSM_REQUEST);
 	var targ := TargetCoordinates(who);
 	
 	if ( !targ )
@@ -31,7 +31,7 @@ program skill_LumberJack(who,tool)
 	endif
 
 	if ( !LJ_IsTree(targ.objtype) )
-		SendSysMessageEx(who, "Isto nÃ£o e uma Ã¡rvore.", SSM_FAIL);
+		SendSysMessageEx(who, "Isto não e uma árvore.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -43,7 +43,7 @@ program skill_LumberJack(who,tool)
 	//SendSysMessage(who," e" + CanChop(who, tool, targ,  orig_x, orig_y));
 	while(CanChop(who, tool, targ,  orig_x, orig_y) )
 		if ( AP_GetVital(who, "Stamina") <= 2)
-			SendSysMessageEx(who, "VocÃª esta muito cansado para continuar.", SSM_FAIL);
+			SendSysMessageEx(who, "Você esta muito cansado para continuar.", SSM_FAIL);
 			break;
 		endif
 		ChopTree(who, tool, targ, orig_x, orig_y);
@@ -51,12 +51,12 @@ program skill_LumberJack(who,tool)
 		CheckToolWear(who, tool, EXTRACAO );
 		sleep(1);
 		if (LJ_GetWoodAmount(who.realm, targ.x, targ.y)== 0 )
-			PrinttextAbove(who, "*derruba a Ã¡rvore*");
+			PrinttextAbove(who, "*derruba a árvore*");
 			break;
 		endif
 	endwhile
 
-	SendSysMessageEx(who, "VocÃª parou de cortar a Ã¡rvore.", SSM_INFO);
+	SendSysMessageEx(who, "Você parou de cortar a árvore.", SSM_INFO);
 endprogram
 
 function ChopTree(who, tool, targ, orig_x, orig_y)
@@ -113,41 +113,41 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 		endif
 		var item := CreateItemInBackPack(who, cint(wood_type), 1);
 		if ( item.errortext )
-			SendSysMessageEx(who, "NÃ£o foi possivel criar: "+wood_type+" ->"+item.errortext);
+			SendSysMessageEx(who, "Não foi possivel criar: "+wood_type+" ->"+item.errortext);
 			return 0;
 		else
 			who.SetAchievement("choptree", 1);
 			ExpGain(who, difficulty, dice_roll);
-			SendSysMessageEx(who, "VocÃª colocou a madeira na sua mochila.");
+			SendSysMessageEx(who, "Você colocou a madeira na sua mochila.");
 			return 1;
 		endif
 	endif
 
-	SendSysMessageEx(who, "VocÃª Ã© incapaz de conseguir madeira usavel dessa Ã¡rvore.", SSM_FAIL);
+	SendSysMessageEx(who, "Você é incapaz de conseguir madeira usavel dessa árvore.", SSM_FAIL);
 	return 0;
 endfunction
 
 function CanChop(who, axe, targ, orig_x, orig_y)
 	if ( who.hidden )
-		SendSysMessageEx(who, "VocÃª parou de cortar a Ã¡rvore para ficar escondido.", SSM_INFO);
+		SendSysMessageEx(who, "Você parou de cortar a árvore para ficar escondido.", SSM_INFO);
 		return 0;
 	elseif ( who.x != orig_x || who.y != orig_y )
-		SendSysMessageEx(who, "VocÃª parou de cortar a Ã¡rvore.", SSM_INFO);
+		SendSysMessageEx(who, "Você parou de cortar a árvore.", SSM_INFO);
 		return 0;
         elseif ( !IsFacing(who, targ.x, targ.y)  )
-               SendSysMessageEx(who, "VocÃª precisa estar virado para a Ã¡rvore.", SSM_INFO);
+               SendSysMessageEx(who, "Você precisa estar virado para a árvore.", SSM_INFO);
                return 0;
 	elseif ( !(axe in ListEquippedItems(who)) )
-		SendSysMessageEx(who, "VocÃª parou de cortar a Ã¡rvore.", SSM_INFO);
+		SendSysMessageEx(who, "Você parou de cortar a árvore.", SSM_INFO);
 		return 0;
 	elseif ( LJ_GetWoodAmount(who.realm, targ.x, targ.y) <= 0 )
-		SendSysMessageEx(who, "Esta Ã¡rvore ja esta derrubada.", SSM_FAIL);
+		SendSysMessageEx(who, "Esta árvore ja esta derrubada.", SSM_FAIL);
 		return 0;
 	elseif ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessageEx(who, "VocÃª nÃ£o pode cortar Ã¡rvore montado.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode cortar árvore montado.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, targ) > 1 )
-		SendSysMessageEx(who, "VocÃª nÃ£o pode cortar de tÃ£o longe.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode cortar de tão longe.", SSM_FAIL);
 		return 0;
 	endif
 	return 1;

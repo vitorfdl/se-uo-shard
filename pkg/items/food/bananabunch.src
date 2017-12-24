@@ -10,7 +10,7 @@ program bananabunch(who, bunch)
 	elseif (bunch.objtype == 0x1722)
 		fruit := 0x171f;
 	endif
-	SendSysMessage(who, "VocÃª arrancou as bananas.");
+	SendSysMessage(who, "Você arrancou as bananas.");
 	playsoundeffect (who, 0x5a);
 	Sleep(1);
 	playsoundeffect (who, 0x5a);

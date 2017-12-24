@@ -29,7 +29,7 @@ program oafeatures_sendpacket(who, text)
    // PrintText(who, GetHP(who));
    // var item := GetEquipmentByLayer(who, LAYER_HAIR);
    // item.color := cint(text);
-   // var test := LearnFeat(who, "Linguagem Élfica", 0);
+   // var test := LearnFeat(who, "Linguagem �lfica", 0);
    // sendsysmessageex(who, ""+test);
    // var item := TargetCoordinates(who);
    // var face := GetFacing(who.x, who.y, item.x, item.y);
@@ -52,7 +52,7 @@ program oafeatures_sendpacket(who, text)
    // Print(targ.my_template() );
 
 	// GFGumpPic(gump, 11, 29, 40009, 0); //borders
-	// GFTextLine(gump, 319, 34, 0, "Vendedor de PoÃ§Ãµes");
+	// GFTextLine(gump, 319, 34, 0, "Vendedor de Poções");
 
    // var i;
    // var x := 48;

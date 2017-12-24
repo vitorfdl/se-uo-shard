@@ -33,10 +33,10 @@ program trapScript(params)
 	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, 3, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL, object.realm);
 	foreach mobile in mobiles
 		if (!mobile.master)
-			SendSysMessageEx(mobile, "VocÃª foi atingido por uma armadilha de dardos.", SSM_FAIL);
+			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha de dardos.", SSM_FAIL);
 
 			if (rollResistDice(mobile, DEXTERITY) >= diff)
-            SendSysMessageEx(mobile, "VocÃª evitou parte do dano da armadilha.", SSM_INFO);
+            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
             SendSystemReport(mobile, "*esquivou*", SSM_FAIL, "all");
             dmgfinal := CInt(dmgfinal * 0.5);
 			endif	

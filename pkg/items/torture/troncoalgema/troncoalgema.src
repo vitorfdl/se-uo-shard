@@ -12,7 +12,7 @@ program troncoAlgema(who, item)
 	endif
 
 	if (KP_HasKeyForLock(who, item))
-		SendSysMessageEx(who,"Quem vocÃª deseja prender?",SSM_REQUEST);
+		SendSysMessageEx(who,"Quem você deseja prender?",SSM_REQUEST);
 		var targ := Target(who);
 		
 		if (!targ)
@@ -26,7 +26,7 @@ program troncoAlgema(who, item)
 		endif
 			
 		if (!targ.ip) // Se for player e tiver on
-			SendSysMessage(who, "VocÃª nÃ£o pode algemar isto.");
+			SendSysMessage(who, "Você não pode algemar isto.");
 			return 0;
 		endif
 
@@ -47,7 +47,7 @@ program troncoAlgema(who, item)
 			PlaySoundEffect(targ,0x04B);
 			SetName(targ, targ.name + " [ALGEMADO AO POSTE]" );
 		else
-			var ok := YesNo(who, "VocÃª deseja soltar "+targ.name+"?" , "Sim.", "Nao.");
+			var ok := YesNo(who, "Você deseja soltar "+targ.name+"?" , "Sim.", "Nao.");
 			if (ok)
 				EraseObjProperty(targ,"algemado");
 				targ.frozen := 0;
@@ -60,7 +60,7 @@ program troncoAlgema(who, item)
 			endif
 		endif
 	else
-		SendSysMessageEx(who, "VocÃª nÃ£o possui a chave para abrir as algemas",SSM_FAIL );
+		SendSysMessageEx(who, "Você não possui a chave para abrir as algemas",SSM_FAIL );
 		return 0;
 	endif
 

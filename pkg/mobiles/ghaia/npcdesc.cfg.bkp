@@ -16381,38 +16381,38 @@ NPCTemplate Ghost
 	// CProps (eww!)
 	Cprop ignoredoor i1
 	
-	InitCombatSpeech NÃ£o preciso de uma palavra para a minha defesa
+	InitCombatSpeech Não preciso de uma palavra para a minha defesa
 	InitCombatSpeech O homem perde o poder quando e contagiado pelo sentimento de piedade
 	InitCombatSpeech A piedade opoe-se completamente a lei da evolucao
 	InitCombatSpeech A desigualdade dos direitos e a primeira condicao para que haja direitos
 	InitCombatSpeech Toda companhia e ma, exceto a companhia dos iguais
 	InitCombatSpeech Independencia e algo para bem poucos: - e prerrogativa dos fortes
-	InitCombatSpeech E necessaria a ferrugem: nÃ£o basta ser afiado!
-	InitCombatSpeech NÃ£o te enchas de ar: a menor picadela te esvaziaria
-	InitCombatSpeech Quem nÃ£o se mete medo nÃ£o consegue mete-lo a ninguem
+	InitCombatSpeech E necessaria a ferrugem: não basta ser afiado!
+	InitCombatSpeech Não te enchas de ar: a menor picadela te esvaziaria
+	InitCombatSpeech Quem não se mete medo não consegue mete-lo a ninguem
 	InitCombatSpeech Odeio seguir alguem, como tambem conduzir
 	InitCombatSpeech Obedecer? Nao! E governar, nunca!
 	InitCombatSpeech A exigencia de ser amado e a maior das pretensoes
 	InitCombatSpeech E preciso ter um caos dentro de si para dar a luz uma estrela cintilante
 	InitCombatSpeech E preciso honrar no amigo o inimigo
-	InitCombatSpeech NÃ£o vos aconselho o trabalho, mas a luta.
-	InitCombatSpeech NÃ£o vos aconselho a paz, mas a vitoria!
-	InitCombatSpeech E escravo? Entao nÃ£o podes ser amigo.
-	InitCombatSpeech Es tirano? Entao nÃ£o podes ter amigos.
+	InitCombatSpeech Não vos aconselho o trabalho, mas a luta.
+	InitCombatSpeech Não vos aconselho a paz, mas a vitoria!
+	InitCombatSpeech E escravo? Entao não podes ser amigo.
+	InitCombatSpeech Es tirano? Entao não podes ter amigos.
 
 	diespeech Existem alturas da alma, de onde mesmo a tragedia deixa de ser tragica
-	diespeech Quanto sangue e quanto horror hÃ¡ no fundo de todas as 'coisas boas'
-	diespeech NÃ£o poderia haver felicidade, jovialidade, esperanca, orgulho, presente, sem o esquecimento
+	diespeech Quanto sangue e quanto horror há no fundo de todas as 'coisas boas'
+	diespeech Não poderia haver felicidade, jovialidade, esperanca, orgulho, presente, sem o esquecimento
 	diespeech O espirito livre respirara sempre.
 	diespeech A solidao o cerca e o envolve, sempre mais ameacadora, mais estranguladora, mais pungente
 	diespeech Mas quem sabe hoje o que e a solidao?
 	diespeech Na vinganca e no amor, a mulher e mais barbara que o homem
-	diespeech Quem combate monstruosidades deve cuidar para que nÃ£o se torne uma
+	diespeech Quem combate monstruosidades deve cuidar para que não se torne uma
 	diespeech O que se faz por amor sempre acontece alem do bem e do mal
 	diespeech Abandono muitas coisas... Deixo-as correr ao acaso
 	diespeech Atrair-me a mim proprio... de volta para mim
 	diespeech A felicidade corre atras de mim
-	diespeech NÃ£o hÃ¡ factos eternos, como nÃ£o hÃ¡ verdades absolutas
+	diespeech Não há factos eternos, como não há verdades absolutas
 }
 
 NPCTemplate Mummy
@@ -27397,7 +27397,7 @@ NPCTemplate Destruidor
 	InitCombatSpeech Inicializando protocolos ofensivos.
 	InitCombatSpeech Intrusos detectados.
 	InitCombatSpeech Diretiva: Encontrar e destruir.
-	InitCombatSpeech Afirmacao: VocÃªs nÃ£o tem chance.
+	InitCombatSpeech Afirmacao: Vocês não tem chance.
 	InitCombatSpeech Afirmacao: Resistencia eh futil.
 
 	diespeech Aviso: Falha critica no reator. Autodestruicao iniciada.
@@ -27491,7 +27491,7 @@ NPCTemplate Hibrido
 	InitCombatSpeech Inicializando protocolos ofensivos.
 	InitCombatSpeech Seu desespero eh doce.
 	InitCombatSpeech Por que resistir ao inevitavel?
-	InitCombatSpeech VocÃªs nÃ£o tem chance. Resistencia eh futil.
+	InitCombatSpeech Vocês não tem chance. Resistencia eh futil.
 
 	diespeech Aviso: A carne pode ser fraca, mas o metal permanece.
 	diespeech Mesmo que eu morra, eu sangue regara a terra.
@@ -28010,7 +28010,7 @@ NPCTemplate arara
 NPCTemplate verme1
 {
 	// Primary NPC settings
-	Name			Verme da CarnÃ¯Â¿Â½voro
+	Name			Verme da Carnï¿½voro
 	Script			:ghaia:generic
 	ObjType			732
 	Color			0
@@ -28082,7 +28082,7 @@ NPCTemplate verme1
 NPCTemplate verme2
 {
 	// Primary NPC settings
-	Name			Verme da CarnÃ¯Â¿Â½voro
+	Name			Verme da Carnï¿½voro
 	Script			:ghaia:generic
 	ObjType			287
 	Color			0
@@ -29399,9 +29399,9 @@ NPCTemplate VendhorgerWarrior
 	
 	InitCombatSpeech Hora de pilhar, rapazes!!
 	InitCombatSpeech Bodot vai gostar de te ver!
-	InitCombatSpeech Vou abrir seu traseiro ao meio, e nÃ£o vai ser com meu machado!!
+	InitCombatSpeech Vou abrir seu traseiro ao meio, e não vai ser com meu machado!!
 	InitCombatSpeech Harrr!! Vou vestir sua pele como casaco!!
-	InitCombatSpeech Perto dos Dragoes, vocÃª nÃ£o eh desafio!
+	InitCombatSpeech Perto dos Dragoes, você não eh desafio!
 	InitCombatSpeech HARHARHAR!! O FALMOND LHE AGUARDA!!
 	InitCombatSpeech Venha! Vamos nos matar antes que o Vendhorg faca isso!
 
@@ -29489,9 +29489,9 @@ NPCTemplate VendhorgerBerserker
 
 	InitCombatSpeech Hora de pilhar, rapazes!!
 	InitCombatSpeech Bodot vai gostar de te ver!
-	InitCombatSpeech Vou abrir seu traseiro ao meio, e nÃ£o vai ser com meu machado!!
+	InitCombatSpeech Vou abrir seu traseiro ao meio, e não vai ser com meu machado!!
 	InitCombatSpeech Harrr!! Vou vestir sua pele como casaco!!
-	InitCombatSpeech Perto dos Dragoes, vocÃª nÃ£o eh desafio!
+	InitCombatSpeech Perto dos Dragoes, você não eh desafio!
 	InitCombatSpeech HARHARHAR!! O FALMOND LHE AGUARDA!!
 	InitCombatSpeech Venha! Vamos nos matar antes que o Vendhorg faca isso!
 

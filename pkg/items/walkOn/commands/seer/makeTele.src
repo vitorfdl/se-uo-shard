@@ -78,7 +78,7 @@ program command_MakeTele(who)
 		dest_a.z := CInt(GFExtractData(input, A_ZCOORD_TXT));
 
 /*		if ( !CreateTeleTile(who, who.realm, who.x, who.y, who.z, dest_a) )
-			SendSysMessage(who, "NÃ£o criou essa porra no who.x, who.y, who.z.");
+			SendSysMessage(who, "Não criou essa porra no who.x, who.y, who.z.");
 			return 0;
 		endif*/
 		
@@ -91,7 +91,7 @@ program command_MakeTele(who)
 		
 		if ( dest_b.realm && dest_b.x && dest_b.y )
 			if ( !CreateTeleTile(who, dest_a.realm, dest_a.x, dest_a.y, dest_a.z, dest_b) )
-				SendSysMessage(who, "NÃ£o criou essa porra no destino.");
+				SendSysMessage(who, "Não criou essa porra no destino.");
 				return 0;
 			else
 				SendSysMessage(who, "Two way teleporter setup completed.");

@@ -9,7 +9,7 @@ program targetHeal(info)
    info := 0;
 
    SetObjProperty(mobile, "cleric_spell", targ.serial);
-   SendSystemReport(mobile, "Alvo selecionado para benÃ§Ã£o de cura.");
+   SendSystemReport(mobile, "Alvo selecionado para benção de cura.");
    SendSystemReport(targ, "Recebendo cura de "+mobile.name);
    return 1;
 endprogram

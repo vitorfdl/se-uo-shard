@@ -33,7 +33,7 @@ if ((moedas.objtype == 0xba63) || (moedas.objtype == 0xba64) || (moedas.objtype 
 	GFTextLine(gump, 50, 120, 1153, "Moedas de Cobre");
 
 	GFAddButton(gump, 250-70, 130, 4502, 4502, 1, 999 );
-	GFTextLine(gump, 50, 145, 800, "Confirmar transaÃ§Ã£o.");
+	GFTextLine(gump, 50, 145, 800, "Confirmar transação.");
 
 	var escolha:=GFSendGump(who,gump);
 	if (1 in escolha.keys) //prata
@@ -49,7 +49,7 @@ if ((moedas.objtype == 0xba63) || (moedas.objtype == 0xba64) || (moedas.objtype 
 				SendSysMessage(who,"Quantidade insuficiente para troca.");
 			endif
 		elseif (moedas.objtype == 0xba64) //prata
-			SendSysMessage(who,"NÃ£o foi possivel realizar a troca");
+			SendSysMessage(who,"Não foi possivel realizar a troca");
 		elseif (moedas.objtype == 0xba65) //ouro
 			calculo:= moedas.amount * 10;
 			DestroyItem(moedas);
@@ -81,14 +81,14 @@ if ((moedas.objtype == 0xba63) || (moedas.objtype == 0xba64) || (moedas.objtype 
 				SendSysMessage(who,"Quantidade insuficiente para troca.");
 			endif
 		elseif (moedas.objtype == 0xba65) // Ouro
-			SendSysMessage(who,"NÃ£o foi possivel realizar a troca");
+			SendSysMessage(who,"Não foi possivel realizar a troca");
 		else	
 			return 0;
 		endif
 
     elseif (3 in escolha.keys)//cobre
 		if (moedas.objtype == 0xba63) // cobre
-			SendSysMessage(who,"NÃ£o foi possivel realizar a troca");
+			SendSysMessage(who,"Não foi possivel realizar a troca");
 		elseif (moedas.objtype == 0xba64) // prata
 			calculo:=moedas.amount * 10;
 			DestroyItem(moedas);

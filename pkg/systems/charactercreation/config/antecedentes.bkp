@@ -1,10 +1,10 @@
 
 Antecedente Hessatar
 {
-    Desc VocÃª entrou na igreja de Anar e conhece suas morais e normas. Anar Ã© um deus poderoso e manda em sua vida, mas por algum motivo suas convicÃ§Ãµes se diferenciam das impostas pela igreja. VocÃª leu pergaminhos proibidos sobre a necromÃ¢ncia e ficou mais prÃ³ximo desta face escondida de Anar. Para vocÃª, a necrÃ´mancia Ã© mais uma forma de vencer o mal ou talvez vocÃª queira se tornar o prÃ³prio mal.
+    Desc Você entrou na igreja de Anar e conhece suas morais e normas. Anar é um deus poderoso e manda em sua vida, mas por algum motivo suas convicções se diferenciam das impostas pela igreja. Você leu pergaminhos proibidos sobre a necromância e ficou mais próximo desta face escondida de Anar. Para você, a necrômancia é mais uma forma de vencer o mal ou talvez você queira se tornar o próprio mal.
     
-    Pericia Milagre de NecromÃ¢ncia
-    Pericia InscriÃ§Ã£o RÃºnica
+    Pericia Milagre de Necromância
+    Pericia Inscrição Rúnica
 
     // name amount
     Item mace 1
@@ -14,14 +14,14 @@ Antecedente Hessatar
     Item shoes 1
     Item runebook 1
     Item moedaouro 5
-    ItemDesc Livro de Runas, Runas bÃ¡sicas, MaÃ§a, TÃºnica de Malha, Tabardo da Igreja, 5 peÃ§as de ouro.
+    ItemDesc Livro de Runas, Runas básicas, Maça, Túnica de Malha, Tabardo da Igreja, 5 peças de ouro.
 
-    Classe ClÃ©rigo
+    Classe Clérigo
 }
 
 Antecedente Anar'emel
 {
-    Desc VocÃª Ã© uma fervorosa seguidora de Anar e decidiu lutar pelo mais alta hierarquia da Igreja, tornando-se uma Anar'emel. Suas habilidades de cura e alquimia tem progredido rapidamente e vocÃª jÃ¡ Ã© reconhecida entre o clero para agir fora da igreja. VocÃª nÃ£o pode ser tocada e as pessoas respeitam isso.
+    Desc Você é uma fervorosa seguidora de Anar e decidiu lutar pelo mais alta hierarquia da Igreja, tornando-se uma Anar'emel. Suas habilidades de cura e alquimia tem progredido rapidamente e você já é reconhecida entre o clero para agir fora da igreja. Você não pode ser tocada e as pessoas respeitam isso.
 
     Pericia Alquimia
     Pericia Milagre de Cura
@@ -37,17 +37,17 @@ Antecedente Anar'emel
 	Item mortar 1
     Recipe 0xDC01
     Recipe 0xdc14
-    ItemDesc MascÃ¡ra de Anar'emel, Livro de Alquimia, Receitas de alquimia, Aparatos de Alquimia, Roupas simples 5 peÃ§as de ouro.
+    ItemDesc Mascára de Anar'emel, Livro de Alquimia, Receitas de alquimia, Aparatos de Alquimia, Roupas simples 5 peças de ouro.
 
-    Classe ClÃ©rigo
+    Classe Clérigo
 
     Sexo 1
 }
 Antecedente Anar'atar
 {
-    Desc VocÃª Ã© um seguidor fervoroso da igreja e dedica sua vida por ela. Anar Ã© um deus bom que celebra a vida, e vocÃª lutarÃ¡ para manter a ordem e o seu dominio. Um dos seus afazeres cotidianos Ã© garantir a estabilidade das runas nas cidades e agir como o punho da igreja quando necessÃ¡rio.
+    Desc Você é um seguidor fervoroso da igreja e dedica sua vida por ela. Anar é um deus bom que celebra a vida, e você lutará para manter a ordem e o seu dominio. Um dos seus afazeres cotidianos é garantir a estabilidade das runas nas cidades e agir como o punho da igreja quando necessário.
 
-    Pericia InscriÃ§Ã£o RÃºnica
+    Pericia Inscrição Rúnica
     Pericia Milagre de Cura
 
     // name amount
@@ -60,9 +60,9 @@ Antecedente Anar'atar
     Item shoes 1
     // Recipe 0xDC01
     // Recipe 0xdc14
-    ItemDesc Livro de runas, receitas de runas, MaÃ§a, TÃºnica de Malha, Tabardo da Igreja e 5 peÃ§as de ouro.
+    ItemDesc Livro de runas, receitas de runas, Maça, Túnica de Malha, Tabardo da Igreja e 5 peças de ouro.
 
-    Classe ClÃ©rigo
+    Classe Clérigo
 
     Sexo 2
 }

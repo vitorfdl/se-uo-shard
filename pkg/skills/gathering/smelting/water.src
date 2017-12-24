@@ -22,7 +22,7 @@ program coolOff(user, water)
 		return;
 	endif
 	if(!Accessible(user, item))
-		SendSysMessage(user, "VocÃª nÃ£o alcanca isto.");
+		SendSysMessage(user, "Você não alcanca isto.");
 		return;
 	endif
         if (item.objtype == 0x5107)
@@ -31,12 +31,12 @@ program coolOff(user, water)
         endif
         
 	if(item.color != 0x486)
-		SendSysMessage(user, "VocÃª nÃ£o pode esfriar este item.", FONT_NORMAL, 40);
+		SendSysMessage(user, "Você não pode esfriar este item.", FONT_NORMAL, 40);
 		return;
 	endif
 	PlaySoundEffect(user, 0x23f);
 	sleepms(1500);
-	SendSysMessage(user, "VocÃª esfriou "+item.desc+".", FONT_NORMAL, 90);
+	SendSysMessage(user, "Você esfriou "+item.desc+".", FONT_NORMAL, 90);
         var cor := GetObjProperty(item, "color");
         item.color := cor;
 	PlaySoundEffect(user, 0x2c);
@@ -52,9 +52,9 @@ function EsfriarLiga(user, item)
         var amt := CINT(GetObjProperty(item, "amt1"));
         var ingot := GetObjProperty(item, "oreObj1");
 	if (ingot == "carvao")
-	   SendSysMessage(user, "VocÃª apenas estragou carvao!", FONT_NORMAL, 40);
+	   SendSysMessage(user, "Você apenas estragou carvao!", FONT_NORMAL, 40);
 	else   
-           SendSysMessage(user, "VocÃª esfriou o metal derretido e fez as barras.", FONT_NORMAL, 90);
+           SendSysMessage(user, "Você esfriou o metal derretido e fez as barras.", FONT_NORMAL, 90);
 	   CreateItemInBackpack(user, ingot, amt);
 	endif
         EraseObjProperty(item, "ingType");
@@ -81,14 +81,14 @@ function EsfriarLiga(user, item)
         if (ingot == "noIngot")
           deleteProp(item);
           item.color := 951;
-          SendSysMessage(user, "VocÃª nÃ£o conseguiu fazer uma liga com esses metais", FONT_NORMAL, 40);
+          SendSysMessage(user, "Você não conseguiu fazer uma liga com esses metais", FONT_NORMAL, 40);
           return;
         endif
 
-        SendSysMessage(user, "VocÃª esfriou a liga metalica derretida e fez as barras.", FONT_NORMAL, 90);
+        SendSysMessage(user, "Você esfriou a liga metalica derretida e fez as barras.", FONT_NORMAL, 90);
         item.color := 951;
         deleteProp(item);
-        if (ingot == 0x6317) //metal liquido, nÃ£o foi implementado no shard ainda mas quandofor
+        if (ingot == 0x6317) //metal liquido, não foi implementado no shard ainda mas quandofor
 	                     //eh so consertar isso
              var hasbottle:= 0;
               foreach item in EnumerateItemsInContainer(user.backpack)
@@ -102,7 +102,7 @@ function EsfriarLiga(user, item)
               if (hasbottle)
                 CreateItemInBackpack(user, ingot, amt);
               else
-                 SendSysMessage(user, "VocÃª deixou o metal liquido derramar no chao.", FONT_NORMAL, 40);
+                 SendSysMessage(user, "Você deixou o metal liquido derramar no chao.", FONT_NORMAL, 40);
                  return;
               endif
         else
@@ -142,7 +142,7 @@ function DeterminaLiga(metals, who)
         endforeach
 
 
-	if ( (metais.size() == 2) && ("ferro"  in metais ) && ("estanho" in metais)  ) //aÃ§o
+	if ( (metais.size() == 2) && ("ferro"  in metais ) && ("estanho" in metais)  ) //aço
 		return 0x6995;
 	elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("helce" in metais)  )
 		return 0x6998;

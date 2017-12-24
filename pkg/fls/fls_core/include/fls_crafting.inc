@@ -1,7 +1,7 @@
 
-/* O objetivo desse include √© fornecer fun√ß√µes que s√£o a parte do sistema default do POL. 
+/* O objetivo desse include È fornecer funÁıes que s„o a parte do sistema default do POL. 
 * por exemplo, no FLS itens de blacksmith podem consumir cabos, couros e cera. como o crafting
-*do pol so procura por um material, essas fun√ßoes tiveram que ser feitas pro FLS
+*do pol so procura por um material, essas funÁoes tiveram que ser feitas pro FLS
 */
 
 use uo;
@@ -106,7 +106,7 @@ function consumePoles(who, amt)
     endif
 endfunction
 
-//essa fun√ßao eh o generico do SearchFor acima. √© so colocar if (AmountInPack(who, poles) > 3) 
+//essa funÁao eh o generico do SearchFor acima. È so colocar if (AmountInPack(who, poles) > 3) 
 // por exemplo.
 
 function AmountInPack(mobile, obj_type, color:=0)
@@ -123,7 +123,7 @@ function AmountInPack(mobile, obj_type, color:=0)
     return amount;
 endfunction
 
-//Check for nails n√£o pode usar a funcao acima :/ pq ele precisa checar a Prop "qt" em cada caida
+//Check for nails n„o pode usar a funcao acima :/ pq ele precisa checar a Prop "qt" em cada caida
 //de prego
 function CheckForNails(who)
 

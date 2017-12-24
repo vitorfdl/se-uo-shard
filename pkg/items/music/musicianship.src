@@ -20,12 +20,12 @@ program skill_Musicianship(who, item)
 	EraseObjProperty(who, "IsMeditating");
 
 	if( Cint(GetObjProperty(who, "#LastMusic")) > ReadGameClock() )
-		SendSysMessage(who, "VocÃª deve esperar um momento antes de tocar novamente.");
+		SendSysMessage(who, "Você deve esperar um momento antes de tocar novamente.");
 		return 0;
 	endif
 
 	if( item.container != who.backpack && GetEquipmentByLayer(who, 1) != item && GetEquipmentByLayer(who, 2) != item)
-		SendSysMessage( who, "Este instrumento nÃ£o esta na sua mochila.");
+		SendSysMessage( who, "Este instrumento não esta na sua mochila.");
 		return 0;
 	endif
 	if(!Accessible(who, item))
@@ -74,7 +74,7 @@ program skill_Musicianship(who, item)
 		SendSysMessage(who, "Escolha uma partitura para acompanhar:",3,191);
 		var partitura := Target(who);
 		if ((partitura.objtype == 0x9924) || (partitura.objtype == 0x9925))
-			SendSysMessage(who, "VocÃª comeca a tocar a musica " + partitura.desc + ".",3,660);
+			SendSysMessage(who, "Você comeca a tocar a musica " + partitura.desc + ".",3,660);
 			notas := Getobjproperty(partitura, "notas");
 			notas2 := Getobjproperty(partitura, "notas2");
 			tempo := Getobjproperty(partitura, "tempo");
@@ -82,7 +82,7 @@ program skill_Musicianship(who, item)
 			magica := Getobjproperty(partitura, "magica");
 			tocarsound(who,item,notas,notas2,tempo,letra,magica);
 		else
-			SendSysMessage(who, "Isso nÃ£o e uma partitura!",3,38);
+			SendSysMessage(who, "Isso não e uma partitura!",3,38);
 			return 1;
 		endif
 	endif

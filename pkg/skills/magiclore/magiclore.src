@@ -18,7 +18,7 @@ program skill_armslore(who)
 	endif
 
 	if ( ! item.isa(POLCLASS_ITEM))
-		//SendSysMessageEx(who, "Este nÃ£o e um alvo valido.", SSM_FAIL);
+		//SendSysMessageEx(who, "Este não e um alvo valido.", SSM_FAIL);
 		//return;
 		PrintText(who, "*analisando " + item.name + " *");
 		var timers := GetMagicTimersSpellName(item);
@@ -30,11 +30,11 @@ program skill_armslore(who)
 				endforeach
 				return;
 			else
-				SendSysMessageEx(who, "O alvo nÃ£o esta sob efeito de encantamentos.", SSM_INFO);
+				SendSysMessageEx(who, "O alvo não esta sob efeito de encantamentos.", SSM_INFO);
 				return;
 			endif
 		else
-			SendSysMessageEx(who, "VocÃª nÃ£o identifica nada.", SSM_FAIL);	
+			SendSysMessageEx(who, "Você não identifica nada.", SSM_FAIL);	
 			return;
 		endif
 	endif
@@ -46,7 +46,7 @@ program skill_armslore(who)
 			var entry := cfg[item.objtype];
 			if (entry)
 				SetObjProperty(item, "pocaoname", entry.Type);
-				SendSysMessageEx(who, "VocÃª identificou o liquido do frasco: " + entry.Type, SSM_INFO);
+				SendSysMessageEx(who, "Você identificou o liquido do frasco: " + entry.Type, SSM_INFO);
 			endif
 			cfg := 0;
 			entry := 0;
@@ -63,7 +63,7 @@ program skill_armslore(who)
 			SetName(item, item.desc);
 			AddAmount(item, backup-1);
 		else
-			SendSysMessageEx(who, "VocÃª nÃ£o esta certo..", SSM_FAIL);
+			SendSysMessageEx(who, "Você não esta certo..", SSM_FAIL);
 		endif
 	else
 		PrintText(who, "*analisando um item*");
@@ -96,7 +96,7 @@ program skill_armslore(who)
 					ActivateMagicItem(item);
 				endif
 				
-				SendSysMessageEx(who, "VocÃª identificou encantamentos nesse item.", SSM_INFO);
+				SendSysMessageEx(who, "Você identificou encantamentos nesse item.", SSM_INFO);
 				var whos := GetObjProperty(item, "magicwho");
 				if (whos == error)
 					whos := array;
@@ -116,10 +116,10 @@ program skill_armslore(who)
 				SetName(item, item.desc);
 				AddAmount(item, backup-1);
 			else
-				SendSysMessageEx(who, "Este item nÃ£o possui propriedades magicas a serem ativadas.", SSM_INFO);
+				SendSysMessageEx(who, "Este item não possui propriedades magicas a serem ativadas.", SSM_INFO);
 			endif
 		else
-			SendSysMessageEx(who, "VocÃª nÃ£o descobriu nada.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não descobriu nada.", SSM_FAIL);
 		endif
 
 	endif

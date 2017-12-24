@@ -13,7 +13,7 @@ function ghaiaRessurect(targ, notame := 0)
 		destama(npc.serial);
 	else
 		if ( (GetNumPets(owner) + GetPetCost(npc)) > GetMaxPets(owner) )
-			SendSysMessageEx(owner, "VocÃª ja tem muitos animais.", SSM_FAIL);
+			SendSysMessageEx(owner, "Você ja tem muitos animais.", SSM_FAIL);
 			destama(npc.serial);
 		else
 			AddPet(owner, npc.serial);

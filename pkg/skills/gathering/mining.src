@@ -60,7 +60,7 @@ program mining(who)
 	input := input[0];
 	
 	if (input > 400)
-		SendsysMessage(who, "VocÃª vai procurar por " + possiveis[input-400]);
+		SendsysMessage(who, "Você vai procurar por " + possiveis[input-400]);
 		SetObjProperty(who, "searchore", possiveis[input-400]);
 	endif
 

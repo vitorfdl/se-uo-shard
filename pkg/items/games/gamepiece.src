@@ -31,5 +31,5 @@ program use_gamepiece (character, gamepiece)
 		return;
 	endif
 
-	SendSysMessage (character, "VocÃª nÃ£o sabe como usar isto.");
+	SendSysMessage (character, "Você não sabe como usar isto.");
 endprogram

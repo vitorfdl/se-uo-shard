@@ -34,13 +34,13 @@ program core_skillWin(who)
 		SendSystemReport(who, "Estou morto e impossibilitado de realizar qualquer atividade.");
 		return;
 	elseif (GetObjProperty(who, "criandochar"))
-		SendSystemReport(who, "VocÃª deve terminar de criar seu personagem.");
+		SendSystemReport(who, "Você deve terminar de criar seu personagem.");
 		return;
 	endif
 
 	var delay := GetObjProperty(who, "#skillwindow");
 	if(delay && delay > ReadGameClock())
-      SendSysMessageEx(who, "VocÃª ainda estÃ¡ fazendo outra coisa.");
+      SendSysMessageEx(who, "Você ainda está fazendo outra coisa.");
       return;
 	endif
 	SetObjProperty(who, "#skillwindow", ReadGameClock() + 3);
@@ -60,7 +60,7 @@ function skillWindow(who)
 		var feat := feat_list[input[0] - 100];
 		feat := FeatInfo(feat);
       if (!feat.script)
-         return SendSysMessageEx(who, "Este talento nÃ£o Ã© ativÃ¡vel.");
+         return SendSysMessageEx(who, "Este talento não é ativável.");
       endif
       print(feat.name);
       start_script(":charactercreation:commands/player/talento", array{who, feat.name});
@@ -97,7 +97,7 @@ function buildGump(who)
 		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
 		var skill_name := skill;
 		skill_name := StrReplace(skill_name, "_", " ");
-      skill_name["NecromÃ¢ncia"] := "Necrom.";
+      skill_name["Necromância"] := "Necrom.";
 		GFTextLine(gump, s_x+18, s_y-3, 1152, skill_name);
 		s_y += 30;
 		sleepms(5);
@@ -133,7 +133,7 @@ function buildGump(who)
 	// GFGumpPic(gump, 581, 55, 4033, 1259);
 	// GFGumpPic(gump, 577, 59, 4033, 1259);
 	GFAddButton(gump, 579, 57, 4033, 4033, GF_CLOSE_BTN, 70); //Comprar Talento
-	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponÃ­veis");
+	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponíveis");
 
 	AttrGump(who, gump);
 
@@ -165,7 +165,7 @@ function AttrGump(who, byref gump)
 	endforeach
 
 	if (attr_points)
-		GFHTMLArea(gump, 26, 177, 185, 20, "<BASEFONT SIZE=2 COLOR=#ffffd6><center>VocÃª tem {} pontos para atribuir".format(attr_points));
+		GFHTMLArea(gump, 26, 177, 185, 20, "<BASEFONT SIZE=2 COLOR=#ffffd6><center>Você tem {} pontos para atribuir".format(attr_points));
 	endif
 endfunction
 
@@ -208,7 +208,7 @@ function BuyTalents(who)
 		sleepms(2);
 	endforeach
 
-	GFHTMLArea(gump, 0, 485, 750, 20, "<BASEFONT size=0><center>VocÃª tem {} pontos de talento.".format(who.GetTalentPoints()));
+	GFHTMLArea(gump, 0, 485, 750, 20, "<BASEFONT size=0><center>Você tem {} pontos de talento.".format(who.GetTalentPoints()));
 
 	var input := GFSendGump(who, gump);
 

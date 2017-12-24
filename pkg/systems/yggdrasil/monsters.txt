@@ -10,7 +10,7 @@ Level: 2
 ["Cidade Orc"]
 Level: 8
 
-["P√¢ntano do Drag√£o Negro"]
+["P‚ntano do Drag„o Negro"]
 Level: 8
 
 ["Masmorra dos Cultistas"]

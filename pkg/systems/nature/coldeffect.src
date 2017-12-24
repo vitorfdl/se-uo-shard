@@ -104,7 +104,7 @@ program neve(params)
 		var resistcheck := CheckResist(who, CONSTITUTION);
 		
 		if (resistcheck)
-			SendSysMessageEx(who, "VocÃª resiste aos efeito do frio.", SSM_INFO);
+			SendSysMessageEx(who, "Você resiste aos efeito do frio.", SSM_INFO);
 			if (penalty == 1)
 				penalty := 0;
 				RemoveColdMod(who, 1);
@@ -113,7 +113,7 @@ program neve(params)
 				//RemoveColdMod(who, 2);
 			endif
 		else
-			SendSysMessageEx(who, "VocÃª nÃ£o resiste aos efeito do frio.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não resiste aos efeito do frio.", SSM_FAIL);
 			if (penalty == 0)
 				penalty := 1;
 				ApplyColdMod(who, 1);

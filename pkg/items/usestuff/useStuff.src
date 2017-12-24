@@ -21,7 +21,7 @@ program UseStuff(character, stuff)
   var targetted, key_id;
 
   if(!Accessible(character, stuff))
-    SendSysMessageEx( character, "VocÃª nÃ£o alcanca isto!", SSM_FAIL );
+    SendSysMessageEx( character, "Você não alcanca isto!", SSM_FAIL );
     return;
   endif
   prompt := "Escolha o objeto para usar nisto.";
@@ -42,7 +42,7 @@ program UseStuff(character, stuff)
   endif
 
   if(!Accessible(character, use_on))
-    SendSysMessageEx(character, "VocÃª nÃ£o alcanca isto!", SSM_FAIL);
+    SendSysMessageEx(character, "Você não alcanca isto!", SSM_FAIL);
     return;
   endif
 
@@ -50,7 +50,7 @@ program UseStuff(character, stuff)
   key_id := CStr(stuff.objtype) + "+" + CStr(use_on.objtype);
   elem := FindConfigElem(config, key_id);
   if(!elem)
-    SendSysMessageEx(character, "VocÃª nÃ£o sabe como usar estes itens!", SSM_FAIL);
+    SendSysMessageEx(character, "Você não sabe como usar estes itens!", SSM_FAIL);
     return;
   endif
 
@@ -73,7 +73,7 @@ program UseStuff(character, stuff)
 
 
     if (stuff.amount < quantity1)
-        SendSysMessageEx(character, "VocÃª nÃ£o possui material suficiente.", SSM_FAIL);
+        SendSysMessageEx(character, "Você não possui material suficiente.", SSM_FAIL);
         return;
     endif
 
@@ -89,12 +89,12 @@ program UseStuff(character, stuff)
     endif
 
     if (!Accessible(character, use_on))
-        SendSysMessageEx(character, "VocÃª nÃ£o alcanca isto!", SSM_FAIL);
+        SendSysMessageEx(character, "Você não alcanca isto!", SSM_FAIL);
         return;
     endif
 
     if (use_on.amount < quantity2)
-        SendSysMessageEx(character, "VocÃª nÃ£o possui material suficiente.", SSM_FAIL);
+        SendSysMessageEx(character, "Você não possui material suficiente.", SSM_FAIL);
         return;
     endif
 
@@ -121,7 +121,7 @@ program UseStuff(character, stuff)
                 SubtractAmount(use_on, 1);
             endif
             PlaySoundEffect(character, success_sound);
-            SendSysMessageEx(character, "VocÃª guardou o item na sua mochila.", SSM_INFO);
+            SendSysMessageEx(character, "Você guardou o item na sua mochila.", SSM_INFO);
             if (leftover)
                var leftitem :=  CreateItemInBackpack(character, leftover, leftover_amount);
 	    	if (!leftitem)
@@ -135,10 +135,10 @@ program UseStuff(character, stuff)
         else
             PlaySoundEffect(character, failure_sound);
             if (destroy_failure)
-                SendSysMessageEx(character, "VocÃª falhou e destruiu parte do material.", SSM_FAIL);
+                SendSysMessageEx(character, "Você falhou e destruiu parte do material.", SSM_FAIL);
                 SubtractAmount(stuff, 1);
             else
-                SendSysMessageEx(character, "VocÃª falhou em fazer o item.", SSM_FAIL);
+                SendSysMessageEx(character, "Você falhou em fazer o item.", SSM_FAIL);
             endif
 
             if  (destroy_target_failure)
@@ -168,7 +168,7 @@ program UseStuff(character, stuff)
             SubtractAmount(use_on, 1);
         endif
         PlaySoundEffect(character, success_sound);
-        SendSysMessageEx(character, "VocÃª guardou o item na sua mochila.", SSM_INFO);
+        SendSysMessageEx(character, "Você guardou o item na sua mochila.", SSM_INFO);
         if (leftover)
             var leftitem := CreateItemInBackpack(character, leftover, leftover_amount);
 	    if (!leftitem)

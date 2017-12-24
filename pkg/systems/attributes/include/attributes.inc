@@ -11,8 +11,8 @@
 *
 * Functions:
 * rollAttrDice(mobile, attribute, penalty := 0, critical := 20) - Rolagem de atributo
-* getProficiencyBonus(mobile, skill := 0) - Bonus de profiencia pelo nivel, se passar skill j√° checa se vai ter
-* rollResistDice(mobile, type) - Rolagem de resist√™ncia
+* getProficiencyBonus(mobile, skill := 0) - Bonus de profiencia pelo nivel, se passar skill j· checa se vai ter
+* rollResistDice(mobile, type) - Rolagem de resistÍncia
 * GetBonusAttr(number) - Convert numero em bonus 12 -> 1
 * HaveSkill(mobile, skill) - Checa se tem skill
 * (attr...)
@@ -346,7 +346,7 @@ endfunction
 
 function Wait(mobile, segundos)
 	if ( GetObjProperty(mobile, "#IsWaiting") > ReadGameClock() )
-		return 0; // J√° est√° esperando
+		return 0; // J· est· esperando
 	else
 		EraseObjProperty(mobile, "#IsWaiting");
 	endif

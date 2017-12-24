@@ -41,7 +41,7 @@ program trapScript(params)
 			var poisonLvl := trap_info.strength;
 
 			if (rollResistDice(mobile, CONSTITUTION) >= diff)
-				SendSysMessageEx(mobile, "VocÃª resistiu ao veneno.", SSM_INFO);
+				SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
 				continue;
 			else
 				TS_StartTimer(mobile, "defaultPoison", 120, danger);

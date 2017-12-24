@@ -17,13 +17,13 @@ program eat_food(who, food)
 		return;
 	endif
 	if(food.movable == 0)
-		SendSysMessageEx(who, "VocÃª nÃ£o pode usar isto.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
 		return;
 	endif
 
    var hungerlvl := AP_GetVital(who, "Hunger");
 	if(hungerlvl <= 10)
-		SendSysMessageEx(who, "VocÃª esta muito cheio para comer mais.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito cheio para comer mais.", SSM_FAIL);
 		return;
 	endif
 
@@ -50,10 +50,10 @@ program eat_food(who, food)
 	var surprisemsg := "";
 	var surpriseabove := "";
 	if (food.objtype == 0xc92e) //silverleaf pie
-		surprisemsg := "VocÃª se sente corajoso!";
+		surprisemsg := "Você se sente corajoso!";
 	elseif (food.objtype == 0x0c6d)//cebola
 		if (GetCooldown(who, "cebola") > 0)
-			surpriseabove := "*mau hÃ¡lito*";
+			surpriseabove := "*mau hálito*";
 		else
 			SetCooldown(who, "cebola", 5);
 		endif
@@ -97,14 +97,14 @@ program eat_food(who, food)
 		endif
 
 		/*case(hungerlvl)
-			0:  themsg := "vocÃª esta muito cheio";
-			1:  themsg := "vocÃª esta muito cheio";
-			2:  themsg := "vocÃª esta satisfeito";
-			3:  themsg := "vocÃª se sente um pouco mais cheio depois de consumir a comida";
-			4:  themsg := "vocÃª ainda esta com fome";
-			5:  themsg := "vocÃª ainda esta muito faminto";
+			0:  themsg := "você esta muito cheio";
+			1:  themsg := "você esta muito cheio";
+			2:  themsg := "você esta satisfeito";
+			3:  themsg := "você se sente um pouco mais cheio depois de consumir a comida";
+			4:  themsg := "você ainda esta com fome";
+			5:  themsg := "você ainda esta muito faminto";
 		endcase*/
-		themsg := "VocÃª se sente melhor alimentado";
+		themsg := "Você se sente melhor alimentado";
 
 		AP_SetVital(who, "Hunger", hungerlvl*60);
 
@@ -112,7 +112,7 @@ program eat_food(who, food)
 
 		if(poisonInfo)
 			poisonInfo.dosage := poisonInfo.dosage - 1;
-			if (poisonInfo.dosage <= 0) //se nÃ£o tiver mais cargas de veneno, deleta
+			if (poisonInfo.dosage <= 0) //se não tiver mais cargas de veneno, deleta
 				EraseObjProperty(food, "poisonInfo");
 				return 0;
 			else //se ainda tiver atualiza na arma

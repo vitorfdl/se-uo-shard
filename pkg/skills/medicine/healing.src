@@ -29,11 +29,11 @@ program UseBandage(mobile, bandage)
 	var equippedleft  := GetEquipmentByLayer(mobile, 0x02);
 	var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
 	if (equippedright || equippedleft || twohanded)
-	  SendSysMessageEx(mobile, "VocÃª precisa das duas maos livres para usar as ataduras!", SSM_FAIL);
+	  SendSysMessageEx(mobile, "Você precisa das duas maos livres para usar as ataduras!", SSM_FAIL);
 	  return 0;
 	endif
 
-	SendSysMessageEx(mobile, "Onde vocÃª deseja usar as ataduras?", SSM_REQUEST);
+	SendSysMessageEx(mobile, "Onde você deseja usar as ataduras?", SSM_REQUEST);
 	var targ := Target(mobile, TGTOPT_CHECK_LOS+TGTOPT_HELPFUL);
 	var heal_skill := MEDICINA;
 
@@ -47,10 +47,10 @@ program UseBandage(mobile, bandage)
 		SendSysMessageEx(mobile, "Alvo ja esta completamente curado.", SSM_INFO);
 		return;
 	elseif(GetObjProperty(targ, "noheal"))
-		SendSysMessageEx(mobile, "NÃ£o hÃ¡ nada que vocÃª possa fazer pelo alvo nas atuais circunstacias", 3, SSM_FAIL);
+		SendSysMessageEx(mobile, "Não há nada que você possa fazer pelo alvo nas atuais circunstacias", 3, SSM_FAIL);
 		return;	
 	elseif ( targ.warmode )
-		SendSysMessageEx(mobile, "VocÃª nÃ£o pode tratar um alvo que esta muito agitado", SSM_INFO);
+		SendSysMessageEx(mobile, "Você não pode tratar um alvo que esta muito agitado", SSM_INFO);
 		return;
 	elseif ( GetObjProperty(targ, "curando") > ReadGameClock() )
 		SendSysMessageEx(mobile, "O alvo ja esta enfaixado", SSM_INFO);
@@ -71,14 +71,14 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "Alvo ja foi curado.", SSM_INFO);
 			return 0;
 		elseif (bandage.amount < 5)
-			SendSysMessageEx(mobile, "VocÃª precisa de 5 bandagens.", SSM_FAIL);
+			SendSysMessageEx(mobile, "Você precisa de 5 bandagens.", SSM_FAIL);
 			return 0;
 		endif
 
 		var restauraDP := 0;
 		if (GetObjProperty(bandage , "cap") == 1 && randomint(5) <= 2)
 			restauraDP := 1;
-		elseif (TemHabilidade(mobile, "CirurgiÃ£o") && randomint(5) <= 2)
+		elseif (TemHabilidade(mobile, "Cirurgião") && randomint(5) <= 2)
 			restauraDP := 1;
 		endif
 
@@ -97,10 +97,10 @@ program UseBandage(mobile, bandage)
 	endif
 
 	if (targ.isTamable())
-		SendSysMessageEX(mobile, "VocÃª nÃ£o tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
+		SendSysMessageEX(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
-	elseif (isBloodied(targ) && ((heal_skill == MEDICINA && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "VeterinÃ¡rio") ))))
-		SendSysMessageEx(mobile, "VocÃª nÃ£o tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
+	elseif (isBloodied(targ) && ((heal_skill == MEDICINA && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") ))))
+		SendSysMessageEx(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
 	endif
 
@@ -147,7 +147,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	endif
 
 	if ( !Wait(mobile, 5) )
-		SendSysMessage(mobile, "VocÃª interrompeu a cura.");
+		SendSysMessage(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -181,10 +181,10 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	for ( i := 0 ; i < q ; i := i + 1 )
 		Sleep(1);
 		if (x != targ.x || y != targ.y)
-			SendSysMessage(targ, "VocÃª interrompeu a cura.");
+			SendSysMessage(targ, "Você interrompeu a cura.");
 			return 1;
 		elseif (AP_GetVital(targ, "hits") >= AP_GetVitalMaximumValue(targ, "hits"))
-			SendSysMessage(targ, "VocÃª esta completamente curado.");
+			SendSysMessage(targ, "Você esta completamente curado.");
 			return 1;
 		endif
 
@@ -222,7 +222,7 @@ function HealCorpse(mobile, targ, restauraDP)
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
 	if ( !Wait(mobile, 10) )
-		SendSysMessage(mobile, "VocÃª interrompeu a cura.");
+		SendSysMessage(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -234,14 +234,14 @@ function HealCorpse(mobile, targ, restauraDP)
 	elseif ( roll >= 16 )
 		ExpGain(mobile, "major");
 		mobile.SetAchievement("heal_corpse", 1);
-		SendSysMessage(mobile, "VocÃª estabilizou "+name);
+		SendSysMessage(mobile, "Você estabilizou "+name);
 		SetObjProperty(targ, "curado", 1);
 		var owner := SystemFindObjectBySerial(targ.ownerserial);
 		if (restauraDP && owner)
 			AP_SetVital(owner, "DP", AP_GetVital(owner, "DP")+10);
 		endif
 	else
-		SendSystemReport(mobile, "VocÃª nÃ£o conseguiu estabilizar "+name+".");
+		SendSystemReport(mobile, "Você não conseguiu estabilizar "+name+".");
 	endif
 
 	return 1;
@@ -253,7 +253,7 @@ function HealNpcCorpse(mobile, targ)
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
 	if ( !Wait(mobile, 10) )
-		SendSysMessage(mobile, "VocÃª interrompeu a cura.");
+		SendSysMessage(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -263,10 +263,10 @@ function HealNpcCorpse(mobile, targ)
 	if (  !GetObjProperty(targ,"morto") )
 		return;
 	elseif ( roll >= 16 ) // SkillCheck(mobile, MEDICINA, diff) SkillCheck(mobile, , diff)
-		SendSysMessage(mobile, "VocÃª estabilizou "+name);
+		SendSysMessage(mobile, "Você estabilizou "+name);
 		ghaiaRessurect(targ);
 	else
-		SendSysMessage(mobile, "VocÃª nÃ£o conseguiu estabilizar "+name+".");
+		SendSysMessage(mobile, "Você não conseguiu estabilizar "+name+".");
 	endif
 
 	return 1;
@@ -282,7 +282,7 @@ function apllyHerbs(mobile, bandage, targ)
 	if (!(targ.objtype in allowed_objtypes))
 		return SendSysMessageEx(mobile, "Cancelado.");
 	elseif (targ.amount != bandage.amount)
-		return SendSysMessageEx(mobile, "VocÃª precisa da mesma quantidade de {}.".format(targ.desc), SSM_FAIL);
+		return SendSysMessageEx(mobile, "Você precisa da mesma quantidade de {}.".format(targ.desc), SSM_FAIL);
 	endif
 
 	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, MEDICINA);
@@ -300,12 +300,12 @@ function apllyHerbs(mobile, bandage, targ)
 		SetObjProperty(bandage, "blood", 1);
 		bandage.color := 1229;
 	else
-		SendSysMessageEx(mobile, "VocÃª estragou algumas ataduras.", SSM_INFO);
+		SendSysMessageEx(mobile, "Você estragou algumas ataduras.", SSM_INFO);
 		SubtractAmount(bandage, cint(bandage.amount*0.7));
 		SubtractAmount(targ, cint(targ.amount*0.7));
 		return;
 	endif
 
-	SendSysMessageEx(mobile, "VocÃª passou o extrato de {} nas ataduras.".format(targ.desc), SSM_INFO);
+	SendSysMessageEx(mobile, "Você passou o extrato de {} nas ataduras.".format(targ.desc), SSM_INFO);
 	DestroyITem(targ);
 endfunction

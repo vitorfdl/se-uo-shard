@@ -20,11 +20,11 @@ function mainGump(who, byref disfarce, byref choice)
 	GFResizePic(gump, 37, 27, 9350, 572, 33); //top paper
 
 	GFResizePic(gump, 36, 69, 9350, 123, 157); //menu paper
-	GFHTMLArea(gump, 47, 34, 200, 20, "<BASEFONT COLOR=#7a600d>Configurar  AparÃªncia");
+	GFHTMLArea(gump, 47, 34, 200, 20, "<BASEFONT COLOR=#7a600d>Configurar  Aparência");
 	GFTextLine(gump, 65, 80, 1101, "Cabelos");
 	GFTextLine(gump, 64, 120, 1101, "Cor do Cabelo");
 	GFTextLine(gump, 64, 140, 1101, "Cor de Pele");
-	// GFTextLine(gump, 64, 160, 1101, "RaÃ§a");
+	// GFTextLine(gump, 64, 160, 1101, "Raça");
 
 	if (choice.menu)
 		menus[choice.menu] := 9763;

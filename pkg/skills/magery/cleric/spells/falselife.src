@@ -17,7 +17,7 @@ program divineOrientation(info)
 			SendSysMessageEX(who, "Cancelado", SSM_FAIL);
          return 1;
       elseif (!targ.isA(POLCLASS_MOBILE) )
-			SendSysMessageEX(who, "VocÃª deve escolher um alvo vivo.", SSM_FAIL);
+			SendSysMessageEX(who, "Você deve escolher um alvo vivo.", SSM_FAIL);
       else
          break;
 		endif
@@ -33,7 +33,7 @@ program divineOrientation(info)
 
    PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
    PlaySoundEffect(targ, SFX_1EA);
-   SendSystemReport(who, "O alvo foi abenÃ§oado.", SSM_HELPFUL);
+   SendSystemReport(who, "O alvo foi abençoado.", SSM_HELPFUL);
    TS_StartTimer(targ, "falselife", 600, level);	
    return 1;
 endprogram

@@ -79,7 +79,7 @@ function MobileTracking(who)
    PrintText(who, "*Estudando o local a sua volta*");
 
    if(len(mobiles) < 1)
-      SendSysMessageEx(who, "NÃ£o encontrou nenhum rastro ao redor para ser perseguido.", 3, 660);
+      SendSysMessageEx(who, "Não encontrou nenhum rastro ao redor para ser perseguido.", 3, 660);
       return;
    endif
 
@@ -110,7 +110,7 @@ function ItemTracking(who)
    PrintText(who, "*Estudando o local a sua volta*");
 
    if(len(items_found) < 1)
-      SendSysMessageEx(who, "VocÃª nÃ£o encontrou traÃ§os de item algum.", 3, 660);
+      SendSysMessageEx(who, "Você não encontrou traços de item algum.", 3, 660);
       return;
    endif
 
@@ -167,7 +167,7 @@ function TrackGump(who, mobiles)
 	if (ifres[0] != 0)
 		var mobontrack := mobiles[ifres[0]];
 		var mobname := mobarray[ifres[0]];
-		SendSysMessageEx(who, "VocÃª agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 3, 191);
+		SendSysMessageEx(who, "Você agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 3, 191);
 		CreatureTrack(who, mobontrack,mobname);
 	endif
 endfunction
@@ -216,7 +216,7 @@ function ItemTrackGump(who, items)
 	endforeach
 
 	if (!temcoisa)
-		SendSysMessageEx(who, "NÃ£o hÃ¡ itens para serem rastreados", 3, 660);
+		SendSysMessageEx(who, "Não há itens para serem rastreados", 3, 660);
 		return;
 	endif
 	var ifres := GFSendGump(who, gump);	
@@ -323,9 +323,9 @@ function CreatureTrack(who, mobontrack, mobname)
 				pin.+name := RequestGump(who, "Escreva o nome dessa marca.");
 				pininfo[targmap.getpins().size()] := pin;
 				SetObjProperty(targmap, "pininfo", pininfo);
-				SendSysMessageEx(who, "VocÃª marcou a localizacao no mapa.", SSM_INFO);
+				SendSysMessageEx(who, "Você marcou a localizacao no mapa.", SSM_INFO);
 			else
-				SendSysMessageEx(who, "O alvo nÃ£o esta na regiao deste mapa.", SSM_INFO);
+				SendSysMessageEx(who, "O alvo não esta na regiao deste mapa.", SSM_INFO);
 			endif
 		endif
 	elseif (ifres[0] == 0)
@@ -341,11 +341,11 @@ function MobDistance(who, mobontrack)
 //	sendsysmessageEx(who, "dist " + dist + " " + mobontrack.x + " " + mobontrack.y);
 	if (dist > 70) return "perdeu";
 		elseif (dist > 60) return "O rastro parece estar quase sumindo";
-		elseif (dist > 50) return "O rastro Ã© muito superficial";
-		elseif (dist > 40) return "O rastro Ã© superficial";
-		elseif (dist > 30) return "O rastro comeÃ§a a ficar definido";
-		elseif (dist > 20) return "O rastro Ã© bem definido";
-		elseif (dist > 10) return "O rastro Ã© recente e cheio de detalhes";
+		elseif (dist > 50) return "O rastro é muito superficial";
+		elseif (dist > 40) return "O rastro é superficial";
+		elseif (dist > 30) return "O rastro começa a ficar definido";
+		elseif (dist > 20) return "O rastro é bem definido";
+		elseif (dist > 10) return "O rastro é recente e cheio de detalhes";
 		elseif (dist > 1) return "A criatura com esse rastro deve estar bem perto";
 	endif
 
@@ -456,7 +456,7 @@ if (CheckGender(who))
 			if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
 				return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";
 			else
-				return "Humanoide com CalÃ§a de Placas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
+				return "Humanoide com Calça de Placas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
 			endif
 		endif
       sleepms(2);
@@ -464,7 +464,7 @@ if (CheckGender(who))
 		if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
 			return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";
 		else
-			return "Humanoide DescalÃ§o"+ " [" + MobLocalizateSigla(who, mobile) + "]";
+			return "Humanoide Descalço"+ " [" + MobLocalizateSigla(who, mobile) + "]";
 		endif	
       
    elseif (mobile.graphic == 1) return "Ogro" + " [" + MobLocalizateSigla(who, mobile) + "]";;
@@ -502,7 +502,7 @@ endfunction
 function DistanceCheck(who, mobontrack)
 	var dist := MobDistance(who, mobontrack);
 	if (dist == "perdeu")
-		SendSysMessageEx(who, "VocÃª nÃ£o consegue mais identificar os rastros desse alvo", 3, 28);
+		SendSysMessageEx(who, "Você não consegue mais identificar os rastros desse alvo", 3, 28);
 		return 1;
 	else
 		return 0;
@@ -525,10 +525,10 @@ function BandVerify(who, mobname, mobontrack)
 	endforeach
 
 	if (x >= 7)
-		return "Ã‰ muito provavel que o alvo esteja em bando.";
+		return "É muito provavel que o alvo esteja em bando.";
 	elseif (x >= 3)
 		return "Talvez o alvo esteja em bando.";
 	else
-		return "VocÃª tem quase certeza que nÃ£o existe um bando.";
+		return "Você tem quase certeza que não existe um bando.";
 	endif
 endfunction

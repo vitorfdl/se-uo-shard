@@ -17,7 +17,7 @@ include ":gumps:htmlgump";
 include "include/say";
 
 program EmailMessage( mobile )
-   SendSysMessageEx( mobile, "VocÃª recebeu uma nova mensagem." );
+   SendSysMessageEx( mobile, "Você recebeu uma nova mensagem." );
         
 	if( GetProcess( CInt( GetObjProperty( mobile, "#EmailMessagePid" ))))
       return 0;

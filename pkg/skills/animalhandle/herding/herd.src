@@ -16,7 +16,7 @@ program herd(who)
 		return;
 	endif
 
-        SendSysMessageEx(who, "Onde vocÃª deseja usar isto?", SSM_REQUEST);
+        SendSysMessageEx(who, "Onde você deseja usar isto?", SSM_REQUEST);
         var npc := Target(who);
         if (!npc)
                 SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
@@ -29,7 +29,7 @@ program herd(who)
       	if(who.cmdlevel >= 2)
                 var location := TargetCoordinates(who);
                 if(!CheckLosAt(npc, location.x, location.y, location.z))
-                        SendSysMessageEx(who, npc.name + " nÃ£o vÃª o alvo!", SSM_FAIL);
+                        SendSysMessageEx(who, npc.name + " não vê o alvo!", SSM_FAIL);
                         return;
                 endif
                 var holder := {};
@@ -42,7 +42,7 @@ program herd(who)
                 return;
         endif 
         if(!CheckLineOfSight(who, npc))
-                SendSysMessageEx(who, "VocÃª nÃ£o vÃª o alvo!", SSM_FAIL);
+                SendSysMessageEx(who, "Você não vê o alvo!", SSM_FAIL);
         endif
 
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
@@ -56,15 +56,15 @@ program herd(who)
                 "employed": chk := 1;
         endcase
         if((chk == 1) or (!cfg.TameDifficulty))
-                SendSysMessageEx(who, "Esta criatura nÃ£o pode ser alvejada!", SSM_FAIL);
+                SendSysMessageEx(who, "Esta criatura não pode ser alvejada!", SSM_FAIL);
                 return;
         endif
 	
 
-        SendSysMessageEx(who, "Para onde vocÃª deseja mover "+ npc.name +" ?", SSM_REQUEST);
+        SendSysMessageEx(who, "Para onde você deseja mover "+ npc.name +" ?", SSM_REQUEST);
         var location := TargetCoordinates(who);
         if (!CheckLosAt(npc, location.x, location.y, location.z))
-                 SendSysMessageEx(who, npc.name + " nÃ£o vÃª o alvo!", SSM_FAIL);
+                 SendSysMessageEx(who, npc.name + " não vê o alvo!", SSM_FAIL);
                  return;
         endif
         var holder := {};

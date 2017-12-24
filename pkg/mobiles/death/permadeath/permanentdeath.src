@@ -15,14 +15,14 @@ program askDeath(params)
    GFCloseGumpTimed(user, GetPid(), 20, 0);
 
 
-   SendSysMessageEx(user, "Ser morto por outro jogador n√£o √© uma decis√£o banal. Se voc√™ acha que n√£o h√° motivos para isso acontecer negue a tentativa.", SSM_INFO);
-   SendSysMessageEx(user, "Tente resolver com o jogador atrav√©s do Discord ou pe√ßa interfer√™ncia dos GM`s se achar que algo est√° errado..", SSM_INFO);
+   SendSysMessageEx(user, "Ser morto por outro jogador n„o È uma decis„o banal. Se vocÍ acha que n„o h· motivos para isso acontecer negue a tentativa.", SSM_INFO);
+   SendSysMessageEx(user, "Tente resolver com o jogador atravÈs do Discord ou peÁa interferÍncia dos GM`s se achar que algo est· errado..", SSM_INFO);
 
 	var gump := GFCreateGump();
 	
 	GFPage(gump, 0);
 	GFGumpPic(gump, 262, 93, 101, 0);
-   GFHTMLArea(gump, 298, 331, 200, 20, "<BASEFONT size=2>Voc√™ n√£o √© obrigado a aceitar.", 0, 0);
+   GFHTMLArea(gump, 298, 331, 200, 20, "<BASEFONT size=2>VocÍ n„o È obrigado a aceitar.", 0, 0);
    GFHTMLArea(gump, 326, 208, 200, 20, "<BASEFONT size=2>Algum jogador esta", 0, 0);
    GFHTMLArea(gump, 312, 229, 200, 20, "<BASEFONT size=2>Tentando assassinar seu", 0, 0);
    GFHTMLArea(gump, 346, 250, 200, 20, "<BASEFONT size=2>Personagem", 0, 0);
@@ -34,8 +34,8 @@ program askDeath(params)
 
    if (input[0] == 10)
       if (Distance(who, targ) > 1)
-         SendSysMessageEx(user, "O alvo aceitou sua tentativa de mata-lo, mas voc√™ est√° muito distante para executar.", SSM_FAIL);
-         SendSysMessageEx(who, "Seu assassino se afastou do corpo e n√£o p√¥de executar o servi√ßo.", SSM_FAIL);
+         SendSysMessageEx(user, "O alvo aceitou sua tentativa de mata-lo, mas vocÍ est· muito distante para executar.", SSM_FAIL);
+         SendSysMessageEx(who, "Seu assassino se afastou do corpo e n„o pÙde executar o serviÁo.", SSM_FAIL);
          return 1;
       endif
       DesmembreCorpse(targ);
@@ -44,16 +44,16 @@ program askDeath(params)
       //    dpmod := dpmod - 10;
       //    SetObjProperty(who, "dpmod", dpmod);
       // endif
-      PrintText( who, "*Corta a cabe√ßa*");
+      PrintText( who, "*Corta a cabeÁa*");
       SetObjProperty(targ, "description", "[Decaptado]");
       SetObjProperty(targ, "WeaponKill", item.desc);
       SetObjProperty(targ, "charname", targ.name);
       SetObjProperty(targ, "deathtime", polcore().systime);
-      SetName(targ, "Corpo Irreconhec√≠vel");
+      SetName(targ, "Corpo IrreconhecÌvel");
       SetObjProperty(targ, "morto", 1);
       return 1;
    endif
 
-   SendSysMessageEx(who, "O alvo negou sua tentativa de mata-lo. Tente resolver com o jogador no Discord ou pe√ßa ajuda a um GM.", SSM_FAIL);
-   SendSysMessageEx(who, "Matar outro jogador n√£o √© uma decis√£o banal, ent√£o n√£o insista se n√£o tiver motivos reais.", SSM_FAIL);
+   SendSysMessageEx(who, "O alvo negou sua tentativa de mata-lo. Tente resolver com o jogador no Discord ou peÁa ajuda a um GM.", SSM_FAIL);
+   SendSysMessageEx(who, "Matar outro jogador n„o È uma decis„o banal, ent„o n„o insista se n„o tiver motivos reais.", SSM_FAIL);
 endprogram

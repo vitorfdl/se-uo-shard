@@ -16,7 +16,7 @@ program use_wool(who, wool)
     return;
   endif
   if(wool.movable == 0)
-    SendSysMessageEx(who, "VocÃª nÃ£o pode usar isto.", SSM_FAIL);
+    SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
     return;
   endif
   if(!ReserveItem(wool))
@@ -59,29 +59,29 @@ program use_wool(who, wool)
 		endif
 
 		if ((who.x != initx) || (who.y != inity))
-			SendSysMessageEx(who, "VocÃª desviou sua atencao.", SSM_FAIL);
+			SendSysMessageEx(who, "Você desviou sua atencao.", SSM_FAIL);
 			break;
 		endif
 
 	endwhile
 
   else
-    SendSysMessageEx(who, "VocÃª precisa usar isto na roda de fiar.", SSM_FAIL);
+    SendSysMessageEx(who, "Você precisa usar isto na roda de fiar.", SSM_FAIL);
   endif
 endprogram
 
 function Makeyarn(who, item) 
 
 		if (!Accessible(who, item))
-			SendSysMessageEx(who, "VocÃª nÃ£o possui o material!", SSM_FAIL);
+			SendSysMessageEx(who, "Você não possui o material!", SSM_FAIL);
 			return 0;
 		endif
 		if(SubtractAmount(item, 1))
 			var yarn := CreateItemInBackpack(who, 0xe1f, 2);
-			SendSysMessageEx(who, "VocÃª criou o fio com o material.", SSM_INFO);
+			SendSysMessageEx(who, "Você criou o fio com o material.", SSM_INFO);
 			return 1;
 		else
-			SendSysMessageEx(who, "VocÃª nÃ£o possui mais material suficiente.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não possui mais material suficiente.", SSM_FAIL);
 			return 0;
 		endif
 

@@ -79,7 +79,7 @@ program Attack(params)
 	if (attacker.acctname)
 		if (!attacker.warmode)
 			if(GetObjProperty(attacker, "#attackmsg") <= polcore().systime)
-				SendSysMessageEx(attacker, "VocÃª precisa estar em modo de combate para ameaÃ§ar alguÃ©m.", SSM_FAIL);
+				SendSysMessageEx(attacker, "Você precisa estar em modo de combate para ameaçar alguém.", SSM_FAIL);
 				SetObjProperty(attacker, "#attackmsg", polcore().systime+15);
 			endif
 			return 1;
@@ -89,7 +89,7 @@ program Attack(params)
 	wpn_a_elem := GetItemCFGInfo(attacker, weapon);
 
 	if ( attacker.frozen )
-		SendSysMessage(attacker, "VocÃª nÃ£o consegue atacar.");
+		SendSysMessage(attacker, "Você não consegue atacar.");
 		return 1;
 	elseif ( (attacker.concealed) && (attacker.cmdlevel == 0) )
 		attacker.concealed := 0;
@@ -197,7 +197,7 @@ function GetAttackerChance(attacker, defender)
    endif
 
 	if (!IsFacing(defender, attacker.x, attacker.y))
-      if (!HaveFeat(defender, "Reflexos RÃ¡pidos"))
+      if (!HaveFeat(defender, "Reflexos Rápidos"))
 		   dice_gain += 1;
       endif
 		if (!defender.npctemplate)
@@ -257,7 +257,7 @@ function GetDefenderCA(defender, armor)
 	var CA := 5;
 	if ( !defender.npctemplate )
 		if (armor)
-			CA := armor.ar_base; //se Ã© armadura pesada, n tem dex
+			CA := armor.ar_base; //se é armadura pesada, n tem dex
 
 			var armor_elem := GetItemCFGInfo(defender, armor);
 			if (armor_elem.pericia == ARMADURA_LEVE)
@@ -266,7 +266,7 @@ function GetDefenderCA(defender, armor)
 			elseif (armor_elem.pericia == ARMADURA_MEDIA)
             defender.SetAchievement("mediumarmor", 1);
 				var mod := GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
-				if (mod > 2) //max de mod Ã© 2 pra mÃ©dia
+				if (mod > 2) //max de mod é 2 pra média
 					mod := 2;
 				endif
 
@@ -297,7 +297,7 @@ function GetDefenderCA(defender, armor)
 		CA += ca_bonus;
 	endif
 
-	//nÃ£o ta em warmode, 95% de chance
+	//não ta em warmode, 95% de chance
 	if (defender.acctname && !defender.warmode)
 		CA := 5;
 	endif
@@ -368,7 +368,7 @@ function WearDownWeapon(attacker)
 	return 0;
 endfunction
 
-// Checa por muniÃ§Ã£o ou faz efeito do npc arqueiro
+// Checa por munição ou faz efeito do npc arqueiro
 function AmmoCheck(attacker, defender)
    var cfgfile := NPC_GetNPCConfig(attacker.npctemplate);
 	if (weapon.isMagicWeapon())
@@ -391,7 +391,7 @@ function AmmoCheck(attacker, defender)
 	var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
 	var ammo   := GetObjProperty(weapon, "ammo");
 	if (!ammo)
-		SendSysMessageEX(attacker, "VocÃª nÃ£o definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]", SSM_FAIL);
+		SendSysMessageEX(attacker, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]", SSM_FAIL);
 		return 0;
 	endif
 	if ( ConsumeSubstance( aljava, ammo, 1 ) )
@@ -407,7 +407,7 @@ function AmmoCheck(attacker, defender)
 
 endfunction
 
-// Cria as muniÃ§Ã£o no chÃ£o
+// Cria as munição no chão
 function ArrowRecovery(defender)
 	var chance := 15;
 	if ( RandomDiceRoll("1d100") <= chance )
@@ -417,7 +417,7 @@ function ArrowRecovery(defender)
 	endif
 endfunction
 
-// Checa direÃ§Ã£o q ta olhando
+// Checa direção q ta olhando
 function FacingChecks(attacker, defender)
 	var retval := 1;
 	if ( !IsFacing(attacker, defender.x, defender.y) )
@@ -425,7 +425,7 @@ function FacingChecks(attacker, defender)
 			TurnObjectToward(attacker, defender.x, defender.y);
 		else
 			if ( IsBehind(attacker, defender.x, defender.y) )
-				SendSysMessageEx(attacker, "VocÃª esta de costas para o inimigo!", SSM_FAIL);
+				SendSysMessageEx(attacker, "Você esta de costas para o inimigo!", SSM_FAIL);
 				retval := 0;
 			endif
 		endif
@@ -443,7 +443,7 @@ function GetAttackerFeatPenalty(attacker, defender)
    if (defender.acctname && attacker.npctemplate) //mob vs player
       var mobiles_near := ListMobilesNearLocationEx(defender.x, defender.y, defender.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
       foreach mob in mobiles_near
-         if (HaveFeat(mob, "PresenÃ§a Imponente"))
+         if (HaveFeat(mob, "Presença Imponente"))
             bonus -= 1;
             break;
          endif
@@ -456,7 +456,7 @@ endfunction
 function GetAttackerDMGBonus(attacker)
    var bonus := 0;
 
-   // if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das LÃ¢minas"))
+   // if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))
    //    bonus += 1;
    // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
    //    bonus += 1;
@@ -474,7 +474,7 @@ endfunction
 function GetAttackerFeatBonus(attacker, roll)
    var bonus := 0;
 
-   if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das LÃ¢minas"))
+   if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))
       bonus += 1;
    elseif (wpn_a_elem.WeaponType == "bow" && HaveFeat(attacker, "Arqueiro Experiente"))
       bonus += 1;

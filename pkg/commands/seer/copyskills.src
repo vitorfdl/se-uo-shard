@@ -23,7 +23,7 @@ program copyskills(who)
 	endif
 	
 	if ((newlook.acctname) && (newlook.cmdlevel < 1))
-		SendSysMessage(who, "VocÃª nÃ£o pode cÃ³piar skills para jogadores.");
+		SendSysMessage(who, "Você não pode cópiar skills para jogadores.");
 		return 0;
 	endif
 

@@ -11,7 +11,7 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 		return 0;
 	endif
 	if (mobile.frozen || mobile.paralyzed)
-		SendSysMessage(mobile, "VocÃª esta paralizado.");
+		SendSysMessage(mobile, "Você esta paralizado.");
 		return 0;
 	endif
 	var valid :=	{0xba63, 0xba64, 0xba65, // moedas
@@ -21,9 +21,9 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 			 0xF0F, 0xF10, 0xF11, 0xF13, 0xF15, 0xF16, 0xF18, 0xF25, 0xF30, // pedras preciosas
 			 0xE34, 0x6116, 0xff990, 0xff991, 0xff992, 0xff994, 0xff995, // pergaminhos
 			 0xfbf, // caneta tinteiro
-			 0x6100, 0x2253, // grimÃ³rio
+			 0x6100, 0x2253, // grimório
 			 0x702D, 0x702C, 0x702E, //cookwork
-			 0x790c, 0x4079// terÃ§o
+			 0x790c, 0x4079// terço
 			};
 	if (item.objtype IN valid)
 		return 1;
@@ -31,7 +31,7 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 		return 1;
 	endif
 
-	SendSysMessage(mobile, "O banco nÃ£o aceita todos os tipos de itens. Apenas pertences pessoais, tais como:");
+	SendSysMessage(mobile, "O banco não aceita todos os tipos de itens. Apenas pertences pessoais, tais como:");
 	SendSysMessage(mobile, "Moedas, joias, pedras preciosas, livros, chaves, pergaminhos.");
 	SendSysMessage(mobile, "Se o item que estiver tentando guardar no banco esteja em uma dessas categorias, envie page.");
 	

@@ -18,7 +18,7 @@ program onRemove(character, container, item, item_amount, movetype)
 
 	if (pagamento && pago)
 		if (item.objtype == 47715)
-			SendSysMessageEx(character, "VocÃª removeu o pagamento!", SSM_FAIL);
+			SendSysMessageEx(character, "Você removeu o pagamento!", SSM_FAIL);
 			container.color := 2117;
 		endif
 	endif

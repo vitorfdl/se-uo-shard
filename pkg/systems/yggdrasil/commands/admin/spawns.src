@@ -231,7 +231,7 @@ endfunction
 function DoGroupList(who, input)
     case (input[0])
         GF_ADD_BTN:
-            var spotgroup_name := RequestGump(who, "Nome do novo Grupo de Spot", "ObrigatÃ³rio um nome ainda nÃ£o usado.", "", CANCEL_BTN_ON);
+            var spotgroup_name := RequestGump(who, "Nome do novo Grupo de Spot", "Obrigatório um nome ainda não usado.", "", CANCEL_BTN_ON);
             var group_list := LoadSpotGroupData().Keys();
             if (spotgroup_name == 0 || !spotgroup_name || spotgroup_name == " " )
                 break;
@@ -274,7 +274,7 @@ function DoSelectedGroupList(byref who, input)
             break;
         GF_GROUP_REMSPOT_BTN:
             RemoveSpotInSpotGroup(selected_group, selected_spot);
-            var respost := YesNo(who, "Deseja deletar o Spot do mundo?", "Sim", "NÃ£o");
+            var respost := YesNo(who, "Deseja deletar o Spot do mundo?", "Sim", "Não");
             if (respost)
                 var spot := SystemFindObjectBySerial(selected_spot);
                 SetObjProperty(spot, "GM_FLAG", 1);
@@ -288,7 +288,7 @@ function DoSelectedGroupList(byref who, input)
             UpdateSpawnGroupInSpotGroup(selected_group, struct{"name":=spawngroup_name});
             break;
         GF_GROUP_REMSPAWNGROUP_BTN:
-            if (YesNo(who, "Deseja mesmo remover esse spawngroup?", "Sim", "NÃ£o"))
+            if (YesNo(who, "Deseja mesmo remover esse spawngroup?", "Sim", "Não"))
                RemoveSpawnGroupInSpotGroup(selected_group, selected_spawngroup);
                SetSelectGroupButton(0, "spawngroup");
             endif
@@ -359,7 +359,7 @@ function DoSpotList(who, input)
                 SendSysMessageEx(who, "You must select a container");
                 break;
             endif
-            var new__name := RequestGump(who, "Nome do novo Treasure", "ObrigatÃ³rio um nome ainda nÃ£o usado neste spot.", "", CANCEL_BTN_ON);
+            var new__name := RequestGump(who, "Nome do novo Treasure", "Obrigatório um nome ainda não usado neste spot.", "", CANCEL_BTN_ON);
             var new_treasure := struct{
                 "serial" := container.serial,
                 "name" := new__name
@@ -478,7 +478,7 @@ function DoTreasureList(who, input)
             SpawnTreasure(treasure_obj, treasure);
             break;
         GF_TREASURE_ADDITEM_BTN:
-            var t_option := RadioGump(who, 180, 165, "VocÃª deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
+            var t_option := RadioGump(who, 180, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
             case (t_option)
                 "Adicionar lista":
                     var loot_cfg  := ReadConfigFile(":loot:config/loot-index");
@@ -527,7 +527,7 @@ function DoTreasureList(who, input)
 				if (!retitem)
 					SendSysMessageEx(who, "erro: " + retitem);
 				endif
-				SendSysMessageEx(who, "VocÃª criou o item na sua mochila."); 
+				SendSysMessageEx(who, "Você criou o item na sua mochila."); 
 			elseif (opt == "Alterar Chance")
 				treasure.loots[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
             endif 
@@ -544,7 +544,7 @@ function ConstructGroupList(byref gump)
     for i:=1 to spotgroups.Size()+1
         GFPage(gump, page);
         var x := 50;
-        var y := (30+(18*i)) / (((page-1) * max_page)+1); //(BaseX(EspaÃ§amento*i)) / (Calculo de Pagina)
+        var y := (30+(18*i)) / (((page-1) * max_page)+1); //(BaseX(Espaçamento*i)) / (Calculo de Pagina)
         var color := 1153;
         if (selected_group == spotgroups[i])
             color := 2103;
@@ -578,7 +578,7 @@ function ConstructGroupConfig(byref gump)
     var form_size   := spawnGroups.Size() + spots.Size();
 
     GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 180+(form_size*18));
-    GFTextLine(gump, 202, 28, 555, "ConfiguraÃ§Ãµes do Grupo");
+    GFTextLine(gump, 202, 28, 555, "Configurações do Grupo");
 
     GFTextLine(gump, 210, 50, 1153, "Ativado:");
     GFCheckBox(gump, 210+50, 50+5, 2360, 2361, group_data.active, GF_GROUP_ACTIVE_SWITCH);

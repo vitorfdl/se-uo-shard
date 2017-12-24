@@ -6,10 +6,10 @@ include ":attributes:attributes";
 
 program installtrap(who, trap)
 	if (!ReserveITem( trap))
-		SendSysMEssageEx(who,"VocÃª nÃ£o pode usar este item agora.", SSM_FAIL);
+		SendSysMEssageEx(who,"Você não pode usar este item agora.", SSM_FAIL);
 		return;
 	elseif ( Distance(who, trap) > 2)
-		SendSysMessageEx(who, "VocÃª esta muito distante.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
 		return;
 	endif
 
@@ -45,11 +45,11 @@ program installtrap(who, trap)
 		var dif := level * 20;
 		var check := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SABOTAGEM);
 		if (check > 12)
-			SendSysMessageEx(who, "VocÃª instalou a armadilha.", SSM_INFO);
+			SendSysMessageEx(who, "Você instalou a armadilha.", SSM_INFO);
 			AddTrap(alvo, traptype, level);
 			DestroyITem(trap);
 		elseif (check >= 20 )
-			SendSysMessageEx(who, "VocÃª falhou em instalar a armadilha", SSM_INFO);
+			SendSysMessageEx(who, "Você falhou em instalar a armadilha", SSM_INFO);
 			return;
 		else
 			PrintText(who, "*"+who.name+" disparou a armadilha.");
@@ -65,7 +65,7 @@ program installtrap(who, trap)
 			endforeach
 		endif
 	else
-		SendSysMessageEx(who, "Este nÃ£o e um alvo valido.", SSM_FAIL);
+		SendSysMessageEx(who, "Este não e um alvo valido.", SSM_FAIL);
 		return 0;
 	endif
 

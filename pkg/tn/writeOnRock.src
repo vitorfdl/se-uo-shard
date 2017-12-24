@@ -29,7 +29,7 @@ function writeName(who, item)
    endif
 
    if (name in names_writed)
-      SendSysMessageEx(who, "Seu nome j√° foi gravado na pedra", SSM_FAIL);
+      SendSysMessageEx(who, "Seu nome j· foi gravado na pedra", SSM_FAIL);
       return;
    endif
 

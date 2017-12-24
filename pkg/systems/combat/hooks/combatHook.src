@@ -108,7 +108,7 @@ endfunction
 // 	endif
 // endfunction
 
-// // Checa por muniÃ§Ã£o ou faz efeito do npc arqueiro
+// // Checa por munição ou faz efeito do npc arqueiro
 // function AmmoCheck(attacker, defender)
 // 	if ( !wpn_a_elem.ProjectileType )
 // 		return 1;
@@ -122,7 +122,7 @@ endfunction
 // 	var aljava := GetEquipmentByLayer(attacker, LAYER_CAPE);
 // 	var ammo   := GetObjProperty(attacker.weapon, "ammo");
 // 	if (!ammo)
-// 		SendSysMessage(attacker, "VocÃª nÃ£o definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
+// 		SendSysMessage(attacker, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
 // 		return 0;
 // 	endif
 // 	if ( ConsumeSubstance( aljava, ammo, 1 ) )
@@ -137,7 +137,7 @@ endfunction
 
 // endfunction
 
-// // Cria as muniÃ§Ã£o no chÃ£o
+// // Cria as munição no chão
 // function ArrowRecovery(defender, weapon)
 // 	var chance := 15;
 // 	if ( RandomDiceRoll("1d100") <= chance )
@@ -154,7 +154,7 @@ endfunction
 // 	endif
 // endfunction
 
-// // Checa direÃ§Ã£o q ta olhando
+// // Checa direção q ta olhando
 // function FacingChecks(attacker, defender)
 // 	var retval := 1;
 // 	if ( !IsFacing(attacker, defender.x, defender.y) )
@@ -162,7 +162,7 @@ endfunction
 // 			TurnObjectToward(attacker, defender.x, defender.y);
 // 		else
 // 			if ( IsBehind(attacker, defender.x, defender.y) )
-// 				SendSysMessage(attacker, "VocÃª esta de costas para o inimigo!");
+// 				SendSysMessage(attacker, "Você esta de costas para o inimigo!");
 // 				retval := 0;
 // 			endif
 // 		endif

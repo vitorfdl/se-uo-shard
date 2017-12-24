@@ -25,7 +25,7 @@ var recipes := ReadConfigFile(":alchemy:config/recipes");
 program advalchemy(who, item)
 
 	if(!Accessible(who, item))
-		SendSysMessageEx(who, "VocÃª nÃ£o alcanca o item.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não alcanca o item.", SSM_FAIL);
 		return;
 	endif
 	if(!ReserveItem(item))
@@ -75,7 +75,7 @@ program advalchemy(who, item)
 			return;
 		endif
 		if ( !(alvo.isReagent() || isOtherReagent(alvo)) )
-			SendSysMessageEx(who, "Isso nÃ£o parece ser um ingrediente valido!", SSM_FAIL);
+			SendSysMessageEx(who, "Isso não parece ser um ingrediente valido!", SSM_FAIL);
 			return;
         	endif
 
@@ -115,7 +115,7 @@ function FazPotion(who, item)
 
 	var regs := GetObjProperty(item, "reagentes");
 	if (!regs)
-		SendSysMessageEx(who, "NÃ£o tem reagentes aqui para misturar.", SSM_FAIL);
+		SendSysMessageEx(who, "Não tem reagentes aqui para misturar.", SSM_FAIL);
 		return;
 	endif
 	var r_keys := regs.keys();
@@ -144,12 +144,12 @@ function FazPotion(who, item)
 
 	if (recipes[objtype].magic)
 		if (!TemHabilidade(who, "Mestre da Alquimia") && !FindInBook(who, objtype))
-			SendSysMessageEx(who, "VocÃª nÃ£o sabe a receita dessa formula.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não sabe a receita dessa formula.", SSM_FAIL);
 			return 1;
 		endif
 	else	
-		if (!TemHabilidade(who, "BoticÃ¡rio"))
-			SendSysMessageEx(who, "VocÃª precisa de Boticario para inventar suas proprias pocoes.", SSM_FAIL);
+		if (!TemHabilidade(who, "Boticário"))
+			SendSysMessageEx(who, "Você precisa de Boticario para inventar suas proprias pocoes.", SSM_FAIL);
 			return 1;
 		endif
 	endif
@@ -169,7 +169,7 @@ function FazPotion(who, item)
 				loop := loop + 1;
 			endwhile
 			PlaySoundEffect(who, SOUND_EFFECT_POUR);
-			SendSysMessageEx(who, "VocÃª nÃ£o conseguiu fazer nada com isso.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não conseguiu fazer nada com isso.", SSM_FAIL);
 			EraseObjProperty(item, "reagentes");
 		endif
 	endif
@@ -221,9 +221,9 @@ function MakePotion ( pot, item, who, magic, strength := 0)
 
 		if(hasbottle)
 			var thing;
-			if (!magic)//se nÃ£o tiver o flag magic como as tintas, cria o item
+			if (!magic)//se não tiver o flag magic como as tintas, cria o item
 				thing := CreateItemInBackpack(who, pot, 1);
-			else //se nÃ£o cria so o extrato
+			else //se não cria so o extrato
 				thing := CreateItemInBackpack(who, 0xcfff, 1);
 				SetObjProperty(thing, "extrato", pot);
 				if (strength)
@@ -231,7 +231,7 @@ function MakePotion ( pot, item, who, magic, strength := 0)
 				endif
 			endif
 			if (GetObjProperty(who, "extratoinstantaneo"))
-					SendSysMessageEx(who, "VocÃª fez um extrato instantaneo.", SSM_INFO);
+					SendSysMessageEx(who, "Você fez um extrato instantaneo.", SSM_INFO);
 					var pocao := GetObjProperty(thing, "pocao");
        					var pot := CreateItemInBackpack(who, pocao, 1);
 					SetObjProperty(pot, "strength", cint(GetObjProperty(thing, "strength")));
@@ -240,19 +240,19 @@ function MakePotion ( pot, item, who, magic, strength := 0)
 			endif
 			SetObjProperty(thing, "crafterskill", AP_GetSkill(who, ALCHEMY) );
 			PlaySoundEffect(who, SOUND_EFFECT_POUR);
-			SendSysMessageEx(who, "VocÃª fez a pocao e a guardou na sua mochila.", SSM_INFO);
+			SendSysMessageEx(who, "Você fez a pocao e a guardou na sua mochila.", SSM_INFO);
 			EraseObjProperty(item, "reagentes");
 			return;
         
 		else
-			SendSysMessageEx(who, "VocÃª nÃ£o tem frascos.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não tem frascos.", SSM_FAIL);
 			return;
 		endif
       
 	else
 		EraseObjProperty(item, "reagentes");
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
-		SendSysMessageEx(who, "VocÃª nÃ£o conseguiu fazer nada com isso.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não conseguiu fazer nada com isso.", SSM_FAIL);
 		return;
 	endif
 endfunction
@@ -275,7 +275,7 @@ function FalhaCritica(who, item)
 			loop := loop + 1;
 		endwhile
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
-		SendSysMessageEx(who, "VocÃª nÃ£o consegui fazer nada com isso.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não consegui fazer nada com isso.", SSM_FAIL);
 		return;
 	//elseif ( falha < 68 )
 	//	SendSysMEssageEx(who,"AHH!  Seu cabelo caiu!!!", SSM_FAIL);
@@ -283,7 +283,7 @@ function FalhaCritica(who, item)
 	//	DestroyItem(GetEquipmentByLayer (who, LAYER_BEARD));
 	//	return;
 	elseif ( falha < 78 )
-		SendSysMessageEx(who,"Ugh... VocÃª nÃ£o esta se sentindo muito bem...", SSM_FAIL);
+		SendSysMessageEx(who,"Ugh... Você não esta se sentindo muito bem...", SSM_FAIL);
 		TS_StartTimer(who, "strPoison", 120, 2);
 	elseif ( falha < 82 )
 		SendSysMessageEx(who,"Ahh!", SSM_FAIL);
@@ -307,7 +307,7 @@ function FalhaCritica(who, item)
 		PlaySoundEffect(who, 0x208);
 		ApplyRawDamage(who, cint(30+ randomInt(100) ) );
 	else
-		SendSysMessageEX(who,"VocÃª esta envenenado!!", SSM_FAIL);
+		SendSysMessageEX(who,"Você esta envenenado!!", SSM_FAIL);
 		TS_StartTimer(who, "defaultPoison", 120, 5);
 	endif
 endfunction

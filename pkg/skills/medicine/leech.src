@@ -9,14 +9,14 @@ include ":timedscripts:poisonUtil";
 include ":charactercreation:feats";
 
 program UseLeech(who, leech)
-	SendSysMessage(who, "Em quem vocÃª deseja usar isto?");
+	SendSysMessage(who, "Em quem você deseja usar isto?");
 	var targ := target(who);
 	
 	if ( !targ.acctname )
 		SendSysMessage(who, "Cancelado");
 		return;
 	elseif ( !targ.poisoned )
-		SendSysMessage(who, targ.name+" nÃ£o esta envenenado.");
+		SendSysMessage(who, targ.name+" não esta envenenado.");
 		return;
 	elseif ( Distance(who, targ) > 2 )
 		SendSysMessage(who, targ.name+" esta muito distante.");
@@ -27,7 +27,7 @@ program UseLeech(who, leech)
 
 	if ( test > 13 )
 		who.SetAchievement("leech", 1);
-		SendSysMessage(who, "VocÃª aplicou a sanguessuga em "+targ.name);
+		SendSysMessage(who, "Você aplicou a sanguessuga em "+targ.name);
 		TS_CurePoison(targ, Floor(test/3), "P", 1);
 	else
 		SendSysMessage(who, "As sanguessugas parecem fazer pouco efeito em "+targ.name);

@@ -18,14 +18,14 @@ program use_FishNets(who, fishnet)
 		return 0;
 	endif
 	if( fishnet.movable == 0 )
-		SendSysMessage(who, "VocÃª nÃ£o pode usar isto.");
+		SendSysMessage(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	if( !ReserveItem(fishnet) )
 		return 0;
 	endif
 	if( !(fishnet in EnumerateItemsInContainer(who.backpack)) )
-		SendSysMessage(who, "O item nÃ£o esta em sua mochila.");
+		SendSysMessage(who, "O item não esta em sua mochila.");
 		return 0;
 	endif
 
@@ -78,9 +78,9 @@ program use_FishNets(who, fishnet)
 				CreateNpcFromTemplate( "waterelemental", targetsquare.x, targetsquare.y, targetsquare.z );
 				CreateNpcFromTemplate( "kraken", targetsquare.x, targetsquare.y, targetsquare.z );
 			endif
-			SendSysMessage(who, "VocÃª parece que pegou algo mais!");
+			SendSysMessage(who, "Você parece que pegou algo mais!");
 		else
-			SendSysMessage(who, "Parece nÃ£o ter peixes aqui.");
+			SendSysMessage(who, "Parece não ter peixes aqui.");
 		endif
 		DestroyItem(fishnet);
 	endif

@@ -13,7 +13,7 @@ program textcmd_partyspy(who, player)
 		if (player)
 			var targ := Target(who);
 			if (!targ.party.leader.name)
-				SendSysMessage(who, "O alvo n√£o esta em Party");
+				SendSysMessage(who, "O alvo n„o esta em Party");
 				return 1;
 			endif
 			SetObjProperty(who, "PartySpyOn", targ.party.leader.name);

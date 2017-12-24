@@ -17,10 +17,10 @@ include ":tn:cooldown";
 
 program use_Break(who, tool)
 	if (who.weapon != tool)
-		SendSysMessage(who, "VocÃª deve estar com a arma em maos.");
+		SendSysMessage(who, "Você deve estar com a arma em maos.");
 		return 0;
 	endif
-	SendSysMessage(who, "O que vocÃª deseja quebrar ?");
+	SendSysMessage(who, "O que você deseja quebrar ?");
 	var targ := TargetCoordinates(who);
 	
 	if ( !targ )
@@ -31,7 +31,7 @@ program use_Break(who, tool)
 	if (targ.item)
 		DestroyItems(who, tool, targ.item);
 	else
-		SendSysMessage(who,"VocÃª nÃ£o pode quebrar isto.");
+		SendSysMessage(who,"Você não pode quebrar isto.");
 		return 0;
 	endif
 

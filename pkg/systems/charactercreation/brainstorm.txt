@@ -9,10 +9,10 @@ rune_inscription
     "Pontos de Mana"   : 10 + Magia + 1d6
     "Mana por Nivel"   : 1d6 + Magia 
 
-    "Pontos de Stamina": 10 + ConstituiÃ§Ã£o + 1d6
-    "Stamina por Nivel": 1d6 + ConstituiÃ§Ã£o
+    "Pontos de Stamina": 10 + Constituição + 1d6
+    "Stamina por Nivel": 1d6 + Constituição
 
-    "Peso": 7*ForÃ§a
+    "Peso": 7*Força
 //------------------------------------------*/    
 // Cleric: 7597
 // Warrior: 759A
@@ -20,134 +20,134 @@ rune_inscription
 // Thief: 75A2
 
 -> Dado de Vida => dado da classe + cons
--> ProficiÃªncia => +2
+-> Proficiência => +2
 -> Atributos => 4d6, soma 3 maiores.
-RaÃ§as
+Raças
     [Humano]
     - Todos Atributos +1
 
     [Elfo]
-    - InteligÃªncia +2 e Dex +1
-    - VisÃ£o Noturna
-    - ResistÃªncia MÃ¡gica
+    - Inteligência +2 e Dex +1
+    - Visão Noturna
+    - Resistência Mágica
 
     [Meio-Elfo]
     - Dex +1 e +1 em dois outros atributos.
-    - VisÃ£o Noturna
-    - ProficiÃªncia em 2 perÃ­cias
+    - Visão Noturna
+    - Proficiência em 2 perícias
 
 Classes
     [Guerreiro]
     - Dado de vida: 1d10 (+ cons)
-    - ProficiÃªncias: Armadura Leve, Armadura MÃ©dia, Armadura Pesada, Arma Leve, Arma Pesada, Arma de Duas MÃ£os, Arco, Besta, Desarmado e Escudo;
-    - Teste de resistÃªncia: ForÃ§a e ConstituiÃ§Ã£o
-    - Escolha duas entre Trato de Animais, PercepÃ§Ã£o, SobrevivÃªncia, Pesquisa, Montaria, Medicina, Ferreiro, ExtraÃ§Ã£o;
+    - Proficiências: Armadura Leve, Armadura Média, Armadura Pesada, Arma Leve, Arma Pesada, Arma de Duas Mãos, Arco, Besta, Desarmado e Escudo;
+    - Teste de resistência: Força e Constituição
+    - Escolha duas entre Trato de Animais, Percepção, Sobrevivência, Pesquisa, Montaria, Medicina, Ferreiro, Extração;
 
     [Ladino]
     - Dado de Vida: 1d8 (+ cons)
-    - ProficiÃªncias: Armaduras Leves, Arma Leve, Arma de Duas MÃ£os, Arco, Besta;
-    - Testes de ResistÃªncia: Destreza e InteligÃªncia
-    - PerÃ­cias: Escolha duas entre PrestidigitaÃ§Ã£o, PercepÃ§Ã£o, Furtividade, Arrombar Fechadura, Pesquisa, Tocar Instrumento, Veneficio, Montaria, Trato de Animais, ExtraÃ§Ã£o, Costura, SobreviÃªncia;
+    - Proficiências: Armaduras Leves, Arma Leve, Arma de Duas Mãos, Arco, Besta;
+    - Testes de Resistência: Destreza e Inteligência
+    - Perícias: Escolha duas entre Prestidigitação, Percepção, Furtividade, Arrombar Fechadura, Pesquisa, Tocar Instrumento, Veneficio, Montaria, Trato de Animais, Extração, Costura, Sobreviência;
 
     [Mago]
     - Dado de Vida: 1d6 (+ cons)
     - Armas: Armas Leves, Bestas;
-    - Testes de ResistÃªncia: InteligÃªncia, Sabedoria;
-    - PerÃ­cias: Escolha duas entre Arcanismo, PercepÃ§Ã£o, Medicina, Veneficio, SobrevivÃªncia, Pesquisa, PlantaÃ§Ã£o, Costura, Cozinha;
-    - Antecedentes: ArtesÃ£o, Menestrel, HerÃ³i do Povo, 
+    - Testes de Resistência: Inteligência, Sabedoria;
+    - Perícias: Escolha duas entre Arcanismo, Percepção, Medicina, Veneficio, Sobrevivência, Pesquisa, Plantação, Costura, Cozinha;
+    - Antecedentes: Artesão, Menestrel, Herói do Povo, 
 
-    [ClÃ©rigo]
+    [Clérigo]
     - Dado de Vida: 1d8 (+ cons)
-    - Armas: Desarmado, Armas Leves, Armas Pesadas, Armaduras Simples, Armaduras MÃ©dias e Escudos.
-    - Testes de resisÃªncia: InteligÃªncia, Sabedoria
-    - PerÃ­cias: Escolha duas entre Runas, Cura, NecromÃ¢ncia, Medicina, Pesquisa, SobrevivÃªncia, ExtraÃ§Ã£o, Ferreiro, Costura, Marcenaria;
+    - Armas: Desarmado, Armas Leves, Armas Pesadas, Armaduras Simples, Armaduras Médias e Escudos.
+    - Testes de resisência: Inteligência, Sabedoria
+    - Perícias: Escolha duas entre Runas, Cura, Necromância, Medicina, Pesquisa, Sobrevivência, Extração, Ferreiro, Costura, Marcenaria;
 
-Todas PerÃ­cias:
-    Combate: Armadura Leve, Armadura MÃ©dia, Armadura Pesada, Arma Leve, Arma Pesada, Arma de Duas MÃ£os, Arco, Besta, Desarmado, Escudo;
-    Ladinagem: Desarmar Armadilha, Arrombar Fechadura, PercepÃ§Ã£o, PrestidigitaÃ§Ã£o, Furtividade, VenefÃ­cio, Tocar Instrumento,
+Todas Perícias:
+    Combate: Armadura Leve, Armadura Média, Armadura Pesada, Arma Leve, Arma Pesada, Arma de Duas Mãos, Arco, Besta, Desarmado, Escudo;
+    Ladinagem: Desarmar Armadilha, Arrombar Fechadura, Percepção, Prestidigitação, Furtividade, Venefício, Tocar Instrumento,
     Maguisse: Arcanismo, Alquimia,
-    ClÃ©riguisse: Runas, Cura, NecromÃ¢ncia,
-    Artificie: ExtraÃ§Ã£o, PlantaÃ§Ã£o, MineraÃ§Ã£o, Ferreiro, Cozinha, Costura, Marcenaria, 
-    Outros: Medicina, SobrevivÃªncia, Trato de Animais, Montaria, Pesquisa
+    Clériguisse: Runas, Cura, Necromância,
+    Artificie: Extração, Plantação, Mineração, Ferreiro, Cozinha, Costura, Marcenaria, 
+    Outros: Medicina, Sobrevivência, Trato de Animais, Montaria, Pesquisa
 
 Antecedentes
     [Menestrel]
-    - VocÃª foi um aprendiz de menestrel ou ainda Ã©, viveu aventuras e sabe conta-las como ninguÃ©m, ou ouviu histÃ³rias e decidiu reproduzi-las. A guilda dos MenestrÃ©is estÃ¡ de olho em vocÃª para recruta-lo e vocÃª sabe disso.
-    - PerÃ­cias: Tocar Instrumento, PercepÃ§Ã£o;
+    - Você foi um aprendiz de menestrel ou ainda é, viveu aventuras e sabe conta-las como ninguém, ou ouviu histórias e decidiu reproduzi-las. A guilda dos Menestréis está de olho em você para recruta-lo e você sabe disso.
+    - Perícias: Tocar Instrumento, Percepção;
     - Equipamento: Harpa, Violino, roupas de menestrel e 15gp
 
-    [HerÃ³i do Povo]
+    [Herói do Povo]
     - Hist: Amado pelo povo onde vivia
-    - PerÃ­cias: Trato de Animais, SobrevivÃªncia
-    - Equipamento: Equipamentos de artÃ­ficie (choice), uma pÃ¡, iron pot, roupas comuns e 10gp.
+    - Perícias: Trato de Animais, Sobrevivência
+    - Equipamento: Equipamentos de artíficie (choice), uma pá, iron pot, roupas comuns e 10gp.
 
-    [ArtesÃ£o Marceneiro]
-    - Hist: VocÃª tem relaÃ§Ãµes com as associaÃ§Ãµes mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradiÃ§Ã£o do seu povo como mulher, liderando o comÃ©rcio e extraindo matÃ©ria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comÃ©rcio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
-    - PerÃ­cias: Marceneiro, ExtraÃ§Ã£o;
+    [Artesão Marceneiro]
+    - Hist: Você tem relações com as associações mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradição do seu povo como mulher, liderando o comércio e extraindo matéria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comércio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
+    - Perícias: Marceneiro, Extração;
     - Equipamento: Ferramentas Arquearia, Serrote, Machado, roupas chiques e 15gp.
 
-    [ArtesÃ£o Ferreiro]
-    - Hist: VocÃª tem relaÃ§Ãµes com as associaÃ§Ãµes mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradiÃ§Ã£o do seu povo como mulher, liderando o comÃ©rcio e extraindo matÃ©ria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comÃ©rcio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
-    - PerÃ­cias: Ferreiro e ExtraÃ§Ã£o.
+    [Artesão Ferreiro]
+    - Hist: Você tem relações com as associações mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradição do seu povo como mulher, liderando o comércio e extraindo matéria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comércio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
+    - Perícias: Ferreiro e Extração.
     - Equipamento: Picareta, Martelo, Ferramenta de Funilaria, roupas chiques e 15gp.
 
-   [ArtesÃ£o Cozinheiro]
-    - Hist: VocÃª tem relaÃ§Ãµes com as associaÃ§Ãµes mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradiÃ§Ã£o do seu povo como mulher, liderando o comÃ©rcio e extraindo matÃ©ria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comÃ©rcio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
-    - PerÃ­cias: Cozinha e PlantaÃ§Ã£o.
-    - Equipamento: Livro de Receitas, Sementes, PÃ¡, Arador, panela, faca, roupas chiques e 15gp.
+   [Artesão Cozinheiro]
+    - Hist: Você tem relações com as associações mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradição do seu povo como mulher, liderando o comércio e extraindo matéria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comércio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
+    - Perícias: Cozinha e Plantação.
+    - Equipamento: Livro de Receitas, Sementes, Pá, Arador, panela, faca, roupas chiques e 15gp.
 
-   [ArtesÃ£o Costureiro]
-    - Hist: VocÃª tem relaÃ§Ãµes com as associaÃ§Ãµes mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradiÃ§Ã£o do seu povo como mulher, liderando o comÃ©rcio e extraindo matÃ©ria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comÃ©rcio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
-    - PerÃ­cias: Costura e SobrevivÃªncia.
+   [Artesão Costureiro]
+    - Hist: Você tem relações com as associações mercantes ou vem de uma familia de mercadores. Resolveu seguir a tradição do seu povo como mulher, liderando o comércio e extraindo matéria-prima. Como homem, talvez tenha aprendido o suficiente para se manter, trabalhando escondido, ou recorreu ao comércio ilegal para se esconder, ou talvez esta seja a unica saida que encontrou para sobreviver.
+    - Perícias: Costura e Sobrevivência.
     - Equipamento: Tesoura, Ferramentas de Costura, roupas chiques e 15gp.
     
     [Heremita]
-    - Hist: VocÃª vivia em reclusÃ£o - seja em um templo de Anar distante ou sozinho em algum lugar - por um bom tempo da sua vida. 
-    - PerÃ­cias: Medicina, Alquimia
-    - Equipamento: Livro (poÃ§Ã£o de cura explicando, explicando etiquetas), roupas comuns, Ferramenta de Alquimia, frascos vazios e 5gp.
+    - Hist: Você vivia em reclusão - seja em um templo de Anar distante ou sozinho em algum lugar - por um bom tempo da sua vida. 
+    - Perícias: Medicina, Alquimia
+    - Equipamento: Livro (poção de cura explicando, explicando etiquetas), roupas comuns, Ferramenta de Alquimia, frascos vazios e 5gp.
     
-    [Criminoso LadrÃ£o]
-    - Hist: VocÃª Ã© um criminoso experiente com um histÃ³rico de quebrar a lei. Passou muito tempo junto de outros criminosos e talvez atÃ© tenha contatos no submundo. VocÃª estÃ£ mais prÃ³ximo do que os demais do mundo de assassinatos, roubo e violÃªncia que permeia o seio da civilizaÃ§Ã£o.
-    - PerÃ­cias: Furtividade, PrestidigitaÃ§Ã£o.
+    [Criminoso Ladrão]
+    - Hist: Você é um criminoso experiente com um histórico de quebrar a lei. Passou muito tempo junto de outros criminosos e talvez até tenha contatos no submundo. Você estã mais próximo do que os demais do mundo de assassinatos, roubo e violência que permeia o seio da civilização.
+    - Perícias: Furtividade, Prestidigitação.
     - Equipamento: roupas pretas, capuz, e 15gp.
     - Classe: Ladino
 
     [Aventureiro]
-    - Hist: VocÃª Ã© um aventureiro e jÃ¡ explorou ruÃ­nas e masmorras antigamente, sozinho ou em um antigo grupo que se separou ou poucos sobreviveram pela inexperiÃªncia. VocÃª reconhece uma armadilha quando a vÃª e tem ideias de como desarma-la. Sabe se mover furtivamente sem chamar atenÃ§Ã£o das criaturas ou ativar armadilhas escondidas.
-    - PerÃ­cias: Furtividade, Desarmar Armadilha.
+    - Hist: Você é um aventureiro e já explorou ruínas e masmorras antigamente, sozinho ou em um antigo grupo que se separou ou poucos sobreviveram pela inexperiência. Você reconhece uma armadilha quando a vê e tem ideias de como desarma-la. Sabe se mover furtivamente sem chamar atenção das criaturas ou ativar armadilhas escondidas.
+    - Perícias: Furtividade, Desarmar Armadilha.
     - Equipamento: Gazuas, roupas comuns, e 15gp.
     - Classe: Ladino
     
     [Nobre]
-    - Hist: VocÃª entende o que Ã© orgulho, poder e previlÃ©gio. 
-    - PerÃ­cias: ;
+    - Hist: Você entende o que é orgulho, poder e previlégio. 
+    - Perícias: ;
     - Equipamento: 
     
     [Servo de Anar]
     - Hist:
-    - PerÃ­cias: Runas e Cura;
-    - Equipamento: Livro de runas, Roupas de clÃ©rigo e 15gp
+    - Perícias: Runas e Cura;
+    - Equipamento: Livro de runas, Roupas de clérigo e 15gp
 
     [Hassatar]
-    - Hist: VocÃª serve a Anar Ã© capaz de invocar seus milagres e, devido a um desvio de carÃ¡ter por poder ou seu fanatismo religioso, vocÃª tem estudado os milagres proibidos da necromÃ¢ncia. VocÃª busca equilibrar a balanÃ§a dos mortos e dos vivos ou chegar ao topo usando quaisquer recursos. De uma ou de outra forma, o uso dos milagres proibidos te qualifica comum Hessatar.
-    - PerÃ­cias: NecromÃ¢ncia, Alquimia.
-    - Equipamento: Roupas de clÃ©rigo e 15gp
-    - Classe: ClÃ©rigo
+    - Hist: Você serve a Anar é capaz de invocar seus milagres e, devido a um desvio de caráter por poder ou seu fanatismo religioso, você tem estudado os milagres proibidos da necromância. Você busca equilibrar a balança dos mortos e dos vivos ou chegar ao topo usando quaisquer recursos. De uma ou de outra forma, o uso dos milagres proibidos te qualifica comum Hessatar.
+    - Perícias: Necromância, Alquimia.
+    - Equipamento: Roupas de clérigo e 15gp
+    - Classe: Clérigo
     
-    [LadrÃ£o]
-    - Hist: VocÃª cresceu nas ruas, abanadonado e sozinho. NÃ£o tinha ninguÃ©m para lhe prover e portanto aprendeu a se virar sozinho. VocÃª sobreviveu a todos as probalidades atravÃ©s da sua sabedoria, velocidade e forÃ§a, ou algum tipo de combinaÃ§Ã£o disso tudo.
-    - PerÃ­cias: PrestidigitaÃ§Ã£o, Furtividade
+    [Ladrão]
+    - Hist: Você cresceu nas ruas, abanadonado e sozinho. Não tinha ninguém para lhe prover e portanto aprendeu a se virar sozinho. Você sobreviveu a todos as probalidades através da sua sabedoria, velocidade e força, ou algum tipo de combinação disso tudo.
+    - Perícias: Prestidigitação, Furtividade
     - Equipamento: Adaga, um mapa, conjunto de roupas comuns e 10gp
     
     []
     - Hist:
-    - PerÃ­cias:
+    - Perícias:
     - Equipamento: 
 
 
 Talentos
     [Sombra da Noite]
         - Trigger: 80x furtividade a noite, passar por 3 players sem ser notado;
-        - Desc: VocÃª nunca falha para ficar furtivo durante a noite e as pessoas tem dificuldade em te notar se nÃ£o estiverem olhando diretamente para vocÃª.
+        - Desc: Você nunca falha para ficar furtivo durante a noite e as pessoas tem dificuldade em te notar se não estiverem olhando diretamente para você.
     
     []

@@ -11,7 +11,7 @@ program Logon(who)
       PrintText(who, "Pid Killed");
    endif   
 
-   if (who.isClass("ClÃ©rigo"))
+   if (who.isClass("Clérigo"))
       Start_Script(":magery:cleric/powerWords", array{who});
    endif
 endprogram

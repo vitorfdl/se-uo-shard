@@ -18,17 +18,17 @@ program enchekeg(who, item)
 					return;
 				endif
 				if (!Accessible(who, barril))
-					SendSysMessage(who, "VocÃª nÃ£o alcanca o barril.");
+					SendSysMessage(who, "Você não alcanca o barril.");
 					return;
 				endif
 				if (barril.objtype == 6870 )
 					if (GetObjProperty(barril, "liquido") != error)
-						SendSysMessage(who, "VocÃª derramou o que tinha no barril para por outro liquido.");
+						SendSysMessage(who, "Você derramou o que tinha no barril para por outro liquido.");
 					endif
 					//SetObjProperty(barril, "liquido", "vinho");
 					var bebida := GetObjProperty(barril, "bebida");
 					if (bebida != error)
-						SendSysMessageEx(who, "VocÃª derramou a bebida do barril para adicionar a nova bebida.");
+						SendSysMessageEx(who, "Você derramou a bebida do barril para adicionar a nova bebida.");
 					endif
 					bebida := struct;
 					bebida.+type := "vinho incompleto";
@@ -36,15 +36,15 @@ program enchekeg(who, item)
 					SetObjProperty(fundo, "doses", (Cint(GetObjProperty(fundo, "doses")) -1) );
 					SetObjProperty(fundo, "passos", 0);   
 					SetObjProperty(fundo, "carregado", 0);
-					SendSysMessage(who, "VocÃª guardou o liquido no barril.");
+					SendSysMessage(who, "Você guardou o liquido no barril.");
 					PlaySoundEffect(who,  0x241);
 					ChangeVatGraphic(item, 1);
 				else
-					SendSysMessage(who, "VocÃª precisa de um barril.");
+					SendSysMessage(who, "Você precisa de um barril.");
 					return;
 				endif
 			else
-				SendSysMessage(who, "NÃ£o tem nenhum liquido aqui.");
+				SendSysMessage(who, "Não tem nenhum liquido aqui.");
 				return;
 			endif
 		endif

@@ -26,7 +26,7 @@ program trapScript(params)
 	endwhile
 	object.color := origcolor;
 
-	SendSysMessage(mobile, "VocÃª ativou uma armadilha magica!");
+	SendSysMessage(mobile, "Você ativou uma armadilha magica!");
 	PlaySoundEffect(mobile, 0x214);
 	//PlayStationaryEffect(object.x, object.y, object.z, GFX_POISON_GAS, 10,10, 0, object.realm);
 

@@ -33,7 +33,7 @@ program book(who, book)
 		var spells   := GetObjProperty(book, "spells");
 		var serialid := GetObjProperty(book, "serialid");
 		if (serialid != error && serialid != who.serial)
-			SendSysMessageEx(who, "VocÃª nÃ£o entende as anotacoes do livro.", SSM_FAIL);
+			SendSysMessageEx(who, "Você não entende as anotacoes do livro.", SSM_FAIL);
 			return 1;
 		elseif (!spells[spell])
 			SendSysMessageEx(who, "Algum erro ocorreu com sua magia, avise um GM.", SSM_FAIL);
@@ -51,7 +51,7 @@ function CopyRecipe(who, recipe)
 	WriteSpellInfo(recipe);
 	//sendsysmessage(who, " " + spellinfo + " " + recipe + "  " + cint(recipe));
 	if (!ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
-		SendSysMessageEx(who, "VocÃª precisa de um pergaminho em branco.", SSM_FAIL);
+		SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -61,12 +61,12 @@ function CopyRecipe(who, recipe)
 			sendsysmessage(who, "  " + item);
 		endif
 		SetObjProperty(item, "spellinfo", recipe.spellid);
-		SendSysMessageEx(who, "VocÃª fez uma cÃ³pia do pergaminho.", SSM_INFO);
+		SendSysMessageEx(who, "Você fez uma cópia do pergaminho.", SSM_INFO);
 		printtext(who, "*escrevendo pergaminho*");
 		return;
 	endif 
 	
-	SendSysMessageEx(who, "VocÃª copiou o pergaminho sem cuidados e ele ficou ilegivel.", SSM_FAIL);
+	SendSysMessageEx(who, "Você copiou o pergaminho sem cuidados e ele ficou ilegivel.", SSM_FAIL);
 endfunction
 
 

@@ -9,7 +9,7 @@ program givebonusrp(who, param)
 
 	var acc := FindAccount(param);
 	if (!acc)
-		SendSysMessage(who, "Conta n√£o encontrada");
+		SendSysMessage(who, "Conta n„o encontrada");
 	endif
 	
 	acc.setprop("nota", 2);

@@ -6,12 +6,12 @@ include "include/say";
 program placas(who,item)
 
 if ( Distance(who, item) > 2)
-		SendSysMessageEx(who, "VocÃª esta muito distante do alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito distante do alvo.", SSM_FAIL);
 		return 0;
 endif
 
 if (!Accessible(who, item))
-		SendSysMessageEx(who, "VocÃª nÃ£o alcanca o alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "Você não alcanca o alvo.", SSM_FAIL);
 		return 0;
 endif
 
@@ -20,13 +20,13 @@ var marked	:=	GetObjProperty(item,"marked");
 var playerid	:=	(who.name + " - " + who.acctname);
 
 if (GetObjProperty(item,"danificada") == 1)
-	SendSysMessageEx(who,"VocÃª nÃ£o pode usar este item.",SSM_FAIL);
+	SendSysMessageEx(who,"Você não pode usar este item.",SSM_FAIL);
 	return 1;
 endif
 	if (description != error)
 		if (marked != error)
 				if (GetObjProperty(item,"marked") != playerid)
-					PrintText(who, "*vocÃª danificou a placa ao retira-la*");
+					PrintText(who, "*você danificou a placa ao retira-la*");
 					if (item.movable == 0)
 						item.movable:=1;
 					endif
@@ -47,7 +47,7 @@ endif
 endprogram
 
 function AddTexto(who, item)
-	var texto	:=	SmallRequestGump(who, "ConteÃºdo da placa:", 1);
+	var texto	:=	SmallRequestGump(who, "Conteúdo da placa:", 1);
 	var marked	:=	who.name + " - " + who.acctname;
 	
 	SetObjProperty(item, "description", texto); 

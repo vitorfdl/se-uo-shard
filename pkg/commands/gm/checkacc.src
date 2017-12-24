@@ -21,7 +21,7 @@ program textcmd_checkacc(who, contas)
 	endif
 
 	if ((conta1 == "Duttones"))
-		sendsysmessage(who, "Este usu√°rio tem muitas accs para eu conseguir checar. Procedimento abortado.");
+		sendsysmessage(who, "Este usu·rio tem muitas accs para eu conseguir checar. Procedimento abortado.");
 		return 1;
 	endif
 	
