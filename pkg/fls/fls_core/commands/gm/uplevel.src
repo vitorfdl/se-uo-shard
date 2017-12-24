@@ -34,6 +34,6 @@ program reset(who, params)
 	// SetAttribPoints(item, GetAttribPoints(item)+3);
 	// // SetCharLevel(item, who.getLevel()(item)+1);
 	
-	// PrintTextPrivate(item, "Você ganhou um level", item);
+	// PrintTextPrivate(item, "VocÃª ganhou um level", item);
 
 endprogram

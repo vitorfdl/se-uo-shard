@@ -24,7 +24,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 		SendSysMessageEx(who, "O livro esta em uso.", SSM_FAIL);
 		return 0;
 	elseif( item.objtype != 0xef1f)
-		SendSysMessageEx(who, "Você não pode colocar isto no livro.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode colocar isto no livro.", SSM_FAIL);
 		MoveITemToContainer(item, who.backpack);
 		return 0;
 	endif
@@ -37,7 +37,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 		return;;
 	endif
 
-	SendSysMessageEx(who, "Você não pode colocar isto no livro.", SSM_FAIL);
+	SendSysMessageEx(who, "VocÃª nÃ£o pode colocar isto no livro.", SSM_FAIL);
 	MoveItemToContainer(item, who.backpack);
 	return 0;
 endprogram
@@ -88,6 +88,6 @@ function addScroll(who, book, recipe)
 	DestroyItem(recipe);
 	Set_Critical(0);
 
-	SendSysMessageEx(who, "Você adicionou o pergaminho no livro.", SSM_INFO);
+	SendSysMessageEx(who, "VocÃª adicionou o pergaminho no livro.", SSM_INFO);
 	return 1;
 endfunction

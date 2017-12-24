@@ -17,7 +17,7 @@ program daynightsystem()
 	var nightlength := cint(config.nightlength) * 60;
 	
 	while(1)
-		SeasonRotate();  //muda o dia do ano e estaçao
+		SeasonRotate();  //muda o dia do ano e estaÃ§ao
       MoonFase();      // muda a fase da lua
                // Temperature();   //mmuda a temperatura local
 		BroadCast("O sol esta nascendo.");

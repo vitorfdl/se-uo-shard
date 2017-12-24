@@ -29,10 +29,10 @@ set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
 program TamingSkill(who)
 	if ( GetObjProperty(who, "#medding") )
-		SendSysMessageEx(who, "Você não pode adestrar nada agora.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode adestrar nada agora.", SSM_FAIL);
 		return;
 	elseif ( CInt(GetObjProperty(who, "#tamewait")) > ReadGameClock() )
-		SendSysMessage(who, "Você precisa esperar para usar esta pericia novamente.", SSM_FAIL);
+		SendSysMessage(who, "VocÃª precisa esperar para usar esta pericia novamente.", SSM_FAIL);
 		return;
 	endif
 
@@ -49,7 +49,7 @@ program TamingSkill(who)
 	GFTextLine(yn_gump, 40, 60, 1153, "Adestrar Animal.");
 
 	GFAddButton(yn_gump, 20, (83), 2117, 2118, GF_CLOSE_BTN, 2);
-	GFTextLine(yn_gump, 40, 80, 1153, "Informações sobre o animal.");
+	GFTextLine(yn_gump, 40, 80, 1153, "InformaÃ§Ãµes sobre o animal.");
 
 	GFTextLine(yn_gump, 40, 100, 1153, "Libertar Animal:");
 
@@ -72,7 +72,7 @@ program TamingSkill(who)
 	elseif (input == 2)
 		Start_Script(":animallore:animalLore", who);
 	elseif (input > 100)
-		SendSysMessageEx(who, "Você libertou seu animal.", SSM_INFO);
+		SendSysMessageEx(who, "VocÃª libertou seu animal.", SSM_INFO);
 		ErasePet(who, pets[input-100]);
 		destama(pets[input-100]);
 	endif
@@ -81,7 +81,7 @@ program TamingSkill(who)
 endprogram
 
 function taming(who)
-	SendSysMessageEx(who, "Que animal você deseja adestrar?", SSM_REQUEST);
+	SendSysMessageEx(who, "Que animal vocÃª deseja adestrar?", SSM_REQUEST);
 	if ( who.hidden )
 		who.hidden := 0;
 	endif
@@ -95,19 +95,19 @@ function taming(who)
 //		SendSysMessage(who, "Alvo esta muito distante.");
 //		return;
 	elseif ( targ.script[":ghaia:follower"] )
-		SendSysMessageEx(who, targ.name+" não pode ser adestrado.", SSM_FAIL);
+		SendSysMessageEx(who, targ.name+" nÃ£o pode ser adestrado.", SSM_FAIL);
 		return 0;
 	elseif ( (GetNumPets(who) + GetPetCost(targ)) > GetMaxPets(who) )
-		SendSysMessageEx(who, "Você atingiu o limite de seguidores.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª atingiu o limite de seguidores.", SSM_FAIL);
 		return 0;
 	/*elseif (who.serial IN GetObjProperty(targ, "#critical"))
-		SendSysMessage(who, targ.name+" não aceita mais ser domado por você.");
+		SendSysMessage(who, targ.name+" nÃ£o aceita mais ser domado por vocÃª.");
 		return 0;*/
 	elseif (!GetObjProperty(targ, "#peacemade") && targ.alignment == 1)
 		SendSysMessageEx(who, "A criatura esta muito hostil para ser domesticada.", SSM_FAIL);
 		return 0;
 	elseif (!targ.isTamable())
-		SendSysMEssageEx(who, "Essa criatura não aceita ser domesticada.", SSM_FAIL);
+		SendSysMEssageEx(who, "Essa criatura nÃ£o aceita ser domesticada.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -126,15 +126,15 @@ function taming(who)
    var chr_level := who.getLevel();
 
    if (info.difficulty > 21 && chr_level < 10)
-	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra vocÃª.", SSM_INFO);
    elseif (info.difficulty > 18 && chr_level < 4)
-	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra vocÃª.", SSM_INFO);
    elseif (info.difficulty > 14 && chr_level < 2)
-	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra vocÃª.", SSM_INFO);
    endif
 
 	// if (CInt(info.difficulty) > CInt(skill + 15))
-	// 	SendSysMessageEx(who, "Você não pode tentar adestrar "+targ.name+" ainda.");
+	// 	SendSysMessageEx(who, "VocÃª nÃ£o pode tentar adestrar "+targ.name+" ainda.");
 	// 	return 0;
 	// endif
 	
@@ -149,10 +149,10 @@ function taming(who)
             var event := struct{"type":=SYSEVENT_ENGAGED, "source":=targ};
             SendEvent(targ, event);
          endif
-			SendSysMessageEx(who, "Você deixou "+targ.name+" irritado.", SSM_INFO);
+			SendSysMessageEx(who, "VocÃª deixou "+targ.name+" irritado.", SSM_INFO);
 			break;
 		elseif ( dice.dice > 0 )
-			SendSysMessageEx(who, "Você ganhou a confiança de "+targ.name+".", SSM_INFO);
+			SendSysMessageEx(who, "VocÃª ganhou a confianÃ§a de "+targ.name+".", SSM_INFO);
 			targ.SetMaster(who);
 			who.SetAchievement("taming", 1);
          removeFromSpawn(GetObjProperty(targ, "spawnpoint"));
@@ -184,19 +184,19 @@ function TameLoop(who, targ, byref info)
 	var targ_hostiles := ListHostiles(targ, 15);
 	
 	if ( targ.master )
-		SendSysMessage(who, targ.name+" não pode ser adestrado.", SSM_FAIL);
+		SendSysMessage(who, targ.name+" nÃ£o pode ser adestrado.", SSM_FAIL);
 		return 0;
 	elseif ( targ_hostiles.size() > 0 )
 		SendSysMessageEx(who, "alguem esta atacando "+targ.name+" .", SSM_FAIL);
 		return 0;
 	elseif ( my_hostiles.size() > 0 )
-		SendSysMessageEx(who, "Você não pode adestrar "+targ.name+" enquanto esta sendo atacado", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode adestrar "+targ.name+" enquanto esta sendo atacado", SSM_FAIL);
 		return 0;
 	elseif ( (who.x != info.x) || (who.y != info.y) || (who.facing != info.facing) )
-		SendSysMessageEx(who, "Você desviou sua atencao.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª desviou sua atencao.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, targ) > 2 )
-		SendSysMessageEx(who, "Você esta muito longe.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª esta muito longe.", SSM_FAIL);
 		return 0;
 	endif
 	
@@ -204,7 +204,7 @@ function TameLoop(who, targ, byref info)
 
 	var dice := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TRATO_ANIMAIS);
 	if ( dice > info.difficulty-4 )
-		SendSysMessageEx(who, ""+targ.name+" parece interessado em você.", SSM_INFO);
+		SendSysMessageEx(who, ""+targ.name+" parece interessado em vocÃª.", SSM_INFO);
 		ghaiaObjective(targ, info.x, 1);
 		ExpGain(who, info.difficulty, dice);
 		return 1;
@@ -213,9 +213,9 @@ function TameLoop(who, targ, byref info)
 	SetObjProperty(targ, "#ForceFlee", 1);
 	sleepms(160);
 	if ( dist == Distance(who, targ) )
-		SendSysMessageEx(who, targ.name+" não aceitou você como dono.", SSM_FAIL);
+		SendSysMessageEx(who, targ.name+" nÃ£o aceitou vocÃª como dono.", SSM_FAIL);
 	else
-		SendSysMessageEx(who, "Você assustou "+targ.name+" .", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª assustou "+targ.name+" .", SSM_FAIL);
 		return 0;
 	endif
 endfunction

@@ -12,11 +12,11 @@ program use_MessageBottle( who, bottle )
 		return 0;
 	endif
 	if( !(bottle in EnumerateItemsInContainer(who.backpack)) )
-		SendSysMessage(who, "Este item não esta em sua mochila.");
+		SendSysMessage(who, "Este item nÃ£o esta em sua mochila.");
 		return 0;
 	endif
 	if( bottle.movable == 0 )
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessage(who, "VocÃª nÃ£o pode usar isto.");
 		return 0;
 	endif
 	if( !ReserveItem(bottle) )
@@ -43,13 +43,13 @@ program use_MessageBottle( who, bottle )
 	var message := CreateItemInContainer(who.backpack, 0xa363);
 	if( !message )
 		DestroyItem(bottle);
-		SendSysMessage(who, "A mensagem se deteriorou em po quando você a pegou!");
+		SendSysMessage(who, "A mensagem se deteriorou em po quando vocÃª a pegou!");
 		return 0;
 	endif
 	SetObjProperty(message, "tileX", X);
 	SetObjProperty(message, "tileY", Y);
 	SetObjProperty(message, "msgnum", RandomInt(4));
-	SendSysMessage(who, "Você retirou a mensagem da garrafa!");
+	SendSysMessage(who, "VocÃª retirou a mensagem da garrafa!");
 	DestroyItem(bottle);
 
 endprogram

@@ -186,7 +186,7 @@ function Flee(opponent)
    endif
 endfunction
     
-//no sleep mode ele o waitfor event fica 30 secs e ele não fica mais fazendo lookarounds o tempo todo
+//no sleep mode ele o waitfor event fica 30 secs e ele nÃ£o fica mais fazendo lookarounds o tempo todo
 function sleepmode()
    // var speech := GetConfigStringArray( npccfgfile, "SleepSpeech" );
    // if (speech.size() > 0)
@@ -257,7 +257,7 @@ endfunction
 
 function Opendoors(me)
   foreach door in (ListItemsNearLocation(me.x, me.y, me.z, 1))
-    if  ((door.isa(POLCLASS_DOOR)) and (!door.locked)) //se não ta trancada
+    if  ((door.isa(POLCLASS_DOOR)) and (!door.locked)) //se nÃ£o ta trancada
         if ( cint(GetObjProperty(me, "ignoredoor")) == 1)
           PrintText(me, "*atravessa a porta*");
           MoveObjectToLocation(me, door.x, door.y, door.z, door.realm, MOVEOBJECT_FORCELOCATION);
@@ -339,11 +339,11 @@ function CalcPathAndMove(me, opponent, sleepdelay)
          PrintText(me, "*fatigado*");
       endif
       sleep(1);
-	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || !CanMove(face_str)) //se não consegue correr direto
+	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || !CanMove(face_str)) //se nÃ£o consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
 		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
 		
-      if (path == error || ( last_loc && !(opponent in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se não calculou
+      if (path == error || ( last_loc && !(opponent in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se nÃ£o calculou
          var flags := FP_IGNORE_MOBILES;
          if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
             flags := flags| FP_IGNORE_DOORS;
@@ -384,7 +384,7 @@ function CalcPathAndMove(me, opponent, sleepdelay)
             else
                EraseObjProperty(me, "path");
             endif
-         else // se não consegue chegar na coord 
+         else // se nÃ£o consegue chegar na coord 
             if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
                EraseObjProperty(me, "path"); //deleta o path atual
                ChooseAnotherOpponent(me);

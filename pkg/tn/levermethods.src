@@ -21,12 +21,12 @@ exported function reset(lever)
 	var funct  := GetObjProperty(lever, "function");
 	
 	case(funct)
-		//"setobj"  : stobj(who, item); //n„o precisa
+		//"setobj"  : stobj(who, item); //n√£o precisa
 		"door"    : resetdoor(lever);
 		"passage" : resetpassage(lever);
-		//"trap"    : trappedswitch(who, item, mid, gfx, snd); //n„o precisa
-		//lights"  : lightswitch(who, item); //n„o precisa
-		//"tele"    : teleporter(who, item, mid, gfx, snd); //n„o precisa
+		//"trap"    : trappedswitch(who, item, mid, gfx, snd); //n√£o precisa
+		//lights"  : lightswitch(who, item); //n√£o precisa
+		//"tele"    : teleporter(who, item, mid, gfx, snd); //n√£o precisa
 		//"graphic": changegraphiclever(who, item); //talvez fosse bom
 		"elevator": resetelevator(lever);
 	endcase

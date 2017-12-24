@@ -36,7 +36,7 @@ program walkOn(who, trap)
 endprogram
 
 function ParalyzeAll(who, trap)
-	PrintText(who, "*ativa a runa de paralização*");
+	PrintText(who, "*ativa a runa de paralizaÃ§Ã£o*");
 	var mobiles := ListMobilesNearLocation(who.x, who.y, who.z, 2, who.realm);
 	mobiles.append(ListMobilesNearLocationEx( who.x, who.y, who.z, 2, LISTEX_FLAG_HIDDEN, who.realm ));
 	foreach mobile in mobiles
@@ -74,7 +74,7 @@ function HealAndDestroy(who, trap)
 	endif
 
 	recalcvitals(who);
-	SendSysMessage(who, "Você foi curado!", SSM_INFO);
+	SendSysMessage(who, "VocÃª foi curado!", SSM_INFO);
 	
 	var destro := DestroyItem(trap);
 endfunction

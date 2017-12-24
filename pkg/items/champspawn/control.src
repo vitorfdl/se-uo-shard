@@ -46,7 +46,7 @@ program control(altar)
 					spawnChampion(altar);
 					champserial := GetObjProperty(altar, "champ");
 					//printtextabove(altar, "completo, spawnando champ");
-				else //se n„o completou faz o loop pra determinar o level
+				else //se n√£o completou faz o loop pra determinar o level
 					var i;
 
 					for(i:=creatures.size(); i>0;i-=1) //conta os kills
@@ -81,7 +81,7 @@ program control(altar)
 						destroyLastRedSkull(altar);
 						nextLVLDownCheck:=ReadGameClock()+LVLDOWNCHECK;
 					endif
-					if (!GetObjProperty(altar, "#completed")) //se n„o ta completo spawnar os mobs
+					if (!GetObjProperty(altar, "#completed")) //se n√£o ta completo spawnar os mobs
 						while(creatures.size()<=(50-get_subLevel(altar)) && altar)
 							var loc:= getSpawnLocation(altar);
 							var overide := struct;
@@ -108,7 +108,7 @@ program control(altar)
 			endif
 				
 			sleep(BIG_CHECK_WAIT);
-		else //se n„o ta ativo, calcula quando vai ser ativado
+		else //se n√£o ta ativo, calcula quando vai ser ativado
 			if(ReadGameClock()>CInt(GetObjProperty(Altar, "#NextActiv")))
 				activateAltar(altar);
 			else

@@ -47,7 +47,7 @@ program spawnGroups(who)
 
         //Start Group Select
         if (input[0] == GF_ADD_BTN)
-                var spawngroup_name := RequestGump(who, "Nome do novo SpawnGroup", "Obrigat�rio um nome ainda n�o usado.", "", CANCEL_BTN_ON);
+                var spawngroup_name := RequestGump(who, "Nome do novo SpawnGroup", "Obrigatório um nome ainda não usado.", "", CANCEL_BTN_ON);
                 var group_list      := LoadSpawnGroupData().Keys();
                 if (spawngroup_name == 0 || !spawngroup_name || spawngroup_name == " " )
                     continue;
@@ -133,7 +133,7 @@ function ConstructGroupList(byref gump)
     for i:=1 to spawngroups.Size()+1
         GFPage(gump, page);
         var x := 50;
-        var y := (30+(18*i)); // (((page-1) * max_page)+1); //(BaseX(Espa�amento*i)) / (Calculo de Pagina)
+        var y := (30+(18*i)); // (((page-1) * max_page)+1); //(BaseX(Espaï¿½amento*i)) / (Calculo de Pagina)
 
         var color := 1153;
         if (selected_elem == spawngroups[i])
@@ -263,7 +263,7 @@ function MobSetConfigs(byref who, byref input)
             CreateBossStructGump(who, mob_bossparams);
             break;
         GF_DAYTIME_BTN:
-            var daytime := CheckBoxGump(who, 150, 165, "Hor�rio de Spawn:", array{"Noite", "Dia", "Lua Nova"});
+            var daytime := CheckBoxGump(who, 150, 165, "Horário de Spawn:", array{"Noite", "Dia", "Lua Nova"});
             if (daytime.Size() > 1)
                 mob_daytime := "always";
             else

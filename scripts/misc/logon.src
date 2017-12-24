@@ -29,9 +29,9 @@ program Logon(who)
 	endif
 
    if (who.isClass("Mago"))
-      LearnFeat(who, "Linguagem Élfica", 0, 0);
-   elseif (who.isClass("Clérigo"))
-      LearnFeat(who, "Linguagem Rúnica", 0, 0);
+      LearnFeat(who, "Linguagem Ã‰lfica", 0, 0);
+   elseif (who.isClass("ClÃ©rigo"))
+      LearnFeat(who, "Linguagem RÃºnica", 0, 0);
    endif
    
    if (who.getPoints() < 0)

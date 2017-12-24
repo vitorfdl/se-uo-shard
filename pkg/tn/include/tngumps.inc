@@ -79,7 +79,7 @@ function AutoCheckBox(mobile, prompt, options, returnKeys := 0)
 	//endforeach
 	
 	GFAddButton(gump, sizex-70, sizey-60, 4502, 4502, 1, 999 );
-	GFTextLine(gump, sizex-110, sizey-50, 1153, "Próximo");
+	GFTextLine(gump, sizex-110, sizey-50, 1153, "PrÃ³ximo");
   
 	var ret := array;
   
@@ -134,7 +134,7 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
   endforeach
 	
     GFAddButton(gump, sizex-70, sizey-60, 4502, 4502, 1, 999 );
-    GFTextLine(gump, sizex-110, sizey-50, 1153, "Próximo");
+    GFTextLine(gump, sizex-110, sizey-50, 1153, "PrÃ³ximo");
     
   var ret := array;
   
@@ -177,7 +177,7 @@ function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0)
   endforeach
 	
   GFAddButton(gump, sizex-70, sizey-60, 4502, 4502, 1, 999 );
-	GFTextLine(gump, sizex-110, sizey-50, 1153, "Próximo");
+	GFTextLine(gump, sizex-110, sizey-50, 1153, "PrÃ³ximo");
   
 	var input := GFSendGump(mobile, gump);
 	if ( input[0] == 999 )

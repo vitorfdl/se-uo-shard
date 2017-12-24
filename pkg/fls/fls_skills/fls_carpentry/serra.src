@@ -8,16 +8,16 @@ include ":gumps:gumps";
 program usar_serra(who, item)
 
 	if (!Accessible (who, item) )
-		SendSysMessage (who, "Você não alcanca aquilo!");
+		SendSysMessage (who, "VocÃª nÃ£o alcanca aquilo!");
 		return;
 	endif
 
 	if (!ReserveItem (item) )
-		SendSysMessage (who, "você não pode usar isso agora.");
+		SendSysMessage (who, "vocÃª nÃ£o pode usar isso agora.");
 		return;
 	endif
 
-	SendSysMessage (who, "O que você deseja fazer com isto?");
+	SendSysMessage (who, "O que vocÃª deseja fazer com isto?");
 	var targetted := Target (who);
 
 	if (!targetted)
@@ -25,20 +25,20 @@ program usar_serra(who, item)
 		return;
 	endif
 	if (!Accessible (who, targetted) )
-		SendSysMessage (who, "Você não alcanca isto!");
+		SendSysMessage (who, "VocÃª nÃ£o alcanca isto!");
 		return;
 	endif
 	if (!targetted.movable)
-		SendSysMessage (who, "Você não pode usar isto.");
+		SendSysMessage (who, "VocÃª nÃ£o pode usar isto.");
 		return;
 	endif
 	if (!ReserveItem (targetted) )
-		SendSysMessage (who, "Você não pode usar isto agora.");
+		SendSysMessage (who, "VocÃª nÃ£o pode usar isto agora.");
 		return;
 	endif
 
 	if((targetted.objtype != 0x1bdd) && (targetted.objtype != 0x1bd7) && (targetted.objtype != 0xee36) && (targetted.objtype != 0xee37) && (targetted.objtype != 0xee39)  && (targetted.objtype != 0xee38) && (targetted.objtype != 0xee3) && (targetted.objtype != 0xee3a) && (targetted.objtype != 0xee3b) && (targetted.objtype != 0xee3c) )
-           SendSysMessage(who, "Você deve usar a serra nas madeiras!");
+           SendSysMessage(who, "VocÃª deve usar a serra nas madeiras!");
            return;
         else
             OpenMenuLog(who, targetted);
@@ -52,7 +52,7 @@ function OpenMenuLog(who, targetted)
     GFResizePic(sawgump, 0, 60, 3600, 260, 230);
     GFResizePic(sawgump, 15, 75, 0x13BE, 230, 200);
 //cor 55 e 600 sao boas
-    GFTextLine(sawgump, 50, 93, 55, "O que você deseja fazer?" );
+    GFTextLine(sawgump, 50, 93, 55, "O que vocÃª deseja fazer?" );
     GFTextLine(sawgump, 50, 123, 600, "Tabuas");
     GFTextLine(sawgump, 170, 123, 600, "Cabos");
     GFTilePic(sawgump, 60, 153, 7127);

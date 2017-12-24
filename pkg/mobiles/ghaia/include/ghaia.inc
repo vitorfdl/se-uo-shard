@@ -17,7 +17,7 @@ include ":awareness:awareness";
 include ":yggdrasil:boss";
 
 // estados do npc, todos comecam no INIT, depois podem ir pro WANDER, 
-// apos algum tempo no wander se n„o for interrompido eles vao pro SLEEP. do WANDER e do SLEEP podem ir pro FIGHT e desse pro VICTORY
+// apos algum tempo no wander se n√£o for interrompido eles vao pro SLEEP. do WANDER e do SLEEP podem ir pro FIGHT e desse pro VICTORY
 enum STATES
    INITIALIZING := 1,
    WANDERING:= 2,
@@ -29,8 +29,8 @@ endenum
 
 var foods;
 
-//alinhamento pra determinar se o player È inimigo ou n„o pra IA.
-//outros inimigos pra IA È definido com a tag enemy
+//alinhamento pra determinar se o player √© inimigo ou n√£o pra IA.
+//outros inimigos pra IA √© definido com a tag enemy
 const ALIGN_EVIL := 1;
 const ALIGN_GOOD := 2;
 const ALIGN_NEUTRAL := 0;
@@ -43,7 +43,7 @@ function CanFight(me, mobile)
    elseif ( GetObjProperty(mobile, "#fantasma") == 1)
       return 0;
    elseif ( Cint(GetCooldown(mobile, "deathtime" )) > 0  )
-   //printtextabove(me, "n„o vou atacar" + mobile.name);
+   //printtextabove(me, "n√£o vou atacar" + mobile.name);
       return 0;
    endif
  
@@ -69,7 +69,7 @@ function CanFight(me, mobile)
          //         "panther", "grizzlybear", "wolf", "sapop"
          //     };
          //     if (mytemplate in templateList)
-         //         if (isBoss(mobile)) //verifica se È boss
+         //         if (isBoss(mobile)) //verifica se √© boss
          //             return 1;
          //         elseif ( TemHabilidade(mobile, "Aliado da Natureza 2" ) || Distance(me, mobile) > 5)
          //             return 0;
@@ -86,13 +86,13 @@ function CanFight(me, mobile)
          // endif
          return 1;
       else 
-         //npcs bons ou neutrals n„o atacam
+         //npcs bons ou neutrals n√£o atacam
          return 0;
       endif
    endif
 
    if (me.alignment == ALIGN_EVIL)
-      if (mobile.master) //se for bicho tamado, È atacado!
+      if (mobile.master) //se for bicho tamado, √© atacado!
          return 1;
       endif
    endif

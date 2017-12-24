@@ -9,7 +9,7 @@ use unicode;
 include ":attributes:attributes";
 
 program textcmd_putinfire(who)
-	SendSysMessage( who, "Onde você deseja botar fogo?" );
+	SendSysMessage( who, "Onde vocÃª deseja botar fogo?" );
 	
 	var targ := Target( who );
 	

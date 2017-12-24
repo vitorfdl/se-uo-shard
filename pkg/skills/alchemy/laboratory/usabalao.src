@@ -16,7 +16,7 @@ program usabalao(who, item)
 
 
   if (!GetObjProperty(alvo, "extrato"))
-    SendSysMessage(who, "Esse liquido não vai ser destilado usando esse balao!");
+    SendSysMessage(who, "Esse liquido nÃ£o vai ser destilado usando esse balao!");
     return;
   endif
 
@@ -24,7 +24,7 @@ program usabalao(who, item)
 
   //sleep(3);
   var extrato := GetObjProperty(alvo, "extrato");
-  SendSysMessage(who, "Você colocou o liquido no balao.");
+  SendSysMessage(who, "VocÃª colocou o liquido no balao.");
   SetObjProperty(item, "extrato", extrato);
   SetObjProperty(item, "strength", cint(GetObjProperty(alvo, "strength")));
   DestroyItem(alvo);   

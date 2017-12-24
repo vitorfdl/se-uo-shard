@@ -38,7 +38,7 @@ program textcmd_ResGump(who)
 		motiveress := cstr(BigRequestGump(who , "Escreva detalhadamente o motivo deste ress:"));
 	endif
 	if (!motiveress && who.cmdlevel <= 4 && who.acctname != targ.acctname)
-		SendSysMessage(who, "Você deve escrever o motivo!");
+		SendSysMessage(who, "VocÃª deve escrever o motivo!");
 		return 0;
 	endif
 	

@@ -12,7 +12,7 @@ const GRAPHIC_BLOOD2 := 4685;
 program UseIronMaiden(who, iron_maiden)
 
 	if ( Distance(who, iron_maiden) > 1 )
-		SendSysMessage(who, "Você esta muito distante");
+		SendSysMessage(who, "VocÃª esta muito distante");
 	else
 		set_critical(1);
 		who.paralyzed := 1;

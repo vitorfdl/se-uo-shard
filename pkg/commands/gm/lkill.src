@@ -19,7 +19,7 @@ program textcmd_Kill(who)
 	
 	if (who.acctname == "gmcaim")
 		if (targ.cmdlevel > 1)
-			Sendsysmessage(who, "Você não pode usar este comando.");
+			Sendsysmessage(who, "VocÃª nÃ£o pode usar este comando.");
 			return 1;
 		endif
 	endif

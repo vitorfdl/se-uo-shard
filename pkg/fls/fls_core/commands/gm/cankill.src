@@ -20,7 +20,7 @@ program changeSkill(who, text)
 	
 	
 	if (!user)
-		SendSysMessageEX(who, "Serial n„o existe", SSM_FAIL);
+		SendSysMessageEX(who, "Serial n√£o existe", SSM_FAIL);
 		return;
 	endif
 	
@@ -29,18 +29,18 @@ program changeSkill(who, text)
 		var targ := Target(who);
 		addkill(targ, serial);
 		addkill(user, targ.serial);
-		var script := start_script( ":email:emailMessage/sendSystemMail", array{ targ, "Permiss„o de Assassinato!", "VocÍ recebeu permiss„o para assassinar o personagem " + user.name + ". [P] Em Algumas ocasiıes, o outro jogador tambÈm ser· avisado que pode te matar. Mas, em qualquer circunst‚ncia, È importante lembrar que ele tambÈm pode te matar, mesmo que n„o tenha sido avisado. [P] Esta permiss„o pode ser revogada a qualquer momento. [P]  [P] Bom Jogo!"} );
-		if (YesNo(who, "Deseja avisar o jogador que ser· assassinado??","Sim","N„o"))
-			var script := start_script( ":email:emailMessage/sendSystemMail", array{ user, "Permiss„o de Assassinato!", "VocÍ recebeu permiss„o para assassinar o personagem " + targ.name + ". [P] Em Algumas ocasiıes, o outro jogador tambÈm ser· avisado que pode te matar. Mas, em qualquer circunst‚ncia, È importante lembrar que ele tambÈm pode te matar, mesmo que n„o tenha sido avisado. [P] Esta permiss„o pode ser revogada a qualquer momento. [P]  [P] Bom Jogo!"} );
+		var script := start_script( ":email:emailMessage/sendSystemMail", array{ targ, "Permiss√£o de Assassinato!", "Voc√™ recebeu permiss√£o para assassinar o personagem " + user.name + ". [P] Em Algumas ocasi√µes, o outro jogador tamb√©m ser√° avisado que pode te matar. Mas, em qualquer circunst√¢ncia, √© importante lembrar que ele tamb√©m pode te matar, mesmo que n√£o tenha sido avisado. [P] Esta permiss√£o pode ser revogada a qualquer momento. [P]  [P] Bom Jogo!"} );
+		if (YesNo(who, "Deseja avisar o jogador que ser√° assassinado??","Sim","N√£o"))
+			var script := start_script( ":email:emailMessage/sendSystemMail", array{ user, "Permiss√£o de Assassinato!", "Voc√™ recebeu permiss√£o para assassinar o personagem " + targ.name + ". [P] Em Algumas ocasi√µes, o outro jogador tamb√©m ser√° avisado que pode te matar. Mas, em qualquer circunst√¢ncia, √© importante lembrar que ele tamb√©m pode te matar, mesmo que n√£o tenha sido avisado. [P] Esta permiss√£o pode ser revogada a qualquer momento. [P]  [P] Bom Jogo!"} );
 		endif
 		elseif (tipo == "remove")
 		var targ := Target(who);
 		removekill(targ, serial);
-		var script := start_script( ":email:emailMessage/sendSystemMail", array{ targ, "Permiss„o de Ass. Revogado!", "Sua permiss„o para assassinar o personagem " + user.name + " foi revogada. [P] Isso ocorre pois vocÍ n„o conseguiu cumprir com algum de seus objetivos a tempo ou seu personagem perdeu motivaÁıes cruciais para o ato. [P]  [P] Bom Jogo!"} );
-		if (YesNo(who, "Deseja remover do outro jogador tambÈm?","Sim","N„o"))
+		var script := start_script( ":email:emailMessage/sendSystemMail", array{ targ, "Permiss√£o de Ass. Revogado!", "Sua permiss√£o para assassinar o personagem " + user.name + " foi revogada. [P] Isso ocorre pois voc√™ n√£o conseguiu cumprir com algum de seus objetivos a tempo ou seu personagem perdeu motiva√ß√µes cruciais para o ato. [P]  [P] Bom Jogo!"} );
+		if (YesNo(who, "Deseja remover do outro jogador tamb√©m?","Sim","N√£o"))
 			removekill(user, targ.serial);
-			if (YesNo(who, "Deseja avisar o jogador assassinado?","Sim","N„o"))
-				var script := start_script( ":email:emailMessage/sendSystemMail", array{ user, "Permiss„o de Ass. Revogado!", "Sua permiss„o para assassinar o personagem " + targ.name + " foi revogada. [P] Isso ocorre pois vocÍ n„o conseguiu cumprir com algum de seus objetivos a tempo ou seu personagem perdeu motivaÁıes cruciais para o ato. [P]  [P] Bom Jogo!"} );
+			if (YesNo(who, "Deseja avisar o jogador assassinado?","Sim","N√£o"))
+				var script := start_script( ":email:emailMessage/sendSystemMail", array{ user, "Permiss√£o de Ass. Revogado!", "Sua permiss√£o para assassinar o personagem " + targ.name + " foi revogada. [P] Isso ocorre pois voc√™ n√£o conseguiu cumprir com algum de seus objetivos a tempo ou seu personagem perdeu motiva√ß√µes cruciais para o ato. [P]  [P] Bom Jogo!"} );
 			endif
 		endif
 	endif

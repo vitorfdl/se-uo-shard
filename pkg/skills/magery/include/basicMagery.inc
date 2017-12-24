@@ -21,11 +21,11 @@ function ManterMagia(magia, mage, mobile)
 	endif
 
 	if (!AP_ConsumeVital(mage, MANA, mana) )
-		SendSysMessage(mage, "Você não possui energia arcana suficiente em seu corpo para manter esta magia!");
+		SendSysMessage(mage, "VocÃª nÃ£o possui energia arcana suficiente em seu corpo para manter esta magia!");
 		return 0;
 	else
-		SendSysMessage(mage, "Você manteve a magia.");
-		SendSysMessage(mobile, "O mago ainda mantem a magia em você.");
+		SendSysMessage(mage, "VocÃª manteve a magia.");
+		SendSysMessage(mobile, "O mago ainda mantem a magia em vocÃª.");
 		if (magia == "bless")
 			TS_StartTimer(mobile, "bless", CINT(AP_GetSkill(mage, ARCANISMO)*2)+30, mage);
 			return 1;
@@ -43,7 +43,7 @@ function ManterMagia(magia, mage, mobile)
 endfunction
 
 function CheckDelay(who, spell_elem)
-	SendSysMessage(who, "Você esta se concentrando para invocar a magia.");
+	SendSysMessage(who, "VocÃª esta se concentrando para invocar a magia.");
 
 	//var script := start_script("movementCheck", {who, GetPid()});
 	//
@@ -102,7 +102,7 @@ function CheckReagents(who, byref spell_elem, scroll)
 		var amountinpack := AmountInContainer(who.backpack, dictToAmount);
 		// print("reag " + reag + " objtype " + objtype + " pack " + amountinpack);
 		if (amountinpack  < amount )
-			SendSysMessage(who, "Você não possui "+GetObjTypeDesc(objtype, (amount>1)));
+			SendSysMessage(who, "VocÃª nÃ£o possui "+GetObjTypeDesc(objtype, (amount>1)));
 			return 0;
 		endif
 		sleepms(2);

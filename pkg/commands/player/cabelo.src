@@ -31,7 +31,7 @@ if(estilo == "lavar")
 	endif
 	var locinfo := GetMapInfo( targ.x, targ.y, who.realm );
 	if (CoordinateDistance(who.x, who.y, targ.x, targ.y) > 2)
-		SendSysMessage(who, "Você esta muito longe de onde deseja lavar as bandagens.");
+		SendSysMessage(who, "VocÃª esta muito longe de onde deseja lavar as bandagens.");
 	elseif (IsWater(targ, locinfo))
 		PrintText(who, "*lava o cabelo*");
 		var hair := GetEquipmentByLayer(who, LAYER_HAIR);
@@ -43,7 +43,7 @@ if(estilo == "lavar")
 			EraseObjProperty(who, "haircolor");
 		endif
 	else
-		SendSysMessage(who, "Você precisa de agua para lava o cabelo.");
+		SendSysMessage(who, "VocÃª precisa de agua para lava o cabelo.");
 	endif
 	return 0;
 endif
@@ -68,11 +68,11 @@ case (estilo)
   break;
 "trancar":
   cabelonovo:= CreateItemAtLocation( who.x, who.y, who.z-4, tranca,  1, realm );
-  PrintText(who, "*trança o cabelo*");
+  PrintText(who, "*tranÃ§a o cabelo*");
   break;
 "trancalonga":
   cabelonovo:= CreateItemAtLocation( who.x, who.y, who.z-4, trancalonga,  1, realm );
-  PrintText(who, "*trança o cabelo*");
+  PrintText(who, "*tranÃ§a o cabelo*");
   break;
 "flor":
   cabelonovo:= CreateItemAtLocation( who.x, who.y, who.z-4, flor,  1, realm );

@@ -33,13 +33,13 @@ exported function HandleAttackRequest( who, byref packet )
 	if (defender.npctemplate && !who.npctemplate) //se o target for npc e quem clicou for player (sempre eh)
 		if ( who.weapon.isBow() || who.weapon.isMagicWeapon())
 			if (Distance(who, defender) > 18)
-				SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
+				SendSysMessageEx(who, "VocÃª esta muito distante.", SSM_FAIL);
 
 				return 1;
 			endif
 		else
 			if (Distance(who, defender) > 6)
-				SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
+				SendSysMessageEx(who, "VocÃª esta muito distante.", SSM_FAIL);
 				return 1;
 			endif
 		
@@ -48,7 +48,7 @@ exported function HandleAttackRequest( who, byref packet )
 
 
 	if(!CheckLineOfSight(who, defender))
-		SendSysMessage(who, "Você não enxerga esse inimigo para ameaca-lo.");
+		SendSysMessage(who, "VocÃª nÃ£o enxerga esse inimigo para ameaca-lo.");
 		return 1;
 	endif
 

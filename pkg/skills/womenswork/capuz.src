@@ -10,7 +10,7 @@ include "include/say";
 program textcmd_openPack(who, robe)
 	var equip := GetEquipmentByLayer(who, LAYER_ROBE);
 	if (robe != equip)
-		SendSysMessageEx(who, "Você precisa esta vestindo o robe.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª precisa esta vestindo o robe.", SSM_FAIL);
 		return 0;
 	endif
 	MoveItemToContainer(robe, who.backpack);

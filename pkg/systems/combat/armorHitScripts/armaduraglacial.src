@@ -21,7 +21,7 @@ program HitScript(params)
 	// 	time := 2;
 	// endif
 	
-	// PrintText(attacker, "*Você esta congelado*", 91);
+	// PrintText(attacker, "*VocÃª esta congelado*", 91);
 	// TS_StartTimer(attacker, "paralysis", time);
 		
 	// return 1;

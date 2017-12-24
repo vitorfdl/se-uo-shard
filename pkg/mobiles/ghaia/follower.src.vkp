@@ -189,14 +189,14 @@ function ProcessSpeech(ev)
       cfg := cfg[npctemplate];
 
       if (GetObjPRoperty(me, "summon") == 1)
-         SendSysMessage(owner, "Outros não podem controlar criaturas invocadas por você.");
+         SendSysMessage(owner, "Outros nÃ£o podem controlar criaturas invocadas por vocÃª.");
          return;
       endif
 
       targ := target(ev.source);
       cmd := NEW_MASTER_CMD;
       if (me.alignment == "evil")
-         // SendSysMessage(owner, "A criatura não aceita o alvo como novo dono.");
+         // SendSysMessage(owner, "A criatura nÃ£o aceita o alvo como novo dono.");
          // return;
       elseif ( !targ.acctname )
          return;
@@ -206,12 +206,12 @@ function ProcessSpeech(ev)
 
    elseif (text["livre"])
       if (GetObjPRoperty(me, "summon") == 1)
-            SendSysMessage(owner, "Criaturas invocadas não podem ser libertadas normalmente.");
+            SendSysMessage(owner, "Criaturas invocadas nÃ£o podem ser libertadas normalmente.");
             return;
         endif
 
         if (GetObjProperty(owner, "companheiro") == me.serial)
-            SendSysMessage(owner, "Seu companheiro animal não quer deixar você.");
+            SendSysMessage(owner, "Seu companheiro animal nÃ£o quer deixar vocÃª.");
             return;
         endif
         
@@ -238,7 +238,7 @@ function TakeItem(ev)
         SetObjProperty(me, "happiness", 100);
     elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
         if ((EnumerateItemsInContainer(ev.item)).size() > 0)
-            SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
+            SendSysMessage(ev.source, "VocÃª precisa esvaziar a mochila antes de coloca-la na montaria.");
             return;
         endif
         if ( me.npctemplate == ":ghaia:Horse3" )
@@ -259,7 +259,7 @@ function TakeItem(ev)
         //    mount := 0;
         //endif
     else
-        SendSysMessage(ev.source, "Não pode dar esse item!");
+        SendSysMessage(ev.source, "NÃ£o pode dar esse item!");
     endif    
 endfunction
 
@@ -315,7 +315,7 @@ function Follow()
          wait_time := 1;
       endif
    elseif (anchor && (CoordinateDistance(me.x, me.y, anchor[1], anchor[2]) > 80))
-      // Say("Não devo me afastar muito.");
+      // Say("NÃ£o devo me afastar muito.");
       // Say("Ficarei por aqui");
       my_following := 0;
    elseif( dist <= 1 )
@@ -401,7 +401,7 @@ function Transfer(targ)
    endif
 
    if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) ) 
-      Say("*" + me.name+ " não aceita " + targ.name + "como dono.");
+      Say("*" + me.name+ " nÃ£o aceita " + targ.name + "como dono.");
       return;
    endif
 
@@ -472,7 +472,7 @@ function ProcessDoubleClick(ev)
 
    if (targ.mobile == me && me.graphic in pack_animals)
       if ((EnumerateItemsInContainer(me.backpack)).size() > 0)
-         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
+         SendSysMessage(ev.source, "VocÃª precisa esvaziar a mochila antes de remove-la.");
          return;
       endif
       PrintText(ev.source, "*remove a mochila de "+me.name+"*");
@@ -502,7 +502,7 @@ function ProcessDoubleClick(ev)
       elseif (input == 30)
             my_opponent := targ.mobile;
       endif
-   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se não for nem item nem mobile anda ate la
+   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se nÃ£o for nem item nem mobile anda ate la
       my_following := 0;
       my_opponent := 0;
       my_guarding := 0;

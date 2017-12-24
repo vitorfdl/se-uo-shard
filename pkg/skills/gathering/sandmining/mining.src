@@ -20,14 +20,14 @@ var resources_data_file := DFOpenDataFile("MiscResources", DF_CREATE);
 
 program SandMining(who, scoop)
 	
-	SendSysMessageEx(who, "Onde você quer pegar areia?", SSM_REQUEST);
+	SendSysMessageEx(who, "Onde vocÃª quer pegar areia?", SSM_REQUEST);
 	var targ := TargetCoordinates(who);
 	
 	if ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 2 )
 		SendSysMessageEx(who, "Muito longe.", SSM_FAIL);
 		return;
 	elseif ( !CanMine(targ, "Sand") )
-		SendSysMessageEx(who, "Você não pode pegar areia aqui.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode pegar areia aqui.", SSM_FAIL);
 		return;
 	endif
 	
@@ -43,13 +43,13 @@ program SandMining(who, scoop)
 		//elseif ( !CheckLoop(who, scoop, my_x, my_y, my_facing))
 		//	break;
 		if ( AP_GetVital(who, "Stamina") < 5)
-			SendSysMessageEx(who, "Você esta muito cansado para continuar.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª esta muito cansado para continuar.", SSM_FAIL);
 			break;
 		endif
 		AP_ConsumeVital(who, "Stamina", 5);
 		sleep(3);
 	endwhile
-	SendSysMessageEx(who, "Você parou de cavar.", SSM_FAIL);
+	SendSysMessageEx(who, "VocÃª parou de cavar.", SSM_FAIL);
 endprogram
 
 function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
@@ -70,7 +70,7 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	var resource_amount := ResourceAmount( resource_type, location_elem );
 		
 	if (resource_amount <= 0)
-		SendSysMessageEx(who, "Não tem areia utilizavel por aqui.", SSM_FAIL);
+		SendSysMessageEx(who, "NÃ£o tem areia utilizavel por aqui.", SSM_FAIL);
 		return 0;
 	endif
 	
@@ -80,11 +80,11 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, SCOOP_OF_SAND, 1);
-		SendSysMessageEx(who, "Você pegou um pouco de areia.", SSM_INFO);
+		SendSysMessageEx(who, "VocÃª pegou um pouco de areia.", SSM_INFO);
 		who.SetAchievement("oremining", 1);
 		ExpGain(who, difficulty, dice_roll);
 		return 1;
 	else
-		SendSysMessageEx(who, "Você e incapaz de pegar areia aqui.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª e incapaz de pegar areia aqui.", SSM_FAIL);
 	endif
 endfunction

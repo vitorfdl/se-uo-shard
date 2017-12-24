@@ -22,7 +22,7 @@ function genericControl()
          endif
       endif
 
-		//se tem objetivo, anda na direcao dele, se n„o tem so wander
+		//se tem objetivo, anda na direcao dele, se n√£o tem so wander
 		if (GetObjProperty(me, "objloc") != error)
 			wanders := 0;
 			DoObjective();

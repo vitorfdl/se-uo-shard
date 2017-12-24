@@ -12,7 +12,7 @@ program canInsert(mobile, container, item, move_type, insert_type, adding_item, 
 	if ( move_type == MOVETYPE_COREMOVE )
 		return 1;
 	elseif ( CP_RootContainerLocked(container) )
-		SendSysMessageEX(mobile, "Você não pode por isto em um container trancado.", SSM_FAIL);
+		SendSysMessageEX(mobile, "VocÃª nÃ£o pode por isto em um container trancado.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -31,7 +31,7 @@ program canInsert(mobile, container, item, move_type, insert_type, adding_item, 
 			endif
 
 			if (mobile.frozen || mobile.paralyzed)
-				SendSysMessageEx(mobile, "Você está paralizado.");
+				SendSysMessageEx(mobile, "VocÃª estÃ¡ paralizado.");
 				return 0;
 			endif
 		endif

@@ -1,8 +1,8 @@
 ['Dynamic Events States']
-'Active'      – The event is running now
-'Success'     – The event has succeeded. During this state NPCs may have different dialogs and offer certain services. And the following events of a chain of events may start within a few seconds.
-'Fail'        – The event has failed
-'Ready'       – The event is inactive, and will only become active once certain criteria are met. Such as talking to an NPC.
+'Active'      Â– The event is running now
+'Success'     Â– The event has succeeded. During this state NPCs may have different dialogs and offer certain services. And the following events of a chain of events may start within a few seconds.
+'Fail'        Â– The event has failed
+'Ready'       Â– The event is inactive, and will only become active once certain criteria are met. Such as talking to an NPC.
 'Preparation' - The event criterias are done, and the events is performing all the necessary changes to get activated. 
 
 ['Essentials']

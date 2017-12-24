@@ -41,7 +41,7 @@ program book(who, book)
 		var runes    := GetObjProperty(book, "runes");
 		var serialid := GetObjProperty(book, "serialid");
 		if (serialid != error && serialid != who.serial)
-			SendSysMessageEx(who, "Você não entende as anotacoes do livro.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª nÃ£o entende as anotacoes do livro.", SSM_FAIL);
 			return 1;
 		elseif (!runes[rune])
 			SendSysMessageEx(who, "Algum erro ocorreu com sua runa, avise um GM.", SSM_FAIL);
@@ -199,7 +199,7 @@ function WriteRune(who, rune_entry)
 	if( TypeOf(rune_entry) != "Struct" )
 		return SendSysMessageEx(who, "Algo esta errado com seu livro.", SSM_FAIL);
 	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
-		SendSysMessageEx(who, "Você precisa de uma faca para entalhar", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª precisa de uma faca para entalhar", SSM_FAIL);
 		return;
 	endif
 
@@ -233,7 +233,7 @@ function WriteRune(who, rune_entry)
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
 		if (who.x != loc[1] && who.y != loc[2])
-			SendSysMessageEx(who, "Você se moveu e parou de gravar no objeto", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª se moveu e parou de gravar no objeto", SSM_FAIL);
 			return;
 		endif
 		PrintText(who, "*inscrevendo em {}*".format(item.desc), who);
@@ -246,7 +246,7 @@ function WriteRune(who, rune_entry)
 	if (roll <= rune_entry.diff)
 		item.hp -= Floor(item.maxhp / 4);
 		SetName(item, item.desc);
-		return SendSysMessageEx(who, "Você falhou em inscrever a runa e danificou o objeto.", SSM_FAIL);
+		return SendSysMessageEx(who, "VocÃª falhou em inscrever a runa e danificou o objeto.", SSM_FAIL);
 	endif
 
 	foreach set in (rune_entry.sets.Keys())
@@ -270,5 +270,5 @@ function WriteRune(who, rune_entry)
 	ExpGain(who,roll, rune_entry.diff);
 	who.SetAchievement("rune_inscription", 1);
 	SetObjProperty(item, "inscripted", rune_entry.name);
-	SendSysMessageEx(who, "Você gravou a runa.", SSM_FAIL);
+	SendSysMessageEx(who, "VocÃª gravou a runa.", SSM_FAIL);
 endfunction

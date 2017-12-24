@@ -28,7 +28,7 @@ program textcmd_flip (me)
    var flip_graphic;
 
    if(!flip_config)
-      SysLog("Error: "+FLIP_CONFIG_FILE+" não existe!");
+      SysLog("Error: "+FLIP_CONFIG_FILE+" nÃ£o existe!");
       return 0;
    endif
 
@@ -47,7 +47,7 @@ program textcmd_flip (me)
    endif
 
    if( !(object.isA(POLCLASS_ITEM)) )
-      SendSysMessageEx(who, "Você não pode girar isso!");
+      SendSysMessageEx(who, "VocÃª nÃ£o pode girar isso!");
       return 0;
    endif
    
@@ -73,7 +73,7 @@ program textcmd_flip (me)
    endwhile
 
    if (graphic_array.size() == 0)
-      SendSysMessageEx(who, "Não é possível girar isso.", SSM_FAIL);
+      SendSysMessageEx(who, "NÃ£o Ã© possÃ­vel girar isso.", SSM_FAIL);
    endif
 
    var flip_menu := CreateMenu("Selecione a nova orientacao:");

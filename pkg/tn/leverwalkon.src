@@ -126,7 +126,7 @@ function alterpassage(who, item, stt, snd);
   if(GetObjProperty(item, "status") == "off")
     var msg := GetObjProperty(obj, "msg");
   if(!msg)
-    msg := "Você ativou alguma coisa onde pisou..";
+    msg := "VocÃª ativou alguma coisa onde pisou..";
   endif
   SendSysMessage(who, msg);
     stp := 1;

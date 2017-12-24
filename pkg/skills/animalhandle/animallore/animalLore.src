@@ -16,24 +16,24 @@ program skill_animal_lore( who )
    EraseObjProperty(who, "IsMeditating");
    EraseObjProperty(who, "HealTimer");
 
-   SendSysMessageEx(who, "Qual animal vocÍ deseja examinar?", SSM_REQUEST);
+   SendSysMessageEx(who, "Qual animal voc√™ deseja examinar?", SSM_REQUEST);
    var creature := Target(who, TGTOPT_CHECK_LOS);
 
    if( GetObjProperty(creature, "Blocked") || creature.frozen )
-      SendSysMessageEx(who, "O raciocinio por tr·s da sua an·lise esta incorreto.", SSM_FAIL);
+      SendSysMessageEx(who, "O raciocinio por tr√°s da sua an√°lise esta incorreto.", SSM_FAIL);
       return 0;
    elseif( creature.serial == who.serial )
-      SendSysMessageEx(who, "Esse n„o pode ser um alvo valido.", SSM_FAIL);
+      SendSysMessageEx(who, "Esse n√£o pode ser um alvo valido.", SSM_FAIL);
       return 0;
    elseif( !creature.isA(POLCLASS_NPC) )
-      SendSysMessageEx(who, "Esse n„o pode ser um alvo valido.", SSM_FAIL);
+      SendSysMessageEx(who, "Esse n√£o pode ser um alvo valido.", SSM_FAIL);
       return 0;
    elseif( (creature.graphic == 0x190) or (creature.graphic == 0x191) or (creature.graphic == 309) or (creature.graphic == 307) or (creature.graphic == 14) )
-      SendSysMessageEx(who, "Esse n„o pode ser um alvo valido.", SSM_FAIL);
+      SendSysMessageEx(who, "Esse n√£o pode ser um alvo valido.", SSM_FAIL);
       return 0;
    elseif ( !creature.isTamable() )
       printtext(who, "test"+creature.isTamable());
-		SendSysMessageEx(who, "Esse n„o pode ser um alvo valido.", SSM_FAIL);
+		SendSysMessageEx(who, "Esse n√£o pode ser um alvo valido.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -58,7 +58,7 @@ program skill_animal_lore( who )
       var al_Gump := AL_LoadGump(who, creature, cfg);
       var input := GFSendGump(who, al_Gump);
    else
-      PrintTextAbovePrivate(creature, "VocÍ falha em conseguir examinar este animal.", who);
+      PrintTextAbovePrivate(creature, "Voc√™ falha em conseguir examinar este animal.", who);
    endif
 
    return 0;
@@ -69,16 +69,16 @@ function GetDif(diff)
 	if (diff >= 20)
 		return "Muito Dificil";
 	elseif (diff >= 16)
-		return "DifÌcil";
+		return "Dif√≠cil";
 	elseif (diff >= 14)
-		return "MÈdio";
+		return "M√©dio";
 	elseif (diff >= 12)
-		return "F·cil";
+		return "F√°cil";
 	elseif (diff)
-		return "FacilÌssimo";
+		return "Facil√≠ssimo";
 	endif
 
-	return "N„o-Dom·vel";
+	return "N√£o-Dom√°vel";
 endfunction
 
 function AL_LoadGump(who, creature, cfg)
@@ -133,7 +133,7 @@ function AL_LoadGump(who, creature, cfg)
    GFHTMLArea(gump, 280, 168,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(hits)+"</div>");
    GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Stamina");
    GFHTMLArea(gump, 280, 186,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(stamina)+"</div>");
-   GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>ForÁa");
+   GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>For√ßa");
    GFHTMLArea(gump, 280, 222,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(str)+"</div>");
    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Destreza");
    GFHTMLArea(gump, 280, 240,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(dex)+"</div>");
@@ -167,7 +167,7 @@ function AL_LoadGump(who, creature, cfg)
       GFHTMLArea(gump, 320, 294, 35, 18, "<basefont color=#4A3929><div align=right>"+cint(pet_properties.loyalt)+"</div>");
       GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>Pontos");
       GFHTMLArea(gump, 320, 312,  35, 18, "<basefont color=#4A3929><div align=right>"+cint(pet_properties.points)+"</div>");
-      // GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>T·ticas");
+      // GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>T√°ticas");
       // GFHTMLArea(gump, 320, 312,  35, 18, "<basefont color=#4A3929><div align=right>"+tactStr+"</div>");
       GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, gump.cur_page-1);
    endif
@@ -177,7 +177,7 @@ function AL_LoadGump(who, creature, cfg)
    // GFPage(gump, 3);
    // GFGumpPic(gump, 128, 152, 2086);
    // GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Danos");
-   // GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>FÌsico");
+   // GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>F√≠sico");
 //    GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+dar+"</div>");
 //    GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Fogo");
 //    GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+darf+"</div>");

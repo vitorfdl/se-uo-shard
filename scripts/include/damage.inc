@@ -27,20 +27,20 @@ include ":fls_core:packets";
  */
 enum DAMAGE_TYPES
 	DMG_FORCED   := -1, // Ignores resistance
-	DMG_PHYSICAL := "Físico",
+	DMG_PHYSICAL := "FÃ­sico",
 	DMG_FIRE     := "Fogo",
 	DMG_COLD     := "Gelo",
 	DMG_POISON   := "Veneno",
 	DMG_ENERGY   := "Eletrecidade",
-	DMG_PIERCING := "Perfuração",
+	DMG_PIERCING := "PerfuraÃ§Ã£o",
 	DMG_SLASH    := "Corte",
-	DMG_BLUDGE   := "Concussão",
+	DMG_BLUDGE   := "ConcussÃ£o",
 endenum
 
 
 function HealFLS(targ, amt, show_heal := 1)
 	if (GetObjProperty(targ, "noheal"))
-		SendSysMessageEx(targ, "Você não pode ser curado.", SSM_FAIL);
+		SendSysMessageEx(targ, "VocÃª nÃ£o pode ser curado.", SSM_FAIL);
 		return;
 	endif
 

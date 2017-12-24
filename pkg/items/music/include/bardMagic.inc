@@ -115,7 +115,7 @@ function BardBuff(who,item,notas,notas2,tempo,magica)
 					if( !sword )
 						return 999;
 					endif
-					SendSysMessage(who, "Essa n„o e uma espada valida. Escolha outra",3,28);
+					SendSysMessage(who, "Essa n√£o e uma espada valida. Escolha outra",3,28);
 				endif
 			endwhile
 

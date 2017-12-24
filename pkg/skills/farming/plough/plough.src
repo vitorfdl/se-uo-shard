@@ -12,14 +12,14 @@ program UsePlough(who, plough)
 		SendSysMessage(who, "Alguem ja esta usando isto.");
 		return;
 	elseif ( Distance(who, plough) > 2 )
-		SendSysMessage(who, "Você esta muito distante da ferramenta.");
+		SendSysMessage(who, "VocÃª esta muito distante da ferramenta.");
 		return;
 	endif
 
 	var repeatable := GetObjProperty(plough, "repeat") ;
 	
 	while ( who.ip )
-		SendSysMessage(who, "Onde você deseja arar a terra?");
+		SendSysMessage(who, "Onde vocÃª deseja arar a terra?");
 		var targ := TargetCoordinates(who);
 		if ( !targ )
 			SendSysMessage(who, "Cancelado.");
@@ -27,16 +27,16 @@ program UsePlough(who, plough)
 		elseif ( CoordinateDistance(plough.x, plough.y, targ.x, targ.y) > 4 )
 			SendSysMessage(who, "Muito longe da ferramenta.");
 		elseif ( !repeatable && Distance(who, targ) > 1)
-			SendSysMessage(who, "Muito você esta muito longe.");
+			SendSysMessage(who, "Muito vocÃª esta muito longe.");
 			return;
 		elseif ( !CheckLOSAt(who, targ.x, targ.y, targ.z) )
-			SendSysMessage(who, "Você não esta na linha de visao para este local.");
+			SendSysMessage(who, "VocÃª nÃ£o esta na linha de visao para este local.");
 		elseif ( (targ.item).objtype == ITEM_DIRT )
 			SendSysMessage(who, "Este local ja esta arado.");
 		elseif ( GetObjProperty(targ.item, "gmplant") )
-			SendSysMessage(who, "Você não consegue remover esta planta.");
+			SendSysMessage(who, "VocÃª nÃ£o consegue remover esta planta.");
 		elseif ( !CanPlough(targ) )
-			SendSysMessage(who, "Você não pode arar a terra aqui.");
+			SendSysMessage(who, "VocÃª nÃ£o pode arar a terra aqui.");
 		else
 			var temp := FoundPlant(targ);
 			if ( temp )
@@ -70,7 +70,7 @@ endfunction
 function PloughDelay(who)
 	var i;
 	for (i:=1; i <= 3; i+=1)
-		SendSysMessage(who, "Você comecou a arar a terra...");
+		SendSysMessage(who, "VocÃª comecou a arar a terra...");
 		PlaySoundEffect(who, PLOUGH_SOUND);
 		sleep(2);
 	endfor
@@ -79,15 +79,15 @@ endfunction
 function PloughDirt(who, targ)
 	var test := 0;
 	if ( test > 0 )
-		SendSysMessage(who, "Você conseguiu arar a terra com sucesso.");
+		SendSysMessage(who, "VocÃª conseguiu arar a terra com sucesso.");
 		CreateItemAtLocation(targ.x, targ.y, GetWorldHeight(targ.x,targ.y), "dirt", 1);
 	else
-		SendSysMessage(who, "Você e incapaz de continuar utilizando essa ferramenta bem para arar a terra.");
+		SendSysMessage(who, "VocÃª e incapaz de continuar utilizando essa ferramenta bem para arar a terra.");
 	endif
 endfunction
 
 function RemovePlant(who, targ)
-	SendSysMessage(who, "Você arrancou a planta.");
+	SendSysMessage(who, "VocÃª arrancou a planta.");
 	DestroyItem(targ);
 endfunction
 

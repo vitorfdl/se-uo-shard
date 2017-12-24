@@ -20,16 +20,16 @@ program colocaruvas( who , item )
 		endif
 
 		if ( (uvas.graphic != 0xd1a) )
-			SendSysMessage(who, "Isto não sao uvas!");
+			SendSysMessage(who, "Isto nÃ£o sao uvas!");
 			return;
 		endif
 
 		if(uvas.movable == 0)
-			SendSysMessage(who, "Você não pode usar estas uvas.");
+			SendSysMessage(who, "VocÃª nÃ£o pode usar estas uvas.");
 			return;
 		endif
 		if(!Accessible(who, uvas))
-			SendSysMessage(who, "Você não alcanca isto.");
+			SendSysMessage(who, "VocÃª nÃ£o alcanca isto.");
 			return;
 		elseif(distance(who, uvas) > 2)
 			SendSysMessage(who, "O alvo esta muito longe.");
@@ -37,11 +37,11 @@ program colocaruvas( who , item )
 		endif
 
 		if (uvas.amount < 50)
-			SendSysMessage(who, "Você precisa por 50 uvas aqui!");
+			SendSysMessage(who, "VocÃª precisa por 50 uvas aqui!");
 			return;
 		else
 			SubtractAmount (uvas, 50);
-			SendSysMessage(who, "Você derramou as uvas, agora e so pisar!");
+			SendSysMessage(who, "VocÃª derramou as uvas, agora e so pisar!");
 			ChangeVatGraphic(item, 2);
 			SetObjProperty(item, "carregado", 1);
 		endif  

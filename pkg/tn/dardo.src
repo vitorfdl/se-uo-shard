@@ -6,16 +6,16 @@ include "include/say";
 
 program usedardo(who, dardo)
 
-	SendSysMessageEx(who, "Onde você deseja atirar o dardo?", SSM_REQUEST);
+	SendSysMessageEx(who, "Onde vocÃª deseja atirar o dardo?", SSM_REQUEST);
 	var targ := Target(who);
 
 	if (!CheckLineOfSight(who, targ))
-		SendSysMessageEx(who, "Você não enxerga o alvo.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o enxerga o alvo.", SSM_FAIL);
 		return 1;
 	endif
 
 	if (targ.objtype != 0x1950)
-		SendSysMessageEx(who, "Este não e um alvo valido.", SSM_FAIL);
+		SendSysMessageEx(who, "Este nÃ£o e um alvo valido.", SSM_FAIL);
 		return 1;
 	endif
 
@@ -35,7 +35,7 @@ program usedardo(who, dardo)
 		elseif (msg == 1)
 			PrintText(targ, "ha! errou!");
 		elseif (msg == 2)
-			PrintText(targ, "você parece uma mocinha!");
+			PrintText(targ, "vocÃª parece uma mocinha!");
 		endif
 		return 1;
 	elseif ( rand > 15 && rand <= 20 )

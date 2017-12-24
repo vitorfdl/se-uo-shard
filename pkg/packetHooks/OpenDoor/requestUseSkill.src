@@ -12,7 +12,7 @@ exported function HandleSkillRequest( who, byref packet )
 	// var delay := GetObjProperty(who, "delayskill");
 	// if(delay)
 	// 	if(delay > ReadGameClock())
-	// 		SendSysMessage(who, "Você ainda esta fazendo outra coisa.");
+	// 		SendSysMessage(who, "VocÃª ainda esta fazendo outra coisa.");
 	// 		return 1;
 	// 	endif
 	// endif
@@ -25,7 +25,7 @@ exported function HandleSkillRequest( who, byref packet )
 	// var chardata := GetObjProperty(who, "chardata");
 
 	// if(!chardata.Skills[skill])
-	// 	SendSysMessage(who, "Você não possui esta skill.");
+	// 	SendSysMessage(who, "VocÃª nÃ£o possui esta skill.");
 	// 	return 1;
 	// endif
 

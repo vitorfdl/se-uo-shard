@@ -16,7 +16,7 @@ program WalkOn(mobile, spiderweb)
 	
 	spiderweb := spiderweb; // So the compiler does no warn
 	
-	SendSysMessage(mobile, "Você ficou preso na teia de aranha.");
+	SendSysMessage(mobile, "VocÃª ficou preso na teia de aranha.");
 	TS_StartTimer(mobile, "paralysis", 30);
 
 	return 1;

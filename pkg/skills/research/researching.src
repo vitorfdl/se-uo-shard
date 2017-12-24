@@ -35,7 +35,7 @@ program skill_armslore(who)
          // 	seed_difficulty := "Alta";
          // elseif (seed_difficulty >= 65)
          // 	seed_habilidade := "Agricultura Avancada";
-         // 	seed_difficulty := "Média";
+         // 	seed_difficulty := "MÃ©dia";
          // elseif (seed_difficulty >= 20)
          // 	seed_habilidade := "Agricultura Basica";
          // 	seed_difficulty := "Baixa";
@@ -54,9 +54,9 @@ program skill_armslore(who)
          endforeach
          
       
-         SendSysMessageEx(who, "Esta semente não brota no :" + seed_estacao, SSM_INFO);
+         SendSysMessageEx(who, "Esta semente nÃ£o brota no :" + seed_estacao, SSM_INFO);
          // SendSysMessageEx(who, "Parece exigir habilidades em: " + seed_habilidade, SSM_INFO);
-         SendSysMessageEx(who, "Sua dificuldade é: " + seed_difficulty, SSM_INFO);
+         SendSysMessageEx(who, "Sua dificuldade Ã©: " + seed_difficulty, SSM_INFO);
       endif
    
       // if (GetObjProperty(item, "magic") != error)
@@ -69,7 +69,7 @@ program skill_armslore(who)
       // 		setobjproperty(item, "cargas", cargas);
       // 	endif
          
-      // 	SendSysMessageEx(who, "Você identificou encantamentos nesse item.", SSM_INFO);
+      // 	SendSysMessageEx(who, "VocÃª identificou encantamentos nesse item.", SSM_INFO);
       // 	var whos := GetObjProperty(item, "magicwho");
       // 	if (whos == error)
       // 		whos := array;
@@ -93,13 +93,13 @@ program skill_armslore(who)
       // 	var craftproperty := GetObjProperty(item, "craftproperty");
       // 	var properties := cint(GetObjProperty(item, "identificado"));
       // 	if (properties >= craftproperty.bonus.size())
-      // 		SendSysMessageEx(who, "Você ja identificou o maximo de propriedades deste item.", SSM_FAIL);
+      // 		SendSysMessageEx(who, "VocÃª ja identificou o maximo de propriedades deste item.", SSM_FAIL);
       // 		return;
       // 	elseif(properties == 1 && AP_GetSkill(who, ESCRIBA) < 40)
-      // 		SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
+      // 		SendSysMessageEx(who, "Este item parece muito complexo para vocÃª.", SSM_FAIL);
       // 		return;	
       // 	elseif(properties == 2 && AP_GetSkill(who, ESCRIBA) < 80)
-      // 		SendSysMessageEx(who, "Este item parece muito complexo para você.", SSM_FAIL);
+      // 		SendSysMessageEx(who, "Este item parece muito complexo para vocÃª.", SSM_FAIL);
       // 		return;	
       // 	endif		
          
@@ -109,13 +109,13 @@ program skill_armslore(who)
          
       // 	properties+=1;
       // 	SetObjProperty(item, "identificado", properties);
-      // 	SendSysMessageEx(who, "Você identificou novas propriedades para artificie neste item.", SSM_INFO);
+      // 	SendSysMessageEx(who, "VocÃª identificou novas propriedades para artificie neste item.", SSM_INFO);
       // 	SetName(item, item.desc);
       // else
-      // 	SendSysMessageEx(who, "Este item não possui propriedades magicas a serem ativadas.", SSM_INFO);
+      // 	SendSysMessageEx(who, "Este item nÃ£o possui propriedades magicas a serem ativadas.", SSM_INFO);
       // endif
    else
-      SendSysMessageEx(who, "Você não descobriu nada.", SSM_FAIL);
+      SendSysMessageEx(who, "VocÃª nÃ£o descobriu nada.", SSM_FAIL);
    endif
 
 endprogram 

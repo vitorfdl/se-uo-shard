@@ -16,12 +16,12 @@ program smelthing(who, tool)
 	// 	return 0;
 	// endif
 	// if((!tool.movable) or !ReserveItem(tool))
-	// 	SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "VocÃª nÃ£o pode usar isto.", SSM_FAIL);
 	// 	return 0;
 	// endif
 	// if(!tool in ListEquippedItems(who))
 	// 	if( !(tool in EnumerateItemsInContainer(who.backpack)) )
-	// 		SendSysMessageEx(who, "A ferramenta não esta na sua mochila.", SSM_FAIL);
+	// 		SendSysMessageEx(who, "A ferramenta nÃ£o esta na sua mochila.", SSM_FAIL);
 	// 		return 0;
 	// 	endif
 	// endif
@@ -29,10 +29,10 @@ program smelthing(who, tool)
 	// EraseObjProperty(who, "IsMeditating");
 	// EraseObjProperty(who, "HealTimer");
 	
-	// SendSysMessageEx(who, "O que você deseja esmeltar?", SSM_REQUEST);
+	// SendSysMessageEx(who, "O que vocÃª deseja esmeltar?", SSM_REQUEST);
 	// var what := Target(who);
 	// if (!FindConfigElem( craft_config, what.objtype))
-	// 	SendSysMessageEx(who, "Este objeto não pode ser esmaltado.", SSM_FAIL);
+	// 	SendSysMessageEx(who, "Este objeto nÃ£o pode ser esmaltado.", SSM_FAIL);
 	// 	return;
 	// endif
 		
@@ -52,7 +52,7 @@ program smelthing(who, tool)
 	// endforeach
 	
 	// if (materials.size() <= 0)
-	// 	SendSysMessageEx(who, "Você não conseguira recuperar nada deste objeto", SSM_FAIL);
+	// 	SendSysMessageEx(who, "VocÃª nÃ£o conseguira recuperar nada deste objeto", SSM_FAIL);
 	// 	return;
 	// endif
 	
@@ -63,7 +63,7 @@ program smelthing(who, tool)
 	// GFResizePic( chargump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 250, 170 );
 	
 	// GFTextLine(chargump, 25, 25, 1153, "Esmeltar Objetos");
-	// GFTextLine(chargump, 25, 45, 2105, "Você irá recuperar os seguintes recursos:");
+	// GFTextLine(chargump, 25, 45, 2105, "VocÃª irÃ¡ recuperar os seguintes recursos:");
 	
 	// GFHTMLArea(chargump, 40, 85, 150, 60, ("<basefont color=#ffffff>" + matname));
 	// GFHTMLArea(chargump, 230, 85, 20, 60, ("<basefont color=#ffffff>" + matresource));
@@ -84,7 +84,7 @@ program smelthing(who, tool)
 	// 		endif
 	// 	endforeach
 	// 	if(anvil_near == 0)
-	// 		SendSysMessageEx(who, "Você precisa estar proximo a uma forja para esmeltar itens.", SSM_FAIL);
+	// 		SendSysMessageEx(who, "VocÃª precisa estar proximo a uma forja para esmeltar itens.", SSM_FAIL);
 	// 		return 0;
 	// 	endif
 	// 	PlaySoundEffect(who, 0x22);

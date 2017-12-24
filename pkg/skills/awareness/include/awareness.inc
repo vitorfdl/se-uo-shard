@@ -31,8 +31,8 @@ function examinarAlvo(who)
 			name := name+" "+last_name;
 		endif
 
-		SendSysMessageEx(who, "Você descobriu que "+targ.name+" é, na verdade, "+name+".", SSM_INFO);
-		SendSysMessageEx(who, "ATENÇÃO: Se você não conhece esse personagem, ignore o fato de saber o nome dele.", SSM_INFO);
+		SendSysMessageEx(who, "VocÃª descobriu que "+targ.name+" Ã©, na verdade, "+name+".", SSM_INFO);
+		SendSysMessageEx(who, "ATENÃ‡ÃƒO: Se vocÃª nÃ£o conhece esse personagem, ignore o fato de saber o nome dele.", SSM_INFO);
 	elseif ( GetObjProperty(targ, "TrapList") )
 		var failed := GetObjProperty(targ, "#awareness_fail");
       if (!failed)
@@ -64,7 +64,7 @@ function examinarAlvo(who)
 		endif
 
       who.SetAchievement("found_item", 1);
-		var revelar := YesNo(who, "Você descobriu uma armadilha, deseja revelá-la?", "Sim.", "Não, deixarei a armadilha escondida.");
+		var revelar := YesNo(who, "VocÃª descobriu uma armadilha, deseja revelÃ¡-la?", "Sim.", "NÃ£o, deixarei a armadilha escondida.");
 		ExpGain(who, diff, dice_roll);
 		if (revelar)
 			PrintText(targ, "*armadilha revelada por "+who.name+"*");
@@ -120,11 +120,11 @@ function examinarArea(who)
 				found := found+1;
 				mobile.hidden := 0;
 				PrintText(mobile, "*aparece*");
-				SendSystemReport(who, "Você encontrou "+mobile.name+".", SSM_INFO);
+				SendSystemReport(who, "VocÃª encontrou "+mobile.name+".", SSM_INFO);
 				SendSystemReport(mobile, who.name+" te encontrou!", SSM_FAIL, mobile);
             who.SetAchievement("found_mobile", 1);
 			elseif ( dice_roll >= difficulty-2 )
-				SendSystemReport(who, "*Você se sente observado*", SSM_INFO);
+				SendSystemReport(who, "*VocÃª se sente observado*", SSM_INFO);
 			endif
 		endif
 		sleepms(2);
@@ -139,14 +139,14 @@ function examinarArea(who)
 			ExpGain(who, "minor");
 			found := found+1;
 			item.invisible := 0;
-			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
+			SendSysMessageEx(who, "VocÃª encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);
          who.SetAchievement("found_item", 1);
 		elseif (GetObjProperty(item, "FindDiff") && dice_roll >= CInt(GetObjProperty(item, "FindDiff")))
 			ExpGain(who, CInt(GetObjProperty(item, "FindDiff")), dice_roll);
 			found := found+1;
 			item.invisible := 0;
-			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
+			SendSysMessageEx(who, "VocÃª encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);						
          who.SetAchievement("found_mobile", 1);
 		endif

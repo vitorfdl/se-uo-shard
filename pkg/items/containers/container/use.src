@@ -42,7 +42,7 @@ function ContainerIsLocked(mobile, container)
 		// Nothing to worry about.
 		return 0;
 	elseif ( KP_HasKeyForLock(mobile, container) )
-		SendSysMessageEx(mobile, "Você abre o container com a chave.");
+		SendSysMessageEx(mobile, "VocÃª abre o container com a chave.");
 		return 0;
 	else
 		return 1;

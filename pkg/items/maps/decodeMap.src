@@ -7,11 +7,11 @@ include ":attributes:attributes";
 include ":charactercreation:habilidades";
 program decode_map( who, map )
 	if(!Accessible(who, map))
-		SendSysMessageEx(who, "Você não alcanca o mapa.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o alcanca o mapa.", SSM_FAIL);
 		return;
 	endif
 		if(map.movable == 0)
-			SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª nÃ£o pode usar isto.", SSM_FAIL);
 			return;
 		endif   var cfgfile := ReadConfigFile( "itemdesc" );
 
@@ -21,7 +21,7 @@ program decode_map( who, map )
 
 	//if( maplevel > maxlevel )
 	if (!TemHabilidade(who, "Cartografia") && who.cmdlevel < 3)
-		SendSysMessageEx( who, "Você não compreende esse mapa.", SSM_FAIL );
+		SendSysMessageEx( who, "VocÃª nÃ£o compreende esse mapa.", SSM_FAIL );
 	else
 		CreateTreasureMap( who, map, maplevel );
 	endif
@@ -54,7 +54,7 @@ function CreateTreasureMap(who, oldmap, maplevel)
 	SetObjProperty(map, "decoder", who.serial);
 	SetTreasureCoords(map);
 	SetName(map, "mapa do tesouro [lvl " + maplevel + "] [desvendado por " + who.name + "]");
-	SendSysMessage( who, "Você desvendou o mapa!" );
+	SendSysMessage( who, "VocÃª desvendou o mapa!" );
 	DestroyItem( oldmap );
 endfunction
 

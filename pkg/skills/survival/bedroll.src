@@ -19,15 +19,15 @@ program use_Bedroll( who, bedroll )
 		return 0;
 	endif
 	if(bedroll.movable == 0)
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessage(who, "VocÃª nÃ£o pode usar isto.");
 		return 0;
 	endif
 	var items := ListItemsNearLocationOfType( who.x,who.y,who.z, 2, UOBJECT_CAMPFIRE, who.realm );
 	if( len(items) == 0 )
-		SendSysMessageEx( who, "Você precisa de um acampamento proximo para usar isto.", SSM_FAIL );
+		SendSysMessageEx( who, "VocÃª precisa de um acampamento proximo para usar isto.", SSM_FAIL );
 		return 0;
 	else
-		SendSysMessageEx( who, "Você deve permanecer aqui para preparar o acampamento.", SSM_FAIL );
+		SendSysMessageEx( who, "VocÃª deve permanecer aqui para preparar o acampamento.", SSM_FAIL );
 	endif
 
 	var x := who.x;
@@ -38,10 +38,10 @@ program use_Bedroll( who, bedroll )
 
 	while( ttl > 0 )
 		if( (who.x != x) || (who.y != y) || (who.z != z) )
-			SendSysMessageEx( who, "Você abandonou suas preparacoes para o acampamento.", SSM_FAIL);
+			SendSysMessageEx( who, "VocÃª abandonou suas preparacoes para o acampamento.", SSM_FAIL);
 			return 0;
 		endif
-		SendSysMessageEx( who, "Você deve esperar " + ttl + " segundos para deslogar.", SSM_FAIL );
+		SendSysMessageEx( who, "VocÃª deve esperar " + ttl + " segundos para deslogar.", SSM_FAIL );
 		ttl := ttl - 5;
 		sleep(5);
 	endwhile

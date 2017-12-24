@@ -204,7 +204,7 @@ function makefood(who, input)
 	var recipeinfo := recipecfg(input);
 	
 	if (!TemHabilidade(who, getconfigstring(recipeinfo, "habilidade")))
-		SendSysMessage(who, "Você não e capaz de compreender as instrucoes desta comida.");
+		SendSysMessage(who, "VocÃª nÃ£o e capaz de compreender as instrucoes desta comida.");
 		return;
 	endif
 	
@@ -256,10 +256,10 @@ function makefood(who, input)
 
 	for (makeamount; makeamount > 0; makeamount := makeamount-1)
 		if (myx > who.x + 10 || myx < who.x - 10)
-			SendSysMessageEx(who, "Você andou e parou de cozinhar.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª andou e parou de cozinhar.", SSM_FAIL);
 			return;
 		elseif(myy > who.y + 10 || myy < who.y - 10)
-			SendSysMessage(who, "Você andou e parou de cozinhar.", SSM_FAIL);
+			SendSysMessage(who, "VocÃª andou e parou de cozinhar.", SSM_FAIL);
 			return;
 		endif
 		
@@ -281,7 +281,7 @@ function makefood(who, input)
 			endforeach
 			
 			if (yield < amount)
-				SendSysMessageEx(who, "Você não possui ingredientes suficientes.", SSM_FAIL);
+				SendSysMessageEx(who, "VocÃª nÃ£o possui ingredientes suficientes.", SSM_FAIL);
 				SendSysMessageEx(who, "Faltando " + amount + " " + line[1], SSM_FAIL);
 				return;
 			else
@@ -304,9 +304,9 @@ function makefood(who, input)
 		// if (SkillCheck(who, COOKWORK, recipeinfo.skill, recipeinfo.skill*2) > 0)
 		if (15 > 0)
 			createiteminbackpack(who, getobjtypebyname(recipeinfo.objtype), 1);
-			SendSysMessageEx(who, "Você guardou a comida na sua mochila.", SSM_INFO);
+			SendSysMessageEx(who, "VocÃª guardou a comida na sua mochila.", SSM_INFO);
 		else
-			SendSysMessageEx(who, "Você falhou e arruinou a comida!", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª falhou e arruinou a comida!", SSM_FAIL);
 		endif
 			
 		foreach line in getconfigstringarray(recipeinfo, "leftovers")
@@ -339,7 +339,7 @@ function loopgump(mobile, foodname)
 	};
 	var data :=
 	array{
-		"Quantos " + foodname, "você quer fazer?",
+		"Quantos " + foodname, "vocÃª quer fazer?",
 		"" // Text Entry
 	};
 	var input :=  SendDialogGump(mobile, layout, data);
@@ -362,13 +362,13 @@ function copyrecipe(who, recipe)
 			endif
 			setobjproperty(item, "RecipeId", num);
 			setname(item, "Receita de " + recipe.name);
-			SendSysMessageEx(who, "Você fez uma cópia da receita.", SSM_INFO);
+			SendSysMessageEx(who, "VocÃª fez uma cÃ³pia da receita.", SSM_INFO);
 			printtext(who, "*escrevendo pergaminho*");
 		else
-			SendSysMessageEx(who, "Você copiou a receita sem cuidados e ela esta ilegivel.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª copiou a receita sem cuidados e ela esta ilegivel.", SSM_FAIL);
 		endif
 	else
-		SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª precisa de um pergaminho em branco.", SSM_FAIL);
 	endif
 endfunction
 

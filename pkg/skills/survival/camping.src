@@ -18,19 +18,19 @@ program UseWood( who, wood )
 	if( !can_access(who, wood) )
 		return 0;
 	elseif( wood.movable == 0 )
-		SendSysMessageEx(who, "Você não pode acender isso.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode acender isso.", SSM_FAIL);
 		return 0;
 	elseif( !Accessible(who, wood) )
-		SendSysMessageEx( who, "Você não alcanca isto!", SSM_FAIL );
+		SendSysMessageEx( who, "VocÃª nÃ£o alcanca isto!", SSM_FAIL );
 		return 0;
 	elseif( wood.container )
-		SendSysMessageEx( who, "Coloque no chão primeiro!", SSM_FAIL );
+		SendSysMessageEx( who, "Coloque no chÃ£o primeiro!", SSM_FAIL );
 		return 0;
 	endif
 	// var camptimer := 0;//GetObjProperty(who, "CampTimer");
 	// if( camptimer )
 	// 	if( camptimer > ReadGameClock() )
-	// 		SendSysMessageEX(who, "Você deve esperar alguns segundos para fazer isto novamente.", SSM_FAIL);
+	// 		SendSysMessageEX(who, "VocÃª deve esperar alguns segundos para fazer isto novamente.", SSM_FAIL);
 	// 		return 0;
 	// 	endif
 	// endif
@@ -50,7 +50,7 @@ program UseWood( who, wood )
 
 		foreach item in itemnearby
 			if ( (item.graphic == 3555) )
-				SendSysMessageEx(who, "Já existe outro acampamento pronto por perto.", SSM_FAIL );
+				SendSysMessageEx(who, "JÃ¡ existe outro acampamento pronto por perto.", SSM_FAIL );
 				return;
 			endif
          sleepms(2);
@@ -113,7 +113,7 @@ program UseWood( who, wood )
 	else
 		PrintText( who, "*acendendo uma fogueira*");
 		sleep(3);
-		SendSysMessageEx( who, "Você não conseguiu acender o fogo", SSM_FAIL );
+		SendSysMessageEx( who, "VocÃª nÃ£o conseguiu acender o fogo", SSM_FAIL );
 	endif
 
 endprogram

@@ -85,7 +85,7 @@ program sound(who, text)
    );
 		
    var data := array(
-      "escolha sua açao:",
+      "escolha sua aÃ§ao:",
       "1. Ah",
       "2. Ahha",
       "3. Aplaudir",
@@ -100,7 +100,7 @@ program sound(who, text)
       "12. Gemer",
       "13. Rosnar",
       "14. Hey",
-      "15. Soluçar",
+      "15. SoluÃ§ar",
       "16. Huh?",
       "17. Beijar",
       "18. Rir",

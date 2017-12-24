@@ -14,12 +14,12 @@ const ACTION_DRINK	:= 0x0022;
 program drink ( character, drink )
 
 	if (drink.movable == 0)
-		SendSysmessage (character, "Você não pode beber isto.", FONT_NORMAL, 90);
+		SendSysmessage (character, "VocÃª nÃ£o pode beber isto.", FONT_NORMAL, 90);
 		return;
 	endif
 
 	if (!ReserveItem (drink))
-		SendSysMessage (character, "Você não pode beber isto.", FONT_NORMAL, 90);
+		SendSysMessage (character, "VocÃª nÃ£o pode beber isto.", FONT_NORMAL, 90);
 		return;
 	endif
 
@@ -34,7 +34,7 @@ program drink ( character, drink )
 
 	if(poisonInfo)
 		poisonInfo.dosage := poisonInfo.dosage - 1;
-		if (poisonInfo.dosage <= 0) //se não tiver mais cargas de veneno, deleta
+		if (poisonInfo.dosage <= 0) //se nÃ£o tiver mais cargas de veneno, deleta
 			EraseObjProperty(drink, "poisonInfo");
 		else //se ainda tiver atualiza na arma
 			SetObjProperty(drink, "poisonInfo", poisonInfo);
@@ -90,13 +90,13 @@ endprogram
 
 function send_drunkness_message (character, drunkness)
 	if (drunkness > 4 and drunkness <= 8)
-		SendSysmessage (character, "Você se sente tonto.", FONT_NORMAL, 90);
+		SendSysmessage (character, "VocÃª se sente tonto.", FONT_NORMAL, 90);
 	elseif( drunkness > 8 and drunkness <= 12)
-		SendSysmessage( character , "Você esta bebado.", FONT_NORMAL, 90 );
+		SendSysmessage( character , "VocÃª esta bebado.", FONT_NORMAL, 90 );
 	elseif( drunkness > 12 and drunkness <= 16)
-		SendSysmessage( character , "Você esta muito bebado!", FONT_NORMAL, 90 );
+		SendSysmessage( character , "VocÃª esta muito bebado!", FONT_NORMAL, 90 );
 	elseif( drunkness > 16)
-		SendSysmessage( character , "Você acha que vai ficar doente...", FONT_NORMAL, 90 );
+		SendSysmessage( character , "VocÃª acha que vai ficar doente...", FONT_NORMAL, 90 );
 	endif
 endfunction
 

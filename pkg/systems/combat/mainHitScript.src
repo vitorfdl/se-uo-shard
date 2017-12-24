@@ -141,7 +141,7 @@ function PlayHurtSound(defender)
 endfunction
 
 function SkillChecks(attacker, defender, weapon, critical)
-   // N„o fazer expGain
+   // N√£o fazer expGain
    // Fazer os achievments
 endfunction
 
@@ -258,7 +258,7 @@ function PoisonChecks(attacker, defender, weapon)
 	endif
 
 	var poisonInfo := struct{};
-	if (!attacker.npctemplate)//se n„o for npc checa se tem poison na arma
+	if (!attacker.npctemplate)//se n√£o for npc checa se tem poison na arma
 		// if (attacker.graphic == 21)
 		// 	if (IsPoisonImune(defender, "defaultPoison") )
 		// 		return 0;
@@ -276,7 +276,7 @@ function PoisonChecks(attacker, defender, weapon)
 		endif
 
 		poisonInfo.dosage := poisonInfo.dosage -1;
-		if (poisonInfo.dosage <= 0) //se n„o tiver mais cargas de veneno, deleta
+		if (poisonInfo.dosage <= 0) //se n√£o tiver mais cargas de veneno, deleta
 			EraseObjProperty(weapon, "poisonInfo");
 			return 0;
 		else //se ainda tiver atualiza na arma
@@ -350,7 +350,7 @@ endfunction
 // 	endif
 
 // 	if (  result == 0 )
-// 		return 1; //se n„o passou
+// 		return 1; //se n√£o passou
 // 	endif
 
 // 	if (!autoCritical)
@@ -371,7 +371,7 @@ endfunction
 // 		PrintText(attacker, "*CRITICO*", _DEFAULT_TEXT_FONT, 2118);
 // 		SetObjProperty(attacker, "critdelay", ReadGameClock()+180);
 // 		if (GetCooldown(defender, "vitalidadeinabalavel"))
-// 			SendSysMessageEx(defender, "VocÍ ignora o critico", SSM_INFO);
+// 			SendSysMessageEx(defender, "Voc√™ ignora o critico", SSM_INFO);
 // 			SendSysMessageEx(attacker, "O defensor ignorou o critico", SSM_FAIL);
 // 			return 1;
 // 		endif

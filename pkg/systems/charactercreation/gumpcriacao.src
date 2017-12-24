@@ -28,7 +28,7 @@ program createchar(who)
       who.frozen := 1;
 		return 1;
 	elseif (GetObjProperty(who, "delete") == 1)
-		SendSysMessageEx(who, "Você não pode ter mais de um personagem por conta.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode ter mais de um personagem por conta.", SSM_FAIL);
       who.frozen := 1;
 		return 1;
 	endif
@@ -118,13 +118,13 @@ program createchar(who)
 
 	/*=====  End of Section comment block  ======*/
 
-	//Mudar Aparência
+	//Mudar AparÃªncia
 	LookGump(who, chardata);
 
 	SetProfessions(who, chardata);
 
 	if (chardata.raca == "Elfo" || chardata.classe == "Mago")
-		LearnFeat(who, "Linguagem Élfica", 0, 0);
+		LearnFeat(who, "Linguagem Ã‰lfica", 0, 0);
 		if (chardata.classe == "Mago")
 			var wand := CreateItemInBackpack(who, 0x0DF2);
 			SetObjProperty(wand, "charges", 5);
@@ -134,11 +134,11 @@ program createchar(who)
 			SetObjProperty(rec, "spell_id", 0x1);
          SysBook_CreateBook(who.backpack, "magia1");
 		endif
-	elseif (chardata.classe == "Clérigo")
+	elseif (chardata.classe == "ClÃ©rigo")
       SysBook_CreateBook(who.backpack, "clerigo1");
-		LearnFeat(who, "Linguagem Rúnica", 0, 0);
+		LearnFeat(who, "Linguagem RÃºnica", 0, 0);
 		Start_Script(":magery:cleric/powerWords", array{who});
-		start_script(":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".milagres\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
+		start_script(":email:emailMessage/sendSystemMail", array{ who, "VocÃª Ã© um clÃ©rigo!", "Parece que vocÃª decidiu ser um clÃ©rigo. [P]ClÃ©rigos sÃ£o servos de Anar e usufruem de um sistema especial de magia. VocÃª pode acessa-lo usando o coamndo \".milagres\" [P]Novas magias sÃ£o aprendidas indo ao templo de Anar e prestando oraÃ§Ãµes em seu altar."} );
 	endif
 
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
@@ -146,9 +146,9 @@ program createchar(who)
 	AP_SetVital(who, "Hunger", 0);
 	EraseObjProperty(who, "criandochar");
 	
-	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser te comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para te deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Para alterar sua senha digite .senha senhanatiga senhanova [P] [P] Bom Jogo!"} );
+	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este Ã© o sistema de conversaÃ§Ã£o por E-Mail. Sempre que o servidor quiser te comunicar algum aviso importante, vocÃª serÃ¡ notificado desta forma. Game Masters tambÃ©m podem utilizar deste sistema para te deixar mensagens ou iniciar uma conversaÃ§Ã£o. [P] VocÃª pode acessar esse menu atravÃ©s do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Para alterar sua senha digite .senha senhanatiga senhanova [P] [P] Bom Jogo!"} );
 	// if (getNotaRP(who) == 2)
-	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
+	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "BonificaÃ§Ã£o Nota 2", "ParabÃ©ns! [P] VocÃª se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + VocÃª receberÃ¡ +5 pontos em todas suas perÃ­cias para inicio de jogo. [P] +VocÃª irÃ¡ receber +200 moedas para investir na econÃ´mia do jogo e destacar seu personagem. [P] [P] Estas bonifcaÃ§Ãµes sÃ³ irÃ£o valer para este personagem. Se recriar, vocÃª irÃ¡ iniciar como um jogador comum [P] Bom Jogo!"} );
 	// 	CreateItemInBackpack(who, 0xba63, 200); //dinheiro
 	// 	setNotaRP(who, 0);
 	// 	// SetSkillPoints(who, GetSkillPoints(who)+3);
@@ -157,7 +157,7 @@ program createchar(who)
 	// endif
 endprogram
 
-function construirgump(byref gump, back := 0) //monta a aparência da gump
+function construirgump(byref gump, back := 0) //monta a aparÃªncia da gump
 	GFDisposable(gump, 0);
 	GFSetID(gump, GUMPID_CREATECHAR);//9260
 	GFGumpPic(gump, 50,80, 10421);
@@ -174,7 +174,7 @@ function construirgump(byref gump, back := 0) //monta a aparência da gump
 
 	GFHTMLArea(gump, 120, 103, 380, 20,"<BASEFONT Size=6 Color=#cccccc><center>Ultimos Sussurros Shard");
 
-	GFTextLine(gump, 390,550,2103,"Próximo");
+	GFTextLine(gump, 390,550,2103,"PrÃ³ximo");
 	GFAddButton(gump, 440, 550, 9903, 9905, GF_CLOSE_BTN, 200);
 
 	if (!back)
@@ -224,7 +224,7 @@ function ShowCreateGumps(who, byref chardata)
 			continue;
 		endif
 		// if (getNotaRP(who) == 2)
-		// 	if (!YesNo(who, "Você receberá bonificações nesse personagem. Elas não estarão disponíveis no próximo. Deseja continuar?", "Sim", "Não"))
+		// 	if (!YesNo(who, "VocÃª receberÃ¡ bonificaÃ§Ãµes nesse personagem. Elas nÃ£o estarÃ£o disponÃ­veis no prÃ³ximo. Deseja continuar?", "Sim", "NÃ£o"))
 		// 		continue;
 		// 	endif
 		// endif
@@ -237,10 +237,10 @@ function RaceGump(who, byref  chardata)
 	var last_name := "";
 
 	var gump := GFCreateGump();
-	construirgump(gump, 1); //monta a aparência da gump
+	construirgump(gump, 1); //monta a aparÃªncia da gump
 
 	if (getNotaRP(who) == 2)
-		GFTextLine(gump, 200,138,52,"Criação de Personagem Bonificado!!");
+		GFTextLine(gump, 200,138,52,"CriaÃ§Ã£o de Personagem Bonificado!!");
 	endif
 	GFTextLine(gump, 176, 150, 1153, "Defina o Nome do seu Personagem");
 	GFTextLine(gump, 176, 175, 2103, "Primeiro Nome:");
@@ -253,17 +253,17 @@ function RaceGump(who, byref  chardata)
 
 	var choice_x := 175;
 	GFSetRadioGroup(gump, 1);
-	GFTextLine(gump, choice_x+1,295,1153,"Escolha sua raça");
+	GFTextLine(gump, choice_x+1,295,1153,"Escolha sua raÃ§a");
 
-	GFTextLine(gump, choice_x+25,315,2103,"Núros");
+	GFTextLine(gump, choice_x+25,315,2103,"NÃºros");
 	GFTextLine(gump, choice_x+25,335,2103,"Valas");
-	GFTextLine(gump, choice_x+25,355,2103,"Alayárz");
+	GFTextLine(gump, choice_x+25,355,2103,"AlayÃ¡rz");
 	GFRadioButton(gump, choice_x, 315, 0x9C4E, 0x9C4F, 1, 2);
 	GFTooltipText(gump, "<right>+1 Todos atributos <br/>+ 8 Meses de vida");
 	GFRadioButton(gump, choice_x, 335, 0x9C4E, 0x9C4F, 0, 3);
-	GFTooltipText(gump, "<right>+2 Inteligência<br/>+1 Dextreza<br/>+ Visão na Penumbra<br/>+ 10 Meses de vida");
+	GFTooltipText(gump, "<right>+2 InteligÃªncia<br/>+1 Dextreza<br/>+ VisÃ£o na Penumbra<br/>+ 10 Meses de vida");
 	GFRadioButton(gump, choice_x, 355, 0x9C4E, 0x9C4F, 0, 4);
-	GFTooltipText(gump, "<right>+2 Dextreza<br/>+1 Inteligência<br/>+ Visão na Penumbra<br/>+ 10 Meses de vida");
+	GFTooltipText(gump, "<right>+2 Dextreza<br/>+1 InteligÃªncia<br/>+ VisÃ£o na Penumbra<br/>+ 10 Meses de vida");
 
 	GFSetRadioGroup(gump, 2);
 	GFTextLine(gump, choice_x+131, 295,1153,"Escolha seu sexo");
@@ -279,7 +279,7 @@ function RaceGump(who, byref  chardata)
 	GFRadioButton(gump, choice_x, 415, 0x9C4E, 0x9C4F, 1, 5);
 	GFRadioButton(gump, choice_x, 435, 0x9C4E, 0x9C4F, 0, 6);
 	GFTextLine(gump, choice_x+155,415,2103,"Mago");
-	GFTextLine(gump, choice_x+155,435,2103,"Clérigo");
+	GFTextLine(gump, choice_x+155,435,2103,"ClÃ©rigo");
 	GFRadioButton(gump, choice_x+130, 415, 0x9C4E, 0x9C4F, 0, 7);
 	GFRadioButton(gump, choice_x+130, 435, 0x9C4E, 0x9C4F, 0, 8);
 
@@ -289,7 +289,7 @@ function RaceGump(who, byref  chardata)
 		first_name := GFExtractData( input, 99);
 		last_name := GFExtractData( input, 98);
 		if (len(first_name) < 3 || cint(len(first_name) + len(last_name)) > 17)
-			SendSysMessageEX(who, "A combinação do seu nome com sobrenome não pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
+			SendSysMessageEX(who, "A combinaÃ§Ã£o do seu nome com sobrenome nÃ£o pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
 			RaceGump(who, chardata);
 		endif
 
@@ -302,7 +302,7 @@ function RaceGump(who, byref  chardata)
 				5: chardata.classe := "Guerreiro";
 				6: chardata.classe := "Ladino";
 				7: chardata.classe := "Mago";
-				8: chardata.classe := "Clérigo";
+				8: chardata.classe := "ClÃ©rigo";
 
 				11: 
 					if (chardata.raca == "Humano")
@@ -328,8 +328,8 @@ function RaceGump(who, byref  chardata)
 			chardata.nomefinal := last_name;
          sleepms(2);
 		endforeach
-      if (chardata.classe == "Clérigo" && chardata.raca == "Elfo")
-         SendSysMessageEx(who, "Clérigos não podem ser elfos!", SSM_FAIL);
+      if (chardata.classe == "ClÃ©rigo" && chardata.raca == "Elfo")
+         SendSysMessageEx(who, "ClÃ©rigos nÃ£o podem ser elfos!", SSM_FAIL);
          RaceGump(who, chardata);
       endif
 	else
@@ -344,7 +344,7 @@ function ChooseGod(who, byref chardata)
 	endif
 	while (who.connected)
 		var gump := GFCreateGump();
-		construirgump(gump); //monta a aparência da gump
+		construirgump(gump); //monta a aparÃªncia da gump
 		// GFTextLine(gump, 140,120,1153,"Escolha seu Deus: ");
 
 		case (god_choose)
@@ -389,8 +389,8 @@ function ChooseGod(who, byref chardata)
 			endcase
 
          case (chardata.classe)
-            "Clérigo":
-					SendSysMessageEx(who, "Clérigos veneram somente a Anar.", SSM_FAIL);
+            "ClÃ©rigo":
+					SendSysMessageEx(who, "ClÃ©rigos veneram somente a Anar.", SSM_FAIL);
 					god_choose := "Anar";
          endcase
 		elseif (input[0] == 200)
@@ -407,7 +407,7 @@ function AttributeGump(who, byref  chardata)
 	var btn_values := array{"str", "dex", "inte", "con", "wis"};
 	while (who.connected)
 		var gump := GFCreateGump();
-		construirgump(gump); //monta a aparência da gump
+		construirgump(gump); //monta a aparÃªncia da gump
 
 		var x := 225;
 		var y := 260;
@@ -421,10 +421,10 @@ function AttributeGump(who, byref  chardata)
 		GFResizePic(gump, x, y+50, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
 		GFResizePic(gump, x, y+75, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
 		GFResizePic(gump, x, y+100, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
-		GFTextLine(gump, x+3, y, 1150,"Força:");
+		GFTextLine(gump, x+3, y, 1150,"ForÃ§a:");
 		GFTextLine(gump, x+3, y+25, 1150,"Destreza:");
-		GFTextLine(gump, x+3, y+50, 1150,"Inteligência:");
-		GFTextLine(gump, x+3, y+75, 1150,"Constituição:");
+		GFTextLine(gump, x+3, y+50, 1150,"InteligÃªncia:");
+		GFTextLine(gump, x+3, y+75, 1150,"ConstituiÃ§Ã£o:");
 		GFTextLine(gump, x+3, y+100, 1150,"Sabedoria:");
 
 		GFHtmlShadowed(gump, x-70, y+200, 300, 20, "#FFFFFF", "<i>Selecione dois atributos para inverter os valores", 2);
@@ -537,8 +537,8 @@ endfunction
 function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
 	while (who.connected)
 		var gump := GFCreateGump();
-		construirgump(gump); //monta a aparência da gump
-		GFTextLine(gump, 148, 140, 2103, "Você pode escolher uma das profissões abaixo:");
+		construirgump(gump); //monta a aparÃªncia da gump
+		GFTextLine(gump, 148, 140, 2103, "VocÃª pode escolher uma das profissÃµes abaixo:");
 
 		var i := 1;
 		var x := 170;
@@ -618,7 +618,7 @@ function SkillGump(who, byref  chardata)
 
 	while (who.connected)
 		var gump := GFCreateGump();
-		construirgump(gump); //monta a aparência da gump
+		construirgump(gump); //monta a aparÃªncia da gump
 		GFTextLine(gump, 150,140,2103,"Escolha mais duas pericias para seu personagem.");
 
 		var x := 180;
@@ -689,7 +689,7 @@ function LookGump(who, chardata, aparencia := 0)
 	if (!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1)
 		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
 		LookGump(who, chardata, aparencia);
-	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
+	elseif (YesNo(who, "Deseja manter esta aparÃªncia?" , "Sim.", "NÃ£o."))
 		return 1;
 	else
 		LookGump(who, chardata, aparencia);

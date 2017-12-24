@@ -12,7 +12,7 @@ program terremoto(params)
         
         SetObjProperty(who, "areaInstavel", 1);
 
-        //configurações de tremor.
+        //configuraÃ§Ãµes de tremor.
         var cfgfile := ReadConfigFile(":nature:config/terConfig");
 	var elem:= FindConfigElem(cfgfile , "configuracoes" );
         var tchance := GetConfigInt(elem , "tchance" );

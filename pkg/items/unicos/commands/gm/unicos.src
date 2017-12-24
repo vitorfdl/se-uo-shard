@@ -49,7 +49,7 @@ program UniqueItemsMenu(player)
 					item := SystemFindObjectBySerial(input, 3);
 					if( !item )
 						GetItemsDataFile().DeleteElement(Hex(input));
-						SendSysMessage(player, "Este item não existe mais e foi removido da lista.");	
+						SendSysMessage(player, "Este item nÃ£o existe mais e foi removido da lista.");	
 					else
 						ShowItemInfo(gump, player, item);
 					endif
@@ -83,22 +83,22 @@ program UniqueItemsMenu(player)
 					sleepms(2);
 				endwhile
 				MoveObjectToLocation(player, cont.x, cont.y, cont.z, cont.realm, MOVEOBJECT_FORCELOCATION);
-				SendSysMessage(player, "Você se teleportou para o item com sucesso.");
+				SendSysMessage(player, "VocÃª se teleportou para o item com sucesso.");
 				return 1;
 			DESTROY_BTN:
 				RemoveItemOfTheList(item);
 				DestroyItem(item);
-				SendSysMessage(player, "Você destruiu o item com sucesso.");
+				SendSysMessage(player, "VocÃª destruiu o item com sucesso.");
 				return 1;
 			GET_BTN:
 				item.movable := 1;
 				MoveItemToContainer(item, player.backpack);
-				SendSysMessage(player, "Você moveu o item para sua bag.");
+				SendSysMessage(player, "VocÃª moveu o item para sua bag.");
 				return 1;
 			REMOVE_BTN:
 				RemoveItemOfTheList(item);
 				EraseObjProperty(item, "itemunico");
-				SendSysMessage(player, "Você removeu o item da lista.");
+				SendSysMessage(player, "VocÃª removeu o item da lista.");
 				return 1;
 		endcase
 	endwhile
@@ -157,7 +157,7 @@ function ShowItemInfo(byref gump, player, item)
 	GFResizePic(gump, 500, 25, 2620, 120, 100);
 	GFTilePic(gump, 550, 60, item.graphic);
 
-	GFTextLine(gump, 180, 235, GF_STDCOLOR, "Descrição");
+	GFTextLine(gump, 180, 235, GF_STDCOLOR, "DescriÃ§Ã£o");
 	GFResizePic(gump, 175, 255, 2620, 445, 140);
 	var desc_lines := GFWordWrap(elem.GetProp("Description"), 455);
 	var y_pos := 260;
@@ -187,17 +187,17 @@ function ShowItemInfo(byref gump, player, item)
 		endif
 		graphic := cont.graphic;
 	elseif( cont.isa(POLCLASS_NPC) )
-		txt := "Está com o npc " + cont.name + " XYZ("+cont.x+","+cont.y+","+cont.z+")";
+		txt := "EstÃ¡ com o npc " + cont.name + " XYZ("+cont.x+","+cont.y+","+cont.z+")";
 		graphic := 8435; //gazer eh o simbolo de npcs =P
 	elseif( cont.acct )
-		txt := "Está com o personagem " + cont.name + " da conta " + cont.acctname;
+		txt := "EstÃ¡ com o personagem " + cont.name + " da conta " + cont.acctname;
 		if(cont.gender)
 			graphic := 8455; //female
 		else
 			graphic := 8454; //male
 		endif
 	else
-		txt := "Está jogado por ae no tile ("+item.x+","+item.y+","+item.z+")";
+		txt := "EstÃ¡ jogado por ae no tile ("+item.x+","+item.y+","+item.z+")";
 		GFTilePic(gump, 520, 150, 6013);
 		GFTilePic(gump, 540, 130, 6013);
 		GFTilePic(gump, 540, 170, 6013);
@@ -207,14 +207,14 @@ function ShowItemInfo(byref gump, player, item)
 
 	desc_lines := GFWordWrap(txt, 300);
 	y_pos := 180;
-	GFTextLine(gump, 175, y_pos - 20, GF_STDCOLOR, "Localização");
+	GFTextLine(gump, 175, y_pos - 20, GF_STDCOLOR, "LocalizaÃ§Ã£o");
 	foreach line in desc_lines
 		GFTextLine(gump, 205, y_pos, 0, line);
 		y_pos := y_pos+20;
 	endforeach
 
 	GFAddButton(gump, 190, 430, 2151, 2154, 1, GO_BTN);
-	GFTextLine(gump, 225, 433, GF_STDCOLOR, "Ir até");
+	GFTextLine(gump, 225, 433, GF_STDCOLOR, "Ir atÃ©");
 
 	GFAddButton(gump, 275, 430, 2151, 2154, 1, DESTROY_BTN);
 	GFTextLine(gump, 310, 433, GF_STDCOLOR, "Destruir");
@@ -227,7 +227,7 @@ function ShowItemInfo(byref gump, player, item)
 endfunction
 
 function AddItem(player)
-	SendSysMessage(player, "Qual item você quer seja unico?");
+	SendSysMessage(player, "Qual item vocÃª quer seja unico?");
 	var targ := target(player);
 	if ( !targ.IsA(POLCLASS_ITEM) )
 		SendSysMessage(player, "Cancelado.");
@@ -235,14 +235,14 @@ function AddItem(player)
 	endif
 
 	if ( GetObjProperty(targ, "itemunico") )
-		if( !YesNo(player, "Esse item já é unico. Continuar mesmo assim?", "Sim", "Não") )
+		if( !YesNo(player, "Esse item jÃ¡ Ã© unico. Continuar mesmo assim?", "Sim", "NÃ£o") )
 			SendSysMessage(player, "Cancelado.");
 			return;
 		endif
 	endif
 	
 	var owner;
-	if( YesNo(player, "Deseja conectar o item a um player ou somente torna-lo único?", "Player", "Único") )
+	if( YesNo(player, "Deseja conectar o item a um player ou somente torna-lo Ãºnico?", "Player", "Ãšnico") )
 		SendSysMessage(player, "Selecione um player para ser o dono deste item unico.");
 		owner := target(player);
 		if ( !owner.acctname )
@@ -250,13 +250,13 @@ function AddItem(player)
 			return;
 		endif
 	else
-		owner := RequestGump(player, "Entre com um título do item para a staff identificar.", "O titulo só servirá para o Gump", "", 1);
+		owner := RequestGump(player, "Entre com um tÃ­tulo do item para a staff identificar.", "O titulo sÃ³ servirÃ¡ para o Gump", "", 1);
 		if( !owner )
 			owner := targ.desc;
 		endif
 	endif
 
-	var desc := RequestGump(player, "Entre com uma pequena descrição do item.", "Isso é importante para sincronia de iGms", "", 1);
+	var desc := RequestGump(player, "Entre com uma pequena descriÃ§Ã£o do item.", "Isso Ã© importante para sincronia de iGms", "", 1);
 	if ( !desc )
 		desc := "";
 	elseif ( Len(desc) > 300 )
@@ -318,12 +318,12 @@ function ShowItems(byref gump, player)
 endfunction
 
 function ClearList(player)
-	if( !YesNo(player, "Tem certeza que quer apagar tudo?", "Sim", "Não") )
+	if( !YesNo(player, "Tem certeza que quer apagar tudo?", "Sim", "NÃ£o") )
 		SendSysMessage(player, "Cancelado.");
 		return 0;
 	endif
 	RemoveAllofTheList();
-	SendSysMessage(player, "Você limpou a lista, mas os itens ainda possuem a prop de unicos. Normal...");
+	SendSysMessage(player, "VocÃª limpou a lista, mas os itens ainda possuem a prop de unicos. Normal...");
 endfunction
 
 

@@ -9,7 +9,7 @@ var female_scream := array(332, 333, 334, 335, 336);
 
 program WhipIt(who, whip)
 
-	SendSysMessage(who, "Quem você deseja chicotear?");
+	SendSysMessage(who, "Quem vocÃª deseja chicotear?");
 	
 	var targ := target(who);
 	

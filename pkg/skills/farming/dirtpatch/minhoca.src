@@ -19,7 +19,7 @@ include "include/sysEvent";
 program catarminhoca(who, dirt)
 
 	if (distance(who, dirt) > 1)
-	SendSysMessage(who, "Você esta muito longe para catar minhocas",FONT_NORMAL,0);
+	SendSysMessage(who, "VocÃª esta muito longe para catar minhocas",FONT_NORMAL,0);
 	return 0;
 	endif 
 
@@ -40,17 +40,17 @@ program catarminhoca(who, dirt)
 	if (randomcritical == 0)
 		PrintTextAbove(dirt, "*tremor da terra*",FONT_NORMAL,0);
 		sleepms(1500);
-		SendSysMessage(who, "Isso não parece uma minhoca",FONT_NORMAL,0);
+		SendSysMessage(who, "Isso nÃ£o parece uma minhoca",FONT_NORMAL,0);
 		var elemental := CreateNpcFromTemplate( "earthelemental", dirt.x, dirt.y, dirt.z );
 		SetName(elemental, "Espirito da Terra");
 		return 0;
 	endif
 
 	if (randomchance < minhocachance)
-		SendSysMessage(who, "Você pegou algumas minhocas",FONT_NORMAL,0);
+		SendSysMessage(who, "VocÃª pegou algumas minhocas",FONT_NORMAL,0);
 		CreateItemInBackpack(who, minhoca, 1);
 	else
-		SendSysMessage(who, "Você revirou a terra e não achou nenhuma minhoca",FONT_NORMAL,0);
+		SendSysMessage(who, "VocÃª revirou a terra e nÃ£o achou nenhuma minhoca",FONT_NORMAL,0);
 	endif
 
 	return 1;

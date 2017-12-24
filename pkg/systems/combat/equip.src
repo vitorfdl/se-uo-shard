@@ -46,7 +46,7 @@ endprogram
 
 function SetEquipmentMods(who, item)
    if (GetObjProperty(item, "gm_createdby") && !GetObjProperty(item, "gm_allowed"))
-		SendSysMessageEx(who, "Você não pode vestir um item criado por GM.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode vestir um item criado por GM.", SSM_FAIL);
       return 0;
    endif
    
@@ -67,7 +67,7 @@ function SetEquipmentMods(who, item)
 
       if (item_e.Pericia["Pesada"])
          who.setToughness(3);
-      elseif (item_e.Pericia["Média"])
+      elseif (item_e.Pericia["MÃ©dia"])
          who.setToughness(2);
       elseif (item_e.Pericia["Leve"])
          who.setToughness(1);
@@ -118,7 +118,7 @@ function SetEquipmentMods(who, item)
 		elseif (mod == "stammod")
 			SetObjProperty(who, "#stammod", Cint(GetObjProperty(who, "#stammod")) + Cint( mods["stammod"] ) );
 			RecalcVitals(who);
-		else // se não eh nada acima eh skillmod ou error :p
+		else // se nÃ£o eh nada acima eh skillmod ou error :p
 			AP_ModifySkillMod(who, mod, Cint(mods[mod]));
 		endif
 	endforeach

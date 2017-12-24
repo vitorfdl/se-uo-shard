@@ -22,7 +22,7 @@ var resources_data_file := DFOpenDataFile("MiscResources", DF_CREATE);
 
 program SandMining(who, scoop)
 	
-	SendSysMessage(who, "O que você deseja fazer?");
+	SendSysMessage(who, "O que vocÃª deseja fazer?");
 	var targ := TargetCoordinates(who);
 	
 	if ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 2 )
@@ -36,7 +36,7 @@ program SandMining(who, scoop)
 		DesenterrarCorpo(who, scoop, targ);
 		return;
 	elseif ( !CanMine(targ, "Clay") )
-		SendSysMessage(who, "Você não pode procurar por argila aqui.");
+		SendSysMessage(who, "VocÃª nÃ£o pode procurar por argila aqui.");
 		return;
 	endif
 	
@@ -51,14 +51,14 @@ program SandMining(who, scoop)
 	
 		CheckToolWear(who, scoop, EXTRACAO);
 		if ( AP_GetVital(who, "Stamina") < 5)
-			SendSysMessageEx(who, "Você esta muito cansado para continuar.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª esta muito cansado para continuar.", SSM_FAIL);
 			return 0;
 		endif
 		
 		AP_ConsumeVital(who, "Stamina", 5);
 		sleep(3);
 	endwhile
-	SendSysMessage(who, "Você parou de minerar.");
+	SendSysMessage(who, "VocÃª parou de minerar.");
 endprogram
 
 function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
@@ -79,7 +79,7 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	var resource_amount := ResourceAmount( resource_type, location_elem );
 		
 	if (resource_amount <= 0)
-		SendSysMessageEx(who, "Parece não existir argila utilizavel por aqui.", SSM_FAIL);
+		SendSysMessageEx(who, "Parece nÃ£o existir argila utilizavel por aqui.", SSM_FAIL);
 		return 0;
 	endif
 	
@@ -90,10 +90,10 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, CLAY_BALL, 1);
-		SendSysMessageEx(who, "Você pegou um pouco de argila.", SSM_INFO);
+		SendSysMessageEx(who, "VocÃª pegou um pouco de argila.", SSM_INFO);
 		return 1;
 	else
-		SendSysMessageEx(who, "Você falhou em pegar argila.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª falhou em pegar argila.", SSM_FAIL);
 	endif
 endfunction
 
@@ -117,7 +117,7 @@ function EnterrarCorpo(who, scoop, targ)
 	elseif (GetObjProperty(targ.item, "enterrado"))
 		var tempo := polcore().systime +600;
 		if (GetObjProperty(targ.item, "enterrado") < tempo)
-			SendSysMessageEX(who, "Você deve aguardar 10 minutos para enterrar este corpo novamente.", SSM_FAIL);
+			SendSysMessageEX(who, "VocÃª deve aguardar 10 minutos para enterrar este corpo novamente.", SSM_FAIL);
 			return;
 		endif
 	elseif (!GetObjProperty(targ.item, "morto"))
@@ -150,7 +150,7 @@ function EnterrarCorpo(who, scoop, targ)
 	endif
 
 	
-	var grave := cstr(RadioGump(who, 280, 250, "Deseja cavar em qual direção?", {"Leste","Oeste","Norte","Sul"}));
+	var grave := cstr(RadioGump(who, 280, 250, "Deseja cavar em qual direÃ§Ã£o?", {"Leste","Oeste","Norte","Sul"}));
 	case ( grave )
 		"Leste": grave := 0x0EE2;
 		"Oeste": grave := 0x0EE0;
@@ -174,7 +174,7 @@ function EnterrarCorpo(who, scoop, targ)
 	endfor
 		
 	if (!targ.item)
-		SendSysMessageEX(who, "Algo aconteceu com o corpo e você não consegui enterra-lo.", SSM_FAIL);
+		SendSysMessageEX(who, "Algo aconteceu com o corpo e vocÃª nÃ£o consegui enterra-lo.", SSM_FAIL);
 		return;
 	endif
 	grave := CreateItemAtLocation(lugar.x, lugar.y, lugar.z, grave);
@@ -186,11 +186,11 @@ function EnterrarCorpo(who, scoop, targ)
 	grave.movable := 0;
 	DestroyItem( targ.item );
 		
-	SendSysMessage(who, "Você parou de cavar.");
+	SendSysMessage(who, "VocÃª parou de cavar.");
 endfunction
 
 function DesenterrarCorpo(who, scoop, targ)
-	if (!YesNo(who, "Você deseja mesmo desenterrar este tumulo?", "Sim: Você não podera enterrar novamente pelos proximos 10 minutos.", "Não: nenhuma consequência."))
+	if (!YesNo(who, "VocÃª deseja mesmo desenterrar este tumulo?", "Sim: VocÃª nÃ£o podera enterrar novamente pelos proximos 10 minutos.", "NÃ£o: nenhuma consequÃªncia."))
 		return;
 	endif
 	
@@ -209,7 +209,7 @@ function DesenterrarCorpo(who, scoop, targ)
 		endif
 	endfor
 	if (!targ.item)
-		SendSysMessageEX(who, "Algo aconteceu com o tumulo e você não conseguiu desenterrá-lo", SSM_FAIL);
+		SendSysMessageEX(who, "Algo aconteceu com o tumulo e vocÃª nÃ£o conseguiu desenterrÃ¡-lo", SSM_FAIL);
 		return;
 	endif
 	var dirth := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x0914);

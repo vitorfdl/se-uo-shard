@@ -20,7 +20,7 @@ Program comand_formadeurso(who)
 
 	// AP_SetSkillMod(who, WRESTLING, AP_GetSkillMod(who, WRESTLING) - 70);
 	ConsumeMana( who, 40 ); 
-	SendSysMessage(who, "Você precisa de mana para se transformar!");
+	SendSysMessage(who, "VocÃª precisa de mana para se transformar!");
 	// AP_SetSkillMod(who, WRESTLING, AP_GetSkillMod(who, WRESTLING) + 70);
 
 	who.graphic := GetObjProperty(who, "originalgraphic");

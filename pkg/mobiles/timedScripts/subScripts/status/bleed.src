@@ -18,7 +18,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 	var time := 5;
 
 	while(1)
-		PrintTextAbovePrivate(mobile, "Você esta com uma grave hemorragia!", mobile);
+		PrintTextAbovePrivate(mobile, "VocÃª esta com uma grave hemorragia!", mobile);
 		foreach mobile in ( ListMobilesInLineOfSight(mobile, 8) )
 			if( mobile.ip && mobile != mobile )
 				PrintTextAbovePrivate(mobile, "* - " + mobile.name + " esta sangrando muito! - *", mobile);

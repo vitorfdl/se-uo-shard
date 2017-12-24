@@ -459,9 +459,9 @@ function GetCustom(targ, property)
 			return targ.GetGottenItem().desc;
 		"gotten_item_serial":
 			return targ.GetGottenItem().serial;
-		"experiência":
+		"experiÃªncia":
 			return targ.GetExp() + " / " + targ.getLevel() * 1000;
-		"data_de_criação":
+		"data_de_criaÃ§Ã£o":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
       "tempo_de_vida":
          var chardata := getObjProperty(targ, "chardata");
@@ -661,7 +661,7 @@ function HabEdit(who, targ, input_info)
 		return 0;
 	endif
 	
-	if (!YesNo(who, "Deseja mesmo remover a hablidade "+ input_info.name+"?", "Sim", "Não"))
+	if (!YesNo(who, "Deseja mesmo remover a hablidade "+ input_info.name+"?", "Sim", "NÃ£o"))
 		return 0;
 	endif
 	
@@ -674,7 +674,7 @@ function HabEdit(who, targ, input_info)
 	endfor
 	SetObjProperty(targ, "myhabs", habilidades);
 	
-	// if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "Não"))
+	// if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "NÃ£o"))
 	// 	SetSkillPoints(targ, GetSkillPoints(who)+1);
 	// endif
 	

@@ -36,12 +36,12 @@ program DblClickNerve(params)
 		var wait := 500;
 		if ( busy.pid )
 			if ( serving.hidden )
-				SendSysMessage(serving, "Você se esconde e interrompe seu negócio com o mercador.");
+				SendSysMessage(serving, "VocÃª se esconde e interrompe seu negÃ³cio com o mercador.");
 				CloseGumpPacket(serving, busy.pid, 0);
 				sleepms(500);
 				busy.kill();
 			elseif ( Distance(npc, serving) > 2 )
-				SendSysMessage(serving, "Você desvia sua atenção da negociação com o mercador.");
+				SendSysMessage(serving, "VocÃª desvia sua atenÃ§Ã£o da negociaÃ§Ã£o com o mercador.");
 				CloseGumpPacket(serving, busy.pid, 0);
 				sleepms(500);
 				busy.kill();

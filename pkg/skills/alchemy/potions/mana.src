@@ -16,16 +16,16 @@ program drink_blue (who, potion)
 		return;
 	endif
 	if(potion.movable == 0)
-		SendSysMessageEx(who, "Você não pode beber isto.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o pode beber isto.", SSM_FAIL);
 		return;
 	endif
 
 	if ( TS_GetCooldown(who, "manapot") != error)
-		SendSysMEssageEx(who, "Você não pode usar essa pocao agora.", SSM_FAIL);
+		SendSysMEssageEx(who, "VocÃª nÃ£o pode usar essa pocao agora.", SSM_FAIL);
 		return 1;
 	endif
 	if (cint(GetObjProperty(who, "#manapotion")))
-		SendSysMessageEx(who, "Você ja esta sob efeito de uma pocao igual.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª ja esta sob efeito de uma pocao igual.", SSM_FAIL);
 		return;
 	endif
 

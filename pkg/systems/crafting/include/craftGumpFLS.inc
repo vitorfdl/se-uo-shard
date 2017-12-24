@@ -1,4 +1,4 @@
-/* Resumo de Funções
+/* Resumo de FunÃ§Ãµes
  * sendCraftGump(who, params)
  * createGump(who, recipes, params)
  *
@@ -60,7 +60,7 @@ function sendCraftGump(who, params)
                SendSysMessageEx(who, "Fazendo ultimo item: {}".format(craft_last.name), SSM_INFO);
                CraftItem(who, params.type, params.tool, craft_last, params.qty, 1);
             else
-               SendSysMessageEx(who, "Você precisa fazer algum item antes de usar essa opção.", SSM_FAIL);
+               SendSysMessageEx(who, "VocÃª precisa fazer algum item antes de usar essa opÃ§Ã£o.", SSM_FAIL);
             endif
         elseif (input[0] == BTN_FILTER)
             //nothing
@@ -162,7 +162,7 @@ function createGump(who, recipes, params)
 
             var name := TruncatePlural(material);
             if (name == "ossodemonio")
-                name := "osso de demônio";
+                name := "osso de demÃ´nio";
             elseif (name["monsterpart"])
                 name["monsterpart"] := "";
                 name := "criatura "+name;

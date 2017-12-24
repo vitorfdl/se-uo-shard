@@ -1,6 +1,6 @@
 use uo;
 
 program lol(who)
-   SendSysMessage(who, "Seja la o que diabos for isso, n„o e para beber!!");
+   SendSysMessage(who, "Seja la o que diabos for isso, n√£o e para beber!!");
    return;
 endprogram

@@ -59,7 +59,7 @@ function Destilar(balao, beker, who, item)
    balao.movable := 0;
    beker.movable := 0;
 
-   SendSysMessage(who, "O extrato começa a ferver.");
+   SendSysMessage(who, "O extrato comeÃ§a a ferver.");
    sleep(5);
    PlaySoundEffect (who, 0x0021);
    PrintTextAbove(balao, "O liquido esta em ebulicao.");

@@ -29,32 +29,32 @@ program skill_lockpicking( me, lockpick )
 	endif
 
 	if(lockpick.movable == 0)
-		SendSysMessageEx(me, "Você não pode usar isto.", SSM_FAIL);
+		SendSysMessageEx(me, "VocÃª nÃ£o pode usar isto.", SSM_FAIL);
 		return;
 	endif
 
 	if (!ReserveItem(lockpick))
 		return;
 	endif
-	SendSysMessageEx(me, "O que você deseja fazer com isto?", SSM_REQUEST);
+	SendSysMessageEx(me, "O que vocÃª deseja fazer com isto?", SSM_REQUEST);
 	var chest := Target(me);
 	if (!chest)
 		SendSysMessageEx(me,"Cancelado.", SSM_FAIL);
 		return;
 	endif
 	if ( (!Accessible(me,chest)) || (!Accessible(me,lockpick)) )
-		SendSysMessageEx(me, "Você não alcanca o alvo!", SSM_FAIL);
+		SendSysMessageEx(me, "VocÃª nÃ£o alcanca o alvo!", SSM_FAIL);
 		return;
 	endif
 	if ( Distance(me, chest) > 2)
-		SendSysMessageEx(me, "Você esta muito distante.", SSM_FAIL);
+		SendSysMessageEx(me, "VocÃª esta muito distante.", SSM_FAIL);
 		return;
 	endif
 
 	if (GetObjProperty(chest,"level"))
 		PickTreasureChest(me, lockpick, chest); //funciona tanto pra chests quando pra portas
 	else
-		SendSysMessageEx(me, "Esse não e um alvo valido.", SSM_FAIL);
+		SendSysMessageEx(me, "Esse nÃ£o e um alvo valido.", SSM_FAIL);
 		ReleaseItem(lockpick);
 	endif
 
@@ -63,7 +63,7 @@ endprogram
 function PickTreasureChest(me, lockpick, chest)
 	var lvl := CInt(GetObjProperty(chest,"level"));
 	if (!chest.locked)
-		SendSysMessageEx(me,"O alvo não parece estar tracado.", SSM_INFO);
+		SendSysMessageEx(me,"O alvo nÃ£o parece estar tracado.", SSM_INFO);
 		return;
 	endif
 	PrintText(me, "*arrombando a fechadura*");
@@ -83,7 +83,7 @@ function PickTreasureChest(me, lockpick, chest)
 		SucessLockPick(me, chest);
       ExpGain(me, diff, dice_roll);
 	else
-		SendSysMessageEx(me, "Você falhou em arrombar a fechadura.", SSM_FAIL);
+		SendSysMessageEx(me, "VocÃª falhou em arrombar a fechadura.", SSM_FAIL);
 		PlaySoundEffect(chest,0xef);
 		SendSysMessageEx(me,"Sua gazua quebrou!", SSM_FAIL);
 		SubtractAmount(lockpick,1);

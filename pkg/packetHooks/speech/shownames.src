@@ -8,7 +8,7 @@ endprogram
 exported function handeSendSpeech(who, byref pkt)
 	if(pkt.GetInt8(9) == 0x6)
 		var obj := SystemFindObjectBySerial(pkt.GetInt32(3));
-      if (obj.IsA(POLCLASS_MOBILE)) // Se for um mobile, n„o exibe o nome
+      if (obj.IsA(POLCLASS_MOBILE)) // Se for um mobile, n√£o exibe o nome
 			return 1;
 		endif
 	endif

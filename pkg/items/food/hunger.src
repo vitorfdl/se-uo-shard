@@ -15,14 +15,14 @@ program Hunger(chr)
 		hunger := CInt(AP_GetVital(chr, "Hunger") / 60);
 
 		if (hunger == 4)
-			SendSysMessageEx(chr, "Você esta se sentindo faminto.",  SSM_INFO);
+			SendSysMessageEx(chr, "VocÃª esta se sentindo faminto.",  SSM_INFO);
 		elseif (hunger == 5)
-			SendSysMessageEx(chr, "Você esta muito faminto e correndo perigo de vida.",  SSM_INFO);
+			SendSysMessageEx(chr, "VocÃª esta muito faminto e correndo perigo de vida.",  SSM_INFO);
 		elseif (hunger == 6 && !chr.dead && !(chr.x > 6005 && chr.y > 42 && chr.x < 6029 && chr.y < 92 ))
-			SendSysMessageEx(chr, "Você esta muito faminto e correndo perigo de vida!!",  SSM_INFO);
+			SendSysMessageEx(chr, "VocÃª esta muito faminto e correndo perigo de vida!!",  SSM_INFO);
 			if (!GetObjProperty(chr, "criandochar") && rollResistDice(chr, CONSTITUTION) < 8)
 				if (AP_GetVital(chr, "DP") >= 20)
-					SendSysMessageEx(chr, "Você desmaiou de fome!!",  SSM_FAIL);
+					SendSysMessageEx(chr, "VocÃª desmaiou de fome!!",  SSM_FAIL);
 					ApplyRawDamage(chr, CInt(AP_GetVitalMaximumValue(chr, "Hits")));
 					AP_SetVital(chr, "Hunger", AP_GetVital(chr, "DP")+(2*60));
 				endif

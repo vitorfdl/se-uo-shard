@@ -12,7 +12,7 @@ include ":gumps:yesno";
 
 program PlantVase(who, vase)
    if (vase.container)
-      return SendSysmessageEx(who, "Você não pode plantar dentro de um container.", SSM_FAIL);
+      return SendSysmessageEx(who, "VocÃª nÃ£o pode plantar dentro de um container.", SSM_FAIL);
    endif
 
 	foreach item in ListItemsNearLocation(vase.x, vase.y, vase.z, 0)
@@ -22,16 +22,16 @@ program PlantVase(who, vase)
 		sleepms(2);
 	endforeach
 
-   SendSysmessageEx(who, "O que você deseja plantar aqui?", SSM_REQUEST);
+   SendSysmessageEx(who, "O que vocÃª deseja plantar aqui?", SSM_REQUEST);
    var targ := target(who);
 
    var itemdesc := ReadConfigFile(":farming:itemdesc");
    if (!targ.isA(POLCLASS_ITEM) || !itemdesc[targ.objtype].script["plantseed"] )
-      return SendSysmessageEx(who, "Você não pode plantar isso aqui.", SSM_FAIL);
+      return SendSysmessageEx(who, "VocÃª nÃ£o pode plantar isso aqui.", SSM_FAIL);
    endif
 
    if (!ConsumeSubstance(who.backpack, 0xF81, 2))
-      return SendSysmessageEx(who, "Você não tem terra fértil para plantar.", SSM_FAIL);
+      return SendSysmessageEx(who, "VocÃª nÃ£o tem terra fÃ©rtil para plantar.", SSM_FAIL);
    endif
 
    planting(who, vase, targ);
@@ -55,7 +55,7 @@ function planting(who, vase, seed)
       vase.movable := 0;
       vase.decayat := 0;
 		grower.SetGrowerType(seed.objtype);
-		SendSysMessageEx(who, "Você plantou a semente.");
+		SendSysMessageEx(who, "VocÃª plantou a semente.");
 		grower.SetWaterAmount(100);
 		grower.SetGrowStep(0);
 		SetObjProperty(grower, "vaseplant", vase.serial);
@@ -67,7 +67,7 @@ function planting(who, vase, seed)
 		
 		if ( who.cmdlevel >= 1 )
 			if (!YesNo(who, "(GM) Deseja que esta planta precise ser regada?", "Sim.", "Nao."))
-				SendSysMessageEx(who, "Esta planta não precisa de agua.");
+				SendSysMessageEx(who, "Esta planta nÃ£o precisa de agua.");
 				SetObjProperty(grower, "gmplant", 1);
 			endif
 		endif
@@ -78,7 +78,7 @@ function planting(who, vase, seed)
 		endif
 
 	else
-		SendSysMessageEx(who, "Você não sabe se essa semente vai crescer.");
+		SendSysMessageEx(who, "VocÃª nÃ£o sabe se essa semente vai crescer.");
 	endif
 	SubtractAmount(seed, 1);
 endfunction

@@ -18,7 +18,7 @@ program usalixa(who, item)
  endif 
  
   if((item2.objtype != 0x1bdd)  && (item2.objtype != 0xee36) && (item2.objtype != 0xee37) && (item2.objtype != 0xee38) && (item2.objtype != 0xee3) && (item2.objtype != 0xee3a) && (item2.objtype != 0xee66) && (item2.objtype != 0xee67) && (item2.objtype != 0xee68) && (item2.objtype != 0xee69) && (item2.objtype != 0xee70)&& (item2.objtype != 0x1bd7) )
-     sendsysmessage(who, "Você so pode lizar madeiras.");
+     sendsysmessage(who, "VocÃª so pode lizar madeiras.");
      return;
   endif
   

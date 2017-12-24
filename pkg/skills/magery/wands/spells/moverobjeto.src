@@ -34,12 +34,12 @@ program SpellScript(params)
 			if (!targ.locked)
 				targ.Toggle();
 			else
-				SendSysMessageEx(who, "Porta não sofreu influência da magia.", SSM_FAIL);
+				SendSysMessageEx(who, "Porta nÃ£o sofreu influÃªncia da magia.", SSM_FAIL);
 			endif
 		elseif ( targ.movable || targ.connected )
 			FloatItem(loc, targ);
 		else
-			SendSysMessageEx(who, "Este item não se move.", SSM_FAIL);
+			SendSysMessageEx(who, "Este item nÃ£o se move.", SSM_FAIL);
 		endif
 	endif
 

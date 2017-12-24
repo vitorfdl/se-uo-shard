@@ -35,10 +35,10 @@ var climamodtemp;
 	var daylength := cint(config.daylength) * 60;
 	var horanascer := cint(getGlobalProperty("halfdaytime"));	
 	if ((ReadGameClock() - horanascer) < (daylength / 5)) solpos := "Parece ter nascido a pouco"; 
-	elseif ((ReadGameClock() - horanascer) < ((2 * daylength) / 5)) solpos := "Caminhando ao topo do cÈu";
+	elseif ((ReadGameClock() - horanascer) < ((2 * daylength) / 5)) solpos := "Caminhando ao topo do c√©u";
 	elseif ((ReadGameClock() - horanascer) < ((3 * daylength) / 5)) solpos := "A Pino";
 	elseif ((ReadGameClock() - horanascer) < ((4 * daylength) / 5)) solpos := "Caminhando ao horizonte";
-	elseif ((tempestade == 0) || (tempestade == 1) || (tempestade == 2)) solpos := "A tempestade atrapalha a vis„o do sol";
+	elseif ((tempestade == 0) || (tempestade == 1) || (tempestade == 2)) solpos := "A tempestade atrapalha a vis√£o do sol";
 	else solpos := "Quase se pondo";
 	endif
 
@@ -64,7 +64,7 @@ var climamodtemp;
 	//Temperatura Base da Estacao + Mods
        case(estacao)
        1:
-       estacaonow:= "Ver„o";
+       estacaonow:= "Ver√£o";
 	basetemp := (RandomInt(15) + 25 + regiontempmod + diamodtemp + itemtempmod + climamodtemp);
 	colore := 48;
 	2:
@@ -86,7 +86,7 @@ var climamodtemp;
 	if (basetemp >= 40)  sensacao := "Extremamente Quente"; color := 338;  endif
 	if ((basetemp < 40) && (basetemp >= 35))  sensacao := "Muito Quente"; color := 338; endif
 	if ((basetemp < 35) && (basetemp >= 27))  sensacao := "Quente"; color := 48; endif
-	if ((basetemp < 27) && (basetemp >= 16))  sensacao := "Agrad·vel"; color := 60; endif
+	if ((basetemp < 27) && (basetemp >= 16))  sensacao := "Agrad√°vel"; color := 60; endif
 	if ((basetemp < 16) && (basetemp >= 5))  sensacao := "Frio"; color := 96; endif
 	if ((basetemp < 5) && (basetemp >= -10))  sensacao := "Muito Frio"; color := 96; endif
 	if ((basetemp < -10)) sensacao := "Extremamente Frio"; color := 92; endif
@@ -94,17 +94,17 @@ var climamodtemp;
 	
 
 	//Mensagens para o Usuario
-	SendSysMessageEx(who, "EstaÁ„o do Ano: " + estacaonow, colore);
+	SendSysMessageEx(who, "Esta√ß√£o do Ano: " + estacaonow, colore);
 
    if(diaounoite == "noite")
       SendSysMessageEx(who, "Fase da Lua: " + fase, colore);
    endif
 
    if(diaounoite == "dia")
-      SendSysMessageEx(who, "PosiÁ„o do Sol: " + solpos, colore);
+      SendSysMessageEx(who, "Posi√ß√£o do Sol: " + solpos, colore);
    endif
 
-   SendSysMessageEx(who, "SensaÁ„o Termica: " + sensacao, color);
+   SendSysMessageEx(who, "Sensa√ß√£o Termica: " + sensacao, color);
 endprogram
 
 function InRect(who, x_pos, y_pos, rect)
@@ -133,7 +133,7 @@ function GetTempRegion(diaounoite, who, x, y)
 			endif
          
 			if (elem == "regiaodungeons")
-				SendSysMessageEx(who, "Esse comando n„o pode ser usado dentro de Dungeons ou Cavernas.");
+				SendSysMessageEx(who, "Esse comando n√£o pode ser usado dentro de Dungeons ou Cavernas.");
 				return 999;
 			endif
 			return tempmod;

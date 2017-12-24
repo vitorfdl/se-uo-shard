@@ -49,7 +49,7 @@ function LookGump(who, chardata, aparencia := 0)
 	if (!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1)
 		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
 		LookGump(who, chardata, aparencia);
-	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
+	elseif (YesNo(who, "Deseja manter esta aparÃªncia?" , "Sim.", "NÃ£o."))
 		return 1;
 	else
 		LookGump(who, chardata, aparencia);

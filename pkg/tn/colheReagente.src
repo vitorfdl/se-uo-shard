@@ -7,7 +7,7 @@ include "include/say";
 program colheReagente(who, item)
 
 	if (!Accessible(who, item))
-		SendSysMessageEX(who, "Você não alcança este item.", SSM_FAIL);
+		SendSysMessageEX(who, "VocÃª nÃ£o alcanÃ§a este item.", SSM_FAIL);
 		return 1;
 	endif
 	
@@ -40,10 +40,10 @@ program colheReagente(who, item)
 	
 	
 	if (!item)
-		SendSysMessageEX(who, "Você não tem espaço na sua mochila.", SSM_FAIL);
+		SendSysMessageEX(who, "VocÃª nÃ£o tem espaÃ§o na sua mochila.", SSM_FAIL);
 		return;
 	else
-		SendSysMessageEX(who, "Você colheu a planta", SSM_INFO);
+		SendSysMessageEX(who, "VocÃª colheu a planta", SSM_INFO);
 		DestroyItem(item);
 	endif
 

@@ -112,7 +112,7 @@ function ListMails( who, flag := 0 )
 			mixcolor := 2103;
 		endif
 		if ( i >= 20)
-			GFTextLine(gump, 420,580,2103,"Próximo");
+			GFTextLine(gump, 420,580,2103,"PrÃ³ximo");
 			GFAddButton(gump, 470, 580, 9903, 9905, GF_PAGE_BTN, gump.cur_page+1);
 			y := 200;
 			i := 1;

@@ -38,7 +38,7 @@ program destroyitems(parms)
 		SendSysMessageEx(who,"Isto ja parece estar quebrado.",SSM_FAIL);
 		return 0;
 	elseif(AP_GetVital(who, "Stamina") < 15)
-      SendSysMessageEx(who, "Você esta cansado demais.",SSM_FAIL);
+      SendSysMessageEx(who, "VocÃª esta cansado demais.",SSM_FAIL);
       return 0;
    elseif ( who.weapon.isBow() || who.weapon.isMagicWeapo())
       return 0;
@@ -66,7 +66,7 @@ program destroyitems(parms)
    SetObjProperty(item, "hits", hits);
 
    if( item.isA(POLCLASS_DOOR) && (hits > 0))
-      PrintText(item, "*A " +item.desc+ " começa a ceder*");
+      PrintText(item, "*A " +item.desc+ " comeÃ§a a ceder*");
    endif
 
    if (hits <= 0)

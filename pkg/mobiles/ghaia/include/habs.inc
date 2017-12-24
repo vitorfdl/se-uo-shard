@@ -56,7 +56,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    case (hab_name)
       "summon": res := SummonCreature(hab_dice, hab_special); break;
       "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target); break;
-      // "cançãoSedutora": CancaoSedutora(hab_dice); break;
+      // "canÃ§Ã£oSedutora": CancaoSedutora(hab_dice); break;
       "furtividade": res := NPC_Sneak(); break;
       "roubar": res := Roubar(hab_target); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
@@ -113,7 +113,7 @@ function RajadaAcida(dmg, targ, difficulty)
       return;
    endif
 
-   PrintText(me, "*cospe ácido*");
+   PrintText(me, "*cospe Ã¡cido*");
    var phase_coords := GetCoordsInLine(me.x, me.y, targ.x, targ.y);
    foreach coord in phase_coords
       var acid := CreateItemAtLocation(coord.x, coord.y, me.z, 0xA370);

@@ -84,7 +84,7 @@ function MenuSelf(who)
       entries.+soltar := struct{ "cliloc" := 3002026, color := YELLOW_COLOR };
    endif
 
-   if (who.isClass("Clérigo"))
+   if (who.isClass("ClÃ©rigo"))
       entries.+blessings := 3002030;
    endif
 

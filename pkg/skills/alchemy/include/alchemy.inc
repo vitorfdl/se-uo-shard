@@ -8,7 +8,7 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
    if(!Accessible(character, potion))
       return 0;
    elseif (!potion.movable)
-      SendSysMessageEx(character, "Você não pode beber isto.", SSM_FAIL);
+      SendSysMessageEx(character, "VocÃª nÃ£o pode beber isto.", SSM_FAIL);
       return 0;
    endif
 
@@ -18,16 +18,16 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
    var cfg           := ReadConfigFile(":*:itemdesc");
    var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
    if (equippedright and equippedleft || twohanded)
-      SendSysMessageEx(character, "Você precisa de pelo menos uma mão livre!");
+      SendSysMessageEx(character, "VocÃª precisa de pelo menos uma mÃ£o livre!");
       return 0;
    elseif (GetObjProperty(character, "noheal") && type == "healingpot")
-      SendSysMessageEx(character, "Essa poção não fará efeito nas atuais circunstâcias", SSM_FAIL);
+      SendSysMessageEx(character, "Essa poÃ§Ã£o nÃ£o farÃ¡ efeito nas atuais circunstÃ¢cias", SSM_FAIL);
       return 0;    
    endif
 
    if((type != "red") and (type != "green_potion") and type)
       if(TS_GetCooldown(character, type))
-         SendSysMessageEx(character, "Você deve esperar um pouco antes de beber outra poção!", SSM_FAIL);
+         SendSysMessageEx(character, "VocÃª deve esperar um pouco antes de beber outra poÃ§Ã£o!", SSM_FAIL);
          return 0;
       elseif (cooldown > 0 )
          TS_StartCooldown(character, type, cooldown);
@@ -40,7 +40,7 @@ endfunction
 
 function EmptyBottle(character, potion, potiontype := 0)
    PlaySoundEffect(character, DRINK_SOUND);
-   PrintText(character, "*usa uma poção*");
+   PrintText(character, "*usa uma poÃ§Ã£o*");
    var goles;
    if (!GetObjProperty(potion, "goles"))
       goles := 3;
@@ -49,7 +49,7 @@ function EmptyBottle(character, potion, potiontype := 0)
       goles := cint(GetObjProperty(potion, "goles"));
    endif
   
-   if(potiontype == 1)  //eh uma poçao de 1 so gole
+   if(potiontype == 1)  //eh uma poÃ§ao de 1 so gole
       goles := -1;
    endif
    
@@ -72,7 +72,7 @@ function EmptyBottle(character, potion, potiontype := 0)
   
 endfunction
 
-//essa funcao so se mantem pra checar os kindlings. se não quiser checar isso use .isReagent();
+//essa funcao so se mantem pra checar os kindlings. se nÃ£o quiser checar isso use .isReagent();
 function isotherreagent(what)
 	case(what.objtype)
       0xf7a:  return 1;
@@ -212,28 +212,28 @@ function do_poison(who, potion)
       else
          TS_StartTimer(who, "defaultPoison", 120, 1);
       endif
-      SendSysMessage(who, "Você foi envenenado", 3, 40);
+      SendSysMessage(who, "VocÃª foi envenenado", 3, 40);
    0xbf01:
 	   TS_StartTimer(who, "strPoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessage(who, "VocÃª foi envenenado", 3, 40);
    0xbf02:
 		TS_StartTimer(who, "staminaPoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessage(who, "VocÃª foi envenenado", 3, 40);
    0xbf03:
 		TS_StartTimer(who, "paralyzePoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessage(who, "VocÃª foi envenenado", 3, 40);
    0xbf04:
 		TS_StartTimer(who, "defaultPoison", 120, 3);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessage(who, "VocÃª foi envenenado", 3, 40);
    0xbf06:
 		TS_StartTimer(who, "manaPoison", 120, 5);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessage(who, "VocÃª foi envenenado", 3, 40);
    0xbf05:
 		TS_StartTimer(who, "defaultPoison", 120, 5);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessage(who, "VocÃª foi envenenado", 3, 40);
    0xdc04:
 		TS_StartTimer(who, "defaultPoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 2, 40);
+		SendSysMessage(who, "VocÃª foi envenenado", 2, 40);
    endcase
 
 endfunction

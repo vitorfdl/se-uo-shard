@@ -22,7 +22,7 @@ program book(who, book)
 	var serialid := GetObjProperty(book, "serialid");
 	if (serialid != error)
 		if (serialid != who.serial && who.cmdlevel < 3)
-			SendSysMessageEx(who, "Você não entende esse livro.", SSM_FAIL);
+			SendSysMessageEx(who, "VocÃª nÃ£o entende esse livro.", SSM_FAIL);
 			return 1;
 		endif
 	endif
@@ -65,7 +65,7 @@ function MakePotion (pot, who)
 	endforeach
 
 	if (!mortar)
-		SendsysMessageEx(who, "Você precisa de um almofariz.", SSM_FAIL);
+		SendsysMessageEx(who, "VocÃª precisa de um almofariz.", SSM_FAIL);
 		return;
 	endif
 
@@ -83,7 +83,7 @@ function MakePotion (pot, who)
 		var amountinpack := AmountInContainer(who.backpack, dictToAmount);
 		//sendsysmessage(who, "reag " + reag + " objtype " + objtype + " pack " + amountinpack);
 		if (amountinpack < amount )
-			SendSysMessage(who, "Você não possui todos os materiais.");
+			SendSysMessage(who, "VocÃª nÃ£o possui todos os materiais.");
 			return 0;
 		endif
 		sleepms(2);
@@ -122,7 +122,7 @@ function MakePotion (pot, who)
    if (dice_roll.critical == -1)
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
       if (ConsumeFlask(who))
-		   SendSysMessageEx(who, "Você quebrou o frasco ao tentar fazer o extrato e perdeu os ingredientes..", SSM_FAIL);
+		   SendSysMessageEx(who, "VocÃª quebrou o frasco ao tentar fazer o extrato e perdeu os ingredientes..", SSM_FAIL);
       endif
 		return;
    endif
@@ -132,9 +132,9 @@ function MakePotion (pot, who)
          return;
       endif
 		var thing;
-		if (!magic)//se não tiver o flag magic como as tintas, cria o item
+		if (!magic)//se nÃ£o tiver o flag magic como as tintas, cria o item
 			thing := CreateItemInBackpack(who, pot, 1);
-		else //se não cria so o extrato
+		else //se nÃ£o cria so o extrato
 			thing := CreateItemInBackpack(who, 0xcfff, 1);
 			SetObjProperty(thing, "extrato", pot);
 			SetObjProperty(thing, "critical", dice_roll.critical);
@@ -142,7 +142,7 @@ function MakePotion (pot, who)
 				SetObjProperty(thing, "strength", strength);
 			endif
 			// if (GetObjProperty(who, "extratoinstantaneo"))
-			// 	SendSysMessageEx(who, "Você fez um extrato instantaneo.", SSM_INFO);
+			// 	SendSysMessageEx(who, "VocÃª fez um extrato instantaneo.", SSM_INFO);
 			// 	var pocao := GetObjProperty(thing, "pocao");
 			// 	var pot := CreateItemInBackpack(who, pocao, 1);
 			// 	SetObjProperty(pot, "strength", cint(GetObjProperty(thing, "strength")));
@@ -152,13 +152,13 @@ function MakePotion (pot, who)
 		endif
 		SetObjProperty(thing, "crafterskill", AP_GetSkill(who, ALQUIMIA) );
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
-		SendSysMessageEx(who, "Você fez a poção e a guardou na sua mochila.", SSM_INFO);
+		SendSysMessageEx(who, "VocÃª fez a poÃ§Ã£o e a guardou na sua mochila.", SSM_INFO);
 		who.SetAchievement("potion", 1);
 		ExpGain(who, difficulty, dice_roll.dice);
 		return 1;
 	else
 		PlaySoundEffect(who, SOUND_EFFECT_POUR);
-		SendSysMessageEx(who, "Você não conseguiu fazer nada com isso.", SSM_FAIL);
+		SendSysMessageEx(who, "VocÃª nÃ£o conseguiu fazer nada com isso.", SSM_FAIL);
 		return 0;
 	endif
 endfunction
@@ -249,7 +249,7 @@ function ConsumeFlask(who)
    endforeach
    set_critical(0);
 
-   SendSysMessageEx(who, "Você não tem frascos.", SSM_FAIL);
+   SendSysMessageEx(who, "VocÃª nÃ£o tem frascos.", SSM_FAIL);
    return 0;
 endfunction
 

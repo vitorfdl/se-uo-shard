@@ -57,7 +57,7 @@ function InnKeeperChecks()
 				if (ticks >= renttime || !player2)
 					if (player2)
 						var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Despejo!", 
-						"O pagamento da sua estalagem com " + npc.name + " n„o foi efetuado como esperado. Estarei colocando a estalagem de novo a disposiÁ„o de novos moradores, e manterei armazenado seus objetos atÈ que me procure."} );
+						"O pagamento da sua estalagem com " + npc.name + " n√£o foi efetuado como esperado. Estarei colocando a estalagem de novo a disposi√ß√£o de novos moradores, e manterei armazenado seus objetos at√© que me procure."} );
 					endif
 					var door := SystemFindObjectBySerial(quarto.door);
 					Eraseobjproperty(door, "LockId");
@@ -75,7 +75,7 @@ function InnKeeperChecks()
 				elseif (ticks >= 5 && !quartos[i].alert)
 					quartos[i].+alert := 1;
 					var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Aluguel!", 
-					"O pagamento da sua estalagem com " + npc.name + " ir· vencer em dois dias. Caso n„o renove o contrato para a prÛxima semana atÈ o ultimo dia, vocÍ ser· despejado e seus objetos confiscados, podendo recupera-los comigo."} );
+					"O pagamento da sua estalagem com " + npc.name + " ir√° vencer em dois dias. Caso n√£o renove o contrato para a pr√≥xima semana at√© o ultimo dia, voc√™ ser√° despejado e seus objetos confiscados, podendo recupera-los comigo."} );
 					SetObjProperty(npc, "quartos", quartos);
 				endif
 			endif
