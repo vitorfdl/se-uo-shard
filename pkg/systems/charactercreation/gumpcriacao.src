@@ -10,7 +10,6 @@ include ":attributes:attributes";
 include "include/client";
 include "include/arrays";
 include ":disguise:disguise";
-include ":charactercreation:createchar";
 include ":gumps:yesno";
 include ":datafile:datafile";
 include ":timeUtils:time";

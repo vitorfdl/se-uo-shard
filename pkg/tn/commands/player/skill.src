@@ -9,28 +9,27 @@ include ":charactercreation:characters";
 
 program start_skill(who, skillname)
 	if (who.dead)
-		SendSysMessageEx(who, "VocÃª estÃ¡ morto e nÃ£o pode fazer isto.");
+		SendSysMessageEx(who, "Você está morto e não pode fazer isto.");
 		return;
 	endif
 
 	var delay := GetObjProperty(who, "delayskill");
 	if(delay && delay > ReadGameClock())
-      SendSysMessageEx(who, "VocÃª ainda estÃ¡ fazendo outra coisa.");
+      SendSysMessageEx(who, "Você ainda está fazendo outra coisa.");
       return;
 	endif
 
 	SetObjProperty(who, "delayskill", ReadGameClock() + 5);
    skillname := StrReplace(skillname, " ", "_");
-	
    if (!skillname)
       return;
    endif
-
+   
    var cfg := AP_GetAttributesCfgFile();
-   var script := cfg[skillname].Script;
-   if( script )
+   var script := GetConfigString(cfg[skillname], "Script");
+   if( script != error )
       start_script( script, who );
    else
-      return SendSysMessageEx(who, "Pericia inexistente!");
+      return SendSysMessageEx(who, "Pericia inexistente ou não ativável!");
    endif
 endprogram
