@@ -16,7 +16,6 @@ include ":gumps:gumps_ex";
 
 /*
  * SendHTMLMessage(who, text)
- *
  * Purpose
  * Sends a HTML gump containing the text to the character.
  *

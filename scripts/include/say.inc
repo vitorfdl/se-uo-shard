@@ -12,6 +12,7 @@ const SSM_INFO_DEBUG:= 946;//1901;
 const SSM_GM_NOTICE := 2001;
 
 // CONSTants for texttype flags in the AI_Speak() function
+
 CONST SPEAK_TEXTTYPE_DEFAULT:= "default";
 CONST SPEAK_TEXTTYPE_WHISPER:= "whisper";
 CONST SPEAK_TEXTTYPE_YELL   := "yell";

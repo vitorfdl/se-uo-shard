@@ -50,6 +50,7 @@ program core_skillWin(who)
    return 0;
 endprogram
 
+
 function skillWindow(who)
 	var gump  := buildGump(who);
 	var input := GFSendGump(who, gump);

@@ -242,7 +242,6 @@ Const CID_OPHIDIAN_QUEEN      := 0x057;
 Const CID_SEA_CREATURE        := 0x05f;
 Const CID_SEA_SERPENT         := 0x096;
 Const CID_DOLPHIN             := 0x097;
-
 Const CID_TAN_HORSE			:= 0x0c8;
 Const CID_CAT				:= 0x0c9;
 Const CID_ALLIGATOR			:= 0x0ca;

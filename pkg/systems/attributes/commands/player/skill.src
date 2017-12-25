@@ -24,7 +24,7 @@ program start_skill(who, skillname)
    if (!skillname)
       return;
    endif
-   
+
    var cfg := AP_GetAttributesCfgFile();
    var script := GetConfigString(cfg[skillname], "Script");
    if( script != error )

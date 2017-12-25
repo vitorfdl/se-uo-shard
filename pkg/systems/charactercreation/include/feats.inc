@@ -28,7 +28,6 @@
 // 	return nome;
 	
 // endfunction
-
 function GetFeatList(who)
 	var chardata := GetObjProperty(who, "chardata");
 	var feat_list := chardata.Feats;
