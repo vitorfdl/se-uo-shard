@@ -16,7 +16,7 @@ function genericControl()
 	while(me)
 		sleepms(15);
       if (npccfgfile.Category == "moriquendi")
-         if (GetGlobalProperty("dia") == "dia")
+         if (GetGlobalProperty("dia") == "dia" && !IsDungeon(me.x, me.y))
             ApplyRawDamage(me, 200);
             ApplyRawDamage(me, 200);
          endif
