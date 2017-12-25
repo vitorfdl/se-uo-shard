@@ -110,7 +110,7 @@ function SendItemView(npc, player)
 		var donoDoItem := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
 		
 		//print("removendo item do vendor de char deletado.");
-		if (!donoDoItem)
+		if (!donoDoItem && cost_info.infinite != 1)
 			RemoveItemForSale(npc, serial);
          continue;
 		endif
