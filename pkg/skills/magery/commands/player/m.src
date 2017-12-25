@@ -7,8 +7,8 @@ include "include/say";
 include "include/arrays";
 include ":charactercreation:characters";
 
-program useMagic(who, spellname)
-	spellname := lower(spellname);
+program useMagic(who, spellname, uc_text)
+	spellname := lower(Cchrz(uc_text));
 
    if (who.cmdlevel > 4)
       var cfg_name := ":magery:config/mage";

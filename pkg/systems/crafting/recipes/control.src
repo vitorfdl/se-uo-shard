@@ -41,7 +41,7 @@ function ScrollCreate(scroll)
    if (objtype)
       foreach cfg_name in (recipes_list.keys())
          var cfg := recipes_list[cfg_name];
-         if (FindConfigElem(cfg, objtype))
+         if (FindConfigElem(cfg, objtype) || FindConfigElem(cfg, Hex(objtype)))
             cfg_name["2"] := "";
             scroll.graphic := recipe_graphic[cfg_name];
             SetObjProperty(scroll, "pericia", cfg_name);

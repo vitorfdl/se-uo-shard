@@ -38,9 +38,10 @@ program clericPowerWords(parms)
                continue;
             endif
 
+            var text := Lower(CChrz(event.uc_text));
             // Check if powerwords passed
             foreach powerword in (spell.powerwords)
-               if (Lower(event.text).find(Lower(powerword)))
+               if (Lower(text).find(Lower(powerword)))
                   verified += 1;
                endif
                sleepms(2);

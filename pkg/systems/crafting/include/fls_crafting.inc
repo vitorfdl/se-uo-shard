@@ -80,6 +80,7 @@ function GetRecipe(objtype, elem)
       "delay"       := GetConfigInt(elem, "delay"),
       "more"       := GetConfigInt(elem, "more"),
       "materials"  := materials,
+      "main_material" := elem.main_material,
       "requires"   :=  GetConfigStringArray(elem, "requires")
    };
    return recipe_info;
@@ -193,9 +194,12 @@ function MaterialSelection(who, type, chk)
 		material := cloth;
 	endif
 
+   var diff := cint(resource_config[materialobjtype].Skill);
+
 	var retarray := array;
 	retarray.append(material);
 	retarray.append(materialobjtype);
+	retarray.append(diff);
 	return retarray;
 endfunction
 
@@ -217,6 +221,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 	var targ_materials   := GetBagList(who, materials.Keys());
 	var choosed_material := 0;
 	var material_color   := 0;
+   var bonus_diff := 0;
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "ossodemonio"} || (typeof(thing) == "String" && thing["monsterpart"]))
@@ -238,7 +243,10 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 					material_cprops["element"] := GetObjProperty(ret[1], "element");
 					material_cprops["elementpower"] := GetObjProperty(ret[1], "elementpower");
 				endif
-				
+				if (ret[3])
+               bonus_diff += cint(ret[3]);
+            endif
+            
             if (thing == main_material)
                material_color   := ret[1].color;
                choosed_material := ret[1].objtype;
@@ -323,6 +331,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 		endforeach
 
 		var check := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, craft_skill);
+      var diff := recipe.difficulty + bonus_diff;
 		if(check > recipe.difficulty || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials, 1+more))
 				SendSysMessageEx(who, "você não possui todos os materiais.", SSM_FAIL);
@@ -332,6 +341,8 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 			if(!theitem)
 				SendSysMessageEx(who, "você não tem espaço suficiente na sua mochila!", SSM_FAIL);
 				return theitems;
+         elseif (recipe.colored)
+            theitem.color := material_color;
 			endif
 			// CheckToolWear(who, tool, craft_skill);
 			theitem.movable := 1;
