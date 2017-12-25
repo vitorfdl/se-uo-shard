@@ -334,7 +334,9 @@ exported function MegaCliloc( who, byref packet )
 			endif
 		endif
 		
-      XDesc := SubStrReplace(xDesc, "", XDesc.length()-3);
+      if (xDesc.length() > 4)
+         XDesc := SubStrReplace(xDesc, "", XDesc.length()-3);
+      endif
 		xDesc := CAscZ(xDesc);
 
 		if ( xDesc.Size() > 0 )
