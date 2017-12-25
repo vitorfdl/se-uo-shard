@@ -21,7 +21,6 @@ program command_rename(who, text)
 			return 0;
 		endif
 	endif
-	
 	SetName(targ, text);
 	return 1;
 endprogram

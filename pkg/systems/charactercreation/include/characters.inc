@@ -3,7 +3,6 @@ use cfgfile;
 include ":attributes:attributes";
 include ":charactercreation:feats";
 
-
 //Traduz o nome da skill
 function translateAttribute(attr)
 	attr["Wisdom"]       := "Sabedoria";

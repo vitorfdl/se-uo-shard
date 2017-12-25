@@ -376,7 +376,7 @@ SendSysMessage( character, text, font := _DEFAULT_TEXT_FONT, color := _DEFAULT_T
 SendTextEntryGump( who, line1, cancel := TE_CANCEL_ENABLE, style := TE_STYLE_NORMAL, maximum := 40, line2 := "" );
 SendViewContainer( character, container );
 SetGlobalProperty( propname, propval );
-SetName( object, name );
+SetName( object, name ); 
 SetObjProperty( object, property_name, property_value );
 SetRegionLightLevel( regionname, lightlevel );
 SetRegionWeatherLevel( region, type, severity, aux := 0, lightoverride := -1);

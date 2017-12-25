@@ -147,7 +147,7 @@ function SendMessage(who, name_text, is_reply:=0)
 	endif
 	
 	if ( !can_msg )
-		SendSysMessage(who, name_text+" não esta online.");
+		SendSysMessage(who, name_text+" n?o esta online.");
 		return 0;
 	endif
 	

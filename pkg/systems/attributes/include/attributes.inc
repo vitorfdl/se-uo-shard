@@ -259,6 +259,7 @@ endfunction
  * Return value
  * Returns a config file elem.
  *
+ *
  */
 function AP_GetAttributeCfgElem(attribute_name, byref cfg_file:=0)
 	if ( !cfg_file )
@@ -374,7 +375,7 @@ function Wait(mobile, segundos)
 
 	return 1;
 endfunction
-
+ 
 function GetHP(mobile)
 	var cons     := CInt(AP_GetTrueStat(mobile, CONSTITUTION));
 	var chardata := GetObjProperty(mobile, "chardata");
