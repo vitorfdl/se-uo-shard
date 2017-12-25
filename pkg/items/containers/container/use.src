@@ -23,6 +23,7 @@ program useContainer(mobile, container)
 		return 0;
 	elseif ( GetObjProperty(container, "TrapList") != error )
 		if (RunTraps(container, mobile))
+         SetObjProperty(container, "trapSpoted", 1);
          PrintText(mobile, "*dispara armadilha*");
       endif
 		return 0;

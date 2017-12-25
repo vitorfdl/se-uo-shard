@@ -72,18 +72,15 @@ function SpawnTreasure(treasure, config)
    endif
 
    if (treasure.desc["[Quebrado]"])
-      var old_name := treasure.desc; 
-      old_name[" [Quebrado]"] := "";
+      var old_name := StrReplace(treasure.desc, " [Quebrado]", ""); 
       SetName(treasure, old_name);
-      var graph := GetObjProperty(treasure, "original_graphic");
-      treasure.graphic := graph;
 
-      SetObjproperty(treasure, "hits", 1+config.level);
+      treasure.graphic := GetObjProperty(treasure, "original_graphic");
+      SetObjproperty(treasure, "hits", 1+cint(config.level));
    endif
 
    if (treasure.desc["[Armadilha]"])
-      var old_name := treasure.desc; 
-      old_name[" [Armadilha]"] := "";
+      var old_name := StrReplace(treasure.desc, " [Armadilha]", ""); 
       SetName(treasure, old_name);
    endif
 
@@ -96,7 +93,7 @@ function SpawnTreasure(treasure, config)
    endif
 
    if (config.protected)
-      SetObjProperty(treasure, "protected", treasure.protected);
+      SetObjProperty(treasure, "protected", 1);
    endif
 
    if (config.breakable)

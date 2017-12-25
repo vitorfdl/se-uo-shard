@@ -193,7 +193,9 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 				targ := source;
 				SetObjProperty(source, "cleric_spell", source.serial);
 			endif
-			HealFLS(targ, Floor(dmg/2), source);
+         if (targ != defender || RandomInt(3) == 1)
+			   HealFLS(targ, Floor(dmg/2), source);
+         endif
 		endif
 	endif
 
