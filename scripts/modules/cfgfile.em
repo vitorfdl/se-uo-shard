@@ -21,7 +21,6 @@ GetConfigIntArray( element, property_name ); // array of ints
 GetConfigStringDictionary( element, property_name );
 
 
-
 	// Appends an element to the config file specified.
 	// Properties must be an array of structures, where each element
 	// is a structure containing a name member first, and a value member

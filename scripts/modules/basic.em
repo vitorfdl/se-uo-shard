@@ -46,7 +46,6 @@ const OT_SQLROW           := 37;
 	// returns the one-based index of Search within Str after position Start
 Find( Str, Search, Start );
 
-
 	// len(): For strings, returns string length
 	//        For arrays, returns number of elements.
 Len( Str_or_array );
