@@ -25,6 +25,7 @@ include ":attributes:include/attributes";
  * Return value
  * Returns a string.
  *
+ 
  */
 function AP_SkillIdToAttributeName(skill_number)
 	var skills_cfg := ReadConfigFile(":attributes:uoskills");

@@ -76,7 +76,7 @@ endfunction
  * mobile:	Mobile reference to get the regen information from.
  *
  * Return value
- * Returns a dictionary
+ * Returns a dictionary 
  *
  */
 function AP_LoadVitalRegenRateProp(mobile)

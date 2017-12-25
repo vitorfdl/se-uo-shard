@@ -138,7 +138,7 @@ function CheckExpUp(who)
 		endif
 
 	endif
-endfunction
+endfunction 
 
 function IncreaseVitalPoints(who)
 	var chardata  := GetObjProperty(who, "chardata");

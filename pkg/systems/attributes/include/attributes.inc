@@ -15,7 +15,7 @@
 * rollResistDice(mobile, type) - Rolagem de resistência
 * GetBonusAttr(number) - Convert numero em bonus 12 -> 1
 * HaveSkill(mobile, skill) - Checa se tem skill
-* (attr...)
+* (attr...) 
 * GetHP(mobile)
 ===============================================================*/
 

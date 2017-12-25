@@ -110,7 +110,7 @@ endfunction
  * mobile:		Mobile reference to set the modifier points on.
  * stat_name:	Name of the stat to set the modifier points on.
  * points:		Number of points to set the modifier stat at.
- *
+ * 
  * Return value
  * Returns a double.
  *
