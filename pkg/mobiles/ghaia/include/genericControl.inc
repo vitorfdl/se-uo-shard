@@ -1,4 +1,5 @@
 include "objective";
+include "include/dungeons";
 
 function genericControl()
 	var ev;
@@ -16,7 +17,7 @@ function genericControl()
 	while(me)
 		sleepms(15);
       if (npccfgfile.Category == "moriquendi")
-         if (GetGlobalProperty("dia") == "dia" && !IsDungeon(me.x, me.y))
+         if (GetGlobalProperty("dia") == "dia" && !InDungeon(me))
             ApplyRawDamage(me, 200);
             ApplyRawDamage(me, 200);
          endif
