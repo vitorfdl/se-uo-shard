@@ -12,7 +12,7 @@ program habilidade(who, text, uc_text)
       text := who[2];
       who := who[1];
    else
-      text := CChrZ(uc_text)
+      text := CChrZ(uc_text);
    endif
 
    if (!text || text == "")

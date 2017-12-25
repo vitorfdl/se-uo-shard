@@ -40,20 +40,21 @@ function examinarAlvo(who)
       endif
 
 		if (who.serial in failed)
+         SendSysMessageEx(who, "Examinar novamente não vai fazer aparecer algo.", SSM_INFO);
 			return 0;
 		elseif ( GetObjProperty(targ, "trapSpoted") )
-			SendSysMessageEx(who, "Armadilha ja foi encontrada e esta obvia.", SSM_INFO);
+			SendSysMessageEx(who, "Armadilha já foi encontrada e está obvia.", SSM_INFO);
 			return 1;
 		endif
 
 		var diff;
 		var lvl := Cint(GetObjProperty(targ, "level"));
 		case (lvl)
-			1: diff := 15;
-			2: diff := 18;
-			3: diff := 23;
-			4: diff := 26;
-			5: diff := 30;
+			1: diff := 12;
+			2: diff := 15;
+			3: diff := 18;
+			4: diff := 21;
+			5: diff := 24;
 			default: diff := 18; 
 		endcase
 
@@ -70,9 +71,8 @@ function examinarAlvo(who)
 			PrintText(targ, "*armadilha revelada por "+who.name+"*");
 			TrapFound(targ, who);
 		endif
+	   return 1;
 	endif
-	
-	return 1;
 endfunction
 
 function CalculateDHDiff(who, mobile,)
