@@ -82,7 +82,7 @@ function CreateClericGump(who, cleric_list, available_slots)
       var spellname := "<basefont Size= 1>Empty";
       var powerwords := "";
 
-      if (not_empty && spell.id)
+      if (not_empty == 1 && spell.id)
          spellname := spell.name;
          powerwords := ", ".join(spell.powerwords);
       endif

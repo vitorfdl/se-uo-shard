@@ -13,6 +13,11 @@ exported function CanDie(mobile)
 		return 0;
 	endif
 
+   if (GetObjProperty(mobile, "metamorfose") == 1)
+      mobile.graphic := GetObjProperty(mobile, "oldgraphic");
+		return 0;
+	endif
+
 	if (GetObjPRoperty(mobile, "Ultimas Palavras") != error)
 		start_script(":death:hooks/speaklastwords", mobile);
 		//if (e == error)

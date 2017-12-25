@@ -58,6 +58,8 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target); break;
       // "cançãoSedutora": CancaoSedutora(hab_dice); break;
       "furtividade": res := NPC_Sneak(); break;
+      "metamorfose": res := Metamorfose(hab_special); break;
+      "curar": res := Healing(hab_target, hab_dice); break;
       "roubar": res := Roubar(hab_target); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       "rajada_acida": res := RajadaAcida(hab_dice, hab_target, hab_special); break;
@@ -92,6 +94,34 @@ function NPC_Agarrar(difficulty, targ)
 
    return 1;
 endfunction
+
+function Metamorfose(hab_special)
+   var monsters := SplitWords(hab_special);
+   var choose_monster := monsters.randomentry();
+   PrintText(me, "*metamorfose*");
+   me.frozen := 1;
+   PlaySoundEffect(me, 0x656);
+   PlayStationaryEffect(me.x, me.y, me.z, GFX_SMOKE, 10, 10, 0);
+   SetObjProperty(me, "metamorfose", choose_monster);
+   SetObjProperty(me, "oldgraphic", me.graphic);
+   
+   sleep(1);
+   var meta_config := NPC_GetNPCConfig(":ghaia:{}".format(choose_monster));
+   me.graphic := meta_config.objtype;
+   me.frozen := 0;
+   TS_StartTimer(me, "metamorfose", 30);
+   return 1;
+endfunction
+
+function Healing(targ, heal)
+
+   PrintText(me, "*magia estranha*");
+   PlaysoundEffect(me, 1137);
+   PlayObjectCenteredEffect( targ, 0x373a, 7, 0x10 );
+   HealDamage(targ, heal);
+   return 1;
+endfunction
+
 
 function NPC_Sneak()
    PrintText(me, "*esconde*");

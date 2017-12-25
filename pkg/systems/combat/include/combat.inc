@@ -40,8 +40,14 @@ endfunction
   
 function PlayHitSounds(attacker, defender := 0)
 	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
+   var metamorfose := GetObjProperty(attacker, "metamorfose");
 
-	if ( wpn_a_elem2.HitSound )
+
+   if (metamorfose)
+		var npcelem := NPC_GetNPCConfig(":ghaia:{}".format(metamorfose));
+      print(npcelem);
+      PlaySoundEffect(attacker, npcelem.AttackSound);
+	elseif ( wpn_a_elem2.HitSound )
 		PlaySoundEffect(attacker, wpn_a_elem2.HitSound);
 	else
 		//NPC intrinsic weapon
@@ -51,7 +57,10 @@ function PlayHitSounds(attacker, defender := 0)
 	
 	if (defender)
 		var hurt_sound;
-		if ( defender.npctemplate )
+      var metamorfose_2 := GetObjProperty(defender, "metamorfose");
+      if (metamorfose_2)
+         hurt_sound := NPC_GetNPCConfig(":ghaia:{}".format(metamorfose_2)).HurtSound;
+		elseif ( defender.npctemplate )
 			var npcelem := NPC_GetNPCConfig(defender.npctemplate);
 			hurt_sound  := npcelem.HurtSound;		
 		else
