@@ -7,13 +7,14 @@ use uo;
 
 include ":gumps:requestgump";
 
-program command_rename(who, text)
+program command_rename(who, text, uc_text)
 	var targ := Target(who);
 	if ( !targ )
 		SendSysMessage(who, "Cancelled.");
 		return 0;
 	endif
-	
+   
+   text := CChrZ(uc_text);
 	if ( !text )
 		text := RequestGump(who, "New Name", "", "", CANCEL_BTN_ON);
 		if ( !text || Len(text) < 1 )

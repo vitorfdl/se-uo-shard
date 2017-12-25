@@ -126,11 +126,11 @@ function taming(who)
    var chr_level := who.getLevel();
 
    if (info.difficulty > 21 && chr_level < 10)
-	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+	   return SendSysMessageEx(who, "Domesticar este animal está além das suas capacidades.", SSM_INFO);
    elseif (info.difficulty > 18 && chr_level < 4)
-	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+	   return SendSysMessageEx(who, "Domesticar este animal está além das suas capacidades.", SSM_INFO);
    elseif (info.difficulty > 15 && chr_level < 2)
-	   return SendSysMessageEx(who, "Este animal parece muito perigoso pra você.", SSM_INFO);
+	   return SendSysMessageEx(who, "Domesticar este animal está além das suas capacidades.", SSM_INFO);
    endif
 
 	// if (CInt(info.difficulty) > CInt(skill + 15))
@@ -187,16 +187,16 @@ function TameLoop(who, targ, byref info)
 		SendSysMessage(who, targ.name+" não pode ser adestrado.", SSM_FAIL);
 		return 0;
 	elseif ( targ_hostiles.size() > 0 )
-		SendSysMessageEx(who, "alguem esta atacando "+targ.name+" .", SSM_FAIL);
+		SendSysMessageEx(who, "alguém está atacando "+targ.name+" .", SSM_FAIL);
 		return 0;
 	elseif ( my_hostiles.size() > 0 )
-		SendSysMessageEx(who, "Você não pode adestrar "+targ.name+" enquanto esta sendo atacado", SSM_FAIL);
+		SendSysMessageEx(who, "Você não pode adestrar "+targ.name+" enquanto está sendo atacado", SSM_FAIL);
 		return 0;
 	elseif ( (who.x != info.x) || (who.y != info.y) || (who.facing != info.facing) )
-		SendSysMessageEx(who, "Você desviou sua atencao.", SSM_FAIL);
+		SendSysMessageEx(who, "Você desviou sua atenção.", SSM_FAIL);
 		return 0;
 	elseif ( Distance(who, targ) > 2 )
-		SendSysMessageEx(who, "Você esta muito longe.", SSM_FAIL);
+		SendSysMessageEx(who, "Você está muito longe.", SSM_FAIL);
 		return 0;
 	endif
 	

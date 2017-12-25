@@ -1,6 +1,7 @@
 use uo;
 
-program textcmd_eraseobjproperty( who, propname )
+program textcmd_eraseobjproperty( who, propname, uc_text )
+   propname := CChrZ(uc_text);
     print( "Property Name: "+propname );
 
     var tgt := Target( who );

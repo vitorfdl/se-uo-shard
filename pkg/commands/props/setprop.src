@@ -4,13 +4,16 @@
 use uo;
 use os;
 
-program SetProperties(who, text)
+program SetProperties(who, text, uc_text)
    var repeatable;
    if (typeof(who) == "Array")
       text := who[2];
       who := who[1];
       repeatable := who[3];
+   else
+      text := CChrZ(uc_text);
    endif
+   
 	var ref := GetProcess(GetPid());
 	SendSysMessage(who, "->"+ref.name);
 	

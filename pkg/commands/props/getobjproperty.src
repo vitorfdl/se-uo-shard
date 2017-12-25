@@ -6,7 +6,8 @@ use uo;
 use os;
 include "include/say";
 
-program GetCProp(who, prop_name)
+program GetCProp(who, prop_name, uc_text)
+   prop_name := CChrZ(uc_text);
 	var targ := Target(who);
 	
 	var prop := GetObjProperty(targ, prop_name);

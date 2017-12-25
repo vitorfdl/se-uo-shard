@@ -1,11 +1,11 @@
 use os;
 use uo;
 include "include/say";
-program textcmd_sayabove( who, text )
+program textcmd_sayabove( who, text, uc_text)
     SendSysMessage( who, "Say above what or whom?" );
 
     var what := Target( who );
     if (what)
-        PrintText( what, text );
+        PrintText( what, CChrZ(uc_text) );
     endif
 endprogram

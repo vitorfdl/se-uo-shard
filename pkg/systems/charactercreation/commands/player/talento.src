@@ -7,10 +7,12 @@ include ":timedScripts:timedScripts";
 include ":charactercreation:feats";
 include "include/say";
 
-program habilidade(who, text)
+program habilidade(who, text, uc_text)
    if (!text)
       text := who[2];
       who := who[1];
+   else
+      text := CChrZ(uc_text)
    endif
 
    if (!text || text == "")

@@ -5,8 +5,8 @@
  
 use uo;
 
-program textcmd_SetObjProperty(who, text)
-	var param := SplitWords(text);
+program textcmd_SetObjProperty(who, text, uc_text)
+	var param := SplitWords(CChrZ(uc_text));
 	if ( param.size() < 2 )
 		SendSysMessage(who, "SYNTAX: .setobjproperty <prop> <value>");
 		return 0;

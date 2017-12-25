@@ -7,7 +7,7 @@ include ":attributes:attributes";
 include ":charactercreation:characters";
 //TODO seria mais facil olhar o skills.cfg que possuem script e executar ele
 
-program start_skill(who, skillname)
+program start_skill(who, txt, skillname)
 	if (who.dead)
 		SendSysMessageEx(who, "Você está morto e não pode fazer isto.");
 		return;
@@ -20,7 +20,7 @@ program start_skill(who, skillname)
 	endif
 
 	SetObjProperty(who, "delayskill", ReadGameClock() + 5);
-   skillname := StrReplace(skillname, " ", "_");
+   skillname := StrReplace(CChrZ(skillname), " ", "_");
    if (!skillname)
       return;
    endif

@@ -63,7 +63,6 @@ function EmptyBottle(character, potion, potiontype := 0)
          Addamount(stacknow, 1);
       else
          var pot := CreateItemInBackpack(character, 0x0f0e, 1);
-         pot.name := "Frasco de Vidro";
       endif
 
       EraseObjProperty(potion, "goles");
