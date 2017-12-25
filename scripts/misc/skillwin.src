@@ -61,9 +61,8 @@ function skillWindow(who)
 		var feat := feat_list[input[0] - 100];
 		feat := FeatInfo(feat);
       if (!feat.script)
-         return SendSysMessageEx(who, "Este talento não é ativável.");
+         return SendSysMessageEx(who, "Este talento n?o é ativável.");
       endif
-      print(feat.name);
       start_script(":charactercreation:commands/player/talento", array{who, feat.name});
 	elseif (input[0] > 80)
       if (who.getPoints() < 0)
