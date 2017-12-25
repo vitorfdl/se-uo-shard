@@ -333,10 +333,11 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 		var check := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, craft_skill);
       var diff := recipe.difficulty + bonus_diff;
 		if(check > recipe.difficulty || who.cmdlevel > 4)
-			if (!SubtractMaterial(who, targ_materials, 1+more))
+			if (!SubtractMaterial(who, targ_materials))
 				SendSysMessageEx(who, "você não possui todos os materiais.", SSM_FAIL);
 				return theitems;
 			endif
+
 			theitem := CreateItem(who, recipe.objtype, more);
 			if(!theitem)
 				SendSysMessageEx(who, "você não tem espaço suficiente na sua mochila!", SSM_FAIL);
@@ -392,7 +393,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 
 endfunction
 
-function SubtractMaterial(who, targ_materials, amountMod)
+function SubtractMaterial(who, targ_materials, amountMod := 1)
 	foreach thing in (targ_materials.keys() )
 		//sendsysmessageEx(who, " materiais antes " + thing + " " +  targ_materials[thing] );
 		targ_materials[thing] := Cint( cint(targ_materials[thing])*amountMod);
@@ -407,26 +408,28 @@ function SubtractMaterial(who, targ_materials, amountMod)
 
 	//no loop anterior procurou os materiais, agora consome.
 	foreach thing in (targ_materials.keys())
-	      foreach item in (EnumerateItemsInContainer(who.backpack))
-				if (cint(item.objtype) == thing)
-					if (item.amount >= targ_materials[thing] )
-						//sendsysmessageEx(who, " " + item + " " + cint(targ_materials[thing]) + " " + thing);
-						var chk := SubtractAmount(item, cint(targ_materials[thing]));
-						if (!chk )
-							SendSysMessageEx(who, "chk " + chk);
-							return 0;
-						endif
-						targ_materials[thing] := 0;
-						break;
-					else
-						// targ_materials[thing] := targ_materials[thing] - item.amount;
-						// if (!SubtractAmount(item, item.amount))
-							return 0;
-						// endif
-					endif
-				endif
-            sleepms(2);
-			endforeach
+      foreach item in (EnumerateItemsInContainer(who.backpack))
+         if (cint(item.objtype) == thing)
+            if (item.amount >= targ_materials[thing] )
+               //sendsysmessageEx(who, " " + item + " " + cint(targ_materials[thing]) + " " + thing);
+               var chk := SubtractAmount(item, cint(targ_materials[thing]));
+               if (!chk )
+                  return 0;
+               endif
+               targ_materials[thing] := 0;
+               break;
+            else
+               // targ_materials[thing] := targ_materials[thing] - item.amount;
+               // if (!SubtractAmount(item, item.amount))
+                  return 0;
+               // endif
+            endif
+         endif
+         sleepms(2);
+      endforeach
+      if (targ_materials[thing] != 0)
+         return 0;
+      endif
 	endforeach
   
 	return 1;
