@@ -3,10 +3,11 @@ use os;
 use util;
 
 include ":containers:settings";
+include "include/dungeons";
 
 program control_Corpse(corpse)
 	if ( corpse.NPCTemplate() )
-      if (corpse.NPCTemplate()["moriquendi"] && GetGlobalProperty("dia") != "noite")
+      if (corpse.NPCTemplate()["moriquendi"] && GetGlobalProperty("dia") != "noite" && !inDungeon(corpse))
          DestroyItem(corpse);
       endif
 		return 0;
