@@ -33,7 +33,7 @@ endprogram
 
 function HandleItemGiven(npc, player, item)
    var items_inside := GetSellerAccount(npc, player.serial);
-   if (items_inside.size() >= 5)
+   if (items_inside.size() >= 5 && !player.cmdlevel)
       PrintText(npc, "Desculpe, mas já estou vendendo muitas mercadorias sua.");
       return;
    endif
