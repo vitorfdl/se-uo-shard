@@ -419,10 +419,10 @@ function SubtractMaterial(who, targ_materials, amountMod)
 						targ_materials[thing] := 0;
 						break;
 					else
-						targ_materials[thing] := targ_materials[thing] - item.amount;
-						if (!SubtractAmount(item, item.amount))
+						// targ_materials[thing] := targ_materials[thing] - item.amount;
+						// if (!SubtractAmount(item, item.amount))
 							return 0;
-						endif
+						// endif
 					endif
 				endif
             sleepms(2);
