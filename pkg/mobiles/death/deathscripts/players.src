@@ -34,7 +34,7 @@ program death(params)
 		save := 1;
 	endif
 
-   if (!killer.acctname && dmg > AP_GetVitalMaximumValue(ghost, HITS))
+   if (!killer.acctname && dmg > AP_GetVitalMaximumValue(ghost, HITS) && AP_GetVital(ghost, "DP") <= 20)
       SendSystemReport(ghost, "Seu corpo foi dilacerado com um golpe mortal.");
       SetObjProperty(ghost, "morto", 1);
    endif
