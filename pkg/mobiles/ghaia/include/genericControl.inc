@@ -55,8 +55,9 @@ function genericControl()
 
 		lookAround();
       loops += 1;
-      if (loops >= 150)
-         print(me.serial+" "+me.name);
+      if (loops >= 200)
+         print("I'm stuck: " + me.serial+" "+me.name);
+         ApplyRawDamage(me, 200);
       endif
 	endwhile
 endfunction
