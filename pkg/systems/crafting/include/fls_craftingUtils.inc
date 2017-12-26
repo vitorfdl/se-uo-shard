@@ -10,6 +10,7 @@
 
 include ":keys:key";
 include ":gumps:yesno";
+include "include/facings";
 
 function GetBagList(who, materials := 0)
    var items     := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
@@ -53,7 +54,7 @@ endfunction
 function CheckObjectNear(who, item_list)
 	var object_near;
 	foreach item in ListItemsNearLocation(who.x, who.y, who.z, 2)
-		if(item.objtype in item_list)
+		if(item.objtype in item_list && !IsBehind(who, item.x, item.y))
 			object_near := item;
 			break;
 		endif

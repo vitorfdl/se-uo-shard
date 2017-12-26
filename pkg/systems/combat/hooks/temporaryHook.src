@@ -149,8 +149,6 @@ program Attack(params)
 			defender.SetAchievement("shield", 1);
 		endif
 
-	
-
 		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, dmg, wpn_a_elem });
 
 	else //ERROU O ATAQUE

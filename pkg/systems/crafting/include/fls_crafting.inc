@@ -224,8 +224,8 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
    var bonus_diff := 0;
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
-      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "ossodemonio"} || (typeof(thing) == "String" && thing["monsterpart"]))
-			var ret := MaterialSelection(who, thing, 0);
+      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone"} || (typeof(thing) == "String" && thing["monsterpart"]))
+			var ret := MaterialSelection(who, thing, 1);
 			if (!ret)
 				SendSysMessageEx(who, "você não possui os materiais necessarios.", SSM_FAIL);
 				return OUT_OF_MATERIALS;
