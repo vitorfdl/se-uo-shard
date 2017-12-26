@@ -27,7 +27,7 @@ program DeathScript(params)
 	endif
 
 	MoveObjectToLocation(sword, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION);
-	var new_hp := sword.hp - 20;
+	var new_hp := sword.hp - 10;
 	if (new_hp < 0)
 		new_hp := 0;
 	endif

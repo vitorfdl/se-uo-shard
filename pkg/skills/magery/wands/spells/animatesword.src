@@ -55,7 +55,6 @@ program animateSword(params)
          0x1401: summoned.graphic:= 630;
       endcase
 
-
 		PrintTextAbove(summoned, "*A espada ganha vida*", 3,191);
 		AddPet(who, summoned.serial);
 		summoned.SetMaster(who);

@@ -194,6 +194,16 @@ function GetAttackerChance(attacker, defender)
 		dice_gain -= 1;
    endif
 
+   if (HaveFeat(attacker, "Primeiro Golpe"))
+      var hited := GetObjProperty(defender, "#hited");
+      if (!hited) hited := array{}; endif
+      if (!(attacker.serial in hited))
+         dice_gain += 1;
+         hited.append(attacker.serial);
+         SetObjProperty(defender, "#hited", hited);
+      endif
+   endif
+
 	if (!IsFacing(defender, attacker.x, attacker.y))
       if (!HaveFeat(defender, "Reflexos Rápidos"))
 		   dice_gain += 1;

@@ -56,7 +56,7 @@ program SpellStarter(params)
          FailSpell(mobile);
          return 0;
       elseif ( !EquipmentCheck(mobile) && mobile.cmdlevel < 3 )
-         SendSysMessageEx(mobile, "Suas maos precisam estar livres para gesticular os componentes gestuais necessarios para a magia.", SSM_FAIL);
+         SendSysMessageEx(mobile, "Você não pode invocar magias com um equipamento em que você não tem perícia.", SSM_FAIL);
          FailSpell(mobile);
          return 0;
       elseif ( !TS_ConsumeMana(mobile, spellinfo.mana) )

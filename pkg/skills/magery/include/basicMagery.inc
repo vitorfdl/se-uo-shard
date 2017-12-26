@@ -43,7 +43,7 @@ function ManterMagia(magia, mage, mobile)
 endfunction
 
 function CheckDelay(who, spell_elem)
-	SendSysMessage(who, "Você esta se concentrando para invocar a magia.");
+	SendSysMessage(who, "Você está se concentrando para invocar a magia.");
 
 	//var script := start_script("movementCheck", {who, GetPid()});
 	//
@@ -53,7 +53,7 @@ function CheckDelay(who, spell_elem)
 	//
 	//script.kill();
 	if ( Events_Waiting() > 0 )
-		SendSysMessage(who, "Sua concentracao foi quebrada.");
+		SendSysMessageEx(who, "Sua concentração foi quebrada.");
 		return 0;
 	else
 		return 1;
