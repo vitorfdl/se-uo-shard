@@ -132,7 +132,7 @@ function doRepair(who, craft_skill, recipe_cfg)
    
    var repairable := GetConfigInt(elem, "repairable");
    if (!repairable)
-      SendSysMessageEx(who, "So pode consertar armas ou armaduras.");
+      SendSysMessageEx(who, "Só pode consertar armas ou armaduras.", SSM_FAIL);
       return 0;
    endif
 
