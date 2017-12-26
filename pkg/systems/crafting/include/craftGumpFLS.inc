@@ -161,8 +161,8 @@ function createGump(who, recipes, params)
             endif
 
             var name := TruncatePlural(material);
-            if (name == "ossodemonio")
-                name := "osso de demônio";
+            if (name == "demonbone")
+                name := "osso de moriq.";
             elseif (name["monsterpart"])
                 name["monsterpart"] := "";
                 name := "criatura "+name;

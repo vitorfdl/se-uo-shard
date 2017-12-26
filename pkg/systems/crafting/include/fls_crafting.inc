@@ -224,6 +224,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
    var bonus_diff := 0;
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
+      print(thing);
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone"} || (typeof(thing) == "String" && thing["monsterpart"]))
 			var ret := MaterialSelection(who, thing, 1);
 			if (!ret)
@@ -237,7 +238,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             return OUT_OF_MATERIALS;
          else
             targ_materials[ret[1].objtype] := materials[thing];
-				if (thing == "ossodemonio")
+				if (thing == "demonbone")
 					material_cprops["magicslot"] := GetObjProperty(ret[1], "power");
 				elseif (thing["monsterpart"])
 					material_cprops["element"] := GetObjProperty(ret[1], "element");
