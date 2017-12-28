@@ -105,8 +105,11 @@ function doRepair(who, craft_skill, recipe_cfg)
    if(what.movable == 0)
       SendSysMessageEx(who, "Você não pode consertar isto.");
       return;
+   else if(!maolivre(who, 1))
+      SendSysMessageEx(who, "Você deve estar com as mãos livres");
+      return;
    elseif((!Accessible(who, what)) or (distance(who, what) > 2))
-      SendSysMessageEx(who, "Você não alcanca o item.");
+      SendSysMessageEx(who, "Você não alcança o item.");
       return;
    endif
 
@@ -229,6 +232,11 @@ function doRepair(who, craft_skill, recipe_cfg)
          SendSysMessageEx(who, "Você consertou o item completamente.");
       else
          what.hp := thehp + repaired_amount;
+         if (what.hp >= 10)
+            var item_name := StrReplace(what.desc, " [Danificado]", "");
+            SetName(what, item_name);
+         endif
+         
          SendSysMessageEx(who, "Você consertou o item.");
       endif
       who.SetAchievement("repair", 1);

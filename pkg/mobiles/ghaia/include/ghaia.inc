@@ -186,12 +186,7 @@ endfunction
     
 //toca um som random do bixo
 function PlayIdleSound()
-   var rint := RandomInt(4) + 1;
-   if(rint == 4)
-      PlaySoundEffect(me, idlesnd1);
-   elseif(rint == 3)
-      PlaySoundEffect(me, idlesnd2);
-   endif
+   PlaySoundEffect(me, idlesnd.randomentry());
 endfunction
 
 function InitializeNpc(mobile)
@@ -199,11 +194,10 @@ function InitializeNpc(mobile)
    mobile.enable("runwhilestealth");
    //inicializa algumas variaveis que todos os npcs tem
    var elem     := npccfgfile; //TODO: Too Ugly, fix that
-   var sounds   := GetConfigStringArray(elem, "IdleSound");
-   idlesnd1     := cint(sounds[1]); //CInt(npccfgfile.idlesound1);
-   idlesnd2     := cint(sounds[2]); //CInt(npccfgfile.idlesound2);
+   var idlesnd   := GetConfigStringArray(elem, "IdleSound");
    flee_point   := CInt(npccfgfile.FleeLevel)/100.0;
    areasize     := CInt(npccfgfile.AreaSize);
+   custombehaviors := GetConfigStringArray(npccfgfile, "CustomBehavior");
 
 
    // if (GetObjPRoperty(mobile, "championspawn") == 2)

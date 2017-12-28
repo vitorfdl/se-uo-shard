@@ -208,6 +208,7 @@ function GetAttackerChance(attacker, defender)
       if (!HaveFeat(defender, "Reflexos Rápidos"))
 		   dice_gain += 1;
       endif
+      
 		if (!defender.npctemplate)
 			defender.SetAchievement("backstabed", 1);
 		endif
@@ -492,7 +493,7 @@ function GetAttackerFeatBonus(attacker, roll)
       bonus += 1;
    elseif (wpn_a_elem.WeaponType == "spear" && HaveFeat(attacker, "Lanceiro"))
       bonus += 1;
-   elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+   elseif (wpn_a_elem.WeaponType == "axe" && HaveFeat(attacker, "Mãos Pesadas"))
       bonus += 1;
    endif
       

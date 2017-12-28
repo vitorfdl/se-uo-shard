@@ -13,10 +13,15 @@ function UseHabs()
       if (GetCooldown(me, hab_name))
          return;
       endif
+
+      if ("Healer" in custombehaviors && hab_name != "curar" && RandomInt(10) < 2)
+         continue;
+      endif
+
       var hab_cooldown := cint(hab[2]);
       var hab_dice     := hab[3];
       var hab_target   := hab[4];
-      var hab_special   := hab[5];
+      var hab_special  := hab[5];
 
       if (hab_dice["no_roll"])
       elseif (hab_dice["d"])
@@ -42,6 +47,11 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       endforeach
    elseif (hab_target == "Ally")
       foreach ally in ListMobilesNearLocation(me.x, me.y, me.z, 8);
+         if (hab_name == "curar")
+            if (AP_GetVital(ally, HITS) == AP_GetVitalMaximumValue(ally, HITS))
+               continue;
+            endif
+         endif
          if (GetObjProperty(ally, "spawnpoint") == GetObjProperty(me, "spawnpoint"))
             hab_target := ally;
             break;
@@ -63,7 +73,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "roubar": res := Roubar(hab_target); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       "rajada_acida": res := RajadaAcida(hab_dice, hab_target, hab_special); break;
-      "teia": res := SpitWeb(hab_dice, hab_target, hab_special); break;
+      "teia": res := SpitWeb(hab_special, hab_target, hab_special); break;
       "teleport": res := teleport(hab_target, hab_special); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
@@ -73,11 +83,12 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    if (hab_cooldown && res)
       SetCooldown(me, hab_name, CInt(hab_cooldown));
    else
-      SetCooldown(me, hab_name, 4);
+      SetCooldown(me, hab_name, 2);
    endif
 endfunction
 
 function summonCreature(qty, creatures)
+   playCastAnimation();
    creatures := SplitWords(creatures);
    for i := 1 to qty
       var rad := GetPointsInRadius(me.x, me.y, 5);
@@ -89,13 +100,18 @@ function summonCreature(qty, creatures)
 endfunction
 
 function NPC_Agarrar(difficulty, targ)
-   PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
-   TS_StartTimer(targ, "agarrar", -1);
-
+   // PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
+   // TS_StartTimer(targ, "agarrar", -1);
    return 1;
 endfunction
 
 function Metamorfose(hab_special)
+   if ("MetamorfoseClose" in custombehaviors)
+      if (Distance(me, me.opponent) > 4)
+         return 0;
+      endif
+   endif
+   playCastAnimation();
    var monsters := SplitWords(hab_special);
    var choose_monster := monsters.randomentry();
    PrintText(me, "*metamorfose*");
@@ -114,7 +130,10 @@ function Metamorfose(hab_special)
 endfunction
 
 function Healing(targ, heal)
-
+   if (!targ.isA(POLCLASS_MOBILE))
+      return 0;
+   endif
+   playCastAnimation();
    PrintText(me, "*magia estranha*");
    PlaysoundEffect(me, 1137);
    PlayObjectCenteredEffect( targ, 0x373a, 7, 0x10 );
@@ -161,6 +180,16 @@ function RajadaAcida(dmg, targ, difficulty)
    return 1;
 endfunction
 
+function playCastAnimation()
+   if ("CastAnimation" in custombehaviors)
+      me.frozen := 1;
+      for i := 1 to (RandomDiceRoll("1d4"))
+         PerformAction(me, ANIM_CAST_DIR);
+         sleepms(650);
+      endfor
+      me.frozen := 0;
+   endif
+endfunction
 // function throwItem(targ)
 //    if ( dist < 3 || dist > 15 )
 //       return 0;
@@ -293,13 +322,7 @@ function SpitWeb(difficulty, targ, range)
    me.frozen := 1;
    sleepms(50);
 
-   var web;
-   case( RandomInt(4) )
-      0: web := 3811; break;
-      1: web := 3812; break;
-      2: web := 3813; break;
-      3: web := 3814; break;
-   endcase
+   var web := array{3811, 3812, 3813, 3814}.randomentry();
 
    PlayMovingEffect(me, targ, web, 10);
 

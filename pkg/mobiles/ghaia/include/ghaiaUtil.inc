@@ -35,9 +35,9 @@ function ghaiaAttack(who, npc)
 	SendEvent(npc, event);
 endfunction
 
-function ghaiaPeaceMade(npc)
+function ghaiaPeaceMade(who, npc)
 	var ev 		:= struct;
-	ev.type 	:= EVID_PEACEMADE; // ajetra isso
+	ev.type 	:= EVID_PEACEMADE;
 	ev.source 	:= who;
 	
 	sendEvent( npc, ev);

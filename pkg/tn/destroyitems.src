@@ -32,7 +32,13 @@ program destroyitems(parms)
 	var elem := FindConfigElem( cfg, item.graphic);
 
 	var normal := GetConfigString( elem, "normal");
+   if (!normal)
+      normal := item.graphic;
+   endif
 	var quebrado := GetConfigString( elem, "quebrado");
+   if (!quebrado)
+      quebrado := 3119;
+   endif
 	
 	if( Hex(item.graphic) == Hex(quebrado) || item.desc["[Quebrado]"])
 		SendSysMessageEx(who,"Isto ja parece estar quebrado.",SSM_FAIL);

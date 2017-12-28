@@ -17,11 +17,17 @@ include ":tn:cooldown";
 
 program use_Bladed(who, tool)
 	if (who.weapon != tool)
-		SendSysMessage(who, "Você deve estar com a arma em maos.");
+		SendSysMessage(who, "Você deve estar com a arma em mãos.");
 		return 0;
 	endif
 
-	SendSysMessage(who, "O que você deseja cortar com esta lamina?");
+   if (who.warmode)
+      if (HaveFeat(who, "Mestre das Lâminas"))
+         return start_script(":charactercreation:commands/player/talento", array{who, "Mestre das Lâminas"});
+      endif
+   endif
+
+	SendSysMessage(who, "O que você deseja cortar com esta lâmina?");
 	var targ := TargetCoordinates(who);
 	
 	if ( !targ )
@@ -89,7 +95,6 @@ function CutLime(who, lemon)
 endfunction
 
 function CarveItems(who, tool, item)
-
 	if ( item.IsA(POLCLASS_CORPSE) )
 		// Carve corpse;
 		var parms;

@@ -11,9 +11,9 @@ include ":ghaia:habs";
 
 var me         := self();
 var npccfgfile := NPC_GetNPCConfig(me);
-var idlesnd1;
-var idlesnd2;
+var idlesnd;
 var areasize;
+var custombehaviors;
 var flee_point   := 0.1;
 var mystate      := INITIALIZING;
 
@@ -83,6 +83,10 @@ function CloseDistanceArcher(opponent)
 endfunction
 
 function lookAround()
+   if (RandomInt(5) == 1)
+      PerformAction(me, ANIM_FIDGET_1);
+   endif
+
    foreach npc in ListMobilesNearLocationEx(me.x, me.y, me.z, areasize, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL);
       if( CanFight(me, npc) )
          Fight(npc);
@@ -124,6 +128,13 @@ function Fight(opponent, alerted := 0)
    var dist;
    while( me && loops <= 140)
       sleepms(15);
+      if (npccfgfile.Category == "moriquendi")
+         if (GetGlobalProperty("dia") == "dia" && !InDungeon(me))
+            ApplyRawDamage(me, 200);
+            ApplyRawDamage(me, 200);
+         endif
+      endif
+
       if (me.dead || !opponent || opponent.concealed || opponent.hidden)
          // me.remAggro(opponent.serial);
          break;
@@ -167,14 +178,6 @@ function Fight(opponent, alerted := 0)
 
       UseHabs();
 
-      // if ( (dist > 6) && ( CInt(npccfgfile.teleport) ) )
-      //    teleport(me, opponent);
-      // endif
-
-      // if ( (dist >  CInt(npccfgfile.BreathRange)) && CInt(npccfgfile.BreathAttack) == 1 )
-      //    FireBreath(me, opponent, dist);
-      // endif
-
       if (npccfgfile.Category == "moriquendi")
         var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
         if (last_autoheal <= ReadGameClock())
@@ -191,8 +194,6 @@ function Fight(opponent, alerted := 0)
          waittime := 1;
       endif
       
-      // checkFlee(opponent);
-
       ev := wait_for_event(waittime);
       if(ev.type == SYSEVENT_SPEECH)
          continue;

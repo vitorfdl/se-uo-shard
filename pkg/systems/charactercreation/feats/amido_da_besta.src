@@ -1,0 +1,28 @@
+use os;
+
+include "include/say";
+include ":timedScripts:timedScripts";
+include ":ghaia:ghaiaUtils";
+
+program magiaSilenciosa(param)
+   var who := param[1];
+   SendSysMessageEx(who, "Qual animal você deseja acalmar?", SSM_REQUEST);
+   var targ := Traget(who);
+
+   if (!targ || !targ.isA(POLCLASS_NPC))
+      SendSysMessageEx(who, "Cancelado.", SSM_INFO);
+      return 0;
+   endif
+   var npcdesc := NPC_GetNPCConfig(targ.my_template());
+   if (npcdesc.category != "besta")
+      SendSysMessageEx(who, "Só pode acalmar bestas.", SSM_INFO);
+      return 0;
+   elseif (GetObjProperty(targ, "#peacemade") )
+      SendSysMessageEx(who, "A criatura já está pacificada.", SSM_INFO);
+      return 0;
+   endif
+
+   TS_StartCooldown(targ, "peacemade", 300);
+   ghaiaPeaceMade(who, targ);
+   return 1;
+endprogram
