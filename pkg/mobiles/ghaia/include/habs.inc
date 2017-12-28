@@ -12,6 +12,7 @@ function UseHabs()
       var hab_name  := hab[1];
 
       if (GetCooldown(me, hab_name))
+         sleepms(2);
          continue;
       endif
 
