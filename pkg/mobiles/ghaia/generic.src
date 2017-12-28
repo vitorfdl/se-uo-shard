@@ -18,7 +18,8 @@ var flee_point   := 0.1;
 var mystate      := INITIALIZING;
 
 program NPCMonitor()
-	genericControl();
+	// genericControl();
+   return;
 endprogram
 
 function CloseDistance( opponent )
