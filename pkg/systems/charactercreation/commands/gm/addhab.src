@@ -15,7 +15,7 @@ program reset(who, params, uc_text)
 		item := who;
 	endif
 	
-	params := splitwords(cchrz(uc_text));
+	params := cchrz(uc_text);
 
 	if (!item)
 		return;
