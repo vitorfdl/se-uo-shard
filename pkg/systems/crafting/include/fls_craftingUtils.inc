@@ -124,8 +124,11 @@ function doRepair(who, craft_skill, recipe_cfg)
    // endif
 
    var recipe_elem := FindConfigElem(recipe_cfg, what.objtype);
+   if (!recipe_elem) recipe_elem := FindConfigElem(recipe_cfg, Hex(what.objtype)); endif
+
    if (!recipe_elem) 
       SendSysMessageEx(who, "Você não pode consertar isso.");	
+      return 0;
    endif
 
    var combatcfg  := ReadConfigFile(":combat:itemdesc");
