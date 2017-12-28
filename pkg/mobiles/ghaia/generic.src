@@ -188,13 +188,13 @@ function Fight(opponent, alerted := 0)
 
       // UseHabs();
 
-      if (npccfgfile.Category == "moriquendi")
-        var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
-        if (last_autoheal <= ReadGameClock())
-          SetObjProperty(me, "demon_heal", ReadGameClock() + 2);
-          HealFLS(me, 25);
-        endif
-      endif
+      // if (npccfgfile.Category == "moriquendi")
+      //   var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
+      //   if (last_autoheal <= ReadGameClock())
+      //     SetObjProperty(me, "demon_heal", ReadGameClock() + 2);
+      //     HealFLS(me, 25);
+      //   endif
+      // endif
    
       if(!CloseDistance(opponent))
          loops := loops + 1;
@@ -272,7 +272,7 @@ endfunction
 
 function JustTeleported(mobile)
 	var tele_time := CInt(GetObjProperty(mobile, "#Teleported"));
-	if ( tele_time > ReadMillisecondClock()-1200 )
+	if ( tele_time > ReadMillisecondClock()-500 )
 		// Mobile just teleported. Too soon to teleport again.
 		return 1;
 	else
