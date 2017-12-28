@@ -161,7 +161,8 @@ function Fight(opponent, alerted := 0)
       if ( (areasize >= 20 && dist > areasize) || (dist > 20 && areasize < 20) )
          print("teleported? "+JustTeleported(opponent));
          if (JustTeleported(opponent))
-            var area := ListItemsNearLocationOfType(me.x, me.y, me.z, 10, 0x6216);
+            var area := ListItemsNearLocationOfType(me.x, me.y, me.z, 10, 25091);
+            print("area "+area);
             if (area.size() < 1)
                break;
             else
