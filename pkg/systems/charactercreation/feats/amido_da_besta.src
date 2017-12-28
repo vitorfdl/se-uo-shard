@@ -7,7 +7,7 @@ include ":ghaia:ghaiaUtil";
 program magiaSilenciosa(param)
    var who := param[1];
    SendSysMessageEx(who, "Qual animal você deseja acalmar?", SSM_REQUEST);
-   var targ := Traget(who);
+   var targ := Target(who);
 
    if (!targ || !targ.isA(POLCLASS_NPC))
       SendSysMessageEx(who, "Cancelado.", SSM_INFO);
