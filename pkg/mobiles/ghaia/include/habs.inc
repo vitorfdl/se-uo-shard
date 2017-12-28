@@ -9,14 +9,15 @@ function UseHabs()
 
    foreach hab in habs
       hab := SplitWords(hab);
-      var hab_name     := hab[1];
-      if (GetCooldown(me, hab_name))
-         return;
-      endif
+      var hab_name  := hab[1];
 
-      if ("Healer" in custombehaviors && hab_name != "curar" && RandomInt(10) < 2)
+      if (GetCooldown(me, hab_name))
          continue;
       endif
+
+      // if ("Healer" in custombehaviors && hab_name != "curar" && RandomInt(10) < 2)
+      //    continue;
+      // endif
 
       var hab_cooldown := cint(hab[2]);
       var hab_dice     := hab[3];
@@ -83,7 +84,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    if (hab_cooldown && res)
       SetCooldown(me, hab_name, CInt(hab_cooldown));
    else
-      SetCooldown(me, hab_name, 2);
+      SetCooldown(me, hab_name, 5);
    endif
 endfunction
 
@@ -111,6 +112,7 @@ function Metamorfose(hab_special)
          return 0;
       endif
    endif
+
    playCastAnimation();
    var monsters := SplitWords(hab_special);
    var choose_monster := monsters.randomentry();

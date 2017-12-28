@@ -162,18 +162,31 @@ function doRepair(who, craft_skill, recipe_cfg)
       sleepms(2);
    endforeach
 
+	var craft_sound  := menu_config[craft_skill].CraftSound;
+	var craft_delay  := menu_config[craft_skill].CraftDelay;
+	var craft_action := menu_config[craft_skill].CraftAnim;
+
    var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Maquina de Marcenaria"};
-   foreach work_item in work_items
-      if (work_item in found.Keys())
-         var machine := found[work_item];
-         machine.graphic := machine.graphic+1;
-      endif
-   endforeach
+
+	var craft_loops  := GetConfigInt(elem, "delay")/ 2;
+	if (craft_loops == error || craft_loops < 1)
+      craft_loops := 1;
+	endif
+ 	craft_loops := cint(craft_loops);
+
+   playCraftWork(who, craft_sound, craft_loops, craft_delay, craft_action, 0);
+
+   // foreach work_item in work_items
+   //    if (work_item in found.Keys())
+   //       var machine := found[work_item];
+   //       machine.graphic := machine.graphic+1;
+   //    endif
+   // endforeach
 
    var reparos := GetObjProperty(what,"reparos");
 
    if (reparos == error)
-      reparos:= 2 + GetBonusAttr(AP_GetStat(who, WISDOM));
+      reparos:= 2 + AP_GetStat(who, WISDOM, RETURN_BONUS) + getProficiencyBonus(who, craft_skill);
       SetObjProperty(what,"reparos",reparos);
    endif
 
