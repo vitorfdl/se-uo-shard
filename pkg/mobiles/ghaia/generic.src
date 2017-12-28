@@ -186,7 +186,7 @@ function Fight(opponent, alerted := 0)
          DoCombatSpecial(me); ////////////// SPECIALL
       endif
 
-      UseHabs();
+      // UseHabs();
 
       if (npccfgfile.Category == "moriquendi")
         var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
