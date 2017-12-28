@@ -186,9 +186,10 @@ endfunction
     
 //toca um som random do bixo
 function PlayIdleSound()
-   if (RandomInt(5) < 2)
-      PlaySoundEffect(me, idlesnd.randomentry());
-   endif
+   return;
+   // if (RandomInt(5) < 2)
+   //    PlaySoundEffect(me, idlesnd.randomentry());
+   // endif
 endfunction
 
 function InitializeNpc(mobile)
