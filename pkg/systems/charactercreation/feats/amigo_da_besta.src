@@ -14,7 +14,7 @@ program magiaSilenciosa(param)
       return 0;
    endif
    var npcdesc := NPC_GetNPCConfig(targ.my_template());
-   if (npcdesc.category != "besta")
+   if (npcdesc.Category != "besta")
       SendSysMessageEx(who, "Só pode acalmar bestas.", SSM_INFO);
       return 0;
    elseif (GetObjProperty(targ, "#peacemade") )

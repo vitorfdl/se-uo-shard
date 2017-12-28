@@ -159,7 +159,17 @@ function Fight(opponent, alerted := 0)
 
       dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
       if ( (areasize >= 20 && dist > areasize) || (dist > 20 && areasize < 20) )
-			break;
+         if (JustTeleported(opponent))
+            var area := ListItemsNearLocationOfType(me.x, me.y, me.z, 10, 0x6216);
+            if (area.size() < 1)
+               break;
+            else
+               var item := area[1];
+               NpcGoTo(item, 2);
+            endif
+         else
+            break;
+         endif
       endif
 
       //se eh boss e tem eventos
@@ -258,4 +268,15 @@ function Fight(opponent, alerted := 0)
    SetWarMode(0);
    SetOpponent(0);
    sleepms(1);
+endfunction
+
+function JustTeleported(mobile)
+	var tele_time := CInt(GetObjProperty(mobile, "#Teleported"));
+	if ( tele_time > ReadMillisecondClock()-500 )
+		// Mobile just teleported. Too soon to teleport again.
+		return 1;
+	else
+		// Safe to teleport the mobile
+		return 0;
+	endif
 endfunction
