@@ -2,7 +2,7 @@ use os;
 
 include "include/say";
 include ":timedScripts:timedScripts";
-include ":ghaia:ghaiaUtils";
+include ":ghaia:ghaiaUtil";
 
 program magiaSilenciosa(param)
    var who := param[1];
