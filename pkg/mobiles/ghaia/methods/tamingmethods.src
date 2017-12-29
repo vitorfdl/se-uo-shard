@@ -200,29 +200,29 @@ exported function listAggro(creature)
 endfunction
 
 exported function getAggro(creature, serial)
-   core_getAggro(creature, serial);
+   return core_getAggro(creature, serial);
 endfunction
 
 exported function remAggro(creature, serial)
-   core_remAggro(creature, serial);
+   return core_remAggro(creature, serial);
 endfunction
 
 exported function setAggro(creature, serial, number := 1)
-   core_setAggro(creature, serial, number);
+   return core_setAggro(creature, serial, number);
 endfunction
 
 // exported function getHighestAggro(creature)
-//    core_getHighestAggro(creature);
+//    return core_getHighestAggro(creature);
 // endfunction
 
 exported function getLowestAggro(creature)
-   core_getLowestAggro(creature);
+   return core_getLowestAggro(creature);
 endfunction
 
 exported function aggroProp(creature)
-   core_aggroProp(creature);
+   return core_aggroProp(creature);
 endfunction
 
 exported function setAggroProp(creature, aggro_prop)
-   core_setAggroProp(creature, aggro_prop);
+   return core_setAggroProp(creature, aggro_prop);
 endfunction
