@@ -45,7 +45,7 @@ function SendGump(who, scroll)
 	var item   := FindConfigElem(itemdesc, objtype);
 	var recipe := FindConfigElem(recipe_list, hex(objtype));
    if (!recipe)
-	   var recipe := FindConfigElem(recipe_list, cint(objtype));
+	   recipe := FindConfigElem(recipe_list, cint(objtype));
    endif
 
    print(recipe);
