@@ -238,13 +238,13 @@ exported function MegaCliloc( who, byref packet )
 
 			if (item.isA(POLCLASS_WEAPON))
 				if (elem.strrequired)
-					xDesc += ">Força Mínima: {}<br".format(elem.strrequired);
+					xDesc += ">Força Mínima: {}<br>".format(elem.strrequired);
 				endif
 				if (who.cmdlevel > 3)
 					xDesc += "Dano: {}<br>".format(elem.damage);
 					xDesc += "Velocidade: {}<br>".format(elem.speed);
 				endif
-				xDesc += "Atributo: {}}<br>".format(TranslateAtt(cstr(item.attribute)));
+				xDesc += "Atributo: {}<br>".format(TranslateAtt(cstr(item.attribute)));
 				// xDesc += "Velocidade: " + GetVelStringDesc(elem, item) + "";
 				var crits := GetCriticalInfo(elem);
 				if (crits != "")
@@ -258,11 +258,11 @@ exported function MegaCliloc( who, byref packet )
 
 			elseif (item.isA(POLCLASS_ARMOR))
 				if (cint(elem.strrequired) > 0)
-					xDesc += "Força Mínima: {}}<br>".format(elem.strrequired);
+					xDesc += "Força Mínima: {}<br>".format(elem.strrequired);
 				endif
 
 				if (who.cmdlevel > 3)
-					xDesc += "AR: {}}<br>".format(elem.AR);
+					xDesc += "AR: {}<br>".format(elem.AR);
 				endif
 			endif
 		endif

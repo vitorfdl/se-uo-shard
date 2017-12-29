@@ -403,14 +403,14 @@ function AddItemToSell(npc, player, item)
 	
 	var result := AddItemForSale(npc, player, item, cost_type, item.desc, cost_amt, desc, infinite);
 	if ( result != error )
-      if (!player.concelaed)
+      if (!player.concealed)
 		   PrintText(npc, "Tudo certo. Colocarei seu item a venda.");
       endif
 		SendSysMessageEx(player, "O item foi adicionado com sucesso.", SSM_FAIL);
 		return 1;
 	endif
 
-   if (!player.concelaed)
+   if (!player.concealed)
 	   PrintText(npc, "Me desculpe mas não poderei vender isto para Você, tome seu dinheiro de volta.", SSM_FAIL);
    endif
 	CreateItemInBackpack(player, MOEDAS, dezperc);
@@ -425,7 +425,7 @@ function DoWithdraw(npc, player)
       return PrintText(npc, "Desculpe, parece que nada vendeu ainda.");
    endif
 
-   PrintText(npc, "Aqui est¿o os lucros de sua venda");
+   PrintText(npc, "Aqui estão os lucros de sua venda");
 	foreach item in account
 		var withdraw := CreateItemInBackPack(player, item.ObjType, item.amount);
 		if( withdraw == error )

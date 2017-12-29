@@ -33,15 +33,15 @@ program blessWater(info)
       fix_amount := 1;
    endif
 
-   print("old_hp "+targ.hp);
    fix_amount := dice_roll + fix_amount;
    if (targ.hp + fix_amount > targ.maxhp)
       targ.hp := targ.maxhp;
    else
       targ.hp := fix_amount+targ.hp;
    endif
-   SetName(targ, targ.desc);
-   print("new_hp "+targ.hp);
+   var item_name := targ.desc;
+   item_name[" [Danificado]"] := "";
+   SetName(targ, item_name);
 
    if (!targ.container)
       PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);

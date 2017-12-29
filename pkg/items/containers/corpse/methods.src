@@ -81,17 +81,15 @@ exported function MakeRemains(corpse)
 	endif
 	
 	foreach item in ( EnumerateItemsInContainer(corpse) )
-		if ( item.container != corpse )
-			continue;
-		endif
-		
 		MoveItemToContainer(item, remains, item.x, item.y);
+      sleepms(2);
 	endforeach
 	
 	var realowner := IsPlayerCorpse(corpse);
 	if (realowner)
 		remains.SetOwner(realowner);
 	endif
+
 	SetObjProperty(remains, "charname", GetObjProperty(corpse, "charname"));
 	SetName(remains, "Restos de Corpo");
 	if (GetObjProperty(corpse, "deathdetails"))
@@ -100,8 +98,6 @@ exported function MakeRemains(corpse)
 	if (GetObjProperty(corpse, "deathtime"))
 		SetObjProperty(remains, "deathtime", GetObjProperty(corpse, "deathtime"));
 	endif
-	
-	
 	
 	DestroyItem(corpse);
 	
