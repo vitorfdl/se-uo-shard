@@ -37,7 +37,9 @@ function SendGump(who, scroll)
 	endif
 
 	var skill_name := GetObjProperty(scroll, "pericia");
-	var book_recipes := ReadConfigFile(":alchemy:recipes") + ReadConfigFile(":cooking:recipes");
+	var book_recipes    := ReadConfigFile(":alchemy:recipes")
+   var cook_reecipes   := ReadConfigFile(":cooking:recipes");
+
 	var itemdesc     := ReadConfigFile(":*:itemdesc");
 	var recipe_list  := ReadConfigFile(":*:recipes");
 	var item   := FindConfigElem(itemdesc, objtype);
@@ -45,7 +47,10 @@ function SendGump(who, scroll)
    if (!recipe)
 	   var recipe := FindConfigElem(recipe_list, cint(objtype));
    endif
-   
+
+   print(recipe);
+   print("recipe_obj "+objtype);
+
 	if (!recipe || (recipe.Type != "group" && !item))
       if (who.cmdlevel < 4)
          SendSysMessageEx(who, "Algo errado com a receita, chame um GM!");
@@ -88,7 +93,7 @@ function SendGump(who, scroll)
 		var charge_list    := GetObjProperty(scroll, "learning");
 		var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
 		var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
-		if (!FindConfigElem(book_recipes, objtype))
+		if (!FindConfigElem(book_recipes, objtype) && !FindConfigElem(cook_reecipes, objtype))
 			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(remain_charges));
 			if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
 				GFTextLine(gump, 205, 182, 995, "Aprender");
