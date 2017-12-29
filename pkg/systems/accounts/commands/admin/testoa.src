@@ -6,7 +6,7 @@ include ":timeUtils:time";
 include ":yggdrasil:boss";
 include "include/say";
 include "include/facings";
-include "include/damage";
+include "include/dungeons";
 include "include/client";
 include ":sysbook:flsbooks";
 include ":gumps:gumps";
@@ -15,7 +15,7 @@ include ":timeUtils:time";
 include ":merchants:crafthelp";
 
 program oafeatures_sendpacket(who, text)
-   who.followers := cint(text);
+   print(HasPlayerNear(who.x, who.y));
    // start_script(":death:permadeath/permadeath", {who, });
    // sendsysmessageex(who, GetTimeStamp(polcore().systime));
    // var targ := Target(who);
