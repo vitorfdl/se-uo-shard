@@ -216,7 +216,6 @@ endfunction
 
 function getHighestAggro(creature)
    var aggros := creature.aggroProp();
-   print(aggros);
    var highest := array{0, -9999999};
    foreach serial in (aggros.keys())
       if (aggros[serial] >= highest[2])
