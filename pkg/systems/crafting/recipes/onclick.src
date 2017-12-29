@@ -41,7 +41,11 @@ function SendGump(who, scroll)
 	var itemdesc     := ReadConfigFile(":*:itemdesc");
 	var recipe_list  := ReadConfigFile(":*:recipes");
 	var item   := FindConfigElem(itemdesc, objtype);
-	var recipe := FindConfigElem(recipe_list, objtype);
+	var recipe := FindConfigElem(recipe_list, hex(objtype));
+   if (!recipe)
+	   var recipe := FindConfigElem(recipe_list, cint(objtype));
+   endif
+   
 	if (!recipe || (recipe.Type != "group" && !item))
       if (who.cmdlevel < 4)
          SendSysMessageEx(who, "Algo errado com a receita, chame um GM!");
