@@ -103,7 +103,7 @@ function taming(who)
 	/*elseif (who.serial IN GetObjProperty(targ, "#critical"))
 		SendSysMessage(who, targ.name+" não aceita mais ser domado por você.");
 		return 0;*/
-	elseif (!TS_GetCooldown(me, "peacemade") && targ.alignment == 1)
+	elseif (!TS_GetCooldown(targ, "peacemade") && targ.alignment == 1)
 		SendSysMessageEx(who, "A criatura esta muito hostil para ser domesticada.", SSM_FAIL);
 		return 0;
 	elseif (!targ.isTamable())
