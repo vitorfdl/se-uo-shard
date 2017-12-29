@@ -215,7 +215,7 @@ function GetNpcRandomAttack(mobile)
 endfunction
 
 function getHighestAggro(creature)
-   var aggros := creature.core_aggroProp();
+   var aggros := creature.aggroProp();
    var highest := array{0, -9999999};
    foreach serial in (aggros.keys())
       if (aggros[serial] >= highest[2])
