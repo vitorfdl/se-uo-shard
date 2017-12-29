@@ -27,7 +27,11 @@ var recipe_cfg;
  * {string} params.type
  **/
 function sendCraftGump(who, params)
-    CloseGump(who, GUMPID_CRAFTING);
+   CloseGump(who, GUMPID_CRAFTING);
+   if (ListHostiles(who, 10).size() >= 1)
+      return SendSysMessageEx(who, "Você não pode fazer isso enquanto está sendo atacado", SSM_FAIL);
+   endif
+
     params.+bag    := GetBagList(who);
     params.+search := "";
     params.+qty    := 1;
