@@ -304,19 +304,6 @@ function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
    return opponent;
 endfunction
 
-function getHighestAggro(creature)
-   var aggros := creature.core_aggroProp();
-   var highest := array{0, -9999999};
-   foreach serial in (aggros.keys())
-      if (aggros[serial] >= highest[2])
-         highest := array{serial, aggros[serial]};
-      endif
-      sleepms(2);
-   endforeach
-
-   return highest[1];
-endfunction
-
 function getFacingString(me_face)
    case (cint(me_face))
       0:default: return "N";

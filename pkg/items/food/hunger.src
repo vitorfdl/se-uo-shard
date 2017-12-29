@@ -12,6 +12,7 @@ program Hunger(chr)
 
 	var hunger;
 	while( chr )
+		Sleep(300); //15 min
 		hunger := CInt(AP_GetVital(chr, "Hunger") / 60);
 
 		if (hunger == 4)
@@ -31,11 +32,11 @@ program Hunger(chr)
 
 		RecalcVitals(chr);
       
-      var players := ListMobilesNearLocationEx(chr.x, chr.y, chr.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+      var players := ListMobilesNearLocationEx(chr.x, chr.y, chr.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
       if (players.size() >= 1)
-         ExpGain(chr, "major");
+         ExpGain(chr, "minor");
       endif
 
-		Sleep(900); //15 min
+		Sleep(500); //15 min
 	endwhile
 endprogram
