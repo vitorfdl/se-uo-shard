@@ -83,6 +83,9 @@ program destroyitems(parms)
       PrintText(who, "*Quebra " +item.desc+ "*");
       SetName(item, item.desc + " [Quebrado]");
 
+      var time_respawn := AddTimeTo(ReadGameClock(), 25+RandomDiceRoll("3d20"), "minutes");
+      SetObjProperty(item, "spawned_time", time_respawn);
+
       if (item.isA(POLCLASS_CONTAINER))
          var container_items := EnumerateItemsInContainer(item);
          foreach citem in container_items

@@ -118,7 +118,4 @@ function SpawnTreasure(treasure, config)
       endif
       sleepms(2);
    endforeach
-
-   var time_respawn := AddTimeTo(ReadGameClock(), 25+RandomDiceRoll("3d20"), "minutes");
-   SetObjProperty(treasure, "spawned_time", time_respawn);
 endfunction

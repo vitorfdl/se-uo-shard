@@ -186,7 +186,6 @@ endfunction
     
 //toca um som random do bixo
 function PlayIdleSound()
-   // return;
    if (RandomInt(5) < 2)
       PlaySoundEffect(me, idlesnd.randomentry());
    endif
