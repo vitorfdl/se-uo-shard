@@ -26,20 +26,22 @@ program blessWater(info)
       sleepms(2);
 	endwhile
 
-   var level := AP_GetStat(who, WISDOM, RETURN_BONUS);
-   if (level > 5)
-      level := 5;
-   elseif (level < 1)
-      level := 1;
+   var fix_amount := 10 + AP_GetStat(who, WISDOM, RETURN_BONUS);
+   if (fix_amount > 5)
+      fix_amount := 5;
+   elseif (fix_amount < 1)
+      fix_amount := 1;
    endif
 
-   level := dice_roll + level;
-   if (targ.hp + level > targ.maxhp)
+   print("old_hp "+targ.hp);
+   fix_amount := dice_roll + fix_amount;
+   if (targ.hp + fix_amount > targ.maxhp)
       targ.hp := targ.maxhp;
    else
-      targ.hp += level;
+      targ.hp := fix_amount+targ.hp;
    endif
    SetName(targ, targ.desc);
+   print("new_hp "+targ.hp);
 
    if (!targ.container)
       PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
