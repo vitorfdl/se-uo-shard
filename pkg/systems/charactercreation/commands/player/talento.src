@@ -76,10 +76,10 @@ function ProccessHab(who, hab)
    //    sleepms(2);
 	// endforeach
 
-   print(feat.script);
-	var e := start_script(":charactercreation:feats/{}".format(feat.script), array{who} );
+	var e := run_script_to_completion(":charactercreation:feats/{}".format(feat.script), array{who} );
    if (e == error)
       return SendSysMessageEx(who, "Script do talento não encontrado.", SSM_FAIL);
+   elseif (e)
+	   TS_StartCooldown(who, hab, feat.cooldown);
    endif
-	TS_StartCooldown(who, hab, feat.cooldown);
 endfunction
