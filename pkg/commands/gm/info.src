@@ -37,7 +37,7 @@ var btn_list := array{};	// Stores button information for the current gump (sinc
 var btn_info := struct{"editFunc", "name"}; // Individual button tracking that goes into the btn_list array.
 
 var gm;
-var gmParedes := array{"gmjaison"};
+var gmParedes := array{"admin"};
 
 program textcmd_Info(who, serial)
 	if ( Lower(TypeOf(who)) == "array" )
@@ -209,7 +209,7 @@ function DisplayVitals(targ, byref gump, byref y_pos)
 	
 	GFResizePic(gump, 145, y_pos, GFCfgConst("Defaults", "ForeGround"), 340, (num_vitals*20));
 	foreach vital_name in ( vitals )
-		if ((vital_name == "SkillCap") && ( gm.acctname in gmParedes ))
+		if ((vital_name == "SkillCap") && !(gm.acctname in gmParedes) )
 		else
 			var btn_id := GFAddButton(gump, 150, (y_pos+3), 2117, 2118, GF_CLOSE_BTN);
 			RegisterButton(btn_id, vital_name, "vitalEdit");
@@ -264,10 +264,10 @@ function DisplayAttributes(targ, byref gump, byref entry, byref y_pos)
 		endif
 
 		foreach attrib_name in ( group )
-			// if (!(gm.acctname in gmParedes) && targ.npctemplate)
+			if (!(gm.acctname in gmParedes) && !targ.npctemplate && targ != gm)
 				var btn_id := GFAddButton(gump, 150, (y_pos+3), 2117, 2118, GF_CLOSE_BTN);
 				RegisterButton(btn_id, attrib_name, "attribEdit");
-			// endif
+			endif
 
 			GFTextLine(gump, 175, y_pos, 2100, attrib_name);
 			var value := AP_GetTrueSkill(targ, attrib_name);
