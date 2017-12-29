@@ -13,7 +13,7 @@ program magiaSilenciosa(param)
       SendSysMessageEx(who, "Cancelado.", SSM_INFO);
       return 0;
    endif
-   var npcdesc := NPC_GetNPCConfig(targ.my_template());
+   var npcdesc := NPC_GetNPCConfig(targ);
    if (npcdesc.Category != "besta")
       SendSysMessageEx(who, "Só pode acalmar bestas.", SSM_INFO);
       return 0;
