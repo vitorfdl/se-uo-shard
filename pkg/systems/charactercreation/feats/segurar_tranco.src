@@ -24,6 +24,7 @@ program mestreLaminas(param)
    var nearby := ListMobilesNearLocationEx( who.x ,who.y, who.z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY);
    foreach mob in nearby
       mob.setaggro(who.serial, 40);
+      print("serial: "+getHighestAggro(mob));
       if (getHighestAggro(mob) == who.serial)
          SendSystemReport(mob, "*!*", 0, who);
       else

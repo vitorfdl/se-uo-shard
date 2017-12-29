@@ -140,19 +140,19 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 		heal_amt := heal_amt / 2;
 		PrintText(mobile, "*usando ataduras em si mesmo*");
 	elseif ( Distance(mobile, targ) > 2 )
-		SendSysMessage(mobile, "Seu paciente esta muito distante.");
+		SendSysMessageEx(mobile, "Seu paciente está muito distante.");
 		return 1;
 	else
 		PrintText(mobile, "*aplicando ataduras em "+targ.name+"*");
 	endif
 
 	if ( !Wait(mobile, 5) )
-		SendSysMessage(mobile, "Você interrompeu a cura.");
+		SendSysMessageEx(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
 	if ( Distance(mobile, targ) > 2 )
-		SendSysMessage(mobile, "Seu paciente esta muito distante.");
+		SendSysMessageEx(mobile, "Seu paciente está muito distante.");
 		return 0;
 	endif
 
@@ -162,13 +162,13 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	endif
 
 	if (heal_amt <= 2)
-		SendSysMessage(mobile, "A cura foi ineficaz.");
+		SendSysMessageEx(mobile, "A cura foi ineficaz.");
 		return 0;
 	endif
 
 	PrintText(mobile, "*parou de aplicar bandagens*");
 	detach();
-	SendSysMessage(targ, "Aguarde enquanto a cura faz efeito.");
+	SendSysMessageEx(targ, "Aguarde enquanto a cura faz efeito.");
 	ExpGain(mobile, "minor");
 	mobile.SetAchievement("bandages", 1);
 	
@@ -181,24 +181,24 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	for ( i := 0 ; i < q ; i := i + 1 )
 		Sleep(1);
 		if (x != targ.x || y != targ.y)
-			SendSysMessage(targ, "Você interrompeu a cura.");
+			SendSysMessageEx(targ, "Você interrompeu a cura.");
 			return 1;
 		elseif (AP_GetVital(targ, "hits") >= AP_GetVitalMaximumValue(targ, "hits"))
-			SendSysMessage(targ, "Você esta completamente curado.");
+			SendSysMessageEx(targ, "Você está completamente curado.");
 			return 1;
 		endif
 
-		HealFLS(targ, CInt(heal_amt/q));
+		HealFLS(targ, CInt(heal_amt/q), 0);
 		r := r + resto;
 		if (r > 1)
-			HealFLS(targ, 1);
+			HealFLS(targ, 1, 0);
 			r := r - 1;
 		endif
 
 		RecalcVitals(targ);
 	endfor
 
-	SendSysMessage(targ, "Acabou o efeito das bandagens.");
+	SendSysMessageEx(targ, "Acabou o efeito das ataduras.");
 	//PrintText(targ, "*acabou bandagem*");
 
 	//bandagens com garlic
@@ -222,7 +222,7 @@ function HealCorpse(mobile, targ, restauraDP)
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
 	if ( !Wait(mobile, 10) )
-		SendSysMessage(mobile, "Você interrompeu a cura.");
+		SendSysMessageEx(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -234,7 +234,7 @@ function HealCorpse(mobile, targ, restauraDP)
 	elseif ( roll >= 16 )
 		ExpGain(mobile, "major");
 		mobile.SetAchievement("heal_corpse", 1);
-		SendSysMessage(mobile, "Você estabilizou "+name);
+		SendSysMessageEx(mobile, "Você estabilizou "+name);
 		SetObjProperty(targ, "curado", 1);
 		var owner := SystemFindObjectBySerial(targ.ownerserial);
 		if (restauraDP && owner)
@@ -253,7 +253,7 @@ function HealNpcCorpse(mobile, targ)
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
 	if ( !Wait(mobile, 10) )
-		SendSysMessage(mobile, "Você interrompeu a cura.");
+		SendSysMessageEx(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif
 
@@ -263,10 +263,10 @@ function HealNpcCorpse(mobile, targ)
 	if (  !GetObjProperty(targ,"morto") )
 		return;
 	elseif ( roll >= 16 ) // SkillCheck(mobile, MEDICINA, diff) SkillCheck(mobile, , diff)
-		SendSysMessage(mobile, "Você estabilizou "+name);
+		SendSysMessageEx(mobile, "Você estabilizou "+name);
 		ghaiaRessurect(targ);
 	else
-		SendSysMessage(mobile, "Você não conseguiu estabilizar "+name+".");
+		SendSysMessageEx(mobile, "Você não conseguiu estabilizar "+name+".");
 	endif
 
 	return 1;
