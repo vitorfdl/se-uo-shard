@@ -78,6 +78,7 @@ function NPC_GetNPCConfig(template, ignore_metamorfose := 0)
       if (!ignore_metamorfose && GetObjProperty(template, "metamorfose"))
 		   template := struct{ "package" := template.package(), "my_template" := GetObjProperty(template, "metamorfose")};
       else
+		   template := struct{ "package" := template.package(), "my_template" := template.my_template()};
       endif
 	else
 		var splited := SplitWords(template, ":");
