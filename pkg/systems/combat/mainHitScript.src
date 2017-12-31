@@ -133,7 +133,7 @@ endfunction
 
 function PlayHurtSound(defender)
 	if ( defender.IsA(POLCLASS_NPC) )
-      damaged_sound := NPC_GetNPCConfig(defender).HurtSound;
+      var damaged_sound := NPC_GetNPCConfig(defender).HurtSound;
 		if ( damaged_sound && RandomInt(2) == 2)
 			PlaySoundEffect(defender, damaged_sound);
 		endif
