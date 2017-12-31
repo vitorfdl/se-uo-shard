@@ -124,7 +124,7 @@ function taming(who)
 	info.+difficulty := cfg.TameDifficulty;
 
    var chr_level := who.getLevel();
-
+ 
    if (info.difficulty > 21 && chr_level < 10)
 	   return SendSysMessageEx(who, "Domesticar este animal está além das suas capacidades.", SSM_INFO);
    elseif (info.difficulty > 18 && chr_level < 4)
