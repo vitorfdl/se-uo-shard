@@ -90,7 +90,7 @@ function SendGump(who, scroll)
 	   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>receitas de uma vez");
 	endif
 
-	if (!(objtype in GetObjProperty(who, "recipes")))
+	if (!(cint(objtype) in GetObjProperty(who, "recipes")) && !(hex(objtype) in GetObjProperty(who, "recipes")))
 		var charge_list    := GetObjProperty(scroll, "learning");
 		var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
 		var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);

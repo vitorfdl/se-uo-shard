@@ -243,6 +243,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 				elseif (thing["monsterpart"])
 					material_cprops["element"] := GetObjProperty(ret[1], "element");
 					material_cprops["elementpower"] := GetObjProperty(ret[1], "elementpower");
+					material_cprops["madeof"] := ret[1].desc;
 				endif
 				if (ret[3])
                bonus_diff += cint(ret[3]);

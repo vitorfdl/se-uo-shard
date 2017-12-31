@@ -267,6 +267,11 @@ exported function MegaCliloc( who, byref packet )
 			endif
 		endif
 
+      var madeof := GetObjProperty(item, "madeof");
+      if (madeof)
+         xDesc += "{}Feito com: {}{}<br>".format(WHITE, ORANGE, madeof);
+      endif
+
       var inscripted := GetObjProperty(item, "inscripted");
       if (inscripted)
          xDesc += "{}{}<br>".format(BLUE, inscripted);
