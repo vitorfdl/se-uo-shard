@@ -11,7 +11,7 @@ include ":ghaia:ghaia";
 include ":ghaia:generic";
 
 var me         := self();
-var npccfgfile := NPC_GetNPCConfig(me);
+var npccfgfile := NPC_GetNPCConfig(me, 1);
 var idlesnd, areasize, custombehaviors;
 var mystate      := INITIALIZING;
 var flee_point   := 0.1;

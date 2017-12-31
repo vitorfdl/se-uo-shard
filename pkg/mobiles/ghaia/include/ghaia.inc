@@ -195,8 +195,7 @@ function InitializeNpc(mobile)
    GrantPrivilege(mobile, "runwhilestealth");
    mobile.enable("runwhilestealth");
    //inicializa algumas variaveis que todos os npcs tem
-   var elem     := npccfgfile; //TODO: Too Ugly, fix that
-   idlesnd   := GetConfigStringArray(elem, "IdleSound");
+   idlesnd   := GetConfigStringArray(npccfgfile, "IdleSound");
    flee_point   := CInt(npccfgfile.FleeLevel)/100.0;
    areasize     := CInt(npccfgfile.AreaSize);
    custombehaviors := GetConfigStringArray(npccfgfile, "CustomBehavior");

@@ -133,16 +133,14 @@ endfunction
 
 function PlayHurtSound(defender)
 	if ( defender.IsA(POLCLASS_NPC) )
-      var metamorfose := GetObjProperty(defender, "metamorfose");
-		var damaged_sound;
-      if (metamorfose)
-         damaged_sound := NPC_GetNPCConfig(":ghaia:{}".format(metamorfose)).HurtSound;
-      else
-         damaged_sound := NPC_GetNPCConfig(defender).HurtSound;
-      endif
+      damaged_sound := NPC_GetNPCConfig(defender).HurtSound;
 		if ( damaged_sound && RandomInt(2) == 2)
 			PlaySoundEffect(defender, damaged_sound);
 		endif
+   // else // TODO: FAZER SOM DE PLAYER
+	// 	if ( damaged_sound && RandomInt(2) == 2)
+	// 		PlaySoundEffect(defender, damaged_sound);
+	// 	endif
 	endif
 endfunction
 

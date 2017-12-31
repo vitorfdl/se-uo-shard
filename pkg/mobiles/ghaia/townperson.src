@@ -12,7 +12,7 @@ include ":tn:tngumps";
 include ":magery:tnmagery";
 include ":timedScripts:timedScripts";
 
-var npccfgfile := NPC_GetNPCConfig(self());
+var npccfgfile := NPC_GetNPCConfig(self(), 1);
 var me := self();
 var areasize;
 

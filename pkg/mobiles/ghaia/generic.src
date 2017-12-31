@@ -10,7 +10,7 @@ include ":ghaia:genericControl";
 include ":ghaia:habs";
 
 var me         := self();
-var npccfgfile := NPC_GetNPCConfig(me);
+var npccfgfile := NPC_GetNPCConfig(me, 1);
 var idlesnd;
 var areasize;
 var custombehaviors;

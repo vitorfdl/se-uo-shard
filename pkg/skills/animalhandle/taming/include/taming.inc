@@ -29,6 +29,8 @@ endfunction
 /* funcao pega o custo dos pets. tbm atualiza os pets perdidos ou que foram transferidos*/
 function GetNumPets(who)
 	var num_tamed := 0;
+   var max_followers := GetMaxPets(who);
+
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )
 		return 0;
@@ -39,14 +41,20 @@ function GetNumPets(who)
 	foreach serial in tamed
 		var pet := SystemFindObjectBySerial(serial);
 		if ( pet.master == who )
-			var npctemplate := pet.npctemplate;
-			npctemplate := npctemplate[10, len(npctemplate)-9];
+			var npctemplate := pet.my_template();
 			var pet_cfg := cfg[npctemplate];
-			if (!Cint(pet_cfg.petslot))
-				num_tamed := num_tamed+1;
-			else
-				num_tamed := Cint(pet_cfg.petslot);
+
+         var pet_num := 1;
+			if (pet_cfg.petslot)
+				pet_num := Cint(pet_cfg.petslot);
 			endif
+
+         if (num_tamed+pet_num > max_followers)
+            destama(serial);
+            remove_indexes.append(_serial_iter);
+         else
+            num_tamed += pet_num;
+         endif
 		elseif ( !pet || pet.master !=who )
 			remove_indexes.append(_serial_iter);
 		endif
@@ -99,7 +107,18 @@ endfunction
 //numero maximo de pets que alguem pode ter
 function GetMaxPets(who)
 	// var skill := AP_GetStat(who, WISDOM);
-	var maxpets := 5;
+	var maxpets := 1;
+   var char_level := who.getLevel();
+   if (char_level >= 12)
+      maxpets := 5;
+   elseif (char_level >= 8)
+      maxpets := 4;
+   elseif (char_level >= 4)
+      maxpets := 3;
+   elseif (char_level >= 2)
+      maxpets := 2;
+   endif
+
 	maxpets += cint( GetObjProperty(who, "extrapets") );
 
 	return maxpets;

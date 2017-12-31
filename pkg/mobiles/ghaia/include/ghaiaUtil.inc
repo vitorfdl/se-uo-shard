@@ -73,9 +73,12 @@ endfunction
  * Config elem reference
  *
  */
-function NPC_GetNPCConfig(template)
+function NPC_GetNPCConfig(template, ignore_metamorfose := 0)
 	if (template.isA(POLCLASS_MOBILE))
-		template := struct{ "package" := template.package(), "my_template" := template.my_template()};
+      if (!ignore_metamorfose && GetObjProperty(template, "metamorfose"))
+		   template := struct{ "package" := template.package(), "my_template" := GetObjProperty(template, "metamorfose")};
+      else
+      endif
 	else
 		var splited := SplitWords(template, ":");
 		template := struct{ "package" := splited[2], "my_template" := splited[3]};
