@@ -51,7 +51,7 @@ program help_menu(who)
 	if (input == BUTTON_HELP_SENDGMPAGE )
 		var sendpage := YesNo(who, "Use a page somente caso seu problema possa ser resolvido por Staffers, ou deseja alguma espécie auxílio. Continuar?", "Sim, quero enviar a msg.", "Não, não quero enviar a msg."  );
 		if (sendpage)
-			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998} );
+			start_script( ":email:emailMessage/helpLetter", array{ who, 999999999} );
 		endif
 
 	elseif (input == BUTTON_HELP_REPORTBUG )
