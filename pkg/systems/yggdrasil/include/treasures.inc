@@ -51,13 +51,13 @@ function CleanTreasure(treasure)
         SysLog("CleanTreasure used on a not container object");
         return;
     endif
-    EraseObjProperty(treasure, "opened_once");
     EraseObjProperty(treasure, "trapSpoted");
     EraseObjProperty(treasure, "trap_inativa");
     EraseObjProperty(treasure, "TrapList");
     EraseObjProperty(treasure, "level");
     EraseObjProperty(treasure, "protected");
     EraseObjProperty(treasure, "breakable");
+    EraseObjProperty(treasure, "#awareness_fail");
 
     foreach item in (EnumerateItemsInContainer( treasure ))
         DestroyItem( item );
