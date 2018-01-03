@@ -15,6 +15,7 @@ include "include/say";
 include "include/objtype";
 include ":attributes:attributes";
 include ":crafting:fls_craftingUtils";
+include ":itemUtils:toolWear";
 
 const OUT_OF_MATERIALS := 1;
 
@@ -224,7 +225,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
    var bonus_diff := 0;
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
-      print(thing);
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone"} || (typeof(thing) == "String" && thing["monsterpart"]))
 			var ret := MaterialSelection(who, thing, 1);
 			if (!ret)
@@ -347,11 +347,11 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
          elseif (recipe.colored)
             theitem.color := material_color;
 			endif
-			// CheckToolWear(who, tool, craft_skill);
+			CheckToolWear(who, tool, craft_skill);
 			theitem.movable := 1;
 
 			//passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
-			// AddMaterialMod(who, theitem, choosed_material, material_color);
+			AddMaterialMod(who, recipe, theitem, choosed_material, material_color);
 			// CraftExceptional(who, theitem, craft_skill);
 			foreach key in (material_cprops.Keys())
 				SetObjProperty(theitem, key, material_cprops[key]);
@@ -421,10 +421,10 @@ function SubtractMaterial(who, targ_materials, amountMod := 1)
                targ_materials[thing] := 0;
                break;
             else
-               // targ_materials[thing] := targ_materials[thing] - item.amount;
-               // if (!SubtractAmount(item, item.amount))
+               targ_materials[thing] := targ_materials[thing] - item.amount;
+               if (!SubtractAmount(item, item.amount))
                   return 0;
-               // endif
+               endif
             endif
          endif
          sleepms(2);
@@ -439,13 +439,13 @@ endfunction
 
 
 
-function AddMaterialMod(who, theitem, principalMaterial, materialColor)
+function AddMaterialMod(who, recipe, theitem, principalMaterial, materialColor)
 	if (!principalMaterial)
 		return;
 	endif	
 
 	var elem  := FindConfigElem(resource_config, principalMaterial);
-	if((craft_config[theitem.objtype].retain == 1))
+	if((recipe.colored == 1))
 		if(resource_config[principalMaterial].Color)
 			theitem.color := resource_config[principalMaterial].Color;
 		else

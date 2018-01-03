@@ -10,7 +10,7 @@ program ArmorHitScript(params)
 	var defender	:= params[2];
 	params := 0; // Not needed anymore.
 	
-   if (RandomInt(60) > 5)
+   if (RandomInt(100) > 15)
       return 1;
    endif
 	

@@ -72,7 +72,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
 
    var res;
    case (hab_name)
-      "summon": res := SummonCreature(hab_dice, hab_special); break;
+      "summon": res := SummonCreature(cint(hab_dice), hab_special); break;
       "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target); break;
       // "cançãoSedutora": CancaoSedutora(hab_dice); break;
       "furtividade": res := NPC_Sneak(); break;
@@ -99,8 +99,10 @@ function summonCreature(qty, creatures)
    playCastAnimation();
    creatures := SplitWords(creatures);
    for i := 1 to qty
-      var rad := GetPointsInRadius(me.x, me.y, 5);
-      var summoned := CreateNpcFromTemplate(":ghaia:{}".format(creatures.randomentry()), rad.x, rad.y, rad.z, 0, me.realm);
+      var rad := randomPlace(me, 5);
+      var summoned := CreateNpcFromTemplate(":ghaia:{}".format(creatures.randomentry()), rad.x, rad.y, me.z, 0, me.realm);
+      ghaiaattack(summoned, me.opponent);
+      SetObjProperty(summoned, "nocorpse", 1);
       TS_StartTimer(summoned, "summon", 60);
    endfor
 

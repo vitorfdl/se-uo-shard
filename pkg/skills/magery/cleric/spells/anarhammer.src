@@ -39,8 +39,9 @@ program blessWater(info)
    else
       targ.hp := fix_amount+targ.hp;
    endif
+
    var item_name := targ.desc;
-   item_name[" [Danificado]"] := "";
+   item_name[" [danificado]"] := "";
    SetName(targ, item_name);
 
    if (!targ.container)

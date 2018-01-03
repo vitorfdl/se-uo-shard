@@ -17,7 +17,7 @@ function GetBagList(who, materials := 0)
    var item_list := dictionary{};
    foreach item in (items)
       if (!materials || item.objtype in materials)
-         item_list[item.objtype] := item.amount;
+         item_list[item.objtype] := cint(item_list[item.objtype]) + item.amount;
          if (resource_config[item.objtype])
             var type := resource_config[item.objtype].Type.lower();
             item_list[type] := cint(item_list[type]) + item.amount;
@@ -249,11 +249,19 @@ function doRepair(who, craft_skill, recipe_cfg)
       else
          what.hp := thehp + repaired_amount;
          if (what.hp >= 10)
-            var item_name := StrReplace(what.desc, " [Danificado]", "");
+            var item_name := StrReplace(what.desc, " [danificado]", "");
             SetName(what, item_name);
          endif
 
          SendSysMessageEx(who, "Você consertou o item.");
+         if (what.isMagicWeapon() && dice_result > 16)
+            var mage := GetObjProperty(what, "spell_list");
+            if (0 in mage)
+               mage := RemoveFromArray(mage, 0);
+               SetObjProperty(what, "spell_list", mage);
+               SendSysMessageEx(who, "Você recuperou um slot do item mágico.");
+            endif
+         endif
       endif
       who.SetAchievement("repair", 1);
       SetName( what, what.desc ); //Update the Item

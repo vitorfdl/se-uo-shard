@@ -19,7 +19,10 @@ include "include/say";
 program EmailMessage( params )
 	var mobile := params[1];
 	var serial := params[2];
-        SendSysMessageEx( mobile, "Foi recebido uma nova page." );
+   if (cint(serial) == 999999998 && mobile.cmdlevel < 5)
+      return;
+   endif
+   SendSysMessageEx( mobile, "Foi recebido uma nova page." );
         
 	if( GetProcess( CInt( GetObjProperty( mobile, "#EmailMessagePid" ))))
 		return 0;
@@ -27,31 +30,31 @@ program EmailMessage( params )
 		SetObjProperty( mobile, "#EmailMessagePid", GetPid() );
 	endif
 
-        var gump := GFCreateGump();
+   var gump := GFCreateGump();
 
-        GFClosable( gump, 0 );
+   GFClosable( gump, 0 );
 
-        //Load Main Background
-	GFResizePic( gump, 540, 430, GFCfgConst( "BackGrounds", "GOLDTRIM" ), 90, 65 );
- 
-        GFAddAlphaRegion( gump, 540, 430, 90, 65 );
+   //Load Main Background
+   GFResizePic( gump, 540, 430, GFCfgConst( "BackGrounds", "GOLDTRIM" ), 90, 65 );
 
-        GFAddButton( gump, 545, 435, 0x7d2, 0x7d2, GF_CLOSE_BTN, 0x20 );
-		var pagename := "Nova Page";
-		if (cint(serial) == 999999999)
-			pagename := "Novo Bug";
-		endif
-		GFDrawWrappedText( gump, 565, 440, GFWordWrap( pagename, 50 ) );
+   GFAddAlphaRegion( gump, 540, 430, 90, 65 );
 
-        //And now we need to know the answer...
-        var input := GFSendGump( mobile, gump );
-        if( input[0x20] )
-                var script := start_script( ":email:email", array{mobile, serial} );
-                if( script.errortext )
-                        SendSysMessageEx( mobile, "Error starting script <:email:email> -->"+script.errortext );
-                        return 0;
-                endif
-        endif
+   GFAddButton( gump, 545, 435, 0x7d2, 0x7d2, GF_CLOSE_BTN, 0x20 );
+	var pagename := "Nova Page";
+   if (cint(serial) == 999999998)
+      pagename := "Novo Bug";
+   endif
+   GFDrawWrappedText( gump, 565, 440, GFWordWrap( pagename, 50 ) );
+
+   //And now we need to know the answer...
+   var input := GFSendGump( mobile, gump );
+   if( input[0x20] )
+      var script := start_script( ":email:email", array{mobile, serial} );
+      if( script.errortext )
+         SendSysMessageEx( mobile, "Error starting script <:email:email> -->"+script.errortext );
+         return 0;
+      endif
+   endif
 
 	return 1;
 endprogram

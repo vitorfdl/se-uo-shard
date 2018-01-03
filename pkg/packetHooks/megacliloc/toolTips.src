@@ -285,7 +285,7 @@ exported function MegaCliloc( who, byref packet )
          endif
 
 			if (who.serial in pplmage)
-				if (item.ismagicWeapon())
+				if (item.isMagicWeapon())
 					var charges := cint(GetObjProperty(item, "charges"));
 					xDesc += WHITE + "Cargas: {}<br>".format(charges);
 				endif

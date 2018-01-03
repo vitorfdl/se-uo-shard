@@ -102,7 +102,8 @@ function resolveEvent(ev, byref wanders)
 		EVID_TAUNT:
 			if(ev.source)
             me.setAggro(ev.source, 15);
-				wanders := 0; Fight(ev.opponent, 1);
+				wanders := 0; 
+            Fight(ev.source, 1);
 			endif
 		EVID_FLEE:
 			if (ev.source)

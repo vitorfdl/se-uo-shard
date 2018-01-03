@@ -20529,9 +20529,9 @@ NPCTemplate ettin
 	// Primary NPC information
 	Name			<random>
 	Script			:ghaia:generic
-	ObjType			2
-	Color			1153
-	TrueColor		1153
+	ObjType			18
+	Color			0
+	TrueColor		0
 	Gender			0
 	AR			30
 	RunSpeed		100
