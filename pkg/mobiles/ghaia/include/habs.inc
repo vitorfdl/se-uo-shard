@@ -8,6 +8,7 @@ function UseHabs()
    endif
 
    foreach hab in habs
+      sleepms(2);
       hab := SplitWords(hab);
       var hab_name  := hab[1];
 
@@ -21,9 +22,15 @@ function UseHabs()
       // endif
 
       var hab_cooldown := cint(hab[2]);
-      var hab_dice     := hab[3];
-      var hab_target   := hab[4];
-      var hab_special  := hab[5];
+      var hab_chance  := cint(hab[3]);
+      var hab_dice     := hab[4];
+      var hab_target   := hab[5];
+      var hab_special  := hab[6];
+
+      if (hab_chance != 100 && Randomint(100)+1 > hab_chance )
+         SetCooldown(me, hab_name, 5);
+         continue;
+      endif
 
       if (hab_dice["no_roll"])
       elseif (hab_dice["d"])
@@ -33,7 +40,6 @@ function UseHabs()
       endif
 
       PlaySpecialHab(hab_name, hab_cooldown, hab_dice, hab_target, hab_special);
-      sleepms(2);
    endforeach
 endfunction
 

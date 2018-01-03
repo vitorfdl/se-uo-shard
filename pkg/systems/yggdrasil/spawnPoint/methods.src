@@ -240,7 +240,7 @@ exported function FillQueue(spawnpoint)
    index_rem := array{};
    var diedmonsters := config.diedmonsters;
    foreach died in diedmonsters
-      if (died.time + spot_time <= ReadGameClock())
+      if (died.time + (spot_time*60000) <= ReadGameClock())
          index_rem.append(_died_iter);
       else
          spawn_size += 1;

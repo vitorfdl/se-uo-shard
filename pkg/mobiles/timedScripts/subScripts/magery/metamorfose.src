@@ -12,6 +12,13 @@ include "include/say";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
+   var metamorfose := GetObjProperty(mobile, "metamorfose");
+   var npc_desc := NPC_GetNPCConfig(":ghaia:{}".format(metamorfose));
+
+   if (!npc_desc.Ranged)
+      SetObjProperty(mobile, "closecombat", 1);
+   endif
+
    return 1;
 endfunction
 
@@ -19,6 +26,12 @@ function EndScript(mobile)
    EraseObjProperty(mobile, "metamorfose");
    mobile.graphic := GetObjProperty(mobile, "oldgraphic");
    EraseObjProperty(mobile, "oldgraphic");
+
+   var npc_desc := NPC_GetNPCConfig(mobile);
+
+   if (npc_desc.Ranged)
+      EraseObjProperty(mobile, "closecombat");
+   endif
    return 1;
 endfunction
 

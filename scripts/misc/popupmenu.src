@@ -46,7 +46,11 @@ program PopUpMenu( who, what )
    if (input == "info")
       return;
    elseif (input == "ficharp")
-      Start_Script(":fls_core:commands/player/ficharp", array{ who, what });
+      var arr := array{ who, what };
+      if (who == what)
+         arr := array{who};
+      endif
+      Start_Script(":fls_core:commands/player/ficharp", arr);
       return;
    elseif (input == "profile")
       start_script(":charprofile:parseCharProfile", array{ who, "0", what });

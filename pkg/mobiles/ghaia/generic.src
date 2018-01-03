@@ -22,9 +22,10 @@ program NPCMonitor()
 endprogram
 
 function CloseDistance( opponent )
-	if (cint(npccfgfile.Ranged) || me.weapon.isBow())
+	if ((cint(npccfgfile.Ranged) || me.weapon.isBow()) && !GetObjProperty(me, "closecombat"))
 		return CloseDistanceArcher(opponent);
 	endif
+
 	return CloseDistanceMeele(opponent);
 endfunction
 

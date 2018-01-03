@@ -381,7 +381,7 @@ endfunction
 
 // Checa por munição ou faz efeito do npc arqueiro
 function AmmoCheck(attacker, defender)
-   var cfgfile := NPC_GetNPCConfig(attacker.npctemplate);
+   var cfgfile := NPC_GetNPCConfig(attacker);
 	if (weapon.isMagicWeapon())
       attacker.SetAchievement("magicweapon", 1);
 		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
