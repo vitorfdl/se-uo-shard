@@ -13,7 +13,7 @@ include ":datafile:datafile";
 var email_datafile := DFOpenDataFile( "Emails", DF_CREATE );
 
 program ReadMail( mobile, serial )
-	serial := 999999998;
+	serial := 999999999;
 	var script := start_script( ":email:email", {mobile, serial} );
 	if( script.errortext )
 		SendSysMessage( mobile, "Error starting script <:email:email> -->"+script.errortext );
