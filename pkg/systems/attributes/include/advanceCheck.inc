@@ -70,13 +70,15 @@ function ExpGain(mobile, difficulty, value := 0)
    endif
   
 	var settings := AP_GetSettingsCfgElem("Skills");
-	//verifica se ja não subiu skills em 30 segundos
-	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 10;
+	//verifica se ja não recebeu exp em 5 segundos
+	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 5;
 	if ( next_check > ReadGameClock() )
 	//	printtextabove(mobile, "não posso subir skill agora");
 		SkillDbgMsg(mobile, "Não pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
 		return 0;
 	endif
+
+   if (!AP_ConsumeVital(who, "SkillCap", 4))
 
 	//calcula a chance de passar
 	var up_amount := 0;

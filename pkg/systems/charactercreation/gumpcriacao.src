@@ -101,9 +101,9 @@ program createchar(who)
 	endforeach
 
 	if (chardata.raca == "Humano")
-		chardata.lifetime := AddTimeTo(ReadGameClock(), 34, "weeks");
+		chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");
 	else
-		chardata.lifetime := AddTimeTo(ReadGameClock(), 42, "weeks");
+		chardata.lifetime := AddTimeTo(POLCore().systime, 42, "weeks");
 	endif
 
 	SetObjProperty(who, "chardata", chardata);

@@ -47,7 +47,7 @@ function CanFight(me, mobile)
       return 0;
    endif
  
-   if (mobile.hidden && (!mobile.npctemplate || !mobile.master) && AP_getStat(me, WISDOM) >= 10)
+   if (mobile.hidden && AP_getStat(me, WISDOM) >= 9 && (!mobile.npctemplate && me.master != mobile))
       var diff := CalculateDhDiff(me, mobile);
       var roll := rollAttrDice(me, WISDOM) + getProficiencyBonus(me, PERCEPCAO);
 
