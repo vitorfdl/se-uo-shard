@@ -152,7 +152,7 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
 
 endfunction
 
-function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0)
+function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0, first := 1)
 	var gump := GFCreateGump(250, 200);
 	GFClosable(gump, 0);
 	GFResizePic(gump, 0, 0, 3600, sizex, sizey);
@@ -168,11 +168,9 @@ function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0)
   GFSetRadioGroup(gump, 1);
   var indice := 1;
   y_pos := 30;
-  var first := 1;
   foreach text in options
     GFTextLine(gump, 60, y_pos + indice*20, 1153, text);
-    GFRadioButton(gump, 30, y_pos + indice*20, 210, 211, first, indice);
-    first := 0;
+    GFRadioButton(gump, 30, y_pos + indice*20, 210, 211, (indice == first), indice);
     indice := indice+1;
   endforeach
 	

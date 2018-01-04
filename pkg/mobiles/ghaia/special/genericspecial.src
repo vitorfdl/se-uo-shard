@@ -2,7 +2,6 @@ use uo;
 use os;
 use vitals;
 
-include ":charactercreation:habilidades";
 include ":timedScripts:timedScripts";
 include "include/damage";
 include "include/sysEvent";
@@ -16,34 +15,36 @@ program loko(params)
 
 	if (!who.opponent)
 		return;
+	elseif ( TS_GetCooldown(who, event.name) != error)
+		return;
+   elseif (event.chance != 100 && Randomint(100)+1 > event.chance )
+      TS_StartCooldown(who, event.name, 3); 
+      return;
+   elseif ( event.hp_percent != 100 && AP_GetVital(who, HITS) > AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100))
+      TS_StartCooldown(who, event.name, 3); 
+      return;
 	endif
 
-	if (event.onlybloodied) 
-		if ( !IsBloodied(who) )
+	if (event.dist > 0)
+		if (CoordinateDistance(who.x, who.y, who.opponent.x, who.opponent.y) < event.dist)
 			return;
 		endif
 	endif
+	// if (event.onlybloodied) 
+	// 	if ( !IsBloodied(who) )
+	// 		return;
+	// 	endif
+	// endif
 
 	//check distancia
-	if (event.dist > 0)
-		if (CoordinateDistance(who.x, who.y, who.opponent.x, who.opponent.y) > event.dist)
-			return;
-		endif
-	endif
 
-	//checa cooldown
-	if ( TS_GetCooldown(who, event.name) != error)
-		return;
-	endif
 
 	TS_StartCooldown(who, event.name, event.cd); 
 	//executa os states
 	foreach state in (event.steps)
-
 		EraseObjPRoperty(who, "noclosecombat");
 
 		if (state.type == "Move")
-
 			SetObjProperty(who, "noclosecombat", 1);
 			var ev := struct;
 			ev.type := EVID_COMBAT_MOVE;
@@ -72,39 +73,23 @@ program loko(params)
 					MoveObjectToLocation(op, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION);
 				endforeach
 			endif
+         
 		elseif (state.type == "TimedScript")
-			var targ := array;
-			if (state.target == "Self")
-				targ.append(who);
-			elseif (state.target == "Opponent")
-				targ.append(who.opponent);
-			elseif (state.target == "All Opponents")
-				targ := GetAllOpponents(who);
-			endif
+			var targ := selectOpponent(who, state.target);
 			foreach t in targ
 				TS_StartTimer(t, state.timername, state.timerduration, state.level);
+            sleepms(2);
 			endforeach
+
 		elseif (state.type == "Perform Action" )
-			var targ := array;
-			if (state.target == "Self")
-				targ.append(who);
-			elseif (state.target == "Opponent")
-				targ.append(who.opponent);
-			elseif (state.target == "All Opponents")
-				targ := GetAllOpponents(who);
-			endif
+			var targ := selectOpponent(who, state.target);
+
 			foreach t in targ
 				PerformAction(t, state.id);
 			endforeach
 		elseif (state.type == "Text")
-			var targ := array;
-			if (state.target == "Self")
-				targ.append(who);
-			elseif (state.target == "Opponent")
-				targ.append(who.opponent);
-			elseif (state.target == "All Opponents")
-				targ := GetAllOpponents(who);
-			endif
+			var targ := selectOpponent(who, state.target);
+
 			foreach t in targ
 				PrintText(t, state.text, state.color);
 			endforeach
@@ -113,17 +98,11 @@ program loko(params)
 		elseif (state.type == "Delay")
 			Sleep(state.delay);
 		elseif (state.type == "Heal")
-			  HealFLS(who, state.healamt);
-			    RecalcVitals(who);
+         HealFLS(who, state.healamt);
+         RecalcVitals(who);
 		elseif ( state.type == "Graphic Effect")
-			var targ := array;
-			if (state.target == "Self")
-				targ.append(who);
-			elseif (state.target == "Opponent")
-				targ.append(who.opponent);
-			elseif (state.target == "All Opponents")
-				targ := GetAllOpponents(who);
-			endif
+			var targ := selectOpponent(who, state.target);
+
 			if (state.target == "Fixed Loc")
 				if (state.graphictype == "Stationary")
 					
@@ -153,22 +132,23 @@ program loko(params)
 			endif
 
 		elseif (state.type == "Dmg")
-			var targ := array;
-			if (state.target == "Self")
-				targ.append(who);
-			elseif (state.target == "Opponent")
-				targ.append(who.opponent);
-			elseif (state.target == "All Opponents")
-				targ := GetAllOpponents(who);
-			endif
+         var targ := selectOpponent(who, state.target);
+
+         var dmg := state.dmg;
+         if (dmg["d"]) 
+            dmg := RandomDiceRoll(state.dmg);
+         else
+            dmg := cint(state.dmg);
+         endif
+
 			foreach vital in (state.vitals)
 				foreach t in targ
 					if (vital == "Hits")
-						DamageFLS(t, cint(state.dmg), state.dmgtype, who);
+						DamageFLS(t, dmg, state.dmgtype, who);
 					elseif (vital == "Stam")
-						AP_ConsumeVital(t, STAMINA, state.dmg);
+						AP_ConsumeVital(t, STAMINA, dmg);
 					elseif (vital == "Mana")
-						AP_ConsumeVital(t, MANA, state.dmg);
+						AP_ConsumeVital(t, MANA, dmg);
 					endif
 				endforeach	
 			endforeach
@@ -195,12 +175,24 @@ program loko(params)
             endwhile
 
 		endif
-		sleepms(500);
+		sleepms(100);
 	endforeach
-
-
 endprogram
 
+function selectOpponent(who, type)
+   var targ := array{};
+   if (type == "Self")
+      targ.append(who);
+   elseif (type == "Opponent")
+      targ.append(who.opponent);
+   elseif (type == "Around Opponent")
+      targ := ListMobilesNearLocation(who.opponent.x, who.opponent.y, who.opponent.z, 3);
+   elseif (type == "All Opponents")
+      targ := GetAllOpponents(who);
+   endif
+
+   return targ;
+endfunction
 
 function GetAllOpponents(who)
 
@@ -221,3 +213,4 @@ function GetAllOpponents(who)
 
 
 endfunction
+

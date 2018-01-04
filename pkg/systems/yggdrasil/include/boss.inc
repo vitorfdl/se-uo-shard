@@ -594,6 +594,8 @@ function ConfigureCombatEvent(who, event := 0)
 		event.+cd := cint(RequestGump(who, "De quanto em quanto tempo o npc realiza esse evento?", "", "", 1));
 		event.+onlybloodied := cint(YesNo(who, "O NPC so faz esse evento se tiver bloodied?"));
 		event.+dist := cint(RequestGump(who, "Qual a distancia que o npc precisa estar do alvo?", "0 para não checar distancia", "", 1));
+		event.+chance := cint(RequestGump(who, "Qual a chance do npc realizar este evento?", "100 para sempre", "100", 1));
+		event.+hp_percent := cint(RequestGump(who, "Quanto % de hp o npc deve ter para realizar este evento?", "100 para sempre", "100", 1));
 
 		event.+steps := array;
 	endif
@@ -658,7 +660,7 @@ function CombatEventsOptions(who, state)
 			state.+y := loc.y;
 			state.+z := loc.z;
 		elseif ( opt == "Teleport")
-			state.+target := RadioGump(who, 210, 200, "Quem vai sofrer o teleporte?", array{"Self", "Opponent", "All Opponents"});
+			state.+target := RadioGump(who, 200, 180, "Quem vai sofrer?", array{"Self", "Opponent", "Around Opponent" ,"All Opponents"});
 			var loc := TargetCoordinates(who);
 			state.+x := loc.x;
 			state.+y := loc.y;
@@ -763,9 +765,14 @@ function CombatEventsOptions(who, state)
 				endif
 			endif
 		elseif ( opt == "Dmg")
-			state.+target := RadioGump(who, 200, 180, "Quem vai sofrer?", array{"Self", "Opponent", "All Opponents"});
-			var dmg := cint(RequestGump(who, "Quanto de dano vai causar", "", "", 1));
-			var dmgtype := RequestGump(who, "Digite qual o tipo de dano: Perfuração, Concussão, Corte, Fogo, Gelo, Eletrecidade, Veneno", "", "", 1);
+			state.+target := RadioGump(who, 200, 180, "Quem vai sofrer?", array{"Self", "Opponent", "Around Opponent" ,"All Opponents"});
+			var dmg := RequestGump(who, "Quanto de dano vai causar", "Ex: 1d2", "", 1);
+			var dmgtype := RadioGump(who, 200, 240, "Qual o tipo de dano:", array{"Perfuração", "Concussão", "Corte", "Fogo", "Gelo", "Eletrecidade", "Veneno"});
+			var test := RadioGump(who, 200, 240, "Algum teste de resistência? ", array{STRENGTH, DEXTERITY, WISDOM, CONSTITUTION, "Nenhum"}, 0, 5);
+         if (test != "Nenhum")
+			   state.+resist_test := test;
+            state.+resist_diff := cint( RequestGump(who, "Qual a dificuldade?", "", "12", 1));
+         endif
 			state.+dmg := dmg;
 			state.+dmgtype := dmgtype;
 			var vitals := CheckBoxGump(who, 230, 180, "Qual tipo de vital sera afetado pelo dano?", array{"Stam", "Hits", "Mana"});
