@@ -129,12 +129,15 @@ program use_MapmakersPen(who, tool)
 		if (rune_list == error)
 			rune_list := array;
 		elseif( rune_list.Size() > 15 )
-			SendSysMessage(who,"Este livro ja esta cheio.");
+			SendSysMessage(who,"Este livro ja esta cheio.", SSM_FAIL);
 			return 0;
 		endif
 
 		var rune_name := GetObjProperty(targ, "rune_name");
-
+      if (rune_name in rune_list)
+			SendSysMessage(who,"Já existe esta runa no livro.", SSM_FAIL);
+         return 0;
+      endif
 		PrintText(who, "*cópiando runa de {}*".format(targ.desc));
 		if (!WaitForCopy(who))
 			return;

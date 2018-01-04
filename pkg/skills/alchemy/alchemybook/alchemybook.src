@@ -95,6 +95,9 @@ function MakePotion (pot, who)
 			amount := 1;
 		endif
 		ConsumeSubstance(who.backpack, reag, amount);
+      if (hex(reag) == 0x1F91)
+         CreateItemInBackpack(who, 0x1F91, amount);
+      endif
 		sleepms(2);
 	endforeach
 
