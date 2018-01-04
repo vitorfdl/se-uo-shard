@@ -78,8 +78,6 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
-   if (!AP_ConsumeVital(who, "SkillCap", 4))
-
 	//calcula a chance de passar
 	var up_amount := 0;
 	if (difficulty == "major")
