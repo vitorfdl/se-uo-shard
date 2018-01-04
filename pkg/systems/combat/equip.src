@@ -7,7 +7,7 @@ include ":tn:cooldown";
 include "include/say";
 
 program equipweapon(who, item, startup)
-   if (startup)
+   if (startup && !who.npctemplate && who.getToughness() > 20)
       who.setToughness(who.getToughness()*-1);
       EraseObjProperty(who, "ArmorPenalty");
 
@@ -19,6 +19,7 @@ program equipweapon(who, item, startup)
       endforeach
       return 0;
    endif
+   
 	var descmod_item:= GetObjProperty(item,"descmod");
 
 	if(descmod_item != error)

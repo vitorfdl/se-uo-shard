@@ -108,7 +108,7 @@ function examinarArea(who)
    
 	var found := 0;
 	foreach mobile in ListMobilesNearLocationEX(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN)
-		if ( mobile == who || GetObjProperty(who, "IgnoreHidden")  ); // Do Nothing
+		if ( mobile == who || GetObjProperty(who, "IgnoreHidden") || mobile in who.party.members ); // Do Nothing
          continue;
 		elseif ( CheckLineOfSight(who, mobile) )
 			var difficulty := CalculateDHDiff(who, mobile);

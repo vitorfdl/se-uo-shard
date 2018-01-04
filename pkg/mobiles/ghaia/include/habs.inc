@@ -338,19 +338,7 @@ function SpitWeb(difficulty, targ, range)
    PlayMovingEffect(me, targ, web, 10);
 
    me.frozen := 0;
-   TS_StartTimer(targ, "paralysis", 5);
-
-   var preso1 := CreateItemAtLocation(targ.x, targ.y, targ.z+1, 4317, 1);
-   var preso2 := CreateItemAtLocation(targ.x, targ.y, targ.z+1, 4314, 1);
-   sleepms(5);
-
-   //AI_Move(me, targ, NEMOVE_TOWARD, NEMOVE_RUN, WAKEUP, dist);
-   RunTowardLocation( targ.x, targ.y );
-   DestroyItem(preso1);
-   DestroyItem(preso2);
-   sleepms(50);
-   SetCooldown(me, "web", 15);
-
+   TS_StartTimer(targ, "teia", 5);
    return 1;
 endfunction
 

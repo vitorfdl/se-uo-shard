@@ -1,0 +1,49 @@
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+
+function StartScript(mobile, attacker := 0, level := 0)
+   CreateItemAtLocation(mobile.x, mobile.y, mobile.z+1, 4317, 1);
+   CreateItemAtLocation(mobile.x, mobile.y, mobile.z+1, 4314, 1);
+
+	PlaySoundEffect(mobile, 0x205);
+	SendSystemReport(mobile, "Incapaz de se mover.");
+	mobile.frozen := 1;
+	
+	return 1;
+endfunction
+
+function EndScript(mobile)
+   var preso := ListItemsNearLocationOfType( mobile.x,mobile.y,mobile.z, 0, 4317 );
+   var preso2 := ListItemsNearLocationOfType( mobile.x,mobile.y,mobile.z, 0, 4314 );
+
+   Destroyitem(preso[1]);
+   Destroyitem(preso2[1]);
+
+	mobile.frozen := 0;
+	return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile);
+      elseif (type == "LogOff")
+         return;
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

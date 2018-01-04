@@ -53,19 +53,23 @@ function CopyRecipe(who, recipe)
 	if (!ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
 		SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
 		return 0;
+	elseif (!SearchArrayOfModel("objtype", cint(0x6400), EnumerateItemsInContainer(who.backpack))) 
+		SendSysMessageEx(who, "Você precisa de uma pena e tinteiro", SSM_FAIL);
+		return;
 	endif
 
-	if (rollAttrDice(who, WISDOM) >= recipe.difficulty+5)
+	if (rollAttrDice(who, WISDOM) >= recipe.difficulty+6)
 		var item := createItemInBackpack(who, OBJ_RECIPE_SLIP, 1);
 		if (item == error)
 			sendsysmessage(who, "  " + item);
 		endif
-		SetObjProperty(item, "spellinfo", recipe.spellid);
+		SetObjProperty(item, "spell_id", recipe.spellid);
 		SendSysMessageEx(who, "Você fez uma cópia do pergaminho.", SSM_INFO);
 		printtext(who, "*escrevendo pergaminho*");
 		return;
 	endif 
-	
+   
+
 	SendSysMessageEx(who, "Você copiou o pergaminho sem cuidados e ele ficou ilegivel.", SSM_FAIL);
 endfunction
 
