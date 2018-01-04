@@ -53,9 +53,6 @@ function SendGump(who, scroll)
       endif
    endif
 
-   print(recipe);
-   print("recipe_obj "+objtype);
-
 	if (!recipe || (recipe.Type != "group" && !item))
       if (who.cmdlevel < 4)
          SendSysMessageEx(who, "Algo errado com a receita, chame um GM!");
