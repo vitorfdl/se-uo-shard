@@ -23,6 +23,8 @@ program textcmd_createNPC(who, template)
 		if ( !template )
 			return 0;
 		endif
+   elseif (!template[":"])
+      template := ":ghaia:{}".format(template);
 	endif
 	
 	var targ := TargetCoordinates(who);

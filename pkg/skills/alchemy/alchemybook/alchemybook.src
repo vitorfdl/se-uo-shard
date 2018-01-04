@@ -227,7 +227,7 @@ function CreaterecipebookGump(book, can_read := 0)
          endif
       else
          GFPage(book_gump, book_gump.cur_page+1);
-         GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, book_gump.cur_page-1);
+         GFAddButton(book_gump, 120, 14, 2205, 2205, GF_PAGE_BTN, book_gump.cur_page-1);
       endif
       
 		GenerateSide(book_gump, recipe_list, book_gump.cur_page, side, pOX, pOY, i);
@@ -274,8 +274,12 @@ function GenerateSide(byref book_gump, recipe_list, i, side, byref pOX, byref pO
 
 	foreach r in (recipe_entry.reg)
 		r := SplitWords(r);
-		var obj := item_desc[r[1]];
-		recipe_entry.desc := "{}{} - {}<br>".format(recipe_entry.desc, r[2], obj.desc);
+		var obj := item_desc[hex(r[1])];
+      if (!obj) obj := item_desc[cint(r[1])]; endif
+
+      var item_name := obj.desc;
+      if (!item_name) item_name := obj.name; endif
+		recipe_entry.desc := "{}{} - {}<br>".format(recipe_entry.desc, r[2], item_name);
 	endforeach
 
 	if( TypeOf(recipe_entry) == "Struct" )
@@ -285,7 +289,7 @@ function GenerateSide(byref book_gump, recipe_list, i, side, byref pOX, byref pO
 			GFTextCrop(book_gump, pOX,  pOY, 115, 17, 995, recipe_entry.name);
 			
 			GFPage(book_gump, i);
-			GFTextCrop(book_gump, sOX,  15, 100, 18, 995, recipe_entry.name);
+			GFTextCrop(book_gump, sOX,  25, 100, 18, 995, recipe_entry.name);
 			// GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Inscrever");
 			// GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 100+recipe_pos);
 

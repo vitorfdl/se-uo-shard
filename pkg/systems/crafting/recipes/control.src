@@ -16,13 +16,13 @@ endprogram
 
 function ScrollCreate(scroll)
    var recipes_list := struct{
-      "Costura"    := ReadConfigFile(":womenswork:recipes"),
-      "Ferraria"   := ReadConfigFile(":tinkering:recipes"),
-      "Ferraria2" := ReadConfigFile(":metalworking:recipes"),
-      "Marcenaria" := ReadConfigFile(":woodworking:recipes"),
-      "Marcenaria2" :=  ReadConfigFile(":bowcrafting:recipes"),
-      "Cozinha"    := ReadConfigFile(":cooking:recipes"),
-      "Alquimia"   := ReadConfigFile(":alchemy:recipes")
+      "Costura"     := ReadConfigFile(":womenswork:recipes"),
+      "Ferraria"    := ReadConfigFile(":tinkering:recipes"),
+      "Ferraria2"   := ReadConfigFile(":metalworking:recipes"),
+      "Marcenaria"  := ReadConfigFile(":woodworking:recipes"),
+      "Marcenaria2" := ReadConfigFile(":bowcrafting:recipes"),
+      "Cozinha"     := ReadConfigFile(":cooking:recipes"),
+      "Alquimia"    := ReadConfigFile(":alchemy:recipes")
       // "Runas"      := ReadConfigFile(":magery:recipes")
    };
 
@@ -35,19 +35,19 @@ function ScrollCreate(scroll)
       // "Runas"      := 0x46AE
    };
 
-   sleep(2);
+   sleep(1);
 
    var objtype := GetObjProperty(scroll, "objtype");
    if (objtype)
       foreach cfg_name in (recipes_list.keys())
          var cfg := recipes_list[cfg_name];
-         if (FindConfigElem(cfg, objtype) || FindConfigElem(cfg, Hex(objtype)))
+         if (FindConfigElem(cfg, cint(objtype)) || FindConfigElem(cfg, Hex(objtype)))
             cfg_name["2"] := "";
             scroll.graphic := recipe_graphic[cfg_name];
             SetObjProperty(scroll, "pericia", cfg_name);
             break;
          endif
-         sleep(1);
+         sleepms(5);
       endforeach
    endif
 
