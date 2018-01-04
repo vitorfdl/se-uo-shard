@@ -30,7 +30,7 @@ function GetExpCap(who)
 
 	var char_age := GetCharAge(who, "weeks") +1;
 	var char_level := who.getLevel() - 1; //hack
-	var result := (char_age*1000) - (char_level*1000);
+	var result := (char_age*2000) - (char_level*500);
 	return result;
 endfunction
 
@@ -64,7 +64,7 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
-  if ( GetExpCap(mobile) == 0)
+  if ( GetExpCap(mobile) >= who.Getexp())
   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
 		return 0;
    endif
@@ -117,7 +117,7 @@ endfunction
 function CheckExpUp(who)
 	var level := who.getLevel();
 	if (level < 20)
-		var maxexp := who.getLevel() * 1000; //starts at 2000
+		var maxexp := who.getLevel() * 1500; //starts at 2000
 		var exp := who.GetExp();
 
 		if (exp < maxexp)

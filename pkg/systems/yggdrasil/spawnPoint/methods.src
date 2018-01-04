@@ -32,15 +32,16 @@ endprogram
 
 exported function GetProps( spawnpoint )
    var data         := struct{};
-   data.+spot_serial := GetObjProperty(spawnpoint, "spot_serial");
-   data.+level       := GetObjProperty(spawnpoint, "level");
-   data.+type        := GetObjProperty(spawnpoint, "type");
-   data.+range       := GetObjProperty(spawnpoint, "range");
-   data.+mob_number  := GetObjProperty(spawnpoint, "mob_number");
-   data.+spotgroup   := GetObjProperty(spawnpoint, "spotgroup");
-   data.+monsters    := GetObjProperty(spawnpoint, "monsters");
-   data.+spawnqueue  := GetObjProperty(spawnpoint, "spawnqueue");
-   data.+groups      := GetObjProperty(spawnpoint, "groups");
+   data.+spot_serial  := GetObjProperty(spawnpoint, "spot_serial");
+   data.+level        := GetObjProperty(spawnpoint, "level");
+   data.+type         := GetObjProperty(spawnpoint, "type");
+   data.+range        := GetObjProperty(spawnpoint, "range");
+   data.+mob_number   := GetObjProperty(spawnpoint, "mob_number");
+   data.+spotgroup    := GetObjProperty(spawnpoint, "spotgroup");
+   data.+monsters     := GetObjProperty(spawnpoint, "monsters");
+   data.+spawnqueue   := GetObjProperty(spawnpoint, "spawnqueue");
+   data.+groups       := GetObjProperty(spawnpoint, "groups");
+   data.+diedmonsters := GetObjProperty(spawnpoint, "diedmonsters");
 
    if (!data.monsters)
       data.monsters := array{};
@@ -178,6 +179,7 @@ function ModelSpawnPoint( data := struct{})
    else
       foreach g in (data.groups)
          data.groups[_g_iter] := cint(g);
+         sleepms(2);
       endforeach
    endif 
 

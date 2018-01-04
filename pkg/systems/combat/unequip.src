@@ -40,6 +40,7 @@ program unequipweapon(who, item)
 	if (who.npctemplate)
 		return 1;
 	endif
+	RemoveEquipmentMods(who, item);
 
 	var mods := GetObjProperty(item, "equip");
 
@@ -68,7 +69,6 @@ program unequipweapon(who, item)
 		
 	endif
 
-	RemoveEquipmentMods(who, item);
 
 	set_critical(0);
 endprogram

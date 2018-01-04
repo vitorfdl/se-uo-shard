@@ -39,13 +39,11 @@ function EnumeratePhysicalItems(mobile)
 endfunction
 
 function UnequipAll(who)
-
 	var equips := EnumeratePhysicalItems(who);
 
 	foreach equip in equips
 		MoveItemToContainer(equip, who.backpack);
 	endforeach
-
 endfunction
 
 

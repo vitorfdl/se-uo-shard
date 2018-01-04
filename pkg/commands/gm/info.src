@@ -264,7 +264,7 @@ function DisplayAttributes(targ, byref gump, byref entry, byref y_pos)
 		endif
 
 		foreach attrib_name in ( group )
-			if (!(gm.acctname in gmParedes) && !targ.npctemplate && targ != gm)
+			if (gm.cmdlevel >= 5 || targ.npctemplate || targ == gm)
 				var btn_id := GFAddButton(gump, 150, (y_pos+3), 2117, 2118, GF_CLOSE_BTN);
 				RegisterButton(btn_id, attrib_name, "attribEdit");
 			endif
@@ -277,11 +277,11 @@ function DisplayAttributes(targ, byref gump, byref entry, byref y_pos)
 			if (mod_value < 0) colors[2] := 39;
 			elseif (mod_value > 0) colors[2] := 61; endif
 			
-			if (gm.acctname in gmParedes && (!targ.npctemplate))
-				GFTextRight(gump, 465, y_pos, 2100, "=x");
-			else
+			if (gm.cmdlevel >= 5 || targ.npctemplate || targ == gm)
 				GFTextRight(gump, 445, y_pos, colors[1], "{}".format(value));
 				GFTextRight(gump, 475, y_pos, colors[2], "({})".format(mod_value));
+			else
+				GFTextRight(gump, 465, y_pos, 2100, "=x");
 			endif
 			y_pos := y_pos+20;
 			SleepMS(2);
@@ -460,7 +460,7 @@ function GetCustom(targ, property)
 		"gotten_item_serial":
 			return targ.GetGottenItem().serial;
 		"experiência":
-			return targ.GetExp() + " / " + targ.getLevel() * 1000;
+			return targ.GetExp() + " / " + targ.getLevel() * 1500;
 		"data_de_criação":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
       "tempo_de_vida":
@@ -674,9 +674,9 @@ function HabEdit(who, targ, input_info)
 	endfor
 	SetObjProperty(targ, "myhabs", habilidades);
 	
-	// if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "Não"))
-	// 	SetSkillPoints(targ, GetSkillPoints(who)+1);
-	// endif
+	if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "Não"))
+		targ.SetTalentPoints(1);
+	endif
 	
 	LogToFile(":fls_core:vital.log", who.name+" ("+who.acctname+") editou "+targ.name+" ("+targ.acctname+") :: removeu habilidade "+input_info.name, LOG_DATETIME);
 
@@ -684,9 +684,10 @@ function HabEdit(who, targ, input_info)
 endfunction
 
 function AttributeEdit(who, targ, input_info)
-	if (who.cmdlevel < 4 && who != targ)
+	if (who.cmdlevel < 5 && who.serial != targ.serial && !targ.npctemplate)
 		return 1;
 	endif
+
 	var real_value := AP_GetTrueSkill(targ, input_info.name);
 	var mod_value := AP_GetSkillMod(targ, input_info.name);
 	var value := real_value+" "+mod_value;
@@ -698,8 +699,8 @@ function AttributeEdit(who, targ, input_info)
 	change := SplitWords(change, " ");
 	if (!targ.cmdlevel && !targ.npctemplate)
 		LogToFile("log/edits.log", who.name+" ("+who.acctname+") editou "+targ.name+" ("+targ.acctname+") :: "+input_info.name+" de "+real_value+" ("+mod_value+") para "+change[1]+" ("+CInt(change[2])+")<br>", LOG_DATETIME);
-	elseif (change[1] != "0" && change[1] != "1")
-		return 1;
+	// elseif (change[1] != "0" && change[1] != "1")
+	// 	return 1;
 	endif
 	//LogToFile(":fls_core:edits.log", who.name+" ("+who.acctname+") editou "+targ.name+" ("+targ.acctname+") :: "+input_info.name+" de "+real_value+" ("+mod_value+") para "+change[1]+" ("+CInt(change[2])+")<br>", LOG_DATETIME);
 	AP_SetTrueSkill(targ, input_info.name, change[1]);
