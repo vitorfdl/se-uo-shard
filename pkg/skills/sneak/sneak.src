@@ -124,7 +124,7 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 	//Caso queira colocar novamente aquele esquema de não se esconder com pessoas OLHANDO
 	if (!TemHabilidade(who, "Guerreiro das Sombras"))
 		var num_watching := GetWatchingPeople(who);
-		var skill := cint(AP_GetSkill(who, FURTIVIDADE) / 10);
+		var skill := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS));
 
 		if (skill < 1)
 			skill := 0;
@@ -144,8 +144,7 @@ function GetWatchingPeople(who)
 	
 	// var range := GetHidingRange(AP_GetSkill(who, FURTIVIDADE));
 	foreach person in ListMobilesInLineOfSight(who, 6)
-	
-		if ( IsFacing(person, who.x, who.y) && person.connected )
+		if ( IsFacing(person, who.x, who.y) && person.acctname && !person.master )
 			counter := counter+1;
 		endif
 		
