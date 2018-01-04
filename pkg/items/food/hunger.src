@@ -23,18 +23,19 @@ program Hunger(chr)
 			SendSysMessageEx(chr, "Você esta muito faminto e correndo perigo de vida!!",  SSM_INFO);
 			if (!GetObjProperty(chr, "criandochar") && rollResistDice(chr, CONSTITUTION) < 8)
 				if (AP_GetVital(chr, "DP") >= 20)
-					SendSysMessageEx(chr, "Você desmaiou de fome!!",  SSM_FAIL);
 					ApplyRawDamage(chr, CInt(AP_GetVitalMaximumValue(chr, "Hits")));
 					AP_SetVital(chr, "Hunger", AP_GetVital(chr, "DP")+(2*60));
+               sleepms(700);
+					SendSysMessageEx(chr, "Você desmaiou de fome!!",  SSM_FAIL);
 				endif
 			endif	
 		endif
 
 		RecalcVitals(chr);
       
-      var players := ListMobilesNearLocationEx(chr.x, chr.y, chr.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+      var players := ListMobilesNearLocationEx(chr.x, chr.y, chr.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
       if (players.size() >= 1)
-         ExpGain(chr, "minor");
+         ExpGain(chr, 2);
       endif
 
 		Sleep(500); //15 min
