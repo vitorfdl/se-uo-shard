@@ -41,7 +41,7 @@ function PlayCraftWork(who, craftSound, loops:=0, delay:=2, craftAction:=0, fast
    else
       PlaySoundEffect(who, craftSound);
       if (fastcraft)
-         sleepms(500);
+         sleepms(200);
          return;
       endif
       sleep(delay);
@@ -79,6 +79,7 @@ function GetRecipe(objtype, elem)
       "mark"        := GetConfigInt(elem, "mark"),
       "exceptional" := GetConfigInt(elem, "exceptional"),
       "delay"       := GetConfigInt(elem, "delay"),
+      "fastcraft"       := GetConfigInt(elem, "fastcraft"),
       "more"       := GetConfigInt(elem, "more"),
       "materials"  := materials,
       "main_material" := elem.main_material,

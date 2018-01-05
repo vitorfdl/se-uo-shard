@@ -143,7 +143,6 @@ endfunction
 
 function clonar(newlook, oldlook)
 	var chardata:=dictionary;
-	var valor;
 	var mod;
 	var mypack := GetEquipmentByLayer(newlook, 0x15);
 	if (!mypack)
@@ -155,13 +154,12 @@ function clonar(newlook, oldlook)
 	var itemlist := ListEquippedItems(newlook);
 	var y;
 	
-	// foreach attrib_name in AP_ListAttributesByType()
-	// 	valor:= GetAttribute( oldlook, attrib_name );
-	// 	mod := AP_GetStatMod( oldlook, attrib_name ) * -1;
-	// 	valor := valor + mod;
-	// 	AP_SetTrueSkill(newlook, attrib_name, valor);
-	// 	sleepms(10);
-	// endforeach
+	foreach attrib_name in AP_ListAttributesByType()
+		var valor:= GetAttribute( oldlook, attrib_name );
+		AP_SetTrueSkill(newlook, attrib_name, valor);
+		AP_SetSkillMod(newlook, attrib_name, mod);
+		sleepms(2);
+	endforeach
 	
 	var newhits := CInt(GetVital(oldlook, "hits"));
 	var newmana := CInt(GetVital(oldlook, "mana"));
@@ -177,6 +175,7 @@ function clonar(newlook, oldlook)
 
 	foreach x in itemlist
 		MoveItemToContainer(x, mypack);
+      sleepms(2);
 	endforeach
 
 	itemlist := ListEquippedItems(oldlook);
@@ -196,29 +195,31 @@ function clonar(newlook, oldlook)
 		EraseObjProperty(newlook,"description");
 	endif
 
-	if(newlook.ip)
-		SetObjProperty(newlook,"raca",oldlook.title_race);
-	endif
-
-	newlook.gender := oldlook.gender;
-	newlook.graphic := oldlook.graphic;
-	newlook.color := oldlook.color;
-	newlook.title_race:=oldlook.title_race;
-	newlook.title_suffix:=oldlook.title_suffix;
-	newlook.title_prefix:=oldlook.title_prefix;
-	newlook.name := oldlook.name;
-	newlook.TrueColor := oldlook.TrueColor;
-	newlook.trueobjtype := oldlook.trueobjtype;
+	newlook.gender       := oldlook.gender;
+	newlook.graphic      := oldlook.graphic;
+	newlook.color        := oldlook.color;
+	newlook.title_race   := oldlook.title_race;
+	newlook.title_suffix := oldlook.title_suffix;
+	newlook.title_prefix := oldlook.title_prefix;
+	newlook.name         := oldlook.name;
+	newlook.TrueColor    := oldlook.TrueColor;
+	newlook.trueobjtype  := oldlook.trueobjtype;
 	
 	newlook.murderer := oldlook.murderer;
 	newlook.criminal := oldlook.criminal;
+
+   case (newlook.alignment)
+      1: 
+   endcase
+
 	if (oldlook.alignment == "evil")
 		newlook.murderer := 1;
 	endif	
 
-	if (newlook.ip)
-		chardata:=GetObjProperty(newlook,"chardata");
-		chardata["raca"]:=newlook.title_race;
+   if (GetObjProperty(newlook, "chardata"))
+		chardata := GetObjProperty(newlook,"chardata");
+   else
+      chardata := struct{};
 	endif
 
 	//Copia o profile do npc.
@@ -238,20 +239,16 @@ function clonar(newlook, oldlook)
 	endif
 	EquipItem(newlook, mypack);
 	
-	if ((GetObjProperty(oldlook,"classe"))!=error)
-		SetObjProperty(newlook,"classe",GetObjProperty(oldlook,"classe"));
-	endif
-
-	if ((GetObjProperty(oldlook,"kit"))!=error)
-		SetObjProperty(newlook,"kit",GetObjProperty(oldlook,"kit"));
+	if ((GetObjProperty(oldlook,"achievements"))!=error)
+		SetObjProperty(newlook,"achievements",GetObjProperty(oldlook,"achievements"));
 	endif
 	
-	if ((GetObjProperty(oldlook,"myhabs"))!=error)
-		SetObjProperty(newlook,"myhabs",GetObjProperty(oldlook,"myhabs"));
+	if ((GetObjProperty(oldlook,"recipes"))!=error)
+		SetObjProperty(newlook,"recipes",GetObjProperty(oldlook,"recipes"));
 	endif
 	
-	if ((GetObjProperty(oldlook,"buyhab"))!=error)
-		SetObjProperty(newlook,"buyhab",GetObjProperty(oldlook,"buyhab"));
+	if ((GetObjProperty(oldlook,"toughness"))!=error)
+		SetObjProperty(newlook,"toughness",GetObjProperty(oldlook,"toughness"));
 	endif	
 	
 	return 1;

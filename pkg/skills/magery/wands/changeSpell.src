@@ -23,7 +23,7 @@ program changeSpell(params)
          new_index -= spell_list.size();
       endif
 
-      if (spell_list[new_index] != 0 && spell_list[new_index] != active_spell)
+      if (cint(spell_list[new_index]) != 0 && cint(spell_list[new_index]) != active_spell)
          new_spell := spell_list[new_index];
          break;
       endif

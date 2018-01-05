@@ -17,6 +17,7 @@ program command_Message(who)
 	if (!targ || !targ.ISA(POLCLASS_MOBILE))
 		targ := who;
 	endif
+
 	while (1)
 		var gump := GFCreateGump();
 		GFResizePic(gump, 84, 90, 9260, 460, 535);
@@ -29,25 +30,18 @@ program command_Message(who)
 		var chardata := GetObjProperty(targ, "chardata");
 		if (!chardata)
 			var chardata := struct;
-			chardata.+Skills := dictionary;
 		endif
-		var attributes := AP_ListAttributesByType("skill");
-		GFTextLine(gump, 245,120,1153,"Chardata Skill Edit: " + targ.name);
+		var attributes := AP_ListAttributesByType("Stat");
+		GFTextLine(gump, 245,120,1153,"Attributes Edit: " + targ.name);
 		var y := 160;
 		foreach skill in attributes
 			GFTextLine(gump, 180, y, 2103, skill);
 			
-			if (!chardata.Skills[skill])
-				GFTextLine(gump, 180+200, y, 2103, "0");
-			else
-				GFTextLine(gump, 180+200, y, 2103, chardata.Skills[skill]);
-			endif
+			// GFAddButton(gump, 180-10, y+3, 2436, 2436, GF_CLOSE_BTN, GetSkillIdFromName(skill));
 			
-			GFAddButton(gump, 180-10, y+3, 2436, 2436, GF_CLOSE_BTN, GetSkillIdFromName(skill));
-			
-			if (chardata.Skills[skill] >= 1)
-				GFAddButton(gump, 180-20, y+3, 2437, 2438, GF_CLOSE_BTN, (300+GetSkillIdFromName(skill)));
-			endif	
+			// if (chardata.Skills[skill] >= 1)
+			// 	GFAddButton(gump, 180-20, y+3, 2437, 2438, GF_CLOSE_BTN, (300+GetSkillIdFromName(skill)));
+			// endif	
 			y += 20;
 		endforeach
 		
@@ -57,20 +51,12 @@ program command_Message(who)
 		if (!input)
 			break;
 		elseif ( input >= 300)
-			input -= 300;
-			var skillname := GetSkillNameFromId(input);
-			chardata.Skills[skillname] -= 1;
-			if (chardata.Skills[skillname] == 0)
-				chardata.Skills.Erase(skillname);
-			endif
-		else
-			var skillname := GetSkillNameFromId(input);
-			if (!chardata.Skills[skillname])
-				chardata.Skills[skillname] := 1;
-			elseif (chardata.Skills[skillname] != 3)
-				chardata.Skills[skillname] += 1;
-			endif
+
 		endif
 		SetObjProperty(targ, "chardata", chardata);
 	endwhile
 endprogram
+
+function handleInput(who, input)
+
+endfunction
