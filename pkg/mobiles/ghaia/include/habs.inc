@@ -110,8 +110,14 @@ function summonCreature(qty, creatures)
 endfunction
 
 function NPC_Agarrar(difficulty, targ)
-   // PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
-   // TS_StartTimer(targ, "agarrar", -1);
+   PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
+   TS_StartTimer(targ, "paralysis", 3);
+   TS_StartTimer(me, "paralysis", 3);
+   MoveObjectToLocation(me, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
+   while (me)
+      sleep(1);
+      DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
+   endwhile
    return 1;
 endfunction
 
