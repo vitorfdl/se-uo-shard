@@ -22,7 +22,7 @@ program textcmd_ResGump(who)
 		targ := Target(who);
 		if ( targ.IsA(POLCLASS_CORPSE) )
 			targ := SystemFindObjectBySerial(targ.ownerserial);
-			if ( !targ )
+			if ( !targ && !GetObjproperty(targ, "npctemplate"))
 				SendSysMessage(who, "No owner could be found for that corpse.");
 				return 0;
 			endif
@@ -33,6 +33,11 @@ program textcmd_ResGump(who)
 			return 0;
 		endif
 	endif
+
+   if (GetObjproperty(targ, "npctemplate"))
+      return ghaiaRessurect(targ);
+   endif
+
 	var motiveress;
 	if (who.acctname != targ.acctname && targ.cmdlevel < 1)
 		motiveress := cstr(BigRequestGump(who , "Escreva detalhadamente o motivo deste ress:"));

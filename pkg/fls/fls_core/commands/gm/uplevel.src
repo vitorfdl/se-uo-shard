@@ -30,6 +30,7 @@ program reset(who, params)
 	item.SetExp(exp+1);
 
 	CheckExpUp(item);
+   SendSysMessageEx(who, "Você subiu 1 nivel");
 	// SetSkillPoints(item, GetSkillPoints(item)+1);
 	// SetAttribPoints(item, GetAttribPoints(item)+3);
 	// // SetCharLevel(item, who.getLevel()(item)+1);

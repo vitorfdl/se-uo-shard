@@ -154,6 +154,10 @@ exported function MegaCliloc( who, byref packet )
 		if( item.IsA(POLCLASS_MOBILE) )
 			Object_Name := item.name;
 
+         if (item.dead)
+            Object_Name := "Fantasminha";
+         endif
+
 			var raca := GetObjProperty(item, "chardata").raca;
 			if (raca)
 				Object_Name := Object_Name  + " [" + raca + "]";

@@ -12,8 +12,18 @@ include ":gumps:include/gumps_ex";
 include ":datafile:datafile";
 include ":attributes:attributes";
 
+const BTN_CHANGE_CLASS := 12;
+const BTN_CHANGE_RACE := 11;
+const BTN_CHANGE_CORPSE := 13;
+const BTN_CHANGE_LEVELUP := 14;
+const BTN_CHANGE_FEAT := 15;
+
 program command_Message(who)
-	var targ := target(who);
+	var targ;
+   if (who.cmdlevel > 4)
+      targ := target(who);
+   endif
+
 	if (!targ || !targ.ISA(POLCLASS_MOBILE))
 		targ := who;
 	endif
@@ -29,34 +39,77 @@ program command_Message(who)
 		
 		var chardata := GetObjProperty(targ, "chardata");
 		if (!chardata)
-			var chardata := struct;
+			var chardata := struct{ "level" := 1, "raca" := "", "Feats" := array{}};
 		endif
-		var attributes := AP_ListAttributesByType("Stat");
-		GFTextLine(gump, 245,120,1153,"Attributes Edit: " + targ.name);
-		var y := 160;
-		foreach skill in attributes
-			GFTextLine(gump, 180, y, 2103, skill);
-			
-			// GFAddButton(gump, 180-10, y+3, 2436, 2436, GF_CLOSE_BTN, GetSkillIdFromName(skill));
-			
-			// if (chardata.Skills[skill] >= 1)
-			// 	GFAddButton(gump, 180-20, y+3, 2437, 2438, GF_CLOSE_BTN, (300+GetSkillIdFromName(skill)));
-			// endif	
-			y += 20;
-		endforeach
-		
+
+      var y := 160;
+		GFTextLine(gump, 170, y, 2103, "Raça:");
+		GFTextLine(gump, 230, y, 2103, "{}".format(chardata.raca));
+      GFAddButton(gump, 150, y+3, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_RACE);
+		GFTextLine(gump, 170, y+20, 2103, "Classe:");
+		GFTextLine(gump, 230, y+20, 2103, "{}".format(chardata.classe));
+      GFAddButton(gump, 150, y+20+3, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_CLASS);
+
+      GFAddButton(gump, 185, y+20+20, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
+		GFHTMLArea(gump,  170, y+20+25, 150, 25, "<basefont color=#7FFFD4>Mudar Aparência");
+      
+      GFAddButton(gump, 185, y+20+20+20, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
+		GFHTMLArea(gump,  170, y+20+20+25, 150, 25, "<basefont color=#7FFFD4>Subir Level");
+      
+      GFAddButton(gump, 185, y+40+20+20, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
+		GFHTMLArea(gump,  170, y+40+20+25, 150, 25, "<basefont color=#7FFFD4>Adquirir Talento");
+      
 		var input := GFSendGump(who, gump);
 		input := input[0];
-		
-		if (!input)
-			break;
-		elseif ( input >= 300)
 
-		endif
+      var output := handleInput(who, input, chardata);
+
 		SetObjProperty(targ, "chardata", chardata);
+		if (output) return; endif;
 	endwhile
 endprogram
 
-function handleInput(who, input)
-
+function handleInput(who, input, byref chardata)
+   case (input)
+      BTN_CHANGE_RACE:
+         var raca := RadioGump(who, 180, 160, "Qual raça deseja escolher?", array{"Humano", "Meio-Elfo", "Elfo", "Remover"});
+         if (raca == "Remover")
+            chardata.erase("raca");
+            return;
+         endif
+         chardata.raca := raca;
+         return;
+      BTN_CHANGE_CLASS:
+         var classe := RadioGump(who, 180, 160, "Qual clase deseja escolher?", array{"Guerreiro", "Ladino", "Mago", "Clérigo"});
+         chardata.classe := classe;
+         return;
+      BTN_CHANGE_CORPSE:
+         var sexo := RadioGump(who, 180, 160, "Qual sexo deseja escolher?", array{"Homem", "Mulher"});
+         if (sexo == "Homem")
+            if (chardata.raca == "Humano")
+               who.graphic 	:= 400;
+               who.trueobjtype := 400;
+            else
+               who.graphic 	:= 605;
+               who.trueobjtype := 605;
+            endif
+            who.gender := 0;
+         else
+            if (chardata.raca == "Humano")
+               who.graphic 	:= 401;
+               who.trueobjtype := 401;
+            else
+               who.graphic 	:= 606;
+               who.trueobjtype := 606;
+            endif
+            who.gender := 1;
+         endif
+         Start_Script(":disguise:commands/gm/editlook", who);
+         return 1;
+      BTN_CHANGE_LEVELUP:
+         Start_Script(":fls_core:commands/gm/uplevel", who);
+         return;
+      BTN_CHANGE_FEAT:
+      default: return 1;
+   endcase
 endfunction

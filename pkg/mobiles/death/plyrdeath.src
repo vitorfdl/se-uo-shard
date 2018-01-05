@@ -56,8 +56,9 @@ program core_chrDeath(params)
 		EraseObjProperty(corpse, "realname");
 	endif
 	
-	SetObjProperty(ghost, "realname", ghost.name);
-	SetName(ghost, "Fantasminha");	
+	// SetObjProperty(ghost, "realname", ghost.name);
+	// SetName(ghost, "Fantasminha");	
+	SetName(ghost, ghost.name);
 
 	TS_Death(ghost);
 	

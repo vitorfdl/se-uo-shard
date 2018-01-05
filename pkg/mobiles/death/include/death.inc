@@ -72,8 +72,8 @@ function KataWakeUp(ghost, corpse)
 		SendSysMessage(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Solicite ajude da Staff");
 	endif
 
-	var realname := GetObjProperty(ghost, "realname");
-	SetName(ghost, realname);	
+	// var realname := GetObjProperty(ghost, "realname");
+	SetName(ghost, ghost.name);	
 	EraseObjProperty(ghost, "realname");
 	EraseObjProperty(ghost, "corpo");
 	
