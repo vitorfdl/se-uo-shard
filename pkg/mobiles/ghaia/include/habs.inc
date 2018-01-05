@@ -73,7 +73,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    var res;
    case (hab_name)
       "summon": res := SummonCreature(cint(hab_dice), hab_special); break;
-      "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target); break;
+      "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target, hab_special); break;
       // "cançãoSedutora": CancaoSedutora(hab_dice); break;
       "furtividade": res := NPC_Sneak(); break;
       "metamorfose": res := Metamorfose(hab_special); break;
@@ -109,14 +109,19 @@ function summonCreature(qty, creatures)
    return 1;
 endfunction
 
-function NPC_Agarrar(difficulty, targ)
+function NPC_Agarrar(dice, targ, difficulty)
    PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
+   if (rollResistDice(targ, DEXTERITY) <= difficulty)
+      printText(targ, "*escapou de {}*".format(me.name));
+      return 1;
+   endif
+
    TS_StartTimer(targ, "paralysis", 3);
    TS_StartTimer(me, "paralysis", 3);
    MoveObjectToLocation(me, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
    while (me)
       sleep(1);
-      DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
+      DamageFLS(targ, RandomDiceRoll("1d2"), DMG_BLUDGE, me);
    endwhile
    return 1;
 endfunction
