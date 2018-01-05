@@ -141,13 +141,19 @@ function Fight(opponent, alerted := 0)
          break;
       elseif (opponent.dead)
          //Somente checa se tem mais inimigo, se n se afsata do corpo.
-         foreach mob in ListMobilesInLineOfSight(me, areasize + 2)
+         var achou := 0;
+         foreach mob in ListMobilesInLineOfSight(me, cint(areasize) + 2)
             if( CanFight(me, mob) )
+               achou := 1;
                break;
             endif
             sleepms(2);
          endforeach
 
+         if (achou)
+            break;
+         endif
+         
          // Pra se afastar do corpo e o cara poder correr
          var corpo := opponent.GetCorpse();
          var end   := ReadGameClock() + 10;
