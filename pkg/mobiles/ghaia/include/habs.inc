@@ -113,7 +113,7 @@ function NPC_Agarrar(dice, targ, difficulty)
    if (Distance(me, targ) > 2)
       return 0;
    endif
-   
+
    PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
    if (rollResistDice(targ, DEXTERITY) <= difficulty)
       printText(targ, "*escapou de {}*".format(me.name));
@@ -123,10 +123,13 @@ function NPC_Agarrar(dice, targ, difficulty)
    TS_StartTimer(targ, "paralysis", 3);
    TS_StartTimer(me, "paralysis", 3);
    MoveObjectToLocation(me, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
-   while (me)
+   for i := 1 to 3
+      if (!me)
+         return;
+      endif
       sleep(1);
       DamageFLS(targ, RandomDiceRoll("1d2"), DMG_BLUDGE, me);
-   endwhile
+   endfor
    return 1;
 endfunction
 
