@@ -238,11 +238,11 @@ exported function FillQueue(spawnpoint)
 
    // count recent died monsters
    var spot := SystemFindObjectBySerial(config.spot_serial);
-   var spot_time := cint(GetObjProperty(spot, "timeinterval")) * 60000;
+   var spot_time := cint(GetObjProperty(spot, "timeinterval"));
    index_rem := array{};
    var diedmonsters := config.diedmonsters;
    foreach died in diedmonsters
-      if (cint(died.time)+spot_time <= POLCore().systime)
+      if (AddTimeTo(died.time, spot_time, "minutes") <= POLCore().systime)
          index_rem.append(_died_iter);
       else
          spawn_size += 1;
