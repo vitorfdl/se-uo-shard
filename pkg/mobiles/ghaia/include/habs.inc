@@ -128,7 +128,7 @@ function NPC_Agarrar(dice, targ, difficulty)
          return;
       endif
       sleep(1);
-      DamageFLS(targ, RandomDiceRoll("1d2"), DMG_BLUDGE, me);
+      DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
    endfor
    return 1;
 endfunction
