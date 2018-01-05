@@ -242,8 +242,11 @@ exported function MegaCliloc( who, byref packet )
 
 			if (item.isA(POLCLASS_WEAPON))
 				if (elem.strrequired)
-					xDesc += ">Força Mínima: {}<br>".format(elem.strrequired);
+					xDesc += "Força Mínima: {}<br>".format(elem.strrequired);
 				endif
+            if (elem.intrequired)
+					xDesc += "Inteligência Mínima: {}<br>".format(elem.intrequired);
+            endif
 				if (who.cmdlevel > 3)
 					xDesc += "Dano: {}<br>".format(elem.damage);
 					xDesc += "Velocidade: {}<br>".format(elem.speed);

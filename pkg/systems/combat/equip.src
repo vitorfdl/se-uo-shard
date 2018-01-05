@@ -70,6 +70,9 @@ function SetEquipmentMods(who, item)
 	if((restrict == 1) and (CheckGender(who) != 2))
 		SendSysMessageEx(who, "Apenas mulheres podem vestir isto.", SSM_FAIL);
 		return 0;
+   elseif (cint(item_e.intrequired) > AP_GetStat(who, INTELLIGENCE))
+		SendSysMessageEx(who, "Você não tem inteligência o suficiente para usar isso.", SSM_FAIL);
+      return 0;
 	endif
 
 	if (item_e.Pericia)
