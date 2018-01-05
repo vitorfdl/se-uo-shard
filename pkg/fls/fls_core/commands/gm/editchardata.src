@@ -11,6 +11,7 @@ include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":datafile:datafile";
 include ":attributes:attributes";
+include ":tn:tngumps";
 
 const BTN_CHANGE_CLASS := 12;
 const BTN_CHANGE_RACE := 11;
@@ -30,34 +31,34 @@ program command_Message(who)
 
 	while (1)
 		var gump := GFCreateGump();
-		GFResizePic(gump, 84, 90, 9260, 460, 535);
+		GFResizePic(gump, 84, 90, 9260, 280, 260);
 
-		GFGumpPicTiled(gump, 100,100,30,510,10460);
-		GFGumpPicTiled(gump, 500,100,30,510,10460);
-		GFGumpPicTiled(gump, 80,88,463,16,10100);
-		GFGumpPicTiled(gump, 84,610,457,16,10100);
+		GFGumpPicTiled(gump, 100,100,30,235,10460);
+		GFGumpPicTiled(gump, 320,100,30,235,10460);
+		// GFGumpPicTiled(gump, 80,88,463,16,10100);
+		// GFGumpPicTiled(gump, 84,610,457,16,10100);
 		
 		var chardata := GetObjProperty(targ, "chardata");
 		if (!chardata)
 			var chardata := struct{ "level" := 1, "raca" := "", "Feats" := array{}};
 		endif
 
-      var y := 160;
-		GFTextLine(gump, 170, y, 2103, "Raça:");
-		GFTextLine(gump, 230, y, 2103, "{}".format(chardata.raca));
-      GFAddButton(gump, 150, y+3, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_RACE);
-		GFTextLine(gump, 170, y+20, 2103, "Classe:");
-		GFTextLine(gump, 230, y+20, 2103, "{}".format(chardata.classe));
-      GFAddButton(gump, 150, y+20+3, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_CLASS);
+      var y := 120;
+		GFTextLine(gump, 170, y, 2100, "Raça:");
+		GFTextLine(gump, 220, y, 2103, "{}".format(chardata.raca));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_RACE);
+		GFTextLine(gump, 170, y+20, 2100, "Classe:");
+		GFTextLine(gump, 220, y+20, 2103, "{}".format(chardata.classe));
+      GFAddButton(gump, 150, y+20+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_CLASS);
 
-      GFAddButton(gump, 185, y+20+20, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
-		GFHTMLArea(gump,  170, y+20+25, 150, 25, "<basefont color=#7FFFD4>Mudar Aparência");
+      GFAddButton(gump, 172, y+20+30, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
+		GFHTMLArea(gump,  170, y+20+30, 115, 25, "<basefont color=#7FFFD4><center>Mudar Aparência", 1);
       
-      GFAddButton(gump, 185, y+20+20+20, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
-		GFHTMLArea(gump,  170, y+20+20+25, 150, 25, "<basefont color=#7FFFD4>Subir Level");
+      GFAddButton(gump, 172, y+20+20+40, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
+		GFHTMLArea(gump,  170, y+20+20+40, 115, 25, "<basefont color=#7FFFD4><center>Subir Level", 1);
       
-      GFAddButton(gump, 185, y+40+20+20, 2437, 2438, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
-		GFHTMLArea(gump,  170, y+40+20+25, 150, 25, "<basefont color=#7FFFD4>Adquirir Talento");
+      GFAddButton(gump, 172, y+40+20+50, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
+		GFHTMLArea(gump,  170, y+40+20+50, 115, 25, "<basefont color=#7FFFD4><center>Adquirir Talento", 1);
       
 		var input := GFSendGump(who, gump);
 		input := input[0];
@@ -72,15 +73,16 @@ endprogram
 function handleInput(who, input, byref chardata)
    case (input)
       BTN_CHANGE_RACE:
-         var raca := RadioGump(who, 180, 160, "Qual raça deseja escolher?", array{"Humano", "Meio-Elfo", "Elfo", "Remover"});
+         var raca := RadioGump(who, 180, 190, "Qual raça deseja escolher?", array{"Humano", "Meio-Elfo", "Elfo", "Remover"});
          if (raca == "Remover")
             chardata.erase("raca");
             return;
          endif
          chardata.raca := raca;
+         SetName(who, who.name);
          return;
       BTN_CHANGE_CLASS:
-         var classe := RadioGump(who, 180, 160, "Qual clase deseja escolher?", array{"Guerreiro", "Ladino", "Mago", "Clérigo"});
+         var classe := RadioGump(who, 180, 190, "Qual clase deseja escolher?", array{"Guerreiro", "Ladino", "Mago", "Clérigo"});
          chardata.classe := classe;
          return;
       BTN_CHANGE_CORPSE:

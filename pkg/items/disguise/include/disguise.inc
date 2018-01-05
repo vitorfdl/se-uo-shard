@@ -15,6 +15,10 @@ function mainGump(who, byref disfarce, byref choice)
 	var gender   := CheckGender(who);
 
 	GFPage(gump, 0);
+   if (who.cmdlevel)
+      GFClosable(gump, 1);
+   endif
+   
    GFSetID(gump, GUMPID_DISGUISE);
 	GFResizePic(gump, 25, 8, 5120, 591, 340); //background
 	GFResizePic(gump, 37, 27, 9350, 572, 33); //top paper

@@ -1570,7 +1570,9 @@
 0x2b70 circlet3 metalworking
 # 0x2b71 - 0x2be0 unused
 0x2be1 biscuit food
-# 0x2be2 - 0x2d29 unused
+# 0x2be2 - 0x2d24 unused
+0x2d25 WildStaff combat
+# 0x2d26 - 0x2d29 unused
 0x2d2a CompositeLongBow combat
 0x2d2b CompositeShortBow combat
 # 0x2d2c unused

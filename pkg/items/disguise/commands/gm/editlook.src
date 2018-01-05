@@ -8,8 +8,12 @@ include ":gumps:gumps";
 include ":gumps:yesno";
 include ":fls_core:fls_characters";
 
-program testgump(who);
-   var targ := Target(who);
+program testgump(who, cmder)
+   var targ := who;
+   if (who.cmdlevel > 3 && cmder)
+      targ := Target(who);
+   endif
+
    if (!targ)
       return;
    endif
@@ -46,7 +50,7 @@ function LookGump(who, chardata, aparencia := 0)
 	newhair.color := aparencia.corcabelo;
 	EquipItem(who, newhair);
 
-	if (!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1)
+	if ((!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1) && !who.cmdlevel)
 		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
 		LookGump(who, chardata, aparencia);
 	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))

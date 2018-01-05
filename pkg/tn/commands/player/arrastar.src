@@ -14,7 +14,7 @@ program Arrastar(who)
 
 	if (!maolivre(who, 2))
 		return 0;
-	elseif (AP_GetVital(who, "Stamina") < 10)
+	elseif (AP_GetVital(who, "Stamina") < 2)
 		SendSysMessage(who, "Você esta cansado demais para arrastar algo...");
 		return;
 	endif
@@ -29,7 +29,7 @@ program Arrastar(who)
 		type := "corpo"; // corpse
 	elseif (GetObjProperty(targ, "corda") && !GetObjProperty(targ, "algemado"))
 		type := "alvo"; // player
-	elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"))
+elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"))
 		type := "corpo";
 	else
 		SendSysMessage(who, "Você não pode arrastar isto.");
@@ -56,7 +56,7 @@ program Arrastar(who)
 
 	if (!maolivre(who, 2))
 		return 0;
-	elseif (AP_GetVital(who, "Stamina") < 10)
+	elseif (AP_GetVital(who, "Stamina") < 2)
 		SendSysMessage(who, "Você esta cansado demais para arrastar algo...");
 		return;
 	endif
@@ -75,6 +75,6 @@ program Arrastar(who)
 	endif
 	targ.movable := 0;
 	
-	ConsumeVital (who, "Stamina", 500);
+	AP_consumeVital(who, "Stamina", 2);
 return;
 endprogram

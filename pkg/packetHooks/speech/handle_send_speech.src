@@ -41,11 +41,7 @@ exported function handleUCOutgoing( character, byref packet )
 		SetObjProperty(source, "LastMSG", message_txt);
 		foreach player in GetGlobalProperty("GmsOnlines")
 			var sender := source.name;
-			if (sender == "Desconhecido")
-				sender := GetObjProperty(source, "realname");
-			endif
-			SendSysMessage(player, "[GMBcast]["+sender+"]: "+message_txt, 0x03, 0x0063);
-
+			SendSysMessageEx(player, "[GMBcast]["+sender+"]: "+message_txt, 0x0063);
 		endforeach
 		return 1;
 	endif

@@ -1,6 +1,7 @@
 use uo;
 include ":timedscripts:timedScripts";
 include "include/arrays";
+include "include/damage";
 
 function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	var cfg := ReadConfigFile(":ghaia:npcdesc");
@@ -133,7 +134,9 @@ function LogoutPets(who)
 	
 	foreach serial in tamed
 		var pet := SystemFindObjectBySerial(serial);
-		if ( (pet.master == who)  && (Distance(pet, who) < 3))
+      if (pet.my_template()["orb"])
+         ApplyRawDamage(pet, 200);
+      elseif ( (pet.master == who)  && (Distance(pet, who) < 3))
 			pet.hidden := 1;
 			var location := array;
 			location.append(pet.x);

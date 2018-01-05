@@ -143,6 +143,14 @@ program loko(params)
 
 			foreach vital in (state.vitals)
 				foreach t in targ
+               sleepms(2);
+               if (state.resist_test)
+                  if (rollResistDice(t, state.resist_test) > state.resist_diff)
+                     SendSystemReport(t, "*resistido*");
+                     continue;
+                  endif
+               endif
+
 					if (vital == "Hits")
 						DamageFLS(t, dmg, state.dmgtype, who);
 					elseif (vital == "Stam")
@@ -150,8 +158,9 @@ program loko(params)
 					elseif (vital == "Mana")
 						AP_ConsumeVital(t, MANA, dmg);
 					endif
-				endforeach	
+				endforeach
 			endforeach
+
 		elseif (state.type == "Summon Npcs") // Summonar NPC
 	        var amt := 0;
 			while (amt < state.amount)
@@ -183,6 +192,8 @@ function selectOpponent(who, type)
    var targ := array{};
    if (type == "Self")
       targ.append(who);
+   elseif (type == "Around Self")
+      targ := ListMobilesNearLocation(who.x, who.y, who.z, 3);
    elseif (type == "Opponent")
       targ.append(who.opponent);
    elseif (type == "Around Opponent")
