@@ -26,7 +26,7 @@ program reset(who, params)
 	// 	params := 1;
 	// endif
 	
-	var exp := item.getLevel() * 1000;
+	var exp := item.getLevel() * 1500;
 	item.SetExp(exp+1);
 
 	CheckExpUp(item);
