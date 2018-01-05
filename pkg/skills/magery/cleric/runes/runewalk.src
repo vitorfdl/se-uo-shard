@@ -84,7 +84,7 @@ function ForceDirection(mobile, back := 0)
       return;
    endif
 
-   PushBack(mobile, 5, 300, back);
+   PushBack(mobile, 8, 300, back);
    var ev := struct{
 		type := EVID_PEACEMADE
    };
