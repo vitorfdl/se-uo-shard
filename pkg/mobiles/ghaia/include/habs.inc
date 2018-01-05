@@ -110,6 +110,10 @@ function summonCreature(qty, creatures)
 endfunction
 
 function NPC_Agarrar(dice, targ, difficulty)
+   if (Distance(me, targ) > 2)
+      return 0;
+   endif
+   
    PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
    if (rollResistDice(targ, DEXTERITY) <= difficulty)
       printText(targ, "*escapou de {}*".format(me.name));
