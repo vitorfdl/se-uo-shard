@@ -23,12 +23,12 @@ program useBook(who,book)
 					SendOpenBook(who, book);
 				endif
 			endif
-			if (TemHabilidade(who, "Falsificar Aprimorado"))
-				var GM := YesNo(who, "Você pode optar por não romper o selo e ainda ler a carta. Deseja faze-lo?" , "Sim.", "Nao.");
-				if (GM)
-					SendOpenBook(who, book);
-				endif
-			endif
+			// if (TemHabilidade(who, "Falsificar Aprimorado"))
+			// 	var GM := YesNo(who, "Você pode optar por não romper o selo e ainda ler a carta. Deseja faze-lo?" , "Sim.", "Nao.");
+			// 	if (GM)
+			// 		SendOpenBook(who, book);
+			// 	endif
+			// endif
 			SendSysMessage(who, "Você optou por não romper o selo");
 			return;
 		endif

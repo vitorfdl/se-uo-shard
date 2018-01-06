@@ -108,19 +108,11 @@ endfunction
 //numero maximo de pets que alguem pode ter
 function GetMaxPets(who)
 	// var skill := AP_GetStat(who, WISDOM);
-	var maxpets := 1;
-   var char_level := who.getLevel();
-   if (char_level >= 12)
-      maxpets := 5;
-   elseif (char_level >= 8)
-      maxpets := 4;
-   elseif (char_level >= 4)
-      maxpets := 3;
-   elseif (char_level >= 2)
-      maxpets := 2;
-   endif
+	var maxpets := 1 + cint( GetObjProperty(who, "extrapets") ) + cint( getProficiencyBonus(who, TRATO_ANIMAIS) / 2 );
 
-	maxpets += cint( GetObjProperty(who, "extrapets") );
+   if (HaveFeat(who, "Treinador de Animais"))
+	   maxpets += 1;
+   endif
 
 	return maxpets;
 endfunction
@@ -136,7 +128,7 @@ function LogoutPets(who)
 		var pet := SystemFindObjectBySerial(serial);
       if (pet.my_template()["orb"])
          ApplyRawDamage(pet, 200);
-      elseif ( (pet.master == who)  && (Distance(pet, who) < 3))
+      elseif ( (pet.master == who)  && (Distance(pet, who) < 6))
 			pet.hidden := 1;
 			var location := array;
 			location.append(pet.x);

@@ -39,9 +39,7 @@ function BardBuff(who,item,notas,notas2,tempo,magica)
 	tempo := Cint(tempo);	
 
 	var duration := ((tempo + (tempo * x) + (tempo * y)) / 1000);
-	if (TemHabilidade(who, "Prolongar Cancoes"))
-		duration := duration * 2;
-	endif 
+
 	var mod := 0;//Cint((AP_GetSkill(who, MUSICIANSHIP) ));
 	if (magica == 1) //Fortalecimento
 		var mobiles := ListMobilesNearLocationEx( who.x, who.y, who.z, 10, 0x01, who.realm );

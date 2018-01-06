@@ -2,7 +2,7 @@ use uo;
 
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":charactercreation:habilidades";
+include ":charactercreation:feats";
 include "include/say";
 include ":tn:cooldown";
 include "include/facings";
@@ -122,7 +122,7 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 	
 
 	//Caso queira colocar novamente aquele esquema de não se esconder com pessoas OLHANDO
-	if (!TemHabilidade(who, "Guerreiro das Sombras"))
+	if (!HaveFeat(who, "Mestre das Sombras"))
 		var num_watching := GetWatchingPeople(who);
 		var skill := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS));
 

@@ -12,7 +12,6 @@ function CreateHabObject(who, habilidade)
 endfunction
 
 function TemRequisito(who, habilidade, msg := 1)
-
 	var habcfg := ReadConfigFile(":charactercreation:config/habilidades");
 	var elem := FindConfigElem( habcfg, habilidade );
 

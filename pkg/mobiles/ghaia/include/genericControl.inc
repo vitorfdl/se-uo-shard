@@ -33,7 +33,7 @@ function genericControl()
 		
 		wanders := wanders +1;
 		if (wanders > 20 && RandomInt(2) == 1)
-         if (ListMobilesNearLocationEx(me.x, me.y, me.z, 20, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 0)
+         if (ListMobilesNearLocationEx(me.x, me.y, me.z, 15, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 0)
 			   wanders := 0;
          endif
       endif
@@ -92,7 +92,7 @@ function resolveEvent(ev, byref wanders)
          me.setAggro(ev.source.serial, cint(ev.damage/2)+1+cint(ev.source.getToughness()));
 			wanders := 0; Fight(ev.source);
          break;
-		EVID_ALERT_ALLIES: 
+		EVID_ALERT_ALLIES:
          me.setAggro(ev.opponent, 5);
 			wanders := 0; Fight(ev.opponent, 1);
          break;

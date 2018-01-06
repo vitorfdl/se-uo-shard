@@ -1,7 +1,7 @@
 use uo;
 use util;
 use os;
-include ":charactercreation:habilidades";
+include ":charactercreation:feats";
 include "include/say";
 
 program colheReagente(who, item)
@@ -13,11 +13,11 @@ program colheReagente(who, item)
 	
 	var amt := 1;
 	
-	if (temHabilidade(who, "Herbalista Experiente"))
-		if (RandomInt(100) < 30)
-			amt := 2;
-		endif
-	endif
+	// if (temHabilidade(who, "Herbalista Experiente"))
+	// 	if (RandomInt(100) < 30)
+	// 		amt := 2;
+	// 	endif
+	// endif
 
 	var newitem;
 	if (item.objtype == 6368)

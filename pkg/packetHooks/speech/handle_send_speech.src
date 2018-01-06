@@ -51,7 +51,7 @@ exported function handleUCOutgoing( character, byref packet )
 	if( !CheckLineOfSight(source, character) ) 
 		if(type == YELL_SPEECH)
 			return 0;
-		elseif (TemHabilidade(character, "Espionar") && Distance(character, source) < 12 && abs(character.z - source.z ) < 19)
+		elseif (HaveFeat(character, "Espionar") && Distance(character, source) < 12 && abs(character.z - source.z ) < 19)
 			return 0;
 		endif
 		return 1;

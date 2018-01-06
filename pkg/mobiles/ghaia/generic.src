@@ -84,9 +84,9 @@ function CloseDistanceArcher(opponent)
 endfunction
 
 function lookAround()
-   // if (RandomInt(5) == 1)
-   //    PerformAction(me, ANIM_FIDGET_1);
-   // endif
+   if (RandomInt(5) == 1)
+      PerformAction(me, ANIM_FIDGET_1);
+   endif
 
    foreach npc in ListMobilesNearLocationEx(me.x, me.y, me.z, areasize, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL);
       if( CanFight(me, npc) )
@@ -164,24 +164,24 @@ function Fight(opponent, alerted := 0)
          break;
       endif
 
+      if (JustTeleported(opponent))
+         var area := ListItemsNearLocationOfType(me.x, me.y, me.z, 10, 25091);
+         if (area.size() < 1)
+            break;
+         else
+            var item := area[1];
+            NpcGoTo(item, 2);
+         endif
+      endif
+      
       dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
       if ( (areasize >= 20 && dist > areasize) || (dist > 20 && areasize < 20) )
-         if (JustTeleported(opponent))
-            var area := ListItemsNearLocationOfType(me.x, me.y, me.z, 10, 25091);
-            if (area.size() < 1)
-               break;
-            else
-               var item := area[1];
-               NpcGoTo(item, 2);
-            endif
-         else
-            break;
-         endif
+         break;
       endif
 
       //se eh boss e tem eventos
-      if ( GetBossStruct(me) != error && isBoss(me) )
-         var unique := GetBossStruct(me);
+      var unique := GetBossStruct(me);
+      if ( unique != error && unique.combatevent.size() > 0 )
          foreach ce in (unique.combatevent)
             if (TS_GetCooldown(me, ce.name) == error)
                Start_Script(":ghaia:special/genericspecial" , array{me, ce});
@@ -190,18 +190,14 @@ function Fight(opponent, alerted := 0)
          endforeach
       endif
 
-      if (hasCombat())
-         DoCombatSpecial(me); ////////////// SPECIALL
-      endif
-
       UseHabs();
 
       if (npccfgfile.Category == "moriquendi")
          var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
          if (last_autoheal <= ReadGameClock())
-            var next_heal := 1;
+            var next_heal := 2;
             if (TS_GetCooldown(me, "divine_damage"))
-               next_heal += GetObjProperty(me, "next_heal"); 
+               next_heal += GetObjProperty(me, "delay_heal"); 
             endif
             SetObjProperty(me, "demon_heal", ReadGameClock() + next_heal);
             HealFLS(me, 25);
@@ -231,6 +227,7 @@ function Fight(opponent, alerted := 0)
                me.setAggro(ev.source.serial, 5);
             endif
             ChooseHighestOpponent(me, opponent, ev.source);
+            continue;
          SYSEVENT_DAMAGED: 
             if (!ev.source)
                continue;
@@ -249,24 +246,28 @@ function Fight(opponent, alerted := 0)
             //       TurnToward(opponent);
             //    endif
             // endif
+            continue;
 
          SYSEVENT_ENGAGED:
             me.setAggro(ev.source.serial, 5);
             ChooseHighestOpponent(me, opponent, ev.source);
+            continue;
 
          EVID_TAUNT:
             me.setAggro(ev.source.serial, 20);
             ChooseHighestOpponent(me, opponent, ev.source);
+            continue;
 
          EVID_FLEE:
             if (ev.source)
                Flee(ev.source);
             endif
-
+            continue;
          EVID_PEACEMADE:
          //	sendsysmessage(ev.source, "peacemade");
             SetPeaceMade();
             return;
+            continue;
          EVID_COMBAT_MOVE:
             RunTowardLocation( ev.x, ev.y );
             if (CoordinateDistance(me.x, me.y, ev.x, ev.y) <= 1)

@@ -16,7 +16,7 @@ program skill_lockpicking( me, lockpick )
 	EraseObjProperty(me, "IsMeditating");
 	EraseObjProperty(me, "HealTimer");
 	var inhidden;
-	if (me.hidden && !TemHabilidade(me, "Maos Rapidas"))
+	if (me.hidden && !HaveFeat(me, "Mãos Rápidas"))
 		me.hidden := 0;
 	endif
 	
@@ -82,6 +82,7 @@ function PickTreasureChest(me, lockpick, chest)
 	if ( dice_roll > diff )
 		SucessLockPick(me, chest);
       ExpGain(me, diff, dice_roll);
+      me.SetAchievement("lockpick", 1);
       
       var time_respawn := AddTimeTo(ReadGameClock(), 25+RandomDiceRoll("3d20"), "minutes");
       SetObjProperty(chest, "spawned_time", time_respawn);

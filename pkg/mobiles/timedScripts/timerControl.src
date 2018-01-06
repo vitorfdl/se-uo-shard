@@ -431,9 +431,6 @@ function LowerDuration(mobile, byref event, byref timer_list, byref cooldowns, b
 	if ( duration <= 0 )
 		EndTimedScript(mobile, event.name, num_poisons);
 		KillTimedScript(mobile, timer_info.pid, timer_list, event.name);
-		if ( elem_info.Icon ) 
-			SendBuff(mobile, 0, elem_info.Icon);
-		endif
 		//sendsysmessage(mobile, "mantain "+ timer_info.mantain);
 		if (timer_info.mantain)
 			MantainSpell(timer_info);
@@ -492,7 +489,7 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 	endif
 
  	if ( elem_info.Icon )
-    	SendBuff(mobile, 0, elem_info.Icon);
+      mobile.delBuff(cint(elem_info.Icon));
 	endif
 
 	if( elem_info.Script )
@@ -500,7 +497,6 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 		var info := TS_GetTimerInfo(mobile, timer_name);
 		SetObjProperty(mobile, "prop", info.level);
 		var script := Start_Script(elem_info.Script, array{mobile, "End", info.level});
-      mobile.delBuff(cint(elem_info.Icon));
 		Set_Critical(0);
 		if( script.errortext )
 			print("Error::EndTimedScript() - "+script.errortext);
@@ -518,7 +514,6 @@ function KillTimedScript(mobile, byref pid, byref timer_list, byref timer_name, 
 
    if (!no_save)
       var e := timer_list.Erase(timer_name);
-
       SaveState(mobile, timer_list, NO_COOLDOWNS);
    endif
 

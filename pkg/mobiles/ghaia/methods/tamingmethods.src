@@ -31,7 +31,7 @@ exported function SetPetProperties(pet, new_props)
       props := struct{};
    endif
 
-   if (new_props["loyalt"] && cint(new_props["loyalt"]))
+   if (new_props["loyalt"] != error && cint(new_props["loyalt"]) != error)
       props["loyalt"] := cint(new_props["loyalt"]);
    endif   
    
@@ -51,7 +51,7 @@ exported function SetPetProperties(pet, new_props)
       props["personality"] := new_props["personality"];
    endif
 
-   if (new_props["exp"] && cint(new_props["exp"]))
+   if (new_props["exp"])
       props["exp"] := cint(new_props["exp"]);
    endif
 
@@ -75,6 +75,7 @@ exported function InitPetProperties(pet, reset := 0)
    if (old_props && old_props.personality)
       props.personality := old_props.personality;
    endif
+   
    props.commands := GetConfigStringDictionary(pet_elem, "command");
    foreach command in (props.commands.keys())
       props.commands[command] := cint(props.commands[command]);
@@ -118,7 +119,7 @@ exported function SetExp(pet, amount := 1)
    if (props.loyalt >= 10) return; endif
 
    var new_exp := props.exp + amount;
-   var max_exp := (props.loyalt + 1) * 50;
+   var max_exp := (props.loyalt + 1) * 100;
 
    var new_prop := struct{ };
    if (new_exp >= max_exp)

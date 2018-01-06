@@ -79,9 +79,7 @@ function CopyKey(who, key, targ)
 	if (test > 12)
 		targ.SetLockId(key_id);
 		SendSysMessageEx(who, "Você copiou a chave.", SSM_INFO);
-		if (!TemHabilidade(who, "Chave de Cera"))
-			PrintText(who, "*cópia uma chave*");
-		endif
+      PrintText(who, "*copia uma chave*");
 	else
 		SendSysMessageEx(who, "Você quebrou a chave.", SSM_FAIL);
 		DestroyItem(targ);

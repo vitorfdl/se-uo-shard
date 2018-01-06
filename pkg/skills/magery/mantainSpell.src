@@ -77,10 +77,6 @@ program spell(params)
 	mana := mana*2;
 	var spellname := GetConfigString(elem, "Name");
 
-	if (temhabilidade(mage, "Manter Magias"))
-		mana := mana/2;
-	endif
-
 	if ( SpellYesNo(mage, spellname,  targ.name ) )
 	        if (!AP_ConsumeVital(mage, MANA, mana))
 		                SendSysMessageEx(mage, "Você não possui mana suficiente para manter esse encantamento.", SSM_FAIL);

@@ -1,0 +1,140 @@
+
+use uo;
+use datafile;
+use basic;
+
+include ":yggdrasil:spawnGroup";
+include ":yggdrasil:treasures";
+// include ":ghaia:ghaiaUtil";
+include ":gumps:requestgump";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include ":tn:tngumps";
+include "include/say";
+include ":unicos:item_template";
+
+//Basic
+var selected_dynamicevent      := ""; //Name of the Elem
+var selected_event := ""; //Name of the spawngroup
+var selected_condition := ""; //Name of the spawngroup
+var gumpid := 0x1F7;
+
+program spotGroups(params)
+    var who;
+    if (TypeOf(params) != "Array")
+        who := params;
+        params := 0;
+    else
+        who := params[1];
+        params := params[2];
+    endif
+
+    CloseGump(who, gumpid);
+    if (params)
+        selected_group      := params.selected_group; //Name of the Elem
+        selected_spawngroup := params.spawngroup; //Name of the spawngroup
+        selected_spot       := params.selected_spot; //Serial Number
+        selected_spawnpoint := params.selected_spawnpoint; //Serial Number
+        selected_treasure   := params.selected_treasure; //Serial Number
+    endif
+
+    var closed := 0;
+    while (closed != 1)
+        var gump := ConstructGump();
+        var input := GFSendGump(who, gump);
+
+        if (selected_group)
+            var active_switch := GFExtractData(input, GF_GROUP_ACTIVE_SWITCH);
+            if (!active_switch || active_switch == error)
+                active_switch := 0;
+            endif
+            SetSpotGroupData(selected_group, struct{"active":=active_switch});
+        endif
+
+        if (selected_spawnpoint)
+            var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
+            var new_spawnpoint := struct{
+                "name"       := GFExtractData(input, spawnpoint_name),
+                "mob_number" := GFExtractData(input, spawnpoint_mobnumber),
+                "range"      := GFExtractData(input, spawnpoint_range)
+            };
+            spawnpoint.SetProps(new_spawnpoint);
+        endif
+
+        if (selected_spot)
+            var active_switch := GFExtractData(input, GF_SPOT_ACTIVE_SWITCH);
+            if (!active_switch || active_switch == error)
+                active_switch := 0;
+            endif
+            var spot := SystemFindObjectBySerial(selected_spot);
+            var new_spot := struct{
+                "active" := active_switch,
+                "name" := GFExtractData(input, spot_name),
+                "evententry" := GFExtractData(input, spot_evententry),
+                "timeinterval" := GFExtractData(input, spot_timeinterval)
+            };
+            spot.SetProps(new_spot);
+        endif
+
+        if (selected_treasure)
+            var spot := SystemFindObjectBySerial(selected_spot);
+            var data := spot.GetProps();
+            var treasure := FindElemInArray(data.treasures, struct{"serial":=selected_treasure});
+            treasure.protected := GFExtractData(input, GF_TREASURE_PROTECTED_SWITCH);
+            treasure.active    := GFExtractData(input, GF_TREASURE_ACTIVE_SWITCH);
+            treasure.trapped   := GFExtractData(input, GF_TREASURE_TRAP_SWITCH);
+            treasure.breakable := GFExtractData(input, GF_TREASURE_BREAKABLE_SWITCH);
+            treasure.hidden := GFExtractData(input, GF_TREASURE_HIDDEN_SWITCH);
+            
+            spot.UpdateTreasure(selected_treasure, treasure);
+        endif
+
+        if ((input[0] >= 900 && input[0] < 910) || (input[0] >= 50 && input[0] < 300))
+            DoGroupList(who, input[0]);
+        elseif ((input[0] >= 910 && input[0] < 920) || (input[0] >= 300 && input[0] < 400))
+            DoSelectedGroupList(who, input[0]);
+        elseif ((input[0] >= 920 && input[0] < 930) || (input[0] >= 400 && input[0] < 450))
+            DoSpotList(who, input[0]);
+        elseif (input[0] >= 930 && input[0] < 940)
+            DoSpawnPointList(who, input[0]);
+        elseif (input[0] >= 1000 && input[0] < 1040)
+            DoTreasureList(who, input[0]);
+        else
+            closed := 1;
+        endif
+
+        sleepms(2);
+    endwhile
+endprogram
+
+function ConstructGump()
+    spotgroups := DFGetElemNames(LoadSpotGroupData()); //Reset every time the Gump is created
+    var gump := GFCreateGump(150, 150);
+    GFPage(gump, 0);
+    GFSetID(gump, gumpid);
+
+    if (selected_group)
+        ConstructGroupConfig(gump); //second menu
+    endif
+
+    if (selected_spawngroup)
+        ConstructSpawnGroupConfig(gump);
+    endif
+
+    if (selected_spot)
+        ConstructSpotConfig(gump);
+    endif
+
+    if (selected_spawnpoint)
+        ConstructSpawnPointConfig(gump);
+    endif
+
+    if (selected_treasure)
+        ConstructTreasureConfig(gump);
+    endif
+
+    ConstructGroupList(gump);
+
+    GFoptimizeGump(gump);
+    return gump;
+endfunction

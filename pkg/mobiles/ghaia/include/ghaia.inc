@@ -27,7 +27,7 @@ enum STATES
    FLEEING := 6
 endenum
 
-var foods;
+var foods, foods2;
 
 //alinhamento pra determinar se o player é inimigo ou não pra IA.
 //outros inimigos pra IA é definido com a tag enemy
@@ -85,16 +85,13 @@ function CanFight(me, mobile)
          //     endif
          // endif
          return 1;
-      else 
-         //npcs bons ou neutrals não atacam
-         return 0;
       endif
+         //npcs bons ou neutrals não atacam
+      return 0;
    endif
 
-   if (me.alignment == ALIGN_EVIL)
-      if (mobile.master) //se for bicho tamado, é atacado!
-         return 1;
-      endif
+   if (me.alignment == ALIGN_EVIL && mobile.master)
+      return 1;
    endif
 
    var enemies := GetConfigStringArray( npccfgfile, "enemy" );
@@ -283,12 +280,14 @@ endfunction
 
 
 function LookForFood()
-   if (!foods)
-      foods := ReadConfigFile(":food:itemdesc") + ReadConfigFile(":cooking:itemdesc");
-   endif
 	if (!me.isTamable())
 		return;
 	endif
+
+   if (!foods)
+      foods := ReadConfigFile(":food:itemdesc");
+      foods2 := ReadConfigFile(":cooking:itemdesc");
+   endif
 
    var foodvalue := 0;
    if (cint(npccfgfile.TameDifficulty) >= 20)
@@ -303,6 +302,7 @@ function LookForFood()
    var food_list := ListItemsNearLocationWithFlag(me.x, me.y, me.z, 5, 0x00000800);
 	foreach item in food_list
 		var found := FindConfigElem(foods, hex(item.objtype));
+      if (!found) found := FindConfigElem(foods2, hex(item.objtype)); endif
 		if (found && found.foodtype == npccfgfile.foodtype && cint(found.foodvalue) >= foodvalue)
 			food := item;
 		endif
@@ -327,29 +327,6 @@ endfunction
 /////////////////////////////////
 // Funcoes Especiais dos Npcs
 ////////////////////////////////
-
-function hasCombat()
-  var str := GetConfigString(npccfgfile,  "SpecialCombat");
-  str := splitwords(str);
-  //printtextabove(me, " " + str);
-  if (str.size() >= 1)
-      return 1;
-  endif
-  return 0;
-endfunction
-
-function doCombatSpecial(me)
-
-  var str := GetConfigString(npccfgfile,  "SpecialCombat");
-  str := splitwords(str);
-  //printtextabove(me, " " + TS_GetCooldown(me, str[1]))
-  if (!TS_GetCooldown(me, str[1]))
-    //TS_StartCooldown(me, cstr(str[1]), cint(str[2]));
-      Start_Script(str[1], array{me, cint(str[2]), str[1]});
-      //printtextabove(me, " " + e +  " " + str[1]);
-  endif
-
-endfunction
 
 function herd(ev)
    var holder     := ev.data;
@@ -394,4 +371,8 @@ function herd(ev)
    if (idlesound)
       PlayIdleSound();
    endif
+endfunction
+
+function Speak(text, type := SAY_TEXTTYPE_DEFAULT)
+   SayUC(UC(text), type);
 endfunction

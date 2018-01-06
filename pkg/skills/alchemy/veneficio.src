@@ -132,9 +132,7 @@ program do_poisoning(who)
 		endif
 		SetObjProperty(the_item, "poisonInfo", poisonInfo);
 		if (the_item.isA(POLCLASS_WEAPON))
-			// if (!TemHabilidade(who, "Maximizar Veneno"))
 			the_item.hp := the_item.hp - 10;
-			// endif
 		endif
 	else
 		SendSysMessageEx(who, "Você falhou e envenenou a si mesmo!", SSM_FAIL);
