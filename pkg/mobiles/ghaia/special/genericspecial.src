@@ -85,6 +85,7 @@ program loko(params)
          
 		elseif (state.type == "TimedScript")
 			var targ := selectOpponent(who, state.target);
+         print(state);
 			foreach t in targ
             sleepms(2);
             if (state.resist_test)
@@ -93,7 +94,7 @@ program loko(params)
                   continue;
                endif
             endif
-				TS_StartTimer(t, state.timername, state.timerduration, state.level);
+				TS_StartTimer(t, state.timername, cint(state.timerduration), state.level);
 			endforeach
 
 		elseif (state.type == "Perform Action" )
@@ -221,7 +222,6 @@ function selectOpponent(who, type)
 endfunction
 
 function GetAllOpponents(who)
-
 	var a := ListHostiles(who);
 	var mobs := ListMobilesNearLocation(who.x, who.y, LIST_IGNORE_Z, 12, who.realm);
 
@@ -236,7 +236,5 @@ function GetAllOpponents(who)
 	endforeach
 
 	return a;
-
-
 endfunction
 
