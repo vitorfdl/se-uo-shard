@@ -3,16 +3,34 @@ use os;
 include ":ghaia:ghaiaUtil";
 include "include/sysEvent";
 
-program textcmd_attack(who)
-	SendSysMessage(who, "Selecione o NPC.");
-	var targ := target(who);
-	if ( !targ.npctemplate ) 
-		SendSysMessage(who, "Cancelled");
-		return 0;
-	endif
+program textcmd_attack(who, command)
+   if (!command)
+      SendSysMessage(who, "Selecione o NPC.");
+      var targ := target(who);
+      if ( !targ.npctemplate ) 
+         SendSysMessage(who, "Cancelled");
+         return 0;
+      endif
 
-	SendSysMessage(who, "Clique para onde ele deve ir.");
-	var loc := TargetCoordinates(who);
+      SendSysMessage(who, "Clique para onde ele deve ir.");
+      var loc := TargetCoordinates(who);
 
-	ghaiaObjective(targ, loc, 2);
+      ghaiaObjective(targ, loc, 2);
+   else
+      var npcs_here := array{};
+      foreach mob in ListMobilesNearLocation(who.x, who.y, who.z, 6);
+         if (mob.npctemplate && !mob.master)
+            npcs_here.append(mob);
+         endif
+         sleepms(2);
+      endforeach
+
+      SendSysMessage(who, "Clique para onde ele deve ir.");
+      var loc := TargetCoordinates(who);
+
+      foreach mob in npcs_here
+         ghaiaObjective(mob, loc, 2);
+         sleepms(2);
+      endforeach
+   endif
 endprogram
