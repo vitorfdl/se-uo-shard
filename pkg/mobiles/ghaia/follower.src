@@ -253,11 +253,10 @@ function ProcessDoubleClick(ev)
       //GFGumpPic(gump, 0, 0, 0x254E);
       GFResizePic(gump, 0, 0, 0x254E, 100, 100);
 
-      GFTextLine(gump, 30, 15, 2100, "Guarda ");
-      GFAddButton(gump, 15, 17, 2117, 2118, 1, 10);
-
-
       if(!GetObjProperty(me, "animatesword"))
+         GFTextLine(gump, 30, 15, 2100, "Guarda ");
+         GFAddButton(gump, 15, 17, 2117, 2118, 1, 10);
+
          GFTextLine(gump, 30, 35, 2100, "Segue ");
          GFAddButton(gump, 15, 37, 2117, 2118, 1, 20);
 
