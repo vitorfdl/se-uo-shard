@@ -19,17 +19,15 @@ program loko(params)
 		return;
    endif
 
-   print(event.chance);
-   print(event.hp_percent);
    if (event.chance != 100 )
       if (Randomint(100)+1 > event.chance)
          TS_StartCooldown(who, event.name, 2); 
-         print("no chance");
          return;
       endif
    endif
 
    if ( event.hp_percent != 100)
+      print(AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100));
       if (AP_GetVital(who, HITS) > AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100))
          TS_StartCooldown(who, event.name, 3); 
          return;
