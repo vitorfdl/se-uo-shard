@@ -15,8 +15,6 @@ program loko(params)
 
 	if (!who.opponent)
 		return;
-	elseif ( TS_GetCooldown(who, event.name) != error)
-		return;
    endif
 
    if (event.chance != 100 )

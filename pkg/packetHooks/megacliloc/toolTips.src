@@ -342,6 +342,12 @@ exported function MegaCliloc( who, byref packet )
 						xDesc += "{}<br>".format(GetSpellName(spell));
                   sleepms(2);
 					endforeach
+
+               var total_slots := GetObjProperty(item, "magicslot") - spell_list.size();
+               for i := 1 to total_slots
+					   xDesc += "{}SLOT VAZIO<br>".format(LIGHTGRAY);
+                  sleepms(2);
+               endfor
 				endif
 			endif
 		endif

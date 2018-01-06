@@ -139,7 +139,7 @@ function Fight(opponent := 0, force := 1)
       if (personality == "Agressivo" && randomInt(4) == 1)
          var mobs := ListMobilesInLineOfSight(me, 8);
          if (mobs[1])
-            Say("*enraivecido*");
+            Speak("*enraivecido*");
             fighting := mobs.randomentry();
             return;
          endif
@@ -203,7 +203,7 @@ function PetGuard(character := 0)
       guarding := 0;
       return;
    elseif ( RandomInt(40) == 1 )
-      Say("*protegendo "+guarding.name+"*");
+      Speak("*protegendo "+guarding.name+"*");
    endif
 
    if (!fighting)
@@ -241,7 +241,7 @@ function ProcessDoubleClick(ev)
 
    if (targ.mobile == me && me.graphic in pack_animals)
       if ((EnumerateItemsInContainer(me.backpack)).size() > 0)
-         SendSysMessage(ev.source, "Voc¿ precisa esvaziar a mochila antes de remove-la.");
+         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
          return;
       endif
       PrintText(ev.source, "*remove a mochila de "+me.name+"*");
@@ -355,11 +355,11 @@ function Transfer(targ)
    endif
 
    if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) )
-      Say("*" + me.name+ " n¿o aceita " + targ.name + "como dono.");
+      Speak("*" + me.name+ " não aceita " + targ.name + "como dono.");
       return;
    endif
 
-   Say("*"+me.name+" aceita "+targ.name+" como novo dono*");
+   Speak("*"+me.name+" aceita "+targ.name+" como novo dono*");
    SetObjProperty(me, "last_owner", (me.master).serial);
    SetObjProperty(me, "owner", targ.serial);
    ErasePet(me.master, me.serial);

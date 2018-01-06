@@ -223,10 +223,6 @@ function DoPurchase(npc, player, input)
 	
 	
 		owed := cost.cost_amt;
-		if (TemHabilidade(player,"Negociador Eximio"))
-			owed := cint(owed*0.7);
-			SendSysMessage(player, "O custo final vai ser de " + owed);
-		endif
 
 		foreach item in pay_list
 			ReleaseItem(item);
@@ -502,10 +498,8 @@ function AddItem(npc, player, targ)
 			SendSysMessage(player, "Valor minimo de 10 moedas de cobre.");
 			return;
 		elseif ( AmountInPack(player, MOEDAS) < CInt(cost_amt * 0.1) )
-			if (!TemHabilidade(player, "Mercador Reconhecido"))
-				SendSysMessage(player, "Você não tem moedas suficiente para pagar o vendedor pelo seu servico.");
-				return 0;
-			endif
+         SendSysMessage(player, "Você não tem moedas suficiente para pagar o vendedor pelo seu servico.");
+         return 0;
 		endif
 	endif
 
@@ -521,34 +515,32 @@ function AddItem(npc, player, targ)
 	if (player.cmdlevel > 2)
 		infinite := YesNo(player, "Você deseja deixar esse item infinito?");
 	elseif (!GetObjProperty(npc, "taverneiro"))
-		if (!TemHabilidade(player, "Mercador Reconhecido"))
 		var pay := 0;
 		do
-			SendSysMessage(player, "Escolha o montante de moedas para que seu item seja colocado a venda.");
-			var targ := Target(player);
-			if ( !targ )
-				SendSysMessage(player, "Cancelado.");
-				return;
-			elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-				SendSysMessage(player, "Não esta na sua bolsa.");
-			elseif ( GetObjProperty(targ, "stealed") )
-				SendSysMessage(player, "Objeto foi roubado!");
-			elseif ( targ.objtype == MOEDAS )
-				if ( !ReserveItem(targ) )
-					SendSysMessage(player, "Você não pode pagar com isto.");
-				else
-					if (!SubtractAmount(targ, dezperc))
-						SendSysMessage(player, "Você não pode pagar com isto.");
-					else
-						pay := 1;
-						SendSysMessage(player, "Pagamento efetuado com sucesso!");
-					endif
-				endif
-			else
-				SendSysMessage(player, "Você deve indicar moedas de cobre.");
-			endif
-		dowhile ( !pay );
-		endif
+         SendSysMessage(player, "Escolha o montante de moedas para que seu item seja colocado a venda.");
+         var targ := Target(player);
+         if ( !targ )
+            SendSysMessage(player, "Cancelado.");
+            return;
+         elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+            SendSysMessage(player, "Não esta na sua bolsa.");
+         elseif ( GetObjProperty(targ, "stealed") )
+            SendSysMessage(player, "Objeto foi roubado!");
+         elseif ( targ.objtype == MOEDAS )
+            if ( !ReserveItem(targ) )
+               SendSysMessage(player, "Você não pode pagar com isto.");
+            else
+               if (!SubtractAmount(targ, dezperc))
+                  SendSysMessage(player, "Você não pode pagar com isto.");
+               else
+                  pay := 1;
+                  SendSysMessage(player, "Pagamento efetuado com sucesso!");
+               endif
+            endif
+         else
+            SendSysMessage(player, "Você deve indicar moedas de cobre.");
+         endif
+      dowhile ( !pay );
 	endif
 	var result := AddItemForSale(npc, player, targ, cost_type, cost_name, cost_amt, desc, infinite, specialProp);
 	if ( result != error )

@@ -60,10 +60,10 @@ program Merchant()
                endif
                break;
             SYSEVENT_ENGAGED:
-               SayUC(UC("Não seja tolo de me atacar!"), "yell");
+               Speak("Não seja tolo de me atacar!"), "yell");
                break;
             SYSEVENT_DAMAGED:
-               // SayUC(UC("Socorro! Estão me atacando!"), "yell");
+               // Speak("Socorro! Estão me atacando!"), "yell");
                // Ignore 'damaged'.
                break;
             SYSEVENT_ITEM_GIVEN:
@@ -82,7 +82,7 @@ program Merchant()
                   wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
                endif
             EVID_SPEAK:
-              SayUC(UC(ev.text), ev.texttype, ev.doevent);
+              Speak(ev.text, ev.texttype);
             // EVID_ALERT_ALLIES:  wanders := 0; Fight(ev.opponent, 1);
             // EVID_HERDING:       herd(ev);
             // EVID_TAUNT:
@@ -117,7 +117,7 @@ endfunction
 function ItemGivenEvent(byref event)
    var occupied := GetObjProperty(me, "#occupied");
    if (occupied && GetProcess(occupied))
-      SayUC(UC("*observa {}*".format(event.source.name)));
+      Speak("*observa {}*".format(event.source.name));
       SendSysMessageEx(event.source, "O mercador parece ocupado agora.", SSM_INFO);
       return;
    endif
@@ -150,7 +150,7 @@ function HandleSpeech(byref event)
    if (event.source.serial == me.serial)
       return;
    elseif (occupied && GetProcess(occupied))
-      SayUC(UC("*observa {}*".format(event.source.name)));
+      Speak("*observa {}*".format(event.source.name));
       SendSysMessageEx(event.source, "O mercador parece ocupado agora.", SSM_INFO);
       return;
    endif
@@ -186,7 +186,7 @@ function DblClickScript(event)
 
    var occupied := GetObjProperty(me, "#occupied");
    if (occupied && GetProcess(occupied))
-      SayUC(UC("*observa {}*".format(event.source.name)));
+      Speak("*observa {}*".format(event.source.name));
       SendSysMessageEx(event.source, "O mercador parece ocupado agora.", SSM_INFO);
       return;
    endif

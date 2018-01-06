@@ -20,7 +20,7 @@ program composicaoscript(who, item)
 	EraseObjProperty(who, "IsMeditating");
 
 	if( Cint(GetObjProperty(who, "#LastMusic")) > ReadGameClock() )
-		SendSysMessage(who, "Você deve esperar um momento antes de compor");
+		SendSysMessageEx(who, "Você deve esperar um momento antes de compor");
 		return 0;
 	endif
 
@@ -29,8 +29,8 @@ program composicaoscript(who, item)
 	endif
 
 
-	SendSysMessage(who, "Você comeca a compor uma musica",3,191);
-	printtextabove(who, "*Compondo uma musica*",3,0);
+	SendSysMessageEx(who, "Você comeca a compor uma musica",3,191);
+	PrintText(who, "*Compondo uma musica*",3,0);
 
 
 	var notas := array;
@@ -42,11 +42,7 @@ program composicaoscript(who, item)
 	BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
 
 
-
-
 	SetObjProperty(who, "#LastMusic", Cint(ReadGameClock() + 5));
 
 	return 1;
-
-
 endprogram

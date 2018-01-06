@@ -18,7 +18,6 @@ array{
 var data := array{};
 
 program cookbooks(who, cookbook)
-
 	var recipeprop := GetObjProperty(cookbook, "recipes");
 	var maxpages := len(recipeprop);
 	var pagenum := 1;
@@ -167,7 +166,7 @@ function gumppage(byref recipe_num, byref pagenum, byref maxpages, byref pageski
 		endif
 	endforeach
 	
-	data.append("Instrucoes");
+	data.append("Instruções");
 	layout.append("text 260 15 1893 " + (len(data)-1));
 	layout.append("gumppic 225 40 96");
 	
@@ -203,13 +202,9 @@ endfunction
 function makefood(who, input)
 	var recipeinfo := recipecfg(input);
 	
-	if (!TemHabilidade(who, getconfigstring(recipeinfo, "habilidade")))
-		SendSysMessage(who, "Você não e capaz de compreender as instrucoes desta comida.");
-		return;
-	endif
-	
 	if (getconfigstring(recipeinfo, "firesource"))
-		var firesources := recipecfg(getconfigstring(recipeinfo, "firesource"));
+      var heatsources := ReadConfigFile(":cooking:config/heatsources")
+		var firesources := heatsources[getconfigstring(recipeinfo, "firesource")];
 		
 		SendSysMessage(who, "" + firesources.ClickMsg);
 		var targ := targetcoordinates(who);
@@ -354,8 +349,8 @@ function copyrecipe(who, recipe)
 	recipe := recipecfg(recipe);
 	
 	if (ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
-		if ((15 > 0))
-		// if ((SkillCheck(who, COOKWORK, cint(recipe.scribe), cint(recipe.scribe+10)) > 0))
+      var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(who, ESCRIBA);
+		if ((roll > recipe.difficulty+5))
 			var item := createiteminbackpack(who, OBJ_RECIPE_SLIP, 1);
 			if (item == error)
 				sendsysmessage(who, "  " + item);
@@ -373,13 +368,13 @@ function copyrecipe(who, recipe)
 endfunction
 
 function recipecfg(recipetype)
-	var alchemy := ReadConfigFile(":cooking:cookbook");
+	var alchemy := ReadConfigFile(":cooking:config/recipes");
 	if (!alchemy || alchemy == error)
 		broadcast("Cant find cooking.cfg");
 		return 0;
 	endif
-	if (alchemy[recipetype])
-		return alchemy[recipetype];
+	if (alchemy[hex(recipetype)])
+		return alchemy[hex(recipetype)];
 	else
 		return 0;
 	endif

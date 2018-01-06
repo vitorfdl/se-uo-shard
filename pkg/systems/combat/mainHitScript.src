@@ -287,12 +287,15 @@ function PoisonChecks(attacker, defender, weapon)
 			SetObjProperty(weapon, "poisonInfo", poisonInfo);
 		endif
 	endif
+
 	var npcelem      := NPC_GetNPCConfig(attacker.npctemplate);
-	var poisonchance := GetConfigInt(npcelem, "Poisoning");		
-	if (poisonChance > 0)
-		poisonInfo.name  := GetConfigString(npcelem, "PoisonType");
-		poisonInfo.level := Cint(GetConfigInt(npcelem, "PoisonLevel"));
-		poisonInfo.difficulty := Cint(GetConfigInt(npcelem, "PoisonDiff"));
+   var poison := GetConfigString(npcelem, "Poisoning");
+
+	if (poison)
+      poison := Splitwords(poison);
+		poisonInfo.name  := poison[1];
+		poisonInfo.level := Cint(poison[2]);
+		poisonInfo.difficulty := Cint(poison[3]);
 
 		if (poisonInfo.name == error)
 			return 0;

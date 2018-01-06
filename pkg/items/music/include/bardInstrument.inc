@@ -28,10 +28,10 @@ function findInstrument(character)
 		myInstrument := targetNewInstrument(character);
 	endif
 	if( !myInstrument.isA(POLCLASS_ITEM) )
-		SendSysMessage(character, "Could not find your instrument!");
+		SendSysMessageEx(character, "Não foi possível encontrar seu instrumento!");
 		return 0;
 	elseif( !(myInstrument in EnumerateItemsInContainer(character.backpack)) )
-		SendSysMessage(character, "Could not find your instrument!");
+		SendSysMessageEx(character, "Não foi possível encontrar seu instrumento!");
 		return 0;
 	endif
 
@@ -61,11 +61,11 @@ function targetNewInstrument(character)
 
 	var instrumentList := {0xeb1, 0xeb2, 0xeb3, 0xeb4, 0xe9c, 0xe9d, 0xe9e};
 
-	SendSysMessage(character, "Target the instrument you wish to use.");
+	SendSysMessageEx(character, "Target the instrument you wish to use.");
 
 	var instrument := Target(character);
 	if( !instrument.isA(POLCLASS_ITEM) )
-		SendSysMessage(character, "Targetting Cancelled.");
+		SendSysMessageEx(character, "Targetting Cancelled.");
 		return 0;
 	endif
 
@@ -95,7 +95,6 @@ endfunction
  *
  */
 function bardSoundCheck(character, instrument, bard_skill)
-
 	var retvalue := dictionary { "success", "fail" };;
 
 	if( CInt(character.clientversion[1]) > 2 )
@@ -121,7 +120,6 @@ function bardSoundCheck(character, instrument, bard_skill)
 	endif
 
 	return retvalue;
-
 endfunction
 
 
@@ -141,7 +139,6 @@ endfunction
  *
  */
 function playHarp(theskill, iType:=1)
-
 	case(theskill)
 		DISCORDANCE:  return 0x393;
 		PEACEMAKING: return 0x394;
@@ -154,7 +151,6 @@ function playHarp(theskill, iType:=1)
 		1: return 0x44;
 		2: return 0x46;
 	endcase
-
 endfunction
 
 

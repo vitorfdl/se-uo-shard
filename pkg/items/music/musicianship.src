@@ -11,7 +11,7 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
 include ":gumps:yesno";
-include ":charactercreation:habilidades";
+include ":charactercreation:feats";
 
 var config;
 
@@ -56,7 +56,7 @@ program skill_Musicianship(who, item)
 	var livremente  := GFAddButton(bardgump, 71, 118, 2103, 2104, 1, 2);
 
 	var musicas := getObjProperty(who, "musicas");
-	if (temhabilidade(who, "Memorizar Musica") || who.cmdlevel >= 3)
+	if (musicas && musicas.size() > 0 && HaveFeat(who, "Memorizar Musica") || who.cmdlevel >= 3)
 		var i := 1;
 		foreach musica in (musicas.keys())
 			GFTextLine(bardgump, 86, 113 + i*20, 600, musicas[musica].nome + "" );
@@ -82,7 +82,7 @@ program skill_Musicianship(who, item)
 			magica := Getobjproperty(partitura, "magica");
 			tocarsound(who,item,notas,notas2,tempo,letra,magica);
 		else
-			SendSysMessage(who, "Isso não e uma partitura!",3,38);
+			SendSysMessageEx(who, "Isso não é uma partitura!",3,38);
 			return 1;
 		endif
 	endif

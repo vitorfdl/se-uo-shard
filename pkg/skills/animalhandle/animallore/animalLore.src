@@ -138,11 +138,14 @@ function AL_LoadGump(who, creature, cfg)
    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Destreza");
    GFHTMLArea(gump, 280, 240,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(dex)+"</div>");
    GFGumpPic(gump, 128, 278, 2086);
-   GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Detalhes");
+   
+   if (HaveFeat(who, "Domador"))
+      GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Detalhes");
       GFHTMLArea(gump, 147, 294, 160, 18, "<basefont color=#4A3929>Personalidade");
       GFHTMLArea(gump, 280, 294, 160, 18, "<basefont color=#4A3929>"+pet_properties.personality);
-   GFHTMLArea(gump, 147, 312, 160, 18, "<basefont color=#4A3929>Comida Preferida");
-   GFHTMLArea(gump, 280, 312, 160, 18, "<basefont color=#4A3929>"+Upper(foodtype));
+      GFHTMLArea(gump, 147, 312, 160, 18, "<basefont color=#4A3929>Comida Preferida");
+      GFHTMLArea(gump, 280, 312, 160, 18, "<basefont color=#4A3929>"+Upper(foodtype));
+   endif
 
    if (creature.master.serial == who.serial)
       GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, gump.cur_page+1);

@@ -227,7 +227,7 @@ endfunction
 
 
 /*
- * FindInArray(byref the_array, find_what)
+ * RemoveFromArray(byref the_array, find_what)
  *
  * Purpose
  * Finds the first instance of something in an array.

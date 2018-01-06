@@ -78,7 +78,7 @@ program UseBandage(mobile, bandage)
 		var restauraDP := 0;
 		if (GetObjProperty(bandage , "cap") == 1 && randomint(5) <= 2)
 			restauraDP := 1;
-		elseif (TemHabilidade(mobile, "Cirurgião") && randomint(5) <= 2)
+		elseif (HaveFeat(mobile, "Cirurgião") && randomint(5) <= 2)
 			restauraDP := 1;
 		endif
 
@@ -122,11 +122,7 @@ program UseBandage(mobile, bandage)
 	endif
 	EraseObjProperty(targ, "curando");
 
-	//deixa isso pode ser util
 	var chance := 3;
-	if ( HaveFeat(mobile, "Conservar Bandagens") )
-		chance := 15;
-	endif
 
 	if (RandomInt(10) < chance)
 		CreateItemInBackpack(mobile, 0xE20, 1);

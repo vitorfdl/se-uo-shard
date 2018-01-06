@@ -24,30 +24,46 @@ Event can be scalled by the number of players inside the area of the Event.
 
 ['Scripting Details']
 CFG ->
-    ['Event Name']
-    Active_Script   = Run periodically when event is running. Should return if Success/Fail was trigered
-    Success_Script  = Run when Success is trigered.
-    Fail_Script     = Run when Fail is trigered.
-    Scalling_Script = Run every time the Scalling requisites are completed. //TODO: Define scalling requisites
-    Ready_Script    = Run periodically to check if conditions to trigger are done.
-    Prepare_Script  = Run every time Ready conditions are completed, to setup the event.
-    TimeInterval    = Time to wait until script can be trigerred again.
-    ChainGroup      = Do not active event if one of the chain is ON.
-    ChainOrder      = Order to be executed in the event chain
-    
-Main Script ->
-    Get CFG events. 
-    Check if EventCondition is Active [Global Props or Data Document?]. If Active run Active_Script.
-        If Active_Script == Success > Success_Script
-        If Active_Script == Fail    > Fail_Script
-        If Active_Script == null    > next()
-            Try to check ChainGroup for next event in ChainOrder
-    Check if event ready conditions has been completed. Activate Ready_Script.
-        if Yes check for TimeInterval
-            if Done check for existing events by ChainGroup
-                Start Prepare_Script
-                Set EventCondition to Prepatation
-                    If Done, set EventCondition to Active
+   [eventname]
+      events ->
+         CanDo:
+            Summon Mobs
+               What mob?
+                  template
+                  spawngroup
+                  
+               Where?
+                  At location
+                  Random Location around
+
+               Run To a location?
+                  Kill after running?
+                     If no players around?
+               
+            CreateItem
+               Where?
+                  At Location
+                  At Container
+               How many?
+
+            Change Enviroment
+               Where?
+                  Around
+                  Regions
+                  World
+
+            DestroyItem
+               What Item?
+
+         Trigger Conditions:
+            x Minimum Enemys
+            x mobs died
+            boss died
+            Every x seconds
+            Battle started around
+            Chance of happen %?
+            Class between enemies
+         
     
 
 

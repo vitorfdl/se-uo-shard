@@ -69,6 +69,7 @@ const GF_TREASURE_REMITEM_BTN      := 1007;
 const GF_TREASURE_LOCKED_SWITCH    := 1008;
 const GF_TREASURE_SPAWN_BTN        := 1009;
 const GF_TREASURE_BREAKABLE_SWITCH := 1010;
+const GF_TREASURE_HIDDEN_SWITCH := 1011;
 const GF_TREASURE_ITEM_BTN         := 1020;
 
 
@@ -146,6 +147,8 @@ program spotGroups(params)
             treasure.active    := GFExtractData(input, GF_TREASURE_ACTIVE_SWITCH);
             treasure.trapped   := GFExtractData(input, GF_TREASURE_TRAP_SWITCH);
             treasure.breakable := GFExtractData(input, GF_TREASURE_BREAKABLE_SWITCH);
+            treasure.hidden := GFExtractData(input, GF_TREASURE_HIDDEN_SWITCH);
+            
             spot.UpdateTreasure(selected_treasure, treasure);
         endif
 
@@ -459,6 +462,14 @@ function DoTreasureList(who, input)
                 treasure.breakable := 0;
             else
                 treasure.breakable := 1;
+            endif
+            spot.UpdateTreasure(selected_treasure, treasure);
+            break;
+        GF_TREASURE_HIDDEN_SWITCH:
+            if (treasure.hidden == 1)
+                treasure.hidden := 0;
+            else
+                treasure.hidden := 1;
             endif
             spot.UpdateTreasure(selected_treasure, treasure);
             break;
@@ -848,6 +859,9 @@ function ConstructTreasureConfig(byref gump)
 
     GFTextLine(gump, sx+80, sy+54, 1153, "Force Spawn:");
     GFAddButton(gump, sx+160, sy+21+38, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_SPAWN_BTN);
+
+    GFTextLine(gump, sx, sy+36+18+18, 1153, "Hidden:");
+    GFCheckBox(gump, sx+60, sy+36+5+18+18, 2360, 2361, treasure.hidden, GF_TREASURE_HIDDEN_SWITCH);
 
     GFTextLine(gump, sx, sy+36+18+18, 1153, "Breakable:");
     GFCheckBox(gump, sx+60, sy+36+5+18+18, 2360, 2361, treasure.breakable, GF_TREASURE_BREAKABLE_SWITCH);

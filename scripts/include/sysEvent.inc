@@ -27,11 +27,10 @@ const EVID_PET_ATTACK := 0x91000002;
 const EVID_PET_GUARD  := 0x91000003;
 const EVID_PET_PATROL := 0x91000004;
 
-const EVID_SPEAK           := 0x92000001;
+const EVID_SPEAK           := 0x9113;
 const EVID_ENGAGED         := 0x0002;
 const EVID_DISENGAGED      := 0x0004;
 const EVID_DAMAGED         := 0x0008;
-const EVID_ENTEREDAREA     := 0x0010;
 const EVID_LEFTAREA        := 0x0020;
 const EVID_OPPONENT_MOVED  := 0x0040;
 const EVID_HOSTILE_MOVED   := 0x0080; // not implemented

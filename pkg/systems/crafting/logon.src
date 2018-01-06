@@ -3,10 +3,17 @@ use os;
 
 program debugCraft(who)
    var chardata := GetObjProperty(who, "chardata");
-   if (chardata.antecedente == "Aprendiz de Costureiro")
+   if (chardata.antecedente == "Aprendiz Costureiro")
       var recipes := GetObjProperty(who, "recipes");
       if (!(0x14f8 in recipes))
          createRecipe(who, 0x14f8);
+      endif
+   endif
+
+   if (chardata.antecedente == "Aprendiz Ferreiro")
+      var recipes := GetObjProperty(who, "recipes");
+      if (!(0x1876 in recipes))
+         createRecipe(who, 0x1876);
       endif
    endif
 endprogram
@@ -14,5 +21,6 @@ endprogram
 function createRecipe(who, objtype)
    var obj := CreateItemInBackpack(who, 0xef1f);
    SetObjProperty(obj, "objtype", objtype);
+   SetObjProperty(obj, "serialid", who.serial);
    Run_Script( ":crafting:recipes/oncreate", obj );
 endfunction

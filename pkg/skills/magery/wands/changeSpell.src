@@ -12,12 +12,14 @@ program changeSpell(params)
       SendSysMessageEx(who, "Não foi encontrado magias para trocar", SSM_FAIL);
    endif
 
+   spell_list := RemoveFromArray(spell_list, 0);
+
    var new_spell;
    var active_spell := GetObjProperty(item, "active_spell");
 
    var spell_index := FindInArray(spell_list, active_spell);
 
-   for tries := 1 to 5
+   for tries := 1 to (spell_list.size())
       var new_index := spell_index + tries;
       if (new_index > spell_list.size())
          new_index -= spell_list.size();

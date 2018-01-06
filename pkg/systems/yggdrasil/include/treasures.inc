@@ -39,6 +39,10 @@ function ModelTreasure( data := struct{} )
         data.breakable := 0;
     endif
 
+    if (!data.hidden)
+        data.hidden := 0;
+    endif
+
     if (TypeOf(data.yggdrasil) != "Struct")
         data.yggdrasil := struct{};
     endif
@@ -57,6 +61,7 @@ function CleanTreasure(treasure)
     EraseObjProperty(treasure, "level");
     EraseObjProperty(treasure, "protected");
     EraseObjProperty(treasure, "breakable");
+    EraseObjProperty(treasure, "hidden");
     EraseObjProperty(treasure, "#awareness_fail");
 
     foreach item in (EnumerateItemsInContainer( treasure ))
@@ -98,6 +103,10 @@ function SpawnTreasure(treasure, config)
 
    if (config.breakable)
       SetObjProperty(treasure, "breakable", 1);
+   endif
+
+   if (config.hidden)
+      treasure.hidden := 1;
    endif
 
    if (config.trapped)

@@ -45,7 +45,7 @@ function addScrollOnBook(who, book, recipe)
 		recipe_list := array;
 	endif
 
-	var new_recipe  := GetObjProperty(recipe, "objtype");
+	var new_recipe  := Hex(GetObjProperty(recipe, "objtype"));
 	var potions_cfg := ReadConfigFile(":cooking:recipes");
 	if(!potions_cfg[new_recipe]);
 		SendSysMessageEx(who, "Receita invalida!", SSM_FAIL);

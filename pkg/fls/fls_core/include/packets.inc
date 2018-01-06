@@ -95,50 +95,6 @@ function GetBuffIcon(name)
 
 endfunction
 
-function SendBuff(mobile, show,  icon, duration := 0, cliloc1 := 0, cliloc2 := 0, str := 0 )
-
-//	return 1;
-   if ( show )
-      show := CInt(show);
-   else
-      show := 0;
-   endif
-
-   if (str)
-   	str := " " + str;
-   endif
-   sendsysmessage(mobile, "s" + show +  " " + icon + " " + duration + " " + cliloc1 +  " " + cliloc2) ;
-   // define the offsets to make it easier
-   var   OFFSET_SERIAL := 3;
-   var   OFFSET_ICONNUMBER1 := 7;
-   var   OFFSET_SHOW1 := 9;
-   var   OFFSET_ICONNUMBER2 := 15;
-   var   OFFSET_SHOW2 := 17;
-   var   OFFSET_TIME := 23;
-   var   OFFSET_CLILOC1 := 28;
-   var   OFFSET_CLILOC2 := 32;
-   var   OFFSET_CLILOC2PARMS := 42;
-
-//   var   BLANK_CLILOC := 1005007;   // a cliloc number with blank text
-//   var   ERROR_CLILOC := 500267;      // an cliloc showing an error
-
-
-   var packet := CreatePacket(0xDF, MSGLEN_VARIABLE);
-   packet.setint32(OFFSET_SERIAL, mobile.serial);
-   packet.setint16(OFFSET_ICONNUMBER1, icon);
-   packet.setint16(OFFSET_SHOW1, show);
-   if ( show )
-      packet.setint16(OFFSET_ICONNUMBER2, icon);
-      packet.setint16(OFFSET_SHOW2, show);
-      packet.setint16(OFFSET_TIME, duration);
-      packet.setint32(OFFSET_CLILOC1, cliloc1);
-      packet.setint32(OFFSET_CLILOC2, cliloc2);
-      packet.SetUnicodeStringFlipped(OFFSET_CLILOC2PARMS, CAscZ(str), 1);
-      packet.setint16(1, packet.GetSize() );
-   endif
-   packet.sendpacket(mobile);
-endfunction
-
 function NewCreatePacket( id, )
 
 	var packet := cstr(id);
@@ -160,7 +116,6 @@ function SetInt32( int32)
 endfunction
 
 function SetInt16 (int16)
-
 	var int1, int2;
 	int1 = (int16 > 8) & 0xFF;
 	int2 = (int16 > 0) & 0xFF;
@@ -168,7 +123,6 @@ function SetInt16 (int16)
 	var str := cstr(int1) + cstr(int2);
 
 	return str;
-
 endfunction
 
 ///////////////////////////////////////////////////////////

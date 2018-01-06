@@ -1,6 +1,5 @@
 // $Id: bard.inc 834 2005-11-02 14:09:50Z austin $
 
-include "bardSkill";
 include "bardInstrument";
 include "bardMagic";
 include ":ghaia:ghaiaUtil";
@@ -205,13 +204,15 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 		if (!tempo)
 		    tempo := Requestgump(who,"Qual é o tempo entre as notas?","","",0);
 		endif
+
 		while (cint(tempo) > 2000)
 		    tempo := Requestgump(who,"O tempo não pode ser tão grande, escolha um menor:","","",0);
 		endwhile
+
 		if (what == 1)		
-		tocarsound(who,item,notas,notas2,tempo,letra,magica);
+		   tocarsound(who,item,notas,notas2,tempo,letra,magica);
 		elseif (what == 2)
-		escrevepartitura(who,item,notas,notas2,tempo,letra);
+		   escrevepartitura(who,item,notas,notas2,tempo,letra);
 		endif
 	endif
 
@@ -233,25 +234,14 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 	// endif
 		
       //DIFICULDADE PELO TANTO DE NOTAS
-		dif := 0;
-		foreach nota in notas
-		   dif := (dif + 1);
-		endforeach
-
-		foreach nota in notas2
-		   dif := (dif + 1);
-		endforeach
+		dif := 2 + cint(notas.size() / 2) + cint(notas2.size() / 2);
 
       //DIFICULDADE PELA VELOCIDADE
-		if (Cint(tempo) < 50) dif := (dif + 1);	
-		elseif (Cint(tempo) < 100) dif := (dif + 2);	
-		elseif (Cint(tempo) < 200) dif := (dif + 3);		
-		elseif (Cint(tempo) < 300) dif := (dif + 4);
-		elseif (Cint(tempo) < 400) dif := (dif + 5);
-		elseif (Cint(tempo) < 500) dif := (dif + 6);
-		elseif (Cint(tempo) < 600) dif := (dif + 7);
+		if (Cint(tempo) < 100) dif := (dif + 1);
+		elseif (Cint(tempo) < 200) dif := (dif + 2);		
+		elseif (Cint(tempo) < 400) dif := (dif + 3);
+		elseif (Cint(tempo) < 600) dif := (dif + 4);
 		endif
-
 
 		var difskill := (dif / 2);
 
@@ -302,7 +292,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 			return 1;
 		endif
 
-		PrintTextAbove(who, "*Tocando uma melodia com " + inst + "*",3,0);
+		PrintText(who, "*Tocando uma melodia com " + inst + "*");
 		var x,y;
 		x := 0;
 		foreach nota in notas
@@ -343,17 +333,19 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 				elseif (nota == "F2") PlaySoundEffect(who, f2); sleepms(tempo);
 				elseif (nota == "F#2") PlaySoundEffect(who, fs2); sleepms(tempo);
 				elseif (nota == "G2") PlaySoundEffect(who, g2); sleepms(tempo);
-				elseif (nota == "G#2") PlaySoundEffect(who, gs2); sleepms(tempo);
+				elseif (nota == "G#2") PlaySoundEffect(desewho, gs2); sleepms(tempo);
 				elseif (nota == "A2") PlaySoundEffect(who, a2); sleepms(tempo);
 				elseif (nota == "A#2") PlaySoundEffect(who, ass2); sleepms(tempo);
 				elseif (nota == "B2") PlaySoundEffect(who, b2); sleepms(tempo);
 				elseif (nota == "C3") PlaySoundEffect(who, c3); sleepms(tempo);
 				elseif (nota == "|") sleepms(tempo);    
 				elseif (nota == "L") 
-				PrintTextAbove(who, letra[L],3,0);
+				PrintText(who, letra[L]);
 				L := L + 1;		
 			endif 				
 		endforeach
+
+      who.SetAchievement("bard", 1);
 
 		if( Cint(GetObjProperty(who, "#MagicaMusic")) > ReadGameClock() )
 			return 0;
@@ -382,7 +374,7 @@ function tocarerrado(who,item,notas,notas2,tempo,letra,magica)
    endcase
    tempo := Cint(tempo);
 
-   PrintTextAbove(who, "*Errando todas as notas*",3,38);
+   PrintText(who, "*Errando todas as notas*",38);
 
    sleepms(tempo);
 
@@ -403,7 +395,7 @@ function tocarerrado(who,item,notas,notas2,tempo,letra,magica)
    elseif (notanow == 12) sleepms(tempo);
    endif
    if (nota == "L") 
-   PrintTextAbove(who, letra[L],3,0);
+   PrintText(who, letra[L],0);
    L := L + 1;    
    endif 		
    endforeach
@@ -418,6 +410,7 @@ function playagain(who,item,notas,notas2,tempo,letra,magica)
       tocarsound(who,item,notas,notas2,tempo,letra,magica);
       return 0;
    else
+      BardNotes(who,item,notas,notas2,tempo,letra,1,magica);
       return 0;
    endif
 endfunction
@@ -436,46 +429,33 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
 
    var difskill := (dif / 2);
 
-   printtextabove(who, "*Escrevendo a partitura*",3,0);
+   PrintText(who, "*Escrevendo a partitura*",0);
    sleepms(2000);
-   printtextabove(who, "*Escrevendo a partitura*",3,0);
+   PrintText(who, "*Escrevendo a partitura*",0);
    sleepms(2000);
 
-   if (AP_GetStat(who, "Intelligence")+(randomint(20)) >= difskill)
-      printtextabove(who, "*Escrevendo a partitura*",3,0);
-   else 
-      SendSysMessage(who, "Você arruinou a partitura",3,0);
-      printtextabove(who, "*Erra ao escrever as notas*",3,38);
-      DestroyItem(item);
-      var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
-      if (tryagain == 1)
-         TentarDenovo(who,item,notas,notas2,tempo,letra);
-         return 0;
-      else
-         return 0;
+   for i := 1 to 2
+      var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
+      if (roll >= difskill)
+         PrintText(who, "*Escrevendo a partitura*",0);
+      else 
+         SendSysMessage(who, "Você arruinou a partitura",0);
+         PrintText(who, "*Erra ao escrever as notas*",38);
+         DestroyItem(item);
+         var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
+         if (tryagain == 1)
+            TentarDenovo(who,item,notas,notas2,tempo,letra);
+            return 0;
+         else
+            return 0;
+         endif
       endif
-   endif
 
-   sleepms(5000);
+      sleepms(5000);
+   endfor
 
-   if (AP_GetStat(who, "Intelligence")+(randomint(40)) >= difskill)
-      printtextabove(who, "*Escrevendo a partitura*",3,0);
-   else 
-      SendSysMessage(who, "Você arruinou a partitura",3,0);
-      printtextabove(who, "*Erra ao escrever as notas*",3,38);
-      DestroyItem(item);
-      var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
-      if (tryagain == 1)
-         TentarDenovo(who,item,notas,notas2,tempo,letra);
-         return 0;
-      else
-         return 0;
-      endif
-   endif
-
-   sleepms(5000);
-   printtextabove(who, "*Escreve a ultima nota*",3,0);
-   SendSysMessage(who, "Você terminou de escrever a partitura",3,191);
+   PrintText(who, "*Escreve a ultima nota*",0);
+   SendSysMessage(who, "Você terminou de escrever a partitura",191);
    DestroyItem(item);
    var partitura := CreateItemInBackPack(who, 0x9924, 1);
 
@@ -491,12 +471,12 @@ endfunction
 
 
 function TentarDenovo(who,item,notas,notas2,tempo,letra)
-	SendSysMessage(who, "Escolha um novo papel pautado em branco:",3,191);
+	SendSysMessage(who, "Escolha um novo papel pautado em branco:",191);
 	item := target(who);
 	if (item.objtype == 0x9923)
 		escrevepartitura(who,item,notas,notas2,tempo,letra);
 	else
-		SendSysMessage(who, "Cancelado.",3,38);
+		SendSysMessageEx(who, "Cancelado.",38);
 		return 0;
 	endif
 endfunction

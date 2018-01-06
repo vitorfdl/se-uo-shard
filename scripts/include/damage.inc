@@ -130,13 +130,6 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	// 		attr_bonus := GetBonusAttr(AP_GetStat(who, STRENGTH));
 	// 	endif
 	// endif
-/*	if (temHabilidade(who, "Ataques Precisos"))
-		stat := DEXTERITY;
-	endif
-	
-	if (temHabilidade(who, "Taticas Arcanas"))
-		stat := INTELLIGENCE;
-	endif*/
 
 	//Bonus de prop da arma    
 	var weapon := cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus"));
