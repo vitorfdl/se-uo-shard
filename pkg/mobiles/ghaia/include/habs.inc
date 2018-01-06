@@ -85,6 +85,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "teleport": res := teleport(hab_target, hab_special); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
+         SetCooldown(me, hab_name, 150);
          break;
    endcase
 
