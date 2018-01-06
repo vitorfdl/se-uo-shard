@@ -17,7 +17,7 @@ program loko(params)
 		return;
 	elseif ( TS_GetCooldown(who, event.name) != error)
 		return;
-   elseif (event.chance != 100 && Randomint(100)+1 < event.chance )
+   elseif (event.chance != 100 && Randomint(100)+1 > event.chance )
       TS_StartCooldown(who, event.name, 3); 
       return;
    elseif ( event.hp_percent != 100 && AP_GetVital(who, HITS) > AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100))

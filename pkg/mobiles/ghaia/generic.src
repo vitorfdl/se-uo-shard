@@ -183,9 +183,10 @@ function Fight(opponent, alerted := 0)
       if ( GetBossStruct(me) != error && isBoss(me) )
          var unique := GetBossStruct(me);
          foreach ce in (unique.combatevent)
-               if (TS_GetCooldown(me, ce.name) == error)
+            if (TS_GetCooldown(me, ce.name) == error)
                Start_Script(":ghaia:special/genericspecial" , array{me, ce});
-               endif
+            endif
+            sleepms(2);
          endforeach
       endif
 
