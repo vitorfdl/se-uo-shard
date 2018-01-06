@@ -77,8 +77,14 @@ program loko(params)
 		elseif (state.type == "TimedScript")
 			var targ := selectOpponent(who, state.target);
 			foreach t in targ
-				TS_StartTimer(t, state.timername, state.timerduration, state.level);
             sleepms(2);
+            if (state.resist_test)
+               if (rollResistDice(t, state.resist_test) > state.resist_diff)
+                  SendSystemReport(t, "*resistido*");
+                  continue;
+               endif
+            endif
+				TS_StartTimer(t, state.timername, state.timerduration, state.level);
 			endforeach
 
 		elseif (state.type == "Perform Action" )

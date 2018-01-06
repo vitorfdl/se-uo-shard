@@ -37,6 +37,7 @@ function resetelevator(item)
 
 	var maxz := Cint(GetObjProperty(item, "z"));
 	var stat := GetObjProperty(item, "status");
+	var direction := GetObjProperty(item, "direction");
 	var items := GetObjProperty(item, "items");
 	var startz := 0;
 	

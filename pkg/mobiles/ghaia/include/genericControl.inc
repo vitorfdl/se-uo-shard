@@ -71,14 +71,10 @@ function resolveEvent(ev, byref wanders)
 			if (ev.destiny)
 				wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
 			endif
+         break;
 		SYSEVENT_ENTEREDAREA:
 			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
-				// wanders := 0;
-            // if (((me.listAggro()).keys()).size() < 1)
-            //    me.setAggro(ev.source.serial, 20);
-            // else
-            //    me.setAggro(ev.source.serial, 15);
-            // endif
+				wanders := 0;
             var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
             foreach mob in mobs
                if (mob == ev.source)
@@ -90,24 +86,30 @@ function resolveEvent(ev, byref wanders)
             endforeach
 				Fight(ev.source);
 			endif
+         break;
 		SYSEVENT_ENGAGED:
 		SYSEVENT_DAMAGED:
          me.setAggro(ev.source.serial, cint(ev.damage/2)+1+cint(ev.source.getToughness()));
 			wanders := 0; Fight(ev.source);
+         break;
 		EVID_ALERT_ALLIES: 
          me.setAggro(ev.opponent, 5);
 			wanders := 0; Fight(ev.opponent, 1);
+         break;
 		EVID_HERDING:
 			herd(ev);
+         break;
 		EVID_TAUNT:
 			if(ev.source)
             me.setAggro(ev.source, 15);
 				wanders := 0; 
             Fight(ev.source, 1);
 			endif
+         break;
 		EVID_FLEE:
 			if (ev.source)
 				flee(ev.source);
 			endif
+         break;
 	endcase
 endfunction

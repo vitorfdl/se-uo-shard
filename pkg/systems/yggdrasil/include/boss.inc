@@ -671,7 +671,11 @@ function CombatEventsOptions(who, state)
 			state.+timername := timername;
 			state.+timerduration := cint(RequestGump(who, "Qual a duracao do timer?", "Nunca mais de 120s", "", 1));
 			state.+level := cint(RequestGump(who, "Qual o level do timer?", "", "", 1));
-
+			var test := RadioGump(who, 200, 240, "Algum teste de resistência? ", array{STRENGTH, DEXTERITY, WISDOM, CONSTITUTION, "Nenhum"}, 0, 5);
+         if (test != "Nenhum")
+			   state.+resist_test := test;
+            state.+resist_diff := cint( RequestGump(who, "Qual a dificuldade?", "", "12", 1));
+         endif
 		elseif ( opt == "Perform Action" )
 			state.+target := RadioGump(who, 200, 180, "Quem vai realizar a action?", array{"Self", "Opponent", "All Opponents"});
 			state.+id := cint(RequestGump(who, "Qual o ID da animacao?", "", "", 1));

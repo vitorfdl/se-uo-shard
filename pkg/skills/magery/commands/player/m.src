@@ -6,6 +6,7 @@ include "include/say";
 // include ":magery:spellbooks";
 include "include/arrays";
 include ":charactercreation:characters";
+include ":tn:tngumps";
 
 program useMagic(who, spellname, uc_text)
 	spellname := lower(Cchrz(uc_text));
@@ -13,6 +14,13 @@ program useMagic(who, spellname, uc_text)
    if (who.cmdlevel > 4)
       var cfg_name := ":magery:config/mage";
       var cfg := ReadConfigFile(":magery:config/mage");
+      if (spellname == "mage")
+         var allspells := getspelloncfg( cfg );
+         spellname := RadioGump(who, 220, 120+(allspells.size() * 20), "Qual magia deseja escolher?", allspells);
+      elseif (spellname == "cleric")
+         var allspells := getspelloncfg(ReadConfigFile(":magery:config/cleric"));
+         spellname := RadioGump(who, 220, 110+(allspells.size() * 20), "Qual magia deseja escolher?", allspells);
+      endif
 		var spell := FindSpell(cfg, spellname);
 		if (!spell)
          cfg_name := ":magery:config/cleric";
@@ -56,7 +64,7 @@ function FindSpell(cfg, spell_name)
 	var id := 0;
 	foreach spell in ( GetConfigIntKeys(cfg) )
 		var elem := FindConfigElem(cfg, spell);
-		if (spell_name == lower(elem.Name))
+		if (lower(spell_name) == lower(elem.Name))
 			id := spell;
 			break;
 		endif
@@ -64,6 +72,17 @@ function FindSpell(cfg, spell_name)
 	endforeach
 
 	return id;
+endfunction
+
+function getspelloncfg(cfgfile)
+   var allspells := GetConfigStringKeys( cfgfile );
+   var spells := array{};
+   foreach id in allspells
+      spells.append(GetConfigString(cfgfile[id], "Name"));
+      sleepms(2);
+   endforeach
+
+   return spells;
 endfunction
 // program magia(who, spellname)
 // 	spellname := lower(spellname);
