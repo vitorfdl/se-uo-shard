@@ -8,8 +8,8 @@ program debugCraft(who)
       if (!(0x14f8 in recipes))
          createRecipe(who, 0x14f8);
       endif
-      if (!(0x14f8 in recipes))
-         createRecipe(who, 0x14f8);
+      if (!(0x9923 in recipes))
+         createRecipe(who, 0x9923);
       endif
    endif
 
