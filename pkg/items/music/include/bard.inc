@@ -20,8 +20,12 @@ function isBardable(character, thetarget, bard_skill, bard_difficulty)
 endfunction
 
 function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
+   if (randomint(5) == 1)
+      PrintText(who, "*Compondo uma musica*");
+   endif
    var x,y,limitenota;
    var bardgump := GFCreateGump();
+   GFSetId(bardgump, GUMPID_BARD);
 	GFClosable(bardgump, 1);
 	GFResizePic(bardgump, 30, 30, 2600, 750, 290);
 	GFResizePic(bardgump, 50, 50, 3500, 710, 250); //55
@@ -101,8 +105,13 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 	GFHTMLArea(bardgump, 80, 206, 650, 60, notas + notas2,3,1);
 
 	GFTextLine(bardgump, 100, 266, 1890, "Limpar Combinacao" );
-	var limpar  := GFAddButton(bardgump, 80, 270, 2103, 2104, 1, 14);
+	GFAddButton(bardgump, 80, 270, 2103, 2104, 1, 14);
 
+	GFTextLine(bardgump, 240, 266, 1890, "Limpar Ultimo" );
+	GFAddButton(bardgump, 220, 270, 2103, 2104, 1, 60);
+
+   GFTextLine(bardgump, 630, 185, 1890, "Compor Partitura" );
+   GFAddButton(bardgump, 610, 189, 2103, 2104, 1, 61);
 
 	if (what == 1) GFTextLine(bardgump, 680, 63, 66, "TOCAR!!" );
 	elseif (what == 2) GFTextLine(bardgump, 680, 63, 66, "COMPOR!!" );
@@ -112,7 +121,6 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 
 	var retv := GFSendGump(who, bardgump );
 
-	
 	if (retv[0] == 100)
 		notas.append("C");
 		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
@@ -199,14 +207,26 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 		notas := array;
 		notas2 := array;
 		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+	elseif (retv[0] == 60)
+		notas.erase(notas.size());
+		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+	elseif (retv[0] == 61)
+      SendSysMessageEx(who, "Selecione o papel pautado em branco.", SSM_REQUEST);
+      var partitura := Target(who);
+      if (!partitura.isA(POLCLASS_ITEM) || partitura.objtype != 0x9923)
+         SendSysMessageEx(who, "Isso não parece um papel pautado", SSM_REQUEST);
+         BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+      else
+         return escrevepartitura(who,partitura,notas,notas2,tempo,letra);
+      endif
 	elseif (retv[0] == 15)
 		var tempo := GFExtractData(retv, tempotxt);
 		if (!tempo)
-		    tempo := Requestgump(who,"Qual é o tempo entre as notas?","","",0);
+		    tempo := Requestgump(who,"Qual é o tempo entre as notas?","","");
 		endif
 
 		while (cint(tempo) > 2000)
-		    tempo := Requestgump(who,"O tempo não pode ser tão grande, escolha um menor:","","",0);
+		    tempo := Requestgump(who,"O tempo não pode ser tão grande, escolha um menor:","","");
 		endwhile
 
 		if (what == 1)		
@@ -287,7 +307,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 		endif
 
 		var result := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
-		if (result < dif)
+		if (result < dif && !who.cmdlevel)
 			tocarerrado(who,item,notas,notas2,tempo,letra,magica);
 			return 1;
 		endif
@@ -308,7 +328,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 		endforeach	
 		
 		var duration := ((tempo + (tempo * x) + (tempo * y)) / 1000);
-		TS_StartTimer(who, "staminaPoison", duration);
+		TS_StartTimer(who, "staminaPoison", duration, 1);
 
 		sleepms(tempo);
 	
@@ -333,7 +353,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 				elseif (nota == "F2") PlaySoundEffect(who, f2); sleepms(tempo);
 				elseif (nota == "F#2") PlaySoundEffect(who, fs2); sleepms(tempo);
 				elseif (nota == "G2") PlaySoundEffect(who, g2); sleepms(tempo);
-				elseif (nota == "G#2") PlaySoundEffect(desewho, gs2); sleepms(tempo);
+				elseif (nota == "G#2") PlaySoundEffect(who, gs2); sleepms(tempo);
 				elseif (nota == "A2") PlaySoundEffect(who, a2); sleepms(tempo);
 				elseif (nota == "A#2") PlaySoundEffect(who, ass2); sleepms(tempo);
 				elseif (nota == "B2") PlaySoundEffect(who, b2); sleepms(tempo);
@@ -405,7 +425,7 @@ endfunction
 
 
 function playagain(who,item,notas,notas2,tempo,letra,magica)
-   var tocardenovo := YesNo(who, "Deseja tentar tocar essa musica denovo?", "Sim", "Nao");
+   var tocardenovo := YesNo(who, "Deseja tentar tocar essa musica denovo?", "Sim", "Não");
    if (tocardenovo == 1)
       tocarsound(who,item,notas,notas2,tempo,letra,magica);
       return 0;
@@ -429,17 +449,17 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
 
    var difskill := (dif / 2);
 
-   PrintText(who, "*Escrevendo a partitura*",0);
+   PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
-   PrintText(who, "*Escrevendo a partitura*",0);
+   PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
 
    for i := 1 to 2
-      var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
+      var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
       if (roll >= difskill)
-         PrintText(who, "*Escrevendo a partitura*",0);
+         PrintText(who, "*Escrevendo a partitura*");
       else 
-         SendSysMessage(who, "Você arruinou a partitura",0);
+         SendSysMessage(who, "Você arruinou a partitura");
          PrintText(who, "*Erra ao escrever as notas*",38);
          DestroyItem(item);
          var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
@@ -454,7 +474,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
       sleepms(5000);
    endfor
 
-   PrintText(who, "*Escreve a ultima nota*",0);
+   PrintText(who, "*Escreve a ultima nota*");
    SendSysMessage(who, "Você terminou de escrever a partitura",191);
    DestroyItem(item);
    var partitura := CreateItemInBackPack(who, 0x9924, 1);
@@ -465,7 +485,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
    Setobjproperty(partitura, "tempo", tempo);
    Setobjproperty(partitura, "letra", letra);				
 
-   var nomedamusica := Requestgump(who,"Qual o nome da Musica?","","",0);
+   var nomedamusica := Requestgump(who,"Qual o nome da Musica?","","");
    Setname(partitura,nomedamusica);		
 endfunction
 

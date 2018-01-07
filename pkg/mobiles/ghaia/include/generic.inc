@@ -1,6 +1,7 @@
 use os;
 use util;
 use vitals;
+use npc;
 
 include "include/say";
 include "include/sysEvent";
@@ -387,4 +388,8 @@ function CalcPathAndMove(me, opponent, sleepdelay)
       RunToward( opponent );
       sleepms(sleepdelay);
 	endif
+endfunction
+
+function Speak(text, type := SAY_TEXTTYPE_DEFAULT)
+   SayUC(UC(text), type);
 endfunction

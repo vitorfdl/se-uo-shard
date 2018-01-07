@@ -52,7 +52,6 @@ function SendGump(who, scroll)
          recipe := FindConfigElem(recipe_list, cint(objtype));
       endif
    endif
-
 	if (!recipe || (recipe.Type != "group" && !item))
       if (who.cmdlevel < 4)
          SendSysMessageEx(who, "Algo errado com a receita, chame um GM!");

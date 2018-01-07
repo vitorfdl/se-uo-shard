@@ -372,7 +372,3 @@ function herd(ev)
       PlayIdleSound();
    endif
 endfunction
-
-function Speak(text, type := SAY_TEXTTYPE_DEFAULT)
-   SayUC(UC(text), type);
-endfunction

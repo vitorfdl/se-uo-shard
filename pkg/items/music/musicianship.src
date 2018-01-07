@@ -20,12 +20,12 @@ program skill_Musicianship(who, item)
 	EraseObjProperty(who, "IsMeditating");
 
 	if( Cint(GetObjProperty(who, "#LastMusic")) > ReadGameClock() )
-		SendSysMessage(who, "Você deve esperar um momento antes de tocar novamente.");
+		SendSysMessageEx(who, "Você deve esperar um momento antes de tocar novamente.");
 		return 0;
 	endif
 
 	if( item.container != who.backpack && GetEquipmentByLayer(who, 1) != item && GetEquipmentByLayer(who, 2) != item)
-		SendSysMessage( who, "Este instrumento não esta na sua mochila.");
+		SendSysMessageEx( who, "Este instrumento não esta na sua mochila.");
 		return 0;
 	endif
 	if(!Accessible(who, item))
@@ -45,6 +45,7 @@ program skill_Musicianship(who, item)
 	var magica;
 
 	var bardgump := GFCreateGump();
+   GFSetId(bardgump, GUMPID_BARD);
 	GFResizePic(bardgump, 30, 30, 2600, 200, 250);
 	GFResizePic(bardgump, 50, 50, 3500, 160, 210); //55
 	GFTextLine(bardgump, 80, 63, 1890, "Escolha a Opcao:" );
@@ -56,7 +57,7 @@ program skill_Musicianship(who, item)
 	var livremente  := GFAddButton(bardgump, 71, 118, 2103, 2104, 1, 2);
 
 	var musicas := getObjProperty(who, "musicas");
-	if (musicas && musicas.size() > 0 && HaveFeat(who, "Memorizar Musica") || who.cmdlevel >= 3)
+	if ((musicas && musicas.size() > 0 && HaveFeat(who, "Memorizar Musica")) || who.cmdlevel >= 3)
 		var i := 1;
 		foreach musica in (musicas.keys())
 			GFTextLine(bardgump, 86, 113 + i*20, 600, musicas[musica].nome + "" );
@@ -71,10 +72,10 @@ program skill_Musicianship(who, item)
 
 	//Tocar Livremente
 	if (retv[0] == 1)
-		SendSysMessage(who, "Escolha uma partitura para acompanhar:",3,191);
+		SendSysMessageEx(who, "Escolha uma partitura para acompanhar:",191);
 		var partitura := Target(who);
 		if ((partitura.objtype == 0x9924) || (partitura.objtype == 0x9925))
-			SendSysMessage(who, "Você comeca a tocar a musica " + partitura.desc + ".",3,660);
+			SendSysMessageEx(who, "Você comeca a tocar a musica " + partitura.desc + ".",660);
 			notas := Getobjproperty(partitura, "notas");
 			notas2 := Getobjproperty(partitura, "notas2");
 			tempo := Getobjproperty(partitura, "tempo");
@@ -82,7 +83,7 @@ program skill_Musicianship(who, item)
 			magica := Getobjproperty(partitura, "magica");
 			tocarsound(who,item,notas,notas2,tempo,letra,magica);
 		else
-			SendSysMessageEx(who, "Isso não é uma partitura!",3,38);
+			SendSysMessageEx(who, "Isso não é uma partitura!",38);
 			return 1;
 		endif
 	endif

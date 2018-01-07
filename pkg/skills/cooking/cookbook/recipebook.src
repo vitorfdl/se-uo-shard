@@ -36,9 +36,9 @@ program cookbooks(who, cookbook)
 		sleepms(5);
 	endforeach
 	
-	var input := senddialoggump(who, layout, data);
+	var input := senddialoggump(who, layout, data, 0, 0, 0, 0x487);
 	input := input[0];
-	
+   
 	if (input > 0)
 		makefood(who, input);
 	elseif (input < 0)
@@ -120,7 +120,7 @@ function gumppage(byref recipe_num, byref pagenum, byref maxpages, byref pageski
 	
 	data.append("Criar");
 	layout.append("text 70 90 1893 " + (len(data)-1));
-	layout.append("button 50 95 5032 5300 1 0 " + recipe_num);
+	layout.append("button 50 95 5032 5300 1 0 " + cint(recipe_num));
 	
 /*	data.append("Copiar Receita");
 	layout.append("text 70 110 1893 " + (len(data)-1));
@@ -200,17 +200,18 @@ function instructions(text)
 endfunction
 
 function makefood(who, input)
+   print(input);
 	var recipeinfo := recipecfg(input);
 	
 	if (getconfigstring(recipeinfo, "firesource"))
-      var heatsources := ReadConfigFile(":cooking:config/heatsources")
+      var heatsources := ReadConfigFile(":cooking:config/heatsources");
 		var firesources := heatsources[getconfigstring(recipeinfo, "firesource")];
 		
-		SendSysMessage(who, "" + firesources.ClickMsg);
+		SendSysMessageEx(who, "" + firesources.ClickMsg);
 		var targ := targetcoordinates(who);
 		
 		if (!(cstr(targ.objtype) in getconfigstringarray(firesources, "heatsource")));
-			SendSysMessage(who, "Cancelled");
+			SendSysMessageEx(who, "Cancelled");
 			return;
 		endif
 	endif
@@ -254,7 +255,7 @@ function makefood(who, input)
 			SendSysMessageEx(who, "Você andou e parou de cozinhar.", SSM_FAIL);
 			return;
 		elseif(myy > who.y + 10 || myy < who.y - 10)
-			SendSysMessage(who, "Você andou e parou de cozinhar.", SSM_FAIL);
+			SendSysMessageEx(who, "Você andou e parou de cozinhar.", SSM_FAIL);
 			return;
 		endif
 		
@@ -299,6 +300,7 @@ function makefood(who, input)
 		// if (SkillCheck(who, COOKWORK, recipeinfo.skill, recipeinfo.skill*2) > 0)
 		if (15 > 0)
 			createiteminbackpack(who, getobjtypebyname(recipeinfo.objtype), 1);
+         who.setAchievement("craft_cozinha", 1);
 			SendSysMessageEx(who, "Você guardou a comida na sua mochila.", SSM_INFO);
 		else
 			SendSysMessageEx(who, "Você falhou e arruinou a comida!", SSM_FAIL);
@@ -349,18 +351,18 @@ function copyrecipe(who, recipe)
 	recipe := recipecfg(recipe);
 	
 	if (ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
-      var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(who, ESCRIBA);
+      var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, ESCRIBA);
 		if ((roll > recipe.difficulty+5))
 			var item := createiteminbackpack(who, OBJ_RECIPE_SLIP, 1);
 			if (item == error)
-				sendsysmessage(who, "  " + item);
+				sendsysmessageEx(who, "  " + item);
 			endif
 			setobjproperty(item, "RecipeId", num);
 			setname(item, "Receita de " + recipe.name);
 			SendSysMessageEx(who, "Você fez uma cópia da receita.", SSM_INFO);
 			printtext(who, "*escrevendo pergaminho*");
 		else
-			SendSysMessageEx(who, "Você copiou a receita sem cuidados e ela esta ilegivel.", SSM_FAIL);
+			SendSysMessageEx(who, "Você copiou a receita sem cuidados e ela está ilegivel.", SSM_FAIL);
 		endif
 	else
 		SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
@@ -400,7 +402,7 @@ function allocateresources(who, itemlist, amount)
 	var i := 1;
 	
 	for (i:=1; i<=len(itemlist); i:=i+1)
-		//SendSysMessage(who, "Debug: Consuming " + amountlist[i] + " " + itemlist[i]);
+		//SendSysMessageEx(who, "Debug: Consuming " + amountlist[i] + " " + itemlist[i]);
 		consumesubstance(who.backpack, itemlist[i], amountlist[i]);
 	endfor		
 endfunction

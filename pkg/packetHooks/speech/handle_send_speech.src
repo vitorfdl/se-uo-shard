@@ -2,7 +2,7 @@ use uo;
 use math;
 use os;
 include "include/say";
-include ":charactercreation:habilidades";
+include ":charactercreation:feats";
 program speech_hooks()
   Print( "Hooking Unicode Outgoing..." );
   return 1;

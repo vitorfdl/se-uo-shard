@@ -1,5 +1,5 @@
 use uo;
-
+include "include/say";
 const LITTORCH_OBJTYPE := 0x0a12;
 
 program turnLogIntoTorch(who, item)
@@ -12,23 +12,23 @@ program turnLogIntoTorch(who, item)
 		return 0;
 	endif
 
-	SendSysMessage(who, "Escolha a fonte de calor fazer sua tocha.");
+	SendSysMessageEx(who, "Escolha a fonte de calor fazer sua tocha.");
 
 	var trg := Target(who);
 	if(!trg)
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return 0;
 	endif
 
 	if(!Accessible(who, trg))
-		SendSysMessage(who, "Você não alcanca isto.");
+		SendSysMessageEx(who, "Você não alcanca isto.");
 		return 0;
 	endif
 
 	if(isHeatSource(trg))
 		logToTorch(who, item);
 	else
-		SendSysMessage(who, "Isto não serve.");
+		SendSysMessageEx(who, "Isto não serve.");
 	endif
 endprogram
 
@@ -61,9 +61,9 @@ function logToTorch(who, item)
 	if(SubtractAmount(item, 1))
 		newitem := CreateItemInBackpack(who, LITTORCH_OBJTYPE);
 		if(newitem)
-			SendSysMessage(who, "Você guardou o item na sua mochila");
+			SendSysMessageEx(who, "Você guardou o item na sua mochila");
 		else
-			SendSysMessage(who, "Você não tem espaço na mochila.");
+			SendSysMessageEx(who, "Você não tem espaço na mochila.");
 		endif
 	endif
 	return 1;

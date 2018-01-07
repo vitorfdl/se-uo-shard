@@ -30,7 +30,7 @@ function ScrollCreate(scroll)
       "Costura"    := 0x0E37,
       "Ferraria"   := 0x0E35,
       "Marcenaria" := 0x0E36,
-      "Cozinha"    := 0x0EF9,
+      "Cozinha"    := 0x1F63,
       "Alquimia"   := 0x46B2
       // "Runas"      := 0x46AE
    };
@@ -41,7 +41,7 @@ function ScrollCreate(scroll)
    if (objtype)
       foreach cfg_name in (recipes_list.keys())
          var cfg := recipes_list[cfg_name];
-         if (FindConfigElem(cfg, cint(objtype)) || FindConfigElem(cfg, Hex(objtype)))
+         if (FindConfigElem(cfg, cint(objtype)) || FindConfigElem(cfg, Hex(objtype)) || FindConfigElem(cfg, objtype))
             cfg_name["2"] := "";
             scroll.graphic := recipe_graphic[cfg_name];
             SetObjProperty(scroll, "pericia", cfg_name);
