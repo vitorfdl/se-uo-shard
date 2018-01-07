@@ -63,14 +63,15 @@ program EquipTest(mobile, item, start_up)
 		SetObjProperty(item, "#EquippedOn", mobile.serial);
 		//SetEquipmentMods(mobile, item);
 		if (coverFace(item) && !mobile.npctemplate)
-			if (!GetObjProperty(mobile, "realname"))
-				SetObjProperty(mobile, "realname", mobile.name);
-			endif
-			if (GetObjProperty(mobile, "description"))
-				SetObjProperty(mobile, "olddescription", GetObjProperty(mobile, "description"));
-				EraseObjProperty(mobile, "description");
-			endif
-			mobile.name := "Desconhecido";
+         SetObjproperty(mobile, "facecovered", 1);
+			// if (!GetObjProperty(mobile, "realname"))
+			// 	SetObjProperty(mobile, "realname", mobile.name);
+			// endif
+			// if (GetObjProperty(mobile, "description"))
+			// 	SetObjProperty(mobile, "olddescription", GetObjProperty(mobile, "description"));
+			// 	EraseObjProperty(mobile, "description");
+			// endif
+         SetName(mobile, mobile.name);
 		endif
 	else
 		// Unable to equip but no reaso was given above. 
