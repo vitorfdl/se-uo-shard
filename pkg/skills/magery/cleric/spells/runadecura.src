@@ -33,7 +33,9 @@ program SpellScript(params)
       level := 1;
    endif
 
-   var dice := "{}d8".format(level);
+   level += 1;
+
+   var dice := "{}d4+1".format(level);
 	var healed := RandomDiceRoll(dice);
 
 	SetObjProperty(item, "healamount", healed);
