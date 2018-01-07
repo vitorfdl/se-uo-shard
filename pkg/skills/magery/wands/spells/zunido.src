@@ -19,8 +19,8 @@ program animateSword(params)
 
    foreach mob in mobiles
       if (rollResistDice(mob, DEXTERITY) <= roll_dice)
-         SendSystemReport(mob, "*cegado*", SSM_HARMFUL, who);
-         TS_StartTimer(targ, "blinded", 5);	
+         PrintText(mob, "*cegado*", SSM_HARMFUL);
+         TS_StartTimer(targ, "blinded", 5);
       endif
       sleepms(2);
    endforeach

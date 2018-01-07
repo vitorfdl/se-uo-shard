@@ -31,7 +31,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 		return 0;
 	elseif( !ReserveItem(book) || !ReserveItem(item) )
 		MoveItemToContainer(item, who.backpack);
-		SendSysMessageEx(who, "O livro esta em uso.");
+		SendSysMessageEx(who, "O livro está em uso.");
 		return 0;
 	endif
 
@@ -59,10 +59,23 @@ function addScroll(who, book, scroll)
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	elseif (FindInArray(spell_list, spell_id))
-		SendSysMessageEX(who,"O grimorio ja possui esta magia.", SSM_FAIL);
+		SendSysMessageEX(who,"O grimorio já possui esta magia.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
 	endif
+
+   var spellinfo := spell_id;
+   WriteSpellInfo(spellinfo);
+
+   var recipe_charges := spellinfo.circle * 2;
+   if (HaveFeat(who, "Tradição Arcana {}".format(spellinfo.type)))
+      recipe_charges := recipe_charges / 2;
+   endif
+
+   if (!CheckCharges(who, scroll, recipe_charges))
+		SendLearnMessage(who);
+      return 0;
+   endif
 	
 	Set_Critical(1);
 

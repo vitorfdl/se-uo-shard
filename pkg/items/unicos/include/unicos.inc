@@ -64,6 +64,8 @@ function AddItemToList(gm, owner, item, desc)
 	data_elem.SetProp("Creator", gm.acctname);
 	data_elem.SetProp("Time", polcore().systime);
 
+   EraseObjProperty(item, "gm_createdby");
+
 	return data_elem;
 endfunction
 

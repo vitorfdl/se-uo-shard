@@ -14,10 +14,10 @@ include "include/say";
 include ":unicos:item_template";
 
 //Basic
-var selected_dynamicevent      := ""; //Name of the Elem
-var selected_event := ""; //Name of the spawngroup
-var selected_condition := ""; //Name of the spawngroup
-var gumpid := 0x1F7;
+var selected_dynamicevent := ""; //Name of the Elem
+var selected_event        := ""; //Name of the spawngroup
+var selected_condition    := ""; //Name of the spawngroup
+var gumpid := 0x1F9;
 
 // program spotGroups(params)
 //     var who;
@@ -31,11 +31,7 @@ var gumpid := 0x1F7;
 
 //     CloseGump(who, gumpid);
 //     if (params)
-//         selected_group      := params.selected_group; //Name of the Elem
-//         selected_spawngroup := params.spawngroup; //Name of the spawngroup
-//         selected_spot       := params.selected_spot; //Serial Number
-//         selected_spawnpoint := params.selected_spawnpoint; //Serial Number
-//         selected_treasure   := params.selected_treasure; //Serial Number
+//         selected_dynamicevent      := params.dynamicevent; //Name of the Elem
 //     endif
 
 //     var closed := 0;
@@ -113,24 +109,16 @@ function ConstructGump()
     GFPage(gump, 0);
     GFSetID(gump, gumpid);
 
-    if (selected_group)
+    if (selected_dynamicevent)
         ConstructGroupConfig(gump); //second menu
     endif
 
-    if (selected_spawngroup)
+    if (selected_event)
         ConstructSpawnGroupConfig(gump);
     endif
 
-    if (selected_spot)
+    if (selected_condition)
         ConstructSpotConfig(gump);
-    endif
-
-    if (selected_spawnpoint)
-        ConstructSpawnPointConfig(gump);
-    endif
-
-    if (selected_treasure)
-        ConstructTreasureConfig(gump);
     endif
 
     ConstructGroupList(gump);
