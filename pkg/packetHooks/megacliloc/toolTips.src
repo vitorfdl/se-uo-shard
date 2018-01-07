@@ -156,8 +156,14 @@ exported function MegaCliloc( who, byref packet )
 
          if (item.dead && !who.cmdlevel)
             Object_Name := "Fantasminha";
-         elseif (GetObjProperty(item, "facecovered") && !who.cmdlevel)
-            Object_Name := "Desconhecido";
+         endif
+
+         if (GetObjProperty(item, "facecovered"))
+            if (!who.cmdlevel)
+               Object_Name := "Desconhecido";
+            else
+               Object_Name := "{} [Desconhec.]".format(Object_Name);
+            endif
          endif
 
 			var raca := GetObjProperty(item, "chardata").raca;
