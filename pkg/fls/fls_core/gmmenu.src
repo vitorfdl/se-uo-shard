@@ -6,8 +6,8 @@ include ":gumps:gumps_ex";
 // include ":gumps:yesno";
 var gumpid := 0x99B7;
 
-var upMenu   := array{"[mTele", "[mDestroy", "[nSight", "[conceal", "[gmpage", "[decayat0"};
-var downMenu := array{"[teleto", "[Info", "[fichaRP", "[Propedit", "[players", "[movable"};
+var upMenu   := array{"[mTele", "[mDestroy", "[nSight", "[conceal", "[gmpage", "[decayat0", "[itemunico"};
+var downMenu := array{"[teleto", "[Info", "[fichaRP", "[Propedit", "[players", "[movable", "[lockradius"};
 //UpMenu is 100+i
 //Downmenu is 200+i
 
@@ -26,7 +26,7 @@ program start_gmMeny(who)
                 start_script(":commands:building/mdestroy", who);
                 break;
             103://nSight
-                start_script(":commands:coun/nSight", who);
+                start_script(":commands:coun/nsight", who);
                 break;
             104://conceal
                 start_script(":commands:coun/conceal", who);
@@ -36,6 +36,9 @@ program start_gmMeny(who)
                 break;
             106://decayat
                 start_script(":commands:props/setprop", array{who, "decayat 0", 1});
+                break;
+            107://itemunico
+                start_script(":unicos:commands/gm/unicos", who);
                 break;
             201://teleto
                  start_script(":commands:seer/teleto", who);
@@ -52,8 +55,11 @@ program start_gmMeny(who)
             205://players
                  start_script(":fls_core:commands/gm/players", who);
                 break;
-            206://decayat
+            206://movable
                 start_script(":commands:props/setprop", array{who, "movable 0", 1});
+                break;
+            206://lockradius
+                start_script(":commands:building/lockradius", array{who, 5);
                 break;
             default:
                 closed := 1;

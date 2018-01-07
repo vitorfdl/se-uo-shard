@@ -8,14 +8,18 @@ use os;
 
 program textcmd_LockRadius(who, text)
 	if ( !text )
-		SendSysMessage(who, "Syntax: .lockradius <radius>");
-		return 0;
+      text := who[2];
+      who := who[1];
+      if (!text)
+         text := 5;
+      endif
 	endif
 
 	var range := CInt(text);
 	foreach item in ListItemsNearLocation(who.x, who.y, who.z, range, who.realm)
 		if (!item.isReagent())
 			item.movable := 0;
+         item.decayat := 0;
 			SleepMS(2);
 		endif
 	endforeach

@@ -393,3 +393,18 @@ endfunction
 function Speak(text, type := SAY_TEXTTYPE_DEFAULT)
    SayUC(UC(text), type);
 endfunction
+
+
+function MakeBlind(mobile, is_remove := 0)
+   if (is_remove)
+      if (!mobile.opponent)
+         return;
+      endif
+      
+      DisableEvents(SYSEVENT_ENTEREDAREA);
+      EnableEvents(SYSEVENT_ENTEREDAREA, areasize);
+      return;
+   endif
+   DisableEvents(SYSEVENT_ENTEREDAREA);
+   EnableEvents(SYSEVENT_ENTEREDAREA, 3);
+endfunction

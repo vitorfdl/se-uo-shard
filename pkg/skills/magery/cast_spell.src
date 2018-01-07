@@ -153,7 +153,12 @@ program SpellStarter(params)
       attribute := WISDOM;
    endif
 
-   spellinfo.dice_roll := rollAttrDice(mobile, attribute) + getProficiencyBonus(mobile);
+   var bonus_spell := 0;
+   if (GetGlobalProperty("dia") == "noite" && HaveFeat(who, "Tradição Arcana {}".format(spellinfo.type)))
+      bonus_spell := 1;
+   endif
+
+   spellinfo.dice_roll := rollAttrDice(mobile, attribute, bonus_spell) + getProficiencyBonus(mobile);
    if (spellinfo.type)
       mobile.SetAchievement("spell_{}".format(lower(spellinfo.type)), 1);
    elseif (spellinfo.pericia)

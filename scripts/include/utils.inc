@@ -139,4 +139,6 @@ function FLSCreateItemBackpack(who, item, amount := 1)
 	if ( !created )
 		SendSysMessage(who, "Error: Could not create "+Hex(item));
 	endif
+
+   return created;
 endfunction

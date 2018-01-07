@@ -110,7 +110,7 @@ function GetMaxPets(who)
 	// var skill := AP_GetStat(who, WISDOM);
 	var maxpets := 1 + cint( GetObjProperty(who, "extrapets") ) + cint( getProficiencyBonus(who, TRATO_ANIMAIS) / 2 );
 
-   if (HaveFeat(who, "Treinador de Animais"))
+   if (HaveFeat(who, "Treinador de Animais") || HaveFeat(who, "Cadeia de Comando") )
 	   maxpets += 1;
    endif
 
@@ -142,7 +142,7 @@ function LogoutPets(who)
 endfunction
 
 //pega os pets da pessoa na area
-function ListPetsNear(who,  range)
+function ListPetsNear(who, range)
 	var pets := array;
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )

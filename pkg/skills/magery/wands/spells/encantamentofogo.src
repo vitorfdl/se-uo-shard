@@ -50,6 +50,16 @@ program animateSword(params)
 	   PlayMovingEffect(item, targ, 0x36E4, 10, 3, 1);
       PlaySoundEffect(item, 0x209);
       var roll_dice := RandomDiceRoll("1d4+1");
+      
+      if (rollResistDice(mobile, DEXTERITY) > spellinfo.dice_roll)
+         roll_dice := roll_dice / 2;
+         SendSysMessageEx(who, "O alvo conseguiu evitar parte do dano.");
+         SendSysMessageEx(mobile, "Você se esquiva e recebe metade do dano.");
+      endif
+
+      if (roll_dice < 1)
+         roll_dice := 1;
+      endif
       DamageFLS(targ, roll_dice, "Fogo", who);
       sleepms(750);
 	endfor

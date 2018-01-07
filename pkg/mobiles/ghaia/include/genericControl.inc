@@ -79,6 +79,13 @@ function resolveEvent(ev, byref wanders)
             foreach mob in mobs
                if (mob == ev.source)
                   me.setAggro(mob.serial, mob.getToughness()+12);
+                  if (HaveFeat(mob, "Cadeia de Comando"))
+                     var followers := ListPetsNear(mob, 5);
+                     foreach follower in followers
+                        me.setAggro(follower.serial, 5);
+                        sleepms(2);
+                     endforeach
+                  endif
                elseif (CanFight(me, mob))
                   me.setAggro(mob.serial, mob.getToughness()+10);
                endif
@@ -111,5 +118,7 @@ function resolveEvent(ev, byref wanders)
 				flee(ev.source);
 			endif
          break;
+      EVID_BLINDED:
+         MakeBlind(me, ev.remove);
 	endcase
 endfunction
