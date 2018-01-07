@@ -32,6 +32,7 @@ function ghaiaAttack(who, npc)
 	event.type		:=	EVID_TAUNT;
 	event.source	:=	who;
 
+   npc.setAggro(who.serial, 30);
 	SendEvent(npc, event);
 endfunction
 
