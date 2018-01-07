@@ -8,12 +8,22 @@ program debugCraft(who)
       if (!(0x14f8 in recipes))
          createRecipe(who, 0x14f8);
       endif
+      if (!(0x14f8 in recipes))
+         createRecipe(who, 0x14f8);
+      endif
    endif
 
    if (chardata.antecedente == "Aprendiz Ferreiro")
       var recipes := GetObjProperty(who, "recipes");
       if (!(0x1876 in recipes))
          createRecipe(who, 0x1876);
+      endif
+   endif
+
+   if (chardata.antecedente == "Aprendiz Marceneiro")
+      var recipes := GetObjProperty(who, "recipes");
+      if (!(0x26B9 in recipes))
+         createRecipe(who, 0x26B9);
       endif
    endif
 endprogram
