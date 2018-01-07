@@ -50,16 +50,32 @@ program destroyitems(parms)
       return 0;
    endif
 
-   var mobiles:= ListMobilesNearLocation( item.x, item.y, item.z, 20, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY );
-   var ev := struct;
-   ev.+type := EVID_HERDING;
-   ev.+data := array{item.x, item.y};
+   if (GetObjProperty(chest, "protected") && !me.hidden)
+      var event := struct{
+         "type" := EVID_TAUNT,
+         "source" := me
+      };
 
-   foreach mob in mobiles
-      SendEvent(mob, ev);
-      SendEvent(mob, ev);
-      sleepms(2);
-   endforeach
+      foreach monster in ListMobilesNearLocationEx(chest.x, chest.y, chest.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
+         if (!monster.master && monster.alignment == 1)
+            SendEvent(monster, event);
+         endif
+         sleepms(2);
+      endforeach
+   else
+      var mobiles:= ListMobilesNearLocation( item.x, item.y, item.z, 20, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY );
+      var ev := struct;
+      ev.+type := EVID_HERDING;
+      ev.+data := array{item.x, item.y};
+
+      foreach mob in mobiles
+         SendEvent(mob, ev);
+         SendEvent(mob, ev);
+         sleepms(2);
+      endforeach
+   endif
+   
+
       
    var hits     := cint(GetObjProperty(item,"hits"));
    PlayAttackAnimation(who, who.weapon);

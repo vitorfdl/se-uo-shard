@@ -158,9 +158,9 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	dmg := Cint(dmg);
 	
 	if (type != DMG_FORCED && checkResist(defender, type) > 0)
-		dmg := Floor(dmg/2);
+		dmg := cint(Floor(dmg/2));
 	elseif (type != DMG_FORCED && checkResist(defender, type) < 0)
-		dmg := Floor(dmg*2);
+		dmg := cint(Floor(dmg*2));
 	elseif (type != DMG_FORCED && checkImmunity(defender, type))
 		dmg := 0;
 		SendSystemReport(defender, "*Imune*", defender);
@@ -168,8 +168,8 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		return;
 	endif
 
-	DisplayDamage(defender, dmg, source);
-	ApplyRawDamage(defender, dmg, DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
+	DisplayDamage(defender, cint(dmg), source);
+	ApplyRawDamage(defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 	
 	if (isBloodied(defender))
 		RecalcVitals(defender);

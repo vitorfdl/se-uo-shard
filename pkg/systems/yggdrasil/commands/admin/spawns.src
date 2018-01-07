@@ -105,7 +105,9 @@ program spotGroups(params)
     while (closed != 1)
         var gump := ConstructGump();
         var input := GFSendGump(who, gump);
-
+       if (input == 0)
+         return;
+       endif
         if (selected_group)
             var active_switch := GFExtractData(input, GF_GROUP_ACTIVE_SWITCH);
             if (!active_switch || active_switch == error)
@@ -860,8 +862,8 @@ function ConstructTreasureConfig(byref gump)
     GFTextLine(gump, sx+80, sy+54, 1153, "Force Spawn:");
     GFAddButton(gump, sx+160, sy+21+38, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_SPAWN_BTN);
 
-    GFTextLine(gump, sx, sy+36+18+18, 1153, "Hidden:");
-    GFCheckBox(gump, sx+60, sy+36+5+18+18, 2360, 2361, treasure.hidden, GF_TREASURE_HIDDEN_SWITCH);
+    GFTextLine(gump, sx+80, sy+36+18+18, 1153, "Hidden:");
+    GFCheckBox(gump, sx+120, sy+36+5+18+18, 2360, 2361, treasure.hidden, GF_TREASURE_HIDDEN_SWITCH);
 
     GFTextLine(gump, sx, sy+36+18+18, 1153, "Breakable:");
     GFCheckBox(gump, sx+60, sy+36+5+18+18, 2360, 2361, treasure.breakable, GF_TREASURE_BREAKABLE_SWITCH);

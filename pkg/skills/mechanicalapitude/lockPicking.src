@@ -66,7 +66,22 @@ function PickTreasureChest(me, lockpick, chest)
 		SendSysMessageEx(me,"O alvo não parece estar tracado.", SSM_INFO);
 		return;
 	endif
+
 	PrintText(me, "*arrombando a fechadura*");
+   if (GetObjProperty(chest, "protected") && !me.hidden)
+      var event := struct{
+         "type" := EVID_TAUNT,
+         "source" := me
+      };
+
+      foreach monster in ListMobilesNearLocationEx(chest.x, chest.y, chest.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
+         if (!monster.master)
+            SendEvent(monster, event);
+         endif
+         sleepms(2);
+      endforeach
+   endif
+   
 	sleepms(250);
 	var diff;
 	case (lvl)
