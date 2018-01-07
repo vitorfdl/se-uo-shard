@@ -17,7 +17,7 @@ include ":blood:blood";
 function StartScript(mobile, attacker := 0, level := 0)
    if (mobile.npctemplate)
       var event := struct{};
-      event.type := EVID_BLINDED:
+      event.type := EVID_BLINDED;
       event.remove := 0;
       SendEvent(mobile, event);
    else
@@ -29,7 +29,7 @@ endfunction
 function EndScript(mobile)
    if (mobile.npctemplate)
       var event := struct{};
-      event.type := EVID_BLINDED:
+      event.type := EVID_BLINDED;
       event.remove := 1;
       SendEvent(mobile, event);
    else

@@ -10,22 +10,27 @@ include ":timedScripts:timedScripts";
 
 program animateSword(params)
 	var who := params[1];
-	var roll_dice := params[2].roll_dice;
+	var roll_dice := params[2].dice_roll;
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var item := CreateItemAtLocation(0x37C4, targ.x, targ.y, targ.z);
+   var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x37C4);
    var mobiles := ListMobilesInLineOfSight( item, 5);
 
    foreach mob in mobiles
+      sleepms(2);
+      if (mob == who || mob in who.party.members)
+         continue;
+      endif
       if (rollResistDice(mob, DEXTERITY) <= roll_dice)
          PrintText(mob, "*cegado*", SSM_HARMFUL);
-         TS_StartTimer(targ, "blinded", 5);
+         TS_StartTimer(mob, "blinded", 10);
+      else
+         SendSystemReport(mob, "*resistido*", SSM_HELPFUL, who);
       endif
-      sleepms(2);
    endforeach
 
-   sleep(2);
+   sleep(1);
    DestroyItem(item);
 	return 1;
 endprogram

@@ -222,7 +222,7 @@ function ShowItemInfo(byref gump, player, item)
 	GFAddButton(gump, 370, 430, 2151, 2154, 1, GET_BTN);
 	GFTextLine(gump, 405, 433, GF_STDCOLOR, "Pegar");
 
-   if (who.cmdlevel > 3)
+   if (player.cmdlevel > 3)
       GFAddButton(gump, 455, 430, 2151, 2154, 1, REMOVE_BTN);
       GFTextLine(gump, 490, 433, GF_STDCOLOR, "Remover da lista");
    endif

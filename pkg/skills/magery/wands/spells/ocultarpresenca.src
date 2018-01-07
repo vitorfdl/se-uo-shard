@@ -10,7 +10,7 @@ include ":timedScripts:timedScripts";
 
 program hiddepresence(params)
 	var who := params[1];
-	var roll_dice := params[2].roll_dice;
+	var roll_dice := params[2].dice_roll;
 	var targ := params[3];
 	params := 0; // No longer needed
    

@@ -7,6 +7,9 @@ use cfgfile;
 
 include "include/say";
 include "include/arrays";
+include ":magery:tnmagery";
+include ":crafting:recipes";
+include ":charactercreation:feats";
 
 //tipo do book eh pra saber se pode inserir scrolls de um certo tipo em um certo book
 function GetBookType(book)

@@ -61,7 +61,7 @@ function CheckCharges(who, recipe, charges_to_learn)
 
       charge_list[already_learning].charges += charges;
       SetObjProperty(recipe, "learning", charge_list);
-      TS_StartCooldown(who, "learning_recipe", 60*30);
+      TS_StartCooldown(who, "learning_recipe", 60*15);
       return 0;
    endif
 
@@ -73,7 +73,7 @@ function CheckCharges(who, recipe, charges_to_learn)
    var me_learning := struct{ "person" := who.serial, "charges" := 1};
    charge_list.append(me_learning);
    SetObjProperty(recipe, "learning", charge_list);
-   TS_StartCooldown(who, "learning_recipe", 60);
+   TS_StartCooldown(who, "learning_recipe", 60*15);
    return 0;
 endfunction
 
@@ -117,5 +117,5 @@ endfunction
 
 function SendLearnMessage(who)
    SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
-   SendSysMessageEx(who, "Sera possivel ler uma receita novamente em 30 minutos.", SSM_INFO);
+   SendSysMessageEx(who, "Sera possivel ler uma receita novamente em 15 minutos.", SSM_INFO);
 endfunction

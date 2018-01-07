@@ -50,13 +50,13 @@ program destroyitems(parms)
       return 0;
    endif
 
-   if (GetObjProperty(chest, "protected") && !me.hidden)
+   if (GetObjProperty(item, "protected"))
       var event := struct{
          "type" := EVID_TAUNT,
-         "source" := me
+         "source" := who
       };
 
-      foreach monster in ListMobilesNearLocationEx(chest.x, chest.y, chest.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
+      foreach monster in ListMobilesNearLocationEx(item.x, item.y, item.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
          if (!monster.master && monster.alignment == 1)
             SendEvent(monster, event);
          endif

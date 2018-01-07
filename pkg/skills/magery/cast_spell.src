@@ -154,7 +154,7 @@ program SpellStarter(params)
    endif
 
    var bonus_spell := 0;
-   if (GetGlobalProperty("dia") == "noite" && HaveFeat(who, "Tradição Arcana {}".format(spellinfo.type)))
+   if (GetGlobalProperty("dia") == "noite" && HaveFeat(mobile, "Tradição Arcana {}".format(spellinfo.type)))
       bonus_spell := 1;
    endif
 
