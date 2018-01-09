@@ -491,6 +491,8 @@ function GetAttackerFeatBonus(attacker, roll)
       bonus += 1;
    elseif (wpn_a_elem.WeaponType == "axe" && HaveFeat(attacker, "Mãos Pesadas"))
       bonus += 1;
+   elseif (wpn_a_elem.WeaponType == "mace" && HaveFeat(attacker, "Destruidor"))
+      bonus += 1;
    endif
       
    return bonus;

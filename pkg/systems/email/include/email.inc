@@ -272,8 +272,12 @@ function ReadMail( who, number )
    if (who.cmdlevel >= 3)
       box_account := "[Acct:"+SystemFindObjectBySerial( CInt( mail_info.from_box ), SYSFIND_SEARCH_OFFLINE_MOBILES ).acctname+"]";
    endif
-		
-	GFTextLine( gump, 25, 20, 1720, "Dê: "+mail_info.from_name+""+box_info+""+box_account );
+	
+   if (!mail_info.rp_rating)
+	   GFTextLine( gump, 25, 20, 1720, "Dê: "+mail_info.from_name+""+box_info+""+box_account );
+   else
+	   GFTextLine( gump, 25, 20, 1720, "Dê: {}".format(mail_info.rp_rating[1]) );
+   endif
 	GFTextLine( gump, 25, 40, 1720, "Assunto: "+mail_info.subject );
 
         var time := StrFormatTime( "%m-%d-%Y %I:%M:%S %p", CInt( mail_info.time ));
@@ -305,7 +309,7 @@ function ReadMail( who, number )
 			GFTextLine( gump, 375, 425, 1720, "Teleportar" );
 		endif
 
-      if (mail_info.from_name != "N/A" && !mail_info.rp_rating)
+      if (mail_info.from_name != "N/A")
          GFAddButton( gump, 495, 425, 0xFBF, 0xFBE, GF_CLOSE_BTN, mail_info.from_box );
          GFTextLine( gump, 530, 425, 1720, "Responder" );
       endif
@@ -481,9 +485,6 @@ function SendSystemMail( who, subject, msg_array, rp_rating)
 	email.+message := msg_array;
 	email.+from_name := "N/A";
 	email.+from_box := "N/A";
-   if (rp_rating)
-      email.+from_name := rp_rating[1];
-   endif
 	email.+time := POLCore().systime;
    email.+rp_rating := rp_rating;
 	email.+unread := 1;
