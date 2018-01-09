@@ -31,7 +31,8 @@ program avaliarrp(params)
    //    return;
    // endif
 
-start_script( ":email:emailMessage/sendSystemMail", array{ 999999997, "Avaliação de Jogador {}".format(targ.name), resposta, array{"{} - {}".format(who.name, who.acctname), targ.serial} }   );
+   start_script( ":email:emailMessage/sendSystemMail", array{ 999999997, "Avaliação de Jogador {}".format(targ.name), resposta, array{"{} - {}".format(who.name, who.acctname), targ.serial} }   );
+   if (who.cmdlevel) return; endif;
    var last_rates := GetObjProperty(who, "ficharp_rates");
    if (!last_rates)
       last_rates := dictionary{};

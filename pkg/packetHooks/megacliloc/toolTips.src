@@ -168,7 +168,7 @@ exported function MegaCliloc( who, byref packet )
 
 			var raca := GetObjProperty(item, "chardata").raca;
 			if (raca)
-				Object_Name := Object_Name.format(raca);
+				Object_Name := "{} [{}]".format(Object_Name, raca);
 			endif
 			
 			if (item.npctemplate && IsBoss(item))

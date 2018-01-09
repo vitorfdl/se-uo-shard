@@ -163,8 +163,8 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		dmg := cint(Floor(dmg*2));
 	elseif (type != DMG_FORCED && checkImmunity(defender, type))
 		dmg := 0;
-		SendSystemReport(defender, "*Imune*", defender);
-		SendSystemReport(defender, "*Imune*", source);
+		SendSystemReport(defender, "*Imune*", SSM_FAIL, defender);
+		SendSystemReport(defender, "*Imune*", SSM_FAIL, source);
 		return;
 	endif
 
