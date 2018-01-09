@@ -17,5 +17,9 @@ program EmailMessage( params )
 	var mobile := params[1];
 	var subject := params[2];
 	var msg := params[3];
+
+   if (!mobile.isA(POCLASS_MOBILE))
+      mobile := SystemFindObjectBySerial(mobile, SYSFIND_SEARCH_OFFLINE_MOBILES);
+   endif
 	SendSystemMail( mobile, subject, msg );
 endprogram

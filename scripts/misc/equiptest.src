@@ -37,7 +37,7 @@ program EquipTest(mobile, item, start_up)
 		endif
 	endif
 
-	if (GetObjProperty(item, "broken") == 1)
+	if (item.hp == 0)
 		SendSysMessageEx(mobile, "Você não pode equipar um item danificado.", SSM_FAIL);
 		return 0;
 	endif

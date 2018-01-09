@@ -51,7 +51,7 @@ function HandleItemGiven(npc, player, item)
 	elseif ( !item.IsA(POLCLASS_ITEM) )
 		SendSysMessageEX(player, "Cancelado.",SSM_FAIL);
 		return;
-	elseif ( (item.objtype == 0xba63 || item.objtype == 0xba64 || item.objtype == 0xba65 ) && player.cmdlevel < 3)
+	elseif ( (item.objtype == 0xeed || item.objtype == 0xba64 || item.objtype == 0xba65 ) && player.cmdlevel < 3)
 		SendSysMessageEX(player, "Você não pode vender moedas",SSM_FAIL);
 		return;
 	endif

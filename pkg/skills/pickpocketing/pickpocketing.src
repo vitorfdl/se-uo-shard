@@ -50,7 +50,7 @@ program skill_Stealing(mobile)
 		SendSysMessageEx(mobile, "O alvo esta muito longe.", SSM_FAIL);
 		return 0;
 	elseif ( !IsBehind(targ, mobile.x, mobile.y) )
-		SendSysMessageEx(mobile, "Você precisa estar atras do alvo que deseja roubar.", SSM_FAIL);
+		SendSysMessageEx(mobile, "Você precisa estar atraá do alvo que deseja roubar.", SSM_FAIL);
 		return 0;
 	endif
 
@@ -121,7 +121,7 @@ program skill_Stealing(mobile)
 			continue;
 		endif
 
-		if (steal.objtype IN {0xba63, 0xba64, 0xba65}) // moeda
+		if (steal.objtype IN {0xeed, 0xba64, 0xba65}) // moeda
 			diff := 10 + CInt(steal.amount * 0.3);
 			// if (temHabilidade(mobile, "Ladrao de Bolsas"))
 			// 	diff := cint(diff * 0.5);

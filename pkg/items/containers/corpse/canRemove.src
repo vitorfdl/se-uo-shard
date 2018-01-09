@@ -11,15 +11,21 @@ program canRemove(character, container, item, move_type)
 	elseif (character.frozen || character.paralyzed)
 		SendSysMessage(character, "Você esta paralizado.");
 		return 0;
-	elseif(GetObjProperty(item, "OnlyKit"))
-		if (GetObjProperty(item, "OnlyKit") != GetObjProperty(character, "kit") )
-			return 0;
-		endif
 	endif
+
+   if (TS_GetCooldown(who, "container_remove"))
+      SendSysMessageEx(mobile, "Aguarde alguns segundos entre cada item que você retira do corpo.", SSM_FAIL);
+      return 0;
+   endif
+
+   var mobiles_near := ListMobilesNearLocationEx(container.x, container.y, LIST_IGNORE_Z, 5, LISTEX_FLAG_PLAYERS_ONLY|LISTEX_FLAG_NORMAL);
+   if (mobiles_near.size() > 1)
+      TS_StartCooldown(mobile, "container_remove", 3);
+   endif
 
 	var mods := GetObjProperty(item, "equip");
 	if ("cursed" in (mods.keys()) && GetObjProperty(item, "#EquippedOn") == container.ownerserial)
-		SendSysMessage(character, "Este item parece estar preso ao usuario");
+		SendSysMessage(character, "Este item parece estar preso ao personagem");
 		return 0;
 	endif	
 	return 1;

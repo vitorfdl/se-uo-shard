@@ -115,8 +115,8 @@ function MenuPlayerToPlayer(who, what)
 
    var last_rates := GetObjProperty(who, "ficharp_rates");
    var createdate := GetObjProperty(who, "createdate");
-   if ((polcore().systime - createdate) >= SECONDS_IN_DAY*2)
-      if (last_rates && (!(what.serial in last_rates) || last_rates[what.serial] <= POLCore().systime))
+   if ((polcore().systime - createdate) >= SECONDS_IN_DAY*2 || who.cmdlevel))
+      if (who.cmldevel || (cint(last_rates[what.serial]) <= POLCore().systime))
          entries.+ficharp_rate := 3002029;
       endif
    endif

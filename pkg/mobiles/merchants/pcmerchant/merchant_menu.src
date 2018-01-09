@@ -404,7 +404,7 @@ function AddItemToSell(npc, player)
 	elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
 		SendSysMessage(player, "Esta não é sua bolsa.");
 		return;
-	elseif ( (targ.objtype == 0xba63 || targ.objtype == 0xba64 || targ.objtype == 0xba65 ) && player.cmdlevel < 3)
+	elseif ( (targ.objtype == 0xeed || targ.objtype == 0xba64 || targ.objtype == 0xba65 ) && player.cmdlevel < 3)
 		SendSysMessage(player, "Você não pode vender moedas");
 		return;
 	endif

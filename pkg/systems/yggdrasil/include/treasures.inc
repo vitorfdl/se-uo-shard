@@ -63,6 +63,7 @@ function CleanTreasure(treasure)
     EraseObjProperty(treasure, "breakable");
     EraseObjProperty(treasure, "hidden");
     EraseObjProperty(treasure, "#awareness_fail");
+    EraseObjProperty(treasure, "broken");
 
     foreach item in (EnumerateItemsInContainer( treasure ))
         DestroyItem( item );
@@ -70,24 +71,17 @@ function CleanTreasure(treasure)
     endforeach
 endfunction
 
-function SpawnTreasure(treasure, config)
+function SpawnTreasure(treasure, config, spot_serial := 1)
+   if (GetObjProperty(treasure, "broken"))
+      treasure.graphic := GetObjProperty(treasure, "broken");      
+   endif
+   
    if(!treasure.isA(POLCLASS_CONTAINER))
       SysLog("SpawnTreasure used on a not container object " + treasure.serial);
       return;
    endif
 
-   if (treasure.desc["[Quebrado]"])
-      var old_name := StrReplace(treasure.desc, " [Quebrado]", ""); 
-      SetName(treasure, old_name);
-
-      treasure.graphic := GetObjProperty(treasure, "original_graphic");
-      SetObjproperty(treasure, "hits", 1+cint(config.level));
-   endif
-
-   if (treasure.desc["[Armadilha]"])
-      var old_name := StrReplace(treasure.desc, " [Armadilha]", ""); 
-      SetName(treasure, old_name);
-   endif
+   SetObjProperty(treasure, "treasure", spot_serial);
 
    CleanTreasure(treasure);
    SetObjProperty(treasure, "level", config.level);
@@ -103,6 +97,7 @@ function SpawnTreasure(treasure, config)
 
    if (config.breakable)
       SetObjProperty(treasure, "breakable", 1);
+      SetObjproperty(treasure, "hits", 1+cint(config.level));
    endif
 
    if (config.hidden)

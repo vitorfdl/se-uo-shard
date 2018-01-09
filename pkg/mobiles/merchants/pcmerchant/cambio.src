@@ -14,7 +14,7 @@ program troca(params)
 	SendSysMessage(who,"Selecione as moedas que deseja trocar");
 	var moedas:=Target( who, options := TGTOPT_CHECK_LOS+TGTOPT_NEUTRAL);
 	
-if ((moedas.objtype == 0xba63) || (moedas.objtype == 0xba64) || (moedas.objtype == 0xba65))
+if ((moedas.objtype == 0xeed) || (moedas.objtype == 0xba64) || (moedas.objtype == 0xba65))
 	
 	var gump := GFCreateGump();
         GFDisposable(gump, 0);
@@ -38,13 +38,13 @@ if ((moedas.objtype == 0xba63) || (moedas.objtype == 0xba64) || (moedas.objtype 
 	var escolha:=GFSendGump(who,gump);
 	if (1 in escolha.keys) //prata
 
-		if (moedas.objtype == 0xba63) //cobre
+		if (moedas.objtype == 0xeed) //cobre
 			if (moedas.amount >= 10)
 				calculo:=moedas.amount / 10;
 				resto:=moedas.amount % 10;
 				DestroyItem(moedas);
 				CreateItemInBackpack( who, 0xba64, amount := calculo);
-				CreateItemInBackpack( who, 0xba63, amount := resto);
+				CreateItemInBackpack( who, 0xeed, amount := resto);
 			else
 				SendSysMessage(who,"Quantidade insuficiente para troca.");
 			endif
@@ -59,13 +59,13 @@ if ((moedas.objtype == 0xba63) || (moedas.objtype == 0xba64) || (moedas.objtype 
 		endif
 
 	elseif (2 in escolha.keys) //Ouro
-		if (moedas.objtype == 0xba63) //cobre
+		if (moedas.objtype == 0xeed) //cobre
 			if(moedas.amount >= 100)
 				calculo:=moedas.amount / 100;
 				resto:=moedas.amount % 100;
 				DestroyItem(moedas);
 				CreateItemInBackpack( who, 0xba65, amount := calculo);
-				CreateItemInBackpack( who, 0xba63, amount := resto);
+				CreateItemInBackpack( who, 0xeed, amount := resto);
 			else
 				SendSysMessage(who,"Quantidade insuficiente para troca.");
 			endif
@@ -87,16 +87,16 @@ if ((moedas.objtype == 0xba63) || (moedas.objtype == 0xba64) || (moedas.objtype 
 		endif
 
     elseif (3 in escolha.keys)//cobre
-		if (moedas.objtype == 0xba63) // cobre
+		if (moedas.objtype == 0xeed) // cobre
 			SendSysMessage(who,"Não foi possivel realizar a troca");
 		elseif (moedas.objtype == 0xba64) // prata
 			calculo:=moedas.amount * 10;
 			DestroyItem(moedas);
-			CreateItemInBackpack( who, 0xba63, amount := calculo);
+			CreateItemInBackpack( who, 0xeed, amount := calculo);
 		elseif (moedas.objtype == 0xba65) // ouro
 			calculo:=moedas.amount * 100;
 			DestroyItem(moedas);
-			CreateItemInBackpack( who, 0xba63, amount := calculo);
+			CreateItemInBackpack( who, 0xeed, amount := calculo);
 		else
 			return 0;
 		endif

@@ -6,7 +6,7 @@ use cfgfile;
 use util;
 include ":attributes:attributes";
 include ":containers:checks"; 
-include ":charactercreation:habilidades";
+include ":timedscripts:timedScripts";
 
 program canRemove(mobile, container, item, move_type)
 
@@ -20,31 +20,44 @@ program canRemove(mobile, container, item, move_type)
 	elseif ( GetProcess(CInt(GetObjProperty(mobile, "#PickPid"))) )
 		SendSysMessageEx(mobile, "Você está ocupado demais tentando roubar alguem.", SSM_FAIL);
 		return 0;
-	endif
+   elseif (ListHostiles(who, 10).size() > 1)
+		SendSysMessageEx(mobile, "Você não pode mexer em containers enquanto está sendo atacado.", SSM_FAIL);
+		return 0;
+   endif
 
-	if (mobile)
-		if (!mobile.npctemplate)
-			//print("mobile is ap layer");
-			var aux := container;
-			while (aux.container)
-				aux := aux.container;
-			endwhile
-			if (aux == mobile && maoLivre(mobile, 1, 0))
-			//	print("mao livre");
-				return 1;
-			endif
+   if (GetObjProperty(container, "treasure"))
+      if (TS_GetCooldown(who, "container_remove"))
+         SendSysMessageEx(mobile, "Aguarde alguns segundos entre cada item que você retira do container.", SSM_FAIL);
+         return 0;
+      endif
 
-			if (!maoLivre(mobile, 1))
-			//	print("sem mao livre");
-				return 0;
-			endif
-			
-			if (mobile.frozen || mobile.paralyzed)
-			//	print("frozen");
-				SendSysMessageEx(mobile, "Você está paralizado.", SSM_FAIL);
-				return 0;
-			endif
-		endif
+      var mobiles_near := ListMobilesNearLocationEx(container.x, container.y, LIST_IGNORE_Z, 5, LISTEX_FLAG_PLAYERS_ONLY|LISTEX_FLAG_NORMAL);
+      if (mobiles_near.size() > 1)
+         TS_StartCooldown(mobile, "container_remove", 2);
+      endif
+   endif
+
+	if (mobile && !mobile.npctemplate)
+      //print("mobile is ap layer");
+      var aux := container;
+      while (aux.container)
+         aux := aux.container;
+      endwhile
+      if (aux == mobile && maoLivre(mobile, 1, 0))
+      //	print("mao livre");
+         return 1;
+      endif
+
+      if (!maoLivre(mobile, 1))
+      //	print("sem mao livre");
+         return 0;
+      endif
+      
+      if (mobile.frozen || mobile.paralyzed)
+      //	print("frozen");
+         SendSysMessageEx(mobile, "Você está paralizado.", SSM_FAIL);
+         return 0;
+      endif
 	endif
 
 	//print("pode mover");

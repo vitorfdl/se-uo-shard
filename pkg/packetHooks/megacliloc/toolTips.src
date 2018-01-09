@@ -168,11 +168,11 @@ exported function MegaCliloc( who, byref packet )
 
 			var raca := GetObjProperty(item, "chardata").raca;
 			if (raca)
-				Object_Name := Object_Name  + " [" + raca + "]";
+				Object_Name := Object_Name.format(raca);
 			endif
 			
 			if (item.npctemplate && IsBoss(item))
-            Object_Name :=  "<BASEFONT COLOR=#CBA300>" + Object_Name;
+            Object_Name :=  "<BASEFONT COLOR=#CBA300>{}".format(Object_Name);
 			endif
 			
 			// Let's get the characters hightlight color.
@@ -189,6 +189,15 @@ exported function MegaCliloc( who, byref packet )
 			//endif
 		elseif ( item.IsA(POLCLASS_ITEM) )
 			Object_Name := item.desc;
+
+         var trap_list := GetObjProperty(item, "TrapList");
+         if (trap_list && GetObjProperty(item, "trapSpoted"))
+            Object_Name := "{} [{} armadilha]".format(Object_Name, trap_list.size());
+         endif
+
+         if ((item.isA(POLCLASS_WEAPON) || item.isA(POLCLASS_ARMOR)) && item.hp == 0)
+            Object_Name := "{} [danificado]".format(Object_Name);
+         endif
 		endif
 
 		// If you try to break a new line in the first cliloc(below) it doesn't

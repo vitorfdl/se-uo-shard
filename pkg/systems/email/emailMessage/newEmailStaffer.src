@@ -22,6 +22,7 @@ program EmailMessage( params )
    if (cint(serial) == 999999998 && mobile.cmdlevel < 5)
       return;
    endif
+
    SendSysMessageEx( mobile, "Foi recebido uma nova page." );
         
 	if( GetProcess( CInt( GetObjProperty( mobile, "#EmailMessagePid" ))))
@@ -43,7 +44,10 @@ program EmailMessage( params )
 	var pagename := "Nova Page";
    if (cint(serial) == 999999998)
       pagename := "Novo Bug";
+   elseif (cint(serial) == 999999997)
+      pagename := "Nova avaliação";
    endif
+   
    GFDrawWrappedText( gump, 565, 440, GFWordWrap( pagename, 50 ) );
 
    //And now we need to know the answer...

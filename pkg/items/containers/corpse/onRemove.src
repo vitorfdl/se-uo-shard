@@ -27,7 +27,7 @@ program onRemove(character, container, item, item_amount, move_type)
 	// endif
 
 	if (cint(GetObjProperty(container, "looteado")) == 0)
-		if (item.objtype == 0xba63)
+		if (item.objtype == 0xeed)
 			SetObjProperty(character, "lootmoedas", cint(GetObjProperty(character, "lootmoedas")) + item_amount );
 			SetObjProperty(container, "looteado", 1);
 		endif

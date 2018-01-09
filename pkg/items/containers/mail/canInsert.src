@@ -15,7 +15,7 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 		SendSysMessage(mobile, "Você esta paralizado.");
 		return 0;
 	endif
-	var valid :=	{0xba63, 0xba64, 0xba65, // moedas
+	var valid :=	{0xeed, 0xba64, 0xba65, // moedas
 			 0xFEF, 0xFF0, 0xFF1, 0xFF2, 0xFF3, 0xFF4, // livros
 			 0x1011, 0x100E, 0x100F, 0x1010, 0x1012, 0x1013, // chaves
 			 0xE34 // pergaminho em branco

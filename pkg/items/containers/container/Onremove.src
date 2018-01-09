@@ -12,7 +12,6 @@ program onRemove(character, container, item, item_amount, movetype)
 		aux := aux.container;
 	endwhile
 	
-	
 	if (aux == character)
 		return 1;
 	endif

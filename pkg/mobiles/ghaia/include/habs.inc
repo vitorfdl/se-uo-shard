@@ -183,6 +183,20 @@ function Roubar(targ)
    if (!IsBehind(targ, me.x, me.y) || Distance(me, targ) > 1)
       return 0;
    endif
+
+   var roll := rollAttrDice(me, DEXTERITY) + getProficiencyBonus(who, PRESTIDIGITACAO);
+   foreach item in EnumerateItemsInContainer(targ.backpack, ENUMERATE_ROOT_ONLY)
+      var diff := 10 + CInt(item.amount * 0.3) + cint(item.weight/2);
+      if (roll > diff)
+         MoveItemToContainer(item, me.backpack);
+         var user_percep := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(who, PERCEPCAO);
+         if (user_percep > roll)
+            SendSystemReport(me, "*pegou item da sua mochila*", SSM_FAIL, targ);
+         endif
+         break;
+      endif
+      sleepms(2);
+   endforeach
    
    return 1;
 endfunction

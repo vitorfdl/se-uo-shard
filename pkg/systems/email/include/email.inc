@@ -138,7 +138,7 @@ function EmailIndex( who )
    return 1;
 endfunction
 
-function NewLetter( who, send_to:=" ", subject:=" ", message:=array{} )
+function NewLetter( who, send_to:=" ", subject:=" ", message:=array{}, extra := 0    )
 
 	var gump := GFCreateGump();
 	GFClosable( gump, 0 );
@@ -220,18 +220,27 @@ function NewLetter( who, send_to:=" ", subject:=" ", message:=array{} )
 	subject := GFExtractData( input, input_subject );
 	msg_array := GFWordWrap( temp_string, 660 );
 
+   var rp_rating := 0;
+   if (extra != 0)
+      if (extra.isA(POLCLASS_MOBILE))
+         msg_array := array{"Usuário reportado: {} - {}".format(extra.name, extra.acctname), ""} + msg_array;
+      elseif (typeof(extra) == "Integer")
+         rp_rating := extra;
+      endif
+   endif
+
    if( input[ADDRESS_BOOK] )
       var char_ref := SelectCharacter( who );
       if( !char_ref )
          NewLetter( who, send_to, subject, message );
       else
-         SendSysMessage(who, "Send_To: " + char_ref.name);
+         SendSysMessageEx(who, "Send To: " + char_ref.name);
          NewLetter( who, send_to+" "+char_ref.serial, subject, message );
       endif
    elseif( input[WORD_WRAP] )
       NewLetter( who, send_to, subject, msg_array );
    elseif( input[SEND_EMAIL] )
-      SendMail( who, send_to, subject, msg_array );
+      SendMail( who, send_to, subject, msg_array, rp_rating );
    endif
 
    return 1;
@@ -295,11 +304,16 @@ function ReadMail( who, number )
 			GFAddButton( gump, 340, 425, 0xFB3, 0xFB2, GF_CLOSE_BTN, TELEPORT_TO );
 			GFTextLine( gump, 375, 425, 1720, "Teleportar" );
 		endif
+
+      if (mail_info.from_name != "N/A")
+         GFAddButton( gump, 495, 425, 0xFBF, 0xFBE, GF_CLOSE_BTN, mail_info.from_box );
+         GFTextLine( gump, 530, 425, 1720, "Responder" );
+      endif
 	endif
 
-	if (mail_info.from_name != "N/A")
-		GFAddButton( gump, 495, 425, 0xFBF, 0xFBE, GF_CLOSE_BTN, mail_info.from_box );
-		GFTextLine( gump, 530, 425, 1720, "Responder" );
+	if (mail_info.rp_rating)
+		GFAddButton( gump, 495, 425, 0xFBF, 0xFBE, GF_CLOSE_BTN, ACCEPT_RATING );
+		GFTextLine( gump, 530, 425, 1720, "Aceitar" );
 	endif
 
 	var input := GFSendGump( who, gump );
@@ -312,6 +326,21 @@ function ReadMail( who, number )
    elseif ( input[TELEPORT_TO] )
       var player := SystemFindObjectBySerial( CInt( mail_info.from_box ) );
       MoveObjectToLocation(who, player.x, player.y, player.z, player.realm, MOVEOBJECT_FORCELOCATION);
+   elseif ( input[ACCEPT_RATING] )
+      var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
+      var ficharp_elem := DFFindElement(ficharp_data_file, Hex(mail_info.rp_rating), DF_NO_CREATE);
+      if (!ficharp_elem)
+         return;
+      endif
+      var value := ficharp_elem.GetProp("Ficha");
+      value["Avaliacoes"].append(" ".join(mail_info.message));
+      var setvalue := ficharp_elem.SetProp("Ficha", value);
+
+      var mobile := SystemFindObjectBySerial(mail_info.rp_rating, SYSFIND_SEARCH_OFFLINE_MOBILES);
+      mobile.IncreaseLifeTime(2, "day");
+      start_script(":email:emailMessage/sendSystemMail", array{ mobile, "Você recebeu uma avaliação em sua ficha de interpretação!", "[P]Para visualiaza-la digite .ficharp" } );
+      
+      mail_elem.EraseProp( Hex( number ));
    endif
 
    return 1;
@@ -456,7 +485,7 @@ function SendSystemMail( who, subject, msg_array )
 	
 endfunction
 
-function SendMail( who, send_to, subject, msg_array )
+function SendMail( who, send_to, subject, msg_array, rp_rating := 0 )
 	while( subject[1] == " " )
 		subject[1] := "";
       SleepMS(5);
@@ -535,6 +564,7 @@ function SendMail( who, send_to, subject, msg_array )
 	email.+from_box := user_serial;
 	email.+time := POLCore().systime;
 	email.+unread := 1;
+   email.+rp_rating := rp_rating;
 
 	if( send_to != "all" || !who.cmdlevel )
 		var y_pos := 55;

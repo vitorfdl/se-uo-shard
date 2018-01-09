@@ -332,9 +332,7 @@ function WearDownArmor(defender, armor)
 			if ( armorhp <= 0 )
 				armor.hp := 0;
 				SendSysMessage(defender, armor.desc+" foi destruida.");
-				SetObjProperty(armor, "broken", 1);
-				SetObjProperty(armor, "realdesc", armor.desc);
-				SetName(armor, armor.desc+" [danificado]");
+				SetName(armor, armor.desc);
 				MoveItemToContainer(armor, defender.backpack);
 			elseif ( armor.hp > armor.maxhp )
 				armor.hp := armor.maxhp;
@@ -362,9 +360,7 @@ function WearDownWeapon(attacker)
 				weapon.hp := 0;
 				SendSysMessage(attacker, weapon.desc+" quebrou.");
 				MoveObjectToLocation(weapon, 1, 1, 1, attacker.realm, MOVEOBJECT_FORCELOCATION);
-				SetObjProperty(weapon, "broken", 1);
-				SetObjProperty(weapon, "realdesc", weapon.desc);
-				SetName(weapon, weapon.desc+" [danificado]");
+				SetName(weapon, weapon.desc);
 				MoveItemToContainer(weapon, attacker.backpack);
 			elseif ( weapon.hp > weapon.maxhp )
 				weapon.hp := weapon.maxhp;

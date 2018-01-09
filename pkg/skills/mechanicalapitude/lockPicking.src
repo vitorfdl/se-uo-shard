@@ -121,7 +121,7 @@ function SucessLockPick(me, chest)
 	set_critical(0);
 	
 	if (TemHabilidade(me, "Toque de Ouro"))
-		CreateItemInContainer(chest, 0xba63, randomdiceroll("5d25"));
+		CreateItemInContainer(chest, 0xeed, randomdiceroll("5d25"));
 	endif
 	
 endfunction

@@ -192,7 +192,6 @@ function RunTrapEffect(trap_list, mobile)
 endfunction
 
 function TrapFound(object, founder)
-	SetName(object, object.desc+" [armadilha]");
 	SetObjProperty(object, "trapSpoted", founder.serial);
 endfunction
 

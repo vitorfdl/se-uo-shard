@@ -488,7 +488,7 @@ function DoTreasureList(who, input)
             spot.UpdateTreasure(selected_treasure, treasure);
             break;
         GF_TREASURE_SPAWN_BTN:
-            SpawnTreasure(treasure_obj, treasure);
+            SpawnTreasure(treasure_obj, treasure, spot.serial);
             break;
         GF_TREASURE_ADDITEM_BTN:
             var t_option := RadioGump(who, 180, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});

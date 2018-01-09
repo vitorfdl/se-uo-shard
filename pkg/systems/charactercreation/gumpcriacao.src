@@ -148,7 +148,7 @@ program createchar(who)
 	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser te comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para te deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Para alterar sua senha digite .senha senhanatiga senhanova [P] [P] Bom Jogo!"} );
 	// if (getNotaRP(who) == 2)
 	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
-	// 	CreateItemInBackpack(who, 0xba63, 200); //dinheiro
+	// 	CreateItemInBackpack(who, 0xeed, 200); //dinheiro
 	// 	setNotaRP(who, 0);
 	// 	// SetSkillPoints(who, GetSkillPoints(who)+3);
 	// 	// who.SetPoints(who.getPoints()+9);

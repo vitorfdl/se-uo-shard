@@ -211,6 +211,16 @@ exported function ReduceLifeTime(who, time, type)
 	return 1;
 endfunction
 
+exported function IncreaseLifeTime(who, time, type)
+	var chardata := GetObjProperty(who, "chardata");
+	var lifetime_penalty := AddTimeTo(1, time, type);
+
+	chardata["lifetime_penalty"] -= lifetime_penalty;
+
+	SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+
 exported function getToughness(who)
 	return cint(GetObjProperty(who, "toughness"));
 endfunction

@@ -23,6 +23,9 @@ program useWeapon(who, weapon)
    elseif (weapon_owner && weapon_owner != who.serial)
 		SendSysMessageEx(who, "Você não sabe usar equipamentos magicos de outra pessoa.", SSM_FAIL);
 		return;
+   elseif (weapon.hp == 0)
+		SendSysMessageEx(who, "Sua varinha está quebrada e não pode ser usada para magias.", SSM_FAIL);
+		return;
    endif
 
    if (!active_spell)

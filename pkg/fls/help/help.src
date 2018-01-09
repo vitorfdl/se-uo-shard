@@ -41,15 +41,17 @@ program help_menu(who)
 	GFHTMLArea(chargump, 70, 100, 310, 290, lines, 9390, 1);
 
 	GFTextLine(chargump, 125, 425, 1153, "Solicitar ajuda aos GMs");
-	GFTextLine(chargump, 125, 460, 1153, "Reportar Bug");
+	GFTextLine(chargump, 125, 460, 1153, "Reportar Bug ou fazer sugestão");
+	GFTextLine(chargump, 125, 460, 1153, "Denunciar Jogador");
 	GFAddButton(chargump, 70, 410, 4502, 4502, 1, BUTTON_HELP_SENDGMPAGE );
 	GFAddButton(chargump, 70, 444, 4502, 4502, 1, BUTTON_HELP_REPORTBUG );
+	GFAddButton(chargump, 70, 410, 4502, 4502, 1, BUTTON_HELP_REPORTUSER );
 
 	input := GFSendGump(who, chargump);
 	input := input[0];
 
 	if (input == BUTTON_HELP_SENDGMPAGE )
-		var sendpage := YesNo(who, "Use a page somente caso seu problema possa ser resolvido por Staffers, ou deseja alguma espécie auxílio. Continuar?", "Sim, quero enviar a msg.", "Não, não quero enviar a msg."  );
+		var sendpage := YesNo(who, "Use a page somente caso seu problema possa ser resolvido por Staffers ou deseja alguma espécie auxílio. Continuar?", "Sim, quero enviar a msg.", "Não, não quero enviar a msg."  );
 		if (sendpage)
 			start_script( ":email:emailMessage/helpLetter", array{ who, 999999999} );
 		endif
@@ -58,6 +60,17 @@ program help_menu(who)
 		var sendpage := YesNo(who, "Um bug é um defeito no jogo que será analisado pelos programadores e corrigido. Detalhe o máximo possivel como você descobriu o bug. Continuar?", "Sim, quero reportar o bug.", "Não, não tenho bug para reportar."  );
 		if (sendpage)
 			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998} );
+		endif
+
+	elseif (input == BUTTON_HELP_REPORTUSER )
+		var sendpage := YesNo(who, "Use essa opção somente se desejar reportar um jogador por má conduta ou que esteja infringindo regras. Deseja continuar?", "Sim, quero reportar um jogdaor.", "Não."  );
+		if (sendpage)
+         SendSysMessageEx(who, "Que jogador deseja denunciar?", SSM_REQUEST);
+         var targ := Target(who);
+         if (!targ.isA(POLCLASS_MOBILE) || !targ.acctname)
+            SendSysMessageEx(who, "Só pode reportar jogadores.?", SSM_FAIL);
+         endif
+			start_script( ":email:emailMessage/helpLetter", array{ who, 999999999, targ, "Reportar Jogador"} );
 		endif
 	endif
 endprogram

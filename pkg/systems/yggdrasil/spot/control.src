@@ -14,7 +14,7 @@ program Install(spot)
             spot.ForceKill();
          endif
          FillSpawnQueue(config.spawnpoints);
-         ResetTreasures(config.treasures);
+         ResetTreasures(spot.serial, config.treasures);
       endif
       sleep(400);
    endwhile
@@ -28,11 +28,11 @@ function FillSpawnQueue(spawnpoints)
     endforeach
 endfunction
 
-function ResetTreasures(treasures)
+function ResetTreasures(spot_serial, treasures)
    foreach item in treasures
       var treasure := SystemFindObjectBySerial(item.serial);
       if (cint(GetObjProperty(treasure, "spawned_time")) <= ReadGameClock())
-         SpawnTreasure(treasure, item);
+         SpawnTreasure(treasure, item, spot_serial);
       endif
       sleepms(2);
    endforeach

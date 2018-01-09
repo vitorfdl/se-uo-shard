@@ -57,7 +57,7 @@ program skillremoveTrap(who)
 		var lvl := Cint(GetObjProperty(item, "level"));
 		case (lvl)
 			1: dif := 16;
-			2: dif := 19;
+			2: dif := 18;
 			3: dif := 22;
 			4: dif := 24;
 			5: dif := 28;
@@ -78,7 +78,6 @@ program skillremoveTrap(who)
 		SendSysMessageEx( who, "Você desarmou a armadilha com sucesso.", SSM_INFO);
 		RemoveTrap(item, 1);
 		item.usescript := "";
-		var name := item.desc[" [armadilha]"] := "";
 		SetName(item, name);
 		ExpGain(who, dif, dice_roll);
 	elseif ( item.isTrap() )

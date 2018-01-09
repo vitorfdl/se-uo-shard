@@ -88,12 +88,12 @@ function sendFichaRp(who, targ, edit := 0)
 		if (!ficharp_elem)
 			ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_CREATE);
 			var ficha := struct;
-            ficha.+Caracteristicas := array{};
-            ficha.+Planejamentos   := array{};
-            ficha.+Feitos          := array{};
-            ficha.+Anotacoes       := array{};
-            ficha.+Avaliacoes      := array{};
-            ficha.+Xettones        := "Limitador";
+         ficha.+Caracteristicas := array{};
+         ficha.+Planejamentos   := array{};
+         ficha.+Feitos          := array{};
+         ficha.+Anotacoes       := array{};
+         ficha.+Avaliacoes      := array{};
+         ficha.+Xettones        := "Limitador";
 			fichaSetProp(targ, "Ficha", ficha);
 		endif
 		var texto;
@@ -274,14 +274,12 @@ function PegarResposta(who)
 		var i;
 		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
 			var line := GFExtractData(input, msg_array[i]);
-      //sendsysmessage(who, "extraindo linha " + line);
 			if ( line )
 				line := " "+line;
 				msg_array[i] := line;
 			else
 				msg_array[i] := "";
 			endif
-      //sendsysmessage(who, "linha final " + line);
 		endfor
 	
 		//Clear off empty lines.

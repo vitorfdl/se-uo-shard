@@ -190,9 +190,6 @@ function doRepair(who, craft_skill, recipe_cfg)
       SetObjProperty(what,"reparos",reparos);
    endif
 
-   SetObjProperty(what, "broken", 0);
-   SetName(what, GetObjProperty(what, "realdesc"));
-  
    if(what.hp == what.maxhp)
       SendSysMessageEx(who, "O item não esta danificado.");
       return;

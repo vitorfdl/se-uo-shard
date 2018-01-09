@@ -11,7 +11,7 @@ program canRemove(mobile, container, item, move_type)
 	elseif ( move_type == MOVETYPE_COREMOVE )
 		return 1;
 	else
-		PrintTextAbovePrivate(container, "That cannot be removed.", mobile);
+		PrintTextAbovePrivate(container, "Não pode remover itens desse container.", mobile);
 		return 0;
 	endif
 endprogram
