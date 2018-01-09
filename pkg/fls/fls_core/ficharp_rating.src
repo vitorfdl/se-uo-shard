@@ -7,17 +7,38 @@ include ":gumps:htmlgump";
 include ":gumps:yesno";
 include ":gumps:include/requestgump";
 include ":timedscripts:timedScripts";
+include "include/say";
+include ":timeUtils:time";
 
 program avaliarrp(params)
    var who := params[1];
    var targ := params[2];
    params := 0;
 
-
-   if (targ,cmdlevel)
+   var resposta := PegarResposta(who);
+   if (!resposta)
+      SendSysmessageEx(who, "Cancelado", SSM_FAIL);
       return;
    endif
-endfunction
+
+   if (!YesNo(who, "Deseja mesmo avaliar este personagem desta forma? Você não pode voltar atrás.", "Sim", "Não"))
+      SendSysmessageEx(who, "Cancelado", SSM_FAIL);
+      return;
+   endif
+
+
+   // if (targ.cmdlevel)
+   //    return;
+   // endif
+
+start_script( ":email:emailMessage/sendSystemMail", array{ 999999997, "Avaliação de Jogador {}".format(targ.name), resposta, array{"{} - {}".format(who.name, who.acctname), targ.serial} }   );
+   var last_rates := GetObjProperty(who, "ficharp_rates");
+   if (!last_rates)
+      last_rates := dictionary{};
+   endif
+   last_rates[targ.serial] := AddTimeTo(polcore().systime, 2, "weeks");
+   SetObjProperty(who, "ficharp_rates", last_rates);
+endprogram
 
 function PegarResposta(who)
 	var gump := GFCreateGump();
@@ -26,12 +47,23 @@ function PegarResposta(who)
 	var y_pos := 80;
 	var i;
 
-	GFResizePic(gump, 0, 0, 3600, 420, 405);
+	GFResizePic(gump, 0, 0, 3600, 420, 250);
+   GFSetId(gump, 0x456);
+   GFClosable(gump, 1);
 	GFResizePic(gump, 15, 15, 0x13BE, 390, 55);
-	GFTextMid(gump, 15, 20, 390, 1153, "Descreva sua avaliação. Tente ser suscinto.");
-	GFTextMid(gump, 15, 40, 390, 1153, "Você pode usar <i> para itálico e <b> para negrito!");
-	GFAddButton(gump, 325, 45, 2128, 2129, GF_CLOSE_BTN, 20);
-	GFResizePic(gump, 15, 70, 0xA3C, 390, 320);
+	GFTextMid(gump, 25, 18, 390, 1153, "Descreva sua avaliação. Tente ser suscinto.");
+	GFTextMid(gump, 25, 36, 390, 1153, "Você pode usar <i>Itálico</i> e <b>Negrito</b>");
+	GFResizePic(gump, 15, 70, 0xA3C, 390, 120);
+
+	GFHTMLArea(gump,  35-10, 200, 115, 25, "<basefont color=#006600><center>Avaliar Positivo", 1);
+	GFAddButton(gump, 35-10, 205, 0x80E, 0x80E, GF_CLOSE_BTN, 21);
+
+	GFAddButton(gump, 165-10, 205, 0x80E, 0x80E, GF_CLOSE_BTN, 22);
+	GFHTMLArea(gump,  165-10, 200, 115, 25, "<basefont color=#7f0000><center>Avaliar Negativo", 1);
+
+	GFAddButton(gump, 290-10, 205, 0x80E, 0x80E, GF_CLOSE_BTN, 0);
+	GFHTMLArea(gump,  290-10, 200, 115, 25, "<basefont color=#7FFFD4><center>Cancelar", 1);
+   
 	for ( i:=1; i<=num_lines; i:=i+1 )
 		msg_array.Append(GFTextEntry(gump, 20, y_pos, 396, 20, 1153, ""));
 		y_pos := y_pos+19;
@@ -39,7 +71,10 @@ function PegarResposta(who)
 	
 	var input := GFSendGump(who, gump);
 
-	if (input[0] == 20)
+   print(input[0]);
+   if (!input[0] || input[0] == 0)
+      return 0;
+	elseif (input[0] == 21 || input[0] == 22)
 		var i;
 		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
 			var line := GFExtractData(input, msg_array[i]);

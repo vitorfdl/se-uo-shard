@@ -75,6 +75,7 @@ function SpawnTreasure(treasure, config, spot_serial := 1)
    if (GetObjProperty(treasure, "broken"))
       treasure.graphic := GetObjProperty(treasure, "broken");      
    endif
+   UpdateItem( treasure );
    
    if(!treasure.isA(POLCLASS_CONTAINER))
       SysLog("SpawnTreasure used on a not container object " + treasure.serial);

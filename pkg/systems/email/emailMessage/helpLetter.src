@@ -12,6 +12,7 @@ use uo;
 use os;
 
 include ":email:email";
+include "include/say";
 
 var user_serial;
 
@@ -22,5 +23,5 @@ program EmailMessage( params )
    var subject := params[4];
    user_serial := mobile.serial;
 
-   NewLetter(mobile, dest, "", array{}, extra);
+   NewLetter(mobile, dest, subject, array{}, extra);
 endprogram

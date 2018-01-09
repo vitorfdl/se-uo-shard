@@ -224,7 +224,7 @@ function NewLetter( who, send_to:=" ", subject:=" ", message:=array{}, extra := 
    if (extra != 0)
       if (extra.isA(POLCLASS_MOBILE))
          msg_array := array{"Usuário reportado: {} - {}".format(extra.name, extra.acctname), ""} + msg_array;
-      elseif (typeof(extra) == "Integer")
+      elseif (typeof(extra) == "Array")
          rp_rating := extra;
       endif
    endif
@@ -305,7 +305,7 @@ function ReadMail( who, number )
 			GFTextLine( gump, 375, 425, 1720, "Teleportar" );
 		endif
 
-      if (mail_info.from_name != "N/A")
+      if (mail_info.from_name != "N/A" && !mail_info.rp_rating)
          GFAddButton( gump, 495, 425, 0xFBF, 0xFBE, GF_CLOSE_BTN, mail_info.from_box );
          GFTextLine( gump, 530, 425, 1720, "Responder" );
       endif
@@ -327,8 +327,8 @@ function ReadMail( who, number )
       var player := SystemFindObjectBySerial( CInt( mail_info.from_box ) );
       MoveObjectToLocation(who, player.x, player.y, player.z, player.realm, MOVEOBJECT_FORCELOCATION);
    elseif ( input[ACCEPT_RATING] )
-      var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
-      var ficharp_elem := DFFindElement(ficharp_data_file, Hex(mail_info.rp_rating), DF_NO_CREATE);
+      var ficharp_data_file := DFOpenDataFile(":fls_core:ficharp", DF_CREATE);
+      var ficharp_elem := DFFindElement(ficharp_data_file, Hex(mail_info.rp_rating[2]), DF_NO_CREATE);
       if (!ficharp_elem)
          return;
       endif
@@ -336,7 +336,7 @@ function ReadMail( who, number )
       value["Avaliacoes"].append(" ".join(mail_info.message));
       var setvalue := ficharp_elem.SetProp("Ficha", value);
 
-      var mobile := SystemFindObjectBySerial(mail_info.rp_rating, SYSFIND_SEARCH_OFFLINE_MOBILES);
+      var mobile := SystemFindObjectBySerial(mail_info.rp_rating[2], SYSFIND_SEARCH_OFFLINE_MOBILES);
       mobile.IncreaseLifeTime(2, "day");
       start_script(":email:emailMessage/sendSystemMail", array{ mobile, "Você recebeu uma avaliação em sua ficha de interpretação!", "[P]Para visualiaza-la digite .ficharp" } );
       
@@ -468,8 +468,11 @@ function BlockList( who )
         return 1;
 endfunction
 
-function SendSystemMail( who, subject, msg_array )
-	var send_to := who.serial;
+function SendSystemMail( who, subject, msg_array, rp_rating)
+   var send_to := who;
+   if (send_to.isA(POLCLASS_MOBILE))
+      send_to := who.serial;
+   endif
 	var mail_box := DFFindElement( email_data_file, Hex( send_to ));
 	msg_array := GFWordWrap( msg_array, 660 );
 
@@ -478,7 +481,11 @@ function SendSystemMail( who, subject, msg_array )
 	email.+message := msg_array;
 	email.+from_name := "N/A";
 	email.+from_box := "N/A";
+   if (rp_rating)
+      email.+from_name := rp_rating[1];
+   endif
 	email.+time := POLCore().systime;
+   email.+rp_rating := rp_rating;
 	email.+unread := 1;
 
 	MessageToBox( mail_box, send_to, email );
@@ -677,7 +684,7 @@ function MessageToBox( mail_box, serial, email )
 	mail_box.SetProp( "NewMsg", message );
 	mail_box.SetProp( Hex( message ), email );
 
-	if  (cint(serial) != 999999998 && cint(serial) != 999999999)
+	if  (cint(serial) != 999999998 && cint(serial) != 999999999&& cint(serial) != 999999997)
 		notify_player( serial );
 	else
       var aux_event := struct{

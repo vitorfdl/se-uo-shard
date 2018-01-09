@@ -40,9 +40,7 @@ program blessWater(info)
       targ.hp := fix_amount+targ.hp;
    endif
 
-   var item_name := targ.desc;
-   item_name[" [danificado]"] := "";
-   SetName(targ, item_name);
+   SetName(targ, targ.desc);
 
    if (!targ.container)
       PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);

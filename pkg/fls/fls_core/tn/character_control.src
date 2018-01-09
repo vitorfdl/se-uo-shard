@@ -1,0 +1,41 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/say";
+include ":attributes:attributes";
+
+program character_control(who)
+   var cfgfile := ReadConfigFile(":fls_core:tips");
+   var classe := GetObjProperty(who, "chardata").classe;
+   while(who.connected)
+      sleep(1800);
+      if (!classe)
+         classe := GetObjProperty(who, "chardata").classe;
+      endif
+      var tips := GetConfigStringArray(cfgfile["general"], "tip");
+      tips += GetConfigStringArray(cfgfile[classe], "tip");
+      SendSysMessageEX(who, "Você sabia? {}".format(tips.randomentry()), SSM_INFO);
+
+		RecalcVitals(who);
+      
+      var players := ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
+      if (players.size() >= 1)
+         ExpGain(who, 4);
+      endif
+
+      var last_rates := GetObjProperty(who, "ficharp_rates");
+      if (last_rates)
+         var rem_index := array{};
+         foreach rate in (last_rates.keys())
+            if (last_rates[rate] < polcore().systime)
+               rem_index.append(_rate_iter);
+            endif
+            sleepms(2);
+         endforeach
+
+         removeIndexes(last_rates, rem_index);
+         SetObjProperty(who, "ficharp_rates", last_rates);
+      endif
+   endwhile
+endprogram

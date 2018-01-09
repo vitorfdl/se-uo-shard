@@ -17,9 +17,10 @@ program EmailMessage( params )
 	var mobile := params[1];
 	var subject := params[2];
 	var msg := params[3];
+	var rp_rating := cint(params[4]);
 
-   if (!mobile.isA(POCLASS_MOBILE))
+   if (!mobile.isA(POLCLASS_MOBILE) && mobile != 999999997)
       mobile := SystemFindObjectBySerial(mobile, SYSFIND_SEARCH_OFFLINE_MOBILES);
    endif
-	SendSystemMail( mobile, subject, msg );
+	SendSystemMail( mobile, subject, msg, rp_rating );
 endprogram

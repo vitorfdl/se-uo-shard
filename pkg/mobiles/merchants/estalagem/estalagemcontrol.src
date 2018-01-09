@@ -75,7 +75,7 @@ function InnKeeperChecks()
 				elseif (ticks >= 5 && !quartos[i].alert)
 					quartos[i].+alert := 1;
 					var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Aluguel!", 
-					"O pagamento da sua estalagem com " + npc.name + " irá vencer em dois dias. Caso não renove o contrato para a próxima semana até o ultimo dia, você será despejado e seus objetos confiscados, podendo recupera-los comigo."} );
+					"O pagamento da sua estalagem com " + npc.name + " irá vencer em dois dias. Caso não renove o contrato para a próxima semana até o ultimo dia, você será despejado e seus objetos confiscados, podendo recuperá-los comigo."} );
 					SetObjProperty(npc, "quartos", quartos);
 				endif
 			endif
@@ -96,7 +96,7 @@ function DestroyRentItens(x, y, z, r, player, npc)
 		SetName(backpack, player.name);
 	endif
 	foreach obj in objects
-		if (CheckLosBetween( x, y, z, obj.x, obj.y, obj.z, r))
+		if (CheckLosBetween( x, y, z+5, obj.x, obj.y, obj.z, r))
 			if (GetObjProperty(obj, "crafterserial"))
 				if (player && player != error)
 					obj.movable := 1;
@@ -104,17 +104,15 @@ function DestroyRentItens(x, y, z, r, player, npc)
 				else
 					DestroyItem(obj);
 				endif
-				
-				
 			elseif (obj.IsA(POLCLASS_CONTAINER))
 				var container := EnumerateItemsInContainer( obj, ENUMERATE_IGNORE_LOCKED );
 				foreach item in container
-				if (player && player != error)
-					item.movable := 1;
-					MoveItemToContainer( item, backpack);
-				else
-					DestroyItem(item);
-				endif
+               if (player && player != error)
+                  item.movable := 1;
+                  MoveItemToContainer( item, backpack);
+               else
+                  DestroyItem(item);
+               endif
 					sleepms(20);
 				endforeach
 			endif

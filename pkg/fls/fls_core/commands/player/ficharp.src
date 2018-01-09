@@ -239,7 +239,7 @@ function OrganizarTexto(ficharp_elem, prop)
 			valores[prop].erase(i);
 			continue;
 		endif
-		texto := texto+i+"."+valor+"<br>";
+		texto := texto+i+". "+valor+"<br>";
 		i+=1;
 		sleepms(5);
 	endforeach

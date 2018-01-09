@@ -62,6 +62,7 @@ program textcmd_ResGump(who)
 		endif
 		LogToFile(":fls_core:ress.log", "Detalhes... Morto: "+morto+"... DeathPoints: "+dpoints+"... Assassinado: "+assassinado, LOG_DATETIME);
 	endif
+   Detach();
 	KataWakeUp(targ, targ.GetCorpse());
 	EraseObjProperty(targ, "morto");
 endprogram

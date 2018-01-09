@@ -10,6 +10,7 @@ use uo;
 use os;
 
 include ":email:email";
+include "include/say";
 
 //Stored here, so gms can use this same script to look at
 //inboxes of other players.

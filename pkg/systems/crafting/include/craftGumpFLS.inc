@@ -170,6 +170,8 @@ function createGump(who, recipes, params)
             elseif (name["monsterpart"])
                 name["monsterpart"] := "";
                 name := "criatura "+name;
+            elseif (name == "madeira")
+                name := "tábua";
             endif
             var material_text := "{}/{} {}".format(material_have, material_req, name);
             GFTextLine(gump, m_x, m_y, color, material_text);

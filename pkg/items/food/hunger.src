@@ -4,7 +4,6 @@ use util;
 
 include ":attributes:attributes";
 include "include/say";
-include "include/array";
 
 program Hunger(chr)
 	if( chr.cmdlevel >= 2 )

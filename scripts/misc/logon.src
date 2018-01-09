@@ -83,7 +83,7 @@ endprogram
 function IsGm(who)
 	if (who.cmdlevel >= 1)
 		var GmsOnlines := GetGlobalProperty("GmsOnlines");
-        Start_Script(":fls_core:gmmenu", who);
+        Start_Script(":fls_core:tn/gmmenu", who);
 		if (GmsOnlines)
 			GmsOnlines.append(who.serial);
 		else

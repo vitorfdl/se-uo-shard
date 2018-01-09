@@ -8,11 +8,13 @@ include ":gumps:gumps";
 include ":gumps:yesno";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
+include "include/say";
 
 const BUTTON_HELP_CANCEL := 1;
 const BUTTON_HELP_SENDGMPAGE := 2;
 const BUTTON_HELP_SENDCOUNPAGE := 3;
 const BUTTON_HELP_REPORTBUG := 4;
+const BUTTON_HELP_REPORTUSER := 5;
 
 program help_menu(who)
 	var chargump := GFCreateGump();
@@ -40,12 +42,12 @@ program help_menu(who)
 	var lines := GetConfigString(textelem, "Line");
 	GFHTMLArea(chargump, 70, 100, 310, 290, lines, 9390, 1);
 
-	GFTextLine(chargump, 125, 425, 1153, "Solicitar ajuda aos GMs");
-	GFTextLine(chargump, 125, 460, 1153, "Reportar Bug ou fazer sugestão");
-	GFTextLine(chargump, 125, 460, 1153, "Denunciar Jogador");
-	GFAddButton(chargump, 70, 410, 4502, 4502, 1, BUTTON_HELP_SENDGMPAGE );
-	GFAddButton(chargump, 70, 444, 4502, 4502, 1, BUTTON_HELP_REPORTBUG );
-	GFAddButton(chargump, 70, 410, 4502, 4502, 1, BUTTON_HELP_REPORTUSER );
+	GFTextLine(chargump, 125, 425-20, 1153, "Solicitar ajuda aos GMs");
+	GFTextLine(chargump, 125, 460-20, 1153, "Reportar Bug ou fazer sugestão");
+	GFTextLine(chargump, 125, 495-20, 1153, "Denunciar Jogador");
+	GFAddButton(chargump, 70, 410-20, 4502, 4502, 1, BUTTON_HELP_SENDGMPAGE );
+	GFAddButton(chargump, 70, 444-20, 4502, 4502, 1, BUTTON_HELP_REPORTBUG );
+	GFAddButton(chargump, 70, 479-20, 4502, 4502, 1, BUTTON_HELP_REPORTUSER );
 
 	input := GFSendGump(who, chargump);
 	input := input[0];
@@ -68,9 +70,9 @@ program help_menu(who)
          SendSysMessageEx(who, "Que jogador deseja denunciar?", SSM_REQUEST);
          var targ := Target(who);
          if (!targ.isA(POLCLASS_MOBILE) || !targ.acctname)
-            SendSysMessageEx(who, "Só pode reportar jogadores.?", SSM_FAIL);
+            return SendSysMessageEx(who, "Só pode reportar jogadores.", SSM_FAIL);
          endif
-			start_script( ":email:emailMessage/helpLetter", array{ who, 999999999, targ, "Reportar Jogador"} );
+			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998, targ, "Reportar Jogador"} );
 		endif
 	endif
 endprogram

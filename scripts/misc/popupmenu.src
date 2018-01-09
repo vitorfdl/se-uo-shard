@@ -96,6 +96,10 @@ function MenuSelf(who)
 endfunction
 
 function MenuPlayerToPlayer(who, what)
+   if (who == what && !who.cmdlevel)
+      return struct{};
+   endif
+
    var entries := struct{
       "profile"   := struct{ cliloc := 3002021 }
    };
@@ -115,7 +119,7 @@ function MenuPlayerToPlayer(who, what)
 
    var last_rates := GetObjProperty(who, "ficharp_rates");
    var createdate := GetObjProperty(who, "createdate");
-   if ((polcore().systime - createdate) >= SECONDS_IN_DAY*2 || who.cmdlevel))
+   if ((polcore().systime - createdate) >= SECONDS_IN_DAY*2 || who.cmdlevel)
       if (who.cmldevel || (cint(last_rates[what.serial]) <= POLCore().systime))
          entries.+ficharp_rate := 3002029;
       endif

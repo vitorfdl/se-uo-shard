@@ -13,14 +13,16 @@ program canRemove(character, container, item, move_type)
 		return 0;
 	endif
 
-   if (TS_GetCooldown(who, "container_remove"))
-      SendSysMessageEx(mobile, "Aguarde alguns segundos entre cada item que você retira do corpo.", SSM_FAIL);
+   if (TS_GetCooldown(character, "container_remove"))
+      SendSysMessageEx(character, "Aguarde alguns segundos entre cada item que você retira do corpo.", SSM_FAIL);
       return 0;
    endif
 
-   var mobiles_near := ListMobilesNearLocationEx(container.x, container.y, LIST_IGNORE_Z, 5, LISTEX_FLAG_PLAYERS_ONLY|LISTEX_FLAG_NORMAL);
-   if (mobiles_near.size() > 1)
-      TS_StartCooldown(mobile, "container_remove", 3);
+   if (!character.cmdlevel)
+      var mobiles_near := ListMobilesNearLocationEx(container.x, container.y, LIST_IGNORE_Z, 5, LISTEX_FLAG_PLAYERS_ONLY|LISTEX_FLAG_NORMAL);
+      if (mobiles_near.size() > 1)
+      TS_StartCooldown(character, "container_remove", 3);
+      endif
    endif
 
 	var mods := GetObjProperty(item, "equip");

@@ -75,10 +75,6 @@ function Loot_CreateItem(container, line, type := 0)
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
 				endif
-				if (item.isA(POLCLASS_EQUIPMENT))
-					item.hp := 0;
-					SetName(item, item.desc+" [danificado]");
-				endif
 			elseif (type == "recipe")
 				var objtype := GetObjtypeByName(parsed.name);
 

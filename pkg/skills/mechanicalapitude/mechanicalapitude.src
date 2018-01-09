@@ -78,7 +78,7 @@ program skillremoveTrap(who)
 		SendSysMessageEx( who, "Você desarmou a armadilha com sucesso.", SSM_INFO);
 		RemoveTrap(item, 1);
 		item.usescript := "";
-		SetName(item, name);
+		SetName(item, item.desc);
 		ExpGain(who, dif, dice_roll);
 	elseif ( item.isTrap() )
 		if (GetObjProperty(item, "trap_inativa"))

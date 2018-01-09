@@ -245,10 +245,7 @@ function doRepair(who, craft_skill, recipe_cfg)
          SendSysMessageEx(who, "Você consertou o item completamente.");
       else
          what.hp := thehp + repaired_amount;
-         if (what.hp >= 10)
-            var item_name := StrReplace(what.desc, " [danificado]", "");
-            SetName(what, item_name);
-         endif
+         SetName(what, what.desc);
 
          SendSysMessageEx(who, "Você consertou o item.");
          if (what.isMagicWeapon() && dice_result > 16)

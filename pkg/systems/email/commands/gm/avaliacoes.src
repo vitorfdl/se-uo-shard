@@ -1,0 +1,22 @@
+/*
+        Maintened by *Edwards
+        For FantasiaShard.com
+
+        Edwards@FantasiaShard.com
+
+        2010-05-10
+*/
+use os;
+
+include ":datafile:datafile";
+
+var email_datafile := DFOpenDataFile( "Emails", DF_CREATE );
+
+program ReadMail( mobile, serial )
+	serial := 999999997;
+	var script := start_script( ":email:email", {mobile, serial} );
+	if( script.errortext )
+		SendSysMessage( mobile, "Error starting script <:email:email> -->"+script.errortext );
+		return 0;
+	endif
+endprogram
