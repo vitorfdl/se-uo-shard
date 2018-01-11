@@ -7,6 +7,10 @@ include ":tn:cooldown";
 include "include/say";
 
 program equipweapon(who, item, startup)
+   if (startup)
+      return 1;
+   endif
+   
 	var descmod_item:= GetObjProperty(item,"descmod");
 
 	if(descmod_item != error)
