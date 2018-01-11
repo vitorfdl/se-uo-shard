@@ -12,20 +12,18 @@ program Install()
 endprogram
 
 exported function IsAmbienceRune( rune )
-
-        rune := rune;
-        
+   rune := rune;
 	return 1;
 endfunction
 
 exported function GetDelay( rune )
 
-	return GetObjProperty( rune, "Delay" );
+	return cint(GetObjProperty( rune, "Delay" ));
 endfunction
 
 exported function GetRange( rune )
 
-	return GetObjProperty( rune, "Range" );
+	return cint(GetObjProperty( rune, "Range" ));
 endfunction
 
 exported function GetSounds( rune )
@@ -35,7 +33,7 @@ endfunction
 
 exported function ActivateAmbience( rune )
 
-        SetObjProperty( rune, "NameSpec", "Activated" );
+   SetObjProperty( rune, "NameSpec", "Activated" );
 	PrintTextAbove( rune, "Ambience is now active." );
 
 	return 1;

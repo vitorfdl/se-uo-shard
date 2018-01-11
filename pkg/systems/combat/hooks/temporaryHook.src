@@ -266,7 +266,7 @@ function GetDefenderCA(defender, armor)
 	var CA := 5;
 	if ( !defender.npctemplate )
 		if (armor)
-			CA := armor.ar_base; //se é armadura pesada, n tem dex
+			CA := armor.ar_base + armor.ar_mod; //se é armadura pesada, n tem dex
 
 			var armor_elem := GetItemCFGInfo(defender, armor);
 			if (armor_elem.pericia == ARMADURA_LEVE)
@@ -289,7 +289,7 @@ function GetDefenderCA(defender, armor)
 		endif
 
 		if (defender.shield)
-			CA += defender.shield.ar_base;
+			CA += defender.shield.ar_base + defender.shield.ar_mod;
 		endif
 
       var wpn_elem := GetItemCFGInfo(defender, defender.weapon);

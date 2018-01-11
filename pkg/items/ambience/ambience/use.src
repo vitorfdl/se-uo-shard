@@ -17,13 +17,13 @@ program setupsound( mobile, rune )
             return 0;
         endif
 	
-	var range := SendTextEntryGump( mobile, "Enter distance people can hear the rune from (max 20).", TE_CANCEL_ENABLE, TE_STYLE_NUMERICAL, 20 );
+	var range := SendTextEntryGump( mobile, "Entre a distância em que as pessoas poderão ouvir a runa (max 20).", TE_CANCEL_ENABLE, TE_STYLE_NUMERICAL, 20 );
 	if( range.errortext )
                 SendSysMessage( mobile, "Error reading range description -->"+range.errortext );
                 return 0;
 	endif
  
-	var delay := SendTextEntryGump( mobile, "Enter the amount of time to wait between sound effects (seconds).", TE_CANCEL_ENABLE, TE_STYLE_NUMERICAL, 500 );
+	var delay := SendTextEntryGump( mobile, "Entre o tempo entre cada playsound (seconds).", TE_CANCEL_ENABLE, TE_STYLE_NUMERICAL, 500 );
 	if( delay.errortext )
                 SendSysMessage( mobile, "Error reading delay description -->"+delay.errortext );
                 return 0;
@@ -31,7 +31,7 @@ program setupsound( mobile, rune )
  
 	var soundlist := array{};
 	while( mobile )
-		var sound := SendTextEntryGump( mobile, "Enter sound effects for it to cycle through (cancel to finish).", TE_CANCEL_ENABLE, TE_STYLE_NORMAL, 5 );
+		var sound := SendTextEntryGump( mobile, "Entre o ID do som para tocar (cancele para terminar).", TE_CANCEL_ENABLE, TE_STYLE_NORMAL, 5 );
 		if( !sound )
 			break;
 		endif
@@ -40,12 +40,12 @@ program setupsound( mobile, rune )
 		PlaySoundEffect( mobile, CInt( sound ));
 	endwhile
  
-        SetObjProperty( rune, "Range", range );
+   SetObjProperty( rune, "Range", range );
 	SetObjProperty( rune, "Delay", delay );
 	SetObjProperty( rune, "SoundList", soundlist );
 
-        SendSysMessage( mobile, "Ambience rune will active within the next minute." );
-        rune.invisible := 1;
- 
-        return 1;
+   SendSysMessage( mobile, "Ambience rune will active within the next minute." );
+   rune.invisible := 1;
+
+   return 1;
 endprogram

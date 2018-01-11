@@ -42,7 +42,46 @@ program use_MapmakersPen(who, tool)
 	endif
 
 	var blank_array := array{ 0xEF3, 0x14EB, 0x14EC };
-	if (targ.objtype in blank_array)
+   if (targ.objtype == 0xef1f)
+      var lang := GetObjProperty(targ, "lang");
+      if (!lang)
+         return;
+      endif
+
+      if (!HaveFeat(who, lang))
+	      SendSysMessageEx(who, "Você não conhece essa lingua para traduzir o pergaminho", SSM_REQUEST);
+         return;
+      endif
+
+      if (!YesNo(who, "Deseja traduzir este pergaminho?", "Sim", "Não"))
+		   SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+         return;
+      endif
+
+      if (!ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
+		   SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
+         return;
+      endif
+
+      ReserveItem(targ);
+
+      PrintText(who, "*traduzindo pergaminho*");
+      if (!Wait(who, 3))
+         SendSysMessageEx(who, "Você se moveu e parou de traduzir o pergaminho", SSM_FAIL);
+         return;
+      endif
+      PrintText(who, "*traduzindo pergaminho*");
+
+      var roll := rollAttrDice(mobile, INTELLIGENCE) + getProficiencyBonus(who, ESCRIBA);
+      if (roll < 19)
+         SendSysMessageEx(who, "Você falhou em traduzir o pergaminho.", SSM_FAIL);
+         return;
+      endif
+
+      ReleaseItem(targ);
+      EraseObjProperty(targ, "lang");
+      SendSysMessageEx(who, "Você traduziu o pergaminho para a lingua comum.", SSM_INFO);
+	elseif (targ.objtype in blank_array)
 		//var rinfo := sendCraftGump(who, "Cartography");
 
 		// OK was pressed, close it on out

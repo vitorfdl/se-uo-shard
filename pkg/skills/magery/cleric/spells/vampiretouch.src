@@ -31,9 +31,8 @@ program animateSword(params)
 	
    var amt := 4;
 	while  (time < 10)
-
 		if ( (who.x != oldx) || (who.y != oldy))
-			SendSysMEssageEx(who, "Voce se moveu e cancelou a magia.", SSM_FAIL);
+			SendSysMEssageEx(who, "Você se moveu e cancelou a magia.", SSM_FAIL);
 			break;
 		endif
 

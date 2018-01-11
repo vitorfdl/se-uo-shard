@@ -39,12 +39,15 @@ endenum
 
 
 function HealFLS(targ, amt, show_heal := 1)
-	if (GetObjProperty(targ, "noheal"))
+   amt := cint(amt);
+   if (amt <= 1)
+      return;
+	elseif (GetObjProperty(targ, "noheal"))
 		SendSysMessageEx(targ, "Você não pode ser curado.", SSM_FAIL);
 		return;
 	endif
 
-	HealDamage(targ, cint(amt));
+	HealDamage(targ, amt);
 	
 	if (!show_heal)	
 		return;
@@ -184,9 +187,9 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 			var targ := SystemFindObjectBySerial(cleric_healing);
 			if (source != targ && Distance(source, targ) > 8 && targ.connected && !targ.dead)
 				targ := source;
-				SetObjProperty(source, "cleric_spell", source.serial);
+				SetClericHeal(source, targ);
 			endif
-         if (targ != defender || RandomInt(3) == 1)
+         if (targ != defender || RandomInt(2) == 1)
 			   HealFLS(targ, Floor(dmg/2), source);
          endif
 		endif

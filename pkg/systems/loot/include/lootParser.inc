@@ -90,12 +90,21 @@ function Loot_CreateItem(container, line, type := 0)
 				endif
 
 				var item := CreateItemInContainer(container, RECIPE_OBJ);
-				SetObjProperty(item, "objtype", objtype);
 				if ( item.errortext )
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
 				endif
+
+            var force_lang := GetObjProperty(container, "lang");
+            if (force_lang)
+               SetObjProperty(item, "lang", force_lang);
+            elseif (RandomInt(101) < 10)
+               SetObjProperty(item, "lang", "Linguagem Rúnica");
+            elseif (RandomInt(101) < 10)
+               SetObjProperty(item, "lang", "Linguagem Élfica");
+            endif
             
+				SetObjProperty(item, "objtype", objtype);
 				run_script(":crafting:recipes/oncreate", item);
 			endif
 			sleepms(2);

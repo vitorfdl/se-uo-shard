@@ -61,6 +61,16 @@ function SendGump(who, scroll)
       endif
 	endif
 
+   var is_lang := GetObjProperty(scroll, "lang");
+   var lang := "";
+   if (is_lang == "Linguagem Élfica")
+      lang := "Face=Gargish";
+   elseif (is_lang == "Linguagem Rúnica")
+      lang := "Face=Runic";
+   elseif (is_lang)
+      SendSysMessageEx(who, "Problema com a linguagem do pergaminho", SSM_FAIL);
+      return 0;
+   endif
 	var gump := GFCreateGump();
 	GFSetID(gump, GUMPID_RECIPES);
 	GFDisposable(gump, 0);
@@ -71,13 +81,13 @@ function SendGump(who, scroll)
 	GFGumpPicTiled(gump, 37, 43, 234, 11, 2091);
 	GFGumpPicTiled(gump, 38, 159, 234, 11, 2091);
 	GFGumpPic(gump, 47, 184, 1209);
-	GFHTMLArea(gump, 35, 16, 240, 20, "<BASEFONT SIZE=5><CENTER>Receita de {}".format(skill_name));
+	GFHTMLArea(gump, 35, 16, 240, 20, "<BASEFONT SIZE=5 {}><CENTER>Receita de {}".format(lang, skill_name));
 
 	var item_name := recipe.name;
 	if (!item_name)
 		item_name := item.desc;
 	endif
-	GFHTMLArea(gump, 38, 60, 240, 20, "<BASEFONT SIZE=5 COLOR=#8c1a1a><CENTER>{}".format(item_name));
+	GFHTMLArea(gump, 38, 60, 240, 20, "<BASEFONT SIZE=5 COLOR=#8c1a1a {}><CENTER>{}".format(lang, item_name));
 	var tilepic := item.graphic;
 	if (!tilepic)
 		tilepic := objtype;
@@ -86,27 +96,29 @@ function SendGump(who, scroll)
 	if (cint(tilepic))
 		GFTilePic(gump, 127, 91, tilepic);
    else
-	   GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>Um kit lhe permite aprender várias");
-	   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>receitas de uma vez");
+	   GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>Um kit lhe permite aprender várias".format(lang));
+	   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>receitas de uma vez".format(lang));
 	endif
 
-	if (!(cint(objtype) in GetObjProperty(who, "recipes")) && !(hex(objtype) in GetObjProperty(who, "recipes")))
-		var charge_list    := GetObjProperty(scroll, "learning");
-		var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
-		var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
-		if (!FindConfigElem(book_recipes, objtype) && !FindConfigElem(cook_reecipes, objtype))
-			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(remain_charges));
-			if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
-				GFTextLine(gump, 205, 182, 995, "Aprender");
-				GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
-			endif
-		else
-			GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
-			GFHTMLArea(gump, 150, 182, 180, 20, "<BASEFONT SIZE=2><CENTER>Restam {} leituras.".format(remain_charges));
-		endif
-	else
-		GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");
-	endif
+   if (!is_lang || HaveFeat(who, is_lang))
+      if (!(cint(objtype) in GetObjProperty(who, "recipes")) && !(hex(objtype) in GetObjProperty(who, "recipes")))
+         var charge_list    := GetObjProperty(scroll, "learning");
+         var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
+         var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
+         if (!FindConfigElem(book_recipes, objtype) && !FindConfigElem(cook_reecipes, objtype))
+            GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2 {}><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(lang, remain_charges));
+            if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
+               GFTextLine(gump, 205, 182, 995, "Aprender");
+               GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
+            endif
+         else
+            GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
+            GFHTMLArea(gump, 150, 182, 180, 20, "<BASEFONT SIZE=2><CENTER>Restam {} leituras.".format(remain_charges));
+         endif
+      else
+         GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");
+      endif
+   endif
 
 	if (who.cmdlevel >= 4)
 		GFTextCrop(gump, 67, 182, 100, 17, 995, "Trocar Receita");

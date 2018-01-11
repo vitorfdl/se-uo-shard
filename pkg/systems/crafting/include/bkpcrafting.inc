@@ -358,19 +358,6 @@ function CraftExceptional(who, theitem, craft_skill)
 						return;
 					endif
 					
-					//Compara material e o layer do equip, dá return se não passar em nenhum
-					if ("Luvas" in special_props.equipamentos && theitem.tile_layer == 7)
-					elseif ("Calças" in special_props.equipamentos && (theitem.tile_layer == 4 || theitem.tile_layer == 23 || theitem.tile_layer == 24) )
-					elseif ("Capas" in special_props.equipamentos && theitem.tile_layer == 20)
-					elseif ("Cabeça" in special_props.equipamentos && theitem.tile_layer == 6)
-					elseif ("Ombreiras" in special_props.equipamentos && theitem.tile_layer == 19)
-					elseif ("Peitoral" in special_props.equipamentos && (theitem.tile_layer == 17 || theitem.tile_layer == 5 || theitem.tile_layer == 13 || theitem.tile_layer == 22))
-					elseif ("Joias" in special_props.equipamentos && (theitem.tile_layer == 8 || theitem.tile_layer == 10 || theitem.tile_layer == 14 || theitem.tile_layer == 18))
-					elseif ("Escudos" in special_props.equipamentos && theitem.tile_layer == 2 && theitem.resist_physical >= 1)
-					else
-						SendSysMessageEx(who, "Material invalido com este objeto [Vestes].", SSM_FAIL);
-						return;
-					endif
 
 				elseif (special_props.tipo == "Armas")
 					if (!theitem.attribute) //se não for arma

@@ -108,12 +108,14 @@ function SendMessage(who, name_text, is_reply:=0)
 		return 0;
 	endif
 	
-	var message_txt := RequestInput(who, who.backpack, "Qual mensagem você deseja enviar para "+name_text+"? (aperte esc para cancelar)");
-	if ( !message_txt )
+	var msg_strct := RequestInputUC(who, who.backpack, "Qual mensagem você deseja enviar para "+name_text+"? (aperte esc para cancelar)");
+	if ( !msg_strct )
 		SendSysMessageEx(who, "Cancelado.");
 		return 0;
 	endif
 	
+   var message_txt := CChrZ(msg_strct.uc_text)
+   
 	var sndr_settings := GetMessageSettings(who);
 	sndr_settings["last"] := name_text;
 	SetObjProperty(who, ".msg", sndr_settings);

@@ -123,7 +123,7 @@ function getProficiencyBonus(mobile, skills := 0)
 		if (typeof(skills) != "Array") 
 			skills := array{skills};
 		endif
-		if (!HaveSkill(mobile, skills)) return 0; endif
+		if (skills[1] && !HaveSkill(mobile, skills)) return 0; endif
 	endif
 
 	var proficiency := 0;

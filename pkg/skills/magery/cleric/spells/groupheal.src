@@ -1,0 +1,80 @@
+use uo;
+use os;
+use vitals;
+
+include ":spells:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedScripts:timedScripts";
+include "include/tileEffects";
+include ":charactercreation:habilidades";
+include "include/damage";
+include ":brainai:npcUtil";
+
+program SpellScript(params)
+	var who := params[1];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+	if (!targ)
+		return;
+	endif
+
+	var oldx := who.x;
+	var oldy := who.y;
+	var gliphs := array{};
+	var i := 1;
+	var success := 0;
+	
+	while (i <= 3)
+		if (who.x != oldx || who.y != oldy)
+			SendSystemReport(who, "'Magia Cancelada!'");
+			break;
+		endif
+		PerformAction(who, ANIM_CAST_AREA);
+		
+		if (i == 1)
+			CreateRandomGliph(gliphs, targ.x-2, targ.y-2, targ.z);
+			sleepms(500);
+			CreateRandomGliph(gliphs, targ.x, targ.y-2, targ.z);
+			sleepms(500);
+			CreateRandomGliph(gliphs, targ.x+2, targ.y-2, targ.z);
+		elseif (i == 2)
+			CreateRandomGliph(gliphs, targ.x+2, targ.y, targ.z);
+			sleepms(500);
+			CreateRandomGliph(gliphs, targ.x+2, targ.y+2, targ.z);
+			sleepms(500);
+			CreateRandomGliph(gliphs, targ.x, targ.y+2, targ.z);
+		else
+			CreateRandomGliph(gliphs, targ.x-2, targ.y+2, targ.z);
+			sleepms(500);
+			CreateRandomGliph(gliphs, targ.x-2, targ.y, targ.z);
+		endif
+		if (i >= 3)
+			success := 1;
+		endif
+		i += 1;
+		sleepms(500);
+	endwhile
+	
+	if (success)
+		var healed := RandomDiceRoll("2d4+4");
+		
+		PlaySoundEffectXYZ(targ.x, targ.y, targ.z, SFX_SPELL_HEAL);
+		foreach mobile in ListMobilesNearLocation( targ.x, targ.y, targ.z, 2)
+			if (mobile.npctemplate)
+				continue;
+			endif
+			PlayObjectCenteredEffect(mobile, 0x3772, 2, 16);
+         healFLS(mobile, healed, who);
+		endforeach
+	endif
+	
+	sleep(1);
+	foreach gliph in gliphs
+		var destro := DestroyItem(gliph);
+	endforeach
+	
+	return 1;
+endprogram 

@@ -304,4 +304,5 @@ function WriteRune(who, rune_entry)
 	who.SetAchievement("rune_inscription", 1);
 	SetObjProperty(item, "inscripted", rune_entry.name);
 	SendSysMessageEx(who, "Você gravou a runa.", SSM_FAIL);
+   SetName(item, item.desc);
 endfunction

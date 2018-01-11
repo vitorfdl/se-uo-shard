@@ -149,6 +149,7 @@ program SpellStarter(params)
    endif
 
    var attribute := INTELLIGENCE;
+   var pericia := spellinfo.pericia;
    if (spellinfo.pericia["Milagre"])
       attribute := WISDOM;
    endif
@@ -162,7 +163,7 @@ program SpellStarter(params)
    if (spellinfo.type)
       mobile.SetAchievement("spell_{}".format(lower(spellinfo.type)), 1);
    elseif (spellinfo.pericia)
-      var bless_type := SplitWords(spellinfo.pericia. "_")[3];
+      var bless_type := SplitWords(spellinfo.pericia, "_")[3];
       mobile.SetAchievement("bless_{}".format(lower(bless_type)), 1);
    endif
 

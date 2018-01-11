@@ -50,27 +50,33 @@ Const OBJ_RECIPE_SLIP := 0x6116;
 function CopyRecipe(who, recipe)
 	WriteSpellInfo(recipe);
 	//sendsysmessage(who, " " + spellinfo + " " + recipe + "  " + cint(recipe));
-	if (!ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
-		SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
-		return 0;
-	elseif (!SearchArrayOfModel("objtype", cint(0x6400), EnumerateItemsInContainer(who.backpack))) 
+	if (!SearchArrayOfModel("objtype", cint(0x6400), EnumerateItemsInContainer(who.backpack))) 
 		SendSysMessageEx(who, "Você precisa de uma pena e tinteiro", SSM_FAIL);
 		return;
+	elseif (!ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
+		SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
+		return 0;
 	endif
 
-	if (rollAttrDice(who, WISDOM) >= recipe.difficulty+6)
-		var item := createItemInBackpack(who, OBJ_RECIPE_SLIP, 1);
-		if (item == error)
-			sendsysmessage(who, "  " + item);
-		endif
-		SetObjProperty(item, "spell_id", recipe.spellid);
-		SendSysMessageEx(who, "Você fez uma cópia do pergaminho.", SSM_INFO);
-		printtext(who, "*escrevendo pergaminho*");
+	if (rollAttrDice(who, WISDOM) <= recipe.difficulty+6)
+	   SendSysMessageEx(who, "Você copiou o pergaminho sem cuidados e ele ficou ilegivel.", SSM_FAIL);
 		return;
 	endif 
    
+   var item := createItemInBackpack(who, OBJ_RECIPE_SLIP, 1);
+   if (item == error)
+      sendsysmessage(who, "  " + item);
+   endif
+   
+   printtext(who, "*escrevendo pergaminho*");
+   if (!Wait(who, 3))
+      SendSysMessageEx(who, "Você se moveu e parou de copiar o pergaminho", SSM_FAIL);
+      return;
+   endif
+   printtext(who, "*escrevendo pergaminho*");
 
-	SendSysMessageEx(who, "Você copiou o pergaminho sem cuidados e ele ficou ilegivel.", SSM_FAIL);
+   SetObjProperty(item, "spell_id", recipe.id);
+   SendSysMessageEx(who, "Você fez uma cópia do pergaminho.", SSM_INFO);
 endfunction
 
 

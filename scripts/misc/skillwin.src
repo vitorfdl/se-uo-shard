@@ -189,7 +189,7 @@ function BuyTalents(who)
    var y := 91;
 	foreach feat in feat_list
 		GFAddButton(gump, x, y, 2151, 2152, GF_CLOSE_BTN, _feat_iter+100);
-      GFHTMLArea(gump, x+40, y+5, 150, 20, "<BASEFONT size=5>{}".format(feat.name));
+      GFHTMLArea(gump, x+40, y+5, 180, 20, "<BASEFONT size=5>{}".format(feat.name));
 		GFHTMLArea(gump, x+224, y-18, 413, 70, feat.desc, 1);
 
 		if (_feat_iter % 5 != 0)

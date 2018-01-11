@@ -12,7 +12,6 @@ use util;
 include "include/sounds";
 
 program SoundPlay( rune )
-
    while( rune )
       var is_active := 0;
       while( rune.GetSounds() )
@@ -22,30 +21,33 @@ program SoundPlay( rune )
          endif
 
          var delay := rune.GetDelay();
-         if( delay.errortext )
+         if( delay )
             PrintTextAbove( rune, "Error reading delay for a sound_rune -->"+delay.errortext );
-            return 0;
+            break;
          endif
 
          var range := rune.GetRange();
-         if( range.errortext )
+         if( range )
             PrintTextAbove( rune, "Error reading range for a sound_rune -->"+range.errortext );
-            return 0;
+            break;
          endif
 
          var sound_list := rune.GetSounds();
-         if( sound_list.errortext )
+         if( sound_list || typeof(sound_list) != "Array" )
             PrintTextAbove( rune, "Error reading sounds for a sound_rune -->"+sound_list.errortext );
-            return 0;
+            break;
          endif
 
          var effect := sound_list.RandomEntry();
-         if( effect.errortext )
+         if( !effect )
             PrintTextAbove( rune, "Error reading sound effect for a sound_rune -->"+effect.errortext );
-            return 0;
+            break;
          endif
 
-         PlaySoundEffect( rune, effect );
+         foreach mobile in ListMobilesNearLocationEx(rune.x, rune.y, LIST_IGNORE_Z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_CONCEALED|LISTEX_FLAG_PLAYER)
+            PlaySoundEffectPrivate( rune, effect, mobile);
+            sleepms(2); 
+         endforeach
          Sleep( RandomInt( delay ));
       endwhile
 

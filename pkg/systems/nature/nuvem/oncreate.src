@@ -1,0 +1,9 @@
+use uo;
+use os;
+include ":yggdrasil:spawnSpot";
+include ":yggdrasil:treasures";
+include "include/dungeons";
+
+program Creating(nuvem)
+   MoveObjectToLocation(nuvem, nuvem.x, nuvem.y, nuvem.z+15, MOVEOBJECT_FORCELOCATION);
+endprogram

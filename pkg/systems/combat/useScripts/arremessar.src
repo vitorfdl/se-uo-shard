@@ -1,0 +1,53 @@
+use uo;
+
+include "include/say";
+include ":attributes:attributes";
+include ":timedScripts:timedScripts";
+include "include/facings";
+include "include/damage";
+include ":tn:combat";
+include ":combat:combat";
+
+program lancararma(who,weapon)
+   if (!weapon != weapon)
+      return;
+   endif
+
+	SendSysMessageEX(who, "Selecione onde deve para lançar a arma. (esc para cancelar)", SSM_INFO);
+	var targ := TargetCoordinates(who);
+	if (!targ)
+		SendSysMessageEX(who, "Cancelado.", SSM_FAIL);
+		return;
+	endif
+	
+	if (CoordinateDistance(who.x, who.y, targ.x, targ.y) > 10 || !CheckLosBetween(who.x, who.y, who.z, targ.x, targ.y, targ.z))
+		SendSysMessageEX(who, "O alvo esta muito distante ou você não pode vê-lo.", SSM_FAIL);
+		return;
+	endif
+	
+	PlayMovingEffectXYZ( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, weapon.objtype, 10, 10, 0, who.realm);
+	PlaySoundEffect(who, 0x5D3);
+	PrintText(who, "*lança {}".format(weapon.desc));
+
+	MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+
+   var dmg := cint(RandomDiceRoll("2d3") + Ap_GetStat(who, STRENGTH, RETURN_BONUS));
+	var altura := cint(who.z - targ.z);
+	if (altura < 0)
+		altura := 0;
+	endif
+
+   dmg += cint(altura/2);
+
+   var mobiles := ListMobilesNearLocation(targ.x, targ.y, targ.z, 0);
+	foreach mob in mobiles
+      if (rollResistDice(mobile, DEXTERITY) > 14)
+         SendSystemReport(mobile, "*esquiva*", SSM_FAIL, who);
+         SendSystemReport(mobile, "*esquiva*");
+         continue;
+      endif
+
+      DamageFLS(mobile, dmg, "Perfuração", who);
+      sleepms(2);
+   endforeach
+endprogram 

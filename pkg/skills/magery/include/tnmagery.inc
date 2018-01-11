@@ -254,3 +254,30 @@ function SetClericSpellUsed(mobile, spellinfo)
 
 	SetObjProperty(mobile, "cleric_list", cleric_list);
 endfunction
+
+function CreateRandomGliph(byref gliphs, x, y, z)
+	var gliph_graphics := array{0x485F, 0x4844, 0x4841, 0x483B, 0x4862, 0x4865, 0x4868, 0x487A, 0x487D, 0x485C, 0x485F};
+	var gliph := CreateItemAtLocation(x, y, z, 0x790d);
+	
+	gliph.graphic := gliph_graphics.randomentry();
+	
+	if (typeof(gliphs) == "Array")
+		gliphs.append(gliph);
+	else
+		return gliph;
+	endif
+endfunction
+
+function SetClericHeal(who, mobile)
+   if (!mobile.isA(POLCLASS_MOBILE))
+      mobile := who;
+   endif
+   if (mobile == who)
+      SendSystemReport(targ, "Benção de Sacrifício retornou para você");
+   else
+      SendSystemReport(targ, "{} direcionou bençãos para você".format(mobile.name));
+   endif
+
+   who.addBuff(cint(elem_info.Icon), 0, cint(1075833), cint(1075834), cAscZ("Curando {}".format(mobile.name)));
+   SetObjProperty(who, "cleric_spell", mobile.serial);
+endfunction

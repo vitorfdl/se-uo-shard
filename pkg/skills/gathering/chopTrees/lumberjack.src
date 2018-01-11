@@ -42,12 +42,11 @@ program skill_LumberJack(who,tool)
 
 	//SendSysMessage(who," e" + CanChop(who, tool, targ,  orig_x, orig_y));
 	while(CanChop(who, tool, targ,  orig_x, orig_y) )
-		if ( AP_GetVital(who, "Stamina") <= 2)
+		if ( !AP_ConsumeVital(who, "Stamina", 4))
 			SendSysMessageEx(who, "Você esta muito cansado para continuar.", SSM_FAIL);
 			break;
 		endif
 		ChopTree(who, tool, targ, orig_x, orig_y);
-		AP_ConsumeVital(who, "Stamina", 5);
 		CheckToolWear(who, tool, EXTRACAO );
 		sleep(1);
 		if (LJ_GetWoodAmount(who.realm, targ.x, targ.y)== 0 )

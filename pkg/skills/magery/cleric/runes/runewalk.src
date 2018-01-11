@@ -37,10 +37,9 @@ endprogram
 
 function ParalyzeAll(who, trap)
 	PrintText(who, "*ativa a runa de paralização*");
-	var mobiles := ListMobilesNearLocation(who.x, who.y, who.z, 2, who.realm);
-	mobiles.append(ListMobilesNearLocationEx( who.x, who.y, who.z, 2, LISTEX_FLAG_HIDDEN, who.realm ));
+	var mobiles := ListMobilesNearLocationEx( who.x, who.y, who.z, 2, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL);
 	foreach mobile in mobiles
-		TS_StartTimer(mobile, "paralysis", 8);
+		TS_StartTimer(mobile, "paralysis", 4);
 		PlayStationaryEffect(mobile.x, mobile.y, mobile.z, FX_PARA_F_EW, 0, 5);
 		sleepms(5);
 	endforeach

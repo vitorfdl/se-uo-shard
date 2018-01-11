@@ -7,25 +7,12 @@ include ":tn:cooldown";
 include "include/say";
 
 program equipweapon(who, item, startup)
-   if (startup && !who.npctemplate && who.getToughness() > 50)
-      who.setToughness(who.getToughness()*-1);
-      EraseObjProperty(who, "ArmorPenalty");
-
-      var itemdesc := ReadConfigFile("::itemdesc");
-      var item_e := itemdesc[item.objtype];
-      var penalty_list := GetConfigStringArray(item_e, "Penalty");
-      foreach skill in penalty_list
-         AP_ModifySkillMod(who, skill, 0);
-      endforeach
-      return 0;
-   endif
-   
 	var descmod_item:= GetObjProperty(item,"descmod");
 
 	if(descmod_item != error)
 		var descmod := GetObjProperty(who,"descmod");
 		if (!descmod)
-			descmod := struct{};
+			descmod := array{};
 		endif
 
 		if (!(descmod_item in descmod))
@@ -33,9 +20,7 @@ program equipweapon(who, item, startup)
 			SetObjProperty(who,"descmod",descmod);
 		endif
 
-		var ori_name:= who.name;
-		SetName(who, " ");
-		SetName(who, ori_name);	
+		SetName(who, who.name);	
 	endif
 				
 	if (who.npctemplate)
@@ -107,10 +92,6 @@ function SetEquipmentMods(who, item)
 	endif
 //	SendSysMessage(who, " " + mods + " " + mods.keys().size());
 	foreach mod in (mods.keys())
-		if (GetObjProperty(item,"magic") == 1)
-			continue;
-		endif
-		
 		if (mod == "strmod")
 			AP_ModifyStatMod(who, STRENGTH, Cint( mods["strmod"] ));
 		elseif (mod == "dexmod")
@@ -122,7 +103,7 @@ function SetEquipmentMods(who, item)
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, Cint( mods["wismod"] ) );
 		elseif (mod == "setprop")
-			EraseObjProperty(who, "#" + GetObjProperty(item, "propname"));
+			SetObjProperty(who, "#" + GetObjProperty(item, "propname"));
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) + Cint( mods["manamod"] ));
       elseif (mod == "toughmod")
