@@ -70,13 +70,18 @@ function addScroll(who, book, scroll)
    var spellinfo := spell_id;
    WriteSpellInfo(spellinfo);
 
-   var recipe_charges := spellinfo.circle * 2;
+   var recipe_charges := (spellinfo.circle * 2) -1;
    if (HaveFeat(who, "Tradição Arcana {}".format(spellinfo.type)))
       recipe_charges := recipe_charges / 2;
    endif
 
+   if (recipe_charges < 1)
+      recipe_charges := 1;
+   endif
+
    if (!CheckCharges(who, scroll, recipe_charges))
 		SendLearnMessage(who);
+      MoveItemToContainer(scroll, who.backpack);
       return 0;
    endif
 	

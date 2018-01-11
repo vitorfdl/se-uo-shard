@@ -154,10 +154,6 @@ exported function MegaCliloc( who, byref packet )
 		if( item.IsA(POLCLASS_MOBILE) )
 			Object_Name := item.name;
 
-         if (item.dead && !who.cmdlevel)
-            Object_Name := "Fantasminha";
-         endif
-
          if (GetObjProperty(item, "facecovered"))
             if (!who.cmdlevel)
                Object_Name := "Desconhecido";
@@ -168,13 +164,16 @@ exported function MegaCliloc( who, byref packet )
 
 			var raca := GetObjProperty(item, "chardata").raca;
 			if (raca)
-				Object_Name := Object_Name.format(raca);
+				Object_Name := "{} [{}]".format(Object_Name, raca);
 			endif
 			
 			if (item.npctemplate && IsBoss(item))
             Object_Name :=  "<BASEFONT COLOR=#CBA300>{}".format(Object_Name);
 			endif
 			
+         if (item.dead && !who.cmdlevel)
+            Object_Name := "Fantasminha";
+         endif
 			// Let's get the characters hightlight color.
 			// This is just an example, NPC's and stuff will still have to be added
 			// ofcourse. :)

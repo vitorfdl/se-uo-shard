@@ -15,8 +15,9 @@ include ":timeUtils:time";
 include ":merchants:crafthelp";
 
 program oafeatures_sendpacket(who, text)
-   print(GetCharAge(who));
-   print(GetExpCap(who));
+   var targ := target(who);
+   SendSysMessageEx(who, ""+GetCharAge(targ));
+   SendSysMessageEx(who, ""+GetExpCap(targ));
    // start_script(":death:permadeath/permadeath", {who, });
    // sendsysmessageex(who, GetTimeStamp(polcore().systime));
    // var targ := Target(who);

@@ -64,7 +64,7 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
-  if ( GetExpCap(mobile) >= mobile.Getexp())
+  if ( GetExpCap(mobile) < mobile.Getexp())
   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
 		return 0;
    endif

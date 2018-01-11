@@ -21,6 +21,8 @@ program EmailMessage( params )
    var dest := params[2];
    var extra := params[3];
    var subject := params[4];
+   if (!subject) subject := ""; endif;
+   
    user_serial := mobile.serial;
 
    NewLetter(mobile, dest, subject, array{}, extra);

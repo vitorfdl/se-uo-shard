@@ -61,7 +61,7 @@ program help_menu(who)
 	elseif (input == BUTTON_HELP_REPORTBUG )
 		var sendpage := YesNo(who, "Um bug é um defeito no jogo que será analisado pelos programadores e corrigido. Detalhe o máximo possivel como você descobriu o bug. Continuar?", "Sim, quero reportar o bug.", "Não, não tenho bug para reportar."  );
 		if (sendpage)
-			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998} );
+			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998 } );
 		endif
 
 	elseif (input == BUTTON_HELP_REPORTUSER )
