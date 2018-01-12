@@ -15,7 +15,7 @@ program healpotion(who, potion)
 	endif
 
 	var healed;
-	case (potion.objtype)
+	case (cint(potion.objtype))
 		56322: healed := RandomDiceRoll("4d4+8");
 		56323: healed := RandomDiceRoll("8d4+12");
 		48914: healed := RandomDiceRoll("10d4+20");
