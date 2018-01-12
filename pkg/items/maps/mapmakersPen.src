@@ -182,8 +182,9 @@ program use_MapmakersPen(who, tool)
 			return;
 		endif
 
-		var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, INSCRICAO_RUNICA);
-		if (roll <= DIFF_MEDIUM && who.cmdlevel < 3)
+      var rune := getRune(rune_name);
+		var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, INSCRICAO_RUNICA);
+		if (roll >= rune.diff+4 && who.cmdlevel < 3)
 			SendSysMessageEx(who, "Falhou em transcrever a runa.", SSM_FAIL);
 			return;
 		endif
@@ -337,4 +338,21 @@ function CreateCraftedMap(who, craft_skill, use_on, objtype, amount, itemname, r
 		endif
 	endif
 	return theitem;
+endfunction
+
+
+function getRune(rune)
+   var rune_cfg := ReadConfigFile(":magery:config/runes");
+   var rune_info := FindConfigElem(rune_cfg, rune);
+   if (!rune_info) return 0; endif;
+
+	var obj := struct{
+		"name":= "Runa {}".format(rune),
+		"desc":= rune_info.desc,
+		"diff":= cint(rune_info.Difficulty),
+		"usos":= GetConfigStringArray(rune_info, "Uso"),
+		"sets":= GetConfigStringDictionary(rune_info, "Set")
+	};
+
+	return obj;
 endfunction
