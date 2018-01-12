@@ -176,6 +176,9 @@ program use_MapmakersPen(who, tool)
       if (rune_name in rune_list)
 			SendSysMessage(who,"Já existe esta runa no livro.", SSM_FAIL);
          return 0;
+      elseif (!ConsumeSubstance(who.backpack, 0xE34, 1))
+			SendSysMessage(who,"Você precisa de um pergaminho em branco.", SSM_FAIL);
+         return 0;
       endif
 		PrintText(who, "*cópiando runa de {}*".format(targ.desc));
 		if (!WaitForCopy(who))
@@ -184,7 +187,7 @@ program use_MapmakersPen(who, tool)
 
       var rune := getRune(rune_name);
 		var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, INSCRICAO_RUNICA);
-		if (roll >= rune.diff+4 && who.cmdlevel < 3)
+		if (roll >= rune.diff+2 && !who.cmdlevel)
 			SendSysMessageEx(who, "Falhou em transcrever a runa.", SSM_FAIL);
 			return;
 		endif

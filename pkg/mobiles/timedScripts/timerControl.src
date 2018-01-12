@@ -116,7 +116,8 @@ function StartUp(mobile, byref timer_list, byref cooldowns, byref num_poisons)
 		event.+attacker := timer.attacker;
 		event.+level := timer.level;
 		event.+mobserial := mobile.serial;
-
+      
+      EndTimedScript(mobile, event.name, 0);
 		AddTimer(mobile, event, timer_list, cooldowns, num_poisons);
 		SleepMS(2);
 	endforeach
@@ -191,19 +192,7 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 		if ( result )
 			SaveState(mobile, timer_list, cooldowns);
 		endif
-		return 1;
-	/*else
-		
-		sendsysmessage(mobile, "add timer "+event.name+" "+event.amount);
-		event.amount := CInt(event.amount);
-		var timer := struct;
-		timer.+endtime := event.amount + ReadGameClock();
-		sendsysmessage(mobile, "timer old "+cooldowns[event.name]);
-		cooldowns.Insert(event.name, timer);	
-		sendsysmessage(mobile, "timer new "+cooldowns[event.name]);
-		//SaveState(mobile, timer_list, cooldowns);
-		*/
-	
+		return 1;	
 	endif
 
 	if( !TS_GetCfgElem(event.name) )
@@ -359,7 +348,7 @@ function CheckTimerStatus(mobile, byref timer_list, byref cooldowns, byref num_p
 	foreach timer in ( timer_list )
 		var cfg_info := TS_GetCfgElem(_timer_iter);
 		if ( cfg_info.errortext )
-			printtextabove(mobile, "Error::CheckTimerStatus() - Unable to find config elem ["+_timer_iter+"] - "+cfg_info.errortext);
+			SendSysMessageEx(mobile, "Error::CheckTimerStatus() - Unable to find config elem ["+_timer_iter+"] - "+cfg_info.errortext);
 			continue;
 		endif
 
@@ -472,7 +461,7 @@ function PlayerDeath(mobile, byref timer_list, byref num_poisons)
 	return 1;
 endfunction
 
-function EndTimedScript(mobile, byref timer_name, byref num_poisons)
+function EndTimedScript(mobile, byref timer_name, byref num_poisons, on_start := 0)
 	var elem_info := TS_GetCfgElem(timer_name);
 	if ( elem_info.errortext )
 		print("Error::EndTimedScript() - Unable to find config elem ["+timer_name+"] - "+elem_info.errortext);
@@ -483,7 +472,7 @@ function EndTimedScript(mobile, byref timer_name, byref num_poisons)
 		num_poisons -= 1;
 	endif
 
-	if( elem_info.EndMessage )
+	if( elem_info.EndMessage && !on_start )
 		SendSysMessageEx(mobile, elem_info.EndMessage);
 	endif
 

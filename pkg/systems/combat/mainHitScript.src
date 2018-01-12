@@ -86,6 +86,8 @@ program MainHitScript( params )
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critical);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical);
 
+   ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
+
 	if( GetObjProperty(defender, "#chain_damage") != error && cint(GetObjProperty(defender, "#chain_damage")) > readgameclock() )
 		var cop_mobs   := GetObjProperty(defender, "#chain_serials");
 		var chain_ca   := GetObjProperty(defender, "#chain_ca");
@@ -205,6 +207,22 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, critic
 	endforeach
 
 	return 1;
+endfunction
+
+function ApplyInscriptedRunes(attacker, defender, weapon, armor, damage)
+   var inscripted := GetObjProperty(weapon, "inscripted");
+   if (inscripted["Sagrada"] && defender.my_template()["moriquendi"])
+      var plus_time := 4;
+      if (inscripted["Superior"])
+         plus_time += 3;
+      endif
+
+      if (cint(GetObjProperty(defender, "#delay_heal")) < plus_time)
+         SetObjProperty(defender, "#delay_heal", plus_time);
+      endif
+
+      TS_StartCooldown(defender, "divine_damage", 5);
+   endif
 endfunction
 
 function ArmorHitScripts(attacker, defender, weapon, armor, base_damage, critical)

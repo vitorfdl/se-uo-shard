@@ -297,7 +297,7 @@ exported function MegaCliloc( who, byref packet )
 
       var inscripted := GetObjProperty(item, "inscripted");
       if (inscripted)
-         xDesc += "{}{}<br>".format(BLUE, inscripted);
+         xDesc += "{}Runa {}<br>".format(BLUE, inscripted);
       endif
 
 		var pplmage := GetObjProperty(item, "magicwho"); //research

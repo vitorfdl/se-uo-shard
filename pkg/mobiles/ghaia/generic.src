@@ -197,7 +197,7 @@ function Fight(opponent, alerted := 0)
          if (last_autoheal <= ReadGameClock())
             var next_heal := 2;
             if (TS_GetCooldown(me, "divine_damage"))
-               next_heal += GetObjProperty(me, "delay_heal"); 
+               next_heal += GetObjProperty(me, "#delay_heal"); 
             endif
             SetObjProperty(me, "demon_heal", ReadGameClock() + next_heal);
             HealFLS(me, 25);

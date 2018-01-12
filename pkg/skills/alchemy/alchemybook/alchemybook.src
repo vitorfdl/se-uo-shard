@@ -218,7 +218,7 @@ function CreaterecipebookGump(book, can_read := 0)
 	pOY      := 60;
 
    var i;
-	for (i := 1; i <= 9; i += 1)
+	for (i := 1; i <= 16; i += 1)
       var side := 1;
       if (i % 2 == 0)
          side := 2;

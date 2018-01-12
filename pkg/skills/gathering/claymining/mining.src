@@ -120,7 +120,7 @@ function EnterrarCorpo(who, scoop, targ)
 			SendSysMessageEX(who, "Você deve aguardar 10 minutos para enterrar este corpo novamente.", SSM_FAIL);
 			return;
 		endif
-	elseif (!GetObjProperty(targ.item, "morto"))
+	elseif (!GetObjProperty(targ.item, "morto") && !targ.objtype != 0xEFFF)
 		SendSysMessageEX(who, "O jogador precisa estar morto para ser enterrado.", SSM_FAIL);
 		return;
 	elseif (CoordinateDistance(who.x, who.y, lugar.x, lugar.y) > 1)

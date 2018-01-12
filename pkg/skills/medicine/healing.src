@@ -135,7 +135,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
       max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.8);
    endif
 
-   if ( AP_GetVital(targ, "hits") := max_healing )
+   if ( cint(AP_GetVital(targ, "hits")) >= max_healing )
 		SendSysMessageEx(mobile, "Você não acha que suas ataduras farão mais efeito neste paciente.");
 		return 1;
    endif
@@ -196,7 +196,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 		elseif (AP_GetVital(targ, "hits") >= AP_GetVitalMaximumValue(targ, "hits"))
 			SendSysMessageEx(targ, "Você está completamente curado.");
 			return 1;
-		elseif (AP_GetVital(targ, "hits") >= max_healing)
+		elseif (cint(AP_GetVital(targ, "hits")) >= max_healing)
 			SendSysMessageEx(targ, "As ataduras não irão recuperar mais vida que isso de você.");
 			return 1;
 		endif
