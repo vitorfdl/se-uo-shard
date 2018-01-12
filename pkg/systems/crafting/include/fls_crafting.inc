@@ -559,6 +559,9 @@ function CraftExceptional(who, theitem, craft_skill)
          "dmgbonus":
             SetObjProperty(theitem, "dmgbonus", cint(prop_list[prop]));
             break;
+         "armod":
+            theitem.ar_mod += cint(prop_list[prop]);
+            break;
          "imunity":
             break;
          "resist":
