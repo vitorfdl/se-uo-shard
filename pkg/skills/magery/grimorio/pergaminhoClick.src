@@ -24,7 +24,7 @@ program usaPergaminho(who, scroll)
 	// GFTextCrop(gump, 70, 70, 150, 17, 995, "Tipo: " + "teste 4");
 	// GFTextCrop(gump, 70, 90, 150, 17, 995, "Inimigos: " + "teste 2");
 	var lang := "";
-	if (!HaveSkill(who, "Linguagem Elfica"))
+	if (!HaveSkill(who, "Linguagem Élfica"))
 		lang := "SIZE=3 Face=Gargish";
 	endif
 	GFHtmlShadowed(gump, 70, 80, 290, 170, "#c3c3c3", "<BASEFONT {}><center>Nome: {}".format(lang, spellinfo.name));

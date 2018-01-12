@@ -490,6 +490,9 @@ endfunction
 function CraftExceptional(who, theitem, craft_skill)
    SendSysMessageEx(who, "Selecione o material que deseja unir a este objeto.", SSM_REQUEST);
    var special_obj := Target(who);
+   if (!special_obj)
+      return;
+   endif
 
    var special_props := GetObjProperty(special_obj, "craftproperty");
 

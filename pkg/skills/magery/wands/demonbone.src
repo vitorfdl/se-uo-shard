@@ -6,14 +6,16 @@ include "include/say";
 program demonbone(item)
    while(item)
       var power := cint(GetObjProperty(item, "power"));
-      if (!item.container && GetGlobalProperty("dia") == "dia")
-         if (GetWorldHeight( item.x, item.y, item.realm) >= item.z + 15)
-            power -= 5;
-         else
-            power -= 50;
+      if (!item.container )
+         if (GetGlobalProperty("dia") == "dia")
+            if (GetWorldHeight( item.x, item.y, item.realm) >= item.z + 15)
+               power -= 5;
+            else
+               power -= 50;
+            endif
+         elseif (ListItemsNearLocationWithFlag(item.x, item.y, item.z, item.realm, TILEDATA_FLAG_LIGHTSOURCE).size() > 1)
+            power -= 10;
          endif
-      elseif (!item.container && ListItemsNearLocationWithFlag(item.x, item.y, item.z, item.realm, TILEDATA_FLAG_LIGHTSOURCE).size() > 1)
-         power -= 10;
       endif
 
       if (power <= 0)
@@ -23,6 +25,6 @@ program demonbone(item)
       else
          SetObjProperty(item, "power", power);
       endif
-      sleep(120);
+      sleep(10);
    endwhile
 endprogram
