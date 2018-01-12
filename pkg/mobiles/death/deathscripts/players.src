@@ -90,7 +90,7 @@ program death(params)
             SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
 			endif
 
-			if (AP_GetVital(ghost, "DP") < 0 )
+			if (AP_GetVital(ghost, "DP") <= 0 )
             SetObjProperty(ghost, "morto", 1);
          endif
 		endif
