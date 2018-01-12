@@ -72,7 +72,6 @@ function PegarResposta(who)
 	
 	var input := GFSendGump(who, gump);
 
-   print(input[0]);
    if (!input[0] || input[0] == 0)
       return 0;
 	elseif (input[0] == 21 || input[0] == 22)

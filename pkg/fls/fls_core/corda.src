@@ -27,7 +27,6 @@ program corda(who, item)
 		diff := 15;
 	endif
 	var mod := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + GetProficiencyBonus(who, PRESTIDIGITACAO);;
-   print(CheckGender(alvo));
 	if (alvo.isA(POLCLASS_CORPSE)) // Se for corpo
 		var char := SystemFindObjectBySerial(alvo.ownerserial);
 

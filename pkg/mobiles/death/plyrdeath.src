@@ -20,7 +20,6 @@ include ":commands:possess";
 include ":death:resurrection";
 
 program core_chrDeath(params)
-   print("starting");
 	var corpse := params[1];
 	var ghost := params[2];
 	
@@ -47,7 +46,6 @@ program core_chrDeath(params)
 	endif
 	
 
-   print("starting2");
 	var corpse_name := corpse.desc;
 	corpse_name["A corpse of"] := "corpo de";
 	SetName(corpse, corpse_name);
@@ -62,7 +60,6 @@ program core_chrDeath(params)
 	// SetName(ghost, "Fantasminha");	
 	SetName(ghost, ghost.name);
 
-   print("starting3");
 	TS_Death(ghost);
 	
 	EraseObjProperty(ghost, "#IsMeditating");
@@ -70,13 +67,11 @@ program core_chrDeath(params)
 	DP_PlayDeathSound(ghost);
 	//MP_DeathUnmount(corpse);
 	
-   print("starting4");
 	CheckForAutoRes(ghost, corpse);
 
 	MoveObjectToLocation( ghost, 4855, 3592, 2, flags := MOVEITEM_IGNOREMOVABLE+MOVEOBJECT_FORCELOCATION);
 	SetName(ghost, ghost.name);
 	SetObjProperty(ghost, "corpo", corpse.serial);
-   print("debug1");
 	Start_Script("deathscripts/players", params);
 
 	

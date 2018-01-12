@@ -200,7 +200,6 @@ function instructions(text)
 endfunction
 
 function makefood(who, input)
-   print(input);
 	var recipeinfo := recipecfg(input);
 	
 	if (getconfigstring(recipeinfo, "firesource"))

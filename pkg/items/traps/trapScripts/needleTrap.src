@@ -29,7 +29,6 @@ program trapScript(params)
 
    var diff     := GetTrapAC(danger);
    var dmgfinal := getTrapDamage(strength, danger);
-   print(diff+ " "+ dmgfinal);
 
 	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, 3, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL, object.realm);
 	foreach mobile in mobiles
