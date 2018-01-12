@@ -83,7 +83,7 @@ function MakePotion (pot, who)
 		var amountinpack := AmountInContainer(who.backpack, dictToAmount);
 		//sendsysmessage(who, "reag " + reag + " objtype " + objtype + " pack " + amountinpack);
 		if (amountinpack < amount )
-			SendSysMessage(who, "Você não possui todos os materiais.");
+			SendSysMessageEx(who, "Você não possui todos os materiais.", SSM_FAIL);
 			return 0;
 		endif
 		sleepms(2);
@@ -95,8 +95,8 @@ function MakePotion (pot, who)
 			amount := 1;
 		endif
 		ConsumeSubstance(who.backpack, reag, amount);
-      if (hex(reag) == 0x1F91)
-         CreateItemInBackpack(who, 0x1F91, amount);
+      if (hex(reag) == hex(0x1F91))
+         CreateItemInBackpack(who, 0x1f81, amount);
       endif
 		sleepms(2);
 	endforeach

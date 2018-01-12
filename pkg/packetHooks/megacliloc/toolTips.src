@@ -163,7 +163,7 @@ exported function MegaCliloc( who, byref packet )
          endif
 
 			var raca := GetObjProperty(item, "chardata").raca;
-			if (raca)
+			if (!Object_Name["Desconhecido"] && raca)
 				Object_Name := "{} [{}]".format(Object_Name, raca);
 			endif
 			

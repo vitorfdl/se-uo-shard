@@ -61,7 +61,7 @@ function skillWindow(who)
 		var feat := feat_list[input[0] - 100];
 		feat := FeatInfo(feat);
       if (!feat.script)
-         return SendSysMessageEx(who, "Este talento n?o é ativável.");
+         return SendSysMessageEx(who, "Este talento não é ativável.");
       endif
       start_script(":charactercreation:commands/player/talento", array{who, feat.name});
 	elseif (input[0] > 80)
@@ -97,7 +97,6 @@ function buildGump(who)
 		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
 		var skill_name := skill;
 		skill_name := StrReplace(skill_name, "_", " ");
-      skill_name["Necromância"] := "Necrom.";
 		GFTextLine(gump, s_x+18, s_y-3, 1152, skill_name);
 		s_y += 30;
 		sleepms(5);

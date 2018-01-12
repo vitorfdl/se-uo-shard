@@ -36,7 +36,7 @@ program erguer(who)
 		SendSysMessageEx(who, "Você não pode erguer itens dentro de containers.", SSM_FAIL);
 		return 0;
 	endif
-	
+
 	if (!GetObjProperty(alvo, "erguido"))
 		SetObjProperty(alvo, "erguido", 1);
 		MoveObjectToLocation(alvo, alvo.x, alvo.y, alvo.z+5, alvo.realm, MOVEOBJECT_FORCELOCATION);

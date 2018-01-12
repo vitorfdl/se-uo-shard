@@ -2,15 +2,11 @@ use uo;
 use os;
 use vitals;
 
-include ":spells:tnmagery";
+include ":magery:tnmagery";
 include "include/client";
 include "include/sounds";
 include "include/say";
-include ":timedScripts:timedScripts";
-include "include/tileEffects";
-include ":charactercreation:habilidades";
 include "include/damage";
-include ":brainai:npcUtil";
 
 program SpellScript(params)
 	var who := params[1];

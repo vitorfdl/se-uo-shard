@@ -108,36 +108,39 @@ function GetNewFeatsList(who)
 		endif
 
 		var pass := 1;
-		foreach req in (feat.requirements)
-			req := SplitWords(req);
+      if (!who.cmdlevel)
+         foreach req in (feat.requirements)
+            req := SplitWords(req);
 
-			if (req[1] == "achievement")
-				if(who.GetAchievement(req[2]) < cint(req[3]))
-					pass := 0;
-					break;
-				endif
-			elseif (req[1] == "class")
-				if(!who.isClass(req[2]))
-					pass := 0;
-					break;
-				endif
-			elseif (req[1] == "skill")
-				if(!HaveSkill(who, req[2]))
-					pass := 0;
-					break;
-				endif
-			elseif (req[1] == "stat")
-				if(!who.GetStat(req[2]) < cint(req[3]))
-					pass := 0;
-					break;
-				endif
-			endif
-		endforeach
-
-		if (pass)
-			feat_list += feat;
-		endif
-	endforeach
+            if (req[1] == "achievement")
+               if(who.GetAchievement(req[2]) < cint(req[3]))
+                  pass := 0;
+                  break;
+               endif
+            elseif (req[1] == "class")
+               if(!who.isClass(req[2]))
+                  pass := 0;
+                  break;
+               endif
+            elseif (req[1] == "skill")
+               if(!HaveSkill(who, req[2]))
+                  pass := 0;
+                  break;
+               endif
+            elseif (req[1] == "stat")
+               if(!who.GetStat(req[2]) < cint(req[3]))
+                  pass := 0;
+                  break;
+               endif
+            endif
+         endforeach
+      else
+         pass := 1;
+      endif
+      if (pass)
+         feat_list += feat;
+      endif
+   endforeach
 
 	return feat_list;
 endfunction

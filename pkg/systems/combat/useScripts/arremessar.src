@@ -41,13 +41,13 @@ program lancararma(who,weapon)
 
    var mobiles := ListMobilesNearLocation(targ.x, targ.y, targ.z, 0);
 	foreach mob in mobiles
-      if (rollResistDice(mobile, DEXTERITY) > 14)
-         SendSystemReport(mobile, "*esquiva*", SSM_FAIL, who);
-         SendSystemReport(mobile, "*esquiva*");
+      if (rollResistDice(mob, DEXTERITY) > 14)
+         SendSystemReport(mob, "*esquiva*", SSM_FAIL, who);
+         SendSystemReport(mob, "*esquiva*");
          continue;
       endif
 
-      DamageFLS(mobile, dmg, "Perfuração", who);
+      DamageFLS(mob, dmg, "Perfuração", who);
       sleepms(2);
    endforeach
 endprogram 

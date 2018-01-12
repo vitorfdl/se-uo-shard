@@ -1,6 +1,7 @@
 use uo;
 use cfgfile;
 
+include "include/say";
 include "include/client";
 include ":food:drink";
 
@@ -11,17 +12,17 @@ program fillpitcher (who, pitcher)
     return;
   endif
   ReserveItem(pitcher);
-  SendSysMessage(who, "O que você quer por no recipiente?", FONT_NORMAL, 90);
+  SendSysMessageEx(who, "O que você quer por no recipiente?", 90);
   var targetted := TargetCoordinates(who);
   if(!targetted)
-    SendSysMessage(who, "Cancelado.", FONT_NORMAL, 90);
+    SendSysMessageEx(who, "Cancelado.", 90);
     return;
   endif
 //  if(!can_access(who, targetted))
 //    return;
 //  endif
 //  if(!Accessible(who, targetted))
-//    SendSysMessage(who,"Você não pode ver isto.", FONT_NORMAL, 90);
+//    SendSysMessageEx(who,"Você não pode ver isto.", 90);
 //    return;
 //  endif
 
@@ -42,7 +43,7 @@ program fillpitcher (who, pitcher)
     DestroyItem(pitcher);
     CreateItemInBackpack(who, toCreate, 1);	
   else
-    SendSysMessage(who,"Você não pode encher o recipiente aqui.", FONT_NORMAL, 90);
+    SendSysMessageEx(who,"Você não pode encher o recipiente aqui.", 90);
     return;
   endif
 endprogram

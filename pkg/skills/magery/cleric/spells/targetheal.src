@@ -2,6 +2,7 @@ use uo;
 use os;
 
 include "include/say";
+include ":magery:tnmagery";
 
 program targetHeal(info)
    var mobile := info[1];

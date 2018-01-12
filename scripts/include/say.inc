@@ -68,6 +68,10 @@ function SendSystemReport(above_object, text, color := SYSTEM_REPORT, character 
   return PrintTextAbovePrivateUC(above_object, UC(text), "ENG", character, 0x10, color);
 endfunction
 
+function GetInput(character, item, uc_prompt, langcode := "ENG") // item is a placeholder, pass anything
+  return RequestInputUC(character, item, UC(uc_prompt), langcode);
+endfunction
+
 function UC(strs)
   var result := array {};
   if (TypeOf(strs) != "Array")

@@ -84,8 +84,10 @@ function KataWakeUp(ghost, corpse)
 		if (item.container == corpse)
 			MoveObjectToLocation(item, ghost.x, ghost.y, ghost.z, ghost.realm);
 			MoveItemToContainer(item, ghost.backpack);
-			if ( CInt(GetObjProperty(item, "#EquippedOn")) == serialC && !EquipItem(ghost, item))
-				EraseObjProperty(item, "#EquippedOn");
+			if ( CInt(GetObjProperty(item, "#EquippedOn")) == serialC) 
+            if (!EquipItem(ghost, item))
+				   EraseObjProperty(item, "#EquippedOn");
+            endif
 			endif
 		endif
 	endforeach

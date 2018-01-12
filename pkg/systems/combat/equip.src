@@ -107,7 +107,7 @@ function SetEquipmentMods(who, item)
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, Cint( mods["wismod"] ) );
 		elseif (mod == "setprop")
-			SetObjProperty(who, "#" + GetObjProperty(item, "propname"));
+			SetObjProperty(who, "#" + GetObjProperty(item, "propname"), GetObjProperty(item, "propvalue") );
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) + Cint( mods["manamod"] ));
       elseif (mod == "toughmod")

@@ -58,7 +58,7 @@ program use_MapmakersPen(who, tool)
          return;
       endif
 
-      if (!ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
+      if (!ConsumeSubstance(who.backpack, 0xE34, 1))
 		   SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
          return;
       endif
@@ -72,7 +72,7 @@ program use_MapmakersPen(who, tool)
       endif
       PrintText(who, "*traduzindo pergaminho*");
 
-      var roll := rollAttrDice(mobile, INTELLIGENCE) + getProficiencyBonus(who, ESCRIBA);
+      var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, ESCRIBA);
       if (roll < 19)
          SendSysMessageEx(who, "Você falhou em traduzir o pergaminho.", SSM_FAIL);
          return;

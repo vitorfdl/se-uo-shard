@@ -16,6 +16,7 @@ include "include/objtype";
 include ":attributes:attributes";
 include ":crafting:fls_craftingUtils";
 include ":itemUtils:toolWear";
+include ":tn:tngumps";
 
 const OUT_OF_MATERIALS := 1;
 
@@ -356,12 +357,12 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 			AddMaterialMod(who, recipe, theitem, choosed_material, material_color);
          if (recipe.exceptional == 1 && HaveFeat(who, "Mestre em {}".format(craft_skill)) && roll.critical == 1)
             SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
-            while (me.connected)
+            while (who.connected)
 			      if (CraftExceptional(who, theitem, craft_skill) != 2)
                   break;
                endif
                sleepms(2);
-            endif
+            endwhile
          endif
 
 			foreach key in (material_cprops.Keys())
@@ -494,7 +495,7 @@ function CraftExceptional(who, theitem, craft_skill)
 
    if (!special_props)
       var exceptional_cfg := ReadConfigFile(":crafting:exceptional_cfg");
-      var item := exceptional_cfg[hex(targ.objtype)];
+      var item := exceptional_cfg[hex(special_obj.objtype)];
       if (!item)
          SendSysMessageEx(who, "Material inválido, selecione outro.", SSM_FAIL);
          return 2;
@@ -512,16 +513,16 @@ function CraftExceptional(who, theitem, craft_skill)
       return 2;
    endif
 
-	var item_type = "None";
-	if (item.isA(POLCLASS_ARMOR))
+	var item_type := "None";
+	if (theitem.isA(POLCLASS_ARMOR))
 		item_type := "Armaduras";
-	elseif (item.isBow())
+	elseif (theitem.isBow())
 		item_type := "Arcos";
-	elseif (item.isA(POLCLASS_WEAPON))
+	elseif (theitem.isA(POLCLASS_WEAPON))
 		item_type := "Armas";
-	elseif (item.isA(POLCLASS_EQUIPMENT))
+	elseif (theitem.isA(POLCLASS_EQUIPMENT))
 		item_type := "Joias";
-	elseif (item.isA(POLCLASS_CONTAINER))
+	elseif (theitem.isA(POLCLASS_CONTAINER))
 		item_type := "Containers";
 	endif
 
@@ -545,14 +546,14 @@ function CraftExceptional(who, theitem, craft_skill)
             var mod := prop[1];
             var value := cint(prop[2]);
 
-            var equip := GetObjProperty(item, "equip");
+            var equip := GetObjProperty(theitem, "equip");
             if (!equip)
                equip := struct{};
             endif
             equip[mod] := value;
             SetObjProperty(theitem, "equip", equip);
             break;
-         "dmgbonus"
+         "dmgbonus":
             SetObjProperty(theitem, "dmgbonus", cint(prop_list[prop]));
             break;
          "imunity":
@@ -565,11 +566,12 @@ function CraftExceptional(who, theitem, craft_skill)
 
    theitem.quality := 1.1;
    who.SetAchievement("exceptional", 1);
-   SetObjProperty(theitem, "madeof", targ.name);
+   SetObjProperty(theitem, "madeof", special_obj.name);
 
    if ( YesNo(who, "Deseja adicionar uma descrição no item?"))
       AddItemDescription(who, theitem);
    endif
    SetName(theitem, theitem.desc);
+   DestroyItem(special_obj);
    return 1;
 endfunction

@@ -164,15 +164,7 @@ function NoLootCheck(corpse, npc_cfg)
 endfunction
 
 function NoCorpseCheck(corpse, npc_cfg)
-	if ( npc_cfg.NoCorpse );
-		// Nothing
-	elseif ( GetObjProperty(corpse, "NoCorpse") );
-		// Nothing
-	elseif ( GetObjProperty(corpse, "nocorpse") );
-		// Nothing - Old Cprop
-	elseif ( GetObjProperty(corpse, "summoned") );
-		// Nothing;
-	else
+	if ( !npc_cfg.NoCorpse && !GetObjProperty(corpse, "NoCorpse") && !GetObjProperty(corpse, "nocorpse") && !GetObjProperty(corpse, "summoned"));
 		return 0;
 	endif
 	

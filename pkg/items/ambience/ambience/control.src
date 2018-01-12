@@ -20,20 +20,20 @@ program SoundPlay( rune )
             is_active := 1;
          endif
 
-         var delay := rune.GetDelay();
-         if( delay )
+         var delay := cint(rune.GetDelay());
+         if( !delay )
             PrintTextAbove( rune, "Error reading delay for a sound_rune -->"+delay.errortext );
             break;
          endif
 
-         var range := rune.GetRange();
-         if( range )
+         var range := cint(rune.GetRange());
+         if( !range )
             PrintTextAbove( rune, "Error reading range for a sound_rune -->"+range.errortext );
             break;
          endif
 
          var sound_list := rune.GetSounds();
-         if( sound_list || typeof(sound_list) != "Array" )
+         if( !sound_list || typeof(sound_list) != "Array" )
             PrintTextAbove( rune, "Error reading sounds for a sound_rune -->"+sound_list.errortext );
             break;
          endif
@@ -44,14 +44,18 @@ program SoundPlay( rune )
             break;
          endif
 
-         foreach mobile in ListMobilesNearLocationEx(rune.x, rune.y, LIST_IGNORE_Z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_CONCEALED|LISTEX_FLAG_PLAYER)
-            PlaySoundEffectPrivate( rune, effect, mobile);
+         printtextabove(rune, "playando");
+         var mobile_list := ListMobilesNearLocationEx(rune.x, rune.y, LIST_IGNORE_Z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_CONCEALED|LISTEX_FLAG_PLAYERS_ONLY);
+         foreach mobile in mobile_list
+            print(mobile.name +" "+effect);
+            PlaySoundEffectPrivate( mobile, cint(effect), mobile);
             sleepms(2); 
          endforeach
-         Sleep( RandomInt( delay ));
+
+         Sleep( delay );
       endwhile
 
-      Sleep( 60 );
+      Sleep( 30 );
    endwhile
 
    return 1;

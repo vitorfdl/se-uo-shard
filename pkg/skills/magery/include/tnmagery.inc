@@ -273,11 +273,11 @@ function SetClericHeal(who, mobile)
       mobile := who;
    endif
    if (mobile == who)
-      SendSystemReport(targ, "Benção de Sacrifício retornou para você");
+      SendSystemReport(mobile, "Benção de Sacrifício retornou para você");
    else
-      SendSystemReport(targ, "{} direcionou bençãos para você".format(mobile.name));
+      SendSystemReport(mobile, "{} direcionou bençãos para você".format(mobile.name));
    endif
 
-   who.addBuff(cint(elem_info.Icon), 0, cint(1075833), cint(1075834), cAscZ("Curando {}".format(mobile.name)));
+   who.addBuff(cint(1069), 0, cint(1075833), cint(1075834), cAscZ("Curando {}".format(mobile.name)));
    SetObjProperty(who, "cleric_spell", mobile.serial);
 endfunction

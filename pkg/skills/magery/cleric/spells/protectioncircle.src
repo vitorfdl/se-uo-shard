@@ -1,14 +1,15 @@
-     use uo;
+use uo;
 use os;
 
-include ":spells:tnmagery";
+include ":magery:tnmagery";
+include ":attributes:attributes";
 include "include/client";
 include "include/sounds";
 include "include/say";
 include "include/tileEffects";
 include ":timedScripts:timedScripts";
-include ":brainai:npcUtil";
 include "include/sysEvent";
+include "include/utils";
 
 program SpellScript(params)
 	var who := params[1];
@@ -18,7 +19,6 @@ program SpellScript(params)
 	
 	var gliphs := array{};
 	var newmobiles;
-	var i := 1;
 	var oldx := who.x;
 	var oldy := who.y;
 	
@@ -45,16 +45,12 @@ program SpellScript(params)
 				var elem := NPC_GetNPCConfig(mobile.npctemplate);
 				var category := lower(GetConfigString(elem, "Category"));
 				if (category == "moriquendi")
-               var ev :=  struct;
-               ev.+source := who;
-               ev.+type := EVID_FLEE;
-               sendEvent(mobile, ev);
+               ForceDirection(mobile, 0);
 				endif
 			endif
 			sleepms(5);
 		endforeach
 
-		var x;
 		foreach gliph in gliphs
 			if ((who.x-3 == gliph.x && who.y+3 == gliph.y)
 				|| (who.x-2 == gliph.x && who.y+3 == gliph.y)
@@ -98,9 +94,21 @@ program SpellScript(params)
 	endwhile
 	
 	foreach gliph in gliphs
-		var destro := DestroyItem(gliph);
+		DestroyItem(gliph);
       sleepms(2);
 	endforeach
 	
 	return 1;
 endprogram 
+
+function ForceDirection(mobile, back := 0)
+   if (!mobile.my_template() || !mobile.my_template()["moriquendi"])
+      return;
+   endif
+
+   PushBack(mobile, 8, 100, back);
+   var ev := struct{
+		type := EVID_PEACEMADE
+   };
+   SendEvent(mobile, ev);
+endfunction

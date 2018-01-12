@@ -130,8 +130,18 @@ program UseBandage(mobile, bandage)
 endprogram
 
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
+   var max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.4);
+   if (HaveFeat(mobile, "Ataduras Perfeitas"))
+      max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.8);
+   endif
+
+   if ( AP_GetVital(targ, "hits") := max_healing )
+		SendSysMessageEx(mobile, "Você não acha que suas ataduras farão mais efeito neste paciente.");
+		return 1;
+   endif
+
 	var x := targ.x, y := targ.y;
-	var heal_amt := GetHealingAmt(GetProficiencyBonus(mobile, heal_skill)) + bonus + RandomDiceRoll("1d5");
+	var heal_amt := GetHealingAmt(2 * GetProficiencyBonus(mobile, heal_skill)) + bonus + RandomDiceRoll("2d5");
 	if (mobile == targ)
 		heal_amt := heal_amt / 2;
 		PrintText(mobile, "*usando ataduras em si mesmo*");
@@ -160,6 +170,9 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	if (heal_amt <= 2)
 		SendSysMessageEx(mobile, "A cura foi ineficaz.");
 		return 0;
+	elseif ( GetObjProperty(targ, "curando") > ReadGameClock() )
+		SendSysMessageEx(mobile, "O alvo ja esta enfaixado", SSM_INFO);
+		return;
 	endif
 
 	PrintText(mobile, "*parou de aplicar bandagens*");
@@ -173,6 +186,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	var resto := heal_amt/q - CInt(heal_amt/q);
 	var r := 0;
 	SetObjProperty(targ, "curando", ReadGameClock()+q);
+
   //PrintText(targ, "Loops: "+q+" | Cura: "+heal_amt/q+" | Total: "+heal_amt);
 	for ( i := 0 ; i < q ; i := i + 1 )
 		Sleep(1);
@@ -181,6 +195,9 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 			return 1;
 		elseif (AP_GetVital(targ, "hits") >= AP_GetVitalMaximumValue(targ, "hits"))
 			SendSysMessageEx(targ, "Você está completamente curado.");
+			return 1;
+		elseif (AP_GetVital(targ, "hits") >= max_healing)
+			SendSysMessageEx(targ, "As ataduras não irão recuperar mais vida que isso de você.");
 			return 1;
 		endif
 

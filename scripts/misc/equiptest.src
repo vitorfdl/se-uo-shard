@@ -11,22 +11,20 @@ program EquipTest(mobile, item, start_up)
 	
 	if ( start_up )
 		// POL is starting up, yes the mobile can equip it
-		retval := 1;
+		return 1;
 	elseif ( mobile.npctemplate )
 		// NPCs can wear anything
-		retval := 1;
+		return 1;
 	elseif ( mobile.cmdlevel )
 		// CmdLevel > 0 can equip anything.
-		retval := 1;
+		return 1;
 	elseif ( item.isa(POLCLASS_CONTAINER) )	
 		// Makes backpacks always equippable.
-		retval := 1;
+		return 1;
 	elseif ( (mobile.frozen) || (mobile.paralyzed) )
 		// Frozen players cant equip stuff
 		SendSysMessage(mobile, "Você esta incapaz de se movimentar para equipar isso.");
 		return 0;
-	else
-		retval := 1;
 	endif
 
 	if ( item.graphic IN array{9920, 9930} )
@@ -59,24 +57,18 @@ program EquipTest(mobile, item, start_up)
 		return 0;		
 	endif
 
-	if ( retval )
-		SetObjProperty(item, "#EquippedOn", mobile.serial);
-		//SetEquipmentMods(mobile, item);
-		if (coverFace(item) && !mobile.npctemplate)
-         SetObjproperty(mobile, "facecovered", 1);
-			// if (!GetObjProperty(mobile, "realname"))
-			// 	SetObjProperty(mobile, "realname", mobile.name);
-			// endif
-			// if (GetObjProperty(mobile, "description"))
-			// 	SetObjProperty(mobile, "olddescription", GetObjProperty(mobile, "description"));
-			// 	EraseObjProperty(mobile, "description");
-			// endif
-         SetName(mobile, mobile.name);
-		endif
-	else
-		// Unable to equip but no reaso was given above. 
-		SendSysMessage(mobile, "Unable to equip ->"+item.desc);
-	endif
-	
-	return retval;
+   SetObjProperty(item, "#EquippedOn", mobile.serial);
+   //SetEquipmentMods(mobile, item);
+   if (coverFace(item) && !mobile.npctemplate)
+      if (!GetObjProperty(mobile, "realname"))
+         SetObjProperty(mobile, "realname", mobile.name);
+      endif
+      if (GetObjProperty(mobile, "description"))
+         SetObjProperty(mobile, "olddescription", GetObjProperty(mobile, "description"));
+         EraseObjProperty(mobile, "description");
+      endif
+      SetName(mobile, "Desconhecido");
+   endif
+
+	return 1;
 endprogram

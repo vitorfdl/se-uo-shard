@@ -4,11 +4,7 @@ use vitals;
 
 include "include/sounds";
 include "include/say";
-include ":timedScripts:timedScripts";
-include "include/tileEffects";
-include ":charactercreation:habilidades";
-include ":brainai:npcUtil";
-include ":spells:tnmagery";
+include ":magery:tnmagery";
 
 program SpellScript(params)
 	var who := params[1];

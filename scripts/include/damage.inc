@@ -17,6 +17,7 @@ include ":attributes:attributes";
 include ":charactercreation:habilidades";
 include "include/say";
 include ":blood:blood";
+include ":magery:tnmagery";
 include ":fls_core:packets";
 
 /*

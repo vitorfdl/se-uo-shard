@@ -43,6 +43,4 @@ program textcmd_paintboat( who, text )
 	foreach compo in (boat.weaponslot)
 		compo.color := boat.color;
 	endforeach
-	
-
 endprogram

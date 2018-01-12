@@ -1,7 +1,7 @@
 use uo;
 use os;
 
-include ":spells:tnmagery";
+include ":magery:tnmagery";
 include "include/client";
 include "include/sounds";
 include "include/say";
@@ -22,13 +22,10 @@ program SpellScript(params)
 	var pilarlist := array{};
 	foreach coord in path
 		PlaySoundEffect(who, 0x20E);
-		var stalagmite := stalagmites[randomint(4)+1];
-		if (!stalagmite)
-			stalagmite := 0x08E4;
-		endif
+		var stalagmite := stalagmites.randomentry();
 		var item := CreateItemAtLocation(coord.x, coord.y, who.z, stalagmite);
 		
-		item.color := 1266;
+		item.color := 2051;
 		PlayStationaryEffectEx( item.x, item.y, item.z, item.realm, 0x3779, 1, 16);
 		if (item)
 			pilarlist.append(item);

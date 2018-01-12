@@ -11,6 +11,7 @@ include "include/client";
 include "include/arrays";
 include ":crafting:recipes";
 include ":gumps:requestgump";
+include ":charactercreation:feats";
 
 program usaPergaminho(who, scroll)
 	var input := SendGump(who, scroll);
