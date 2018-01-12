@@ -174,7 +174,7 @@ function EnterrarCorpo(who, scoop, targ)
 	endfor
 		
 	if (!targ.item)
-		SendSysMessageEX(who, "Algo aconteceu com o corpo e você não consegui enterra-lo.", SSM_FAIL);
+		SendSysMessageEX(who, "Algo aconteceu com o corpo e você não conseguiu enterrá-lo.", SSM_FAIL);
 		return;
 	endif
 	grave := CreateItemAtLocation(lugar.x, lugar.y, lugar.z, grave);

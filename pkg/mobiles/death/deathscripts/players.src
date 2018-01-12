@@ -34,7 +34,7 @@ program death(params)
 		save := 1;
 	endif
 
-   if (!killer.acctname && dmg > AP_GetVitalMaximumValue(ghost, HITS) && AP_GetVital(ghost, "DP") <= 20)
+   if (!killer.acctname && dmg > AP_GetVitalMaximumValue(ghost, HITS) && AP_GetVital(ghost, "DP") <= 30)
       SendSystemReport(ghost, "Seu corpo foi dilacerado com um golpe mortal.");
       SetObjProperty(ghost, "morto", 1);
    endif
@@ -83,14 +83,14 @@ program death(params)
          if (rollResistDice(ghost, CONSTITUTION) <= 15)
 				AP_ConsumeVital(ghost, "DP", 10);
 				SendSystemReport(ghost, "Você sofreu uma fratura!");
-            if (AP_GetVital(ghost, "DP") <= 19)
+            if (AP_GetVital(ghost, "DP") <= 29)
                TS_StartTimer(ghost, "fraturaexposta", 1);
             endif
          else
             SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
 			endif
 
-			if (AP_GetVital(ghost, "DP") <= 0 )
+			if (AP_GetVital(ghost, "DP") <= 10 )
             SetObjProperty(ghost, "morto", 1);
          endif
 		endif
@@ -193,7 +193,7 @@ endfunction
 
 function checkIfDead(corpse, ghost := 0)
    if ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) )
-		SendSysMessage(ghost, "Algo aconteceu... Você morreu.");
+		SendSysMessageEx(ghost, "Algo aconteceu... Você morreu.", SSM_FAIL);
 		SetObjProperty(corpse, "morto", 1);
 		SetObjProperty(ghost, "morto", 1);
 		SetObjProperty(corpse, "deathtimer", polcore().systime);

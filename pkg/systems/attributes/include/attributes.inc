@@ -63,7 +63,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	endif
 
 	if (!mobile.npctemplate && !mobile.master)
-		if (AP_GetVitalMaximumValue(mobile, "DP")-20 > AP_GetVital(mobile, "DP"))
+		if (AP_GetVitalMaximumValue(mobile, "DP")-30 > AP_GetVital(mobile, "DP"))
 			penalty -= 2;
 		endif
 

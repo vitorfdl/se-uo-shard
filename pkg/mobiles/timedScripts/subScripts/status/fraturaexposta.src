@@ -14,7 +14,7 @@ include "include/say";
 include ":blood:blood";
 
 function StartScript(mobile, attacker := 0, level := 0)
-	while(AP_GetVital(mobile, "DP") <= 19)
+	while(AP_GetVital(mobile, "DP") <= 29)
       PlayerSpeedSlower(mobile, 1);
 		sleep(4);
 	endwhile
