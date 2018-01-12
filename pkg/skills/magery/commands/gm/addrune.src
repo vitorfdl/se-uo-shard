@@ -18,7 +18,7 @@ program monge_book(who, params )
    var keys       := GetConfigStringKeys(spellcfg);
    var prompt := RadioGump(who, 300, 100+(keys.size() * 20), "Escolha a Runa:", keys);
    if (prompt)
-      SetObjProperty(targ, "rune_name", prompt);
+      SetObjProperty(targ, "inscripted", prompt);
    endif
 
 	SendSysMessageEX(who, "Objeto criado com sucesso");
