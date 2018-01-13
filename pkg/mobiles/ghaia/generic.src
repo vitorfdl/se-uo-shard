@@ -184,7 +184,7 @@ function Fight(opponent, alerted := 0)
       if ( unique != error && unique.combatevent.size() > 0 )
          foreach ce in (unique.combatevent)
             if (TS_GetCooldown(me, ce.name) == error)
-               Start_Script(":ghaia:special/genericspecial" , array{me, ce});
+               start_script(":ghaia:special/genericspecial" , array{me, ce});
             endif
             sleepms(2);
          endforeach

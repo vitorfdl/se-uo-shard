@@ -5,14 +5,11 @@ use vitals;
 include ":timedScripts:timedScripts";
 include "include/damage";
 include "include/sysEvent";
-include ":ghaia:generic";
 
 program loko(params)
-
 	var who := params[1];
 	var event := params[2];
 	//printtextabove(who, " "  + event); //apagar
-
 	if (!who.opponent)
 		return;
    endif
@@ -83,7 +80,6 @@ program loko(params)
          
 		elseif (state.type == "TimedScript")
 			var targ := selectOpponent(who, state.target);
-         print(state);
 			foreach t in targ
             sleepms(2);
             if (state.resist_test)
