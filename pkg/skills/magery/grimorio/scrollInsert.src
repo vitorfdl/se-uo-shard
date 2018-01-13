@@ -65,6 +65,10 @@ function addScroll(who, book, scroll)
 		SendSysMessageEX(who,"O grimorio já possui esta magia.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
+   elseif (TS_GetCooldown(who, "learning_recipe") && !who.cmdlevel)
+      SendSysMessageEx(who, "Sua mente ainda esta absorvendo a ultima receita que leu.", SSM_FAIL);
+      MoveItemToContainer(scroll, who.backpack);
+      return 0;
 	endif
 
    var spellinfo := spell_id;

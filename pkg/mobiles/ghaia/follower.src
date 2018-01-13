@@ -151,7 +151,11 @@ function Fight(opponent := 0, force := 1)
    endif
 
    var dist := CoordinateDistance(me.x, me.y, fighting.x, fighting.y);
-   if (dist > 1)
+   var started_loc := GetObjProperty(me, "started_loc");
+   if (started_loc && CoordinateDistance(me.x, me.y, started_loc[1], started_loc[2]) > 10)
+      fighting := 0;
+      PetGoTo(struct{ "x" := started_loc[1], "y" := started_loc[2], "z" := started_loc[3] }, 2);
+   elseif (dist > 1)
       CalcPathAndMove(me, fighting, 275 - me.run_speed);
    endif
 

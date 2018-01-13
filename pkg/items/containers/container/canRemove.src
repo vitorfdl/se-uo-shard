@@ -20,7 +20,7 @@ program canRemove(mobile, container, item, move_type)
 	elseif ( GetProcess(CInt(GetObjProperty(mobile, "#PickPid"))) )
 		SendSysMessageEx(mobile, "Você está ocupado demais tentando roubar alguem.", SSM_FAIL);
 		return 0;
-   elseif (ListHostiles(mobile, 10).size() > 1)
+   elseif (ListHostiles(mobile, 10).size() > 1 && container != mobile.backpack)
 		SendSysMessageEx(mobile, "Você não pode mexer em containers enquanto está sendo atacado.", SSM_FAIL);
 		return 0;
    endif

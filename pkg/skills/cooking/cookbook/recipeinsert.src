@@ -67,11 +67,13 @@ function addScrollOnBook(who, book, recipe)
 		SendSysMessageEx(who,"Cancelado", SSM_INFO);
 		MoveItemToContainer(recipe, who.backpack);
 		return 0;
-	elseif (TS_GetCooldown(who, "learning_recipe"))
+   elseif (TS_GetCooldown(who, "learning_recipe") && !who.cmdlevel)
       SendSysMessageEx(who, "Sua mente ainda esta absorvendo a ultima receita que leu.", SSM_FAIL);
+      MoveItemToContainer(recipe, who.backpack);
       return 0;
 	elseif (!CheckCharges(who, recipe, RecipeCharges(diff)))
 		SendLearnMessage(who);
+      MoveITemToContainer(recipe, who.backpack);
 		return 0;
 	endif
 

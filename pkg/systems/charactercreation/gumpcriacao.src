@@ -327,6 +327,7 @@ function RaceGump(who, byref  chardata)
 			chardata.nomefinal := last_name;
          sleepms(2);
 		endforeach
+      
       if (chardata.classe == "Clérigo" && chardata.raca == "Elfo")
          SendSysMessageEx(who, "Clérigos não podem ser elfos!", SSM_FAIL);
          RaceGump(who, chardata);
@@ -383,15 +384,14 @@ function ChooseGod(who, byref chardata)
 						"Seredhiel":
 							god_choose := "Anar";
 						"Anar":
-							god_choose := "Seredhiel";
+                     if (chardata.classe == "Clérigo")
+                        SendSysMessageEx(who, "Clérigos veneram somente a Anar.", SSM_FAIL);
+                        god_choose := "Anar";
+                     else
+							   god_choose := "Seredhiel";
+                     endif
 					endcase
 			endcase
-
-         case (chardata.classe)
-            "Clérigo":
-					SendSysMessageEx(who, "Clérigos veneram somente a Anar.", SSM_FAIL);
-					god_choose := "Anar";
-         endcase
 		elseif (input[0] == 200)
 			chardata.god := god_choose;
 			break;
