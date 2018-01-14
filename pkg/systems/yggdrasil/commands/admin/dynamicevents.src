@@ -14,26 +14,28 @@ include "include/say";
 include ":unicos:item_template";
 
 //Main Menu
-const GF_GROUP_ACTIVE_SWITCH := 886;
-const GF_ADD_BTN        := 888;
-const GF_DEL_BTN        := 887;
-const GF_SELECTELEM_BTN := 100;
+const GF_GROUP_ACTIVE_SWITCH := 2;
+const GF_ADD_BTN        := 3;
+const GF_DEL_BTN        := 4;
+const GF_SELECTELEM_BTN := 10;
 
 //Moblist menu
-const GF_ADDEVENT_BTN     := 889;
-const GF_DELEVENT_BTN     := 890;
-const GF_SELECTEVENT_BTN := 200;
+const GF_ADDEVENT_BTN    := 101;
+const GF_DELEVENT_BTN    := 102;
+const GF_SELECTEVENT_BTN := 110;
 
 //Moblist menu
-const GF_ADDCONDITION_BTN    := 891;
-const GF_DELCONDITION_BTN    := 892;
-const GF_SELECTCONDITION_BTN := 300;
+const GF_ADDCONDITION_BTN    := 201;
+const GF_DELCONDITION_BTN    := 202;
+const GF_SELECTCONDITION_BTN := 210;
 
-//
-const GF_EVENT_UPDATE_BTN := 893;
-const GF_EVENT_CHANGE_BTN := 894;
+// Event/Conditiosn BTN
+const GF_EVENT_UPDATE_BTN := 301;
+const GF_EVENT_CHANGE_BTN := 302;
+const GF_EVENT_BTN := 300;
 
-const GF_EVENT_BTN := 400;
+var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};
+var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Every Second", "Battle Started", "% of Chance", "Player Class", "Light near"};
 
 //Basic
 var selected_dynamicevent := ""; //Name of the Elem
@@ -96,16 +98,14 @@ program spotGroups(params)
             // spot.SetProps(new_spot);
         endif
 
-        if ((input[0] >= 900 && input[0] < 910) || (input[0] >= 50 && input[0] < 300))
-      //       DoGroupList(who, input[0]);
-      //   elseif ((input[0] >= 910 && input[0] < 920) || (input[0] >= 300 && input[0] < 400))
-      //       DoSelectedGroupList(who, input[0]);
-      //   elseif ((input[0] >= 920 && input[0] < 930) || (input[0] >= 400 && input[0] < 450))
-      //       DoSpotList(who, input[0]);
-      //   elseif (input[0] >= 930 && input[0] < 940)
-      //       DoSpawnPointList(who, input[0]);
-      //   elseif (input[0] >= 1000 && input[0] < 1040)
-      //       DoTreasureList(who, input[0]);
+        if ((input[0] >= 1 && input[0] < 100)
+            DoDynamicEventList(who, input[0]);
+        elseif ((input[0] >= 100 && input[0] < 200)
+            DoEventList(who, input[0]);
+        elseif ((input[0] >= 200 && input[0] < 930))
+            DoConditionList(who, input[0]);
+        elseif (input[0] >= 300 && input[0] < 940)
+            DoStepsList(who, input[0]);
         else
             closed := 1;
         endif
@@ -113,6 +113,191 @@ program spotGroups(params)
         sleepms(2);
     endwhile
 endprogram
+
+
+function DoDynamicEventList(who, input)
+    case (input[0])
+        GF_ADDEVENT_BTN:
+            var dynamicevent_name := RequestGump(who, "Nome do novo Dynamic Event", "Obrigatório um nome ainda não usado.", "", CANCEL_BTN_ON);
+            var group_list := LoadDynamicGroupData().Keys();
+            if (dynamicevent_name == 0 || !dynamicevent_name || dynamicevent_name == " " )
+                break;
+            elseif (dynamicevent_name in group_list)
+                selected_dynamicevent := dynamicevent_name;
+                break;
+            endif
+            // group_list := group_list;
+            GetSpotGroupData(dynamicevent_name);
+            SetElemButton(dynamicevent_name);
+            break;
+        GF_DELEVENT_BTN:
+            RemoveSpotGroupData(selected_dynamicevent);
+            SetElemButton(0);
+            break;
+
+        default:
+            var key_index := input[0]-GF_SELECTELEM_BTN;
+            SetElemButton(key_index);
+            break;
+    endcase
+endfunction
+
+
+function SetElemButton(key_index)
+   if (TypeOf(key_index) == "Integer")
+      selected_dynamicevent := dynamiceventgroups[key_index];
+   else
+      selected_dynamicevent := key_index;
+   endif
+
+   selected_condition := 0;
+   selected_event := 0;
+endfunction
+
+function DoEventList(who, input)
+    case (input[0])
+        GF_ADDEVENT_BTN:
+            var choose := RadioGump(who, 0, 0, "Escolha um evento:", event_options);
+            var events := GetStepsFor(choose);
+
+            var new_event := struct{"name" := choose, "steps" := events};
+
+            break;
+        GF_DELEVENT_BTN:
+            RemoveEventData(selected_dynamicevent, selected_event);
+            selected_event := 0;
+
+            break;
+        default:
+            var key_index := input[0]-GF_SELECTEVENT_BTN;
+            selected_condition := 0;
+            selected_event := key_index;
+            break;
+    endcase
+endfunction
+
+function DoConditionList(who, input)
+    case (input[0])
+        GF_ADDCONDITION_BTN:
+            var choose := RadioGump(who, 0, 0, "Escolha uma condição:", condition_options);
+            var events := GetStepsFor(choose);
+
+            var new_condition := struct{"name" := choose, "steps" := events};
+            break;
+        GF_DELCONDITION_BTN:
+            RemoveConditionData(selected_dynamicevent, selected_condition);
+            selected_condition := 0;
+            break;
+
+        default:
+            var key_index := input[0]-GF_SELECTCONDITION_BTN;
+            selected_condition := key_index;
+            selected_event := 0;
+            break;
+    endcase
+endfunction
+
+
+// var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};
+// var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Every Second", "Battle Started", "% of Chance", "Player Class"};
+
+function GetStepsFor(event_type)
+   var input_request := array{};
+   var events := array{};
+   case (event_type)
+      event_options[1]: // summon
+         events.append(struct{ "template" := ":ghaia:" });
+         events.append(struct{ "number" := 1 });
+         events.append(struct{ "location" := array{0, 0, 0} });
+         events.append(struct{ "go_to" := array{0, 0, 0} });
+
+         break;
+      event_options[2]: //create item
+         events.append(struct{ "item" := struct{"desc" := "Nenhum"} });
+         events.append(struct{ "location" := array{0, 0, 0} });
+         events.append(struct{ "container" := 0 });
+         // do nothing
+         break;
+      event_options[3]:  //change environment
+         break;
+      event_options[4]: // destroyitem
+         break;
+      event_options[5]:  //applytimed
+         events.append(struct{ "timedscript" := "" });
+         events.append(struct{ "resist_test" := CONSTITUTION });
+         events.append(struct{ "chance" := 100 });
+         break;
+
+      condition_options[1]: //minimum player
+         events.append(struct{ "number" := 1 });
+         events.append(struct{ "location" := array{0, 0, 0} });
+         events.append(struct{ "range" := 10 });
+
+         break;
+      condition_options[2]: //mobiles died
+         events.append(struct{ "number" := 1 });
+         break;
+      condition_options[3]: //boss died
+         break;
+      condition_options[4]: //every second
+         events.append(struct{ "number" := 120 });
+         break;
+      condition_options[5]: //battle started
+         events.append(struct{ "location" := array{0, 0, 0} });
+         events.append(struct{ "range" := 10 });
+         return;
+      condition_options[6]: //% of chance
+         events.append(struct{ "number" := 100 });
+         break;
+      condition_options[7]: //player class
+         events.append(struct{ "haveclass" := "Mago" });
+         events.append(struct{ "range" := 10 });
+         break;
+      condition_options[8]: //Light near
+         events.append(struct{ "location" := array{0, 0, 0} });
+         events.append(struct{ "number" := 1 });
+         events.append(struct{ "range" := 10 });
+   endcase
+
+   return events;
+endfunction
+
+function ChangeStep(who, step_type)
+   case (step_type)
+      "location":
+         SendSysMessageEx(who, "Selecione o local", SSM_REQUEST);
+         var targ := TargetCoordinates(who);
+         return targ;
+      "haveclass":
+         return RadioGump(who, 0, 0, "Escolha uma classe:", array{"Mago", "Clérigo", "Guerreiro", "Ladino"});
+      "timedscript":
+         var timedcfg := TS_GetCfgFile();
+         return RadioGump(who, 0, 0, "Escolha um timedscript:", GetConfigStringKeys(timedcfg));
+      "resist_test":
+         return RadioGump(who, 0, 0, "Escolha um teste:", array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM});
+   endcase
+endfunction
+
+function ChooseLocation(who, many)
+   var loc := array{};
+   while (1)
+      var targ := TargetCoordinates(who);
+
+      if (targ)
+         loc.append(array{ loc.x, loc.y, loc.z});
+      elseif (!targ && loc.size() > 0)
+         break;
+      elseif (!many && loc.size() > 0)
+         break;
+      endif
+   endwhile
+
+   return loc;
+endfunction
+
+function EventParameters(event, conditions)
+// QuestionsGump(who, questions)
+endfunction
 
 function ConstructGump()
     dynamiceventgroups := DFGetElemNames(LoadDynamicGroupData()); //Reset every time the Gump is created
@@ -280,11 +465,6 @@ function ConstructEventConfig(byref gump)
 
    config_struct := event.steps;
 
-   GFTextLine(gump, sx, sy, 1153, "Nome:");
-   config_struct.name := GFTextLine(gump, sx+40, sy, 2103, config_struct.name);
-   
-   sy += 18;
-
    foreach ev in (config_struct.keys())
       if (ev.template)
          GFTextLine(gump, sx, sy, 1153, "Template:");
@@ -313,17 +493,18 @@ function ConstructEventConfig(byref gump)
          GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.environment));
          GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
 
-      elseif (ev.lightnear)
-         GFTextLine(gump, sx, sy, 1153, "Have light:");
-         GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.lightnear));
-         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
-
       elseif (ev.range)
          GFTextLine(gump, sx, sy, 1153, "Range:");
          ev.range := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, ev.range);
+
       elseif (ev.haveclass)
          GFTextLine(gump, sx, sy, 1153, "Have class:");
          GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.haveclass));
+         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
+
+      elseif (ev.item)
+         GFTextLine(gump, sx, sy, 1153, "Item:");
+         GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.item.desc));
          GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
       endif
 

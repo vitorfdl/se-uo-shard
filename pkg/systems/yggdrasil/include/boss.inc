@@ -650,153 +650,203 @@ function ConfigureCombatEvent(who, event := 0)
 endfunction
 
 function CombatEventsOptions(who, state)
-		var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Delay"});	
+   var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Delay"});	
 
-		state.type := opt;
-		if (opt == "Move")
-			SendSysMessageEx(who, "Para onde o npc deve andar?");
-			var loc := TargetCoordinates(who);
-			state.+x := loc.x;
-			state.+y := loc.y;
-			state.+z := loc.z;
-		elseif ( opt == "Teleport")
-			state.+target := RadioGump(who, 200, 180, "Quem vai sofrer?", array{"Self", "Opponent", "Around Opponent" ,"All Opponents"});
-			var loc := TargetCoordinates(who);
-			state.+x := loc.x;
-			state.+y := loc.y;
-			state.+z := loc.z;
-		elseif ( opt == "TimedScript")
-			state.+target := RadioGump(who, 200, 180, "Quem vai realizar a action?", array{"Self", "Opponent", "All Opponents"});
-         var timedcfg := TS_GetCfgFile();
-			var timername := RadioGump(who, 270, 580, "Escolha o timedscript", GetConfigStringKeys(timedcfg));
-			state.+timername := timername;
-			state.+timerduration := cint(RequestGump(who, "Qual a duracao do timer?", "Nunca mais de 120s", "", 1));
-			state.+level := cint(RequestGump(who, "Qual o level do timer?", "", "", 1));
-			var test := RadioGump(who, 200, 240, "Algum teste de resistência? ", array{STRENGTH, DEXTERITY, WISDOM, CONSTITUTION, "Nenhum"}, 0, 5);
-         if (test != "Nenhum")
-			   state.+resist_test := test;
-            state.+resist_diff := cint( RequestGump(who, "Qual a dificuldade?", "", "12", 1));
+   var targ_opts := array{"Self", "Opponent", "Around Opponent", "All Opponents", "Around myself"};
+   state.type := opt;
+   if (opt == "Move")
+      SendSysMessageEx(who, "Para onde o npc deve andar?");
+      var loc := TargetCoordinates(who);
+      state.+x := loc.x;
+      state.+y := loc.y;
+      state.+z := loc.z;
+   elseif ( opt == "Teleport")
+      state.+target := RadioGump(who, 200, 180, "Quem vai sofrer?", targ_opts);
+      var loc := TargetCoordinates(who);
+      state.+x := loc.x;
+      state.+y := loc.y;
+      state.+z := loc.z;
+   elseif ( opt == "TimedScript")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai realizar a action?", "marked" := 1, "radio" := targ_opts});
+      var timedcfg := TS_GetCfgFile();
+      input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := 1, "radio" := GetConfigStringKeys(timedcfg)});
+      input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""});
+      input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := "1"});
+      input_list.append(struct{ "title" := "Teste de resistência?," "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
+      input_list.append(struct{ "title" := "Dificuldade do teste?", "marked" := "12"});
+
+      var output := QuestionsGump(who, input_list);
+      
+      state.+target  := output[1];
+      state.+timername     := output[2];
+      state.+timerduration := cint(output[3]);
+      state.+level         := cint(output[4]);
+
+      if (output[5] != "Nenhum")
+         state.+resist_test := output[5];
+         state.+resist_diff := cint(output[6]);
+      endif
+   elseif ( opt == "Perform Action" )
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai realizar a action?", "marked" := 1, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual o ID da animação?", "marked" := ""});
+      var output := QuestionsGump(who, input_list);
+
+      state.+target := output[1];
+      state.+id := cint(output[2]);
+   elseif (opt == "Text")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai falar?", "marked" := 1, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual o texto?", "marked" := ""});
+      input_list.append(struct{ "title" := "Qual a cor do texto?", "marked" := "1000"});
+      var output := QuestionsGump(who, input_list);
+
+      state.+target := output[1];
+      state.+text := output[2];
+      state.+color := cint(output[3]);
+   elseif (opt == "Play Sound")
+      state.+id := cint(RequestGump(who, "Qual o ID do som?", "", "", 1));
+   elseif (opt == "Delay")
+      state.+delay := cint(RequestGump(who, "Quanto tempo de delay?", "", "", 1));
+   elseif (opt == "Heal")
+      state.healamt := cint(RequestGump(who, "Quanto vai healar?", "", "", 1));
+   elseif (opt == "Graphic Effect")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Onde vai aparecer o efeito? (fixed loc deve ser Moving)", "marked" := 1, "radio" := targ_opts + array{"Fixed Loc"}});
+      input_list.append(struct{ "title" := "Qual o tipo de efeito?", "marked" := 1, "radio" := array{"Stationary", "Moving"}});
+      input_list.append(struct{ "title" := "Qual o efeito?", "marked" := "", "radio" := array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Small Fireball", "Large Fireball", "Wavy Fireball", "Outro"}});
+      input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Qual a direção? (Moving)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"});
+      input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer:", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Digite o x y z da posicao final do efeito:", "marked" := "1000"});
+      var output := QuestionsGump(who, input_list);
+
+
+      state.+target := output[1];
+      state.+graphictype := output[2];
+      if ( input[3] == "Lightning" )
+         state.+fxid := fxid;
+      elseif ( input[3] == "Red Sparkles")
+         state.+fxid := GFX_RED_SPARKLES;
+         state.+speed := 7;
+         state.+loops := 7;
+      elseif ( input[3] == "Blue Sparkles")
+         state.+fxid := GFX_BLUE_SPARKLES;
+         state.+speed := 10;
+         state.+loops := 10;
+      elseif (input[3] == "Blue and Swirl")
+         state.+fxid := GFX_BLUE_SPARKLE_SWIRL;
+         state.+speed := 7;
+         state.+loops := 16;
+      elseif (input[3] == "Swirl Sparkles")
+         state.+fxid := GFX_BLUE_SPARKLE_BORDER;
+         state.+speed := 7;
+         state.+loops := 0;
+      elseif (input[3] == "Blue Sparkles on Ground")
+         state.+fxid := GFX_BLUE_SPARKLE_GROUND;
+         state.+speed := 7;
+         state.+loops := 10;
+      elseif (input[3] == "Fire Column");
+         state.+fxid := GFX_FIRE_COLUMN;
+         state.+speed := 7;
+         state.+loops := 0;
+      elseif (input[3] == "Small Fireball")
+         state.fxid := GFX_SMALL_FIREBALL;
+         state.+speed := 5;
+         state.+loops := 0;
+      elseif (input[3] == "Large Fireball")
+         state.fxid := GFX_LARGE_FIREBALL;
+         state.+speed := 5;
+         state.+loops := 0;
+      elseif (input[3] == "Wavy Fireball")
+         state.fxid := GFX_WAVY_FIREBALL;
+         state.+speed := 5;
+         state.+loops := 0;
+      elseif (input[3] == "Outro")
+         state.+fxid := input[4];
+         if (state.graphictype == "Stationary")
+            state.+speed := 7;
+            state.+loops := 16;
+         else
+            state.+speed := 5;
+            state.+loops := 0;
          endif
-		elseif ( opt == "Perform Action" )
-			state.+target := RadioGump(who, 200, 180, "Quem vai realizar a action?", array{"Self", "Opponent", "All Opponents"});
-			state.+id := cint(RequestGump(who, "Qual o ID da animacao?", "", "", 1));
-		elseif (opt == "Text")
-			state.+target := RadioGump(who, 200, 180, "Quem vai falar?", array{"Self", "Opponent", "All Opponents"});
-			state.+text := RequestGump(who, "Qual o texto ?", "", "", 1);
-			state.+color := cint(RequestGump(who, "Qual a cor do texto?", "", "1000", 1));
-		elseif (opt == "Play Sound")
-			state.+id := cint(RequestGump(who, "Qual o ID do som?", "", "", 1));
-		elseif (opt == "Delay")
-			state.+delay := cint(RequestGump(who, "Quanto tempo de delay?", "", "", 1));
-		elseif (opt == "Heal")
-			state.healamt := cint(RequestGump(who, "Quanto vai healar?", "", "", 1));
-		elseif (opt == "Graphic Effect")
-			state.+target := RadioGump(who, 250, 200, "Onde vai aparecer o efeito? (fixed loc deve ser Moving)", array{"Self", "Opponent", "All Opponents", "Fixed Loc"});
-			state.+graphictype := RadioGump(who, 180, 150, "Qual o tipo de efeito?", array{"Stationary", "Moving"});
-			if (state.graphictype == "Stationary")
-				var fxid :=  RadioGump(who, 230, 300, "Qual o efeito?", array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Outro"});
-				if ( fxid == "Lightning" )
-					state.+fxid := fxid;
-				elseif ( fxid == "Red Sparkles")
-					state.+fxid := GFX_RED_SPARKLES;
-					state.+speed := 7;
-					state.+loops := 7;
-				elseif ( fxid == "Blue Sparkles")
-					state.+fxid := GFX_BLUE_SPARKLES;
-					state.+speed := 10;
-					state.+loops := 10;
-				elseif (fxid == "Blue and Swirl")
-					state.+fxid := GFX_BLUE_SPARKLE_SWIRL;
-					state.+speed := 7;
-					state.+loops := 16;
-				elseif (fxid == "Swirl Sparkles")
-					state.+fxid := GFX_BLUE_SPARKLE_BORDER;
-					state.+speed := 7;
-					state.+loops := 0;
-				elseif (fxid == "Blue Sparkles on Ground")
-					state.+fxid := GFX_BLUE_SPARKLE_GROUND;
-					state.+speed := 7;
-					state.+loops := 10;
-				elseif (fxid == "Fire Column");
-					state.+fxid := GFX_FIRE_COLUMN;
-					state.+speed := 7;
-					state.+loops := 0;
-				elseif (fxid == "Outro")
-					state.+fxid := hex(RequestGump(who, "Qual o ID do efeito?", "", "", 1));
-					state.+speed := 7;
-					state.+loops := 16;
-				endif
-				
-			elseif (state.graphictype == "Moving")
-				var fxid := RadioGump(who, 180, 280, "Qual o efeito?", array{"Small Fireball", "Large Fireball", "Wavy Fireball", "Other"});
-				state.+direction := RadioGump(who, 200, 180, "Qual vai ser a direcao do efeito?", array{"Mob->Player", "Player->Mob"});
-				if (fxid == "Small Fireball")
-					state.fxid := GFX_SMALL_FIREBALL;
-					state.+speed := 5;
-					state.+loops := 0;
-				elseif (fxid == "Large Fireball")
-					state.fxid := GFX_LARGE_FIREBALL;
-					state.+speed := 5;
-					state.+loops := 0;
-				elseif (fxid == "Wavy Fireball")
-					state.fxid := GFX_WAVY_FIREBALL;
-					state.+speed := 5;
-					state.+loops := 0;
-				elseif (fxid == "Other")
-					state.+fxid := cint(RequestGump(who, "Qual o ID do efeito?", "", "", 1));
-					state.+speed := 5;
-					state.+loops := 0;
-				endif
-				if (state.target == "Fixed Loc")
-					var loc := RequestGump(who, "Digite o x y z onde o efeito vai aparecer:", "", "", 1);
-	                		loc := splitwords(loc);
-        	        		state.+startx :=  loc[1];
-         	       			state.+starty :=  loc[2];
-               	 			state.+startz :=  loc[3];
- 					var radius :=   RequestGump(who, "Qual o raio de onde o efeito vai aparecer:", "0 se for sempre no mesmo lugar", "0", 1);
-					state.startradius := radius;
-	
-					if (state.graphictype == "Moving")
-						var loc2 := RequestGump(who, "Digite o x y z da posicao final do efeito:", "", "", 1);
-	                			loc2 := splitwords(loc);
-        	        			state.+endx :=  loc2[1];
-         	       				state.+endy :=  loc2[2];
-               	 				state.+endz :=  loc2[3];
- 						var radius :=   RequestGump(who, "Qual o raio de onde o efeito vai terminar:", "0 se for sempre no mesmo lugar", "0", 1);
-						state.endradius := radius;
+      endif
 
-					endif
+      state.+direction := input[5];
 
-				endif
-			endif
-		elseif ( opt == "Dmg")
-			state.+target := RadioGump(who, 200, 180, "Quem vai sofrer?", array{"Self", "Opponent", "Around Opponent" ,"All Opponents"});
-			var dmg := RequestGump(who, "Quanto de dano vai causar", "Ex: 1d2", "", 1);
-			var dmgtype := RadioGump(who, 200, 240, "Qual o tipo de dano:", array{"Perfuração", "Concussão", "Corte", "Fogo", "Gelo", "Eletrecidade", "Veneno"});
-			var test := RadioGump(who, 200, 240, "Algum teste de resistência? ", array{STRENGTH, DEXTERITY, WISDOM, CONSTITUTION, "Nenhum"}, 0, 5);
-         if (test != "Nenhum")
-			   state.+resist_test := test;
-            state.+resist_diff := cint( RequestGump(who, "Qual a dificuldade?", "", "12", 1));
+      if (state.target == "Fixed Loc")
+         var loc := splitwords(input[6]);
+         state.+startx :=  loc[1];
+         state.+starty :=  loc[2];
+         state.+startz :=  loc[3];
+         state.startradius := 0;
+
+         if (state.graphictype == "Moving")
+            var loc2 := splitwords(input[7]);
+            state.+endx :=  loc2[1];
+            state.+endy :=  loc2[2];
+            state.+endz :=  loc2[3];
+            // var radius :=   RequestGump(who, "Qual o raio de onde o efeito vai terminar:", "0 se for sempre no mesmo lugar", "0", 1);
+            state.endradius := 0;
          endif
-			state.+dmg := dmg;
-			state.+dmgtype := dmgtype;
-			var vitals := CheckBoxGump(who, 230, 180, "Qual tipo de vital sera afetado pelo dano?", array{"Stam", "Hits", "Mana"});
-			state.+vitals := vitals;
-		elseif ( opt == "Create Items")
-			SendSysMessage(who, "Não implementado");
-		elseif (opt == "Summon Npcs")
-        	        state.+amount := Cint(RequestGump(who, "Quantos npcs vao ser spawnados:", "", "", 1));
-	                var loc := RequestGump(who, "Digite o x y z onde eles vao aparecer:", "Escreva 6 6 6 se for para aparecer onde o boss esta", "", 1);
-	                loc := splitwords(loc);
-        	        state.+x :=  loc[1];
-         	       	state.+y :=  loc[2];
-               	 	state.+z :=  loc[3];
-               	 	state.+range := Cint(RequestGump(who, "Digite o raio de spawn:", "", "", 1));
-                	state.+npctemplate := RequestGump(who, "Digite o npctemplate:", "", "", 1);
-					state.+tempo := Cint(RequestGump(who, "Coloque o tempo de vida do monstro(2 minutos default):", "", "", 1));
+      endif
+   elseif ( opt == "Dmg")
 
-		elseif (opt == "Custom HitScript")
-			SendSysMessage(who, "Não implementado");
-		endif
-		return state;
+         ########
+      input_list.append(struct{ "title" := "", "marked" := ""});
+      input_list.append(struct{ "title" := "", "marked" := 1, "radio" := array{}});
+      ########
+
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai sofrer?", "marked" := 1, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quanto de dano vai causar? Ex: 1d2", "marked" := "1d2"});
+      input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := 1, "radio" := array{"Perfuração", "Concussão", "Corte", "Fogo", "Gelo", "Eletrecidade", "Veneno"}}});
+      input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := "", "radio" := array{"Stam", "Hits", "Mana"});
+      input_list.append(struct{ "title" := "Teste de resistência?," "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
+      input_list.append(struct{ "title" := "Qual a dificuldade do teste?", "marked" := "14"});
+      var output := QuestionsGump(who, input_list);
+
+      state.+target := output[1];
+      state.+dmg := output[2];
+      state.+dmgtype := output[3];
+      state.+vitals := output[4];
+      if (output[5] != "Nenhum")
+         state.+resist_test := output[5];
+         state.+resist_diff := cint(output[6]);
+      endif
+   elseif ( opt == "Create Items")
+      SendSysMessage(who, "Não implementado");
+   elseif (opt == "Summon Npcs")
+
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ":ghaia:"});
+      input_list.append(struct{ "title" := "Quantos npcs vao ser spawnados?", "marked" := "2"});
+      input_list.append(struct{ "title" := "Qual o raio de spawn?", "marked" := "5"});
+      input_list.append(struct{ "title" := "Qual o tempo de vida dos monstros?", "marked" := "120"});
+      input_list.append(struct{ "title" := "Digite o x y z onde eles vao aparecer: (6 6 6 para onde o boss esta)", "marked" := "6 6 6"});
+      
+      var output := QuestionsGump(who, input_list);
+      state.+npctemplate := output[1];
+      state.+amount := output[2];
+      state.+range := output[3];
+      state.+tempo := output[4];
+      
+      var loc := output[6];
+      if (!loc)
+         SendSysMessageEx(who, "Onde vão ser spawnados? (Esc para mesmo local do boss)");
+         loc := TargetCoordinates(who);
+      else
+         loc := splitwords(loc);
+      endif
+      
+      state.+x :=  loc[1];
+      state.+y :=  loc[2];
+      state.+z :=  loc[3];
+
+   elseif (opt == "Custom HitScript")
+      SendSysMessage(who, "Não implementado");
+   endif
+   return state;
 endfunction

@@ -57,6 +57,8 @@ CFG ->
 
          Trigger Conditions:
             x Minimum Enemys
+               at point
+               around
             x mobs died
             boss died
             Every x seconds
@@ -65,6 +67,104 @@ CFG ->
             Class between enemies
          
     
+function DoStepsList(who, event_type)
+   var input_request := array{};
+   var events := array{};
+   case (event_type)
+      event_options[1]: // summon
+         input_request.append(struct{ "title" := "Mobile template", "checked" := ":ghaia:" });
+         input_request.append(struct{ "title" := "Mover-se até algum local?", "checked" := 1, "option" := array{"Sim", "Não"} });
+         // input_request.append(struct{ "title" := "Matar somente se não houver players?", "checked" := 1, "option" := array{"Sim", "Não"} });
+         input_request.append(struct{ "title" := "Método de Respawn", "checked" := 1, "option" := array{"Escolher um local", "Vários locais"} });
+         var input := QuestionsGump(who, input_request);
+
+         SendSysMessageEx(who, "Spawnar onde? (Esc to cancel)");
+         var loc := ChooseLocation(who, ((input_request[3])["Vários"]) != 0);
+         foreach location in loc
+            events.append(struct{ "location" := location});
+         endforeach
+         
+         events.append(struct{ "template" := input_request[1]});
+         if (input_request[1])
+            SendSysMessageEx(who, "Andar até onde? (Esc to cancel)");
+            loc := ChooseLocation(who);
+            foreach location in loc
+               events.append(struct{ "go_to" := location});
+            endforeach
+         endif
+
+         return events;
+      event_options[2]: //create item
+         // do nothing
+         return events;
+      event_options[3]:  //change environment
+         return events;
+      event_options[4]: // destroyitem
+         return events;
+      event_options[5]:  //applytimed
+         var timedcfg := TS_GetCfgFile();
+         input_request.append(struct{ "title" := "Escolha um TimedScript", "checked" := 1, "option" := GetConfigStringKeys(timedcfg) });
+         input_request.append(struct{ "title" := "Teste de dificuldade?," "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM} });
+         input_request.append(struct{ "title" := "Dificuldade do teste"});
+         input_request.append(struct{ "title" := "Enviar mensagem ao ativar? [deixar em branco se não]"});
+         var input := QuestionsGump(who, input_request);
+
+         SendSysMessageEx(who, "Escolha o local (Esc to cancel)");
+         var loc := ChooseLocation(who);
+
+         return events;
+
+      condition_options[1]: //minimum player
+         input_request.append(struct{ "title" := "Quantos players próximo?"});
+         input_request.append(struct{ "title" := "Próximo do que?", "checked" := 1, "option" := array{"Spawnpoint", "Escolher local"}});
+         var input := QuestionsGump(who, input_request);
+      
+         if (input[2] != "Spawnpoint")
+            var loc := ChooseLocation(who);
+         else
+         
+         endif
+         return events;
+      condition_options[2]: //mobiles died
+         input_request.append(struct{ "title" := "Quantos monstros? [0 para todos]", "checked" := "0"});
+         var input := QuestionsGump(who, input_request);
+         return events;
+      condition_options[3]: //boss died
+      condition_options[4]: //every second
+         input_request.append(struct{ "title" := "De quantos em quantos segundos?", "checked" := "120"});
+         var input := QuestionsGump(who, input_request);
+      
+      condition_options[5]: //battle started
+         input_request.append(struct{ "title" := "Ao redor do que?", "checked" := 1, "option" := array{"Spawnpoint", "Escolher local"}});
+         var input := QuestionsGump(who, input_request);
+      condition_options[6]: //% of chance
+         if (input[1] != "Spawnpoint")
+            SendSysMessageEx(who, "Escolha o local (Esc to cancel)");
+            var loc := ChooseLocation(who);
+         else
+         
+         endif
+         input_request.append(struct{ "title" := "Qual a % de chance?", "checked" := "100");
+         var input := QuestionsGump(who, input_request);
+         return events;
+      condition_options[7]: //player class
+         input_request.append(struct{ "title" := "Qual classe?", "checked" := 1, "option" := array{"Mago", "Clérigo", "Guerreiro", "Ladino"}});
+         var input := QuestionsGump(who, input_request);
+         return events;
+      condition_options[8]: //Light near
+         input_request.append(struct{ "title" := "Ao redor do que?", "checked" := 1, "option" := array{"Spawnpoint", "Escolher local"}});
+         var input := QuestionsGump(who, input_request);
+         if (input[1] != "Spawnpoint")
+            SendSysMessageEx(who, "Escolha o local (Esc to cancel)");
+            var loc := ChooseLocation(who);
+         else
+
+         endif
+         return events;
+   endcase
+
+   return 0;
+endfunction
 
 
 ['Ready Script']

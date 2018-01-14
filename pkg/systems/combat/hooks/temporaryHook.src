@@ -185,8 +185,9 @@ function GetAttackerChance(attacker, defender)
 			dice_gain -= 1;
 		endif
 
-      if (weapon.isBow() || weapon.isMagicWeapon())
+      if (weapon.isBow())
          if (!HaveLightNear(defender))
+            who.SetAchievement("shoot_night", 1);
             dice_gain -= 1;
          endif
 
@@ -194,6 +195,12 @@ function GetAttackerChance(attacker, defender)
             if (Distance(attacker,defender) > cint(wpn_a_elem.medrange))
                dice_gain -= 1;
             endif
+         endif
+      endif
+
+      if (weapon.isMagicWeapon())
+         if (!HaveLightNear(defender))
+            dice_gain -= 1;
          endif
       endif
 	endif
