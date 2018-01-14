@@ -6,9 +6,9 @@ include "plankUtil";
 var shiptype := 0;
 var shipheight := 0;
 
-program usemooringline (mob, mooringline)
+program usemooringline(mob, mooringline)
 	set_critical(1); 
-	if (Distance(mob, mooringline) > 6)
+	if (Distance(mob, mooringline) > 8)
 		return 0;
 	elseif (mob.multi == mooringline.multi)
 		shiptype := mooringline.multi.multiid;
@@ -23,11 +23,11 @@ program usemooringline (mob, mooringline)
 		else
 			return;
 		endif
-		GetOutOfBoat (mob, mooringline);
+		GetOutOfBoat(mob, mooringline);
 	else
-		YankOntoBoat (mob, mooringline);
+		YankOntoBoat(mob, mooringline);
 	endif
-	set_critical (0); 
+	set_critical(0); 
 endprogram
 
 

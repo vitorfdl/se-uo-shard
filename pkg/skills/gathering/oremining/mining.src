@@ -10,7 +10,7 @@ include ":attributes:attributes";
 include ":itemUtils:toolWear";
 include ":gathering:mining";
 include "include/say";
-include ":charactercreation:habilidades";
+include "include/dungeons";
 
 const MINING_ANIMATION	:= 0xB;
 const MINING_SOUND	:= 0x126;
@@ -117,8 +117,9 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 
 	if ( ore_amount > 0 )
 		if (ore_type != 999) //999 eh quando não passou na chance de raridade do minerio
-			var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
-			if ( dice_roll > difficulty )
+         var bonus := HaveLightNear(who) - 1;
+			var dice := rollAttrDice(who, STRENGTH, bonus, struct{ "get_critical" := 1}) + getProficiencyBonus(who, EXTRACAO);
+			if ( dice.roll > difficulty )
 				var amt := 1 + AP_GetStat(who, STRENGTH, RETURN_BONUS);
 				if (amt <= 0)
 					amt := 2;
@@ -133,9 +134,9 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 				var minerio := CreateItemInBackPack(who, cint(ore_type), cint(amt));
 				minerio.movable := 1;
 				who.SetAchievement("oremining", 1);
-				ExpGain(who, difficulty, dice_roll);
+				ExpGain(who, difficulty, dice.roll);
 				SendSysMessageEx(who, "Você pegou alguns minerios. " );
-				if (TemHabilidade(who, "Garimpeiro"))
+				if (HaveFeat(who, "Garimpeiro") && dice.critical)
 					Garimpeiro(who);
 				endif
 			else

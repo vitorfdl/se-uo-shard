@@ -15,7 +15,7 @@ function Garimpeiro(who)
 		var keys := GetConfigStringKeys( cfg );
 
 		SendSysMessageEx(who, "Você achou uma pedra preciosa!", SSM_INFO);
-		CreateItemInBackPack(who, keys[RandomInt(keys.size()+1)], 1);
+		CreateItemInBackPack(who, keys.randomentry(), 1);
 
 	endif
 	return 1;
