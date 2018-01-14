@@ -4,7 +4,7 @@ use datafile;
 use basic;
 
 include ":yggdrasil:spawnGroup";
-include ":yggdrasil:treasures";
+include ":yggdrasil:dynamicevents";
 // include ":ghaia:ghaiaUtil";
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
@@ -64,61 +64,48 @@ program spotGroups(params)
         var input := GFSendGump(who, gump);
 
         if (selected_dynamicevent)
-            var active_switch := GFExtractData(input, GF_GROUP_ACTIVE_SWITCH);
-            if (!active_switch || active_switch == error)
-                active_switch := 0;
-            endif
-            SetSpotGroupData(selected_dynamicevent, struct{"active":=active_switch});
+            // var active_switch := GFExtractData(input, GF_GROUP_ACTIVE_SWITCH);
+            // if (!active_switch || active_switch == error)
+            //     active_switch := 0;
+            // endif
+            // SetSpotGroupData(selected_dynamicevent, struct{"active":=active_switch});
         endif
 
         if (selected_event)
-            var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
-            var new_spawnpoint := struct{
-                "name"       := GFExtractData(input, spawnpoint_name),
-                "mob_number" := GFExtractData(input, spawnpoint_mobnumber),
-                "range"      := GFExtractData(input, spawnpoint_range)
-            };
-            spawnpoint.SetProps(new_spawnpoint);
+            // var spawnpoint := SystemFindObjectBySerial(selected_spawnpoint);
+            // var new_spawnpoint := struct{
+            //     "name"       := GFExtractData(input, spawnpoint_name),
+            //     "mob_number" := GFExtractData(input, spawnpoint_mobnumber),
+            //     "range"      := GFExtractData(input, spawnpoint_range)
+            // };
+            // spawnpoint.SetProps(new_spawnpoint);
         endif
 
         if (selected_condition)
-            var active_switch := GFExtractData(input, GF_SPOT_ACTIVE_SWITCH);
-            if (!active_switch || active_switch == error)
-                active_switch := 0;
-            endif
-            var spot := SystemFindObjectBySerial(selected_spot);
-            var new_spot := struct{
-                "active" := active_switch,
-                "name" := GFExtractData(input, spot_name),
-                "evententry" := GFExtractData(input, spot_evententry),
-                "timeinterval" := GFExtractData(input, spot_timeinterval)
-            };
-            spot.SetProps(new_spot);
-        endif
-
-        if (selected_treasure)
+            // var active_switch := GFExtractData(input, GF_SPOT_ACTIVE_SWITCH);
+            // if (!active_switch || active_switch == error)
+            //     active_switch := 0;
+            // endif
             // var spot := SystemFindObjectBySerial(selected_spot);
-            // var data := spot.GetProps();
-            // var treasure := FindElemInArray(data.treasures, struct{"serial":=selected_treasure});
-            // treasure.protected := GFExtractData(input, GF_TREASURE_PROTECTED_SWITCH);
-            // treasure.active    := GFExtractData(input, GF_TREASURE_ACTIVE_SWITCH);
-            // treasure.trapped   := GFExtractData(input, GF_TREASURE_TRAP_SWITCH);
-            // treasure.breakable := GFExtractData(input, GF_TREASURE_BREAKABLE_SWITCH);
-            // treasure.hidden := GFExtractData(input, GF_TREASURE_HIDDEN_SWITCH);
-            
-            spot.UpdateTreasure(selected_treasure, treasure);
+            // var new_spot := struct{
+            //     "active" := active_switch,
+            //     "name" := GFExtractData(input, spot_name),
+            //     "evententry" := GFExtractData(input, spot_evententry),
+            //     "timeinterval" := GFExtractData(input, spot_timeinterval)
+            // };
+            // spot.SetProps(new_spot);
         endif
 
         if ((input[0] >= 900 && input[0] < 910) || (input[0] >= 50 && input[0] < 300))
-            DoGroupList(who, input[0]);
-        elseif ((input[0] >= 910 && input[0] < 920) || (input[0] >= 300 && input[0] < 400))
-            DoSelectedGroupList(who, input[0]);
-        elseif ((input[0] >= 920 && input[0] < 930) || (input[0] >= 400 && input[0] < 450))
-            DoSpotList(who, input[0]);
-        elseif (input[0] >= 930 && input[0] < 940)
-            DoSpawnPointList(who, input[0]);
-        elseif (input[0] >= 1000 && input[0] < 1040)
-            DoTreasureList(who, input[0]);
+      //       DoGroupList(who, input[0]);
+      //   elseif ((input[0] >= 910 && input[0] < 920) || (input[0] >= 300 && input[0] < 400))
+      //       DoSelectedGroupList(who, input[0]);
+      //   elseif ((input[0] >= 920 && input[0] < 930) || (input[0] >= 400 && input[0] < 450))
+      //       DoSpotList(who, input[0]);
+      //   elseif (input[0] >= 930 && input[0] < 940)
+      //       DoSpawnPointList(who, input[0]);
+      //   elseif (input[0] >= 1000 && input[0] < 1040)
+      //       DoTreasureList(who, input[0]);
         else
             closed := 1;
         endif
@@ -128,7 +115,7 @@ program spotGroups(params)
 endprogram
 
 function ConstructGump()
-    spotgroups := DFGetElemNames(LoadDynamicGroupData()); //Reset every time the Gump is created
+    dynamiceventgroups := DFGetElemNames(LoadDynamicGroupData()); //Reset every time the Gump is created
     var gump := GFCreateGump(150, 150);
     GFPage(gump, 0);
     GFSetID(gump, gumpid);
@@ -159,7 +146,7 @@ function ConstructGroupList(byref gump)
         var y := (30+(18*i)); // (((page-1) * max_page)+1); //(BaseX(Espa�amento*i)) / (Calculo de Pagina)
 
         var color := 1153;
-        if (selected_elem == dynamiceventgroups[i])
+        if (selected_dynamicevent == dynamiceventgroups[i])
             color := 2103;
         endif
         if (dynamiceventgroups[i])
@@ -169,7 +156,7 @@ function ConstructGroupList(byref gump)
             GFTextLine(gump, x+70, y, 1153, "Adicionar");
             GFAddButton(gump, x+70-14, y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_ADD_BTN);
 
-            if (selected_elem)
+            if (selected_dynamicevent)
                 GFTextLine(gump, x+70, y+18, 1153, "Remover");
                 GFAddButton(gump, x+70-14, y+18+5, 0x938, 0x938, GF_CLOSE_BTN, GF_DEL_BTN);
             endif
@@ -277,10 +264,10 @@ function ConstructEventConfig(byref gump)
    var group_data;
    var title;
    if (selected_event)
-      group_data := GetSpawnGroupData(selected_elem).events;
+      group_data := GetSpawnGroupData(selected_dynamicevent).events;
       title := "Event";
    else
-      group_data := GetSpawnGroupData(selected_elem).conditions;
+      group_data := GetSpawnGroupData(selected_dynamicevent).conditions;
       title := "Condition";
    endif
 
@@ -294,54 +281,50 @@ function ConstructEventConfig(byref gump)
    config_struct := event.steps;
 
    GFTextLine(gump, sx, sy, 1153, "Nome:");
-   config_struct.name := GFTextLine(gump, sx+40, sy, 120, 18, 2103, config_struct.name);
+   config_struct.name := GFTextLine(gump, sx+40, sy, 2103, config_struct.name);
    
    sy += 18;
 
-   foreach step in (config_struct.keys())
-      if (step.name)
-
-         
-      // Summon Monster
-      elseif (step.template)
+   foreach ev in (config_struct.keys())
+      if (ev.template)
          GFTextLine(gump, sx, sy, 1153, "Template:");
-         step.template := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, step.template);
-      elseif (step.spawngroup)
+         ev.template := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, ev.template);
+      elseif (ev.spawngroup)
          GFTextLine(gump, sx, sy, 1153, "SpawnGroup:");
-         step.spawngroup := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, step.spawngroup);
-      elseif (step.number)
+         ev.spawngroup := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, ev.spawngroup);
+      elseif (ev.number)
          GFTextLine(gump, sx, sy, 1153, "Number:");
-         step.number := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, step.number);
+         ev.number := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, ev.number);
       
-      elseif (step.location)
+      elseif (ev.location)
          GFTextLine(gump, sx, sy, 1153, "Location:");
-         GFTextLine(gump, sx+65, sy, 2103, "{}".format(step.location));
-         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_step_iter);
+         GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.location));
+         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
 
-      elseif (step.goto)
+      elseif (ev.go_to)
          GFTextLine(gump, sx, sy, 1153, "Go to:");
-         GFTextLine(gump, sx+65, sy, 2103, "{}".format(step.goto));
-         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_step_iter);
+         GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.go_to));
+         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
 
 
       // Create Item
-      elseif (step.environment)
+      elseif (ev.environment)
          GFTextLine(gump, sx, sy, 1153, "Clima:");
-         GFTextLine(gump, sx+65, sy, 2103, "{}".format(step.environment));
-         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_step_iter);
+         GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.environment));
+         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
 
-      elseif (step.lightnear)
+      elseif (ev.lightnear)
          GFTextLine(gump, sx, sy, 1153, "Have light:");
-         GFTextLine(gump, sx+65, sy, 2103, "{}".format(step.lightnear));
-         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_step_iter);
+         GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.lightnear));
+         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
 
-      elseif (step.range)
+      elseif (ev.range)
          GFTextLine(gump, sx, sy, 1153, "Range:");
-         step.range := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, step.range);
-      elseif (step.haveclass)
+         ev.range := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, ev.range);
+      elseif (ev.haveclass)
          GFTextLine(gump, sx, sy, 1153, "Have class:");
-         GFTextLine(gump, sx+65, sy, 2103, "{}".format(step.haveclass));
-         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_step_iter);
+         GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.haveclass));
+         GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
       endif
 
       sy+=20;
@@ -350,7 +333,8 @@ function ConstructEventConfig(byref gump)
 
     GFAddButton(gump, 500, sy+18+40+18, 0xEF, 0xF0, 1, GF_EVENT_UPDATE_BTN);
     GFAddButton(gump, 500, sy+18+60+20+28, 0xEF, 0xF0, 1, GF_EVENT_CHANGE_BTN);
-endfunction\
+endfunction
+
 function EventSetConfigs(byref who, byref input)
     var event_entry   := struct{};
 
@@ -385,7 +369,7 @@ function EventSetConfigs(byref who, byref input)
     event_entry.+type       := mob_type;
     event_entry.+mobgroup       := mob_group;
 
-    UpdateGroupMobData(selected_elem, event_entry, selected_mob);
+    UpdateGroupMobData(selected_dynamicevent, event_entry, selected_mob);
 
     SendSysMessageEx(who, "Mob atualizado no spawnGroup!");
 

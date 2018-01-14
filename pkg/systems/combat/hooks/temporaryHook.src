@@ -182,8 +182,20 @@ function GetAttackerChance(attacker, defender)
 	var dice_gain := 0;
 	if ( !attacker.npctemplate )
 		if ( GetEquipmentByLayer(attacker, LAYER_MOUNT))
-			dice_gain -= -1;
+			dice_gain -= 1;
 		endif
+
+      if (weapon.isBow() || weapon.isMagicWeapon())
+         if (!HaveLightNear(defender))
+            dice_gain -= 1;
+         endif
+
+         if (wpn_a_elem.medrange && !HaveFeat(attacker, "Arqueiro Experiente"))
+            if (Distance(attacker,defender) > cint(wpn_a_elem.medrange))
+               dice_gain -= 1;
+            endif
+         endif
+      endif
 	endif
 
 	if (GetObjProperty(attacker, "#attackbonus" ) || GetObjProperty(attacker, "hitbonus") )

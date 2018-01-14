@@ -40,6 +40,7 @@ exported function HandleItemPickup( who, byref packet )
 		else
 			if (!(who.hidden || who.concealed))
 				if (item.movable != 0)
+               EraseObjProperty(item, "erguido");
 					PrintText(who, "*Pegou "+item.desc+"*");
 				endif
 			endif

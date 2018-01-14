@@ -11,6 +11,7 @@ include ":taming:taming";
 include ":tn:cooldown";
 include ":ghaia:generic";
 include ":ghaia:objective";
+include ":timedScripts:timedscripts";
 
 var me        := self();
 var wait_time := 1;
@@ -26,6 +27,10 @@ program NPCMonitor()
          Follow(me.master);
       endif
       sleepms(2);
+
+      if (!TS_GetCooldown(me, "summon")) 
+         ApplyRawDamage(me, 200);
+      endif
    endwhile
 endprogram
 

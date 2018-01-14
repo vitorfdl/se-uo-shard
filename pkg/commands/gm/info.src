@@ -665,15 +665,11 @@ function HabEdit(who, targ, input_info)
 		return 0;
 	endif
 	
-	var habilidades := GetObjProperty(targ, "myhabs");
-	var i;
-	for(i:=1;i<=habilidades.size();i+=1)
-		if (input_info.name == habilidades[i])
-			habilidades.Erase(i);
-		endif
-	endfor
-	SetObjProperty(targ, "myhabs", habilidades);
-	
+   if (!removeFeat(targ, input_info.name))
+      SendSysMessage(who, "Feat invalido");
+      return 0;
+   endif
+
 	if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "Não"))
 		targ.SetTalentPoints(1);
 	endif

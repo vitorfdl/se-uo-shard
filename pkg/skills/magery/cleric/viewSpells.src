@@ -59,10 +59,17 @@ endprogram
 
 function CreateClericGump(who, cleric_list, available_slots)
 	var gump := GFCreateGump();
-	
+   
+   var size := cleric_list.Size() + available_slots;
+   if (size >= 1)
+      size := size * 26;
+   else
+      size := 0;
+   endif
+
    GFSetId(gump, GUMPID_CLERICSPELL);
 	GFClosable(gump, 1);
-	GFResizePic(gump, 10, 26, 9390, 463, 284);
+	GFResizePic(gump, 10, 26, 9390, 463, 120+size);
 	GFHTMLArea(gump, 180, 65, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0); //shadow
 	GFHTMLArea(gump, 182, 67, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0);
 	GFHTMLArea(gump, 181, 66, 192, 20, "<BASEFONT Size=5 Color=#ffffff >Lista de Bençãos", 0, 0); //shadow

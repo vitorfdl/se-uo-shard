@@ -93,6 +93,23 @@ function LearnFeat(who, feat, minus_point := 1, gives := 1)
    return 1;
 endfunction
 
+
+function removeFeat(mobile, feat_name)
+	var chardata := GetObjProperty(mobile, "chardata");
+	var feat_list := chardata.Feats;
+
+   foreach feat in feat_list
+      if (lower(feat_name) == lower(feat))
+         feat_list.Erase(_feat_iter);
+      endif
+      sleepms(2);
+   endforeach
+
+   chardata.Feats := feat_list;
+   SetObjProperty(mobile, "chardata", chardata);
+   return 1;
+endfunction
+
 function GetNewFeatsList(who)
 	var feat_cfg := ReadConfigFile(":charactercreation:feats");
 	var feat_list := array{};

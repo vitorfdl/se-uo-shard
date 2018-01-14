@@ -27,8 +27,25 @@ exported function handleUCOutgoing( character, byref packet )
 	var message_txt := packet.GetUnicodeString(48, length_of_text);
 	message_txt := CChrZ(message_txt);
 
-	if (type == 0x00 || type == 0x06)
+	if (type == 0x06)
 		return 0;
+	endif
+
+	if  ((type == ALLIANCE_SPEECH || type == BROADCAST_SPEECH) && source.cmdlevel >= 1 && GetObjProperty(source, "LastMSG") != message_txt)
+		SetObjProperty(source, "LastMSG", message_txt);
+		foreach player in GetGlobalProperty("GmsOnlines")
+			var sender := source.name;
+			SendSysMessageEx(player, "[GMBcast]["+sender+"]: "+message_txt, 0x0063);
+		endforeach
+		return 0;
+	endif
+
+	if( !CheckLineOfSight(source, character) ) 
+		if(type != YELL_SPEECH)
+			return 1;
+		elseif (!HaveFeat(character, "Espionar") || Distance(character, source) > 12 || abs(character.z - source.z ) < 19)
+			return 1;
+		endif
 	endif
 
 	if (GetObjProperty(source, "metamorfose") || GetObjProperty(source, "mudo") || GetObjProperty(source, "#sleep"))
@@ -37,25 +54,7 @@ exported function handleUCOutgoing( character, byref packet )
 		endif
 	endif
 	
-	if  ((type == ALLIANCE_SPEECH || type == BROADCAST_SPEECH) && source.cmdlevel >= 1 && GetObjProperty(source, "LastMSG") != message_txt)
-		SetObjProperty(source, "LastMSG", message_txt);
-		foreach player in GetGlobalProperty("GmsOnlines")
-			var sender := source.name;
-			SendSysMessageEx(player, "[GMBcast]["+sender+"]: "+message_txt, 0x0063);
-		endforeach
-		return 1;
-	endif
-	
 	SendToSpy(source, message_txt);
-	
-	if( !CheckLineOfSight(source, character) ) 
-		if(type == YELL_SPEECH)
-			return 0;
-		elseif (HaveFeat(character, "Espionar") && Distance(character, source) < 12 && abs(character.z - source.z ) < 19)
-			return 0;
-		endif
-		return 1;
-	endif
 
 	return 0;
 endfunction 

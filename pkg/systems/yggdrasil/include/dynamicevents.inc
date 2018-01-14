@@ -5,10 +5,10 @@ include ":datafile:datafile";
 
 /**
  * [Commands for DynamicEvents]
- * LoadDynamicEventData() - Get the DataFile document
+ * LoadDynamicGroupData() - Get the DataFile document
  * SetDynamicEventData(group_name, group_struct) - Set changes to a group;
  * GetDynamicEventData(group_name) - Get all info about a group;
- * RemoveGroupData(group_name) - Remove a group;
+ * RemoveDynamicGroupData(group_name) - Remove a group;
  * RemoveEventData(group_name, index_mob) - Remove a mob from mobList. Need index;
  * UpdateEventData(group_name, mob_struct, index) - Update all informations about a mob.
  */
@@ -23,7 +23,7 @@ function LoadDynamicGroupData()
 endfunction
 
 function SetDynamicEventData(name, data := struct{})
-    var df   := loadDynamicEventData();
+    var df   := LoadDynamicGroupData();
     var elem := DFFindElement(df, name, DF_CREATE);
     if (data.events)
         elem.SetProp("events", data.events);
@@ -35,7 +35,7 @@ function SetDynamicEventData(name, data := struct{})
 endfunction
 
 function GetDynamicEventData(name, create := 1)
-    var df   := loadDynamicEventData();
+    var df   := LoadDynamicGroupData();
     var elem := DFFindElement(df, name, create);
 
     if (!elem)
@@ -49,8 +49,8 @@ function GetDynamicEventData(name, create := 1)
     return data;
 endfunction
 
-function RemoveGroupData(name)
-    var df   := loadDynamicEventData();
+function RemoveDynamicGroupData(name)
+    var df   := LoadDynamicGroupData();
     df.DeleteElement(name);
 endfunction
 

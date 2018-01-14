@@ -82,13 +82,13 @@ endprogram
 
 function CreateClericGump(who, spell_list, available_slots)
    var gump := GFCreateGump();
-   var size := spell_list.Size() - 7;
+   var size := spell_list.Size();
    if (size >= 1)
       size := size * 26;
    else
       size := 0;
    endif
-	GFResizePic(gump, 17, 31, 9390, 359, 290+size);
+	GFResizePic(gump, 17, 31, 9390, 359, 125+size);
 	// GFHtmlShadowed(gump, 115, 70, 192, 20, "#feb98e ", "<BASEFONT Size=5>Lista de Bençãos");
 	GFHTMLArea(gump, 114, 69, 192, 20, "<BASEFONT Size=5 Color=#999999 >Lista de Bençãos", 0, 0); //shadow
 	GFHTMLArea(gump, 116, 71, 192, 20, "<BASEFONT Size=5 Color=#999999 >Lista de Bençãos", 0, 0); //shadow
@@ -103,7 +103,7 @@ function CreateClericGump(who, spell_list, available_slots)
 
    var y := 121;
    foreach spell in spell_list
-      var color := "f9dd46";
+      var color := "333300";
       if (!spell.pericia["Cura"])
          color := "a745a7";
       endif
