@@ -105,7 +105,10 @@ endfunction
    RadioGump cria um gump com varias radiosbuttons, mas apenas um botao pode ser retornado */
 
 function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
-
+   if (!sizex) sizex := 200; endif;
+   if (!sizey) sizey := 125 + (options.size * 20); endif;
+   
+    
 	var gump := GFCreateGump(250, 200);
 	GFClosable(gump, 0);
     GFSetID(gump, GUMPID_TNGUMPS);
