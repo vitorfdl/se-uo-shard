@@ -69,7 +69,7 @@ function CreateClericGump(who, cleric_list, available_slots)
 
    GFSetId(gump, GUMPID_CLERICSPELL);
 	GFClosable(gump, 1);
-	GFResizePic(gump, 10, 26, 9390, 463, 120+size);
+	GFResizePic(gump, 10, 26, 9390, 476, 120+size);
 	GFHTMLArea(gump, 180, 65, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0); //shadow
 	GFHTMLArea(gump, 182, 67, 192, 20, "<BASEFONT Size=5 Color=#666666 >Lista de Bençãos", 0, 0);
 	GFHTMLArea(gump, 181, 66, 192, 20, "<BASEFONT Size=5 Color=#ffffff >Lista de Bençãos", 0, 0); //shadow
@@ -108,10 +108,10 @@ function CreateClericGump(who, cleric_list, available_slots)
          endif
       endif
 
-      GFHTMLArea(gump, 253, y, 174, 24, "{}".format(powerwords), 1, 0);
+      GFHTMLArea(gump, 253, y, 185, 24, "{}".format(powerwords), 1, 0);
 
       if (not_empty == 0 || not_empty == 3)
-         GFAddButton(gump, 431, y+2, 22150, 22151, GF_CLOSE_BTN, SPELL_BTN+_spell_iter);
+         GFAddButton(gump, 442, y+2, 22150, 22151, GF_CLOSE_BTN, SPELL_BTN+_spell_iter);
          GFToolTipText(gump, "Esquecer milagre");
       endif
 

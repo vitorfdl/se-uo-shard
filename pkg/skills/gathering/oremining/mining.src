@@ -21,6 +21,9 @@ program OreMining(who, tool)
 	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
 		SendSysMessageEx(who, "Você não pode minerar montado.");
 		return;
+   elseif (who.weapon != toll)
+		SendSysMessageEx(who, "Você precisa equipar a picareta para minerar.");
+		return;
 	endif
 	SendSysMessageEx(who, "Onde você deseja minerar?", SSM_REQUEST);
 	var targ := TargetCoordinates(who);
