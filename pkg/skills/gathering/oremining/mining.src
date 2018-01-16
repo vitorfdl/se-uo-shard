@@ -21,7 +21,7 @@ program OreMining(who, tool)
 	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
 		SendSysMessageEx(who, "Você não pode minerar montado.");
 		return;
-   elseif (who.weapon != toll)
+   elseif (who.weapon != tool)
 		SendSysMessageEx(who, "Você precisa equipar a picareta para minerar.");
 		return;
 	endif

@@ -98,14 +98,14 @@ program spotGroups(params)
             // spot.SetProps(new_spot);
         endif
 
-        if ((input[0] >= 1 && input[0] < 100)
+        if (input[0] >= 1 && input[0] < 100)
             DoDynamicEventList(who, input[0]);
-        elseif ((input[0] >= 100 && input[0] < 200)
+        elseif (input[0] >= 100 && input[0] < 200)
             DoEventList(who, input[0]);
-        elseif ((input[0] >= 200 && input[0] < 930))
+        elseif (input[0] >= 200 && input[0] < 930)
             DoConditionList(who, input[0]);
         elseif (input[0] >= 300 && input[0] < 940)
-            DoStepsList(who, input[0]);
+            // DoStepsList(who, input[0]);
         else
             closed := 1;
         endif
@@ -127,11 +127,11 @@ function DoDynamicEventList(who, input)
                 break;
             endif
             // group_list := group_list;
-            GetSpotGroupData(dynamicevent_name);
+            GetDynamicEventData(dynamicevent_name);
             SetElemButton(dynamicevent_name);
             break;
         GF_DELEVENT_BTN:
-            RemoveSpotGroupData(selected_dynamicevent);
+            RemoveDynamicGroupData(selected_dynamicevent);
             SetElemButton(0);
             break;
 

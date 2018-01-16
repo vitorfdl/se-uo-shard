@@ -187,7 +187,7 @@ function GetAttackerChance(attacker, defender)
 
       if (weapon.isBow())
          if (!HaveLightNear(defender))
-            who.SetAchievement("shoot_night", 1);
+            attacker.SetAchievement("shoot_night", 1);
             dice_gain -= 1;
          endif
 

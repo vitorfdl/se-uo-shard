@@ -673,7 +673,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := 1, "radio" := GetConfigStringKeys(timedcfg)});
       input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""});
       input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := "1"});
-      input_list.append(struct{ "title" := "Teste de resistência?," "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
+      input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
       input_list.append(struct{ "title" := "Dificuldade do teste?", "marked" := "12"});
 
       var output := QuestionsGump(who, input_list);
@@ -717,7 +717,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual o tipo de efeito?", "marked" := 1, "radio" := array{"Stationary", "Moving"}});
       input_list.append(struct{ "title" := "Qual o efeito?", "marked" := "", "radio" := array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Small Fireball", "Large Fireball", "Wavy Fireball", "Outro"}});
       input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Qual a direção? (Moving)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"});
+      input_list.append(struct{ "title" := "Qual a direção? (Moving)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"}});
       input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer:", "marked" := "1000"});
       input_list.append(struct{ "title" := "Digite o x y z da posicao final do efeito:", "marked" := "1000"});
       var output := QuestionsGump(who, input_list);
@@ -725,46 +725,46 @@ function CombatEventsOptions(who, state)
 
       state.+target := output[1];
       state.+graphictype := output[2];
-      if ( input[3] == "Lightning" )
-         state.+fxid := fxid;
-      elseif ( input[3] == "Red Sparkles")
+      if ( output[3] == "Lightning" )
+         state.+fxid := "Lightning";
+      elseif ( output[3] == "Red Sparkles")
          state.+fxid := GFX_RED_SPARKLES;
          state.+speed := 7;
          state.+loops := 7;
-      elseif ( input[3] == "Blue Sparkles")
+      elseif ( output[3] == "Blue Sparkles")
          state.+fxid := GFX_BLUE_SPARKLES;
          state.+speed := 10;
          state.+loops := 10;
-      elseif (input[3] == "Blue and Swirl")
+      elseif (output[3] == "Blue and Swirl")
          state.+fxid := GFX_BLUE_SPARKLE_SWIRL;
          state.+speed := 7;
          state.+loops := 16;
-      elseif (input[3] == "Swirl Sparkles")
+      elseif (output[3] == "Swirl Sparkles")
          state.+fxid := GFX_BLUE_SPARKLE_BORDER;
          state.+speed := 7;
          state.+loops := 0;
-      elseif (input[3] == "Blue Sparkles on Ground")
+      elseif (output[3] == "Blue Sparkles on Ground")
          state.+fxid := GFX_BLUE_SPARKLE_GROUND;
          state.+speed := 7;
          state.+loops := 10;
-      elseif (input[3] == "Fire Column");
+      elseif (output[3] == "Fire Column");
          state.+fxid := GFX_FIRE_COLUMN;
          state.+speed := 7;
          state.+loops := 0;
-      elseif (input[3] == "Small Fireball")
+      elseif (output[3] == "Small Fireball")
          state.fxid := GFX_SMALL_FIREBALL;
          state.+speed := 5;
          state.+loops := 0;
-      elseif (input[3] == "Large Fireball")
+      elseif (output[3] == "Large Fireball")
          state.fxid := GFX_LARGE_FIREBALL;
          state.+speed := 5;
          state.+loops := 0;
-      elseif (input[3] == "Wavy Fireball")
+      elseif (output[3] == "Wavy Fireball")
          state.fxid := GFX_WAVY_FIREBALL;
          state.+speed := 5;
          state.+loops := 0;
-      elseif (input[3] == "Outro")
-         state.+fxid := input[4];
+      elseif (output[3] == "Outro")
+         state.+fxid := output[4];
          if (state.graphictype == "Stationary")
             state.+speed := 7;
             state.+loops := 16;
@@ -774,17 +774,17 @@ function CombatEventsOptions(who, state)
          endif
       endif
 
-      state.+direction := input[5];
+      state.+direction := output[5];
 
       if (state.target == "Fixed Loc")
-         var loc := splitwords(input[6]);
+         var loc := splitwords(output[6]);
          state.+startx :=  loc[1];
          state.+starty :=  loc[2];
          state.+startz :=  loc[3];
          state.startradius := 0;
 
          if (state.graphictype == "Moving")
-            var loc2 := splitwords(input[7]);
+            var loc2 := splitwords(output[7]);
             state.+endx :=  loc2[1];
             state.+endy :=  loc2[2];
             state.+endz :=  loc2[3];
@@ -794,17 +794,13 @@ function CombatEventsOptions(who, state)
       endif
    elseif ( opt == "Dmg")
 
-         ########
-      input_list.append(struct{ "title" := "", "marked" := ""});
-      input_list.append(struct{ "title" := "", "marked" := 1, "radio" := array{}});
-      ########
 
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer?", "marked" := 1, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Quanto de dano vai causar? Ex: 1d2", "marked" := "1d2"});
-      input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := 1, "radio" := array{"Perfuração", "Concussão", "Corte", "Fogo", "Gelo", "Eletrecidade", "Veneno"}}});
-      input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := "", "radio" := array{"Stam", "Hits", "Mana"});
-      input_list.append(struct{ "title" := "Teste de resistência?," "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
+      input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := 1, "radio" := array{"Perfuração", "Concussão", "Corte", "Fogo", "Gelo", "Eletrecidade", "Veneno"}});
+      input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := "", "radio" := array{"Stam", "Hits", "Mana"}});
+      input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
       input_list.append(struct{ "title" := "Qual a dificuldade do teste?", "marked" := "14"});
       var output := QuestionsGump(who, input_list);
 
