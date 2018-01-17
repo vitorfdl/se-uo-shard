@@ -36,7 +36,7 @@ const GF_EVENT_CHANGE_BTN := 302;
 const GF_EVENT_BTN := 320;
 
 var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};
-var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Cooldown", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping Near"};
+var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Cooldown", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping near"};
 
 //Basic
 var selected_dynamicevent := ""; //Name of the Elem
@@ -235,7 +235,7 @@ function GetStepsFor(event_type)
       "Light near": //Light near
          events.append(struct{ "location" := array{0, 0, 0} });
          break;
-      "Camping Near": //Light near
+      "Camping near": //Light near
          events.append(struct{ "location" := array{0, 0, 0} });
          events.append(struct{ "range" := 10 });
          break;
@@ -279,9 +279,18 @@ function DoStepsList(who, input)
             endif
             break;
         GF_EVENT_CHANGE_BTN:
-            SendSysMessageEx(who, "Desativado.", SSM_INFO);
+            if (selected_event)
+               var event_list := GetDynamicEventData(selected_dynamicevent).events;
+               event := event_list[selected_event];
+               var new_event := GetEventOptions(who, event);
+               UpdateEventData(selected_dynamicevent, new_event, selected_event);
+            else
+               var event_list := GetDynamicEventData(selected_dynamicevent).conditions;
+               event := event_list[selected_condition];
+               var new_event := GetEventOptions(who, event);
+               UpdateConditionData(selected_dynamicevent, new_event, selected_condition);
+            endif
             break;
-
         default:
             var key_index := input[0]-GF_EVENT_BTN;
             if (selected_event)
@@ -302,6 +311,51 @@ function DoStepsList(who, input)
 
             break;
     endcase
+endfunction
+
+
+var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};
+var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Cooldown", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping near"};
+
+function GetEventOptions(who, event)
+   var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Adicionar passo", "Remover passo", "Cancelar"}, 1);
+   if (choice == 1)
+      var new_step := array{};
+      if (event.name["Summon"])
+         new_step.append("Location");
+         new_step.append("Go to Player location");
+         new_step.append("Go to location");
+      elseif(event.name["Minimum Pla"] || event.name["near"] || event.name["TimedScript"])
+         new_step.append("Location");
+      endif
+
+      choice := RadioGump(who, 0, 0, "Qual novo elemento?", new_step);
+      if (choice == "Location")
+         event.steps.append(struct{ "location" := array{0,0,0}});
+      elseif(choice == "Go to Player location")
+         event.steps.append(struct{ "player_location" := 1);
+      elseif(choice == "Go to location")
+         event.steps.append(struct{ "go_to" := array{0,0,0});
+      endif
+
+      return event;
+   elseif (choice == 2)
+      const step_list := array{};
+      foreach item in (event.steps)
+         step_list.append(item.keys()[1]);
+         sleepms(2);
+      endforeach
+      step_list.append("Cancelar");
+
+      var remove_step := RadioGump(who, 0, 0, "Qual passo remover?", step_list, 1);
+      if (remove_step == step_list.size())
+         return event;
+      endif
+      event.steps.remove(remove_step);
+      return event;
+   else
+      return event;
+   endif
 endfunction
 
 function ChangeStep(who, mystep)
@@ -554,6 +608,9 @@ function ConstructEventConfig(byref gump)
          GFTextLine(gump, sx, sy, 1153, "Item:");
          GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.item.desc));
          GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
+
+      elseif (ev.player_location)
+         GFTextLine(gump, sx, sy, 1153, "Mobiles go to player loc");
       endif
 
       sy+=20;
