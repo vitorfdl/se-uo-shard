@@ -3,7 +3,7 @@ use uo;
 use util;
 use cfgfile;
 include ":alchemy:alchemy";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":timedScripts:poisonUtil";
 
 program antidote(who, potion)

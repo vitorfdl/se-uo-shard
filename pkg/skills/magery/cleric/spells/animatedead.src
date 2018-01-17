@@ -4,7 +4,7 @@ use os;
 include "include/client";
 include "include/sounds";
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":attributes:attributes";
 include ":tn:npcutil";
 include ":ghaia:ghaia";

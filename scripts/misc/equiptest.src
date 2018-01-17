@@ -4,7 +4,7 @@ use os;
 include ":tn:equipment";
 include ":combat:armorZones";
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 program EquipTest(mobile, item, start_up)
 	var retval := 0;

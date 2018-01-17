@@ -3,7 +3,7 @@ use uo;
 use util;
 use vitals;
 
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/client";
 include ":ghaia:ghaia";
 include "include/damage";

@@ -7,7 +7,7 @@ include "include/sounds";
 include "include/say";
 include ":attributes:attributes";
 include ":attributes:vitals";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 program drenarmana(params)
 	var who := params[1];

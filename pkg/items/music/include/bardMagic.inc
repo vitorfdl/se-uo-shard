@@ -13,7 +13,7 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
 include ":gumps:yesno";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/sysEvent";
 
 

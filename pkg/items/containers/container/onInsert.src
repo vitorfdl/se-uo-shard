@@ -5,7 +5,7 @@
 use uo;
 use os;
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":tn:cooldown";
 
 program onInsert(character, container, movetype, insert_type, adding_item, existing_stack, amount_to_add)	

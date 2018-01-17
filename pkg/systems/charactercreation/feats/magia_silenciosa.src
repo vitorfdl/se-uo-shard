@@ -1,7 +1,7 @@
 use os;
 
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 program magiaSilenciosa(param)
    var who := param[1];

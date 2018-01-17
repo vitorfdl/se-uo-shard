@@ -1,4 +1,4 @@
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":tn:cooldown";
 include "include/say";
 

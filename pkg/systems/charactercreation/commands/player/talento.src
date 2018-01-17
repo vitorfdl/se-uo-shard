@@ -3,7 +3,7 @@ use vitals;
 use math;
 
 include ":attributes:attributes";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":charactercreation:feats";
 include "include/say";
 

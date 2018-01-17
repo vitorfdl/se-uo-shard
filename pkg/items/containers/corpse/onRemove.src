@@ -5,7 +5,7 @@
 use uo;
 use os;
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 program onRemove(character, container, item, item_amount, move_type)
 	if (container.ownerserial == character.serial)

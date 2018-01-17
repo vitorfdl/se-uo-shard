@@ -3,7 +3,7 @@ use uo;
 use util;
 use cfgfile;
 include ":alchemy:alchemy";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 program drink_blue (who, potion)
 	if(!checkifcandrink(who, potion, 0, 0) || TS_GetTimerDuration(who, "invis"))

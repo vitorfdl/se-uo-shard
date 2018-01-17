@@ -6,7 +6,7 @@ use vitals;
 use attributes;
 include ":alchemy:alchemy";
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/damage";
 
 program healpotion(who, potion)

@@ -1,7 +1,7 @@
 use os;
 
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":ghaia:ghaiaUtil";
 include ":fls_core:fls_characters";
 include "include/client";

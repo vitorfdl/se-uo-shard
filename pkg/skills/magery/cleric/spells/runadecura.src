@@ -5,7 +5,7 @@ use util;
 
 include "include/sounds";
 include "include/say";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/tileEffects";
 include ":charactercreation:habilidades";
 include ":ghaia:ghaiaUtil";

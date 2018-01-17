@@ -7,7 +7,7 @@ include "include/client";
 include "include/sounds";
 include "include/say";
 include "include/tileEffects";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/sysEvent";
 include "include/utils";
 

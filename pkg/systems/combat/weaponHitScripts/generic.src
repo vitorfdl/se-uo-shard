@@ -5,7 +5,7 @@ include "include/damage";
 include "include/client";
 include "include/sounds";
 include ":combat:hitscripts";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 program HitScript(params)
 	var attacker	:= params[1];

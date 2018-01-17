@@ -11,7 +11,7 @@ include ":taming:taming";
 include ":tn:cooldown";
 include ":ghaia:generic";
 include ":ghaia:objective";
-include ":timedScripts:timedscripts";
+include ":timedscripts:timedScripts";
 
 var me        := self();
 var wait_time := 1;

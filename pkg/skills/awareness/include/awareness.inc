@@ -4,7 +4,7 @@ include ":itemUtils:itemdesc";
 include ":gumps:yesno";
 include ":traps:traps";
 include ":charactercreation:habilidades";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/facings";
 
 function examinarAlvo(who)

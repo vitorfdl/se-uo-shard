@@ -11,7 +11,7 @@ include ":gumps:yesno";
 include ":gumps:include/requestgump";
 include ":attributes:attributes";
 include ":attributes:stats";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 //include ":unicos:item_template";
 include ":tn:questevent";
 include ":combat:hitscripts";

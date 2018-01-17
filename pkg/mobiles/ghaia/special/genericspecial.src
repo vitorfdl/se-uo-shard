@@ -2,7 +2,7 @@ use uo;
 use os;
 use vitals;
 
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/damage";
 include "include/sysEvent";
 

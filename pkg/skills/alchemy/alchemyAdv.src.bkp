@@ -7,7 +7,7 @@ use os;
 include ":attributes:attributes";
 include "include/client";
 include ":alchemy:alchemy";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":gumps:gumps";
 include "include/say";
 include ":charactercreation:habilidades";

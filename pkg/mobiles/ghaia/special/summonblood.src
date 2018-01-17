@@ -3,7 +3,7 @@ use os;
 use vitals;
 
 include ":charactercreation:habilidades";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include "include/damage";
 include "include/sysEvent";
 

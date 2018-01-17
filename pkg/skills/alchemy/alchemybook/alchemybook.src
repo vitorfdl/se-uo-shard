@@ -2,7 +2,7 @@
 
 use uo;
 
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":gumps:gumps";
 include ":gumps:yesno";
 include ":gumps:requestgump";

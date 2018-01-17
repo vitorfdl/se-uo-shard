@@ -5,7 +5,7 @@ use os;
 include ":attributes:attributes";
 include ":fls_core:packets";
 include "include/sysEvent";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 program usenarguile(who, item)
 	if (item.objtype == 0x9958)

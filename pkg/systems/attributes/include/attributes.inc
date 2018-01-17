@@ -37,7 +37,7 @@ include ":charactercreation:habilidades";
 include "include/arrays";
 include ":ghaia:ghaiaUtil";
 include ":charactercreation:characters";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 const BASE_DIFFICULTY := 19;
 

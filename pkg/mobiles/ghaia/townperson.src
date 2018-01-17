@@ -10,7 +10,7 @@ include ":gumps:yesno";
 include ":gumps:requestgump";
 include ":tn:tngumps";
 include ":magery:tnmagery";
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 
 var npccfgfile := NPC_GetNPCConfig(self(), 1);
 var me := self();

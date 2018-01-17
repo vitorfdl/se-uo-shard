@@ -1,5 +1,5 @@
 use uo;
-include ":timedScripts:timedScripts";
+include ":timedscripts:timedScripts";
 include ":gumps:yesno";
 include ":attributes:attributes";
 include "include/say";
