@@ -126,7 +126,7 @@ function NpcGoTo(destiny, move_type, stop_if_attacker := 0)
 		if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
 			flags := flags| FP_IGNORE_DOORS;
 		endif
-		var path := FindPath(  me.x, me.y, me.z, destiny.x, destiny.y, destiny.z, me.realm, flags, 12); //calcula o path
+		var path := FindPath(  me.x, me.y, me.z, destiny.x, destiny.y, destiny.z, me.realm, flags, 40); //calcula o path
 		var sleepdelay := 275 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
 		foreach coord in path
 			if (move_type == 1)
@@ -136,10 +136,12 @@ function NpcGoTo(destiny, move_type, stop_if_attacker := 0)
 			endif
          Opendoors(me);
 
-         if (stop_if_attacker)
-            if (lookAround())
-               return;
-            endif
+         if (stop_if_attacker && RandomInt(3) == 1)
+            foreach mobile in ListMobilesNearLocation(me.x, me.y, me.z, 8)
+               if (CanFight(me, mobile))
+                  return;
+               endif
+            endforeach
          endif
 			sleepms(sleepdelay);
 		endforeach

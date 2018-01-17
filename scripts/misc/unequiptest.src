@@ -34,7 +34,11 @@ program UnequipTest(mobile, item)
             EraseObjProperty(mobile, "realname");
             SetName(mobile, realname);
          endif
-         
+
+			if (GetObjProperty(mobile, "olddescription"))
+				SetObjProperty(mobile, "description", GetObjProperty(mobile, "olddescription"));
+				EraseObjProperty(mobile, "olddescription");
+			endif
 		endif
 	endif
 

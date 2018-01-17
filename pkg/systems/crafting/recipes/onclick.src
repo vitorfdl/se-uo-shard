@@ -64,13 +64,15 @@ function SendGump(who, scroll)
 
    var is_lang := GetObjProperty(scroll, "lang");
    var lang := "";
-   if (is_lang == "Linguagem Élfica")
-      lang := "Face=Gargish";
-   elseif (is_lang == "Linguagem Rúnica")
-      lang := "Face=Runic";
-   elseif (is_lang)
-      SendSysMessageEx(who, "Problema com a linguagem do pergaminho", SSM_FAIL);
-      return 0;
+   if (is_lang && !HaveFeat(who, is_lang))
+      if (is_lang == "Linguagem Élfica")
+         lang := "Face=Gargish";
+      elseif (is_lang == "Linguagem Rúnica")
+         lang := "Face=Runic";
+      else
+         SendSysMessageEx(who, "Problema com a linguagem do pergaminho", SSM_FAIL);
+         return 0;
+      endif
    endif
 	var gump := GFCreateGump();
 	GFSetID(gump, GUMPID_RECIPES);

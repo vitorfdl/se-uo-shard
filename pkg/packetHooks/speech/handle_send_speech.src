@@ -27,9 +27,13 @@ exported function handleUCOutgoing( character, byref packet )
 	var message_txt := packet.GetUnicodeString(48, length_of_text);
 	message_txt := CChrZ(message_txt);
 
-	if (type == 0x06)
+	if (type == 0x06 || (type == 0 && !source))
 		return 0;
 	endif
+
+   if ((source.hidden == 1 && !character.Enabled("seehidden")) || (source.invisible == 1 && !character.Enabled("seeinvisitems")))
+      return 1;
+   endif
 
 	if  ((type == ALLIANCE_SPEECH || type == BROADCAST_SPEECH) && source.cmdlevel >= 1 && GetObjProperty(source, "LastMSG") != message_txt)
 		SetObjProperty(source, "LastMSG", message_txt);
@@ -85,9 +89,13 @@ function sendToSpy(source, message_txt)
 	endif
 
 	foreach player in GetGlobalProperty("GmsOnlines")
+		Sleepms(2); 
 		player := SystemFindObjectBySerial(Cint(player));
       var sayspy := GetObjProperty(player, "SaySpyOn");
 		if ( sayspy && player.cmdlevel >= 3 && player != source)
+         if (getObjProperty(player, "lastsayspy") == message_txt)
+            continue;
+         endif
 			var sender := source.name;
 			if (sender == "Desconhecido")
 				sender := GetObjProperty(source, "realname");
@@ -98,7 +106,7 @@ function sendToSpy(source, message_txt)
 			elseif(sender in sayspy)
 				SendSysMessageEx(player, "["+sender+"]: "+message_txt);
 			endif
+         SetObjProperty(player, "lastsayspy", message_txt);
 		endif
-		Sleepms(2); 
 	endforeach
 endfunction
