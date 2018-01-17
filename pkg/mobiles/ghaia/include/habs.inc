@@ -46,6 +46,14 @@ endfunction
 function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target := "Enemy", hab_special := 0)
    if (hab_target == "Enemy")
       hab_target := me.opponent;
+   elseif (hab_target == "Enemies")
+      hab_target := array{};
+      foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 10);
+         var hostiles := ListHostiles(me);
+         if (CanFight(me, enemy) || enemy in hostiles)
+            hab_target.append(enemy);
+         endif
+      endforeach
    elseif (hab_target == "RandomEnemy")
       foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 5);
          if (CanFight(me, enemy))
@@ -74,7 +82,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    case (hab_name)
       "summon": res := SummonCreature(cint(hab_dice), hab_special); break;
       "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target, hab_special); break;
-      // "cançãoSedutora": CancaoSedutora(hab_dice); break;
+      "cancaoSedutora": CancaoSedutora(hab_target, hab_dice); break;
       "furtividade": res := NPC_Sneak(); break;
       "metamorfose": res := Metamorfose(hab_special); break;
       "curar": res := Healing(hab_target, hab_dice); break;
@@ -107,6 +115,31 @@ function summonCreature(qty, creatures)
       TS_StartTimer(summoned, "summon", 60);
    endfor
 
+   return 1;
+endfunction
+
+function CancaoSedutora(mobiles, dice)
+   printtext(me, "play!");
+   playCastAnimation();
+   print(mobiles);
+   if (!mobiles[1]) return 0; endif
+   sleep(1);
+   PerformAction(me, 0x06);
+   PlaySoundEffect(me, 0x58C);
+   PrintText(me, "*cantando*");
+   foreach mob in mobiles
+      if (rollResistDice(mob, WISDOM) <= dice)
+         TS_StartTimer(mob, "paralysis", 5);
+      else
+         SendSystemReport(mob, "*resistido*", SSM_INFO);
+      endif
+      sleepms(2);
+   endforeach
+   sleep(2);
+   PerformAction(me, 0x06);
+   sleep(2);
+   PerformAction(me, 0x06);
+   PrintText(me, "*cantando*");
    return 1;
 endfunction
 

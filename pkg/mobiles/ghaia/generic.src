@@ -212,6 +212,8 @@ function Fight(opponent, alerted := 0)
          waittime := 1;
       endif
       
+      CheckFlee(opponent);
+      
       ev := wait_for_event(waittime);
       if(ev.type == SYSEVENT_SPEECH)
          continue;

@@ -28,7 +28,13 @@ program UnequipTest(mobile, item)
 		EraseObjProperty(item, "#EquippedOn");
 		if (coverFace(item))
          EraseObjProperty(mobile, "facecovered");
-         SetName(mobile, mobile.name);
+
+         var realname := GetObjProperty(mobile, "realname");
+         if (realname)
+            EraseObjProperty(mobile, "realname");
+            SetName(mobile, realname);
+         endif
+         
 		endif
 	endif
 

@@ -155,7 +155,7 @@ function taming(who)
 			SendSysMessageEx(who, "Você ganhou a confiança de "+targ.name+".", SSM_INFO);
 			targ.SetMaster(who);
 			who.SetAchievement("taming", 1);
-         removeFromSpawn(GetObjProperty(targ, "spawnpoint"));
+         removeFromSpawn(GetObjProperty(targ, "spawnpoint"), targ);
 			EraseObjProperty(targ, "anchor");
 			EraseObjProperty(targ, "spawnpoint");
 			EraseObjProperty(targ, "spawnpointtype");

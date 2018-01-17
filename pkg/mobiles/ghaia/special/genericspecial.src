@@ -203,7 +203,7 @@ function selectOpponent(who, type)
    if (type == "Self")
       targ.append(who);
    elseif (type == "Around Self")
-      targ := ListMobilesNearLocation(who.x, who.y, who.z, 3);
+      targ := ListMobilesNearLocation(who.x, who.y, who.z, 4);
    elseif (type == "Opponent")
       targ.append(who.opponent);
    elseif (type == "Around Opponent")

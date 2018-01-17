@@ -183,7 +183,7 @@ endfunction
 ===========================================*/
 
 
-function removeFromSpawn(spawnpoint)
+function removeFromSpawn(spawnpoint, monster := 0)
    spawnpoint := SystemFindObjectBySerial(spawnpoint);
    if (!spawnpoint)
       return;
@@ -194,7 +194,8 @@ function removeFromSpawn(spawnpoint)
       diedmonsters := array{};
    endif
 
-   diedmonsters.append(struct{"time":= polcore().systime});
+   var boss := isBoss(monster);
+   diedmonsters.append(struct{"time":= polcore().systime, "boss" := boss });
 
    spawnpoint.setProps(struct{ "diedmonsters" := diedmonsters });
 endfunction

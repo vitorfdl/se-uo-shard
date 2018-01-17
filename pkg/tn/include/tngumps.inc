@@ -106,7 +106,7 @@ endfunction
 
 function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
    if (!sizex) sizex := 200; endif;
-   if (!sizey) sizey := 125 + (options.size * 20); endif;
+   if (!sizey) sizey := 125 + (options.size() * 20); endif;
    
     
 	var gump := GFCreateGump(250, 200);
@@ -156,6 +156,9 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
 endfunction
 
 function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0, first := 1)
+   if (!sizex) sizex := 200; endif;
+   if (!sizey) sizey := 120 + (options.size() * 20); endif;
+
 	var gump := GFCreateGump(250, 200);
 	GFClosable(gump, 0);
 	GFResizePic(gump, 0, 0, 3600, sizex, sizey);
@@ -349,8 +352,8 @@ function QuestionsGump(who, questions := array{})
 			foreach entry in (quest.radio)
 				GFTextLine(gump, x_plus+25, y+3, 1153, entry);
 				GFRadioButton(gump, x_plus, y+3, 210, 211, (_entry_iter == cint(quest.marked)), _entry_iter+(_quest_iter * 100));
-				x_plus += 100;
-            if (_entry_iter % 5 == 0)
+				x_plus += 130;
+            if (_entry_iter % 4 == 0 && quest.radio[_entry_iter+1])
                y += 25;
                x_plus := x;
             endif
@@ -359,8 +362,8 @@ function QuestionsGump(who, questions := array{})
 			foreach entry in (quest.checkbox)
 				GFTextLine(gump, x_plus+25, y+3, 1153, entry);
 				GFCheckBox(gump, x_plus, y+3, 210, 211, (_entry_iter in quest.marked), _entry_iter+(_quest_iter * 500));
-				x_plus += 100;
-           if (_entry_iter % 5 == 0)
+				x_plus += 130;
+           if (_entry_iter % 4 == 0 && quest.checkbox[_entry_iter+1])
                y += 25;
                x_plus := x;
             endif
@@ -379,7 +382,9 @@ function QuestionsGump(who, questions := array{})
 	endforeach
 
 	GFAddButton(gump, x+150, y, 4011, 4030, GF_CLOSE_BTN, 5); //confirm
+   GFTextLine(gump, x+175, y+3, 1153, "Confirmar");
 	GFAddButton(gump, x+260, y, 4011, 4030, GF_CLOSE_BTN, 1); //cancel;
+   GFTextLine(gump, x+285, y+3, 1153, "Cancelar");
 
 	var input := GFSendGump(who, gump);
 	if (input[0] == 1) return 0; endif

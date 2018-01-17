@@ -3,6 +3,7 @@ use datafile;
 use basic;
 
 include ":yggdrasil:spawnGroup";
+include ":yggdrasil:dynamicevents";
 include ":yggdrasil:spawnSpot";
 include ":yggdrasil:treasures";
 // include ":ghaia:ghaiaUtil";

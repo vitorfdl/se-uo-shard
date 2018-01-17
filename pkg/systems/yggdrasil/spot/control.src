@@ -2,7 +2,9 @@ use uo;
 use os;
 include ":yggdrasil:spawnSpot";
 include ":yggdrasil:treasures";
+include ":yggdrasil:dynamicevents";
 include "include/dungeons";
+include ":tn:cooldown";
 
 program Install(spot)
    while(spot)
@@ -16,7 +18,13 @@ program Install(spot)
          FillSpawnQueue(config.spawnpoints);
          ResetTreasures(spot.serial, config.treasures);
       endif
-      sleep(400);
+
+      if (spot.evententry && spot.evententry != "")
+         if (!GetCoolDown(spot, "dynamicevent"))
+            StartDynamicEvent(spot, config, spot.evententry);
+         endif
+      endif
+      sleep(10);
    endwhile
 endprogram
 
@@ -34,6 +42,111 @@ function ResetTreasures(spot_serial, treasures)
       if (cint(GetObjProperty(treasure, "spawned_time")) <= ReadGameClock())
          SpawnTreasure(treasure, item, spot_serial);
       endif
+      sleepms(2);
+   endforeach
+endfunction
+
+// array{"Minimum Players", "Mobiles Died", "Boss Died", "Every Second", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping Near"};
+
+function StartDynamicEvent(spot, config, evententry)
+   var dynamicevent := GetDynamicEventData(evententry);
+   if (!dynamicevent)
+      var GmsOnlines := GetGlobalProperty("GmsOnlines");
+      foreach mobile in GmsOnlines
+         SendSysMessageEx(mobile, "Evento dinâmico não encontrado para {}".format(spot.serial));
+         sleepms(2);
+      endforeach
+      return;
+   endif
+
+   var passed_conditions := 1;
+   var next_cooldown := 10;
+   var diedmonsters := 0;
+   var bossdied := 0;
+   foreach serial in (config.spawnpoints)
+      var spawnpoint := SystemFindObjectBySerial(serial);
+      var died := GetObjProperty(spawnpoint, "diedmonsters");
+      if (!died) died := array{}; endif;
+
+      if (FindElemInArray(died, struct{"boss" := 1}))
+         bossdied := 1;
+      endif
+
+      diedmonsters += died.size();
+      sleepms(2);
+   endforeach
+
+   foreach condition in (dynamicevent.conditions)
+      if (condition.name["Minimum Players"])
+         var loc := condition.location;
+         var mobiles := ListMobilesNearLocationEx(loc[1], loc[2], loc[3], cint(condition.range), LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+         if (mobiles.size() < condition.number)
+            passed_conditions := 0;
+            break;
+         endif
+      elseif (condition.name["Mobiles Died"])
+         if (diedmonsters < cint(condition.number))
+            passed_conditions := 0;
+            break;
+         endif
+      elseif (condition.name["Boss Died"])
+         if (!bossdied)
+            passed_conditions := 0;
+            break;
+         endif
+      elseif (condition.name["Battle Started"])
+         var loc := condition.location;
+         var mobiles := ListMobilesNearLocation(loc[1], loc[2], loc[3], cint(condition.range));
+         var passed_event := 0;
+         foreach mobile in mobiles
+            if (mobile.warmode)
+               passed_event := 1;
+            endif
+            sleepms(2);
+         endforeach
+
+         if (!passed_event)
+            passed_conditions := 0;
+            break;
+         endif
+      elseif (condition.name["% of Chance"])
+         if (condition.number != 100 && Randomint(100)+1 > condition.number )
+            var cooldown := FindElemInArray(dynamicevent.conditions, struct{"name" := "Cooldown"});
+            if (!cooldown)
+               cooldown := struct{"number" := 20};
+            endif
+            SetCooldown(spot, "dynamicevent", cooldown.number);
+            continue;
+         endif
+      elseif (condition.name["Player Class"])
+      elseif (condition.name["Light near"])
+         var loc := condition.location;
+         var coord := struct{"x" := loc[1], "y" := loc[2], "z" := loc[3]};
+         if (!HaveLightNear(coord))
+            passed_conditions := 0;
+            break;
+         endif
+      elseif (condition.name["Camping Near"])
+         var loc := condition.location;
+         var passed_event := ListItemsNearLocationOfType(loc[1], loc[2], loc[3], condition.range, 0x0de3);
+
+         if (passed_event.size() < 1)
+            passed_conditions := 0;
+            break;
+         endif
+      endif
+      sleepms(2);
+   endforeach
+
+   if (!passed_conditions)
+      return 0;
+   endif
+
+   var cooldown := FindElemInArray(dynamicevent.conditions, struct{"name" := "Cooldown"});
+   SetCooldown(spot, "dynamicevent", cooldown.number);
+
+   foreach trigged in (dynamicevent.events)
+
       sleepms(2);
    endforeach
 endfunction

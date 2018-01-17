@@ -633,10 +633,20 @@ function ConfigureCombatEvent(who, event := 0)
 		continua := 0;
 	elseif (input[0] >= 400)
 		input := input[0] - 400;
+      var oldstate := event.steps[input];
 		event.steps.Erase(input);
-		if (YesNo(who, "Deseja Alterar ou Remover?","Alterar","Remover") )
+      var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover"});
+		if (choice == "Alterar")
 			var state := CombatEventsOptions(who, struct{});
 			event.steps.Insert(input, state);
+      elseif (choice == "Mudar Posição")
+         var position := cint(RequestGump(who, "Qual posição??", "Ex: 1", "1", 1));
+         if (position == 0)
+            position := 1;
+         elseif (position > event.steps.size())
+            position := event.steps.size()+1;
+         endif
+         event.steps.Insert(position, oldstate);
 		else
 			SendSysMessage(who, "Evento Removido");
 		endif
@@ -652,7 +662,7 @@ endfunction
 function CombatEventsOptions(who, state)
    var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Delay"});	
 
-   var targ_opts := array{"Self", "Opponent", "Around Opponent", "All Opponents", "Around myself"};
+   var targ_opts := array{"Self", "Opponent", "Around Opponent", "All Opponents", "Around Self"};
    state.type := opt;
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
