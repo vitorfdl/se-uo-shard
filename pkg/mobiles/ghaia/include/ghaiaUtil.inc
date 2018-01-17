@@ -51,11 +51,12 @@ function CopyProps(origin, destiny)
 	endforeach
 endfunction
 
-function ghaiaObjective(npc, destiny, move_type)
+function ghaiaObjective(npc, destiny, move_type, can_stop := 0)
 	var ev      := struct;
 	ev.type     := EVID_DOOBJECTIVE;
 	ev.destiny  := destiny;
 	ev.move_type:= move_type;
+	ev.can_stop := can_stop;
 	// ev.move_direction:=
 	
 	sendEvent( npc, ev);

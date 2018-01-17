@@ -4,6 +4,7 @@ include ":yggdrasil:spawnSpot";
 include ":yggdrasil:treasures";
 include ":yggdrasil:dynamicevents";
 include "include/dungeons";
+include ":ghaia:ghaiaUtil";
 include ":tn:cooldown";
 
 program Install(spot)
@@ -77,26 +78,29 @@ function StartDynamicEvent(spot, config, evententry)
    endforeach
 
    foreach condition in (dynamicevent.conditions)
-      if (condition.name["Minimum Players"])
-         var loc := condition.location;
-         var mobiles := ListMobilesNearLocationEx(loc[1], loc[2], loc[3], cint(condition.range), LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
-         if (mobiles.size() < condition.number)
-            passed_conditions := 0;
+      var this_step := StepToStruct(condition.steps);
+      this_step.name := condition.name;
+
+      if (this_step.name["Minimum Players"])
+         var loc := this_step.location;
+         var mobiles := ListMobilesNearLocationEx(loc[1], loc[2], loc[3], cint(this_step.range), LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+         if (mobiles.size() < this_step.number)
+            passed_this_steps := 0;
             break;
          endif
-      elseif (condition.name["Mobiles Died"])
-         if (diedmonsters < cint(condition.number))
-            passed_conditions := 0;
+      elseif (this_step.name["Mobiles Died"])
+         if (diedmonsters < cint(this_step.number))
+            passed_this_steps := 0;
             break;
          endif
-      elseif (condition.name["Boss Died"])
+      elseif (this_step.name["Boss Died"])
          if (!bossdied)
-            passed_conditions := 0;
+            passed_this_steps := 0;
             break;
          endif
-      elseif (condition.name["Battle Started"])
-         var loc := condition.location;
-         var mobiles := ListMobilesNearLocation(loc[1], loc[2], loc[3], cint(condition.range));
+      elseif (this_step.name["Battle Started"])
+         var loc := this_step.location;
+         var mobiles := ListMobilesNearLocation(loc[1], loc[2], loc[3], cint(this_step.range));
          var passed_event := 0;
          foreach mobile in mobiles
             if (mobile.warmode)
@@ -106,32 +110,34 @@ function StartDynamicEvent(spot, config, evententry)
          endforeach
 
          if (!passed_event)
-            passed_conditions := 0;
+            passed_this_steps := 0;
             break;
          endif
-      elseif (condition.name["% of Chance"])
-         if (condition.number != 100 && Randomint(100)+1 > condition.number )
+      elseif (this_step.name["% of Chance"])
+         if (this_step.number != 100 && Randomint(100)+1 > this_step.number )
             var cooldown := FindElemInArray(dynamicevent.conditions, struct{"name" := "Cooldown"});
             if (!cooldown)
-               cooldown := struct{"number" := 20};
+               cooldown := 20;
+            else
+               cooldown := cooldown.steps[1].number;
             endif
-            SetCooldown(spot, "dynamicevent", cooldown.number);
+            SetCooldown(spot, "dynamicevent", cooldown);
             continue;
          endif
-      elseif (condition.name["Player Class"])
-      elseif (condition.name["Light near"])
-         var loc := condition.location;
+      elseif (this_step.name["Player Class"])
+      elseif (this_step.name["Light near"])
+         var loc := this_step.location;
          var coord := struct{"x" := loc[1], "y" := loc[2], "z" := loc[3]};
          if (!HaveLightNear(coord))
-            passed_conditions := 0;
+            passed_this_steps := 0;
             break;
          endif
-      elseif (condition.name["Camping Near"])
-         var loc := condition.location;
-         var passed_event := ListItemsNearLocationOfType(loc[1], loc[2], loc[3], condition.range, 0x0de3);
+      elseif (this_step.name["Camping Near"])
+         var loc := this_step.location;
+         var passed_event := ListItemsNearLocationOfType(loc[1], loc[2], loc[3], this_step.range, 0x0de3);
 
          if (passed_event.size() < 1)
-            passed_conditions := 0;
+            passed_this_steps := 0;
             break;
          endif
       endif
@@ -143,10 +149,49 @@ function StartDynamicEvent(spot, config, evententry)
    endif
 
    var cooldown := FindElemInArray(dynamicevent.conditions, struct{"name" := "Cooldown"});
-   SetCooldown(spot, "dynamicevent", cooldown.number);
+   if (!cooldown)
+      cooldown := 20;
+   else
+      cooldown := cooldown.steps[1].number;
+   endif
+   SetCooldown(spot, "dynamicevent", cooldown);
 
    foreach trigged in (dynamicevent.events)
+      var this_step := StepToStruct(condition.steps);
+      this_step.name := condition.name;
+      if (this_step.name == "Summon Mobs")
+         var loc := this_step.location;
+         var coord := struct{"x" := loc[1], "y" := loc[2], "z" := loc[3]};
+         for i := 1 to (this_step.number)
+            var summon := CreateNpcFromTemplate(this_step.template, loc[1], loc[2], loc[3]);
+            if (!summon) continue;
 
+            ghaiaObjective(summon, coord, 2, 1);
+         endfor
+      elseif (this_step.name == "Apply TimedScript")
+         var loc := this_step.location;
+         foreach mobile in ListMobilesNearLocationEx(loc[1], loc[2], loc[3], 5, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY)
+            if (rollResistDice(mobile, this_step.resist_test) > this_step.chance)
+               SendsystemReport(mobile, "*resistido*", SSM_INFO);
+            else
+               TS_StartTime(mobile, this_step.timedscript, this_step.number);
+            endif
+         endforeach
+      endif
       sleepms(2);
    endforeach
 endfunction
+
+function StepToStruct(step_list)
+   var return_step := struct{};
+   foreach item in step_list
+      foreach key in item.keys()
+         return_step[key] := item[key];
+      endforeach
+      sleepms(2);
+   endforeach
+
+   return return_step;
+endfunction
+
+// var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};

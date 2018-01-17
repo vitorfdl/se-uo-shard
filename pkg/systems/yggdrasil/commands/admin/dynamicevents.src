@@ -33,7 +33,7 @@ const GF_SELECTCONDITION_BTN := 210;
 // Event/Conditiosn BTN
 const GF_EVENT_UPDATE_BTN := 301;
 const GF_EVENT_CHANGE_BTN := 302;
-const GF_EVENT_BTN := 300;
+const GF_EVENT_BTN := 320;
 
 var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};
 var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Cooldown", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping Near"};
@@ -106,7 +106,7 @@ program spotGroups(params)
         elseif (input[0] >= 200 && input[0] < 930)
             DoConditionList(who, input[0]);
         elseif (input[0] >= 300 && input[0] < 940)
-            // DoStepsList(who, input[0]);
+            DoStepsList(who, input[0]);
         else
             closed := 1;
         endif
@@ -212,7 +212,6 @@ function DoConditionList(who, input)
 endfunction
 
 
-
 function GetStepsFor(event_type)
    var input_request := array{};
    var events := array{};
@@ -238,6 +237,8 @@ function GetStepsFor(event_type)
          events.append(struct{ "timedscript" := "" });
          events.append(struct{ "resist_test" := CONSTITUTION });
          events.append(struct{ "chance" := 100 });
+         events.append(struct{ "number" := 5 });
+         events.append(struct{ "location" := array{0, 0, 0} });
          break;
 
       "Minimum Players": //minimum player
@@ -277,20 +278,82 @@ function GetStepsFor(event_type)
    return events;
 endfunction
 
-function ChangeStep(who, step_type)
-   case (step_type)
-      "location":
-         SendSysMessageEx(who, "Selecione o local", SSM_REQUEST);
-         var targ := TargetCoordinates(who);
-         return targ;
-      "haveclass":
-         return RadioGump(who, 0, 0, "Escolha uma classe:", array{"Mago", "Clérigo", "Guerreiro", "Ladino"});
-      "timedscript":
-         var timedcfg := TS_GetCfgFile();
-         return RadioGump(who, 0, 0, "Escolha um timedscript:", GetConfigStringKeys(timedcfg));
-      "resist_test":
-         return RadioGump(who, 0, 0, "Escolha um teste:", array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM});
-   endcase
+function DoStepsList(who, input)
+    case (input)
+        GF_EVENT_UPDATE_BTN:
+            if (selected_event)
+               var event_list := GetDynamicEventData(selected_dynamicevent).events;
+               event := event_list[selected_event];
+
+               for i := 1 to (event.steps.size())
+                  foreach key of (change_struct[i].keys())
+                     if (key != "template")
+                        event.steps[i][key] := cint(change_struct[i][key]);
+                     else
+                        event.steps[i][key] := change_struct[i][key];
+                     endif
+                     sleepms(2);
+                  endforeach
+                  sleepms(2);
+               endfor
+
+               UpdateEventData(selected_dynamicevent, event, selected_event);
+            else
+               var event_list := GetDynamicEventData(selected_dynamicevent).conditions;
+               event := event_list[selected_event];
+
+               for i := 1 to (event.steps.size())
+                  foreach key of (change_struct[i].keys())
+                     event.steps[i][key] := cint(change_struct[i][key]);
+                     sleepms(2);
+                  endforeach
+                  sleepms(2);
+               endfor
+
+               UpdateConditionData(selected_dynamicevent, event, selected_condition);
+            endif
+            break;
+        GF_EVENT_CHANGE_BTN:
+            SendSysMessageEx(who, "Desativado.");
+            break;
+
+        default:
+            var key_index := input[0]-GF_EVENT_BTN;
+            if (selected_event)
+               group_data := GetDynamicEventData(selected_dynamicevent).events;
+               event := group_data[selected_event];
+               var step_selected := event.steps[key_index];
+               var value := ChangeStep(who, step_selected);
+               event.steps[key_index] := value;
+               SetDynamicEventData(selected_dynamicevent, struct{ "events" := event_list });
+            else
+               group_data := GetDynamicEventData(selected_dynamicevent).conditions;
+               event := group_data[selected_condition];
+               var step_selected := event.steps[key_index];
+               var value := ChangeStep(who, step_selected);
+               event.steps[key_index] := value;
+               SetDynamicEventData(selected_dynamicevent, struct{ "conditions" := event_list });
+            endif
+
+            break;
+    endcase
+endfunction
+
+function ChangeStep(who, mystep)
+   if (mystep.location)
+      SendSysMessageEx(who, "Selecione o local", SSM_REQUEST);
+      var targ := TargetCoordinates(who);
+      mystep.location := array{targ.x, targ.y, targ.z}
+   elseif (mystep.haveclass)
+      mystep.haveclass := RadioGump(who, 0, 0, "Escolha uma classe:", array{"Mago", "Clérigo", "Guerreiro", "Ladino"});
+   elseif (mystep.timedscript)
+      var timedcfg := TS_GetCfgFile();
+      mystep.timedscript := RadioGump(who, 0, 0, "Escolha um timedscript:", GetConfigStringKeys(timedcfg));
+   elseif (mystep.resist_test)
+      mystep.resist_test := RadioGump(who, 0, 0, "Escolha um teste:", array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM});
+   endif
+
+   return mystep;
 endfunction
 
 function ChooseLocation(who, many)
@@ -480,17 +543,18 @@ function ConstructEventConfig(byref gump)
 
    var sy := 45;
    var sx := 450;
-
+   config_struct := dictionary{};
    foreach ev in (event.steps)
+      config_struct[_ev_iter] := struct{};
       if (ev.template)
          GFTextLine(gump, sx, sy, 1153, "Template:");
-         ev.template := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.template);
+         config_struct[_ev_iter].template := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.template);
       elseif (ev.spawngroup)
          GFTextLine(gump, sx, sy, 1153, "SpawnGroup:");
-         ev.spawngroup := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.spawngroup);
+         config_struct[_ev_iter].spawngroup := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.spawngroup);
       elseif (ev.number)
          GFTextLine(gump, sx, sy, 1153, "Number:");
-         ev.number := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.number);
+         config_struct[_ev_iter].number := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.number);
       
       elseif (ev.location)
          GFTextLine(gump, sx, sy, 1153, "Location:");
@@ -510,7 +574,7 @@ function ConstructEventConfig(byref gump)
 
       elseif (ev.range)
          GFTextLine(gump, sx, sy, 1153, "Range:");
-         ev.range := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, ev.range);
+         config_struct[_ev_iter].range := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, ev.range);
 
       elseif (ev.haveclass)
          GFTextLine(gump, sx, sy, 1153, "Have class:");

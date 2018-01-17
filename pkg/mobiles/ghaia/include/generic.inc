@@ -117,7 +117,7 @@ function CheckFlee(opponent)
     endif
 endfunction
 
-function NpcGoTo(destiny, move_type)
+function NpcGoTo(destiny, move_type, stop_if_attacker := 0)
 	if((me.script == "immobile") || (me.script == "immobilespell"))
 		sleep(2);
 		return;
@@ -135,6 +135,12 @@ function NpcGoTo(destiny, move_type)
 				RunTowardLocation( coord.x, coord.y ); //anda na direcao
 			endif
          Opendoors(me);
+
+         if (stop_if_attacker)
+            if (lookAround())
+               return;
+            endif
+         endif
 			sleepms(sleepdelay);
 		endforeach
 	endif

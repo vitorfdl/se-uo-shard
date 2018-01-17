@@ -69,7 +69,7 @@ function resolveEvent(ev, byref wanders)
 	case(ev.type)
 		EVID_DOOBJECTIVE:
 			if (ev.destiny)
-				wanders := 0; NpcGoTo(ev.destiny, ev.move_type);
+				wanders := 0; NpcGoTo(ev.destiny, ev.move_type, ev.can_stop);
 			endif
          break;
 		SYSEVENT_ENTEREDAREA:
