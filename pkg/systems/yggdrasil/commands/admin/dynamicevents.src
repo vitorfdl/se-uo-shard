@@ -325,8 +325,13 @@ function GetEventOptions(who, event)
          new_step.append("Location");
          new_step.append("Go to Player location");
          new_step.append("Go to location");
-      elseif(event.name["Minimum Pla"] || event.name["near"] || event.name["TimedScript"])
+         new_step.append("Spawn in player location");
+         new_step.append("Text");
+      elseif(event.name["Minimum Pla"] || event.name["near"])
          new_step.append("Location");
+      elseif(event.name["TimedScript"])
+         new_step.append("Location");
+         new_step.append("Text");
       endif
 
       choice := RadioGump(who, 0, 0, "Qual novo elemento?", new_step);
@@ -336,6 +341,10 @@ function GetEventOptions(who, event)
          event.steps.append(struct{ "player_location" := 1);
       elseif(choice == "Go to location")
          event.steps.append(struct{ "go_to" := array{0,0,0});
+      elseif(choice == "Spawn in player location")
+         event.steps.append(struct{ "spawn_player_loc" := 1);
+      elseif(choice == "Text")
+         event.steps.append(struct{ "text" := "");
       endif
 
       return event;
@@ -571,14 +580,17 @@ function ConstructEventConfig(byref gump)
       config_struct[_ev_iter] := struct{};
       if (ev.template)
          GFTextLine(gump, sx, sy, 1153, "Template:");
-         config_struct[_ev_iter].template := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.template);
+         config_struct[_ev_iter].template := GFTextEntry(gump, sx+60, sy, 180, 18, 2103, ev.template);
       elseif (ev.spawngroup)
          GFTextLine(gump, sx, sy, 1153, "SpawnGroup:");
-         config_struct[_ev_iter].spawngroup := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.spawngroup);
+         config_struct[_ev_iter].spawngroup := GFTextEntry(gump, sx+60, sy, 180, 18, 2103, ev.spawngroup);
       elseif (ev.number)
          GFTextLine(gump, sx, sy, 1153, "Number:");
-         config_struct[_ev_iter].number := GFTextEntry(gump, sx+60, sy, 120, 18, 2103, ev.number);
+         config_struct[_ev_iter].number := GFTextEntry(gump, sx+60, sy, 40, 18, 2103, ev.number);
       
+      elseif (ev.text)
+         GFTextLine(gump, sx, sy, 1153, "Text:");
+         config_struct[_ev_iter].spawngroup := GFTextEntry(gump, sx+60, sy, 180, 18, 2103, ev.text);
       elseif (ev.location)
          GFTextLine(gump, sx, sy, 1153, "Location:");
          GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.location));
@@ -611,6 +623,8 @@ function ConstructEventConfig(byref gump)
 
       elseif (ev.player_location)
          GFTextLine(gump, sx, sy, 1153, "Mobiles go to player loc");
+      elseif (ev.spawn_player_loc)
+         GFTextLine(gump, sx, sy, 1153, "Mobiles spawn in player loc");
       endif
 
       sy+=20;

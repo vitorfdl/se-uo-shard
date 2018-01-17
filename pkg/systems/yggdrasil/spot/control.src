@@ -202,15 +202,18 @@ function StartDynamicEvent(spot, config, evententry)
       var this_step := StepToStruct(trigged.steps);
       this_step.name := trigged.name;
       if (this_step.name == "Summon Mobs")
-         var loc := this_step.location;
+         var loc := this_step.location[1];
          var coord := struct{ "x" := this_step.go_to[1], "y" := this_step.go_to[2], "z" := this_step.go_to[3]};
-         var on_player := FindElemInArray(trigged.steps, struct{ "player_location" := 1});
-         if (on_player && player_found)
+         if (this_step.player_location && player_found)
             coord := player_found;
+         endif
+         if (spawn_player_loc && player_found)
+            loc := array{player_found.x, player_found.y, player_found.z};
          endif
          for i := 1 to (this_step.number)
             var summon := CreateNpcFromTemplate(this_step.template, loc[1], loc[2], loc[3]);
             if (summon.errortext) continue; endif
+            if (this_step.text) PrintText(summon, this_step.text); endif;
             sleepms(100);
             ghaiaObjective(summon, coord, 2, 1);
          endfor
@@ -220,6 +223,7 @@ function StartDynamicEvent(spot, config, evententry)
             if (rollResistDice(mobile, this_step.resist_test) > this_step.chance)
                SendsystemReport(mobile, "*resistido*", SSM_INFO);
             else
+               if (this_step.text) PrintText(mobile, this_step.text); endif;
                TS_StartTimer(mobile, this_step.timedscript, this_step.number);
             endif
          endforeach

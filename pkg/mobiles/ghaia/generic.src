@@ -8,6 +8,7 @@ include ":ghaia:ghaia";
 include ":ghaia:objective";
 include ":ghaia:genericControl";
 include ":ghaia:habs";
+include ":timedscripts:timedScripts";
 
 var me         := self();
 var npccfgfile := NPC_GetNPCConfig(me, 1);
@@ -18,6 +19,9 @@ var flee_point   := 0.1;
 var mystate      := INITIALIZING;
 
 program NPCMonitor()
+   if (GetObjProperty(me, "%CooldownList%") || GetObjProperty(me, "%TimerList%"))
+      TS_StartController(me);
+   endif
 	genericControl();
 endprogram
 
