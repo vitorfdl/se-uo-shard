@@ -31,7 +31,7 @@ program skillremoveTrap(who)
 	endif
 
 	var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SABOTAGEM);
-   if (HaveFeat(who, "Segredos das Fechaduras"))
+   if (HaveFeat(who, "Segredo das Fechaduras"))
       dice_roll += 2;
    endif
 
