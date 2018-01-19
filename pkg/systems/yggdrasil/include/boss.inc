@@ -355,7 +355,7 @@ function CreateBossStructGump(who, byref boss)
 		if (boss.combatevent[index] != error )
 			var yes := YesNo(who, "Editar ou Deletar Evento?", "Editar", "Deletar");
 			if (yes == 1)
-				var nevent := ConfigureCombatEvent(who, boss.combatevent[index] );
+				var nevent := ConfigureCombatEvent(who, boss.combatevent[index], 1);
 				(boss.combatevent).erase(index);
 				if (nevent)
 					(boss.combatevent).append(nevent);
@@ -587,17 +587,33 @@ function CreateBoss(boss, x, y, z, realm)
 	return npc;
 endfunction
 
-function ConfigureCombatEvent(who, event := 0)
-	if (!event)
-		event := struct;
-		event.+name := RequestGump(who, "Digite o nome desse evento de combate", "Ex.: Ataque Multiplo", "", 1);
-		event.+cd := cint(RequestGump(who, "De quanto em quanto tempo o npc realiza esse evento?", "", "", 1));
-		event.+onlybloodied := cint(YesNo(who, "O NPC so faz esse evento se tiver bloodied?"));
-		event.+dist := cint(RequestGump(who, "Qual a distancia que o npc precisa estar do alvo?", "0 para não checar distancia", "", 1));
-		event.+chance := cint(RequestGump(who, "Qual a chance do npc realizar este evento?", "100 para sempre", "100", 1));
-		event.+hp_percent := cint(RequestGump(who, "Quanto % de hp o npc deve ter para realizar este evento?", "100 para sempre", "100", 1));
+function ConfigureCombatEvent(who, event := 0, change_event := 0)
+	if (!event || change_event == 1)
+      if (!event)
+         event := struct{
+            name := "",
+            cd := 10,
+            dist := 0,
+            chance := 100,
+            hp_percent := 100,
+            steps := array{},
+         };
+      endif
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Digite o nome desse evento de combate?. Ex: Ataque Multiplo", "marked" := event.name});
+      input_list.append(struct{ "title" := "De quanto em quanto tempo o npc realiza esse evento? (segundos)", "marked" := ""+event.cd});
+      input_list.append(struct{ "title" := "Qual a distancia que o npc precisa estar do alvo? (0 para não checar)", "marked" := ""+event.dist});
+      input_list.append(struct{ "title" := "Qual a chance do npc realizar esta ação? (100 para sempre)", "marked" := ""+event.chance});
+      input_list.append(struct{ "title" := "Quanto % de hp o npc deve ter para realizar este evento? (100 para sempre)", "marked" := ""+event.hp_percent});
 
-		event.+steps := array;
+      var output := QuestionsGump(who, input_list);
+
+		event.name := output[1];
+		event.cd := cint(output[2]);
+		event.onlybloodied := 0;
+		event.dist := cint(output[3]);
+		event.chance := cint(output[4]);
+		event.hp_percent := cint(output[5]);
 	endif
 	var continua := 1;
 
