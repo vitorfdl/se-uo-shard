@@ -20,12 +20,12 @@ program SpellScript(params)
 	var npctemplate := GetObjproperty(targ, "npctemplate");
 	var category := lower(getnpccategory( SplitWords(npctemplate)[3] ));
 
-	if ( getnpccategory(category == "morto-vivo" ))
+	if ( category == "morto-vivo" )
 		SendSysMessageEx(who, "Não resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
 		return 0;
 	endif
 
-	if (GetObjProperty(who, "NecroSummons") == maxsummons);
+	if (GetMaxPEts(who) <= GetNumPets(who) )
 		SendSysMessageEx(who, "Voce ja levantou corpos demais para sua capacidade", SSM_FAIL);
 		return 0;
 	endif
@@ -58,34 +58,30 @@ program SpellScript(params)
 
 	//Random de Monstros
 	var undead := createnpcfromtemplate(npctemplate, targ.x, targ.y, targ.z, 0 , who.realm);
-   undead.color     := 801;
-   undead.run_speed := 90;
+   undead.color     := 2301;
+   undead.truecolor := 2301;
+   undead.run_speed := 5;
    undead.CA        := undead.CA - 4;
    SetObjProperty(undead, "dmgbonus", -4);
+	AddPet(who, undead.serial, 1);
 
 	PlaySoundEffect(targ, 383);
 
 	Destroyitem( targ );
 	undead.SetMaster(who);
-				
 	SetObjProperty(undead, "GuardKill", 1);	
+	SetObjProperty(undead, "pet_cost", 1);	
 	SetObjProperty(undead, "owner", who.serial);
 	SetObjProperty(undead, "name", targ.name);
 	SetObjproperty(undead, "script", targ.script);
 	SetObjProperty(undead, "AntigoTreinadorID", who.serial);
-		
 	undead.script := ":ghaia:follower";
 	RestartScript(undead);
 				
 	Run_Script_To_Completion(":death:npcdeath", {undead});
 				
-	SetObjProperty(undead, "Necro", 1);
-	var numbersummons := Cint(GetObjProperty(who, "NecroSummons"));
-	SetObjProperty(who, "NecroSummons", (numbersummons + 1));
-
 	TS_StartTimer(undead, "summon", 240);
 		
-
 	SendSysMEssageEx(who, "Voce teve sucesso ao levantar o corpo", SSM_INFO);
 	
 	return 1;

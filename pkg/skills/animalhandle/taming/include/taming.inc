@@ -81,7 +81,12 @@ function ErasePet(who, myserial)
 			MP_Unmount(who);
 			tamed.erase(_serial_iter);
 			var pet := SystemFindObjectBySerial(serial);
-			who.followers -= GetPetCost(pet);
+         var custom_cost := GetObjProperty(pet, "pet_cost");
+         if (!custom_cost)
+			   who.followers -= GetPetCost(pet);
+         else
+            who.followers -= custom_cost;
+         endif
 			break;
 		endif
 		sleepms(2);
@@ -91,7 +96,7 @@ function ErasePet(who, myserial)
 endfunction
 
 //adiciona o serial do pet 
-function AddPet(who, serial)
+function AddPet(who, serial, pet_cost := 0)
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )
 		tamed := array;
@@ -101,7 +106,11 @@ function AddPet(who, serial)
 	SetObjProperty(who, "followers", tamed);
 
 	var pet := SystemFindObjectBySerial(serial);
-	who.followers := who.followers + GetPetCost(pet);
+   if (!pet_cost)
+	   who.followers := who.followers + GetPetCost(pet);
+   else
+      who.followers := who.followers + pet_cost;
+   endif
 	pet.InitPetProperties(0);
 endfunction
 

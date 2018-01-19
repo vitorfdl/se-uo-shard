@@ -42,7 +42,7 @@ program skill_LumberJack(who,tool)
 
 	//SendSysMessage(who," e" + CanChop(who, tool, targ,  orig_x, orig_y));
 	while(CanChop(who, tool, targ,  orig_x, orig_y) )
-		if ( !AP_ConsumeVital(who, "Stamina", 4))
+		if ( !AP_ConsumeVital(who, "Stamina", 2))
 			SendSysMessageEx(who, "Você esta muito cansado para continuar.", SSM_FAIL);
 			break;
 		endif

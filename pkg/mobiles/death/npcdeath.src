@@ -144,6 +144,7 @@ function NoLootCheck(corpse, npc_cfg)
 		// Nothing - Old Cprop
 	elseif ( GetObjProperty(corpse, "summoned") );
 		// Nothing;
+      
 	else
 		return 0;
 	endif

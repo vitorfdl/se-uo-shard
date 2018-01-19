@@ -56,7 +56,7 @@ program animateSword(params)
       endcase
 
 		PrintTextAbove(summoned, "*A espada ganha vida*", 3,191);
-		AddPet(who, summoned.serial);
+		AddPet(who, summoned.serial, 1);
 		summoned.SetMaster(who);
 		summoned.script := ":ghaia:follower";
 		RestartScript(summoned);
