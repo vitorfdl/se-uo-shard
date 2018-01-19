@@ -117,7 +117,7 @@ endfunction
 function CheckExpUp(who)
 	var level := who.getLevel();
 	if (level < 20)
-		var maxexp := who.getLevel() * 1500; //starts at 2000
+		var maxexp := who.getLevel() * 1200; //starts at 2000
 		var exp := who.GetExp();
 
 		if (exp < maxexp)

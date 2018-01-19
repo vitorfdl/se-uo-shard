@@ -73,14 +73,18 @@ program ArcheryButte(who, butte)
 			var projectile_damage := CS_GetWeaponInfo(weapon, "Damage");
 			ApplyDamageEX(closest, RandomDiceRoll(projectile_damage), DMG_PHYSICAL);
 		else
-			PrintTextAbove(butte, DetermineHit(who, test));
-			if ( RandomInt(2) )
-				Set_Critical(1);
-				var ammo := CInt(GetObjProperty(butte, "Ammo-"+projectile_type));
-				ammo := ammo + 1;
-				SetObjProperty(butte, "Ammo-"+projectile_type, ammo);
-				Set_Critical(0);
-			endif
+         const hited := DetermineHit(who, test);
+			PrintTextAbove(butte, hited);
+         if (!hited["Errou"])
+            Set_Critical(1);
+            var ammo := CInt(GetObjProperty(butte, "Ammo-"+projectile_type));
+            ammo := ammo + 1;
+            SetObjProperty(butte, "Ammo-"+projectile_type, ammo);
+            Set_Critical(0);
+         else
+            const point := RandomPlace(butte, 1);
+            CreateItemAtLocation(point.x, point.y, point.z, projectile_type, 1, butte.realm);
+         endif
 		endif
 	else
 		PlaySoundEffect(who, miss_sound);

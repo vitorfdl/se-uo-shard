@@ -436,6 +436,10 @@ endfunction
 // Cria as munição no chão
 function ArrowRecovery(defender)
 	var chance := 15;
+   if (HaveFeat(attacker, "Flechas Intactas"))
+      chance := 70;
+   endif
+   
 	if ( RandomDiceRoll("1d100") <= chance )
 		var ammo := GetObjProperty(weapon, "ammo");
 		var point := RandomPlace(defender, 1);

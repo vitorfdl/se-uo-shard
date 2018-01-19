@@ -11,6 +11,7 @@ program EquipTest(mobile, item, start_up)
 	
 	if ( start_up )
 		// POL is starting up, yes the mobile can equip it
+      SetObjProperty(item, "#EquippedOn", mobile.serial);
 		return 1;
 	elseif ( mobile.npctemplate )
 		// NPCs can wear anything

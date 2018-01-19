@@ -58,9 +58,6 @@ program SpellScript(params)
 
 	//Random de Monstros
 
-	var random := RandomIntMinMax(Cint(skill-20),Cint(skill+10));
-	var undead;
-	
 	// if (random < 20)
 	// 	undead := createnpcfromtemplate(":brainai:headless", targ.x, targ.y, targ.z, 0 , who.realm);
 	// elseif (random < 40)

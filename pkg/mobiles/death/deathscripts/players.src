@@ -83,7 +83,7 @@ program death(params)
          if (rollResistDice(ghost, CONSTITUTION) <= 15)
 				AP_ConsumeVital(ghost, "DP", 10);
 				SendSystemReport(ghost, "Você sofreu uma fratura!");
-            if (AP_GetVital(ghost, "DP") <= 29)
+            if (AP_GetVital(ghost, "DP") <= 19)
                TS_StartTimer(ghost, "fraturaexposta", 1);
             endif
          else
