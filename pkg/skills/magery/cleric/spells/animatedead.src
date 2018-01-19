@@ -8,6 +8,7 @@ include ":timedscripts:timedScripts";
 include ":attributes:attributes";
 include ":tn:npcutil";
 include ":ghaia:ghaia";
+include ":ghaia:ghaiaUtil";
 
 
 program SpellScript(params)
@@ -16,14 +17,14 @@ program SpellScript(params)
 	params := 0; // No longer needed
 
 	var skill := AP_GetStat(who, "Intelligence");
-	var maxsummons := Cint(skill / 25);
-	// var npctemplate := GetObjproperty(targ, "npctemplate");
-	// var category := lower(getnpccategory( ParseTemplateName(npctemplate).template ));
+	var maxsummons := 2);
+	var npctemplate := GetObjproperty(targ, "npctemplate");
+	var category := lower(getnpccategory( SplitWord(npctemplate)[3] ));
 
-	// if ( category == "undead" )	
-	// 	SendSysMessageEx(who, "Nao resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
-	// 	return 0;
-	// endif
+	if ( getnpccategory(category == "morto-vivo" )	
+		SendSysMessageEx(who, "Não resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
+		return 0;
+	endif
 
 	if (GetObjProperty(who, "NecroSummons") == maxsummons);
 		SendSysMessageEx(who, "Voce ja levantou corpos demais para sua capacidade", SSM_FAIL);
@@ -58,7 +59,6 @@ program SpellScript(params)
 
 	//Random de Monstros
 
-	var random := RandomIntMinMax(Cint(skill-20),Cint(skill+10));
 	var undead;
 	
 	// if (random < 20)
@@ -82,22 +82,22 @@ program SpellScript(params)
 
 
 	Destroyitem( targ );
-	// undead.SetMaster(who);
+	undead.SetMaster(who);
 				
-	// SetObjProperty(undead, "GuardKill", 1);	
-	// SetObjProperty(undead, "owner", who.serial);
-	// SetObjProperty(undead, "name", targ.name);
-	// SetObjproperty(undead, "script", targ.script);
-	// SetObjProperty(undead, "AntigoTreinadorID", who.serial);
+	SetObjProperty(undead, "GuardKill", 1);	
+	SetObjProperty(undead, "owner", who.serial);
+	SetObjProperty(undead, "name", targ.name);
+	SetObjproperty(undead, "script", targ.script);
+	SetObjProperty(undead, "AntigoTreinadorID", who.serial);
 		
-	// undead.script := ":ghaia:tamed";
-	// RestartScript(undead);
+	undead.script := ":ghaia:follower";
+	RestartScript(undead);
 				
-	// Run_Script_To_Completion(":death:npcdeath", {undead});
+	Run_Script_To_Completion(":death:npcdeath", {undead});
 				
-	// SetObjProperty(undead, "Necro", 1);
-	// var numbersummons := Cint(GetObjProperty(who, "NecroSummons"));
-	// SetObjProperty(who, "NecroSummons", (numbersummons + 1));
+	SetObjProperty(undead, "Necro", 1);
+	var numbersummons := Cint(GetObjProperty(who, "NecroSummons"));
+	SetObjProperty(who, "NecroSummons", (numbersummons + 1));
 
 	// TS_StartTimer(undead, "summon", GetSpellDuration(AP_GetStat(who, "Intelligence")) / 2);
 		

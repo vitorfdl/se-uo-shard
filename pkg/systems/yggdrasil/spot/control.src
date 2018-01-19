@@ -92,7 +92,7 @@ function StartDynamicEvent(spot, config, evententry)
          var pass_step := 0;
          foreach loc in locs
             var mobiles := GetPlayerNear(loc, cint(this_step.range));
-            if (mobiles.size() >= this_step.number)
+            if (mobiles.size() >= cint(this_step.number))
                pass_step := 1;
                player_found := mobiles[1];
                break;
@@ -100,8 +100,8 @@ function StartDynamicEvent(spot, config, evententry)
             sleepms(2);
          endforeach
          
-         if (pass_step)
-            passed_this_steps := 0;
+         if (!pass_step)
+            passed_conditions := 0;
             break;
          endif
       elseif (this_step.name["Mobiles Died"])
@@ -117,9 +117,9 @@ function StartDynamicEvent(spot, config, evententry)
       elseif (this_step.name["Battle Started"])
          var locs := this_step.location;
 
+         var passed_event := 0;
          foreach loc in locs
             var mobiles := ListMobilesNearLocation(loc[1], loc[2], loc[3], cint(this_step.range));
-            var passed_event := 0;
             foreach mobile in mobiles
                if (mobile.warmode)
                   passed_event := 1;
@@ -161,11 +161,11 @@ function StartDynamicEvent(spot, config, evententry)
          endforeach
 
          if (!passed_event)
-            passed_this_steps := 0;
+            passed_conditions := 0;
             break;
          endif
       elseif (this_step.name["Camping Near"])
-         var loc := this_step.location;
+         var locs := this_step.location;
          var passed_event := 0;
          
          foreach loc in locs
@@ -178,7 +178,7 @@ function StartDynamicEvent(spot, config, evententry)
          endforeach
 
          if (!passed_event)
-            passed_this_steps := 0;
+            passed_conditions := 0;
             break;
          endif
       endif
@@ -194,7 +194,7 @@ function StartDynamicEvent(spot, config, evententry)
    if (!cooldown)
       cooldown := 20;
    else
-      cooldown := cooldown.steps[1].number;
+      cooldown := cint(cooldown.steps[1].number);
    endif
    SetCooldown(spot, "dynamicevent", cooldown);
 
@@ -207,7 +207,7 @@ function StartDynamicEvent(spot, config, evententry)
          if (this_step.player_location && player_found)
             coord := player_found;
          endif
-         if (spawn_player_loc && player_found)
+         if (this_step.spawn_player_loc && player_found)
             loc := array{player_found.x, player_found.y, player_found.z};
          endif
          for i := 1 to (this_step.number)
@@ -245,13 +245,13 @@ function StepToStruct(step_list)
       sleepms(2);
    endforeach
 
-   return_step.location := item[key];
+   return_step.location := locations;
 
    return return_step;
 endfunction
 
 function GetPlayerNear(loc, range := 5)
-   return ListMobilesNearLocationEx(loc[1], loc[2], loc[3], range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY)
+   return ListMobilesNearLocationEx(loc[1], loc[2], loc[3], range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
 endfunction
 
 // var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};

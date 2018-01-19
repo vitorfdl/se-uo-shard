@@ -253,7 +253,7 @@ function DoStepsList(who, input)
 
                for i := 1 to (event.steps.size())
                   foreach key in (config_struct[i].keys())
-                     if (key != "template")
+                     if (key != "template" && key != "text")
                         event.steps[i][key] := cint(GFExtractData(input, config_struct[i][key]));
                      else
                         event.steps[i][key] := GFExtractData(input, config_struct[i][key]);
@@ -281,12 +281,12 @@ function DoStepsList(who, input)
         GF_EVENT_CHANGE_BTN:
             if (selected_event)
                var event_list := GetDynamicEventData(selected_dynamicevent).events;
-               event := event_list[selected_event];
+               var event := event_list[selected_event];
                var new_event := GetEventOptions(who, event);
                UpdateEventData(selected_dynamicevent, new_event, selected_event);
             else
                var event_list := GetDynamicEventData(selected_dynamicevent).conditions;
-               event := event_list[selected_condition];
+               var event := event_list[selected_condition];
                var new_event := GetEventOptions(who, event);
                UpdateConditionData(selected_dynamicevent, new_event, selected_condition);
             endif
@@ -313,10 +313,6 @@ function DoStepsList(who, input)
     endcase
 endfunction
 
-
-var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript"};
-var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Cooldown", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping near"};
-
 function GetEventOptions(who, event)
    var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Adicionar passo", "Remover passo", "Cancelar"}, 1);
    if (choice == 1)
@@ -335,32 +331,29 @@ function GetEventOptions(who, event)
       endif
 
       choice := RadioGump(who, 0, 0, "Qual novo elemento?", new_step);
-      if (choice == "Location")
-         event.steps.append(struct{ "location" := array{0,0,0}});
-      elseif(choice == "Go to Player location")
-         event.steps.append(struct{ "player_location" := 1);
+      if(choice == "Go to Player location")
+         event.steps.append(struct{ "player_location" := 1});
       elseif(choice == "Go to location")
-         event.steps.append(struct{ "go_to" := array{0,0,0});
+         event.steps.append(struct{ "go_to" := array{0,0,0}});
       elseif(choice == "Spawn in player location")
-         event.steps.append(struct{ "spawn_player_loc" := 1);
+         event.steps.append(struct{ "spawn_player_loc" := 1});
       elseif(choice == "Text")
-         event.steps.append(struct{ "text" := "");
+         event.steps.append(struct{ "text" := ""});
       endif
 
       return event;
    elseif (choice == 2)
-      const step_list := array{};
+      var step_list := array{};
       foreach item in (event.steps)
-         step_list.append(item.keys()[1]);
+         step_list := step_list +item.keys();
          sleepms(2);
       endforeach
       step_list.append("Cancelar");
-
       var remove_step := RadioGump(who, 0, 0, "Qual passo remover?", step_list, 1);
       if (remove_step == step_list.size())
          return event;
       endif
-      event.steps.remove(remove_step);
+      event.steps.erase(remove_step);
       return event;
    else
       return event;
@@ -588,9 +581,9 @@ function ConstructEventConfig(byref gump)
          GFTextLine(gump, sx, sy, 1153, "Number:");
          config_struct[_ev_iter].number := GFTextEntry(gump, sx+60, sy, 40, 18, 2103, ev.number);
       
-      elseif (ev.text)
-         GFTextLine(gump, sx, sy, 1153, "Text:");
-         config_struct[_ev_iter].spawngroup := GFTextEntry(gump, sx+60, sy, 180, 18, 2103, ev.text);
+      elseif (ev.text != error)
+         GFTextLine(gump, sx+10, sy, 1153, "Text:");
+         config_struct[_ev_iter].text := GFTextEntry(gump, sx+60, sy, 180, 18, 2103, ""+ev.text);
       elseif (ev.location)
          GFTextLine(gump, sx, sy, 1153, "Location:");
          GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.location));
@@ -631,8 +624,8 @@ function ConstructEventConfig(byref gump)
       sleepms(2);
    endforeach
 
-    GFAddButton(gump, 560, sy+40, 0xEF, 0xF0, 1, GF_EVENT_UPDATE_BTN);
-    GFAddButton(gump, 500, sy+40, 0x842, 0x843, 1, GF_EVENT_CHANGE_BTN);
+    GFAddButton(gump, 560, sy+10, 0xEF, 0xF0, 1, GF_EVENT_UPDATE_BTN);
+    GFAddButton(gump, 500, sy+10, 0x842, 0x843, 1, GF_EVENT_CHANGE_BTN);
 endfunction
 
 function EventSetConfigs(byref who, byref input)

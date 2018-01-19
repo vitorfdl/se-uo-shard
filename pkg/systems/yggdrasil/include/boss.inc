@@ -422,12 +422,11 @@ function SetBoss(npc, boss)
 		npc.CA := Cint(boss.CA);
 	endif
 
-
-	AP_SetTrueStat(npc, STRENGTH, Cint(boss.str));
-	AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex));
-	AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int));
-	AP_SetTrueStat(npc, WISDOM, Cint(boss.wis));
-	AP_SetTrueStat(npc, CONSTITUTION, Cint(boss.con));
+   if (boss.str) AP_SetTrueStat(npc, STRENGTH, Cint(boss.str)); endif
+   if (boss.dex) AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex)); endif
+   if (boss.int) AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int)); endif
+   if (boss.wis) AP_SetTrueStat(npc, WISDOM, Cint(boss.wis)); endif
+   if (boss.con) AP_SetTrueStat(npc, CONSTITUTION, Cint(boss.con)); endif
 	
 	foreach skill in (boss.skills)
 		AP_SetTrueSkill(npc, skill, 1);

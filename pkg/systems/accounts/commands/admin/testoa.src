@@ -15,17 +15,10 @@ include ":timeUtils:time";
 include ":merchants:crafthelp";
 
 program oafeatures_sendpacket(who, text)
-   // var targ := target(who);
+   var targ := TargetCoordinates(who);
    // SendSysMessageEx(who, ""+GetCharAge(targ));
    // SendSysMessageEx(who, ""+GetExpCap(targ));
-   var questions := array{ 
-      struct{ "title" := "Entre com texto", "marked" := "Seu texto"}, 
-      struct{ "title" := "Entre com texto"},
-      struct{ "title" := "Select an Option?", "marked" := 3, "radio" := array{ "Dia", "Noite", "feliz"}},
-      struct{ "title":= "Is a checkbox", "checkbox" := array{"teste", "teste2"}, "marked":= array{1}}
-      };
-   var res:= QuestionsGump(who, questions);
-   print(res);
+   var mobs := ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
    // start_script(":death:permadeath/permadeath", {who, });
    // sendsysmessageex(who, GetTimeStamp(polcore().systime));
    // var targ := Target(who);

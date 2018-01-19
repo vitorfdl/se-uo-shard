@@ -33,7 +33,7 @@ program SpellScript(params)
 	CreateRandomGliph(gliphs, who.x+3, who.y-2, who.z);
 	SendSystemReport(who, "'Mova-se para parar a conjuração!'", SSM_INFO);
 
-	while ( AP_ConsumeVital(who, MANA, 2) )
+	while ( who.connected )
 		if (oldx != who.x || oldy != who.y)
 			break;
 		endif
