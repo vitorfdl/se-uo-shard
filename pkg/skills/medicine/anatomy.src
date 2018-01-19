@@ -16,7 +16,7 @@ program medicineSkill(who)
    if (subject.graphic == 0x2006)
 		if( rolldice > 12 ) //SkillCheck(who, MEDICINE, -1)
          PrintText(who, "*examinando corpo*");
-			if (GetObjProperty(subject, "morto") == 1)
+			if (GetObjProperty(subject, "morto") == 1 || subject.npctemplate)
 				SendSysMessageEx(who, "Parece morto para você.", SSM_INFO);
 				if ( rolldice > 18 ); //valorInicial(who, MEDICINE)
 					if (GetObjProperty(subject, "deathtimer"))

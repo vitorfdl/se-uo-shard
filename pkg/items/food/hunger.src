@@ -16,8 +16,10 @@ program Hunger(chr)
 		hunger := CInt(AP_GetVital(chr, "Hunger") / 60);
 
 		if (hunger == 4)
+         RecalcVitals(chr);
 			SendSysMessageEx(chr, "Você está se sentindo faminto.",  SSM_INFO);
 		elseif (hunger == 5)
+         RecalcVitals(chr);
 			SendSysMessageEx(chr, "Você está muito faminto e correndo perigo de vida.",  SSM_INFO);
 		elseif (hunger == 6 && !chr.dead && !(chr.x > 6005 && chr.y > 42 && chr.x < 6029 && chr.y < 92 ))
 			SendSysMessageEx(chr, "Você esta muito faminto e correndo perigo de vida!!",  SSM_INFO);

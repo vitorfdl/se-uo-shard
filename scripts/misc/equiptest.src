@@ -11,6 +11,7 @@ program EquipTest(mobile, item, start_up)
 	
 	if ( start_up )
 		// POL is starting up, yes the mobile can equip it
+      SetObjProperty(item, "#EquippedOn", mobile.serial);
 		return 1;
 	elseif ( mobile.npctemplate )
 		// NPCs can wear anything
@@ -49,7 +50,7 @@ program EquipTest(mobile, item, start_up)
 		endif
 	endif
 	
-	if (TS_GetCooldown(mobile, "metamorfosedruida"))
+	if (TS_GetCooldown(mobile, "metamorfose"))
 		SendSysMessageEx(mobile, "Você não pode equipar itens enquanto estiver metamorfoseado.", SSM_FAIL);
 		return 0;
 	elseif (GetObjProperty(mobile, "desarmar") && item.isa(POLCLASS_WEAPON))

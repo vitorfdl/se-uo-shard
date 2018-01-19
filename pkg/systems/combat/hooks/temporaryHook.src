@@ -436,6 +436,10 @@ endfunction
 // Cria as munição no chão
 function ArrowRecovery(defender)
 	var chance := 15;
+   if (HaveFeat(attacker, "Flechas Intactas"))
+      chance := 70;
+   endif
+   
 	if ( RandomDiceRoll("1d100") <= chance )
 		var ammo := GetObjProperty(weapon, "ammo");
 		var point := RandomPlace(defender, 1);
@@ -511,6 +515,8 @@ function GetAttackerFeatBonus(attacker, roll)
    elseif (wpn_a_elem.WeaponType == "axe" && HaveFeat(attacker, "Mãos Pesadas"))
       bonus += 1;
    elseif (wpn_a_elem.WeaponType == "mace" && HaveFeat(attacker, "Destruidor"))
+      bonus += 1;
+   elseif (wpn_a_elem.WeaponType == "greatsword" && HaveFeat(attacker, "Peso da Montanha"))
       bonus += 1;
    endif
       

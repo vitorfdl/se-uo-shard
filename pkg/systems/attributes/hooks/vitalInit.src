@@ -87,7 +87,7 @@ exported function GetStaminaMaximumValue(mobile)
 
 	vital_points := GetNPCVitalSetting(mobile, "STAM");
 	if (!vital_points);
-		vital_points := CInt(40 + (AP_GetTrueStat(mobile, "Constitution") * 2)) * 100;
+		vital_points := CInt(30 + (AP_GetTrueStat(mobile, "Constitution") * 2)) * 100;
 	endif
 
 	vital_points := vital_points + (( Cint( GetObjProperty(mobile, "stammod") ) + Cint( GetObjProperty(mobile, "#stammod") ) )*100);
