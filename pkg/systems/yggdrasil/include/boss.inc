@@ -595,7 +595,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
             dist := 0,
             chance := 100,
             hp_percent := 100,
-            steps := array{},
+            steps := array{}
          };
       endif
       var input_list := array{};

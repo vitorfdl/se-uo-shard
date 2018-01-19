@@ -8,6 +8,7 @@ include ":combat:weaponInfo";
 include ":training:training";
 include "include/client";
 include "include/damage";
+include "include/utils";
 
 program ArcheryButte(who, butte)
 	if ( butte.container )
@@ -73,7 +74,7 @@ program ArcheryButte(who, butte)
 			var projectile_damage := CS_GetWeaponInfo(weapon, "Damage");
 			ApplyDamageEX(closest, RandomDiceRoll(projectile_damage), DMG_PHYSICAL);
 		else
-         const hited := DetermineHit(who, test);
+         var hited := DetermineIfHit(who, test);
 			PrintTextAbove(butte, hited);
          if (!hited["Errou"])
             Set_Critical(1);
@@ -82,7 +83,7 @@ program ArcheryButte(who, butte)
             SetObjProperty(butte, "Ammo-"+projectile_type, ammo);
             Set_Critical(0);
          else
-            const point := RandomPlace(butte, 1);
+            var point := RandomPlace(butte, 1);
             CreateItemAtLocation(point.x, point.y, point.z, projectile_type, 1, butte.realm);
          endif
 		endif
@@ -93,7 +94,7 @@ program ArcheryButte(who, butte)
 	Sleep(3);
 endprogram
 
-function DetermineHit(who, test)
+function DetermineIfHit(who, test)
 	if ( test > 18 )
 		return "*Na mosca*";
 	elseif ( test > 16 )

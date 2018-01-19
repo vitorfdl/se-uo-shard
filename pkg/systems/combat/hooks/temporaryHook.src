@@ -153,7 +153,7 @@ program Attack(params)
 
 	else //ERROU O ATAQUE
 		if ( weapon.isBow() && !attacker.npctemplate )
-			ArrowRecovery(defender);
+			ArrowRecovery(attacker, defender);
 		endif
 
 		EraseObjProperty(attacker, "movement");
@@ -434,7 +434,7 @@ function AmmoCheck(attacker, defender)
 endfunction
 
 // Cria as munição no chão
-function ArrowRecovery(defender)
+function ArrowRecovery(attacker, defender)
 	var chance := 15;
    if (HaveFeat(attacker, "Flechas Intactas"))
       chance := 70;

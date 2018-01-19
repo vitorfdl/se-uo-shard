@@ -9,7 +9,7 @@ include "include/sounds";
 program control(nuvem)
    var timing := cint(GetObjProperty(nuvem, "expiretime"));
    if (!timing)
-      timing := polcore().systime + 20;
+      timing := polcore().systime + 40;
    endif
 
    var i := 0;

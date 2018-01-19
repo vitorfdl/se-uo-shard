@@ -8,7 +8,7 @@ include ":timedscripts:timedScripts";
 include ":attributes:attributes";
 include ":tn:npcutil";
 include ":ghaia:ghaia";
-include ":ghaia:ghaiaUtil";
+include ":tn:npcutil";
 
 
 program SpellScript(params)
@@ -16,12 +16,11 @@ program SpellScript(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-	var skill := AP_GetStat(who, "Intelligence");
-	var maxsummons := 2);
+	var maxsummons := 2;
 	var npctemplate := GetObjproperty(targ, "npctemplate");
-	var category := lower(getnpccategory( SplitWord(npctemplate)[3] ));
+	var category := lower(getnpccategory( SplitWords(npctemplate)[3] ));
 
-	if ( getnpccategory(category == "morto-vivo" )	
+	if ( getnpccategory(category == "morto-vivo" ))
 		SendSysMessageEx(who, "Não resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
 		return 0;
 	endif
@@ -58,28 +57,13 @@ program SpellScript(params)
 
 
 	//Random de Monstros
+	var undead := createnpcfromtemplate(npctemplate, targ.x, targ.y, targ.z, 0 , who.realm);
+   undead.color     := 801;
+   undead.run_speed := 90;
+   undead.CA        := undead.CA - 4;
+   SetObjProperty(undead, "dmgbonus", -4);
 
-	var undead;
-	
-	// if (random < 20)
-	// 	undead := createnpcfromtemplate(":brainai:headless", targ.x, targ.y, targ.z, 0 , who.realm);
-	// elseif (random < 40)
-	// 	undead := createnpcfromtemplate(":brainai:skeleton1", targ.x, targ.y, targ.z, 0 , who.realm);
-	// elseif (random < 50)
-	// 	undead := createnpcfromtemplate(":brainai:zombie", targ.x, targ.y, targ.z, 0 , who.realm);
-	// elseif (random < 70)
-	// 	undead := createnpcfromtemplate(":brainai:ossadaescarlate", targ.x, targ.y, targ.z, 0 , who.realm);
-	// elseif (random < 80)
-	// 	undead := createnpcfromtemplate(":brainai:zombielord", targ.x, targ.y, targ.z, 0 , who.realm);
-	// elseif (random < 90)
-	// 	undead := createnpcfromtemplate(":brainai:spectre", targ.x, targ.y, targ.z, 0 , who.realm);
-	// elseif (random < 95)
-	// 	undead := createnpcfromtemplate(":brainai:skeletonmage", targ.x, targ.y, targ.z, 0 , who.realm);
-	// elseif (random < 5000)
-	// 	undead := createnpcfromtemplate(":brainai:fleshgolem", targ.x, targ.y, targ.z, 0 , who.realm);
-	// endif
 	PlaySoundEffect(targ, 383);
-
 
 	Destroyitem( targ );
 	undead.SetMaster(who);
@@ -99,7 +83,7 @@ program SpellScript(params)
 	var numbersummons := Cint(GetObjProperty(who, "NecroSummons"));
 	SetObjProperty(who, "NecroSummons", (numbersummons + 1));
 
-	// TS_StartTimer(undead, "summon", GetSpellDuration(AP_GetStat(who, "Intelligence")) / 2);
+	TS_StartTimer(undead, "summon", 240);
 		
 
 	SendSysMEssageEx(who, "Voce teve sucesso ao levantar o corpo", SSM_INFO);
