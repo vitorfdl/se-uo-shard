@@ -168,9 +168,7 @@ function summonCreature(qty, creatures)
 endfunction
 
 function CancaoSedutora(mobiles, dice)
-   printtext(me, "play!");
    playCastAnimation();
-   print(mobiles);
    if (!mobiles[1]) return 0; endif
    sleep(1);
    PerformAction(me, 0x06);

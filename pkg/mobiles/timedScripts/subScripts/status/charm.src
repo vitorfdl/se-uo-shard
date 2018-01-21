@@ -12,7 +12,7 @@ include ":attributes:attributes";
 include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   SetObjProperty(mobile, "charmed", attacker.serial);
+   SetObjProperty(mobile, "#charmed", attacker.serial);
    while (1)
       PlayObjectCenteredEffect(mobile, 0x4AA4, 6, 40);
       sleep(4);
@@ -24,7 +24,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-   EraseObjProperty(mobile, "charmed");
+   EraseObjProperty(mobile, "#charmed");
 	return 1;
 endfunction
 

@@ -93,6 +93,9 @@ program spotGroups(params)
         params := params[2];
     endif
 
+   if (who.cmdlevel < 4)
+      return 1;
+   endif
     CloseGump(who, gumpid);
     if (params)
         selected_group      := params.selected_group; //Name of the Elem

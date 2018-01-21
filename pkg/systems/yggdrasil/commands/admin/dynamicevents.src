@@ -55,7 +55,9 @@ program spotGroups(params)
         who := params[1];
         params := params[2];
     endif
-
+   if (who.cmdlevel < 4)
+      return 1;
+   endif
     CloseGump(who, gumpid);
     if (params)
         selected_dynamicevent      := params.dynamicevent; //Name of the Elem

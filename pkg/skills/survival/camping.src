@@ -47,7 +47,7 @@ program UseWood( who, wood )
 		var y := wood.y;
 		var z := wood.z;
       var itemnearby := ListItemsNearLocationOfType( x, y, z, 12, 0xDE3 );
-      if (itemnearby > 1)
+      if (itemnearby.size() > 1)
          SendSysMessageEx(who, "Já existe outro acampamento pronto por perto.", SSM_FAIL );
          return;
       endif

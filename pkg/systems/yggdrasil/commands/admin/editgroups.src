@@ -40,7 +40,9 @@ var gumpid := 0x1F4;
 program spawnGroups(who)
     CloseGump(who, gumpid);
     var closed := 0;
-
+   if (who.cmdlevel < 4)
+      return 1;
+   endif
     while (closed != 1)
         var gump := ConstructGump();
         var input := GFSendGump(who, gump);

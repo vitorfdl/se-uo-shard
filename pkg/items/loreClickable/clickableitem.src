@@ -28,7 +28,7 @@ program command_Message(who, item)
 		
 		var gump_params := GetObjProperty(item, "gump_params");
 		if (!gump_params)
-			gump_params := struct{ "x" := 0, "y" := 0, "gump_id" := 0};
+			gump_params := struct{ "x" := 20, "y" := 20, "width" := 200, "height":= 200, "color" := "FFFFFF", "gump_id" := 0};
 		endif
 
       var y := 120;
@@ -62,12 +62,14 @@ function handleInput(who, input, item, byref gump_params)
          questions.append(struct{ "title" := "Qual posição y do texto?", "marked" := ""+cint(gump_params.y)});
          questions.append(struct{ "title" := "Qual largura do texto?", "marked" := ""+cint(gump_params.width)});
          questions.append(struct{ "title" := "Qual altura do texto?", "marked" := ""+cint(gump_params.height)});
+         questions.append(struct{ "title" := "Qual a cor do texto?", "marked" := ""+gump_params.color});
          var output := QuestionsGump(who, questions);
          gump_params.gump_id := cint(output[1]);
          gump_params.x := cint(output[2]);
          gump_params.y := cint(output[3]);
          gump_params.width := cint(output[4]);
          gump_params.height := cint(output[5]);
+         gump_params.color := cint(output[6]);
          
       BTN_CHANGE_LANG:
          var choice := RadioGump(who, 0, 0, "Qual idioma deseja escolher?", array{"Linguagem Rúnica", "Linguagem Élfica", "Lingua Comum"});
@@ -109,6 +111,6 @@ function showSpecialGump(who, item)
    GFClosable(gump, 1);
    GFSetId(gump, 0x94b5);
    GFGumpPic(gump, 250, 250, gump_params.gump_id);
-   GFHTMLArea(gump, gump_params.x+250, gump_params.y+250, gump_params.width, gump_params.height, "<basefont {} color=#FFFFFF>{}".format(lang, gump_params.text) , 0, 0);
+   GFHTMLArea(gump, gump_params.x+250, gump_params.y+250, gump_params.width, gump_params.height, "<basefont {} color=#{}>{}".format(lang, gump_params.color, gump_params.text) , 0, 0);
    GFSendGump(who, gump);
 endfunction
