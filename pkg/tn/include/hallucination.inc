@@ -12,15 +12,17 @@ function Hallucinate(who)
       DeleteObject(who, mobile);
       DrawObject(who, mobile, graphic, color, 1);
     endif
+    sleepms(2);
   endforeach
+
   foreach item in ListItemsNearLocation(who.x, who.y, who.z, 30)
     color := RandomInt(99) + 2;
     if ((item.amount == 1) and (!item.isa(POLCLASS_CORPSE)) and (!item.invisible))
       DeleteObject(who, item);
       DrawObject(who, item, item.graphic, color);
     endif
+    sleepms(2);
   endforeach
-
 endfunction
 
 // the following functions have been pasted from SendPacket.inc

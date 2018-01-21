@@ -215,6 +215,7 @@ function StartDynamicEvent(spot, config, evententry)
             if (summon.errortext) continue; endif
             if (this_step.text) PrintText(summon, this_step.text); endif;
             sleepms(100);
+            TS_StartTimer(summon, "dynamickill", 1200);
             ghaiaObjective(summon, coord, 2, 1);
          endfor
       elseif (this_step.name == "Apply TimedScript")

@@ -91,6 +91,9 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "rajada_acida": res := RajadaAcida(hab_dice, hab_target, hab_special); break;
       "teia": res := SpitWeb(hab_special, hab_target, hab_special); break;
       "teleport": res := teleport(hab_target, hab_special); break;
+      "constrictSpell": res := constrict(hab_target, hab_dice, hab_special); break;
+      "charming": res := charm(hab_target, hab_dice hab_special); break;
+      "SoproEuforia": res := euforic(hab_target, hab_dice hab_special); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
          SetCooldown(me, hab_name, 150);
@@ -102,6 +105,41 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    else
       SetCooldown(me, hab_name, 5);
    endif
+endfunction
+
+function charm(mobile, ts_time, diff)
+   playCastAnimation();
+   if (rollResistDice(mobile, INTELLIGENCE) > diff)
+      SendSystemReport(mobile, "*resistido*", SSM_INFO);
+      return 1;
+   endif
+
+   TS_StartTimer(summoned, "charmed", ts_time, diff, me);
+   return 1;
+endfunction
+
+function constrict(mobile, ts_time, diff)
+   playCastAnimation();
+   PrintText(mobile, "*raizes tentam se prender a você*");
+   if (rollResistDice(mobile, STRENGTH) > diff)
+      PrintText(mobile, "*resistido*", SSM_INFO);
+      return 1;
+   endif
+   PrintText(mobile, "*preso*", SSM_FAIL);
+
+   TS_StartTimer(summoned, "constricted", ts_time, diff);
+   return 1;
+endfunction
+
+function euforic(mobile, ts_time, diff)
+   playCastAnimation();
+   if (rollResistDice(mobile, CONSTITUTION) > diff)
+      PrintText(mobile, "*resistido*", SSM_INFO);
+      return 1;
+   endif
+
+   TS_StartTimer(summoned, "euforic", ts_time, diff);
+   return 1;
 endfunction
 
 function summonCreature(qty, creatures)
@@ -150,9 +188,10 @@ function NPC_Agarrar(dice, targ, difficulty)
 
    PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
    if (rollResistDice(targ, DEXTERITY) <= difficulty)
-      printText(targ, "*escapou de {}*".format(me.name));
+      PrintText(targ, "*resistido*".format(me.name), SSM_INFO);
       return 1;
    endif
+   PrintText(mobile, "*agarrado*", SSM_FAIL);
 
    TS_StartTimer(targ, "paralysis", 3);
    TS_StartTimer(me, "paralysis", 3);
@@ -409,18 +448,18 @@ function SpitWeb(difficulty, targ, range)
 endfunction
 
 function teleport(targ, effect := 0x3728)
-    var phase_coords := GetCoordsInLine(me.x, me.y, targ.x, targ.y);
-    phase_coords.Erase(phase_coords.Size()); 
-    TurnObjectToward(me, targ.x, targ.y);
-    PlaySoundEffect(me, 0x1FF);
+   var phase_coords := GetCoordsInLine(me.x, me.y, targ.x, targ.y);
+   phase_coords.Erase(phase_coords.Size()); 
+   TurnObjectToward(me, targ.x, targ.y);
+   PlaySoundEffect(me, 0x1FF);
 
-    foreach coord in phase_coords
-        PlayStationaryEffect(me.x, me.y, me.z, effect, 5, 5, 0);
-        //PlayStationaryEffectHuefx( npc.x, npc.y, npc.z, CInt(npccfgfile.teleportEffect), 5, 5,  0, CInt(npccfgfile.teleportColor), CInt(npccfgfile.teleportAlpha));
-        var z := GetWorldHeight(coord.x, coord.y, me.realm);
-        MoveObjectToLocation(me, coord.x, coord.y, z, me.realm, MOVEOBJECT_NORMAL);
-        sleepms(20);
-    endforeach
-  
-    return 1;
+   foreach coord in phase_coords
+      PlayStationaryEffect(me.x, me.y, me.z, effect, 5, 5, 0);
+      // PlayStationaryEffectHuefx( npc.x, npc.y, npc.z, CInt(npccfgfile.teleportEffect), 5, 5,  0, CInt(npccfgfile.teleportColor), CInt(npccfgfile.teleportAlpha));
+      var z := GetWorldHeight(coord.x, coord.y, me.realm);
+      MoveObjectToLocation(me, coord.x, coord.y, z, me.realm, MOVEOBJECT_FORCELOCATION);
+      sleepms(20);
+   endforeach
+
+   return 1;
 endfunction

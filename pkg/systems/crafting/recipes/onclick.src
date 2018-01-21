@@ -97,7 +97,7 @@ function SendGump(who, scroll)
 	endif
 	
 	if (cint(tilepic))
-      if (HaveFeat(who, is_lang))
+      if (!is_lang || HaveFeat(who, is_lang))
 		   GFTilePic(gump, 127, 91, tilepic);
       endif
    else

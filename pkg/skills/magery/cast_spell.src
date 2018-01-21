@@ -144,6 +144,14 @@ program SpellStarter(params)
       endif
    endif
 
+
+   if (TS_GetCooldown(mobile, "hallucination"))
+      if (targ.isA(POLCLASS_NPC))
+         var mobile_around := ListMobilesInLineOfSight( mobile, 10);
+         targ := mobile_around.randomentry();
+      endif
+   endif
+
    if (targ.isA(POLCLASS_NPC))
       targ.setAggro(mobile.serial, 12);
    endif

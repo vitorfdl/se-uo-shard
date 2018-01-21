@@ -202,20 +202,17 @@ function doRepair(who, craft_skill, recipe_cfg)
    endif
   
    var skill        := GetBonusAttr(AP_GetStat(who, WISDOM)) + getProficiencyBonus(who, craft_skill);
-   var damageamount := (2 * (3 + skill)/3000.0);
-   if (damageamount > 0)
-      damageamount := damageamount * -1;
-   endif
+   var damageamount := (2 * (15 - skill)/300.0);
    what.quality -= damageamount;
 
    if(what.quality <= damageamount)
-      SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
+      SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
       DestroyItem(what);
       return;
    endif
   
    if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-      SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
+      SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
       DestroyItem(what);
       return;
    endif

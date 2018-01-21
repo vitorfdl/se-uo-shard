@@ -153,6 +153,15 @@ function Flee(opponent)
       sleep(2);
       return;
    else
+      if ("FleeStealth" in custombehaviors)
+         if (!GetCooldown(me, "fleestealth"))
+            PrintText(me, "*esconde*");
+            sleep(1);
+            me.hidden := 1;
+            me.stealthsteps := 30;
+            SetCooldown(me, "fleestealth", 30);
+         endif
+      endif
       // var speech := GetConfigStringArray( npccfgfile, "FleeSpeech" );
       // if (speech.size() > 0)
       //    if (RandomInt(100)  < 30) //sempre 30% de chance de falar
@@ -347,6 +356,7 @@ function CalcPathAndMove(me, opponent, sleepdelay)
          path := FindPath(  me.x, me.y, me.z, opponent.x, opponent.y, opponent.z, me.realm, flags, 15); //calcula o path
          
          if (!path[1] || !path || path == error)
+            SetObjProperty(me,"#flees", 15);
             Flee(opponent);
             sleepms(sleepdelay);
             ChooseAnotherOpponent(me);

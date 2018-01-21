@@ -18,26 +18,38 @@ program SpellScript(params)
 
 	var maxsummons := 2;
 	var npctemplate := GetObjproperty(targ, "npctemplate");
-	var category := lower(getnpccategory( SplitWords(npctemplate)[3] ));
-
-	if ( category == "morto-vivo" )
+   var npc_info := NPC_GetNPCConfig(npc.npctemplate);
+	if ( npc_info.Category in array{"morto-vivo", "fada", "elemental"}  )
 		SendSysMessageEx(who, "Não resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
 		return 0;
-	endif
-
-	if (GetMaxPEts(who) <= GetNumPets(who) )
+	elseif (GetMaxPEts(who) <= GetNumPets(who) )
 		SendSysMessageEx(who, "Voce ja levantou corpos demais para sua capacidade", SSM_FAIL);
 		return 0;
-	endif
-
-	if ( !targ.isa(POLCLASS_CORPSE) )
+	elseif ( !targ.isa(POLCLASS_CORPSE) )
 		SendSysMessageEx(who, "Voce so pode usar esta magia em corpos", SSM_FAIL);
 		return 0;
-	endif
-	if (!GetObjproperty(targ, "npctemplate"))
+	elseif (!GetObjproperty(targ, "npctemplate"))
 		SendSysMessageEx(who, "Essa magia nao pode ser usada em players", SSM_FAIL);
 		return 0;
 	endif
+
+   var level := who.GetLevel();
+   var npclevel := cdbl(npc_info.Level);
+
+   if (level < 4 && npclevel > 1.5)
+		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
+		return 0;
+   elseif (level < 8 && npclevel > 2)
+		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
+		return 0;
+   elseif (level < 12 && npclevel > 4)
+		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
+		return 0;
+   elseif (level < 16 && npclevel > 6)
+		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
+		return 0;
+   endif
+
 	
 	//Efeito da magia
 	PlaySoundEffect(targ, SFX_SPELL_HEAL);
@@ -57,17 +69,15 @@ program SpellScript(params)
 
 
 	//Random de Monstros
-	var undead := createnpcfromtemplate(npctemplate, targ.x, targ.y, targ.z, 0 , who.realm);
+	var undead := createnpcfromtemplate(npctemplate, targ.x, targ.y, targ.z, 0 , targ.realm);
+	PlaySoundEffect(targ, 383);
+	Destroyitem( targ );
+
    undead.color     := 2301;
    undead.truecolor := 2301;
    undead.run_speed := 5;
    undead.CA        := undead.CA - 4;
    SetObjProperty(undead, "dmgbonus", -4);
-	AddPet(who, undead.serial, 1);
-
-	PlaySoundEffect(targ, 383);
-
-	Destroyitem( targ );
 	undead.SetMaster(who);
 	SetObjProperty(undead, "GuardKill", 1);	
 	SetObjProperty(undead, "pet_cost", 1);	
@@ -75,14 +85,15 @@ program SpellScript(params)
 	SetObjProperty(undead, "name", targ.name);
 	SetObjproperty(undead, "script", targ.script);
 	SetObjProperty(undead, "AntigoTreinadorID", who.serial);
+
 	undead.script := ":ghaia:follower";
 	RestartScript(undead);
-				
 	Run_Script_To_Completion(":death:npcdeath", {undead});
+	AddPet(who, undead.serial, 1);
 				
 	TS_StartTimer(undead, "summon", 240);
 		
-	SendSysMEssageEx(who, "Voce teve sucesso ao levantar o corpo", SSM_INFO);
+	SendSysMEssageEx(who, "Você teve sucesso ao levantar o corpo", SSM_INFO);
 	
 	return 1;
 endprogram 

@@ -1,0 +1,49 @@
+
+program command_Message(who, item)
+   if (!who.cmdlevel)
+      return showSpecialGump(who);
+   endif
+
+	while (1)
+		var gump := GFCreateGump();
+		GFResizePic(gump, 84, 90, 9260, 280, 200);
+
+		GFGumpPicTiled(gump, 100,100,30,235,10460);
+		GFGumpPicTiled(gump, 320,100,30,235,10460);
+		
+		var gump_params := GetObjProperty(item, "gump_params");
+		if (!gump_params)
+			var gump_params := struct{};
+		endif
+
+      var y := 120;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Mudar Gump", 1);
+      
+      GFAddButton(gump, 172, y+20, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
+		GFHTMLArea(gump,  170, y+20, 115, 25, "<basefont color=#7FFFD4><center>Testar Gump", 1);
+      
+      GFAddButton(gump, 172, y+20+20, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
+		GFHTMLArea(gump,  170, y+20+20, 115, 25, "<basefont color=#7FFFD4><center>Alterar lingua", 1);
+      
+		var input := GFSendGump(who, gump);
+		input := input[0];
+
+      var output := handleInput(who, input, gump_params);
+
+		SetObjProperty(targ, "gump_params", gump_params);
+		if (output) return; endif;
+	endwhile
+endprogram
+
+function handleInput(who, input, gump_params)
+
+endfunction
+
+
+function showSpecialGump(who)
+   var gump_params := GetObjProperty(item, "gump_params");
+   if (!gump_params)
+      return 1;
+   endif
+endfunction

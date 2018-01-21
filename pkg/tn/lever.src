@@ -209,9 +209,7 @@ function setHiding(who, item)
 endfunction
 
 function SetElevator(who, item)
-
 	var maxz := Cint(RequestGump(who, "Qual o valor que você deseja subir ou descer os itens"));
-	
 	if (!maxz)
 		SendSysMessage(who, "Cancelado");
 		return;
@@ -235,7 +233,6 @@ function SetElevator(who, item)
 	endforeach
 	setobjproperty(item, "items", serials);
 	SendSysMessage(who, "Itens adicionados: " + items.size() );
-
 endfunction
 
 function changegraphic(who, item)
@@ -360,22 +357,31 @@ function doElevator(who, item)
 	
 	var stat := GetObjProperty(item, "status");
 	if ( (stat == error) || (stat == "up"))
+      var modifier := 1;
+      if (maxz < 0)
+         modifier := -1;
+      endif
 		//sendsysmessage(who, "subindo2");
-		while (startz <= maxz )
+		while (startz != maxz )
 			foreach obj in items
 				var coisa := SystemFindObjectBySerial(obj);
 				//SendSysMessage(who, " " + coisa);
-				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z + 1, coisa.realm, MOVEOBJECT_FORCELOCATION); 
+				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z + modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
 			endforeach
 			startz := startz + 1;
 			sleepms(50);
 		endwhile
 		SetObjProperty(item, "status", "down");
 	else
-		while (startz <= maxz )
+      maxz := max * -1;
+      var modifier := 1;
+      if (maxz < 0)
+         modifier := -1;
+      endif
+		while (startz != maxz )
 			foreach obj in items
 				var coisa := SystemFindObjectBySerial(obj);
-				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z - 1, coisa.realm, MOVEOBJECT_FORCELOCATION); 
+				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z - modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
 			endforeach
 			startz := startz + 1;
 			sleepms(50);
@@ -996,7 +1002,7 @@ endfunction
 
 function bindlights(who, item)
   var newarray := array{};
-  SendSysMessage(who,"target the lights to link to the switch. cancel to end");
+  SendSysMessage(who,"Escolha as luzes que você deseja ligar com a alavanca. cancel to end");
   var trg;
   while(1)
     trg := Target(who);
@@ -1019,7 +1025,7 @@ function createpassage(who, item)
   var newarray := array{};
   var linkarray := array{};
   linkarray.append(item.serial);
-  SendSysMessage(who,"target the pieces to link to the switch. cancel to end");
+  SendSysMessage(who,"Escolhas as peças que você deseja ligar com a alavanca. cancel to end");
   var trg;
   while(1)
     trg := Target(who);
@@ -1028,13 +1034,13 @@ function createpassage(who, item)
     endif
     newarray.append(trg.serial);
   endwhile
-  SendSysMessage(who,"target the item you wish sounds to originate from");
+  SendSysMessage(who,"Escolha o item que você quer que o som seja originado");
   var snd := Target(who);
   var speaker := array{};
   speaker.append(snd.x);
   speaker.append(snd.y);
   speaker.append(snd.z);
-  SendSysMessage(who,"now target any other switches you wish to link together.");
+  SendSysMessage(who,"Agora escolha qualquer outra alavanca que queira sincronizar com esta.");
   while(1)
     trg := Target(who);
     if(!trg)
@@ -1054,7 +1060,7 @@ endfunction
 
 function doorstatus(who, item)
   var newarray := array{};
-  SendSysMessage(who,"target the door you wish to link this switch to. cancel to end");
+  SendSysMessage(who,"Escolha a porta que você deseja linkar com esta alavanca. Esc para cancelar");
   var trg;
   while(1)
     trg := Target(who);
@@ -1065,7 +1071,7 @@ function doorstatus(who, item)
   endwhile
   SetObjProperty(item,"function", "door");
   SetObjProperty(item,"ds", newarray);
-  SendSysMessage(who,"the switch has successfully been linked to the door(s)");
+  SendSysMessage(who,"A alavanca foi ligada com as porta(s)");
 endfunction
 
 function setprp(who, item, result)

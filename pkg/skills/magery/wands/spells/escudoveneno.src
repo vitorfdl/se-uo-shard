@@ -1,0 +1,74 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program pisonShield(params)
+	var who := params[1];
+	var targ := params[3];
+   var dice_roll := params[2].dice_roll;
+	params := 0; // No longer needed
+
+   while ( 1 )
+      SendSysMessageEx(who, "Selecione o veneno", SSM_REQUEST);
+      var the_poison := Target(who);
+
+      if(!the_poison)
+         SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+         return;
+      elseif(!can_access(who, the_poison))
+         SendSysMessageEx(who, "Você não pode usar isto!", SSM_FAIL);
+         return;
+      elseif (Distance(who, the_poison) > 1)
+         SendSysMessageEx(who, "Você está muito distante!", SSM_FAIL);
+         return;		
+      elseif (the_poison.graphic != 0x0f09)
+         SendSysMessageEx(who, "Isso não parece ser uma poção!", SSM_FAIL);
+         return;
+      endif
+
+   endwhile
+
+	var level, poisonType;
+	level := Cint(GetObjProperty(the_poison, "level"));
+	if (!level)
+		level := RandomDiceRoll("1d2");
+	endif
+
+	case(the_poison.objtype)
+		0xbf00: level := 1;  poisonType := "defaultPoison";
+    	// 0xbf01: poisonType :="strPoison"; 
+		// 0xbf07: poisonType :="dexPoison"; 
+		// 0xbf06: poisonType :="intPoison"; 
+		0xbf02: poisonType:="staminaPoison"; 
+		0xbf03: poisonType:="paralyzePoison";
+		0xef54: poisonType :="manaPoison";
+		0xbf04: level := 3;  poisonType := "defaultPoison";
+		0xdc04: level := 2;  poisonType := "defaultPoison";
+		0xbf05: level := 4;  poisonType := "defaultPoison";
+      default:
+         SendSysMessageEx(who, "Isso não parece um veneno.", SSM_FAIL);
+         return 0;
+	endcase
+
+   var diff := dice_roll-2;
+   if (diff < 10)
+      diff := 10;
+   endif
+
+   var poisonInfo := struct;
+   poisonInfo.+name   := poisonType;
+   poisonInfo.+level  := level;
+   poisonInfo.+acc    := who.acctname;
+   poisonInfo.+difficulty := diff;
+
+   SetObjProperty(who, "poisonshield", poisonInfo);
+   TS_StartTimer(targ, "poisonshield", 20);	
+	return 1;
+endprogram

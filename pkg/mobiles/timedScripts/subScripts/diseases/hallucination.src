@@ -1,0 +1,68 @@
+	/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+function StartScript(mobile, attacker := 0, level := 0)
+	while ( 1 )
+      sleep(RandomDiceRoll("1d4+8"));
+      if (mobile.dead) continue; endif
+
+      var random_effect = RandomInt(7);
+
+      case (random_effect)
+         1:
+            TS_StartScript(mobile, "paralysis", 4)
+            PrintText(mobile, "*divagando olhando algo*", SSM_INFO);
+            PlayCustomSound(mobile, 11);
+         2:
+            PlayCustomSound(mobile, 21);
+         3:
+            PlayCustomSound(mobile, 18);
+            sleep(2);         
+            PlayCustomSound(mobile, 18);
+         4:
+            PlayCustomSound(mobile, 1);
+         5:
+            PrintText(mobile, "*parece doidão*");
+         5:
+            PrintText(mobile, "*se assusta*");
+            PlayCustomSound(mobile, 25);
+      endcase
+   endwhile
+
+   return 1;
+endfunction
+
+function EndScript(mobile)
+   return 1;
+endfunction
+
+function LogOffScript(mobile)
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile);
+      elseif (type == "LogOff")
+         return LogOffScript(mobile);
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

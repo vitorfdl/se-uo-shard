@@ -96,7 +96,9 @@ function MakePotion (pot, who)
 		endif
 		ConsumeSubstance(who.backpack, reag, amount);
       if (hex(reag) == hex(0x1F91))
-         CreateItemInBackpack(who, 0x1f81, amount);
+         for let i = 1 to amount
+            CreateItemInBackpack(who, 0x1f81);
+         endfor
       endif
 		sleepms(2);
 	endforeach

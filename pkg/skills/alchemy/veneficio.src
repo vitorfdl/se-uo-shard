@@ -15,7 +15,8 @@ include ":charactercreation:habilidades";
 program do_poisoning(who)
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
-	SendSysMessageEx(who, "Escolha a pocao de veneno.", SSM_REQUEST);
+
+	SendSysMessageEx(who, "Escolha a poção de veneno.", SSM_REQUEST);
 	var the_poison := Target(who);
 
 	if(!the_poison)
@@ -82,7 +83,7 @@ program do_poisoning(who)
 		canBePoisoned := 1;
 	elseif( the_item.graphic == 0x1bfb || the_item.graphic == 0xf3f  )
 		if(the_item.amount > 10)
-			SendSysMessageEx(who, "Você so pode envenenar 10 flechas de uma vez.", SSM_FAIL);
+			SendSysMessageEx(who, "Você só pode envenenar 10 flechas de uma vez.", SSM_FAIL);
 			return 0;
 		endif
 		canBePoisoned := 1;

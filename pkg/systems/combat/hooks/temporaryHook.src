@@ -74,6 +74,10 @@ program Attack(params)
 		return 1;
 	elseif ( GetObjProperty(attacker, "#Casting") )
 		return 1;
+   elseif ( TS_GetTimerInfo(attacker, "charmed") )
+      if (GetObjProperty(attacker, "#charmed") == defender.serial)
+         return 1;
+      endif
 	endif
 
 	if (attacker.acctname)
@@ -103,7 +107,16 @@ program Attack(params)
       attacker.hidden := 0;
 	endif
 
-	var attack_chance := GetAttackerChance(attacker, defender);
+	var attacker_roll := GetAttackerChance(attacker, defender);
+   if (weapon.isBow() && (attacker_roll.critical < 0 || TS_GetTimerInfo(who, "hallucination")))
+      SendSysMessageEx(attacker, "Você erra o alvo", SSM_FAIL);
+      var mobiles := ListMobilesNearLocation(defender.x, defender.y, defender.z, 2);
+      mobiles := RemoveFromArray(mobiles, attacker);
+      defender := mobiles.randomentry();
+      attacker_roll := GetAttackerChance(attacker, defender);
+   endif
+
+   var attack_chance := attacker_roll.dice;
 
 	var armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
 	armor     := CS_SelectArmored(armor);
@@ -149,7 +162,7 @@ program Attack(params)
 			defender.SetAchievement("shield", 1);
 		endif
 
-		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, dmg, wpn_a_elem });
+		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, attack_chance, wpn_a_elem });
 
 	else //ERROU O ATAQUE
 		if ( weapon.isBow() && !attacker.npctemplate )
@@ -258,8 +271,9 @@ function GetAttackerChance(attacker, defender)
 
    bonus += GetAttackerFeatBonus(attacker, 0);
 	
-	var dice := rollAttrDice(attacker, attribute, dice_gain) + bonus;
-	return dice;
+	var roll := rollAttrDice(attacker, attribute, dice_gain, struct{ "get_critical" := 1});
+   roll.dice += bonus;
+	return roll;
 endfunction
 
 function SelectAttribute(attacker)
@@ -307,9 +321,13 @@ function GetDefenderCA(defender, armor)
 			CA := 10 + GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
 		endif
 
-		if (defender.shield)
+		if (defender.shield && !defender.npctemplate)
 			CA += defender.shield.ar_base + defender.shield.ar_mod;
 		endif
+
+      if (!defender.npctemplate && !attacaker.npctemplate)
+         attacker.SetAchievement("player_attack", 1);
+      endif
 
       var wpn_elem := GetItemCFGInfo(defender, defender.weapon);
       if (defender.weapon.WeaponType == "dualsword" && HaveFeat(defender, "Defesa Perfeita"))

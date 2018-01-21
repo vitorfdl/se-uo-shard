@@ -128,7 +128,7 @@ function CreateBossStructGump(who, byref boss)
 		cfg_hp := " [{}]".format(cfg.Hits);
 	endif
 	GFTextLine(chargump, cx_pos, y_pos, 1153, "HP{}:".format(cfg_hp));
-	hits := GFTextEntry( chargump, cx_pos+60, y_pos, 100, 20, 1150, cint(boss.hits) + "");
+	hits := GFTextEntry( chargump, cx_pos+80, y_pos, 100, 20, 1150, cint(boss.hits) + "");
 
 	var cfg_ca := "";
 	if (cfg)

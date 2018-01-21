@@ -25,7 +25,9 @@ exported function HandleItemPickup( who, byref packet )
 	packet := packet;
 
 	var item := SystemFindObjectBySerial(packet.GetInt32(1)); //pega os 32 bits depois do primeiro byte
-
+   if (GetObjProperty(item, "nopickup") && !who.cmdlevel)
+      return 1;
+   endif
 
 	var item1 := GetEquipmentByLayer(who, 1);
 	var item2 := GetEquipmentByLayer(who, 2);

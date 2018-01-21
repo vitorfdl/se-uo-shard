@@ -46,15 +46,11 @@ program UseWood( who, wood )
 		var x := wood.x;
 		var y := wood.y;
 		var z := wood.z;
-      var itemnearby := ListItemsNearLocation( x, y, z, 8 );
-
-		foreach item in itemnearby
-			if ( (item.graphic == 3555) )
-				SendSysMessageEx(who, "Já existe outro acampamento pronto por perto.", SSM_FAIL );
-				return;
-			endif
-         sleepms(2);
-		endforeach  
+      var itemnearby := ListItemsNearLocationOfType( x, y, z, 12, 0xDE3 );
+      if (itemnearby > 1)
+         SendSysMessageEx(who, "Já existe outro acampamento pronto por perto.", SSM_FAIL );
+         return;
+      endif
 
 		Detach();
 		PrintTextAbove( who, "*acendendo uma fogueira*");
@@ -65,7 +61,7 @@ program UseWood( who, wood )
 		PrintText( campfire, "Um acampamento foi preparado.");
 		
 		campfire.movable := 0;
-		var time := AP_GetSkill(who, SOBREVIVENCIA) + 40;
+		var time := (AP_GetSkill(who, SOBREVIVENCIA, RETURN_BONUS) + 10) * 2;
 		time := cint(time * wood.amount);
 		DestroyItem(wood);
 		var tempocura := 0;
@@ -73,11 +69,11 @@ program UseWood( who, wood )
 		var healpoints := 2;
 
 		while( time > 0 )
-			// if (GetObjProperty(campfire, "encantado") == 1)
-			// 	time := time + 30;
-			// 	healpoints := healpoints+2;
-			// 	EraseObjProperty(campfire, "encantado");
-			// endif
+			if (GetObjProperty(campfire, "encantado") == 1)
+				time := time + 10;
+				healpoints := healpoints+2;
+				EraseObjProperty(campfire, "encantado");
+			endif
 			time := time - 1;
 			tempocura := tempocura + 1;
 			if (tempocura == 5)
@@ -86,7 +82,7 @@ program UseWood( who, wood )
 				foreach char in (nearbypeople)
 					if (char.warmode)
 						continuehealing := 0;
-						PrintText(campfire, "Algo atrapalha o acampamento.");
+						PrintText(campfire, "*algo atrapalha o acampamento*");
 					endif
 					sleepms(2);
 				endforeach
@@ -94,6 +90,7 @@ program UseWood( who, wood )
 				if (continuehealing == 1)
 					foreach char in (nearbypeople)
 						healFLS(char, healpoints, 0);
+                  sleepms(1);
 					endforeach
 				endif
 			endif

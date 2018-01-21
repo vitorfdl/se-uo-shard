@@ -68,7 +68,7 @@ program help_menu(who)
 		var sendpage := YesNo(who, "Use essa opção somente se desejar reportar um jogador por má conduta ou que esteja infringindo regras. Deseja continuar?", "Sim, quero reportar um jogdaor.", "Não."  );
 		if (sendpage)
          SendSysMessageEx(who, "Que jogador deseja denunciar?", SSM_REQUEST);
-         var targ := Target(who);
+         var targ := Target(who, TGTOPT_NOCHECK_LOS);
          if (!targ.isA(POLCLASS_MOBILE) || !targ.acctname)
             return SendSysMessageEx(who, "Só pode reportar jogadores.", SSM_FAIL);
          endif

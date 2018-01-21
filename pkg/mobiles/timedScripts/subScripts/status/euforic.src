@@ -1,0 +1,58 @@
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include "include/utils";
+
+function StartScript(mobile, attacker := 0, level := 0)
+   mobile.frozen := 1;
+   while (1)
+      PlayObjectCenteredEffect(mobile, GFX_EXPLODE_1, 7, 16);
+      var point;
+      while (!point)
+         var point := RandomPlace(mobile, 1);
+         if (!CanWalk("L", mobile.x, mobile.y, mobile.z, point.x, point.y, CANWALK_DIR))
+            point := 0;
+         endif
+         sleepms(2);
+      endwhile
+      mobile.facing := GetFacing(mobile.x, mobile.y, point.x, point.y);
+      MoveObjectToLocation(mobile, point.x, point.y, point.z, mobile.realm, MOVEOBJECT_FORCELOCATION);
+      if (!randomInt(2))
+         PrintText(mobile, "*eufórico*", SSM_FAIL);
+      endif
+      sleep(2);
+      if (rollResistDice(mobile, CONSTITUTION) > level)
+         break;
+      endif
+   endwhile
+	return 1;
+endfunction
+
+function EndScript(mobile)
+   mobile.frozen := 0;
+	return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile);
+      elseif (type == "LogOff")
+         return;
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

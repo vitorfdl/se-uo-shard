@@ -14,7 +14,7 @@ exported function intrade( player, byref packet )
 	var character := SystemFindObjectBySerial(Cint(packet.GetInt32(4)));
 	if (player.concealed < 1 && character.concealed < 1 && !GetObjProperty(player, "nomsgtrade") && !GetObjProperty(character, "nomsgtrade"))
 		if (type == 0x00)
-			PrintText(player, "*"+player.name+" realizando uma troca com "+character.name+"*", 6);
+			PrintText(player, "*realizando uma troca com {}*".format(character.name), 6);
 		endif
 	endif
 

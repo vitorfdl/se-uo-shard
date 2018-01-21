@@ -5,6 +5,8 @@ include ":combat:weaponInfo";
 include "include/newperformaction";
 include "include/client";
 
+const IS_REMOVE := 1;
+
 function DistanceChecks(attacker, defender)
 	var cur_range := Distance(attacker, defender);
 	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
@@ -190,4 +192,44 @@ function debugMSG(who, text)
 	if (GetObjProperty(who, "debug"))
 		SendSysMessageEx(who, text);	
 	endif
+endfunction
+
+function SetAmorHitscript(who, hitscript, remove := 0);
+   var hitscripts := GetObjProperty(who, "ArmorHitScripts");
+   if (!hitscripts)
+      hitscripts := array{};
+   endif
+
+   if (!remove)
+      if (FindInArray(hitscripts, hitscript))
+         hitscripts.append(hitscript);
+      endif
+   else
+      hitscripts := RemoveFromArray(hitscripts, hitscript);
+   endif
+
+   if (hitscripts.size() < 1)
+      return EraseObjProperty(who, "ArmorHitScripts");
+   endif
+   SetObjProperty(who, "ArmorHitScripts", hitscripts);
+endfunction
+
+function SetHitscript(who, hitscript, remove := 0);
+   var hitscripts := GetObjProperty(who, "HitScripts");
+   if (!hitscripts)
+      hitscripts := array{};
+   endif
+
+   if (!remove)
+      if (FindInArray(hitscripts, hitscript))
+         hitscripts.append(hitscript);
+      endif
+   else
+      hitscripts := RemoveFromArray(hitscripts, hitscript);
+   endif
+
+   if (hitscripts.size() < 1)
+      return EraseObjProperty(who, "HitScripts");
+   endif
+   SetObjProperty(who, "HitScripts", hitscripts);
 endfunction

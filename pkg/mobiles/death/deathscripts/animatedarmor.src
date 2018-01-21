@@ -1,0 +1,29 @@
+
+
+use uo;
+use os;
+use util;
+
+include ":death:death";
+
+CONST MAX_RANGE	:= 8;
+
+program DeathScript(params)
+	var corpse := params[1];
+	//var npc_cfg := params[2];
+	params := 0; // Not needed anymore
+   PrintTextAbove(corpse, "*a armadura para de se mover*");
+
+	var sword;
+	foreach item in (EnumerateItemsInContainer(corpse))
+      item.hp := 0;
+      item.quality = 0;
+	   MoveObjectToLocation(item, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION);
+	   SetName(item, item.desc);
+      if (item.isA(POLCLASS_ARMOR))
+	      SetName(item, "{} enferrujada".format(item.desc));
+      endif
+	endforeach
+
+	return 1;
+endprogram

@@ -1,0 +1,75 @@
+	/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+function StartScript(mobile, attacker := 0, level := 0)
+	var cycle := 0;
+	while ( 1 )
+		cycle := cycle+1;
+		if  ( cycle == 1 )
+			SendSysMessageEx(mobile, "Você não sente os efeitos do alcool.", SSM_INFO);
+		elseif ( cycle == 5 )
+			SendSysMessageEx(mobile, "Você sente que pode ficar mais bêbado se beber mais.", SSM_INFO);
+		elseif ( cycle == 8 )
+			SendSysMessageEx(mobile, "Você começa a se sentir um pouco tonto.", SSM_INFO);
+		elseif ( cycle == 13 )
+			SendSysMessageEx(mobile, "Você se sente bêbado e começa a tropeçar.", SSM_INFO);
+		elseif ( cycle == 20 )
+			SendSysMessageEx(mobile, "Você começa a se sentir doente com o alcool", SSM_INFO);
+		endif
+
+		var roll := RandomInt(10);
+		if ( cycle >= 13 )
+			mobile.facing := RandomInt(8);
+			PrintTextAbove(mobile, "*Hic!*");
+
+			if ( roll < 7 )
+				PerformAction(mobile, ANIM_BOW);
+			endif
+		endif
+
+		if ( cycle > 25 ) // Boy this person is wasted.
+			PerformAction(mobile, 32);
+			if ( roll < 3 )
+				CreateItemAtLocation(mobile.x, mobile.y, mobile.z, "vomit", 1, mobile.realm);
+			endif
+		endif
+		
+		Sleep(RandomDiceRoll("1d4")+2);
+	endwhile
+   return 1;
+endfunction
+
+function EndScript(mobile)
+   return 1;
+endfunction
+
+function LogOffScript(mobile)
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile);
+      elseif (type == "LogOff")
+         return LogOffScript(mobile);
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

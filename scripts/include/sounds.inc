@@ -2,6 +2,10 @@ use uo;
 use os;
 
 function PlayCustomSound(who, number)
+   if (GetObjProperty(who, "nosound"))
+      return 1;
+   endif
+   
    var sounds := dictionary;
    sounds[1] := array{"*Ah*", 0x30B, 0x41A};
    sounds[2] := array{"*Ahha*", 0x30D, 0x41B};
@@ -17,7 +21,7 @@ function PlayCustomSound(who, number)
    sounds[12] := array{"*Gemendo*", 0x31C, 0x42C};
    sounds[13] := array{"*Rosnando*", 0x31D, 0x42D};
    sounds[14] := array{"*Hey*", 0x31E, 0x42E};
-   sounds[15] := array{"*Solucando*", 0x31F, 0x42F};
+   sounds[15] := array{"*Soluçando*", 0x31F, 0x42F};
    sounds[16] := array{"*Huh?*", 0x320, 0x430};
    sounds[17] := array{"*Beijando*", 0x321, 0x431};
    sounds[18] := array{"*Rindo*", 0x322, 0x432};
