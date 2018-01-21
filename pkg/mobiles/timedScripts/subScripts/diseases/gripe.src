@@ -9,6 +9,7 @@ use util;
 include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
+include "include/sounds";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 
@@ -17,7 +18,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       sleep(RandomDiceRoll("1d4") * 120);
       if (mobile.dead) continue; endif
 
-      var random_effect = RandomInt(8);
+      var random_effect := RandomInt(8);
 
       case (random_effect)
          1:

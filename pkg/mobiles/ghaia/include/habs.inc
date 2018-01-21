@@ -48,19 +48,25 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       hab_target := me.opponent;
    elseif (hab_target == "Enemies")
       hab_target := array{};
+      var hostiles := ListHostiles(me, 10);
       foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 10);
-         var hostiles := ListHostiles(me);
          if (CanFight(me, enemy) || enemy in hostiles)
             hab_target.append(enemy);
          endif
       endforeach
    elseif (hab_target == "RandomEnemy")
-      foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 5);
-         if (CanFight(me, enemy))
+      hab_target := 0;
+      var mobs := ListMobilesNearLocation(me.x, me.y, me.z, 10);
+      var hostiles := ListHostiles(me, 10);
+      foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 10);
+         if (CanFight(me, enemy) || enemy in hostiles)
             hab_target := enemy;
             break;
          endif
       endforeach
+      if (!hab_target)
+         return 0;
+      endif
    elseif (hab_target == "Ally")
       foreach ally in ListMobilesNearLocation(me.x, me.y, me.z, 8);
          if (hab_name == "curar")
@@ -88,12 +94,12 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "curar": res := Healing(hab_target, hab_dice); break;
       "roubar": res := Roubar(hab_target); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
-      "rajada_acida": res := RajadaAcida(hab_dice, hab_target, hab_special); break;
-      "teia": res := SpitWeb(hab_special, hab_target, hab_special); break;
+      "rajada_acida": res := RajadaAcida(hab_dice, hab_target, cint(hab_special)); break;
+      "teia": res := SpitWeb(hab_special, hab_target, cint(hab_special)); break;
       "teleport": res := teleport(hab_target, hab_special); break;
-      "constrictSpell": res := constrict(hab_target, hab_dice, hab_special); break;
-      "charming": res := charm(hab_target, hab_dice hab_special); break;
-      "SoproEuforia": res := euforic(hab_target, hab_dice hab_special); break;
+      "constrictSpell": res := constrict(hab_target, hab_dice, cint(hab_special)); break;
+      "charming": res := charm(hab_target, hab_dice, cint(hab_special)); break;
+      "SoproEuforia": res := euforic(hab_target, hab_dice, cint(hab_special)); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
          SetCooldown(me, hab_name, 150);
@@ -109,17 +115,21 @@ endfunction
 
 function charm(mobile, ts_time, diff)
    playCastAnimation();
+   print(diff);
+   PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
+
    if (rollResistDice(mobile, INTELLIGENCE) > diff)
       SendSystemReport(mobile, "*resistido*", SSM_INFO);
       return 1;
    endif
 
-   TS_StartTimer(summoned, "charmed", ts_time, diff, me);
+   TS_StartTimer(mobile, "charmed", ts_time, diff, me);
    return 1;
 endfunction
 
 function constrict(mobile, ts_time, diff)
    playCastAnimation();
+   PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
    PrintText(mobile, "*raizes tentam se prender a você*");
    if (rollResistDice(mobile, STRENGTH) > diff)
       PrintText(mobile, "*resistido*", SSM_INFO);
@@ -127,18 +137,19 @@ function constrict(mobile, ts_time, diff)
    endif
    PrintText(mobile, "*preso*", SSM_FAIL);
 
-   TS_StartTimer(summoned, "constricted", ts_time, diff);
+   TS_StartTimer(mobile, "constricted", ts_time, diff);
    return 1;
 endfunction
 
 function euforic(mobile, ts_time, diff)
    playCastAnimation();
+   PrintText(me, "*baforada mágica*");
    if (rollResistDice(mobile, CONSTITUTION) > diff)
       PrintText(mobile, "*resistido*", SSM_INFO);
       return 1;
    endif
 
-   TS_StartTimer(summoned, "euforic", ts_time, diff);
+   TS_StartTimer(mobile, "euforic", ts_time, diff);
    return 1;
 endfunction
 
@@ -191,7 +202,7 @@ function NPC_Agarrar(dice, targ, difficulty)
       PrintText(targ, "*resistido*".format(me.name), SSM_INFO);
       return 1;
    endif
-   PrintText(mobile, "*agarrado*", SSM_FAIL);
+   PrintText(targ, "*agarrado*", SSM_FAIL);
 
    TS_StartTimer(targ, "paralysis", 3);
    TS_StartTimer(me, "paralysis", 3);

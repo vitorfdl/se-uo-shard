@@ -1,49 +1,114 @@
+use uo;
+use os;
+use util;
+
+include ":gumps:include/gumps";
+include ":gumps:include/gumps_ex";
+include ":datafile:datafile";
+include ":attributes:attributes";
+include ":tn:tngumps";
+
+const BTN_CHANGE_CHANGE := 13;
+const BTN_CHANGE_TEST := 14;
+const BTN_CHANGE_LANG := 15;
+const BTN_CHANGE_TEXT := 16;
 
 program command_Message(who, item)
    if (!who.cmdlevel)
-      return showSpecialGump(who);
+      return showSpecialGump(who, item);
    endif
 
 	while (1)
 		var gump := GFCreateGump();
+      GFClosable(gump, 1);
 		GFResizePic(gump, 84, 90, 9260, 280, 200);
 
-		GFGumpPicTiled(gump, 100,100,30,235,10460);
-		GFGumpPicTiled(gump, 320,100,30,235,10460);
+		GFGumpPicTiled(gump, 100,100,30,180,10460);
+		GFGumpPicTiled(gump, 320,100,30,180,10460);
 		
 		var gump_params := GetObjProperty(item, "gump_params");
 		if (!gump_params)
-			var gump_params := struct{};
+			gump_params := struct{ "x" := 0, "y" := 0, "gump_id" := 0};
 		endif
 
       var y := 120;
-      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CHANGE);
 		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Mudar Gump", 1);
       
-      GFAddButton(gump, 172, y+20, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
-		GFHTMLArea(gump,  170, y+20, 115, 25, "<basefont color=#7FFFD4><center>Testar Gump", 1);
+      GFAddButton(gump, 172, y+20+10, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LANG);
+		GFHTMLArea(gump,  170, y+20+10, 115, 25, "<basefont color=#7FFFD4><center>Alterar idioma", 1);
       
-      GFAddButton(gump, 172, y+20+20, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
-		GFHTMLArea(gump,  170, y+20+20, 115, 25, "<basefont color=#7FFFD4><center>Alterar lingua", 1);
+      GFAddButton(gump, 172, y+20+20+20, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_TEXT);
+		GFHTMLArea(gump,  170, y+20+20+20, 115, 25, "<basefont color=#7FFFD4><center>Alterar Texto", 1);
       
+      GFAddButton(gump, 172, y+20+20+20+30, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_TEST);
+		GFHTMLArea(gump,  170, y+20+20+20+30, 115, 25, "<basefont color=#7FFFD4><center>Testar Gump", 1);
 		var input := GFSendGump(who, gump);
 		input := input[0];
 
-      var output := handleInput(who, input, gump_params);
+      var output := handleInput(who, input, item, gump_params);
 
-		SetObjProperty(targ, "gump_params", gump_params);
+		SetObjProperty(item, "gump_params", gump_params);
 		if (output) return; endif;
 	endwhile
 endprogram
 
-function handleInput(who, input, gump_params)
-
+function handleInput(who, input, item, byref gump_params)
+   case (input)
+      BTN_CHANGE_CHANGE:
+         var questions := array{};
+         questions.append(struct{ "title" := "Qual o ID do gump?", "marked" := ""+cint(gump_params.gump_id)});
+         questions.append(struct{ "title" := "Qual posição x do texto?", "marked" := ""+cint(gump_params.x)});
+         questions.append(struct{ "title" := "Qual posição y do texto?", "marked" := ""+cint(gump_params.y)});
+         questions.append(struct{ "title" := "Qual largura do texto?", "marked" := ""+cint(gump_params.width)});
+         questions.append(struct{ "title" := "Qual altura do texto?", "marked" := ""+cint(gump_params.height)});
+         var output := QuestionsGump(who, questions);
+         gump_params.gump_id := cint(output[1]);
+         gump_params.x := cint(output[2]);
+         gump_params.y := cint(output[3]);
+         gump_params.width := cint(output[4]);
+         gump_params.height := cint(output[5]);
+         
+      BTN_CHANGE_LANG:
+         var choice := RadioGump(who, 0, 0, "Qual idioma deseja escolher?", array{"Linguagem Rúnica", "Linguagem Élfica", "Lingua Comum"});
+         if (choice["Comum"])
+            gump_params.erase("lang");
+         else
+            gump_params.lang := choice;
+         endif
+      BTN_CHANGE_TEST:
+         showSpecialGump(who, item);
+      BTN_CHANGE_TEXT:
+         var text := BigRequestGump(who, "Escreva o conteúdo do gump, use [P] para quebrar a linha");
+         gump_params.text := text;
+      default: return 1;
+   endcase
 endfunction
 
 
-function showSpecialGump(who)
+function showSpecialGump(who, item)
    var gump_params := GetObjProperty(item, "gump_params");
-   if (!gump_params)
+   if (!gump_params || !gump_params.gump_id)
       return 1;
    endif
+
+   var is_lang := gump_params.lang;
+   var lang := "";
+   if (is_lang && !HaveFeat(who, is_lang))
+      if (is_lang == "Linguagem Élfica")
+         lang := "Face=Gargish";
+      elseif (is_lang == "Linguagem Rúnica")
+         lang := "Face=Runic";
+      else
+         SendSysMessageEx(who, "Problema com a linguagem do objeto", SSM_FAIL);
+         return 0;
+      endif
+   endif
+
+   var gump := GFCreateGump();
+   GFClosable(gump, 1);
+   GFSetId(gump, 0x94b5);
+   GFGumpPic(gump, 250, 250, gump_params.gump_id);
+   GFHTMLArea(gump, gump_params.x+250, gump_params.y+250, gump_params.width, gump_params.height, "<basefont {} color=#FFFFFF>{}".format(lang, gump_params.text) , 0, 0);
+   GFSendGump(who, gump);
 endfunction

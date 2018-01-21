@@ -16,8 +16,11 @@ program DeathScript(params)
 
 	var sword;
 	foreach item in (EnumerateItemsInContainer(corpse))
+      if (item.objtype == 0x9b2)
+         Destroyitem(item);
+      endif
       item.hp := 0;
-      item.quality = 0;
+      item.quality := 0;
 	   MoveObjectToLocation(item, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION);
 	   SetName(item, item.desc);
       if (item.isA(POLCLASS_ARMOR))

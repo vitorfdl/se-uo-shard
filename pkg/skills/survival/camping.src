@@ -61,7 +61,7 @@ program UseWood( who, wood )
 		PrintText( campfire, "Um acampamento foi preparado.");
 		
 		campfire.movable := 0;
-		var time := (AP_GetSkill(who, SOBREVIVENCIA, RETURN_BONUS) + 10) * 2;
+		var time := (AP_GetStat(who, SOBREVIVENCIA, RETURN_BONUS) + 10) * 2;
 		time := cint(time * wood.amount);
 		DestroyItem(wood);
 		var tempocura := 0;

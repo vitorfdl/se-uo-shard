@@ -9,6 +9,7 @@ use util;
 include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
+include "include/dungeons";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 
@@ -17,7 +18,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-   if (HasPlayerNear(mobile.x, mobile.y)
+   if (HasPlayerNear(mobile.x, mobile.y))
       TS_StartTimer(mobile, "dynamickill", 1200);
    else
       ApplyRawDamage(mobile, 200);

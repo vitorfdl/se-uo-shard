@@ -9,19 +9,19 @@ use util;
 include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
+include "include/sounds";
 include ":attributes:attributes";
-include ":timedscripts:timedScripts";
 
 function StartScript(mobile, attacker := 0, level := 0)
 	while ( 1 )
       sleep(RandomDiceRoll("1d4+8"));
       if (mobile.dead) continue; endif
 
-      var random_effect = RandomInt(7);
+      var random_effect := RandomInt(7);
 
       case (random_effect)
          1:
-            TS_StartScript(mobile, "paralysis", 4)
+            TS_StartTimer(mobile, "paralysis", 4);
             PrintText(mobile, "*divagando olhando algo*", SSM_INFO);
             PlayCustomSound(mobile, 11);
          2:

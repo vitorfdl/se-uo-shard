@@ -373,7 +373,7 @@ function doElevator(who, item)
 		endwhile
 		SetObjProperty(item, "status", "down");
 	else
-      maxz := max * -1;
+      maxz := maxz * -1;
       var modifier := 1;
       if (maxz < 0)
          modifier := -1;

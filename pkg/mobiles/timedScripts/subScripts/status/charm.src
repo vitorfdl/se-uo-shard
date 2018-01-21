@@ -8,13 +8,14 @@ use util;
 
 include "include/client";
 include ":timedscripts:timedScripts";
+include ":attributes:attributes";
 include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
    SetObjProperty(mobile, "charmed", attacker.serial);
    while (1)
-      PlayObjectCenteredEffect(mobile, GFX_EXPLODE_1, 7, 16);
-      sleep(2);
+      PlayObjectCenteredEffect(mobile, 0x4AA4, 6, 40);
+      sleep(4);
       if (rollResistDice(mobile, INTELLIGENCE) > level)
          break;
       endif

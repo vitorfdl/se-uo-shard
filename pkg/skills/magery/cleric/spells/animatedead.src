@@ -18,7 +18,7 @@ program SpellScript(params)
 
 	var maxsummons := 2;
 	var npctemplate := GetObjproperty(targ, "npctemplate");
-   var npc_info := NPC_GetNPCConfig(npc.npctemplate);
+   var npc_info := NPC_GetNPCConfig(targ.npctemplate);
 	if ( npc_info.Category in array{"morto-vivo", "fada", "elemental"}  )
 		SendSysMessageEx(who, "Não resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
 		return 0;

@@ -85,7 +85,7 @@ function ResZombie(corpse, byref pieces, template)
 			SleepMS(2);
 		endforeach
 
-		var npc := CreateNPCFromTemplate(":ghaia:Skeleton1", corpse_x, corpse_y, corpse_z, 0, realm);
+		var npc := CreateNPCFromTemplate(":ghaia:esqueleto", corpse_x, corpse_y, corpse_z, 0, realm);
 		RestartScript(npc);
 		if ( npc.errortext )
 			SysLog("Error making npc ->"+npc.errortext);

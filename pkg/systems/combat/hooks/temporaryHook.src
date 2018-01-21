@@ -108,7 +108,7 @@ program Attack(params)
 	endif
 
 	var attacker_roll := GetAttackerChance(attacker, defender);
-   if (weapon.isBow() && (attacker_roll.critical < 0 || TS_GetTimerInfo(who, "hallucination")))
+   if (weapon.isBow() && (attacker_roll.critical < 0 || TS_GetTimerInfo(attacker, "hallucination")))
       SendSysMessageEx(attacker, "Você erra o alvo", SSM_FAIL);
       var mobiles := ListMobilesNearLocation(defender.x, defender.y, defender.z, 2);
       mobiles := RemoveFromArray(mobiles, attacker);
@@ -129,7 +129,7 @@ program Attack(params)
 	elseif (GetObjProperty(defender, "#defensefail") == 1)
 		EraseObjProperty(defender, "#defensefail");
 	else
-		defender_CA := GetDefenderCA(defender, armor);
+		defender_CA := GetDefenderCA(defender, armor, attacker);
 	endif
 
 	//Arrow repulse magic
@@ -295,7 +295,7 @@ function SelectAttribute(attacker)
 	return attribute;
 endfunction
 
-function GetDefenderCA(defender, armor)
+function GetDefenderCA(defender, armor, attacker)
 	var CA := 5;
 	if ( !defender.npctemplate )
 		if (armor)
@@ -325,7 +325,7 @@ function GetDefenderCA(defender, armor)
 			CA += defender.shield.ar_base + defender.shield.ar_mod;
 		endif
 
-      if (!defender.npctemplate && !attacaker.npctemplate)
+      if (!defender.npctemplate && !attacker.npctemplate)
          attacker.SetAchievement("player_attack", 1);
       endif
 

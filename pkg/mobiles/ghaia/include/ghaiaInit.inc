@@ -98,10 +98,8 @@ function SetupName(mobile)
 endfunction
 
 function SetupEquip(who)
-
 	var group;
 	var categ := GetConfigString(npccfgfile, "Equip");
-	categ := categ;
 
 	if(who.graphic == 0x190)
 				//case(randomint(2))
@@ -123,7 +121,6 @@ function SetupEquip(who)
 		group := FindConfigElem(templt, categ);
 		//printtextabove(who, " " +templt + " " + categ + " " + group);
 		if(group)
-
 			var lastc := 0;
 			foreach str in GetConfigStringArray(group, "Equip")
 						lastc := EquipItemString(who, str, lastc);
@@ -218,6 +215,7 @@ function EquipItemString(who, str, lastcolor)
 				objname := CInt(newarray[RandomInt(len(newarray))+1]);
 				item := CreateItemAtLocation(5852, 1163, 0, objname, 1);
 		item.quality := 0.6;
+      item.hp := 0.5;
 			endif
 		endif
 		item.color := color;

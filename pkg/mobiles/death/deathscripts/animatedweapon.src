@@ -23,7 +23,7 @@ program DeathScript(params)
 	endforeach
 
 	if (!sword)
-		sword := CreateItemAtLocation(corpse.x, corpse.y, corpse.z, GetObjProperty(item, "animated_type"));
+		sword := CreateItemAtLocation(corpse.x, corpse.y, corpse.z, GetObjProperty(corpse, "animated_type"));
 	endif
 
 	MoveObjectToLocation(sword, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION);

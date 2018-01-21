@@ -10,6 +10,7 @@ include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
 include "include/utils";
+include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
    mobile.frozen := 1;

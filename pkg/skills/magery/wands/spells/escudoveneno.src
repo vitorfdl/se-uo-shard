@@ -8,16 +8,17 @@ include "include/say";
 include "include/damage";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
+include ":itemUtils:canAccess";
 
 program pisonShield(params)
 	var who := params[1];
 	var targ := params[3];
    var dice_roll := params[2].dice_roll;
 	params := 0; // No longer needed
-
+   var the_poison;
    while ( 1 )
       SendSysMessageEx(who, "Selecione o veneno", SSM_REQUEST);
-      var the_poison := Target(who);
+      the_poison := Target(who);
 
       if(!the_poison)
          SendSysMessageEx(who, "Cancelado.", SSM_FAIL);

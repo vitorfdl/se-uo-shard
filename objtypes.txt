@@ -1440,7 +1440,9 @@
 0x1f03 deathrobe womenswork
 # 0x1f04 - 0x1f0a unused
 0x1f0b Orchelm combat
-# 0x1f0c - 0x1f27 unused
+# 0x1f0c - 0x1f12 unused
+0x1f13 clickableitem clickableitem
+# 0x1f14 - 0x1f27 unused
 0x1f28 placa5 woodworking
 0x1f29 placa6 woodworking
 # 0x1f2a unused
