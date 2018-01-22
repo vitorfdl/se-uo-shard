@@ -3,6 +3,7 @@ use uo;
 
 include ":tn:tngumps";
 include ":gumps:yesno";
+include "include/say";
 
 program renameboat(you, tillerman)
 
@@ -17,23 +18,24 @@ program renameboat(you, tillerman)
 		if (destname)
 			foreach dest in destinos
 				if (destname == (dest.name + " [" + dest.cost + " moedas]"))
-					SendSysMessage(you, "Você deve pagar " + dest.cost + " moedas por essa viagem.");
+					SendSysMessageEx(you, "Você deve pagar " + dest.cost + " moedas por essa viagem.", SSM_REQUEST);
 					var moedas := target(you);
-					if ( moedas.objtype == 47715)
+					if ( moedas.objtype == 0xeed)
 						if (moedas.amount >= cint(dest.cost))
 							if (!SubtractAmount(moedas, cint(dest.cost)))
-								PrintTextAbove(tillerman, "Você não tem moedas necessarias.");
+								PrintText(tillerman, "Você não tem moedas necessarias.");
 							endif
 						else
-							PrintTextAbove(tillerman, "Você não tem moedas necessarias.");
+							PrintText(tillerman, "Você não tem moedas necessarias.");
 							return;
 						endif
 					else
+						PrintText(tillerman, "Isso ai parece moeda pra você? Pra mim não.");
 						return;
 					endif
 					SetObjProperty(tillerman, "course", dest.plots);
 					SetObjProperty(tillerman, "nextwaypoint", 1);
-					PrintTextAbove(tillerman,"Viagem programada, iremos *partir* quando me ordenar!");
+					PrintText(tillerman,"Viagem programada, iremos *partir* quando me ordenar!");
 				endif
 			endforeach
 		endif
@@ -41,7 +43,7 @@ program renameboat(you, tillerman)
 	endif
 
 	if((GetObjProperty(tillerman,"owner") != you.serial) &&(you.cmdlevel < 2))
-		//PrintTextAbove(tillerman,"Stop that, or I'll throw ye overboard!");
+		//PrintText(tillerman,"Stop that, or I'll throw ye overboard!");
 		return;
 	endif
 	if (YesNo(you, "Deseja Mudar o Nome do Barco?"))
@@ -49,9 +51,9 @@ program renameboat(you, tillerman)
 		if(boatname)
 			if(len(boatname) <= 40)
 				tillerman.name := boatname;
-				SendSysMessage(you, "Barco renomeado.");
+				SendSysMessageEx(you, "Barco renomeado.");
 			else
-				SendSysMessage(you, "Excedeu o numero de caracteres.");
+				SendSysMessageEx(you, "Excedeu o numero de caracteres.");
 			endif
 		endif
 	endif

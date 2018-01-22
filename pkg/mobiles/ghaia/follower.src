@@ -58,7 +58,9 @@ program NPCMonitor()
       case(ev.type)
          SYSEVENT_ENGAGED:
          SYSEVENT_DAMAGED:
-            Fight(ev.source);
+            if (!following && !fighting)
+               Fight(ev.source);
+            endif
          // EVID_HERDING:
          // 	herd(ev);
          EVID_TAUNT:

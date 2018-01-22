@@ -73,6 +73,7 @@ function HandleSpeech(npc, player, text)
       var onlyclass := GetObjProperty(npc, "onlyclass");
       if (onlyclass && !player.isClass(onlyclass) && player.cmdlevel < 3)
          PrintText(npc, "Desculpe, não posso alugar quartos para você.");
+         return 1;
       endif
 		Printtext(npc, "Em que posso ajuda-lo?");
       while(1)
