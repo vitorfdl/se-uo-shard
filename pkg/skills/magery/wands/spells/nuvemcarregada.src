@@ -1,0 +1,23 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program nuvemcarregada(params)
+	var who := params[1];
+	params := 0; // No longer needed
+
+   for i := 1 to 8
+      var point := RandomPlace(who, 15);
+      var item := CreateItemAtLocation(point.x, point.y, GetWorldheight(point.x, point.y), 0x9BCB);
+      item.color := 971;
+      sleep(1);
+   endfor
+
+	return 1;
+endprogram

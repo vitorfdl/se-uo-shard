@@ -159,12 +159,12 @@ function handle_speech(event)
   if(text["drift"] || text["levantar ancora"])
     ms_delay_between_moves := 1000;
     state := STATE_DRIFTING;
-    PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+    PrintTextAbove(tillerman, "Aye Aye, Capitão!");
   elseif(text["avante"])
     if(state == STATE_STATIONARY)
-      PrintTextAbove(tillerman, "O barco esta ancorado, Capitao!");
+      PrintTextAbove(tillerman, "O barco esta ancorado, Capitão!");
     else
-      PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão!");
       state := STATE_MOVING;
       if(text["a bombordo"])
         relative_direction := 7;
@@ -176,9 +176,9 @@ function handle_speech(event)
     endif
   elseif(text["para tras"])
     if(state == STATE_STATIONARY)
-      PrintTextAbove(tillerman, "O barco esta ancorado, Capitao!");
+      PrintTextAbove(tillerman, "O barco esta ancorado, Capitão!");
     else
-      PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão!");
       state := STATE_MOVING;
       if(text["a bombordo"])
         relative_direction := 5;
@@ -189,46 +189,46 @@ function handle_speech(event)
       endif
     endif
   elseif(text["recolher velas"] || text["parar o barco"] || text["furl"])
-    PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+    PrintTextAbove(tillerman, "Aye Aye, Capitão!");
     ms_delay_between_moves := 1000;
     state := STATE_DRIFTING;
   elseif(text["jogar ancora"])
-    PrintTextAbove(tillerman, "Aye Aye, Capitao! Barco Ancorado!");
+    PrintTextAbove(tillerman, "Aye Aye, Capitão! Barco Ancorado!");
     ms_delay_between_moves := 1000;
     state := STATE_STATIONARY;
   elseif(text["virar a estibordo"] || text["starboard"])
     if(state == STATE_STATIONARY)
-      PrintTextAbove(tillerman, "O barco esta ancorado, Capitao!");
+      PrintTextAbove(tillerman, "O barco esta ancorado, Capitão!");
     else
-      PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão!");
       TurnBoat(boat, 1);
     endif
   elseif(text["a estibordo"])
     if(state == STATE_STATIONARY)
-      PrintTextAbove(tillerman, "O barco esta ancorado, Capitao!");
+      PrintTextAbove(tillerman, "O barco esta ancorado, Capitão!");
     else
-      PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão!");
       state := STATE_MOVING;
       relative_direction := 2;
     endif
   elseif(text["virar a bombordo"] || text["port"])
     if(state == STATE_STATIONARY)
-      PrintTextAbove(tillerman, "O barco esta ancorado, Capitao!");
+      PrintTextAbove(tillerman, "O barco esta ancorado, Capitão!");
     else
-      PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão!");
       TurnBoat(boat, 3);
     endif
   elseif(text["a bombordo"])
     if(state == STATE_STATIONARY)
-      PrintTextAbove(tillerman, "O barco esta ancorado, Capitao!");
+      PrintTextAbove(tillerman, "O barco esta ancorado, Capitão!");
     else
-      PrintTextAbove(tillerman, "Aye Aye, Capitao!");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão!");
       state := STATE_MOVING;
       relative_direction := 6;
     endif
   elseif(text["come about"] || text["girar o barco"])
     if(state == STATE_STATIONARY)
-      PrintTextAbove(tillerman, "O barco esta ancorado, Capitao!");
+      PrintTextAbove(tillerman, "O barco esta ancorado, Capitão!");
     else
       PrintTextAbove(tillerman, "Aye Aye, Captain! Girando o Barco!");
       TurnBoat(boat, 2);
@@ -238,14 +238,15 @@ function handle_speech(event)
     elseif(text["viagem"])
       	PrintTextAbove(tillerman, "Me entregue o bilhete.");   	
       	var map := Target(event.source);
-      	//if(!map.isa(POLCLASS_MAP))
-	if (GetObjProperty(map, "plots") == error)
-      		PrintTextAbove(tillerman, "Eu preciso do seu bilhete!"); 
-      	else
-      		SetObjProperty(tillerman, "course", GetObjProperty(map, "plots"));
-      		SetObjProperty(tillerman, "nextwaypoint", 1);
-      		PrintTextAbove(tillerman, "Arr, rota programada."); 
-      	endif
+
+            //if(!map.isa(POLCLASS_MAP))
+      if (GetObjProperty(map, "plots") == error)
+         PrintTextAbove(tillerman, "Eu preciso do seu bilhete!"); 
+      else
+         SetObjProperty(tillerman, "course", GetObjProperty(map, "plots"));
+         SetObjProperty(tillerman, "nextwaypoint", 1);
+         PrintTextAbove(tillerman, "Arr, rota programada."); 
+      endif
     //elseif(text["clear course"])
     //	PrintTextAbove(tillerman, "Arr, course cleared Cap'n.");
     //	EraseObjProperty(tillerman, "course");
@@ -276,12 +277,12 @@ function handle_speech(event)
 /*END NEW MAP COURSE COMMANDS*/
   if(text["a toda velocidade"])
     if(state != STATE_STATIONARY)
-      PrintTextAbove(tillerman, "Aye Aye, Capitao! A toda velocidade!");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão! A toda velocidade!");
       ms_delay_between_moves := 100;
     endif
   elseif(text["diminuir velocidade"])
     if(state != STATE_STATIONARY)
-      PrintTextAbove(tillerman, "Aye Aye, Capitao! ");
+      PrintTextAbove(tillerman, "Aye Aye, Capitão! ");
       ms_delay_between_moves := 1000;
     endif
   endif
@@ -650,6 +651,7 @@ function BoatFollowCourse(boat)
 		first_move_toward_waypoint := 1; //so we turn toward next waypoint (includes next course follow if we're done with this one)
 		if(nextwaypoint > course.size()) //done
 			state := STATE_DRIFTING;
+         SetObjProperty(boat.tillerman, "oldcourse", course)
 			EraseObjProperty(boat.tillerman, "course");
 			PrintTextAbove(boat.tillerman,"Arr, chegamos ao nosso destino!");
 			return;
@@ -669,7 +671,7 @@ function BoatFollowCourse(boat)
 		
 		if((startx == boat.x) &&(starty == boat.y)) //we didn't move. must be blocked
     		state := STATE_DRIFTING;
-    		PrintTextAbove(tillerman, "Aaargh!  We've stopped!");
+    		PrintTextAbove(tillerman, "Aaargh!  Nós paramos!");
   		endif
   	endif
 	
