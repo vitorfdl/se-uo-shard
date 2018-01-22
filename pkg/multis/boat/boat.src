@@ -651,7 +651,7 @@ function BoatFollowCourse(boat)
 		first_move_toward_waypoint := 1; //so we turn toward next waypoint (includes next course follow if we're done with this one)
 		if(nextwaypoint > course.size()) //done
 			state := STATE_DRIFTING;
-         SetObjProperty(boat.tillerman, "oldcourse", course)
+         SetObjProperty(boat.tillerman, "oldcourse", course);
 			EraseObjProperty(boat.tillerman, "course");
 			PrintTextAbove(boat.tillerman,"Arr, chegamos ao nosso destino!");
 			return;

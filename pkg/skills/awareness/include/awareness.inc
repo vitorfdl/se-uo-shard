@@ -133,7 +133,7 @@ function examinarArea(who)
 			continue;
 		endif
 
-      var item_diff = cint(GetObjProperty(item, "FindDiff"));
+      var item_diff := cint(GetObjProperty(item, "FindDiff"));
       if (!item_diff)
          item_diff := BASE_DIFFICULTY;
       endif

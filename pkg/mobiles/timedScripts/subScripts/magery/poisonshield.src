@@ -22,7 +22,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       mobiles := RemoveFromArray(mobiles, mobile);
 
       foreach mob in mobiles
-         if (rollResistDice(mob, CONSTITUION) > poisonInfo.difficulty)
+         if (rollResistDice(mob, CONSTITUTION) > poisonInfo.difficulty)
             SendSystemReport(mob, "*resistido*");
          else
             TS_StartTimer(mob, poisonInfo.name, 10, poisonInfo.level, mobile);

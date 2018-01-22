@@ -9,7 +9,7 @@ include "include/say";
 include ":keys:key";
 include "include/client";
 include ":itemutils:itemdesc";
-include ":itemutils:time";
+include ":timeUtils:time";
 
 CONST CYCLE_WAIT := 60 * 180;
 

@@ -139,7 +139,7 @@ function constrict(mobile, ts_time, diff)
    return 1;
 endfunction
 
-function euforic(mobile, ts_time, diff)
+function euforic(mobile, diff)
    playCastAnimation();
    PrintText(me, "*baforada mágica*");
    if (rollResistDice(mobile, CONSTITUTION) > diff)
@@ -147,7 +147,7 @@ function euforic(mobile, ts_time, diff)
       return 1;
    endif
 
-   TS_StartTimer(mobile, "euforic", ts_time, diff);
+   TS_StartTimer(mobile, "euforic", 5, diff);
    return 1;
 endfunction
 

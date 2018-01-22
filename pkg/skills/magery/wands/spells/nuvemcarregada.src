@@ -5,6 +5,7 @@ use cfgfile;
 include "include/client";
 include "include/sounds";
 include "include/say";
+include "include/utils";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 

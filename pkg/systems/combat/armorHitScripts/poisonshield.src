@@ -5,6 +5,7 @@ include "include/damage";
 include "include/client";
 include "include/sounds";
 include "include/say";
+include ":attributes:attributes";
 
 program HitScript(params)
 	var attacker	:= params[1];
@@ -15,7 +16,7 @@ program HitScript(params)
    if (!poisonInfo) return; endif
 
 	PlayObjectCenteredEffectEx( defender, 0x22c6, 1, 9, 11);
-   if (rollResistDice(attacker, CONSTITUION) <= poisonInfo.difficulty)
+   if (rollResistDice(attacker, CONSTITUTION) <= poisonInfo.difficulty)
       TS_StartTimer(attacker, poisonInfo.name, 10, poisonInfo.level, defender);
    endif
 
