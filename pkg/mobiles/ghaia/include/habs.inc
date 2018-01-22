@@ -87,7 +87,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    var res;
    case (hab_name)
       "summon": res := SummonCreature(cint(hab_dice), hab_special); break;
-      "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target, hab_special); break;
+      "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target, cint(hab_special)); break;
       "cancaoSedutora": CancaoSedutora(hab_target, hab_dice); break;
       "furtividade": res := NPC_Sneak(); break;
       "metamorfose": res := Metamorfose(hab_special); break;
@@ -99,7 +99,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "teleport": res := teleport(hab_target, hab_special); break;
       "constrictSpell": res := constrict(hab_target, hab_dice, cint(hab_special)); break;
       "charming": res := charm(hab_target, hab_dice, cint(hab_special)); break;
-      "SoproEuforia": res := euforic(hab_target, hab_dice, cint(hab_special)); break;
+      "SoproEuforia": res := euforic(hab_dice, cint(hab_special)); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
          SetCooldown(me, hab_name, 150);
@@ -115,7 +115,6 @@ endfunction
 
 function charm(mobile, ts_time, diff)
    playCastAnimation();
-   print(diff);
    PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
 
    if (rollResistDice(mobile, INTELLIGENCE) > diff)
@@ -135,7 +134,6 @@ function constrict(mobile, ts_time, diff)
       PrintText(mobile, "*resistido*", SSM_INFO);
       return 1;
    endif
-   PrintText(mobile, "*preso*", SSM_FAIL);
 
    TS_StartTimer(mobile, "constricted", ts_time, diff);
    return 1;

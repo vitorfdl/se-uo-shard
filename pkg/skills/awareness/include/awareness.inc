@@ -82,13 +82,13 @@ function CalculateDHDiff(who, mobile,)
       endif
    endif
 
-	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(mobile, FURTIVIDADE);
+	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + (getProficiencyBonus(mobile, FURTIVIDADE) * 2);
 	//sendsysmessage(mobile, "dificuldade de  "  + who.name + "te achar " + mobile_skill);
 	if (GetObjProperty(mobile, "#overridehiding") != error)
 		difficulty := cint(GetObjProperty(mobile, "#overridehiding"));
 	endif
 
-	difficulty += cint(Distance(who, mobile) / 1.5);
+	difficulty += Distance(who, mobile);
    // if (HaveLightNear(mobile))
    //    difficulty -= 2;
    // endif
@@ -109,7 +109,6 @@ function examinarArea(who)
 	var found := 0;
 	foreach mobile in ListMobilesNearLocationEX(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN)
 		if ( mobile == who || GetObjProperty(who, "IgnoreHidden") || mobile in who.party.members ); // Do Nothing
-         continue;
 		elseif ( CheckLineOfSight(who, mobile) )
 			var difficulty := CalculateDHDiff(who, mobile);
 			
@@ -133,14 +132,20 @@ function examinarArea(who)
 		if ( !item.invisible )
 			continue;
 		endif
-		if ( item.isTrap() && dice_roll > BASE_DIFFICULTY)
+
+      var item_diff = cint(GetObjProperty(item, "FindDiff"));
+      if (!item_diff)
+         item_diff := BASE_DIFFICULTY;
+      endif
+
+		if ( item.isTrap() && (dice_roll > item_diff))
 			ExpGain(who, "minor");
 			found := found+1;
 			item.invisible := 0;
 			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);
          who.SetAchievement("found_item", 1);
-		elseif (GetObjProperty(item, "FindDiff") && dice_roll >= CInt(GetObjProperty(item, "FindDiff")))
+		elseif (GetObjProperty(item, "FindDiff") && dice_roll >= item_diff)
 			ExpGain(who, CInt(GetObjProperty(item, "FindDiff")), dice_roll);
 			found := found+1;
 			item.invisible := 0;

@@ -82,6 +82,11 @@ program SpellStarter(params)
    var orig_hp := AP_GetVital(mobile, "Hits");
 
    var cycles := spellinfo.cycles;
+   if (HaveFeat(mobile, "Conjuração Rápida") && !GetCooldown(mobile, "#fastcast"))
+      cycles := Floor(cycles / 3);
+      SetCooldown(mobile, "#fastcast", 60);
+   endif
+   
    while(cycles)
       // If mobile is injured and does not have the protection spell on, fail the spell
       if ( orig_hp > AP_GetVital(mobile, "Hits") && randomdiceroll("1d100") < 75)
@@ -170,9 +175,11 @@ program SpellStarter(params)
    spellinfo.dice_roll := rollAttrDice(mobile, attribute, bonus_spell) + getProficiencyBonus(mobile);
    if (spellinfo.type)
       mobile.SetAchievement("spell_{}".format(lower(spellinfo.type)), 1);
+      mobile.SetAchievement("spellcast", 1);
    elseif (spellinfo.pericia)
       var bless_type := SplitWords(spellinfo.pericia, "_")[3];
       mobile.SetAchievement("bless_{}".format(lower(bless_type)), 1);
+      mobile.SetAchievement("blesscast", 1);
    endif
 
    if (spellinfo.script != error)

@@ -17,6 +17,7 @@ program animateSword(params)
    var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x37C4);
    var mobiles := ListMobilesInLineOfSight( item, 5);
 
+   var dmg := RandomDiceRoll("2d4") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
    foreach mob in mobiles
       sleepms(2);
       if (mob == who || mob in who.party.members)
@@ -25,8 +26,10 @@ program animateSword(params)
       if (rollResistDice(mob, DEXTERITY) <= roll_dice)
          PrintText(mob, "*cegado*", SSM_HARMFUL);
          TS_StartTimer(mob, "blinded", 10);
+         DamageFLS(mob, dmg, DMG_ENERGY, who);
       else
          SendSystemReport(mob, "*resistido*", SSM_HELPFUL, who);
+         DamageFLS(mob, Floor(dmg/2), DMG_ENERGY, who);
       endif
    endforeach
 

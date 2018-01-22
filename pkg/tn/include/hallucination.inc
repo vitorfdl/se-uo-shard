@@ -25,6 +25,24 @@ function Hallucinate(who)
   endforeach
 endfunction
 
+function EndHallucinate(who)
+  DrawGamePlayer(who, who.graphic, who.color);
+  foreach mobile in ListMobilesNearLocation(who.x, who.y, who.z, 30)
+    if (mobile.serial != who.serial)
+      DeleteObject(who, mobile);
+      DrawObject(who, mobile, mobile.graphic, mobile.color, 1);
+    endif
+    sleepms(2);
+  endforeach
+
+  foreach item in ListItemsNearLocation(who.x, who.y, who.z, 30)
+    if ((item.amount == 1) and (!item.isa(POLCLASS_CORPSE)) and (!item.invisible))
+      DeleteObject(who, item);
+      DrawObject(who, item, item.graphic, item.color);
+    endif
+    sleepms(2);
+  endforeach
+endfunction
 // the following functions have been pasted from SendPacket.inc
 
 function ConvertIntToHex(astring, alength)

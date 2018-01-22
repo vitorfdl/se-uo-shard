@@ -11,10 +11,10 @@ include ":awareness:awareness";
 
 program skill_Alertness(who)
 	if ( CInt(GetobjProperty(who, "#Alertness")) > ReadGameClock() )
-		SendSysMessageEx(who, "Você precisa esperar para usar essa pericia novamente.", SSM_INFO);
+		SendSysMessageEx(who, "Você precisa esperar 20 segundos para usar essa perícia novamente.", SSM_INFO);
 		return;
 	else
-		SetObjProperty(who, "#Alertness", ReadGameClock()+1);
+		SetObjProperty(who, "#Alertness", ReadGameClock()+20);
 	endif
 
 	EraseObjProperty(who, "#IsMeditating");

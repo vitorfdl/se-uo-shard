@@ -40,10 +40,11 @@ program renameboat(you, tillerman)
 		return;
 	endif
 
-	if((GetObjProperty(tillerman,"owner") != you.serial) &&(you.cmdlevel < 2))
+	if((GetObjProperty(tillerman,"owner") != you.serial) && (you.cmdlevel < 2))
 		//PrintTextAbove(tillerman,"Stop that, or I'll throw ye overboard!");
 		return;
 	endif
+
 	if (YesNo(you, "Deseja Mudar o Nome do Barco?"))
 		var boatname := RequestInput(you, tillerman, "Entre com um novo nome para o barco.(max 40 characters)");
 		if(boatname)
@@ -51,7 +52,7 @@ program renameboat(you, tillerman)
 				tillerman.name := boatname;
 				SendSysMessage(you, "Barco renomeado.");
 			else
-				SendSysMessage(you, "Excedeu o numero de caracteres.");
+				SendSysMessage(you, "Excedeu o número de caracteres.");
 			endif
 		endif
 	endif

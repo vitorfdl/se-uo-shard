@@ -15,7 +15,9 @@ include ":charactercreation:feats"; // remove later
 program Logon(who)
 	EraseObjProperty(who, "#pegueiesse"); // evitar bugs no stealing.
 	EraseObjProperty(who, "#torobando");
+	EraseObjProperty(who, "#Casting");
 	SetObjProperty(who, "ConnectTime", polcore().systime);
+   GrantPrivilege(who, "hiddenattack");
 
 	var createdat :=  GetObjProperty(who, "createdate");
 	if (createdat == error)

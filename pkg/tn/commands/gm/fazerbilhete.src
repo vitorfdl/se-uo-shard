@@ -2,7 +2,6 @@ use uo;
 include ":gumps:yesno";
 
 program setpins(who)
-
 	var map := target(who);
 	SendSysMEssage(who, "Escolha o tilerman.");
 	//sendsysmessage(who, );
@@ -37,5 +36,4 @@ program setpins(who)
 
 	//SendSysMEssage(who, "Coordenadas adicionadas no mapa.");
 	SetObjProperty(map, "viagem", viagens);
-	
 endprogram

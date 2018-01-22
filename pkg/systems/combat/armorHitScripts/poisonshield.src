@@ -1,0 +1,24 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include "include/say";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	params := 0; // Not needed anymore.
+   
+   var poisonInfo := GetObjProperty(defender, "poisonshield");
+   if (!poisonInfo) return; endif
+
+	PlayObjectCenteredEffectEx( defender, 0x22c6, 1, 9, 11);
+   if (rollResistDice(attacker, CONSTITUION) <= poisonInfo.difficulty)
+      TS_StartTimer(attacker, poisonInfo.name, 10, poisonInfo.level, defender);
+   endif
+
+	return 1;
+endprogram
+ 

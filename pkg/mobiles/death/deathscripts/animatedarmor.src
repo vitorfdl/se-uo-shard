@@ -27,6 +27,7 @@ program DeathScript(params)
 	      SetName(item, "{} enferrujada".format(item.desc));
       endif
 	endforeach
-
+   
+   DestroyItem(corpse);
 	return 1;
 endprogram

@@ -96,10 +96,10 @@ var data := array(
     "abrir/fechar passagem secreta",            //3
     "Acender/apagar luzes",                //4
     "Teleportar",                      //5
-    "Alterar grafico do alvo",                               //6
+    "Alterar gráfico do alvo",                               //6
     "Setar on/off texto",                               //7 <-
     "Criar alavanca com armadilha",                //8 
-    "Alterar grafico da alavanca",           //9 <-
+    "Alterar gáafico da alavanca",           //9 <-
     "Testar",    //10
     "Escolha o novo grafico",               //11
     "",                                     //12  Cprop name
@@ -368,7 +368,7 @@ function doElevator(who, item)
 				//SendSysMessage(who, " " + coisa);
 				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z + modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
 			endforeach
-			startz := startz + 1;
+			startz := startz + modifier;
 			sleepms(50);
 		endwhile
 		SetObjProperty(item, "status", "down");
@@ -383,7 +383,7 @@ function doElevator(who, item)
 				var coisa := SystemFindObjectBySerial(obj);
 				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z - modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
 			endforeach
-			startz := startz + 1;
+			startz := startz + modifier;
 			sleepms(50);
 		endwhile
 		SetObjProperty(item, "status", "up");		

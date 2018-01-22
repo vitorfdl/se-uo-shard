@@ -9,7 +9,7 @@ program character_control(who)
    var cfgfile := ReadConfigFile(":fls_core:tips");
    var classe := GetObjProperty(who, "chardata").classe;
    while(who.connected)
-      sleep(1800);
+      sleep(2200);
       if (!classe)
          classe := GetObjProperty(who, "chardata").classe;
       endif

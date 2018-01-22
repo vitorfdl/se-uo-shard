@@ -9,6 +9,7 @@ include "include/say";
 include ":keys:key";
 include "include/client";
 include ":itemutils:itemdesc";
+include ":itemutils:time";
 
 CONST CYCLE_WAIT := 60 * 180;
 
@@ -44,9 +45,10 @@ function InnKeeperChecks()
 				if (rentdate == error)
 					quartos[i].data := polcore().systime;
 					SetObjProperty(npc, "quartos", quartos);
+               continue;
 				endif
 
-				var ticks := CalcularDias(rentdate);
+				var ticks := GetTimeBetween(rentdate, polcore().systime, "days");;
 				var renttime := GetObjProperty(npc, "tempoalugado");
 				if (!renttime || renttime.errortext)
 					renttime := 7;
@@ -59,6 +61,7 @@ function InnKeeperChecks()
 						var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Despejo!", 
 						"O pagamento da sua estalagem com " + npc.name + " não foi efetuado como esperado. Estarei colocando a estalagem de novo a disposição de novos moradores, e manterei armazenado seus objetos até que me procure."} );
 					endif
+
 					var door := SystemFindObjectBySerial(quarto.door);
 					Eraseobjproperty(door, "LockId");
 					quartos[i].inquilino := 0;
@@ -149,13 +152,4 @@ function ChecarMobileQuarto(who, x, y, z, npc)
 			endif
 		endif
 	endif
-endfunction
-
-
-function CalcularDias(data)
-    var criadoEm := cint(data);
-    var tempoAgora := polcore().systime;// segundos
-    var tempoDevida:= tempoAgora - criadoEm;
-    var dias := cint(tempoDevida/(86400));//24horas*60minutos*60segundos = 86400 segundos
-    return dias;
 endfunction

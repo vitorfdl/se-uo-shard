@@ -207,6 +207,20 @@ function Fight(opponent, alerted := 0)
             HealFLS(me, 25);
          endif
       endif
+
+      if ("openLevers" in custombehaviors)
+         var levers := ListItemsNearLocationOfType(me.x, me.y, me.z, 10, 0x108c);
+         foreach lever in levers
+            if (GetObjProperty(lever, "mobs_open") && GetObjProperty(lever, "status") == "up")
+               NpcGoTo(lever, 2);
+               if (GetObjProperty(lever, "status") == "up")
+                  UseItem(lever, me);
+               endif
+            endif
+
+            sleepms(2);
+         endforeach 
+      endif
    
       if(!CloseDistance(opponent))
          loops := loops + 1;

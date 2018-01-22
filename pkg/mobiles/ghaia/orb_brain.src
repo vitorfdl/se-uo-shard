@@ -28,7 +28,7 @@ program NPCMonitor()
       endif
       sleepms(2);
 
-      if (!TS_GetCooldown(me, "summon")) 
+      if (!TS_GetTimerInfo(me, "summon")) 
          ApplyRawDamage(me, 200);
       endif
    endwhile
