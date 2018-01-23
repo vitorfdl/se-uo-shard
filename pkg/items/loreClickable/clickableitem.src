@@ -69,7 +69,7 @@ function handleInput(who, input, item, byref gump_params)
          gump_params.y := cint(output[3]);
          gump_params.width := cint(output[4]);
          gump_params.height := cint(output[5]);
-         gump_params.color := cint(output[6]);
+         gump_params.color := output[6];
          
       BTN_CHANGE_LANG:
          var choice := RadioGump(who, 0, 0, "Qual idioma deseja escolher?", array{"Linguagem Rúnica", "Linguagem Élfica", "Lingua Comum"});
