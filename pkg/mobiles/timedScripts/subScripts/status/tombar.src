@@ -9,33 +9,22 @@ use util;
 include "include/client";
 include ":timedscripts:timedScripts";
 include ":attributes:attributes";
-include ":combat:combat";
+include "include/sounds";
 include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   SetAmorHitscript(mobile, "poisonshield");
-   var poisonInfo := GetObjProperty(mobile, "poisonshield");
-
-   while (1)
-      var mobiles := ListMobilesNearLocation(mobile.x, mobile.y, mobile.z, 1);
-      mobiles := RemoveFromArray(mobiles, mobile);
-
-      foreach mob in mobiles
-         if (rollResistDice(mob, CONSTITUTION) > poisonInfo.difficulty)
-            SendSystemReport(mob, "*resistido*");
-         else
-            TS_StartTimer(mob, poisonInfo.name, 10, poisonInfo.level, mobile);
-         endif
-         sleepms(2);
-      endforeach
-      sleep(4);
-   endwhile
-   
+	mobile.paralyzed := 1;
+   PerformAction(mobile, 0x14, 5, 1, ACTION_DIR_FORWARD , 0, 1);
+   sleepms(750);
+   PlayCustomSound(mobile, 34);
+	PrintText(mobile, "*cai no chão*", SSM_FAIL);
+   PerformAction(mobile, 0x15, 5, 1, ACTION_DIR_FORWARD , 0, 4);
+   sleepms(750);
 	return 1;
 endfunction
 
 function EndScript(mobile)
-   SetAmorHitscript(mobile, "poisonshield", IS_REMOVE);
+	mobile.paralyzed := 0;
 	return 1;
 endfunction
 

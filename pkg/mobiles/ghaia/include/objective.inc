@@ -8,10 +8,7 @@ function DoObjective();
 		EraseObjProperty(me, "objloc");
   endif
   
-	path := array;
-  lineBresenham(me.x, me.y, dest[1], dest[2], path);
-	
-	var xy := path[1];
+var xy := lineBresenham(me.x, me.y, dest[1], dest[2]);
   
   // sendsysmessage(me, "Distance: "+ CoordinateDistance( me.x, me.y, cint(xy.x), cint(xy.y) ) );
   var i;
@@ -37,7 +34,7 @@ function DoObjective();
 endfunction
 
 //Bresenham's line drawing algorithm. determines a line between two waypoints.
-function lineBresenham(x0, y0, x1, y1, byref ret)
+function lineBresenham(x0, y0, x1, y1)
     var dy;
     dy := y1 - y0;
     var dx;
@@ -71,11 +68,7 @@ function lineBresenham(x0, y0, x1, y1, byref ret)
            	endif
             x0 := x0 + stepx;
             fraction := fraction + dy;
-        		var xy := struct;
-            xy.+x := x0;
-            xy.+y := y0;
-            ret.append( xy );
-            return;
+            return array{x0, y0};
         endwhile
     else
         var fraction;
@@ -87,14 +80,7 @@ function lineBresenham(x0, y0, x1, y1, byref ret)
             endif
             y0 := y0 + stepy;
             fraction := fraction + dx;
-        		var xy := struct;
-            xy.+x := x0;
-            xy.+y := y0;
-            ret.append( xy );
-            return;
+            return array{x0, y0};
         endwhile
     endif
-    
-    //print(" " + ret);
-    
 endfunction

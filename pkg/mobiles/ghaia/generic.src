@@ -40,7 +40,7 @@ function CloseDistanceMeele( opponent )
       me.hidden := 0;
 	endif
 
-	var sleepdelay := 275 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
+	var sleepdelay := 270 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
 
 	if (sleepdelay < 0)
 		sleepdelay := 0;
@@ -55,7 +55,7 @@ function CloseDistanceMeele( opponent )
 endfunction
 
 function CloseDistanceArcher(opponent)
-	var sleepdelay := 275 - me.run_speed;
+	var sleepdelay := 270 - me.run_speed;
 
 	if (sleepdelay < 0)
 		sleepdelay := 50;
@@ -221,10 +221,20 @@ function Fight(opponent, alerted := 0)
             sleepms(2);
          endforeach 
       endif
-   
+
       if(!CloseDistance(opponent))
          loops := loops + 1;
          waittime := 0;
+         if ("charge" in custombehaviors)
+            var charge := cint(GetObjProperty(me, "#charge_enemy"));
+            SetObjProperty(me, "#charge_enemy", charge+1);
+            if (charge+1 == 8) 
+               PrintText(me, "*charging*", SSM_FAIL); 
+               me.run_speed += 40;
+            elseif (charge == 1)
+               me.run_speed -= 40;
+            endif
+         endif
       else
          loops := 0;
          waittime := 1;

@@ -1,0 +1,50 @@
+use uo;
+use util;
+use vitals;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include ":attributes:vitals";
+include ":attributes:attributes";
+include "include/client";
+include ":mounts:mounts";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+
+   var steps := cint(GetObjProperty(attacker, "#charge_enemy"));
+   var steps_need := cint(GetObjProperty(attacker, "charge_steps"));
+   if (!steps_need) steps_need := 10; endif;
+
+   if (steps < steps_need) return; endif
+
+   var diff := cint(GetObjProperty(attacker, "charge_diff"));
+   if (!diff) diff := 14; endif
+
+   if (TS_GetCooldown(defender, "charge_protect"))
+      diff := 0;
+   endif
+
+   EraseObjProperty(attacker, "#charge_enemy");
+   if (rollResistDice(defender, STRENGTH) > diff)
+      PrintText(defender, "*segura o baque de {}*".format(attacker.name), SSM_INFO);
+   else
+      PrintText(attacker, "*derruba {}*".format(defender.name), SSM_FAIL);
+      TS_StartTimer(defender, "tombar", 5);
+   endif
+
+	// var mount := GetEquipmentByLayer(attacker, LAYER_MOUNT);
+	
+	// if (mount)
+	// 	var dmg := rawdamage*0.2;
+	// 	if (dmg < 2)
+	// 		dmg := 2;
+	// 	endif
+	
+	// 	DamageFLS(defender, cint(dmg), DMG_FORCED, attacker);
+	// 	//ApplyRawDamage(defender, CInt(dmg));
+	// endif
+	// return 1;
+endprogram

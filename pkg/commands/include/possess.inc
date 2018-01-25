@@ -9,7 +9,7 @@ include ":attributes:attributes";
 include ":attributes:stats";
 include ":gumps:requestgump";
 
-function possess (me, npc)
+function possess(me, npc)
 	if (GetObjProperty (me, "lastpossessedserial"))
 		var oldnpc := SystemFindObjectBySerial(GetObjProperty(me, "lastpossessedserial"));
 		if (oldnpc)
@@ -18,17 +18,15 @@ function possess (me, npc)
 	endif
 	
 	var oldbody := CreateNpcFromTemplate(":ghaia:humanmale", npc.x, npc.y, npc.z, 0, npc.realm);
-	MoveObjectToLocation (oldbody, 5385, 923, 0, me.realm, MOVEOBJECT_FORCELOCATION);
+	MoveObjectToLocation(oldbody, 5385, 923, 0, me.realm, MOVEOBJECT_FORCELOCATION);
 	SetObjProperty(me, "oldmeserial", oldbody.serial);
 	SetObjProperty(me, "lastpossessedserial", npc.serial);
 	
 	clonar(oldbody, me);
 	var itemsinbag := EnumerateItemsInContainer( me.backpack );
 	foreach iteminbag in itemsinbag
-     	var copyitem := CreateItemCopyAtLocation(5384, 923, 0, iteminbag);
-		MoveItemToContainer( copyitem, oldbody.backpack);
-		destroyitem ( iteminbag ); 
-		sleepms(10);
+		MoveItemToContainer( iteminbag, oldbody.backpack);
+		sleepms(2);
 	endforeach 
 	
 	clonar(me, npc);
@@ -37,18 +35,16 @@ function possess (me, npc)
 	EquipItem(me, bolsa);
 	var itemsinbag2 := EnumerateItemsInContainer( npc.backpack );
 	foreach iteminbag in itemsinbag2
-     	var copyitem := CreateItemCopyAtLocation(5384, 923, 0, iteminbag);
-		MoveItemToContainer( copyitem, me.backpack );
-		destroyitem ( iteminbag );
-		sleepms(10);
+		MoveItemToContainer( iteminbag, me.backpack );
+		sleepms(2);
 	endforeach 
 	
 	npc.concealed := 1;
 	me.concealed := 0;
 	me.facing := npc.facing;
 	
-	MoveObjectToLocation (me, npc.x, npc.y, npc.z, npc.realm, MOVEOBJECT_FORCELOCATION);
-	MoveObjectToLocation (npc, 5383, 923, 0, npc.realm, MOVEOBJECT_FORCELOCATION);
+	MoveObjectToLocation(me, npc.x, npc.y, npc.z, npc.realm, MOVEOBJECT_FORCELOCATION);
+	MoveObjectToLocation(npc, 5383, 923, 0, npc.realm, MOVEOBJECT_FORCELOCATION);
 	npc.frozen := 1;
 	oldbody.frozen := 1;
 	me.Disable("invul");
@@ -87,15 +83,13 @@ function unpossess(me, freeze :=1)
 	EquipItem(oldnpc, bolsa);
 	var itemsinbag := EnumerateItemsInContainer( me.backpack );
 	foreach iteminbag in itemsinbag
-     	var copyitem := CreateItemCopyAtLocation(5383, 923, 0, iteminbag);
-		MoveItemToContainer( copyitem, oldnpc.backpack);
-		destroyitem ( iteminbag ); 
+		MoveItemToContainer(iteminbag, oldnpc.backpack);
 	endforeach 
 	oldnpc.facing := me.facing;
 	MoveObjectToLocation (oldnpc, me.x, me.y, me.z, me.realm, MOVEOBJECT_FORCELOCATION);
-	oldnpc.frozen := 1;
+	oldnpc.frozen    := 1;
 	oldnpc.concealed := 0;
-	me.concealed := 1;
+	me.concealed     := 1;
 
 	container := CreateItemAtLocation(5383, 923, 0, "backpack", 1, me.realm);
 	container.invi := 1;
@@ -142,8 +136,6 @@ endfunction
 
 
 function clonar(newlook, oldlook)
-	var chardata:=dictionary;
-	var mod;
 	var mypack := GetEquipmentByLayer(newlook, 0x15);
 	if (!mypack)
 		mypack := CreateItemAtLocation(5383, 923, 0, 0xe75, 1, newlook.realm);
@@ -155,19 +147,20 @@ function clonar(newlook, oldlook)
 	var y;
 	
 	foreach attrib_name in AP_ListAttributesByType()
-		var valor:= GetAttribute( oldlook, attrib_name );
+		var valor := AP_GetTrueSkill( oldlook, attrib_name );
+      var mod := AP_GetSkillMod( oldlook, attrib_name );
 		AP_SetTrueSkill(newlook, attrib_name, valor);
 		AP_SetSkillMod(newlook, attrib_name, mod);
 		sleepms(2);
 	endforeach
 	
-	var newhits := CInt(GetVital(oldlook, "hits"));
-	var newmana := CInt(GetVital(oldlook, "mana"));
+	var newhits := AP_GetVital(oldlook, "hits");
+	var newmana := AP_GetVital(oldlook, "mana");
 	if ( newhits == GetVitalMaximumValue(oldlook, "hits") )
-		newhits := CInt(GetVitalMaximumValue(newlook, "hits"));
+		newhits := AP_GetVitalMaximumValue(newlook, "hits");
 	endif
 	if ( newmana == GetVitalMaximumValue(oldlook, "mana") )
-		newmana := CInt(GetVitalMaximumValue(newlook, "mana"));
+		newmana := AP_GetVitalMaximumValue(newlook, "mana");
 	endif
 	SetVital(newlook, "hits", newhits);
 	SetVital(newlook, "stamina", CInt(GetVitalMaximumValue(newlook, "stamina")));
@@ -206,22 +199,18 @@ function clonar(newlook, oldlook)
 	newlook.trueobjtype  := oldlook.trueobjtype;
 	
 	newlook.murderer := oldlook.murderer;
-	newlook.criminal := oldlook.criminal;
 
-   case (newlook.alignment)
-      1: 
+   case (oldlook.alignment)
+      1: newlook.murderer := 1;
    endcase
 
-	if (oldlook.alignment == "evil")
-		newlook.murderer := 1;
-	endif	
-
-   if (GetObjProperty(newlook, "chardata"))
-		chardata := GetObjProperty(newlook,"chardata");
+	var chardata;
+   if (GetObjProperty(oldlook, "chardata"))
+		chardata := GetObjProperty(oldlook, "chardata");
    else
       chardata := struct{};
 	endif
-
+   SetObjProperty(newlook, "chardata", chardata);
 	//Copia o profile do npc.
 	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
 	var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, oldlook.serial, DF_CREATE);
@@ -229,7 +218,6 @@ function clonar(newlook, oldlook)
 
 	var cp_data_file_newlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
 	var cp_elem_newlook       := DFFindElement(cp_data_file_newlook, newlook.serial, DF_CREATE);
-	var cp_profile_newlook    := DFGetProp(cp_elem_newlook, "Profile", DF_CREATE);
 	
 	cp_elem_newlook.SetProp("Profile", cp_profile_oldlook);
 	

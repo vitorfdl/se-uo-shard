@@ -18,21 +18,21 @@ function StartScript(mobile, attacker := 0, level := 0)
       sleep(RandomDiceRoll("1d4") * 120);
       if (mobile.dead) continue; endif
 
-      var random_effect := RandomInt(8);
+      var random_effect := RandomInt(6);
 
       case (random_effect)
          1:
             SendSysMessageEx(mobile, "Você sente seu nariz coçar", SSM_INFO);
          2:
-            PlayCustomSound(mobile, 25);
+            PlayCustomSound(mobile, 26);
          3:
-            PlayCustomSound(mobile, 25);
+            PlayCustomSound(mobile, 26);
             sleep(2);         
-            PlayCustomSound(mobile, 25);
+            PlayCustomSound(mobile, 26);
             sleep(2);         
-            PlayCustomSound(mobile, 25);
+            PlayCustomSound(mobile, 26);
             sleep(2);         
-            PlayCustomSound(mobile, 25);
+            PlayCustomSound(mobile, 4);
          4:
             PlayCustomSound(mobile, 7);
             sleep(1);

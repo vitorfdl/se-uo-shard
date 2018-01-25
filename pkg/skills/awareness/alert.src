@@ -8,7 +8,7 @@ program alert(mobile)
 	while ( mobile )
 		SetName(mobile, mobile.name);
 		if ( mobile.connected && !mobile.cmdlevel)
-			examinarArea(mobile);
+			examinarArea(mobile, +2);
 		endif
 		sleep(15);
 	endwhile

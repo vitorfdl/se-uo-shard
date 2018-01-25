@@ -16,7 +16,7 @@ program pisonShield(params)
    var dice_roll := params[2].dice_roll;
 	params := 0; // No longer needed
    var the_poison;
-   while ( 1 )
+   while ( who.connected )
       SendSysMessageEx(who, "Selecione o veneno", SSM_REQUEST);
       the_poison := Target(who);
 
@@ -32,8 +32,9 @@ program pisonShield(params)
       elseif (the_poison.graphic != 0x0f09)
          SendSysMessageEx(who, "Isso não parece ser uma poção!", SSM_FAIL);
          return;
+      else
+         break;
       endif
-
    endwhile
 
 	var level, poisonType;
@@ -69,7 +70,8 @@ program pisonShield(params)
    poisonInfo.+acc    := who.acctname;
    poisonInfo.+difficulty := diff;
 
+   PlayObjectCenteredEffectEx(targ, 0x9F89, 9, 20, 2128);
    SetObjProperty(who, "poisonshield", poisonInfo);
-   TS_StartTimer(targ, "poisonshield", 20);	
+   TS_StartTimer(targ, "poisonshield", 160);	
 	return 1;
 endprogram

@@ -52,7 +52,7 @@ function genericControl()
 		endif
 		
 		resolveEvent(ev, wanders);
-
+      EraseObjProperty(me, "#charge_enemy");
 		lookAround();
       loops += 1;
       if (loops >= 200)

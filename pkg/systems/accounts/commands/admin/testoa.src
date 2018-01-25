@@ -13,12 +13,22 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":timeUtils:time";
 include ":merchants:crafthelp";
+include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
-   var targ := TargetCoordinates(who);
+      
+      sleep(3);
+      PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 60, 0);
+      sleep(3);
+      PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 50, 0);
+   // var coord := SplitWords(text);
+   // var ret := array{};
+   // var targ := lineBresenham(who.x, who.y, cint(coord[1]), cint(coord[2]));
+   // MoveObjectToLocation(who, targ[1], targ[2], who.z, who.realm, MOVEOBJECT_FORCELOCATION);
+   // print(targ);
    // SendSysMessageEx(who, ""+GetCharAge(targ));
    // SendSysMessageEx(who, ""+GetExpCap(targ));
-   var mobs := ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+   // var mobs := ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
    // start_script(":death:permadeath/permadeath", {who, });
    // sendsysmessageex(who, GetTimeStamp(polcore().systime));
    // var targ := Target(who);

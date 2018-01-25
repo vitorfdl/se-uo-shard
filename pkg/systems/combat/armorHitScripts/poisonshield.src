@@ -15,7 +15,7 @@ program HitScript(params)
    var poisonInfo := GetObjProperty(defender, "poisonshield");
    if (!poisonInfo) return; endif
 
-	PlayObjectCenteredEffectEx( defender, 0x22c6, 1, 9, 11);
+   PlayObjectCenteredEffectEx( defender, 0x22c6, 1, 9, 2128);
    if (rollResistDice(attacker, CONSTITUTION) <= poisonInfo.difficulty)
       TS_StartTimer(attacker, poisonInfo.name, 10, poisonInfo.level, defender);
    endif

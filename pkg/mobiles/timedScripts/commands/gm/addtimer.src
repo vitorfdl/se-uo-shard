@@ -21,41 +21,39 @@ program textcmd_AddTimer(who, params)
       endfor
 		SendSysMessage(who, "timer added");
 	elseif (params[1] == "remall")
-      for i := 1020 to 1099 
-         who.delBuff(i);
-         sleepms(2);
-      endfor
+      who.clearBuffs();
 		SendSysMessage(who, "timer removed");
-	elseif (params[1] != "rem")
+	elseif (params[1] == "add")
 		SendSysMessage(who, "timer added");
 		who.addBuff(cint(params[6]), cint(params[2]), cint(params[3]), cint(params[4]), cAscZ(params[5]));
-	else
+	elseif (params[1] == "rem")
 		SendSysMessage(who, "timer removed");
 		who.delBuff(cint(params[2]));
 	endif
-	// var timer_name	:= params[1];
-	// var duration	:= CInt(params[2]);
-	// var level	:= CInt(params[3]);
 
-	// if ( !level )
-	// 	level := 1;
-	// endif
+	var timer_name	:= params[1];
+	var duration	:= CInt(params[2]);
+	var level	:= CInt(params[3]);
+
+	if ( !level )
+		level := 1;
+	endif
 	
-	// if ( !timer_name || !duration )
-	// 	SendSysMessage(who, "Command syntax .addtimer <timername> <duration> (level)");
-	// 	return 0;
-	// endif
+	if ( !timer_name || !duration )
+		SendSysMessage(who, "Command syntax .addtimer <timername> <duration> (level)");
+		return 0;
+	endif
 
-	// SendSysMessage(who, "Select a mobile.");
-	// var targ := target(who);
-	// if ( !targ.IsA(POLCLASS_MOBILE) )
-	// 	SendSysMessage(who, "Cancelled.");
-	// 	return 0;
-	// endif
+	SendSysMessage(who, "Select a mobile.");
+	var targ := target(who);
+	if ( !targ.IsA(POLCLASS_MOBILE) )
+		SendSysMessage(who, "Cancelled.");
+		return 0;
+	endif
 	
-	// TS_StartTimer(targ, timer_name, duration, level);
+	TS_StartTimer(targ, timer_name, duration, level);
 
-	// SendSysMessage(who, "Done.");
+	SendSysMessage(who, "Done.");
 
 	return 1;
 endprogram

@@ -99,7 +99,7 @@ function CalculateDHDiff(who, mobile,)
 	return difficulty;
 endfunction
 
-function examinarArea(who)
+function examinarArea(who, plus_diff := 0)
 	var range := 5 + AP_GetStat(who, WISDOM, RETURN_BONUS) + getProficiencyBonus(who, PERCEPCAO) ;
 	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PERCEPCAO);
    if (range < 1)
@@ -110,7 +110,7 @@ function examinarArea(who)
 	foreach mobile in ListMobilesNearLocationEX(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN)
 		if ( mobile == who || GetObjProperty(who, "IgnoreHidden") || mobile in who.party.members ); // Do Nothing
 		elseif ( CheckLineOfSight(who, mobile) )
-			var difficulty := CalculateDHDiff(who, mobile);
+			var difficulty := CalculateDHDiff(who, mobile) + plus_diff;
 			
 			if ( dice_roll >= difficulty )
 				ExpGain(who, difficulty, dice_roll);

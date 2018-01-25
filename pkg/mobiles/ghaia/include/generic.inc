@@ -148,60 +148,61 @@ function NpcGoTo(destiny, move_type, stop_if_attacker := 0)
 	endif
 endfunction
 
-function Flee(opponent)
+function Flee(opponent, sleepdelay := 0)
    if((me.script == "immobile") || (me.script == "immobilespell"))
       sleep(2);
       return;
-   else
-      if ("FleeStealth" in custombehaviors)
-         if (!GetCooldown(me, "fleestealth"))
-            PrintText(me, "*esconde*");
-            sleep(1);
-            me.hidden := 1;
-            me.stealthsteps := 30;
-            SetCooldown(me, "fleestealth", 30);
-         endif
+   endif
+
+   if ("FleeStealth" in custombehaviors)
+      if (!GetCooldown(me, "fleestealth"))
+         PrintText(me, "*esconde*");
+         sleep(1);
+         me.hidden := 1;
+         me.stealthsteps := 30;
+         SetCooldown(me, "fleestealth", 30);
       endif
-      // var speech := GetConfigStringArray( npccfgfile, "FleeSpeech" );
-      // if (speech.size() > 0)
-      //    if (RandomInt(100)  < 30) //sempre 30% de chance de falar
-      //          SayUC((speech[RandomInt(speech.size()+1)]));
-      //    endif
+   endif
+   // var speech := GetConfigStringArray( npccfgfile, "FleeSpeech" );
+   // if (speech.size() > 0)
+   //    if (RandomInt(100)  < 30) //sempre 30% de chance de falar
+   //          SayUC((speech[RandomInt(speech.size()+1)]));
+   //    endif
+   // endif
+   var numflees := cint(GetObjProperty(me,"#flees"));
+   if(numflees > 10)
+      EraseObjProperty(me, "#flees");
+      RestartScript(me);
+   else
+      numflees := numflees + 1;
+      SetObjProperty(me,"#flees", numflees);
+   endif
+   
+   var runs := 0;
+   if (!sleepdelay)
+      sleepdelay := 275 - me.run_speed;
+   endif
+   // var chk := 0;
+   while(Distance(me, opponent) < 20 && runs < 50 && CheckLineOfSight(me, opponent))
+      sleepms(sleepdelay);
+      var ev := wait_for_event(0);
+      //chk := process_flee_event(opponent);
+      RunAwayFrom(opponent);
+      runs := runs +1;
+      if (ev.type == SYSEVENT_DAMAGED)
+         if (((ev.source.npctemplate) and (CheckLineOfSight(me, ev.source))) 
+               || (CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y ,opponent.x, opponent.y)) 
+               || (!CheckLineOfSight(me, opponent)) || (!opponent) || (RandomInt(3)==1))
+            opponent := ev.source;
+            SetOpponent(opponent);
+         endif
+      endif 
+
+      // if(chk)
+      //    break;
       // endif
 
-      var numflees := GetObjProperty(me,"#flees");
-      if (!numflees)
-         numflees := 1;
-      elseif(numflees > 10)
-         RestartScript(me);
-      else
-         numflees := numflees + 1;
-      endif
-
-      SetObjProperty(me,"#flees", numflees);
-      var runs := 0;
-      var chk := 0;
-      var ev;
-      while(Distance(me, opponent) < 15 && runs < 50 && CheckLineOfSight(me, opponent))
-         ev := wait_for_event(1);
-         //chk := process_flee_event(opponent);
-         RunAwayFrom(opponent);
-         runs := runs +1;
-         if (ev.type == SYSEVENT_DAMAGED)
-            if (((ev.source.npctemplate) and (CheckLineOfSight(me, ev.source))) 
-                || (CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y ,opponent.x, opponent.y)) 
-                || (!CheckLineOfSight(me, opponent)) || (!opponent) || (RandomInt(3)==1))
-              opponent := ev.source;
-              SetOpponent(opponent);
-            endif
-         endif 
-
-         if(chk)
-            break;
-         endif
-
-      endwhile
-   endif
+   endwhile
 endfunction
     
 //no sleep mode ele o waitfor event fica 30 secs e ele não fica mais fazendo lookarounds o tempo todo
@@ -356,8 +357,7 @@ function CalcPathAndMove(me, opponent, sleepdelay)
          path := FindPath(  me.x, me.y, me.z, opponent.x, opponent.y, opponent.z, me.realm, flags, 15); //calcula o path
          
          if (!path[1] || !path || path == error)
-            SetObjProperty(me,"#flees", 15);
-            Flee(opponent);
+            Flee(opponent, sleepdelay);
             sleepms(sleepdelay);
             ChooseAnotherOpponent(me);
             if (CoordinateDistance(me.x, me.y, opponent.x, opponent.y) > 14)

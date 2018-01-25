@@ -69,7 +69,10 @@ function SendSystemReport(above_object, text, color := SYSTEM_REPORT, character 
 endfunction
 
 function GetInput(character, item, uc_prompt, langcode := "ENG") // item is a placeholder, pass anything
-  return RequestInputUC(character, item, UC(uc_prompt), langcode);
+   var request := RequestInputUC(character, item, UC(uc_prompt), langcode);
+   if (!request) return; endif
+
+   return CChrZ(request.uc_text);
 endfunction
 
 function UC(strs)

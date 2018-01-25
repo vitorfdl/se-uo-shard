@@ -6,20 +6,25 @@ include ":gumps:yesno";
 include "include/say";
 
 program renameboat(you, tillerman)
-
-	if (GetObjProperty(tillerman, "viagem") != error)
+	if (GetObjProperty(tillerman, "viagem") != error && !GetObjProperty(tillerman, "course"))
 		var destinos := GetObjProperty(tillerman, "viagem");
 		var options := array;
-		foreach dest in destinos 
-			options.append(dest.name + " [" + dest.cost + " moedas]");
+		foreach dest in destinos
+         var plots := dest.plots;
+         var last_plot := plots[plots.size()];
+         // if (CoordinateDistance(last_plot.x, last_plot.y, tillerman.x, tillerman.y) > 5)
+			   options.append(dest.name + " [" + dest.cost + " moedas]");
+         // endif
+         sleepms(2);
 		endforeach
+      options.append("Cancelar");
 	
 		var destname := RadioGump(you, 350, 200, "Escolha o destino da viagem. ", options);
-		if (destname)
+		if (destname && destname != "Cancelar")
 			foreach dest in destinos
 				if (destname == (dest.name + " [" + dest.cost + " moedas]"))
 					SendSysMessageEx(you, "Você deve pagar " + dest.cost + " moedas por essa viagem.", SSM_REQUEST);
-					var moedas := target(you);
+					var moedas := Target(you);
 					if ( moedas.objtype == 0xeed)
 						if (moedas.amount >= cint(dest.cost))
 							if (!SubtractAmount(moedas, cint(dest.cost)))
@@ -34,7 +39,7 @@ program renameboat(you, tillerman)
 						return;
 					endif
 					SetObjProperty(tillerman, "course", dest.plots);
-					SetObjProperty(tillerman, "nextwaypoint", 1);
+					SetObjProperty(tillerman, "back_course", dest.plots.Reverse());
 					PrintText(tillerman,"Viagem programada, iremos *partir* quando me ordenar!");
 				endif
 			endforeach

@@ -1757,10 +1757,10 @@
 0x602b largeboatdeed boat
 0x602c largedragonboatdeed boat
 0x602d smalltowerdeed house
-0x602e orcshipdeed boat
-0x602f gargoyleshipdeed boat
-0x6030 tokunoshipdeed boat
-0x6031 britannianshipdeed boat
+0x602e orcshipDeed boat
+0x602f gargoyleshipDeed boat
+0x6030 tokunoshipDeed boat
+0x6031 britannianshipDeed boat
 0x6032 sandstonepatiohousedeed house
 0x6033 twostoryvilladeed house
 0x6034 tentdeed house

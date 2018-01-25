@@ -8,9 +8,12 @@ include "include/string";
 include":merchants:crafthelp";
 include ":ghaia:ghaiaUtil";
 include ":gumps:gumps";
+include ":crafting:recipes";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
 include ":gumps:include/requestgump";
+include ":crafting:craft_props";
+include ":crafting:fls_crafting";
 
 const GF_STDCOLOR := 1890;
 const MOEDAS      := 0xeed;
@@ -45,9 +48,9 @@ function HandleItemGiven(npc, player, item)
 	elseif (onlyplayersells && onlyplayersells != player.name)
 		SendSysMessage(player, "Perdao, somente " + onlyplayersells + " pode fazer vendas comigo");
 		return;
-	// elseif (serialid != error)
-	// 	SendSysMessageEx(player,"Você não pode vender isto.",SSM_FAIL);
-	// 	return;
+	elseif (GetObjproperty(item, "serialid") != error)
+		SendSysMessageEx(player,"Você não pode vender isto.",SSM_FAIL);
+		return;
 	elseif ( !item.IsA(POLCLASS_ITEM) )
 		SendSysMessageEX(player, "Cancelado.",SSM_FAIL);
 		return;
@@ -153,10 +156,16 @@ function SendItemView(npc, player)
 			GFAddButton(gump, x+96, y+116, 0x9C4F, 0x9C4F, GF_CLOSE_BTN, 90000+cint(serial));
 		endif
   		GFHTMLArea(gump, x+20, y+1, 90, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(item.desc));
+      GFTooltipText(gump, "{}".format(item.desc));
 		GFTilePic(gump, x+42, y+75, item.graphic, 0); //objtype
+      var item_desc := GetDetails(item);
       if (cost_info.desc)
-		   GFTooltipText(gump, "{}".format(cost_info.desc));
+         item_desc := "{}{}".format(item_desc, cost_info.desc);
       endif
+      if (item_desc != "")
+		   GFTooltipText(gump, "{}".format(item_desc));
+      endif
+      
 		GFTextLine(gump, x+24, y+120, 1051, "Unidade");
 		GFResizePic(gump, x+25, y+138, 30546, 96, 19);
 		GFGumpPic(gump, x+27, y+140, 40022, 0);
@@ -440,4 +449,28 @@ function DoWithdraw(npc, player)
 	endforeach
 
 	data_elem.EraseProp(Hex(player.serial));
+endfunction
+
+function GetDetails(item)
+   var ret := "";
+   if (item.ObjClass == "Armor" || item.ObjClass == "Weapon")
+      ret += "Condição: {}<br>".format(GetCondition(item));
+      ret += "Qualidade: {}<br>".format(getQuality(item.quality));
+      if (item.strrequired)
+         ret += "Força Minima: {}<br>".format(item.strrequired);
+      endif
+      if (item.intrequired)
+         ret += "Força Minima: {}<br>".format(item.intrequired);
+      endif
+   endif
+
+   if (item.CProps.objtype)
+      var recipe := GetRecipe(item.CProps.objtype, ReadConfigFile(":*:recipes"));
+      ret += "Receita de {}<br>".format(recipe.name);
+   endif
+   // if (item.ObjClass == "Armor")
+   //    print("is armor");
+   // endif
+
+   return ret;
 endfunction

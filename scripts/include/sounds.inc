@@ -40,6 +40,7 @@ function PlayCustomSound(who, number)
    sounds[32] := array{"*Yeah*", 0x338, 0x44A};
    sounds[31] := array{"*Bocejando*", 0x337, 0x449};
    sounds[33] := array{"*Gritando*", 0x339, 0x44B};
+   sounds[34] := array{"", 0x150, 0x15A};
 
    var sound_array := sounds[number];
    if (!sound_array) return; endif
@@ -50,7 +51,7 @@ function PlayCustomSound(who, number)
    else
       PlaySoundEffect( who, sound_array[3] );
    endif
-   PrintTextAbove(who, sound_array[1]);
+   PrintText(who, sound_array[1]);
 endfunction
 
 // SOUNDS ABC order by insideUO

@@ -39,7 +39,8 @@ function UseHabs()
          hab_dice := cint(hab_dice);
       endif
 
-      PlaySpecialHab(hab_name, hab_cooldown, hab_dice, hab_target, hab_special);
+      var res := PlaySpecialHab(hab_name, hab_cooldown, hab_dice, hab_target, hab_special);
+      if (res) break; endif
    endforeach
 endfunction
 
@@ -108,6 +109,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
 
    if (hab_cooldown && res)
       SetCooldown(me, hab_name, CInt(hab_cooldown));
+      return 1;
    else
       SetCooldown(me, hab_name, 5);
    endif
@@ -122,7 +124,7 @@ function charm(mobile, ts_time, diff)
       return 1;
    endif
 
-   TS_StartTimer(mobile, "charmed", ts_time, diff, me);
+   TS_StartTimer(mobile, "charmed", cint(ts_time), diff, me);
    return 1;
 endfunction
 
