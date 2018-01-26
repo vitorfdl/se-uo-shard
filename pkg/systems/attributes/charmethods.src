@@ -233,3 +233,7 @@ exported function setToughness(who, plus := 1)
    endif
    SetObjProperty(who, "toughness", toughness);
 endfunction
+
+exported function getMaxExp(who)
+   return getLevel(who) * 1100;
+endfunction

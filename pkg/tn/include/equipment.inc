@@ -70,6 +70,12 @@ function RemoveEquipmentMods(who, item)
          who.setToughness(-1);
       endif
 	endif
+
+   var specialprop := GetObjProperty(item, "setprop");
+   if (specialprop)
+      specialprop := Splitwords(specialprop);
+      EraseObjProperty(who, specialprop[1]);
+   endif
 	
 	var mods := GetObjProperty(item, "equip");
 	if (!mods)
@@ -90,8 +96,6 @@ function RemoveEquipmentMods(who, item)
 			AP_ModifyStatMod(who, CONSTITUTION, (-1)*Cint( mods["conmod"] ) );
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
-		elseif (mod == "setprop")
-			EraseObjProperty(who, "#" + GetObjProperty(item, "propname"));
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) - Cint( mods["manamod"] ));
 			RecalcVitals(who);

@@ -1,11 +1,24 @@
 
 use uo;
+use os;
+
+include ":fls_core:fls_characters";
 
 program seasonaleffects(params)
 	//return;
 	//sem efeitos das estacoes
+   sleep(2);
 	var who := params[1];
 	
+   if (HaveReverseVision(who))
+		if (who.cmdlevel > 1)
+			SendSysMessage(who, "Ajustando infravision");
+		endif
+		ReverseLight(who);
+	else
+		who.setlightlevel(0, 2);
+	endif
+
 	var season := cint(getglobalproperty("season"));
 	if (!season)
 		season := 1;

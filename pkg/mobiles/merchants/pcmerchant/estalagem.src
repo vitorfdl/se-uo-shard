@@ -16,6 +16,7 @@ include ":gumps:yesno";
 include "include/say";   
 include ":keys:key";
 include ":tn:tngumps";
+include ":timeUtils:time";
 
 const BKGND_STONESLAB		:= 9200;  // Gray stone slab background
 const BKGND_BLUESLAB		:= 3600;  // Raised edge (blocky)
@@ -116,7 +117,7 @@ function SendRoomGump(npc, player)
 		GFAddButton(gump, 20, 133, 2117, 2118, GF_CLOSE_BTN, 400);
 		GFTextLine(gump, 40, 130, GF_STDCOLOR, "Entregar Quarto");
 		
-		if ( CalcularDias(quartos[meuquarto].data) >= 6)
+		if ( GetTimeBetween(quartos[meuquarto].data, polcore().systime, "days") >= 5)
 			GFAddButton(gump, 20, 183, 2117, 2118, GF_CLOSE_BTN, 500);
 			GFTextLine(gump, 40, 180, GF_STDCOLOR, "Pagar Aluguel");
 		endif

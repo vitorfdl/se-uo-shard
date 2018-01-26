@@ -42,6 +42,8 @@ function AddPaymentForSeller(merchant, seller_serial, item_template)
 
 	data_elem.SetProp("my_payments", my_payments);
 	data_elem.SetProp(Hex(seller_serial), seller_account);
+	var money_stored := cint(data_elem.GetProp("money_stored"));
+   
 endfunction
 
 function GetSellerAccount(merchant, seller_serial)
@@ -216,14 +218,14 @@ endfunction
 // Removes an item from the ItemsSelling list.
 //
 function RemoveItemForSale(merchant, item_num, confiscar := 0)
-	var data_elem := GetMerchantDataElem(Hex(merchant.serial)+"-ItemsSelling");
+   var data_elem := GetMerchantDataElem(Hex(merchant.serial)+"-ItemsSelling");
 	
-  var selling_info := data_elem.GetProp(Cstr(item_num));  
-  if ( cint(selling_info[1].infinite) == 1 && !confiscar)
-    return 1;
-  else
-    return data_elem.EraseProp(CStr(item_num));
-  endif
+   var selling_info := data_elem.GetProp(Cstr(item_num));  
+   if ( cint(selling_info[1].infinite) == 1 && !confiscar)
+      return 1;
+   else
+      return data_elem.EraseProp(CStr(item_num));
+   endif
 endfunction
 
 //
@@ -243,6 +245,25 @@ function RemoveOldItemsForSale(merchant)
 		sleepms(2);
 	endforeach
 endfunction		
+
+function SetMerchantLog(merchant, buyer_name, item_name, seller_name, cost)
+	var data_elem := GetPaymentsDataElem(Hex(merchant.serial));
+	var my_sellings := data_elem.GetProp("sell_log");
+   if (!my_sellings) my_sellings := array{}; endif
+   my_sellings.Insert(1, "{} vendeu {} para {} por {} moedas".format(seller_name, item_name, buyer_name, cost));
+
+   if (my_sellings.size() > 20)
+      my_sellings.Erase(my_sellings.size());
+   endif
+
+   data_elem.SetProp("sell_log", my_sellings);
+endfunction
+
+function GetMerchantLog(merchant)
+	var data_elem := GetPaymentsDataElem(Hex(merchant.serial));
+	var my_sellings := data_elem.GetProp("sell_log");
+   return my_sellings;
+endfunction
 
 //
 // This function cleans everything up when a merchant dies.

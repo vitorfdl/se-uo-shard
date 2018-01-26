@@ -16,11 +16,11 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
-      
-      sleep(3);
-      PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 60, 0);
-      sleep(3);
-      PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 50, 0);
+      who.setexp(cint(text));
+      // sleep(3);
+      // PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 60, 0);
+      // sleep(3);
+      // PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 50, 0);
    // var coord := SplitWords(text);
    // var ret := array{};
    // var targ := lineBresenham(who.x, who.y, cint(coord[1]), cint(coord[2]));

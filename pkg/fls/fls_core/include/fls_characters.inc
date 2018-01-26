@@ -57,6 +57,7 @@ function HaveReverseVision(who)
 	if (chardata.raca["Elfo"])
 		return 1;
 	endif
+   
 	return 0;
 endfunction
 

@@ -111,6 +111,6 @@ function showSpecialGump(who, item)
    GFClosable(gump, 1);
    GFSetId(gump, 0x94b5);
    GFGumpPic(gump, 250, 250, gump_params.gump_id);
-   GFHTMLArea(gump, gump_params.x+250, gump_params.y+250, gump_params.width, gump_params.height, "<basefont {} color=#{}>{}".format(lang, gump_params.color, gump_params.text) , 0, 0);
+   GFHTMLArea(gump, gump_params.x+250, gump_params.y+250, gump_params.width, gump_params.height, "<BASEFONT {} color=#{}>{}".format(lang, gump_params.color, gump_params.text) , 0, 0);
    GFSendGump(who, gump);
 endfunction

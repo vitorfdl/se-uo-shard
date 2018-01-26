@@ -1,0 +1,36 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/say";
+include "include/client";
+include ":gumps:gumps_ex";
+include ":attributes:attributes";
+
+program expBar(who)
+   var x := 200;
+   var y := 500;
+	var expbar := GFCreateGump();
+   GFPage(expbar, 0);
+   GFClosable(expbar, 0);
+   GFSetId(expbar, GUMPID_EXPBAR);
+   GFResizePic(expbar, x+7, y+8, 9270, 526, 66);
+   GFResizePic(expbar, x+21, y+21, 9300, 502, 39);
+   GFHTMLArea(expbar, x+30, y+23, 173, 20, "<BASEFONT Size=5 color=#332a1c>Barra de Experiência");
+   GFGumpPic(expbar, x+499, y+31, 9771, 0);
+   GFGumpPicTiled(expbar, x+30, y+48, 480, 6, 0x2616);
+
+   while (who.connected)
+      GFCloseGumpTimed(who, GUMPID_EXPBAR, 15);
+      var temp_gump := expbar;
+      var exp_width := getExpLength(who.getExp(), who.getMaxExp(), 480);
+      GFGumpPicTiled(temp_gump, x+30, y+48, exp_width, 6, 9751);
+
+      GFSendGump(who, temp_gump);
+   endwhile
+
+endprogram
+
+function getExpLength(exp, maxexp, maxwidth)
+   return cint((exp * maxwidth) / maxexp);
+endfunction

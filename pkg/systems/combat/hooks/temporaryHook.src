@@ -103,8 +103,10 @@ program Attack(params)
 		return 1;
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
-   elseif ( attacker.hidden && attacker.npctemplate)
+   elseif ( attacker.hidden)
       attacker.hidden := 0;
+		attacker.SetAchievement("sneak_attack", 1);
+		ExpGain(attacker, "minor");
 	endif
 
 	var attacker_roll := GetAttackerChance(attacker, defender);

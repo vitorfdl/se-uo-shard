@@ -26,17 +26,6 @@ include ":gumps:gumps";
 CONST ALIGN_CENTER	:= 0x1;
 CONST ALIGN_RIGHT	:= 0x2;
 
-function GFCloseGump(mobile, pid, ret_val:=0)
-	var packet := CreatePacket(0xBF, 13);
-	packet.SetInt16(1, 13);
-	packet.SetInt16(3, 4);
-	packet.SetInt32(5, pid);
-	packet.SetInt32(9, ret_val);
-
-	return packet.SendPacket(mobile);
-endfunction
-
-
 function GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
 	return Start_Script(":gumps:autoClose", array{mobile, pid, timer, ret_val});
 endfunction

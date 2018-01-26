@@ -101,6 +101,15 @@ function ExpGain(mobile, difficulty, value := 0)
 		SysLog("Erro em difficulty para ExpGain: {}".format(difficulty));
 	endif
 
+   var account := FindAccount(mobile.acctname);
+   if (account && account.GetProp("expboost"))
+      if (account.GetProp("expboost") >= mobile.getlevel())
+         account.EraseProp("expboost");
+      else
+         up_amount := up_amount * 2;
+      endif
+   endif
+
 	//guarda as skills dos npcs tamados
 	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)
 		// TODO: Tamed exp gain
@@ -117,7 +126,7 @@ endfunction
 function CheckExpUp(who)
 	var level := who.getLevel();
 	if (level < 20)
-		var maxexp := who.getLevel() * 1200; //starts at 2000
+		var maxexp := who.getMaxExp(); //starts at 2000
 		var exp := who.GetExp();
 
 		if (exp < maxexp)

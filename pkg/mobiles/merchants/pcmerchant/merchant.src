@@ -14,6 +14,7 @@ include ":gumps:yesno";
 include ":gumps:include/requestgump";
 include ":crafting:craft_props";
 include ":crafting:fls_crafting";
+include ":gumps:htmlgump";
 
 const GF_STDCOLOR := 1890;
 const MOEDAS      := 0xeed;
@@ -86,6 +87,12 @@ function HandleSpeech(npc, player, text)
       endwhile
    elseif (text["minhas vendas"])
       DoWithdraw(npc, player);
+   elseif (text["histórico"] && text["vendas"])
+      if (GetObjProperty(player, "merchant_owner") == GetRegionName(player))
+         var historico := GetMerchantLog(npc);
+         historico := "<br> - ".format("<br> -".join(historico));
+         SendHTMLGump(npc, "Histórico de Vendas", historico);
+      endif
    endif
 endfunction
 
@@ -144,7 +151,8 @@ function SendItemView(npc, player)
 		GFGumpPic(gump, x+4, y+118, 40032, 0);
 		GFAddButton(gump, x+1, y+132, 40023, 40023, GF_CLOSE_BTN, serial);
 		GFTooltipText(gump, "Comprar");
-		if (player.cmdlevel > 3)
+
+		if (player.cmdlevel > 3 || GetObjProperty(player, "merchant_owner") == GetRegionName(player))
 			var vendor := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
 			var vendor_name := vendor.name;
 			if (GetObjProperty(vendor, "realname"))
@@ -152,9 +160,10 @@ function SendItemView(npc, player)
 			endif
   			GFHTMLArea(gump, x+10, y+35, 110, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(vendor_name));
 		endif
-		if (player.cmdlevel >3 || cost_info.seller == player.serial)
+		if (player.cmdlevel >3 || cost_info.seller == player.serial || GetObjProperty(player, "merchant_owner") == GetRegionName(npc))
 			GFAddButton(gump, x+96, y+116, 0x9C4F, 0x9C4F, GF_CLOSE_BTN, 90000+cint(serial));
 		endif
+
   		GFHTMLArea(gump, x+20, y+1, 90, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(item.desc));
       GFTooltipText(gump, "{}".format(item.desc));
 		GFTilePic(gump, x+42, y+75, item.graphic, 0); //objtype
@@ -190,7 +199,7 @@ function removeItemMerchant(npc, player, input)
 	var selling := info[2];
 	
 	var confiscar;
-	if ( player.cmdlevel >= 3 && YesNo(player, "Você deseja confiscar este objeto?") )
+	if ( (player.cmdlevel >= 3 || GetObjProperty(player, "merchant_owner") == GetRegionName(player)) && YesNo(player, "Você deseja confiscar este objeto?") )
 		confiscar := 1;
 		var ItensRevogados := dictionary;
 		if ( GetObjProperty(npc, "ItensRevogados") )
@@ -224,6 +233,7 @@ function removeItemMerchant(npc, player, input)
 			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
 		endif
 	endif
+   CreateItemInBackPack(player, cost.cost_type, cost.cost_amt);
 endfunction
 
 function DoPurchase(npc, player, input)
@@ -292,9 +302,10 @@ function DoPurchase(npc, player, input)
 		owed := owed-amount;
 		sleepms(2);
 	endforeach
-
+   
 	RemoveItemForSale(npc, input);
 	CreateItemInBackpackFromTemplate(player, selling);
+   SetMerchantLog(npc, player.name, selling.desc, cost.seller, cost.cost_amt);
 endfunction
 
 // function RemoveItem(npc, player, input)
@@ -320,7 +331,8 @@ endfunction
 function AddItemToSell(npc, player, item)
    var items_sold := GetItemsSoldList(npc);
    if (items_sold.size() >= 15)
-      return PrintText(npc, "Desculpe, não posso vender mais coisas no momento. Venha outra hora.");
+      PrintText(npc, "Desculpe, não posso vender mais coisas no momento. Venha outra hora.");
+      return 0;
    endif
 
 	var gump := GFCreateGump();
