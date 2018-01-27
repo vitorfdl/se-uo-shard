@@ -11,23 +11,29 @@ include ":timedscripts:timedScripts";
 
 program animateSword(params)
 	var who := params[1];
+	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 
-
-   PlayObjectCenteredEffect( targ, 0x3728, 1, 2 );
-   var dice := "1d6";
-   if (who.getLevel() >= 17)
-      dice := "4d6";
-   elseif (who.getLevel() >= 11)
-      dice := "3d6";
-   elseif (who.getLevel() >= 5)
-      dice := "2d6";
+   if (TS_GetTimerInfo(targ, "escudo"))
+      SendSysMessageEx(who, "O Alvo já está protegido por um escudo");
+      return 0;
    endif
 
-   var roll_dice := RandomDiceRoll(dice);
-   DamageFLS(targ, roll_dice, "Gelo", who);
-   PlaySoundEffect(targ, 0x209);
-   TS_StartTimer(targ, "attack_disadvantage", 4);	
+   PlayObjectCenteredEffect( targ, 0x3728, 1, 2 );
+   var shieldtype := "Fogo";
+   var color := 1923;
+   if (spellinfo.spelltype["Gelo"])
+      shieldtype := "Gelo";
+      color := 1923;
+   endif
+
+   SetObjproperty(targ, "oldcolor", targ.color);
+   targ.color = color;
+   targ.truecolor = color;
+   SetObjProperty(targ, "shieldtype", shieldtype);
+
+   SetObjProperty(targ, "fireshield");
+   TS_StartTimer(targ, "escudo", 4);	
 	return 1;
 endprogram

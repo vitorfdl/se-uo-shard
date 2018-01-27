@@ -784,3 +784,43 @@ function MyHex(i)
 	
 	return res; 
 endfunction
+
+
+function DrawObject(ktowhom, kserial, kgraphic, kx, ky, kz, kfacing, kcolor, keqitrandcolor := 0)
+  var PacketHexStringPart1 := "78";
+  var PacketHexStringPart2 := ConvertIntToHex(kserial, 4) + ConvertIntToHex(kgraphic, 2);
+  PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(kx, 2);
+  PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(ky, 2);
+  PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(kkz, 1);
+  PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(kfacing, 1);
+  PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(kcolor, 2);
+  PacketHexStringPart2 := PacketHexStringPart2 +"0000";
+  if ((kobj.isa(POLCLASS_MOBILE)) and ((kobj.graphic == 400) or (kobj.graphic == 401)))
+    var color;
+    var graphic;
+    foreach item in ListEquippedItems(kobj)
+      PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(item.serial, 4);
+      if (keqitrandcolor == 1)
+        color := RandomInt(99) + 2;
+
+      else
+        color := item.color;
+      endif
+      if (color == 0)
+        graphic := item.graphic;
+
+      else
+        graphic := item.graphic + 32768;
+      endif
+      PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(graphic, 2);
+      PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(item.layer, 1);
+      if (color != 0)
+        PacketHexStringPart2 := PacketHexStringPart2 + ConvertIntToHex(color, 2);
+      endif
+    endforeach
+  endif
+  PacketHexStringPart2 := PacketHexStringPart2 +"00000000";
+  var FullPacketHexStringLength := (len(PacketHexStringPart1) + len(PacketHexStringPart2)) / 2 + 2;
+  var FullPacketHexString := PacketHexStringPart1 + ConvertIntToHex(FullPacketHexStringLength, 2) + PacketHexStringPart2;
+  SendPacket(ktowhom, FullPacketHexString);
+endfunction
