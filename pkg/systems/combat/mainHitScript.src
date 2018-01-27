@@ -37,10 +37,6 @@ program MainHitScript( params )
 	if ( attacker == defender )
 		sendsysmessage(attacker, "attacker ao igual o defender");
 		return 0;
-	elseif ( attacker.hidden )
-		attacker.hidden := 0;
-		attacker.SetAchievement("sneak_attack", 1);
-		ExpGain(attacker, "minor");
 	elseif ( defender.hidden )
 		return 0;
 	elseif ( !attacker.npctemplate && defender.npctemplate && defender.master )

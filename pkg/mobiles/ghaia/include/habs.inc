@@ -101,6 +101,9 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "constrictSpell": res := constrict(hab_target, hab_dice, cint(hab_special)); break;
       "charming": res := charm(hab_target, hab_dice, cint(hab_special)); break;
       "SoproEuforia": res := euforic(hab_dice, cint(hab_special)); break;
+      "hunterMark": res := hunterMark(hab_target); break;
+      "fireWall": res := fireWall(hab_target, hab_dice); break;
+      "castSpell": res := castSpell(hab_target, hab_dice, hab_special); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
          SetCooldown(me, hab_name, 150);
@@ -113,6 +116,21 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    else
       SetCooldown(me, hab_name, 5);
    endif
+endfunction
+
+function castSpell(mobile, hab_dice, spellname)
+
+   return 1;
+endfunction
+
+
+function hunterMark(mobile)
+   return 1;
+endfunction
+
+function fireWall(mobile, hab_dice)
+   playCastAnimation();
+   return 1;
 endfunction
 
 function charm(mobile, ts_time, diff)

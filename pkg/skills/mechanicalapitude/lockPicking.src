@@ -62,7 +62,7 @@ endprogram
 
 function PickTreasureChest(me, lockpick, chest)
 	var lvl := CInt(GetObjProperty(chest,"level"));
-	if (!chest.locked)
+	if (!chest.locked || Getobjproperty(chest, "broken"))
 		SendSysMessageEx(me,"O alvo não parece estar tracado.", SSM_INFO);
 		return;
 	endif

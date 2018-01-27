@@ -48,7 +48,7 @@ function InnKeeperChecks()
                continue;
 				endif
 
-				var ticks := GetTimeBetween(rentdate, polcore().systime, "days");;
+				var ticks := GetTimeBetween(rentdate, polcore().systime, "days");
 				var renttime := GetObjProperty(npc, "tempoalugado");
 				if (!renttime || renttime.errortext)
 					renttime := 7;

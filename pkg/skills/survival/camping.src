@@ -46,12 +46,7 @@ program UseWood( who, wood )
 		var x := wood.x;
 		var y := wood.y;
 		var z := wood.z;
-      var itemnearby := ListItemsNearLocationOfType( x, y, z, 12, 0xDE3 );
-      if (itemnearby.size() > 1)
-         SendSysMessageEx(who, "Já existe outro acampamento pronto por perto.", SSM_FAIL );
-         return;
-      endif
-
+  
 		Detach();
 		PrintTextAbove( who, "*acendendo uma fogueira*");
 		sleep (5);
@@ -69,6 +64,12 @@ program UseWood( who, wood )
 		var healpoints := 2;
 
 		while( time > 0 )
+         var itemnearby := ListItemsNearLocationOfType( x, y, z, 12, 0xDE3 );
+         if (itemnearby.size() > 1)
+            SendSysMessageEx(who, "Já existe outro acampamento pronto por perto.", SSM_FAIL );
+            break;
+         endif
+
 			if (GetObjProperty(campfire, "encantado") == 1)
 				time := time + 10;
 				healpoints := healpoints+2;

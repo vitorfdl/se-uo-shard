@@ -381,7 +381,7 @@ function doElevator(who, item)
 		while (startz != maxz )
 			foreach obj in items
 				var coisa := SystemFindObjectBySerial(obj);
-				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z - modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
+				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z + modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
 			endforeach
 			startz := startz + modifier;
 			sleepms(50);

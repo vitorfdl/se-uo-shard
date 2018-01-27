@@ -14,7 +14,7 @@ function getNames()
       names_writed := Array{};
    endif
 
-   return names_writed.join("<br/>");
+   return "<br/>".join(names_writed);
 endfunction
 
 function writeName(who, item)

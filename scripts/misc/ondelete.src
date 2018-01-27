@@ -33,6 +33,15 @@ program core_onDelete(who)
 			ApplyRawDamage(pet, 9999);
 		endforeach
 
+      if (who.GetLevel() >= 8)
+         acc.SetProp("expboost", 4);
+      elseif (who.GetLevel() >= 5)
+         acc.SetProp("expboost", 3);
+      elseif (who.GetLevel() >= 3)
+         acc.SetProp("expboost", 2);
+      endif
+
+
 		return 1;
 	else
 		return 0;

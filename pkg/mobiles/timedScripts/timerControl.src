@@ -12,6 +12,7 @@ include ":timedscripts:timedScripts";
 include ":fls_core:packets";
 include "include/say";
 include ":magery:tnmagery";
+include ":attributes:attributes";
 
 set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
@@ -34,6 +35,7 @@ program TimerControl(mobile)
       endif
 
 		mobile.SetPoisoned((num_poisons > 0));
+      RecalcVitals(mobile);
 
 		var event;
 		if ( (timer_list.Size() > 0) || (cooldowns.Size() > 0) )

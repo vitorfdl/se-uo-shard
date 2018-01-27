@@ -26,11 +26,11 @@ program reset(who, params)
 	// 	params := 1;
 	// endif
 	
-	var exp := item.getLevel() * 1200;
+	var exp := item.getMaxExp() + 1;
 	item.SetExp(exp+1);
 
 	CheckExpUp(item);
-   SendSysMessageEx(who, "Você subiu 1 nivel");
+   SendSysMessageEx(who, "{} subiu 1 nivel".format(item.name));
 	// SetSkillPoints(item, GetSkillPoints(item)+1);
 	// SetAttribPoints(item, GetAttribPoints(item)+3);
 	// // SetCharLevel(item, who.getLevel()(item)+1);

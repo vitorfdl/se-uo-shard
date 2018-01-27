@@ -79,6 +79,15 @@ function SetEquipmentMods(who, item)
       endif
 	endif
 
+   var specialprop := GetObjProperty(item, "setprop");
+   if (specialprop)
+      specialprop := Splitwords(specialprop);
+      if (specialprop[2]["+"] || specialprop[2]["-"])
+         specialprop[2] := cint(specialprop[2]);
+      endif
+      SetObjProperty(who, specialprop[1], specialprop[2]);
+   endif
+
 	// if (item.isa(POLCLASS_ARMOR))
 	// 	EraseObjProperty(who, "twohanded");
 	// endif
@@ -106,8 +115,6 @@ function SetEquipmentMods(who, item)
 			AP_ModifyStatMod(who, CONSTITUTION, Cint( mods["conmod"] ) );
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, Cint( mods["wismod"] ) );
-		elseif (mod == "setprop")
-			SetObjProperty(who, "#" + GetObjProperty(item, "propname"), GetObjProperty(item, "propvalue") );
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) + Cint( mods["manamod"] ));
       elseif (mod == "toughmod")
