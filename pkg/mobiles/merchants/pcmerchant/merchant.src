@@ -46,7 +46,8 @@ function HandleSeeEvent(npc, player)
 	var data_elem := GetPaymentsDataElem(Hex(npc.serial));
 	var account := data_elem.GetProp(Hex(player.serial));
    
-   if (account.size() < 1)
+   if (!account || account.size() < 1)
+      SetCooldown(npc, "{}_see".format(player.serial), 600);
       return;
    endif
 
@@ -251,7 +252,10 @@ function removeItemMerchant(npc, player, input)
 			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
 		endif
 	endif
-   CreateItemInBackPack(player, cost.cost_type, cost.cost_amt);
+   var return_amt := cost.cost_amt * 0.1;
+   if (return_amt >= 1)
+      CreateItemInBackPack(player, cost.cost_type, return_amt);
+   endif
 endfunction
 
 function DoPurchase(npc, player, input)

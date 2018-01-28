@@ -182,6 +182,7 @@ function BuyTalents(who)
 	GFResizePic(gump, 0, 0, 9380, 715, 508);
 	GFGumpPicTiled(gump, 22, 36, 671, 11, 2091); //top decoration
 	GFGumpPicTiled(gump, 23, 463, 671, 11, 2091); //bottom decoration
+	GFHTMLArea(gump, 0, 485, 750, 20, "<BASEFONT size=0><center>Você tem {} pontos de talento.".format(who.GetTalentPoints()));
 	
 	GFPage(gump, 1);
    var x := 39;
@@ -207,7 +208,6 @@ function BuyTalents(who)
 		sleepms(2);
 	endforeach
 
-	GFHTMLArea(gump, 0, 485, 750, 20, "<BASEFONT size=0><center>Você tem {} pontos de talento.".format(who.GetTalentPoints()));
 
 	var input := GFSendGump(who, gump);
 
