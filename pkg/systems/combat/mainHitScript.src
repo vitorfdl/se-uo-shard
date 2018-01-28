@@ -201,8 +201,7 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
 	foreach hitscript in weapon_scripts
 		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll, hitopt});
 		if ( !script || script.errortext )
-			SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-			SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+			Print("*Attacker* Weapon {} script error starting [{}] : {}".format(weapon.name, hitscript, script.errortext));
 		endif
 		sleepms(2);
 	endforeach
@@ -245,8 +244,7 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
 	foreach hitscript in weapon_scripts
 		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll});
 		if ( !script || script.errortext )
-			SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-			SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+			Print("*Attacker* Weapon {} script error starting [{}] : {}".format(weapon.name, hitscript, script.errortext));
 		endif
 		sleepms(2);
 	endforeach
@@ -304,8 +302,7 @@ function ArmorHitScripts(attacker, defender, weapon, armor, base_damage, dice_ro
 	foreach hitscript in armor_scripts
 		var script := start_script("armorHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll});
 		if ( script.errortext )
-			SendSysMessage(attacker, "*Defender* armor script error starting ["+hitscript+"] :" + script.errortext);
-			SendSysMessage(defender, "*Defender* armor script error starting ["+hitscript+"] :" + script.errortext);
+			Print("*Defender* Weapon script error starting ["+hitscript+"] :" + script.errortext);
 		endif
 		sleepms(2);
 	endforeach
