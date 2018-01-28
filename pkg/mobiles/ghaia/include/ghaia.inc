@@ -141,41 +141,47 @@ endfunction
    //  var spawn_config := spawnpoint.getProps();
   
 //pega a lista de aliados proximos. se o npc for good, os players serao allies pra ele tbm
-function GetAlliesNear(me)
-   var spawnpointserial := GetObjProperty(mobile, "spawnpoint");
-   var spawnpoint       := SystemFindObjectBySerial(spawnpointserial);
-   spawnpoint := spawnpoint.GetProps();
+function GetAlliesNear(loc, range := 5)
+   var spotserial := GetObjProperty(mobile, "spawnspot");
+   var spot       := SystemFindObjectBySerial(spotserial);
+   spot := spot.GetProps();
    
    var myallies := array{};
-   foreach mobile in ListMobilesNearLocation(me.x, me.y, me.z, 5)
-      if (mobile.npctemplate && FindElemInArray(spawnpoint.monsters, struct{ "serial" := mobile.serial}))
+   foreach mobile in ListMobilesNearLocation(loc.x, loc.y, loc.z, range)
+      if (GetObjProperty(mobile, "spawnspot") == spotserial)
          myallies.append(mobile);
       elseif (me.alignment == ALIGN_GOOD && !(me in mobile.aggressorto))
          myallies.append(mobile);
       endif
+      sleepms(2);
    endforeach
 
    return myallies;
 endfunction
   
 //pega a lista de inimigos proximo, se tiver player perto e a tendencia for evil ele vira inimigo
-function GetEnemiesNear(me)
+function GetEnemiesNear(loc, range := 5, get_hidden := 0)
    var enemies := GetConfigStringArray( npccfgfile, "enemy" );
-   var myenemies := ListHostiles(me, 8);
-   foreach mobile in ListMobilesNearLocation(me.x, me.y, me.z, 8)
-      if (mobile IN myenemies)
+   var hostiles := ListHostiles(me, 10);
+   var myenemies := array{};
+   
+   foreach mobile in ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
+      if ((mobile.hidden && !get_hidden))
          continue;
+      endif
+      
+      if (mobile IN hostiles )
+         myenemies.append(mobile);
       endif
 
       if (mobile.npctemplate)
          if ( mobile.my_template() in enemies)
                myenemies.append(mobile);
          endif
-      else
-         if (me.alignment == ALIGN_EVIL)
-               myenemies.append(mobile);
-         endif
+      elseif (me.alignment == ALIGN_EVIL)
+         myenemies.append(mobile);
       endif
+      sleepms(2);
    endforeach
 
    return myenemies;

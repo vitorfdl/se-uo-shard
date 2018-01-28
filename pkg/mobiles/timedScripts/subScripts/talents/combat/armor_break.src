@@ -9,21 +9,24 @@ use util;
 include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
-include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   SetObjProperty(mobile, "#attack_disadvantage", level+1);
-   SendSystemReport(mobile, "*sente uma onda de frio*");
+   var bonus_ca := cint(GetObjProperty(mobile, "bonus_ca"));
+   bonus_ca -= (level+2);
+   SetObjProperty(mobile, "bonus_ca", bonus_ca);
+   SendSysmessageEx(mobile, "Sua defesa foi rompida!", SSM_INFO);
    return 1;
 endfunction
 
 function EndScript(mobile, level)
-   EraseObjProperty(mobile, "#attack_disadvantage");
-   return 1;
-endfunction
+   var bonus_ca := cint(GetObjProperty(mobile, "bonus_ca"));
+   bonus_ca += (level+2);
 
-function LogOffScript(mobile)
-   EraseObjProperty(mobile, "#attack_disadvantage");
+   if (bonus_ca <= 0)
+      EraseObjProperty(mobile, "bonus_ca");
+   else
+      SetObjProperty(mobile, "bonus_ca", bonus_ca);
+   endif
    return 1;
 endfunction
 
@@ -36,7 +39,7 @@ program TimedScriptInit(params)
       if (type == "End")
          return EndScript(mobile, level);
       elseif (type == "LogOff")
-         return LogOffScript(mobile);
+         return;
       endif
    endif
 

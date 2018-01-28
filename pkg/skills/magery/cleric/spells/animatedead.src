@@ -84,6 +84,7 @@ program SpellScript(params)
 	SetObjProperty(undead, "owner", who.serial);
 	SetObjProperty(undead, "name", targ.name);
 	SetObjproperty(undead, "script", targ.script);
+   SetObjProperty(undead, "summoned", 1);
 	SetObjProperty(undead, "AntigoTreinadorID", who.serial);
 
 	undead.script := ":ghaia:follower";

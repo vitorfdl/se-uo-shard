@@ -12,11 +12,15 @@ program renameboat(you, tillerman)
 		foreach dest in destinos
          var plots := dest.plots;
          var last_plot := plots[plots.size()];
-         // if (CoordinateDistance(last_plot.x, last_plot.y, tillerman.x, tillerman.y) > 5)
+         if (CoordinateDistance(last_plot.x, last_plot.y, tillerman.x, tillerman.y) > 5)
 			   options.append(dest.name + " [" + dest.cost + " moedas]");
-         // endif
+         endif
          sleepms(2);
 		endforeach
+      
+      if (options.size() < 1)
+         return;
+      endif
       options.append("Cancelar");
 	
 		var destname := RadioGump(you, 350, 200, "Escolha o destino da viagem. ", options);

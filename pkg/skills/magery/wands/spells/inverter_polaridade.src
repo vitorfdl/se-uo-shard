@@ -1,0 +1,44 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var coords := GetCoordsInSquare(who.x, who.y, 3);
+   foreach p in coords
+      p.z := who.z;
+      LightningEffect(p);
+      sleepms(2);
+   endforeach
+
+   var me_pos := struct{ "x" := who.x, "y" := who.y, "z" := who.z};
+   MoveObjectToLocation(who, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
+   MoveObjectToLocation(targ, me_pos.x, me_pos.y, me_pos.z, me_pos.realm, MOVEOBJECT_FORCELOCATION);
+
+
+   var hostiles := ListHostiles(who);
+   foreach mobile in (ListMobilesNearLocationEx( who.x, who.y, who.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
+      sleepms(2);
+      if ((!(mobile in who.party.members) && mobile != who) || mobile in hostiles)
+         if (rollResistDice(mobile, CONSTITUTION) > dice_roll)
+            SendSystemReport(mobile, "*resistido*", SSM_FAIL, who);
+            SendSystemReport(mobile, "*resistido*", SSM_INFO);
+            continue;
+         endif
+         DamageFLS(mobile, RandomDiceRoll("3d8"), DMG_ENERGY, who);
+      endif
+   endforeach
+   PlaySoundEffect(targ, 0x475);	
+	return 1;
+endprogram

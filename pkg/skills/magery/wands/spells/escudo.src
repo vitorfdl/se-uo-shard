@@ -16,7 +16,7 @@ program animateSword(params)
 	params := 0; // No longer needed
 
    if (TS_GetTimerInfo(targ, "escudo"))
-      SendSysMessageEx(who, "O Alvo já está protegido por um escudo");
+      SendSysMessageEx(who, "O alvo já está protegido por um escudo");
       return 0;
    endif
 
@@ -39,6 +39,6 @@ program animateSword(params)
    SetObjproperty(targ, "shieldcolor", color);
    SetObjProperty(targ, "shieldtype", shieldtype);
 
-   TS_StartTimer(targ, "escudo_magico", 5);	
+   TS_StartTimer(targ, "escudo_magico", 120);	
 	return 1;
 endprogram

@@ -8,8 +8,8 @@ include "include/damage";
 include ":tn:combat";
 include ":combat:combat";
 
-program lancararma(who,weapon)
-   if (!weapon != weapon)
+program lancararma(who, weapon)
+   if (weapon != who.weapon)
       return;
    endif
 
@@ -18,6 +18,11 @@ program lancararma(who,weapon)
 	if (!targ)
 		SendSysMessageEX(who, "Cancelado.", SSM_FAIL);
 		return;
+   elseif (weapon != who.weapon)
+      return;
+   elseif(!AP_ConsumeVital(who, STAMINA, 2))
+      SendSysMessageEx(who, "Você está sem fôlego para arremessar a arma.", SSM_FAIL);
+      return;
 	endif
 	
 	if (CoordinateDistance(who.x, who.y, targ.x, targ.y) > 10 || !CheckLosBetween(who.x, who.y, who.z, targ.x, targ.y, targ.z))

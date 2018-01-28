@@ -1,0 +1,31 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include "include/say";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	// var weapon	:= params[3];
+	// var dice	:= params[6];
+	// var basedamage	:= params[5];
+	// var rawdamage	:= params[6];
+	// params := 0; // Not needed anymore.
+
+   var msgs := array{"Parte o inimigo ao meio", "Corta a cabeça", "Atravessa o inimigo com a arma"};
+   if (AP_GetVital(defender, HITS) <= AP_GetVitalMaximumValue(defender, HITS) * 0.2)
+      PrintText(attacker, msgs.randomentry(), SSM_FAIL);
+      ApplyRawDamage(defender, 200);
+      PlaySoundEffect(targ, SFX_LIGHTNING);
+   endif
+		
+	// if (RandomInt(100) < 20 ) //20% de chance sempre
+	// 	PrintText(defender, "*cria do pantano surge entre horror do pantano*");
+	// 	CreateNpcFromTemplate(":ghaia:bogling", defender.x, defender.y, defender.z,  0, defender.realm);
+	// endif
+	
+	// return 1;
+endprogram

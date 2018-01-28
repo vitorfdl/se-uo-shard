@@ -57,7 +57,6 @@ program MainHitScript( params )
 	// TODO: reaproveitar depois
 
 	// TODO: Verificar depois
-	// CriticalHitScripts(attacker, defender, weapon, armor, base_damage, total);
 
 	PoisonChecks(attacker, defender, weapon);
 
@@ -81,6 +80,7 @@ program MainHitScript( params )
 
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll);
+	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll);
 
    ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
 
@@ -180,6 +180,24 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
 		hitopt := GetObjProperty(weapon, "generichit");
 	endif
 
+   if (dice_roll.two_dice_success)
+      if (HaveFeat(me, "Golpe Baixo") && wpn_a_elem.WeaponType == "dagger")
+         hitscripts.append("bleed");
+      elseif (HaveFeat(me, "Destruidor") && wpn_a_elem.WeaponType == "dagger")
+         hitscripts.append("armorbreak");
+      elseif (weapon.isMagicWeapon())
+         if (HaveFeat(me, "Aptidão do Fogo") && wpn_a_elem.DamageType == "Fogo")
+            hitscripts.append("immolation");
+         elseif (HaveFeat(me, "Aptidão do Raio") && wpn_a_elem.DamageType == "Eletrecidade")
+            hitscripts.append("armorbreak");
+         elseif (HaveFeat(me, "Aptidão do Gelo") && wpn_a_elem.DamageType == "Gelo")
+            hitscripts.append("attackbreak");
+         elseif (HaveFeat(me, "Aptidão do Veneno") && wpn_a_elem.DamageType == "Veneno")
+            hitscripts.append("constrict");
+         endif
+      endif
+   endif
+
 	foreach hitscript in weapon_scripts
 		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll, hitopt});
 		if ( !script || script.errortext )
@@ -189,6 +207,50 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
 		sleepms(2);
 	endforeach
 
+	return 1;
+endfunction
+
+function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byref dice_roll)
+	var auto_critical := 0;
+	if (GetObjProperty(attacker, "#nextcritical"))
+		EraseObjProperty(attacker, "#nextcritical");
+		auto_critical := 1;
+	endif
+
+   if (!dice_roll.critical && !auto_critical)
+      return;
+   endif
+   
+	if (!auto_critical)
+		if (GetCooldown(attacker, "critical") > 0)
+			return 1;
+		endif
+		SetCooldown(attacker, "critical", 10);
+	endif
+
+	var weapon_scripts := array;
+	if ( weapon.IsA(POLCLASS_WEAPON) )
+		weapon_scripts :=  GetConfigStringArray( item_cfg[weapon.objtype], "CriticalHitScripts" );
+	elseif (attacker.npctemplate)
+		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
+		weapon_scripts :=  GetConfigStringArray( npcelem, "CriticalHitScripts" );
+	endif
+
+   if (HaveFeat(me, "Peso da Montanha") && wpn_a_elem.WeaponType == "greatsword")
+      hitscripts.append("peso_da_montanha");
+   elseif (HaveFeat(me, "Golpe Baixo") && wpn_a_elem.WeaponType == "dagger")
+      hitscripts.append("bleed");
+   endif
+
+	foreach hitscript in weapon_scripts
+		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll, hitopt});
+		if ( !script || script.errortext )
+			SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+			SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
+		endif
+		sleepms(2);
+	endforeach
+	
 	return 1;
 endfunction
 
@@ -324,88 +386,6 @@ function PoisonChecks(attacker, defender, weapon)
 
 	return TS_StartTimer(defender, poisonInfo.name, poisonInfo.time, poisonInfo.level, attacker);
 endfunction
-
-// function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byref critical)
-
-// 	var autoCritical := 0;
-// 	if (GetObjProperty(attacker, "#nextcritical"))
-// 		EraseObjProperty(attacker, "#nextcritical");
-// 		autoCritical := 1;
-// 	endif
-
-// 	if (!autoCritical)
-// 		if (GetCooldown(attacker, "critical") > 0)
-// 			return 1;
-// 		endif
-// 	endif
-
-// 	//chance total = prop da arma  (pra bonus magicos) + prop do mob (pra npcs ou magias) + valor no itemdesc
-// 	var chance := Cint( Cint(GetObjProperty(weapon, "CriticalChance")) + Cint(GetObjProperty(attacker, "CriticalChance")) + Cint((item_cfg[weapon.objtype]).CriticalChance )) + CInt(AP_GetSkill(attacker, TACTICS)/20) + Cint(GetObjProperty(attacker, "#CriticalChance"));
-// 	EraseObjProperty(attacker, "#CriticalChance");
-// 	if (!chance)
-// 		return 1;
-// 	endif
-// 	if (lower(attacker.weapon.attribute) == lower("rangedcombat") && TemHabilidade(attacker, "Olhos de Aguia"))
-// 		chance += 15;
-// 	endif
-// 	var critcooldown := 60;
-
-// 	var rand := Cint((RandomInt(100) + 1));
-// 	//printtextabove(attacker, "chance " + chance + " rand " + rand + " " + (chance > rand) );
-// 	var result := chance > rand;
-
-// 	if (autoCritical)
-// 		result := 1;
-// 	endif
-
-// 	if (  result == 0 )
-// 		return 1; //se não passou
-// 	endif
-
-// 	if (!autoCritical)
-// 		SetCooldown(attacker, "critical", critcooldown);
-// 	endif
-	
-// 	var weapon_scripts := array;
-// 	if ( weapon.IsA(POLCLASS_WEAPON) )
-// 		weapon_scripts :=  GetConfigStringArray( item_cfg[weapon.objtype], "CriticalHitScripts" );
-// 	elseif (attacker.npctemplate)
-// 		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
-// 		weapon_scripts :=  GetConfigStringArray( npcelem, "CriticalHitScripts" );
-// 	endif
-// 	//Duttones: Possivel mudar o critico de npc's. Prioriza sempre o critico da arma.
-
-// 	//printtextabove(attacker, "critical hit scripts " + weapon_scripts);
-// 	if (weapon_scripts.size() > 0)
-// 		PrintText(attacker, "*CRITICO*", _DEFAULT_TEXT_FONT, 2118);
-// 		SetObjProperty(attacker, "critdelay", ReadGameClock()+180);
-// 		if (GetCooldown(defender, "vitalidadeinabalavel"))
-// 			SendSysMessageEx(defender, "Você ignora o critico", SSM_INFO);
-// 			SendSysMessageEx(attacker, "O defensor ignorou o critico", SSM_FAIL);
-// 			return 1;
-// 		endif
-// 	endif
-	
-// 	if (TemHabilidade(defender, "Reflexos Rapidos") && defender.shield)
-// 		if (!GetCooldown(defender, "reflexosrapidos"))
-// 			PrintText(defender, "*IMUNE*");
-// 			SetCooldown(defender, "reflexosrapidos", 10);
-// 			return;
-// 		endif
-// 	endif
-
-// 	foreach hitscript in weapon_scripts
-// 		var script := start_script(hitscript, array{attacker, defender, weapon, armor, base_damage, critical});
-// 		if ( !script || script.errortext )
-// 			SendSysMessage(attacker, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-// 			SendSysMessage(defender, "*Attacker* Weapon script error starting ["+hitscript+"] :" + script.errortext);
-// 		endif
-		
-// 		sleepms(2);
-// 	endforeach
-	
-// 	return 1;
-// endfunction
 
 // function Trespassar(attacker, defender)
 

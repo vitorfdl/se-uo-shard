@@ -32,7 +32,7 @@ program SpellScript(params)
 		endif
 
       var hostiles := ListHostiles(who);
-      var dmg := RandomDiceRoll("2d3+2");
+      var dmg := RandomDiceRoll("5d6");
 		foreach mobile in (ListMobilesNearLocationEx( item.x, item.y, item.z, 1, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
          sleepms(2);
 			if (!(mobile in alreadydamaged) && ((!(mobile in who.party.members) && mobile != who) || mobile in hostiles))
@@ -48,7 +48,7 @@ program SpellScript(params)
 		sleepms(300);
 	endforeach
 	
-	sleep(5);
+	sleep(12);
 	foreach pilar in pilarlist
 		DestroyItem(pilar);
       sleepms(2);

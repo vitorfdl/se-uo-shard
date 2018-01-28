@@ -50,39 +50,31 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    if (hab_target == "Enemy")
       hab_target := me.opponent;
    elseif (hab_target == "Enemies")
-      hab_target := array{};
-      var hostiles := ListHostiles(me, 10);
-      foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 10);
-         if (CanFight(me, enemy) || enemy in hostiles)
-            hab_target.append(enemy);
-         endif
-      endforeach
+      hab_target := GetEnemiesNear(me, 10);
+      if (hab_target.size() < 1) return 0; endif
    elseif (hab_target == "RandomEnemy")
-      hab_target := 0;
-      var mobs := ListMobilesNearLocation(me.x, me.y, me.z, 10);
-      var hostiles := ListHostiles(me, 10);
-      foreach enemy in ListMobilesNearLocation(me.x, me.y, me.z, 10);
-         if (CanFight(me, enemy) || enemy in hostiles)
-            hab_target := enemy;
-            break;
-         endif
-      endforeach
-      if (!hab_target)
-         return 0;
-      endif
+      var enemies_near := GetEnemiesNear(me, 10);
+      if (enemies_near.size() < 1) return 0; endif
+      hab_target := enemies_near.randomentry();
    elseif (hab_target == "Ally")
-      foreach ally in ListMobilesNearLocation(me.x, me.y, me.z, 8);
+      foreach ally in GetAlliesNear(me, 6)
          if (hab_name == "curar")
             if (AP_GetVital(ally, HITS) == AP_GetVitalMaximumValue(ally, HITS))
                continue;
             endif
          endif
-         if (GetObjProperty(ally, "spawnpoint") == GetObjProperty(me, "spawnpoint"))
+         hab_target := ally;
+         break;
+      endforeach
+   elseif (hab_target == "AllyUnderAttack")
+      hab_target := 0;
+      foreach ally in GetAlliesNear(me, 6)
+         if (ally.opponent.opponent == ally)
             hab_target := ally;
             break;
          endif
       endforeach
-   elseif (hab_target == "AllyUnderAttack")
+      if (!hab_target) return 0; endif
    elseif (hab_target == "Self")
       hab_target := me;
    endif
@@ -155,8 +147,7 @@ endfunction
 
 function hunterMark(mobile)
    PlayStationaryEffectEx(mobile.x, mobile.y, mobile.z+20, mobile.realm, 0x9E29, 0, 15, 1650);
-   var npc_near := ListMobilesNearLocationEx(me.x, me.y, me.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY, me.realm);
-   foreach npc in npc_near
+   foreach npc in GetAlliesNear(mobile, 5)
       if (npc.alignment == 1)
          if (NPC_GetNPCConfig(npc).Category == "beast")
             npc.setAggro(mobile.serial, 40);
@@ -168,9 +159,75 @@ function hunterMark(mobile)
    return 1;
 endfunction
 
-function fireWall(mobile, hab_dice)
+function fireWall(mobile, dmg_dice)
+   if (Distance(mobile, me) > 12)
+      return 0;
+   endif
+   
    playCastAnimation();
+   var direction := GetFacing(me.x, me.y, mobile.x, mobile.y);
+   var face := cint(direction / 2);
+   if (face > 4)
+      face /= 2;
+   endif
+
+   var flame := "FireFieldNS";
+   if (face < 2)
+      flame := "FireFieldEW";
+   endif
+
+   var pos := GetPointsByFacing(me.x, me.y, direction, Distance(me, mobile)+3);
+
+   var z := me.z;
+   foreach p in pos
+      if (mobile.z > z)
+         z += 1;
+      elseif (mobile.z < z)
+         z -= 1;
+      endif
+      var item := CreateItemAtLocation(p.x, p.y, z, flame, me.realm, 1);
+      item.SetDuration(20);
+
+      var mobs := GetEnemiesNear(item, 0);
+      foreach mob in mobs
+         if (rollResistDice(mob, DEXTERITY) > 14)
+            PrintText(mob, "*resistido*", SSM_INFO);
+         else
+            DamageFLS(mob, dmg_dice, DMG_FIRE, me);
+         endif
+      endforeach
+      sleepms(400);
+   endforeach
+
    return 1;
+endfunction
+
+function IceMine(ts_time)
+
+endfunction
+
+function Iceberg(mobile, ice_damage)
+   PlayMovingEffectXYZEx( mobile.x, mobile.y, mobile.z-10, mobile.x, mobile.y, mobile.z, me.realm, 0x0, 0, 40, 1222);
+   sleep(1);
+
+   var enemies := GetEnemiesNear(mobile, 1);
+
+
+endfunction
+
+
+function ElectricBreath(mobile, dmg, opt)
+   opt := SplitWords(opt, "|");
+   var anim := opt[1]
+   var dist := opt[2];
+
+endfunction
+
+
+function PullCloser(mobile, dmg, opt)
+   opt := SplitWords(opt, "|");
+   var anim := opt[1]
+   var dist := opt[2];
 endfunction
 
 function charm(mobile, ts_time, diff)
@@ -473,24 +530,11 @@ function Firebreath(npc, opponent, byref dist)
          continue;
       endif
 
-      case( RandomInt(3) )
-         default:
-            PlayStationaryEffect(coord.x, coord.y, npc.z, GFX_EXPLODE_1, 10, 10, 0);
-            break;
-         1:
-            PlayStationaryEffect(coord.x, coord.y, npc.z, GFX_EXPLODE_2, 10, 10, 0);
-            break;
-         2:
-            PlayStationaryEffect(coord.x, coord.y, npc.z, GFX_EXPLODE_3, 10, 10, 0);
-            break;
-      endcase
+      var effects := array{GFX_EXPLODE_1, GFX_EXPLODE_2, GFX_EXPLODE_3};
+      PlayStationaryEffect(coord.x, coord.y, npc.z, effects.randomentry(), 10, 10, 0);
 
-      var field;
-      if ( RandomInt(2) )
-         field := CreateItemAtLocation(coord.x, coord.y, opponent.z, "FireFieldNS", 1);
-      else
-         field := CreateItemAtLocation(coord.x, coord.y, opponent.z, "FireFieldEW", 1);
-      endif
+      var fields := array{"FireFieldNS", "FireFieldEW"};
+      var field := CreateItemAtLocation(coord.x, coord.y, opponent.z, fields.randomentry, 1);
       field.SetDuration(20);
       sleepms(5);
    endforeach

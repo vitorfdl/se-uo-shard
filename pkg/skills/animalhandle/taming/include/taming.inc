@@ -106,6 +106,8 @@ function AddPet(who, serial, pet_cost := 0)
 	SetObjProperty(who, "followers", tamed);
 
 	var pet := SystemFindObjectBySerial(serial);
+   EraseObjProperty(pet, "spawnspot");
+   EraseObjProperty(pet, "spawnpoint");
    if (!pet_cost)
 	   who.followers := who.followers + GetPetCost(pet);
    else

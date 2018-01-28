@@ -38,7 +38,7 @@ function genericControl()
          endif
       endif
 
-		if (wanders >= 30)
+		if (wanders >= 30 || me.frozen)
          if (npccfgfile.CustomBehavior == "camuflar" && RandomInt(8) == 1)
             me.hidden := 1;
             me.stealthsteps := 5;

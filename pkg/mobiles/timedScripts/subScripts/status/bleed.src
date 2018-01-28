@@ -13,9 +13,16 @@ include "include/say";
 include ":blood:blood";
 
 function StartScript(mobile, attacker := 0, level := 0)
+	var dmg_dice;
 
-	var dmg := 7;
-	var time := 5;
+   var dmg;
+   case (level)
+      0: dmg_dice := "1d2";
+      1: dmg_dice := "2d2+1";
+      2: dmg_dice := "3d2+2";
+      3: dmg_dice := "4d2+4";
+      4: dmg_dice := "5d4+8";
+   endcase
 
 	while(1)
 		SendSystemReport(mobile, "Você está com uma grave hemorragia!", mobile);
@@ -24,9 +31,9 @@ function StartScript(mobile, attacker := 0, level := 0)
 				SendSystemReport(mobile, "* " + mobile.name + " está sangrando muito! *", mobile);
 			endif
 			sleepms(2);
-		endforeach		
+		endforeach
 		
-		ApplyRawDamage(mobile, dmg);
+		DamageFLS(mobile, dmg);
 		MakeBleed(mobile);
 
 		Set_Critical(1);
@@ -37,8 +44,12 @@ function StartScript(mobile, attacker := 0, level := 0)
 		//	AP_SetVital(who, "Stamina", 0);
 		//endif
 		Set_Critical(0);
+
+      if (rollResistDice(mobile, CONSTITUTION) > 16 )
+         break;
+      endif
 		
-		sleep(time);
+		sleep(4);
 	endwhile
 
    return 1;

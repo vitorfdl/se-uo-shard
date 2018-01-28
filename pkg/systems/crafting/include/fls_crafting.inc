@@ -127,7 +127,7 @@ endfunction
 // to check the item for. This is used for example, for boards that
 // was originally colored logs. The colored log objtype is stored
 // in the cprop, and is used to get it's "ResourceList" reference.
-function MaterialSelection(who, type, chk)
+function MaterialSelection(who, type, chk, craft_skill)
 	var name;
 	if (type["monsterpart"])
 		name := "parte de criatura";
@@ -152,10 +152,29 @@ function MaterialSelection(who, type, chk)
 	
 	if( (!Accessible(who, material)) || (Distance(who, material) > 2)
        || (material.movable == 0) || (!ReserveItem(material)))
-		SendSysMessageEx(who, "você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	
+   if (!HaveFeat(who, "Formidável {}".format(craft_skill))
+      if (thing == "metal")
+         if (material.objtype != 0x6309)
+            SendSysMessageEx(who, "Você não sabe trabalhar com isto.");
+            return 0;
+         endif
+      elseif (thing == "couro")
+         if (material.objtype != 0xee45 && material.color != 0)
+            SendSysMessageEx(who, "Você não sabe trabalhar com isto.");
+            return 0;
+         endif
+      elseif (thing == "madeira")
+         if (material.objtype != 0x1BD7 && material.color != 0)
+            SendSysMessageEx(who, "Você não sabe trabalhar com isto.");
+            return 0;
+         endif
+      endif
+   endif
+
 	var materialobjtype := 0;
 	if(chk)
 		if(GetObjProperty(material, chk))
@@ -179,7 +198,7 @@ function MaterialSelection(who, type, chk)
 	endif
 
 	if(materialchk == 0)
-	   SendSysMessageEx(who, "Esse não e o material certo.");
+	   SendSysMessageEx(who, "Esse não é o material certo.");
 	   return 0;
 	endif
 	
@@ -228,7 +247,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone"} || (typeof(thing) == "String" && thing["monsterpart"]))
-			var ret := MaterialSelection(who, thing, 1);
+			var ret := MaterialSelection(who, thing, 1, craft_skill);
 			if (!ret)
 				SendSysMessageEx(who, "você não possui os materiais necessarios.", SSM_FAIL);
 				return OUT_OF_MATERIALS;

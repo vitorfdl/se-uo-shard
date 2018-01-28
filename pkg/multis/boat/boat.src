@@ -27,6 +27,7 @@ include "include/say";
 include ":gumps:yesno";
 include ":ghaia:objective";
 include ":keys:key";
+include ":tn:cooldown";
 
 const STATE_STATIONARY := 0;
 const STATE_MOVING := 1;
@@ -43,10 +44,7 @@ var state := STATE_STATIONARY;
 var relative_direction;
 var ms_delay_between_moves := 200;
 var boat, tillerman, wheel;
-var owner := GetObjProperty(boat.hold,"owner");
-
-/*NOTE NEW GLOBAL*/
-var first_move_toward_waypoint := 1;
+var owner := GetObjProperty(boat.hold, "owner");
 
 program autostart_boat(param)
 	boat := param;
@@ -115,7 +113,7 @@ program autostart_boat(param)
          sleepms(5);
 
          if(ReadGameClock() > nextencounter)
-            DoEncounter();
+            // DoEncounter();
             nextencounter := ReadGameClock()+120;
          endif
 
@@ -138,7 +136,12 @@ program autostart_boat(param)
          while(events_waiting())
             process_event(wait_for_event(0));
          endwhile
-      STATE_STATIONARY: 
+      STATE_STATIONARY:
+         if (!GetCooldown(tillerman, "do_back_course") && GetObjProperty(tillerman, "back_course"))
+            var back_course := GetObjProperty(tillerman, "back_course");
+            SetObjProperty(tillerman, "course", back_course);
+            EraseObjProperty(tillerman, "back_course");
+         endif
          var ev := wait_for_event(120);
          if(ev)
             process_event(ev);
@@ -237,7 +240,7 @@ function handle_speech(event)
       state := STATE_MOVING;
       relative_direction := 6;
     endif
-  elseif(text["come about"] || text["girar o barco"])
+  elseif(text["girar"] && (text["barco"] || text["navio"]))
     if(state == STATE_STATIONARY)
       PrintText(tillerman, "O barco esta ancorado, Capitão!");
     else
@@ -341,65 +344,6 @@ function CanCommandMe(who)
   endif
 endfunction
 
-function DoEncounter()
-  foreach who in  ListMobilesNearLocationEx(boat.x, boat.y, GetMapInfo(boat.x, boat.y).z, 4, LISTEX_FLAG_GHOST)
-    if(YesNo(who,"Resurrect?"))
-      if (who in boat.mobiles)
-        //PlaySoundEffect(who, SFX_SPELL_RESSURECTION);
-        //PlaySoundEffect(who, SFX_SPELL_RESSURECTION);
-        Resurrect(who);
-      endif
-    endif
-  endforeach
-  var who :=(boat.mobiles);
-  who := who[1];
-  if(!who)
-    return;
-  endif
-  var x;
-  var y;
-  var z;
-  x := RandomInt(15)-5;
-  y := RandomInt(15)-5;
-  x := x + boat.x;
-  y := y + boat.y;
-  if(x > boat.x)
-    x := x + 5;
-  else
-    x := x - 5;
-  endif
-  if(y > boat.y)
-    y := y + 5;
-  else
-    y := y - 5;
-  endif
-  z := GetMapInfo(x, y).z;
-  if(z >= who.z)
-    return;
-  endif
-  var it := CreateNpcFromTemplate(getcritter(), x, y, z, 0);
-  if(it)
-    SetObjProperty(it,"killme",1);
-  endif
-  var ev := struct{};
-  ev.+type := SYSEVENT_ENTEREDAREA;
-  ev.+source := who;
-  SendEvent(it, ev);
-endfunction
-
-function getcritter()
-  case(RandomInt(9))
-    0: return "walrus";
-    1: return "walrus";
-    2: return "walrus";
-    3: return "walrus";
-    4: return "alligator";
-    5: return "alligator";
-    6: return "waterelemental";
-    7: return "seaserpent";
-    8: return "airelemental";
-  endcase
-endfunction
 
 function drydock(event)
   if(GetObjProperty(event.source, "#DryDocking"))
@@ -620,12 +564,12 @@ function BoatFollowCourse(boat)
 	var desty := cint(course[1].y);
 	var newpoint := lineBresenham(boat.x, boat.y, destx, desty);
 	if(!newpoint) //reached waypoint/end
-		first_move_toward_waypoint := 1; //so we turn toward next waypoint (includes next course follow if we're done with this one)
       course.Erase(1);
 		if(!course[1]) //done
 			state := STATE_STATIONARY;
 			EraseObjProperty(tillerman, "course");
 			PrintText(tillerman,"Arr, chegamos ao nosso destino!");
+         SetCooldown(tillerman, "do_back_course", 600);
 			return;
 		else
 			SetObjProperty(tillerman, "course", course);
@@ -636,7 +580,7 @@ function BoatFollowCourse(boat)
       if( prevfacing != newfacing )
          TurnBoat(boat, newfacing );
       endif
-		MoveBoatRelative(boat, raw_facing - boat.facing, BOAT_SPEED_SLOW);
+		MoveBoatRelative(boat, raw_facing - boat.facing);
 		if (CoordinateDistance(boat.x, boat.y, newpoint[1], newpoint[2]) > 0)
     		state := STATE_DRIFTING;
     		PrintText(tillerman, "Aaargh!  Nós paramos!");
@@ -657,3 +601,64 @@ function DetermineTurnCode( boat, desired )
     endif
     return (desired - current);
 endfunction
+
+
+// function DoEncounter()
+//   foreach who in  ListMobilesNearLocationEx(boat.x, boat.y, GetMapInfo(boat.x, boat.y).z, 4, LISTEX_FLAG_GHOST)
+//     if(YesNo(who,"Resurrect?"))
+//       if (who in boat.mobiles)
+//         //PlaySoundEffect(who, SFX_SPELL_RESSURECTION);
+//         //PlaySoundEffect(who, SFX_SPELL_RESSURECTION);
+//         Resurrect(who);
+//       endif
+//     endif
+//   endforeach
+//   var who :=(boat.mobiles);
+//   who := who[1];
+//   if(!who)
+//     return;
+//   endif
+//   var x;
+//   var y;
+//   var z;
+//   x := RandomInt(15)-5;
+//   y := RandomInt(15)-5;
+//   x := x + boat.x;
+//   y := y + boat.y;
+//   if(x > boat.x)
+//     x := x + 5;
+//   else
+//     x := x - 5;
+//   endif
+//   if(y > boat.y)
+//     y := y + 5;
+//   else
+//     y := y - 5;
+//   endif
+//   z := GetMapInfo(x, y).z;
+//   if(z >= who.z)
+//     return;
+//   endif
+//   var it := CreateNpcFromTemplate(getcritter(), x, y, z, 0);
+//   if(it)
+//     SetObjProperty(it,"killme",1);
+//   endif
+//   var ev := struct{};
+//   ev.+type := SYSEVENT_ENTEREDAREA;
+//   ev.+source := who;
+//   SendEvent(it, ev);
+// endfunction
+
+// function getcritter()
+//   case(RandomInt(9))
+//     0: return "walrus";
+//     1: return "walrus";
+//     2: return "walrus";
+//     3: return "walrus";
+//     4: return "alligator";
+//     5: return "alligator";
+//     6: return "waterelemental";
+//     7: return "seaserpent";
+//     8: return "airelemental";
+//   endcase
+// endfunction

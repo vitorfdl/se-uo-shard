@@ -1,0 +1,29 @@
+use uo;
+use util;
+use vitals;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include ":timedscripts:timedScripts";
+
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	// //var weapon	:= params[3];
+	// //var armor	:= params[4];
+	// //var basedamage	:= params[5];
+	// var rawdamage	:= params[6];
+	// params := 0; // Not needed anymore.
+
+	// var dmg := rawdamage/5;
+	// if (dmg < 2)
+	// 	dmg := 2;
+	// endif
+   var level := 0;
+	
+   TS_StartTimer(defender, "constricted", 10, level);
+	
+	// return 1;
+endprogram

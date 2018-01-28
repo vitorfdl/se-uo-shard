@@ -6,6 +6,9 @@
  * might be.
  *
  */
+
+use uo;
+
 enum GUMPID_LIST
     GUMPID_SKILLLIST   := 0x000010,
     GUMPID_EMAIL_INDEX := 0x000011,
@@ -308,3 +311,11 @@ const CID_DRAGON_RUST := 0x2e;
 const CID_DRAGON_FIRE := 0xac;
 const CID_DRAGON_CRIMSON := 0xc5;
 const CID_DRAGON_BLACK := 0xc6;
+
+
+function LightningEffect(point)
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x-1, point.y, point.z+15, GFX_ENERGY, 5, 25);
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x+1, point.y, point.z+15, GFX_ENERGY, 5, 25);
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y+1, point.z+15, GFX_ENERGY, 5, 25);
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y-1, point.z+15, GFX_ENERGY, 5, 25);
+endfunction

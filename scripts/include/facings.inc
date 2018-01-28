@@ -150,7 +150,6 @@ function GetFacingToDest(tgt_mob, locx, locy)
 	endif
 
 	var frot := Abs(((tgt_mob.facing)%8)-GetFacing(tgt_mob.x,tgt_mob.y,locx,locy));
-   SendSysMessageEx(tgt_mob, ""+frot);
 	if (frot > 4)
 		frot := 8-frot;
 	endif

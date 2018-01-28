@@ -26,6 +26,11 @@ program blessWater(info)
       sleepms(2);
 	endwhile
 
+   if (targ.quality <= 0.1 || !targ.quality)
+		SendSysMessageEX(who, "Esse objeto não pode ser consertado nem por milagres.", SSM_FAIL);
+      return 0;
+   endif
+
    var fix_amount := 10 + AP_GetStat(who, WISDOM, RETURN_BONUS);
    if (fix_amount > 5)
       fix_amount := 5;

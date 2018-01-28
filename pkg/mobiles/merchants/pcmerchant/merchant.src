@@ -5,6 +5,7 @@ use cfgfile;
 use math;
 include ":merchants:merchant";
 include "include/string";
+include "include/sounds";
 include":merchants:crafthelp";
 include ":ghaia:ghaiaUtil";
 include ":gumps:gumps";
@@ -15,6 +16,7 @@ include ":gumps:include/requestgump";
 include ":crafting:craft_props";
 include ":crafting:fls_crafting";
 include ":gumps:htmlgump";
+include ":tn:cooldown";
 
 const GF_STDCOLOR := 1890;
 const MOEDAS      := 0xeed;
@@ -29,11 +31,28 @@ program HandleMerchant(params)
 				MoveItemToContainer(params.item, params.source.backpack);
 			endif
 		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+      "SeeEvent": HandleSeeEvent(params.me, params.source);
 		"Default": return;
 	endcase
 
 	EraseObjProperty(params.me, "#occupied");
 endprogram
+
+function HandleSeeEvent(npc, player)
+   if (GetCooldown(npc, "{}_see".format(player.serial)))
+      return;
+   endif
+	var data_elem := GetPaymentsDataElem(Hex(npc.serial));
+	var account := data_elem.GetProp(Hex(player.serial));
+   
+   if (!account.size())
+      return;
+   endif
+
+   PlayCustomSound(npc, 14);
+   PrintText(npc, "{}, vendi alguns artigos seu!");
+   SetCooldown(npc, "{}_see".format(player.serial), 600);
+endfunction
 
 function HandleItemGiven(npc, player, item)
    var items_inside := GetSellerAccount(npc, player.serial);

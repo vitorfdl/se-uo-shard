@@ -20,17 +20,27 @@ program NPCMonitor()
    set_critical(1);
    SetWarMode( 0 );
    me.enable( "invul" );
+   var damage_transfer;
 
    while (me)
       sleep(wait_time);
       if (me.master && !GetObjProperty(me, "no_follow"))
          Follow(me.master);
       endif
+
       sleepms(2);
 
       if (!TS_GetTimerInfo(me, "summon")) 
          ApplyRawDamage(me, 200);
       endif
+
+      if (damage_transfer)
+         var mob := SystemFindObjectBySerial(serial);
+         if (Distance(me, mob) > 14)
+            ApplyRawDamage(me, 200);
+         endif
+      endif
+      damage_transfer := GetObjProperty(me, "damage_transfer");
    endwhile
 endprogram
 

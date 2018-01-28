@@ -118,6 +118,7 @@ exported function AddSpawnPoint( spot, serial )
 
     var spawnpoint := SystemFindObjectBySerial(serial);
     SetObjProperty(spawnpoint, "spotgroup", data.spotgroup);
+    SetObjProperty(spawnpoint, "spot_serial", spot.serial);
     return 1;
 endfunction
 

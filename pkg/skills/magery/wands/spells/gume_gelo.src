@@ -1,0 +1,33 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var mod := GetModByFacing(facing);
+   PlayStationaryEffectEx(who.x+mod[1], who.y+mod[2], who.z+5, who.realm, 0x0CEE, 9, 20, 0);
+   PrintText(who, "*o gelo começa a se formar a frente*");
+   sleep(1);
+
+   PlayMovingEffectXYZ(who.x+mod[1], who.y+mod[2], who.z+5, targ.x, targ.y, targ.z+5, GFX_ENERGY, 5, 25);
+   if (rollResistDice(targ, DEXTERITY) > spellinfo.dice_roll)
+      SendSystemReport(targ, "*esquiva*", SSM_INFO);
+      SendSystemReport(targ, "*esquiva*", SSM_FAIL, who);
+      return;
+   endif
+
+   DamageFLS(targ, RandomDiceRoll("3d4+1"), DMG_COLD, who);
+
+	return 1;
+endprogram

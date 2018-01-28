@@ -44,7 +44,7 @@ program Attack(params)
 	if ( attacker == defender )
 		ApplyRawDamage(attacker, 5000);
 		return 1;
-   elseif (attacker.my_template() == "orb")
+   elseif (defender.my_template() == "orb" && defender.owner != attacker)
       return 1;
 	elseif ( !CheckLineOfSight(attacker, defender) )
 		return 1;
@@ -81,8 +81,11 @@ program Attack(params)
    elseif ( attacker.hidden)
       attacker.hidden := 0;
 		attacker.SetAchievement("sneak_attack", 1);
-		ExpGain(attacker, "minor");
-      bonus_atk := 1;
+		ExpGain(attacker, "minor"); := 1;
+      if (rollResistDice(defender, PERCEPCAO) <= rollAttrDice(attacker, DEXTERITY) + getProficiencyBonus(who, FURTIVIDADE);)
+         SendSystemMessage(attacker, "*Golpe Furtivo*", SSM_INFO);
+         bonus_atk += 1;
+      endif
 	endif
 
 	var attacker_roll := GetAttackerChance(attacker, defender);
@@ -140,6 +143,7 @@ program Attack(params)
 			defender.SetAchievement("shield", 1);
 		endif
 
+      dice_roll.two_dice_success := (dice_roll.two_dice > defender_CA);
 		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, attack_chance, wpn_a_elem });
 
 	else //ERROU O ATAQUE
@@ -170,7 +174,7 @@ endprogram
 
 // Rola o dado de ataque
 function GetAttackerChance(attacker, defender)
-	var dice_gain := 0;
+	var dice_gain := bonus_atk;
 	if ( !attacker.npctemplate )
 		if ( GetEquipmentByLayer(attacker, LAYER_MOUNT))
 			dice_gain -= 1;
@@ -250,7 +254,7 @@ function GetAttackerChance(attacker, defender)
    bonus += GetAttackerFeatBonus(attacker, 0);
 	
 	var roll := rollAttrDice(attacker, attribute, dice_gain, struct{ "get_critical" := 1});
-   roll.dice += bonus + bonus_atk;
+   roll.dice += bonus;
 	return roll;
 endfunction
 
