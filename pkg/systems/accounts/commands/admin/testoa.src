@@ -31,10 +31,14 @@ program oafeatures_sendpacket(who, text)
       //    PlayMovingEffectXYZ(p[1], p[2], who.z+15, p[1], p[2]-1, who.z+15, GFX_ENERGY, 5, 25);
       //    sleepms(2);
 
-      PlayObjectCenteredEffectEx( who,  0x19AB, 5, 20, 0, 4, 0);
-      sleep(1);
-      printtext(who, "1 sec");
-      // var defender := target(who);
+      // PlayObjectCenteredEffectEx( who,  0x19AB, 5, 20, 0, 4, 0);
+      // sleep(1);
+      // printtext(who, "1 sec");
+      var defender := target(who);
+      GrantPrivilege(defender, "hiddenattack");
+      defender.enable("hiddenattack");
+      print(defender.privileges());
+      printtext(who, defender.Enabled("hiddenattack"));
       // PlayMovingEffectEx(who, defender, 0x0F51, 10, 10, 0, 0);
       // sleep(3);PlayObjectCenteredEffectEx( center, effect, speed, duration := 0, hue := 0, render := 0, layer := 0, effect3d := 0 );
       // PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 50, 0);

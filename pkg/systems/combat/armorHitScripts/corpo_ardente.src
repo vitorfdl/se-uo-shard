@@ -1,0 +1,27 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedscripts:timedScripts";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	var weapon	:= params[3];
+	params := 0; // Not needed anymore.
+	
+   if (weapon.isBow() || weapon.isMagicweapon())
+      return;
+   endif
+   
+   if (RollResistDice(defender, CONSTITUTION) < 10)
+      PrintText(defender, "*pegando fogo*", SSM_FAIL);
+      TS_StartTimer(defender, "immolation", 4);
+   endif
+	
+	return 1;
+endprogram
+ 

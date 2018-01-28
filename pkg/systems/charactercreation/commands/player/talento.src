@@ -76,7 +76,7 @@ function ProccessHab(who, hab)
    //    sleepms(2);
 	// endforeach
 
-	var e := start_script(":charactercreation:feats/{}".format(feat.script), array{who} );
+	var e := start_script(":charactercreation:feats/{}".format(feat.script), array{who, hab} );
    if (e == error)
       return SendSysMessageEx(who, "Script do talento não encontrado.", SSM_FAIL);
    endif

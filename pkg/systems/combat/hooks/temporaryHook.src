@@ -34,31 +34,7 @@ var item_cff  := ReadConfigFile(":*:itemdesc");
 //prototypes shorter and easier to read.
 var wpn_a_elem;
 var weapon;
-
-function CalculateRawDamage(attacker)
-	if (attacker.npctemplate)
-		var dmg       := wpn_a_elem.dicedmg;
-      if (GetObjProperty(attacker, "dicedmg"))
-         dmg := GetObjProperty(attacker, "dicedmg");
-      endif
-		var attribute := wpn_a_elem.Attribute;
-		return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
-	else
-		var weaponcfg  := ReadConfigFile(":*:itemdesc");
-		var weaponelem := FindConfigElem(weaponcfg, weapon.objtype);
-		var attribute := SelectAttribute(attacker);
-		var dmg;
-		if ( GetObjProperty(attacker, "metamorfose") != error)
-			var dmg       := GetObjProperty(attacker, "dicedmg");
-			var attribute := GetObjProperty(attacker, "attrdmg");
-			dmg := RandomDiceRoll( dmg ) + AP_GetStat(attacker, attribute, RETURN_BONUS);
-		else
-			dmg :=  RandomDiceRoll(cstr(weaponelem.Damage)) + AP_GetStat(attacker, attribute, RETURN_BONUS) + GetAttackerDMGBonus(attacker);
-		endif
-		
-		return ( dmg + weapon.dmg_mod );
-	endif
-endfunction
+var bonus_atk := 0;
 
 program Attack(params)
    var attacker := params[1];
@@ -91,7 +67,6 @@ program Attack(params)
 	endif
 
 	wpn_a_elem := GetItemCFGInfo(attacker, weapon);
-
 	if ( attacker.frozen )
 		SendSysMessage(attacker, "Você não consegue atacar.");
 		return 1;
@@ -107,6 +82,7 @@ program Attack(params)
       attacker.hidden := 0;
 		attacker.SetAchievement("sneak_attack", 1);
 		ExpGain(attacker, "minor");
+      bonus_atk := 1;
 	endif
 
 	var attacker_roll := GetAttackerChance(attacker, defender);
@@ -154,7 +130,7 @@ program Attack(params)
 		// endif
 		WearDownWeapon(attacker);
 		PlayHitSounds(attacker, defender);
-		var dmg := CalculateRawDamage(attacker);
+		var dmg := CalculateRawDamage(attacker, attacker.weapon);
 		ExpGain(attacker, defender_CA, attack_chance);
       if (attacker.master)
          attacker.SetExp(2);
@@ -258,7 +234,7 @@ function GetAttackerChance(attacker, defender)
 	var bonus := 0;
 	if (!attacker.npctemplate)
 		// Verifica se arma tem atributo
-		attribute := SelectAttribute(attacker);
+		attribute := SelectAttribute(attacker, attacker.weapon);
 		// Checa Pericia
 		if (HaveSkill(attacker, attribute))
 			bonus := cint(getProficiencyBonus(attacker));
@@ -274,28 +250,11 @@ function GetAttackerChance(attacker, defender)
    bonus += GetAttackerFeatBonus(attacker, 0);
 	
 	var roll := rollAttrDice(attacker, attribute, dice_gain, struct{ "get_critical" := 1});
-   roll.dice += bonus;
+   roll.dice += bonus + bonus_atk;
 	return roll;
 endfunction
 
-function SelectAttribute(attacker)
-	var attribute := STRENGTH;
-	if (weapon.Attribute)
-		attribute := weapon.Attribute;
-		// Escolhe maior atributo para versatilidade
-		if (attribute == "Versatil")
-			var dex := AP_GetTrueStat(attacker, DEXTERITY);
-			var str := AP_GetTrueStat(attacker, STRENGTH);
-			if (str > dex)
-				attribute := DEXTERITY;
-			else
-				attribute := STRENGTH;
-			endif
-		endif
-	endif
 
-	return attribute;
-endfunction
 
 function GetDefenderCA(defender, armor, attacker)
 	var CA := 5;
@@ -500,24 +459,6 @@ function GetAttackerFeatPenalty(attacker, defender)
       endforeach
    endif
 
-   return bonus;
-endfunction
-
-function GetAttackerDMGBonus(attacker)
-   var bonus := 0;
-
-   // if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // endif
-      
    return bonus;
 endfunction
 

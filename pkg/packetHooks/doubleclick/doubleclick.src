@@ -38,7 +38,7 @@ exported function HandleDoubleClick( who, byref packet )
 		SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
 		return 1;
 	elseif ( abs(who.z - defender.z ) > 10 && defender.isa(POLCLASS_MOBILE) && (!who.weapon.isBow() && !who.weapon.isMagicWeapon()))
-		SendSysMessageEx(who, "Você esta muito distance.", SSM_FAIL);
+		SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
 		return 1;
 	endif
    

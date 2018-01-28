@@ -17,6 +17,7 @@ include ":attributes:attributes";
 include ":charactercreation:habilidades";
 include "include/say";
 include ":blood:blood";
+include ":combat:combat";
 include ":magery:tnmagery";
 include ":fls_core:packets";
 
@@ -38,6 +39,66 @@ enum DAMAGE_TYPES
 	DMG_BLUDGE   := "Concussão",
 endenum
 
+function SelectAttribute(attacker, attacker_weapon)
+	var attribute := STRENGTH;
+	if (attacker_weapon.Attribute)
+		attribute := attacker_weapon.Attribute;
+		// Escolhe maior atributo para versatilidade
+		if (attribute == "Versatil")
+			var dex := AP_GetTrueStat(attacker, DEXTERITY);
+			var str := AP_GetTrueStat(attacker, STRENGTH);
+			if (str > dex)
+				attribute := DEXTERITY;
+			else
+				attribute := STRENGTH;
+			endif
+		endif
+	endif
+
+	return attribute;
+endfunction
+
+function CalculateRawDamage(attacker, attacker_weapon)
+   var wpn_elem := GetItemCFGInfo(attacker, attacker_weapon);
+	if (attacker.npctemplate)
+		var dmg       := wpn_elem.dicedmg;
+      if (GetObjProperty(attacker, "dicedmg"))
+         dmg := GetObjProperty(attacker, "dicedmg");
+      endif
+		var attribute := wpn_elem.Attribute;
+		return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
+	else
+		var attribute := SelectAttribute(attacker, attacker_weapon);
+		var dmg;
+		if ( GetObjProperty(attacker, "metamorfose") != error)
+			var dmg       := GetObjProperty(attacker, "dicedmg");
+			var attribute := GetObjProperty(attacker, "attrdmg");
+			dmg := RandomDiceRoll( dmg ) + AP_GetStat(attacker, attribute, RETURN_BONUS);
+		else
+			dmg :=  RandomDiceRoll(cstr(wpn_elem.Damage)) + AP_GetStat(attacker, attribute, RETURN_BONUS) + GetAttackerDMGBonus(attacker);
+		endif
+		
+		return ( dmg + attacker_weapon.dmg_mod );
+	endif
+endfunction
+
+function GetAttackerDMGBonus(attacker)
+   var bonus := 0;
+
+   // if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))
+   //    bonus += 1;
+   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+   //    bonus += 1;
+   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+   //    bonus += 1;
+   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+   //    bonus += 1;
+   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
+   //    bonus += 1;
+   // endif
+      
+   return bonus;
+endfunction
 
 function HealFLS(targ, amt, show_heal := 1)
    amt := cint(amt);
