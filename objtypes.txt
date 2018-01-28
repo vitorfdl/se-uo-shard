@@ -2315,7 +2315,11 @@
 0xf125 wool womenswork
 # 0xf126 - 0xfddd unused
 0xfdde bandages2 medicine
-# 0xfddf - 0xff96 unused
+# 0xfddf - 0xfdf7 unused
+0xfdf8 VikingSwordWood combat
+0xfdf9 ShortSpearWood combat
+0xfdfa AxeWood combat
+# 0xfdfb - 0xff96 unused
 0xff97 armadilhafogo traps
 0xff98 armadilhaflecha traps
 0xff99 atrairinimigo traps

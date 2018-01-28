@@ -187,8 +187,8 @@ function Fight(opponent, alerted := 0)
       var unique := GetBossStruct(me);
       if ( unique != error && unique.combatevent.size() > 0 )
          foreach ce in (unique.combatevent)
-            if (TS_GetCooldown(me, ce.name) == error)
-               start_script(":ghaia:special/genericspecial" , array{me, ce});
+            if (!TS_GetCooldown(me, ce.name))
+               run_script_to_completion(":ghaia:special/genericspecial" , array{me, ce});
             endif
             sleepms(2);
          endforeach
@@ -238,6 +238,10 @@ function Fight(opponent, alerted := 0)
       else
          loops := 0;
          waittime := 1;
+      endif
+
+      if (me.frozen && me.alignment == 2)
+         waittime := 60000;
       endif
       
       CheckFlee(opponent);

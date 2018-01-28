@@ -7,6 +7,7 @@ use uo;
 use os;
 use math;
 
+include "include/facings";
 /*
  * GetCoordsInSquare(mid_x, mid_y, radius)
  *
@@ -113,6 +114,56 @@ function GetCoordsInCircle(mid_x, mid_y, radius)
 	radius := CInt(radius);
 	return error{"errortext":="Hasn't been coded yet!"};
 endfunction
+
+/*
+ * GetConeCoordsInFront(x, y, facing, range)
+ *
+ * Purpose
+ * Retrieves the coordinates in the cone front of the facing
+ *
+ * Parameters
+ * x:	X coordinate of the start of the cone
+ * y:	Y coordinate of the start of the cone
+ * facing:	mobile facing
+ * range:	range in front
+ *
+ * Return value
+ * Array of arrays where (x, y)
+ * 
+ */
+function GetConeCoordsInFront(x, y, facing, range)
+   var mod := GetModByFacing(facing);
+   var coords := array{};
+   for i := 1 to range
+      var base_x := x+(i*mod[1]);
+      var base_y := y+(i*mod[2]);
+      coords.append(array{ base_x, base_y});
+      // drawn up
+      for t := 1 to (i * 2)
+         var t_mod;
+         if ( t <= i)
+            t_mod := GetModByFacing(facing, t);
+         else
+            t_mod := GetModByFacing(facing, (t-i)*-1);
+         endif
+
+         var x_mod := base_x + (t_mod[1] - mod[1]);
+         var y_mod := base_y + (t_mod[2] - mod[2]);
+         
+         coords.append(array{x_mod, y_mod});
+         sleepms(2);
+      endfor
+      sleepms(2);
+   endfor
+
+	return coords;
+endfunction
+
+         //    var t_mod := GetModByFacing(facing, t);
+         //    coords.append(array{ x+(i*mod[1])+t_mod[1], y+(i*mod[2])+t_mod[2]});
+         // else
+         //    var t_mod := GetModByFacing(facing, t*-1);
+         //    coords.append(array{ x+(i*mod[1])+t_mod[1], y+(i*mod[2])+t_mod[2]});
 
 /* 
  * GetCoordsInPolygon(coord_list)

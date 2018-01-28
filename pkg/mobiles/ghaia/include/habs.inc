@@ -1,5 +1,6 @@
 include "include/utils";
 include "include/facings";
+include "include/shapes";
 
 function UseHabs()
    var habs := GetConfigStringArray(npccfgfile, "EspecialAttack");
@@ -27,7 +28,8 @@ function UseHabs()
       var hab_target   := hab[5];
       var hab_special  := hab[6];
 
-      if (hab_chance != 100 && Randomint(100)+1 > hab_chance )
+      var chance_try := Randomint(100)+1;
+      if (hab_chance != 100 && chance_try > hab_chance )
          SetCooldown(me, hab_name, 5);
          continue;
       endif
@@ -87,23 +89,25 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
 
    var res;
    case (hab_name)
-      "summon": res := SummonCreature(cint(hab_dice), hab_special); break;
-      "agarrar": res :=  NPC_Agarrar(hab_dice, hab_target, cint(hab_special)); break;
-      "cancaoSedutora": CancaoSedutora(hab_target, hab_dice); break;
-      "furtividade": res := NPC_Sneak(); break;
-      "metamorfose": res := Metamorfose(hab_special); break;
-      "curar": res := Healing(hab_target, hab_dice); break;
-      "roubar": res := Roubar(hab_target); break;
+      "summon":              res := SummonCreature(cint(hab_dice), hab_special); break;
+      "agarrar":             res := NPC_Agarrar(hab_dice, hab_target, cint(hab_special)); break;
+      "cancaoSedutora":      res := CancaoSedutora(hab_target, hab_dice); break;
+      "furtividade":         res := NPC_Sneak(); break;
+      "metamorfose":         res := Metamorfose(hab_special); break;
+      "curar":               res := Healing(hab_target, hab_dice); break;
+      "roubar":              res := Roubar(hab_target); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
-      "rajada_acida": res := RajadaAcida(hab_dice, hab_target, cint(hab_special)); break;
-      "teia": res := SpitWeb(hab_special, hab_target, cint(hab_special)); break;
-      "teleport": res := teleport(hab_target, hab_special); break;
-      "constrictSpell": res := constrict(hab_target, hab_dice, cint(hab_special)); break;
-      "charming": res := charm(hab_target, hab_dice, cint(hab_special)); break;
-      "SoproEuforia": res := euforic(hab_dice, cint(hab_special)); break;
-      "hunterMark": res := hunterMark(hab_target); break;
-      "fireWall": res := fireWall(hab_target, hab_dice); break;
-      "castSpell": res := castSpell(hab_target, hab_dice, hab_special); break;
+      "rajada_acida":        res := RajadaAcida(hab_dice, hab_target, cint(hab_special)); break;
+      "teia":                res := SpitWeb(hab_special, hab_target, cint(hab_special)); break;
+      "teleport":            res := teleport(hab_target, hab_special); break;
+      "constrictSpell":      res := constrict(hab_target, hab_dice, cint(hab_special)); break;
+      "charming":            res := charm(hab_target, hab_dice, cint(hab_special)); break;
+      "SoproEuforia":        res := euforic(hab_dice, cint(hab_special)); break;
+      "hunterMark":          res := hunterMark(hab_target); break;
+      "fireWall":            res := fireWall(hab_target, hab_dice); break;
+      "castSpell":           res := castSpell(hab_target, hab_dice, hab_special); break;
+      "throwBomb":           res := throwBomb(hab_target, hab_dice, hab_special); break;
+      "evasao":           res := evasion(hab_target); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
          SetCooldown(me, hab_name, 150);
@@ -118,13 +122,49 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    endif
 endfunction
 
+
+function throwBomb(mobile, hab_dice, bombs)
+   if (Distance(mobile, me) > 12) return; endif
+
+   bombs := SplitWords(bombs, "|");
+   var item := CreateItemAtLocation(me.x, me.y, me.z, bombs.randomentry());
+   start_script(":alchemy:potions/explosionTimer", array{item, me});
+   SetObjProperty(item, "#bomb", 1);
+   PrintText(me, "*joga um frasco*");
+
+   PlayMovingEffectXYZ( me.x, me.y, me.z+15, mobile.x, mobile.y, mobile.z, 0x0f09, 8, 0, 0 );
+   MoveObjectToLocation(item, mobile.x, mobile.y, mobile.z, mobile.realm, MOVEOBJECT_FORCELOCATION );
+   return 1;
+endfunction
+
+function evasion(mobile)
+   if (Distance(mobile, me) > 2)
+      return 0;
+   endif
+
+   var point := RandomPlace(mobile, 1);
+   MoveObjectToLocation(me, point.x, point.y, mobile.z, mobile.realm, MOVEOBJECT_FORCELOCATION);
+   me.facing := GetFacing(me.x, me.y, mobile.x, mobile.y);
+   return 1;
+endfunction
+
 function castSpell(mobile, hab_dice, spellname)
 
    return 1;
 endfunction
 
-
 function hunterMark(mobile)
+   PlayStationaryEffectEx(mobile.x, mobile.y, mobile.z+20, mobile.realm, 0x9E29, 0, 15, 1650);
+   var npc_near := ListMobilesNearLocationEx(me.x, me.y, me.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY, me.realm);
+   foreach npc in npc_near
+      if (npc.alignment == 1)
+         if (NPC_GetNPCConfig(npc).Category == "beast")
+            npc.setAggro(mobile.serial, 40);
+         endif
+      endif
+      sleepms(2);
+   endforeach
+   
    return 1;
 endfunction
 
@@ -161,13 +201,29 @@ endfunction
 
 function euforic(mobile, diff)
    playCastAnimation();
-   PrintText(me, "*baforada mágica*");
-   if (rollResistDice(mobile, CONSTITUTION) > diff)
-      PrintText(mobile, "*resistido*", SSM_INFO);
-      return 1;
+   if (Distance(me, mobile) > 3)
+      return 0;
    endif
 
-   TS_StartTimer(mobile, "euforic", 5, diff);
+   PrintText(me, "*baforada mágica*");
+   var points := GetConeCoordsInFront(me.x, me.y, me.facing, 3);
+   points.erase(points.size());
+   points.erase(points.size()-2);
+   foreach p in points
+      var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
+      foreach m in mobs
+         if (rollResistDice(m, CONSTITUTION) > diff)
+            PrintText(m, "*resistido*", SSM_INFO);
+            return 1;
+         else
+            TS_StartTimer(m, "euforic", 5, diff);
+         endif
+         sleepms(2);
+      endforeach
+      PlayStationaryEffectEx( p[1], p[2], me.z+2, me.realm, 0x9DAC, 7, 10, 1953);
+      sleepms(2);
+   endforeach
+
    return 1;
 endfunction
 
@@ -333,6 +389,7 @@ function playCastAnimation()
       me.frozen := 0;
    endif
 endfunction
+
 // function throwItem(targ)
 //    if ( dist < 3 || dist > 15 )
 //       return 0;

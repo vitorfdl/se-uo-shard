@@ -11,32 +11,18 @@ include ":timedscripts:timedScripts";
 include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   var it := CreateItemAtLocation(mobile.x, mobile.y, mobile.z+1, 4317, 1);
-   var it2 := CreateItemAtLocation(mobile.x, mobile.y, mobile.z+1, 4314, 1);
-
-   var teias := GetObjProperty(mobile, "teias");
-   if (!teias)
-      teias := array{};
-   endif
-
-   teias := teias + array{it.serial, it2.serial};
-   SetObjProperty(mobile, "teias", teias);
-
-	PlaySoundEffect(mobile, 0x205);
+   PlaySoundEffect(mobile, 0x205);
 	SendSystemReport(mobile, "Incapaz de se mover.");
 	mobile.frozen := 1;
-	
+	while (1)
+      PlayStationaryEffect( mobile.x, mobile.y, mobile.z+2, 4317, 7, 10, 1);
+      PlayStationaryEffect( mobile.x, mobile.y, mobile.z+2, 4314, 7, 10, 1);
+      sleepms(420);
+   endwhile
 	return 1;
 endfunction
 
 function EndScript(mobile)
-   var teias := GetObjProperty(mobile, "teias");
-   foreach item in teias
-      item := SystemFindObjectBySerial(item);
-      Destroyitem(item);
-      sleepms(2);
-   endforeach
-   EraseObjProperty(mobile, "teias");
 	mobile.frozen := 0;
 	return 1;
 endfunction

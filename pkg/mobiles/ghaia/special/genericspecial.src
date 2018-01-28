@@ -12,6 +12,8 @@ program loko(params)
 	//printtextabove(who, " "  + event); //apagar
 	if (!who.opponent)
 		return;
+   elseif (TS_GetCooldown(who, event.name))
+      return;
    endif
 
    if (event.chance != 100 )
@@ -172,26 +174,39 @@ program loko(params)
 			endforeach
 
 		elseif (state.type == "Summon Npcs") // Summonar NPC
-	        var amt := 0;
-			while (amt < state.amount)
-				var npc;
-				if (state.x == 6 && state.y == 6 && state.z == 6)
-					npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(who.x) + RandomInt(2 * state.range) - state.range,
-												  Cint(who.y) + RandomInt(2 * state.range) - state.range, Cint(who.z));
-				else
-					npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(state.x) + RandomInt(2 * state.range) - state.range,
-												  Cint(state.y) + RandomInt(2 * state.range) - state.range, Cint(state.z));
-				endif
-                if (npc != error)
-					var duracaonpc := state.duracao;
-					if (!duracaonpc)
-						duracaonpc := 120;
-					endif
-					TS_StartTimer(npc, "summon", duracaonpc);
-                	amt := amt + 1;
-                endif
-              	sleepms(2);
-            endwhile
+	      var amt := 0;
+         var tries := 0;
+         var amount := state.amount;
+         if (amount["d"]) 
+            amount := RandomDiceRoll(amount);
+         else
+            amount := cint(amount);
+         endif
+         while (amt < amount)
+            if (tries >= 20)
+               break;
+            endif
+            var npc;
+            if (state.x == 6 && state.y == 6 && state.z == 6)
+               npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(who.x) + RandomInt(2 * state.range) - state.range,
+               Cint(who.y) + RandomInt(2 * state.range) - state.range, Cint(who.z));
+            else
+               npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(state.x) + RandomInt(2 * state.range) - state.range,
+               Cint(state.y) + RandomInt(2 * state.range) - state.range, Cint(state.z));
+            endif
+
+
+            if (npc != error)
+               var duracaonpc := state.duracao;
+               if (!duracaonpc)
+                  duracaonpc := 120;
+               endif
+               TS_StartTimer(npc, "summon", duracaonpc);
+               amt := amt + 1;
+            endif
+            tries += 1;
+            sleepms(2);
+         endwhile
 
 		endif
 		sleepms(100);

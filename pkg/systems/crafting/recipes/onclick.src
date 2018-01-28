@@ -41,9 +41,9 @@ function SendGump(who, scroll)
 	var book_recipes    := ReadConfigFile(":alchemy:recipes");
    var cook_reecipes   := ReadConfigFile(":cooking:recipes");
 
-	var itemdesc     := ReadConfigFile(":*:itemdesc");
-	var recipe_list  := ReadConfigFile(":*:recipes");
-	var item   := FindConfigElem(itemdesc, hex(objtype));
+	var itemdesc    := ReadConfigFile(":*:itemdesc");
+	var recipe_list := ReadConfigFile(":*:recipes");
+	var item        := FindConfigElem(itemdesc, hex(objtype));
    if (!item) item   := FindConfigElem(itemdesc, cint(objtype)); endif
 
 	var recipe := FindConfigElem(recipe_list, hex(objtype));
@@ -106,7 +106,8 @@ function SendGump(who, scroll)
 	endif
 
    if (!is_lang || HaveFeat(who, is_lang))
-      if (!(cint(objtype) in GetObjProperty(who, "recipes")) && !(hex(objtype) in GetObjProperty(who, "recipes")))
+      var my_recipes := GetObjProperty(who, "recipes");
+      if (!(cint(objtype) in my_recipes) && !(hex(objtype) in my_recipes) && !(objtype in my_recipes))
          var charge_list    := GetObjProperty(scroll, "learning");
          var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
          var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);

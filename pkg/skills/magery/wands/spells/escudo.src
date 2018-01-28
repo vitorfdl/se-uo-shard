@@ -21,19 +21,24 @@ program animateSword(params)
    endif
 
    PlayObjectCenteredEffect( targ, 0x3728, 1, 2 );
-   var shieldtype := "Fogo";
-   var color := 1923;
+   var shieldtype;
+   var color;
+
+   PlaySoundEffect(targ, 0x475);
    if (spellinfo.spelltype["Gelo"])
       shieldtype := "Gelo";
-      color := 1923;
+      color := 2753;
+   elseif (spellinfo.spelltype["Veneno"])
+      shieldtype := "Veneno";
+      color := 2573;
+   else
+      shieldtype := "Fogo";
+      color := 2696;
    endif
 
-   SetObjproperty(targ, "oldcolor", targ.color);
-   targ.color = color;
-   targ.truecolor = color;
+   SetObjproperty(targ, "shieldcolor", color);
    SetObjProperty(targ, "shieldtype", shieldtype);
 
-   SetObjProperty(targ, "fireshield");
-   TS_StartTimer(targ, "escudo", 4);	
+   TS_StartTimer(targ, "escudo_magico", 5);	
 	return 1;
 endprogram

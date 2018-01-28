@@ -23,10 +23,10 @@ function StartScript(mobile, attacker := 0, level := 0)
 	endif
 
    var dicedmg := "1d2";
-   var diff := 12;
+   var diff := 13;
    case (level)
       2: dicedmg := "1d6";
-         diff := 14;
+         diff := 15;
       3: dicedmg := "2d6";
          diff := 16;
       4: dicedmg := "3d6";

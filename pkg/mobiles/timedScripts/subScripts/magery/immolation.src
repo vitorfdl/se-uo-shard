@@ -10,36 +10,39 @@ include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
 include "include/utils";
+include "include/sounds";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   
-   while (1)
-      PlayObjectCenteredEffect(mobile, GFX_EXPLODE_1, 7, 16);
+   print(level);
+   var dmg_roll;
+   case (level)
+      0: dmg_roll :="1d4+1";
+      1: dmg_roll :="2d4+2";
+      2: dmg_roll :="3d4+6";
+      3: dmg_roll :="4d4+8";
+      4: dmg_roll :="5d4+12";
+   endcase
 
-      var point;
-      while (!point)
-         var point := RandomPlace(mobile, 1);
-         if (!CanWalk("L", mobile.x, mobile.y, mobile.z, point.x, point.y, CANWALK_DIR))
-            point := 0;
-         endif
-         sleepms(2);
-      endwhile
-      mobile.facing := GetFacing(mobile.x, mobile.y, point.x, point.y);
-      MoveObjectToLocation(mobile, point.x, point.y, point.z, mobile.realm, MOVEOBJECT_FORCELOCATION);
-      if (!randomInt(2))
-         PrintText(mobile, "*eufórico*", SSM_FAIL);
+   while (1)
+      PlayObjectCenteredEffectEx( mobile,  0x19AB, 5, 40, 0, 4, 0);
+      DamageFLS(mobile, RandomDiceRoll(dmg_roll), DMG_FIRE, attacker);
+      if (RandomInt(2) == 1)
+         mobile.paralyzed := 1;
+         PlayCustomSound(mobile, 23);
+         SendSysMessageEx(mobile, "Você está em pânico", SSM_FAIL);
+         sleep(1);
+         mobile.paralyzed := 0;
+      else
+         sleep(1);
       endif
-      sleep(2);
-      if (rollResistDice(mobile, CONSTITUTION) > level)
-         break;
-      endif
+      sleep(1);
    endwhile
 	return 1;
 endfunction
 
 function EndScript(mobile)
-   mobile.paralyzed = 0;
+   mobile.paralyzed := 0;
 	return 1;
 endfunction
 

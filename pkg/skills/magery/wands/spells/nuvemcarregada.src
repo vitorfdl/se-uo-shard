@@ -17,6 +17,7 @@ program nuvemcarregada(params)
       var point := RandomPlace(who, 15);
       var item := CreateItemAtLocation(point.x, point.y, GetWorldheight(point.x, point.y), 0x9BCB);
       item.color := 971;
+      SetobjProperty(item, "owner", who.serial);
       sleep(1);
    endfor
 

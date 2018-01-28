@@ -340,14 +340,14 @@ function GetDefenderCA(defender, armor, attacker)
 		CA := cint(npcelem.AR);
 	endif
 
-	var ca_bonus := cint(GetObjProperty(defender, "bonus_ca"));
-	if (ca_bonus)
-		CA += ca_bonus;
-	endif
-
 	//não ta em warmode, 95% de chance
 	if (defender.acctname && !defender.warmode)
 		CA := 5;
+	endif
+   
+	var ca_bonus := cint(GetObjProperty(defender, "bonus_ca"));
+	if (ca_bonus)
+		CA += ca_bonus;
 	endif
 
 	return CA;
@@ -419,7 +419,7 @@ function AmmoCheck(attacker, defender)
    var cfgfile := NPC_GetNPCConfig(attacker);
 	if (weapon.isMagicWeapon())
       attacker.SetAchievement("magicweapon", 1);
-		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		PlayMovingEffectEx(attacker, defender, wpn_a_elem.ProjectileAnim, 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
 		return 1;
 	elseif ( !weapon.isBow() && !cfgfile.Ranged)
 		return 1;
@@ -427,9 +427,9 @@ function AmmoCheck(attacker, defender)
 
 	if(attacker.npctemplate)
       if (wpn_a_elem.ProjectileAnim)
-		   PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		   PlayMovingEffectEx(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
       else
-		   PlayMovingEffectXYZHued(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(cfgfile.ProjectileColor));
+		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(cfgfile.ProjectileColor));
       endif
 		return 1;
 	endif
@@ -444,7 +444,7 @@ function AmmoCheck(attacker, defender)
 		var cfg  := ReadConfigFile(":woodworking:itemdesc");
 		var elem := FindConfigElem(cfg, ammo);
 		var ammo_color := elem.color;
-		PlayMovingEffectXYZHued(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, ammo_color);
+		PlayMovingEffectEx(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, ammo_color);
 		return 1;
 	else
 		SendSysMessageEX(attacker, "Sua flecha acabou ou esta fora da aljava.", SSM_FAIL);

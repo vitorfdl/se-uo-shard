@@ -5,10 +5,10 @@ use math;
 function randomPlace(loc, radius := 1)
 	var y, x;
    case (RandomInt(3)+1)
-      1: y := RandomInt(radius) * -1; x := RandomInt(radius);
-      2: y := RandomInt(radius); 		x := RandomInt(radius) * -1;
-      3: y := RandomInt(radius) * -1; x := RandomInt(radius) * -1;
-      4: y := RandomInt(radius); 		x := RandomInt(radius);
+      1: y := (RandomInt(radius)+1) * -1; x := (RandomInt(radius)+1);
+      2: y := (RandomInt(radius)+1); 		x := (RandomInt(radius)+1) * -1;
+      3: y := (RandomInt(radius)+1) * -1; x := (RandomInt(radius)+1) * -1;
+      4: y := (RandomInt(radius)+1); 		x := (RandomInt(radius)+1);
    endcase
 
 	var new_loc := struct{

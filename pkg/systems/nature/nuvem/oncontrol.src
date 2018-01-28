@@ -7,19 +7,21 @@ include "include/dungeons";
 include "include/sounds";
 
 program control(nuvem)
+   sleep(1);
    var timing := cint(GetObjProperty(nuvem, "expiretime"));
    if (!timing)
       timing := polcore().systime + 40;
    endif
-
+   var owner := GetObjProperty(nuvem, "owner");
    var i := 0;
    while (nuvem && polcore().systime < timing )
       sleep(5);
       if (nuvem.color == 0)
          continue;
       endif
+
       foreach mobile in (ListMobilesNearLocationEx(nuvem.x, nuvem.y, nuvem.z-20, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
-         if (randomInt(5) == 1)
+         if (randomInt(5) == 1 && owner != mobile.serial )
             PlayLightningBoltEffect(mobile);
             PlaySoundEffect(mobile, SFX_LIGHTNING);
             if (rollResistDice(mobile, CONSTITUTION) > 16)

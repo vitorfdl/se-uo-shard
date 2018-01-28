@@ -89,11 +89,13 @@ function HandleSpeech(npc, player, text)
       DoWithdraw(npc, player);
    elseif (text["histórico"] && text["vendas"])
       if (GetObjProperty(player, "merchant_owner") == GetRegionName(player))
+         PrintText(npc, "Aqui está o histórico de vendas, Sr.");
          var historico := GetMerchantLog(npc);
-         historico := "<br> - ".format("<br> -".join(historico));
-         SendHTMLGump(npc, "Histórico de Vendas", historico);
+         historico := "<br> - {}".format("<br> -".join(historico));
+         SendHTMLGump(player, "Histórico de Vendas", historico);
       endif
    endif
+
 endfunction
 
 function SendItemView(npc, player)
@@ -153,11 +155,7 @@ function SendItemView(npc, player)
 		GFTooltipText(gump, "Comprar");
 
 		if (player.cmdlevel > 3 || GetObjProperty(player, "merchant_owner") == GetRegionName(player))
-			var vendor := SystemFindObjectBySerial(cost_info.seller, SYSFIND_SEARCH_OFFLINE_MOBILES);
-			var vendor_name := vendor.name;
-			if (GetObjProperty(vendor, "realname"))
-				vendor_name := GetObjProperty(vendor, "realname");
-			endif
+			var vendor_name := GetPlayerNameBySerial(cost_info.seller);
   			GFHTMLArea(gump, x+10, y+35, 110, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(vendor_name));
 		endif
 		if (player.cmdlevel >3 || cost_info.seller == player.serial || GetObjProperty(player, "merchant_owner") == GetRegionName(npc))
@@ -305,7 +303,7 @@ function DoPurchase(npc, player, input)
    
 	RemoveItemForSale(npc, input);
 	CreateItemInBackpackFromTemplate(player, selling);
-   SetMerchantLog(npc, player.name, selling.desc, cost.seller, cost.cost_amt);
+   SetMerchantLog(npc, player.name, selling.desc, GetPlayerNameBySerial(cost.seller), cost.cost_amt);
 endfunction
 
 // function RemoveItem(npc, player, input)

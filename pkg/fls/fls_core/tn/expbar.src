@@ -8,6 +8,7 @@ include ":gumps:gumps_ex";
 include ":attributes:attributes";
 
 program expBar(who)
+   if (who.cmdlevel) return; endif
    var x := 200;
    var y := 500;
 	var expbar := GFCreateGump();
@@ -16,7 +17,7 @@ program expBar(who)
    GFSetId(expbar, GUMPID_EXPBAR);
    GFResizePic(expbar, x+7, y+8, 9270, 526, 66);
    GFResizePic(expbar, x+21, y+21, 9300, 502, 39);
-   GFHTMLArea(expbar, x+30, y+23, 173, 20, "<BASEFONT Size=5 color=#332a1c>Barra de Experiência");
+   GFHTMLArea(expbar, x+30, y+23, 173, 20, "<BASEFONT Size=5 color=#332a1c>Experiência");
    GFGumpPic(expbar, x+499, y+31, 9771, 0);
    GFGumpPicTiled(expbar, x+30, y+48, 480, 6, 0x2616);
 

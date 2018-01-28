@@ -1,0 +1,47 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":magery:tnmagery";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	// var weapon	:= params[3];
+	// var armor	:= params[4];
+	// var basedamage	:= params[5];
+	// var rawdamage	:= params[6];
+	// params := 0; // Not needed anymore.
+   var shieldtype := GetObjProperty(defender, "shieldtype");
+   var effect;
+   var dmg_type;
+
+   if (shieldtype["Gelo"])
+      SendSysMessageEx(attacker, "Um frio intenso vindo de {} te causa intensa dor".format(defender.name));
+      // effect := ;
+      dmg_type := DMG_COLD;
+   elseif (shieldtype["Fogo"])
+      SendSysMessageEx(attacker, "As chamas de {} entra em erupção te ferindo".format(defender.name));
+      SendSysMessageEx(defender, "Um frio intenso vindo de {} te causa intensa dor".format(defender.name));
+      // effect := ;
+      dmg_type := DMG_FIRE;
+   else
+      return;
+   endif
+
+   var dmg := RandomDiceRoll("2d8");
+   DamageFLS(attacker, dmg, dmg_type, defender);
+	// var time := cdbl(GetObjProperty(defender, "armaduraglacial"));
+	// if (!time)
+	// 	time := 2;
+	// endif
+	
+	// PrintText(attacker, "*Você esta congelado*", 91);
+	// TS_StartTimer(attacker, "paralysis", time);
+		
+	// return 1;
+endprogram
+ 

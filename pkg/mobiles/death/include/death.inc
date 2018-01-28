@@ -76,7 +76,9 @@ function KataWakeUp(ghost, corpse)
 	SetName(ghost, ghost.name);	
 	EraseObjProperty(ghost, "realname");
 	EraseObjProperty(ghost, "corpo");
-	
+	EraseObjProperty(ghost, "curado");
+	EraseObjProperty(corpse, "curado");
+
 	Resurrect(ghost, RESURRECT_FORCELOCATION);
 	DestroyItem(GetEquipmentByLayer(ghost, 0x16));
 

@@ -39,6 +39,15 @@ endfunction
 function GetNPCattack(mobile)
 	
 endfunction
+
+function PlayHurtSound(defender)
+	if ( defender.IsA(POLCLASS_NPC) )
+      var damaged_sound := NPC_GetNPCConfig(defender).HurtSound;
+		if ( damaged_sound && RandomInt(2) == 2)
+			PlaySoundEffect(defender, damaged_sound);
+		endif
+	endif
+endfunction
   
 function PlayHitSounds(attacker, defender := 0)
 	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
@@ -194,14 +203,14 @@ function debugMSG(who, text)
 	endif
 endfunction
 
-function SetAmorHitscript(who, hitscript, remove := 0);
+function SetArmorHitscript(who, hitscript, remove := 0);
    var hitscripts := GetObjProperty(who, "ArmorHitScripts");
    if (!hitscripts)
       hitscripts := array{};
    endif
 
    if (!remove)
-      if (FindInArray(hitscripts, hitscript))
+      if (!FindInArray(hitscripts, hitscript))
          hitscripts.append(hitscript);
       endif
    else
@@ -221,7 +230,7 @@ function SetHitscript(who, hitscript, remove := 0);
    endif
 
    if (!remove)
-      if (FindInArray(hitscripts, hitscript))
+      if (!FindInArray(hitscripts, hitscript))
          hitscripts.append(hitscript);
       endif
    else

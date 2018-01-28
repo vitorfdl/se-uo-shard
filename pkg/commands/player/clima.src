@@ -121,7 +121,7 @@ function GetTempRegion(diaounoite, who, x, y)
 		var region := FindConfigElem(cfg, elem);
 		var rect := GetConfigString(region, "Rect");
 		if ( InRect(who, x, y, rect) )
-			if (who.cmdlevel > 2) SendSysMessageEx(who, "Regiao que Estou: " + elem); endif
+			if (who.cmdlevel > 2) SendSysMessageEx(who, "Região que Estou: " + elem); endif
 			var tempmod := cint(GetConfigString(region, "TempMod"));
 			//DESERTO FRIO DENOITE
 			if ((diaounoite == "noite") && ((elem == "adesertointerior") || (elem == "adesertointerior2") || (elem == "desertolitoral"))) 

@@ -10,6 +10,7 @@ const SSM_INFO_IC   := 55;
 const SSM_INFO_OOC  := 91;
 const SSM_INFO_DEBUG:= 946;//1901;
 const SSM_GM_NOTICE := 2001;
+const SSM_DEFAULT_COLOR := 2001;
 
 // CONSTants for texttype flags in the AI_Speak() function
 

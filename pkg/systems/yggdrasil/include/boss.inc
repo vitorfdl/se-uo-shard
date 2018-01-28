@@ -698,7 +698,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := 1, "radio" := GetConfigStringKeys(timedcfg)});
       input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""});
       input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := "1"});
-      input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
+      input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 1, "radio" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
       input_list.append(struct{ "title" := "Dificuldade do teste?", "marked" := "12"});
 
       var output := QuestionsGump(who, input_list);
@@ -738,13 +738,13 @@ function CombatEventsOptions(who, state)
       state.healamt := cint(RequestGump(who, "Quanto vai healar?", "", "", 1));
    elseif (opt == "Graphic Effect")
       var input_list := array{};
-      input_list.append(struct{ "title" := "Onde vai aparecer o efeito? (fixed loc deve ser Moving)", "marked" := 1, "radio" := targ_opts + array{"Fixed Loc"}});
-      input_list.append(struct{ "title" := "Qual o tipo de efeito?", "marked" := 1, "radio" := array{"Stationary", "Moving"}});
+      input_list.append(struct{ "title" := "Onde vai aparecer o efeito?", "marked" := 1, "radio" := targ_opts + array{"Fixed Loc"}});
+      input_list.append(struct{ "title" := "Qual o tipo de efeito? (fixed loc deve ser Moving)", "marked" := 1, "radio" := array{"Stationary", "Moving"}});
       input_list.append(struct{ "title" := "Qual o efeito?", "marked" := "", "radio" := array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Small Fireball", "Large Fireball", "Wavy Fireball", "Outro"}});
       input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := "1000"});
       input_list.append(struct{ "title" := "Qual a direção? (Moving)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"}});
-      input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer:", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Digite o x y z da posicao final do efeito:", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer: (stationary)", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Digite o x y z da posicao final do efeito: (stationary)", "marked" := "1000"});
       var output := QuestionsGump(who, input_list);
 
 
@@ -823,15 +823,18 @@ function CombatEventsOptions(who, state)
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer?", "marked" := 1, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Quanto de dano vai causar? Ex: 1d2", "marked" := "1d2"});
-      input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := 1, "radio" := array{"Perfuração", "Concussão", "Corte", "Fogo", "Gelo", "Eletrecidade", "Veneno"}});
-      input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := "", "radio" := array{"Stam", "Hits", "Mana"}});
-      input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 1, "option" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
+      input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := 1, "radio" := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY,DMG_PIERCING,DMG_SLASH,DMG_BLUDGE, "Sem Resistência" }});
+      input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := "", "checkbox" := array{"Stam", "Hits", "Mana"}});
+      input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 6, "radio" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
       input_list.append(struct{ "title" := "Qual a dificuldade do teste?", "marked" := "14"});
       var output := QuestionsGump(who, input_list);
 
       state.+target := output[1];
       state.+dmg := output[2];
       state.+dmgtype := output[3];
+      if (state.dmgtype == "Sem Resistência")
+         state.dmgtype := -1;
+      endif
       state.+vitals := output[4];
       if (output[5] != "Nenhum")
          state.+resist_test := output[5];
@@ -840,7 +843,6 @@ function CombatEventsOptions(who, state)
    elseif ( opt == "Create Items")
       SendSysMessage(who, "Não implementado");
    elseif (opt == "Summon Npcs")
-
       var input_list := array{};
       input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ":ghaia:"});
       input_list.append(struct{ "title" := "Quantos npcs vao ser spawnados?", "marked" := "2"});
@@ -851,20 +853,25 @@ function CombatEventsOptions(who, state)
       var output := QuestionsGump(who, input_list);
       state.+npctemplate := output[1];
       state.+amount := output[2];
-      state.+range := output[3];
-      state.+tempo := output[4];
+      state.+range := cint(output[3]);
+      state.+tempo := cint(output[4]);
       
-      var loc := output[6];
+      var loc := output[5];
       if (!loc)
          SendSysMessageEx(who, "Onde vão ser spawnados? (Esc para mesmo local do boss)");
          loc := TargetCoordinates(who);
+         if (!loc)
+            loc := array{6, 6, 6};
+         else
+            loc := array{loc.x, loc.y, loc.z};
+         endif
       else
          loc := splitwords(loc);
       endif
       
-      state.+x :=  loc[1];
-      state.+y :=  loc[2];
-      state.+z :=  loc[3];
+      state.+x := cint(loc[1]);
+      state.+y := cint(loc[2]);
+      state.+z := cint(loc[3]);
 
    elseif (opt == "Custom HitScript")
       SendSysMessage(who, "Não implementado");

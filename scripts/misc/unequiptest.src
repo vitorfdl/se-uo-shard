@@ -10,7 +10,7 @@ program UnequipTest(mobile, item)
 	if ( (mobile.frozen) || (mobile.paralyzed))
 		SendSysMessage(mobile, "Você esta incapaz de se mover para desequipar isso.");
 		retval := 0;
-	elseif ("cursed" in (GetObjProperty(item, "equip")))
+	elseif ("cursed" in (GetObjProperty(item, "equip")) || GetObjProperty(item, "#no_unequip"))
 		retval := 0;
 	endif
 

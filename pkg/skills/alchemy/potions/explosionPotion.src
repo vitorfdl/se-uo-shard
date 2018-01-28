@@ -22,7 +22,7 @@ program use_explosion(who, potion)
 	who.hidden := 0;
 	SendSysMessage(who, "Escolha o alvo " );
 	if( !Cint(GetObjProperty(potion, "#bomb")))
-		var parms := {};
+		var parms := array{};
 		parms[1] := potion;
 		parms[2] := who;
 		var t := start_script("potions/explosionTimer", parms);

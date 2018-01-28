@@ -21,8 +21,7 @@ program HitScript(params)
    if (!TS_GetTimerInfo(defender, "tombar") || TS_GetCooldown(attacker, "{}_attackonfall".format(defender.serial)))
       return 0;
    endif
-
-   TS_StartCooldown(attacker, "{}_attackonfall".format(defender.serial), 3);
+   TS_StartCooldown(attacker, "{}_attackonfall".format(defender.serial), 5);
    attacker.attack_once(defender);
 
 	// var mount := GetEquipmentByLayer(attacker, LAYER_MOUNT);

@@ -9,6 +9,7 @@ use cfgfile;
 include ":attributes:attributes";
 include ":ghaia:ghaiaUtil";
 include ":blood:blood";
+include ":combat:combat";
 include ":combat:settings";
 include ":timedscripts:timedScripts";
 include "include/client";
@@ -17,7 +18,6 @@ include "include/damage";
 include ":tn:cooldown";
 include ":fls_core:packets";
 include "include/say";
-include ":charactercreation:habilidades";
 include "include/client";
 include "include/sounds";
 
@@ -127,15 +127,6 @@ function FacingChecks(attacker, defender)
 	// endif
 	
 	return 1;
-endfunction
-
-function PlayHurtSound(defender)
-	if ( defender.IsA(POLCLASS_NPC) )
-      var damaged_sound := NPC_GetNPCConfig(defender).HurtSound;
-		if ( damaged_sound && RandomInt(2) == 2)
-			PlaySoundEffect(defender, damaged_sound);
-		endif
-	endif
 endfunction
 
 function SkillChecks(attacker, defender, weapon, dice_roll)

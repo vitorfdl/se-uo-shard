@@ -34,7 +34,7 @@ program skill_Stealth( who )
 	endif*/
 
 	var base_steps :=  (AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE)) - RandomDiceRoll("1d2");
-   SendSysMessageEx(who, base_steps);
+   SendSysMessageEx(who, "Numero de passos: {}".format(base_steps));
 	if (base_steps < 0)
 		return SendSysMessageEx(who, "Você é incapaz de se mover furtivamente.", SSM_INFO);
 	endif

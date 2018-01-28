@@ -55,7 +55,7 @@ function genericControl()
       EraseObjProperty(me, "#charge_enemy");
 		lookAround();
       loops += 1;
-      if (loops >= 200)
+      if (loops >= 200 && me.alignment != 2)
          print("I'm stuck: " + me.serial+" "+me.name);
          ApplyRawDamage(me, 200);
       endif
