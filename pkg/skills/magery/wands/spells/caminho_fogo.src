@@ -22,46 +22,38 @@ program SpellScript(params)
       face /= 2;
    endif
 
-   var flame := "FireFieldNS";
-   if (face < 2)
-      flame := "FireFieldEW";
+   var flame := 0x3996;
+   if (face % 2)
+      flame := 0x398C;
    endif
 
-   var pos := GetCoordsInLine(who.x, who.y, targ, targ);
-   var flame_list := array{};
+   var pos := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
+   pos.Erase(1);
    var hostiles := ListHostiles(who);
    var z := who.z;
 
+   var dmg_dice := RandomDiceRoll("2d6+2");
    foreach p in pos
       if (targ.z > z)
          z += 1;
       elseif (targ.z < z)
          z -= 1;
       endif
-      var item := CreateItemAtLocation(p.x, p.y, z, flame, who.realm, 1);
-      flame_list.append(item);
-      if (_p_iter > 4)
-         DestroyItem(flame_list[1]);
-      endif
-
-      var mobs := ListMobilesNearLocationEx( item.x, item.y, item.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
-      foreach mob in mobs
-			if (!(mobile in alreadydamaged) && ((!(mobile in who.party.members) && mobile != who) || mobile in hostiles))
-            if (rollResistDice(mob, DEXTERITY) > dice_roll+3)
-               SendSystemReport(mob, "*esquivou*", SSM_FAIL, who);
-               SendSystemReport(mob, "*esquivou*", SSM_INFO);
+      var item := CreateItemAtLocation(p.x, p.y, z, cint(flame));
+      item.SetDuration(1);
+      foreach mobile in ListMobilesNearLocationEx( item.x, item.y, item.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
+			if (((!(mobile in who.party.members) && mobile != who) || mobile in hostiles))
+            if (rollResistDice(mobile, DEXTERITY) > dice_roll+3)
+               SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
+               SendSystemReport(mobile, "*esquivou*", SSM_INFO);
             else
-               DamageFLS(mob, dmg_dice, DMG_FIRE, who);
+               DamageFLS(mobile, dmg_dice, DMG_FIRE, who);
             endif
          endif
       endforeach
-      sleepms(400);
+      sleepms(150);
    endforeach
 
-   foreach f in flame_list
-      DestroyItem(f);
-      sleepms(400);
-   endforeach
 
 	return 1;
 endprogram 

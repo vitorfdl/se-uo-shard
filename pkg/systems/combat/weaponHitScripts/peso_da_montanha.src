@@ -19,7 +19,7 @@ program HitScript(params)
    if (AP_GetVital(defender, HITS) <= AP_GetVitalMaximumValue(defender, HITS) * 0.2)
       PrintText(attacker, msgs.randomentry(), SSM_FAIL);
       ApplyRawDamage(defender, 200);
-      PlaySoundEffect(targ, SFX_LIGHTNING);
+      PlaySoundEffect(defender, SFX_LIGHTNING);
    endif
 		
 	// if (RandomInt(100) < 20 ) //20% de chance sempre

@@ -35,7 +35,7 @@ program NPCMonitor()
       endif
 
       if (damage_transfer)
-         var mob := SystemFindObjectBySerial(serial);
+         var mob := SystemFindObjectBySerial(damage_transfer);
          if (Distance(me, mob) > 14)
             ApplyRawDamage(me, 200);
          endif

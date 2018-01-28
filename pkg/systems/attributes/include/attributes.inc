@@ -76,12 +76,12 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	// Rola o dado com penalidade, se for o caso.
 	if (penalty < 0 || GetObjProperty(mobile, "ArmorPenalty") >= 1)
 		var dices := array{ RandomDiceRoll("1d20"), dice};
-		dice := ReturnHighest(dices);
-      param_return.two_dice := ReturnLowest(dices);
-	elseif (penalty > 0)
-		var dices := array{ RandomDiceRoll("1d20"), dice};
 		dice := ReturnLowest(dices);
       param_return.two_dice := ReturnHighest(dices);
+	elseif (penalty > 0)
+		var dices := array{ RandomDiceRoll("1d20"), dice};
+		dice := ReturnHighest(dices);
+      param_return.two_dice := ReturnLowest(dices);
 	endif
 
 	// Grava info de critico.

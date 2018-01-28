@@ -42,15 +42,16 @@ function HandleSeeEvent(npc, player)
    if (GetCooldown(npc, "{}_see".format(player.serial)))
       return;
    endif
+
 	var data_elem := GetPaymentsDataElem(Hex(npc.serial));
 	var account := data_elem.GetProp(Hex(player.serial));
    
-   if (!account.size())
+   if (account.size() < 1)
       return;
    endif
 
    PlayCustomSound(npc, 14);
-   PrintText(npc, "{}, vendi alguns artigos seu!");
+   PrintText(npc, "{}, vendi alguns artigos seu!".format(player.name));
    SetCooldown(npc, "{}_see".format(player.serial), 600);
 endfunction
 

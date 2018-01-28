@@ -44,7 +44,9 @@ program Attack(params)
 	if ( attacker == defender )
 		ApplyRawDamage(attacker, 5000);
 		return 1;
-   elseif (defender.my_template() == "orb" && defender.owner != attacker)
+   elseif (attacker.my_template() == "orb")
+      return 1;
+   elseif (defender.my_template() == "orb" && defender.master != attacker)
       return 1;
 	elseif ( !CheckLineOfSight(attacker, defender) )
 		return 1;
@@ -81,9 +83,9 @@ program Attack(params)
    elseif ( attacker.hidden)
       attacker.hidden := 0;
 		attacker.SetAchievement("sneak_attack", 1);
-		ExpGain(attacker, "minor"); := 1;
-      if (rollResistDice(defender, PERCEPCAO) <= rollAttrDice(attacker, DEXTERITY) + getProficiencyBonus(who, FURTIVIDADE);)
-         SendSystemMessage(attacker, "*Golpe Furtivo*", SSM_INFO);
+		ExpGain(attacker, "minor");
+      if (rollResistDice(defender, PERCEPCAO) <= rollAttrDice(attacker, DEXTERITY) + getProficiencyBonus(attacker, FURTIVIDADE))
+         SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
          bonus_atk += 1;
       endif
 	endif
@@ -143,8 +145,8 @@ program Attack(params)
 			defender.SetAchievement("shield", 1);
 		endif
 
-      dice_roll.two_dice_success := (dice_roll.two_dice > defender_CA);
-		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, attack_chance, wpn_a_elem });
+      attacker_roll.two_dice_success := (attacker_roll.two_dice > defender_CA);
+		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, attacker_roll, wpn_a_elem });
 
 	else //ERROU O ATAQUE
 		if ( weapon.isBow() && !attacker.npctemplate )

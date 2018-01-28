@@ -56,7 +56,7 @@ endfunction
 
 function BurnMobile(mobile, dmg_dice)
 	var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
-	ApplyDamageEX(mobile, dmg, DMG_FIRE);
+	DamageFLS(mobile, dmg, DMG_FIRE);
 
 	return 1;
 endfunction

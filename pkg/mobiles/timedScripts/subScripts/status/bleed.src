@@ -14,8 +14,6 @@ include ":blood:blood";
 
 function StartScript(mobile, attacker := 0, level := 0)
 	var dmg_dice;
-
-   var dmg;
    case (level)
       0: dmg_dice := "1d2";
       1: dmg_dice := "2d2+1";
@@ -24,16 +22,16 @@ function StartScript(mobile, attacker := 0, level := 0)
       4: dmg_dice := "5d4+8";
    endcase
 
+   SendSystemReport(mobile, "Você está com uma grave hemorragia!", mobile);
+   foreach mobile in ( ListMobilesInLineOfSight(mobile, 8) )
+      if( mobile.ip && mobile != mobile )
+         SendSystemReport(mobile, "* " + mobile.name + " está sangrando muito! *", mobile);
+      endif
+      sleepms(2);
+   endforeach
+
 	while(1)
-		SendSystemReport(mobile, "Você está com uma grave hemorragia!", mobile);
-		foreach mobile in ( ListMobilesInLineOfSight(mobile, 8) )
-			if( mobile.ip && mobile != mobile )
-				SendSystemReport(mobile, "* " + mobile.name + " está sangrando muito! *", mobile);
-			endif
-			sleepms(2);
-		endforeach
-		
-		DamageFLS(mobile, dmg);
+		DamageFLS(mobile, RandomDiceRoll(dmg_dice), DMG_FORCED);
 		MakeBleed(mobile);
 
 		Set_Critical(1);

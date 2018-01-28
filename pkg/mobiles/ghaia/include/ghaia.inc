@@ -40,7 +40,7 @@ function CanFight(me, mobile)
    EraseObjProperty(me, "path");
    if ( mobile.concealed || GetObjProperty(mobile, "ignorenpcs") || TS_GetCooldown(me, "peacemade"))
       return 0;
-   elseif ( GetObjProperty(mobile, "#fantasma") == 1)
+   elseif ( GetObjProperty(mobile, "#fantasma") == 1 || mobile.my_template() == "orb")
       return 0;
    elseif ( Cint(GetCooldown(mobile, "deathtime" )) > 0  )
    //printtextabove(me, "não vou atacar" + mobile.name);
@@ -142,7 +142,7 @@ endfunction
   
 //pega a lista de aliados proximos. se o npc for good, os players serao allies pra ele tbm
 function GetAlliesNear(loc, range := 5)
-   var spotserial := GetObjProperty(mobile, "spawnspot");
+   var spotserial := GetObjProperty(me, "spawnspot");
    var spot       := SystemFindObjectBySerial(spotserial);
    spot := spot.GetProps();
    

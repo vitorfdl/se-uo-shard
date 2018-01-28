@@ -166,13 +166,13 @@ function fireWall(mobile, dmg_dice)
    
    playCastAnimation();
    var direction := GetFacing(me.x, me.y, mobile.x, mobile.y);
-   var face := cint(direction / 2);
-   if (face > 4)
-      face /= 2;
+   var field := cint(direction / 2);
+   if (field > 4)
+      field /= 2;
    endif
 
    var flame := "FireFieldNS";
-   if (face < 2)
+   if (field % 2)
       flame := "FireFieldEW";
    endif
 
@@ -185,8 +185,8 @@ function fireWall(mobile, dmg_dice)
       elseif (mobile.z < z)
          z -= 1;
       endif
-      var item := CreateItemAtLocation(p.x, p.y, z, flame, me.realm, 1);
-      item.SetDuration(20);
+      var item := CreateItemAtLocation(p.x, p.y, z, flame);
+      item.SetDuration(1);
 
       var mobs := GetEnemiesNear(item, 0);
       foreach mob in mobs

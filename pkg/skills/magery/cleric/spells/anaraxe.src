@@ -4,6 +4,7 @@ use os;
 include "include/say";
 include "include/sounds";
 include "include/facings";
+include ":attributes:attributes";
 
 program blessWater(info)
    var who := info[1];
@@ -11,14 +12,14 @@ program blessWater(info)
    var targ := info[3];
    info := 0;
    
-   var mod := GetModByFacing(facing);
-   var summoned := CreateNpcFromTemplate(":ghaia:orb", targ.x+mod[1], targ.y+mod[2], targ.z);
+   var mod := GetModByFacing(who.facing);
+   var summoned := CreateNpcFromTemplate(":ghaia:orb", who.x+mod[1], who.y+mod[2], who.z);
 	if (summoned)
 		PrintTextAbove(summoned, "*Uma orbe de luz se forma*", 3,191);
       SendSysMessage(who, "Ataque a esfera para transferir seu dano para o alvo", SSM_INFO);
 		summoned.SetMaster(who);
-      SetObjProperty(summon, "no_follow", 1);
-      SetObjProperty(summon, "damage_transfer", targ.serial);
+      SetObjProperty(summoned, "no_follow", 1);
+      SetObjProperty(summoned, "damage_transfer", targ.serial);
 
 		if (!summoned.backpack)
 			var mochila := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, 0x9b2, 1, summoned.realm);

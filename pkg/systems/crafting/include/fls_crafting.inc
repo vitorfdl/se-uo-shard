@@ -156,20 +156,20 @@ function MaterialSelection(who, type, chk, craft_skill)
 		return 0;
 	endif
 	
-   if (!HaveFeat(who, "Formidável {}".format(craft_skill))
-      if (thing == "metal")
+   if (!HaveFeat(who, "Formidável {}".format(craft_skill)))
+      if (type == "metal")
          if (material.objtype != 0x6309)
-            SendSysMessageEx(who, "Você não sabe trabalhar com isto.");
+            SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
             return 0;
          endif
-      elseif (thing == "couro")
+      elseif (type == "couro")
          if (material.objtype != 0xee45 && material.color != 0)
-            SendSysMessageEx(who, "Você não sabe trabalhar com isto.");
+            SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
             return 0;
          endif
-      elseif (thing == "madeira")
+      elseif (type == "madeira")
          if (material.objtype != 0x1BD7 && material.color != 0)
-            SendSysMessageEx(who, "Você não sabe trabalhar com isto.");
+            SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
             return 0;
          endif
       endif
