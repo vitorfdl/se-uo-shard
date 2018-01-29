@@ -396,6 +396,10 @@ function AmmoCheck(attacker, defender)
       else
 		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(cfgfile.ProjectileColor));
       endif
+
+      if (cfgfile.AttackTargetAnim)
+         PlayObjectCenteredEffectEx( defender, cint(cfgfile.AttackTargetAnim), 10, 20, cint(cfgfile.ProjectileColor));
+      endif
 		return 1;
 	endif
 

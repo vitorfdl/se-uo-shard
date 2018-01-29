@@ -51,7 +51,7 @@ program SpellScript(params)
             endif
          endif
       endforeach
-      sleepms(150);
+      sleepms(100);
    endforeach
 
 
