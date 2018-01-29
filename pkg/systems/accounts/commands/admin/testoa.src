@@ -38,6 +38,8 @@ program oafeatures_sendpacket(who, text)
       var acc := FindAccount(targ.acctname);
 
       acc.SetProp("expboost", cint(text));
+
+      SendSysMessageEx(who, ""+acc.GetProp("expboost"));
       // PlayMovingEffectEx(who, defender, 0x0F51, 10, 10, 0, 0);
       // sleep(3);PlayObjectCenteredEffectEx( center, effect, speed, duration := 0, hue := 0, render := 0, layer := 0, effect3d := 0 );
       // PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 50, 0);
