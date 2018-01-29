@@ -88,7 +88,7 @@ function ModelSpot( data := struct{} )
         data.timeinterval := 60;
     endif
 
-    if (!data.evententry)
+    if (!data.evententry || data.evententry == "N")
         data.evententry := "";
     endif 
 

@@ -1,10 +1,11 @@
 
+include ":timeUtils:time";
 //se tiver passado o tempo retorna 0, se não retorna o tempo que falta
 function getCooldown(who, hability)
 
 	hability := "#"+hability;
 
-	var now := ReadGameClock();
+	var now := polcore().systime;
 	
 	var future := Cint(GetObjProperty(who, hability));
 	
@@ -27,7 +28,7 @@ function setCooldown(who, hability, time)
 	if (cint(cooldown))
 		return cooldown;
 	else
-		SetObjProperty(who, hability, Cint(ReadGameClock()+time) );
+		SetObjProperty(who, hability, AddTimeTo(polcore().systime, time, "seconds") );
 		return 0;
 	endif
 	
