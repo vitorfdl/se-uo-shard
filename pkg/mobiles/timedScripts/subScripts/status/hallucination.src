@@ -15,7 +15,6 @@ include ":tn:hallucination";
 
 function StartScript(mobile, attacker := 0, level := 0)
 	while ( 1 )
-      Hallucinate(mobile);
       sleep(RandomDiceRoll("1d4+8"));
       if (mobile.dead) continue; endif
 
@@ -34,7 +33,7 @@ function StartScript(mobile, attacker := 0, level := 0)
             PlayCustomSound(mobile, 18);
          4:
             PlayCustomSound(mobile, 2);
-         5:
+         5:3
             PrintText(mobile, "*parece doidão*");
          5:
             PrintText(mobile, "*se assusta*");
@@ -46,7 +45,6 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-   EndHallucinate(mobile);
    return 1;
 endfunction
 
