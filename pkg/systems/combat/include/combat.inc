@@ -25,7 +25,6 @@ function DistanceChecks(attacker, defender)
 endfunction
 
 function GetItemCFGInfo(mobile, weapon)
-
 	var item_cfg2	:= ReadConfigFile(":*:itemdesc");
 
 	if ( mobile.IsA(POLCLASS_NPC) && weapon.objtype == 0x1F020 )

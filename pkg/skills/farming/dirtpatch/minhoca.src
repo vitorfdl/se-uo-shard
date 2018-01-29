@@ -19,38 +19,34 @@ include "include/sysEvent";
 program catarminhoca(who, dirt)
 
 	if (distance(who, dirt) > 1)
-	SendSysMessage(who, "Você esta muito longe para catar minhocas",FONT_NORMAL,0);
-	return 0;
+      SendSysMessageEx(who, "Você está muito longe para catar minhocas");
+      return 0;
 	endif 
 
-	var currentskill := AP_GetSkill(who, SOBREVIVENCIA);
-	var randomskill := RandomInt(cint(currentskill)) + 1;
-	var minhocachance := ((currentskill) + (randomskill / 2));
-	var randomchance := RandomInt(100) + 1;
+   var roll := rollAttrDice(who, DEXTERITY, 0, struct{ "get_critical" := 1 }) + getProficiencyBonus(who, SOBREVIVENCIA);
 	var minhoca := cint("0x9980");
-	var randomcritical := RandomInt(200);
 
 
 	PerformAction( who, ANIM_BOW );
-	PrintTextAbove(who, "*revirando a terra*",FONT_NORMAL,0);
+	PrintText(who, "*revirando a terra*");
 	sleepms(1000);
 	PerformAction( who, ANIM_BOW );
 	sleepms(1000);
 
-	if (randomcritical == 0)
-		PrintTextAbove(dirt, "*tremor da terra*",FONT_NORMAL,0);
-		sleepms(1500);
-		SendSysMessage(who, "Isso não parece uma minhoca",FONT_NORMAL,0);
-		var elemental := CreateNpcFromTemplate( "earthelemental", dirt.x, dirt.y, dirt.z );
-		SetName(elemental, "Espirito da Terra");
-		return 0;
-	endif
+	// if (roll.critical < 0)
+	// 	PrintText(dirt, "*tremor da terra*");
+	// 	sleepms(1500);
+	// 	SendSysMessageEx(who, "Isso não parece uma minhoca", SSM_INFO);
+	// 	var elemental := CreateNpcFromTemplate( "earthelemental", dirt.x, dirt.y, dirt.z );
+	// 	SetName(elemental, "Espirito da Terra");
+	// 	return 0;
+	// endif
 
-	if (randomchance < minhocachance)
-		SendSysMessage(who, "Você pegou algumas minhocas",FONT_NORMAL,0);
+	if (roll.dice > 14)
+		SendSysMessageEx(who, "Você pegou algumas minhocas", SSM_INFO);
 		CreateItemInBackpack(who, minhoca, 1);
 	else
-		SendSysMessage(who, "Você revirou a terra e não achou nenhuma minhoca",FONT_NORMAL,0);
+		SendSysMessageEx(who, "Você revirou a terra e não achou nenhuma minhoca", SSM_FAIL);
 	endif
 
 	return 1;

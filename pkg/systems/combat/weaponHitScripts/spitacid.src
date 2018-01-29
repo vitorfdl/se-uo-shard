@@ -19,6 +19,7 @@ program HitScript(params)
 	if (!acid)
 		acid := 20;
 	endif
+   
 	if (RandomInt(100) < acid)
 		SpitAcid(attacker, defender);
 	endif

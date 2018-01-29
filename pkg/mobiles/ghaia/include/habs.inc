@@ -81,25 +81,27 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
 
    var res;
    case (hab_name)
-      "summon":              res := SummonCreature(cint(hab_dice), hab_special); break;
-      "agarrar":             res := NPC_Agarrar(hab_dice, hab_target, cint(hab_special)); break;
-      "cancaoSedutora":      res := CancaoSedutora(hab_target, hab_dice); break;
-      "furtividade":         res := NPC_Sneak(); break;
-      "metamorfose":         res := Metamorfose(hab_special); break;
-      "curar":               res := Healing(hab_target, hab_dice); break;
-      "roubar":              res := Roubar(hab_target); break;
+      "summon":         res := SummonCreature(cint(hab_dice), hab_special); break;
+      "agarrar":        res := NPC_Agarrar(hab_dice, hab_target, cint(hab_special)); break;
+      "cancaoSedutora": res := CancaoSedutora(hab_target, hab_dice); break;
+      "furtividade":    res := NPC_Sneak(); break;
+      "metamorfose":    res := Metamorfose(hab_special); break;
+      "curar":          res := Healing(hab_target, hab_dice); break;
+      "roubar":         res := Roubar(hab_target); break;
+      "rajada_acida":   res := RajadaAcida(hab_dice, hab_target, cint(hab_special)); break;
+      "teia":           res := SpitWeb(hab_special, hab_target, cint(hab_special)); break;
+      "teleport":       res := teleport(hab_target, hab_special); break;
+      "constrictSpell": res := constrict(hab_target, hab_dice, cint(hab_special)); break;
+      "charming":       res := charm(hab_target, hab_dice, cint(hab_special)); break;
+      "SoproEuforia":   res := euforic(hab_dice, cint(hab_special)); break;
+      "hunterMark":     res := hunterMark(hab_target); break;
+      "fireWall":       res := fireWall(hab_target, hab_dice); break;
+      "castSpell":      res := castSpell(hab_target, hab_dice, hab_special); break;
+      "throwBomb":      res := throwBomb(hab_target, hab_dice, hab_special); break;
+      "evasao":         res := evasion(hab_target); break;
+      "fireWall":       res := fireWall(hab_target, hab_dice, cint(hab_special)); break;
+      "Iceberg":        res := Iceberg(hab_target, hab_dice, cint(hab_special)); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
-      "rajada_acida":        res := RajadaAcida(hab_dice, hab_target, cint(hab_special)); break;
-      "teia":                res := SpitWeb(hab_special, hab_target, cint(hab_special)); break;
-      "teleport":            res := teleport(hab_target, hab_special); break;
-      "constrictSpell":      res := constrict(hab_target, hab_dice, cint(hab_special)); break;
-      "charming":            res := charm(hab_target, hab_dice, cint(hab_special)); break;
-      "SoproEuforia":        res := euforic(hab_dice, cint(hab_special)); break;
-      "hunterMark":          res := hunterMark(hab_target); break;
-      "fireWall":            res := fireWall(hab_target, hab_dice); break;
-      "castSpell":           res := castSpell(hab_target, hab_dice, hab_special); break;
-      "throwBomb":           res := throwBomb(hab_target, hab_dice, hab_special); break;
-      "evasao":           res := evasion(hab_target); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
          SetCooldown(me, hab_name, 150);
@@ -159,7 +161,7 @@ function hunterMark(mobile)
    return 1;
 endfunction
 
-function fireWall(mobile, dmg_dice)
+function fireWall(mobile, dmg_dice, diff := 14)
    if (Distance(mobile, me) > 12)
       return 0;
    endif
@@ -176,7 +178,8 @@ function fireWall(mobile, dmg_dice)
       flame := "FireFieldEW";
    endif
 
-   var pos := GetPointsByFacing(me.x, me.y, direction, Distance(me, mobile)+3);
+   var pos := GetCoordsInLine(me.x, me.y, mobile.x, mobile.y);
+   pos.erase(1);
 
    var z := me.z;
    foreach p in pos
@@ -186,17 +189,17 @@ function fireWall(mobile, dmg_dice)
          z -= 1;
       endif
       var item := CreateItemAtLocation(p.x, p.y, z, flame);
-      item.SetDuration(1);
+      item.SetDuration(0);
 
       var mobs := GetEnemiesNear(item, 0);
       foreach mob in mobs
-         if (rollResistDice(mob, DEXTERITY) > 14)
+         if (rollResistDice(mob, DEXTERITY) > diff)
             PrintText(mob, "*resistido*", SSM_INFO);
          else
             DamageFLS(mob, dmg_dice, DMG_FIRE, me);
          endif
       endforeach
-      sleepms(400);
+      sleepms(150);
    endforeach
 
    return 1;
@@ -206,13 +209,24 @@ function IceMine(ts_time)
 
 endfunction
 
-function Iceberg(mobile, ice_damage)
-   PlayMovingEffectXYZEx( mobile.x, mobile.y, mobile.z-10, mobile.x, mobile.y, mobile.z, me.realm, 0x0, 0, 40, 1222);
-   sleep(1);
+function Iceberg(mobile, ice_damage, diff)
+   var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
+   var st_item := CreateItemAtLocation(mobile.x, mobile.y, mobile.z-1, 0x08E0);
+   st_item.graphic := stalagmites.randomentry();
+   st_item.color := 2051;
+   st_item.SetDuration(2);
 
+   PlaySoundEffect(mobile, 0x20E);
+   PlayStationaryEffectEx( st_item.x, st_item.y, st_item.z, st_item.realm, 0x3779, 1, 16);
    var enemies := GetEnemiesNear(mobile, 1);
-
-
+   foreach mob in enemies
+      if (rollResistDice(mob, DEXTERITY) > diff)
+         PrintText(mob, "*esquiva*", SSM_INFO);
+      else
+         DamageFLS(mob, ice_damage, DMG_COLD, me);
+      endif
+   endforeach
+   return 1;
 endfunction
 
 

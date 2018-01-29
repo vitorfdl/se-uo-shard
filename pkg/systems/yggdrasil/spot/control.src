@@ -192,7 +192,7 @@ function StartDynamicEvent(spot, config, evententry)
 
    var cooldown := FindElemInArray(dynamicevent.conditions, struct{"name" := "Cooldown"});
    if (!cooldown)
-      cooldown := 20;
+      cooldown := 60;
    else
       cooldown := cint(cooldown.steps[1].number);
    endif

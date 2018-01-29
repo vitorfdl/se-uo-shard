@@ -46,7 +46,8 @@ function HandleSeeEvent(npc, player)
 	var data_elem := GetPaymentsDataElem(Hex(npc.serial));
 	var account := data_elem.GetProp(Hex(player.serial));
    
-   if (account.size() < 1)
+   if (!account || account.size() < 1)
+      SetCooldown(npc, "{}_see".format(player.serial), 600);
       return;
    endif
 
@@ -242,7 +243,8 @@ function removeItemMerchant(npc, player, input)
 	endif
 
 	RemoveItemForSale(npc, input, confiscar);
-	var purchase := CreateItemInBackPack(player, selling, selling.amount);
+	var purchase := CreateItemInBackpackFromTemplate(player, selling);
+	// purchase.desc := GetName(selling.objtype, CInt( (owed-1)/(owed-1) ));
 	if ( purchase == error )
 		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
 		if ( purchase == error )
@@ -251,7 +253,10 @@ function removeItemMerchant(npc, player, input)
 			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
 		endif
 	endif
-   CreateItemInBackPack(player, cost.cost_type, cost.cost_amt);
+   var return_amt := cost.cost_amt * 0.1;
+   if (return_amt >= 1)
+      CreateItemInBackPack(player, cost.cost_type, return_amt);
+   endif
 endfunction
 
 function DoPurchase(npc, player, input)
@@ -305,7 +310,7 @@ function DoPurchase(npc, player, input)
 		var amount := item.amount;
 		
 		var template := CreateItemTemplate(item);
-		template.desc := GetName(item.objtype, CInt( (owed-1)/(owed-1) ));
+		// template.desc := GetName(item.objtype, CInt( (owed-1)/(owed-1) ));
 		
 		if ( owed > amount )
 			AddPaymentForSeller(npc, cost.seller, template);
