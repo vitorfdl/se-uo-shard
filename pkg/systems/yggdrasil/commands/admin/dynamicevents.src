@@ -326,6 +326,7 @@ function GetEventOptions(who, event)
          new_step.append("Spawn in player location");
          new_step.append("Text");
       elseif(event.name["Minimum Pla"] || event.name["near"])
+         print("here");
          new_step.append("Location");
       elseif(event.name["TimedScript"])
          new_step.append("Location");
@@ -335,6 +336,8 @@ function GetEventOptions(who, event)
       choice := RadioGump(who, 0, 0, "Qual novo elemento?", new_step);
       if(choice == "Go to Player location")
          event.steps.append(struct{ "player_location" := 1});
+      elseif(choice == "Location")
+         event.steps.append(struct{ "location" := array{0,0,0}});
       elseif(choice == "Go to location")
          event.steps.append(struct{ "go_to" := array{0,0,0}});
       elseif(choice == "Spawn in player location")
@@ -565,7 +568,7 @@ function ConstructEventConfig(byref gump)
       title := "Condition";
    endif
 
-   GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 220, 200);
+   GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 220, 100+(event.steps.size()*18));
    GFTextLine(gump, 465, 28, 555, "{} Configuration".format(title));
 
    var sy := 45;
