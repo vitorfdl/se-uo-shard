@@ -11,7 +11,6 @@ include ":timedscripts:timedScripts";
 include "include/say";
 include "include/sounds";
 include ":attributes:attributes";
-include ":tn:hallucination";
 
 function StartScript(mobile, attacker := 0, level := 0)
 	while ( 1 )
@@ -19,10 +18,9 @@ function StartScript(mobile, attacker := 0, level := 0)
       if (mobile.dead) continue; endif
 
       var random_effect := RandomInt(7);
-
       case (random_effect)
          1:
-            TS_StartTimer(mobile, "paralysis", 4);
+            TS_StartTimer(mobile, "paralysis", 2);
             PrintText(mobile, "*divagando olhando algo*", SSM_INFO);
             PlayCustomSound(mobile, 11);
          2:
@@ -33,9 +31,9 @@ function StartScript(mobile, attacker := 0, level := 0)
             PlayCustomSound(mobile, 18);
          4:
             PlayCustomSound(mobile, 2);
-         5:3
-            PrintText(mobile, "*parece doidão*");
          5:
+            PrintText(mobile, "*parece doidão*");
+         6:
             PrintText(mobile, "*se assusta*");
             PlayCustomSound(mobile, 25);
       endcase
