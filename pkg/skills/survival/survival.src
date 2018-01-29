@@ -138,27 +138,27 @@ function TrackGump(who, mobiles)
 	var colunas := 1;
 	var pages := 1;
 	foreach mobile in mobiles
-     	   if((mobile != who) && (!mobile.dead))
-		mobdesc := GetMobDesc(who, mobile);
-		mobarray.append(mobdesc);
-		GFTextLine(gump, (47 + x), (70 + y), ""+MobDistanceColor(who, mobile), mobdesc);
-		GFAddButton(gump, (30 + x), (74 + y),  2103, 2104, GF_CLOSE_BTN, b );
-		y := y + 20;
-		b := b + 1;
-		if (y > 380)
-			x := x + 150;
-			y := 0;
-			colunas := colunas + 1;
-		endif
-		if (colunas == 5) //adiciona uma page
-			colunas := 0;
-			x := 0;
-			y := 0;
-			pages := pages + 1;
-			GFAddButton(gump, 570, 520, 2224, 2224, GF_PAGE_BTN,  pages);
-			GFPage(gump, pages);
-			GFAddButton(gump, 30, 520, 2223, 2223, GF_PAGE_BTN,  pages-1);
-		endif
+     	if((mobile != who) && (!mobile.dead))
+         mobdesc := GetMobDesc(who, mobile);
+         mobarray.append(mobdesc);
+         GFTextLine(gump, (47 + x), (70 + y), ""+MobDistanceColor(who, mobile), mobdesc);
+         GFAddButton(gump, (30 + x), (74 + y),  2103, 2104, GF_CLOSE_BTN, b );
+         y := y + 20;
+         b := b + 1;
+         if (y > 380)
+            x := x + 150;
+            y := 0;
+            colunas := colunas + 1;
+         endif
+         if (colunas == 5) //adiciona uma page
+            colunas := 0;
+            x := 0;
+            y := 0;
+            pages := pages + 1;
+            GFAddButton(gump, 570, 520, 2224, 2224, GF_PAGE_BTN,  pages);
+            GFPage(gump, pages);
+            GFAddButton(gump, 30, 520, 2223, 2223, GF_PAGE_BTN,  pages-1);
+         endif
 	   endif
 	endforeach
 
@@ -226,8 +226,6 @@ function ItemTrackGump(who, items)
 		var mobontrack := itemarray[ifres[0]];
 		CreatureTrack(who, mobontrack,mobname);
 	endif
-
-
 endfunction
 
 
@@ -427,76 +425,33 @@ endfunction
 function GetMobDesc(who, mobile)
 if (CheckGender(who))
 	var itemonmobile := ListEquippedItems( mobile );
-	foreach item in itemonmobile
-		if (item.graphic == 5903) 
-			if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
-				return mobile.name + " [" + MobLocalizateSigla(who, mobile) + "]";
-			else
-				return "Humanoide com Sapatos" + " [" + MobLocalizateSigla(who, mobile) + "]";
-			endif
-		elseif (item.graphic == 5901) 
-			if (CheckLineOfSight( who, mobile ) && (!mobile.hidden))
-				return mobile.name + " [" + MobLocalizateSigla(who, mobile) + "]";
-			else
-				return "Humanoide com Sandalhas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
-			endif
-		elseif (item.graphic == 5899)
-			if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
-				return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";
-			else
-				return "Humanoide com Botas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
-			endif		
-		elseif (item.graphic == 5905) 
-			if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
-				return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";
-			else
-				return "Humanoide com Botas Longas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
-			endif
-		elseif (item.graphic == 5137)
-			if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
-				return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";
-			else
-				return "Humanoide com Calça de Placas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
-			endif
-		endif
-      sleepms(2);
-	endforeach
-		if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
-			return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";
-		else
-			return "Humanoide Descalço"+ " [" + MobLocalizateSigla(who, mobile) + "]";
-		endif	
-      
-   elseif (mobile.graphic == 1) return "Ogro" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 776) return "Sahagin Pequeno" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 795) return "Sahagin" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 796) return "Sahagin Gigante"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 999) return "Sahagin Gigante" + " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 35) return "Homem Lagarto"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 36) return "Homem Lagarto"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 43) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 44) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 42) return "Homem Rato"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 17) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 7) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 41) return "Goblin"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 245) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 255) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 253) return "Kobold"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 200) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 291) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 226) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 204) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 228) return "Cavalo"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   elseif (mobile.graphic == 6) return "Passaro"+ " [" + MobLocalizateSigla(who, mobile) + "]";;
+   if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
+      return mobile.name + " [" + MobLocalizateSigla(who, mobile) + "]";
    endif
 
-   if (mobile.isa(POLCLASS_MOBILE))
-      return mobile.name+ " [" + MobLocalizateSigla(who, mobile) + "]";;
-   else
-      return mobile.desc + " [" + MobLocalizateSigla(who, mobile) + "]";;
+   if (CheckGender(mobile))
+      foreach item in itemonmobile
+         if (item.graphic == 5903) 
+            return "Humanoide com Sapatos" + " [" + MobLocalizateSigla(who, mobile) + "]";
+         elseif (item.graphic == 5901) 
+            return "Humanoide com Sandalhas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
+         elseif (item.graphic == 5899)
+            return "Humanoide com Botas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
+         elseif (item.graphic == 5905) 
+            return "Humanoide com Botas Longas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
+         elseif (item.graphic == 5137)
+            return "Humanoide com Calça de Placas"+ " [" + MobLocalizateSigla(who, mobile) + "]";
+         else
+            return "Humanoide Descalço"+ " [" + MobLocalizateSigla(who, mobile) + "]";
+         endif
+         sleepms(2);
+      endforeach
    endif
 
+   if (mobile.isa(POLCLASS_NPC))
+      var npcdesc := NPC_GetNPCConfig(mobile.template);
+      return npcdesc.rastro;
+   endif
 endfunction
 
 function DistanceCheck(who, mobontrack)

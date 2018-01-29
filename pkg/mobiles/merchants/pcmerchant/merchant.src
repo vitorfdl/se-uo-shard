@@ -324,6 +324,7 @@ function DoPurchase(npc, player, input)
 	RemoveItemForSale(npc, input);
 	CreateItemInBackpackFromTemplate(player, selling);
    SetMerchantLog(npc, player.name, selling.desc, GetPlayerNameBySerial(cost.seller), cost.cost_amt);
+   PlaySoundEffectPrivate( player, 0x37, player ); //some gold
 endfunction
 
 // function RemoveItem(npc, player, input)

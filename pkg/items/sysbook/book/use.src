@@ -11,6 +11,11 @@ program useBook(who,book)
 	if ( !ReserveItem(book) )
 		SendSysMessage(who, "Outra pessoa esta usando este livro.", SSM_FAIL);
 		return 0;
+   elseif (GetObjProperty(book, "lang"))
+      if (!HaveFeat(who, GetObjProperty(book, "lang")))
+		   SendSysMessage(who, "O livro está em uma lingua ilegível por você.", SSM_FAIL);
+         return 0;
+      endif
 	endif
 	
 	//check pra cartas

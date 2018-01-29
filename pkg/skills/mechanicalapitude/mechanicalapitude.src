@@ -9,7 +9,6 @@ include "include/say";
 include ":charactercreation:habilidades";
 
 program skillremoveTrap(who)
-
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 
@@ -26,16 +25,13 @@ program skillremoveTrap(who)
 		SendSysMessageEx(who, "Você não alcanca o alvo!", SSM_FAIL);
 		return;
 	elseif ( Distance(who, item) > 2)
-		SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
+		SendSysMessageEx(who, "Você está muito distante.", SSM_FAIL);
 		return;
    elseif (GetObjProperty(item,"broken"))
       return;
 	endif
 
 	var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SABOTAGEM);
-   if (HaveFeat(who, "Segredo das Fechaduras"))
-      dice_roll += 2;
-   endif
 
 	if( GetObjProperty(item, "TrapList") != error )
 		if (!GetObjProperty(item, "trapSpoted"))
@@ -61,12 +57,12 @@ program skillremoveTrap(who)
 		var dif;
 		var lvl := Cint(GetObjProperty(item, "level"));
 		case (lvl)
-			1: dif := 16;
-			2: dif := 19;
-			3: dif := 22;
-			4: dif := 24;
-			5: dif := 28;
-			default: dif := 18; 
+			1: dif := 12;
+			2: dif := 16;
+			3: dif := 19;
+			4: dif := 22;
+			5: dif := 25;
+			default: dif := 16; 
 		endcase
 
 		if( dice_roll <= dif )
@@ -97,8 +93,8 @@ program skillremoveTrap(who)
 			return;
 		endif
 
-		if (dice_roll >= 15)
-			ExpGain(who, 15, dice_roll);
+		if (dice_roll >= dif)
+			ExpGain(who, "major");
 			SendSysMessageEx( who, "Desativou a armadilha com sucesso.", SSM_INFO);
 			SetObjProperty(item, "trap_inativa", 1);
 			return;

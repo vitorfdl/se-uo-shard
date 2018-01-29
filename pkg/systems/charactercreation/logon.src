@@ -1,15 +1,9 @@
 use uo;
 include ":attributes:attributes";
 
-program fixSkills(who)
-   var chardata := GetObjProperty(who, "chardata");
-   if (!chardata)
-      return;
+program fixTalent(who)
+   if (HaveFeat(who, "Segredo das Fechaduras"))
+      removeFeat(who, "Segredo das Fechaduras")
+      who.SetTalentPoints(1);
    endif
-
-	foreach skill in (chardata.skills)
-      skill := StrReplace(skill, " ", "_" );
-		AP_SetTrueSkill(who, skill, 1);
-      sleepms(2);
-	endforeach
 endprogram

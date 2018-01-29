@@ -16,26 +16,21 @@ program skill_lockpicking( me, lockpick )
 	EraseObjProperty(me, "IsMeditating");
 	EraseObjProperty(me, "HealTimer");
 	var inhidden;
-	if (me.hidden && !HaveFeat(me, "Mãos Rápidas"))
+
+   if (me.getClass() != "Ladino")
+	elseif (me.hidden && !HaveFeat(me, "Mãos Rápidas"))
 		me.hidden := 0;
-	endif
-	
-	if (!maolivre(me, 2))
+	elseif (!maolivre(me, 2))
 		return 0;
-	endif
-
-	if(!can_access(me, lockpick))
+	elseif(!can_access(me, lockpick))
 		return;
-	endif
-
-	if(lockpick.movable == 0)
+	elseif(lockpick.movable == 0)
 		SendSysMessageEx(me, "Você não pode usar isto.", SSM_FAIL);
 		return;
-	endif
-
-	if (!ReserveItem(lockpick))
+	elseif (!ReserveItem(lockpick))
 		return;
 	endif
+
 	SendSysMessageEx(me, "O que você deseja fazer com isto?", SSM_REQUEST);
 	var chest := Target(me);
 	if (!chest)
@@ -85,11 +80,11 @@ function PickTreasureChest(me, lockpick, chest)
 	sleepms(250);
 	var diff;
 	case (lvl)
-		1: diff := 15;
-		2: diff := 18;
-		3: diff := 23;
-		4: diff := 26;
-		5: diff := 30;
+		1: diff := 13;
+		2: diff := 16;
+		3: diff := 19;
+		4: diff := 22;
+		5: diff := 16;
 		default: diff := 12; 
 	endcase
 

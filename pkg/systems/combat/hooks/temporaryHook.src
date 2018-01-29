@@ -392,7 +392,7 @@ function AmmoCheck(attacker, defender)
 
 	if(attacker.npctemplate)
       if (wpn_a_elem.ProjectileAnim)
-		   PlayMovingEffectEx(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
       else
 		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(cfgfile.ProjectileColor));
       endif

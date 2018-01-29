@@ -237,13 +237,15 @@ function Fight(opponent, alerted := 0)
          endif
       else
          if ("matilha" in custombehaviors && RandomInt(2) == 1)
-            var allies := GetAlliesNear(me, 4);
-            if (allies.size() > 1)
-               RunAwayFrom(opponent);
-               sleepms(275 - me.run_speed);
-               RunAwayFrom(opponent);
-               sleepms(275 - me.run_speed);
-               RunAwayFrom(opponent);
+            if (!IsBehind(opponent, me.x, me.y))
+               var allies := GetAlliesNear(me, 4);
+               if (allies.size() > 1)
+                  RunAwayFrom(opponent);
+                  sleepms(275 - me.run_speed);
+                  RunAwayFrom(opponent);
+                  sleepms(275 - me.run_speed);
+                  RunAwayFrom(opponent);
+               endif
             endif
          endif
          loops := 0;
