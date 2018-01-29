@@ -384,7 +384,7 @@ function AmmoCheck(attacker, defender)
    var cfgfile := NPC_GetNPCConfig(attacker);
 	if (weapon.isMagicWeapon())
       attacker.SetAchievement("magicweapon", 1);
-		PlayMovingEffectEx(attacker, defender, wpn_a_elem.ProjectileAnim, 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
 		return 1;
 	elseif ( !weapon.isBow() && !cfgfile.Ranged)
 		return 1;
@@ -392,14 +392,13 @@ function AmmoCheck(attacker, defender)
 
 	if(attacker.npctemplate)
       if (wpn_a_elem.ProjectileAnim)
-		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		   PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+      elseif (cfgfile.AttackTargetAnim)
+         PlayObjectCenteredEffectEx( defender, cint(cfgfile.AttackTargetAnim), 10, 20, cint(cfgfile.ProjectileColor));
       else
 		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(cfgfile.ProjectileColor));
       endif
 
-      if (cfgfile.AttackTargetAnim)
-         PlayObjectCenteredEffectEx( defender, cint(cfgfile.AttackTargetAnim), 10, 20, cint(cfgfile.ProjectileColor));
-      endif
 		return 1;
 	endif
 
@@ -408,18 +407,16 @@ function AmmoCheck(attacker, defender)
 	if (!ammo)
 		SendSysMessageEX(attacker, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]", SSM_FAIL);
 		return 0;
-	endif
-	if ( ConsumeSubstance( aljava, ammo, 1 ) )
-		var cfg  := ReadConfigFile(":woodworking:itemdesc");
-		var elem := FindConfigElem(cfg, ammo);
-		var ammo_color := elem.color;
-		PlayMovingEffectEx(attacker, defender, wpn_a_elem.ProjectileAnim, 10, 10, 0, ammo_color);
-		return 1;
-	else
-		SendSysMessageEX(attacker, "Sua flecha acabou ou esta fora da aljava.", SSM_FAIL);
+	elseif ( !ConsumeSubstance( aljava, ammo, 1 ) )
+		SendSysMessageEX(attacker, "Sua flecha acabou ou está fora da aljava.", SSM_FAIL);
 		return 0;
 	endif
 
+   var cfg  := ReadConfigFile(":woodworking:itemdesc");
+   var elem := FindConfigElem(cfg, ammo);
+   var ammo_color := cint(elem.color);
+   PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, 0, ammo_color);
+   return 1;
 endfunction
 
 // Cria as munição no chão

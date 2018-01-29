@@ -142,6 +142,7 @@ program autostart_boat(param)
             SetObjProperty(tillerman, "course", back_course);
             EraseObjProperty(tillerman, "back_course");
          endif
+         
          var ev := wait_for_event(120);
          if(ev)
             process_event(ev);

@@ -24,15 +24,13 @@ function DistanceChecks(attacker, defender)
 	endif
 endfunction
 
-function GetItemCFGInfo(mobile, weapon)
-	var item_cfg2	:= ReadConfigFile(":*:itemdesc");
-
-	if ( mobile.IsA(POLCLASS_NPC) && weapon.objtype == 0x1F020 )
+function GetItemCFGInfo(mobile, wpn)
+	if ( mobile.IsA(POLCLASS_NPC) && wpn.objtype == 0x1F020 )
 		return GetNpcRandomAttack(mobile);
-	else
-		return item_cfg2[weapon.objtype];
 	endif
-
+   
+	var item_cfg2	:= ReadConfigFile(":*:itemdesc");
+	return item_cfg2[wpn.objtype];
 endfunction
 
 function GetNPCattack(mobile)

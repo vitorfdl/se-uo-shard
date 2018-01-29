@@ -186,7 +186,7 @@ function SendItemView(npc, player)
   		GFHTMLArea(gump, x+20, y+1, 90, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(item.desc));
       GFTooltipText(gump, "{}".format(item.desc));
 		GFTilePic(gump, x+42, y+75, item.graphic, 0); //objtype
-      var item_desc := GetDetails(item);
+      var item_desc := GetDetails(item, playe);
       if (cost_info.desc)
          item_desc := "{}{}".format(item_desc, cost_info.desc);
       endif
@@ -487,7 +487,7 @@ function DoWithdraw(npc, player)
 	data_elem.EraseProp(Hex(player.serial));
 endfunction
 
-function GetDetails(item)
+function GetDetails(item, who)
    var ret := "";
    if (item.ObjClass == "Armor" || item.ObjClass == "Weapon")
       ret += "Condição: {}<br>".format(GetCondition(item));
@@ -500,10 +500,19 @@ function GetDetails(item)
       endif
    endif
 
+   if (item.Cprops.lang)
+      ret += "Idioma: {}<br>".format(item.Cprops.lang);
+   endif
+   
    if (item.CProps.objtype)
+      if (item.Cprops.lang && !HaveFeat(who, item.Cprops.lang))
+         return ret;
+      endif
       var recipe := GetRecipe(item.CProps.objtype, ReadConfigFile(":*:recipes"));
       ret += "Receita de {}<br>".format(recipe.name);
    endif
+
+
    // if (item.ObjClass == "Armor")
    //    print("is armor");
    // endif
