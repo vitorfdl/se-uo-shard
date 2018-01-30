@@ -188,7 +188,7 @@ function Fight(opponent, alerted := 0)
       if ( unique != error && unique.combatevent.size() > 0 )
          foreach ce in (unique.combatevent)
             if (!TS_GetCooldown(me, ce.name))
-               run_script_to_completion(":ghaia:special/genericspecial" , array{me, ce});
+               start_script(":ghaia:special/genericspecial" , array{me, ce});
             endif
             sleepms(2);
          endforeach
@@ -230,9 +230,9 @@ function Fight(opponent, alerted := 0)
             SetObjProperty(me, "#charge_enemy", charge+1);
             if (charge+1 == 8) 
                PrintText(me, "*charging*", SSM_FAIL); 
-               me.run_speed += 40;
-            elseif (charge == 1)
-               me.run_speed -= 40;
+               me.run_speed := cint(npccfgfile.RunSpeed)+40;
+            elseif (charge == 1 && cint(npccfgfile.RunSpeed) != me.run_speed)
+               me.run_speed := cint(npccfgfile.RunSpeed);
             endif
          endif
       else
