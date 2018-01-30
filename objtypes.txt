@@ -1881,12 +1881,14 @@
 # 0x6503 - 0x698f unused
 0x6990 EstanhoOre gathering
 0x6991 EstanhoIngot gathering
-0x6992 CrystalOre gathering
-0x6993 CrystalIngot gathering
+0x6992 PrataOre gathering
+0x6993 PrataIngot gathering
 0x6994 BronzeIngot gathering
 0x6995 AcoIngot gathering
 0x6996 FerroTemperadoIngot gathering
-# 0x6997 - 0x7006 unused
+0x6997 CrystalOre gathering
+0x6998 CrystalIngot gathering
+# 0x6999 - 0x7006 unused
 0x7007 trashcan trash
 0x7008 playervendordeed
 0x7009 trashcandeed trash

@@ -12,7 +12,7 @@ program renameboat(you, tillerman)
 		foreach dest in destinos
          var plots := dest.plots;
          var last_plot := plots[plots.size()];
-         if (CoordinateDistance(last_plot.x, last_plot.y, tillerman.x, tillerman.y) > 5)
+         if (CoordinateDistance(last_plot.x, last_plot.y, tillerman.x, tillerman.y) < 10)
 			   options.append(dest.name + " [" + dest.cost + " moedas]");
          endif
          sleepms(2);
