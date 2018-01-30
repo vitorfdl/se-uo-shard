@@ -111,6 +111,8 @@ function DoInput(who, input)
             if (!targ) break; endif
 
             var item := CreateItemAtLocation(targ.x, targ.y, targ.z, traps[trap_choose]);
+            item.movable := 0;
+            item.decayat := 0;
             SetobjProperty(item, "level", traplevel);
             sleepms(2);
          endwhile
