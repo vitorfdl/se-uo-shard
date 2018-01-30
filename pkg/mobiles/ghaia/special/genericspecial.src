@@ -26,9 +26,9 @@ program loko(params)
 
    if ( event.hp_percent != 100)
       print(AP_GetVitalMaximumValue(who, HITS));
-      var maxhit := cint(AP_GetVitalMaximumValue(who, HITS)) * (cint(event.hp_percent)/100);
+      var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * (cdbl(event.hp_percent)/100);
       print(maxhit);
-      if (cint(AP_GetVital(who, HITS)) > maxhit)
+      if (cdbl(AP_GetVital(who, HITS)) > maxhit)
          SetCooldown(who, ""+event.name, 2); 
          return;
       endif
