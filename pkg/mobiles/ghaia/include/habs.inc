@@ -29,7 +29,7 @@ function UseHabs()
       var hab_special  := hab[6];
 
       var chance_try := Randomint(100)+1;
-      print(me.name+""+chance_try);
+      print(me.name+" "+chance_try+" "+hab_chance);
       if (hab_chance != 100 && chance_try > hab_chance )
          SetCooldown(me, hab_name, 5);
          continue;
