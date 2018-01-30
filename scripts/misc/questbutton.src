@@ -3,8 +3,8 @@ use uo;
 use os;
 use datafile;
 
-program QuestButton( character )
-    SendSysmessage(character,"You clicked the Questbutton.");
+program FichaRPButton( character )
+   Start_Script(":fls_core:commands/player/ficharp", array{character});
 endprogram
 /*
 program virtueachievements(who)
