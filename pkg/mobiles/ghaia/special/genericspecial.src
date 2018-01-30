@@ -25,8 +25,7 @@ program loko(params)
    endif
 
    if ( event.hp_percent != 100)
-      print(event.hp_percent);
-      print(typeof(event.hp_percent));
+      print(AP_GetVitalMaximumValue(who, HITS));
       var maxhit := cint(AP_GetVitalMaximumValue(who, HITS)) * (cint(event.hp_percent)/100);
       print(maxhit);
       if (cint(AP_GetVital(who, HITS)) > maxhit)
