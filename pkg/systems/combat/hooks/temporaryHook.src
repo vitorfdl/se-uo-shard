@@ -70,7 +70,7 @@ program Attack(params)
 
 	wpn_a_elem := GetItemCFGInfo(attacker, weapon);
 	if ( attacker.frozen )
-		SendSysMessage(attacker, "Você não consegue atacar.");
+		SendSysMessageEx(attacker, "Você não consegue atacar.", SSM_FAIL);
 		return 1;
 	elseif ( (attacker.concealed) && (attacker.cmdlevel == 0) )
 		attacker.concealed := 0;

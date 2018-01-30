@@ -2177,7 +2177,7 @@
 0xdc03 pocaocurasuperior alchemy
 0xdc04 VenenoErvaForte alchemy
 # 0xdc05 - 0xdc07 unused
-0xdc08 FogoGrego alchemy
+0xdc08 FogoGregoLeve alchemy
 # 0xdc09 - 0xdc0d unused
 0xdc0e pocaovigor alchemy
 0xdc0f pocaovigorforte alchemy
@@ -2295,7 +2295,7 @@
 0xef36 escamasazuis survival
 0xef37 escamasvermelhas survival
 # 0xef38 - 0xef5f unused
-0xef60 FogoGregoLeve alchemy
+0xef60 FogoGrego alchemy
 0xef61 FogoGregoMedio alchemy
 0xef62 FogoGregoForte alchemy
 # 0xef63 - 0xefef unused

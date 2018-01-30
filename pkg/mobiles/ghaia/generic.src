@@ -91,7 +91,7 @@ function lookAround()
    if (RandomInt(5) == 1)
       PerformAction(me, ANIM_FIDGET_1);
    endif
-
+   cooldown_habs := struct{};
    foreach npc in ListMobilesNearLocationEx(me.x, me.y, me.z, areasize, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL);
       if( CanFight(me, npc) )
          Fight(npc);

@@ -25,18 +25,17 @@ CONST SPEAK_DOEVENT_ENABLE  := 0x1;
 CONST SYSTEM_REPORT := 493;
 CONST SYSTEM_HEAL := 166;
 
-function SendSysMessageEX(who, message, SSM_TYPE := _DEFAULT_TEXT_COLOR, font_number := _DEFAULT_TEXT_FONT)
+function SendSysMessageEX(who, message, SSM_TYPE := _DEFAULT_UCCOLOR, font_number := _DEFAULT_TEXT_FONT)
 	SendSysMessageUNI(who, ""+message, font_number, SSM_TYPE);
 endfunction
 
-function SendSysMessageUNI(character, uc_text, font := _DEFAULT_UCFONT, color := 1153, langcode := "ENG")
+function SendSysMessageUNI(character, uc_text, font := _DEFAULT_UCFONT, color := _DEFAULT_UCCOLOR, langcode := "ENG")
   if (uc_text == error)
 	  return;
   endif
 
   return SendSysMessageUC(character, UC(uc_text), langcode, font, color);
 endfunction
-
 
 function PrintText(above_object, uc_text, color := _DEFAULT_UCCOLOR, font := _DEFAULT_UCFONT, langcode := "ENG")
   if (uc_text == error)

@@ -2,6 +2,20 @@ include "include/utils";
 include "include/facings";
 include "include/shapes";
 
+var cooldown_habs := struct{};
+
+function SetHabCd(hab_name, cd)
+   cooldown_habs[hab_name] := polcore().systime + (cd);
+endfunction
+
+function GetHabCd(hab_name)
+   if (polcore().systime >= cint(cooldown_habs[hab_name]))
+      return 0;
+   endif
+
+   return 1;
+endfunction
+
 function UseHabs()
    var habs := GetConfigStringArray(npccfgfile, "EspecialAttack");
    if (!habs || !habs[1])
@@ -13,7 +27,7 @@ function UseHabs()
       hab := SplitWords(hab);
       var hab_name  := hab[1];
 
-      if (GetCooldown(me, hab_name))
+      if (GetHabCd(hab_name))
          sleepms(2);
          continue;
       endif
@@ -30,7 +44,7 @@ function UseHabs()
 
       var chance_try := Randomint(100)+1;
       if (hab_chance != 100 && chance_try > hab_chance )
-         SetCooldown(me, hab_name, 5);
+         SetHabCd(hab_name, 5);
          continue;
       endif
 
@@ -100,21 +114,23 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "throwBomb":      res := throwBomb(hab_target, hab_dice, hab_special); break;
       "evasao":         res := evasion(hab_target); break;
       "fireWall":       res := fireWall(hab_target, hab_dice, cint(hab_special)); break;
-      "Iceberg":        res := Iceberg(hab_target, hab_dice, cint(hab_special)); break;
+      "Iceberg":      res := Iceberg(hab_target, hab_dice, cint(hab_special)); break;
       "scald":        res := scald(hab_target, hab_dice, cint(hab_special)); break;
       "nuvem":        res := nuvem(hab_dice); break;
+      "pullCloser":   res := pullCloser(hab_dice, cint(hab_special)); break;
+      "electricCone": res := electricCone(hab_target, hab_dice, cint(hab_special)); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
-         SetCooldown(me, hab_name, 150);
+         SetHabCd(hab_name, 150);
          break;
    endcase
 
    if (hab_cooldown && res)
-      SetCooldown(me, hab_name, CInt(hab_cooldown));
+      SetHabCd(hab_name, CInt(hab_cooldown));
       return 1;
    else
-      SetCooldown(me, hab_name, 5);
+      SetHabCd(hab_name, 5);
    endif
 endfunction
 
@@ -136,7 +152,59 @@ function nuvem(timing)
    var targ := av_enemies.randomentry();
    var item := CreateItemAtLocation(targ.x, targ.y, targ.z, "nuvem", 1);
    item.color := 904;
-   SetObjProperty(item, "expiretime", 15);
+   SetObjProperty(item, "expiretime", timing);
+   SetObjProperty(item, "owner", me.serial);
+   return 1;
+endfunction
+
+function pullCloser(dist, times)
+   PrintText(me, "Batendo Asas");
+   for i := 1 to (cint(times) *2)
+      PerformAction(me, cint(0x06));
+      if (i % 2 == 0)
+         var enemies := GetEnemiesNear(me, dist);
+         foreach mob in enemies
+            sleepms(2);
+            if ( Distance(me, mob < 1) )
+               continue;
+            endif
+            if (CheckLineOfSight(me, mob))
+               SendSysMessageEx(mob, "Você é puxado pelo vento");
+               var point := GetModByFacing(GetFacing(me.x, me.y, mob.x, mob.y));
+               point[1] *= -1;
+               point[2] *= -1;
+               MoveObjectToLocation(mob, mob.x+point[1], mob.y+point[2], mob.z, mob.realm, MOVEOBJECT_FORCELOCATION);
+            endif
+         endforeach
+      endif
+      sleepms(300);
+   endfor
+   PrintText(me, "Batendo Asas");
+   return 1;
+endfunction
+
+
+function electricCone(mobile, dmg, dist)
+   PrintText(me, "*baforada elétrica*");
+   var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
+   points.erase(points.size());
+   points.erase(points.size()-2);
+   dmg := "{}d2".format(dmg);
+   for i := 1 to 8
+      foreach p in points
+         var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
+         foreach m in mobs
+            if (CanFight(me, m))
+               DamageFLS(m, RandomDiceRoll(dmg), DMG_ENERGY, me);
+            endif
+            sleepms(2);
+         endforeach
+         LightningEffect(struct{ "x" := p[1], "y" := p[2], "z" := me.z, "realm" := me.realm}, 50);
+         sleepms(2);
+      endforeach
+      sleepms(400);
+   endfor
+
    return 1;
 endfunction
 
@@ -151,6 +219,7 @@ function throwBomb(mobile, hab_dice, bombs)
 
    PlayMovingEffectXYZ( me.x, me.y, me.z+15, mobile.x, mobile.y, mobile.z, 0x0f09, 8, 0, 0 );
    MoveObjectToLocation(item, mobile.x, mobile.y, mobile.z, mobile.realm, MOVEOBJECT_FORCELOCATION );
+   EraseObjProperty(item, "#bomb");
    return 1;
 endfunction
 
@@ -253,20 +322,6 @@ function Iceberg(mobile, ice_damage, diff)
 endfunction
 
 
-function ElectricBreath(mobile, dmg, opt)
-   opt := SplitWords(opt, "|");
-   var anim := opt[1]
-   var dist := opt[2];
-
-endfunction
-
-
-function PullCloser(mobile, dmg, opt)
-   opt := SplitWords(opt, "|");
-   var anim := opt[1]
-   var dist := opt[2];
-endfunction
-
 function charm(mobile, ts_time, diff)
    playCastAnimation();
    PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
@@ -309,7 +364,6 @@ function euforic(mobile, diff)
          if (CanFight(me, m))
             if (rollResistDice(m, CONSTITUTION) > diff)
                PrintText(m, "*resistido*", SSM_INFO);
-               return 1;
             else
                TS_StartTimer(m, "euforic", 5, diff);
             endif
@@ -337,7 +391,6 @@ function scald(mobile, dmg, diff)
          if (CanFight(me, m))
             if (rollResistDice(m, CONSTITUTION) > diff)
                PrintText(m, "*resistido*", SSM_INFO);
-               return 1;
             else
                DamageFLS(m, dmg, DMG_FIRE, me);
             endif

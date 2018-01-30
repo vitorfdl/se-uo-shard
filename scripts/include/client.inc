@@ -313,9 +313,9 @@ const CID_DRAGON_CRIMSON := 0xc5;
 const CID_DRAGON_BLACK := 0xc6;
 
 
-function LightningEffect(point)
-	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x-1, point.y, point.z+15, GFX_ENERGY, 5, 50);
-	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x+1, point.y, point.z+15, GFX_ENERGY, 5, 50);
-	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y+1, point.z+15, GFX_ENERGY, 5, 50);
-	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y-1, point.z+15, GFX_ENERGY, 5, 50);
+function LightningEffect(point, timing := 50)
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x-1, point.y, point.z+15, GFX_ENERGY, 5, timing);
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x+1, point.y, point.z+15, GFX_ENERGY, 5, timing);
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y+1, point.z+15, GFX_ENERGY, 5, timing);
+	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y-1, point.z+15, GFX_ENERGY, 5, timing);
 endfunction

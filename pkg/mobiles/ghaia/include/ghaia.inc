@@ -166,7 +166,7 @@ function GetEnemiesNear(loc, range := 5, get_hidden := 0)
    var myenemies := array{};
    
    foreach mobile in ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
-      if ((mobile.hidden && !get_hidden))
+      if ((mobile.hidden && !get_hidden || mobile == me))
          continue;
       endif
       

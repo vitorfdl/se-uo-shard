@@ -17,7 +17,8 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
-   PlayMovingEffectXYZEx( who.x, who.y, who.z-10, who.x, who.y, who.z, who.realm, 0x08E0, 1, 5, 2050);
+   SendSysMessageEx(who, text);
+   // PlayMovingEffectXYZEx( who.x, who.y, who.z-10, who.x, who.y, who.z, who.realm, 0x08E0, 1, 5, 2050);
       // who.setexp(cint(text));
       // sleep(3);
       // PlayObjectCenteredeffect(who, 0x19AB, 5, 20);
