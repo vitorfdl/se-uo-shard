@@ -23,13 +23,12 @@ program loko(params)
       endif
    endif
 
-   // if ( event.hp_percent != 100)
-   //    print(AP_GetVitalMaximumValue(who, HITS) * (cint(event.hp_percent)/100));
-   //    if (AP_GetVital(who, HITS) > AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100))
-   //       TS_StartCooldown(who, event.name, 3); 
-   //       return;
-   //    endif
-	// endif
+   if ( event.hp_percent != 100)
+      if (AP_GetVital(who, HITS) > AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100))
+         TS_StartCooldown(who, event.name, 3); 
+         return;
+      endif
+	endif
 
 	if (event.dist > 0)
 		if (CoordinateDistance(who.x, who.y, who.opponent.x, who.opponent.y) < event.dist)
