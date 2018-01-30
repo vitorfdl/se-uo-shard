@@ -17,9 +17,9 @@ program skill_lockpicking( me, lockpick )
 	EraseObjProperty(me, "HealTimer");
 	var inhidden;
 
-   if (me.getClass() != "Ladino")
-	elseif (me.hidden && !HaveFeat(me, "Mãos Rápidas"))
-		me.hidden := 0;
+   if (!me.isClass("Ladino"))
+      SendSysMessageEx(me, "Apenas ladinos podem usar essa perícia.", SSM_REQUEST);
+      return;
 	elseif (!maolivre(me, 2))
 		return 0;
 	elseif(!can_access(me, lockpick))
@@ -30,6 +30,10 @@ program skill_lockpicking( me, lockpick )
 	elseif (!ReserveItem(lockpick))
 		return;
 	endif
+
+   if (me.hidden && !HaveFeat(me, "Mãos Rápidas"))
+      me.hidden := 0;
+   endif
 
 	SendSysMessageEx(me, "O que você deseja fazer com isto?", SSM_REQUEST);
 	var chest := Target(me);

@@ -12,6 +12,10 @@ program skillremoveTrap(who)
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 
+   if (!who.isClass("Ladino"))
+      SendSysMessageEx(who, "Apenas ladinos podem usar essa perícia.", SSM_REQUEST);
+      return;
+   endif
 	if (!maolivre(who, 2))
 		return 0;
 	endif
