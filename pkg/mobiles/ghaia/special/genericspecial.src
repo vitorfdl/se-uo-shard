@@ -3,6 +3,7 @@ use os;
 use vitals;
 
 include ":timedscripts:timedScripts";
+include ":tn:cooldown";
 include "include/damage";
 include "include/sysEvent";
 
@@ -12,20 +13,22 @@ program loko(params)
 	//printtextabove(who, " "  + event); //apagar
 	if (!who.opponent)
 		return;
-   elseif (TS_GetCooldown(who, event.name))
+   elseif (GetCooldown(who, ""+event.name))
       return;
    endif
 
    if (event.chance != 100 )
       if (Randomint(100)+1 > event.chance)
-         TS_StartCooldown(who, event.name, 2); 
+         SetCooldown(who, ""+event.name, 2); 
          return;
       endif
    endif
 
    if ( event.hp_percent != 100)
-      if (AP_GetVital(who, HITS) > AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100))
-         TS_StartCooldown(who, event.name, 3); 
+      var maxhit := AP_GetVitalMaximumValue(who, HITS) * (event.hp_percent/100);
+      print(maxhit);
+      if (AP_GetVital(who, HITS) > maxhit)
+         SetCooldown(who, ""+event.name, 2); 
          return;
       endif
 	endif
@@ -44,7 +47,7 @@ program loko(params)
 	//check distancia
 
 
-	TS_StartCooldown(who, event.name, event.cd); 
+	SetCooldown(who, event.name, event.cd); 
 	//executa os states
 	foreach state in (event.steps)
 		EraseObjPRoperty(who, "noclosecombat");
