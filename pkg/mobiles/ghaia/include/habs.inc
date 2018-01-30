@@ -621,6 +621,7 @@ function SpitWeb(difficulty, targ, range)
 endfunction
 
 function teleport(targ, effect := 0x3728)
+   if(!effect) effect := 0x3728; endif
    var phase_coords := GetCoordsInLine(me.x, me.y, targ.x, targ.y);
    phase_coords.Erase(phase_coords.Size()); 
    TurnObjectToward(me, targ.x, targ.y);
@@ -629,8 +630,7 @@ function teleport(targ, effect := 0x3728)
    foreach coord in phase_coords
       PlayStationaryEffect(me.x, me.y, me.z, effect, 5, 5, 0);
       // PlayStationaryEffectHuefx( npc.x, npc.y, npc.z, CInt(npccfgfile.teleportEffect), 5, 5,  0, CInt(npccfgfile.teleportColor), CInt(npccfgfile.teleportAlpha));
-      var z := GetWorldHeight(coord.x, coord.y, me.realm);
-      MoveObjectToLocation(me, coord.x, coord.y, z, me.realm, MOVEOBJECT_FORCELOCATION);
+      MoveObjectToLocation(me, coord.x, coord.y, targ.z, me.realm, MOVEOBJECT_FORCELOCATION);
       sleepms(20);
    endforeach
 
