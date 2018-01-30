@@ -124,7 +124,7 @@ function examinarArea(who, plus_diff := 0)
 			continue;
 		endif
 
-      var item_diff := getItemDiff(who, item);
+      var item_diff := getItemDiff(who, item) + plus_diff;
       var custom_diff := GetObjProperty(item, "FindDiff");
 
 		if ( item.isTrap() && (dice_roll > item_diff))
