@@ -34,23 +34,27 @@ exported function reset(lever)
 endfunction
 
 function resetelevator(item)
-
 	var maxz := Cint(GetObjProperty(item, "z"));
 	var stat := GetObjProperty(item, "status");
 	var direction := GetObjProperty(item, "direction");
 	var items := GetObjProperty(item, "items");
 	var startz := 0;
-	
-	while (startz <= maxz )
-		foreach obj in items
-			var coisa := SystemFindObjectBySerial(obj);
-			MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z - 1, coisa.realm, MOVEOBJECT_FORCELOCATION);
-		endforeach
-		startz := startz + 1;
-		sleepms(50);
-	endwhile
-	SetObjProperty(item, "status", "up");
 
+   maxz := maxz * -1;
+   var modifier := 1;
+   if (maxz < 0)
+      modifier := -1;
+   endif
+   while (startz != maxz )
+      foreach obj in items
+         var coisa := SystemFindObjectBySerial(obj);
+         MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z + modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
+      endforeach
+      startz := startz + modifier;
+      sleepms(50);
+   endwhile
+   
+	SetObjProperty(item, "status", "up");
 endfunction
 
 function resetdoor(item)

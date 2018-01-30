@@ -102,6 +102,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "fireWall":       res := fireWall(hab_target, hab_dice, cint(hab_special)); break;
       "Iceberg":        res := Iceberg(hab_target, hab_dice, cint(hab_special)); break;
       "scald":        res := scald(hab_target, hab_dice, cint(hab_special)); break;
+      "nuvem":        res := nuvem(hab_dice); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
@@ -117,6 +118,27 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    endif
 endfunction
 
+
+function nuvem(timing)
+   var enemies := GetEnemiesNear(me, 10);
+   var av_enemies := array{};
+   foreach en in enemies
+      if (Distance(me, en) > 3)
+         av_enemies.append(en);
+      endif
+      sleepms(2);
+   endforeach
+
+   if (av_enemies.size() < 1)
+      return;
+   endif
+
+   var targ := av_enemies.randomentry();
+   var item := CreateItemAtLocation(targ.x, targ.y, targ.z, "nuvem", 1);
+   item.color := 904;
+   SetObjProperty(item, "expiretime", 15);
+   return 1;
+endfunction
 
 function throwBomb(mobile, hab_dice, bombs)
    if (Distance(mobile, me) > 12) return; endif
