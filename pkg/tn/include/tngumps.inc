@@ -351,7 +351,7 @@ function QuestionsGump(who, questions := array{})
   			GFSetRadioGroup(gump, _quest_iter);
 			foreach entry in (quest.radio)
 				GFTextLine(gump, x_plus+25, y+3, 1153, entry);
-            GFRadioButton(gump, x_plus, y+3, 210, 211, (_entry_iter == cint(quest.marked)), _entry_iter+(_quest_iter * 100), (cint(quest.marked) == _entry_iter));
+            GFRadioButton(gump, x_plus, y+3, 210, 211, (_entry_iter == cint(quest.marked)), _entry_iter+(_quest_iter * 100));
 				x_plus += 130;
             if (_entry_iter % 4 == 0 && quest.radio[_entry_iter+1])
                y += 25;

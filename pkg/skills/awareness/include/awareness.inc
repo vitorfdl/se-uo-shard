@@ -147,7 +147,8 @@ function examinarArea(who, plus_diff := 0)
 	return found;
 endfunction
 
-function getItemDiff(who, item)
+function getItemDiff(who, item) 
+   var diff;
    var lvl := Cint(GetObjProperty(item, "level"));
    case (lvl)
       1: diff := 12;

@@ -103,7 +103,7 @@ program architect_gump(who)
 
     // cleanup construction site
     foreach dummy in ListObjectsInBox (startloc[1], startloc[2], GetWorldHeight(startloc[1], startloc[2]), startloc[1] + SITESIZE, startloc[2] + SITESIZE, 120)
-      DestroyItem (dummy);
+      DestroyItem(dummy);
     endforeach
 
     // create construction site borders
@@ -353,7 +353,7 @@ program architect_gump(who)
 
       // page 1: List members of the chosen sub group
       var partcount:= 0;
-      groupparts:= GetConfigStringArray (parts[choice[2]], choice[3]);
+      groupparts:= GetConfigStringArray(parts[choice[2]], choice[3]);
       makeArrayNumerical(groupparts);
       groupparts.sort ();
       layout.append ("page 1");
@@ -940,12 +940,12 @@ program architect_gump(who)
           endif
 
           foreach element in tbd
-            if (GetObjProperty (element, "#built_by_architect") != who.serial)
-              SendSysMessage (who, lang["delete_err"]);
-            else
-              undo.append (array{2, element.objtype, element.x, element.y, element.z});
-              DestroyItem (element);
-            endif
+            // if (GetObjProperty(element, "#built_by_architect") != who.serial)
+            //   SendSysMessage(who, lang["delete_err"]);
+            // else
+              undo.append(array{2, element.objtype, element.x, element.y, element.z});
+              DestroyItem(element);
+            // endif
           endforeach
 
           break;

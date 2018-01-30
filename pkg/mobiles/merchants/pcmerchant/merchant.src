@@ -186,7 +186,7 @@ function SendItemView(npc, player)
   		GFHTMLArea(gump, x+20, y+1, 90, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(item.desc));
       GFTooltipText(gump, "{}".format(item.desc));
 		GFTilePic(gump, x+42, y+75, item.graphic, 0); //objtype
-      var item_desc := GetDetails(item, playe);
+      var item_desc := GetDetails(item, player);
       if (cost_info.desc)
          item_desc := "{}{}".format(item_desc, cost_info.desc);
       endif

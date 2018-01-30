@@ -1,9 +1,10 @@
 use uo;
 include ":attributes:attributes";
+include ":charactercreation:feats";
 
 program fixTalent(who)
    if (HaveFeat(who, "Segredo das Fechaduras"))
-      removeFeat(who, "Segredo das Fechaduras")
+      removeFeat(who, "Segredo das Fechaduras");
       who.SetTalentPoints(1);
    endif
 endprogram

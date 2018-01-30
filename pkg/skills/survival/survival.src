@@ -423,7 +423,6 @@ endfunction
 
 
 function GetMobDesc(who, mobile)
-if (CheckGender(who))
 	var itemonmobile := ListEquippedItems( mobile );
    if (CheckLineOfSight( who, mobile ) && (mobile.hidden == 0))
       return mobile.name + " [" + MobLocalizateSigla(who, mobile) + "]";

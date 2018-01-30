@@ -98,9 +98,9 @@ function showSpecialGump(who, item)
    var lang := "";
    if (is_lang && !HaveFeat(who, is_lang))
       if (is_lang == "Linguagem Élfica")
-         lang := "Face=Gargish";
+         lang := "Face=Gargish size=4";
       elseif (is_lang == "Linguagem Rúnica")
-         lang := "Face=Runic";
+         lang := "Face=Runic size=4";
       else
          SendSysMessageEx(who, "Problema com a linguagem do objeto", SSM_FAIL);
          return 0;

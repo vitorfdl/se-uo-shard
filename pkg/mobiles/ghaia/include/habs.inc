@@ -101,6 +101,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "evasao":         res := evasion(hab_target); break;
       "fireWall":       res := fireWall(hab_target, hab_dice, cint(hab_special)); break;
       "Iceberg":        res := Iceberg(hab_target, hab_dice, cint(hab_special)); break;
+      "scald":        res := scald(hab_target, hab_dice, cint(hab_special)); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
@@ -283,15 +284,45 @@ function euforic(mobile, diff)
    foreach p in points
       var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
       foreach m in mobs
-         if (rollResistDice(m, CONSTITUTION) > diff)
-            PrintText(m, "*resistido*", SSM_INFO);
-            return 1;
-         else
-            TS_StartTimer(m, "euforic", 5, diff);
+         if (CanFight(me, m))
+            if (rollResistDice(m, CONSTITUTION) > diff)
+               PrintText(m, "*resistido*", SSM_INFO);
+               return 1;
+            else
+               TS_StartTimer(m, "euforic", 5, diff);
+            endif
          endif
          sleepms(2);
       endforeach
       PlayStationaryEffectEx( p[1], p[2], me.z+2, me.realm, 0x9DAC, 7, 10, 1953);
+      sleepms(2);
+   endforeach
+
+   return 1;
+endfunction
+
+function scald(mobile, dmg, diff)
+   playCastAnimation();
+   if (Distance(me, mobile) > 2)
+      return 0;
+   endif
+
+   PrintText(me, "*solta um jato de ar quente*");
+   var points := GetConeCoordsInFront(me.x, me.y, me.facing, 2);
+   foreach p in points
+      var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
+      foreach m in mobs
+         if (CanFight(me, m))
+            if (rollResistDice(m, CONSTITUTION) > diff)
+               PrintText(m, "*resistido*", SSM_INFO);
+               return 1;
+            else
+               DamageFLS(m, dmg, DMG_FIRE, me);
+            endif
+         endif
+         sleepms(2);
+      endforeach
+      PlayStationaryEffectEx( p[1], p[2], me.z+2, me.realm, 0x372A, 7, 18, 2150);
       sleepms(2);
    endforeach
 

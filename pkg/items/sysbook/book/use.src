@@ -5,7 +5,7 @@ include "include/say";
 include ":charactercreation:habilidades";
 include ":gumps:include/requestgump";
 include ":gumps:yesno";
-include ":charactercreation:habilidades";
+include ":charactercreation:feats";
 
 program useBook(who,book)
 	if ( !ReserveItem(book) )

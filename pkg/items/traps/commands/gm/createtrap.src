@@ -1,0 +1,129 @@
+use uo;
+use os;
+use cfgfile;
+
+// include ":ghaia:ghaiaUtil";
+include ":gumps:requestgump";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include ":tn:tngumps";
+include "include/say";
+
+var traplevel := 1;
+var range_check := 5;
+var change_trap, change_range;
+var traps := array{
+   0x10F5,
+   0x10FC,
+   0x1103,
+   0x1108,
+   0x110F,
+   0x1116,
+   0x111B,
+   0x112B,
+   0x112F,
+   0x1133,
+   0x119A,
+   0x11A0,
+   0x11AC,
+   0x11B1,
+   0x6204,
+   0xff99
+};
+var trap_choose := 1;
+
+program createTrap(who)
+   var itemdesc := ReadConfigFile(":traps:itemdesc");
+   var output := 1;
+
+   while(output)
+      sleepms(2);
+      var gump := GFCreateGump();
+      GFSetID(gump, 0x87);
+      GFDisposable(gump, 0);
+      GFResizePic(gump, 0, 0, 3600, 750, 440);
+      GFResizePic(gump, 15, 15, 0x13BE, 750-30, 440-30);
+
+      var x := 20;
+      var y := 20;
+      GFTextLine(gump, x+200, y+2, 2100, "Level da Armadilha:");
+      GFResizePic(gump, x+200+130, y, 0x7752, 30, 25);
+      change_trap := GFTextEntry(gump, x+200+135, y+2, 30, 20, 2100, ""+traplevel);
+
+      y += 50;
+      GFSetRadioGroup(gump, 1);
+      foreach objtype in traps
+         var tilepic := itemdesc[objtype].graphic;
+         if (!tilepic) tilepic := objtype; endif
+
+         GFRadioButton(gump, x, y+15, 210, 211, (cint(trap_choose) == _objtype_iter), 100+_objtype_iter);
+
+         GFTilePic(gump, x+20, y, tilepic);
+         GFTextLine(gump, x+20, y+40, 2100, "{}".format(itemdesc[objtype].Name));
+         if (_objtype_iter % 4 == 0)
+            x := 20;
+            y += 70;
+         else
+            x += 200;
+         endif
+         sleepms(2);
+      endforeach
+      
+      x := 160;
+      y := 390;
+
+      GFHTMLArea(gump,  x-10, y, 115, 25, "<basefont color=#006600><center>Criar", 1);
+      GFAddButton(gump, x-10, y+5, 0x80E, 0x80E, GF_CLOSE_BTN, 10);
+
+      GFTextLine(gump, x+120, y-24, 2100, "Range:");
+      GFResizePic(gump, x+120+45, y-29+2, 0x7752, 30, 25);
+      change_range := GFTextEntry(gump, x+120+45+5, y-29+4, 30, 20, 2100, ""+range_check);
+
+      GFHTMLArea(gump,  x+130-10, y, 115, 25, "<basefont color=#7f0000><center>Alterar armadilhas", 1);
+      GFAddButton(gump, x+130-10, y+5, 0x80E, 0x80E, GF_CLOSE_BTN, 11);
+
+      GFHTMLArea(gump,  x+260, y, 115, 25, "<basefont color=#7FFFD4><center>Cancelar", 1);
+      GFAddButton(gump, x+260, y+5, 0x80E, 0x80E, GF_CLOSE_BTN, 1);
+
+      var input := GFSendGump(who, gump);
+      for i := 1 to traps.size()
+         if (100+i in input.keys)
+            trap_choose := i;
+            break;
+         endif
+         sleepms(2);
+      endfor
+
+      traplevel := cint(GFExtractData(input, change_trap));
+      range_check     := cint(GFExtractData(input, change_range));
+      if (!range_check) range_check := 5; endif
+
+      output := DoInput(who, input);
+   endwhile
+endprogram
+
+function DoInput(who, input)
+   case (input[0])
+      10:
+         while (1)
+            SendSysMessageEx(who, "Onde quer criar a armadilha? (esc para cancelar)");
+            var targ := TargetCoordinates(who);
+            if (!targ) break; endif
+
+            var item := CreateItemAtLocation(targ.x, targ.y, targ.z, traps[trap_choose]);
+            SetobjProperty(item, "level", traplevel);
+            sleepms(2);
+         endwhile
+      11:
+         foreach item in ListItemsNearLocation(who.x, who.y, who.z, cint(range_check), who.realm);
+            if (item.objtype in traps)
+               SetObjProperty(item, "level", traplevel);
+            endif
+            sleepms(2);
+         endforeach
+         SendSysMessageEx(who, "Armadilhas atualizadas", SSM_INFO);
+      0:1:4: return 0;
+   endcase
+
+   return 1;
+endfunction

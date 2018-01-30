@@ -47,7 +47,7 @@ function BurnNearbyMobiles(field, dmg_dice)
    var creator := field.GetOwner();
 	var nearby := ListMobilesNearLocationEX(field.x, field.y, field.z, 0, LISTEX_FLAG_NORMAL+LISTEX_FLAG_HIDDEN, field.realm);
 	foreach mobile in ( nearby )
-      if (creator != mobile)
+      if (creator != mobile && !(mobile.npctemplate && creator.npctemplate))
 		   BurnMobile(mobile, dmg_dice);
       endif
 		sleepms(2);

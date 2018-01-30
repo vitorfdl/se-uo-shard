@@ -338,7 +338,13 @@ endfunction
 
 function CalcPathAndMove(me, opponent, sleepdelay)
    var face_str := getFacingString(GetFacing(me.x, me.y, opponent.x, opponent.y));
-   if (AP_GetVital(me, STAMINA) < 1)
+   var stam := AP_GetVital(me, STAMINA);
+   var move_type := 1;
+   if (stam < 3)
+      move_type := 0;
+   endif
+
+   if (stam <= 1)
       var last_msg := GetObjProperty(me, "#fatigue");
       if (!last_msg || last_msg < ReadGameClock())
          SetObjProperty(me, "#fatigue", ReadGameClock()+15);
@@ -365,7 +371,9 @@ function CalcPathAndMove(me, opponent, sleepdelay)
                ChooseHighestOpponent(me, opponent);
             endif
          else
-            RunTowardLocation( path[1].x, path[1].y ); //anda na direcao
+            if (move_type) RunTowardLocation( path[1].x, path[1].y );
+            else WalkTowardLocation(path[1].x, path[1].y); endif
+
 				path.erase(1); //deleta a coordenada e vai pra proxima
             set_critical(1);
             SetObjProperty(me, "path", path);
@@ -380,7 +388,8 @@ function CalcPathAndMove(me, opponent, sleepdelay)
          if (coordtry != error && coordtry[1] != coord)
             SetObjProperty(me, "#coordtry", array{coord, ReadGameClock()+5 }); 
          endif
-         RunTowardLocation( coord.x, coord.y ); //anda na direcao
+         if (move_type) RunTowardLocation( coord.x, coord.y );
+         else WalkTowardLocation(coord.x, coord.y); endif
          sleepms(sleepdelay);
          Opendoors(me); //tenta abrir possiveis portas
          if (CoordinateDistance(me.x, me.y, coord.x, coord.y) <= 1) //se chegou onde devia 
@@ -397,13 +406,15 @@ function CalcPathAndMove(me, opponent, sleepdelay)
             endif
          endif
       else
-         RunToward( opponent );
+         if (move_type) RunToward( opponent );
+         else WalkToward( opponent ); endif
          sleepms(sleepdelay);
       endif
    else
       EraseObjProperty(me, "path");
       EraseObjProperty(me, "#enemy_last_loc");
-      RunToward( opponent );
+      if (move_type) RunToward( opponent );
+      else WalkToward( opponent ); endif
       sleepms(sleepdelay);
 	endif
 endfunction

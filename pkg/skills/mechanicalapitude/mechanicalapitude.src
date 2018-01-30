@@ -31,6 +31,17 @@ program skillremoveTrap(who)
       return;
 	endif
 
+   var dif;
+   var lvl := Cint(GetObjProperty(item, "level"));
+   case (lvl)
+      1: dif := 12;
+      2: dif := 16;
+      3: dif := 19;
+      4: dif := 22;
+      5: dif := 25;
+      default: dif := 16; 
+   endcase
+   
 	var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SABOTAGEM);
 
 	if( GetObjProperty(item, "TrapList") != error )
@@ -53,17 +64,6 @@ program skillremoveTrap(who)
 			SendSysMessageEx(who, "Você interrompeu o processo.", SSM_FAIL);
 			return;
 		endif
-
-		var dif;
-		var lvl := Cint(GetObjProperty(item, "level"));
-		case (lvl)
-			1: dif := 12;
-			2: dif := 16;
-			3: dif := 19;
-			4: dif := 22;
-			5: dif := 25;
-			default: dif := 16; 
-		endcase
 
 		if( dice_roll <= dif )
 			SendSysMessageEx( who, "Você falhou em desarmar a armadilha.", SSM_FAIL);
