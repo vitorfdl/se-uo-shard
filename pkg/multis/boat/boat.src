@@ -261,7 +261,7 @@ function handle_speech(event)
     //		PrintText(tillerman, "The next waypoint is #" + GetObjProperty(tillerman,"nextwaypoint"));
     //	endif
     elseif(text["partir"])
-    	if( (GetObjProperty(tillerman,"course") == error) || (GetObjProperty(tillerman,"nextwaypoint")==error))
+    	if( (GetObjProperty(tillerman,"course") == error))
     		//PrintText(tillerman,"Arr, set course first Cap'n.");
     	else    		
      		state := STATE_FOLLOWING_COURSE;
