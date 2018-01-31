@@ -124,6 +124,8 @@ program lever(who, item)
     SendSysMessage(who,"that switch is in use");
     return;
   endif
+   var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
+   if (!trapstrength) trapstrength := 2; endif
   if(who.cmdlevel > 2)
     var res := SendDialogGump( who, layout, data );
     case(res[0])
@@ -133,10 +135,10 @@ program lever(who, item)
        4: bindlights(who, item);
        5: linkteleport(who, item);
        
-      15: createtrap(who, item, "3");
-      16: createtrap(who, item, "2");
-      17: createtrap(who, item, "1");
-      18: createtrap(who, item, "4");
+      15: AddTrap(item, "Explosion", trapstrength);
+      16: AddTrap(item, "PoisonGas", trapstrength);
+      17: AddTrap(item, "Needle", trapstrength);
+      18: AddTrap(item, "Magic", trapstrength);
       
       20: item.graphic := 0x108e;           // graphic 1
           item.name    := "alavanca";
@@ -151,7 +153,7 @@ program lever(who, item)
       96: setElevator(who, item);
       99: normalusage(who, item);           // use item like normal
       100: setHiding(who, item);
-      101: setMoveObject(who, item);	
+      101: setMoveObject(who, item);
     endcase
   else
     normalusage(who, item);
@@ -437,51 +439,13 @@ function stobj(who, item)
 endfunction
 
 function trappedswitch(who, item, mid, stt, snd)
-  SetObjProperty(item, "#inuse", 1);
-  Detach();
-  var traptype := CInt(GetObjProperty(item,"trap_type"));
-  var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
-  case (traptype)
-    1:   PlaySoundEffect(who, 0x0224);
-         var dmg := getTrapDamage(1, CInt(trapstrength));
-         PrintTextAbovePrivate(who, "Você ativou uma armadilha de dardos!", who);
-         DamageFLS(who, dmg);
-    2:   PlaySoundEffect(who, 0x0232);
-         PrintTextAbovePrivate(who, "Você ativou uma armadilha de gas venenoso!", who);
-         PlayObjectCenteredEffect( who, FX_POISON_GAS, 10,10);
-		 var range := 3;
-		 var poisonLvl := trapstrength+1;
-		 var mobiles := ListMobilesNearLocationEx(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL);
-		 TS_StartTimer(who, "defaultPoison", 120, poisonLvl);
-		 foreach mobile in mobiles
-
-			 if (!mobile.npctemplate)
-		 		 if (CheckResist(mobile, STRENGTH))
-		 			 SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
-		 			 continue;
-		 		 else
-		 			 TS_StartTimer(mobile, "defaultPoison", 120, poisonLvl);
-		 		 endif
-		 	 endif
-
-		 endforeach
-		 
-    3:   PlaySoundEffect(who, 0x0208);
-         PrintTextAbovePrivate(who, "Você ativou uma armadilha explosiva!", who);
-         PlayObjectCenteredEffect( who, FX_EXPLODE_3, 10,10);
-         var dmg := getTrapDamage(1, CInt(trapstrength));
-         DamageFLS(who, dmg);
-    4:   var dmg;
-         var victims := ListMobilesNearLocation( item.x, item.y, item.z, 5);
-         Detach();
-         foreach mob in victims
-         var dmg := getTrapDamage(1, CInt(trapstrength));
-	       PlayLightningBoltEffect( mob );
-	       PlaySoundEffect(mob, SFX_SPELL_LIGHTNING);
-	       DamageFLS( mob, Resisted( mob, dmg) );
-           sleepms(600);
-         endforeach
-  endcase
+   SetObjProperty(item, "#inuse", 1);
+   Detach();
+   if (RunTraps(item, who))
+      SetObjProperty(item, "trapSpoted", 1);
+      PrintText(who, "*dispara armadilha*");
+   endif
+ 
   sleepms(500);
   PlaySoundEffect( item, snd);
   item.graphic := mid;
