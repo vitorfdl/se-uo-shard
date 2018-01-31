@@ -439,17 +439,17 @@ function trappedswitch(who, item, mid, stt, snd)
   SetObjProperty(item, "#inuse", 1);
   Detach();
   var traptype := CInt(GetObjProperty(item,"trap_type"));
-  var trapstrength := CInt(RandomInt(99) + 1);
+  var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
   case (traptype)
     1:   PlaySoundEffect(who, 0x0224);
-         var dmg :=(RandomInt(20) + CInt(trapstrength));
+         var dmg := getTrapDamage(1, CInt(trapstrength));
          PrintTextAbovePrivate(who, "Você ativou uma armadilha de dardos!", who);
          DamageFLS(who, dmg);
     2:   PlaySoundEffect(who, 0x0232);
          PrintTextAbovePrivate(who, "Você ativou uma armadilha de gas venenoso!", who);
          PlayObjectCenteredEffect( who, FX_POISON_GAS, 10,10);
 		 var range := 3;
-		 var poisonLvl := 2;
+		 var poisonLvl := trapstrength+1;
 		 var mobiles := ListMobilesNearLocationEx(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL);
 		 TS_StartTimer(who, "defaultPoison", 120, poisonLvl);
 		 foreach mobile in mobiles
@@ -468,13 +468,13 @@ function trappedswitch(who, item, mid, stt, snd)
     3:   PlaySoundEffect(who, 0x0208);
          PrintTextAbovePrivate(who, "Você ativou uma armadilha explosiva!", who);
          PlayObjectCenteredEffect( who, FX_EXPLODE_3, 10,10);
-         var dmg :=(RandomInt(20) + CInt(trapstrength));
+         var dmg := getTrapDamage(1, CInt(trapstrength));
          DamageFLS(who, dmg);
     4:   var dmg;
          var victims := ListMobilesNearLocation( item.x, item.y, item.z, 5);
          Detach();
          foreach mob in victims
-         var dmg :=(RandomInt(20) + CInt(trapstrength));
+         var dmg := getTrapDamage(1, CInt(trapstrength));
 	       PlayLightningBoltEffect( mob );
 	       PlaySoundEffect(mob, SFX_SPELL_LIGHTNING);
 	       DamageFLS( mob, Resisted( mob, dmg) );
