@@ -152,7 +152,7 @@ function nuvem(timing)
    var targ := av_enemies.randomentry();
    var item := CreateItemAtLocation(targ.x, targ.y, targ.z, "nuvem", 1);
    item.color := 904;
-   SetObjProperty(item, "expiretime", timing);
+   SetObjProperty(item, "expiretime", polcore().systime + timing);
    SetObjProperty(item, "owner", me.serial);
    return 1;
 endfunction
