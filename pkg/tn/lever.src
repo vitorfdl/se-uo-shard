@@ -341,7 +341,14 @@ function normalusage(who, item)
       msg := "Você ouve algo se movendo longe...";
    endif
    SendSysMessageEx(who, msg);
-   trappedswitch(who, item, mid, gfx, snd);
+   if (RunTraps(item, who))
+      SetObjProperty(item, "trapSpoted", 1);
+      PrintText(who, "*dispara armadilha*");
+      item.graphic := mid;
+      sleepms(500);
+      item.graphic := gfx;
+      return;
+   endif
   case(funct)
     "setobj"  : stobj(who, item);
     "door"    : linkdoor(who,item);
@@ -443,22 +450,6 @@ function stobj(who, item)
     oldnote := GetObjProperty(itm,"oldnote");
     SetObjProperty(itm, note, oldnote);
   endforeach
-  EraseObjProperty(item, "#inuse");
-endfunction
-
-function trappedswitch(who, item, mid, stt, snd)
-   SetObjProperty(item, "#inuse", 1);
-   Detach();
-   if (RunTraps(item, who))
-      SetObjProperty(item, "trapSpoted", 1);
-      PrintText(who, "*dispara armadilha*");
-   endif
- 
-  sleepms(500);
-  PlaySoundEffect( item, snd);
-  item.graphic := mid;
-  sleepms(500);
-  item.graphic := stt;
   EraseObjProperty(item, "#inuse");
 endfunction
 
