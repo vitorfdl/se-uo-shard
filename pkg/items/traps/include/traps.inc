@@ -49,7 +49,7 @@ function ExistTrap(object)
       return 0;
    endif
 
-   return 1.
+   return 1;
 endfunction
 /*
  * AddTrap(object, trap_name, strength, count)
