@@ -13,7 +13,6 @@ const SUMMON_START	:= 0xA000;
 const GOTO_START	:= 0xF000;
 
 program textcmd_Players(who, text)
-	SendSysMessage(who, "XXX");
 	var online_list := GotoArray(who);
 	var input;
 	
@@ -75,7 +74,6 @@ function PlayerListGump(who, byref online_list)
 	GFTextMid(gump, 25, 25, 230, 2100, "Player Name");
 	GFTextLine(gump, 270, 25, 2100, "Summon");
 	GFTextLine(gump, 350, 25, 2100, "Goto");
-
 	
 	var counter := 0;
 	var y_pos := 50;

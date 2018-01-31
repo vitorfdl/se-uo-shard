@@ -25,9 +25,9 @@ function PlayersGump(who)
 	GFTextLine(gump, 25, 20, 2100, "Player Name");
 	GFTextLine(gump, 255+15, 20, 2100, "Msg");
 	GFTextLine(gump, 305+15, 20, 2100, "Go");
-	GFTextLine(gump, 345+15, 20, 2100, "Summon");
-	GFTextLine(gump, 405+15, 20, 2100, "Freeze");
-	GFTextLine(gump, 465+15, 20, 2100, "Info");
+	GFTextLine(gump, 345+15, 20, 2100, "Freeze");
+	GFTextLine(gump, 405+15, 20, 2100, "Info");
+	GFTextLine(gump, 465+15, 20, 2100, "Summon");
 	
 	var acc_list := GetAccList(who);
 	var num_players := acc_list.size();
@@ -51,9 +51,9 @@ function PlayersGump(who)
 		GFTextLine(gump, 25, y_pos, name_color, "{} - [{}] - {} Lv.{}".format(acc, charname, chardata.classe, char.getLevel()) );
 		GFAddButton(gump, 260+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter);
 		GFAddButton(gump, 308+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+200);
-		GFAddButton(gump, 360+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+400);
-		GFAddButton(gump, 410+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+800);
-		GFAddButton(gump, 470+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+600);
+		GFAddButton(gump, 360+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+800);
+		GFAddButton(gump, 410+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+600);
+		GFAddButton(gump, 470+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+400);
 
 		y_pos := y_pos+20;
 		counter := counter+1;
