@@ -15,9 +15,9 @@ endfunction
 
 exported function GetOwner(corpse)
 	if ( corpse.ownerserial )
-		return SystemFindObjectBySerial(corpse.ownerserial);
+		return SystemFindObjectBySerial(corpse.ownerserial, SYSFIND_SEARCH_OFFLINE_MOBILES);
 	elseif ( CInt(GetObjProperty(corpse, "ownerserial")) )
-		return SystemFindObjectBySerial(CInt(GetObjProperty(corpse, "ownerserial")));
+		return SystemFindObjectBySerial(CInt(GetObjProperty(corpse, "ownerserial")), SYSFIND_SEARCH_OFFLINE_MOBILES);
 	endif
 endfunction
 
