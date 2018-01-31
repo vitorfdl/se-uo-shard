@@ -101,13 +101,13 @@ function SetupEquip(who)
 	var group;
 	var categ := GetConfigString(npccfgfile, "Equip");
 
-	if(who.graphic == 0x190 || who.graphic == 604 )
+	if(who.graphic == 0x190 || cint(who.graphic) == 604 )
 				//case(randomint(2))
 					//0: 
 						who.graphic:= 0x190;
 						who.gender := 0;
 						categ      := categ + "M";
-	elseif (who.graphic == 0x191 || who.graphic == 605)
+	elseif (who.graphic == 0x191 || cint(who.graphic) == 605)
 					//1: who.graphic := 0x191;
 						 //who.gender := 1;
 						 categ := categ + "F";
