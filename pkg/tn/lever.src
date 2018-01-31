@@ -135,10 +135,18 @@ program lever(who, item)
        4: bindlights(who, item);
        5: linkteleport(who, item);
        
-      15: AddTrap(item, "Explosion", trapstrength);
-      16: AddTrap(item, "PoisonGas", trapstrength);
-      17: AddTrap(item, "Needle", trapstrength);
-      18: AddTrap(item, "Magic", trapstrength);
+      15: 
+         SetObjProperty(item, "HaveTrap", "Explosion");
+         AddTrap(item, "Explosion", trapstrength);
+      16: 
+         SetObjProperty(item, "HaveTrap", "PoisonGas");
+         AddTrap(item, "PoisonGas", trapstrength);
+      17: 
+         SetObjProperty(item, "HaveTrap", "Needle");
+         AddTrap(item, "Needle", trapstrength);
+      18: 
+         SetObjProperty(item, "HaveTrap", "Magic");
+         AddTrap(item, "Magic", trapstrength);
       
       20: item.graphic := 0x108e;           // graphic 1
           item.name    := "alavanca";
