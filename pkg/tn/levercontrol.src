@@ -15,7 +15,6 @@ program lever(item)
 	endif
 
 
-
 	var delay := Cint(GetObjProperty(item, "delay"));
 	if (!delay)
 		delay := 7200;

@@ -1,6 +1,7 @@
 use uo;
 use os;
 
+include ":traps:traps";
 
 program Install()
 	return 1;
@@ -17,6 +18,11 @@ exported function reset(lever)
 		lever.invisible := 1;
 	endif
 
+	if ( GetObjProperty(lever, "HaveTrap"))
+      var trapstrength := CInt(GetObjProperty(lever,"trap_strength"));
+      if (!trapstrength) trapstrength := 2; endif
+      AddTrap(lever, GetObjProperty(lever, "HaveTrap"), trapstrength);
+	endif
 
 	var funct  := GetObjProperty(lever, "function");
 	
