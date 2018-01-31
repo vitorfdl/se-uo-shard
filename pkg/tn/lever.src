@@ -328,16 +328,16 @@ function normalusage(who, item)
     sleepms(500);
     obj.graphic := fin;
   endforeach
-  var msg := GetObjProperty(obj, "msg");
-  if(!msg)
-    msg := "You hear a rumbling off in the distance...";
-  endif
-  SendSysMessage(who, msg);
+   var msg := GetObjProperty(obj, "msg");
+   if(!msg)
+      msg := "Você ouve algo se movendo longe...";
+   endif
+   SendSysMessageEx(who, msg);
+   trappedswitch(who, item, mid, gfx, snd);
   case(funct)
     "setobj"  : stobj(who, item);
     "door"    : linkdoor(who,item);
     "passage" : alterpassage(who, item, gfx, snd);
-    "trap"    : trappedswitch(who, item, mid, gfx, snd);
     "lights"  : lightswitch(who, item);
     "tele"    : teleporter(who, item, mid, gfx, snd);
     "graphic": changegraphiclever(who, item);
@@ -979,11 +979,6 @@ function bindlights(who, item)
   endwhile
   SetObjProperty(item,"function", "lights");
   SetObjProperty(item,"partsarray", newarray);
-endfunction
-
-function createtrap(who, item, type);
-  SetObjProperty(item,"function", "trap");
-  SetObjProperty(item,"trap_type", type);
 endfunction
 
 function createpassage(who, item)
