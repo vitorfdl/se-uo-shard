@@ -59,6 +59,7 @@ function SelectAttribute(attacker, attacker_weapon)
 endfunction
 
 function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
+   print(wpn_elem);
 	if (wpn_elem.dicedmg)
 		var dmg       := wpn_elem.dicedmg;
       if (GetObjProperty(attacker, "dicedmg"))

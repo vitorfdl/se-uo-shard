@@ -135,7 +135,7 @@ program Attack(params)
 		// endif
 		WearDownWeapon(attacker);
 		PlayHitSounds(attacker, defender);
-		var dmg := CalculateRawDamage(attacker, attacker.weapon);
+		var dmg := CalculateRawDamage(attacker, wpn_a_elem, attacker.weapon);
 		ExpGain(attacker, defender_CA, attack_chance);
       if (attacker.master)
          attacker.SetExp(2);
