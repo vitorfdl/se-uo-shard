@@ -19,6 +19,25 @@ function getQuality(num)
 	endif
 endfunction
 
+function getWeaponType(type)
+   var res;
+   case (type)
+      "axe": res := "Machado"; break;
+      "sword": res := "Espada"; break;
+      "greatsword": res := "Espada Gigante"; break;
+      "spear": res := "Lança"; break;
+      "dagger": res := "Adaga"; break;
+      "dualsword": res := "Arma Dupla"; break;
+      "bow": res := "Arco"; break;
+      "crossbow": res := "Besta"; break;
+      "mace": res := "Maça"; break;
+      "halberd": res := "Arma de Haste"; break;
+   endcase
+
+   return res;
+endfunction
+
+
 function getCondition(item)
 	var c := cdbl(item.hp) / cdbl(item.maxhp);
 

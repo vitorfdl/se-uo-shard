@@ -141,6 +141,12 @@ exported function MegaCliloc( who, byref packet )
 			if (elem.DamageType)
 				xDesc += "Tipo: {}<br>".format(elem.DamageType);
 			endif
+         if (elem.Pericia)
+				xDesc += "Perícia: {}<br>".format(elem.Pericia);
+         endif
+         if (elem.WeaponType)
+				xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
+         endif
 
 			if (item.isA(POLCLASS_WEAPON))
 				if (elem.strrequired)

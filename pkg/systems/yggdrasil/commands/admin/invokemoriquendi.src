@@ -8,7 +8,6 @@ include "include/utils";
 include "include/say";
 include "include/damage";
 include "include/client";
-include ":sysbook:flsbooks";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":merchants:crafthelp";
