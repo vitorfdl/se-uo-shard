@@ -498,11 +498,11 @@ function GetDetails(item, who)
       if (item.intrequired)
          ret += "Inteligência Minima: {}<br>".format(item.intrequired);
       endif
-      if (elem.Pericia)
-         xDesc += "Perícia: {}<br>".format(elem.Pericia);
+      if (item.Pericia)
+         ret += "Perícia: {}<br>".format(item.Pericia);
       endif
-      if (elem.WeaponType)
-         xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
+      if (item.WeaponType)
+         ret += "Categoria: {}<br>".format(getWeaponType(item.WeaponType));
       endif
    endif
 

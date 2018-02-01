@@ -10,7 +10,7 @@ include ":attributes:attributes";
 program expBar(params)
    var who := params[1];
    var no_start := params[2];
-   if (not_start)
+   if (no_start)
       CloseGump(who, GUMPID_EXPBAR, 2);
       return;
    endif
@@ -33,6 +33,7 @@ program expBar(params)
    GFGumpPic(expbar, x+499, y+31, 9771, 0);
    GFGumpPicTiled(expbar, x+30, y+48, 480, 6, 0x2616);
 
+   var reopen := 1;
    while (who.connected)
       GFCloseGumpTimed(who, GUMPID_EXPBAR, 15);
       var temp_gump := expbar;
@@ -41,10 +42,14 @@ program expBar(params)
 
       var i := GFSendGump(who, temp_gump);
       if (i == 2)
+         reopen := 0;
          return;
       endif
    endwhile
 
+   if (reopen)
+      start_script(":fls_core:tn/expbar", array{who});
+   endif
 endprogram
 
 function getExpLength(exp, maxexp, maxwidth)

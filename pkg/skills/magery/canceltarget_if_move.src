@@ -5,9 +5,9 @@ program moveCheck(mobile)
 	var orig_x := mobile.x;
 	var orig_y := mobile.y;
 	
-	while ( spell_starter.pid )
+	while ( 1 )
 		if ( mobile.x != orig_x || mobile.y != orig_y )
-			CancelTarget(mobile)
+			CancelTarget(mobile);
 			return 1;
 		endif
 		SleepMS(50);

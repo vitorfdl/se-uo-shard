@@ -350,7 +350,7 @@ endfunction
 
 function euforic(mobile, diff)
    playCastAnimation();
-   if (Distance(me, mobile) > 3)
+   if (Distance(me, mobile) > 2)
       return 0;
    endif
 

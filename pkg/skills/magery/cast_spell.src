@@ -202,7 +202,7 @@ endprogram
 
 function ChooseTarget(mobile, spellinfo)
    var targ;
-   var move_script := start_script(":magery:canceltarget_if_move", who);
+   var move_script := start_script(":magery:canceltarget_if_move", mobile);
    if (spellinfo.alvo == "Self")
       targ := mobile;
    elseif (spellinfo.alvo == "Unico")

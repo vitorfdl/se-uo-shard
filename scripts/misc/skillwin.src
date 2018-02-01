@@ -173,7 +173,7 @@ function BuyTalents(who)
 		return SendSysMessageEx(who, "Sem pontos de talento disponiveis.", SSM_FAIL);
 	endif
    var levels := array{};
-   var type := 0;
+   var type := "normal";
    var mylevel := who.getLevel();
    if (mylevel >= 6)
       var chardata := GetObjProperty(who, "chardata");

@@ -1053,7 +1053,7 @@
 0x140b Helmet2 combat
 0x140c Bascinet combat
 0x140d Bascinet2 combat
-0x140e NoseHelm combat
+# 0x140e unused
 0x140f NoseHelm2 combat
 0x1410 PlatemailArms combat
 0x1411 PlatemailLegs combat
@@ -1572,7 +1572,9 @@
 0x2b6e circlet metalworking
 0x2b6f circlet2 metalworking
 0x2b70 circlet3 metalworking
-# 0x2b71 - 0x2be0 unused
+# 0x2b71 unused
+0x2b72 vultureHelm combat
+# 0x2b73 - 0x2be0 unused
 0x2be1 biscuit food
 # 0x2be2 - 0x2d24 unused
 0x2d25 WildStaff combat
@@ -1616,22 +1618,26 @@
 0x315a unicornhead tn
 # 0x315b - 0x315c unused
 0x315d unicornhorn tn
-0x315e FeericMailTunic combat
+0x315e woodMailTunic combat
 # 0x315f unused
-0x3160 FeericMailGorget combat
-0x3161 FeericMailGloves combat
-0x3162 FeericMailLeggings combat
-0x3163 FeericMailSleeves combat
-# 0x3164 - 0x316a unused
-0x316b FeericTunic combat
-0x316c FeericGloves combat
-0x316d FeericGorget combat
-0x316e FeericSleeves combat
-0x316f FeericLeggings combat
+0x3160 woodMailGorget combat
+0x3161 woodMailGloves combat
+0x3162 woodMailLeggings combat
+0x3163 woodMailSleeves combat
+# 0x3164 - 0x3167 unused
+0x3168 ravenhelm combat
+0x3169 NoseHelm combat
+0x316a wingedhelm combat
+0x316b woodTunic combat
+0x316c woodGloves combat
+0x316d woodGorget combat
+0x316e woodSleeves combat
+0x316f woodLeggings combat
 # 0x3170 - 0x3176 unused
 0x3177 CamisaNobre womenswork
 0x3178 CamisaFina womenswork
-# 0x3179 - 0x317a unused
+# 0x3179 unused
+0x317a ValaBoots womenswork
 0x317b LeafTunic combat
 0x317c LeafGloves combat
 0x317d LeafGorget combat

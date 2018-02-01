@@ -1,4 +1,5 @@
 use os;
+use util;
 
 include "include/say";
 include "include/damage";
@@ -9,7 +10,7 @@ include ":attributes:attributes";
 program ultimoSuspiro(param)
    var who := param[1];
 
-   var heal := RandomDiceRoll("2d{}+{}".format(who.getLevel()), AP_GetStat(who, CONSTITUTION));
+   var heal := RandomDiceRoll("2d{}+{}".format(who.getLevel(), AP_GetStat(who, CONSTITUTION)));
    HealFlS(who, heal, 1);
 
    PlayCustomSound(who, 25);

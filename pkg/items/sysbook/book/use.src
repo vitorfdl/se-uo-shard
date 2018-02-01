@@ -9,11 +9,11 @@ include ":charactercreation:feats";
 
 program useBook(who,book)
 	if ( !ReserveItem(book) )
-		SendSysMessage(who, "Outra pessoa esta usando este livro.", SSM_FAIL);
+		SendSysMessageEx(who, "Outra pessoa esta usando este livro.", SSM_FAIL);
 		return 0;
    elseif (GetObjProperty(book, "lang"))
       if (!HaveFeat(who, GetObjProperty(book, "lang")))
-		   SendSysMessage(who, "O livro está em uma língua ilegível por você.", SSM_FAIL);
+		   SendSysMessageEx(who, "O livro está em uma língua ilegível por você.", SSM_FAIL);
          return 0;
       endif
 	endif
@@ -34,7 +34,7 @@ program useBook(who,book)
 			// 		SendOpenBook(who, book);
 			// 	endif
 			// endif
-			SendSysMessage(who, "Você optou por não romper o selo");
+			SendSysMessageEx(who, "Você optou por não romper o selo");
 			return;
 		endif
 		PrintTextAbove(book, "Rompe o selo", who);

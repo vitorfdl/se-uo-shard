@@ -119,7 +119,7 @@ function removeFeat(mobile, feat_name)
    return 1;
 endfunction
 
-function GetNewFeatsList(who, type := 0, levels := array{})
+function GetNewFeatsList(who, type := "normal", levels := array{})
 	var feat_cfg := ReadConfigFile(":charactercreation:feats");
 	var feat_list := array{};
 	foreach feat in (GetConfigStringKeys(feat_cfg))
@@ -129,7 +129,7 @@ function GetNewFeatsList(who, type := 0, levels := array{})
 		endif
 
 		feat := FeatInfo(feat, 1);
-		if (feat.level && feat.level < who.GetLevel())
+		if (feat.level && cint(feat.level) < who.GetLevel())
 			continue;
 		endif
 
@@ -137,10 +137,12 @@ function GetNewFeatsList(who, type := 0, levels := array{})
       if (!who.cmdlevel)
          if(type == "Classe")
             if (feat.type != "Classe")
-               pass := 0;
+               continue;
             elseif (!(feat.level in levels))
-               pass := 0;
+               continue;
             endif
+         elseif (feat.type)
+            continue;
          endif
 
          foreach req in (feat.requirements)
@@ -171,6 +173,7 @@ function GetNewFeatsList(who, type := 0, levels := array{})
       else
          pass := 1;
       endif
+
       if (pass)
          feat_list += feat;
       endif
@@ -198,7 +201,7 @@ function FeatInfo(feat, plus := 0)
 		"cooldown" := GetConfigInt( elem, "Cooldown" ),
 
 		"level" := GetConfigInt( elem, "Level" ),
-		"type" := GetConfigInt( elem, "Type" )
+		"type" := GetConfigString( elem, "Type" )
 	};
 
 	if (plus)

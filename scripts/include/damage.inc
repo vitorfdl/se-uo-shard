@@ -58,7 +58,7 @@ function SelectAttribute(attacker, attacker_weapon)
 	return attribute;
 endfunction
 
-function CalculateRawDamage(attacker, wpn_elem)
+function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
 	if (wpn_elem.dicedmg)
 		var dmg       := wpn_elem.dicedmg;
       if (GetObjProperty(attacker, "dicedmg"))
@@ -68,14 +68,16 @@ function CalculateRawDamage(attacker, wpn_elem)
 		return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
 	endif
 
-   var attribute := SelectAttribute(attacker, attacker_weapon);
+   if (!wpn) wpn := attacker.weapon; endif
+
+   var attribute := SelectAttribute(attacker, attacker.weapon);
    var dmg       := wpn_elem.Damage;
    if (GetObjProperty(attacker, "dicedmg"))
       dmg := GetObjProperty(attacker, "dicedmg");
    endif
    dmg :=  RandomDiceRoll(cstr(dmg)) + AP_GetStat(attacker, attribute, RETURN_BONUS) + GetAttackerDMGBonus(attacker);
 
-   return ( dmg + attacker_weapon.dmg_mod );
+   return ( dmg + attacker.weapon.dmg_mod );
 endfunction
 
 function GetAttackerDMGBonus(attacker)
@@ -105,9 +107,9 @@ function HealFLS(targ, amt, show_heal := 1)
 		return;
 	endif
 
-   var start_vital := AP_GetVital(who, HITS);
+   var start_vital := AP_GetVital(targ, HITS);
 	HealDamage(targ, amt);
-   var amt_healed := AP_GetVital(who, HITS) - start_vital;
+   var amt_healed := AP_GetVital(targ, HITS) - start_vital;
 	if (!show_heal || amt_healed <= 0)	
 		return;
 	endif

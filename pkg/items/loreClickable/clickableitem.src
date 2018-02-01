@@ -44,8 +44,8 @@ program command_Message(who, item)
       GFAddButton(gump, 172, y+80+10, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_TEST);
 		GFHTMLArea(gump,  170, y+80+10, 115, 25, "<basefont color=#7FFFD4><center>Testar Gump", 1);
       
-      GFAddButton(gump, 172, y+110, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_SET_COND);
-		GFHTMLArea(gump,  170, y+110, 115, 25, "<basefont color=#7FFFD4><center>Add Condições", 1);
+      // GFAddButton(gump, 172, y+110, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_SET_COND);
+		// GFHTMLArea(gump,  170, y+110, 115, 25, "<basefont color=#7FFFD4><center>Add Condições", 1);
 		var input := GFSendGump(who, gump);
 		input := input[0];
 
