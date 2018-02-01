@@ -45,6 +45,10 @@ program expBar(params)
          reopen := 0;
          return;
       endif
+
+      if (RandomInt(5) == 1)
+         break;
+      endif
    endwhile
 
    if (reopen)
