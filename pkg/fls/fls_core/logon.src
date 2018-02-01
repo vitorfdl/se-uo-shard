@@ -3,6 +3,6 @@ use os;
 
 program SendTips(who)
    start_script(":fls_core:tn/character_control", who);
-   start_script(":fls_core:tn/expbar", who);
+   start_script(":fls_core:tn/expbar", array{who, who.cmdlevel});
 endprogram
 

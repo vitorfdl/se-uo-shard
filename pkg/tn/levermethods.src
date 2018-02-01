@@ -18,7 +18,7 @@ exported function reset(lever)
 		lever.invisible := 1;
 	endif
 
-	if ( GetObjProperty(lever, "HaveTrap"))
+	if ( GetObjProperty(lever, "HaveTrap") && !ExistTrap(lever))
       var trapstrength := CInt(GetObjProperty(lever,"trap_strength"));
       if (!trapstrength) trapstrength := 2; endif
       AddTrap(lever, GetObjProperty(lever, "HaveTrap"), trapstrength);

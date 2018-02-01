@@ -38,11 +38,14 @@ program command_Message(who, item)
       GFAddButton(gump, 172, y+20+10, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LANG);
 		GFHTMLArea(gump,  170, y+20+10, 115, 25, "<basefont color=#7FFFD4><center>Alterar idioma", 1);
       
-      GFAddButton(gump, 172, y+20+20+20, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_TEXT);
-		GFHTMLArea(gump,  170, y+20+20+20, 115, 25, "<basefont color=#7FFFD4><center>Alterar Texto", 1);
+      GFAddButton(gump, 172, y+40+20, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_TEXT);
+		GFHTMLArea(gump,  170, y+40+20, 115, 25, "<basefont color=#7FFFD4><center>Alterar Texto", 1);
       
-      GFAddButton(gump, 172, y+20+20+20+30, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_TEST);
-		GFHTMLArea(gump,  170, y+20+20+20+30, 115, 25, "<basefont color=#7FFFD4><center>Testar Gump", 1);
+      GFAddButton(gump, 172, y+80+10, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_TEST);
+		GFHTMLArea(gump,  170, y+80+10, 115, 25, "<basefont color=#7FFFD4><center>Testar Gump", 1);
+      
+      GFAddButton(gump, 172, y+110, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_SET_COND);
+		GFHTMLArea(gump,  170, y+110, 115, 25, "<basefont color=#7FFFD4><center>Add Condições", 1);
 		var input := GFSendGump(who, gump);
 		input := input[0];
 

@@ -68,6 +68,16 @@ function LearnFeat(who, feat, minus_point := 1, gives := 1)
 		return 0;
 	endif
 
+
+   if (feat.type == "Classe")
+      var class_feats := chardata.class_feats;
+      if (!feat_list)
+         class_feats := array{};
+      endif
+      class_feats.append(feat.level);
+      chardata.class_feats := class_feats;
+   endif
+
 	feat_list.append(feat.name);
 	chardata.Feats := feat_list;
 	SetObjProperty(who, "chardata", chardata);
@@ -89,7 +99,6 @@ function LearnFeat(who, feat, minus_point := 1, gives := 1)
          sleepms(2);
       endforeach
    endif
-
    return 1;
 endfunction
 
@@ -110,7 +119,7 @@ function removeFeat(mobile, feat_name)
    return 1;
 endfunction
 
-function GetNewFeatsList(who)
+function GetNewFeatsList(who, type := 0, levels := array{})
 	var feat_cfg := ReadConfigFile(":charactercreation:feats");
 	var feat_list := array{};
 	foreach feat in (GetConfigStringKeys(feat_cfg))
@@ -126,6 +135,14 @@ function GetNewFeatsList(who)
 
 		var pass := 1;
       if (!who.cmdlevel)
+         if(type == "Classe")
+            if (feat.type != "Classe")
+               pass := 0;
+            elseif (!(feat.level in levels))
+               pass := 0;
+            endif
+         endif
+
          foreach req in (feat.requirements)
             req := SplitWords(req);
 
@@ -180,7 +197,8 @@ function FeatInfo(feat, plus := 0)
 
 		"cooldown" := GetConfigInt( elem, "Cooldown" ),
 
-		"level" := GetConfigInt( elem, "Level" )
+		"level" := GetConfigInt( elem, "Level" ),
+		"type" := GetConfigInt( elem, "Type" )
 	};
 
 	if (plus)

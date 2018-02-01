@@ -13,7 +13,7 @@ program useBook(who,book)
 		return 0;
    elseif (GetObjProperty(book, "lang"))
       if (!HaveFeat(who, GetObjProperty(book, "lang")))
-		   SendSysMessage(who, "O livro está em uma lingua ilegível por você.", SSM_FAIL);
+		   SendSysMessage(who, "O livro está em uma língua ilegível por você.", SSM_FAIL);
          return 0;
       endif
 	endif

@@ -235,6 +235,12 @@ function GetAttackerChance(attacker, defender)
 	endif
 
    dice_gain += GetAttackerFeatPenalty(attacker, defender);
+   
+   var marca := GetObjProperty(attacker, "#marca_inabalavel");
+   if (marca && marca != defender.serial)
+      dice_gain := -1;
+   endif
+
 
 	var attribute := "Strength";
 	var bonus := 0;
@@ -464,6 +470,10 @@ function GetAttackerFeatPenalty(attacker, defender)
             break;
          endif
       endforeach
+   endif
+
+   if (GetObjProperty(defender, "#assassinate") == attacker.serial)
+      bonus += 1;
    endif
 
    return bonus;

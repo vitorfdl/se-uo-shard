@@ -58,28 +58,24 @@ function SelectAttribute(attacker, attacker_weapon)
 	return attribute;
 endfunction
 
-function CalculateRawDamage(attacker, attacker_weapon)
-   var wpn_elem := GetItemCFGInfo(attacker, attacker_weapon);
-	if (attacker.npctemplate)
+function CalculateRawDamage(attacker, wpn_elem)
+	if (wpn_elem.dicedmg)
 		var dmg       := wpn_elem.dicedmg;
       if (GetObjProperty(attacker, "dicedmg"))
          dmg := GetObjProperty(attacker, "dicedmg");
       endif
 		var attribute := wpn_elem.Attribute;
 		return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
-	else
-		var attribute := SelectAttribute(attacker, attacker_weapon);
-		var dmg;
-		if ( GetObjProperty(attacker, "metamorfose") != error)
-			var dmg       := GetObjProperty(attacker, "dicedmg");
-			var attribute := GetObjProperty(attacker, "attrdmg");
-			dmg := RandomDiceRoll( dmg ) + AP_GetStat(attacker, attribute, RETURN_BONUS);
-		else
-			dmg :=  RandomDiceRoll(cstr(wpn_elem.Damage)) + AP_GetStat(attacker, attribute, RETURN_BONUS) + GetAttackerDMGBonus(attacker);
-		endif
-		
-		return ( dmg + attacker_weapon.dmg_mod );
 	endif
+
+   var attribute := SelectAttribute(attacker, attacker_weapon);
+   var dmg       := wpn_elem.Damage;
+   if (GetObjProperty(attacker, "dicedmg"))
+      dmg := GetObjProperty(attacker, "dicedmg");
+   endif
+   dmg :=  RandomDiceRoll(cstr(dmg)) + AP_GetStat(attacker, attribute, RETURN_BONUS) + GetAttackerDMGBonus(attacker);
+
+   return ( dmg + attacker_weapon.dmg_mod );
 endfunction
 
 function GetAttackerDMGBonus(attacker)
@@ -109,21 +105,22 @@ function HealFLS(targ, amt, show_heal := 1)
 		return;
 	endif
 
+   var start_vital := AP_GetVital(who, HITS);
 	HealDamage(targ, amt);
-	
-	if (!show_heal)	
+   var amt_healed := AP_GetVital(who, HITS) - start_vital;
+	if (!show_heal || amt_healed <= 0)	
 		return;
 	endif
 
-	SendSystemReport(targ, amt, SYSTEM_HEAL, targ);
+	SendSystemReport(targ, amt_healed, SYSTEM_HEAL, targ);
 	if (show_heal.isA(POLCLASS_MOBILE))
-		SendSystemReport(targ, amt, SYSTEM_HEAL, show_heal);
+		SendSystemReport(targ, amt_healed, SYSTEM_HEAL, show_heal);
       var mobs := ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY);
 	endif
 endfunction
 
 function ApplyDamageEX(defender, dmg, type, source := 0)
-	ApplyRawDamage( defender, dmg );
+	ApplyRawDamage( defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 
 	if (source)
 		SetLastDamageInfo(defender, dmg, type, source);

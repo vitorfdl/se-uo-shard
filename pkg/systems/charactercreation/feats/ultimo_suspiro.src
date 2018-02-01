@@ -1,0 +1,18 @@
+use os;
+
+include "include/say";
+include "include/damage";
+include "include/sounds";
+include ":timedscripts:timedScripts";
+include ":attributes:attributes";
+
+program ultimoSuspiro(param)
+   var who := param[1];
+
+   var heal := RandomDiceRoll("2d{}+{}".format(who.getLevel()), AP_GetStat(who, CONSTITUTION));
+   HealFlS(who, heal, 1);
+
+   PlayCustomSound(who, 25);
+   SendSysMessageEx(who, "Você dá seu ultimo suspiro e sente-se mais revitalizado.", SSM_INFO);
+   return 1;
+endprogram
