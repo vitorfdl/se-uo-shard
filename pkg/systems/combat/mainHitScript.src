@@ -78,6 +78,9 @@ program MainHitScript( params )
 	DamageFLS(defender, base_damage, damage_type, attacker);
 	EraseObjProperty(attacker, "#backstab");
 
+   ApplyFeatChanges(attacker, defender, dice_roll, base_damage);
+
+   
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll, wpn_a_elem);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll);
 	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll, wpn_a_elem);
@@ -250,6 +253,25 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
 	endforeach
 	
 	return 1;
+endfunction
+
+function ApplyFeatChanges(attacker, defender, byref dice_roll, byref dmg)
+   var marca := GetObjProperty(attacker, "#marca_inabalavel");
+   if (marca != defender.serial)
+      SetObjProperty(defender, "marca_ativado", attacker.serial);
+   endif
+
+   marca := GetObjProperty(attacker, "#marca_ativado");
+   if (marca == defender.serial)
+      dice_roll.critical := 1;
+      EraseObjProperty(attacker, "marca_ativado");
+   endif
+
+   marca := GetObjProperty(defender, "#assassinate");
+   if (marca == attacker.serial)
+      dice_roll.critical := 1;
+      EraseObjProperty(defender, "#assassinate");
+   endif
 endfunction
 
 function ApplyInscriptedRunes(attacker, defender, weapon, armor, damage)

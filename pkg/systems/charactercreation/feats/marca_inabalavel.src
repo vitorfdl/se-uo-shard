@@ -1,0 +1,23 @@
+use os;
+
+include "include/say";
+include "include/damage";
+include ":timedscripts:timedScripts";
+include ":attributes:attributes";
+
+program ultimoSuspiro(param)
+   var who := param[1];
+
+   SendSysMessageEx(who, "Selecione um alvo para receber a marca.", SSM_REQUEST);
+   var targ := Target(who, TGTOPT_HARMFUL);
+   if (!targ.isA(POLCLASS_MOBILE))
+      return SendSysMessageEx(who, "Esse não é um alvo válido!", SSM_INFO);
+   elseif (GetObjProperty(targ, "#marca_inabalavel"))
+      return SendSysMessageEx(who, "Esse alvo já está marcado!", SSM_INFO);
+   endif
+
+   TS_StartTimer(targ, "marca_inabalavel", 40, 1, who);
+   SendSysMessageEx(who, "Você marcou o alvo.", SSM_INFO);
+
+   return 1;
+endprogram

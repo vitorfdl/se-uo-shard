@@ -172,8 +172,25 @@ function BuyTalents(who)
 	if (!who.GetTalentPoints())
 		return SendSysMessageEx(who, "Sem pontos de talento disponiveis.", SSM_FAIL);
 	endif
+   var levels := array{};
+   var type := 0;
+   var mylevel := who.getLevel();
+   if (mylevel >= 6)
+      var chardata := GetObjProperty(who, "chardata");
+      if (mylevel >= 6 && !(6 in chardata.class_feats))
+         levels.append(6);
+      endif
 
-	var feat_list := GetNewFeatsList(who);
+      if (mylevel >= 14 && !(14 in chardata.class_feats))
+         levels.append(14);
+      endif
+
+      if (levels.size() > 0)
+         type := "Classe";
+      endif
+   endif
+
+	var feat_list := GetNewFeatsList(who, type, levels);
 	var gump := GFCreateGump();
 	
 	GFPage(gump, 0);
@@ -189,8 +206,8 @@ function BuyTalents(who)
    var y := 91;
 	foreach feat in feat_list
 		GFAddButton(gump, x, y, 2151, 2152, GF_CLOSE_BTN, _feat_iter+100);
-      GFHTMLArea(gump, x+40, y+5, 180, 20, "<BASEFONT size=5>{}".format(feat.name));
-		GFHTMLArea(gump, x+224, y-18, 413, 70, feat.desc, 1);
+      GFHTMLArea(gump, x+35, y+5, 200, 20, "<BASEFONT size=5>{}".format(feat.name));
+		GFHTMLArea(gump, x+219, y-18, 413, 70, feat.desc, 1);
 
 		if (_feat_iter % 5 != 0)
 			GFGumpPic(gump, x-13, y+50, 57);

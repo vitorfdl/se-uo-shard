@@ -71,7 +71,7 @@ function disparoPoderoso(param)
 		foreach mobile in mobiles
 			if (!(mobile.serial in alreadydamaged) && (mobile != who) && !(mobile in who.party.members))
 				alreadydamaged.Append(mobile.serial);
-	         var basedamage := CalculateRawDamage(who, who.weapon);
+	         var basedamage := CalculateRawDamage(who, elem);
             if (alreadydamaged.size() < 2)
                basedamage += 2;
             endif

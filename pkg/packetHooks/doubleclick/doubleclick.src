@@ -2,6 +2,7 @@ use uo;
 use math;
 use polsys;
 include "include/say";
+include ":charactercreation:feats";
 
 CONST BYTE_DEFENDER := 1;
 
@@ -35,10 +36,10 @@ exported function HandleDoubleClick( who, byref packet )
 	endwhile
 
 	if( Distance(who, defender) > 15 )
-		SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
+		SendSysMessageEx(who, "Você está muito distante.", SSM_FAIL);
 		return 1;
-	elseif ( abs(who.z - defender.z ) > 10 && defender.isa(POLCLASS_MOBILE) && (!who.weapon.isBow() && !who.weapon.isMagicWeapon()))
-		SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
+	elseif ( abs(who.z - defender.z ) > 12 && defender.isa(POLCLASS_MOBILE) && (!who.weapon.isBow() && !who.weapon.isMagicWeapon()))
+		SendSysMessageEx(who, "Você está muito distante.", SSM_FAIL);
 		return 1;
 	endif
    
@@ -46,6 +47,12 @@ exported function HandleDoubleClick( who, byref packet )
 		SendSysMessageEx(who, "Você não enxerga o alvo.", SSM_FAIL);
 		return 1;
 	endif
+
+   if (!defender.warmode && defender.isA(POLCLASS_MOBILE))
+      if (HaveFeat(who, "Assassinato"))
+         SetObjProperty(defender, "#assinate", who.serial);
+      endif
+   endif
 
 	return 0;
 endfunction

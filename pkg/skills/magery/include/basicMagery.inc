@@ -134,8 +134,12 @@ function FailSpell(who, no_sound := 0)
 endfunction
 
 function TS_ConsumeMana(mobile, qty) 
-	if (!AP_ConsumeVital(mobile, MANA, qty))
-		var hit_qty := qty - GetVital(mobile, MANA);
+	if (!AP_ConsumeVital(mobile, MANA, cint(qty)))
+		var hit_qty := cint(qty);
+      if (GetVital(mobile, MANA) > 0)
+         hit_qty -= GetVital(mobile, MANA);
+      endif
+      
 		AP_ConsumeVital(mobile, MANA, GetVital(mobile, MANA));
 		ApplyDamageEX(mobile, hit_qty * 2, "FORCED");
 		if (mobile.dead)

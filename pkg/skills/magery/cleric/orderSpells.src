@@ -4,6 +4,7 @@ use os;
 include "include/client";
 include "include/sysEvent";
 include ":charactercreation:characters";
+include ":charactercreation:feats";
 include ":magery:clerics";
 include ":magery:tnmagery";
 include ":tn:tngumps";
@@ -18,7 +19,11 @@ program orderSpells(who, item)
 
    var cfg          := ReadConfigFile(":magery:config/cleric");
    var char_level   := who.GetLevel();
-   var cleric_slots := char_level+ 2;
+   var cleric_slots := char_level+2;
+   if (HaveFeat(who, "Abençoado"))
+      cleric_slots += 2;
+   endif
+
    var cleric_list  := GetObjProperty(who, "cleric_list");
    if (!cleric_list)
       cleric_list := array{};

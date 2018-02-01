@@ -7,8 +7,14 @@ include "include/client";
 include ":gumps:gumps_ex";
 include ":attributes:attributes";
 
-program expBar(who)
-   if (who.cmdlevel) return; endif
+program expBar(params)
+   var who := params[1];
+   var no_start := params[2];
+   if (not_start)
+      CloseGump(who, GUMPID_EXPBAR, 2);
+      return;
+   endif
+   
    var x := 200;
    var y := 500;
 	var expbar := GFCreateGump();
@@ -18,6 +24,12 @@ program expBar(who)
    GFResizePic(expbar, x+7, y+8, 9270, 526, 66);
    GFResizePic(expbar, x+21, y+21, 9300, 502, 39);
    GFHTMLArea(expbar, x+30, y+23, 173, 20, "<BASEFONT Size=5 color=#332a1c>Experiência");
+   if (cint(who.account.GetProp("expboost")) >= who.getLevel())
+      GFHTMLArea(expbar, x+200, y+23, 173, 20, "<BASEFONT Size=5 color=#ADD8E6>EXP Dobrada");
+   endif
+   if (who.getExp >= GetExpCap(who))
+      GFHTMLArea(expbar, x+100, y+23, 173, 20, "<BASEFONT Size=5 color=#FF6666>Cap Semanal Atingido");
+   endif
    GFGumpPic(expbar, x+499, y+31, 9771, 0);
    GFGumpPicTiled(expbar, x+30, y+48, 480, 6, 0x2616);
 
@@ -27,7 +39,10 @@ program expBar(who)
       var exp_width := getExpLength(who.getExp(), who.getMaxExp(), 480);
       GFGumpPicTiled(temp_gump, x+30, y+48, exp_width, 6, 9751);
 
-      GFSendGump(who, temp_gump);
+      var i := GFSendGump(who, temp_gump);
+      if (i == 2)
+         return;
+      endif
    endwhile
 
 endprogram
