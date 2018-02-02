@@ -32,17 +32,23 @@ program trapScript(params)
 
 	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, 3, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL, object.realm);
 	foreach mobile in mobiles
+      sleepms(2);
 		if (!mobile.master)
-			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha de dardos.", SSM_FAIL);
-
 			if (rollResistDice(mobile, DEXTERITY) >= diff)
+            if (HaveFeat(mobile, "Ladrão de Masmorras"))
+               SendSysMessageEx(mobile, "Você evitou a armadilha.", SSM_INFO);
+               continue;
+            endif
             SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            SendSystemReport(mobile, "*esquivou*", SSM_FAIL, "all");
+            dmgfinal := CInt(dmgfinal * 0.5);
+         elseif (HaveFeat(mobile, "Ladrão de Masmorras"))
+            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
             dmgfinal := CInt(dmgfinal * 0.5);
 			endif	
+			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha de dardos.", SSM_FAIL);
 
 			PerformAction(mobile, ANIM_HIT);
-			DamageFLS(mobile, dmgfinal);
+			DamageFLS(mobile, dmgfinal, DMG_PIERCING);
 			mobile.hidden := 0;
 		endif
 	endforeach

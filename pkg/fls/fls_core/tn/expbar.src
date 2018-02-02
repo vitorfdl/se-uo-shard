@@ -14,7 +14,7 @@ program expBar(params)
       CloseGump(who, GUMPID_EXPBAR, 2);
       return;
    endif
-   
+   SetObjProperty(who, "#expbar", GetPid());
    var x := 200;
    var y := 500;
 	var expbar := GFCreateGump();
@@ -35,7 +35,7 @@ program expBar(params)
 
    var reopen := 1;
    while (who.connected)
-      GFCloseGumpTimed(who, GUMPID_EXPBAR, 15);
+      GFCloseGumpTimed(who, GUMPID_EXPBAR, 60);
       var temp_gump := expbar;
       var exp_width := getExpLength(who.getExp(), who.getMaxExp(), 480);
       GFGumpPicTiled(temp_gump, x+30, y+48, exp_width, 6, 9751);

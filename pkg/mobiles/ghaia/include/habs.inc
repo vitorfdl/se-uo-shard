@@ -107,7 +107,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "teleport":       res := teleport(hab_target, hab_special); break;
       "constrictSpell": res := constrict(hab_target, hab_dice, cint(hab_special)); break;
       "charming":       res := charm(hab_target, hab_dice, cint(hab_special)); break;
-      "SoproEuforia":   res := euforic(hab_dice, cint(hab_special)); break;
+      "SoproEuforia":   res := euforic(hab_target, hab_dice, cint(hab_special)); break;
       "hunterMark":     res := hunterMark(hab_target); break;
       "fireWall":       res := fireWall(hab_target, hab_dice); break;
       "castSpell":      res := castSpell(hab_target, hab_dice, hab_special); break;
@@ -165,7 +165,7 @@ function pullCloser(dist, times)
          var enemies := GetEnemiesNear(me, dist);
          foreach mob in enemies
             sleepms(2);
-            if ( Distance(me, mob < 1) )
+            if ( Distance(me, mob) < 1 )
                continue;
             endif
             if (CheckLineOfSight(me, mob))
@@ -348,7 +348,7 @@ function constrict(mobile, ts_time, diff)
    return 1;
 endfunction
 
-function euforic(mobile, diff)
+function euforic(mobile, ts_time, diff)
    playCastAnimation();
    if (Distance(me, mobile) > 2)
       return 0;
@@ -365,7 +365,7 @@ function euforic(mobile, diff)
             if (rollResistDice(m, CONSTITUTION) > diff)
                PrintText(m, "*resistido*", SSM_INFO);
             else
-               TS_StartTimer(m, "euforic", 5, diff);
+               TS_StartTimer(m, "euforic", ts_time, diff);
             endif
          endif
          sleepms(2);

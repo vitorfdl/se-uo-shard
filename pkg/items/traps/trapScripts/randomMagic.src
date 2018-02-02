@@ -39,9 +39,9 @@ program trapScript(params)
 	elseif ( rand == 3 )
 		TS_StartTimer(mobile, "paralysis", 120, 50, 3);
 	elseif ( rand == 4 )
-	      PlayLightningBoltEffect( mobile );
-	      PlaySoundEffect( mobile, 0x2a );
-	      ApplyDamageEX(mobile, 60, DMG_ENERGY);
+      PlayLightningBoltEffect( mobile );
+      PlaySoundEffect( mobile, 0x2a );
+      ApplyDamageEX(mobile, 8, DMG_ENERGY);
 	endif
 
 	

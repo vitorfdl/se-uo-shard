@@ -85,6 +85,7 @@ program skillremoveTrap(who)
 		item.usescript := "";
 		SetName(item, item.desc);
 		ExpGain(who, dif, dice_roll);
+      who.SetAchievement("trap", 1);
 	elseif ( item.isTrap() )
 		if (GetObjProperty(item, "trap_inativa"))
 			SendSysMessageEx(who, "A armadilha ja esta desativada", SSM_INFO);
@@ -101,6 +102,7 @@ program skillremoveTrap(who)
 			ExpGain(who, "major");
 			SendSysMessageEx( who, "Desativou a armadilha com sucesso.", SSM_INFO);
 			SetObjProperty(item, "trap_inativa", 1);
+         who.SetAchievement("trap", 1);
 			return;
 		endif
 		SendSysMessageEx( who, "Falhou em desarmar a armadilha.", SSM_FAIL);

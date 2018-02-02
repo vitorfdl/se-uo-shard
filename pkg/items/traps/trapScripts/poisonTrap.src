@@ -38,13 +38,20 @@ program trapScript(params)
 	var mobiles := ListMobilesNearLocationEx(object.x, object.y, object.z, 3, LISTEX_FLAG_HIDDEN + LISTEX_FLAG_NORMAL);
 	foreach mobile in mobiles
 		if (!mobile.master)
-			var poisonLvl := trap_info.strength;
-
 			if (rollResistDice(mobile, CONSTITUTION) >= diff)
-				SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
-				continue;
+            if (HaveFeat(mobile, "Ladrão de Masmorras"))
+               SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
+            else
+               SendSysMessageEx(mobile, "Você evitou parte do veneno.", SSM_INFO);
+				   TS_StartTimer(mobile, "defaultPoison", 60, danger-1);
+            endif
 			else
-				TS_StartTimer(mobile, "defaultPoison", 120, danger);
+            if (!HaveFeat(mobile, "Ladrão de Masmorras"))
+               SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
+				   TS_StartTimer(mobile, "defaultPoison", 60, danger-1);
+            else
+               SendSysMessageEx(mobile, "Você evitou o veneno.", SSM_INFO);
+            endif
 			endif
 		endif
 	endforeach

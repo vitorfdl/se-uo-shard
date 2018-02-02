@@ -84,7 +84,7 @@ program Attack(params)
       attacker.hidden := 0;
 		attacker.SetAchievement("sneak_attack", 1);
 		ExpGain(attacker, "minor");
-      if (rollResistDice(defender, PERCEPCAO) <= rollAttrDice(attacker, DEXTERITY) + getProficiencyBonus(attacker, FURTIVIDADE))
+      if (rollAttrDice(defender, WISDOM) + getProficiencyBonus(attacker, PERCEPCAO)  <= rollAttrDice(attacker, DEXTERITY) + getProficiencyBonus(attacker, FURTIVIDADE))
          SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
          bonus_atk += 1;
       endif

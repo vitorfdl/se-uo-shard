@@ -141,10 +141,10 @@ exported function MegaCliloc( who, byref packet )
 			if (elem.DamageType)
 				xDesc += "Tipo: {}<br>".format(elem.DamageType);
 			endif
-         if (elem.Pericia)
+         if (elem.Pericia && !item.isMagicWeapon())
 				xDesc += "Perícia: {}<br>".format(elem.Pericia);
          endif
-         if (elem.WeaponType)
+         if (elem.WeaponType && !item.isMagicWeapon())
 				xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
          endif
 
@@ -239,9 +239,10 @@ exported function MegaCliloc( who, byref packet )
 				if (spell_list != error && spell_list.size() > 0)
 					xDesc += "{} Magias<br>".format(ORANGE);
 					var active_spell := GetObjProperty(item, "active_spell");
+               var lost_slots := 0;
 					foreach spell in spell_list
 						if (spell == 0)
-					      xDesc += "{}SLOT PERDIDO<br>".format(LIGHTGRAY);
+                     lost_slots += 1;
 							continue;
 						elseif (xDesc.search(GetSpellName(spell)))
 							xDesc += "I";
@@ -254,6 +255,10 @@ exported function MegaCliloc( who, byref packet )
 						xDesc += "{}<br>".format(GetSpellName(spell));
                   sleepms(2);
 					endforeach
+
+               if (lost_slots > 0)
+					   xDesc += "{}x {}SLOT PERDIDO<br>".format(lost_slots, LIGHTGRAY);
+               endif
 
                var total_slots := GetObjProperty(item, "magicslot") - spell_list.size();
                for i := 1 to total_slots

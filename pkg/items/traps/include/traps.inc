@@ -45,7 +45,7 @@ function ExistTrap(object)
 		trap_list := array{};
 	endif
 
-   if (trap_list.size < 1 )
+   if (trap_list.size() < 1 )
       return 0;
    endif
 

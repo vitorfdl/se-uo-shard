@@ -5,24 +5,22 @@ include "include/damage";
 include "include/client";
 include "include/sounds";
 include "include/say";
+include ":combat:combat";
 
 program HitScript(params)
 	var attacker	:= params[1];
 	var defender	:= params[2];
 	var weapon	:= params[3];
-	var armor	:= params[4];
-	var basedamage	:= params[5];
-	var rawdamage	:= params[6];
-	params := 0; // Not needed anymore.
-	
-	var dupechance := cint(GetObjProperty(defender, "dupechance"));
-	if (!dupechance)
-		dupechance := 20;
-	endif
-	if (RandomInt(100) < dupechance ) //20% de chance sempre
+	params := 0; // Not needed anymore
+   
+   var wpn_elem := GetItemCFGInfo(attacker, weapon);
+   if (wpn_elem.DamageType == "Corte" || wpn_elem.DamageType == "Eletrecidade")
 		PrintText(defender, "*divide-se em dois*");
-		CreateNpcFromTemplate( defender.npctemplate, defender.x, defender.y, defender.z,  0, defender.realm);
-	endif
+		var npc := CreateNpcFromTemplate( defender.npctemplate, defender.x, defender.y, defender.z,  0, defender.realm);
+      SetObjProprty(npc, "GuardKill", 1);
+      SetObjProprty(npc, "hitsmod", (GetVitalMaximumValue(npc, HITS) / 2) * -1);
+      RecalcVitals(npc);
+   endif
 	
 	return 1;
 endprogram
