@@ -40,10 +40,10 @@ program trapScript(params)
                continue;
             endif
             SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmgfinal := CInt(dmgfinal * 0.5);
+            dmgfinal := CInt(cdbl(dmgfinal) * 0.5);
          elseif (HaveFeat(mobile, "Ladrão de Masmorras"))
             SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmgfinal := CInt(dmgfinal * 0.5);
+            dmgfinal := CInt(cdbl(dmgfinal) * 0.5);
 			endif	
 			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha de dardos.", SSM_FAIL);
 

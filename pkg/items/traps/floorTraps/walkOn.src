@@ -122,16 +122,16 @@ program TrapWalkOn(mobile, trap)
       var dmg := getTrapDamage(strength, danger);
       
 		if (rollResistDice(mobile, DEXTERITY) > diff)
-         if (HaveFeat(mobile, "Ladrão de Masmorras"))
+         if (!HaveFeat(mobile, "Ladrão de Masmorras"))
             SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmg := CInt(dmg * 0.5);
+            dmg := CInt(cdbl(dmgfinal) * 0.5);
          else
             SendSysMessageEx(mobile, "Você evitou a armadilha", SSM_INFO);
             dmg := 0;
          endif
       elseif (HaveFeat(mobile, "Ladrão de Masmorras"))
          SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-         dmg := CInt(dmg * 0.5);
+         dmg := CInt(cdbl(dmgfinal) * 0.5);
 		endif
       
       
