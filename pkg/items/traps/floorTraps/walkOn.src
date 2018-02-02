@@ -14,10 +14,11 @@ use util;
 include "include/damage";
 include "include/say";
 include ":blood:blood";
-include ":charactercreation:habilidades";
+include ":charactercreation:feats";
 include "include/sysEvent";
 include ":timedscripts:timedScripts";
 include ":fls_core:fls_characters";
+include ":traps:traps";
 
 program TrapWalkOn(mobile, trap)
 	if ( mobile.dead )

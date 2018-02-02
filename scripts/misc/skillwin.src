@@ -75,7 +75,7 @@ function skillWindow(who)
 		BuyTalents(who);
 		//use feat
 	elseif(input[0] == 71)
-      var pid := GetObjProperty(me, "#expbar");
+      var pid := GetObjProperty(who, "#expbar");
       if (GetProcess(pid))
          CloseGump(who, GUMPID_EXPBAR, 2);
       else
@@ -88,7 +88,7 @@ function buildGump(who)
 	var gump := GFCreateGump();
 	GFDisposable(gump, 0);
 	GFSetID(gump, GUMPID_SKILLLIST);
-	GFResizePic(gump, 526, 42, 40000, 79, 48); //Options background
+	GFResizePic(gump, 526, 42, 40000, 79, 68); //Options background
 	GFResizePic(gump, 229, 13, 39925, 347, 465); //Default Background
 
 	GFHTMLArea(gump, 287, 27, 60, 20, "<BASEFONT SIZE=5 COLOR=#ffffea>Pericias");
@@ -127,7 +127,7 @@ function buildGump(who)
 			GFAddButton(gump, f_x, f_y, 2224, 2224, GF_CLOSE_BTN, 100+_feat_iter); //Usar Talento
 		endif
 		GFGumpPic(gump, f_x+14, f_y-5, 40135, 0);
-		if (feat.desc)
+		if (feat_info.desc)
 			GFTooltipText(gump, "{}".format(feat_info.desc));
 		endif
 		GFTextLine(gump, f_x+18, f_y-3, 1152, feat_info.name);
@@ -140,7 +140,7 @@ function buildGump(who)
 	// GFGumpPic(gump, 577, 59, 4033, 1259);
 	GFAddButton(gump, 579, 57, 4033, 4033, GF_CLOSE_BTN, 70); //Comprar Talento
 	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponíveis");
-	GFAddButton(gump, 579, 57+20, 4033, 4033, GF_CLOSE_BTN, 71); //Comprar Talento
+	GFAddButton(gump, 581, 57+23, 0x93A, 0x93A, GF_CLOSE_BTN, 71); //Comprar Talento
 	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Ativar/Desativar Barra de EXP");
 
 	AttrGump(who, gump);

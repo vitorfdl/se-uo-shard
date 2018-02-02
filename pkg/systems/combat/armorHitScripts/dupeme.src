@@ -17,8 +17,8 @@ program HitScript(params)
    if (wpn_elem.DamageType == "Corte" || wpn_elem.DamageType == "Eletrecidade")
 		PrintText(defender, "*divide-se em dois*");
 		var npc := CreateNpcFromTemplate( defender.npctemplate, defender.x, defender.y, defender.z,  0, defender.realm);
-      SetObjProprty(npc, "GuardKill", 1);
-      SetObjProprty(npc, "hitsmod", (GetVitalMaximumValue(npc, HITS) / 2) * -1);
+      SetObjProperty(npc, "GuardKill", 1);
+      SetObjProperty(npc, "hitsmod", (AP_GetVitalMaximumValue(npc, HITS) / 2) * -1);
       RecalcVitals(npc);
    endif
 	

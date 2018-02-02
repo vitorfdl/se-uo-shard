@@ -261,6 +261,10 @@ PerformAction(who, 0x0a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay)
 endif
 
 if ( (input[31]==1) )
+PerformAction(who, 0xB, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
+endif
+
+if ( (input[31]==1) )
 //PerformAction(who, 0x0b, 5, 1, 0, 1, 100 );
 // PerformAction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);
 PerformAction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay);

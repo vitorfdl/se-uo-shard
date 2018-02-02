@@ -156,14 +156,14 @@ function clonar(newlook, oldlook)
 	
 	var newhits := AP_GetVital(oldlook, "hits");
 	var newmana := AP_GetVital(oldlook, "mana");
-	if ( newhits == GetVitalMaximumValue(oldlook, "hits") )
+	if ( newhits == AP_GetVitalMaximumValue(oldlook, "hits") )
 		newhits := AP_GetVitalMaximumValue(newlook, "hits");
 	endif
-	if ( newmana == GetVitalMaximumValue(oldlook, "mana") )
+	if ( newmana == AP_GetVitalMaximumValue(oldlook, "mana") )
 		newmana := AP_GetVitalMaximumValue(newlook, "mana");
 	endif
 	SetVital(newlook, "hits", newhits);
-	SetVital(newlook, "stamina", CInt(GetVitalMaximumValue(newlook, "stamina")));
+	SetVital(newlook, "stamina", CInt(AP_GetVitalMaximumValue(newlook, "stamina")));
 	SetVital(newlook, "mana", newmana);
 
 	foreach x in itemlist

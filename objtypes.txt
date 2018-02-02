@@ -2333,8 +2333,7 @@
 0xff97 armadilhafogo traps
 0xff98 armadilhaflecha traps
 0xff99 atrairinimigo traps
-0xff9a beartrap traps
-# 0xff9b - 0xffe0 unused
+# 0xff9a - 0xffe0 unused
 0xffe1 mushrooms2 food
 # 0xffe2 - 0x10fff unused
 0x11000 SmallBoat boat
