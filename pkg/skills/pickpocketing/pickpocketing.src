@@ -55,6 +55,9 @@ program skill_Stealing(mobile)
 	elseif ( !IsBehind(targ, mobile.x, mobile.y) && targ.IsA(POLCLASS_MOBILE) )
 		SendSysMessageEx(mobile, "Você precisa estar atrás do alvo que deseja roubar.", SSM_FAIL);
 		return 0;
+   elseif (!CheckLosAt(mobile, targ.x, targ.y, targ.z))
+		SendSysMessageEx(mobile, "Você não tem visão do alvo.", SSM_FAIL);
+		return 0;
 	endif
 
 	var advantage := (getglobalproperty("dia") == "noite")*-1;
@@ -85,7 +88,7 @@ program skill_Stealing(mobile)
 	// endforeach
 	var check := rollAttrDice(mobile, DEXTERITY, 0, struct{ "get_critical" := 1, "failure" := 3}) + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
 	if ( check.dice <= diff )
-      SendSysMessageEx(mobile, "Você percebe que não se disfarcou bem e recua para não chamar atenção.", SSM_FAIL);
+      SendSysMessageEx(mobile, "Você percebe que não se disfarçou bem e recua para não chamar atenção.", SSM_FAIL);
       if (targ.isA(POLCLASS_MOBILE))
          SendSystemReport(mobile, "O alvo parece ter percebido algo.", SSM_FAIL);
          SendSystemReport(targ, "Você sentiu algo na sua bolsa.", SSM_INFO, targ);
