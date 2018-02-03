@@ -39,7 +39,7 @@ function ModelMobListData(entry := struct{})
         entry.+power := 1;
     endif
 
-    if (lower(entry.type) != "melee" && lower(entry.type) != "ranged" && lower(entry.type) != "boss" && lower(entry.type) != "spellcaster") 
+    if (lower(entry.type) != "melee" && lower(entry.type) != "ranged" && lower(entry.type) != "spellcaster") 
         entry.+type := "melee";
     endif
 

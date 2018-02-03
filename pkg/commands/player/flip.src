@@ -70,6 +70,7 @@ program textcmd_flip (me)
          graphic_array[i] := new_obj_graphic;
          i := i+1;
       endif
+      sleepms(2);
    endwhile
 
    if (graphic_array.size() == 0)

@@ -279,7 +279,11 @@ exported function FillQueue(spawnpoint)
       spawn_queue := GetObjProperty(spawnpoint, "spawnqueue");
 
       foreach mob_config in (spawngroup.mob_list)
-         if (!(mob_config.type in config.type) || mob_config.power > config.level)
+         if (mob_config.isBoss)
+            mob_config.type := "boss";
+         endif
+         
+         if ((!(mob_config.type in config.type)) || mob_config.power > config.level)
             continue;
          elseif (!(mob_config.daytime in array{ "always", "lua nova"}) && daytime != mob_config.daytime)
             continue;
@@ -352,21 +356,25 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       return 1;
    endif
 
+   var spot = SystemFindObjectBySerial(config.spot_serial);
+
    var i, x, y, z, spawned, success := 0;
    var loscheck := (config.loscheck == 1);
 	while(success == 0)
+		sleepms(5);
 		if(config.range == 0 || i >= 10)
 			x := spawnpoint.x;
 			y := spawnpoint.y;
 			z := spawnpoint.z;
-		elseif(spawnpoint.z >= 0)
+		elseif(spawnpoint.z > spot.z)
 			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
 			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
 			z := GetWorldHeight(x, y);
-		elseif(spawnpoint.z < 0)
+         if (z < spawnpoint.z) z := spawnpoint.z+5; endif
+		elseif(spawnpoint.z <= spot.z)
 			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
 			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
-			z := spawnpoint.z;
+			z := spawnpoint.z+5;
 		endif
 
 		if(loscheck && !CheckLosAt(spawnpoint, x, y, z))
@@ -385,8 +393,6 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       endif
 
       success := 1;
-
-		sleepms(5);
 	endwhile
 
    if (spawned == error || !spawned.serial)
