@@ -577,7 +577,7 @@ function BoatFollowCourse(boat)
 	else
       var raw_facing := GetFacing(boat.x, boat.y, newpoint[1], newpoint[2]);
 	   var newfacing := DetermineTurnCode(boat, raw_facing);
-      if( prevfacing != newfacing )
+      if( prevfacing != newfacing/2 )
          TurnBoat(boat, newfacing );
       endif
 		MoveBoatRelative(boat, raw_facing - boat.facing);

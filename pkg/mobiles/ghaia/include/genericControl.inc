@@ -10,7 +10,7 @@ function genericControl()
 	set_critical(0);
 	SetWarMode( 0 );
 	ev := os::wait_for_event(0);
-	wanders := 0;
+	wanders := 30;
 	EnableMainEvents();
 	Set_Event_Queue_Size(50);
    var loops := 0;

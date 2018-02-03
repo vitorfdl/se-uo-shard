@@ -15,7 +15,7 @@ program HitScript(params)
 	// var rawdamage	:= params[6];
 	// params := 0; // Not needed anymore.
 
-   var msgs := array{"Parte o inimigo ao meio", "Corta a cabeça", "Atravessa o inimigo com a arma"};
+   var msgs := array{"*Parte o inimigo ao meio*", "*Corta a cabeça*", "*Atravessa o inimigo com a arma*"};
    if (AP_GetVital(defender, HITS) <= AP_GetVitalMaximumValue(defender, HITS) * 0.2)
       PrintText(attacker, msgs.randomentry(), SSM_FAIL);
       ApplyRawDamage(defender, 200);

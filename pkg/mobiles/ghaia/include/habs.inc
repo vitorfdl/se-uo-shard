@@ -185,11 +185,11 @@ endfunction
 
 
 function electricCone(mobile, dmg, dist)
-   PrintText(me, "*baforada elétrica*");
+   PrintText(me, "*baforada*");
    var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
    points.erase(points.size());
    points.erase(points.size()-2);
-   dmg := "{}d2".format(dmg);
+   dmg := "{}d4".format(dmg);
    for i := 1 to 8
       foreach p in points
          var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);

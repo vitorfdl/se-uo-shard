@@ -356,7 +356,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       return 1;
    endif
 
-   var spot = SystemFindObjectBySerial(config.spot_serial);
+   var spot := SystemFindObjectBySerial(config.spot_serial);
 
    var i, x, y, z, spawned, success := 0;
    var loscheck := (config.loscheck == 1);
