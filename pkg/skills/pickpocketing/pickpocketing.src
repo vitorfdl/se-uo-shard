@@ -55,9 +55,6 @@ program skill_Stealing(mobile)
 	elseif ( !IsBehind(targ, mobile.x, mobile.y) && targ.IsA(POLCLASS_MOBILE) )
 		SendSysMessageEx(mobile, "Você precisa estar atrás do alvo que deseja roubar.", SSM_FAIL);
 		return 0;
-   elseif (!CheckLosAt(mobile, targ.x, targ.y, targ.z))
-		SendSysMessageEx(mobile, "Você não tem visão do alvo.", SSM_FAIL);
-		return 0;
 	endif
 
 	var advantage := (getglobalproperty("dia") == "noite")*-1;

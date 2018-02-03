@@ -19,7 +19,7 @@ use uo;
 
 include "include/say";
 
-CONST FLIP_CONFIG_FILE := ("::flip");
+CONST FLIP_CONFIG_FILE := (":*:flip");
 
 program textcmd_flip (me)
    var flip_config := ReadConfigFile(FLIP_CONFIG_FILE);
@@ -55,18 +55,18 @@ program textcmd_flip (me)
    endif
 
    var object_graphic := object.graphic;
-   var new_obj_graphic;
+   var new_obj_graphic := object_graphic;
    var graphic_array := array{};
    var i := 1;
 
-   while ( object_graphic != new_obj_graphic )
-      new_obj_graphic := flip_config[CInt(new_obj_graphic)].ChangeTo;
+   do
+      i += 1;
+      new_obj_graphic := GetConfigInt(flip_config[CInt(new_obj_graphic)], "ChangeTo");
       if (!new_obj_graphic) break; endif
 
-      graphic_array.append(new_obj_graphic);
+      graphic_array.append(cint(new_obj_graphic));
       sleepms(2);
-   endwhile
-
+   dowhile( (object_graphic != new_obj_graphic) && (i < 10) );
 
    if (graphic_array.size() == 0)
       SendSysMessageEx(who, "Não é possível girar isso.", SSM_FAIL);
