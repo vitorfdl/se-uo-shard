@@ -88,7 +88,6 @@ program autostart_boat(param)
 			eraseobjproperty(boat.hold, "#speed");
 			eraseobjproperty(boat.hold, "#relativedir");    
 		endif     
-
     case(state)
       STATE_MOVING:   
          if(ReadGameClock() > nextsound)
@@ -144,7 +143,7 @@ program autostart_boat(param)
             state := STATE_FOLLOWING_COURSE;
          endif
 
-         var ev := wait_for_event(120);
+         var ev := wait_for_event(10);
          if(ev)
             process_event(ev);
          endif
@@ -171,7 +170,9 @@ program autostart_boat(param)
 endprogram
 
 function handle_speech(event)
+   print("handling speech");
   var text := lower(event.text);
+   print(text);
   if(text["drift"] || text["levantar ancora"])
     ms_delay_between_moves := 1000;
     state := STATE_DRIFTING;
@@ -263,6 +264,7 @@ function handle_speech(event)
     //	endif
     elseif(text["partir"])
     	if( (GetObjProperty(tillerman,"course") == error) || state == STATE_FOLLOWING_COURSE)
+         print(state);
     		//PrintText(tillerman,"Arr, set course first Cap'n.");
     	else    		
      		state := STATE_FOLLOWING_COURSE;
@@ -307,7 +309,7 @@ function process_event(event)
       //   drydock(event);
       //   sleep(1);
       // else
-      if (event.person in boat.mobiles)
+      if (event.source in boat.mobiles)
          handle_speech(event);
       endif
       // endif
@@ -580,10 +582,10 @@ function BoatFollowCourse(boat)
       if( prevfacing != newfacing/2 )
          TurnBoat(boat, newfacing );
       endif
-		MoveBoatRelative(boat, raw_facing - boat.facing);
+		MoveBoatRelative(boat, raw_facing - prevfacing);
 		if (CoordinateDistance(boat.x, boat.y, newpoint[1], newpoint[2]) > 0)
     		state := STATE_DRIFTING;
-    		PrintText(tillerman, "Aaargh!  Nós paramos!");
+    		PrintText(tillerman, "Aaargh! Nós paramos!");
   		endif
   	endif
 	

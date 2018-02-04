@@ -43,7 +43,9 @@ program renameboat(you, tillerman)
 						return;
 					endif
 					SetObjProperty(tillerman, "course", dest.plots);
-					SetObjProperty(tillerman, "back_course", dest.plots.Reverse());
+               var reverse_spot := dest.plots;
+               reverse_spot.Reverse();
+					SetObjProperty(tillerman, "back_course", reverse_spot);
 					PrintText(tillerman,"Viagem programada, iremos *partir* quando me ordenar!");
 				endif
 			endforeach

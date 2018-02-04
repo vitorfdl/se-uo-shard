@@ -1516,7 +1516,13 @@
 0x204c medlongbeard hair
 0x204d VandykeHair hair
 0x204e deathshroud
-# 0x204f - 0x25ea unused
+# 0x204f - 0x2329 unused
+0x232a giftbox containers
+0x232b giftbox containers
+# 0x232c - 0x24da unused
+0x24db basketbig containers
+0x24dc basketbig2 containers
+# 0x24dd - 0x25ea unused
 0x25eb CheckeredShirt womenswork
 # 0x25ec - 0x2640 unused
 0x2641 DragonBreastplate combat
@@ -1566,7 +1572,27 @@
 # 0x27e9 - 0x2803 unused
 0x2804 dardo tn
 0x2805 flute musicianship
-# 0x2806 - 0x2b67 unused
+# 0x2806 - 0x280a unused
+0x280b BigWoodenChest containers
+0x280c BigWoodenChest2 containers
+0x280d BigRefordWoodenChest1 containers
+0x280e BigRefordWoodenChest2 containers
+0x280f BigElfWoodenChest1 containers
+0x2810 BigElfWoodenChest2 containers
+0x2811 OldWoodenChest containers
+0x2812 OldWoodenChest2 containers
+0x2813 OldWoodenChest containers
+0x2814 OldWoodenChest2 containers
+# 0x2815 - 0x2856 unused
+0x2857 armoireseb1 containers
+0x2858 armoireseb2 containers
+0x2859 armoiresebigw2 containers
+0x285a armoiresebigw2 containers
+0x285b armoiresew1 containers
+0x285c armoiresew2 containers
+0x285d armoiresebig1 containers
+0x285e armoiresebig2 containers
+# 0x285f - 0x2b67 unused
 0x2b68 tanga combat
 # 0x2b69 - 0x2b6d unused
 0x2b6e circlet metalworking
@@ -1597,7 +1623,11 @@
 0x2de3 OrnateElvenChair woodworking
 # 0x2de4 - 0x2dea unused
 0x2deb BigElvenChair woodworking
-# 0x2dec - 0x2df4 unused
+# 0x2dec - 0x2df0 unused
+0x2df1 rarewoodchest containers
+0x2df2 rarewoodchest2 containers
+0x2df3 rarewoodornamentedchest2 containers
+0x2df4 rarewoodornamentedchest containers
 0x2df5 ElvenReadingDesk woodworking
 # 0x2df6 - 0x2fb6 unused
 0x2fb7 aljavapequena bowcrafting
@@ -1691,11 +1721,18 @@
 0x3d4f fruitcook food
 # 0x3d50 - 0x3dd7 unused
 0x3dd8 deerhead survival
-# 0x3dd9 - 0x4043 unused
+# 0x3dd9 - 0x4024 unused
+0x4025 gorgoyglechest containers
+0x4026 gorgoyglechest2 containers
+# 0x4027 - 0x4043 unused
 0x4044 ornamentedmirror woodworking
 # 0x4045 unused
 0x4046 floormirror woodworking
-# 0x4047 - 0x41c1 unused
+# 0x4047 - 0x4101 unused
+0x4102 piratechest containers
+# 0x4103 - 0x4105 unused
+0x4106 piratechest2 containers
+# 0x4107 - 0x41c1 unused
 0x41c2 [n/a] doors
 0x41c3 [n/a] doors
 0x41c4 [n/a] doors
@@ -2040,7 +2077,10 @@
 0x9e40 soschest containers
 # 0x9e41 - 0x9e80 unused
 0x9e81 anaraltar magery
-# 0x9e82 - 0xa1ff unused
+# 0x9e82 - 0x9ff7 unused
+0x9ff8 goldenchest containers
+0x9ff9 goldenchest containers
+# 0x9ffa - 0xa1ff unused
 0xa200 arenastone arena
 # 0xa201 - 0xa35f unused
 0xa360 sosbottle sosbottles
