@@ -53,7 +53,7 @@ function DoorIsLocked(mobile, door)
 		SendSysMessageEx(mobile, "You open the door with GM previlegies.", SSM_INFO);
 		return 0;
 	else
-		PrintTextAbovePrivate(door, "That is locked.", mobile);
+		PrintTextPrivate(door, "Isso está trancado.", mobile);
 		return 1;
 	endif
 endfunction

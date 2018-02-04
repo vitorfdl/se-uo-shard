@@ -29,9 +29,7 @@ program unequipweapon(who, item)
 		endif	
 
 		var ori_name:=who.name;
-		SetName(who, " ");
 		SetName(who, ori_name);	
-		
 	endif
 	
 	

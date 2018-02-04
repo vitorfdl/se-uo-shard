@@ -30,6 +30,7 @@ exported function reset(lever)
 		//"setobj"  : stobj(who, item); //não precisa
 		"door"    : resetdoor(lever);
 		"passage" : resetpassage(lever);
+		"opendoor" : resetopendoor(lever);
 		//"trap"    : trappedswitch(who, item, mid, gfx, snd); //não precisa
 		//lights"  : lightswitch(who, item); //não precisa
 		//"tele"    : teleporter(who, item, mid, gfx, snd); //não precisa
@@ -70,6 +71,18 @@ function resetdoor(item)
 		foreach dr in da
 			var door := SystemFindObjectBySerial(CInt(dr));
 			door.locked := 1;
+		endforeach
+		SetObjProperty(item,"status", "off");
+	endif
+endfunction
+
+function resetopendoor(item)
+	var da := GetObjProperty(item, "ds");
+	var status := GetObjProperty(item, "status");
+	if (status == "on")
+		foreach dr in da
+			var door := SystemFindObjectBySerial(CInt(dr));
+			door.doToggle();
 		endforeach
 		SetObjProperty(item,"status", "off");
 	endif
