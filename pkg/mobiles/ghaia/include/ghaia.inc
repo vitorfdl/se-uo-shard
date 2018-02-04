@@ -195,6 +195,8 @@ function PlayIdleSound()
 endfunction
 
 function InitializeNpc(mobile)
+   mobile.GrantPrivilege("hiddenattack");
+   mobile.GrantPrivilege("runwhilestealth");
    mobile.enable("runwhilestealth");
    mobile.enable("hiddenattack");
    //inicializa algumas variaveis que todos os npcs tem

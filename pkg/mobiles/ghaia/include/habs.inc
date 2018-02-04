@@ -185,6 +185,10 @@ endfunction
 
 
 function electricCone(mobile, dmg, dist)
+   if (Distance(me, mobile) > 4)
+      return 0;
+   endif
+   
    PrintText(me, "*baforada elétrica*");
    var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
    points.erase(points.size());

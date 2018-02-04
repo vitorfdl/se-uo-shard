@@ -17,6 +17,7 @@ program Logon(who)
 	EraseObjProperty(who, "#torobando");
 	EraseObjProperty(who, "#Casting");
 	SetObjProperty(who, "ConnectTime", polcore().systime);
+   who.GrantPrivilege("hiddenattack");
    who.enable("hiddenattack");
 
 	var createdat :=  GetObjProperty(who, "createdate");

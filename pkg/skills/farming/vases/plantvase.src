@@ -43,11 +43,17 @@ function planting(who, vase, seed)
 	PlaySoundEffect(who, PLANT_SOUND);
 	var cfg := ReadConfigFile(":*:itemdesc");
 	cfg := cfg[seed.objtype];
+
+   if (cfg.NoVase)
+		SendSysMessageEx(who, "Você não sabe se essa semente vai crescer.");
+      return;      
+   endif
+   
 	var difficulty := cfg.PlantDifficulty;
 	
 	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PLANTACAO);
 	if ( test > difficulty )
-		var grower := CreateItemAtLocation(vase.x, vase.y, vase.z+1, GROWTH_UNIT, 1);
+		var grower := CreateItemAtLocation(vase.x, vase.y, vase.z+2, GROWTH_UNIT, 1);
       if (!grower)
          SendSysMessageEx(who, "whoops");
          return;

@@ -40,13 +40,20 @@ program skill_lockpicking( me, lockpick )
 	if (!chest)
 		SendSysMessageEx(me,"Cancelado.", SSM_FAIL);
 		return;
-	endif
-	if ( (!Accessible(me,chest)) || (!Accessible(me,lockpick)) )
+	elseif ( (!Accessible(me,chest)) || (!Accessible(me,lockpick)) )
 		SendSysMessageEx(me, "Você não alcanca o alvo!", SSM_FAIL);
 		return;
-	endif
-	if ( Distance(me, chest) > 2)
+	elseif ( Distance(me, chest) > 2)
 		SendSysMessageEx(me, "Você esta muito distante.", SSM_FAIL);
+		return;
+   endif
+   var stam_c := 6;
+   if (HaveFeat(me, "Fôlego de Ladrão"))
+      stam_c := 2;
+   endif
+   
+   if ( !AP_ConsumeVital(me, STAMINA, stam_c) )
+		SendSysMessageEx(me, "Você está cansado demais para tentar isso.", SSM_FAIL);
 		return;
 	endif
 

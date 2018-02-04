@@ -1,0 +1,24 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include ":timedscripts:timedScripts";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	// var weapon	:= params[3];
+	// var armor	:= params[4];
+	// var basedamage	:= params[5];
+	// var rawdamage	:= params[6];
+	params := 0; // Not needed anymore.
+   
+   var n_hits := cint(GetObjproperty(attacker, "morehits"));
+   for i := 1 to n_hits
+      attacker.attack_once(defender);
+   endfor
+	
+	return 1;
+endprogram

@@ -228,6 +228,12 @@ function StartDynamicEvent(spot, config, evententry)
                TS_StartTimer(mobile, this_step.timedscript, this_step.number);
             endif
          endforeach
+      elseif (this_step.name == "Play Sound")
+         var loc := this_step.location[1];
+         if (this_step.spawn_player_loc && player_found)
+            coord := player_found;
+         endif
+         PlaySoundEffectXYZ( loc[1], loc[2], loc[3], cint(this_step.number) );
       endif
       sleepms(2);
    endforeach

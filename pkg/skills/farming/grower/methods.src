@@ -217,7 +217,7 @@ exported function MakeDead(grower)
 	data_elem.SetProp("Dead", 1);
 
 	var name := TruncateArticle(grower.desc);
-	SetName(grower, "a dead "+name);
+	SetName(grower, "{} morta".format(name));
 	
 	SetProduceAmount(grower, 0);
 	
