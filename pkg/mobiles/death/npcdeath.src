@@ -81,7 +81,11 @@ program core_npcDeath(params)
 	// endif
 
 	//printtextabove(corpse, "spawnpoint " + spawnpoint);
-
+   var changeskin := GetObjProperty(corpse, "skinchanged");
+   if (changeskin)
+      var item := SystemFindObjectBySerial(changeskin);
+      DestroyItem(item);
+   endif
 
 	var death_script := npc_cfg.DeathScript;
 	if (GetObjProperty(corpse, "spawnkill") == error)

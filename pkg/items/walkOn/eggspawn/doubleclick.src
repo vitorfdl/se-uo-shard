@@ -1,0 +1,44 @@
+use uo;
+
+include ":tn:tngumps";
+include "include/say";
+
+program dblclick(who, item)
+   var template    := GetObjProperty(item, "npctemplate");
+   var brokengraph := GetObjProperty(item, "brokengraph");
+   var nmonsters   := GetObjProperty(item, "nmonsters");
+   var broke       := GetObjProperty(item, "origingraph");
+
+   if (who.warmode && !broke && Distance(who, item) < 2)
+      PrintText(who, "Quebrou {}".format(item.name));
+      SetObjProperty(item, "origingraph", item.graphic);
+      SetObjProperty(item, "spawn", polcore().systime + 1200);
+      item.graphic := cint(brokengraph);
+
+      if (nmonsters["d"])
+         nmonsters := RandomDiceRoll(nmonsters);
+      else
+         nmonsters := cint(nmonsters);
+      endif
+
+      for i := 1 to nmonsters
+         CreateNpcFromTemplate(template, item.x, item.y, item.z, 0, item.realm);
+         sleepms(2);
+      endfor
+   endif
+
+   if (who.cmdlevel)
+      if (!template) template := ":ghaia:"; endif
+      if (!brokengraph) brokengraph := "0"; endif
+      if (!nmonsters) nmonsters := "1d2"; endif
+      var questions := array{};
+      input_list.append(struct{ "title" := "Escolha o npctemplate", "marked" := template});
+      input_list.append(struct{ "title" := "Escolha o gráfico quebrado", "marked" := brokengraph});
+      input_list.append(struct{ "title" := "Quantos monstros deseja spawnar?", "marked" := nmonsters});
+      var output := QuestionsGump(who, input_list);
+
+      SetObjProperty(item, "npctemplate", output[1]);
+      SetObjProperty(item, "brokengraph", output[2]);
+      SetObjProperty(item, "nmonsters", output[3]);
+   endif
+endprogram

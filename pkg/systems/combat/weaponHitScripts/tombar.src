@@ -1,0 +1,18 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include ":timedscripts:timedScripts";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	params := 0; // Not needed anymore.
+   
+   PrintText(attacker, "*derruba {}".format(defender.name));
+	TS_StartTimer(defender, "tombar", 10);
+	
+	return 1;
+endprogram

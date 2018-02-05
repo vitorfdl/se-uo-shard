@@ -1,0 +1,30 @@
+use os;
+
+include "include/say";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+
+program startTalent(param)
+   var who := param[1];
+   var talent_name := param[2];
+   var res := amigobesta(who);
+
+   if (!res)
+      TS_LowerDuration(who, talent_name, -1, 1);
+   endif
+endprogram
+
+function amigobesta(who)
+   if (!who.shield) 
+      SendSysMessageEx(who, "Você precisa estar usando um escudo.", SSM_INFO);
+      return 0;
+   elseif (!who.opponent || who.opponent.dead)
+      SendSysMessageEx(who, "Você não tem um oponente selecionado.", SSM_INFO);
+      return 0;
+   endif
+
+   PrintText(who, "*golpe de escudo*");
+
+   TS_StartCooldown(who.opponent, "tombar", 10);
+   return 1;
+endfunction

@@ -139,7 +139,11 @@ program Attack(params)
 		ExpGain(attacker, defender_CA, attack_chance);
 
 		if (!defender.npctemplate && defender.shield)
-			defender.SetAchievement("shield", 1);
+         if (wpn_a_elem.ProjectileAnim)
+            defender.SetAchievement("ragendshield", 1);
+         else
+			   defender.SetAchievement("shield", 1);
+         endif
 		endif
 
       attacker_roll.two_dice_success := (attacker_roll.two_dice > defender_CA);
@@ -308,11 +312,6 @@ function GetDefenderCA(defender, armor, attacker)
 		CA := cint(npcelem.AR);
 	endif
 
-	//não ta em warmode, 95% de chance
-	if (defender.acctname && !defender.warmode)
-		CA := 5;
-	endif
-   
 	var ca_bonus := cint(GetObjProperty(defender, "bonus_ca"));
 	if (ca_bonus)
 		CA += ca_bonus;
@@ -386,7 +385,6 @@ endfunction
 function AmmoCheck(attacker, defender)
    var cfgfile := NPC_GetNPCConfig(attacker);
 	if (weapon.isMagicWeapon())
-      attacker.SetAchievement("magicweapon", 1);
 		PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 5, 10, cint(wpn_a_elem.ProjectileColor));
 		return 1;
 	elseif ( !weapon.isBow() && !cfgfile.Ranged)

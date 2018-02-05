@@ -185,15 +185,11 @@ endfunction
 
 
 function electricCone(mobile, dmg, dist)
-<<<<<<< HEAD
    if (Distance(me, mobile) > 4)
       return 0;
    endif
    
    PrintText(me, "*baforada elétrica*");
-=======
-   PrintText(me, "*baforada*");
->>>>>>> d43dc44580bf0a3c98b0e96abf5f7d2b2f4c2b91
    var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
    points.erase(points.size());
    points.erase(points.size()-2);

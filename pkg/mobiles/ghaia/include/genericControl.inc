@@ -39,9 +39,18 @@ function genericControl()
       endif
 
 		if (wanders >= 30 || me.frozen)
-         if (npccfgfile.CustomBehavior == "camuflar" && RandomInt(8) == 1)
+         if ("camuflar" in custombehaviors && RandomInt(8) == 1)
             me.hidden := 1;
             me.stealthsteps := 5;
+         endif
+
+         if ("changeskin" in custombehaviors && !me.concealed)
+            me.frozen := 1;
+            me.concealed := 1;
+            var changeskin := GetObjProperty(me, "changeskin");
+				var item := CreateItemAtLocation(me.x, me.y, me.z, changeskin, 1, me.realm);
+
+            SetObjProperty(me, "skinchanged", item.serial);
          endif
 			wanders := 0;
 			lookAround();
@@ -74,6 +83,16 @@ function resolveEvent(ev, byref wanders)
          break;
 		SYSEVENT_ENTEREDAREA:
 			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
+            if ("changeskin" in custombehaviors && me.concealed)
+               var changeskin := GetObjProperty(corpse, "skinchanged");
+               if (changeskin)
+                  var item := SystemFindObjectBySerial(changeskin);
+                  DestroyItem(item);
+               endif
+               me.concealed := 0;
+               me.frozen := 0;
+            endif
+            
 				wanders := 0;
             var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
             foreach mob in mobs
@@ -100,6 +119,9 @@ function resolveEvent(ev, byref wanders)
 			wanders := 0; Fight(ev.source);
          break;
 		EVID_ALERT_ALLIES:
+         if ("changeskin" in custombehaviors && me.concealed)
+            break;
+         endif      
          me.setAggro(ev.opponent, 5);
 			wanders := 0; Fight(ev.opponent, 1);
          break;

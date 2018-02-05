@@ -1,0 +1,58 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program explosao(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var found := 0;
+	var items := ListItemsNearLocationWithFlag(targ.x, targ.y, targ.z, 1, TILEDATA_FLAG_LIGHTSOURCE );
+   items.reverse();
+   found := items[1];
+
+   if (!found)
+      var light_cfg := ReadConfigFile(":lighting:itemdesc");
+      var mobiles    := ListMobilesNearLocation( targ.x, targ.y, targ.z, 1);
+      foreach mobile in mobiles
+         var equipleft  := GetEquipmentByLayer(mobile, 0x01);
+         var equipright := GetEquipmentByLayer(mobile, 0x02);
+         if (FindConfigElem(light_cfg, equipright.objtype) || FindConfigElem(light_cfg, equipleft.objtype))
+            found := mobile;;
+         endif
+         sleepms(2);
+      endforeach
+   endif
+
+   if (!found)
+      SendSysMessageEx(who, "Nenhuma fonte de calor foi encontrada para explodir");
+      return;
+   endif
+
+   var dmg_dice := RandomDiceRoll("1d4+2");
+
+   var effects := array{GFX_EXPLODE_1, GFX_EXPLODE_2, GFX_EXPLODE_3};
+   PlayStationaryEffect(found.x, found.y, found.z, effects.randomentry(), 10, 10, 0);
+
+   foreach mobile in ListMobilesNearLocation( targ.x, targ.y, targ.z, 3)
+      if (rollResistDice(mobile, DEXTERITY) > dice_roll+3)
+         SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
+         SendSystemReport(mobile, "*esquivou*", SSM_INFO);
+      else
+         DamageFLS(mobile, dmg_dice, DMG_FIRE, who);
+         TS_StartTimer(targ, "immolation", 6);	
+      endif
+      sleepms(2);
+   endforeach
+   
+	return 1;
+endprogram

@@ -102,24 +102,24 @@ endfunction
 
 exported function SetLoyalt(pet, amount := 1)
    var props := GetObjProperty(pet, "info");
-   var new_loyalt := struct{ "loyalt" := props.loyalt + amount };
+   var new_loyalt := struct{ "loyalt" := cint(props.loyalt) + amount };
    SetPetProperties(pet, new_loyalt);
    return 1;
 endfunction
 
 exported function SetPoints(pet, amount := 1)
    var props := GetObjProperty(pet, "info");
-   var new_points := struct{ "points" := props.points + amount };
+   var new_points := struct{ "points" := cint(props.points) + amount };
    SetPetProperties(pet, new_points);
    return 1;
 endfunction
 
 exported function SetExp(pet, amount := 1)
    var props := GetObjProperty(pet, "info");
-   if (props.loyalt >= 10) return; endif
+   if (cint(props.loyalt) >= 10) return; endif
 
-   var new_exp := props.exp + amount;
-   var max_exp := (props.loyalt + 1) * 100;
+   var new_exp := cint(props.exp) + amount;
+   var max_exp := (cint(props.loyalt) + 1) * 100;
 
    var new_prop := struct{ };
    if (new_exp >= max_exp)

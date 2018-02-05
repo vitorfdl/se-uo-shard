@@ -438,16 +438,13 @@ endfunction
 function escrevepartitura(who,item,notas,notas2,tempo,letra)
    var dif;
    //DIFICULDADE PELO TANTO DE NOTAS
-   dif := 0;
+   dif := 2;
    foreach nota in notas
-   dif := (dif + 1);
+      dif := (dif + 1);
    endforeach
    foreach nota in notas2
-   dif := (dif + 1);
+      dif := (dif + 1);
    endforeach
-   dif := (dif * 1.7);
-
-   var difskill := (dif / 2);
 
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
