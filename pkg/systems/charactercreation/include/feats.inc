@@ -164,7 +164,7 @@ function GetNewFeatsList(who, type := "normal", levels := array{})
                   break;
                endif
             elseif (req[1] == "stat")
-               if(!who.GetStat(req[2]) < cint(req[3]))
+               if(AP_GetStat(who, req[2]) < cint(req[3]))
                   pass := 0;
                   break;
                endif

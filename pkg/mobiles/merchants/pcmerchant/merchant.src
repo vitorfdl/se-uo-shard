@@ -39,7 +39,7 @@ program HandleMerchant(params)
 endprogram
 
 function HandleSeeEvent(npc, player)
-   if (GetCooldown(npc, "{}_see".format(player.serial)))
+   if (GetCooldown(npc, "{}_see".format(player.serial)) || player.cmdlevel)
       return;
    endif
 

@@ -19,7 +19,7 @@ use uo;
 
 include "include/say";
 
-CONST FLIP_CONFIG_FILE := ("::flip");
+CONST FLIP_CONFIG_FILE := (":*:flip");
 
 program textcmd_flip (me)
    var flip_config := ReadConfigFile(FLIP_CONFIG_FILE);
@@ -30,9 +30,7 @@ program textcmd_flip (me)
    if(!flip_config)
       SysLog("Error: "+FLIP_CONFIG_FILE+" não existe!");
       return 0;
-   endif
-
-   if( TypeOf(me) == TypeOf( array{} ) )
+   elseif( TypeOf(me) == TypeOf( array{} ) )
       object := me[2];
       who := me[1];
    else
@@ -57,21 +55,18 @@ program textcmd_flip (me)
    endif
 
    var object_graphic := object.graphic;
-   var new_obj_graphic;
+   var new_obj_graphic := object_graphic;
    var graphic_array := array{};
    var i := 1;
 
-   while( (i < 100) && (object_graphic != new_obj_graphic) )
-      if(!new_obj_graphic)
-         new_obj_graphic := object_graphic;
-      endif
-      new_obj_graphic := flip_config[CInt(new_obj_graphic)].ChangeTo;
-      if(new_obj_graphic && new_obj_graphic != object_graphic)
-         graphic_array[i] := new_obj_graphic;
-         i := i+1;
-      endif
+   do
+      i += 1;
+      new_obj_graphic := GetConfigInt(flip_config[CInt(new_obj_graphic)], "ChangeTo");
+      if (!new_obj_graphic) break; endif
+
+      graphic_array.append(cint(new_obj_graphic));
       sleepms(2);
-   endwhile
+   dowhile( (object_graphic != new_obj_graphic) && (i < 10) );
 
    if (graphic_array.size() == 0)
       SendSysMessageEx(who, "Não é possível girar isso.", SSM_FAIL);
@@ -79,15 +74,17 @@ program textcmd_flip (me)
 
    var flip_menu := CreateMenu("Selecione a nova orientacao:");
    var j;
-   for(j:=1;j<i;j:=j+1)
-      AddMenuItem(flip_menu,CInt(graphic_array[j]),object.name);
-   endfor
+   foreach grap in graphic_array
+      AddMenuItem(flip_menu,CInt(grap),object.name);
+      sleepms(2);
+   endforeach
 
    var selection := SelectMenuItem2(who,flip_menu);
    if(!selection)
       SendSysMessageEx(who, "Cancelado.");
       return 0;
    endif
+
    flip_graphic := CInt(selection.graphic);
 
    object.graphic := flip_graphic;

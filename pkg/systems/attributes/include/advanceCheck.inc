@@ -112,6 +112,7 @@ function ExpGain(mobile, difficulty, value := 0)
 
 	//guarda as skills dos npcs tamados
 	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)
+      mobile.setExp(1);
 		// TODO: Tamed exp gain
 	elseif (up_amount > 0)
 		var exp := mobile.GetExp();

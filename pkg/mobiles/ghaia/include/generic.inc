@@ -243,7 +243,7 @@ function sleepmode()
             EnableMainEvents();
             return ev;
           SYSEVENT_ENTEREDAREA: 
-            if (ev.source && ev.source.connected)
+            if (ev.source && ev.source.connected && !ev.source.concealed)
                EnableMainEvents();
                return ev;
             endif

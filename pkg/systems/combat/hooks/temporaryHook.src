@@ -137,9 +137,6 @@ program Attack(params)
 		PlayHitSounds(attacker, defender);
 		var dmg := CalculateRawDamage(attacker, wpn_a_elem, attacker.weapon);
 		ExpGain(attacker, defender_CA, attack_chance);
-      if (attacker.master)
-         attacker.SetExp(2);
-      endif
 
 		if (!defender.npctemplate && defender.shield)
 			defender.SetAchievement("shield", 1);

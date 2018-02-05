@@ -1,4 +1,5 @@
 use uo;
+use boat;
 include ":gumps:yesno";
 include ":tn:tngumps";
 include "include/say";
@@ -19,14 +20,24 @@ program setpins(who)
       sleepms(2);
    endforeach
 
+   routes.append("Retornar a ponto de origem");
    routes.append("Nova Rota");
    routes.append("Cancelar");
+
    var cancel_choice := routes.size();
    var new_choice := routes.size()-1;
+   var return_boat := routes.size()-2;
 
    var request := RadioGump(who, 260, 0, "Escolha qual rota deseja alterar.", routes, 1);
    if (request == cancel_choice)
       return 1;
+   elseif (request == return_boat)
+      var boat := tillerman.multi;
+      var plots := GetObjProperty(tillerman, "back_course");
+      if (plots)
+         var pos := plots[plots.size()];
+         MoveBoatXY(boat, plots[pos].x, plots[pos].y);
+      endif
    elseif (request == new_choice)
       var dest := struct{ "plots" := array{} };
       dest.+name := GetInput(who, tillerman, "Escreva o nome do destino da viagem: (Esc para cancelar)");
