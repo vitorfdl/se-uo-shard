@@ -387,7 +387,7 @@ function AmmoCheck(attacker, defender)
    var cfgfile := NPC_GetNPCConfig(attacker);
 	if (weapon.isMagicWeapon())
       attacker.SetAchievement("magicweapon", 1);
-		PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 5, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 5, 10, cint(wpn_a_elem.ProjectileColor));
 		return 1;
 	elseif ( !weapon.isBow() && !cfgfile.Ranged)
 		return 1;
@@ -395,11 +395,11 @@ function AmmoCheck(attacker, defender)
 
 	if(attacker.npctemplate)
       if (wpn_a_elem.ProjectileAnim)
-		   PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, 0, cint(wpn_a_elem.ProjectileColor));
+		   PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, cint(wpn_a_elem.ProjectileColor));
       elseif (cfgfile.AttackTargetAnim)
          PlayObjectCenteredEffectEx( defender, cint(cfgfile.AttackTargetAnim), 10, 20, cint(cfgfile.ProjectileColor));
       else
-		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, 0, cint(cfgfile.ProjectileColor));
+		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, cint(cfgfile.ProjectileColor));
       endif
 
 		return 1;

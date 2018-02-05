@@ -7,6 +7,8 @@ use vitals;
 include "include/client";
 include ":attributes:attributes";
 include ":gumps:requestgump";
+include ":gumps:gumps";
+include ":tn:tngumps";
 include "include/damage";
 include ":timedscripts:timedScripts";
 include ":traps:traps";
@@ -15,105 +17,99 @@ const FX_POISON_GAS := 0x113a;
 const FX_EXPLODE_3      :=  0x36b0; //
 const SFX_SPELL_LIGHTNING           :=  0x002a;
 
-var layout := array(
-	"page 0                            ",
-	"gumppic   0   0  206              ",
-	"gumppic  44   0  201              ",
-	"gumppic 444   0  207              ",
-	"gumppic   0  40  202              ",
-	"gumppic  44  40 2604              ",
-	"gumppic 444  40  203              ",
-	"gumppic   0 350  204              ",
-	"gumppic  44 350  233              ",
-	"gumppic 444 350  205              ",
-    "text    155  20  900    0         ",
+// var layout := array(
+//     "page 3                            ",
+// 	"gumppic  25  58 1141              ",
+// 	"gumppic  25  88 1141              ",
+//     "textentry 32 60  250 60 910 12 12 ",  //Cprop entry box
+//     "textentry 32 90  250 90 910 13 13 ",  //Cprop entry box
+//     "text    302  60  500   14         ",  //prop name text
+//     "text    302  90  500   15         ",  //prop value text
+//     "button  200 250 1149 1148 1  0 24 ",  //Accept Cprop Entry
 
-    "page 1                            ",
-	"button   25  50 2117 2118 0  3  0 ",
-	"button   25  70 2117 2118 1  0  2 ",
-	"button   25 90 2117 2118 1  0  3 ",
-	"button   25 110 2117 2118 1  0  4 ",
-	"button   25 130 2117 2118 1  0  5 ",
-	"button   25 150 2117 2118 1  0  98 ",
-	"button   25 170 2117 2118 1  0  97 ",
-	"button   25 190 2117 2118 0  4  0 ",
-	"button   25 210 2117 2118 0  2  0 ",
-	"button   25 230 2117 2118 1  0 99 ",
-	"button   25 250 2117 2118 1  0 96 ",
-	"button   25 270 2117 2118 1  0 100 ",
-	"button   25 290 2117 2118 1  0 101 ",
-    "text     45  48  500    1         ",
-    "text     45  68  500    2         ",
-    "text     45 88  500    3         ",
-    "text     45 108  500    4         ",
-    "text     45 128  500    5         ",
-    "text     45 148  500    6         ",
-    "text     45 168  500    7         ",
-    "text     45 188  500    8         ",
-    "text     45 208  500    9         ",
-    "text     45 228  500   10         ",
-    "text     45 248  500   18         ",
-    "text     45 268  500   20         ",
-    "text     45 288  500   21         ",
+function ConstructGump(who)
+   var gump := GFCreateGump();
+	GFSetID(gump, 0x597);
+	GFPage(gump, 0);
+	GFResizePic(gump, 0, 0, 9200, 480, 395);
+   GFTextLine(gump, 165, 20, 900, "Lever Control Interface");
+   GFPage(gump, 1);
 
-    "page 2                            ",
-    "text    155  50  900   11         ",
-	"tilepic 105 120 4237              ",
-	"tilepic 355 120 4244              ",
-	"tilepic 105 270 4240              ",
-	"tilepic 355 270 4241              ",
-	"button   85 130  210  211 1  0 20 ",
-	"button  345 130  210  211 1  0 21 ",
-	"button   85 270  210  211 1  0 22 ",
-	"button  345 270  210  211 1  0 23 ",
-	"button   45 350 2453 2454 0  1  0 ",
+   GFTextLine(gump, 45, 48, 500, "SetObjProperty em outros");
+   GFAddButton(gump, 25, 50, 2117, 2118, GF_PAGE_BTN, 3);
+   GFTextLine(gump, 45, 68, 500, "Trancar/destrancar porta");
+   GFAddButton(gump, 25, 70, 2117, 2118, GF_CLOSE_BTN, 2);
+   GFTextLine(gump, 45, 88, 500, "Abrir/Fechar porta");
+   GFAddButton(gump, 25, 90, 2117, 2118, GF_CLOSE_BTN, 102);
+   GFTextLine(gump, 45, 108, 500, "Acender/apagar luzes");
+   GFAddButton(gump, 25, 110, 2117, 2118, GF_CLOSE_BTN, 4);
+   GFTextLine(gump, 45, 128, 500, "Teleportar");
+   GFAddButton(gump, 25, 130, 2117, 2118, GF_CLOSE_BTN, 5);
+   GFTextLine(gump, 45, 148, 500, "Alterar gráfico do alvo");
+   GFAddButton(gump, 25, 150, 2117, 2118, GF_CLOSE_BTN, 98);
+   GFTextLine(gump, 45, 168, 500, "Alterar on/off texto");
+   GFAddButton(gump, 25, 170, 2117, 2118, GF_CLOSE_BTN, 97);
+   GFTextLine(gump, 45, 188, 500, "Adicionar armadilhas");
+   GFAddButton(gump, 25, 190, 2117, 2118, GF_PAGE_BTN, 4);
+   GFTextLine(gump, 45, 208, 500, "Mudar gráfico da alavanca");
+   GFAddButton(gump, 25, 210, 2117, 2118, GF_PAGE_BTN, 2);
+   GFTextLine(gump, 45, 228, 500, "Testar");
+   GFAddButton(gump, 25, 230, 2117, 2118, GF_CLOSE_BTN, 99);
+   GFTextLine(gump, 45, 248, 500, "Subir/descer objetos");
+   GFAddButton(gump, 25, 250, 2117, 2118, GF_CLOSE_BTN, 96);
+   GFTextLine(gump, 45, 268, 500, "Tornar alavanca escondida");
+   GFAddButton(gump, 25, 270, 2117, 2118, GF_CLOSE_BTN, 100);
+   GFTextLine(gump, 45, 288, 500, "Mover objetos");
+   GFAddButton(gump, 25, 290, 2117, 2118, GF_CLOSE_BTN, 101);
+   GFTextLine(gump, 45, 308, 500, "Mover passagem secreta");
+   GFAddButton(gump, 25, 310, 2117, 2118, GF_CLOSE_BTN, 3);
+   
+   GFPage(gump, 2);
+   GFTextLine(gump, 145, 50, 900, "Escolha o gráfico da alavanca");
 
-    "page 3                            ",
-	"gumppic  25  58 1141              ",
-	"gumppic  25  88 1141              ",
-    "textentry 32 60  250 60 910 12 12 ",  //Cprop entry box
-    "textentry 32 90  250 90 910 13 13 ",  //Cprop entry box
-    "text    302  60  500   14         ",  //prop name text
-    "text    302  90  500   15         ",  //prop value text
-    "button  200 250 1149 1148 1  0 24 ",  //Accept Cprop Entry
+   GFTilePic(gump, 105, 120, 4237);
+   GFAddButton(gump, 85, 130, 210, 211, GF_CLOSE_BTN, 20);
+   GFTilePic(gump, 355, 120, 4244);
+   GFAddButton(gump, 345, 130, 210, 211, GF_CLOSE_BTN, 21);
+   GFTilePic(gump, 105, 270, 4240);
+   GFAddButton(gump, 85, 270, 210, 211, GF_CLOSE_BTN, 22);
+   GFTilePic(gump, 355, 270, 4241);
+   GFAddButton(gump, 345, 270, 210, 211, GF_CLOSE_BTN, 23);
 
-    "page 4                            ",
-    "text    155  50  900   16         ",
-	"tilepic 105 120 4347              ",
-	"tilepic 355 120 4414              ",
-	"tilepic 105 270 4401              ",
-	"tilepic 355 270 8128              ",
-	"button   85 130  210  211 1  0 15 ",
-	"button  345 130  210  211 1  0 16 ",
-	"button   85 270  210  211 1  0 17 ",
-	"button  345 270  210  211 1  0 18 ",
-	"button   45 350 2453 2454 0  1  0 "
-);
+   GFAddButton(gump, 45, 350, 2453, 2454, GF_PAGE_BTN, 1);
+   
+   GFPage(gump, 3);
+   GFPage(gump, 4);
+   GFTextLine(gump, 145, 50, 900, "Escolha o gráfico da alavanca");
+   
+   GFTilePic(gump, 105, 120, 4347);
+   GFTilePic(gump, 355, 120, 4414);
+   GFTilePic(gump, 105, 270, 4401);
+   GFTilePic(gump, 355, 270, 8128);
+   
+   GFAddButton(gump, 85, 130, 210, 211, GF_CLOSE_BTN, 15);
+   GFAddButton(gump, 345, 130, 210, 211, GF_CLOSE_BTN, 16);
+   GFAddButton(gump, 85, 270, 210, 211, GF_CLOSE_BTN, 17);
+   GFAddButton(gump, 345, 270, 210, 211, GF_CLOSE_BTN, 18);
+   GFAddButton(gump, 45, 350, 2453, 2454, GF_PAGE_BTN, 1);
 
-var data := array(
-    "Lever Control Interface",              //0
-    "SetObjProperty em outros",      //1
-    "abrir/fechar porta",                   //2
-    "abrir/fechar passagem secreta",            //3
-    "Acender/apagar luzes",                //4
-    "Teleportar",                      //5
-    "Alterar gráfico do alvo",                               //6
-    "Setar on/off texto",                               //7 <-
-    "Criar alavanca com armadilha",                //8 
-    "Alterar gáafico da alavanca",           //9 <-
-    "Testar",    //10
-    "Escolha o novo grafico",               //11
-    "",                                     //12  Cprop name
-    "",                                     //13  Cprop value
-    "Property Name",                        //14
-    "Property value",                       //15
-    "Escolha o tipo de armadilha",                  //16
-    "Setar on/off som", //17 <-
-    "Subir/descer objetos", //18 <-
-    "Enviar msg pra area", //19 <-
-    "Alavanca escondida", //20
-    "Mover objetos" //21
-);
+   return gump;
+endfunction
+
+
+// var data := array(
+
+//     "",                                     //12  Cprop name
+//     "",                                     //13  Cprop value
+//     "Property Name",                        //14
+//     "Property value",                       //15
+//     "Escolha o tipo de armadilha",                  //16
+//     "Setar on/off som", //17 <-
+//     "", //18 <-
+//     "Enviar msg pra area", //19 <-
+//     "", //20
+//     "Mover objetos" //21
+// );
 
 program lever(who, item)
   if ( !ReserveItem(item) )
@@ -127,7 +123,8 @@ program lever(who, item)
    var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
    if (!trapstrength) trapstrength := 2; endif
   if(who.cmdlevel > 2)
-    var res := SendDialogGump( who, layout, data );
+    var gump := ConstructGump(who);
+    var res := GFSendGump(who, gump);
     case(res[0])
     //
        2: doorstatus(who, item);
@@ -162,6 +159,7 @@ program lever(who, item)
       99: normalusage(who, item);           // use item like normal
       100: setHiding(who, item);
       101: setMoveObject(who, item);
+      102: setOpenDoor(who, item);
     endcase
   else
     normalusage(who, item);
@@ -212,11 +210,15 @@ endfunction
 
 function setHiding(who, item)
 
-	var dif := Cint(RequestGump(who, "Qual a dificuldade do teste de DH?"));
+	var dif := Cint(RadioGump(who, 0, 0, "Qual o level do interruptor?", array{"1", "2", "3", "4", "5", "Remover"}, 0, 1));
+   if (!dif) 
+      EraseObjProperty(item, "level"); 
+      item.invisible := 0;
+      return;
+   endif
 
-	SetObjProperty(item, "FindDiff", dif);
+	SetObjProperty(item, "level", dif);
 	item.invisible := 1;
-
 endfunction
 
 function SetElevator(who, item)
@@ -358,6 +360,7 @@ function normalusage(who, item)
     "graphic": changegraphiclever(who, item);
     "elevator": doElevator(who, item);
     "moveobjects": moveObjects(who, item, gfx, snd);
+    "opendoor": openthedoors(who, item);
   endcase
 endfunction
 
@@ -941,6 +944,34 @@ function linkdoor(who, item)
   EraseObjProperty(item, "#inuse");
 endfunction
 
+function openthedoors(who, item)
+  SetObjProperty(item, "#inuse", 1);
+  Detach();
+
+  var da := GetObjProperty(item, "ds");
+  var status := GetObjProperty(item, "status");
+  var door;
+  
+  if(status == "off");
+    foreach dr in da
+      door := SystemFindObjectBySerial(CInt(dr));
+      door.doToggle();
+      PlaySoundEffect(door, 0x200);
+    endforeach
+    SetObjProperty(item,"status", "on");
+  elseif(status == "on")
+    foreach dr in da
+      door := SystemFindObjectBySerial(CInt(dr));
+      door.doToggle();
+      PlaySoundEffect(door, 0x1f5);
+    endforeach
+    SetObjProperty(item,"status", "off");
+  endif
+
+  EraseObjProperty(item, "#inuse");
+endfunction
+
+
 function lightswitch(who, item )
   SetObjProperty(item, "#inuse", 1);
   var cfg := ReadConfigFile(":*:itemdesc");
@@ -1032,7 +1063,23 @@ function doorstatus(who, item)
   SetObjProperty(item,"ds", newarray);
   SendSysMessage(who,"A alavanca foi ligada com as porta(s)");
 endfunction
-
+function setOpenDoor(who, item)
+  var newarray := array{};
+  SendSysMessageEx(who,"Escolha a porta que você deseja linkar com esta alavanca. Esc para cancelar");
+  var trg;
+  while(1)
+    trg := Target(who);
+    if(!trg)
+      break;
+    endif
+    newarray.append(trg.serial);
+    trg.locked := 1;
+  SendSysMessageEx(who,"Alavanca ligada.");
+  endwhile
+  SetObjProperty(item,"function", "opendoor");
+  SetObjProperty(item,"ds", newarray);
+  SendSysMessageEx(who,"A alavanca foi ligada com as porta(s)");
+endfunction
 function setprp(who, item, result)
   var newarray := array{};
   var note:=result[12];

@@ -147,7 +147,6 @@ program use_FishingPole(who, fishingpole)
 				SendSysMessageEx(who,"Alguma coisa fisgou a isca!!" ,66);
 			   PrintText(who, "*vara tremendo*");
 			       
-
 				var fishcatch := FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 				if (fishcatch != 0)
 					if (randomint(10) == 1)
@@ -320,13 +319,13 @@ function FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 
 	if (pretfish == "Manjuba") peso := (2 + RandomInt(3)) ;
 	elseif (pretfish == "Lambari") peso := (2 + RandomInt(3)) ;
- 	elseif (pretfish == "Atum") peso := (60 + RandomInt(30)) ; 
- 	elseif (pretfish == "Dourado") peso := (40 + RandomInt(20)) ;
- 	elseif (pretfish == "Anchova") peso := (25 + RandomInt(20)) ; 
+ 	elseif (pretfish == "Atum") peso := (20 + RandomInt(15)) ; 
+ 	elseif (pretfish == "Dourado") peso := (10 + RandomInt(10)) ;
+ 	elseif (pretfish == "Anchova") peso := (8 + RandomInt(10)) ; 
  	elseif (pretfish == "Sardinha") peso := (6 + RandomInt(3)) ; 
-	elseif (pretfish == "Perca") peso := (30 + RandomInt(20)) ; 
- 	elseif (pretfish == "PeixeGalo") peso := (15 + RandomInt(10)) ; 
- 	elseif (pretfish == "Robalo") peso := (30 + RandomInt(20)) ;  
+	elseif (pretfish == "Perca") peso := (12 + RandomInt(10)) ; 
+ 	elseif (pretfish == "PeixeGalo") peso := (15 + RandomInt(5)) ; 
+ 	elseif (pretfish == "Robalo") peso := (12 + RandomInt(10)) ;  
 	endif
 	
 	while ((distancia > 0) && (tensao < tensaomax))

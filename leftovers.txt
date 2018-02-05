@@ -1,1 +1,2 @@
-Object Count: 0
+Object Count: 1
+type: Item serial: 0x0 name: alavanca
