@@ -147,10 +147,17 @@ program use_MapmakersPen(who, tool)
 			copy.SetContents(content.Contents);
 			copy.SetAuthor(content.Author);
 			copy.SetTitle(content.Title);
+         var writed := GetObjProperty(targ, "writed");
+         if (writed)
+            SetObjProperty(copy, "writed", writed);
+         endif
 
 			SendSysMessageEx(who, "Você terminou de cópiar o livro.", SSM_INFO);
 			return;
 		elseif (YesNo(who, "Deseja lacrar o livro?"))
+         if (!GetObjProperty(targ, "writed"))
+            SetObjProperty(targ, "writed", who.serial);
+         endif
 			targ.ReadOnly(1);
 			SendSysMessageEx(who, "O livro esta lacrado.", SSM_INFO);
 			return;

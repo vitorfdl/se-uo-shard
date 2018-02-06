@@ -119,6 +119,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "nuvem":        res := nuvem(hab_dice); break;
       "pullCloser":   res := pullCloser(hab_dice, cint(hab_special)); break;
       "electricCone": res := electricCone(hab_target, hab_dice, cint(hab_special)); break;
+      "cavar": res := cavar(hab_target, hab_dice, cint(hab_special)); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
@@ -696,6 +697,35 @@ function SpitWeb(difficulty, targ, range)
 
    me.frozen := 0;
    TS_StartTimer(targ, "teia", 5);
+   return 1;
+endfunction
+
+function cavar(targ, diff, effect := 0x3728)
+   if(!effect) effect := 0x3728; endif
+
+   if (Distance(targ, me) < 3)
+      return 0;
+   endif
+
+   PrintText(me, "*entra no subsolo*");
+   PlayStationaryEffect(me.x, me.y, me.z, effect, 5, 5, 0);
+   me.concealed := 1;
+   TurnObjectToward(me, targ.x, targ.y);
+   PlaySoundEffect(me, 0x1FF);
+   sleepms(500);
+   MoveObjectToLocation(me, targ.x, targ.y, targ.z, me.realm, MOVEOBJECT_FORCELOCATION);
+   me.concealed := 0;
+   PrintText(me, "*surge embaixo de {}*".format(targ.name));
+
+   var enemies := GetEnemiesNear(targ, 0);
+   foreach enemie in enemies
+      if (rollResistDice(enemie, DEXTERITY) <= diff)
+         TS_StartTimer(enemie, "tombar", 10);
+      endif
+      sleepms(2);
+   endforeach
+      // PlayStationaryEffectHuefx( npc.x, npc.y, npc.z, CInt(npccfgfile.teleportEffect), 5, 5,  0, CInt(npccfgfile.teleportColor), CInt(npccfgfile.teleportAlpha));
+
    return 1;
 endfunction
 

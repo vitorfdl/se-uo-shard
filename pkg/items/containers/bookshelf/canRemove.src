@@ -14,6 +14,5 @@ program canRemoveScript(mobile, container, item, move_type)
 	endif
 
 	return 1;
-
 endprogram
 

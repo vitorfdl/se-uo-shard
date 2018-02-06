@@ -136,14 +136,26 @@ program autostart_boat(param)
             process_event(wait_for_event(0));
          endwhile
       STATE_STATIONARY:
-         if (!GetCooldown(tillerman, "do_back_course") && GetObjProperty(tillerman, "back_course"))
-            var back_course := GetObjProperty(tillerman, "back_course");
-            SetObjProperty(tillerman, "course", back_course);
-            EraseObjProperty(tillerman, "back_course");
-            state := STATE_FOLLOWING_COURSE;
+         if (GetObjProperty(tillerman, "back_course"))
+            if (!GetCooldown(tillerman, "do_back_course"))
+               var back_course := GetObjProperty(tillerman, "back_course");
+               SetObjProperty(tillerman, "course", back_course);
+               EraseObjProperty(tillerman, "back_course");
+               state := STATE_FOLLOWING_COURSE;
+            endif
+         elseif (!GetCooldown(tillerman, "do_travel") && GetObjProperty(tillerman, "always_travel"))
+            var p := GetObjProperty(tillerman, "always_travel");
+            var dest := GetObjProperty(tillerman, "viagem")[p];
+            if (dest)
+               SetObjProperty(tillerman, "course", dest.plots);
+               var backcourse := dest.plots;
+               backcourse.reverse();
+               SetObjProperty(tillerman, "back_course", backcourse);
+               state := STATE_FOLLOWING_COURSE;
+            endif
          endif
 
-         var ev := wait_for_event(10);
+         var ev := wait_for_event(30);
          if(ev)
             process_event(ev);
          endif
@@ -264,7 +276,6 @@ function handle_speech(event)
     //	endif
     elseif(text["partir"])
     	if( (GetObjProperty(tillerman,"course") == error) || state == STATE_FOLLOWING_COURSE)
-         print(state);
     		//PrintText(tillerman,"Arr, set course first Cap'n.");
     	else    		
      		state := STATE_FOLLOWING_COURSE;
@@ -327,7 +338,7 @@ function CanCommandMe(who)
 	endif
 
   
-  if(who.serial == owner)
+  if(who.serial == owner || who.cmdlevel)
     return 1;
   else
     var packkey;
@@ -337,6 +348,7 @@ function CanCommandMe(who)
         packkey := 1;
         break;
       endif
+      sleepms(2);
     endforeach
     if(packkey == 1)
       return 1;
@@ -571,7 +583,12 @@ function BoatFollowCourse(boat)
 			state := STATE_STATIONARY;
 			EraseObjProperty(tillerman, "course");
 			PrintText(tillerman,"Arr, chegamos ao nosso destino!");
-         SetCooldown(tillerman, "do_back_course", 600);
+         if (GetObjProperty(tillerman, "back_course"))
+            SetCooldown(tillerman, "do_back_course", 300);
+         else
+            SetCooldown(tillerman, "do_travel", 300);
+         endif
+         
 			return;
 		else
 			SetObjProperty(tillerman, "course", course);
