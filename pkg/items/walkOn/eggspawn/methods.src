@@ -1,0 +1,46 @@
+/* $Id: methods.src 938 2005-11-07 06:22:45Z muaddiblsd $
+ * 
+ */
+ 
+use uo;
+use util;
+use os;
+include "include/say";
+
+program Install()
+	return 1;
+endprogram
+
+exported function isEggSpawn(field)
+	return 1;
+endfunction
+
+exported function ResetSpawn(item)
+   var oldgraph := GetObjProperty(item, "origingraph");
+   EraseObjProperty(item, "origingraph");
+   if (oldgraph)
+      item.graphic := oldgraph;
+   endif
+   EraseObjProperty(item, "spawn");
+endfunction
+
+exported function MakeSpawn(item)
+   var template    := GetObjProperty(item, "npctemplate");
+   var brokengraph := GetObjProperty(item, "brokengraph");
+   var nmonsters   := GetObjProperty(item, "nmonsters");
+   SetObjProperty(item, "origingraph", item.graphic);
+
+   item.graphic := cint(brokengraph);
+
+   if (nmonsters["d"])
+      nmonsters := RandomDiceRoll(nmonsters);
+   else
+      nmonsters := cint(nmonsters);
+   endif
+
+   for i := 1 to nmonsters
+      CreateNpcFromTemplate(template, item.x, item.y, item.z, 0, item.realm);
+      sleepms(2);
+   endfor
+   SetObjProperty(item, "spawn", polcore().systime + 1200);
+endfunction

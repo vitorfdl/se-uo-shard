@@ -2,23 +2,59 @@ use os;
 use uo;
 
 include ":keys:key";
+include "include/say";
 include "plankUtil";
 
 program useplank(mob, plank)
   set_critical(1);
 
-  if(mob.multi.serial == plank.multi.serial)
-	TimedOpenClose(plank);
-  elseif((FK(mob, plank) == 1) ||(!plank.locked))
-	if(!IsExtended(plank))
-	  TimedOpenClose(plank);
-	else
-	  YankOntoBoat(mob,plank);
-	endif
-  else
-	PrintTextAbovePrivate(plank, "Esta trancado.", mob);
-  endif
+   if(mob.multi.serial == plank.multi.serial)
+      TimedOpenClose(plank);
+   elseif((FK(mob, plank) == 1) ||(!plank.locked))
+      if(!IsExtended(plank))
+         TimedOpenClose(plank);
+      else
+         var tillerman := plank.multi.tillerman;
+         var t := GetObjProperty(tillerman, "always_travel");
+         if (t)
+            var dest := GetObjProperty(tillerman, "viagem")[t];
+            if (PayTravel(mob,tillerman, dest))
+               PrintText(tillerman, "Suba a bordo marujo!");
+               SendSysMessageEx(mob, "Aguarde um momento até que o barco siga seu rumo.", SSM_INFO);
+               YankOntoBoat(mob,plank);
+            endif
+         else
+            YankOntoBoat(mob,plank);
+         endif
+      endif
+   else
+      PrintText(plank, "Está trancado.", mob);
+   endif
 endprogram
+
+function PayTravel(mob, tillerman, dest)
+   SendSystemReport(tillerman, "Vai custar {} moedas para subir!".format(dest.cost), SSM_INFO, mob);
+   SendSysMessageEx(mob, "Você deve pagar " + dest.cost + " moedas por essa viagem.", SSM_REQUEST);
+   SendSysMessageEx(mob, "Rota: {}".format(dest.name), SSM_REQUEST);
+   var moedas := Target(mob);
+   if ( moedas.objtype == 0xeed)
+      if (moedas.amount >= cint(dest.cost))
+         if (!SubtractAmount(moedas, cint(dest.cost)))
+            PrintText(tillerman, "Você não tem moedas necessárias.");
+         endif
+      else
+         PrintText(tillerman, "Você não tem moedas necessárias.");
+         return;
+      endif
+   elseif (!moedas)
+      return;
+   else
+      PrintText(tillerman, "Isso ai parece moeda pra você? Pra mim não.");
+      return;
+   endif
+
+   return 1;
+endfunction
 
 function TimedOpenClose(plank)
   if(IsExtended(plank))

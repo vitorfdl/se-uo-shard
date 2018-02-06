@@ -36,7 +36,7 @@ program setpins(who)
       var plots := GetObjProperty(tillerman, "back_course");
       if (plots)
          var pos := plots[plots.size()];
-         MoveBoatXY(boat, plots[pos].x, plots[pos].y);
+         MoveBoatXY(boat, pos.x, pos.y);
       endif
    elseif (request == new_choice)
       var dest := struct{ "plots" := array{} };
@@ -50,9 +50,9 @@ program setpins(who)
 	   SetObjProperty(tillerman, "viagem", viagens);
       SendsysMessageEx(who, "Rota adicionada", SSM_INFO);
    else
-      var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar Preço", "Alterar Rota", "Alterar Nome", "Remover", "Cancelar"}, 1);
+      var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar Preço", "Alterar Rota", "Alterar Nome", "Fazer barco auto-seguir essa rota", "Remover", "Cancelar"}, 1);
 
-      if (choice == 4) // remove
+      if (choice == 5) // remove
          viagens.Erase(request);
 	      SetObjProperty(tillerman, "viagem", viagens);
          SendsysMessageEx(who, "Rota removida", SSM_FAIL);
@@ -73,6 +73,8 @@ program setpins(who)
          setPlots(who, tillerman, viagens[request].plots);
 	      SetObjProperty(tillerman, "viagem", viagens);
          SendsysMessageEx(who, "Rota alterada", SSM_INFO);
+      elseif (choice == 4)
+         SetObjProperty(tillerman, "always_travel", request);
       endif
    endif
 endprogram

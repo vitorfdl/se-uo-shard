@@ -6,7 +6,7 @@ include ":gumps:yesno";
 include "include/say";
 
 program renameboat(you, tillerman)
-	if (GetObjProperty(tillerman, "viagem") != error && !GetObjProperty(tillerman, "course"))
+	if (GetObjProperty(tillerman, "viagem") != error && !GetObjProperty(tillerman, "course") && !GetObjProperty(tillerman, "always_travel") )
 		var destinos := GetObjProperty(tillerman, "viagem");
 		var options := array;
 		foreach dest in destinos

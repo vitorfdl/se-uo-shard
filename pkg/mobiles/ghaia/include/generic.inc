@@ -62,10 +62,10 @@ function doSpecial(me)
 endfunction
 
 function EnableMainEvents()
-   DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA + SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
-   EnableEvents(SYSEVENT_ENTEREDAREA, areasize);
-   EnableEvents(SYSEVENT_DAMAGED, areasize);
-   EnableEvents(SYSEVENT_ENGAGED, areasize);
+   DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA|SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
+   EnableEvents(SYSEVENT_ENTEREDAREA, cint(areasize));
+   EnableEvents(SYSEVENT_DAMAGED, cint(areasize));
+   EnableEvents(SYSEVENT_ENGAGED, cint(areasize));
    EnableEvents(EVID_ALERT_ALLIES);
    EnableEvents(EVID_HERDING);
    EnableEvents(EVID_TAUNT);
@@ -73,7 +73,7 @@ function EnableMainEvents()
 endfunction
 
 function DisableMainEvents(type := 0)
-   DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ENTEREDAREA);
+   DisableEvents(SYSEVENT_ENGAGED|SYSEVENT_DAMAGED|SYSEVENT_ENTEREDAREA);
 endfunction
 
 
@@ -101,12 +101,12 @@ function SetPeaceMade()
 endfunction
 
 function EnableCombatEvents()
-    EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED );
+    EnableEvents(SYSEVENT_ENGAGED|SYSEVENT_DAMAGED );
     DisableEvents(SYSEVENT_SPEECH);
 endfunction
 
 function DisableCombatEvents()
-    DisableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED );
+    DisableEvents(SYSEVENT_ENGAGED|SYSEVENT_DAMAGED );
 endfunction
 
 
@@ -210,6 +210,7 @@ function sleepmode()
    // endif
    EraseObjProperty(me, "aggros");
    EraseObjProperty(me,"#flees");
+   SetObjProperty(me,"#sleepmode", 1);
    DisableMainEvents();
 
    //TODO se tiver skill hiding, usar
@@ -254,6 +255,7 @@ function sleepmode()
          endcase
       until(!(ev := os::wait_for_event(30)));
    endwhile
+   EraseObjProperty(me,"#sleepmode");
 endfunction
 
 function CreateAnimalitems()

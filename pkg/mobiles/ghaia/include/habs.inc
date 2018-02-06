@@ -398,6 +398,7 @@ function scald(mobile, dmg, diff)
                PrintText(m, "*resistido*", SSM_INFO);
             else
                DamageFLS(m, dmg, DMG_FIRE, me);
+               AP_ConsumeVital(m, STAMINA, 6);
             endif
          endif
          sleepms(2);
@@ -703,7 +704,7 @@ endfunction
 function cavar(targ, diff, effect := 0x3728)
    if(!effect) effect := 0x3728; endif
 
-   if (Distance(targ, me) < 3)
+   if (Distance(me, targ) < 3)
       return 0;
    endif
 
@@ -712,7 +713,7 @@ function cavar(targ, diff, effect := 0x3728)
    me.concealed := 1;
    TurnObjectToward(me, targ.x, targ.y);
    PlaySoundEffect(me, 0x1FF);
-   sleepms(500);
+   sleep(1);
    MoveObjectToLocation(me, targ.x, targ.y, targ.z, me.realm, MOVEOBJECT_FORCELOCATION);
    me.concealed := 0;
    PrintText(me, "*surge embaixo de {}*".format(targ.name));

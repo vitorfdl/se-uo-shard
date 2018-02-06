@@ -81,7 +81,7 @@ program NPCMonitor()
                   ProcessDoubleClick(ev);
                elseif ( me.graphic in pack_animals )
                   OpenPack(ev);
-               elseif ( !GetEquipmentByLayer(ev.source, LAYER_MOUNT) && IsMountable(me.graphic))
+               elseif ( !GetEquipmentByLayer(ev.source, LAYER_MOUNT) && IsMountable(me.graphic) && (ev.source.cmdlevel || me.HaveTalent("Montar")))
                   if (MoveObjectToLocation(ev.source, me.x, me.y, me.z, ev.source.realm))
                      ev.source.hidden := 0;
                      MP_Mount(ev.source, me);

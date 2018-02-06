@@ -130,6 +130,7 @@ function Fight(opponent, alerted := 0)
    endif
 */
 
+
    var dist;
    while( me && loops <= 140)
       sleepms(15);

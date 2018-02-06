@@ -64,35 +64,35 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 	//terceira oitava
 	GFTextLine(bardgump, 86, 146, 600, "C3" );
 
-	//primeira oitava
-	var C  := GFAddButton(bardgump, 86, 106, 2103, 2104, 1, 100);
-	var Cs  := GFAddButton(bardgump, 118, 106, 2103, 2104, 1, 2);
-	var D  := GFAddButton(bardgump, 150, 106, 2103, 2104, 1, 3);
-	var Ds  := GFAddButton(bardgump, 182, 106, 2103, 2104, 1, 4);
-	var E  := GFAddButton(bardgump, 214, 106, 2103, 2104, 1, 5);
-	var F  := GFAddButton(bardgump, 246, 106, 2103, 2104, 1, 6);
-	var Fs  := GFAddButton(bardgump, 278, 106, 2103, 2104, 1, 7);
-	var G  := GFAddButton(bardgump, 310, 106, 2103, 2104, 1, 8);
-	var Gs  := GFAddButton(bardgump, 342, 106, 2103, 2104, 1, 9);
-	var A  := GFAddButton(bardgump, 374, 106, 2103, 2104, 1, 10);
-	var Ass  := GFAddButton(bardgump, 406, 106, 2103, 2104, 1, 11);
-	var B  := GFAddButton(bardgump, 438, 106, 2103, 2104, 1, 12);
-	var P  := GFAddButton(bardgump, 475, 106, 2103, 2104, 1, 13);
-	var L  := GFAddButton(bardgump, 520, 106, 2103, 2104, 1, 16);
+   //primeira oitava
+   GFAddButton(bardgump, 86, 106, 2103, 2104, 1, 100);// var C
+   GFAddButton(bardgump, 118, 106, 2103, 2104, 1, 2);// var Cs 
+   GFAddButton(bardgump, 150, 106, 2103, 2104, 1, 3);// var D 
+   GFAddButton(bardgump, 182, 106, 2103, 2104, 1, 4);// var Ds 
+   GFAddButton(bardgump, 214, 106, 2103, 2104, 1, 5);// var E 
+   GFAddButton(bardgump, 246, 106, 2103, 2104, 1, 6);// var F 
+   GFAddButton(bardgump, 278, 106, 2103, 2104, 1, 7);// var Fs 
+   GFAddButton(bardgump, 310, 106, 2103, 2104, 1, 8);// var G 
+   GFAddButton(bardgump, 342, 106, 2103, 2104, 1, 9);// var Gs 
+   GFAddButton(bardgump, 374, 106, 2103, 2104, 1, 10);// var A
+   GFAddButton(bardgump, 406, 106, 2103, 2104, 1, 11);// var Ass
+   GFAddButton(bardgump, 438, 106, 2103, 2104, 1, 12);// var B
+   GFAddButton(bardgump, 475, 106, 2103, 2104, 1, 13);// var P
+   GFAddButton(bardgump, 520, 106, 2103, 2104, 1, 16);// var L
 
-	//segunda oitava
-	var C2  := GFAddButton(bardgump, 86, 136, 2103, 2104, 1, 17);
-	var Cs2  := GFAddButton(bardgump, 118, 136, 2103, 2104, 1, 18);
-	var D2  := GFAddButton(bardgump, 150, 136, 2103, 2104, 1, 19);
-	var Ds2  := GFAddButton(bardgump, 182, 136, 2103, 2104, 1, 20);
-	var E2  := GFAddButton(bardgump, 214, 136, 2103, 2104, 1, 21);
-	var F2  := GFAddButton(bardgump, 246, 136, 2103, 2104, 1, 22);
-	var Fs2  := GFAddButton(bardgump, 278, 136, 2103, 2104, 1, 23);
-	var G2  := GFAddButton(bardgump, 310, 136, 2103, 2104, 1, 24);
-	var Gs2  := GFAddButton(bardgump, 342, 136, 2103, 2104, 1, 25);
-	var A2  := GFAddButton(bardgump, 374, 136, 2103, 2104, 1, 26);
-	var Ass2  := GFAddButton(bardgump, 406, 136, 2103, 2104, 1, 27);
-	var B2  := GFAddButton(bardgump, 438, 136, 2103, 2104, 1, 28);	
+   //segunda oitava
+   GFAddButton(bardgump, 86, 136, 2103, 2104, 1, 17);// var C2 
+   GFAddButton(bardgump, 118, 136, 2103, 2104, 1, 18);// var Cs2
+   GFAddButton(bardgump, 150, 136, 2103, 2104, 1, 19);// var D2
+   GFAddButton(bardgump, 182, 136, 2103, 2104, 1, 20);// var Ds2
+   GFAddButton(bardgump, 214, 136, 2103, 2104, 1, 21);// var E2
+   GFAddButton(bardgump, 246, 136, 2103, 2104, 1, 22);// var F2
+   GFAddButton(bardgump, 278, 136, 2103, 2104, 1, 23);// var Fs2
+   GFAddButton(bardgump, 310, 136, 2103, 2104, 1, 24);// var G2
+   GFAddButton(bardgump, 342, 136, 2103, 2104, 1, 25);// var Gs2
+   GFAddButton(bardgump, 374, 136, 2103, 2104, 1, 26);// var A2
+   GFAddButton(bardgump, 406, 136, 2103, 2104, 1, 2);// var Ass2
+   GFAddButton(bardgump, 438, 136, 2103, 2104, 1, 28);// var B2	
 
 	//terceira oitava
 	var C3  := GFAddButton(bardgump, 86, 166, 2103, 2104, 1, 29);
@@ -452,7 +452,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
    sleepms(2000);
    for i := 1 to 2
       var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
-      if (roll >= difskill)
+      if (roll >= dif)
          PrintText(who, "*Escrevendo a partitura*");
       else 
          SendSysMessage(who, "Você arruinou a partitura");

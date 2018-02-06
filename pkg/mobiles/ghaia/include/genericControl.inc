@@ -45,7 +45,7 @@ function genericControl()
          endif
 
          if ("changeskin" in custombehaviors && !me.concealed)
-            me.frozen := 1;
+            me.paralyzed := 1;
             me.concealed := 1;
             var changeskin := GetObjProperty(me, "changeskin");
 				var item := CreateItemAtLocation(me.x, me.y, me.z, changeskin, 1, me.realm);
@@ -82,36 +82,41 @@ function resolveEvent(ev, byref wanders)
 			endif
          break;
 		SYSEVENT_ENTEREDAREA:
-			if (CheckLineOfSight(me, ev.source) && CanFight(me, ev.source))
-            if ("changeskin" in custombehaviors && me.concealed)
-               var changeskin := GetObjProperty(corpse, "skinchanged");
-               if (changeskin)
-                  var item := SystemFindObjectBySerial(changeskin);
-                  DestroyItem(item);
-               endif
-               me.concealed := 0;
-               me.frozen := 0;
+         wanders := 0;
+         if (!CheckLineOfSight(me, ev.source)  )
+            break;
+         elseif (!CanFight(me, ev.source) || areasize < Distance(me, ev.source))
+            break;
+         endif
+
+         if ("changeskin" in custombehaviors && me.concealed)
+            var changeskin := GetObjProperty(me, "skinchanged");
+            if (changeskin)
+               var item := SystemFindObjectBySerial(changeskin);
+               DestroyItem(item);
             endif
-            
-				wanders := 0;
-            var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
-            foreach mob in mobs
-               if (mob == ev.source)
-                  me.setAggro(mob.serial, mob.getToughness()+12);
-                  if (HaveFeat(mob, "Cadeia de Comando"))
-                     var followers := ListPetsNear(mob, 5);
-                     foreach follower in followers
-                        me.setAggro(follower.serial, 5);
-                        sleepms(2);
-                     endforeach
-                  endif
-               elseif (CanFight(me, mob))
-                  me.setAggro(mob.serial, mob.getToughness()+10);
+            me.concealed := 0;
+            me.paralyzed := 0;
+         endif
+
+         var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
+         foreach mob in mobs
+            if (mob == ev.source)
+               me.setAggro(mob.serial, mob.getToughness()+12);
+               if (HaveFeat(mob, "Cadeia de Comando"))
+                  var followers := ListPetsNear(mob, 5);
+                  foreach follower in followers
+                     me.setAggro(follower.serial, 5);
+                     sleepms(2);
+                  endforeach
                endif
-               sleepms(2);
-            endforeach
-				Fight(ev.source);
-			endif
+            elseif (CanFight(me, mob))
+               me.setAggro(mob.serial, mob.getToughness()+10);
+            endif
+            sleepms(2);
+         endforeach
+
+         Fight(ev.source);
          break;
 		SYSEVENT_ENGAGED:
 		SYSEVENT_DAMAGED:

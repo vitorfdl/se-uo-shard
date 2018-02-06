@@ -25,7 +25,7 @@ function StartScript(mobile, attacker := 0, level := 0)
    endcase
 
    while (1)
-      PlayObjectCenteredEffectEx( mobile,  0x19AB, 5, 40, 0, 4, 0);
+      PlayObjectCenteredEffectEx( mobile,  0x19AB, 5, 30, 0, 4, 0);
       DamageFLS(mobile, RandomDiceRoll(dmg_roll), DMG_FIRE, attacker);
       if (RandomInt(2) == 1)
          mobile.paralyzed := 1;

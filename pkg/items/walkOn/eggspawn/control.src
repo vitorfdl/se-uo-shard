@@ -1,0 +1,26 @@
+use os;
+use uo;
+use util;
+
+include "include/sysEvent";
+include "include/say";
+
+program startControl(item)
+   Attach(item);
+   EnableEvents(SYSEVENT_ENTEREDAREA, 2);
+   while (item)
+      var reset := GetObjProperty(item, "spawn");
+      if (reset)
+         if (reset <= polcore().systime)
+            item.ResetSpawn();
+         endif
+      else
+         var mobiles := ListMobilesNearLocationEx(item.x, item.y, item.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY, item.realm);
+         if (mobiles.size() >= 1)
+            PrintText(item, "*eclode*");
+            item.MakeSpawn();
+         endif
+      endif
+      sleep(30);
+   endwhile
+endprogram

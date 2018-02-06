@@ -4,7 +4,7 @@ use util;
 include "include/damage";
 include "include/client";
 include "include/sounds";
-include ":timedscripts:timedScripts";
+include ":tn:cooldown";
 
 program HitScript(params)
 	var attacker	:= params[1];
@@ -14,7 +14,12 @@ program HitScript(params)
 	// var basedamage	:= params[5];
 	// var rawdamage	:= params[6];
 	params := 0; // Not needed anymore.
-   
+   if (GetCooldown(attacker, "morehits_done"))
+      return;
+   endif
+
+   SetCooldown(attacker, "morehits_done", 1);
+
    var n_hits := cint(GetObjproperty(attacker, "morehits"));
    for i := 1 to n_hits
       attacker.attack_once(defender);

@@ -11,7 +11,7 @@ include ":timedscripts:timedScripts";
 
 program explosao(params)
 	var who := params[1];
-	var spellinfo := params[2];
+	var dice_roll := params[2].dice_roll;
 	var targ := params[3];
 	params := 0; // No longer needed
 
@@ -38,18 +38,19 @@ program explosao(params)
       return;
    endif
 
-   var dmg_dice := RandomDiceRoll("1d4+2");
+   var dmg_dice := RandomDiceRoll("1d6+3");
 
    var effects := array{GFX_EXPLODE_1, GFX_EXPLODE_2, GFX_EXPLODE_3};
    PlayStationaryEffect(found.x, found.y, found.z, effects.randomentry(), 10, 10, 0);
-
+   PlaySoundEffect(found, 0x16B);
+   
    foreach mobile in ListMobilesNearLocation( targ.x, targ.y, targ.z, 3)
-      if (rollResistDice(mobile, DEXTERITY) > dice_roll+3)
+      if (rollResistDice(mobile, DEXTERITY) > dice_roll+2)
          SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
          SendSystemReport(mobile, "*esquivou*", SSM_INFO);
       else
          DamageFLS(mobile, dmg_dice, DMG_FIRE, who);
-         TS_StartTimer(targ, "immolation", 6);	
+         TS_StartTimer(mobile, "immolation", 10, 0);	
       endif
       sleepms(2);
    endforeach

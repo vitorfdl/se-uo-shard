@@ -231,7 +231,7 @@ function StartDynamicEvent(spot, config, evententry)
       elseif (this_step.name == "Play Sound")
          var loc := this_step.location[1];
          if (this_step.spawn_player_loc && player_found)
-            coord := player_found;
+            loc := player_found;
          endif
          PlaySoundEffectXYZ( loc[1], loc[2], loc[3], cint(this_step.number) );
       endif

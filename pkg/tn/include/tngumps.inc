@@ -382,9 +382,9 @@ function QuestionsGump(who, questions := array{})
 	endforeach
 
 	GFAddButton(gump, x+150, y, 4011, 4030, GF_CLOSE_BTN, 5); //confirm
-   GFTextLine(gump, x+175, y+3, 1153, "Confirmar");
+   GFTextLine(gump, x+178, y+3, 1153, "Confirmar");
 	GFAddButton(gump, x+260, y, 4011, 4030, GF_CLOSE_BTN, 1); //cancel;
-   GFTextLine(gump, x+285, y+3, 1153, "Cancelar");
+   GFTextLine(gump, x+288, y+3, 1153, "Cancelar");
 
 	var input := GFSendGump(who, gump);
 	if (input[0] == 1) return 0; endif
