@@ -47,7 +47,6 @@ program SoundPlay( rune )
          printtextabove(rune, "playando");
          var mobile_list := ListMobilesNearLocationEx(rune.x, rune.y, LIST_IGNORE_Z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_CONCEALED|LISTEX_FLAG_PLAYERS_ONLY);
          foreach mobile in mobile_list
-            print(mobile.name +" "+effect);
             PlaySoundEffectPrivate( mobile, cint(effect), mobile);
             sleepms(2); 
          endforeach

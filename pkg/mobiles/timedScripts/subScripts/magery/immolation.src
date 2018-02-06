@@ -14,7 +14,6 @@ include "include/sounds";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   print(level);
    var dmg_roll;
    case (level)
       0: dmg_roll :="1d4+1";

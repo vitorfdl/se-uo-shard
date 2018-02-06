@@ -183,7 +183,7 @@ function SeasonRotate()
 		setglobalproperty("season", 3);
 		//start_script("seasonaleffects");
 	elseif (daynumber == 272)
-		Broadcast("Os passaros cantam felizes e a vida selvagem e ambudante.");
+		Broadcast("Os pássaros cantam felizes e a vida selvagem é ambudante.");
 		setglobalproperty("season", 5);
 		//start_script("seasonaleffects");
 	endif

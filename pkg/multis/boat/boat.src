@@ -142,6 +142,8 @@ program autostart_boat(param)
                SetObjProperty(tillerman, "course", back_course);
                EraseObjProperty(tillerman, "back_course");
                state := STATE_FOLLOWING_COURSE;
+               ms_delay_between_moves := 1000;
+               PrintText(tillerman, "Estamos partindo! Aye!");
                continue;
             endif
          elseif (!GetCooldown(tillerman, "do_travel") && GetObjProperty(tillerman, "always_travel"))
@@ -154,6 +156,7 @@ program autostart_boat(param)
                backcourse.reverse();
                SetObjProperty(tillerman, "back_course", backcourse);
                state := STATE_FOLLOWING_COURSE;
+               ms_delay_between_moves := 1000;
                PrintText(tillerman, "Estamos partindo! Aye!");
                continue;
             endif
@@ -186,9 +189,7 @@ program autostart_boat(param)
 endprogram
 
 function handle_speech(event)
-   print("handling speech");
   var text := lower(event.text);
-   print(text);
   if(text["drift"] || text["levantar ancora"])
     ms_delay_between_moves := 1000;
     state := STATE_DRIFTING;
@@ -600,12 +601,18 @@ function BoatFollowCourse(boat)
 	else
       var raw_facing := GetFacing(boat.x, boat.y, newpoint[1], newpoint[2]);
 	   var newfacing := DetermineTurnCode(boat, raw_facing);
-      if( prevfacing/2 != newfacing/2 )
+
+      if( prevfacing != newfacing && raw_facing % 2 != 0 )
          TurnBoat(boat, newfacing );
       endif
-      // printtext(tillerman, "n {}, raw {}, after: {}".format(newfacing, raw_facing, newfacing - raw_facing));
-		MoveBoatRelative(boat, raw_facing - boat.facing);
-		if (CoordinateDistance(boat.x, boat.y, newpoint[1], newpoint[2]) > 2)
+
+      if (boat.facing > raw_facing)
+         raw_facing += 8;
+      endif
+      var direct := raw_facing - boat.facing;
+ 
+		var relative := MoveBoatRelative(boat, direct);
+		if (CoordinateDistance(boat.x, boat.y, newpoint[1], newpoint[2]) > 0)
     		state := STATE_DRIFTING;
     		PrintText(tillerman, "Aaargh! Nós paramos!");
   		endif

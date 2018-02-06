@@ -61,9 +61,9 @@ program weathercontrol()
          output("Duracao de: " + cint((duration*150)/60) + " minutos");
 
          weathereffects(stormtype , duration);
-	 SetGlobalProperty("weather", stormtype);
+	      SetGlobalProperty("weather", stormtype);
          endweather();
-	 EraseGlobalProperty("weather");
+	   EraseGlobalProperty("weather");
       endif
     endif
 

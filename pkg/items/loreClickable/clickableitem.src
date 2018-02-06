@@ -13,6 +13,37 @@ const BTN_CHANGE_TEST := 14;
 const BTN_CHANGE_LANG := 15;
 const BTN_CHANGE_TEXT := 16;
 
+var resizables := array{
+   0xE10,
+   0xA3C,
+   0x1432,
+   0x141E,
+   0x24A4,
+   0x24AE,
+   0xBB8,
+   0xDAC,
+   0x2454,
+   0x2486,
+   0x13BE,
+   0x2422,
+   0x242C,
+   0x9D8,
+   0x53,
+   0x24B8,
+   0x24B8,
+   0x254E,
+   0x255E,
+   0x1400,
+   0x13EC,
+   0xA28,
+   0x12E,
+   0x137,
+   0x7748,
+   0x7752,
+   0x9bF5,
+   0x9C40
+};
+
 program command_Message(who, item)
    if (!who.cmdlevel)
       return showSpecialGump(who, item);
@@ -61,6 +92,8 @@ function handleInput(who, input, item, byref gump_params)
       BTN_CHANGE_CHANGE:
          var questions := array{};
          questions.append(struct{ "title" := "Qual o ID do gump?", "marked" := ""+cint(gump_params.gump_id)});
+         questions.append(struct{ "title" := "Qual largura do gump? (ignorar se não é resizable)", "marked" := ""+cint(gump_params.g_width)});
+         questions.append(struct{ "title" := "Qual altura do gump? (ignorar se não é resizable)", "marked" := ""+cint(gump_params.g_height)});
          questions.append(struct{ "title" := "Qual posição x do texto?", "marked" := ""+cint(gump_params.x)});
          questions.append(struct{ "title" := "Qual posição y do texto?", "marked" := ""+cint(gump_params.y)});
          questions.append(struct{ "title" := "Qual largura do texto?", "marked" := ""+cint(gump_params.width)});
@@ -68,11 +101,13 @@ function handleInput(who, input, item, byref gump_params)
          questions.append(struct{ "title" := "Qual a cor do texto?", "marked" := ""+gump_params.color});
          var output := QuestionsGump(who, questions);
          gump_params.gump_id := cint(output[1]);
-         gump_params.x := cint(output[2]);
-         gump_params.y := cint(output[3]);
-         gump_params.width := cint(output[4]);
-         gump_params.height := cint(output[5]);
-         gump_params.color := output[6];
+         gump_params.x := cint(output[4]);
+         gump_params.y := cint(output[5]);
+         gump_params.width := cint(output[6]);
+         gump_params.g_width := cint(output[2]);
+         gump_params.height := cint(output[7]);
+         gump_params.g_height := cint(output[3]);
+         gump_params.color := output[8];
          
       BTN_CHANGE_LANG:
          var choice := RadioGump(who, 0, 0, "Qual idioma deseja escolher?", array{"Linguagem Rúnica", "Linguagem Élfica", "Lingua Comum"});
@@ -84,7 +119,7 @@ function handleInput(who, input, item, byref gump_params)
       BTN_CHANGE_TEST:
          showSpecialGump(who, item);
       BTN_CHANGE_TEXT:
-         var text := BigRequestGump(who, "Escreva o conteúdo do gump, use [P] para quebrar a linha");
+         var text := BigRequestGump(who, "Escreva o conteúdo do gump, use <br> para quebrar a linha");
          gump_params.text := text;
       default: return 1;
    endcase
@@ -113,7 +148,11 @@ function showSpecialGump(who, item)
    var gump := GFCreateGump();
    GFClosable(gump, 1);
    GFSetId(gump, 0x94b5);
-   GFGumpPic(gump, 250, 250, gump_params.gump_id);
+   if (cint(gump_params.gump_id) in resizables)
+      GFResizePic(gump, 250, 250, gump_params.gump_id, gump_params.g_width, gump_params.g_height);
+   else
+      GFGumpPic(gump, 250, 250, gump_params.gump_id);
+   endif
    GFHTMLArea(gump, gump_params.x+250, gump_params.y+250, gump_params.width, gump_params.height, "<BASEFONT {} color=#{}>{}".format(lang, gump_params.color, gump_params.text) , 0, 0);
    GFSendGump(who, gump);
 endfunction

@@ -314,7 +314,6 @@ function ReadMail( who, number )
          GFTextLine( gump, 530, 425, 1720, "Responder" );
       endif
 	endif
-   print(mail_info.rp_rating);
 	if (mail_info.rp_rating)
 		GFAddButton( gump, 495, 425, 0xFBF, 0xFBE, GF_CLOSE_BTN, ACCEPT_RATING );
 		GFTextLine( gump, 530, 425, 1720, "Aceitar" );

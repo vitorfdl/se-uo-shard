@@ -261,12 +261,12 @@ exported function FillQueue(spawnpoint)
 
    var spotgroup  := GetSpotGroupData(config.spotgroup, 0);
    if (!spotgroup.activegroup)
-      print(spawnpoint.serial+" no active spotgroup");
+      SysLog(spawnpoint.serial+" no active spotgroup");
       return; //no active group
    endif
    var spawngroup := GetSpawnGroupData(spotgroup.activegroup, 0);
    if (!spawngroup)
-      print(spawnpoint.serial+" no active group");
+      SysLog(spawnpoint.serial+" no active group");
       return; //no active group
    endif
 

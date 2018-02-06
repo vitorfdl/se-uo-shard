@@ -2,6 +2,5 @@ use uo;
 use os;
 
 program gmmenu(who)
-    Print("enviando script");
     Start_Script(":fls_core:gmmenu", who);
 endprogram
