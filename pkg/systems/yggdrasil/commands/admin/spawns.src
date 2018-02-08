@@ -504,7 +504,7 @@ function DoTreasureList(who, input)
                      input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := 1, "checkbox" := loot_list});
                      input_list.append(struct{ "title" := "Quantos itens podem dropar?", "marked" := "1d4" });
                      input_list.append(struct{ "title" := "Qual a chance de drop?", "marked" := "60" });
-                     input_list.append(struct{ "title" := "Forçar recipe em items?", "marked" := 1, "radio" :=  });
+                     input_list.append(struct{ "title" := "Forçar items em recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
                      var output := QuestionsGump(who, input_list);
                      if (!output)
                         break;
@@ -513,7 +513,8 @@ function DoTreasureList(who, input)
                         var loot := struct{
                            "by_group":= glist,
                            "rate":= output[2],
-                           "chance":= cint(output[3])
+                           "chance":= cint(output[3]),
+                           "forceitem" := output[4] == "Sim"
                         };
                         treasure.loots.append(loot);
                         sleepms(2);
@@ -897,7 +898,9 @@ function ConstructTreasureConfig(byref gump)
         if (loot)
             GFAddButton( gump, sx-8, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
             if (loot.by_group)
-                GFTextLine(gump, sx, sy, 2103, "{} [{}] R: ".format(Upper(loot.item.desc), loot.chance, loot.rate));
+               var forceitem = "N";
+               if (loot.forceitem) forceitem := "F"; endif
+                GFTextLine(gump, sx, sy, 2103, "{} [{}][{}] R: {}".format(Upper(loot.item.desc), loot.chance, ,loot.rate));
             else
                 GFTextLine(gump, sx, sy, 2103, "{} [{}]".format(Upper(loot.item.desc), loot.chance));
             endif
