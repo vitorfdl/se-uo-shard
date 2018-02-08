@@ -116,7 +116,7 @@ function SpawnTreasure(treasure, config, spot_serial := 1)
 
    foreach loot in (config.loots)
       if(loot.by_group)
-         Loot_Generate(treasure, loot.by_group);
+         Loot_Generate(treasure, loot.by_group, loot);
       elseif( RandomDiceRoll("1d100") <= loot.chance)
          var item := CreateItemAtLocationFromTemplate(treasure.x, treasure.y, treasure.z, _DEFAULT_REALM, loot.item );
          MoveItemToContainer(item, treasure);

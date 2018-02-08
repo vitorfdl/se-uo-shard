@@ -452,7 +452,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
    sleepms(2000);
    for i := 1 to 2
       var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
-      if (roll >= dif)
+      if (roll >= dif - (i-1 * 2))
          PrintText(who, "*Escrevendo a partitura*");
       else 
          SendSysMessage(who, "Você arruinou a partitura");

@@ -35,6 +35,7 @@ function genericControl()
 		if (wanders > 20 && RandomInt(2) == 1)
          if (ListMobilesNearLocationEx(me.x, me.y, me.z, 15, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 0)
 			   wanders := 0;
+            loops := 0;
          endif
       endif
 
@@ -66,7 +67,8 @@ function genericControl()
       loops += 1;
       if (loops >= 200 && me.alignment != 2)
          print("I'm stuck: " + me.serial+" "+me.name);
-         ApplyRawDamage(me, 200);
+         SetObjProperty(me, "GuardKill", 1);	
+         ApplyRawDamage(me, 500);
       endif
 	endwhile
 endfunction

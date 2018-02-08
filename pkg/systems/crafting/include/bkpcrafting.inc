@@ -71,7 +71,7 @@ function MaterialSelection(who, craft_skill, type, chk)
 		materialchk := 1;
 	endif
 	if(materialchk == 0)
-		SendSysMessage(who, "Esse não e o material certo.");
+		SendSysMessage(who, "Esse não é o material certo.");
 		return 0;
 	endif
 	

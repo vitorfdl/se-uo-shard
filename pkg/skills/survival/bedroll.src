@@ -38,7 +38,7 @@ program use_Bedroll( who, bedroll )
 
 	while( ttl > 0 )
 		if( (who.x != x) || (who.y != y) || (who.z != z) )
-			SendSysMessageEx( who, "Você abandonou suas preparacoes para o acampamento.", SSM_FAIL);
+			SendSysMessageEx( who, "Você abandonou suas preparações para o acampamento.", SSM_FAIL);
 			return 0;
 		endif
 		SendSysMessageEx( who, "Você deve esperar " + ttl + " segundos para deslogar.", SSM_FAIL );
@@ -47,6 +47,12 @@ program use_Bedroll( who, bedroll )
 	endwhile
 
 	SetObjProperty(who,"#camped",1);
+   var uses := cint(GetObjProperty(bedroll, "uses"));
+   if (uses >= 5) 
+      DestroyItem(bedroll);
+   else
+      SetObjProperty(bedroll, "uses", uses+1);
+   endif
 	DisconnectClient( who );
 
 endprogram

@@ -841,7 +841,7 @@ function CombatEventsOptions(who, state)
          state.+resist_diff := cint(output[6]);
       endif
    elseif ( opt == "Create Items")
-      SendSysMessage(who, "Não implementado");
+      SendSysMessageEx(who, "Não implementado");
    elseif (opt == "Summon Npcs")
       var input_list := array{};
       input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ":ghaia:"});

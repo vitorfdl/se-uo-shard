@@ -154,6 +154,16 @@ program autostart_boat(param)
                SetObjProperty(tillerman, "course", dest.plots);
                var backcourse := dest.plots;
                backcourse.reverse();
+               foreach plot in backcourse
+                  if (plot.p)
+                     if (plot.p > 1)
+                        plot.p -= 2;
+                     else
+                        plot.p += 2;
+                     endif
+                  endif
+                  sleepms(2);
+               endforeach
                SetObjProperty(tillerman, "back_course", backcourse);
                state := STATE_FOLLOWING_COURSE;
                ms_delay_between_moves := 1000;
@@ -581,6 +591,7 @@ function BoatFollowCourse(boat)
 	endif
 	var destx := cint(course[1].x);
 	var desty := cint(course[1].y);
+	var destp := cint(course[1].p);
 	var newpoint := lineBresenham(boat.x, boat.y, destx, desty);
 	if(!newpoint) //reached waypoint/end
       course.Erase(1);
@@ -600,12 +611,15 @@ function BoatFollowCourse(boat)
 		endif
 	else
       var raw_facing := GetFacing(boat.x, boat.y, newpoint[1], newpoint[2]);
-	   var newfacing := DetermineTurnCode(boat, raw_facing);
-
-      if( prevfacing != newfacing && raw_facing % 2 != 0 )
-         TurnBoat(boat, newfacing );
+      if (!destp)
+         var newfacing := DetermineTurnCode(boat, raw_facing);
+         
+         if( prevfacing != newfacing && raw_facing % 2 != 0 )
+            TurnBoat(boat, newfacing );
+         endif
+      else
+         TurnBoat(boat, destp );
       endif
-
       if (boat.facing > raw_facing)
          raw_facing += 8;
       endif

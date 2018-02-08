@@ -104,11 +104,12 @@ program skinning(parms)
 			var dif := 0;
 			var bonusdif := 0;
 			if (blade.objtype == 0x0ec4)//se for skinning knife da bonus
-				bonusdif := -5;
+				bonusdif := -2;
 			endif
 			var found := 0;
 			foreach thing in corpseitm
 				dif := bonusdif + CINT(GetSkinningDifficulty(corpseitm[i]) );
+            if (dif < 5) dif := 9; endif
 				minamt := GetMinSkinningAmt(corpseitm[i]);
 				var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
 				if(dice_roll > dif)

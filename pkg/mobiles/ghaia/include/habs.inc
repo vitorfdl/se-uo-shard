@@ -169,11 +169,12 @@ function pullCloser(dist, times)
             if ( Distance(me, mob) < 1 )
                continue;
             endif
-            if (CheckLineOfSight(me, mob))
+            if (CheckLineOfSight(me, targme, mob))
                SendSysMessageEx(mob, "Você é puxado pelo vento");
                var point := GetModByFacing(GetFacing(me.x, me.y, mob.x, mob.y));
                point[1] *= -1;
                point[2] *= -1;
+               MoveObjectToLocation(mob, mob.x+point[1], mob.y+point[2], mob.z, mob.realm, MOVEOBJECT_FORCELOCATION);
                MoveObjectToLocation(mob, mob.x+point[1], mob.y+point[2], mob.z, mob.realm, MOVEOBJECT_FORCELOCATION);
             endif
          endforeach
@@ -190,7 +191,7 @@ function electricCone(mobile, dmg, dist)
       return 0;
    endif
    
-   PrintText(me, "*baforada elétrica*");
+   PrintText(me, "*baforada*");
    var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
    points.erase(points.size());
    points.erase(points.size()-2);
@@ -214,7 +215,7 @@ function electricCone(mobile, dmg, dist)
 endfunction
 
 function throwBomb(mobile, hab_dice, bombs)
-   if (Distance(mobile, me) > 12) return; endif
+   if (Distance(mobile, me) > 12 || !CheckLineOfSight(me, targ)) return; endif
 
    bombs := SplitWords(bombs, "|");
    var item := CreateItemAtLocation(me.x, me.y, me.z, bombs.randomentry());
@@ -540,7 +541,7 @@ function Roubar(targ)
 endfunction
 
 function RajadaAcida(dmg, targ, difficulty)
-   if (!targ || Distance(me, targ) < 3  || !CheckLineOfSight(me, targ))
+   if (!targ || Distance(me, targ) < 3  || !CheckLineOfSight(me, targme, targ))
       return;
    endif
 
@@ -576,7 +577,7 @@ endfunction
 // function throwItem(targ)
 //    if ( dist < 3 || dist > 15 )
 //       return 0;
-//    elseif ( !CheckLineOfSight(npc, opponent) )
+//    elseif ( !CheckLineOfSight(me, targnpc, opponent) )
 //       return 0;
 //    elseif ( CInt( GetCooldown(npc, "throws" )) != 0 )
 //       return 0;
@@ -626,7 +627,7 @@ function Firebreath(npc, opponent, byref dist)
       return 0;
    elseif ( CInt( GetCooldown(npc, "breath" )) != 0 )
       return 0;
-   elseif ( !CheckLineOfSight(npc, opponent) )
+   elseif ( !CheckLineOfSight(me, targnpc, opponent) )
       return 0;
    endif
 
@@ -681,7 +682,7 @@ function SpitWeb(difficulty, targ, range)
    range := cint(range);
    if (!targ || Distance(me, targ) > range )
       return 0;
-   elseif ( !CheckLineOfSight(me, targ) )
+   elseif ( !CheckLineOfSight(me, targme, targ) )
       return 0;
    elseif ( targ.frozen )
       return 0;

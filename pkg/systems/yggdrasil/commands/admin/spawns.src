@@ -437,7 +437,7 @@ function DoTreasureList(who, input)
                 break;
             endif
             treasure.serial := container.serial;
-            var result := spot.UpdateTreasure(treasure_obj.serial, treasure);
+            var result := spot.UpdateTreasure(selected_treasure, treasure);
             if (result)
                 SendSysMessageEx(who, "Container updated!");
                 selected_treasure := treasure.serial;
@@ -498,17 +498,27 @@ function DoTreasureList(who, input)
             var t_option := RadioGump(who, 180, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
             case (t_option)
                 "Adicionar lista":
-                    var loot_cfg  := ReadConfigFile(":loot:config/loot-index");
-                    var loot_list := GetConfigStringKeys(loot_cfg);
-                    var list      := RadioGump(who, 230, 120+(loot_list.Size()*18), "Escolha o loot-index?:", loot_list);
-                    if (list == "Cancelar")
+                     var loot_cfg  := ReadConfigFile(":loot:config/loot-groups");
+                     var loot_list := GetConfigStringKeys(loot_cfg);
+                     var input_list := array{};
+                     input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := 1, "checkbox" := loot_list});
+                     input_list.append(struct{ "title" := "Quantos itens podem dropar?", "marked" := "1d4" });
+                     input_list.append(struct{ "title" := "Qual a chance de drop?", "marked" := "60" });
+                     input_list.append(struct{ "title" := "Forçar recipe em items?", "marked" := 1, "radio" :=  });
+                     var output := QuestionsGump(who, input_list);
+                     if (!output)
                         break;
-                    endif
-                    var loot := struct{
-                        "by_group":= list
-                    };
-                    treasure.loots.append(loot);
-                    break;
+                     endif
+                     foreach glist in (output[1])
+                        var loot := struct{
+                           "by_group":= glist,
+                           "rate":= output[2],
+                           "chance":= cint(output[3])
+                        };
+                        treasure.loots.append(loot);
+                        sleepms(2);
+                     endforeach
+                     break;
                 "Adicionar item":
                         SendSysMessage(who, "Escolha o item do loot.");
                         var targ := Target(who);
@@ -530,8 +540,9 @@ function DoTreasureList(who, input)
             var available_opts := array{};
             if (!treasure.loots[index].by_group)
                 available_opts.append("Criar");
-                available_opts.append("Alterar Chance");
+                available_opts.append("Alterar rate de drop");
             endif
+            available_opts.append("Alterar Chance");
             available_opts.append("Deletar");
             available_opts.append("Cancelar");
 
@@ -547,8 +558,11 @@ function DoTreasureList(who, input)
 				SendSysMessageEx(who, "Você criou o item na sua mochila."); 
 			elseif (opt == "Alterar Chance")
 				treasure.loots[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
-            endif 
-            spot.UpdateTreasure(selected_treasure, treasure);
+			elseif (opt == "Alterar rate de drop")
+				treasure.loots[index].rate := Cint(RequestGump(who, "Digite o rate de drop.:", "", "1d2", 1));
+         endif 
+         endif 
+         spot.UpdateTreasure(selected_treasure, treasure);
     endcase
 endfunction
 
@@ -883,9 +897,9 @@ function ConstructTreasureConfig(byref gump)
         if (loot)
             GFAddButton( gump, sx-8, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
             if (loot.by_group)
-                GFTextLine(gump, sx, sy, 2103, " " + Upper(loot.by_group));
+                GFTextLine(gump, sx, sy, 2103, "{} [{}] R: ".format(Upper(loot.item.desc), loot.chance, loot.rate));
             else
-                GFTextLine(gump, sx, sy, 2103, " " + Upper(loot.item.desc) + " [" + loot.chance + "%]");
+                GFTextLine(gump, sx, sy, 2103, "{} [{}]".format(Upper(loot.item.desc), loot.chance));
             endif
             sy += 18;
         endif

@@ -7,16 +7,40 @@ include ":loot:magicLoot";
 
 const RECIPE_OBJ := 0xef1f;
 
-function Loot_Generate(container, loot_index)
+function Loot_Generate(container, loot_index, is_group)
 	if ( !container.IsA(POLCLASS_CONTAINER) )
 		return error{"errortext" := "`ect passed was not a container."};
 	endif
+
+   if (is_group)
+	   var index_cfg := ReadConfigFile(":loot:config/loot-groups");
+      if ( index_cfg.errortext )
+         return error{"errortext" := "Error - Could not open loot-index.cfg -> "+index_cfg.errortext};
+      endif
+      
+      var index_elem := index_cfg[loot_index];
+      if ( !index_elem )
+         return error{"errortext" := "Error - loot-index.cfg elem ["+index_elem+"] does not exist."};
+      //print( "Error - loot-index.cfg elem ["+index_elem+"] does not exist.");
+      endif
+
+      var type = GetConfigStringArray(index_elem, "Type");
+      var line = "{}	 {} {}".format(loot_index. is_group.rate, is_group.chance);
+      if ((type == "recipe" && is_group.forceitem) || !type])
+         Loot_CreateRandom(container, line);
+      elseif (type == "recipe")
+         Loot_CreateRandom(container, line, "recipe");
+      endif
+
+      return 1;
+   endif
+
 
 	var index_cfg := ReadConfigFile(":loot:config/loot-index");
 	if ( index_cfg.errortext )
 		return error{"errortext" := "Error - Could not open loot-index.cfg -> "+index_cfg.errortext};
 	endif
-
+   
 	var index_elem := index_cfg[loot_index];
 	if ( !index_elem )
 		return error{"errortext" := "Error - loot-index.cfg elem ["+index_elem+"] does not exist."};
@@ -85,7 +109,7 @@ function Loot_CreateItem(container, line, type := 0)
                endif
 				endif
 
-				if (!objtype)
+				if (!objtype || objtype == 0x0)
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] -> Objtype not found"};
 				endif
 
@@ -149,7 +173,11 @@ function Loot_CreateRandom(container, line)
          var random := RandomInt(num_items)+1;
          if (random > items.size())
             random := random - items.size();
-            Loot_CreateItem(container, recipes[random], "recipe");
+            if (!forcetype)
+               Loot_CreateItem(container, recipes[random], "recipe");
+            else
+               Loot_CreateItem(container, recipes[random]);
+            endif
          else
             Loot_CreateItem(container, items[random]);
          endif
@@ -185,16 +213,13 @@ function Loot_ParseString(line)
 		chance := 100.0;
 	endif
 
-	var level := CInt(line[4]);
-	if (!level)
-		level := 1;
-	endif
+	var forcetype := cstr(line[4]);
 
 	var result := struct;
 	result.+name := name;
 	result.+amount := amount;
 	result.+chance := chance;
-	result.+level := level;
+	result.+forcetype := level;
 
 	return result;
 endfunction

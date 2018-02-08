@@ -37,19 +37,19 @@ function PayTravel(mob, tillerman, dest)
    SendSysMessageEx(mob, "Você deve pagar " + dest.cost + " moedas por essa viagem.", SSM_REQUEST);
    SendSysMessageEx(mob, "Rota: {}".format(dest.name), SSM_REQUEST);
    var moedas := Target(mob);
-   if ( moedas.objtype == 0xeed)
+   if (!moedas)
+      return;
+   elseif ( moedas.objtype == 0xeed)
       if (moedas.amount >= cint(dest.cost))
          if (!SubtractAmount(moedas, cint(dest.cost)))
-            PrintText(tillerman, "Você não tem moedas necessárias.");
+            SendSystemReport(tillerman, "Você não tem moedas suficiente.", SSM_FAIL, mob);
          endif
       else
-         PrintText(tillerman, "Você não tem moedas necessárias.");
+         SendSystemReport(tillerman, "Você não tem moedas suficiente.", SSM_FAIL, mob);
          return;
       endif
-   elseif (!moedas)
-      return;
    else
-      PrintText(tillerman, "Isso ai parece moeda pra você? Pra mim não.");
+      SendSystemReport(tillerman, "Isso ai parece moeda pra você? Pra mim não.", SSM_FAIL, mob);
       return;
    endif
 

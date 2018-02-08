@@ -81,25 +81,27 @@ program setpins(who)
             if (route == route_array.size())
                return;
             elseif (route == route_array.size()-1)
-               var plot := GetInput(who, tillerman, "Escreva o X e Y do mapa. (Esc para cancelar)");
+               var plot := GetInput(who, tillerman, "Escreva o X Y e P do mapa. (Esc para cancelar)");
                if (!plot) return; endif;
                plot := splitwords(plot);
 
                var plotinfo := struct;
                plotinfo.+x := plot[1];
                plotinfo.+y := plot[2];
+               plotinfo.+p := plot[3];
 
                viagens[request].plots.append(plotinfo);
             else
                var select_opt := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Remover", "Cancelar"}, 1);
                if (select_opt == 1)
-                  var plot := GetInput(who, tillerman, "Escreva o X e Y do mapa. (Esc para cancelar)");
+                  var plot := GetInput(who, tillerman, "Escreva o X Y e P do mapa. (Esc para cancelar)");
                   if (!plot) return; endif;
                   plot := splitwords(plot);
 
                   var plotinfo := struct;
                   plotinfo.+x := plot[1];
                   plotinfo.+y := plot[2];
+                  plotinfo.+p := plot[3];
                   viagens[request].plots[route] := plotinfo;
                elseif (select_opt == 2)
                   viagens[request].plots.Erase(route);
@@ -117,13 +119,14 @@ endprogram
 
 function setPlots(who, tillerman, byref plots)
    while(who.connected)
-      var plot := GetInput(who, tillerman, "Escreva o X e Y do mapa. (Esc para cancelar)");
+      var plot := GetInput(who, tillerman, "Escreva o X Y e P do mapa. (Esc para cancelar)");
       if (!plot) break; endif;
       plot := splitwords(plot);
 
       var plotinfo := struct;
       plotinfo.+x := plot[1];
       plotinfo.+y := plot[2];
+      plotinfo.+p := plot[3];
 
       plots.append(plotinfo);
    endwhile
