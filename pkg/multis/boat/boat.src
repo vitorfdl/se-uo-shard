@@ -144,6 +144,7 @@ program autostart_boat(param)
                state := STATE_FOLLOWING_COURSE;
                ms_delay_between_moves := 1000;
                PrintText(tillerman, "Estamos partindo! Aye!");
+               EraseObjProperty(tillerman, "payed");
                continue;
             endif
          elseif (!GetCooldown(tillerman, "do_travel") && GetObjProperty(tillerman, "always_travel"))
@@ -158,6 +159,7 @@ program autostart_boat(param)
                state := STATE_FOLLOWING_COURSE;
                ms_delay_between_moves := 1000;
                PrintText(tillerman, "Estamos partindo! Aye!");
+               EraseObjProperty(tillerman, "payed");
                continue;
             endif
          endif

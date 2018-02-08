@@ -17,8 +17,12 @@ program useplank(mob, plank)
          var tillerman := plank.multi.tillerman;
          var t := GetObjProperty(tillerman, "always_travel");
          if (t)
+            var payed := GetObjProperty(tillerman, "payed");
+            if (!payed) payed := array{}; endif
             var dest := GetObjProperty(tillerman, "viagem")[t];
-            if (PayTravel(mob,tillerman, dest))
+            if (mob.serial in payed)
+               YankOntoBoat(mob,plank);
+            elseif (PayTravel(mob,tillerman, dest))
                PrintText(tillerman, "Suba a bordo marujo!");
                SendSysMessageEx(mob, "Aguarde um momento até que o barco siga seu rumo.", SSM_INFO);
                YankOntoBoat(mob,plank);
@@ -53,6 +57,10 @@ function PayTravel(mob, tillerman, dest)
       return;
    endif
 
+   var payed := GetObjProperty(tillerman, "payed");
+   if (!payed) payed := array{}; endif
+   payed.append(mob.serial);
+   SetObjProperty(tillerman, "payed", payed);
    return 1;
 endfunction
 
