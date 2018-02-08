@@ -169,7 +169,7 @@ function pullCloser(dist, times)
             if ( Distance(me, mob) < 1 )
                continue;
             endif
-            if (CheckLineOfSight(me, targme, mob))
+            if (CheckLineOfSight(me, mob))
                SendSysMessageEx(mob, "Você é puxado pelo vento");
                var point := GetModByFacing(GetFacing(me.x, me.y, mob.x, mob.y));
                point[1] *= -1;
@@ -215,7 +215,7 @@ function electricCone(mobile, dmg, dist)
 endfunction
 
 function throwBomb(mobile, hab_dice, bombs)
-   if (Distance(mobile, me) > 12 || !CheckLineOfSight(me, targ)) return; endif
+   if (Distance(mobile, me) > 12 || !CheckLineOfSight(me, mobile)) return; endif
 
    bombs := SplitWords(bombs, "|");
    var item := CreateItemAtLocation(me.x, me.y, me.z, bombs.randomentry());
@@ -541,7 +541,7 @@ function Roubar(targ)
 endfunction
 
 function RajadaAcida(dmg, targ, difficulty)
-   if (!targ || Distance(me, targ) < 3  || !CheckLineOfSight(me, targme, targ))
+   if (!targ || Distance(me, targ) < 3  || !CheckLineOfSight(me, targ))
       return;
    endif
 
@@ -682,7 +682,7 @@ function SpitWeb(difficulty, targ, range)
    range := cint(range);
    if (!targ || Distance(me, targ) > range )
       return 0;
-   elseif ( !CheckLineOfSight(me, targme, targ) )
+   elseif ( !CheckLineOfSight(me, targ) )
       return 0;
    elseif ( targ.frozen )
       return 0;

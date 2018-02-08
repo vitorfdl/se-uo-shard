@@ -7,7 +7,7 @@ include ":loot:magicLoot";
 
 const RECIPE_OBJ := 0xef1f;
 
-function Loot_Generate(container, loot_index, is_group)
+function Loot_Generate(container, loot_index, is_group := 0)
 	if ( !container.IsA(POLCLASS_CONTAINER) )
 		return error{"errortext" := "`ect passed was not a container."};
 	endif
@@ -24,13 +24,9 @@ function Loot_Generate(container, loot_index, is_group)
       //print( "Error - loot-index.cfg elem ["+index_elem+"] does not exist.");
       endif
 
-      var type = GetConfigStringArray(index_elem, "Type");
-      var line = "{}	 {} {}".format(loot_index. is_group.rate, is_group.chance);
-      if ((type == "recipe" && is_group.forceitem) || !type])
-         Loot_CreateRandom(container, line);
-      elseif (type == "recipe")
-         Loot_CreateRandom(container, line, "recipe");
-      endif
+      var type := GetConfigStringArray(index_elem, "Type");
+      var line := "{} {} {}".format(is_group.by_group, is_group.rate, is_group.chance);
+      Loot_CreateRandom(container, line, is_group.forceitem);
 
       return 1;
    endif
@@ -151,7 +147,7 @@ function Loot_CreateStack(container, line)
 	return 1;
 endfunction
 
-function Loot_CreateRandom(container, line)
+function Loot_CreateRandom(container, line, forcetype := 0)
 	var parsed := Loot_ParseString(line);
 	var groups_cfg := ReadConfigFile(":loot:config/loot-groups");
 	if ( groups_cfg.errortext )
@@ -213,13 +209,13 @@ function Loot_ParseString(line)
 		chance := 100.0;
 	endif
 
-	var forcetype := cstr(line[4]);
+	var type := cstr(line[4]);
 
 	var result := struct;
 	result.+name := name;
 	result.+amount := amount;
 	result.+chance := chance;
-	result.+forcetype := level;
+	result.+type := type;
 
 	return result;
 endfunction

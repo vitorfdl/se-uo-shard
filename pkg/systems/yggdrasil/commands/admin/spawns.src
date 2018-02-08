@@ -541,6 +541,7 @@ function DoTreasureList(who, input)
             var available_opts := array{};
             if (!treasure.loots[index].by_group)
                 available_opts.append("Criar");
+            else
                 available_opts.append("Alterar rate de drop");
             endif
             available_opts.append("Alterar Chance");
@@ -561,7 +562,6 @@ function DoTreasureList(who, input)
 				treasure.loots[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
 			elseif (opt == "Alterar rate de drop")
 				treasure.loots[index].rate := Cint(RequestGump(who, "Digite o rate de drop.:", "", "1d2", 1));
-         endif 
          endif 
          spot.UpdateTreasure(selected_treasure, treasure);
     endcase
@@ -898,9 +898,9 @@ function ConstructTreasureConfig(byref gump)
         if (loot)
             GFAddButton( gump, sx-8, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
             if (loot.by_group)
-               var forceitem = "N";
+               var forceitem := "N";
                if (loot.forceitem) forceitem := "F"; endif
-                GFTextLine(gump, sx, sy, 2103, "{} [{}][{}] R: {}".format(Upper(loot.item.desc), loot.chance, ,loot.rate));
+                GFTextLine(gump, sx, sy, 2103, "{} [{}][{}] R: {}".format(Upper(loot.by_group), loot.chance, forceitem,loot.rate));
             else
                 GFTextLine(gump, sx, sy, 2103, "{} [{}]".format(Upper(loot.item.desc), loot.chance));
             endif

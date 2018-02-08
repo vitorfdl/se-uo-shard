@@ -31,7 +31,7 @@ program expBar(params)
    endif
 
    GFHTMLArea(expbar, x+30, y+23, 173, 20, "<BASEFONT Size=5 color={}>Experiência".format(color));
-   GFToolTipText(expbar, "Branco: Normal<br>Vermelho: Limite semanal atingido<br>Azul: Boost de EXP");
+   GFToolTipText(expbar, "Preto: Normal<br>Vermelho: Limite atingido<br>Azul: Boost de EXP");
    GFGumpPic(expbar, x+499, y+31, 9771, 0);
    GFGumpPicTiled(expbar, x+30, y+48, 480, 6, 0x2616);
 

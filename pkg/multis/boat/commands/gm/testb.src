@@ -1,0 +1,27 @@
+use uo;
+use boat;
+
+program textcmd_paintboat( who, text )
+	var params := SplitWords( text );
+	if (len(params) < 1)
+		return;
+	endif
+	var boat := TargetCoordinates(who);
+	if(!boat)
+		return;
+	endif
+	
+	if (!boat.isa(POLCLASS_BOAT))
+		if(!boat.multi)
+			return;
+		endif
+
+		if(boat.multi.isa(POLCLASS_BOAT))
+			boat := boat.multi;
+		else
+			return;
+		endif
+	endif
+
+   TurnBoat(boat, cint(text));
+endprogram

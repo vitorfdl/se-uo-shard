@@ -374,7 +374,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 
 			//passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
 			AddMaterialMod(who, recipe, theitem, choosed_material, material_color);
-         if (recipe.exceptional == 1 && HaveFeat(who, "Mestre em {}".format(craft_skill)) && roll.critical == 1)
+         if (recipe.exceptional == 1 && (HaveFeat(who, "Mestre em {}".format(craft_skill)) && roll.critical == 1) || who.cmdlevel > 3)
             SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
             while (who.connected)
 			      if (CraftExceptional(who, theitem, craft_skill) != 2)
@@ -503,6 +503,7 @@ endfunction
 		endif
 		SendSysMessageEx(who, "Você excedeu o número máximo de caracteres! Utilize apenas 3 linhas da janela.");
 	endwhile
+   str := SubStrReplace(str, "", str.length()-4);
 	SetObjProperty(item, "description", str);
 endfunction
 
@@ -552,16 +553,17 @@ function CraftExceptional(who, theitem, craft_skill)
       SendSysMessageEx(who, "O material não pode ser usado nesse tipo de equipamento.", SSM_FAIL);
       return 2;
    endif
-
+   
    var custom_name := "";
    var prop_list := special_props.props;
-   foreach prop in prop_list
+   foreach prop in (prop_list.keys())
       case (prop)
          "custom_name":
             custom_name := prop_list[prop];
             break;
          "hpmod":
-            theitem.maxhp_mod += cint(prop_list[prop]);
+            theitem.maxhp_mod := theitem.maxhp_mod + cint(prop_list[prop]);
+            theitem.hp := theitem.maxhp;
             break;
          "equipmod":
             prop := SplitWords(prop_list[prop]);
@@ -596,7 +598,7 @@ function CraftExceptional(who, theitem, craft_skill)
    if ( YesNo(who, "Deseja adicionar uma descrição no item?"))
       AddItemDescription(who, theitem);
    endif
-   SetName(theitem, theitem.desc);
+   SetName(theitem, "{} {}".format(theitem.desc, custom_name));
    DestroyItem(special_obj);
    return 1;
 endfunction
