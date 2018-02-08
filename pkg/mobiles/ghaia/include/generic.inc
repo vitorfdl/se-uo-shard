@@ -255,7 +255,6 @@ function sleepmode()
          endcase
       until(!(ev := os::wait_for_event(30)));
    endwhile
-   EraseObjProperty(me,"#sleepmode");
 endfunction
 
 function CreateAnimalitems()

@@ -31,9 +31,9 @@ function genericControl()
 			MoveAround(wanders);
 		endif
 		
-		wanders := wanders +1;
+		wanders += 1;
 		if (wanders > 20 && RandomInt(2) == 1)
-         if (ListMobilesNearLocationEx(me.x, me.y, me.z, 15, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 0)
+         if (HasPlayerNear(me.x, me.y, me.realm))
 			   wanders := 0;
             loops := 0;
          endif
@@ -53,10 +53,12 @@ function genericControl()
 
             SetObjProperty(me, "skinchanged", item.serial);
          endif
+
 			wanders := 0;
 			lookAround();
          loops := 0;
 			ev := sleepmode();
+         EraseObjProperty(me,"#sleepmode");
 		else
 			ev := os::wait_for_event(10);
 		endif
@@ -84,12 +86,12 @@ function resolveEvent(ev, byref wanders)
 			endif
          break;
 		SYSEVENT_ENTEREDAREA:
-         wanders := 0;
          if (!CheckLineOfSight(me, ev.source)  )
             break;
          elseif (!CanFight(me, ev.source) || areasize < Distance(me, ev.source))
             break;
          endif
+         wanders := 0;
 
          if ("changeskin" in custombehaviors && me.concealed)
             var changeskin := GetObjProperty(me, "skinchanged");
