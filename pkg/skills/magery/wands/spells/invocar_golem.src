@@ -1,0 +1,58 @@
+use uo;
+use os;
+use cfgfile;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedscripts:timedScripts";
+include ":attributes:attributes";
+include ":tn:npcutil";
+include ":ghaia:ghaiaUtil";
+include ":ghaia:ghaia";
+include ":magery:summon";
+include ":taming:taming";
+include ":charactercreation:habilidades";
+
+program animateSword(params)
+	var who := params[1];
+	var targ := params[3];
+	params := 0; // No longer needed
+	
+	//sendsysmessage(who, " " + GetNumPets(who) );
+	if (GetMaxPEts(who) <= GetNumPets(who) )
+		SendSysMessageEx(who, "Você tem " + GetNumPets(who) + " criaturas sob seu comando e o máximo sao : " + GetMaxPEts(who)  + "  . "  , SSM_FAIL);
+		return 1;
+	endif
+	
+	sleepms(500);
+	
+	var summoned := CreateNpcFromTemplate(":ghaia:golem", targ.x, targ.y, targ.z);
+	if (summoned)
+		PrintTextAbove(summoned, "*Um golem se levanta*", 3,191);
+		AddPet(who, summoned.serial, 1);
+		summoned.SetMaster(who);
+		summoned.script := ":ghaia:follower";
+		RestartScript(summoned);
+
+		if (!summoned.backpack)
+			var mochila := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, 0x9b2, 1, summoned.realm);
+			EquipItem(summoned, mochila);
+		endif
+
+		if (who.opponent)
+         ghaiaAttack(who.opponent, summoned);
+      else
+         var hostiles := ListHostiles(who, 10);
+         if (hostiles[0])
+            ghaiaAttack(hostiles[0], summoned);
+         endif
+      endif
+		// SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
+		// var mobile := target(who);
+		TS_StartTimer(summoned, "summon", 15);	
+	endif
+   
+	return 1;
+endprogram

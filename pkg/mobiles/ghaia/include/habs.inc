@@ -455,21 +455,28 @@ function NPC_Agarrar(dice, targ, difficulty)
 
    PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
    if (rollResistDice(targ, DEXTERITY) <= difficulty)
-      PrintText(targ, "*resistido*".format(me.name), SSM_INFO);
-      return 1;
-   endif
-   PrintText(targ, "*agarrado*", SSM_FAIL);
+      PrintText(targ, "*agarrado*", SSM_FAIL);
 
-   TS_StartTimer(targ, "paralysis", 3);
-   TS_StartTimer(me, "paralysis", 3);
-   MoveObjectToLocation(me, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
-   for i := 1 to 3
-      if (!me)
-         return;
-      endif
+      TS_StartTimer(targ, "paralysis", 3);
+      TS_StartTimer(me, "paralysis", 3);
+      MoveObjectToLocation(me, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
+      for i := 1 to 3
+         if (!me)
+            return;
+         endif
+         sleep(1);
+         DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
+      endfor
+   else
+      PrintText(targ, "*resistido*".format(me.name), SSM_INFO);
+   endif
+
+   if ("AgarrarDeath" in custombehaviors)
+      PrintText(me, "*Se desfaz*");
       sleep(1);
-      DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
-   endfor
+      ApplyRawDamage(me, 10000);
+   endif
+   
    return 1;
 endfunction
 
