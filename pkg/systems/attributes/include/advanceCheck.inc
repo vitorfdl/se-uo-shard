@@ -64,7 +64,7 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
-   if (mobile.GetTalentPoints() > 0)
+   if (cint(mobile.GetTalentPoints()) > 0)
       if (RandomInt(10) == 1)
 		   SendSysMessageEx(mobile, "Sua experiência está travada até você gastar seu ponto de talento!", SSM_FAIL);
       endif
