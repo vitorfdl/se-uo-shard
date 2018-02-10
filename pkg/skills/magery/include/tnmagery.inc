@@ -167,6 +167,14 @@ function WriteMagic(who, spell_id)
 		return;
 	endif
 
+   var is_dbl := 0;
+   if (HaveFeat(who, "Magia Poderosa") && spell_list.size() - magic_slot >= 2)
+      if (YesNo(who, "Deseja usar o dobro de slots para esta magia? (Magia Poderosa)", "Sim", "Não"))
+         is_dbl := 1;
+         spellinfo.difficulty += 1;
+      endif
+   endif
+
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
 		if (who.x != loc[1] && who.y != loc[2])
@@ -183,8 +191,13 @@ function WriteMagic(who, spell_id)
 		return;
 	endif
 
+   if (!HaveFeat(who, "Tradição {}".format(spellinfo.type)))
+      spellinfo.difficulty += 3;
+   endif
+
+
 	var dice_roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, ARCANISMO);
-	if (dice_roll <= spellinfo.difficulty+3 && who.cmdlevel < 4)
+	if (dice_roll <= spellinfo.difficulty && who.cmdlevel < 4)
 		SendSysMessageEx(who, "Parece que você errou durante a cópia. O espaço ficou inutilizado.", SSM_FAIL);
 		spell_list.append(0);
 		SetObjProperty(targ, "spell_list", spell_list);
@@ -193,6 +206,9 @@ function WriteMagic(who, spell_id)
 
 	ExpGain(who, spellinfo.difficulty+3, dice_roll);
 	spell_list.append(spell_id);
+   if (is_dbl)
+      spell_list.append(spell_id);
+   endif
 	SetObjProperty(targ, "serialid", who.serial);
 	SetObjProperty(targ, "spell_list", spell_list);
 	SetObjProperty(targ, "magicwho", array{ who.serial });

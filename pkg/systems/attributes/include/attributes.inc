@@ -119,11 +119,19 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 endfunction
 
 function getProficiencyBonus(mobile, skills := 0)
+   var bn := 1;
 	if (skills)
 		if (typeof(skills) != "Array") 
 			skills := array{skills};
 		endif
-		if (skills[1] && !HaveSkill(mobile, skills)) return 0; endif
+      if (!skills[0])
+         return 0;
+      endif
+
+      bn := HaveSkill(mobile, skills);
+		if (!bn) 
+         return 0; 
+      endif
 	endif
 
 	var proficiency := 0;
@@ -153,6 +161,10 @@ function getProficiencyBonus(mobile, skills := 0)
 	elseif (level <= 30)
 		proficiency := 9; // Npc's can get to +9
 	endif
+
+   if (bn > 1)
+      proficiency *= 2;
+   endif
 
 	return proficiency;
 endfunction
@@ -187,8 +199,9 @@ function HaveSkill(mobile, skill)
 	endif
 
 	foreach name in skill
-		if (AP_GetTrueSkill(mobile, name) == 1)
-			return 1;
+      var res := AP_GetTrueSkill(mobile, name);
+		if (res != 0)
+			return res;
 		endif
       sleepms(2);
 	endforeach

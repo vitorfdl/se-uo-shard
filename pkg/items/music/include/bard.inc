@@ -436,23 +436,16 @@ function playagain(who,item,notas,notas2,tempo,letra,magica)
 endfunction
 
 function escrevepartitura(who,item,notas,notas2,tempo,letra)
-   var dif;
    //DIFICULDADE PELO TANTO DE NOTAS
-   dif := 2;
-   foreach nota in notas
-      dif := (dif + 1);
-   endforeach
-   foreach nota in notas2
-      dif := (dif + 1);
-   endforeach
+   var dif := cint(notas.size() /2) + cint(notas2.size() /2);
 
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
+   var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
    for i := 1 to 2
-      var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
-      if (roll >= dif - (i-1 * 2))
+      if (roll > dif-2)
          PrintText(who, "*Escrevendo a partitura*");
       else 
          SendSysMessage(who, "Você arruinou a partitura");

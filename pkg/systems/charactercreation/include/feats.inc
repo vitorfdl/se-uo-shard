@@ -94,7 +94,8 @@ function LearnFeat(who, feat, minus_point := 1, gives := 1)
          elseif (give_parse[1] == "stat")
             AP_SetTrueStat(who, give_parse[2], AP_GetTrueStat(who, give_parse[2]) + cint(give_parse[3]));
          else
-            AP_SetTrueSkill(who, give_parse[2], 1);
+            var oldskill := AP_GetTrueSkill(who, give_parse[2]);
+            AP_SetTrueSkill(who, give_parse[2], oldskill+1);
          endif
          sleepms(2);
       endforeach
@@ -107,10 +108,22 @@ function removeFeat(mobile, feat_name)
 	var chardata := GetObjProperty(mobile, "chardata");
 	var feat_list := chardata.Feats;
 
-   foreach feat in feat_list
-      if (lower(feat_name) == lower(feat))
-         feat_list.Erase(_feat_iter);
+   foreach feat_name2 in feat_list
+      if (lower(feat_name) == lower(feat_name2))
+         feat_list.Erase(_feat_name2_iter);
       endif
+
+      var feat := FeatInfo(feat_name2);
+      foreach give_parse in (feat.give)
+         give_parse := SplitWords(give_parse);
+         if (give_parse[1] == "stat")
+            AP_SetTrueStat(mobile, give_parse[2], AP_GetTrueStat(mobile, give_parse[2]) - cint(give_parse[3]));
+         // else
+         //    var oldskill := AP_GetTrueSkill(mobile, give_parse[2]);
+         //    AP_SetTrueSkill(mobile, give_parse[2], oldskill-1);
+         endif
+         sleepms(2);
+      endforeach
       sleepms(2);
    endforeach
 
@@ -129,7 +142,7 @@ function GetNewFeatsList(who, type := "normal", levels := array{})
 		endif
 
 		feat := FeatInfo(feat, 1);
-		if (feat.level && cint(feat.level) < who.GetLevel())
+		if (feat.level && cint(feat.level) < who.GetLevel() && who.cmdlevel < 3)
 			continue;
 		endif
 

@@ -16,14 +16,14 @@ program control_plant (plant)
 	while (plant)
 		sleep (REGROW_TIME);
 
-		harvested_amount := CInt (GetObjProperty (plant, "#harvested"));
+		harvested_amount := CInt(GetObjProperty (plant, "#harvested"));
 		if (!harvested_amount)
-			EraseobjProperty (plant, "#harvested");
+			EraseobjProperty(plant, "#harvested");
 		elseif (harvested_amount == 1)
-			EraseObjProperty (plant, "#harvested");
+			EraseObjProperty(plant, "#harvested");
 		else
 			harvested_amount := CInt (harvested_amount - 1);
-			SetObjProperty (plant, "#harvested", harvested_amount);
+			SetObjProperty(plant, "#harvested", harvested_amount);
 		endif
 	endwhile
 

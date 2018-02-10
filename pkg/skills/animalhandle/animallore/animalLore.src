@@ -32,7 +32,6 @@ program skill_animal_lore( who )
       SendSysMessageEx(who, "Esse não pode ser um alvo valido.", SSM_FAIL);
       return 0;
    elseif ( !creature.isTamable() )
-      printtext(who, "test"+creature.isTamable());
 		SendSysMessageEx(who, "Esse não pode ser um alvo valido.", SSM_FAIL);
 		return 0;
 	endif

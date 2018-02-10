@@ -1,0 +1,25 @@
+/*
+ * $Id: refresh.src 664 2005-10-27 03:36:13Z muaddiblsd $
+ *
+ */
+
+use uo;
+
+include ":attributes:attributes";
+
+program textcmd_RefreshVitals(who, text)
+   var accounts := ListAccounts();
+   foreach acc_name in accounts
+      var acc := FindAccount(acc_name);
+      var mobile := acc.getcharacter(1);
+      var feats := GetFeatList(mobile);
+      foreach feat in feats
+         removeFeat(mobile, feat);
+         sleepms(2);
+         mobile.SetTalentPoints(1);
+      endforeach
+      sleepms(2);
+   endforeach
+
+	SendSysMessage(who, "Done.");
+endprogram

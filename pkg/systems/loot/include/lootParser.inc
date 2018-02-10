@@ -91,6 +91,7 @@ function Loot_CreateItem(container, line, type := 0)
 			if (!type)
 				var item := CreateItemInContainer(container, parsed.name);
 				item.quality := 0.6;
+            item.movable := 1;
 				if ( item.errortext )
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
