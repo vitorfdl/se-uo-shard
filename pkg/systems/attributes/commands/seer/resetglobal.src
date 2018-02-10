@@ -24,7 +24,10 @@ program textcmd_RefreshVitals(who, text)
       if (lvl >= 3) mobile.SetTalentPoints(1); endif
       if (lvl >= 6) mobile.SetTalentPoints(1); endif
       if (lvl >= 7) mobile.SetTalentPoints(1); endif
-      
+
+      var chardata := GetObjProperty(who, "chardata");
+      chardata.class_feats := array{};
+	   SetObjProperty(who, "chardata", chardata);
       sleepms(2);
    endforeach
 
