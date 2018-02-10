@@ -118,9 +118,9 @@ function removeFeat(mobile, feat_name)
          give_parse := SplitWords(give_parse);
          if (give_parse[1] == "stat")
             AP_SetTrueStat(mobile, give_parse[2], AP_GetTrueStat(mobile, give_parse[2]) - cint(give_parse[3]));
-         // else
-         //    var oldskill := AP_GetTrueSkill(mobile, give_parse[2]);
-         //    AP_SetTrueSkill(mobile, give_parse[2], oldskill-1);
+         else
+            var oldskill := AP_GetTrueSkill(mobile, give_parse[2]);
+            AP_SetTrueSkill(mobile, give_parse[2], oldskill-1);
          endif
          sleepms(2);
       endforeach

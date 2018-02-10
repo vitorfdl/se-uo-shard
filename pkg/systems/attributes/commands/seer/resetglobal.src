@@ -16,8 +16,15 @@ program textcmd_RefreshVitals(who, text)
       foreach feat in feats
          removeFeat(mobile, feat);
          sleepms(2);
-         mobile.SetTalentPoints(1);
       endforeach
+
+      mobile.SetTalentPoints(-10);
+      var lvl := mobile.getLevel();
+      if (lvl >= 2) mobile.SetTalentPoints(1); endif
+      if (lvl >= 3) mobile.SetTalentPoints(1); endif
+      if (lvl >= 6) mobile.SetTalentPoints(1); endif
+      if (lvl >= 7) mobile.SetTalentPoints(1); endif
+      
       sleepms(2);
    endforeach
 
