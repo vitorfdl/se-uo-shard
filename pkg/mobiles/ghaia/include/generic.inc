@@ -305,7 +305,11 @@ function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
       TurnToward(new_opponent);
       return;
    elseif (opponent && !CheckLineOfSight(me, opponent))
-      me.setAggro(opponent.serial, -10);
+      me.setAggro(opponent.serial, -4);
+   endif
+
+   if (GetCooldown(me, "#lockaggro"))
+      return opponent;
    endif
 
    var highest_aggro := getHighestAggro(me);

@@ -14,8 +14,7 @@ include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
 	while ( 1 )
-      sleep(RandomDiceRoll("1d2+2"));
-      if (mobile.dead) continue; endif
+      if (mobile.dead) break; endif
 
       var random_effect := RandomInt(7);
       case (random_effect)
@@ -37,6 +36,7 @@ function StartScript(mobile, attacker := 0, level := 0)
             PrintText(mobile, "*se assusta*");
             PlayCustomSound(mobile, 25);
       endcase
+      sleep(RandomDiceRoll("1d3+3"));
    endwhile
 
    return 1;

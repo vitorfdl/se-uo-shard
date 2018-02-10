@@ -675,7 +675,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
 endfunction
 
 function CombatEventsOptions(who, state)
-   var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Delay"});	
+   var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
 
    var targ_opts := array{"Self", "Opponent", "Around Opponent", "All Opponents", "Around Self"};
    state.type := opt;
@@ -875,6 +875,13 @@ function CombatEventsOptions(who, state)
 
    elseif (opt == "Custom HitScript")
       SendSysMessage(who, "Não implementado");
+   elseif (opt == "Set Cooldown")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Qual o cooldown?", "marked" := "lockaggro" });
+      input_list.append(struct{ "title" := "Quanto tempo vai durar?", "marked" := "10"});
+      var output := QuestionsGump(who, input_list);
+      state.+prop := output[1];
+      state.+time := cint(output[2]);
    endif
    return state;
 endfunction

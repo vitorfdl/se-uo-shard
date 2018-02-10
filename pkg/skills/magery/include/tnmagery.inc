@@ -275,7 +275,7 @@ function SetClericHeal(who, mobile)
    if (mobile == who)
       SendSystemReport(mobile, "Benção de Sacrifício retornou para você");
    else
-      SendSystemReport(mobile, "{} direcionou bençãos para você".format(mobile.name));
+      SendSystemReport(mobile, "{} direcionou bençãos para você".format(who.name));
    endif
 
    who.addBuff(cint(1069), 0, cint(1075833), cint(1075834), cAscZ("Curando {}".format(mobile.name)));
