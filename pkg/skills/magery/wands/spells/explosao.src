@@ -44,7 +44,7 @@ program explosao(params)
    PlayStationaryEffect(found.x, found.y, found.z, effects.randomentry(), 10, 10, 0);
    PlaySoundEffect(found, SFX_EXPLOSION_11);
    
-   foreach mobile in ListMobilesNearLocation( targ.x, targ.y, targ.z, 3)
+   foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
       if (rollResistDice(mobile, DEXTERITY) > dice_roll+2)
          SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
          SendSystemReport(mobile, "*esquivou*", SSM_INFO);
