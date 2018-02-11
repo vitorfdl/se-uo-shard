@@ -157,7 +157,7 @@ function GetNewFeatsList(who, type := "normal", levels := array{})
          elseif (feat.type)
             continue;
          endif
-
+         print(feat.name);
          foreach req in (feat.requirements)
             req := SplitWords(req);
 
