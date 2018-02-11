@@ -15,8 +15,6 @@ program Logon(who)
 		SendSysMessage(who, "->"+result.errortext);
 	endif
 
-   if (who.dead && !TS_GetTimer(who, ))
-
 	return 1;
 endprogram
 

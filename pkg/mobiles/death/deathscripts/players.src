@@ -22,6 +22,8 @@ program death(params)
 	if (GetObjProperty(ghost, "forjoumorte") == 1)
 		return 1;
 	endif
+
+   SetObjProperty(ghost, "death_loc", array{corpse.x, corpse.y, corpse.z});
 	
 	var lastHit := GetObjProperty(ghost, "LastDamage");
 	var killer := SystemFindObjectBySerial(lastHit.serial);
