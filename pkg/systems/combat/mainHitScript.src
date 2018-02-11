@@ -242,6 +242,8 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
       weapon_scripts.append("peso_da_montanha");
    elseif (HaveFeat(attacker, "Golpe Baixo") && wpn_a_elem.WeaponType == "dagger")
       weapon_scripts.append("bleed");
+   elseif(HaveFeat(attacker, "Arqueiro Experiente") && wpn_a_elem.WeaponType == "bow")
+      weapon_scripts.append("hit_again");
    endif
 
 	foreach hitscript in weapon_scripts
