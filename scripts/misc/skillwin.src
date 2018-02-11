@@ -200,6 +200,8 @@ function BuyTalents(who)
       endif
    endif
 
+   print(type);
+   print(levels);
 	var feat_list := GetNewFeatsList(who, type, levels);
 	var gump := GFCreateGump();
 	
