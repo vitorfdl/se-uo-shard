@@ -289,7 +289,7 @@ function SendRoomGump(npc, player)
 		endif
 		
 		if (player.cmdlevel >=3) //opcao de gm de remover quarto
-			var gmmenu :=  RadioGump(player, 250, 325, "Escolha uma opção", array{"Mudar Nome","Mudar Pre~co","Remover Quarto", "Mudar Centro", "Mudar Porta", "Teleportar na Porta","Informacoes"});
+			var gmmenu :=  RadioGump(player, 250, 325, "Escolha uma opção", array{"Mudar Nome","Mudar Preço","Remover Quarto", "Mudar Centro", "Mudar Porta", "Teleportar na Porta","Informacoes"});
 
 			if (gmmenu == "Remover Quarto")
 				quartos.erase(input[0]);
@@ -301,7 +301,7 @@ function SendRoomGump(npc, player)
 				setobjproperty(npc, "quartos", quartos);
 				SendSysMessageEx(player, "Nome Alterado para: " +quartos[input[0]].name ,SSM_INFO);
 				return 1;
-			elseif (gmmenu == "Mudar Preco")
+			elseif (gmmenu == "Mudar Preço")
 				quartos[input[0]].custo := cint(RequestGump(player, "Quanto vai ser cobrado em moedas de cobre?", 0, 1));
 				setobjproperty(npc, "quartos", quartos);
 				SendSysMessageEx(player, "Preco Alterado para" +quartos[input[0]].custo,SSM_INFO);
