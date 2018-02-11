@@ -12,13 +12,19 @@ program textcmd_RefreshVitals(who, text)
    foreach acc_name in accounts
       var acc    := FindAccount(acc_name);
       var mobile := acc.getcharacter(1);
+      mobile := SystemFindObjectBySerial(mobile.serial, SYSFIND_SEARCH_OFFLINE_MOBILES);
       var lvl    := mobile.getLevel();
-      if ((GetFeatList(mobile)).size() < 1 && lvl > 1)
+      if (GetFeatList(mobile).size() < 1 && lvl > 1)
          mobile.SetTalentPoints(-10);
-         if (lvl >= 2) mobile.SetTalentPoints(1); endif
-         if (lvl >= 3) mobile.SetTalentPoints(1); endif
-         if (lvl >= 6) mobile.SetTalentPoints(1); endif
-         if (lvl >= 7) mobile.SetTalentPoints(1); endif
+         sleepms(4);
+         var total_points := 0;
+         if (lvl >= 2) total_points += 1; endif
+         if (lvl >= 3) total_points += 1; endif
+         if (lvl >= 6) total_points += 1; endif
+         if (lvl >= 7) total_points += 1; endif
+         if (total_points > 0)
+            mobile.SetTalentPoints(total_points);
+         endif
       endif
       sleepms(2);
    endforeach
