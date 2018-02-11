@@ -123,6 +123,13 @@ program use_MapmakersPen(who, tool)
 			if ( content.Contents.size() <= 1)
 				return 1;
 			endif
+
+         var lang := GetObjProperty(targ, "lang");
+         if (lang && !HaveFeat(who, lang))
+            SendSysMessageEx(who, "Você não conhece essa lingua para traduzir o livro", SSM_FAIL);
+            return;
+         endif
+
 			SendSysMessageEx(who, "Escolha outro livro para cópiar.", SSM_REQUEST);
 			var copy := target(who);
 			if (!copy || !copy.isBook())
@@ -132,12 +139,6 @@ program use_MapmakersPen(who, tool)
 				SendSysMessageEx(who, "Você não pode escrever neste livro.", SSM_FAIL);
 				return;
 			endif
-
-         var lang := GetObjProperty(copy, "lang");
-         if (lang && !HaveFeat(who, lang))
-            SendSysMessageEx(who, "Você não conhece essa lingua para traduzir o livro", SSM_REQUEST);
-            return;
-         endif
 
 			PrintText(who, "*copiando um livro*");
 			if (!WaitForCopy(who))
