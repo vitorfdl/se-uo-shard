@@ -1,0 +1,21 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include ":tn:cooldown";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	// var weapon	:= params[3];
+	// var armor	:= params[4];
+	// var basedamage	:= params[5];
+	// var rawdamage	:= params[6];
+	params := 0; // Not needed anymore.
+   PrintText(attacker, "*Disparo duplo*");
+   attacker.attack_once(defender);
+	
+	return 1;
+endprogram
