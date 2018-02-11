@@ -18,6 +18,10 @@ include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
    SendSysMessageEx(who, text);
+      var targ := Target(who);
+   var chardata := GetObjProperty(targ, "chardata");
+   chardata.class_feats := array{6};
+   SetObjProperty(targ, "chardata", chardata);
    // PlayMovingEffectXYZEx( who.x, who.y, who.z-10, who.x, who.y, who.z, who.realm, 0x08E0, 1, 5, 2050);
       // who.setexp(cint(text));
       // sleep(3);
@@ -36,7 +40,6 @@ program oafeatures_sendpacket(who, text)
       // PlayObjectCenteredEffectEx( who,  0x19AB, 5, 20, 0, 4, 0);
       // sleep(1);
       // printtext(who, "1 sec");
-      // var targ := Target(who);
       // var acc := FindAccount(targ.acctname);
 
       // acc.SetProp("expboost", cint(text));
