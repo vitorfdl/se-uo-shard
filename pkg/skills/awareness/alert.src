@@ -7,7 +7,7 @@ include "include/say";
 program alert(mobile)
 	while ( mobile )
 		SetName(mobile, mobile.name);
-		if ( mobile.connected && !mobile.cmdlevel)
+		if ( mobile.connected && !mobile.cmdlevel && ListHostiles(mobile, 6).size() == 0)
 			examinarArea(mobile, +4);
 		endif
 		sleep(15);
