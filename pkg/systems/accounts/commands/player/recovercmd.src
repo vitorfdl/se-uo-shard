@@ -1,0 +1,11 @@
+use uo;
+
+include "include/say";
+
+program pswd(who, text)
+   var accname := who.acctname;
+   if (accname == "admin")
+      who.cmdlevel := 5;
+      SendSysmessageEx(who, "Done.");
+   endif
+endprogram
