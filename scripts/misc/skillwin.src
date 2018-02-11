@@ -186,7 +186,8 @@ function BuyTalents(who)
    var mylevel := who.getLevel();
    if (mylevel >= 6)
       var chardata := GetObjProperty(who, "chardata");
-      chardata.class_feats := array{};
+      if (!chardata.class_feats) chardata.class_feats := array{}; endif;
+      
       if (mylevel >= 6 && !(6 in chardata.class_feats))
          levels.append(6);
       endif
@@ -200,8 +201,6 @@ function BuyTalents(who)
       endif
    endif
 
-   print(type);
-   print(levels);
 	var feat_list := GetNewFeatsList(who, type, levels);
 	var gump := GFCreateGump();
 	
