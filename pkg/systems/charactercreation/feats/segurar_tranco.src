@@ -21,9 +21,10 @@ program mestreLaminas(param)
 	endif
 
 	PerformAction(who, ANIM_HIT);
-   var nearby := ListMobilesNearLocationEx( who.x ,who.y, who.z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY);
+   var nearby := ListMobilesNearLocationEx( who.x ,who.y, who.z, 6, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY);
    foreach mob in nearby
-      mob.setaggro(who.serial, 40);
+      mob.setaggro(who.serial, 20);
+      ghaiaAttack(who, mob);
       if (cint(getHighestAggro(mob)) == cint(who.serial))
          SendSystemReport(mob, "*!*", SYSTEM_REPORT, who);
       else
