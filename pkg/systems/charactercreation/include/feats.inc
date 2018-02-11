@@ -143,6 +143,7 @@ function GetNewFeatsList(who, type := "normal", levels := array{})
 
 		feat := FeatInfo(feat, 1);
 		if (feat.level && cint(feat.level) < who.GetLevel() && who.cmdlevel < 3)
+         print(feat.name);
 			continue;
 		endif
 
@@ -157,7 +158,6 @@ function GetNewFeatsList(who, type := "normal", levels := array{})
          elseif (feat.type)
             continue;
          endif
-         print(feat.name);
          foreach req in (feat.requirements)
             req := SplitWords(req);
 
