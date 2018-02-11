@@ -71,7 +71,7 @@ function LearnFeat(who, feat, minus_point := 1, gives := 1)
 
    if (feat.type == "Classe")
       var class_feats := chardata.class_feats;
-      if (!feat_list)
+      if (!feat_list || typeof(feat_list) != "Array" )
          class_feats := array{};
       endif
       class_feats.append(feat.level);
