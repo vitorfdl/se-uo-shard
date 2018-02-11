@@ -5,6 +5,7 @@ use uo;
 use vitals;
 
 include ":acid:acid";
+include "include/say";
 
 program acid_WalkOn(mobile, acid)
 	if( TypeOf(mobile) == "Array" )
@@ -18,8 +19,16 @@ program acid_WalkOn(mobile, acid)
 	elseif ( isAcidImune(mobile) )
 		return 0;
 	endif
+   
+   var owner := GetObjProperty(acid, "owner");
+   if (owner)
+      owner := SystemFindObjectBySerial(owner);
+      if (mobile in owner.party)
+         return;
+      endif
+   endif
 
-	SendSysMessage(mobile, "*Voce pisou em acido!*");
+	SendSysMessageEx(mobile, "*Voce pisou em acido!*", SSM_FAIL);
 	if( !DealAcidDamage(acid, mobile, acid) )
 		DealAcidDamage(acid, mobile, acid, "5d2");
 	endif

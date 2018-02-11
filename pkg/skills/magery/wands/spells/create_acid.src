@@ -1,0 +1,26 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/utils";
+include "include/damage";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   for i := 0 to 8
+      var point := randomPlace(targ, 4);
+      var item := CreateItemAtLocation(point.x, point.y, targ.z, "acid", 1, who.realm);
+      SetObjProperty(item, "owner", who.serial);
+      PrintText(item, "*ácido se forma no chão*");
+      sleepms(2);
+   endfor
+
+	return 1;
+endprogram
