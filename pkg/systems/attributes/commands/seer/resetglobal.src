@@ -10,26 +10,46 @@ include ":attributes:attributes";
 program textcmd_RefreshVitals(who, text)
    var accounts := ListAccounts();
    foreach acc_name in accounts
-      var acc := FindAccount(acc_name);
+      var acc    := FindAccount(acc_name);
       var mobile := acc.getcharacter(1);
-      var feats := GetFeatList(mobile);
-      foreach feat in feats
-         removeFeat(mobile, feat);
-         sleepms(2);
-      endforeach
-
-      mobile.SetTalentPoints(-10);
-      var lvl := mobile.getLevel();
-      if (lvl >= 2) mobile.SetTalentPoints(1); endif
-      if (lvl >= 3) mobile.SetTalentPoints(1); endif
-      if (lvl >= 6) mobile.SetTalentPoints(1); endif
-      if (lvl >= 7) mobile.SetTalentPoints(1); endif
-
-      var chardata := GetObjProperty(who, "chardata");
-      chardata.class_feats := array{};
-	   SetObjProperty(who, "chardata", chardata);
+      var lvl    := mobile.getLevel();
+      if ((GetFeatList(mobile)).size() < 1 && lvl > 1)
+         mobile.SetTalentPoints(-10);
+         if (lvl >= 2) mobile.SetTalentPoints(1); endif
+         if (lvl >= 3) mobile.SetTalentPoints(1); endif
+         if (lvl >= 6) mobile.SetTalentPoints(1); endif
+         if (lvl >= 7) mobile.SetTalentPoints(1); endif
+      endif
       sleepms(2);
    endforeach
 
 	SendSysMessage(who, "Done.");
 endprogram
+
+
+// program textcmd_RefreshVitals(who, text)
+//    var accounts := ListAccounts();
+//    foreach acc_name in accounts
+//       var acc := FindAccount(acc_name);
+//       var mobile := acc.getcharacter(1);
+//       var feats := GetFeatList(mobile);
+//       foreach feat in feats
+//          removeFeat(mobile, feat);
+//          sleepms(2);
+//       endforeach
+
+//       mobile.SetTalentPoints(-10);
+//       var lvl := mobile.getLevel();
+//       if (lvl >= 2) mobile.SetTalentPoints(1); endif
+//       if (lvl >= 3) mobile.SetTalentPoints(1); endif
+//       if (lvl >= 6) mobile.SetTalentPoints(1); endif
+//       if (lvl >= 7) mobile.SetTalentPoints(1); endif
+
+//       var chardata := GetObjProperty(who, "chardata");
+//       chardata.class_feats := array{};
+// 	   SetObjProperty(who, "chardata", chardata);
+//       sleepms(2);
+//    endforeach
+
+// 	SendSysMessage(who, "Done.");
+// endprogram
