@@ -142,8 +142,7 @@ function GetNewFeatsList(who, type := "normal", levels := array{})
 		endif
 
 		feat := FeatInfo(feat, 1);
-		if (feat.level && cint(feat.level) < who.GetLevel() && who.cmdlevel < 3)
-         print(feat.name);
+		if (feat.level && cint(feat.level) > who.GetLevel() && who.cmdlevel < 3)
 			continue;
 		endif
 
