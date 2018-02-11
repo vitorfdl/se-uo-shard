@@ -108,7 +108,6 @@ endfunction
 
 function AlertAllies(me, opponent)
    var player_allies  := array;
-   var myallies       := array;
    var my_spot        := GetObjProperty(me, "spawnpoint");
    var allies_near := GetAlliesNear(me, 10);
    var myallies := array{};
