@@ -58,7 +58,7 @@ program start_gmMeny(who)
             206://movable
                 start_script(":commands:props/setprop", array{who, "movable 0", 1});
                 break;
-            206://lockradius
+            207://lockradius
                 start_script(":commands:building/lockradius", array{who, 5});
                 break;
             default:
