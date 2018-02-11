@@ -133,7 +133,13 @@ program use_MapmakersPen(who, tool)
 				return;
 			endif
 
-			PrintText(who, "*cópiando um livro*");
+         var lang := GetObjProperty(copy, "lang");
+         if (lang && !HaveFeat(who, lang))
+            SendSysMessageEx(who, "Você não conhece essa lingua para traduzir o livro", SSM_REQUEST);
+            return;
+         endif
+
+			PrintText(who, "*copiando um livro*");
 			if (!WaitForCopy(who))
 				return;
 			endif
