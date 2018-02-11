@@ -186,6 +186,7 @@ function BuyTalents(who)
    var mylevel := who.getLevel();
    if (mylevel >= 6)
       var chardata := GetObjProperty(who, "chardata");
+      chardata.class_feats := array{};
       if (mylevel >= 6 && !(6 in chardata.class_feats))
          levels.append(6);
       endif
@@ -194,7 +195,7 @@ function BuyTalents(who)
          levels.append(14);
       endif
 
-      if (levels.size() > 0)
+      if (levels.size() != 0)
          type := "Classe";
       endif
    endif
