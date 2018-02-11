@@ -15,10 +15,10 @@ endprogram
 
 function checkdeath(ghost)
 	var corpse := ghost.GetCorpse();
-	if (!corpse || AP_GetVital(ghost, "DP") < 10 || CInt(GetObjProperty(ghost, "morto")) || CInt(GetObjProperty(corpse, "morto")))
+	if (CInt(GetObjProperty(ghost, "morto")) || CInt(GetObjProperty(corpse, "morto")))
 		return 0;
 	endif
-	
+
 	EraseObjProperty(corpse, "japrolongou");
 	KataWakeUp(ghost, corpse);
 endfunction

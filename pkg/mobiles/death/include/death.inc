@@ -69,7 +69,8 @@ function KataWakeUp(ghost, corpse)
 	
 	SetCooldown(ghost, "deathtime", 15);
 	if ( !MoveObjectToLocation(ghost, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE) )
-		SendSysMessage(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Solicite ajude da Staff");
+		SendSysMessage(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Estamos te enviando para o refugio.");
+      MoveObjectToLocation(ghost, 4032, 2581, -25, ghost.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
 	endif
 
 	// var realname := GetObjProperty(ghost, "realname");
