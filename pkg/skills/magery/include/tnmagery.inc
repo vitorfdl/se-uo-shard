@@ -168,7 +168,7 @@ function WriteMagic(who, spell_id)
 	endif
 
    var is_dbl := 0;
-   if (HaveFeat(who, "Magia Poderosa") && spell_list.size() - magic_slot >= 2)
+   if (HaveFeat(who, "Magia Poderosa") && magic_slot - spell_list.size() >= 2)
       if (YesNo(who, "Deseja usar o dobro de slots para esta magia? (Magia Poderosa)", "Sim", "Não"))
          is_dbl := 1;
          spellinfo.difficulty += 1;

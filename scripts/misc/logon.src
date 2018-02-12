@@ -31,12 +31,6 @@ program Logon(who)
 		ReverseLight(who);
 	endif
 
-   if (who.isClass("Mago"))
-      LearnFeat(who, "Linguagem Élfica", 0, 0);
-   elseif (who.isClass("Clérigo"))
-      LearnFeat(who, "Linguagem Rúnica", 0, 0);
-   endif
-   
    if (who.getPoints() < 0)
       who.setpoints(0);
    endif

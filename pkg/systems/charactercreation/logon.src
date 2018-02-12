@@ -3,8 +3,28 @@ include ":attributes:attributes";
 include ":charactercreation:feats";
 
 program fixTalent(who)
-   if (HaveFeat(who, "Segredo das Fechaduras"))
-      removeFeat(who, "Segredo das Fechaduras");
-      who.SetTalentPoints(1);
+   if (who.isClass("Mago") || who.isRace("Elfo"))
+      LearnFeat(who, "Linguagem Élfica", 0, 0);
+   elseif (who.isClass("Clérigo"))
+      LearnFeat(who, "Linguagem Rúnica", 0, 0);
+   endif
+   
+   var lvl := who.GetLevel();
+   var feat_size := GetFeatList(who).size();
+   if (who.isClass("Mago") || who.isRace("Elfo") || who.isClass("Clérigo"))
+      feat_size -= 1;
+   endif
+
+   if (feat_size < 1 && lvl >= 2)
+      who.SetTalentPoints(-10);
+      var new_p := 0;
+      if (lvl >= 2) new_p += 1; endif
+      if (lvl >= 3) new_p += 1; endif
+      if (lvl >= 6) new_p += 1; endif
+      if (lvl >= 7) new_p += 1; endif
+
+      if (new_p)
+         who.SetTalentPoints(new_p);
+      endif
    endif
 endprogram
