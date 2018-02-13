@@ -217,15 +217,19 @@ endfunction
 //
 // Removes an item from the ItemsSelling list.
 //
-function RemoveItemForSale(merchant, item_num, confiscar := 0)
+function RemoveItemForSale(merchant, item_num, amount := 0, confiscar := 0)
    var data_elem := GetMerchantDataElem(Hex(merchant.serial)+"-ItemsSelling");
 	
    var selling_info := data_elem.GetProp(Cstr(item_num));  
    if ( cint(selling_info[1].infinite) == 1 && !confiscar)
       return 1;
-   else
+   elseif (amount == 0 || selling_info[2].amount <= amount)
       return data_elem.EraseProp(CStr(item_num));
    endif
+
+   selling_info[2].amount -= amount;
+   data_elem.SetProp(Cstr(item_num), selling_info);
+   return 1;
 endfunction
 
 //

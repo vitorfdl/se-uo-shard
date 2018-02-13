@@ -11,25 +11,19 @@ include ":timedscripts:timedScripts";
 
 program animateSword(params)
 	var who := params[1];
+	var spell_info := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 
 
    PlayObjectCenteredEffect( targ, 0x3728, 1, 10 );
-   var dice := "1d6";
-   if (who.getLevel() >= 17)
-      dice := "4d6";
-   elseif (who.getLevel() >= 11)
-      dice := "3d6";
-   elseif (who.getLevel() >= 5)
-      dice := "2d6";
-   endif
+   var dice := "{}d6".format(cint(spell_info.powered+1));
 
    var roll_dice := RandomDiceRoll(dice);
    DamageFLS(targ, roll_dice, "Gelo", who);
    PlaySoundEffect(targ, 0x5BF);
-   TS_StartTimer(targ, "attack_disadvantage", 6);	
-   PlayObjectCenteredEffect( targ, 0x3728, 1, 120 );
+   TS_StartTimer(targ, "attack_disadvantage", 6+cint(spell_info.powered*3));	
+   PlayObjectCenteredEffect( targ, 0x3728, 1, 120+cint(spell_info.powered*20) );
    PrintText(targ, "*ar frio ao redor*", SSM_FAIL);
 	return 1;
 endprogram

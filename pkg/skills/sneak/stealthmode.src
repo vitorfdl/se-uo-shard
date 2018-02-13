@@ -18,7 +18,7 @@ program showdfdiff(params)
                dif := 0;
             endif
             
-				PrintTextPrivate(mob, "" + dif, who, GetMagentaMap(cint(dif/10)) );
+				PrintTextAbovePrivate(mob, "{}".format(dif), who, 3, GetMagentaMap(cint(dif/10)) );
 			endif
 			sleepms(2);
 		endforeach

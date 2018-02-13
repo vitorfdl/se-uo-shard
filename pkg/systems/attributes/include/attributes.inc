@@ -200,8 +200,8 @@ function HaveSkill(mobile, skill)
 
 	foreach name in skill
       var res := AP_GetTrueSkill(mobile, name);
-		if (res != 0)
-			return res;
+		if (res > 0)
+			return cint(res);
 		endif
       sleepms(2);
 	endforeach

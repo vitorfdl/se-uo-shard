@@ -156,7 +156,6 @@ endfunction
  *
  */
 function MP_Mount(mobile, npc)
-
 	if ( Cint(GetObjProperty(mobile, "#desmontar")) == 1)
 		SendSysMessage(mobile, "Você não pode montar.");
 		return 0;
@@ -202,6 +201,7 @@ function MP_Mount(mobile, npc)
 
 	MoveObjectToLocation(npc, 6066, 60, 22, npc.realm, MOVEOBJECT_FORCELOCATION);
 	//MoveObjectToLocation(me, owner.x, owner.y, owner.z, me.realm, MOVEOBJECT_FORCELOCATION);
+   TS_StartTimer(mobile, "montar", 1);
 
 	return mount_piece;
 endfunction

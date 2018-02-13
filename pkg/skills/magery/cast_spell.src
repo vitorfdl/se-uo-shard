@@ -203,11 +203,15 @@ endprogram
 function ChooseTarget(mobile, spellinfo)
    var targ;
    var move_script := start_script(":magery:canceltarget_if_move", mobile);
+   if (spellinfo.powered_move)
+      move_script.kill();
+   endif
    if (spellinfo.alvo == "Self")
       targ := mobile;
    elseif (spellinfo.alvo == "Unico")
       while (1)
          SendSysMessageEx(mobile, "Escolha o alvo da magia.", SSM_REQUEST);
+         SendSysMessageEx(mobile, "Você pode se mover para escolher o alvo como resultado de uma magia fortificada.", SSM_INFO);
          var noto := TGTOPT_NEUTRAL;
          if (spellinfo.align == "Harmful")
             noto := TGTOPT_HARMFUL;

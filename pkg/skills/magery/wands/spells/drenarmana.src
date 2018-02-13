@@ -11,39 +11,34 @@ include ":timedscripts:timedScripts";
 
 program drenarmana(params)
 	var who := params[1];
+   var spell_info = params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
-	var mana    := AP_GetVital(targ, MANA);
+	var mana := AP_GetVital(targ, MANA);
    if (mana <= 2 )
       SendSystemReport(who, "O alvo parece esgotado de mana", SSM_FAIL);
    endif
 
    PlayObjectCenteredEffect( targ, 0x3728, 1, 2 );
-   var dice := "2d4";
-   if (who.getLevel() >= 17)
-      dice := "3d4";
-   elseif (who.getLevel() >= 11)
-      dice := "5d4";
-   elseif (who.getLevel() >= 5)
-      dice := "6d4";
-   endif
-
-	PlaySoundEffect(targ, SFX_SPELL_WEAKEN);
-   for i := 1 to 3
-	   PlayMovingEffectEx(targ, who, 3982, 255, 1, 2120);
-      sleepms(350);
-   endfor
-
-   sleepms(300);
-   var roll_dice := RandomDiceRoll(dice);
-   if (mana < roll_dice)
-      roll_dice := mana;
-   endif
-
-   AP_ConsumeVital(targ, MANA, roll_dice);
-   HealMana(who, roll_dice);
+   var nums := 3 + cint(spell_info.powered * 2);
 
    SendSystemReport(targ, "Sente sua alma sendo drenada");
+
+	PlaySoundEffect(targ, SFX_SPELL_WEAKEN);
+   for i := 1 to nums
+	   PlayMovingEffectEx(targ, who, 3982, 255, 1, 2120);
+      sleepms(400);
+      var roll_dice := RandomDiceRoll("1d4");
+      if (mana < roll_dice)
+         roll_dice := mana;
+      endif
+      if (AP_ConsumeVital(targ, MANA, roll_dice))
+         HealMana(who, roll_dice);
+      else
+         SendSystemReport(who, "O alvo parece esgotado de mana", SSM_FAIL);
+         break;
+      endif
+   endfor
 
 	return 1;
 endprogram 

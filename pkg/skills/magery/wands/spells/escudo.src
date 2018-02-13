@@ -25,10 +25,10 @@ program animateSword(params)
    var color;
 
    PlaySoundEffect(targ, 0x475);
-   if (spellinfo.spelltype["Gelo"])
+   if (spellinfo.type["Gelo"])
       shieldtype := "Gelo";
       color := 2753;
-   elseif (spellinfo.spelltype["Veneno"])
+   elseif (spellinfo.type["Veneno"])
       shieldtype := "Veneno";
       color := 2573;
    else

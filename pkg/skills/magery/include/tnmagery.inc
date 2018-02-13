@@ -25,14 +25,12 @@ function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
 	spellinfo.+alvo        := GetConfigString( elem, "Target" );
 	spellinfo.+type        := GetConfigString( elem, "Type" );
 	spellinfo.+range       := GetConfigString( elem, "Range" );
-	spellinfo.+targtype    := GetConfigString( elem, "TargetType" );
 	spellinfo.+mana        := GetConfigInt( elem, "Mana" );
 	spellinfo.+delay       := GetConfigInt( elem, "Delay" );
 	spellinfo.+difficulty  := GetConfigInt( elem, "Difficulty" );
 	spellinfo.+description := GetConfigString( elem, "Desc" );
 	spellinfo.+script      := GetConfigString( elem, "SpellScript" );
 	spellinfo.+reagents    := GetConfigStringDictionary(elem, "RegCost");
-	spellinfo.+spelltype   := GetConfigString(elem, "Type");
 	spellinfo.+align       := GetConfigStringDictionary(elem, "Align");
 	spellinfo.+flavortext  := GetConfigString( elem, "FlavorText" );
 	spellinfo.+cycles      := GetConfigInt( elem, "Cycles" );
@@ -40,6 +38,7 @@ function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
 	spellinfo.+circle      := GetConfigInt( elem, "Circle" );
 	spellinfo.+charges     := GetConfigInt( elem, "Charges" );
 	spellinfo.+radius      := GetConfigInt( elem, "Radius" );
+	spellinfo.+powered_move      := GetConfigInt( elem, "PoweredMove" );
 	spellinfo.+pericia     := StrReplace(GetConfigString( elem, "Pericia"), " ", "_");
 	spellinfo.+targettype     := GetConfigInt( elem, "TargetType" );
 	if (spellinfo.flavortext == error)
@@ -53,6 +52,9 @@ endfunction
 
 function TNCheckReagents(who, byref spellinfo, item)
 	if ( item.isa(POLCLASS_ITEM) && spellinfo.charges )
+      if (spellinfo.powered)
+         spellinfo.charges *= spellinfo.powered+1;
+      endif
 		var charges := cint(GetObjProperty(item, "charges"));
 		if (charges < spellinfo.charges)
 			SendSysMessageEx(who, "Cargas insuficientes na varinha: {} cargas".format(charges), SSM_FAIL);

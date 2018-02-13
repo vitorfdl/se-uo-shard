@@ -4,6 +4,7 @@ use uo;
 use os;
 
 include ":mounts:mounts";
+include ":timedscripts:timedScripts";
 
 program command_Mount(who, type)
 	SendSysMessage(who, "Select a character to mount.");
@@ -27,6 +28,5 @@ program command_Mount(who, type)
 	
 	EquipItem(targ, item);
 	Set_Critical(0);
-	
 	SendSysMessage(who, "Done!");
 endprogram

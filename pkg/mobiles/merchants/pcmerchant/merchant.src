@@ -242,7 +242,7 @@ function removeItemMerchant(npc, player, input)
 		
 	endif
 
-	RemoveItemForSale(npc, input, confiscar);
+	RemoveItemForSale(npc, input, 0, confiscar);
 	var purchase := CreateItemInBackpackFromTemplate(player, selling);
 	// purchase.desc := GetName(selling.objtype, CInt( (owed-1)/(owed-1) ));
 	if ( purchase == error )
@@ -269,9 +269,18 @@ function DoPurchase(npc, player, input)
 		SendSysMessage(player, "Você não tem "+GetName(cost.cost_type, 1)+ " suficiente para comprar isto.");
 		return 0;
 	endif
+	var amount := item.amount;
+   if (amount > 1)
+      var amt_buy = ChooseAmt(player, amount);
+      if (amt_buy <= 0)
+         return 0;
+      elseif (amt_buy <= amount)
+         amount := amt_buy;
+      endif
+   endif
 
+	var owed := cost.cost_amt * amount;
 	var cost_desc := AddArticle(GetName(cost.cost_type));
-	var owed := cost.cost_amt;
 	var pay_list := array{};
 	repeat
 		SendSysMessageEx(player, "Escolha "+cost_desc+" que Você quer usar para pagar. Você deve mais ["+owed+"].");
@@ -304,10 +313,9 @@ function DoPurchase(npc, player, input)
 		endif
 	until ( owed <= 0 );
 
-	owed := cost.cost_amt;
+	owed := cost.cost_amt * amount;
 	foreach item in pay_list
 		ReleaseItem(item);
-		var amount := item.amount;
 		
 		var template := CreateItemTemplate(item);
 		// template.desc := GetName(item.objtype, CInt( (owed-1)/(owed-1) ));
@@ -326,30 +334,32 @@ function DoPurchase(npc, player, input)
 		sleepms(2);
 	endforeach
    
-	RemoveItemForSale(npc, input);
+	RemoveItemForSale(npc, input, amount);
 	CreateItemInBackpackFromTemplate(player, selling);
-   SetMerchantLog(npc, player.name, selling.desc, GetPlayerNameBySerial(cost.seller), cost.cost_amt);
+   SetMerchantLog(npc, player.name, selling.desc, GetPlayerNameBySerial(cost.seller), cost.cost_amt * amount);
    PlaySoundEffectPrivate( player, 0x37, player ); //some gold
 endfunction
 
-// function RemoveItem(npc, player, input)
-// 	var info    := GetItemSoldInfo(npc, input);
-// 	var cost    := info[1];
-// 	var selling := info[2];
-// 	var cost_desc := AddArticle(GetName(cost.cost_type));
-	
-// 	Printtext(npc, "Certo. Aqui esta seu produto.");
-// 	RemoveItemForSale(npc, input);
-// 	var purchased := CreateItemInBackPack(player, selling, selling.amount);
-// 	if ( purchased == error )
-// 		purchased := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
-// 		if ( purchased == error )
-// 			SendSysMessage(player, "Error - Unable to create item! ->"+purchased.errortext);
-// 		else
-// 			Printtext(npc, "Vou deixar sua compra aqui no chao.");
-// 		endif
-// 	endif
-// endfunction
+function ChooseAmt(player, amount)
+   var gump := GFCreateGump();
+	var infinite;
+	GFPage(gump, 0);
+	GFResizePic(gump, 14, 22, 9270, 176, 149);
+	GFResizePic(gump, 27, 32, 9350, 150, 126);
+
+	GFAddButton(gump, 34, 126, 241, 248, GF_CLOSE_BTN, 0);
+	GFAddButton(gump, 105, 123, 247, 248, GF_CLOSE_BTN, 1);
+	GFHtmlShadowed(gump, 80, 37, 80, 20, "#FFFFFF", "Comprar", 5);
+	GFTextLine(gump, 39, 69, 1891, "Quantos quer comprar? MAX: {}".format(amount));
+	GFResizePic(gump, 39, 89, 30546, 126, 26);
+	var cost := GFTextEntry(gump, 62, 92, 89, 20, 1153, "{}".format(amount));
+	var input := GFSendGump(player, gump);
+   if (!input[0] || input[0] == 4)
+      return 0;
+   endif
+	var cost_amt := cint(GFExtractData(input, cost));
+   return cost_amt;   
+endfunction
 
 
 function AddItemToSell(npc, player, item)

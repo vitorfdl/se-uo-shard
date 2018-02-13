@@ -1,0 +1,29 @@
+use os;
+use util;
+
+include "include/say";
+include "include/damage";
+include "include/sounds";
+include ":timedscripts:timedScripts";
+include ":attributes:attributes";
+
+program truqueDeMagia(param)
+   var who := param[1];
+
+   var spellinfo := GetObjProperty(who, "cantrip_spell");
+   if (!spellinfo)
+      SendSysMessageEx(who, "Você não tem um truque escolhido. Abra seu grimório para escolher.", SSM_FAIL);
+      return 0;
+   endif
+
+   writeSpellInfo(spellinfo);
+   if (!spellinfo)
+      SendSysMessageEx(who, "Algo errado com sua magia. Escolha outro em seu grimório.", SSM_FAIL);
+      EraseObjProperty(who, "cantrip_lastchange");
+      return 0;
+   endif
+   spellinfo.mana *= 2;
+
+   start_Script(":magery:cast_spell", array{who, spellinfo, 0, 0});
+   return 1;
+endprogram

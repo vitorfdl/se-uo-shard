@@ -3,7 +3,6 @@ use uo;
 const BEETLE_MOUNTPIECE_GRAPHIC :=  0x3ebc;
 
 function InDungeonMountCheck(mobile, coord) //retorna 1 se estiver fora de caverna ou montado num Beetle
-	
 	var mount_ref := GetEquipmentByLayer(mobile, 0x19); //LAYER_MOUNT
 	if ( !mount_ref )
 		return 1;

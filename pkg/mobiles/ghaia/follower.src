@@ -82,7 +82,10 @@ program NPCMonitor()
                elseif ( me.graphic in pack_animals )
                   OpenPack(ev);
                elseif ( !GetEquipmentByLayer(ev.source, LAYER_MOUNT) && IsMountable(me.graphic) && (ev.source.cmdlevel || me.HaveTalent("Montar")))
-                  if (MoveObjectToLocation(ev.source, me.x, me.y, me.z, ev.source.realm))
+                  var sela := cint(GetObjProperty(me, "sela_hp"));
+                  if (sela <= 0 && !who.cmdlevel)
+                     SendSysMessageEx(ev.source, "Esse animal precisa de uma sela para ser montado", SSM_FAIL);
+                  elseif (MoveObjectToLocation(ev.source, me.x, me.y, me.z, ev.source.realm))
                      ev.source.hidden := 0;
                      MP_Mount(ev.source, me);
                      me.hidden := 0;

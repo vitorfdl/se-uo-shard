@@ -9,7 +9,6 @@ include ":itemutils:canAccess";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
 include "include/say";
-include ":charactercreation:habilidades";
 include ":gumps:yesno";
 
 program skill_lockpicking( me, lockpick )
@@ -110,9 +109,16 @@ function PickTreasureChest(me, lockpick, chest)
 	else
 		SendSysMessageEx(me, "Você falhou em arrombar a fechadura.", SSM_FAIL);
 		PlaySoundEffect(chest,0xef);
+      
+      if (HaveFeat(me, "Gazua Inquebrável"))
+         if (randomint(101) <= 50)
+	         ReleaseItem(lockpick);
+            return;
+         endif
+	   endif
+
 		SendSysMessageEx(me,"Sua gazua quebrou!", SSM_FAIL);
 		SubtractAmount(lockpick,1);
-		return;
 	endif
 	ReleaseItem(lockpick);
 endfunction
@@ -126,7 +132,7 @@ function SucessLockPick(me, chest)
 	chest.locked := 0;
 	set_critical(0);
 	
-	if (TemHabilidade(me, "Toque de Ouro"))
+	if (HaveFeat(me, "Toque de Ouro"))
 		CreateItemInContainer(chest, 0xeed, randomdiceroll("5d25"));
 	endif
 	

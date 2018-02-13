@@ -13,14 +13,32 @@ include "include/client";
 include ":charactercreation:habilidades";
 include "include/facings";
 include ":tn:cooldown";
+include ":timeUtils:time";
 
 program book(who, book)
 	var can_read  := HaveSkill(who, "Linguagem Elfica");
-	var book_gump := CreateBookGump(book, can_read);
+   var can_trip;
+   if (HaveTalent(who, "Truque de Magia"))
+      var last_change := cint(GetObjProperty(who, "cantrip_lastchange"))
+      if (!GetObjProperty(who, "cantrip_spell") || last_change <= polcore().systime)
+         can_trip := 1;
+      endif
+   endif
+
+	var book_gump := CreateBookGump(book, can_read, can_trip);
 	var result    := GFSendGump(who, book_gump);
 
-	if (result[0] > 900)
-		var spell := result[0] - 900;
+   if (result[0] > 500)
+		var spell := result[0] - 500;
+		var spells := GetObjProperty(book, "spells");
+      if (spells[spell])
+         var newtime := AddTimeTo(GetTime(), 3, "days");
+         SetObjProperty(who, "cantrip_lastchange", newtime);
+         SetObjProperty(who, "cantrip_spell", spells[spell]);
+         SendSysMessageEx(who, "Truque mágico definido, você poderá escolher outro em 3 dias.", SSM_INFO);
+      endif
+	elseif (result[0] > 300)
+		var spell := result[0] - 300;
 
 		var spells := GetObjProperty(book, "spells");
 		//sendsysmessage(who, " " + bookopt);
@@ -80,7 +98,7 @@ function CopyRecipe(who, recipe)
 endfunction
 
 
-function CreateBookGump(book, can_read := 0)
+function CreateBookGump(book, can_read := 0, can_trip := 0)
 	var spell_list := GetObjProperty(book, "spells");
 	if( TypeOf(spell_list) != "Array" )
 		spell_list := array{};
@@ -146,7 +164,7 @@ function CreateBookGump(book, can_read := 0)
          GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, book_gump.cur_page-1);
       endif
       
-		GenerateFilledSide(book_gump, spell_list, book_gump.cur_page, side, pOX, pOY, i);
+		GenerateFilledSide(book_gump, spell_list, book_gump.cur_page, side, pOX, pOY, i, can_trip);
 
 		SleepMS(2);
 	endfor
@@ -158,7 +176,7 @@ endfunction
 // Generate every page of the book. And the button for the First page.
 // Inside generate empty page too
 //-----------------
-function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, spell_pos)
+function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, spell_pos, can_trip)
 	var sOX := 160;
 	if (side == 2)
 		sOX := 300;
@@ -183,8 +201,12 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 
 			GFTextCrop(book_gump, sOX,  15, 100, 18, 995, spell_entry.name);
 			GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Copiar");
-			GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 900+spell_pos);
+			GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 300+spell_pos);
 
+         if (can_trip && spell_entry.circle <= 1)
+            GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Truque Mágico");
+            GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 500+spell_pos);
+         endif
 			//Fix description position by side
 			if (side == 1)
 				GFHTMLArea(book_gump, sOX-20, 60, 120,  140, cstr(spell_entry.description), 0, 1);

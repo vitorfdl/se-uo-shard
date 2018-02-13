@@ -17,10 +17,10 @@ include ":charactercreation:habilidades";
 
 program esferadeluz(params)
 	var who := params[1];
-	var targ := params[3];
+	var spell_info := params[2];
 	params := 0; // No longer needed
 	
-	var summoned := CreateNpcFromTemplate(":ghaia:orb", targ.x, targ.y, targ.z);
+	var summoned := CreateNpcFromTemplate(":ghaia:orb", who.x+1, who.y, who.z);
 	if (summoned)
 		PrintTextAbove(summoned, "*Uma orbe de fogo se forma*", 3,191);
 		summoned.SetMaster(who);
@@ -41,12 +41,21 @@ program esferadeluz(params)
 		endif
 		duration := duration * 30;
 
-		SetObjProperty(summoned, "owner", targ.serial);
+		TS_StartTimer(summoned, "summon", duration);	
+
+      var new_owner := who.serial;
+      if (spell_info.powered)
+         SendSysMessageEx(who, "Escolha um alvo para a esfera seguir.", SSM_INFO);
+         var targ := Target(who);
+         if (targ)
+		      summoned.SetMaster(targ);
+            new_owner := targ.serial;
+         endif
+      endif
+		SetObjProperty(summoned, "owner", new_owner);
 		
 		// SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
 		// var mobile := target(who);
-		TS_StartTimer(summoned, "summon", duration);	
 	endif
 	return 1;
-
 endprogram

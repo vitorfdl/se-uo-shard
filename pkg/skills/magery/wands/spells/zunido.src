@@ -4,27 +4,31 @@ use cfgfile;
 
 include "include/client";
 include "include/sounds";
+include "include/damage";
 include "include/say";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 
 program animateSword(params)
 	var who := params[1];
-	var roll_dice := params[2].dice_roll;
+   var spell_info := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 
    var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x37C4);
-   var mobiles := ListMobilesInLineOfSight( item, 5);
+   var mobiles := ListMobilesInLineOfSight( item, 5 + (spell_info.powered * 2));
 
    foreach mob in mobiles
       sleepms(2);
       if (mob == who || mob in who.party.members)
          continue;
       endif
-      if (rollResistDice(mob, DEXTERITY) <= roll_dice)
+      if (rollResistDice(mob, DEXTERITY) <= spell_info.dice_roll)
          PrintText(mob, "*cegado*", SSM_HARMFUL);
          TS_StartTimer(mob, "blinded", 10);
+         if (spell_info.powered && !mob.npctemplate)
+            DamageFLS(mob, RandomDiceRoll("1d4+{}").format(AP_GetStat(who, INTELLIGENCE, RETURN_BONUS)));
+         endif
       else
          SendSystemReport(mob, "*resistido*", SSM_HELPFUL, who);
       endif
