@@ -18,8 +18,8 @@ include ":timeUtils:time";
 program book(who, book)
 	var can_read  := HaveSkill(who, "Linguagem Elfica");
    var can_trip;
-   if (HaveTalent(who, "Truque de Magia"))
-      var last_change := cint(GetObjProperty(who, "cantrip_lastchange"))
+   if (HaveFeat(who, "Truque de Magia"))
+      var last_change := cint(GetObjProperty(who, "cantrip_lastchange"));
       if (!GetObjProperty(who, "cantrip_spell") || last_change <= polcore().systime)
          can_trip := 1;
       endif
@@ -178,8 +178,10 @@ endfunction
 //-----------------
 function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, spell_pos, can_trip)
 	var sOX := 160;
+   var difX := 0;
 	if (side == 2)
 		sOX := 300;
+      difX := 20;
 	endif
    // print(spell_pos);
 	var spell_entry := spell_list[spell_pos];
@@ -200,12 +202,12 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 			GFPage(book_gump, i);
 
 			GFTextCrop(book_gump, sOX,  15, 100, 18, 995, spell_entry.name);
-			GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Copiar");
-			GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 300+spell_pos);
+			GFTextCrop(book_gump, sOX+50+difX, 35, 100, 18, 995, "Copiar");
+			GFAddButton(book_gump, sOX+35+difX, 39, 2103, 2104,  GF_CLOSE_BTN, 300+spell_pos);
 
          if (can_trip && spell_entry.circle <= 1)
-            GFTextCrop(book_gump, sOX+20, 35, 100, 18, 995, "Truque Mágico");
-            GFAddButton(book_gump, sOX, 38, 2103, 2104,  GF_CLOSE_BTN, 500+spell_pos);
+            GFTextCrop(book_gump, sOX-10+difX, 35, 100, 18, 995, "Truque");
+            GFAddButton(book_gump, sOX-25+difX, 39, 2103, 2104,  GF_CLOSE_BTN, 500+spell_pos);
          endif
 			//Fix description position by side
 			if (side == 1)

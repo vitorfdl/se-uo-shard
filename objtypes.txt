@@ -661,9 +661,9 @@
 0xeb2 harp musicianship
 0xeb3 lute musicianship
 0xeb4 lute2 musicianship
-0xeb5 partiturapequena woodworking
+0xeb5 suportepartitura woodworking
 # 0xeb6 - 0xeb8 unused
-0xeb9 partituragrande woodworking
+0xeb9 suportepartitura2 woodworking
 # 0xeba - 0xec1 unused
 0xec2 Cleaver combat
 # 0xec3 unused
@@ -696,9 +696,7 @@
 0xf25 amber gems
 # 0xf26 - 0xf2f unused
 0xf30 diamond gems
-# 0xf31 - 0xf36 unused
-0xf37 seladecavalo woodworking
-0xf38 seladecavalo2 woodworking
+# 0xf31 - 0xf38 unused
 0xf39 Shovel gathering
 # 0xf3a - 0xf3e unused
 0xf3f arrow bowcrafting
@@ -1056,7 +1054,7 @@
 0x140c Bascinet combat
 0x140d Bascinet2 combat
 # 0x140e unused
-0x140f NoseHelm2 combat
+0x140f NoseHelm combat
 0x1410 PlatemailArms combat
 0x1411 PlatemailLegs combat
 0x1412 PlateHelm combat
@@ -1600,9 +1598,7 @@
 0x2b6e circlet metalworking
 0x2b6f circlet2 metalworking
 0x2b70 circlet3 metalworking
-# 0x2b71 unused
-0x2b72 vultureHelm combat
-# 0x2b73 - 0x2be0 unused
+# 0x2b71 - 0x2be0 unused
 0x2be1 biscuit food
 # 0x2be2 - 0x2d24 unused
 0x2d25 WildStaff combat
@@ -1650,15 +1646,15 @@
 0x315a unicornhead tn
 # 0x315b - 0x315c unused
 0x315d unicornhorn tn
-0x315e woodMailTunic combat
+0x315e halfplateTunic combat
 # 0x315f unused
-0x3160 woodMailGorget combat
-0x3161 woodMailGloves combat
-0x3162 woodMailLeggings combat
-0x3163 woodMailSleeves combat
+0x3160 halfplateGorget combat
+0x3161 halfplateGloves combat
+0x3162 halfplateLeggings combat
+0x3163 halfplateSleeves combat
 # 0x3164 - 0x3167 unused
 0x3168 ravenhelm combat
-0x3169 NoseHelm combat
+0x3169 vultureHelm combat
 0x316a wingedhelm combat
 0x316b woodTunic combat
 0x316c woodGloves combat

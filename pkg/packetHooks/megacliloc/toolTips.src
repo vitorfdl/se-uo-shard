@@ -244,9 +244,9 @@ exported function MegaCliloc( who, byref packet )
 						if (spell == 0)
                      lost_slots += 1;
 							continue;
-						elseif (xDesc.search(GetSpellName(spell)))
+						elseif (xDesc.find(GetSpellName(spell)))
                      XDesc := SubStrReplace(xDesc, "", XDesc.length()-3);
-							xDesc += "II<br>";
+							xDesc += " II<br>";
                      continue;
 						elseif (active_spell == spell)
 							xDesc += WHITE;
