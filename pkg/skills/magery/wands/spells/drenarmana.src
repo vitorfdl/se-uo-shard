@@ -11,7 +11,7 @@ include ":timedscripts:timedScripts";
 
 program drenarmana(params)
 	var who := params[1];
-   var spell_info = params[2];
+   var spell_info := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 	var mana := AP_GetVital(targ, MANA);

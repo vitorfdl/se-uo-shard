@@ -132,6 +132,7 @@ function CreateIteminBackpackFromTemplate(player, selling)
 	if (selling.amount == 1)
 		SetName(purchase, selling.desc);
 	endif
+   
 	foreach prop in selling
 		//sendsysmessage(player, " " + _prop_iter + " "+ selling[_prop_iter]);
 		purchase.set_member(_prop_iter, selling[_prop_iter]);

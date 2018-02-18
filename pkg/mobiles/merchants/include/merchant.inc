@@ -146,7 +146,7 @@ endfunction
 // Adds an item to the merchant's ItemsSelling list.
 // Moves item to the merchant's GetSellingItemsBox()
 //
-function AddItemForSale(merchant, seller, item, cost_type, cost_name, cost_amt, desc, infiniteAmount := 0, specialProp := 0, commission:=0)
+function AddItemForSale(merchant, seller, item, cost_type, cost_name, cost_amt, desc, cost_lote, infiniteAmount := 0, specialProp := 0, commission:=0)
 	var data_elem := GetMerchantDataElem(Hex(merchant.serial)+"-ItemsSelling");
 //	var new_num := GetMerchantDataFile().keys().size();
 //	new_num := GetMerchantDataFile().keys().size()+1;
@@ -172,6 +172,7 @@ function AddItemForSale(merchant, seller, item, cost_type, cost_name, cost_amt, 
 	cost_info.+cost_amt := CInt(cost_amt);
 	cost_info.+commission := commission;
 	cost_info.+desc := desc;
+   cost_info.+lote := CInt(cost_lote);
 	cost_info.+time := polcore().systime;
 	cost_info.infinite := cint(infiniteAmount);
 	if (specialProp)
@@ -226,7 +227,7 @@ function RemoveItemForSale(merchant, item_num, amount := 0, confiscar := 0)
    elseif (amount == 0 || selling_info[2].amount <= amount)
       return data_elem.EraseProp(CStr(item_num));
    endif
-
+   selling_info[2].desc := StrReplace(selling_info[2].desc, "{}".format(selling_info[2].amount), "{}".format(selling_info[2].amount - amount));
    selling_info[2].amount -= amount;
    data_elem.SetProp(Cstr(item_num), selling_info);
    return 1;
