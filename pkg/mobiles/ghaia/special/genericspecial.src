@@ -223,7 +223,7 @@ program loko(params)
 endprogram
 
 function selectOpponent(who, type, dist := 3)
-   if (!dist) dist : 3; endif
+   if (!dist) dist := 3; endif
    var targ := array{};
    if (type == "Self")
       targ.append(who);
