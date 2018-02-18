@@ -127,7 +127,6 @@ program SpellStarter(params)
    // if (item.isA(POLCLASS_ITEM) && item.objtype != 0x790c && item.objtype != 0x2253)
    //    SubtractAmount(item, 1);
    // endif
-
    if (!targ)
       targ := ChooseTarget(mobile, spellinfo);
       if (!targ)
@@ -223,7 +222,9 @@ function ChooseTarget(mobile, spellinfo)
          if (GetCooldown(targ, "repeal") > 0)
             SendSysMessageEx(mobile, "O alvo esta invulneravel a magias.", SSM_FAIL);
          elseif (spellinfo.targettype)
-            if (spellinfo.targettype == "Mobile" && !targ.isA(POLCLASS_MOBILE))
+            if (!targ)
+               break;
+            elseif (spellinfo.targettype == "Mobile" && !targ.isA(POLCLASS_MOBILE))
                SendSysMessageEx(mobile, "Você deve escolher uma criatura como alvo.", SSM_FAIL);
             elseif (spellinfo.targettype == "Item" && !targ.isA(POLCLASS_ITEM))
                SendSysMessageEx(mobile, "Você deve escolher um objeto como alvo", SSM_FAIL);

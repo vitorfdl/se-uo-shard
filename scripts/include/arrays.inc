@@ -213,7 +213,7 @@ function FindAllElemInArray(byref the_array, find_what, return_index := 0)
                 sleepms(2);
             endforeach
         elseif ( index == find_what )
-			return to_return.append(index);
+			   to_return.append(index);
         endif
         sleepms(2);
     endforeach

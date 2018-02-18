@@ -6,22 +6,24 @@ include ":timedscripts:timedScripts";
 include ":ghaia:ghaiaUtil";
 include ":disguise:disguise";
 include ":timeUtils:time";
+include ":tn:tngumps";
+include ":gumps:yesno";
 
 program startTalent(param)
    var who := param[1];
-   disguisegump(who);
+   disguisefeat(who);
 endprogram
 
-function disguisegump(who)
+function disguisefeat(who)
    var is_disguise := GetObjProperty(who, "disfarce_oldlook");
    var my_disguise := GetObjProperty(who, "my_disguise");
    var end_disguise := GetObjProperty(who, "disgued_end");
 
    var gump := GFCreateGump();
-   GFResizePic(gump, 84, 90, 9260, 280, 260);
+   GFResizePic(gump, 100, 90, 9260, 250, 200);
 
-   GFGumpPicTiled(gump, 100,100,30,235,10460);
-   GFGumpPicTiled(gump, 320,100,30,235,10460);
+   GFGumpPicTiled(gump, 116,100,30,175,10460);
+   GFGumpPicTiled(gump, 306,100,30,175,10460);
    // GFGumpPicTiled(gump, 80,88,463,16,10100);
    // GFGumpPicTiled(gump, 84,610,457,16,10100);
    
@@ -30,35 +32,31 @@ function disguisegump(who)
       GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, 11);
       GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Disfarçar", 1);
    elseif (cint(end_disguise) > GetTime())
-      GFTextLine(gump, 170, y, 2100, "Restama {} minutos para terminar o disfarce".format(GetTimeBetween(end_disguise, GetTime(), "minutes")));
+	   GFHtmlShadowed(gump, 150, y, 160, 40, "#FFFFFF", "<center>Restam {} horas para terminar o disfarce".format(GetTimeBetween(GetTime(),end_disguise, "hours")), 4);
    endif
    
    if (is_disguise)
-      GFAddButton(gump, 172, y+30 0x80E, 0x80E, GF_CLOSE_BTN, 12);
-      GFHTMLArea(gump,  170, y+30, 115, 25, "<basefont color=#7FFFD4><center>Remover Disfarce", 1);
+      GFAddButton(gump, 172, y+30, 0x80E, 0x80E, GF_CLOSE_BTN, 12);
+      GFHTMLArea(gump, 170, y+30, 115, 25, "<basefont color=#7FFFD4><center>Remover Disfarce", 1);
    endif
    
-   GFAddButton(gump, 172, y+60 0x80E, 0x80E, GF_CLOSE_BTN, 13);
-   GFHTMLArea(gump,  170, y+60, 115, 25, "<basefont color=#7FFFD4><center>Novo Disfarce", 1);
+   GFAddButton(gump, 172, y+60, 0x80E, 0x80E, GF_CLOSE_BTN, 13);
+   GFHTMLArea(gump, 170, y+60, 115, 25, "<basefont color=#7FFFD4><center>Novo Disfarce", 1);
    
    var input := GFSendGump(who, gump);
-   input := input[0];
 
    if (input[0] == 11)
-      if (who.name["Desconhecido"])
-         SendSysMessageEx(who, "Você não pode se disfarçar enquanto está com rosto coberto.", SSM_FAIL);
-         return;
-      endif
+      PrintText(who, "*aplicando disfarce*");
+      sleep(2);
+      PrintText(who, "*aplicando disfarce*");
+      sleep(2);
 
-      StoreOldLook(who);
-      SendSysMessageEx(who, "Monte o profile do seu disfarce, ele será mantido para sempre.", SSM_INFO);
-      ApplyDisguise(who, my_disguise);
       TS_StartTimer(who, "disfarce", 1);
    elseif (input[0] == 13)
       if (is_disguise)
          return SendSysMessageEx(who, "Você deve remover o disfarce antes.", SSM_INFO);
       endif
-
+      var chardata := GetObjProperty(who, "chardata");
       var new_disguise := createDisguise(who, chardata);
       if (!new_disguise)
          SendSysMessageEx(who, "Você cancelou a montagem do disfarce", SSM_INFO);
@@ -71,6 +69,10 @@ function disguisegump(who)
       SendSysMessageEx(who, "Você começou a montar o disfarce, ele ficará disponível em 3 dias.", SSM_INFO);
       SendSysMessageEx(who, "É possível clicar em novo disfarce para coemçar o processo novamente a qualquer momento.", SSM_INFO);
    elseif (input[0] == 12)
+      PrintText(who, "*removendo disfarce*");
+      sleep(2);
+      PrintText(who, "*removendo disfarce*");
+      sleep(2);
       TS_LowerDuration(who, "disfarce", -1);
    endif
 endfunction
@@ -91,11 +93,12 @@ function createDisguise(who, chardata, aparencia := 0)
       input_list.append(struct{ "title" := "Nome da identidade falsa? (max 20 letras)"});
       var output := QuestionsGump(who, input_list);
 
-      var name := output[0];
-      if (!name || name.size() >= 20)
+      var name := output[1];
+      if (!name || name.length() > 20)
          SendSysMessageEx(who, "Nome inválido ou maior que 20 caracteres", SSM_FAIL);
          return 0;
       endif
+
       aparencia.name := name;
       aparencia.profile := " ";
       if (YesNo(who, "Deseja manter esse disfarce?"))
@@ -103,23 +106,4 @@ function createDisguise(who, chardata, aparencia := 0)
       endif
    endif
    return 0;
-endfunction
-
-function StoreOldLook(who)
-	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
-	var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, who.serial, DF_CREATE);
-	var cp_profile_oldlook    := DFGetProp(cp_elem_oldlook, "Profile", DF_CREATE);
-
-   var hair := GetEquipmentByLayer(who, LAYER_HAIR);
-   var barba := GetEquipmentByLayer(who, LAYER_BEARD);
-   var oldlook := struct{
-      "barba" := barba.color,
-      "corpele" := who.truecolor,
-      "corcabelo" := hair.color,
-      "cabelo" := hair.objtype,
-      "barba" := barba.objtype,
-      "profile" := cp_profile_oldlook,
-   };
-
-   SetObjProperty(who, "disfarce_oldlook", oldlook);
 endfunction

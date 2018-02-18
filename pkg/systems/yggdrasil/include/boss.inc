@@ -677,7 +677,7 @@ endfunction
 function CombatEventsOptions(who, state)
    var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
 
-   var targ_opts := array{"Self", "Cone in front", "Around Self" "Opponent", "Around Opponent", "All Opponents", "Random Opponent"};
+   var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent"};
    state.type := opt;
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
@@ -743,12 +743,14 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual o efeito?", "marked" := "", "radio" := array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Small Fireball", "Large Fireball", "Wavy Fireball", "Outro"}});
       input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := "1000"});
       input_list.append(struct{ "title" := "Qual a direção? (Moving, ignore for Cone)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"}});
-      input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer: (stationary)", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Digite o x y z da posição final do efeito: (stationary)", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer: (stationary, ignore for Cone)", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Digite o x y z da posição final do efeito: (stationary, ignore for Cone)", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Digite a distância do cone (somente Cone in Front)", "marked" := "3"});
       var output := QuestionsGump(who, input_list);
 
 
       state.+target := output[1];
+      state.+conedist := output[8];
       state.+graphictype := output[2];
       if ( output[3] == "Lightning" )
          state.+fxid := "Lightning";

@@ -9,13 +9,45 @@ use util;
 include "include/client";
 include ":disguise:disguise";
 
+function StoreOldLook(who)
+	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
+	var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, who.serial, DF_CREATE);
+	var cp_profile_oldlook    := DFGetProp(cp_elem_oldlook, "Profile", DF_CREATE);
+
+   var hair := GetEquipmentByLayer(who, LAYER_HAIR);
+   var barba := GetEquipmentByLayer(who, LAYER_BEARD);
+   var oldlook := struct{
+      "barba" := barba.color,
+      "corpele" := who.truecolor,
+      "corcabelo" := hair.color,
+      "cabelo" := hair.objtype,
+      "barba" := barba.objtype,
+      "profile" := cp_profile_oldlook,
+      "name" := who.name
+   };
+   
+   return oldlook;
+endfunction
+
 function StartScript(mobile, attacker := 0, level := 0)
+   var my_disguise := GetObjProperty(mobile, "my_disguise");
+
+   if (mobile.name["Desconhecido"])
+      SendSysMessageEx(mobile, "Você não pode se disfarçar enquanto está com rosto coberto.", SSM_FAIL);
+      return;
+   endif
+
+   var oldlook := StoreOldLook(mobile);
+
+   SetObjProperty(mobile, "disfarce_oldlook", oldlook);
+   ApplyDisguise(mobile, my_disguise);
+   SendSysMessageEx(mobile, "Monte o profile do seu disfarce, ele será mantido para sempre.", SSM_INFO);
    return 1;
 endfunction
 
 function EndScript(mobile, level)
-      RemoveDisguise(who);
-
+   RemoveDisguise(mobile);
+   EraseObjProperty(mobile, "disfarce_oldlook");
    return 1;
 endfunction
 

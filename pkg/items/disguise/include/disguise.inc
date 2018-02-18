@@ -280,8 +280,8 @@ endfunction
 
 
 function RemoveDisguise(who)
-   var disguise := GetObjProperty(who, "disfarce_oldlook");
-   if (disguise)
+   var old_look := GetObjProperty(who, "disfarce_oldlook");
+   if (!old_look)
       return 0;
    endif
 
@@ -292,7 +292,7 @@ function RemoveDisguise(who)
    my_disguise.profile := cp_profile_oldlook;
    SetObjProperty(who, "my_disguise", my_disguise);
 
-   ApplyDisguise(who, disguise);
+   ApplyDisguise(who, old_look);
 
    EraseObjProperty(who, "disfarce_oldlook");
    return 1;

@@ -1,6 +1,6 @@
 use uo;
 use os;
-use guild;
+use guilds;
 
 program commandFaccoes(who)
 
