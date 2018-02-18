@@ -96,7 +96,7 @@ program loko(params)
 			endforeach
 
 		elseif (state.type == "Perform Action" )
-			var targ := selectOpponent(who, state.target, , state.conedist);
+			var targ := selectOpponent(who, state.target, state.conedist);
 
 			foreach t in targ
 				PerformAction(t, state.id);
