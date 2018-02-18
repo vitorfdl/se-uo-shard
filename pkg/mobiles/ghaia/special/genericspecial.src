@@ -83,7 +83,7 @@ program loko(params)
 			endif
          
 		elseif (state.type == "TimedScript")
-			var targ := selectOpponent(who, state.target);
+			var targ := selectOpponent(who, state.target, stat.conedist);
 			foreach t in targ
             sleepms(2);
             if (state.resist_test)
@@ -96,13 +96,13 @@ program loko(params)
 			endforeach
 
 		elseif (state.type == "Perform Action" )
-			var targ := selectOpponent(who, state.target);
+			var targ := selectOpponent(who, state.target, , stat.conedist);
 
 			foreach t in targ
 				PerformAction(t, state.id);
 			endforeach
 		elseif (state.type == "Text")
-			var targ := selectOpponent(who, state.target);
+			var targ := selectOpponent(who, state.target, stat.conedist);
 
 			foreach t in targ
 				PrintText(t, state.text, state.color);
@@ -115,7 +115,7 @@ program loko(params)
          HealFLS(who, state.healamt);
          RecalcVitals(who);
 		elseif ( state.type == "Graphic Effect")
-			var targ := selectOpponent(who, state.target);
+			var targ := selectOpponent(who, state.target, stat.conedist);
 
 			if (state.target == "Fixed Loc")
 				if (state.graphictype == "Stationary")
@@ -152,7 +152,7 @@ program loko(params)
 			endif
 
 		elseif (state.type == "Dmg")
-         var targ := selectOpponent(who, state.target);
+         var targ := selectOpponent(who, state.target, stat.conedist);
 
          var dmg := state.dmg;
          if (dmg["d"]) 
@@ -222,7 +222,8 @@ program loko(params)
 	endforeach
 endprogram
 
-function selectOpponent(who, type)
+function selectOpponent(who, type, dist := 3)
+   if (!dist) dist : 3; endif
    var targ := array{};
    if (type == "Self")
       targ.append(who);
@@ -235,7 +236,7 @@ function selectOpponent(who, type)
    elseif (type == "All Opponents")
       targ := GetAllOpponents(who);
    elseif (type == "Cone in front")
-      var points := GetConeCoordsInFront(who.x, who.z, who.facing, 3);
+      var points := GetConeCoordsInFront(who.x, who.z, who.facing, dist);
       foreach p in points
          var mobs := ListMobilesNearLocation(p[1], p[2], who.z, 0);
          targ := targ + mobs;

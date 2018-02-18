@@ -700,13 +700,15 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := "1"});
       input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 1, "radio" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
       input_list.append(struct{ "title" := "Dificuldade do teste?", "marked" := "12"});
+      input_list.append(struct{ "title" := "Distância do cone (cone in front only)?", "marked" := "3"});
 
       var output := QuestionsGump(who, input_list);
       
-      state.+target  := output[1];
+      state.+target        := output[1];
       state.+timername     := output[2];
       state.+timerduration := cint(output[3]);
       state.+level         := cint(output[4]);
+      state.+conedist      := cint(output[6]);
 
       if (output[5] != "Nenhum")
          state.+resist_test := output[5];
@@ -750,7 +752,7 @@ function CombatEventsOptions(who, state)
 
 
       state.+target := output[1];
-      state.+conedist := output[8];
+      state.+conedist := cint(output[8]);
       state.+graphictype := output[2];
       if ( output[3] == "Lightning" )
          state.+fxid := "Lightning";
@@ -827,11 +829,13 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := "", "checkbox" := array{"Stam", "Hits", "Mana"}});
       input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 6, "radio" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
       input_list.append(struct{ "title" := "Qual a dificuldade do teste?", "marked" := "14"});
+      input_list.append(struct{ "title" := "Digite a distância do cone (somente Cone in Front)", "marked" := "3"});
       var output := QuestionsGump(who, input_list);
 
       state.+target := output[1];
       state.+dmg := output[2];
       state.+dmgtype := output[3];
+      state.+conedist := cint(output[7]);
       if (state.dmgtype == "Sem Resistência")
          state.dmgtype := -1;
       endif
