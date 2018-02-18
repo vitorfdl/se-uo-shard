@@ -98,7 +98,6 @@ function RemoveEquipmentMods(who, item)
 			AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
 		elseif (mod == "manamod")
 			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) - Cint( mods["manamod"] ));
-			RecalcVitals(who);
       elseif (mod == "toughmod")
          who.setToughness(cint(mods["toughmod"])*(-1));
 		elseif (mod == "hitsmod")
@@ -110,13 +109,14 @@ function RemoveEquipmentMods(who, item)
 			else
 				SetObjProperty(who, "#hitsmod", final );
 			endif
-			RecalcVitals(who);
 		elseif (mod == "stammod")
 			SetObjProperty(who, "#stammod", Cint(GetObjProperty(who, "#stammod")) - Cint( mods["stammod"] ));
-			RecalcVitals(who);
 		else
 			AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
 		endif
-endforeach
+   endforeach
 
+   if (mods.keys().size() > 0)
+      RecalcVitals(who);
+   endif
 endfunction

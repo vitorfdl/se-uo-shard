@@ -185,5 +185,8 @@ exported function RemoveTreasure( spot, serial )
         data.treasures.Erase(index);
         SetProps( spot, data );
     endif
+
+   var container := SystemFindObjectBySerial(serial);
+    EraseObjProperty(container, "CANT_DESTROY");
     return 1;
 endfunction

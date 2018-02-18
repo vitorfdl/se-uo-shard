@@ -7,17 +7,15 @@ use os;
 use util;
 
 include "include/client";
-include "include/say";
-include "include/dungeons";
-include ":attributes:attributes";
+include ":disguise:disguise";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   mobile.run_speed := mobile.run_speed + level;
    return 1;
 endfunction
 
 function EndScript(mobile, level)
-   mobile.run_speed := mobile.run_speed - level;
+      RemoveDisguise(who);
+
    return 1;
 endfunction
 

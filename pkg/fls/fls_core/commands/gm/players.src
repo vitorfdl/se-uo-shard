@@ -38,7 +38,7 @@ function PlayersGump(who)
 	GFPage(gump, 1);
 	foreach acc in (acc_list.keys())
 		var name_color := 2100;
-		if (SystemFindObjectBySerial(acc_list[acc]).cmdlevel > 0)
+		if (SystemFindObjectBySerial(acc_list[acc]).cmdlevel > 1)
 			name_color := 168;
 		endif
 		var char := SystemFindObjectBySerial(acc_list[acc]);

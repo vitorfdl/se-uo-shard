@@ -386,7 +386,7 @@ function CreateBossStructGump(who, byref boss)
 			endif
 
 		else
-			var opt := RadioGump(who, 250, 270, "Editar item", array{"Special Hit Anim", "Life Drain", "Dmg Return", "Custom Hitscript", "Special AI"});
+			var opt := RadioGump(who, 250, 270, "Editar item", array{"Special Hit Anim", "Life Drain", "Dmg Return", "Custom Hitscript"});
 			var spec := struct;
 			spec.+name := opt;
 			if (!boss.special)
@@ -396,9 +396,9 @@ function CreateBossStructGump(who, byref boss)
 				spec.+amt := Cdbl(RequestGump(who, "Digite quanto sera retornado. 0.1 a 1.0:", "", "", 1));
 			elseif (opt == "Custom Hitscript")
 					spec.+hitopt := configurehitscript(who);
-			elseif (opt == "Special AI")
-				var ainame := Cstr(RequestGump(who, "Digite o nome da IA", "", "", 1));
-				spec.+ai := ainame;
+			// elseif (opt == "Special AI")
+			// 	var ainame := Cstr(RequestGump(who, "Digite o nome da IA", "", "", 1));
+			// 	spec.+ai := ainame;
 			elseif (opt == "Special Hit Anim")
 				var hitanim := Hex(RequestGump(who, "Digite o hex/int da Animação", "", "", 1));
 				spec.+anim := hitanim;
@@ -677,7 +677,7 @@ endfunction
 function CombatEventsOptions(who, state)
    var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
 
-   var targ_opts := array{"Self", "Opponent", "Around Opponent", "All Opponents", "Around Self"};
+   var targ_opts := array{"Self", "Cone in front", "Around Self" "Opponent", "Around Opponent", "All Opponents", "Random Opponent"};
    state.type := opt;
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
@@ -693,7 +693,7 @@ function CombatEventsOptions(who, state)
       state.+z := loc.z;
    elseif ( opt == "TimedScript")
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai realizar a action?", "marked" := 1, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai sofrer a action?", "marked" := 1, "radio" := targ_opts});
       var timedcfg := TS_GetCfgFile();
       input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := 1, "radio" := GetConfigStringKeys(timedcfg)});
       input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""});
@@ -742,9 +742,9 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual o tipo de efeito? (fixed loc deve ser Moving)", "marked" := 1, "radio" := array{"Stationary", "Moving"}});
       input_list.append(struct{ "title" := "Qual o efeito?", "marked" := "", "radio" := array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Small Fireball", "Large Fireball", "Wavy Fireball", "Outro"}});
       input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Qual a direção? (Moving)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"}});
+      input_list.append(struct{ "title" := "Qual a direção? (Moving, ignore for Cone)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"}});
       input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer: (stationary)", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Digite o x y z da posicao final do efeito: (stationary)", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Digite o x y z da posição final do efeito: (stationary)", "marked" := "1000"});
       var output := QuestionsGump(who, input_list);
 
 
@@ -818,8 +818,6 @@ function CombatEventsOptions(who, state)
          endif
       endif
    elseif ( opt == "Dmg")
-
-
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer?", "marked" := 1, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Quanto de dano vai causar? Ex: 1d2", "marked" := "1d2"});

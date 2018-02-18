@@ -184,6 +184,7 @@ function SendRoomGump(npc, player)
 		else
 			var room := struct;
 			room.+door := porta.serial;
+         SetObjProperty(porta, "estalagem", npc.serial);
 			SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do quarto.");
 			var cent := TargetCoordinates(player);
 			room.+centro := { cent.x, cent.y, cent.z };

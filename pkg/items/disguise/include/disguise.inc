@@ -248,10 +248,52 @@ function disguiseGump(who, choice := struct{}, disfarce := 0);
     return 0;
 endfunction
 
-function applyDisguise()
+function ApplyDisguise(who, disguise)
+	who.color    := disguise.corpele;
+	who.truecolor:= disguise.corpele;
+	//barba
+	var mybarba  := GetEquipmentByLayer(who, LAYER_BEARD);
+	DestroyItem(mybarba);
 
+	var newbarba := CreateItemAtLocation(who.x, who.y, who.z, disguise.barba, 1, who.realm);
+	newbarba.color := disguise.corcabelo;
+	EquipItem(who, newbarba);
+	
+	var myhair := GetEquipmentByLayer(who, LAYER_HAIR);
+	DestroyItem(myhair);
+
+	var newhair:= CreateItemAtLocation(who.x, who.y, who.z, disguise.cabelo, 1, who.realm);
+	newhair.color := disguise.corcabelo;
+	EquipItem(who, newhair);
+
+   if (disguise.name)
+      who.name := disguise.name;
+   endif
+
+  if (disguise.profile)
+      var cp_data_file_newlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
+      var cp_elem_newlook       := DFFindElement(cp_data_file_newlook, who.serial, DF_CREATE);
+      
+      cp_elem_newlook.SetProp("Profile", disguise.profile);
+   endif
 endfunction
 
-function removeDisguise()
 
+function RemoveDisguise(who)
+   var disguise := GetObjProperty(who, "disfarce_oldlook");
+   if (disguise)
+      return 0;
+   endif
+
+	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
+	var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, who.serial, DF_CREATE);
+	var cp_profile_oldlook    := DFGetProp(cp_elem_oldlook, "Profile", DF_CREATE);
+   var my_disguise := GetObjProperty(who, "my_disguise");
+   my_disguise.profile := cp_profile_oldlook;
+   SetObjProperty(who, "my_disguise", my_disguise);
+
+   ApplyDisguise(who, disguise);
+
+   EraseObjProperty(who, "disfarce_oldlook");
+   return 1;
 endfunction

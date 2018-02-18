@@ -43,7 +43,7 @@ program animateSword(params)
    endif
 
    PrintText(item, "*Fogo se move de forma não natural*");
-   var shards := 3 + cint(spellinfo.powered * 2);
+   var shards := 3 + (cint(spellinfo.powered)*2);
 
    var i;
    for (i := 1; i <= shards; i+=1)

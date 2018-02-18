@@ -8,6 +8,12 @@ use uo;
 
 program textcmd_Destroy(who)
 	SendSysMessage(who, "What do you want to destroy?");
-	
-	DestroyItem(target(who));
+
+   var targ := target(who);
+   if (GetObjProperty(targ, "CANT_DESTROY"))
+	   SendSysMessage(who, "Can't destroy that in this way");
+      return;
+   endif
+   
+	DestroyItem(targ);
 endprogram

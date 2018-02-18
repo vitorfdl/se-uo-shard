@@ -17,13 +17,13 @@ program animateSword(params)
 
 
    PlayObjectCenteredEffect( targ, 0x3728, 1, 10 );
-   var dice := "{}d6".format(cint(spell_info.powered+1));
+   var dice := "{}d6".format(cint(spell_info.powered)+1);
 
    var roll_dice := RandomDiceRoll(dice);
    DamageFLS(targ, roll_dice, "Gelo", who);
    PlaySoundEffect(targ, 0x5BF);
-   TS_StartTimer(targ, "attack_disadvantage", 6+cint(spell_info.powered*3));	
-   PlayObjectCenteredEffect( targ, 0x3728, 1, 120+cint(spell_info.powered*20) );
+   TS_StartTimer(targ, "attack_disadvantage", 6+cint(spell_info.powered)*3);	
+   PlayObjectCenteredEffect( targ, 0x3728, 1, 120+cint(spell_info.powered)*20 );
    PrintText(targ, "*ar frio ao redor*", SSM_FAIL);
 	return 1;
 endprogram

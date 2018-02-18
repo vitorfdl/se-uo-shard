@@ -114,7 +114,7 @@ endfunction
 function GotoArray(who)
 	var thearray := array{};
 	foreach person in EnumerateOnlineCharacters()
-		if ( person.concealed <= who.cmdlevel )
+		if ( person.concealed < who.cmdlevel )
 			thearray.Append(person);
 		endif
 		SleepMS(2);

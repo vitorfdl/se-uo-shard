@@ -15,9 +15,12 @@ program SpellScript(params)
 	params := 0; // No longer needed
 
 	SendSysMEssageEx(who, "Escolha para onde quer mover.", SSM_REQUEST);
-	var loc := TargetCoordinates(who);
+	var loc := TargetCoordinates(who, );
    if (!loc)
 		SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+		return 0;
+   elseif (!CheckLOSAt(who, targ.x, targ.y, targ.z))
+		SendSysMessageEx(who, "Não é capaz de enxergar o ponto alvo.", SSM_FAIL);
 		return 0;
 	endif
 

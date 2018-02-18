@@ -122,14 +122,15 @@ function SetEquipmentMods(who, item)
 		elseif (mod == "hitsmod")
 			var prevhits := Cint(GetObjProperty(who, "#hitsmod"));
 			SetObjProperty(who, "#hitsmod",  prevhits + Cint(mods["hitsmod"] ) );
-			RecalcVitals(who);
 		elseif (mod == "stammod")
 			SetObjProperty(who, "#stammod", Cint(GetObjProperty(who, "#stammod")) + Cint( mods["stammod"] ) );
-			RecalcVitals(who);
 		else // se não eh nada acima eh skillmod ou error :p
 			AP_ModifySkillMod(who, mod, Cint(mods[mod]));
 		endif
 	endforeach
 
+   if (mods.keys().size() > 0)
+      RecalcVitals(who);
+   endif
 	return 1;
 endfunction;

@@ -11,7 +11,7 @@ include ":tn:tngumps";
 program useMagic(who, spellname, uc_text)
 	spellname := lower(Cchrz(uc_text));
 
-   if (who.cmdlevel > 4)
+   if (who.cmdlevel > 2)
       var cfg_name := ":magery:config/mage";
       var cfg := ReadConfigFile(":magery:config/mage");
       if (spellname == "mage")

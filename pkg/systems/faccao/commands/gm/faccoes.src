@@ -1,0 +1,7 @@
+use uo;
+use os;
+use guild;
+
+program commandFaccoes(who)
+
+endprogram

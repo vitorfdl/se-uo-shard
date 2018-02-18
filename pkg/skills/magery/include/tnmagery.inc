@@ -40,7 +40,7 @@ function WritespellInfo(byref spellinfo, cfg := ":magery:config/mage")
 	spellinfo.+radius      := GetConfigInt( elem, "Radius" );
 	spellinfo.+powered_move      := GetConfigInt( elem, "PoweredMove" );
 	spellinfo.+pericia     := StrReplace(GetConfigString( elem, "Pericia"), " ", "_");
-	spellinfo.+targettype     := GetConfigInt( elem, "TargetType" );
+	spellinfo.+targettype     := GetConfigString( elem, "TargetType" );
 	if (spellinfo.flavortext == error)
 		spellinfo.flavortext := "";
 	else

@@ -126,6 +126,12 @@ program loko(params)
 					var endy := Cint(state.endy) + RandomInt(2 * state.endradius) - state.endradius;
 					PlayMovingEffectXYZ(startx,  starty, Cint(state.startz), endx, endy, Cint(state.endz), state.fxid, state.speed, state.loop); 
 				endif
+         elseif (state.target == "Cone in Front")
+            var points := GetConeCoordsInFront(who.x, who.z, who.facing, 3);
+				foreach t in points
+               PlayMovingEffectXYZ(t[1], t[2], who.z+5, t[1], t[2], t.z+5, state.fxid, state.speed, state.loops);
+               sleepms(2);
+            endforeach
 			else
 				foreach t in targ
 				if (state.graphictype == "Stationary")
@@ -227,6 +233,16 @@ function selectOpponent(who, type)
       targ := ListMobilesNearLocation(who.opponent.x, who.opponent.y, who.opponent.z, 3);
    elseif (type == "All Opponents")
       targ := GetAllOpponents(who);
+   elseif (type == "Cone in Front")
+      var points := GetConeCoordsInFront(who.x, who.z, who.facing, 3);
+      foreach p in points
+         var mobs := ListMobilesNearLocation(p[1], p[2], who.z, 0);
+         targ := targ + mobs;
+         sleepms(2);
+      endforeach
+   elseif (type == "Random Opponent")
+      targ := GetAllOpponents(who);
+      targ := targ.randomEntry();
    endif
 
    return targ;

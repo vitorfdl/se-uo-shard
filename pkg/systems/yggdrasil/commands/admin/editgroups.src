@@ -192,6 +192,9 @@ function ConstructMobList(byref gump)
             if (group_data[n].isBoss)
                 name_string := "<BOSS> {}".format(name_string);
             endif
+            if (group_data[n].mobgroup)
+                name_string := "[{}] {}".format(group_data[n].mobgroup, name_string);
+            endif
             //endboss
 
             GFTextLine(gump, x, y, color, name_string);
@@ -273,13 +276,13 @@ function MobSetConfigs(byref who, byref input)
             endif
             break;
         GF_POWER_BTN:
-            mob_power := cint(RadioGump(who, 150, 165, "Nivel de Poder:", array{"1", "2", "3"}));
+            mob_power := cint(RadioGump(who, 150, 0, "Level de Poder:", array{"1", "2", "3"}));
             break;
         GF_TYPE_BTN:
-            mob_type := lower(RadioGump(who, 190, 180, "Tipo de Monstro:", array{"Melee", "Ranged", "Spellcaster"}));
+            mob_type := lower(RadioGump(who, 190, 0, "Tipo de Monstro:", array{"Melee", "Ranged", "Spellcaster"}));
             break;
          GF_MGROUP_BTN:
-            mob_group := cint(RadioGump(who, 150, 185, "Grupo:", array{"0", "1", "2", "3"}));
+            mob_group := cint(RadioGump(who, 150, 0, "Grupo:", array{"0", "1", "2", "3", "4", "5", "6", "7", "8"}));
             break;
     endcase
 
