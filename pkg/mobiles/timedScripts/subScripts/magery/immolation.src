@@ -12,6 +12,7 @@ include "include/say";
 include "include/utils";
 include "include/sounds";
 include ":attributes:attributes";
+include ":combat:combat";
 
 function StartScript(mobile, attacker := 0, level := 0)
    var dmg_roll;
@@ -28,7 +29,11 @@ function StartScript(mobile, attacker := 0, level := 0)
       DamageFLS(mobile, RandomDiceRoll(dmg_roll), DMG_FIRE, attacker);
       if (RandomInt(2) == 1)
          mobile.paralyzed := 1;
-         PlayCustomSound(mobile, 23);
+         if (!who.npctemplate)
+            PlayCustomSound(mobile, 23);
+         else
+            PlayHurtSound(mobile);
+         endif
          SendSysMessageEx(mobile, "Você está em pânico", SSM_FAIL);
          sleep(1);
          mobile.paralyzed := 0;

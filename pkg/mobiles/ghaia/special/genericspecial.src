@@ -6,6 +6,7 @@ include ":timedscripts:timedScripts";
 include ":tn:cooldown";
 include "include/damage";
 include "include/shapes";
+include ":ghaia:ghaia";
 include "include/sysEvent";
 
 program loko(params)
@@ -228,13 +229,13 @@ function selectOpponent(who, type, dist := 3)
    if (type == "Self")
       targ.append(who);
    elseif (type == "Around Self")
-      targ := ListMobilesNearLocation(who.x, who.y, who.z, 4);
+      targ := GetEnemiesNear(who, 3);
    elseif (type == "Opponent")
       targ.append(who.opponent);
    elseif (type == "Around Opponent")
-      targ := ListMobilesNearLocation(who.opponent.x, who.opponent.y, who.opponent.z, 3);
+      targ := GetEnemiesNear(who.opponent, 3);
    elseif (type == "All Opponents")
-      targ := GetAllOpponents(who);
+      targ := GetEnemiesNear(who, 12);
    elseif (type == "Cone in front")
       var points := GetConeCoordsInFront(who.x, who.z, who.facing, dist);
       foreach p in points
@@ -243,7 +244,7 @@ function selectOpponent(who, type, dist := 3)
          sleepms(2);
       endforeach
    elseif (type == "Random Opponent")
-      targ := GetAllOpponents(who);
+      targ := GetEnemiesNear(who, 12);
       targ := targ.randomEntry();
    endif
 
