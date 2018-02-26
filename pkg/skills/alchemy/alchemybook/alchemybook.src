@@ -115,12 +115,12 @@ function MakePotion (pot, who)
    
 	var proficiency;
 	if (is_poison)
-		proficiency := GetProficiencyBonus(who, VENEFICIO);
+		proficiency := GetSkillBonus(who, VENEFICIO);
 		if (!proficiency)
-			proficiency := GetProficiencyBonus(who, ALQUIMIA);
+			proficiency := GetSkillBonus(who, ALQUIMIA);
 		endif
 	else
-		proficiency := GetProficiencyBonus(who, ALQUIMIA);
+		proficiency := GetSkillBonus(who, ALQUIMIA);
 	endif
 
 	var dice_roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2}) + proficiency;

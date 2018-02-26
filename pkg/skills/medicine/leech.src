@@ -23,7 +23,7 @@ program UseLeech(who, leech)
 		return;
 	endif
 
-	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MEDICINA);
+	var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PRIMEIROS_SOCORROS);
 
 	if ( test > 13 )
 		who.SetAchievement("leech", 1);

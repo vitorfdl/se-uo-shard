@@ -262,7 +262,7 @@ function WriteRune(who, rune_entry)
    ReleaseItem(water);
    ReleaseItem(item);
 
-	var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, INSCRICAO_RUNICA);
+	var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSCRICAO_RUNICA);
 	if (roll <= rune_entry.diff)
 		item.hp -= Floor(item.maxhp / 4);
 		SetName(item, item.desc);

@@ -77,7 +77,7 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	SetResource(resource_type, location_elem, resource_amount-1);
 	
 	var difficulty := 15;//CInt(100 - (resource_amount * 100 / MAX_RESOURCE_AMOUNT));
-	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
+	var dice_roll := rollAttrDice(who, STRENGTH) + GetSkillBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, SCOOP_OF_SAND, 1);
 		SendSysMessageEx(who, "Você pegou um pouco de areia.", SSM_INFO);

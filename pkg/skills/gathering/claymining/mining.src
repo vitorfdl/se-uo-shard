@@ -87,7 +87,7 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	
 	var difficulty := 20;//CInt(100 - (resource_amount * 100 / MAX_RESOURCE_AMOUNT));
 	
-	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
+	var dice_roll := rollAttrDice(who, STRENGTH) + GetSkillBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, CLAY_BALL, 1);
 		SendSysMessageEx(who, "Você pegou um pouco de argila.", SSM_INFO);

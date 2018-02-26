@@ -23,7 +23,7 @@ program catarminhoca(who, dirt)
       return 0;
 	endif 
 
-   var roll := rollAttrDice(who, DEXTERITY, 0, struct{ "get_critical" := 1 }) + getProficiencyBonus(who, SOBREVIVENCIA);
+   var roll := rollAttrDice(who, DEXTERITY, 0, struct{ "get_critical" := 1 }) + GetSkillBonus(who, PLANTACAO);
 	var minhoca := cint("0x9980");
 
 

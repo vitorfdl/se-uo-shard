@@ -9,9 +9,12 @@ include "include/shapes";
 include ":ghaia:ghaia";
 include "include/sysEvent";
 
+var me;
+
 program loko(params)
 	var who := params[1];
 	var event := params[2];
+   me := who;
 	//printtextabove(who, " "  + event); //apagar
 	if (!who.opponent)
 		return;

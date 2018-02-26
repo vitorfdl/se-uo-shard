@@ -11,7 +11,7 @@
 *
 * Functions:
 * rollAttrDice(mobile, attribute, penalty := 0, critical := 20) - Rolagem de atributo
-* getProficiencyBonus(mobile, skill := 0) - Bonus de profiencia pelo nivel, se passar skill já checa se vai ter
+* GetSkillBonus(mobile, skill := 0) - Bonus de profiencia pelo nivel, se passar skill já checa se vai ter
 * rollResistDice(mobile, type) - Rolagem de resistência
 * GetBonusAttr(number) - Convert numero em bonus 12 -> 1
 * HaveSkill(mobile, skill) - Checa se tem skill
@@ -118,7 +118,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 	return dice;
 endfunction
 
-function getProficiencyBonus(mobile, skills := 0)
+function GetSkillBonus(mobile, skills := 0)
    var bn := 1;
 	if (skills)
 		if (typeof(skills) != "Array") 
@@ -127,42 +127,43 @@ function getProficiencyBonus(mobile, skills := 0)
       if (!skills[1])
          return 0;
       endif
+
       bn := HaveSkill(mobile, skills);
 		if (!bn) 
          return 0; 
       endif
 	endif
 
-	var proficiency := 0;
-	var level := 1;
-	if (mobile.npctemplate);
-		var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
-		level       := GetConfigInt(npcelem, "Difficulty");
-	else
-		var chardata := GetObjProperty(mobile, "chardata");
-		level        := cint(chardata.level);
-	endif
+   var proficiency := 0;
 
-	if (!level || level <= 4)
-		proficiency := 2;
-	elseif (level <= 8)
-		proficiency := 3;
-	elseif (level <= 12)
-		proficiency := 4;
-	elseif (level <= 16)
-		proficiency := 5;
-	elseif (level <= 20)
-		proficiency := 6; // Players stop here
-	elseif (level <= 24)
-		proficiency := 7;
-	elseif (level <= 28)
-		proficiency := 8;
-	elseif (level <= 30)
-		proficiency := 9; // Npc's can get to +9
-	endif
+   if (mobile.npctemplate);
+      var level := 1;
+      var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
+      level       := GetConfigInt(npcelem, "Difficulty");
 
-   if (bn > 1)
-      proficiency *= 2;
+      if (!level || level <= 4)
+         proficiency := 2;
+      elseif (level <= 8)
+         proficiency := 3;
+      elseif (level <= 12)
+         proficiency := 4;
+      elseif (level <= 16)
+         proficiency := 5;
+      elseif (level <= 20)
+         proficiency := 6; // Players stop here
+      elseif (level <= 24)
+         proficiency := 7;
+      elseif (level <= 28)
+         proficiency := 8;
+      elseif (level <= 30)
+         proficiency := 9; // Npc's can get to +9
+      endif
+   else
+      if (bn >= 1)
+         bn -= 1; //fix for +0
+      endif
+
+      proficiency := bn;
    endif
 
 	return proficiency;
@@ -184,7 +185,7 @@ function rollResistDice(mobile, type)
 
 	var proficiency_bonus := 0;
 	if (type in resist_list)
-		proficiency_bonus := getProficiencyBonus(mobile);
+		proficiency_bonus := GetSkillBonus(mobile);
 	endif
 
 	var dice := RandomDiceRoll("1d20") + proficiency_bonus;
@@ -197,15 +198,19 @@ function HaveSkill(mobile, skill)
 		skill := array{skill};
 	endif
 
+   var modifier := 0;
+
 	foreach name in skill
       var res := AP_GetTrueSkill(mobile, name);
 		if (res > 0)
 			return cint(res);
 		endif
+
+      modifier := GetSkillModifier(name);
       sleepms(2);
 	endforeach
 
-	return 0; //n tem skill
+	return modifier; //n tem skill
 endfunction
 
 function GetSkillIdFromName(name)
@@ -237,6 +242,35 @@ function GetSkillNameFromId(id)
 	return "";
 
 endfunction
+
+function GetSkillModifier(name)
+	var cfg := AP_GetAttributesCfgFile();
+	var elem := FindConfigElem(cfg, name);
+	if (elem == error)
+		return "elem not found: " + GetConfigStringKeys( cfg );
+	endif
+
+	var type := GetConfigString(elem, "SkillType");
+	if (type == error)
+		return "type error";
+	endif
+
+   var modifier := -3;
+   case (type)
+      "S":
+         modifier := -3;
+         break;
+      "I":
+         modifier := -4;
+         break;
+      "C":
+         modifier := -5;
+         break;
+   endcase
+
+	return modifier;
+endfunction
+
 
 /* AP_GetAttributesCfgFile()
  * 

@@ -35,7 +35,7 @@ program UseBandage(mobile, bandage)
 
 	SendSysMessageEx(mobile, "Onde você deseja usar as ataduras?", SSM_REQUEST);
 	var targ := Target(mobile, TGTOPT_CHECK_LOS+TGTOPT_HELPFUL);
-	var heal_skill := MEDICINA;
+	var heal_skill := PRIMEIROS_SOCORROS;
 
 	if ( !targ.IsA(POLCLASS_MOBILE) && !targ.IsA(POLCLASS_CORPSE) )
 		if (HaveFeat(mobile, "Herbalismo"))
@@ -99,7 +99,7 @@ program UseBandage(mobile, bandage)
 	if (targ.isTamable())
 		SendSysMessageEX(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
-	elseif (isBloodied(targ) && ((heal_skill == MEDICINA && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") ))))
+	elseif (isBloodied(targ) && ((heal_skill == PRIMEIROS_SOCORROS && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") ))))
 		SendSysMessageEx(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
 	endif
@@ -141,7 +141,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
    endif
 
 	var x := targ.x, y := targ.y;
-	var heal_amt := GetHealingAmt(2 * GetProficiencyBonus(mobile, heal_skill)) + bonus + RandomDiceRoll("2d5");
+	var heal_amt := GetHealingAmt(2 * GetSkillBonus(mobile, heal_skill)) + bonus + RandomDiceRoll("2d5");
 	if (mobile == targ)
 		heal_amt := heal_amt / 2;
 		PrintText(mobile, "*usando ataduras em si mesmo*");
@@ -162,8 +162,8 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 		return 0;
 	endif
 
-	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, heal_skill);
-	if ( roll <= 14 ) //SkillCheck(mobile, MEDICINA, -1)
+	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, heal_skill);
+	if ( roll <= 14 ) //SkillCheck(mobile, PRIMEIROS_SOCORROS, -1)
 		heal_amt := heal_amt / 2;
 	endif
 
@@ -216,12 +216,12 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 
 	//bandagens com garlic
 	if ( (poison == 1) )
-		if  ( 15 > 0)  //SkillCheck(mobile, MEDICINA, 70))
+		if  ( 15 > 0)  //SkillCheck(mobile, PRIMEIROS_SOCORROS, 70))
 			// Should be enough to cure all poison.
 			TS_CurePoison(targ, 10000, "P", 10);
 		endif
 	elseif(   (poison == 2))
-		if (10 > 0)  //(SkillCheck(mobile, MEDICINA,70)
+		if (10 > 0)  //(SkillCheck(mobile, PRIMEIROS_SOCORROS,70)
 			TS_LowerDuration(targ, "bleed", -1);
 		endif
 	endif
@@ -241,7 +241,7 @@ function HealCorpse(mobile, targ, restauraDP)
 
 	CreateItemInBackpack(mobile, 0xE20, RandomInt(5)+1);
 
-	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, MEDICINA);
+	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, PRIMEIROS_SOCORROS);
 	if ( !GetObjProperty(targ,"morto") )
 		return;
 	elseif ( roll >= 16 )
@@ -272,10 +272,10 @@ function HealNpcCorpse(mobile, targ)
 
 	CreateItemInBackpack(mobile, 0xE20, RandomInt(5)+1);
 
-	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, TRATO_ANIMAIS);
+	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, TRATO_ANIMAIS);
 	if (  !GetObjProperty(targ,"morto") )
 		return;
-	elseif ( roll >= 16 ) // SkillCheck(mobile, MEDICINA, diff) SkillCheck(mobile, , diff)
+	elseif ( roll >= 16 ) // SkillCheck(mobile, PRIMEIROS_SOCORROS, diff) SkillCheck(mobile, , diff)
 		SendSysMessageEx(mobile, "Você estabilizou "+name);
 		ghaiaRessurect(targ);
 	else
@@ -298,7 +298,7 @@ function apllyHerbs(mobile, bandage, targ)
 		return SendSysMessageEx(mobile, "Você precisa da mesma quantidade de {}.".format(targ.desc), SSM_FAIL);
 	endif
 
-	var roll := rollAttrDice(mobile, WISDOM) + getProficiencyBonus(mobile, MEDICINA);
+	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, PRIMEIROS_SOCORROS);
 	
 	if (targ.objtype == 0xF85 && roll >= 15 ) //se for ginseng
 		SetObjProperty(bandage, "ginseng", 1);

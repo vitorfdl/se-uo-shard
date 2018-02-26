@@ -28,16 +28,6 @@ exported function setLevel(who, level)
 	return 1;
 endfunction
 
-exported function isClass(who, class)
-	var chardata := GetObjProperty(who, "chardata");
-
-	if (Lower(chardata.classe) == Lower(class))
-		return 1;
-	endif
-
-	return 0;
-endfunction
-
 exported function isRace(who, race)
 	var chardata := GetObjProperty(who, "chardata");
 
@@ -52,7 +42,7 @@ exported function SkillList(who)
 	var attributes := AP_ListAttributesByType("Skill");
 	var skill_list := array{};
 	foreach attrib_name in attributes
-		if (AP_GetTrueSkill(who, attrib_name) == 1)
+		if (AP_GetTrueSkill(who, attrib_name) >= 1)
 			skill_list += attrib_name;
 		endif
 		sleepms(2);

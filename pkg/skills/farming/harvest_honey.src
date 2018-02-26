@@ -44,7 +44,7 @@ program harvest_honey (character, beehive)
 		sleep (3);
 
 		//do a skill check to see if they manage to harvest anything
-		var test := rollAttrDice(character, WISDOM) + getProficiencyBonus(character, SOBREVIVENCIA);
+		var test := rollAttrDice(character, WISDOM);
 		if (test > 13)
 			already_harvested_amount := CInt(GetObjProperty (beehive, "#harvested"));
 			if (!already_harvested_amount)

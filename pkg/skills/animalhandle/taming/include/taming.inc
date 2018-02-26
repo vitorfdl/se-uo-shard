@@ -122,7 +122,7 @@ function GetMaxPets(who)
       return 300;
    endif
 	// var skill := AP_GetStat(who, WISDOM);
-	var maxpets := 1 + cint( GetObjProperty(who, "extrapets") ) + cint( getProficiencyBonus(who, TRATO_ANIMAIS) / 2 );
+	var maxpets := 1 + cint( GetObjProperty(who, "extrapets") ) + cint( GetSkillBonus(who, TRATO_ANIMAIS) / 2 );
 
    if (HaveFeat(who, "Treinador de Animais") || HaveFeat(who, "Cadeia de Comando") )
 	   maxpets += 1;

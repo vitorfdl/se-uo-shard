@@ -178,7 +178,7 @@ exported function rollPetDice(pet, command, tame_difficulty)
       return 1;
    endif
 
-   var dice_roll := rollAttrDice(pet.master, WISDOM) + getProficiencyBonus(pet.master, TRATO_ANIMAIS);
+   var dice_roll := rollAttrDice(pet.master, WISDOM) + GetSkillBonus(pet.master, TRATO_ANIMAIS);
    if (dice_roll >= tame_difficulty-cmd_level)
       return 1;
    endif

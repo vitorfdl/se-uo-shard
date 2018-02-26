@@ -90,7 +90,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 		difficulty := 22;
 	endif
 	
-	var dice_roll := rollAttrDice(who, STRENGTH) + getProficiencyBonus(who, EXTRACAO);
+	var dice_roll := rollAttrDice(who, STRENGTH) + GetSkillBonus(who, EXTRACAO);
 	if ( who.cmdlevel )
 		SendSysMessageEx(who, "more_dif="+more_dif);
 		SendSysMessageEx(who, "MaxWood="+max_wood+"    CurWood="+wood_amount);

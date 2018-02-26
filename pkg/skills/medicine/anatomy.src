@@ -12,7 +12,7 @@ program medicineSkill(who)
 	SendSysMessageEx(who, "Quem você deseja examinar?", SSM_REQUEST);
 	var subject := Target(who);
 
-   var rolldice := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MEDICINA);
+   var rolldice := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PRIMEIROS_SOCORROS);
    if (subject.graphic == 0x2006)
 		if( rolldice > 12 ) //SkillCheck(who, MEDICINE, -1)
          PrintText(who, "*examinando corpo*");

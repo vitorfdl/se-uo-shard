@@ -142,3 +142,18 @@ function FLSCreateItemBackpack(who, item, amount := 1)
 
    return created;
 endfunction
+
+function convertToRoman(num)
+  var roman :=  struct{ "M":=1000, "CM":=900, "D":=500, "CD":=400, "C":=100, "XC":=90, "L":=50, "XL":=40, "X":=10, "IX":=9, "V":=5, "IV":=4, "I":=1};
+  var letters := array{ "M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+  var str := "";
+   foreach i in (letters)
+      var q := Floor(num / roman[i]);
+      num -= q * roman[i];
+      for a := 1 to q
+          str += i;
+      endfor
+   endforeach
+
+   return str;
+endfunction

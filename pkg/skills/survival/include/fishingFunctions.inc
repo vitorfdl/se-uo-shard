@@ -212,7 +212,7 @@ endfunction
 
 
 function GetSOSTreasure(who, targetsquare, sosmsg)
-	var test := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
+	var test := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, PESCARIA);
 	if( test > 18 )
 		var itemcfg := ReadConfigFile(":*:itemdesc");
 		var it, oldname;

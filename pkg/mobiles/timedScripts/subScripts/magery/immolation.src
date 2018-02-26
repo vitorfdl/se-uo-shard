@@ -29,7 +29,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       DamageFLS(mobile, RandomDiceRoll(dmg_roll), DMG_FIRE, attacker);
       if (RandomInt(2) == 1)
          mobile.paralyzed := 1;
-         if (!who.npctemplate)
+         if (!mobile.npctemplate)
             PlayCustomSound(mobile, 23);
          else
             PlayHurtSound(mobile);

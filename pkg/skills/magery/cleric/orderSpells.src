@@ -137,7 +137,7 @@ function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
       return 0;
    endif
 
-   var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, MILAGRES);
+   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, MILAGRES);
    if (roll > 12+(spellinfo.circle*2))
       TS_StartCooldown(who, "orderspell", 2);
       SendSysMessageEx(who, "Você teve dificuldades em conseguir a benção de anar.", SSM_FAIL);

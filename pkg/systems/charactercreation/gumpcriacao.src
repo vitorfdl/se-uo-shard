@@ -85,14 +85,14 @@ program createchar(who)
 	AP_SetTrueStat(who, "Strength", chardata.str);
 	AP_SetTrueStat(who, "Dexterity", chardata.dex);
 	AP_SetTrueStat(who, "Intelligence", chardata.inte);
-	AP_SetTrueStat(who, "Constitution", chardata.con);
+	AP_SetTrueStat(who, "Constitution", chacrdata.con);
 	AP_SetTrueStat(who, "Wisdom", chardata.wis);
-	AP_SetTrueStat(who, "Charisma", chardata.char);
+	AP_SetTrueStat(who, "Aura", chardata.aura);
 
-	var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
-	chardata.hitpoints  := cint(class_cfg.HITS) + cint(GetBonusAttr(chardata.con));
-	chardata.manapoints := cint(class_cfg.MANA) + cint(GetBonusAttr(chardata.inte));
-	chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
+	// var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
+	// chardata.hitpoints  := cint(class_cfg.HITS) + cint(GetBonusAttr(chardata.con));
+	// chardata.manapoints := cint(class_cfg.MANA) + cint(GetBonusAttr(chardata.inte));
+	// chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
 
 	foreach skill in (chardata.skills)
       skill := StrReplace(skill, " ", "_" );
@@ -200,7 +200,7 @@ function ShowCreateGumps(who, byref chardata)
 		chardata.+inte := 12;
 		chardata.+con  := 10;
 		chardata.+wis  := 8;
-		chardata.+char := 15;
+		chardata.+aura := 15;
 		chardata.+antecedente := "";
 
 		if (RaceGump(who,chardata))
@@ -271,16 +271,16 @@ function RaceGump(who, byref  chardata)
 	GFRadioButton(gump, choice_x+130, 315, 0x9C4E, 0x9C4F, 1, 11);
 	GFRadioButton(gump, choice_x+130, 335, 0x9C4E, 0x9C4F, 0, 12);
 
-	GFSetRadioGroup(gump, 3);
-	GFTextLine(gump, choice_x+1,395,1153,"Escolha sua classe");
-	GFTextLine(gump, choice_x+25,415,2103,"Guerreiro");
-	GFTextLine(gump, choice_x+25,435,2103,"Ladino");
-	GFRadioButton(gump, choice_x, 415, 0x9C4E, 0x9C4F, 1, 5);
-	GFRadioButton(gump, choice_x, 435, 0x9C4E, 0x9C4F, 0, 6);
-	GFTextLine(gump, choice_x+155,415,2103,"Mago");
-	GFTextLine(gump, choice_x+155,435,2103,"Clérigo");
-	GFRadioButton(gump, choice_x+130, 415, 0x9C4E, 0x9C4F, 0, 7);
-	GFRadioButton(gump, choice_x+130, 435, 0x9C4E, 0x9C4F, 0, 8);
+	// GFSetRadioGroup(gump, 3);
+	// GFTextLine(gump, choice_x+1,395,1153,"Escolha sua classe");
+	// GFTextLine(gump, choice_x+25,415,2103,"Guerreiro");
+	// GFTextLine(gump, choice_x+25,435,2103,"Ladino");
+	// GFRadioButton(gump, choice_x, 415, 0x9C4E, 0x9C4F, 1, 5);
+	// GFRadioButton(gump, choice_x, 435, 0x9C4E, 0x9C4F, 0, 6);
+	// GFTextLine(gump, choice_x+155,415,2103,"Mago");
+	// GFTextLine(gump, choice_x+155,435,2103,"Clérigo");
+	// GFRadioButton(gump, choice_x+130, 415, 0x9C4E, 0x9C4F, 0, 7);
+	// GFRadioButton(gump, choice_x+130, 435, 0x9C4E, 0x9C4F, 0, 8);
 
 	var input := GFSendGump(who, gump);
 
@@ -297,11 +297,6 @@ function RaceGump(who, byref  chardata)
 				2: chardata.raca := "Humano";
 				3: chardata.raca := "Elfo";
 				4: chardata.raca := "Meio-Elfo";
-
-				5: chardata.classe := "Guerreiro";
-				6: chardata.classe := "Ladino";
-				7: chardata.classe := "Mago";
-				8: chardata.classe := "Clérigo";
 
 				11: 
 					if (chardata.raca == "Humano")
@@ -327,11 +322,6 @@ function RaceGump(who, byref  chardata)
 			chardata.nomefinal := last_name;
          sleepms(2);
 		endforeach
-      
-      if (chardata.classe == "Clérigo" && chardata.raca == "Elfo")
-         SendSysMessageEx(who, "Clérigos não podem ser elfos!", SSM_FAIL);
-         RaceGump(who, chardata);
-      endif
 	else
 		RaceGump(who, chardata);
 	endif

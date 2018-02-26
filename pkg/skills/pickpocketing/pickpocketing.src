@@ -62,10 +62,10 @@ program skill_Stealing(mobile)
       advantage += 1;
    endif
 
-	var user_skill := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
+	var user_skill := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetSkillBonus(mobile, FURTO);
 	var diff := 2;
    if (targ.isA(POLCLASS_MOBILE))
-      diff += rollAttrDice(targ, WISDOM, advantage) + GetProficiencyBonus(targ, PERCEPCAO);
+      diff += rollAttrDice(targ, WISDOM, advantage) + GetSkillBonus(targ, PERCEPCAO);
    elseif (targ.isA(POLCLASS_ITEM))
       var check_targ := targ;
       while (check_targ.container)
@@ -83,7 +83,7 @@ program skill_Stealing(mobile)
 	// 		diff += 5;
 	// 	endif
 	// endforeach
-	var check := rollAttrDice(mobile, DEXTERITY, 0, struct{ "get_critical" := 1, "failure" := 3}) + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
+	var check := rollAttrDice(mobile, DEXTERITY, 0, struct{ "get_critical" := 1, "failure" := 3}) + GetSkillBonus(mobile, FURTO);
 	if ( check.dice <= diff )
       SendSysMessageEx(mobile, "Você percebe que não se disfarçou bem e recua para não chamar atenção.", SSM_FAIL);
       if (targ.isA(POLCLASS_MOBILE))
@@ -152,7 +152,7 @@ program skill_Stealing(mobile)
       var diff := PickPocketDiff(steal, mobile, user_skill);
 
 		var dice_roll := rollAttrDice(mobile, DEXTERITY, advantage, struct{ "get_critical" := 1, "failure" := 3});
-		check := dice_roll.dice + GetProficiencyBonus(mobile, PRESTIDIGITACAO);
+		check := dice_roll.dice + GetSkillBonus(mobile, FURTO);
 		if ( check >= diff )
 			var copyitem := CreateItemCopyAtLocation(0, 0, 0, steal, mobile.realm);
 			MoveItemToContainer(copyitem, mobile.backpack);
@@ -198,7 +198,7 @@ function CriticalFailure(mobile, targ)
 	endif
 	SendSysMessageEx(mobile, "Você chamou muita atencao!", SSM_FAIL);
 
-	var range := 22 - (Ap_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetProficiencyBonus(mobile, PRESTIDIGITACAO));
+	var range := 22 - (Ap_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetSkillBonus(mobile, FURTO));
 
 	foreach player in ( ListMobilesInLineOfSight(targ, range) )
 		if ( player.npctemplate );

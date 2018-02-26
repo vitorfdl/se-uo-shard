@@ -51,7 +51,7 @@ function planting(who, vase, seed)
    
 	var difficulty := cfg.PlantDifficulty;
 	
-	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PLANTACAO);
+	var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PLANTACAO);
 	if ( test > difficulty )
 		var grower := CreateItemAtLocation(vase.x, vase.y, vase.z+2, GROWTH_UNIT, 1);
       if (!grower)

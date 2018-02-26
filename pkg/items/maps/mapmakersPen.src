@@ -72,7 +72,7 @@ program use_MapmakersPen(who, tool)
       endif
       PrintText(who, "*traduzindo pergaminho*");
 
-      var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, ESCRIBA);
+      var roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, ESCRIBA);
       if (roll < 19)
          SendSysMessageEx(who, "Você falhou em traduzir o pergaminho.", SSM_FAIL);
          return;
@@ -107,7 +107,7 @@ program use_MapmakersPen(who, tool)
 		endif
 
 		var amt := 1;
-		var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, SOBREVIVENCIA);
+		var roll := rollAttrDice(who, INTELLIGENCE);
 		if (roll < diff)
 			return SendSysMessageEx(who, "Você não conseguiu mapear o local.", SSM_FAIL);
 		endif
@@ -145,7 +145,7 @@ program use_MapmakersPen(who, tool)
 				return;
 			endif
 
-			var roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, array{PRESTIDIGITACAO, ESCRIBA});
+			var roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, ESCRIBA);
 			if (roll <= 14)
 				SendSysMessageEx(who, "Falhou em cópiar o livro.", SSM_FAIL);
 				return;
@@ -201,7 +201,7 @@ program use_MapmakersPen(who, tool)
 		endif
 
       var rune := getRune(rune_name);
-		var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, INSCRICAO_RUNICA);
+		var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSCRICAO_RUNICA);
 		if (roll >= rune.diff+2 && !who.cmdlevel)
 			SendSysMessageEx(who, "Falhou em transcrever a runa.", SSM_FAIL);
 			return;

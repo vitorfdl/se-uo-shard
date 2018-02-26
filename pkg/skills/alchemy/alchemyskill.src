@@ -26,7 +26,7 @@ program alchemy(who)
    endif
 
 	PrintText(who, "*analisando um frasco*");
-   var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, ALQUIMIA);
+   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, ALQUIMIA);
    if (roll < 15) //SkillCheck(who, PESQUISA, -1)
       SendSysMessageEx(who, "Você não esta certo..", SSM_FAIL);
       return;

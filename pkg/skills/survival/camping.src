@@ -41,7 +41,7 @@ program UseWood( who, wood )
 		difficulty := 8;
 	endif
 
-	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, SOBREVIVENCIA);
+	var dice_roll := rollAttrDice(who, WISDOM);
 	if( dice_roll > 12 )
 		var x := wood.x;
 		var y := wood.y;
@@ -56,7 +56,7 @@ program UseWood( who, wood )
 		PrintText( campfire, "Um acampamento foi preparado.");
 		
 		campfire.movable := 0;
-		var time := (AP_GetStat(who, SOBREVIVENCIA, RETURN_BONUS) + 10) * 2;
+		var time := (AP_GetStat(who, WISDOM, RETURN_BONUS) + 10) * 2;
 		time := cint(time * wood.amount);
 		DestroyItem(wood);
 		var tempocura := 0;

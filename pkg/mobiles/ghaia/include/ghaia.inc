@@ -49,7 +49,7 @@ function CanFight(me, mobile)
  
    if (mobile.hidden && AP_getStat(me, WISDOM) >= 9 && (!mobile.npctemplate && me.master != mobile))
       var diff := CalculateDhDiff(me, mobile);
-      var roll := rollAttrDice(me, WISDOM) + getProficiencyBonus(me, PERCEPCAO);
+      var roll := rollAttrDice(me, WISDOM) + GetSkillBonus(me, PERCEPCAO);
 
       if ( roll > diff )
          mobile.hidden := 0;
@@ -171,9 +171,9 @@ function GetEnemiesNear(loc, range := 5, get_hidden := 0)
       endif
 
       if (mobile.npctemplate)
-         if ( mobile.my_template() in enemies)
-               myenemies.append(mobile);
-         endif
+         // if ( mobile.my_template() in enemies)
+         //       myenemies.append(mobile);
+         // endif
       elseif (me.alignment == ALIGN_EVIL)
          myenemies.append(mobile);
       endif

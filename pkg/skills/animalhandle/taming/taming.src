@@ -142,7 +142,7 @@ function taming(who)
 	while( TameLoop(who, targ, info) )
 		SetObjProperty(who, "#tamewait", ReadGameClock()+15);
 		sleep(3);
-		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2, "failure" := 5}) + getProficiencyBonus(who, TRATO_ANIMAIS);
+		var dice := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 2, "failure" := 5}) + GetSkillBonus(who, TRATO_ANIMAIS);
 		if (dice.critical == -1)
          if (targ.alignment == 1)
             TS_LowerDuration(targ, "peacemade", -1, 1);
@@ -202,7 +202,7 @@ function TameLoop(who, targ, byref info)
 	
 	PrintText(who, "*tentando adestrar " + targ.name + "*");
 
-	var dice := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TRATO_ANIMAIS);
+	var dice := rollAttrDice(who, WISDOM) + GetSkillBonus(who, TRATO_ANIMAIS);
 	if ( dice > info.difficulty-4 )
 		SendSysMessageEx(who, ""+targ.name+" parece interessado em você.", SSM_INFO);
 		ghaiaObjective(targ, info.x, 1);

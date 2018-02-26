@@ -19,9 +19,11 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
 include "include/say";
+include "include/utils";
 include "include/client";
 include ":gumps:requestgump";
 include ":gumps:htmlgump";
+
 //Standard text colors on TSSE
 /////////////////////////////////////////////////////////////////
 CONST GF_STDCOLOR		:= 1890;
@@ -50,6 +52,33 @@ program core_skillWin(who)
    return 0;
 endprogram
 
+   // GFResizePic(gump, 19, 246, 5170, 613, 255);
+	// GFResizePic(gump, 19, 27, 5170, 219, 216);
+	// GFResizePic(gump, 65, 75, 3000, 88, 21);
+	// GFTextLine(gump, 69, 75, Ultima.Hue, "Destreza");
+	// GFTextLine(gump, 39, 197, Ultima.Hue, "VocÃª tem 2 pontos para distribuir");
+	// GFAddButton(gump, 44, 73, 55, 248, GF_CLOSE_BTN, 0);
+	// GFAddButton(gump, 44, 100, 55, 248, GF_CLOSE_BTN, 0);
+	// GFAddButton(gump, 44, 125, 55, 248, GF_CLOSE_BTN, 0);
+	// GFAddButton(gump, 44, 150, 55, 248, GF_CLOSE_BTN, 0);
+	// GFResizePic(gump, 160, 75, 3000, 41, 21);
+	// GFAddButton(gump, 44, 179, 55, 248, GF_CLOSE_BTN, 0);
+	// GFResizePic(gump, 66, 99, 3000, 88, 21);
+	// GFTextLine(gump, 69, 100, Ultima.Hue, "Destreza");
+	// GFResizePic(gump, 160, 100, 3000, 41, 21);
+	// GFResizePic(gump, 65, 124, 3000, 88, 21);
+	// GFTextLine(gump, 68, 125, Ultima.Hue, "Destreza");
+	// GFResizePic(gump, 160, 125, 3000, 41, 21);
+	// GFResizePic(gump, 65, 149, 3000, 88, 21);
+	// GFTextLine(gump, 86, 53, Ultima.Hue, "Status");
+	// GFTextLine(gump, 68, 150, Ultima.Hue, "Destreza");
+	// GFResizePic(gump, 160, 150, 3000, 41, 21);
+	// GFResizePic(gump, 64, 175, 3000, 88, 21);
+	// GFTextLine(gump, 68, 176, Ultima.Hue, "Destreza");
+	// GFResizePic(gump, 160, 176, 3000, 41, 21);
+	// GFGumpPic(gump, 173, 55, 5411, Ultima.Hue);
+	// GFResizePic(gump, 243, 28, 5170, 388, 216);
+	
 
 function skillWindow(who)
 	var gump  := buildGump(who);
@@ -72,7 +101,7 @@ function skillWindow(who)
 		AP_SetTrueStat(who, attr, AP_GetTrueStat(who, attr) + 1);
 		who.SetPoints(-1);
 	elseif(input[0] == 70)
-		BuyTalents(who);
+		BuyHabs(who);
 		//use feat
 	elseif(input[0] == 71)
       var pid := GetObjProperty(who, "#expbar");
@@ -84,64 +113,111 @@ function skillWindow(who)
 	endif
 endfunction
 
+
+
+	// GFTextLine(gump, 390, 59, Ultima.Hue, "Talentos");
+	// GFResizePic(gump, 494, 477, 9350, 116, 17);
+	// GFTextLine(gump, 501, 475, Ultima.Hue, "Adquirir Habilidades");
+	// GFTextLine(gump, 406, 476, Ultima.Hue, "Barra de EXP");
+	// GFTextLine(gump, 242, 292, Ultima.Hue, "VocÃª tem 5 pontos de habilidade");
+	// GFResizePic(gump, 44, 352, 9350, 182, 24);
+	// GFAddButton(gump, 47, 358, 2224, 248, GF_CLOSE_BTN, 0);
+
+	// GFTextLine(gump, 70, 354, Ultima.Hue, "Arma de Duas MÃ£os");
+	// GFTextLine(gump, 198, 354, Ultima.Hue, "VII");
+	// GFResizePic(gump, 231, 325, 9350, 182, 24);
+	// GFAddButton(gump, 234, 331, 2224, 248, GF_CLOSE_BTN, 0);
+	// GFTextLine(gump, 257, 327, Ultima.Hue, "Arma de 2 MÃ£os");
+	// GFTextLine(gump, 385, 327, Ultima.Hue, "VII");
+	// GFResizePic(gump, 422, 326, 9350, 182, 24);
+	// GFAddButton(gump, 425, 332, 2224, 248, GF_CLOSE_BTN, 0);
+	// GFTextLine(gump, 448, 328, Ultima.Hue, "Arma de 3 MÃ£os");
+	// GFTextLine(gump, 576, 328, Ultima.Hue, "VII");
+	// GFResizePic(gump, 269, 86, 9350, 164, 24);
+	// GFAddButton(gump, 272, 92, 2224, 248, GF_CLOSE_BTN, 0);
+	// GFTextLine(gump, 295, 88, Ultima.Hue, "Disparo");
+	// GFResizePic(gump, 447, 86, 9350, 156, 24);
+	// GFAddButton(gump, 450, 92, 2224, 248, GF_CLOSE_BTN, 0);
+	// GFTextLine(gump, 473, 88, Ultima.Hue, "Disparo");
+   
+
 function buildGump(who)
 	var gump := GFCreateGump();
 	GFDisposable(gump, 0);
 	GFSetID(gump, GUMPID_SKILLLIST);
-	GFResizePic(gump, 526, 42, 40000, 79, 68); //Options background
-	GFResizePic(gump, 229, 13, 39925, 347, 465); //Default Background
+	GFAddButton(gump, 501, 470, 2445, 2445, GF_CLOSE_BTN, 70); //Comprar Talento
+	GFAddButton(gump, 377, 470, 2445, 2445, GF_CLOSE_BTN, 71); //Comprar Talento
+   
+	GFResizePic(gump, 19, 246, 5170, 613, 255);
+	GFResizePic(gump, 243, 28, 5170, 388, 216);
 
-	GFHTMLArea(gump, 287, 27, 60, 20, "<BASEFONT SIZE=5 COLOR=#ffffea>Pericias");
+   GFHtmlShadowed(gump, 276, 276, 80, 20, "#DDDDDD", "Habilidades", 8);
 
-	var s_x := 240;
-	var s_y := 52;
+	var s_x := 49;
+	var s_y := 302;
 	foreach skill in (who.skillList())
+	   GFResizePic(gump, s_x+20, s_y+1, 9350, 158, 21);
 		if (AP_GetSkillScript(skill) != error)
 			var elem := AP_GetAttributeCfgElem(skill);
 			var id := elem.SkillId;
-			GFAddButton(gump, s_x, s_y, 2224, 2224, GF_CLOSE_BTN, id); //Use Skill
+         GFAddButton(gump, s_x+3, s_y+5, 0x837, 0x838, GF_CLOSE_BTN, id);
 		endif
-		GFGumpPic(gump, s_x+14, s_y-5, 40136, 0);
 		var skill_name := skill;
+		GFTextLine(gump, s_x+154, s_y+3, 1152, ""+convertToRoman(GetSkillBonus(who, skill_name)+1));
 		skill_name := StrReplace(skill_name, "_", " ");
-		GFTextLine(gump, s_x+18, s_y-3, 1152, skill_name);
-		s_y += 30;
+		GFTextLine(gump, s_x+26, s_y+3, 1152, skill_name);
+		s_y += 25;
 		sleepms(5);
+      if (_skill_iter % 6 == 0)
+         s_x += 190;
+         s_y := 302;
+      endif
 	endforeach
+   
+   GFHtmlShadowed(gump, 390, 54, 80, 20, "#DDDDDD", "Especiais", 5);
+   
+	// GFResizePic(gump, 445, 85, 9350, 159, 26);
 
-	GFHTMLArea(gump, 442, 26, 60, 20, "<BASEFONT SIZE=5 COLOR=#ffffea>Talentos");
 	var feat_list := GetFeatList(who);
 	if (!feat_list[1])
 		feat_list += struct{ "name" := "Nenhum"};
 	endif
 
-	var f_x := 395;
-	var f_y := 53;
+	var f_x := 271;
+	var f_y := 75;
 	foreach feat in feat_list
+      GFResizePic(gump, f_x+20, f_y+1, 9350, 140, 21);
 		var feat_info := feat;
 		if (feat.name != "Nenhum")
 			feat_info := FeatInfo(feat);
 		endif
 		
 		if (feat_info.script)
-			GFAddButton(gump, f_x, f_y, 2224, 2224, GF_CLOSE_BTN, 100+_feat_iter); //Usar Talento
+			GFAddButton(gump, f_x+3, f_y+7, 0x837, 0x838, GF_CLOSE_BTN, 100+_feat_iter); //Usar Talento
 		endif
-		GFGumpPic(gump, f_x+14, f_y-5, 40135, 0);
-		if (feat_info.desc)
+
+		GFTextLine(gump, f_x+26, f_y+3, 1152, feat_info.name);
+      if (feat_info.desc)
 			GFTooltipText(gump, "{}".format(feat_info.desc));
 		endif
-		GFTextLine(gump, f_x+18, f_y-3, 1152, feat_info.name);
-      f_y += 30;
+      f_y += 25;
 		// GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 70); // Info
 		sleepms(2);
+      if (_feat_iter % 6 == 0)
+         f_x += 174;
+         f_y := 85;
+      endif
 	endforeach
 
 	// GFGumpPic(gump, 581, 55, 4033, 1259);
 	// GFGumpPic(gump, 577, 59, 4033, 1259);
-	GFAddButton(gump, 579, 57, 4033, 4033, GF_CLOSE_BTN, 70); //Comprar Talento
-	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponíveis");
-	GFAddButton(gump, 581, 57+23, 0x93A, 0x93A, GF_CLOSE_BTN, 71); //Comprar Talento
-	GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Ativar/Desativar Barra de EXP");
+	// GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponíveis");
+   GFResizePic(gump, 400, 476, 9350, 80, 18);
+	GFHTMLArea(gump, 406, 476, 100, 24, "<BASEFONT SIZE=2 COLOR=#003d00>Barra de EXP", 0);
+
+   GFResizePic(gump, 495, 475, 9350, 100, 18);
+	GFHTMLArea(gump, 501, 475, 100, 24, "<BASEFONT SIZE=2 COLOR=#003d00>Adquirir Habilidades", 0);
+	// GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Ativar/Desativar Barra de EXP");
 
 	AttrGump(who, gump);
 
@@ -149,15 +225,17 @@ function buildGump(who)
 endfunction
 
 function AttrGump(who, byref gump)
+   var x := 15;
+   var y := 20;
 	// Attributes
 	// GFHTMLArea(gump, 20, 11, 185, 20, "<BASEFONT SIZE=4 COLOR=#D3D3D3><center>Atributos");
-	GFResizePic(gump, 6, 7, 5170, 219, 216);
-	GFHTMLArea(gump, 52, 37, 131, 20, "<BASEFONT SIZE=5 COLOR=#4c4ca6>Status Lv.{}".format(who.getLevel()));
-	GFGumpPic(gump, 153, 35, 5411, 0);
+	GFResizePic(gump, 6+x, 7+y, 5170, 219, 216);
+	GFHTMLArea(gump, 52+x, 37+y, 131, 20, "<BASEFONT SIZE=5 COLOR=#4c4ca6>Status Lv.{}".format(who.getLevel()));
+	GFGumpPic(gump, 153+x, 35+y, 5411, 0);
 
 	var attr_points := who.getPoints();
-	var attr_x := 52;
-	var attr_y := 55;
+	var attr_x := 52+x;
+	var attr_y := 55+y;
 	foreach attr in (attr_list)
 		GFResizePic(gump, attr_x, attr_y, 3000, 120, 21);
 		GFTextLine(gump, attr_x+4, attr_y, 2966, "{}:".format(translateAttribute(attr)));
@@ -173,80 +251,190 @@ function AttrGump(who, byref gump)
 	endforeach
 
 	if (attr_points)
-		GFHTMLArea(gump, 26, 177, 185, 20, "<BASEFONT SIZE=2 COLOR=#ffffd6><center>Você tem {} pontos para atribuir".format(attr_points));
+		GFHTMLArea(gump, 26+x, 177+y, 185, 20, "<BASEFONT SIZE=2 COLOR=#ffffd6><center>Você tem {} pontos para atribuir".format(attr_points));
 	endif
 endfunction
 
-function BuyTalents(who)
-	if (!who.GetTalentPoints())
-		return SendSysMessageEx(who, "Sem pontos de talento disponiveis.", SSM_FAIL);
-	endif
-   var levels := array{};
-   var type := "normal";
-   var mylevel := who.getLevel();
-   if (mylevel >= 6)
-      var chardata := GetObjProperty(who, "chardata");
-      if (!chardata.class_feats) chardata.class_feats := array{}; endif;
-      
-      if (mylevel >= 6 && !(6 in chardata.class_feats))
-         levels.append(6);
-      endif
-
-      if (mylevel >= 14 && !(14 in chardata.class_feats))
-         levels.append(14);
-      endif
-
-      if (levels.size() != 0)
-         type := "Classe";
-      endif
+function getMaxUP(nhabs, bonusum)
+   if (nhabs >= 13 && bonusum >= 77)
+      return 13;
+   elseif (nhabs >= 12 && bonusum >= 65)
+      return 12;
+   elseif (nhabs >= 11 && bonusum >= 54)
+      return 11;
+   elseif (nhabs >= 10 && bonusum >= 44)
+      return 10;
+   elseif (nhabs >= 9 && bonusum >= 35)
+      return 9;
+   elseif (nhabs >= 8 && bonusum >= 27)
+      return 8;
+   elseif (nhabs >= 7 && bonusum >= 20)
+      return 7;
+   elseif (nhabs >= 6 && bonusum >= 14)
+      return 6;
+   elseif (nhabs >= 5 && bonusum >= 9)
+      return 5;
+   elseif (nhabs >= 4 && bonusum >= 5)
+      return 4;
+   elseif (nhabs >= 3 && bonusum >= 2)
+      return 3;
+   elseif (nhabs >= 2 && bonusum >= 0)
+      return 2;
    endif
 
-	var feat_list := GetNewFeatsList(who, type, levels);
+   return 1;
+endfunction
+
+function BuyHabs(who)
+   var myhabs := who.skillList();
+   var sum := 0;
+   foreach hab in myhabs
+      sum += cint(AP_GetTrueSkill(who, hab)) -1;
+      sleepms(2);
+   endforeach
+
+   var maxup := getMaxUP(myhabs.size(), sum);
+
 	var gump := GFCreateGump();
-	
-	GFPage(gump, 0);
+	GFSetID(gump, GUMPID_SKILLLIST);
+	GFResizePic(gump, 7, 8, 9380, 675, 495);
+	GFGumpPicTiled(gump, 33, 458, 623, 11, 2091);
+	GFGumpPicTiled(gump, 33, 44, 626, 11, 2091);
 
-	GFAddButton(gump, 388, 0, 2093, 248, GF_CLOSE_BTN, 0); //skill page
-	GFResizePic(gump, 0, 0, 9380, 715, 508);
-	GFGumpPicTiled(gump, 22, 36, 671, 11, 2091); //top decoration
-	GFGumpPicTiled(gump, 23, 463, 671, 11, 2091); //bottom decoration
-	GFHTMLArea(gump, 0, 485, 750, 20, "<BASEFONT size=0><center>Você tem {} pontos de talento.".format(who.GetTalentPoints()));
-	
-	GFPage(gump, 1);
-   var x := 39;
-   var y := 91;
-	foreach feat in feat_list
-		GFAddButton(gump, x, y, 2151, 2152, GF_CLOSE_BTN, _feat_iter+100);
-      GFHTMLArea(gump, x+35, y+5, 200, 20, "<BASEFONT size=5>{}".format(feat.name));
-		GFHTMLArea(gump, x+219, y-18, 413, 70, feat.desc, 1);
+   GFResizePic(gump, 29, 14, 9350, 40, 18);
+	GFHTMLArea(gump, 35, 14, 40, 28, "<BASEFONT SIZE=2 COLOR=#003d00>Ajuda", 0);
 
-		if (_feat_iter % 5 != 0)
-			GFGumpPic(gump, x-13, y+50, 57);
-			GFGumpPicTiled(gump, x+11, y+50, 609, 11, 58); //divisoria
-			GFGumpPic(gump, x+619, y+50, 59);
+   // GFHtmlShadowed(gump, 202, 55, 300, 20, "#FFFFFF", "Deixe o mouse sobre a habilidade para ver sua descrição", 2);
+   var points := who.GetTalentPoints();
+   GFHtmlShadowed(gump, 250, 55, 300, 20, "#99c199", "Você tem {} pontos de habilidade".format(points), 4);
 
-         y += 80;
-		elseif (feat_list[_feat_iter+1])
-			GFAddButton(gump, 651, 490, 2509, 2509, GF_PAGE_BTN, gump.cur_page+1); //next
-			GFPage(gump, gump.cur_page+1);
-			GFAddButton(gump, 45, 490, 2508, 2508, GF_PAGE_BTN, gump.cur_page-1); //previous
-         y := 91;
-		endif
+	GFGumpPic(gump, 627, 71, 59, 0);
+	GFGumpPicTiled(gump, 55, 71, 573, 11, 58);
+	GFGumpPic(gump, 31, 71, 57, 0);
 
+   var attr := ReadConfigFile(":attributes:attributes");
+   var pos_x := 63;
+   var pos_y := 89;
+	foreach attribute_name in ( AP_ListAttributesByType("Skill") )
+      var skill_name := StrReplace(attribute_name, "_", " ");
+      var mystat := AP_GetTrueSkill(who, attribute_name);
+	   GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#000066>{} <BASEFONT SIZE=4>{}".format(skill_name, convertToRoman(mystat+1)), 0);
+		GFTooltipText(gump, "{}".format(attr[attribute_name].desc));
+
+      var custo := getCost(attr[attribute_name].SkillType, mystat+1);
+      GFTextLine(gump, 170+pos_x, pos_y, 0, "Custo: {}".format(custo));
+
+      if (mystat+1 <= maxup && custo <= points)
+         GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, attr[attribute_name].SkillId);
+      endif
+
+      pos_y += 20;
+      if (_attribute_name_iter % 18 == 0)
+         pos_y := 89;
+         pos_x += 321;
+      endif
 		sleepms(2);
 	endforeach
 
-
 	var input := GFSendGump(who, gump);
+   if (input[0] == 500)
+   elseif (input[0])
+      var skill_name := GetSkillNameByID( input[0] );
+      if (!skill_name) return; endif
 
-	if (input[0] > 100)
-		var feat_iter := input[0] - 100;
-		var feat := feat_list[feat_iter];
+      var mystat := AP_GetTrueSkill(who, skill_name);
+      var custo := getCost(attr[skill_name].SkillType, mystat+1);
+
+      if (YesNo(who, "Deseja mesmo adquirir {} pelo custo de {} pontos de habilidade?".format(StrReplace(skill_name, "_", " "), custo)))
+         who.SetTalentPoints(custo * -1);
+         AP_SetTrueSkill(who, skill_name, mystat+1);
+      endif
+   endif
+
+   skillWindow(who);
+endfunction
+
+function getCost(type, nivel)
+   case (type)
+      "S": return 1 + ((nivel-1) * 3);
+      "I": return 3 + ((nivel-1) * 3);
+      "C": return 5 + ((nivel-1) * 3);
+   endcase
+// Simples 1 4 7 10 13 16 19 22 25 28 31 34 37
+// Intermediária 3 6 9 12 15 18 21 24 27 30 33 36 39
+// Complexa 5 8 11 14 17 20 23 26 29 32 35 38 41
+endfunction
+
+// function BuyTalents(who)
+// 	if (!who.GetTalentPoints())
+// 		return SendSysMessageEx(who, "Sem pontos de talento disponiveis.", SSM_FAIL);
+// 	endif
+//    var levels := array{};
+//    var type := "normal";
+//    var mylevel := who.getLevel();
+//    if (mylevel >= 6)
+//       var chardata := GetObjProperty(who, "chardata");
+//       if (!chardata.class_feats) chardata.class_feats := array{}; endif;
+      
+//       if (mylevel >= 6 && !(6 in chardata.class_feats))
+//          levels.append(6);
+//       endif
+
+//       if (mylevel >= 14 && !(14 in chardata.class_feats))
+//          levels.append(14);
+//       endif
+
+//       if (levels.size() != 0)
+//          type := "Classe";
+//       endif
+//    endif
+
+// 	var feat_list := GetNewFeatsList(who, type, levels);
+// 	var gump := GFCreateGump();
+	
+// 	GFPage(gump, 0);
+
+// 	GFAddButton(gump, 388, 0, 2093, 248, GF_CLOSE_BTN, 0); //skill page
+// 	GFResizePic(gump, 0, 0, 9380, 715, 508);
+// 	GFGumpPicTiled(gump, 22, 36, 671, 11, 2091); //top decoration
+// 	GFGumpPicTiled(gump, 23, 463, 671, 11, 2091); //bottom decoration
+// 	GFHTMLArea(gump, 0, 485, 750, 20, "<BASEFONT size=0><center>Você tem {} pontos de talento.".format(who.GetTalentPoints()));
+	
+// 	GFPage(gump, 1);
+//    var x := 39;
+//    var y := 91;
+// 	foreach feat in feat_list
+// 		GFAddButton(gump, x, y, 2151, 2152, GF_CLOSE_BTN, _feat_iter+100);
+//       GFHTMLArea(gump, x+35, y+5, 200, 20, "<BASEFONT size=5>{}".format(feat.name));
+// 		GFHTMLArea(gump, x+219, y-18, 413, 70, feat.desc, 1);
+
+// 		if (_feat_iter % 5 != 0)
+// 			GFGumpPic(gump, x-13, y+50, 57);
+// 			GFGumpPicTiled(gump, x+11, y+50, 609, 11, 58); //divisoria
+// 			GFGumpPic(gump, x+619, y+50, 59);
+
+//          y += 80;
+// 		elseif (feat_list[_feat_iter+1])
+// 			GFAddButton(gump, 651, 490, 2509, 2509, GF_PAGE_BTN, gump.cur_page+1); //next
+// 			GFPage(gump, gump.cur_page+1);
+// 			GFAddButton(gump, 45, 490, 2508, 2508, GF_PAGE_BTN, gump.cur_page-1); //previous
+//          y := 91;
+// 		endif
+
+// 		sleepms(2);
+// 	endforeach
+
+
+// 	var input := GFSendGump(who, gump);
+
+// 	if (input[0] > 100)
+// 		var feat_iter := input[0] - 100;
+// 		var feat := feat_list[feat_iter];
 		
-		LearnFeat(who, feat.name);
-	else
-		skillWindow(who);
-	endif
+// 		LearnFeat(who, feat.name);
+// 	else
+// 		skillWindow(who);
+// 	endif
 	// var feat_list := GetNewFeatsList(who);
 
 	// GFPage(gump, 1);
@@ -261,4 +449,4 @@ function BuyTalents(who)
 	// 	endif
 	// 	sleepms(2);
 	// endforeach
-endfunction
+// endfunction

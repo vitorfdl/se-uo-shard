@@ -77,7 +77,7 @@ function PloughDelay(who)
 endfunction
 
 function PloughDirt(who, targ)
-	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PLANTACAO);;
+	var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PLANTACAO);;
 	if ( test > 12 )
 		SendSysMessageEx(who, "Você conseguiu arar a terra com sucesso.", SSM_INFO);
 		CreateItemAtLocation(targ.x, targ.y, GetWorldHeight(targ.x,targ.y), "dirt", 1);

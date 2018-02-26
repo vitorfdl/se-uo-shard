@@ -17,11 +17,15 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
-   SendSysMessageEx(who, text);
-      var targ := Target(who);
-   var chardata := GetObjProperty(targ, "chardata");
-   chardata.class_feats := array{6};
-   SetObjProperty(targ, "chardata", chardata);
+   // var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
+   // SendSysMessageEx(who, ""+GetSkillBonus(who, PERCEPCAO));
+   SendSysMessageEx(who, ""+convertToRoman(cint(text)));
+   //    var targ := Target(who);
+   // var chardata := GetObjProperty(targ, "chardata");
+   // chardata.class_feats := array{6};
+   // SetObjProperty(targ, "chardata", chardata);
+
+
    // PlayMovingEffectXYZEx( who.x, who.y, who.z-10, who.x, who.y, who.z, who.realm, 0x08E0, 1, 5, 2050);
       // who.setexp(cint(text));
       // sleep(3);

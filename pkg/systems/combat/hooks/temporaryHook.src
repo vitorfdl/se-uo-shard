@@ -84,7 +84,7 @@ program Attack(params)
       attacker.hidden := 0;
 		attacker.SetAchievement("sneak_attack", 1);
 		ExpGain(attacker, "minor");
-      if (rollAttrDice(defender, WISDOM) + getProficiencyBonus(attacker, PERCEPCAO)  <= rollAttrDice(attacker, DEXTERITY) + getProficiencyBonus(attacker, FURTIVIDADE))
+      if (rollAttrDice(defender, WISDOM) + GetSkillBonus(attacker, PERCEPCAO)  <= rollAttrDice(attacker, DEXTERITY) + GetSkillBonus(attacker, FURTIVIDADE))
          SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
          bonus_atk += 1;
       endif
@@ -250,7 +250,7 @@ function GetAttackerChance(attacker, defender)
 		attribute := SelectAttribute(attacker, attacker.weapon);
 		// Checa Pericia
 		if (HaveSkill(attacker, attribute))
-			bonus := cint(getProficiencyBonus(attacker));
+			bonus := cint(GetSkillBonus(attacker));
 		endif
 	else
 		// Pega atributo principal do npc

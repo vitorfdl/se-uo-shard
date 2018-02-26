@@ -41,7 +41,7 @@ program PlantSeed(who, seed)
 	cfg := cfg[seed.objtype];
 	var difficulty := cfg.PlantDifficulty;
 	
-	var test := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PLANTACAO);
+	var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PLANTACAO);
 	if ( test > difficulty )
 		var grower := CreateItemAtLocation(who.x, who.y, who.z+1, GROWTH_UNIT, 1);
 		grower.SetGrowerType(seed.objtype);

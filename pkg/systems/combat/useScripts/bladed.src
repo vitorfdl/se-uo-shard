@@ -203,7 +203,7 @@ function MakeBlankScrolls (who, hides)
 	endif
 
 	var item_skill := 10;
-	var myskill := AP_GetSkill (who, SOBREVIVENCIA);
+	var myskill := AP_GetSkill (who, ESCALPELAR);
 	//sendsysmessage(who, "gmdebug: skinning " + myskill);
 
 	if (item_skill > myskill)
@@ -225,7 +225,7 @@ function MakeBlankScrolls (who, hides)
 			SendSysMessage(who, "Você não pode usar estes couros!");
 			return;
 		endif
-		var test := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
+		var test := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
 		if (test > 10)
 
 			if (!CreateItemInContainer (who.backpack, UOBJ_BLANK_SCROLL, 1))
@@ -251,7 +251,7 @@ function CarveFishNew(who, blade, use_on)
 	var peso;
 	var num_steaks;
 	
-	var myskill := AP_GetSkill (who, SOBREVIVENCIA);
+	var myskill := AP_GetSkill (who, ESCALPELAR);
 	if( (!Accessible(who, use_on)) or (!CheckLineOfSight(who, use_on)) or (distance(who, use_on) > 2) )
 		SendSysMessage(who, "Você não pode usar isto.");
 		return 0;

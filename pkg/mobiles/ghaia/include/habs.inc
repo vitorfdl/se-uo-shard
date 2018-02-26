@@ -530,12 +530,12 @@ function Roubar(targ)
       return 0;
    endif
 
-   var roll := rollAttrDice(me, DEXTERITY) + getProficiencyBonus(me, PRESTIDIGITACAO);
+   var roll := rollAttrDice(me, DEXTERITY) + GetSkillBonus(me, FURTO);
    foreach item in EnumerateItemsInContainer(targ.backpack, ENUMERATE_ROOT_ONLY)
       var diff := 10 + CInt(item.amount * 0.3) + cint(item.weight/2);
       if (roll > diff)
          MoveItemToContainer(item, me.backpack);
-         var user_percep := rollAttrDice(targ, WISDOM) + getProficiencyBonus(targ, PERCEPCAO);
+         var user_percep := rollAttrDice(targ, WISDOM) + GetSkillBonus(targ, PERCEPCAO);
          if (user_percep > roll)
             SendSystemReport(me, "*pegou item da sua mochila*", SSM_FAIL, targ);
          endif

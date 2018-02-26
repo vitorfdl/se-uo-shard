@@ -42,11 +42,7 @@ program neve(params)
 			dif := dif + 40;
 		endif
 		
-		if ( GetObjProperty(who, "chardata").povo == "Thuriao")
-			dif := dif - 90;
-		endif
-		
-		var survivalBonus := cint(AP_GetSkill(who, SOBREVIVENCIA)/3);
+		var survivalBonus := AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
 		dif := dif - survivalBonus;
 		
 		foreach item in (ListEquippedITems(who))

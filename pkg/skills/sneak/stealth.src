@@ -33,7 +33,7 @@ program skill_Stealth( who )
 		endif
 	endif*/
 
-	var base_steps :=  (AP_GetStat(who, DEXTERITY, RETURN_BONUS) + getProficiencyBonus(who, FURTIVIDADE)) - RandomDiceRoll("1d2");
+	var base_steps :=  (AP_GetStat(who, DEXTERITY, RETURN_BONUS) + GetSkillBonus(who, FURTIVIDADE)) - RandomDiceRoll("1d2");
    SendSysMessageEx(who, "Numero de passos: {}".format(base_steps));
 	if (base_steps < 0)
 		return SendSysMessageEx(who, "Você é incapaz de se mover furtivamente.", SSM_INFO);
@@ -44,7 +44,7 @@ program skill_Stealth( who )
 		advantage += 1;
 	endif
 
-	var check := rollAttrDice(who, DEXTERITY, advantage) + getProficiencyBonus(who, FURTIVIDADE);
+	var check := rollAttrDice(who, DEXTERITY, advantage) + GetSkillBonus(who, FURTIVIDADE);
 	if (check >= diff)
 		who.stealthsteps := cint(base_steps);
 		/*

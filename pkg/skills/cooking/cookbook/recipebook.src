@@ -350,7 +350,7 @@ function copyrecipe(who, recipe)
 	recipe := recipecfg(recipe);
 	
 	if (ConsumeSubstance(who.backpack, OBJ_BLANK_SCROLL, 1))
-      var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, ESCRIBA);
+      var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, ESCRIBA);
 		if ((roll > recipe.difficulty+5))
 			var item := createiteminbackpack(who, OBJ_RECIPE_SLIP, 1);
 			if (item == error)

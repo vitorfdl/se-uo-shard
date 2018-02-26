@@ -26,7 +26,7 @@ program corda(who, item)
 	if (!diff)
 		diff := 15;
 	endif
-	var mod := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + GetProficiencyBonus(who, PRESTIDIGITACAO);;
+	var mod := AP_GetStat(who, DEXTERITY, RETURN_BONUS) + GetSkillBonus(who, IMOBILIZACAO);
 	if (alvo.isA(POLCLASS_CORPSE)) // Se for corpo
 		var char := SystemFindObjectBySerial(alvo.ownerserial);
 

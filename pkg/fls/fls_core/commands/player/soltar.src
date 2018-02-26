@@ -25,7 +25,7 @@ program soltar(me)
 		dice_roll := rollAttrDice(me, STRENGTH, 0, struct{ "get_critical" := 1, "failure" := 2});
 	endif
 
-	var check := dice_roll.dice + GetProficiencyBonus(me, PRESTIDIGITACAO);
+	var check := dice_roll.dice + GetSkillBonus(me, IMOBILIZACAO);
 
 	if (check >= diff)
 		if (dice_roll.critical == 1)

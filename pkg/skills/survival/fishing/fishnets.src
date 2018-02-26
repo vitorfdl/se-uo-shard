@@ -63,7 +63,7 @@ program use_FishNets(who, fishnet)
 				5: CreateNpcFromTemplate( "waterelemental", targetsquare.x, targetsquare.y, targetsquare.z );
 				6: CreateNpcFromTemplate( "seaserpent", targetsquare.x, targetsquare.y, targetsquare.z );
 			endcase
-			var myskill := AP_GetSkill(who, SOBREVIVENCIA);
+			var myskill := AP_GetSkill(who, PESCARIA);
 			if(myskill <= 50)
 				CreateNpcFromTemplate( "seaserpent", targetsquare.x, targetsquare.y, targetsquare.z );
 			elseif(myskill <= 75)
@@ -91,7 +91,7 @@ endprogram
 function lostbag(who)
 
 	var regloop, regcount,reg;
-	var fishing := GetEffectiveSkill(who, SOBREVIVENCIA);
+	var fishing := GetEffectiveSkill(who, PESCARIA);
 	var gold := fishing * (RandomInt(9)+1);
 	var bag := CreateItemInContainer(who.backpack,0x0E76, 1);
 	if(!bag)

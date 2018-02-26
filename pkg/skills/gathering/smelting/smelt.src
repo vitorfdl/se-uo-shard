@@ -168,7 +168,7 @@ function SmeltOre(who, item, ore)
   endcase
 
   
-   var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, FERRARIA);
+   var dice_roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, FERRARIA);
    if (GetObjProperty(item, "numMetal"))
       var num := CINT(GetObjProperty(item, "amt1"));
       var nummetal := Cint(GetObjProperty(item, "numMetal"));

@@ -198,7 +198,7 @@ function WriteMagic(who, spell_id)
    endif
 
 
-	var dice_roll := rollAttrDice(who, INTELLIGENCE) + getProficiencyBonus(who, ARCANISMO);
+	var dice_roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, ARCANISMO);
 	if (dice_roll <= spellinfo.difficulty && who.cmdlevel < 4)
 		SendSysMessageEx(who, "Parece que você errou durante a cópia. O espaço ficou inutilizado.", SSM_FAIL);
 		spell_list.append(0);

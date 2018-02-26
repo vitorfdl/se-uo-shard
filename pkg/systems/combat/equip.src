@@ -65,6 +65,13 @@ function SetEquipmentMods(who, item)
 	endif
 
 	if (item_e.Pericia)
+      if (item_e.ReqPericia)
+         if (AP_GetTrueSkill(who, item_e.Pericia) < cint(item_e.ReqPericia))
+		      SendSysMessageEx(who, "Você não tem o mínimo de habilidade necessário para equipar este item.", SSM_FAIL);
+            return 0;
+         endif
+      endif
+
       if (!HaveSkill(who, item_e.Pericia))
          var value := cint(GetObjProperty(who, "ArmorPenalty")) +1;
          SetObjProperty(who, "ArmorPenalty", value);

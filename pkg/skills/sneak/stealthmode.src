@@ -12,7 +12,7 @@ program showdfdiff(params)
 		foreach mob in mobs
 			if (!mob.hidden && (!mob.npctemplate || AP_getStat(mob, WISDOM) >= 9))
             var AC  := cint(CalculateDHDiff(mob, who));
-            var MOD := cint(AP_GetStat(mob, WISDOM, RETURN_BONUS) + GetProficiencyBonus(mob, PERCEPCAO));   
+            var MOD := cint(AP_GetStat(mob, WISDOM, RETURN_BONUS) + GetSkillBonus(mob, PERCEPCAO));   
 				var dif := CalcSuccessPercent(AC, MOD);
             if (AC >= 30)
                dif := 0;

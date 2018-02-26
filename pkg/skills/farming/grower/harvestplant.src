@@ -42,7 +42,7 @@ function HarvestPlant(who, grower)
 	
 	// SendSysMessage(who, "dificuldade " + difficulty);
 
-	var test := rollAttrDice(who, DEXTERITY, penalty := 0, params := struct{}) + getProficiencyBonus(who, array{SOBREVIVENCIA, PLANTACAO});	
+	var test := rollAttrDice(who, DEXTERITY, penalty := 0, params := struct{}) + GetSkillBonus(who, PLANTACAO);	
 	if ( test > difficulty )
 		CreateItemInBackPack(who, grower.GetProduceType(), 1);
 		SendSysMessage(who, "Você guardou os frutos na sua mochila.");

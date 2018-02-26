@@ -33,11 +33,11 @@ include ":gumps:gumps_ex";
  * Returns '1' if yes is selected.
  *
  */
-function YesNo(mobile, prompt:="", yes_text:="Yes", no_text:="No")
+function YesNo(mobile, prompt:="", yes_text:="Sim", no_text:="Não")
 	var yn_gump := GFCreateGump(140, 100);
 
 	var wraps := struct;
-	wraps.+prompt := GFWordWrap(prompt, 360);
+	wraps.+prompt := GFWordWrap(prompt, 385);
 	wraps.+yes := GFWordWrap(yes_text, 355);
 	wraps.+no := GFWordWrap(no_text, 355);
 	var wraps_size := len(wraps.prompt) + len(wraps.yes) + len(wraps.no);

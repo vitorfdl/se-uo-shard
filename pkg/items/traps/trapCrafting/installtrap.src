@@ -43,7 +43,7 @@ program installtrap(who, trap)
 		PrintText(who, "*instalando armadilha*");
 		sleep(4);
 		var dif := level * 20;
-		var check := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SABOTAGEM);
+		var check := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, SABOTAGEM);
 		if (check > 12)
 			SendSysMessageEx(who, "Você instalou a armadilha.", SSM_INFO);
 			AddTrap(alvo, traptype, level);

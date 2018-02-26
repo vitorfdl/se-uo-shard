@@ -186,7 +186,7 @@ function doRepair(who, craft_skill, recipe_cfg)
    var reparos := GetObjProperty(what,"reparos");
 
    if (reparos == error)
-      reparos:= 2 + AP_GetStat(who, WISDOM, RETURN_BONUS) + getProficiencyBonus(who, craft_skill);
+      reparos:= 2 + AP_GetStat(who, WISDOM, RETURN_BONUS) + GetSkillBonus(who, craft_skill);
       SetObjProperty(what,"reparos",reparos);
    endif
 
@@ -201,7 +201,7 @@ function doRepair(who, craft_skill, recipe_cfg)
       return;
    endif
   
-   var skill        := GetBonusAttr(AP_GetStat(who, WISDOM)) + getProficiencyBonus(who, craft_skill);
+   var skill        := GetBonusAttr(AP_GetStat(who, WISDOM)) + GetSkillBonus(who, craft_skill);
    var damageamount := (2 * (15 - skill)/300.0);
    what.quality -= damageamount;
 
@@ -225,7 +225,7 @@ function doRepair(who, craft_skill, recipe_cfg)
    endif
 
    var thehp := what.hp;
-   var dice_result := rollAttrDice(who, WISDOM, advantage) + getProficiencyBonus(who, craft_skill);
+   var dice_result := rollAttrDice(who, WISDOM, advantage) + GetSkillBonus(who, craft_skill);
    if (dice_result > recipe.difficulty - 1)
       var repaired_amount := cint((skill+2)*2);
       //SendSysMessageEx(who, "rep"+repaired_amount);

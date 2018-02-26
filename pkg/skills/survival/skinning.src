@@ -111,7 +111,7 @@ program skinning(parms)
 				dif := bonusdif + CINT(GetSkinningDifficulty(corpseitm[i]) );
             if (dif < 5) dif := 9; endif
 				minamt := GetMinSkinningAmt(corpseitm[i]);
-				var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SOBREVIVENCIA);
+				var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
 				if(dice_roll > dif)
 					if (minamt > corpseamt[i])
 						minamt := corpseamt[i];

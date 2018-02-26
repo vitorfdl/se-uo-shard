@@ -32,14 +32,14 @@ program skill_Hide(who)
 
 	SendSysMessageEx(who, "Você comecou a tentar se esconder...", SSM_INFO);
 
-   var dif := 18 - getProficiencyBonus(who, FURTIVIDADE);
+   var dif := 18 - GetSkillBonus(who, FURTIVIDADE);
 	while ( 1 )
 		sleep(2);
 		
 		if ( !CanHide(who, orig_x, orig_y) )
 			break;
 		endif
-		var check := rollAttrDice(who, DEXTERITY, (GetGlobalProperty("dia") == "noite")) + getProficiencyBonus(who, "Furtividade");
+		var check := rollAttrDice(who, DEXTERITY, (GetGlobalProperty("dia") == "noite")) + GetSkillBonus(who, "Furtividade");
 		if( check >= dif )
 			ExpGain(who, "minor");
 			SendSysMessageEx(who, "Você se escondeu.", SSM_INFO);

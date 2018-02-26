@@ -18,7 +18,7 @@ function examinarAlvo(who)
 		return 0;
 	endif
 
-	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PERCEPCAO);
+	var dice_roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
 	if ( GetObjProperty(targ, "Disfarcado") )
 		if ( dice_roll < 20 )
 			return 0;
@@ -73,7 +73,7 @@ function CalculateDHDiff(who, mobile,)
       endif
    endif
 
-	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + (getProficiencyBonus(mobile, FURTIVIDADE) * 2);
+	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + (GetSkillBonus(mobile, FURTIVIDADE) * 2);
 	//sendsysmessage(mobile, "dificuldade de  "  + who.name + "te achar " + mobile_skill);
 	if (GetObjProperty(mobile, "#overridehiding") != error)
 		difficulty := cint(GetObjProperty(mobile, "#overridehiding"));
@@ -91,8 +91,8 @@ function CalculateDHDiff(who, mobile,)
 endfunction
 
 function examinarArea(who, plus_diff := 0)
-	var range := 5 + AP_GetStat(who, WISDOM, RETURN_BONUS) + getProficiencyBonus(who, PERCEPCAO) ;
-	var dice_roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, PERCEPCAO);
+	var range := 5 + AP_GetStat(who, WISDOM, RETURN_BONUS) + GetSkillBonus(who, PERCEPCAO) ;
+	var dice_roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
    if (range < 1)
       range := 1;
    endif

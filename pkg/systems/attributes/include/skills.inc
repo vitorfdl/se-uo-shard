@@ -270,3 +270,27 @@ function AP_CheckSkillsTotal(mobile)
 	return total;
 
 endfunction
+
+/*
+ * AP_CheckSkillTotal(mobile)
+ *
+ * Purpose
+ * Checks the total sum of all skills a mobile has.
+ *
+ * Parameters
+ * mobile:	Mobile to check the skills on
+ *
+ * Return value
+ * Returns Integer of the sum total of skill points
+ *
+ */
+function AP_GetSkillPenality(mobile)
+	var total := 0.0;
+	foreach attribute_name in ( AP_ListAttributesByType("Skill") )
+		total := total + AP_GetTrueSkill(mobile, attribute_name);
+		sleepms(2);
+	endforeach
+
+	return total;
+
+endfunction

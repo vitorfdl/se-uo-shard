@@ -353,7 +353,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 			endif
 		endforeach
 
-		var roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1}) + getProficiencyBonus(who, craft_skill);
+		var roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1}) + GetSkillBonus(who, craft_skill);
       var check := roll.dice;
       var diff := recipe.difficulty + bonus_diff;
 		if(check > recipe.difficulty || who.cmdlevel > 4)

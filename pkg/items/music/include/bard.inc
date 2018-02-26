@@ -306,7 +306,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 			return 0;
 		endif
 
-		var result := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
+		var result := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
 		if (result < dif && !who.cmdlevel)
 			tocarerrado(who,item,notas,notas2,tempo,letra,magica);
 			return 1;
@@ -443,7 +443,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
    sleepms(2000);
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
-   var roll := rollAttrDice(who, WISDOM) + getProficiencyBonus(who, TOCAR_INSTRUMENTO);
+   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
    for i := 1 to 2
       if (roll > dif-2)
          PrintText(who, "*Escrevendo a partitura*");

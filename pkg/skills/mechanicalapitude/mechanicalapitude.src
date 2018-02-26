@@ -46,7 +46,7 @@ program skillremoveTrap(who)
       default: dif := 16; 
    endcase
    
-	var dice_roll := rollAttrDice(who, DEXTERITY) + getProficiencyBonus(who, SABOTAGEM);
+	var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, SABOTAGEM);
 
 	if( GetObjProperty(item, "TrapList") != error )
 		if (!GetObjProperty(item, "trapSpoted"))
