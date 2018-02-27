@@ -134,61 +134,43 @@ function GetPlayerNameBySerial(serial)
 	return player_name;
 endfunction
 
-function SubtractMoney(container, qty := array{})
-	if (qty.length() > 3) return 0;
+function getCost(type, nivel)
+   case (type)
+      "S": return 1 + ((nivel-1) * 3);
+      "I": return 3 + ((nivel-1) * 3);
+      "C": return 5 + ((nivel-1) * 3);
+   endcase
+// Simples 1 4 7 10 13 16 19 22 25 28 31 34 37
+// Intermediária 3 6 9 12 15 18 21 24 27 30 33 36 39
+// Complexa 5 8 11 14 17 20 23 26 29 32 35 38 41
+endfunction
 
-	var money := array{0, 0, 0};
-	foreach item in (EnumerateItemsInContainer(container))
-		if (item.serial == 0x1) money[1] += item.amount;
-		elseif (item.serial == 0x2) money[2] += item.amount;
-		elseif (item.serial == 0x3) money[3] += item.amount; endif
-		sleepms(2);
-	endforeach
+function getMaxUP(nhabs, bonusum)
+   if (nhabs >= 13 && bonusum >= 77)
+      return 13;
+   elseif (nhabs >= 12 && bonusum >= 65)
+      return 12;
+   elseif (nhabs >= 11 && bonusum >= 54)
+      return 11;
+   elseif (nhabs >= 10 && bonusum >= 44)
+      return 10;
+   elseif (nhabs >= 9 && bonusum >= 35)
+      return 9;
+   elseif (nhabs >= 8 && bonusum >= 27)
+      return 8;
+   elseif (nhabs >= 7 && bonusum >= 20)
+      return 7;
+   elseif (nhabs >= 6 && bonusum >= 14)
+      return 6;
+   elseif (nhabs >= 5 && bonusum >= 9)
+      return 5;
+   elseif (nhabs >= 4 && bonusum >= 5)
+      return 4;
+   elseif (nhabs >= 3 && bonusum >= 2)
+      return 3;
+   elseif (nhabs >= 2 && bonusum >= 0)
+      return 2;
+   endif
 
-	var check := 1;
-	var change_back := array{0, 0, 0};
-	var i;
-	for (i := 1; i <= 3; i++)
-		if (qty[i] < money[i]) check := 0;
-		if (!check && i != 1 && qty[i-1] < money[i-1] && money[i]+100 >= qty[i])
-			qty[i-1] += 1;
-			qty[i] -= 100;
-			if (qty[i] < 0) 
-				change_back[i] := qty[i] * -1;
-				qty[i] := 0; 
-			endif
-			check := 1;
-		endif
-	endfor
-
-	if (!check) return 0; endif
-
-	for (i := 1; i <= 3; i++)
-		var coin_type;
-		if (i == 1) coin_type := 0x1;
-		elseif (i == 2) coin_type := 0x2;
-		elseif (i == 3) coin_type := 0x3; endif
-		foreach item in (EnumerateItemsInContainer(container))
-			if (item.objtype != coin_type) continue;
-			if (item.amount >= qty[i])
-				var chk := SubtractAmount(item, qty[i]);
-				if (!chk )
-					SendSysMessage(who, "chk " + chk);
-					return 0;
-				endif
-			else
-				qty[i] -= item.amount;
-				if (!SubtractAmount(item, item.amount))
-					return 0;
-				endif
-			endif
-         sleepms(2);
-		endforeach
-
-		if (change_back[i])
-			CreateItemInContainer(container, coin_type, change_back);
-		endif
-	endfor
-
-	return 1;	
+   return 1;
 endfunction

@@ -18,7 +18,7 @@ program clericPowerWords(who)
    CloseGump(who, GUMPID_CLERICSPELL);
 
    var char_level   := who.GetLevel();
-   var cleric_slots := char_level+2;
+   var cleric_slots := AP_GetTrueSkill(who, MILAGRE_DE_CURA) + AP_GetTrueSkill(who, MILAGRE_DE_NECROMANCIA) + 1;
    var cleric_list  := GetObjProperty(who, "cleric_list");
    if (!cleric_list) cleric_list := array{}; endif
    cleric_list := array{ struct{ "id":= 1, "used" := 0, "time" := 0} } + cleric_list;

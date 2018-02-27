@@ -48,7 +48,7 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
-function LearnFeat(who, feat, minus_point := 1, gives := 1)
+function LearnFeat(who, feat, minus_point := 0, gives := 1)
 	if (typeof(feat) != "Struct")
 		feat := FeatInfo(feat, 1);
 	endif

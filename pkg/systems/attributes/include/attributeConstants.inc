@@ -68,6 +68,8 @@ enum SKILLS
 	IMOBILIZACAO        := "Imobilização",
 	FURTIVIDADE         := "Furtividade",
 	SABOTAGEM 			  := "Sabotagem",
-	INSTRUMENTO_MUSICAL := "Instrumento_Musical"
+	INSTRUMENTO_MUSICAL := "Instrumento_Musical",
+   MILAGRE_DE_NECROMANCIA := "Milagre_de_Necromância",
+   MILAGRE_DE_CURA := "Milagre_de_Cura"
 endenum
 

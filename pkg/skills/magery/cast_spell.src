@@ -164,6 +164,8 @@ program SpellStarter(params)
    var pericia := spellinfo.pericia;
    if (spellinfo.pericia["Milagre"])
       attribute := WISDOM;
+   else
+      pericia := "Magia_de_{}".format(spellinfo.type);
    endif
 
    var bonus_spell := 0;
@@ -171,7 +173,7 @@ program SpellStarter(params)
       bonus_spell := 1;
    endif
 
-   spellinfo.dice_roll := rollAttrDice(mobile, attribute, bonus_spell) + GetSkillBonus(mobile);
+   spellinfo.dice_roll := rollAttrDice(mobile, attribute, bonus_spell) + GetSkillBonus(mobile, pericia);
    if (spellinfo.type)
       mobile.SetAchievement("spell_{}".format(lower(spellinfo.type)), 1);
       mobile.SetAchievement("spellcast", 1);
@@ -185,8 +187,6 @@ program SpellStarter(params)
       var e := Start_Script(spellinfo.script, array{mobile, spellinfo, targ});
       if (e == error)
          SysLog("Can't reach spell {} : {}".format(spellinfo.name, e));
-         FailSpell(mobile);
-      elseif (!e)
          FailSpell(mobile);
       else
          SetClericSpellUsed(mobile, spellinfo);

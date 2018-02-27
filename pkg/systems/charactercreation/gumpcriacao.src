@@ -9,8 +9,10 @@ include ":gumps:include/requestgump";
 include ":attributes:attributes";
 include "include/client";
 include "include/arrays";
+include "include/utils";
 include ":disguise:disguise";
 include ":gumps:yesno";
+include ":fls_core:fls_characters";
 include ":datafile:datafile";
 include ":timeUtils:time";
 include ":sysbook:flsbooks";
@@ -85,14 +87,14 @@ program createchar(who)
 	AP_SetTrueStat(who, "Strength", chardata.str);
 	AP_SetTrueStat(who, "Dexterity", chardata.dex);
 	AP_SetTrueStat(who, "Intelligence", chardata.inte);
-	AP_SetTrueStat(who, "Constitution", chacrdata.con);
+	AP_SetTrueStat(who, "Constitution", chardata.con);
 	AP_SetTrueStat(who, "Wisdom", chardata.wis);
 	AP_SetTrueStat(who, "Aura", chardata.aura);
 
 	// var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
-	// chardata.hitpoints  := cint(class_cfg.HITS) + cint(GetBonusAttr(chardata.con));
-	// chardata.manapoints := cint(class_cfg.MANA) + cint(GetBonusAttr(chardata.inte));
-	// chardata.stampoints := cint(class_cfg.STAM) + cint(GetBonusAttr(chardata.dex));
+	chardata.hitpoints  := cint(GetBonusAttr(chardata.con));
+	chardata.manapoints := cint(GetBonusAttr(chardata.inte));
+	chardata.stampoints := cint(GetBonusAttr(chardata.dex));
 
 	foreach skill in (chardata.skills)
       skill := StrReplace(skill, " ", "_" );
@@ -590,25 +592,71 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
 endfunction
 
 function SkillGump(who, byref chardata)
-	var cfg  := ReadConfigFile(":charactercreation:config/classes");
-	var elem := FindConfigElem(cfg, cstr(chardata.classe) );
+   var ngump := GFCreateGump();
+   construirgump(ngump); //monta a aparência da gump
+   var god_x := 500;
+   var god_y := 80;
+   GFResizePic(ngump, 7+god_x, 8+god_y, 9380, 675, 535);
+	GFGumpPicTiled(ngump, 33+god_x, 498+god_y, 623, 11, 2091);
+	GFGumpPicTiled(ngump, 33+god_x, 44+god_y, 626, 11, 2091);
 
-	// Adiciona pericias de classe
-	var skills_classe := GetConfigStringArray(elem, "Pericia");
-	chardata.skills := skills_classe + chardata.skills;
+   GFResizePic(ngump, 29+god_x, 14+god_y, 9350, 40, 18);
+	GFHTMLArea(ngump, 35+god_x, 14+god_y, 40, 28, "<BASEFONT SIZE=2 COLOR=#003d00>Ajuda", 0);
 
-	var raw_skillchoice := GetConfigStringArray(elem, "Lista");
-	var skills_choice := array{};
-	foreach skill in raw_skillchoice;
-		if (!(skill in chardata.skills))
-			skills_choice += skill;
-		endif
-	endforeach
+   
 
 	while (who.connected)
-		var gump := GFCreateGump();
-		construirgump(gump); //monta a aparência da gump
-		GFTextLine(gump, 150,140,2103,"Escolha mais duas pericias para seu personagem.");
+      var gump := ngump;
+      var myhabs := who.skillList();
+      var sum := 0;
+      foreach hab in myhabs
+         sum += cint(AP_GetTrueSkill(who, hab)) -1;
+         sleepms(2);
+      endforeach
+
+      var maxup := getMaxUP(myhabs.size(), sum);
+
+      var points := who.GetTalentPoints();
+      GFHtmlShadowed(gump, 250+god_x, 55+god_y, 300, 20, "#99c199", "Você tem {} pontos de habilidade".format(points), 4);
+
+      GFGumpPic(gump, 627+god_x, 71+god_y, 59, 0);
+      GFGumpPicTiled(gump, 55+god_x, 71+god_y, 573, 11, 58);
+      GFGumpPic(gump, 31+god_x, 71+god_y, 57, 0);
+
+      var attr := ReadConfigFile(":attributes:attributes");
+      var pos_x := 63+god_x;
+      var pos_y := 89++god_y;
+      var i := 1;
+      foreach attribute_name in ( AP_ListAttributesByType("Skill") )
+         sleepms(2);
+         var skill_name := StrReplace(attribute_name, "_", " ");
+         var mystat := AP_GetTrueSkill(who, attribute_name);
+         var attr_cfg := attr[attribute_name];
+         if (attr_cfg.Req)
+            var req := SplitWords(attr_cfg.Req);
+            if (req[1] == "god" && GetObjProperty(who, "chardata").god != req[2])
+               continue;
+            endif
+         endif 
+         GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#000066>{} <BASEFONT SIZE=4>{}".format(skill_name, convertToRoman(mystat+1)), 0);
+         GFTooltipText(gump, "{}".format(attr_cfg.desc));
+
+         var custo := getCost(attr_cfg.SkillType, mystat+1);
+         GFTextLine(gump, 185+pos_x, pos_y, 0, "Custo: {}".format(custo));
+
+         if (mystat+1 <= maxup && custo <= points)
+            GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, attr_cfg.SkillId);
+         endif
+
+         pos_x += 321;
+         if (i % 2 == 0)
+            pos_y += 20;
+            pos_x := 63++god_x;
+         endif
+         i += 1;
+      endforeach
+
+		GFTextLine(gump, 150,140,2103,"Escolha as características e habilidades do seu personagem.");
 
 		var x := 180;
 		var y := 180;
@@ -623,27 +671,27 @@ function SkillGump(who, byref chardata)
 
 		var input := GFSendGump(who, gump);
 
-		if (input[0] == 200)
-			var skills_chosed := array{};
-			foreach btn in (input.keys)
-				if (btn > 20 && btn <= 40)
-					skills_chosed += skills_choice[btn-20];
-				endif
-			endforeach
+		// if (input[0] == 200)
+		// 	var skills_chosed := array{};
+		// 	foreach btn in (input.keys)
+		// 		if (btn > 20 && btn <= 40)
+		// 			skills_chosed += skills_choice[btn-20];
+		// 		endif
+		// 	endforeach
 
-			if (skills_chosed.Size() > 2)
-				SendSysMessageEx(who, "Escolha somente duas pericias!", SSM_FAIL);
-			elseif (skills_chosed.Size() < 2)
-				SendSysMessageEx(who, "Escolha pelo menos duas pericias!", SSM_FAIL);
-			else
-				chardata.skills := chardata.skills + skills_chosed;
-				break;
-			endif
-			// break;
-		elseif (input[0] == 201)
-			return 1;
-		endif
-      sleepms(2);
+		// 	if (skills_chosed.Size() > 2)
+		// 		SendSysMessageEx(who, "Escolha somente duas pericias!", SSM_FAIL);
+		// 	elseif (skills_chosed.Size() < 2)
+		// 		SendSysMessageEx(who, "Escolha pelo menos duas pericias!", SSM_FAIL);
+		// 	else
+		// 		chardata.skills := chardata.skills + skills_chosed;
+		// 		break;
+		// 	endif
+		// 	// break;
+		// elseif (input[0] == 201)
+		// 	return 1;
+		// endif
+      // sleepms(2);
 	endwhile
 endfunction
  
@@ -688,15 +736,14 @@ endfunction
 function SetProfessions(who, chardata);
 	var background := chardata.background;
 	var cfg        := ReadConfigFile("config/antecedentes")[background];
-	// var skills     := GetConfigStringArray(cfg, "Pericia");
 	var items      := GetConfigStringArray(cfg, "Item");
 	var recipes    := GetConfigStringArray(cfg, "Recipe");
 	var books    := GetConfigStringArray(cfg, "Book");
 
-	foreach skill in skills
-		AP_SetTrueSkill(who, skill, 1);
-      sleepms(2);
-	endforeach
+	// foreach skill in skills
+	// 	AP_SetTrueSkill(who, skill, 1);
+   //    sleepms(2);
+	// endforeach
 
 	foreach item in items
 		item := SplitWords(item);

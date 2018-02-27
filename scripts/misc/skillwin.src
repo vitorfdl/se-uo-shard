@@ -102,6 +102,7 @@ function skillWindow(who)
 		who.SetPoints(-1);
 	elseif(input[0] == 70)
 		BuyHabs(who);
+      skillWindow(who);
 		//use feat
 	elseif(input[0] == 71)
       var pid := GetObjProperty(who, "#expbar");
@@ -166,11 +167,11 @@ function buildGump(who)
 		GFTextLine(gump, s_x+154, s_y+3, 1152, ""+convertToRoman(GetSkillBonus(who, skill_name)+1));
 		skill_name := StrReplace(skill_name, "_", " ");
 		GFTextLine(gump, s_x+26, s_y+3, 1152, skill_name);
-		s_y += 25;
+		s_x += 190;
 		sleepms(5);
-      if (_skill_iter % 6 == 0)
-         s_x += 190;
-         s_y := 302;
+      if (_skill_iter % 3 == 0)
+         s_x := 49;
+         s_y += 25;
       endif
 	endforeach
    
@@ -200,12 +201,13 @@ function buildGump(who)
       if (feat_info.desc)
 			GFTooltipText(gump, "{}".format(feat_info.desc));
 		endif
-      f_y += 25;
+
+      f_x += 174;
 		// GFAddButton(gump, f_x+142, f_y-3, 22153, 22153, GF_CLOSE_BTN, 70); // Info
 		sleepms(2);
-      if (_feat_iter % 6 == 0)
-         f_x += 174;
-         f_y := 85;
+      if (_feat_iter % 2 == 0)
+         f_x := 271;
+         f_y += 25;
       endif
 	endforeach
 
@@ -255,36 +257,6 @@ function AttrGump(who, byref gump)
 	endif
 endfunction
 
-function getMaxUP(nhabs, bonusum)
-   if (nhabs >= 13 && bonusum >= 77)
-      return 13;
-   elseif (nhabs >= 12 && bonusum >= 65)
-      return 12;
-   elseif (nhabs >= 11 && bonusum >= 54)
-      return 11;
-   elseif (nhabs >= 10 && bonusum >= 44)
-      return 10;
-   elseif (nhabs >= 9 && bonusum >= 35)
-      return 9;
-   elseif (nhabs >= 8 && bonusum >= 27)
-      return 8;
-   elseif (nhabs >= 7 && bonusum >= 20)
-      return 7;
-   elseif (nhabs >= 6 && bonusum >= 14)
-      return 6;
-   elseif (nhabs >= 5 && bonusum >= 9)
-      return 5;
-   elseif (nhabs >= 4 && bonusum >= 5)
-      return 4;
-   elseif (nhabs >= 3 && bonusum >= 2)
-      return 3;
-   elseif (nhabs >= 2 && bonusum >= 0)
-      return 2;
-   endif
-
-   return 1;
-endfunction
-
 function BuyHabs(who)
    var myhabs := who.skillList();
    var sum := 0;
@@ -297,8 +269,8 @@ function BuyHabs(who)
 
 	var gump := GFCreateGump();
 	GFSetID(gump, GUMPID_SKILLLIST);
-	GFResizePic(gump, 7, 8, 9380, 675, 495);
-	GFGumpPicTiled(gump, 33, 458, 623, 11, 2091);
+	GFResizePic(gump, 7, 8, 9380, 675, 535);
+	GFGumpPicTiled(gump, 33, 498, 623, 11, 2091);
 	GFGumpPicTiled(gump, 33, 44, 626, 11, 2091);
 
    GFResizePic(gump, 29, 14, 9350, 40, 18);
@@ -315,25 +287,34 @@ function BuyHabs(who)
    var attr := ReadConfigFile(":attributes:attributes");
    var pos_x := 63;
    var pos_y := 89;
+   var i := 1;
 	foreach attribute_name in ( AP_ListAttributesByType("Skill") )
+		sleepms(2);
       var skill_name := StrReplace(attribute_name, "_", " ");
       var mystat := AP_GetTrueSkill(who, attribute_name);
+      var attr_cfg := attr[attribute_name];
+      if (attr_cfg.Req)
+         var req := SplitWords(attr_cfg.Req);
+         if (req[1] == "god" && GetObjProperty(who, "chardata").god != req[2])
+            continue;
+         endif
+      endif 
 	   GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#000066>{} <BASEFONT SIZE=4>{}".format(skill_name, convertToRoman(mystat+1)), 0);
-		GFTooltipText(gump, "{}".format(attr[attribute_name].desc));
+		GFTooltipText(gump, "{}".format(attr_cfg.desc));
 
-      var custo := getCost(attr[attribute_name].SkillType, mystat+1);
-      GFTextLine(gump, 170+pos_x, pos_y, 0, "Custo: {}".format(custo));
+      var custo := getCost(attr_cfg.SkillType, mystat+1);
+      GFTextLine(gump, 185+pos_x, pos_y, 0, "Custo: {}".format(custo));
 
       if (mystat+1 <= maxup && custo <= points)
-         GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, attr[attribute_name].SkillId);
+         GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, attr_cfg.SkillId);
       endif
 
-      pos_y += 20;
-      if (_attribute_name_iter % 18 == 0)
-         pos_y := 89;
-         pos_x += 321;
+      pos_x += 321;
+      if (i % 2 == 0)
+         pos_y += 20;
+         pos_x := 63;
       endif
-		sleepms(2);
+      i += 1;
 	endforeach
 
 	var input := GFSendGump(who, gump);
@@ -348,22 +329,38 @@ function BuyHabs(who)
       if (YesNo(who, "Deseja mesmo adquirir {} pelo custo de {} pontos de habilidade?".format(StrReplace(skill_name, "_", " "), custo)))
          who.SetTalentPoints(custo * -1);
          AP_SetTrueSkill(who, skill_name, mystat+1);
+         var levels := GetConfigStringDictionary(attr[skill_name], "Level");
+         foreach giv in levels
+            giv := SplitWords(giv);
+            if (giv[1] == "feat")
+               var new_feat := StrReplace(giv[2], "_", " ");
+               LearnFeat(who, new_feat);
+            endif
+            sleepms(2);
+         endforeach
+         var gives := GetConfigStringDictionary(attr[skill_name], "Give");
+         foreach giv in gives
+            giv := SplitWords(giv);
+            if (giv[1] == "mana")
+               var chardata := GetObjProperty(who, "chardata");
+	            chardata.manapoints += cint(giv[2]);
+               SetObjProperty(who, "chardata", chardata);
+            elseif (giv[1] == "hits")
+               var chardata := GetObjProperty(who, "chardata");
+               chardata.hitpoints  += cint(giv[2]);
+               SetObjProperty(who, "chardata", chardata);
+            elseif (giv[1] == "stam")
+               var chardata := GetObjProperty(who, "chardata");
+               chardata.stampoints += cint(giv[2]);
+               SetObjProperty(who, "chardata", chardata);
+            endif
+            sleepms(2);
+         endforeach
       endif
    endif
-
-   skillWindow(who);
 endfunction
 
-function getCost(type, nivel)
-   case (type)
-      "S": return 1 + ((nivel-1) * 3);
-      "I": return 3 + ((nivel-1) * 3);
-      "C": return 5 + ((nivel-1) * 3);
-   endcase
-// Simples 1 4 7 10 13 16 19 22 25 28 31 34 37
-// Intermediária 3 6 9 12 15 18 21 24 27 30 33 36 39
-// Complexa 5 8 11 14 17 20 23 26 29 32 35 38 41
-endfunction
+
 
 // function BuyTalents(who)
 // 	if (!who.GetTalentPoints())
