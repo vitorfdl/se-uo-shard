@@ -125,6 +125,11 @@ function ExpGain(mobile, difficulty, value := 0)
 		var exp := mobile.GetExp();
 		mobile.SetExp(exp+up_amount);
 		CheckExpUp(mobile);
+      var pnt_amt := cint(GetObjProperty(mobile, "points_received"))+1;
+      if (exp+up_amount >= pnt_amt * 200)
+         mobile.SetTalentPoints(1);
+         SetObjProperty(mobile, "points_received", pnt_amt+1);
+      endif
 	endif
 
 	SetObjProperty(mobile, "#LastSkillGain", ReadGameClock());
@@ -133,7 +138,7 @@ endfunction
 
 function CheckExpUp(who)
 	var level := who.getLevel();
-	if (level < 20)
+	if (level < 10)
 		var maxexp := who.getMaxExp(); //starts at 2000
 		var exp := who.GetExp();
 
@@ -149,11 +154,6 @@ function CheckExpUp(who)
 		if (cint(levelup_cfg.AttributePoints))
 			who.SetPoints(1);
 		endif
-
-		if (cint(levelup_cfg.TalentPoints))
-			who.SetTalentPoints(1);
-		endif
-
 	endif
 endfunction 
 

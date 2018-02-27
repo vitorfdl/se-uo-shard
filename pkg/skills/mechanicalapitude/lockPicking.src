@@ -16,10 +16,7 @@ program skill_lockpicking( me, lockpick )
 	EraseObjProperty(me, "HealTimer");
 	var inhidden;
 
-   if (!me.isClass("Ladino"))
-      SendSysMessageEx(me, "Apenas ladinos podem usar essa perícia.", SSM_REQUEST);
-      return;
-	elseif (!maolivre(me, 2))
+   if (!maolivre(me, 2))
 		return 0;
 	elseif(!can_access(me, lockpick))
 		return;

@@ -36,27 +36,25 @@ program useMagic(who, spellname, uc_text)
       return;
    endif
 
-	if (who.isClass("Mago"))
-		if (!who.weapon)
-			SendSysMEssageEx(who, "Você não tem um objeto magico para usar magias.", SSM_FAIL);
-			return 0;
-		endif
+   if (!who.weapon)
+      SendSysMEssageEx(who, "Você não tem um objeto magico para usar magias.", SSM_FAIL);
+      return 0;
+   endif
 
-		var spell_list := GetObjProperty(who.weapon, "spell_list");
-		if (!spell_list)
-			SendSysMEssageEx(who, "Você não tem um objeto magico para usar magias.", SSM_FAIL);
-			return 0;
-		endif
+   var spell_list := GetObjProperty(who.weapon, "spell_list");
+   if (!spell_list)
+      SendSysMEssageEx(who, "Você não tem um objeto magico para usar magias.", SSM_FAIL);
+      return 0;
+   endif
 
-		var cfg := ReadConfigFile(":magery:config/mage");
-		var spell := FindSpell(cfg, spellname);
-		if (!(spell in spell_list))
-			SendSysMEssageEx(who, "A magia " + spellname + " não existe.", SSM_FAIL);
-			return;
-		endif
+   var cfg := ReadConfigFile(":magery:config/mage");
+   var spell := FindSpell(cfg, spellname);
+   if (!(spell in spell_list))
+      SendSysMEssageEx(who, "A magia " + spellname + " não existe.", SSM_FAIL);
+      return;
+   endif
 
-		start_Script(":magery:wands/weaponUse", array{who, who.weapon, spell});
-	endif
+   start_Script(":magery:wands/weaponUse", array{who, who.weapon, spell});
 endprogram
 
 

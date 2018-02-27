@@ -58,7 +58,6 @@ exported function SkillList(who)
 	return skill_list;
 endfunction
 
-
 exported function GetExp(who)
 	var chardata := GetObjProperty(who, "chardata");
 	var exppoints := chardata["exppoints"];
@@ -225,5 +224,5 @@ exported function setToughness(who, plus := 1)
 endfunction
 
 exported function getMaxExp(who)
-   return getLevel(who) * 1100;
+   return getLevel(who) * 2200;
 endfunction

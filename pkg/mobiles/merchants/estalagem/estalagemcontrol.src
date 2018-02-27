@@ -44,7 +44,6 @@ function InnKeeperChecks()
 
 				if (rentdate == error)
 					quartos[i].data := polcore().systime;
-					SetObjProperty(npc, "quartos", quartos);
                continue;
 				endif
 
@@ -62,31 +61,33 @@ function InnKeeperChecks()
 						"O pagamento da sua estalagem com " + npc.name + " não foi efetuado como esperado. Estarei colocando a estalagem de novo a disposição de novos moradores, e manterei armazenado seus objetos até que me procure."} );
 					endif
 
-					var door := SystemFindObjectBySerial(quarto.door);
-					Eraseobjproperty(door, "LockId");
 					quartos[i].inquilino := 0;
-					SetObjProperty(npc, "quartos", quartos);
-					var cent := quartos[i].centro;
-					if (cent[1])
-						DestroyRentItens(cent[1], cent[2], cent[3], npc.realm, player2, npc);
-						ChecarMobileQuarto(player2, cent[1], cent[2], cent[3], npc);
-						if (cent[4])
-							DestroyRentItens(cent[4], cent[5], cent[6], npc.realm, player2, npc);
-							ChecarMobileQuarto(player2, cent[4], cent[5], cent[6], npc);
-						endif
-					endif
+
+               foreach door in (quartos[i].doors)
+                  door := SystemFindObjectBySerial(door);
+                  EraseObjProperty( key, "LockId" );
+                  sleepms(2);
+               endforeach
+
+					var cent := quartos[i].center;
+               foreach loc in cent
+                  DestroyRentItens(loc.x, loc.y, loc.z+5, npc.realm, player2, npc);
+						ChecarMobileQuarto(player2, loc.x, loc.y, loc.z+5, npc);
+                  sleepms(2);
+               endforeach
 				elseif (ticks >= 5 && !quartos[i].alert)
 					quartos[i].+alert := 1;
 					var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Aluguel!", 
 					"O pagamento da sua estalagem com " + npc.name + " irá vencer em dois dias. Caso não renove o contrato para a próxima semana até o ultimo dia, você será despejado e seus objetos confiscados, podendo recuperá-los comigo."} );
-					SetObjProperty(npc, "quartos", quartos);
 				endif
 			endif
 			i := i +1;
-			sleepms(20);
+			sleepms(2);
 		endforeach
+
+		SetObjProperty(npc, "quartos", quartos);
 		x := x+1;
-		sleepms(20);
+		sleepms(2);
 	endwhile
 	return 1;
 endfunction

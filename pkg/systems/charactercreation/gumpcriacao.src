@@ -589,7 +589,7 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
 	endwhile
 endfunction
 
-function SkillGump(who, byref  chardata)
+function SkillGump(who, byref chardata)
 	var cfg  := ReadConfigFile(":charactercreation:config/classes");
 	var elem := FindConfigElem(cfg, cstr(chardata.classe) );
 
@@ -688,7 +688,7 @@ endfunction
 function SetProfessions(who, chardata);
 	var background := chardata.background;
 	var cfg        := ReadConfigFile("config/antecedentes")[background];
-	var skills     := GetConfigStringArray(cfg, "Pericia");
+	// var skills     := GetConfigStringArray(cfg, "Pericia");
 	var items      := GetConfigStringArray(cfg, "Item");
 	var recipes    := GetConfigStringArray(cfg, "Recipe");
 	var books    := GetConfigStringArray(cfg, "Book");

@@ -5,9 +5,10 @@ include "include/say";
 include "include/client";
 include ":taming:taming";
 include ":gumps:gumpprompt";
+include ":charactercreation:feats";
 
 program Logon(who)
-   if (who.isClass("Clérigo") && !GetProcess(GetObjProperty(who, "#clericpid")))
+   if (HaveFeat(who, "Vinculo com Anar") && !GetProcess(GetObjProperty(who, "#clericpid")))
       Start_Script(":magery:cleric/powerWords", array{who});
    endif
 endprogram

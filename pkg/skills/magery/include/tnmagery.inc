@@ -118,7 +118,7 @@ endfunction
 
 function WriteMagic(who, spell_id)
 	var items_bag := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
-	if (who.cmdlevel < 2 && !who.isClass("Mago"))
+	if (!HaveSkill())
 		SendSysMessageEx(who, "Você não tem conhecimento de magia", SSM_FAIL);
 		return;
 	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 

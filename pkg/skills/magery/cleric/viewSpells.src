@@ -10,8 +10,8 @@ const SPELL_BTN := 200;
 
 program clericPowerWords(who)
 	detach();
-   if (!who.isClass("Clérigo"))
-      SendSysMessageEx(who, "Este menu não e acessivel para sua classe", SSM_FAIL);
+   if (!HaveFeat(who, "Vinculo com Anar"))
+      SendSysMessageEx(who, "Este menu não e acessivel para você.", SSM_FAIL);
       return;
    endif
 

@@ -16,7 +16,7 @@ include ":tn:cooldown";
 include ":timeUtils:time";
 
 program book(who, book)
-	var can_read  := HaveSkill(who, "Linguagem Elfica");
+	var can_read  := HaveFeat(who, "Linguagem Élfica");
    var can_trip;
    if (HaveFeat(who, "Truque de Magia"))
       var last_change := cint(GetObjProperty(who, "cantrip_lastchange"));

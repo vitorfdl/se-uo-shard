@@ -164,11 +164,6 @@ function GetNewFeatsList(who, type := "normal", levels := array{})
                   pass := 0;
                   break;
                endif
-            elseif (req[1] == "class")
-               if(!who.isClass(req[2]))
-                  pass := 0;
-                  break;
-               endif
             elseif (req[1] == "skill")
                if(!HaveSkill(who, req[2]))
                   pass := 0;

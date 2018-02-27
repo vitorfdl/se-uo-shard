@@ -71,12 +71,12 @@ endprogram
 function HandleSpeech(npc, player, text)
 	text := lower(text);
    if (text["alugar"] || text["quarto"] || text["ver"])
-      var onlyclass := GetObjProperty(npc, "onlyclass");
-      if (onlyclass && !player.isClass(onlyclass) && player.cmdlevel < 3)
-         PrintText(npc, "Desculpe, não posso alugar quartos para você.");
-         return 1;
-      endif
-		Printtext(npc, "Em que posso ajuda-lo?");
+      // var onlyclass := GetObjProperty(npc, "onlyclass");
+      // if (onlyclass && !player.isClass(onlyclass) && player.cmdlevel < 3)
+      //    PrintText(npc, "Desculpe, não posso alugar quartos para você.");
+      //    return 1;
+      // endif
+		Printtext(npc, "Em que posso ajudá-lo?");
       while(1)
          var input := SendRoomGump(npc, player);
          if (!input)
@@ -176,70 +176,95 @@ function SendRoomGump(npc, player)
 	var input := GFSendGump(player, gump);
 	
 	if (input[0] == 300) //adicionar quarto
-		SendSysMessageEx(player, "Escolha a PORTA do quarto.", SSM_REQUEST);
-		var porta := Target(player);
-	
-		if (!porta.isDoor())
-			SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
-		else
-			var room := struct;
-			room.+door := porta.serial;
-         SetObjProperty(porta, "estalagem", npc.serial);
-			SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do quarto.");
-			var cent := TargetCoordinates(player);
-			room.+centro := { cent.x, cent.y, cent.z };
-			if ( YesNo(player, "Existe um centro em Z diferente?") )
-				SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do novo Z.",SSM_INFO);
-				var cent2 := TargetCoordinates(player);
-				room.+centro := { cent.x, cent.y, cent.z, cent2.x, cent2.y, cent2.z };
-			endif
-			room.+custo := cint(RequestGump(player, "Quanto vai ser cobrado em moedas de cobre?", 0, 1));
-			room.+name := cstr(RequestGump(player, "Qual o nome do quarto?"));
-			SendSysMessage(player, "O quarto foi cadastrado.");
-			var quartos := GetObjProperty(npc, "quartos");
-			if (quartos == error)
-				quartos := array;
-			endif
-			quartos.append(room);
-			SetObjProperty(npc, "quartos", quartos);
-		endif
+      var porta := array{};
+      while (player.connected)
+         SendSysMessageEx(player, "Escolha as portas do quarto.", SSM_REQUEST);
+         var targ := Target(player);
+         if (!targ)
+            break;
+         elseif (!porta.isDoor())
+            SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
+         else
+            porta.append(targ.serial);
+            targ.locked := 1;
+            SetObjProperty(targ, "estalagem", npc.serial);
+         endif
+      endwhile
+
+      if (!porta.length) return 1; endif
+		var room := struct{
+         "doors" := porta,
+      };
+
+      var centro := array{};
+      while (player.connected)
+         SendSysMessageEx(player, "Selecione os cantos com mais visibilidade dentro do quarto.");
+         var cent := TargetCoordinates(player);
+         if (!cent)
+            break;
+         else
+            centro.append(cent);
+         endif
+      endwhile
+
+		room.+center := centro;
+		room.+custo := cint(RequestGump(player, "Quanto vai ser cobrado em moedas de cobre?", 0, 1));
+		room.+name := cstr(RequestGump(player, "Qual o nome do quarto?"));
+
+      SendSysMessage(player, "O quarto foi cadastrado.");
+      var quartos := GetObjProperty(npc, "quartos");
+      if (quartos == error)
+         quartos := array;
+      endif
+      quartos.append(room);
+      SetObjProperty(npc, "quartos", quartos);
+
       return 1;
 	elseif (input[0] == 100 ) //trocar fechadura
 		var yes := yesno(player, "O chaveiro vai cobrar 25 moedas, deseja continuar? " );
 		if (yes)
-			var bank_region := GetObjProperty(npc, "City");
-			if ( !bank_region )
-				bank_region := CP_DEFAULT_AREA;
-			endif
+			// var bank_region := GetObjProperty(npc, "City");
+			// if ( !bank_region )
+			// 	bank_region := CP_DEFAULT_AREA;
+			// endif
 			if ( (!getgoldpayment(player, 25)) )
 				SendSysMEssageEx(player, "Você não tem moedas o suficiente.", SSM_FAIL);
 			else
 				var lockid := AllocLockId();
 				var key := CreateItemInBackpack( player, "ironkey", 1 );
-				var door := SystemFindObjectBySerial(quartos[meuquarto].door);
-				SetObjProperty(door, "LockId", lockid);
-				door.locked := 1;
 				SetObjProperty( key, "LockId", lockid );
+            var doors := quartos[meuquarto].doors;
+            foreach door in doors
+               door := SystemFindObjectBySerial(door);
+               SetObjProperty(door, "LockId", lockid);
+               door.locked := 1;
+               SetObjProperty( key, "LockId", lockid );
+               sleepms(2);
+            endforeach
+				SendSysMEssageEx(player, "Fechaduras trocadas.", SSM_FAIL);
 			endif
 		endif
       return 1;
 	elseif (input[0] == 400)//entregar quarto
       Printtext(npc, "Quer mesmo devolver o seu quarto?");
-		var yes := yesno(player, "Deseja devolver o quarto?  Seus itens serão deletados." );
 		var quarto := quartos[meuquarto];
-		if (yes)
-			var cent := quarto.centro;
-			if (cent[1])
-				DestroyRentItens(cent[1], cent[2], cent[3], npc.realm);
-				if (cent[4])
-					DestroyRentItens(cent[4], cent[5], cent[6], npc.realm);
-				endif
-			endif		
-			var door := SystemFindObjectBySerial(quarto.door);
-			Eraseobjproperty(door, "LockId");
+		if (YesNo(player, "Deseja devolver o quarto?  Seus itens serão deletados." ))
+			var center := quarto.center;
+         foreach loc in center
+            DestroyRentItens(loc.x, loc.y, loc.z+5, npc.realm);
+            sleepms(2);
+         endforeach
+	
+			var doors := quarto.doors;
+         foreach door in doors
+            door := SystemFindObjectBySerial(door);
+            Eraseobjproperty(door, "LockId");
+
+            sleepms(2);
+         endforeach
+
 			quartos[meuquarto].inquilino := 0;
 			SetObjProperty(npc, "quartos", quartos);
-
 		endif
 	
       return 1;
@@ -266,10 +291,11 @@ function SendRoomGump(npc, player)
 			SendSysMessageEx(player, "NPC adicionado.", SSM_INFO);
 		endif
 	elseif (input[0] == 800) //objetos confiscados
-		var bank_region := GetObjProperty(npc, "City");
-		if ( !bank_region )
-			bank_region := CP_DEFAULT_AREA;
-		endif
+		// var bank_region := GetObjProperty(npc, "City");
+		// if ( !bank_region )
+		// 	bank_region := CP_DEFAULT_AREA;
+		// endif
+
 		var confiscados := GetObjProperty(npc, "confiscados");
 		var mypack := confiscados["" + player.serial];
 		mypack := SystemFindObjectBySerial(mypack);
@@ -283,14 +309,13 @@ function SendRoomGump(npc, player)
 		endif
 	
 	elseif (input[0] < 100 && input[0] >= 1) //alugar quarto
-		
 		if (souInquilino)
          Printtext(npc, "Tem muita gente precisando de onde morar, não vou alugar dois quartos para você.");
 			return 1;
 		endif
 		
 		if (player.cmdlevel >=3) //opcao de gm de remover quarto
-			var gmmenu :=  RadioGump(player, 250, 325, "Escolha uma opção", array{"Mudar Nome","Mudar Preço","Remover Quarto", "Mudar Centro", "Mudar Porta", "Teleportar na Porta","Informacoes"});
+			var gmmenu :=  RadioGump(player, 250, 325, "Escolha uma opção", array{"Mudar Nome","Mudar Preço","Remover Quarto", "Mudar Centro", "Mudar Porta", "Teleportar na Porta","Informações"});
 
 			if (gmmenu == "Remover Quarto")
 				quartos.erase(input[0]);
@@ -307,39 +332,51 @@ function SendRoomGump(npc, player)
 				setobjproperty(npc, "quartos", quartos);
 				SendSysMessageEx(player, "Preco Alterado para" +quartos[input[0]].custo,SSM_INFO);
 				return 1;
-			elseif (gmmenu == "Informacoes")
+			elseif (gmmenu == "Informações")
 				var inq := SystemFindObjectBySerial(quartos[input[0]].inquilino, SYSFIND_SEARCH_OFFLINE_MOBILES);
 				SendSysMessageEx(player, " Inquilino "+ inq.name + " Conta: " + inq.acctname);
 				
 			elseif (gmmenu == "Mudar Centro")
-				SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do quarto.",SSM_INFO);
-				var cent := TargetCoordinates(player);
-				quartos[input[0]].centro := { cent.x, cent.y, cent.z };
-				if ( YesNo(player, "Existe um centro em Z diferente?") )
-					SendSysMessageEx(player, "Selecione o centro com mais visibilidade dentro do novo Z.",SSM_INFO);
-					var cent2 := TargetCoordinates(player);
-					quartos[input[0]].centro := { cent.x, cent.y, cent.z, cent2.x, cent2.y, cent2.z };
-				endif
-				
+            var centro := array{};
+            while (player.connected)
+               SendSysMessageEx(player, "Selecione os cantos com mais visibilidade dentro do quarto.");
+               var cent := TargetCoordinates(player);
+               if (!cent)
+                  break;
+               else
+                  centro.append(cent);
+               endif
+            endwhile
+
+            quartos[input[0]].center := centro;
+
 				setobjproperty(npc, "quartos", quartos);	
-				SendSysMessageEx(player, "Centro Alterado.",SSM_INFO);
+				SendSysMessageEx(player, "Centros Alterados.",SSM_INFO);
 				return 1;
 			elseif (gmmenu == "Mudar Porta")
-				SendSysMessageEx(player, "Escolha a PORTA do quarto.", SSM_REQUEST);
-				var porta := Target(player);
-			
-				if (!porta.isDoor())
-					SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
-					return 1;
-				else
-					quartos[input[0]].door := porta.serial;
-				endif
+            var porta := array{};
+            while (player.connected)
+               SendSysMessageEx(player, "Escolha as portas do quarto.", SSM_REQUEST);
+               var targ := Target(player);
+               if (!targ)
+                  break;
+               elseif (!porta.isDoor())
+                  SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
+               else
+                  porta.append(targ.serial);
+                  SetObjProperty(targ, "estalagem", npc.serial);
+               endif
+            endwhile
+
+            if (!porta.length) return 1; endif
+
+            quartos[input[0]].doors := porta;
 			
 				Setobjproperty(npc, "quartos", quartos);
-				SendSysMessageEx(player, "Porta Alterada.",SSM_INFO);
+				SendSysMessageEx(player, "Portas Alteradas.",SSM_INFO);
 				return 1;
 			elseif (gmmenu == "Teleportar na Porta")
-				var porta := SystemFindObjectBySerial(quartos[input[0]].door);
+				var porta := SystemFindObjectBySerial(quartos[input[0]].doors[0]);
 				if (!porta)
 					SendSysMessageEx(player, "Porta Inexistente.",SSM_FAIL);
 				else
@@ -358,13 +395,24 @@ function SendRoomGump(npc, player)
 				quartos[input[0]].inquilino := player.serial;
 				quartos[input[0]].data := polcore().systime;
 				quartos[input[0]].alert := 0;
-				SetObjProperty(npc, "quartos", quartos); //seta prop
+            var doors := quartos[input[0]].doors;
 				var lockid := AllocLockId();
 				var key := CreateItemInBackpack( player, "ironkey", 1 );
-				SetObjProperty(quartos[input[0]].door, "LockId", lockid);
-				var porta := SystemFindObjectBySerial(quartos[input[0]].door);
-				porta.locked := 1;
 				SetObjProperty( key, "LockId", lockid );
+            foreach door in doors
+               door := SystemFindObjectBySerial(door);
+               SetObjProperty(door, "LockId", lockid);
+               door.locked := 1;
+               SetObjProperty( key, "LockId", lockid );
+               sleepms(2);
+            endforeach
+
+            foreach loc in (quartos[input[0]].center)
+               DestroyRentItens(loc.x, loc.y, loc.z+5, npc.realm);
+               sleepms(2);
+            endforeach
+            
+				SetObjProperty(npc, "quartos", quartos); //seta prop
 			endif
 		endif
       return 1;
@@ -420,7 +468,7 @@ function DestroyRentItens(x, y, z, r)
 				endforeach
 			endif
 		endif
-		sleepms(20);
+		sleepms(3);
 	endforeach
 	return 1;
 endfunction
