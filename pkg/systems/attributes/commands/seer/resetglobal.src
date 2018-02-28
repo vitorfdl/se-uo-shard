@@ -16,12 +16,14 @@ program textcmd_RefreshVitals(who, text)
       var lvl := mobile.getLevel();
       mobile.setLevel(0);
       mobile.SetExp(0);
-      mobile.setLevel(0);
       mobile.SetPoints(mobile.GetPoints() * -1);
       mobile.SetTalentPoints(mobile.GetTalentPoints() * -1);
       MoveObjectToLocation(mobile, 4756, 3541, 1, who.realm, MOVEOBJECT_FORCELOCATION);
-      acc.SetProp("expboost", lvl);
+      acc.SetProp("expboost", cint(lvl/2));
       SetObjproperty(mobile, "recriando", 1);
+      var chardata := GetObjProperty(mobile, "chardata");
+      chardata.Feats := array{};
+      SetObjproperty(mobile, "chardata", chardata);
       sleepms(2);
    endforeach
 

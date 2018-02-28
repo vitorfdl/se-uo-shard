@@ -27,7 +27,7 @@ program skill_lockpicking( me, lockpick )
 		return;
 	endif
 
-   if (me.hidden && !HaveFeat(me, "Mãos Rápidas"))
+   if (me.hidden && AP_GetTrueSkill(me, SABOTAGEM) < 2)
       me.hidden := 0;
    endif
 
@@ -43,9 +43,10 @@ program skill_lockpicking( me, lockpick )
 		SendSysMessageEx(me, "Você esta muito distante.", SSM_FAIL);
 		return;
    endif
+
    var stam_c := 6;
-   if (HaveFeat(me, "Fôlego de Ladrão"))
-      stam_c := 2;
+   if (AP_GetTrueSkill(me, SABOTAGEM) >= 4)
+      stam_c := 4;
    endif
    
    if ( !AP_ConsumeVital(me, STAMINA, stam_c) )
@@ -107,12 +108,12 @@ function PickTreasureChest(me, lockpick, chest)
 		SendSysMessageEx(me, "Você falhou em arrombar a fechadura.", SSM_FAIL);
 		PlaySoundEffect(chest,0xef);
       
-      if (HaveFeat(me, "Gazua Inquebrável"))
-         if (randomint(101) <= 50)
-	         ReleaseItem(lockpick);
-            return;
-         endif
-	   endif
+      // if (HaveFeat(me, "Gazua Inquebrável"))
+      //    if (randomint(101) <= 50)
+	   //       ReleaseItem(lockpick);
+      //       return;
+      //    endif
+	   // endif
 
 		SendSysMessageEx(me,"Sua gazua quebrou!", SSM_FAIL);
 		SubtractAmount(lockpick,1);
@@ -129,8 +130,8 @@ function SucessLockPick(me, chest)
 	chest.locked := 0;
 	set_critical(0);
 	
-	if (HaveFeat(me, "Toque de Ouro"))
-		CreateItemInContainer(chest, 0xeed, randomdiceroll("5d25"));
-	endif
+	// if (HaveFeat(me, "Toque de Ouro"))
+	// 	CreateItemInContainer(chest, 0xeed, randomdiceroll("5d25"));
+	// endif
 	
 endfunction

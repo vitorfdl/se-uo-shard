@@ -35,13 +35,13 @@ program trapScript(params)
       sleepms(2);
 		if (!mobile.master)
 			if (rollResistDice(mobile, DEXTERITY) >= diff)
-            if (HaveFeat(mobile, "Ladrão de Masmorras"))
+            if (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
                SendSysMessageEx(mobile, "Você evitou a armadilha.", SSM_INFO);
                continue;
             endif
             SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
             dmgfinal := CInt(cdbl(dmgfinal) * 0.5);
-         elseif (HaveFeat(mobile, "Ladrão de Masmorras"))
+         elseif (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
             SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
             dmgfinal := CInt(cdbl(dmgfinal) * 0.5);
 			endif	

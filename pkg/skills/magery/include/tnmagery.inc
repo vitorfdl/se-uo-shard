@@ -55,11 +55,17 @@ function TNCheckReagents(who, byref spellinfo, item)
       if (spellinfo.powered)
          spellinfo.charges *= spellinfo.powered+1;
       endif
+
+      if (AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)) >= 9)
+         spellinfo.charges /= 2;
+      endif
+
 		var charges := cint(GetObjProperty(item, "charges"));
 		if (charges < spellinfo.charges)
 			SendSysMessageEx(who, "Cargas insuficientes na varinha: {} cargas".format(charges), SSM_FAIL);
 			return 0;
 		endif
+
 		charges -= spellinfo.charges;
       SetName(item, item.desc);
 		SetObjProperty(item, "charges", charges);
@@ -170,12 +176,12 @@ function WriteMagic(who, spell_id)
 	endif
 
    var is_dbl := 0;
-   if (HaveFeat(who, "Magia Poderosa") && magic_slot - spell_list.size() >= 2)
-      if (YesNo(who, "Deseja usar o dobro de slots para esta magia? (Magia Poderosa)", "Sim", "Não"))
-         is_dbl := 1;
-         spellinfo.difficulty += 1;
-      endif
-   endif
+   // if (HaveFeat(who, "Magia Poderosa") && magic_slot - spell_list.size() >= 2)
+   //    if (YesNo(who, "Deseja usar o dobro de slots para esta magia? (Magia Poderosa)", "Sim", "Não"))
+   //       is_dbl := 1;
+   //       spellinfo.difficulty += 1;
+   //    endif
+   // endif
 
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
@@ -193,12 +199,9 @@ function WriteMagic(who, spell_id)
 		return;
 	endif
 
-   if (!HaveFeat(who, "Tradição {}".format(spellinfo.type)))
-      spellinfo.difficulty += 3;
-   endif
+   spellinfo.difficulty += 3;
 
-
-	var dice_roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, ARCANISMO);
+	var dice_roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, "Magia_de_{]".format(spellinfo.type));
 	if (dice_roll <= spellinfo.difficulty && who.cmdlevel < 4)
 		SendSysMessageEx(who, "Parece que você errou durante a cópia. O espaço ficou inutilizado.", SSM_FAIL);
 		spell_list.append(0);

@@ -39,14 +39,14 @@ program trapScript(params)
 	foreach mobile in mobiles
 		if (!mobile.master)
 			if (rollResistDice(mobile, CONSTITUTION) >= diff)
-            if (HaveFeat(mobile, "Ladrão de Masmorras"))
+            if (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
                SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
             else
                SendSysMessageEx(mobile, "Você evitou parte do veneno.", SSM_INFO);
 				   TS_StartTimer(mobile, "defaultPoison", 60, danger-1);
             endif
 			else
-            if (!HaveFeat(mobile, "Ladrão de Masmorras"))
+            if (AP_GetTrueSkill(mobile, SABOTAGEM) < 6)
                SendSysMessageEx(mobile, "Você resistiu ao veneno.", SSM_INFO);
 				   TS_StartTimer(mobile, "defaultPoison", 60, danger-1);
             else

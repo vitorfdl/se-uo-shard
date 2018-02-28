@@ -64,13 +64,6 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
-   if (cint(mobile.GetTalentPoints()) > 0)
-      if (RandomInt(10) == 1)
-		   SendSysMessageEx(mobile, "Sua experiência está travada até você gastar seu ponto de talento!", SSM_FAIL);
-      endif
-      return 0;
-   endif
-
   if ( GetExpCap(mobile) < mobile.Getexp())
   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
 		return 0;
@@ -159,23 +152,12 @@ endfunction
 
 function IncreaseVitalPoints(who)
 	var chardata  := GetObjProperty(who, "chardata");
-	var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
 
-   var hit_dice := RandomDiceRoll("1d{}+5".format(class_cfg.HITS/2));
-   if (HaveFeat(who, "Resiliência"))
-      var dice2 := RandomDiceRoll("1d{}+5".format(class_cfg.HITS/2));
-      if (hit_dice < dice2)
-         hit_dice := dice2;
-      endif
-   endif
-
-	var increase_hitpoint := hit_dice + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
-	var increase_manapoint := RandomDiceRoll("1d{}+5".format(class_cfg.MANA/2)) + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
-	// var increase_stampoint := RandomDiceRoll("1d{}".format(class_cfg.STAM)) + GetBonusAttr(AP_GetTrueStat(who, DEXTERITY));
+	var increase_hitpoint := RandomDiceRoll("1d3+2") + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
+	var increase_manapoint := RandomDiceRoll("1d3+2") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
 
 	chardata.hitpoints  += cint(increase_hitpoint);
 	chardata.manapoints += increase_manapoint;
-	// chardata.stampoints += increase_stampoint;
 
 	SetObjProperty(who, "chardata", chardata);
    RecalcVitals(who);

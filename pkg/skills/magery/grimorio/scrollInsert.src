@@ -75,9 +75,6 @@ function addScroll(who, book, scroll)
    WriteSpellInfo(spellinfo);
 
    var recipe_charges := (spellinfo.circle * 2) -1;
-   if (HaveFeat(who, "Tradição Arcana {}".format(spellinfo.type)))
-      recipe_charges := recipe_charges / 2;
-   endif
 
    if (recipe_charges < 1)
       recipe_charges := 1;

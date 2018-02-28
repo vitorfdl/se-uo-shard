@@ -189,7 +189,7 @@ function GetAttackerChance(attacker, defender)
             dice_gain -= 1;
          endif
 
-         if (wpn_a_elem.medrange && !HaveFeat(attacker, "Arqueiro Experiente"))
+         if (wpn_a_elem.medrange && AP_GetTrueSkill(who, ARCO) <= 3)
             if (Distance(attacker,defender) > cint(wpn_a_elem.medrange))
                dice_gain -= 1;
             endif
@@ -211,15 +211,15 @@ function GetAttackerChance(attacker, defender)
 		dice_gain -= 1;
    endif
 
-   if (HaveFeat(attacker, "Primeiro Golpe"))
-      var hited := GetObjProperty(defender, "#hited");
-      if (!hited) hited := array{}; endif
-      if (!(attacker.serial in hited))
-         dice_gain += 1;
-         hited.append(attacker.serial);
-         SetObjProperty(defender, "#hited", hited);
-      endif
-   endif
+   // if (HaveFeat(attacker, "Primeiro Golpe"))
+   //    var hited := GetObjProperty(defender, "#hited");
+   //    if (!hited) hited := array{}; endif
+   //    if (!(attacker.serial in hited))
+   //       dice_gain += 1;
+   //       hited.append(attacker.serial);
+   //       SetObjProperty(defender, "#hited", hited);
+   //    endif
+   // endif
 
 	if (!IsFacing(defender, attacker.x, attacker.y))
       if (!HaveFeat(defender, "Reflexos Rápidos"))
@@ -260,7 +260,7 @@ function GetAttackerChance(attacker, defender)
 		bonus := cint(wpn_a_elem.hitbonus);
 	endif
 
-   bonus += GetAttackerFeatBonus(attacker, 0);
+   // bonus += GetAttackerFeatBonus(attacker, 0);
 	
 	var roll := rollAttrDice(attacker, attribute, dice_gain, struct{ "get_critical" := 1});
    roll.dice += bonus;
@@ -273,7 +273,7 @@ function GetDefenderCA(defender, armor, attacker)
 	var CA := 5;
 	if ( !defender.npctemplate )
 		if (armor)
-			CA := armor.ar_base + armor.ar_mod; //se é armadura pesada, n tem dex
+			CA := armor.ar_base + armor.ar_mod; //se é armadura `ada, n tem dex
 
 			var armor_elem := GetItemCFGInfo(defender, armor);
 			if (armor_elem.pericia == ARMADURA_LEVE)
@@ -304,9 +304,9 @@ function GetDefenderCA(defender, armor, attacker)
       endif
 
       var wpn_elem := GetItemCFGInfo(defender, defender.weapon);
-      if (defender.weapon.WeaponType == "dualsword" && HaveFeat(defender, "Defesa Perfeita"))
-         CA += 1;
-      endif
+      // if (defender.weapon.WeaponType == "dualsword" && HaveFeat(defender, "Defesa Perfeita"))
+      //    CA += 1;
+      // endif
 	else
 		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
 		CA := cint(npcelem.AR);
@@ -460,7 +460,7 @@ function GetAttackerFeatPenalty(attacker, defender)
    if (defender.acctname && attacker.npctemplate) //mob vs player
       var mobiles_near := ListMobilesNearLocationEx(defender.x, defender.y, defender.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
       foreach mob in mobiles_near
-         if (HaveFeat(mob, "Presença Imponente"))
+         if (mob.shield && AP_GetTrueSkill(who, ESCUDO) >= 7)
             bonus -= 1;
             break;
          endif
@@ -471,27 +471,5 @@ function GetAttackerFeatPenalty(attacker, defender)
       bonus += 1;
    endif
 
-   return bonus;
-endfunction
-
-function GetAttackerFeatBonus(attacker, roll)
-   var bonus := 0;
-
-   if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))
-      bonus += 1;
-   elseif (wpn_a_elem.WeaponType == "bow" && HaveFeat(attacker, "Arqueiro Experiente"))
-      bonus += 1;
-   elseif (wpn_a_elem.WeaponType == "dagger" && HaveFeat(attacker, "Golpe Baixo"))
-      bonus += 1;
-   elseif (wpn_a_elem.WeaponType == "spear" && HaveFeat(attacker, "Lanceiro"))
-      bonus += 1;
-   elseif (wpn_a_elem.WeaponType == "axe" && HaveFeat(attacker, "Mãos Pesadas"))
-      bonus += 1;
-   elseif (wpn_a_elem.WeaponType == "mace" && HaveFeat(attacker, "Destruidor"))
-      bonus += 1;
-   elseif (wpn_a_elem.WeaponType == "greatsword" && HaveFeat(attacker, "Peso da Montanha"))
-      bonus += 1;
-   endif
-      
    return bonus;
 endfunction

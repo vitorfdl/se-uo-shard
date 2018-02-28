@@ -57,7 +57,7 @@ program skill_Musicianship(who, item)
 	var livremente  := GFAddButton(bardgump, 71, 118, 2103, 2104, 1, 2);
 
 	var musicas := getObjProperty(who, "musicas");
-	if ((musicas && musicas.size() > 0 && HaveFeat(who, "Memorizar Música")) || who.cmdlevel >= 3)
+	if ((musicas && musicas.size() > 0 && AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) >= 3) || who.cmdlevel >= 3)
 		var i := 1;
 		foreach musica in (musicas.keys())
 			GFTextLine(bardgump, 86, 113 + i*20, 600, musicas[musica].nome + "" );

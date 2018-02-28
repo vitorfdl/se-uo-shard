@@ -217,13 +217,14 @@ function ShowCreateGumps(who, byref chardata)
 			continue;
 		endif
 
+		if (SkillGump(who, chardata))
+			continue;
+		endif
+
 		if (ChooseBackground(who, chardata))
 			continue;
 		endif
 
-		if (SkillGump(who, chardata))
-			continue;
-		endif
 		// if (getNotaRP(who) == 2)
 		// 	if (!YesNo(who, "Você receberá bonificações nesse personagem. Elas não estarão disponíveis no próximo. Deseja continuar?", "Sim", "Não"))
 		// 		continue;
@@ -603,20 +604,24 @@ function SkillGump(who, byref chardata)
    GFResizePic(ngump, 29+god_x, 14+god_y, 9350, 40, 18);
 	GFHTMLArea(ngump, 35+god_x, 14+god_y, 40, 28, "<BASEFONT SIZE=2 COLOR=#003d00>Ajuda", 0);
 
-   
+   var points := 30;
+   var myhabs := struct{};
+   var skill_list := AP_ListAttributesByType("Skill");
+
+
+   var mycaracs := struct{};
+   var cfgcarac := ReadConfigFile("config/caracteristicas");
+   var caraclist := GetConfigStringKeys(cfgcarac);
 
 	while (who.connected)
       var gump := ngump;
-      var myhabs := who.skillList();
       var sum := 0;
-      foreach hab in myhabs
-         sum += cint(AP_GetTrueSkill(who, hab)) -1;
+      foreach hab in (myhabs.keys())
+         sum += cint(myhabs[hab]) -1;
          sleepms(2);
       endforeach
+      var maxup := getMaxUP(myhabs.keys().size(), sum);
 
-      var maxup := getMaxUP(myhabs.size(), sum);
-
-      var points := who.GetTalentPoints();
       GFHtmlShadowed(gump, 250+god_x, 55+god_y, 300, 20, "#99c199", "Você tem {} pontos de habilidade".format(points), 4);
 
       GFGumpPic(gump, 627+god_x, 71+god_y, 59, 0);
@@ -627,14 +632,14 @@ function SkillGump(who, byref chardata)
       var pos_x := 63+god_x;
       var pos_y := 89++god_y;
       var i := 1;
-      foreach attribute_name in ( AP_ListAttributesByType("Skill") )
+      foreach attribute_name in ( skill_list )
          sleepms(2);
          var skill_name := StrReplace(attribute_name, "_", " ");
-         var mystat := AP_GetTrueSkill(who, attribute_name);
+         var mystat := cint(myhabs[attribute_name]);
          var attr_cfg := attr[attribute_name];
          if (attr_cfg.Req)
             var req := SplitWords(attr_cfg.Req);
-            if (req[1] == "god" && GetObjProperty(who, "chardata").god != req[2])
+            if (req[1] == "god" && chardata.god != req[2])
                continue;
             endif
          endif 
@@ -644,8 +649,12 @@ function SkillGump(who, byref chardata)
          var custo := getCost(attr_cfg.SkillType, mystat+1);
          GFTextLine(gump, 185+pos_x, pos_y, 0, "Custo: {}".format(custo));
 
-         if (mystat+1 <= maxup && custo <= points)
-            GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, attr_cfg.SkillId);
+         if (mystat+1 <= maxup && custo <= points && mystat < 13)
+            GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, 300+_attribute_name_iter);
+         endif
+
+         if (mystat >= 0)
+            GFAddButton(gump, pos_x-58, pos_y+1, 55, 55, GF_CLOSE_BTN, 400+_attribute_name_iter);
          endif
 
          pos_x += 321;
@@ -662,15 +671,47 @@ function SkillGump(who, byref chardata)
 		var y := 180;
 
 		var i := 21;
-		foreach skill in skills_choice
-			GFTextLine(gump, x, y, 2100, skill);
-			GFCheckBox(gump, x-25, y, 0x9c4E, 0x9c4F, 0, i);
+		foreach caract in caraclist
+         var points := SplitWords(cfgcarac[caract].points, "|");
+         var custo := cint(points[1]);
+			GFTextLine(gump, x, y, 2100, "{} - Custo: {} ".format(caract, custo));
+			// GFCheckBox(gump, x-25, y, 0x9c4E, 0x9c4F, 0, i);
+         if (custo <= points && mystat < 13)
+            GFAddButton(gump, x-24, y+1, 55, 55, GF_CLOSE_BTN, 600+_attribute_name_iter);
+         endif
+
 			y := y + 25;
 			i += 1;
 		endforeach
 
 		var input := GFSendGump(who, gump);
+      if (input[0] >= 300 && input[0] < 400)
+         var i := input[0] - 300;
+         var skill := skill_list[i];
 
+         var attr_cfg := attr[skill];
+         var mystat := cint(myhabs[skill]);
+         
+         var custo := getCost(attr_cfg.SkillType, mystat+1);
+         points -= custo;
+         myhabs[skill] += 1;
+      elseif (input[0] >= 400 && input[0] < 500)
+         var i := input[0] - 400;
+         var skill := skill_list[i];
+
+         var attr_cfg := attr[skill];
+         var mystat := cint(myhabs[skill]);
+         
+         var custo := getCost(attr_cfg.SkillType, mystat);
+         points += custo;
+         myhabs[skill] -= 1;
+      elseif (input[0] == 200)
+         chardata.skills := myhabs;
+         chardata.carac := mycaracs;
+         break;
+      elseif (input[0] == 201)
+			return 1;
+      endif
 		// if (input[0] == 200)
 		// 	var skills_chosed := array{};
 		// 	foreach btn in (input.keys)

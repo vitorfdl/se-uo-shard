@@ -40,6 +40,7 @@ include ":charactercreation:characters";
 include ":timedscripts:timedScripts";
 
 const BASE_DIFFICULTY := 19;
+const GET_MODIFIER := 1;
 
 // params.critical -> dice >= value
 // params.failure -> dice <= value
@@ -128,7 +129,7 @@ function GetSkillBonus(mobile, skills := 0)
          return 0;
       endif
 
-      bn := HaveSkill(mobile, skills);
+      bn := HaveSkill(mobile, skills, GET_MODIFIER);
 		if (!bn) 
          return 0; 
       endif
@@ -193,7 +194,7 @@ function rollResistDice(mobile, type)
 	return dice;
 endfunction
 
-function HaveSkill(mobile, skill)
+function HaveSkill(mobile, skill, get_mod := 1)
 	if (typeof(skill) != "Array")
 		skill := array{skill};
 	endif
@@ -206,7 +207,9 @@ function HaveSkill(mobile, skill)
 			return cint(res);
 		endif
 
-      modifier := GetSkillModifier(name);
+      if (get_mod)
+         modifier := GetSkillModifier(name);
+      endif
       sleepms(2);
 	endforeach
 

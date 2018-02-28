@@ -31,6 +31,16 @@ program skillremoveTrap(who)
       return;
 	endif
 
+   var stam_c := 6;
+   if (AP_GetTrueSkill(me, SABOTAGEM) >= 4)
+      stam_c := 4;
+   endif
+
+   if ( AP_ConsumeVital(me, STAMINA, stam_c) )
+		SendSysMessageEx(who, "Você está muito cansado para fazer isso.", SSM_FAIL);
+		return;
+   endif
+
    var dif;
    var lvl := Cint(GetObjProperty(item, "level"));
    case (lvl)
@@ -82,6 +92,7 @@ program skillremoveTrap(who)
 		SetName(item, item.desc);
 		ExpGain(who, dif, dice_roll);
       who.SetAchievement("trap", 1);
+
 	elseif ( item.isTrap() )
 		if (GetObjProperty(item, "trap_inativa"))
 			SendSysMessageEx(who, "A armadilha ja esta desativada", SSM_INFO);

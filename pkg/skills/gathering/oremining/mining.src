@@ -139,7 +139,7 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
 				who.SetAchievement("oremining", 1);
 				ExpGain(who, difficulty, dice.dice);
 				SendSysMessageEx(who, "Você pegou alguns minerios. " );
-				if (HaveFeat(who, "Garimpeiro") && dice.critical)
+				if (AP_GetTrueSkill(who, EXTRACAO) > 3 && dice.critical)
 					Garimpeiro(who);
 				endif
 			else

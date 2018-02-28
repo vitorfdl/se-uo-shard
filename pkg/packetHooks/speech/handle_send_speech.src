@@ -2,7 +2,6 @@ use uo;
 use math;
 use os;
 include "include/say";
-include ":charactercreation:feats";
 program speech_hooks()
   Print( "Hooking Unicode Outgoing..." );
   return 1;
@@ -47,7 +46,7 @@ exported function handleUCOutgoing( character, byref packet )
 	if( !CheckLineOfSight(source, character) ) 
 		if(type != YELL_SPEECH)
 			return 1;
-		elseif (!HaveFeat(character, "Espionar") || Distance(character, source) > 12 || abs(character.z - source.z ) < 19)
+		elseif (AP_GetTrueSkill(character, FURTIVIDADE) < 6 && (Distance(character, source) > 12 || abs(character.z - source.z ) < 19))
 			return 1;
 		endif
 	endif

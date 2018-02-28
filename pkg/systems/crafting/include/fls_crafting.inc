@@ -156,7 +156,7 @@ function MaterialSelection(who, type, chk, craft_skill)
 		return 0;
 	endif
 	
-   if (!HaveFeat(who, "Formidável {}".format(craft_skill)))
+   if (AP_GetTrueSkill(who, craft_skill) < 3)
       if (type == "metal")
          if (material.objtype != 0x6309)
             SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
@@ -374,7 +374,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 
 			//passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
 			AddMaterialMod(who, recipe, theitem, choosed_material, material_color);
-         if (recipe.exceptional == 1 && (HaveFeat(who, "Mestre em {}".format(craft_skill)) && roll.critical == 1) || who.cmdlevel > 3)
+         if (recipe.exceptional == 1 && (AP_GetTrueSkill(who, crafT_skill) >= 5 && roll.critical == 1) || who.cmdlevel > 3)
             SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
             while (who.connected)
 			      if (CraftExceptional(who, theitem, craft_skill) != 2)

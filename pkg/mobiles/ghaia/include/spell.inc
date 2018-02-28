@@ -492,46 +492,46 @@ function CastSpellNPC(opponent, spell_list)
 endfunction
 
 function CastDirect(caster, cast_on, spellname)
-  var dmg := CInt(AP_GetSkill(caster, ARCANISMO)/2);
-  if (dmg < 10)
-    dmg := 10;
-  endif
+//   var dmg := CInt(AP_GetSkill(caster, ARCANISMO)/2);
+//   if (dmg < 10)
+//     dmg := 10;
+//   endif
   
-  if (GetObjProperty(cast_on, "kit") == "abascanto")
-	if (RandomInt(100) < 24)
-		SendSysMessageEx(cast_on, "A magia falha em você.", SSM_INFO);
-		dmg := 0;
-  endif
-  endif
+//   if (GetObjProperty(cast_on, "kit") == "abascanto")
+// 	if (RandomInt(100) < 24)
+// 		SendSysMessageEx(cast_on, "A magia falha em você.", SSM_INFO);
+// 		dmg := 0;
+//   endif
+//   endif
   
-  if (spellname == "lightning")
-      SetCooldown(me, "npcspell", 6);
-      PlayLightningBoltEffect( cast_on );
-      PlaySoundEffect( caster, SOUND_EFFECT_LIGHTNING );
-      DamageFLS(cast_on, dmg, "Energy", me);
-elseif (spellname == "flamestryke")
-      SetCooldown(me, "npcspell", 6);
-      PlayObjectCenteredEffect(cast_on, 0x3709, 0x0a, 0x1e );
-      PlaySoundEffect( caster, SOUND_EFFECT_FLAMESTRIKE );
-      DamageFLS(cast_on, dmg, "Fire", me);
-  elseif ( spellname == "fireball")
-      SetCooldown(me, "npcspell", 6);
-      PlaySoundEffect( caster, SOUND_EFFECT_FIREBALL ); 
-      PlayMovingEffect(caster, cast_on, GFX_LARGE_FIREBALL, 10, 10, 1);
-      //PlayMovingEffectXYZ( caster.x, caster.y, caster.z , cast_on.x, cast_on.y, cast_on.z, 0x36d4, 0x18, 0x10, 0);
-      DamageFLS(cast_on, dmg, "Fire", me);
-  elseif (spellname == "poisoning" && !cast_on.poisoned)
-      SetCooldown(me, "npcspell", 3);
-      PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 10,10);
-      PlaySoundEffect(cast_on, SOUND_EFFECT_POISON);
-	  var poisonnivel := CInt(AP_GetSkill(caster, ARCANISMO)/20);
-      TS_StartTimer(cast_on, "defaultPoison", dmg, poisonnivel, caster);
-  elseif ( spellname == "hallucination")
-      SetCooldown(me, "npcspell", 3);
-      PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 10,10);
-      PlaySoundEffect(cast_on, SOUND_EFFECT_POISON);
-      TS_StartTimer(cast_on, "hallucination", 60, 2, caster);
-  endif
+//   if (spellname == "lightning")
+//       SetCooldown(me, "npcspell", 6);
+//       PlayLightningBoltEffect( cast_on );
+//       PlaySoundEffect( caster, SOUND_EFFECT_LIGHTNING );
+//       DamageFLS(cast_on, dmg, "Energy", me);
+// elseif (spellname == "flamestryke")
+//       SetCooldown(me, "npcspell", 6);
+//       PlayObjectCenteredEffect(cast_on, 0x3709, 0x0a, 0x1e );
+//       PlaySoundEffect( caster, SOUND_EFFECT_FLAMESTRIKE );
+//       DamageFLS(cast_on, dmg, "Fire", me);
+//   elseif ( spellname == "fireball")
+//       SetCooldown(me, "npcspell", 6);
+//       PlaySoundEffect( caster, SOUND_EFFECT_FIREBALL ); 
+//       PlayMovingEffect(caster, cast_on, GFX_LARGE_FIREBALL, 10, 10, 1);
+//       //PlayMovingEffectXYZ( caster.x, caster.y, caster.z , cast_on.x, cast_on.y, cast_on.z, 0x36d4, 0x18, 0x10, 0);
+//       DamageFLS(cast_on, dmg, "Fire", me);
+//   elseif (spellname == "poisoning" && !cast_on.poisoned)
+//       SetCooldown(me, "npcspell", 3);
+//       PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 10,10);
+//       PlaySoundEffect(cast_on, SOUND_EFFECT_POISON);
+// 	  var poisonnivel := CInt(AP_GetSkill(caster, ARCANISMO)/20);
+//       TS_StartTimer(cast_on, "defaultPoison", dmg, poisonnivel, caster);
+//   elseif ( spellname == "hallucination")
+//       SetCooldown(me, "npcspell", 3);
+//       PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 10,10);
+//       PlaySoundEffect(cast_on, SOUND_EFFECT_POISON);
+//       TS_StartTimer(cast_on, "hallucination", 60, 2, caster);
+//   endif
 
 endfunction
 
@@ -581,14 +581,14 @@ function CastSummon(me, spell)
   endif
 endfunction
 
-function CastHeal(me, cast_on)
+// function CastHeal(me, cast_on)
       
-    var healed := CInt(AP_GetSkill(me, ARCANISMO)/2);
-    HealFLS(cast_on, healed);
-    PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 7, 0x10 );
-    PlaySoundEffect( cast_on, SOUND_EFFECT_HEAL );
+//     var healed := CInt(AP_GetSkill(me, ARCANISMO)/2);
+//     HealFLS(cast_on, healed);
+//     PlayObjectCenteredEffect( cast_on, EFFECT_SPARKLE, 7, 0x10 );
+//     PlaySoundEffect( cast_on, SOUND_EFFECT_HEAL );
     
-endfunction
+// endfunction
       
 function GetAreaSpells()
 

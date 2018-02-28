@@ -305,7 +305,7 @@ function BuyHabs(who)
       var custo := getCost(attr_cfg.SkillType, mystat+1);
       GFTextLine(gump, 185+pos_x, pos_y, 0, "Custo: {}".format(custo));
 
-      if (mystat+1 <= maxup && custo <= points)
+      if (mystat+1 <= maxup && custo <= points && mystat < 13)
          GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, attr_cfg.SkillId);
       endif
 
@@ -329,16 +329,21 @@ function BuyHabs(who)
       if (YesNo(who, "Deseja mesmo adquirir {} pelo custo de {} pontos de habilidade?".format(StrReplace(skill_name, "_", " "), custo)))
          who.SetTalentPoints(custo * -1);
          AP_SetTrueSkill(who, skill_name, mystat+1);
-         var levels := GetConfigStringDictionary(attr[skill_name], "Level");
+         var levels := GetConfigStringArray(attr[skill_name], "Level");
          foreach giv in levels
+            sleepms(2);
             giv := SplitWords(giv);
-            if (giv[1] == "feat")
-               var new_feat := StrReplace(giv[2], "_", " ");
+            if (cint(giv[1]) != mystat+1)
+               continue;
+            endif
+
+            if (giv[2] == "feat")
+               var new_feat := StrReplace(giv[3], "_", " ");
                LearnFeat(who, new_feat);
             endif
-            sleepms(2);
          endforeach
-         var gives := GetConfigStringDictionary(attr[skill_name], "Give");
+
+         var gives := GetConfigStringArray(attr[skill_name], "Give");
          foreach giv in gives
             giv := SplitWords(giv);
             if (giv[1] == "mana")
@@ -356,6 +361,7 @@ function BuyHabs(who)
             endif
             sleepms(2);
          endforeach
+         RecalcVitals(who);
       endif
    endif
 endfunction

@@ -13,7 +13,6 @@ program mestreLaminas(param)
       return;
    endif
 
-   PrintText(who, "*bate no escudo*");
 	if (CheckGender(who) == 2)
 		PlaySoundEffect( who, 0x339 );
 	else

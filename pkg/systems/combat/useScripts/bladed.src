@@ -22,7 +22,7 @@ program use_Bladed(who, tool)
 	endif
 
    if (who.warmode)
-      if (HaveFeat(who, "Mestre das Lâminas"))
+      if (AP_GetTrueSkill(who, ESPADAS) >= 1)
          return start_script(":charactercreation:commands/player/talento", array{who, "Mestre das Lâminas"});
       endif
    endif

@@ -126,19 +126,17 @@ function CanHide(who, orig_x, orig_y, override_hiding := 0)
 	
 
 	//Caso queira colocar novamente aquele esquema de não se esconder com pessoas OLHANDO
-	if (!HaveFeat(who, "Mestre das Sombras"))
-		var num_watching := GetWatchingPeople(who);
-		var skill := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS));
+   var num_watching := GetWatchingPeople(who);
+   var skill := cint(AP_GetStat(who, DEXTERITY, RETURN_BONUS));
 
-		if (skill < 1)
-			skill := 0;
-		endif	
+   if (skill < 1)
+      skill := 0;
+   endif	
 
-		if ( num_watching > skill )
-			SendSysMessageEx(who, "Existem muitas pessoas olhando você se esconder aqui.", SSM_FAIL);
-			return 0;
-		endif
-	endif
+   if ( num_watching > skill )
+      SendSysMessageEx(who, "Existem muitas pessoas olhando você se esconder aqui.", SSM_FAIL);
+      return 0;
+   endif
 	
 	return 1;
 endfunction

@@ -12,7 +12,7 @@ include ":combat:combat";
 program lancararma(who, weapon)
    if (weapon != who.weapon)
       return;
-   elseif (!HaveFeat(who, "Lanceiro"))
+   elseif (AP_GetTrueSkill(who, LANCA_E_ALABARDA) <= 3)
       return;
    endif
 

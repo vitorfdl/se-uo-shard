@@ -12,7 +12,6 @@ include ":attributes:attributes";
 include ":timedscripts:poisonUtil";
 include "include/say";
 include ":tn:cooldown";
-include ":charactercreation:feats";
 include "include/damage";
 include ":ghaia:ghaiaUtil";
 
@@ -38,7 +37,7 @@ program UseBandage(mobile, bandage)
 	var heal_skill := PRIMEIROS_SOCORROS;
 
 	if ( !targ.IsA(POLCLASS_MOBILE) && !targ.IsA(POLCLASS_CORPSE) )
-		if (HaveFeat(mobile, "Herbalismo"))
+		if (AP_GetTrueSkill(who, PRIMEIROS_SOCORROS) >= 7)
 			return apllyHerbs(mobile, bandage, targ);
 		endif
 		SendSysMessageEx(mobile, "Cancelado.", SSM_FAIL);
@@ -78,9 +77,10 @@ program UseBandage(mobile, bandage)
 		var restauraDP := 0;
 		if (GetObjProperty(bandage , "cap") == 1 && randomint(5) <= 2)
 			restauraDP := 1;
-		elseif (HaveFeat(mobile, "Cirurgião") && randomint(5) <= 2)
-			restauraDP := 1;
-		endif
+      endif
+		// elseif (HaveFeat(mobile, "Cirurgião") && randomint(5) <= 2)
+		// 	restauraDP := 1;
+		// endif
 
 		SubtractAmount(bandage, 5);
 		if ( !GetObjProperty(targ, "npctemplate") )
@@ -99,10 +99,11 @@ program UseBandage(mobile, bandage)
 	if (targ.isTamable())
 		SendSysMessageEX(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
-	elseif (isBloodied(targ) && ((heal_skill == PRIMEIROS_SOCORROS && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") ))))
-		SendSysMessageEx(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
-		return 0;
-	endif
+   endif
+	// elseif (isBloodied(targ) && ((heal_skill == PRIMEIROS_SOCORROS && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !TemHabilidade(mobile, "Veterinário") ))))
+	// 	SendSysMessageEx(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
+	// 	return 0;
+	// endif
 
 	var bonus  := 0;
 	var poison := 0;
@@ -131,7 +132,7 @@ endprogram
 
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
    var max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.4);
-   if (HaveFeat(mobile, "Ataduras Perfeitas"))
+   if (AP_GetTrueSkill(who, PRIMEIROS_SOCORROS) >= 3)
       max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.8);
    endif
 

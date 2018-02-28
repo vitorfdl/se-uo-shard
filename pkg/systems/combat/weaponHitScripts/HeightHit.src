@@ -17,12 +17,12 @@ program HitScript(params)
 	//var rawdamage	:= params[6];
 	params := 0; // Not needed anymore.
 	
-	var dmg :=( attacker.z - defender.z)/2;
+	var dmg := ( attacker.z - defender.z) / 2;
 
 	//if (dmg >= 5)
 	//	dmg := dmg*2;
-	if (dmg > 4)
-		dmg := 4;
+	if (dmg > 3)
+		dmg := 3;
 	endif
 	DamageFLS(defender, CInt(dmg), DMG_BLUDGE, attacker);
 	//endif

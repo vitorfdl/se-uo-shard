@@ -49,9 +49,9 @@ program PlantSeed(who, seed)
 		grower.SetWaterAmount(100);
 		grower.SetGrowStep(0);
 		var maxAmt := grower.GetDefaultMaxProduceAmount();
-		if (HaveFeat(who, "Agricultor Experiente"))
-			maxAmt := maxAmt*2;
-		endif
+		// if (HaveFeat(who, "Agricultor Experiente"))
+		// 	maxAmt := maxAmt*2;
+		// endif
 		grower.SetMaxProduceAmount( maxAmt );
 		
 		if ( who.cmdlevel >= 1 )

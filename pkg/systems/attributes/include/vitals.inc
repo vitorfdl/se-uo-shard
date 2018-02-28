@@ -182,16 +182,38 @@ endfunction
  *
  */
 function AP_ConsumeVital(mobile, vital_name, points)
-	points := CDbl(points);
-	var cur_amount := AP_GetVital(mobile, vital_name);
-	
-	if ( points > cur_amount )
+	points := cint(points * 100);
+
+	if ( !ConsumeVital(mobile, vital_name, points) )
 		return error{"errortext":="Insufficient points - unable to consume."};
-	else
-		cur_amount := cur_amount-points;
-		AP_SetVital(mobile, vital_name, cur_amount);
-		return 1;
 	endif
+
+   return 1;
+endfunction
+
+/*
+ * AP_ConsumeVitalForced(mobile, vital_name, points)
+ *
+ * Purpose
+ * Attempts to remove points from a vital.
+ *
+ * Parameters
+ * mobile:	Mobile reference to consume the vital on.
+ * vital_name:	Name of the vital to consume.
+ * points:	Number of points to attempt to consume.
+ *
+ * Return value
+ * Returns 1 on success
+ *
+ */
+function AP_ConsumeVitalForced(mobile, vital_name, points)
+	points := cint(points) * 100;
+
+	if ( !ConsumeVital(mobile, vital_name, points) )
+		AP_SetVital(mobile, vital_name, 0);
+	endif
+
+   return 1;
 endfunction
 
 /*
