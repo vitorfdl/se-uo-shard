@@ -446,3 +446,51 @@ function CalcSuccessPercent(AC, MOD)
    var result := (cdbl(20) - (cdbl(AC) - cdbl(MOD))) /cdbl(20);
    return result * 100;
 endfunction
+
+function LearnSkill(who, skill_name)
+   var mystat := AP_GetTrueSkill(who, skill_name);
+   var attr := ReadConfigFile(":attributes:attributes");
+   AP_SetTrueSkill(who, skill_name, mystat+1);
+
+   var levels := GetConfigStringArray(attr[skill_name], "Level");
+   foreach giv in levels
+      sleepms(2);
+      giv := SplitWords(giv);
+      if (cint(giv[1]) != mystat+1)
+         continue;
+      endif
+
+      if (giv[2] == "feat")
+         var new_feat := StrReplace(giv[3], "_", " ");
+         LearnFeat(who, new_feat);
+      endif
+   endforeach
+
+   var gives := GetConfigStringArray(attr[skill_name], "Give");
+   foreach giv in gives
+      giv := SplitWords(giv);
+      if (giv[1] == "mana")
+         var chardata := GetObjProperty(who, "chardata");
+         chardata.manapoints += cint(giv[2]);
+         SetObjProperty(who, "chardata", chardata);
+      elseif (giv[1] == "hits")
+         var chardata := GetObjProperty(who, "chardata");
+         chardata.hitpoints  += cint(giv[2]);
+         SetObjProperty(who, "chardata", chardata);
+      elseif (giv[1] == "stam")
+         var chardata := GetObjProperty(who, "chardata");
+         chardata.stampoints += cint(giv[2]);
+         SetObjProperty(who, "chardata", chardata);
+      endif
+      sleepms(2);
+   endforeach
+
+   if (attr_cfg.achievement)
+      var achiev := SplitWords(attr_cfg.achievement, " ");
+      var nextp := cint(achiev[2]) * mystat+1);
+      if (who.GetAchievement(achiev[1]) < nextp)
+         who.SetAchievement(achiev[1], nextp);
+      endif
+   endif
+   RecalcVitals(who);
+endfunction

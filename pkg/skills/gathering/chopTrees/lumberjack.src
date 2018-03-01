@@ -115,7 +115,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 			SendSysMessageEx(who, "Não foi possivel criar: "+wood_type+" ->"+item.errortext);
 			return 0;
 		else
-			who.SetAchievement("choptree", 1);
+			who.SetAchievement("oremining", 1);
 			ExpGain(who, difficulty, dice_roll);
 			SendSysMessageEx(who, "Você colocou a madeira na sua mochila.");
 			return 1;

@@ -299,6 +299,13 @@ function BuyHabs(who)
             continue;
          endif
       endif 
+
+      if (attr_cfg.achievement)
+         var achiev := SplitWords(attr_cfg.achievement, " ");
+         if (who.GetAchievement(achiev[1]) < cint(achiev[2]) * mystat+1)
+            continue;
+         endif
+      endif
 	   GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#000066>{} <BASEFONT SIZE=4>{}".format(skill_name, convertToRoman(mystat+1)), 0);
 		GFTooltipText(gump, "{}".format(attr_cfg.desc));
 
@@ -319,6 +326,7 @@ function BuyHabs(who)
 
 	var input := GFSendGump(who, gump);
    if (input[0] == 500)
+      
    elseif (input[0])
       var skill_name := GetSkillNameByID( input[0] );
       if (!skill_name) return; endif
@@ -327,41 +335,8 @@ function BuyHabs(who)
       var custo := getCost(attr[skill_name].SkillType, mystat+1);
 
       if (YesNo(who, "Deseja mesmo adquirir {} pelo custo de {} pontos de habilidade?".format(StrReplace(skill_name, "_", " "), custo)))
+         LearnSkill(who, skill_name);
          who.SetTalentPoints(custo * -1);
-         AP_SetTrueSkill(who, skill_name, mystat+1);
-         var levels := GetConfigStringArray(attr[skill_name], "Level");
-         foreach giv in levels
-            sleepms(2);
-            giv := SplitWords(giv);
-            if (cint(giv[1]) != mystat+1)
-               continue;
-            endif
-
-            if (giv[2] == "feat")
-               var new_feat := StrReplace(giv[3], "_", " ");
-               LearnFeat(who, new_feat);
-            endif
-         endforeach
-
-         var gives := GetConfigStringArray(attr[skill_name], "Give");
-         foreach giv in gives
-            giv := SplitWords(giv);
-            if (giv[1] == "mana")
-               var chardata := GetObjProperty(who, "chardata");
-	            chardata.manapoints += cint(giv[2]);
-               SetObjProperty(who, "chardata", chardata);
-            elseif (giv[1] == "hits")
-               var chardata := GetObjProperty(who, "chardata");
-               chardata.hitpoints  += cint(giv[2]);
-               SetObjProperty(who, "chardata", chardata);
-            elseif (giv[1] == "stam")
-               var chardata := GetObjProperty(who, "chardata");
-               chardata.stampoints += cint(giv[2]);
-               SetObjProperty(who, "chardata", chardata);
-            endif
-            sleepms(2);
-         endforeach
-         RecalcVitals(who);
       endif
    endif
 endfunction

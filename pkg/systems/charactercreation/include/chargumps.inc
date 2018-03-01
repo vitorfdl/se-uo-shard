@@ -54,6 +54,15 @@ function ItemPickerGump(who, byref chardata)
 			elem := FindConfigElem(cfg, entry);
 			var itens := GetConfigStringDictionary(elem, "item");
 			foreach item in (itens.keys())
+            if (item["/"])
+               var sex_choose := SplitWords(item, "/");
+               if (who.gender == 0)
+                  item := sex_choose[1];
+               else
+                  item := sex_choose[2];
+               endif
+            endif
+
             var item_name := item;
             var objtype := GetObjtypeByName( item );
             if (objtype && itemcfg[objtype].desc)

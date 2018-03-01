@@ -149,6 +149,7 @@ program use_FishingPole(who, fishingpole)
 			       
 				var fishcatch := FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 				if (fishcatch != 0)
+               who.SetAchievement("fishing", 1);
 					if (randomint(10) == 1)
 						var peixemorto := CreateItemAtLocation(who.x, who.y, who.z, 0x3B0C, 1, who.realm);
 						var newname := pretfish + " morto";

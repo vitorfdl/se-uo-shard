@@ -46,6 +46,7 @@ function HarvestPlant(who, grower)
 	if ( test > difficulty )
 		CreateItemInBackPack(who, grower.GetProduceType(), 1);
 		SendSysMessage(who, "Você guardou os frutos na sua mochila.");
+      who.SetAchievement("plant", 1);
 		var seed_chance := grower.GetSeedDice();
 		var roll := RandomInt(100)+1;
 		if ( roll <= seed_chance )

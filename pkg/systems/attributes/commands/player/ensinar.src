@@ -1,0 +1,111 @@
+use uo;
+use os;
+use util;
+use cfgfile;
+
+include ":attributes:attributes";
+include ":charactercreation:characters";
+//TODO seria mais facil olhar o skills.cfg que possuem script e executar ele
+
+program start_skill(who)
+   var targ;
+   if (typeof(who) == "Array")
+      targ := who[2];
+      who := who[1];
+   endif
+
+	if (who.dead)
+		SendSysMessageEx(who, "Você está morto e não pode fazer isto.", SSM_FAIL);
+		return;
+	endif
+
+   var last_teach := GetObjProperty(who, "last_teach");
+   if (last_teach > GetTime())
+		SendSysMessageEx(who, "Você ainda deve esperar {} minutos para ensinar alguém.".format(GetTimeBetween(GetTime(), last_teach, "minutes")), SSM_FAIL);
+		return;
+   endif
+
+   if (!targ)
+      SendSysMessageEx(who, "Quem você deseja ensinar?", SSM_REQUEST);
+      targ := Target(who);
+   endif
+   
+   if (!targ)
+      return;
+   endif
+   
+   SendSysMessageEx(who, "Aguardando {} autorizar aprendizado.".format(targ.name), SSM_INFO);
+
+   if (!YesNo(targ, "{} quer te ensinar algo, deseja aprender?".format(who.name)))
+      SendSysMessageEx(who, "{} negou ser tutelado".format(targ.name), SSM_FAIL);
+      SendSysMessageEx(targ, "Você não recusou ser tutelado", SSM_FAIL);
+      return;
+   endif
+
+   var attr := ReadConfigFile(":attributes:attributes");
+   var can_teach := array{};
+
+   foreach attribute_name in ( AP_ListAttributesByType("Skill") )
+      var attr_cfg := attr[attribute_name];
+      var targstat := AP_GetTrueSkill(targ, attribute_name);
+      if (AP_GetTrueSkill(who, attribute_name) > targstat)
+         var achiev := SplitWords(attr_cfg.achievement, " ");
+         if (who.GetAchievement(achiev[1]) < cint(achiev[2]) * targstat+1)
+            can_teach.append(attribute_name);
+         endif
+      endif
+      sleepms(2);
+   endforeach
+
+   if (can_teach.size() < 1)
+      SendSysMessageEx(who, "Não há nada que você possa ensinar para {}".format(targ.name), SSM_FAIL);
+      SendSysMessageEx(targ, "Não há nada que você possa aprender com {}".format(who.name), SSM_FAIL);
+   endif
+
+	var gump := GFCreateGump();
+	GFSetID(gump, GUMPID_SKILLLIST);
+	GFResizePic(gump, 7, 8, 9380, 675, 535);
+   GFHtmlShadowed(gump, 250, 55, 300, 20, "#99c199", "Qual habilidade você deseja ensinar?", 4);
+   GFHtmlShadowed(gump, 250, 55, 300, 20, "#99c199", "Você não poderá ensinar outra pessoa durante 36 horas.", 4);
+
+   var pos_x := 63;
+   var pos_y := 89;
+   foreach attribute_name in ( can_teach )
+      var attr_cfg := attr[attribute_name];
+      var skill_name := StrReplace(attribute_name, "_", " ");
+	   GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#000066>{}".format(skill_name), 0);
+      GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, attr_cfg.SkillId);
+
+      pos_x += 321;
+      if (_attribute_name_iter % 2 == 0)
+         pos_y += 20;
+         pos_x := 63;
+      endif
+      sleepms(2);
+   endforeach
+
+   if (Distance(who, targ) > 4)
+      SendSysMessageEx(who, "Você está muito distante de {}".format(targ.name), SSM_FAIL);
+      return;
+   endif
+
+   if (input[0] > 200)
+      var skill_name := GetSkillNameByID( input[0] );
+      var attr_cfg := attr[skill_name];
+      var targstat := AP_GetTrueSkill(targ, attribute_name);
+      var achiev := SplitWords(attr_cfg.achievement, " ");
+      
+      for i := 1 to 3
+         PrintText(who, "ensinando");
+         PrintText(targ, "aprendendo");
+         sleepms(600);
+      endfor
+
+      targ.SetAchievement(achiev[1], cint(achiev[2]) * targstat+1);
+
+      SendSysMessageEx(targ, "Você dominou os requisitos para aprender {}".format(convertToRoman(targstat+1)), SSM_FAIL);
+      SetObjProperty(who, "last_teach", AddTimeTo(GetTime(), 36, "hours"));
+   endif
+
+   SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+endprogram

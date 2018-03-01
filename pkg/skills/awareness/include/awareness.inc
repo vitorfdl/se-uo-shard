@@ -110,7 +110,7 @@ function examinarArea(who, plus_diff := 0)
 				PrintText(mobile, "*aparece*");
 				SendSystemReport(who, "Você encontrou "+mobile.name+".", SSM_INFO);
 				SendSystemReport(mobile, who.name+" te encontrou!", SSM_FAIL, mobile);
-            who.SetAchievement("found_mobile", 1);
+            who.SetAchievement("found_something", 1);
 			elseif ( dice_roll >= difficulty-2 )
 				SendSystemReport(who, "*Você se sente observado*", SSM_INFO);
 			endif
@@ -140,7 +140,7 @@ function examinarArea(who, plus_diff := 0)
 			item.invisible := 0;
 			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);						
-         who.SetAchievement("found_mobile", 1);
+         who.SetAchievement("found_something", 1);
 		endif
 	endforeach
 

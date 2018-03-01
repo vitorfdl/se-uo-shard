@@ -48,6 +48,7 @@ program PlantSeed(who, seed)
 		SendSysMessageEx(who, "Você plantou a semente.");
 		grower.SetWaterAmount(100);
 		grower.SetGrowStep(0);
+      who.SetAchievement("plant", 1);
 		var maxAmt := grower.GetDefaultMaxProduceAmount();
 		// if (HaveFeat(who, "Agricultor Experiente"))
 		// 	maxAmt := maxAmt*2;

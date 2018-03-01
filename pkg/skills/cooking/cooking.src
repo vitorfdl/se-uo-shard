@@ -98,17 +98,17 @@ function cookit(who,item);
       return;
     endif
   endif
+
   if(skill_needed)
-	// var cookcheck := SkillCheck( who, COOKWORK, skill_needed, 0);
-	var cookcheck := 10;
-    if(cookcheck > 0);
+	var cookcheck := rollAttrDice(who, WISDOM) + GetSkillBonus(who, COZINHA);
+    if(cookcheck > skill_needed);
 		var consume := SubtractAmount(item, 1);
       if(consume)
         newitem := CreateItemInBackpack(who, product, 1);
         if(newitem)
 	      SendSysMessageEx(who, "Você guardou o item na sua mochila");
 	    else
-	      SendSysMessageEx(who, "You dont have any room in your backpack.");
+	      SendSysMessageEx(who, "Você não tem mais espaço na sua mochila.");
 	    endif
 	  endif
     else
@@ -152,7 +152,7 @@ var result := {};
 
   foreach item in result
     if (!Accessible(who, item) || !ReserveItem(item))
-      SendSysMessageEx(who, "Você não pose usar isso!");
+      SendSysMessageEx(who, "Você não pode usar isso!");
       return error;
     endif
   endforeach

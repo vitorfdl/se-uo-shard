@@ -19,6 +19,11 @@ program habilidade(who, text, uc_text)
       return;
    endif
 
+	if (who.dead)
+		SendSysMessageEx(who, "Você está morto e não pode fazer isto.");
+		return;
+	endif
+
 //	if (who.cmdlevel < 3)
 //		return;
 //	endif
