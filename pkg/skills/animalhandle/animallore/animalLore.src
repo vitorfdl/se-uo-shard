@@ -88,14 +88,14 @@ function AL_LoadGump(who, creature, cfg)
 
    var hits := ""+GetVital(creature, "Hits")/100+"/"+AP_GetVitalMaximumValue(creature, "Hits")+"";
    var stamina := ""+GetVital(creature, "Stamina")/100+"/"+AP_GetVitalMaximumValue(creature, "Stamina")+"";
-   var mana := ""+GetVital(creature, "Mana")/100+"/"+AP_GetVitalMaximumValue(creature, "Mana")+"";
+   // var mana := ""+GetVital(creature, "Mana")/100+"/"+AP_GetVitalMaximumValue(creature, "Mana")+"";
    var str := ""+AP_GetStat(creature, STRENGTH)+"";
    var dex := ""+AP_GetStat(creature, DEXTERITY)+"";
    // var int := ""+AP_GetStat(creature, INTELLIGENCE)+"";
    // var cons := ""+AP_GetStat(creature, CONSTITUTION)+"";
    // var ar := ""+creature.AR+"%";
 
-   var diftype := GetDif(cfg.TameDifficulty);
+   // var diftype := GetDif(cfg.TameDifficulty);
 
    var loyalty := "";
    if(creature.script == ":ghaia:follower" && creature.master)
@@ -138,7 +138,7 @@ function AL_LoadGump(who, creature, cfg)
    GFHTMLArea(gump, 280, 240,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(dex)+"</div>");
    GFGumpPic(gump, 128, 278, 2086);
    
-   if (AP_GetTrueSkill(mobile, TRATO_ANIMAIS) >= 2)
+   if (AP_GetTrueSkill(who, TRATO_ANIMAIS) >= 2)
       GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Detalhes");
       GFHTMLArea(gump, 147, 294, 160, 18, "<basefont color=#4A3929>Personalidade");
       GFHTMLArea(gump, 280, 294, 160, 18, "<basefont color=#4A3929>"+pet_properties.personality);

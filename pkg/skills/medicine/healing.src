@@ -37,7 +37,7 @@ program UseBandage(mobile, bandage)
 	var heal_skill := PRIMEIROS_SOCORROS;
 
 	if ( !targ.IsA(POLCLASS_MOBILE) && !targ.IsA(POLCLASS_CORPSE) )
-		if (AP_GetTrueSkill(who, PRIMEIROS_SOCORROS) >= 7)
+		if (AP_GetTrueSkill(mobile, PRIMEIROS_SOCORROS) >= 7)
 			return apllyHerbs(mobile, bandage, targ);
 		endif
 		SendSysMessageEx(mobile, "Cancelado.", SSM_FAIL);
@@ -132,7 +132,7 @@ endprogram
 
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
    var max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.4);
-   if (AP_GetTrueSkill(who, PRIMEIROS_SOCORROS) >= 3)
+   if (AP_GetTrueSkill(mobile, PRIMEIROS_SOCORROS) >= 3)
       max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.8);
    endif
 

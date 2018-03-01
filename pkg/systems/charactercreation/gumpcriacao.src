@@ -16,6 +16,7 @@ include ":fls_core:fls_characters";
 include ":datafile:datafile";
 include ":timeUtils:time";
 include ":sysbook:flsbooks";
+include ":charactercreation:chargumps";
 
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
@@ -91,7 +92,6 @@ program createchar(who)
 	AP_SetTrueStat(who, "Wisdom", chardata.wis);
 	AP_SetTrueStat(who, "Aura", chardata.aura);
 
-	// var class_cfg := FindConfigElem(ReadConfigFile(":charactercreation:config/classes"), cstr(chardata.classe) );
 	chardata.hitpoints  := cint(GetBonusAttr(chardata.con));
 	chardata.manapoints := cint(GetBonusAttr(chardata.inte));
 	chardata.stampoints := cint(GetBonusAttr(chardata.dex));
@@ -124,7 +124,7 @@ program createchar(who)
 
 	SetProfessions(who, chardata);
 
-	if (chardata.raca == "Elfo" || chardata.classe == "Mago")
+	if (chardata.raca == "Elfo")
 		LearnFeat(who, "Linguagem Élfica", 0, 0);
 		if (chardata.classe == "Mago")
 			var wand := CreateItemInBackpack(who, 0x0DF2);
@@ -165,7 +165,7 @@ function construirgump(byref gump, back := 0) //monta a aparência da gump
 	GFResizePic(gump, 84, 90, 0x9c40, 420, 500);
 
 	GFGumpPicTiled(gump, 90,100,30,480,10460);
-	GFGumpPicTiled(gump, 468,100,30,480,10460);
+	GFGumpPicTiled(gump, 460,100,30,480,10460);
 	// GFGumpPicTiled(gump, 80,88,463,16,10100);
 	// GFGumpPicTiled(gump, 84,610,457,16,10100);
 	GFGumpPic(gump, 85,79, 10420);
@@ -221,7 +221,7 @@ function ShowCreateGumps(who, byref chardata)
 			continue;
 		endif
 
-		if (ChooseBackground(who, chardata))
+		if (ItemPickerGump(who, chardata))
 			continue;
 		endif
 
@@ -481,16 +481,11 @@ function ChooseBackground(who, byref chardata)
 		var canadd       := 1;
 		var racas        := GetConfigStringArray( elem, "Raca" );
 		var sexos        := GetConfigStringArray( elem, "Sexo" );
-		var classes      := GetConfigStringArray( elem, "Classe" );
 		var reqs      := GetConfigStringDictionary( elem, "Req" );
 		var require_nota := GetConfigInt( elem, "NotaRP" );
 
 		if ((racas.size() >= 1) && !(chardata.raca in racas))
 			//sendsysmessage(who, " racas " + racas + " chardata.raca " + chardata.raca);
-			canadd := 0;
-		endif
-		if ((classes.size()>=1) && !(chardata.classe in classes))
-			//sendsysmessage(who, " classes " + classes + " chardata.classe " + chardata.classe);
 			canadd := 0;
 		endif
 		if ((sexos.size() >= 1) && !(cstr(who.gender) in sexos))
@@ -514,7 +509,7 @@ function ChooseBackground(who, byref chardata)
 			kit.+nome       := key;
 			kit.+desc       := GetconfigString(elem, "Desc");
 			kit.+equip_desc := GetconfigString(elem, "ItemDesc");
-			kit.+pericias   := GetConfigStringArray( elem, "Pericia" );
+			// kit.+pericias   := GetConfigStringArray( elem, "Pericia" );
 			kits.append(kit);
 		endif
 		sleepms(5);
@@ -534,7 +529,7 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
 
 		var i := 1;
 		var x := 170;
-		var y := 200;
+		var y := 180;
 		for ( i := 1; i <= kits.size(); i := i + 1)
 			if ( i == selectedkit)
 				GFTextLine(gump, x, y,2105,kits[i].nome);
@@ -555,15 +550,15 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
 
 			y := y + 24;
 			if (i == 10)
-				y := 200;
-				x := 400;
+				y := 180;
+				x := 350;
 			endif
 		endfor
 
 		var str := "";
-		if ( kits[selectedkit].desc)
-			str :=  str + kits[selectedkit].desc + "<BR>Pericias: ";
-		endif
+		// if ( kits[selectedkit].desc)
+		// 	str :=  str + kits[selectedkit].desc + "<BR>Pericias: ";
+		// endif
 		if ( kits[selectedkit].pericias)
 			str :=  str + kits[selectedkit].pericias + "<BR>Equipamentos: ";
 		endif
@@ -579,9 +574,9 @@ function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
 		if (cint(ret[0]) == 200)
 			var kitname  := kits[selectedkit].nome;
 			var pericias := kits[selectedkit].pericias;
-			chardata.background := kitname;
+			chardata.backgrouinnd := kitname;
 			chardata.skills     := pericias;
-			SendSysMessageEx(who, "Seu antecedente: " + chardata.background, SSM_INFO);
+			SendSysMessageEx(who, "Sua profissão: " + chardata.background, SSM_INFO);
 			break;
 		elseif (cint(ret[0]) == 201)
 			return 1;
@@ -629,7 +624,7 @@ function SkillGump(who, byref chardata)
       GFGumpPic(gump, 31+god_x, 71+god_y, 57, 0);
 
       var attr := ReadConfigFile(":attributes:attributes");
-      var pos_x := 63+god_x;
+      var pos_x := 80+god_x;
       var pos_y := 89++god_y;
       var i := 1;
       foreach attribute_name in ( skill_list )
@@ -643,7 +638,19 @@ function SkillGump(who, byref chardata)
                continue;
             endif
          endif 
-         GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#000066>{} <BASEFONT SIZE=4>{}".format(skill_name, convertToRoman(mystat+1)), 0);
+
+         var sk_color := "000066";
+         if (mystat > 0)
+            GFAddButton(gump, pos_x-42, pos_y+1, 0x38, 0x38, GF_CLOSE_BTN, 400+_attribute_name_iter);
+            sk_color := "006600";
+         endif
+
+         var rm_n := convertToRoman(mystat);
+         if (!mystat)
+            rm_n := "";
+         endif
+
+         GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#{}>{} <BASEFONT SIZE=4>{}".format(sk_color, skill_name, rm_n), 0);
          GFTooltipText(gump, "{}".format(attr_cfg.desc));
 
          var custo := getCost(attr_cfg.SkillType, mystat+1);
@@ -653,35 +660,44 @@ function SkillGump(who, byref chardata)
             GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, 300+_attribute_name_iter);
          endif
 
-         if (mystat >= 0)
-            GFAddButton(gump, pos_x-58, pos_y+1, 55, 55, GF_CLOSE_BTN, 400+_attribute_name_iter);
-         endif
+
 
          pos_x += 321;
          if (i % 2 == 0)
             pos_y += 20;
-            pos_x := 63++god_x;
+            pos_x := 80+god_x;
          endif
          i += 1;
       endforeach
 
-		GFTextLine(gump, 150,140,2103,"Escolha as características e habilidades do seu personagem.");
-
-		var x := 180;
+		GFTextLine(gump, 160,140,2103,"Escolha suas características e habilidades.");
+	   GFResizePic(gump, 130, 170, 0x2454, 320, 365);
+		var x := 175;
 		var y := 180;
 
-		var i := 21;
 		foreach caract in caraclist
-         var points := SplitWords(cfgcarac[caract].points, "|");
-         var custo := cint(points[1]);
-			GFTextLine(gump, x, y, 2100, "{} - Custo: {} ".format(caract, custo));
-			// GFCheckBox(gump, x-25, y, 0x9c4E, 0x9c4F, 0, i);
-         if (custo <= points && mystat < 13)
-            GFAddButton(gump, x-24, y+1, 55, 55, GF_CLOSE_BTN, 600+_attribute_name_iter);
+         if (cfgcarac[caract].god && cfgcarac[caract].god != chardata.god)
+            continue;
+         endif
+         var parse := SplitWords(cfgcarac[caract].points, "|");
+         var custo := cint(parse[1]);
+         var maxp := cint(parse[2]);
+         if (!maxp) maxp := 1; endif
+			GFTextLine(gump, x, y, 2100, "{}[{}]".format(caract, maxp - cint(mycaracs[caract])));
+         GFTooltipText(gump, "Custo: {} <br> {}".format(custo, cfgcarac[caract].desc));
+         if (custo <= points && cint(mycaracs[caract]) < maxp)
+            GFAddButton(gump, x-24, y+1, 0x37, 0x37, GF_CLOSE_BTN, 600+_caract_iter);
          endif
 
-			y := y + 25;
-			i += 1;
+         if (mycaracs[caract])
+            GFAddButton(gump, x-42, y+1, 0x38, 0x38, GF_CLOSE_BTN, 700+_caract_iter);
+         endif
+         
+         y += 25;
+         if (_caract_iter % 14 == 0)
+            y := 180;
+            x += 185;
+         endif
 		endforeach
 
 		var input := GFSendGump(who, gump);
@@ -694,7 +710,7 @@ function SkillGump(who, byref chardata)
          
          var custo := getCost(attr_cfg.SkillType, mystat+1);
          points -= custo;
-         myhabs[skill] += 1;
+         myhabs[skill] := cint(myhabs[skill]) + 1;
       elseif (input[0] >= 400 && input[0] < 500)
          var i := input[0] - 400;
          var skill := skill_list[i];
@@ -705,6 +721,25 @@ function SkillGump(who, byref chardata)
          var custo := getCost(attr_cfg.SkillType, mystat);
          points += custo;
          myhabs[skill] -= 1;
+      elseif (input[0] >= 600 && input[0] < 700)
+         var i := input[0] - 600;
+         var car := caraclist[i];
+
+         var parse := SplitWords(cfgcarac[car].points, "|");
+         var custo := cint(parse[1]);
+         points += custo * -1;
+
+         mycaracs[car] := cint(mycaracs[car]) + 1;
+         
+      elseif (input[0] >= 700 && input[0] < 800)
+         var i := input[0] - 700;
+         var car := caraclist[i];
+
+         var parse := SplitWords(cfgcarac[car].points, "|");
+         var custo := cint(parse[1]);
+         points += custo;
+
+         mycaracs[car] := cint(mycaracs[car]) - 1;
       elseif (input[0] == 200)
          chardata.skills := myhabs;
          chardata.carac := mycaracs;

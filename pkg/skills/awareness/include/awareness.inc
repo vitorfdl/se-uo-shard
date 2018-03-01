@@ -73,7 +73,7 @@ function CalculateDHDiff(who, mobile,)
       endif
    endif
 
-	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + (GetSkillBonus(mobile, FURTIVIDADE) * 2);
+	var difficulty := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetSkillBonus(mobile, FURTIVIDADE);
 	//sendsysmessage(mobile, "dificuldade de  "  + who.name + "te achar " + mobile_skill);
 	if (GetObjProperty(mobile, "#overridehiding") != error)
 		difficulty := cint(GetObjProperty(mobile, "#overridehiding"));

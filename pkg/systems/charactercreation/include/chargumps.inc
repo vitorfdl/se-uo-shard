@@ -10,65 +10,84 @@ include ":charactercreation:characters";
 include "include/say";
 
 function ItemPickerGump(who, byref chardata)
-
+   if (!who.connected) return; endif
+   if (!chardata.Credits) chardata.Credits := 60; endif
 	var cfg := ReadConfigFile(":charactercreation:config/itempicker");
 	var secoes := GetConfigStringKeys( cfg );
 	var chargump := GFCreateGump();
 	var input;
 
+	GFSetID(chargump, GUMPID_CREATECHAR);//9260
 	GFClosable(chargump, 0);
 	GFDisposable(chargump, 0);
-	GFResizePic(chargump, 0, 25, 3600, 600, 480);
-	GFResizePic(chargump, 15, 40, 0x13BE, 570, 450);
-	GFTextMid(chargump, 15, 45, 600, 1153, "Defina seus Itens Iniciais");
-	GFTextMid(chargump, 15, 60, 600, 1153, "Você tem " + chardata.Credits + " creditos.");
-	GFAddButton(chargump, 510, 450, 4502, 4502, 1, 999 );
-	GFTextLine(chargump, 450, 460, 1153, "Termina");
+	GFResizePic(chargump, 0, 20, 0x9c40, 600, 450);
+	GFGumpPicTiled(chargump, 6, 30,30,425,10460);
+	GFGumpPicTiled(chargump, 574, 30,30,425,10460);
 
-	var x := 50;
-	var y := 75;
-	var page := 1;
+	GFTextMid(chargump, 20, 30, 600, 1153, "Defina seus Itens Iniciais");
+	GFTextMid(chargump, 15, 50, 600, 1153, "Você tem " + chardata.Credits + " créditos.");
+	GFAddButton(chargump, 500, 415, 4502, 4502, 1, 999 );
+	GFTextLine(chargump, 450, 430, 1153, "Finalizar");
+
+	var x := 100;
+	var y := 90;
 	foreach entry in secoes
 		if (entry != "DefaultAmount")
-			GFTextLine(chargump, x, y, 1153, entry );
-			GFAddButton(chargump, x-30, y+4, 9762, 9763, GF_PAGE_BTN, page);
+			GFTextLine(chargump, x, y, 1153, StrReplace(entry, "_", " ") );
+			GFAddButton(chargump, x-30, y+4, 9762, 9763, GF_PAGE_BTN, _entry_iter);
 			y := y + 20;
-			page := page + 1;
 		endif
     sleepms(2);
 	endforeach
 
-	page := 1;
-	var itens;
-	x := 170;
-	y := 75;
+	x := 250;
+	y := 90;
 	var itensmap := dictionary;
 	var itemcusto := dictionary;
-	var i := 1;
+   var amtelem := FindConfigElem(cfg, "DefaultAmount");
 	var elem;
-	var custo;
+   var itemcfg := ReadConfigFile(":*:itemdesc");
+	var i := 1;
 	foreach entry in secoes
 		if (entry != "DefaultAmount")
-			GFPage(chargump, page);
+			GFPage(chargump, _entry_iter);
 			elem := FindConfigElem(cfg, entry);
-			itens := ListConfigElemProps(elem);
-			foreach item in itens
-				GFTextLine(chargump, x, y, 1153, item );
-				custo := GetConfigInt(elem, item);
-				GFTextLine(chargump, x+100, y, 1153, ""+custo );
-				itemcusto[item] := custo;
-				itensmap[i] := item;
+			var itens := GetConfigStringDictionary(elem, "item");
+			foreach item in (itens.keys())
+            var item_name := item;
+            var objtype := GetObjtypeByName( item );
+            if (objtype && itemcfg[objtype].desc)
+               item_name := itemcfg[objtype].desc;
+               item_name["%s%"] := "";
+            endif
+
+            if (Cint(GetConfigInt(amtelem, item)))
+               item_name += " [{}]".format(Cint(GetConfigInt(amtelem, item)));
+            endif
+
+            item_name[1] := Upper(item_name[1]);
+
+				GFTextLine(chargump, x, y, 1153, StrReplace(item_name, "_", " ") );
+				var custo := itens[item];
+				GFTextLine(chargump, x+175, y, 1153, ""+custo );
+				itemcusto[i] := custo;
+            itensmap[i] := GetConfigString(elem, item);
+            if (!itensmap[i])
+				   itensmap[i] := array{ item };
+            else
+               itensmap[i] := SplitWords(itensmap[i], ",");
+            endif
 				GFAddButton(chargump, x-20, y+4, 2103, 2104, 1, i);
 				i := i + 1;
 				y := y + 20;
 				if ( y >= 450 )
-					y := 75;
+					y := 90;
 					x := 320;
 				endif
+            sleepms(2);
 			endforeach
-			x := 170;
-			y := 75;
-			page := page + 1;
+			x := 250;
+			y := 90;
 		endif
     sleepms(2);
 	endforeach
@@ -79,22 +98,25 @@ function ItemPickerGump(who, byref chardata)
 	if (input == 999)
 		return;
 	else
-		var buyitem := itensmap[input];
-		var custo := itemcusto[buyitem];
-		var amt := 1;
-		var amtelem := FindConfigElem(cfg, "DefaultAmount");
-		amt := Cint(GetConfigInt(amtelem, buyitem));
-		if ( (amt == 0) || (amt == error) )
-			amt := 1;
-		endif
-		if (chardata.Credits >= custo)
-			chardata.Credits := chardata.Credits - custo;
-			CreateItemInBackpack( who, buyitem, amt );
-			ItemPickerGump(who, chardata);
-		else
-			SendSysMessage(who, "Você não tem creditos para comprar isto.");
-			ItemPickerGump(who, chardata);
-		endif
+		var custo := cint(itemcusto[input]);
+      if (chardata.Credits < custo)
+         SendSysMessage(who, "Você não tem créditos para comprar isto.");
+         return ItemPickerGump(who, chardata);
+      endif
+      chardata.Credits := chardata.Credits - custo;
+		var item_list := itensmap[input];
+      foreach buyitem in item_list
+         var amt := 1;
+
+         amt := Cint(GetConfigInt(amtelem, buyitem));
+         if ( (amt == 0) || (amt == error) )
+            amt := 1;
+         endif
+            
+         CreateItemInBackpack( who, buyitem, amt );
+         sleepms(2);
+      endforeach
 	endif
 
+   ItemPickerGump(who, chardata);
 endfunction

@@ -12,7 +12,7 @@ include ":tn:tngumps";
 const SPELL_BTN := 200;
 
 program orderSpells(who, item)
-   GetObjProperty(who, "chardata").caracteristicas
+   // GetObjProperty(who, "chardata").caracteristicas
    if (!HaveFeat(who, "Vinculo com Anar"))
       SendSysMessageEx(who, "Você presta homenagem a Anar", SSM_INFO);
       return;

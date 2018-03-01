@@ -32,11 +32,11 @@ program skillremoveTrap(who)
 	endif
 
    var stam_c := 6;
-   if (AP_GetTrueSkill(me, SABOTAGEM) >= 4)
+   if (AP_GetTrueSkill(who, SABOTAGEM) >= 4)
       stam_c := 4;
    endif
 
-   if ( AP_ConsumeVital(me, STAMINA, stam_c) )
+   if ( AP_ConsumeVital(who, STAMINA, stam_c) )
 		SendSysMessageEx(who, "Você está muito cansado para fazer isso.", SSM_FAIL);
 		return;
    endif

@@ -189,7 +189,7 @@ function GetAttackerChance(attacker, defender)
             dice_gain -= 1;
          endif
 
-         if (wpn_a_elem.medrange && AP_GetTrueSkill(who, ARCO) <= 3)
+         if (wpn_a_elem.medrange)
             if (Distance(attacker,defender) > cint(wpn_a_elem.medrange))
                dice_gain -= 1;
             endif
@@ -460,7 +460,7 @@ function GetAttackerFeatPenalty(attacker, defender)
    if (defender.acctname && attacker.npctemplate) //mob vs player
       var mobiles_near := ListMobilesNearLocationEx(defender.x, defender.y, defender.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
       foreach mob in mobiles_near
-         if (mob.shield && AP_GetTrueSkill(who, ESCUDO) >= 7)
+         if (mob.shield && AP_GetTrueSkill(mob, ESCUDO) >= 7)
             bonus -= 1;
             break;
          endif

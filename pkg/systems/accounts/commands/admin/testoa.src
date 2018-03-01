@@ -19,7 +19,7 @@ include ":ghaia:objective";
 program oafeatures_sendpacket(who, text)
    // var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
    // SendSysMessageEx(who, ""+GetSkillBonus(who, PERCEPCAO));
-   SendSysMessageEx(who, ""+convertToRoman(cint(text)));
+   // SendSysMessageEx(who, ""+convertToRoman(cint(text)));
    //    var targ := Target(who);
    // var chardata := GetObjProperty(targ, "chardata");
    // chardata.class_feats := array{6};

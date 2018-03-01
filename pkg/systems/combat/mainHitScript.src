@@ -184,9 +184,9 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
 	endif
 
    if (dice_roll.two_dice_success)
-      if (wpn_a_elem.WeaponType == "mace" && AP_GetTrueSkill(who, ARMAS_DE_CONCUSSAO) >= 2)
+      if (wpn_a_elem.WeaponType == "mace" && AP_GetTrueSkill(attacker, ARMAS_DE_CONCUSSAO) >= 2)
          weapon_scripts.append("armorbreak");
-      elseif (wpn_a_elem.WeaponType == "dagger" && AP_GetTrueSkill(who, LAMINAS_CURTAS) >= 2)
+      elseif (wpn_a_elem.WeaponType == "dagger" && AP_GetTrueSkill(attacker, LAMINAS_CURTAS) >= 2)
          weapon_scripts.append("bleed");
       endif
    endif
@@ -228,23 +228,23 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
 		weapon_scripts :=  GetConfigStringArray( npcelem, "CriticalHitScripts" );
 	endif
 
-   if (wpn_a_elem.WeaponType == "greatsword" && AP_GetTrueSkill(who, ESPADAS) >= 2)
+   if (wpn_a_elem.WeaponType == "greatsword" && AP_GetTrueSkill(attacker, ESPADAS) >= 2)
       weapon_scripts.append("peso_da_montanha");
    elseif (weapon.isMagicWeapon())
-      if (wpn_a_elem.DamageType == "Fogo" && AP_GetTrueSkill(who, "Magia_de_Fogo") >= 2)
+      if (wpn_a_elem.DamageType == "Fogo" && AP_GetTrueSkill(attacker, "Magia_de_Fogo") >= 2)
          weapon_scripts.append("immolation");
-      elseif (wpn_a_elem.DamageType == "Eletrecidade" && AP_GetTrueSkill(who, "Magia_de_Eletrecidade") >= 2)
+      elseif (wpn_a_elem.DamageType == "Eletrecidade" && AP_GetTrueSkill(attacker, "Magia_de_Eletrecidade") >= 2)
          weapon_scripts.append("double_dmg");
-      elseif (wpn_a_elem.DamageType == "Gelo" && AP_GetTrueSkill(who, "Magia_de_Gelo") >= 2)
+      elseif (wpn_a_elem.DamageType == "Gelo" && AP_GetTrueSkill(attacker, "Magia_de_Gelo") >= 2)
          weapon_scripts.append("attackbreak");
-      elseif (wpn_a_elem.DamageType == "Veneno" && AP_GetTrueSkill(who, "Magia_de_Veneno") >= 2)
+      elseif (wpn_a_elem.DamageType == "Veneno" && AP_GetTrueSkill(attacker, "Magia_de_Veneno") >= 2)
          weapon_scripts.append("constrict");
       endif
-   elseif(wpn_a_elem.WeaponType == "bow" && AP_GetTrueSkill(who, ARCO) >= 2)
+   elseif(wpn_a_elem.WeaponType == "bow" && AP_GetTrueSkill(attacker, ARCO) >= 2)
       weapon_scripts.append("hit_again");
-   elseif(wpn_a_elem.WeaponType == "dualsword" && AP_GetTrueSkill(who, ARMAS_DUPLAS) >= 2)
+   elseif(wpn_a_elem.WeaponType == "dualsword" && AP_GetTrueSkill(attacker, ARMAS_DUPLAS) >= 2)
       weapon_scripts.append("hit_again");
-   elseif (wpn_a_elem.WeaponType == "besta" && AP_GetTrueSkill(who, BESTA) >= 2)
+   elseif (wpn_a_elem.WeaponType == "besta" && AP_GetTrueSkill(attacker, BESTA) >= 2)
       weapon_scripts.append("double_dmg");
    endif
 

@@ -124,17 +124,18 @@ endfunction
 
 function WriteMagic(who, spell_id)
 	var items_bag := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
-	if (!HaveSkill())
-		SendSysMessageEx(who, "Você não tem conhecimento de magia", SSM_FAIL);
-		return;
-	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
+if (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
 		SendSysMessageEx(who, "Você precisa de uma faca para entalhar", SSM_FAIL);
 		return;
 	endif
 
 	var spellinfo := struct{ id := spell_id };
+
 	if (!WriteSpellInfo(spellinfo))
 		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia. Chame um GM.", SSM_FAIL);
+		return;
+   elseif (!HaveSkill(who, "Magia_de_{}".format(spellinfo.type)))
+		SendSysMessageEx(who, "Você não tem conhecimento de magia", SSM_FAIL);
 		return;
 	endif
 

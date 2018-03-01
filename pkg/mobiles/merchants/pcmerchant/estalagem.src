@@ -7,7 +7,6 @@ include "include/string";
 include":merchants:crafthelp";
 include ":ghaia:ghaiaUtil";
 include ":gumps:gumps_ex";
-
 include ":containers:storageAreas";
 include ":containers:containers";
 include ":gumps:include/requestgump";
@@ -23,7 +22,6 @@ const BKGND_BLUESLAB		:= 3600;  // Raised edge (blocky)
 const GF_STDCOLOR		:= 1890;
 
 const MOEDAS      := 0xeed;
-var item_cfg      := ReadConfigFile(":*:itemdesc");
 var npc;
 
 program HandleMerchant(params)
@@ -193,7 +191,7 @@ function SendRoomGump(npc, player)
 
       if (!porta.length) return 1; endif
 		var room := struct{
-         "doors" := porta,
+         "doors" := porta
       };
 
       var centro := array{};
