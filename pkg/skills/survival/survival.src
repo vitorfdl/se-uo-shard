@@ -114,7 +114,7 @@ function ItemTracking(who)
       return;
    endif
 
-   who.SetAchievement("item_track", 1);
+   who.SetAchievement("mob_track", 1);
    ItemTrackGump(who, items_found);
 endfunction
 

@@ -11,7 +11,6 @@ include "include/say";
 
 function ItemPickerGump(who, byref chardata)
    if (!who.connected) return; endif
-   if (!chardata.Credits) chardata.Credits := 60; endif
 	var cfg := ReadConfigFile(":charactercreation:config/itempicker");
 	var secoes := GetConfigStringKeys( cfg );
 	var chargump := GFCreateGump();
@@ -112,17 +111,36 @@ function ItemPickerGump(who, byref chardata)
          SendSysMessage(who, "Você não tem créditos para comprar isto.");
          return ItemPickerGump(who, chardata);
       endif
+
       chardata.Credits := chardata.Credits - custo;
 		var item_list := itensmap[input];
       foreach buyitem in item_list
-         var amt := 1;
+         if (buyitem["Recipe_"])
+            buyitem["Recipe_"] := "";
+            if (Hex(buyitem) != error && cint(Hex(buyitem)) != 0)
+   			   buyitem := hex(buyitem);
+            endif
+            var obj := CreateItemInBackpack(who, 0xef1f);
+            SetObjProperty(obj, "objtype", buyitem);
+            Run_Script( ":crafting:recipes/oncreate", obj );
+         elseif (buyitem["Book_"])
+            buyitem["Book_"] := "";
+            SysBook_CreateBook(who.backpack, buyitem);
+         else
+            var amt := 1;
 
-         amt := Cint(GetConfigInt(amtelem, buyitem));
-         if ( (amt == 0) || (amt == error) )
-            amt := 1;
+            amt := Cint(GetConfigInt(amtelem, buyitem));
+            if ( (amt == 0) || (amt == error) )
+               amt := 1;
+            endif
+               
+            var created := CreateItemInBackpack( who, buyitem, amt );
+            if (buyitem["wand"])
+               SetObjProperty(created, "charges", 5);
+            endif
          endif
-            
-         CreateItemInBackpack( who, buyitem, amt );
+
+
          sleepms(2);
       endforeach
 	endif

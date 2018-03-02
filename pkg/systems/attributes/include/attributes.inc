@@ -466,6 +466,10 @@ function LearnSkill(who, skill_name)
       endif
    endforeach
 
+   if (skill_name["Rúnica"])
+      LearnFeat(who, "Linguagem Rúnica", 0, 0);
+   endif
+   
    var gives := GetConfigStringArray(attr[skill_name], "Give");
    foreach giv in gives
       giv := SplitWords(giv);
@@ -485,9 +489,9 @@ function LearnSkill(who, skill_name)
       sleepms(2);
    endforeach
 
-   if (attr_cfg.achievement)
-      var achiev := SplitWords(attr_cfg.achievement, " ");
-      var nextp := cint(achiev[2]) * mystat+1);
+   if (attr[skill_name].achievement)
+      var achiev := SplitWords(attr[skill_name].achievement, " ");
+      var nextp := cint(achiev[2]) * mystat+1;
       if (who.GetAchievement(achiev[1]) < nextp)
          who.SetAchievement(achiev[1], nextp);
       endif

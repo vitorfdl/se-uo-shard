@@ -99,8 +99,9 @@ function DestroyRentItens(x, y, z, r, player, npc)
 		backpack := CreateItemAtLocation( x, y, z, hex(3701), 1, r);
 		SetName(backpack, player.name);
 	endif
+   
 	foreach obj in objects
-		if (CheckLosBetween( x, y, z+5, obj.x, obj.y, obj.z, r))
+   if (CheckLosBetween( x, y, z+5, obj.x, obj.y, obj.z+8, r))
 			if (GetObjProperty(obj, "crafterserial"))
 				if (player && player != error)
 					obj.movable := 1;
@@ -119,10 +120,13 @@ function DestroyRentItens(x, y, z, r, player, npc)
                endif
 					sleepms(20);
 				endforeach
+         elseif (obj.IsPlant())
+            DestroyItem(obj);
 			endif
 		endif
 		sleepms(20);
 	endforeach
+
 	if (player && player != error)
 		if ( !npc.backpack )
 			Set_Critical(1);

@@ -226,3 +226,16 @@ endfunction
 exported function getMaxExp(who)
    return getLevel(who) * 2200;
 endfunction
+
+exported function Caracteristica(who, carac)
+	var chardata := GetObjProperty(who, "chardata");
+	if (chardata == error || !chardata)
+		chardata := struct;
+	endif
+
+   if (lower(carac) in lower(chardata.carac.keys()))
+      return 1;
+   endif
+
+   return 0;
+endfunction

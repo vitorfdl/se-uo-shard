@@ -106,6 +106,7 @@ function MenuPlayerToPlayer(who, what)
 
    if (Distance(who, what) <= 2)
       entries.+revistar := 3002028;
+      entries.+ensinar := 3002031;
    endif
 
    var disguisable := GetObjProperty(who, "#can_unmask");

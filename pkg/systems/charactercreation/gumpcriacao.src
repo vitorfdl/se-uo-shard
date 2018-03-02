@@ -24,50 +24,53 @@ program createchar(who)
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
 	AP_SetVital(who, "Hunger", 0);
-
-	if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
-		SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
-      who.frozen := 1;
-		return 1;
-	elseif (GetObjProperty(who, "delete") == 1)
-		SendSysMessageEx(who, "Você não pode ter mais de um personagem por conta.", SSM_FAIL);
-      who.frozen := 1;
-		return 1;
-	endif
-
-	if (!who.backpack)
-		var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
-		EquipItem(who, mochila);
-	endif
-
-	//destroi todos os itens equipados e na bag
-	if (who.cmdlevel < 2)
-		var equiped := listequippeditems(who);
-		foreach item in equiped
-			if (item != who.backpack && item.layer != LAYER_HAIR && item.layer != LAYER_BEARD)
-				DestroyItem(item);
-			endif
-         sleepms(2);
-		endforeach
-
-		equiped := enumerateitemsincontainer(who.backpack);
-		foreach item in equiped
-			DestroyItem(item);
-         sleepms(2);
-		endforeach
-		equiped := 0;
-	endif
-
-
-
-	//zeras as skills
-	foreach attrib in AP_ListAttributesByType()
-		AP_SetTrueSkill(who, attrib, 0);
-		sleepms(2);
-	endforeach
-
-	//Gumps
 	var chardata := struct;
+
+   if (!GetObjProperty(who, "recriando"))
+      if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
+         SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
+         who.frozen := 1;
+         return 1;
+      elseif (GetObjProperty(who, "delete") == 1)
+         SendSysMessageEx(who, "Você não pode ter mais de um personagem por conta.", SSM_FAIL);
+         who.frozen := 1;
+         return 1;
+      endif
+
+      if (!who.backpack)
+         var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
+         EquipItem(who, mochila);
+      endif
+
+      //destroi todos os itens equipados e na bag
+      if (who.cmdlevel < 2)
+         var equiped := listequippeditems(who);
+         foreach item in equiped
+            if (item != who.backpack && item.layer != LAYER_HAIR && item.layer != LAYER_BEARD)
+               DestroyItem(item);
+            endif
+            sleepms(2);
+         endforeach
+
+         equiped := enumerateitemsincontainer(who.backpack);
+         foreach item in equiped
+            DestroyItem(item);
+            sleepms(2);
+         endforeach
+         equiped := 0;
+      endif
+   else
+      chardata := GetObjProperty(who, "chardata");
+      chardata.recriando := 1;
+   endif
+
+   //zeras as skills
+   foreach attrib in AP_ListAttributesByType()
+      AP_SetTrueSkill(who, attrib, 0);
+      sleepms(2);
+   endforeach
+   
+	//Gumps
 	ShowCreateGumps(who, chardata);
 
 	if (chardata.raca["Humano"])
@@ -92,21 +95,37 @@ program createchar(who)
 	AP_SetTrueStat(who, "Wisdom", chardata.wis);
 	AP_SetTrueStat(who, "Aura", chardata.aura);
 
-	chardata.hitpoints  := cint(GetBonusAttr(chardata.con));
-	chardata.manapoints := cint(GetBonusAttr(chardata.inte));
-	chardata.stampoints := cint(GetBonusAttr(chardata.dex));
+	chardata.hitpoints  := cint(GetBonusAttr(chardata.con)) +5;
+   var duro_de_matar := chardata.carac["Duro de Matar"];
+   if (duro_de_matar) chardata.hitpoints += duro_de_matar; endif
 
-	foreach skill in (chardata.skills)
-      skill := StrReplace(skill, " ", "_" );
-		AP_SetTrueSkill(who, skill, 1);
+	chardata.manapoints := cint(GetBonusAttr(chardata.inte)) +5;
+   var acumulador_mana := chardata.carac["Acumulador de Mana"];
+   if (acumulador_mana) chardata.manapoints += acumulador_mana; endif
+
+	chardata.stampoints := cint(GetBonusAttr(chardata.dex)) + 10;
+   var agil := chardata.carac["Ágil"];
+   if (agil) chardata.stampoints += agil; endif
+
+   var lento := chardata.carac["Lento"];
+   if (lento) chardata.stampoints -= lento; endif
+
+	foreach skill in (chardata.skills.keys())
+      var value := chardata.skills[skill];
+      for i := 1 to value
+         LearnSkill(who, skill);
+         sleepms(2);
+      endfor
       sleepms(2);
 	endforeach
 
-	if (chardata.raca == "Humano")
-		chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");
-	else
-		chardata.lifetime := AddTimeTo(POLCore().systime, 42, "weeks");
-	endif
+   if (!chardata.recriando)
+      if (chardata.raca == "Humano")
+         chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");
+      else
+         chardata.lifetime := AddTimeTo(POLCore().systime, 42, "weeks");
+      endif
+   endif
 
 	SetObjProperty(who, "chardata", chardata);
 
@@ -120,35 +139,38 @@ program createchar(who)
 	/*=====  End of Section comment block  ======*/
 
 	//Mudar Aparência
-	LookGump(who, chardata);
+   if (!chardata.recriando)
+	   LookGump(who, chardata);
+   endif
 
-	SetProfessions(who, chardata);
+	// SetProfessions(who, chardata);
 
 	if (chardata.raca == "Elfo")
 		LearnFeat(who, "Linguagem Élfica", 0, 0);
-		if (chardata.classe == "Mago")
-			var wand := CreateItemInBackpack(who, 0x0DF2);
-			SetObjProperty(wand, "charges", 5);
-			CreateItemInBackpack(who, 0x6100);
-			CreateItemInBackpack(who, 0x10e4);
-			var rec := CreateItemInBackpack(who, 0x6116);
-			SetObjProperty(rec, "spell_id", 0x1);
-         SysBook_CreateBook(who.backpack, "magia1");
-		endif
-	elseif (chardata.classe == "Clérigo")
+	endif
+
+   if (who.Caracteristica("Vinculo com Anar"))
       SysBook_CreateBook(who.backpack, "clerigo1");
-		LearnFeat(who, "Linguagem Rúnica", 0, 0);
 		Start_Script(":magery:cleric/powerWords", array{who});
 		start_script(":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".milagres\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
-	endif
+   elseif (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade"))
+      var rec := CreateItemInBackpack(who, 0x6116);
+      SetObjProperty(rec, "spell_id", 0x1);
+      SysBook_CreateBook(who.backpack, "magia1");
+      CreateItemInBackpack(who, 0x6100);
+      CreateItemInBackpack(who, 0x10e4);
+   endif
 
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
 	AP_SetVital(who, "Hunger", 0);
 	EraseObjProperty(who, "criandochar");
+	EraseObjProperty(who, "recriando");
 	
-	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser te comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para te deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Para alterar sua senha digite .senha senhanatiga senhanova [P] [P] Bom Jogo!"} );
-	// if (getNotaRP(who) == 2)
+   if (!chardata.recriando)
+	   start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Ultimos Sussurros Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser te comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para te deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Para alterar sua senha digite .senha senhanatiga senhanova [P] [P] Bom Jogo!"} );
+	endif
+   // if (getNotaRP(who) == 2)
 	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
 	// 	CreateItemInBackpack(who, 0xeed, 200); //dinheiro
 	// 	setNotaRP(who, 0);
@@ -195,7 +217,9 @@ endfunction
 function ShowCreateGumps(who, byref chardata)
 	while (who.connected)
       sleepms(2);
-		chardata := struct;
+      if (!chardata.recriando)
+		   chardata := struct;
+      endif
 		chardata.+Skills := dictionary;
 		chardata.+str  := 14;
 		chardata.+dex  := 13;
@@ -203,11 +227,13 @@ function ShowCreateGumps(who, byref chardata)
 		chardata.+con  := 10;
 		chardata.+wis  := 8;
 		chardata.+aura := 15;
-		chardata.+antecedente := "";
+		chardata.+carac := "";
 
-		if (RaceGump(who,chardata))
-			continue;
-		endif
+      if (!chardata.recriando)
+         if (RaceGump(who,chardata))
+            continue;
+         endif
+      endif
 
 		if (ChooseGod(who, chardata))
 			continue;
@@ -221,9 +247,12 @@ function ShowCreateGumps(who, byref chardata)
 			continue;
 		endif
 
-		if (ItemPickerGump(who, chardata))
-			continue;
-		endif
+      if (!chardata.recriando)
+         chardata.Credits := 60;
+         if (ItemPickerGump(who, chardata))
+            continue;
+         endif
+      endif
 
 		// if (getNotaRP(who) == 2)
 		// 	if (!YesNo(who, "Você receberá bonificações nesse personagem. Elas não estarão disponíveis no próximo. Deseja continuar?", "Sim", "Não"))
@@ -633,11 +662,21 @@ function SkillGump(who, byref chardata)
          var mystat := cint(myhabs[attribute_name]);
          var attr_cfg := attr[attribute_name];
          if (attr_cfg.Req)
-            var req := SplitWords(attr_cfg.Req);
-            if (req[1] == "god" && chardata.god != req[2])
-               continue;
-            endif
+            var requirements := GetConfigStringArray(attr_cfg, "Req");
+            var pass := 0;
+            foreach req in requirements
+               req := SplitWords(req);
+               if (req[1] == "god" && chardata.god != req[2])
+                  pass := 1;
+                  break;
+               elseif (req[1] == "charac" && !(StrReplace(req[2], "_", " ") in chardata.carac))
+                  pass := 1;
+                  break;
+               endif
+            endforeach
+            if (pass) continue; endif
          endif 
+
 
          var sk_color := "000066";
          if (mystat > 0)
@@ -679,6 +718,8 @@ function SkillGump(who, byref chardata)
          if (cfgcarac[caract].god && cfgcarac[caract].god != chardata.god)
             continue;
          endif
+
+
          var parse := SplitWords(cfgcarac[caract].points, "|");
          var custo := cint(parse[1]);
          var maxp := cint(parse[2]);

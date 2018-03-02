@@ -10,7 +10,7 @@ const SPELL_BTN := 200;
 
 program clericPowerWords(who)
 	detach();
-   if (!HaveFeat(who, "Vinculo com Anar"))
+   if (!who.Caracteristica("Clérigo de Anar"))
       SendSysMessageEx(who, "Este menu não e acessivel para você.", SSM_FAIL);
       return;
    endif

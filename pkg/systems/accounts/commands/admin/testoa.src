@@ -17,6 +17,10 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
+   var parse := SplitWords(text, " ");
+   who.setAchievement(parse[1], cint(parse[2]));
+   SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
+
    // var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
    // SendSysMessageEx(who, ""+GetSkillBonus(who, PERCEPCAO));
    // SendSysMessageEx(who, ""+convertToRoman(cint(text)));
