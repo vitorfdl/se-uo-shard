@@ -13,13 +13,12 @@ const SPELL_BTN := 200;
 
 program orderSpells(who, item)
    // GetObjProperty(who, "chardata").caracteristicas
-   if (!HaveFeat(who, "Vinculo com Anar"))
+   if (!who.Caracteristica("Clérigo de Anar"))
       SendSysMessageEx(who, "Você presta homenagem a Anar", SSM_INFO);
       return;
    endif
 
    var cfg          := ReadConfigFile(":magery:config/cleric");
-   var char_level   := who.GetLevel();
    var cleric_slots := AP_GetTrueSkill(who, MILAGRE_DE_CURA) + AP_GetTrueSkill(who, MILAGRE_DE_NECROMANCIA) + 1;
 
    var cleric_list  := GetObjProperty(who, "cleric_list");
@@ -41,12 +40,11 @@ program orderSpells(who, item)
          endforeach
       endif
 
-      if(spell.circle < Ceil(cdbl(AP_GetTrueSkill(who, spell.pericia)) / 2))
+      if (spell.circle > cint(Ceil(cdbl(AP_GetTrueSkill(who, spell.pericia)) / 2)))
          continue;
       elseif (spell.type == "Auto")
          continue;
       endif
-      
       spell_list.append(spell);
       sleepms(2);
    endforeach

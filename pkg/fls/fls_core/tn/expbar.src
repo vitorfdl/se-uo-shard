@@ -26,8 +26,8 @@ program expBar(params)
    var color := "#332a1c";
    if (who.getExp() >= GetExpCap(who))
       color := "#FF6666";
-   elseif (cint(who.account.GetProp("expboost")) >= who.getLevel())
-      color := "#ADD8E6";
+   elseif (cint(FindAccount(who.acctname).GetProp("expboost")) >= who.getLevel())
+      color := "#0059B2";
    endif
 
    GFHTMLArea(expbar, x+30, y+23, 173, 20, "<BASEFONT Size=5 color={}>Experiência".format(color));

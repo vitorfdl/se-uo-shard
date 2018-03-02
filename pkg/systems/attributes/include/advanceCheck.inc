@@ -101,14 +101,14 @@ function ExpGain(mobile, difficulty, value := 0)
 		SysLog("Erro em difficulty para ExpGain: {}".format(difficulty));
 	endif
 
-   var account := FindAccount(mobile.acctname);
-   if (account && account.GetProp("expboost"))
-      if (account.GetProp("expboost") >= mobile.getlevel())
-         account.EraseProp("expboost");
-      else
-         up_amount := up_amount * 2;
-      endif
-   endif
+   // var account := FindAccount(mobile.acctname);
+   // if (account && account.GetProp("expboost"))
+   //    if (account.GetProp("expboost") >= mobile.getlevel())
+   //       account.EraseProp("expboost");
+   //    else
+   //       up_amount := up_amount * 2;
+   //    endif
+   // endif
 
 	//guarda as skills dos npcs tamados
 	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)
@@ -155,6 +155,9 @@ function IncreaseVitalPoints(who)
 
 	var increase_hitpoint := RandomDiceRoll("1d3+2") + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
 	var increase_manapoint := RandomDiceRoll("1d3+2") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
+
+   var duro_de_matar := chardata.carac["Duro de Matar"];
+   if (duro_de_matar) increase_hitpoint += duro_de_matar; endif
 
 	chardata.hitpoints  += cint(increase_hitpoint);
 	chardata.manapoints += increase_manapoint;

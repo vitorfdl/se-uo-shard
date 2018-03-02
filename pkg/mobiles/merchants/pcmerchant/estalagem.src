@@ -69,11 +69,6 @@ endprogram
 function HandleSpeech(npc, player, text)
 	text := lower(text);
    if (text["alugar"] || text["quarto"] || text["ver"])
-      // var onlyclass := GetObjProperty(npc, "onlyclass");
-      // if (onlyclass && !player.isClass(onlyclass) && player.cmdlevel < 3)
-      //    PrintText(npc, "Desculpe, não posso alugar quartos para você.");
-      //    return 1;
-      // endif
 		Printtext(npc, "Em que posso ajudá-lo?");
       while(1)
          var input := SendRoomGump(npc, player);
@@ -180,7 +175,7 @@ function SendRoomGump(npc, player)
          var targ := Target(player);
          if (!targ)
             break;
-         elseif (!porta.isDoor())
+         elseif (!targ.isDoor())
             SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
          else
             porta.append(targ.serial);
@@ -188,8 +183,8 @@ function SendRoomGump(npc, player)
             SetObjProperty(targ, "estalagem", npc.serial);
          endif
       endwhile
-
-      if (!porta.length) return 1; endif
+      print(porta);
+      if (!porta.size()) return 1; endif
 		var room := struct{
          "doors" := porta
       };
@@ -358,7 +353,7 @@ function SendRoomGump(npc, player)
                var targ := Target(player);
                if (!targ)
                   break;
-               elseif (!porta.isDoor())
+               elseif (!targ.isDoor())
                   SendSysMessageEx(player, "Alvo invalido.", SSM_FAIL);
                else
                   porta.append(targ.serial);
@@ -366,7 +361,7 @@ function SendRoomGump(npc, player)
                endif
             endwhile
 
-            if (!porta.length) return 1; endif
+            if (!porta.size()) return 1; endif
 
             quartos[input[0]].doors := porta;
 			
@@ -455,15 +450,18 @@ endfunction
 function DestroyRentItens(x, y, z, r)
 	var objects := ListItemsNearLocation( x, y, z, 10, r);
 	foreach obj in objects
-		if (CheckLosBetween( x, y, z, obj.x, obj.y, obj.z, r))
-			if (GetObjProperty(obj, "crafterserial"))
+      // print("LosAt "+ CheckLosAt(struct{ "x" := x, "y" := y, "z" := z}, obj.x, obj.y, obj.z+10, r));
+		if (CheckLosBetween( x, y, z+5, obj.x, obj.y, obj.z+10, r))
+			if (GetObjProperty(obj, "crafterserial") || GetObjProperty(obj, "fixer"))
 				DestroyItem(obj);
-			elseif (KP_IsLockable(obj))
+			elseif (obj.IsA(POLCLASS_CONTAINER))
 				var container := EnumerateItemsInContainer( obj, ENUMERATE_IGNORE_LOCKED );
 				foreach item in container
 					DestroyItem(item);
 					sleepms(20);
 				endforeach
+         elseif (obj.IsPlant())
+            DestroyItem(obj);
 			endif
 		endif
 		sleepms(3);

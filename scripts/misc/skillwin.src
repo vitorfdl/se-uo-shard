@@ -111,6 +111,7 @@ function skillWindow(who)
       else
 		   start_script(":fls_core:tn/expbar", array{who});
       endif
+      skillWindow(who);
 	endif
 endfunction
 
@@ -291,18 +292,27 @@ function BuyHabs(who)
 	foreach attribute_name in ( AP_ListAttributesByType("Skill") )
 		sleepms(2);
       var skill_name := StrReplace(attribute_name, "_", " ");
-      var mystat := AP_GetTrueSkill(who, attribute_name);
+      var mystat := cint(AP_GetTrueSkill(who, attribute_name));
       var attr_cfg := attr[attribute_name];
       if (attr_cfg.Req)
-         var req := SplitWords(attr_cfg.Req);
-         if (req[1] == "god" && GetObjProperty(who, "chardata").god != req[2])
-            continue;
-         endif
+         var requirements := GetConfigStringArray(attr_cfg, "Req");
+         var pass := 0;
+         foreach req in requirements
+            req := SplitWords(req);
+            if (req[1] == "god" && GetObjProperty(who, "chardata").god != req[2])
+               pass := 1;
+               break;
+            elseif (req[1] == "charac" && !who.Caracteristica(StrReplace(req[2], "_", " ")))
+               pass := 1;
+               break;
+            endif
+         endforeach
+         if (pass) continue; endif
       endif 
 
       if (attr_cfg.achievement)
          var achiev := SplitWords(attr_cfg.achievement, " ");
-         if (who.GetAchievement(achiev[1]) < cint(achiev[2]) * mystat+1)
+         if (who.GetAchievement(achiev[1]) < cint(achiev[2]) * (mystat+1))
             continue;
          endif
       endif
@@ -323,6 +333,10 @@ function BuyHabs(who)
       endif
       i += 1;
 	endforeach
+
+   if (i <= 1)
+	   GFHTMLArea(gump, pos_x+90, pos_y+150, 400, 58, "<BASEFONT color=#000066><center>Você não desenvolveu nenhuma habilidade o suficiente para aprender algo. Tente usar mais suas habilidades ou aprender com outro personagem.");
+   endif
 
 	var input := GFSendGump(who, gump);
    if (input[0] == 500)

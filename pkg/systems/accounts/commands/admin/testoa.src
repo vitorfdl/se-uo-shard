@@ -17,10 +17,16 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
+   // SendSysMessageEx(who, ""+who.Caracteristica("Clérigo de Anar"));
+   // return;
+   var parse := SplitWords(text, " ");
+   who.setAchievement(parse[1], cint(parse[2]));
+   SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
+
    // var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
    // SendSysMessageEx(who, ""+GetSkillBonus(who, PERCEPCAO));
    // SendSysMessageEx(who, ""+convertToRoman(cint(text)));
-   //    var targ := Target(who);
+      // var targ := Target(who);
    // var chardata := GetObjProperty(targ, "chardata");
    // chardata.class_feats := array{6};
    // SetObjProperty(targ, "chardata", chardata);

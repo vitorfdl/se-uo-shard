@@ -8,7 +8,7 @@ include ":gumps:gumpprompt";
 include ":charactercreation:feats";
 
 program Logon(who)
-   if (HaveFeat(who, "Vinculo com Anar") && !GetProcess(GetObjProperty(who, "#clericpid")))
+   if (who.Caracteristica("Clérigo de Anar") && !GetProcess(GetObjProperty(who, "#clericpid")))
       Start_Script(":magery:cleric/powerWords", array{who});
    endif
 endprogram

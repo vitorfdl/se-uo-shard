@@ -70,7 +70,7 @@ program Logon(who)
 
 	LogonPets(who);
 
-	if (GetObjProperty(who, "criandochar") || !GetObjProperty(who, "chardata"))
+	if (GetObjProperty(who, "criandochar") || GetObjProperty(who, "recriando") || !GetObjProperty(who, "chardata"))
 		start_script(":charactercreation:gumpcriacao", who);
 	endif
    
