@@ -115,7 +115,7 @@ function HealFLS(targ, amt, show_heal := 1)
 	endif
 
 	SendSystemReport(targ, amt_healed, SYSTEM_HEAL, targ);
-	if (show_heal.isA(POLCLASS_MOBILE))
+	if (show_heal.isA(POLCLASS_MOBILE) && show_heal != targ)
 		SendSystemReport(targ, amt_healed, SYSTEM_HEAL, show_heal);
       var mobs := ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY);
 	endif
