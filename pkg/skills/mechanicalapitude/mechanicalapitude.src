@@ -36,7 +36,7 @@ program skillremoveTrap(who)
       stam_c := 4;
    endif
 
-   if ( AP_ConsumeVital(who, STAMINA, stam_c) )
+   if ( !AP_ConsumeVital(who, STAMINA, stam_c) )
 		SendSysMessageEx(who, "Você está muito cansado para fazer isso.", SSM_FAIL);
 		return;
    endif

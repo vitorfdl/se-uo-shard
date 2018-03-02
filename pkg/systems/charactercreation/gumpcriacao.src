@@ -119,6 +119,11 @@ program createchar(who)
       sleepms(2);
 	endforeach
 
+   chardata.exppoints := 0;
+   chardata.Level := 1;
+   chardata.attpoints := 0;
+   chardata.talentpoints := 0;
+
    if (!chardata.recriando)
       if (chardata.raca == "Humano")
          chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");

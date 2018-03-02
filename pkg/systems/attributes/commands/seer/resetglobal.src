@@ -13,17 +13,14 @@ program textcmd_RefreshVitals(who, text)
       var acc    := FindAccount(acc_name);
       var mobile := acc.getcharacter(1);
       mobile := SystemFindObjectBySerial(mobile.serial, SYSFIND_SEARCH_OFFLINE_MOBILES);
-      // var lvl := mobile.getLevel();
-      // mobile.setLevel(0);
-      // mobile.SetExp(0);
-      // mobile.SetPoints(mobile.GetPoints() * -1);
-      // mobile.SetTalentPoints(mobile.GetTalentPoints() * -1);
-      // MoveObjectToLocation(mobile, 4756, 3541, 1, who.realm, MOVEOBJECT_FORCELOCATION);
-      // acc.SetProp("expboost", cint(lvl/2));
-      // SetObjproperty(mobile, "recriando", 1);
       var chardata := GetObjProperty(mobile, "chardata");
-      chardata.Level := 0;
+      chardata.exppoints := 0;
+      chardata.Level := 1;
+      chardata.attpoints := 0;
+      chardata.talentpoints := 0;
       SetObjproperty(mobile, "chardata", chardata);
+      MoveObjectToLocation(mobile, 4756, 3541, 1, who.realm, MOVEOBJECT_FORCELOCATION);
+      SetObjproperty(mobile, "recriando", 1);
       sleepms(2);
    endforeach
 
