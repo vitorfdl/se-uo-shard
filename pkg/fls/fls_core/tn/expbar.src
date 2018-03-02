@@ -37,7 +37,7 @@ program expBar(params)
 
    var reopen := 1;
    while (who.connected)
-      sleepms(2);
+      sleepms(80);
       GFCloseGumpTimed(who, GUMPID_EXPBAR, 60);
       var temp_gump := expbar;
       var exp_width := getExpLength(who.getExp(), who.getMaxExp(), 480);
