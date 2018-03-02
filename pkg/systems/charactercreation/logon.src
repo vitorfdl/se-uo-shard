@@ -8,4 +8,26 @@ program fixTalent(who)
    elseif (who.Caracteristica("Clérigo de Anar"))
       LearnFeat(who, "Linguagem Rúnica", 0, 0);
    endif
+
+   var attr := ReadConfigFile(":attributes:attributes");
+	foreach skill in (who.skillList())
+      var mystat := cint(AP_GetTrueSkill(who, skill));
+      var levels := GetConfigStringArray(attr[skill], "Level");
+      for i := 1 to mystat
+         foreach giv in levels
+            sleepms(2);
+            giv := SplitWords(giv);
+            if (cint(giv[1]) > mystat)
+               continue;
+            endif
+
+            if (giv[2] == "feat")
+               var new_feat := StrReplace(giv[3], "_", " ");
+               LearnFeat(who, new_feat, 0, 0);
+            endif
+         endforeach
+         sleepms(2);
+      endfor
+      sleepms(2);
+	endforeach
 endprogram
