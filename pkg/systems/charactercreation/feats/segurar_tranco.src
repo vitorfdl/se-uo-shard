@@ -8,10 +8,10 @@ include "include/client";
 
 program mestreLaminas(param)
    var who := param[1];
-   if (!who.shield)
-      SendSysMessageEx(who, "Você precisa estar equipado com um escudo para usar este talento.");
-      return;
-   endif
+   // if (!who.shield)
+   //    SendSysMessageEx(who, "Você precisa estar equipado com um escudo para usar este talento.");
+   //    return;
+   // endif
 
 	if (CheckGender(who) == 2)
 		PlaySoundEffect( who, 0x339 );
@@ -19,6 +19,7 @@ program mestreLaminas(param)
 		PlaySoundEffect( who, 0x44B );
 	endif
 
+   PrintText(who, "*grito de guerra*");
 	PerformAction(who, ANIM_HIT);
    var nearby := ListMobilesNearLocationEx( who.x ,who.y, who.z, 6, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY);
    foreach mob in nearby
