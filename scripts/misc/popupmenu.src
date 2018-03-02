@@ -12,7 +12,7 @@ program PopUpMenu( who, what )
    elseif (what.isa(POLCLASS_MOBILE) && what.npctemplate)
       return;
    elseif (who.cmdlevel >= 1 && what.isa(POLCLASS_MOBILE))
-      entries := MenuGmToPlayer(who, what);
+      entries := MenuGmToPlayer(who);
       var menuplayer := MenuPlayerToPlayer(who, what);
       foreach menu in (menuplayer.Keys())
          entries[menu] := menuplayer[menu];
@@ -77,6 +77,8 @@ program PopUpMenu( who, what )
       Start_Script(":magery:wands/changeSpell", array{who, what});
    elseif (input == "ficharp_rate")
       Start_Script(":fls_core:ficharp_rating", array{ who, what });
+   elseif(input == "ensinar")
+      Start_Script(":attributes:commands/player/ensinar", array{ who, what });
    endif
 
    return 1;
@@ -104,9 +106,12 @@ function MenuPlayerToPlayer(who, what)
       "profile"   := struct{ cliloc := 3002021 }
    };
 
-   if (Distance(who, what) <= 2)
+   if (Distance(who, what) <= 2 && who != what)
       entries.+revistar := 3002028;
-      entries.+ensinar := 3002031;
+      var last_teach := cint(GetObjProperty(who, "last_teach"));
+      if (last_teach <= GetTime())
+         entries.+ensinar := 3002031;
+      endif
    endif
 
    var disguisable := GetObjProperty(who, "#can_unmask");
@@ -129,7 +134,7 @@ function MenuPlayerToPlayer(who, what)
    return entries;
 endfunction
 
-function MenuGmToPlayer(who, what)
+function MenuGmToPlayer(who)
    return struct{
       "info"     := 3002022, 
       "ficharp"  := 3002023,
