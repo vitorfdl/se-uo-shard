@@ -35,7 +35,7 @@ exported function GetHitsMaximumValue(mobile)
 		vital_points := GetHP(mobile);
 	endif
 	
-	return cint(vital_points);
+	return cint(vital_points) + 10*100;
 endfunction
 
 // *****
