@@ -798,6 +798,10 @@ function SkillGump(who, byref chardata)
 		foreach caract in caraclist
          if (cfgcarac[caract].god && cfgcarac[caract].god != chardata.god)
             continue;
+         elseif(cfgcarac[caract].sexo && who.gender != cint(cfgcarac[caract].sexo))
+            continue;
+         elseif(cfgcarac[caract].carac && !(cfgcarac[caract].carac in mycaracs.keys()))
+            continue;
          endif
 
 
@@ -859,8 +863,8 @@ function SkillGump(who, byref chardata)
       elseif (input[0] >= 700 && input[0] < 800)
          var i := input[0] - 700;
          var car := caraclist[i];
-         if (car["Anar"] && (myhabs[MILAGRE_DE_CURA] >= 1 || myhabs[MILAGRE_DE_NECROMANCIA] >= 1 || myhabs[INSCRICAO_RUNICA] >= 1))
-            SendSysMessageEX(who, "Para remover essa característica você deve remover os pontos de milagres e incrição rúnica", SSM_FAIL);
+         if (car["Clérigo de Anar"] && (myhabs[MILAGRE_DE_CURA] >= 1 || myhabs[MILAGRE_DE_NECROMANCIA] >= 1 || myhabs[INSCRICAO_RUNICA] >= 1 || "Dádiva de Anar'Niel" in mycaracs.keys()))
+            SendSysMessageEX(who, "Para remover essa característica você deve remover os pontos de milagres, inscrição rúnica e características relacionadas a Anar", SSM_FAIL);
             continue;
          endif
 

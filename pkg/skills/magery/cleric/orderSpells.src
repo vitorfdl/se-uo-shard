@@ -20,6 +20,9 @@ program orderSpells(who, item)
 
    var cfg          := ReadConfigFile(":magery:config/cleric");
    var cleric_slots := AP_GetTrueSkill(who, MILAGRE_DE_CURA) + AP_GetTrueSkill(who, MILAGRE_DE_NECROMANCIA) + 1;
+   if (who.Caracteristica("Dádiva de Anar'Niel"))
+      cleric_slots += 1;
+   endif
 
    var cleric_list  := GetObjProperty(who, "cleric_list");
    if (!cleric_list)
