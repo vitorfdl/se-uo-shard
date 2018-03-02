@@ -24,6 +24,7 @@ program createchar(who)
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
 
+   chardata.Feats := array{};
    // remove later
    if (GetObjProperty(who, "re_stat"))
       SendSysMessageEx(who, "Por favor, distribua novamente seus status.", SSM_INFO);

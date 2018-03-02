@@ -55,7 +55,7 @@ endfunction
 // array{"Minimum Players", "Mobiles Died", "Boss Died", "Every Second", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping Near"};
 
 function StartDynamicEvent(spot, config, evententry)
-   var dynamicevent := GetDynamicEventData(evententry);
+   var dynamicevent := GetDynamicEventData(evententry, 0);
    if (!dynamicevent)
       var GmsOnlines := GetGlobalProperty("GmsOnlines");
       foreach mobile in GmsOnlines
