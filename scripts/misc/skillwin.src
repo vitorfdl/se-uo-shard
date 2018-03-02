@@ -111,6 +111,7 @@ function skillWindow(who)
       else
 		   start_script(":fls_core:tn/expbar", array{who});
       endif
+      skillWindow(who);
 	endif
 endfunction
 

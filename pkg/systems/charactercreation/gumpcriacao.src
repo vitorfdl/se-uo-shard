@@ -669,7 +669,7 @@ function SkillGump(who, byref chardata)
                if (req[1] == "god" && chardata.god != req[2])
                   pass := 1;
                   break;
-               elseif (req[1] == "charac" && !(StrReplace(req[2], "_", " ") in chardata.carac))
+               elseif (req[1] == "charac" && !(StrReplace(req[2], "_", " ") in mycaracs.keys()))
                   pass := 1;
                   break;
                endif
@@ -698,8 +698,6 @@ function SkillGump(who, byref chardata)
          if (mystat+1 <= maxup && custo <= points && mystat < 13)
             GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, 300+_attribute_name_iter);
          endif
-
-
 
          pos_x += 321;
          if (i % 2 == 0)
@@ -762,6 +760,9 @@ function SkillGump(who, byref chardata)
          var custo := getCost(attr_cfg.SkillType, mystat);
          points += custo;
          myhabs[skill] -= 1;
+          if (myhabs[skill] <= 0)
+            myhabs.erase(skill);
+         endif
       elseif (input[0] >= 600 && input[0] < 700)
          var i := input[0] - 600;
          var car := caraclist[i];
@@ -775,20 +776,28 @@ function SkillGump(who, byref chardata)
       elseif (input[0] >= 700 && input[0] < 800)
          var i := input[0] - 700;
          var car := caraclist[i];
+         if (car["Anar"] && (myhabs[MILAGRE_DE_CURA] >= 1 || myhabs[MILAGRE_DE_NECROMANCIA] >= 1 || myhabs[INSCRICAO_RUNICA] >= 1))
+            SendSysMessageEX(who, "Para remover essa característica você deve remover os pontos de milagres e incrição rúnica", SSM_FAIL);
+            continue;
+         endif
 
          var parse := SplitWords(cfgcarac[car].points, "|");
          var custo := cint(parse[1]);
          points += custo;
 
          mycaracs[car] := cint(mycaracs[car]) - 1;
-      elseif (input[0] == 200)
-         if (points <= 0)
-            chardata.skills := myhabs;
-            chardata.carac := mycaracs;
-            break;
-         else
-            SendSysMessageEX(who, "Você deve gastar todos os pontos!", SSM_FAIL);
+         if (mycaracs[car] <= 0)
+            mycaracs.erase(car);
          endif
+      elseif (input[0] == 200)
+         if (points > 0)
+            SendSysMessageEX(who, "Você deve gastar todos os pontos!", SSM_FAIL);
+            continue;
+         endif
+
+         chardata.skills := myhabs;
+         chardata.carac := mycaracs;
+         break;
       elseif (input[0] == 201)
 			return 1;
       endif
