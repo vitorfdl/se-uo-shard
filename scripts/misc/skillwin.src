@@ -294,7 +294,7 @@ function BuyHabs(who)
       var skill_name := StrReplace(attribute_name, "_", " ");
       var mystat := cint(AP_GetTrueSkill(who, attribute_name));
       var attr_cfg := attr[attribute_name];
-      if (attr_cfg.Req)
+      if (attr_cfg.Req && !who.cmdlevel)
          var requirements := GetConfigStringArray(attr_cfg, "Req");
          var pass := 0;
          foreach req in requirements
@@ -310,7 +310,7 @@ function BuyHabs(who)
          if (pass) continue; endif
       endif 
 
-      if (attr_cfg.achievement)
+      if (attr_cfg.achievement && !who.cmdlevel)
          var achiev := SplitWords(attr_cfg.achievement, " ");
          if (who.GetAchievement(achiev[1]) < cint(achiev[2]) * (mystat+1))
             continue;
