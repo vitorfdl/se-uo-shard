@@ -23,6 +23,62 @@ program createchar(who)
 	sleepms(600);
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
+
+   // remove later
+   if (GetObjProperty(who, "re_stat"))
+      SendSysMessageEx(who, "Por favor, distribua novamente seus status.", SSM_INFO);
+      var chardata := GetObjProperty(who, "chardata");
+      while (who.connected)
+         if (AttributeGump(who, chardata))
+            continue;
+         else
+            break;
+         endif
+      endwhile
+
+      if (chardata.raca["Humano"])
+         chardata.inte += 1;
+         chardata.str += 1;
+         chardata.dex += 1;
+         chardata.wis += 1;
+         chardata.con += 1;
+      elseif (chardata.raca["Meio-Elfo"])
+         chardata.dex += 2;
+         chardata.inte += 1;
+      else
+         chardata.inte += 2;
+         chardata.dex += 1;
+      endif
+
+      //Status
+      AP_SetTrueStat(who, "Strength", chardata.str);
+      AP_SetTrueStat(who, "Dexterity", chardata.dex);
+      AP_SetTrueStat(who, "Intelligence", chardata.inte);
+      AP_SetTrueStat(who, "Constitution", chardata.con);
+      AP_SetTrueStat(who, "Wisdom", chardata.wis);
+      AP_SetTrueStat(who, "Aura", chardata.aura);
+
+      chardata.hitpoints  := cint(GetBonusAttr(chardata.con)) +5;
+      var duro_de_matar := chardata.carac["Duro de Matar"];
+      if (duro_de_matar) chardata.hitpoints += duro_de_matar; endif
+
+      chardata.manapoints := cint(GetBonusAttr(chardata.inte)) +5;
+      var acumulador_mana := chardata.carac["Acumulador de Mana"];
+      if (acumulador_mana) chardata.manapoints += acumulador_mana; endif
+
+      chardata.stampoints := cint(GetBonusAttr(chardata.dex)) + 10;
+      var agil := chardata.carac["Ágil"];
+      if (agil) chardata.stampoints += agil; endif
+
+      var lento := chardata.carac["Lento"];
+      if (lento) chardata.stampoints -= lento; endif
+      
+      SetObjProperty(who, "chardata", chardata);
+      EraseObjProperty(who, "re_stat");
+      return;
+   endif
+   //remove later
+
 	AP_SetVital(who, "Hunger", 0);
 	var chardata := struct;
 
@@ -227,14 +283,8 @@ function ShowCreateGumps(who, byref chardata)
       if (!chardata.recriando)
 		   chardata := struct;
       endif
-		chardata.+Skills := dictionary;
-		chardata.+str  := 14;
-		chardata.+dex  := 13;
-		chardata.+inte := 12;
-		chardata.+con  := 10;
-		chardata.+wis  := 8;
-		chardata.+aura := 15;
-		chardata.+carac := "";
+		chardata.Skills := dictionary{};
+		chardata.carac := struct{};
 
       if (!chardata.recriando)
          if (RaceGump(who,chardata))
@@ -431,6 +481,12 @@ function ChooseGod(who, byref chardata)
 endfunction
 
 function AttributeGump(who, byref  chardata)
+   chardata.str  := 14;
+   chardata.dex  := 13;
+   chardata.inte := 12;
+   chardata.con  := 10;
+   chardata.wis  := 8;
+   chardata.aura := 15;
 	var last_attr := 0;
 	var btn_values := array{"str", "dex", "inte", "con", "wis"};
 	while (who.connected)
