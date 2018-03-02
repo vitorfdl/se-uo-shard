@@ -53,7 +53,7 @@ program start_skill(who)
       var targstat := AP_GetTrueSkill(targ, attribute_name);
 
       if (attr_cfg.Req)
-         var requirements := GetConfigStringArray(attr_cfg, "Red");
+         var requirements := GetConfigStringArray(attr_cfg, "Req");
          var pass := 0;
          foreach req in requirements
             req := SplitWords(req);
