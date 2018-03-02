@@ -81,9 +81,9 @@ function LearnFeat(who, feat, minus_point := 0, gives := 1)
 	chardata.Feats := feat_list;
 	SetObjProperty(who, "chardata", chardata);
 	
-	if (minus_point)
-		who.SetTalentPoints(-1);
-	endif
+	// if (minus_point)
+	// 	who.SetTalentPoints(-1);
+	// endif
 
    if (gives)
       foreach give_parse in (feat.give)
@@ -92,9 +92,9 @@ function LearnFeat(who, feat, minus_point := 0, gives := 1)
             createiteminBackpack(who, give_parse[2], give_parse[3]);
          elseif (give_parse[1] == "stat")
             AP_SetTrueStat(who, give_parse[2], AP_GetTrueStat(who, give_parse[2]) + cint(give_parse[3]));
-         else
-            var oldskill := AP_GetTrueSkill(who, give_parse[2]);
-            AP_SetTrueSkill(who, give_parse[2], oldskill+1);
+         // else
+         //    var oldskill := AP_GetTrueSkill(who, give_parse[2]);
+         //    AP_SetTrueSkill(who, give_parse[2], oldskill+1);
          endif
          sleepms(2);
       endforeach
