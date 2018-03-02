@@ -119,7 +119,7 @@ function ExpGain(mobile, difficulty, value := 0)
 		mobile.SetExp(exp+up_amount);
 		CheckExpUp(mobile);
       var pnt_amt := cint(GetObjProperty(mobile, "points_received"))+1;
-      if (exp+up_amount >= pnt_amt * 200)
+      if (exp+up_amount >= pnt_amt * 120)
          mobile.SetTalentPoints(1);
          SetObjProperty(mobile, "points_received", pnt_amt+1);
       endif
