@@ -135,12 +135,15 @@ endfunction
 
 function TS_ConsumeMana(mobile, qty) 
 	if (!AP_ConsumeVital(mobile, MANA, cint(qty)))
+      if (mobile.Caracteristica("Clérigo de Anar"))
+         return 0;
+      endif
 		var hit_qty := cint(qty);
       if (GetVital(mobile, MANA) > 0)
-         hit_qty -= GetVital(mobile, MANA);
+         hit_qty -= cint(GetVital(mobile, MANA));
       endif
       
-		AP_ConsumeVital(mobile, MANA, GetVital(mobile, MANA));
+		AP_ConsumeVital(mobile, MANA, cint(GetVital(mobile, MANA)));
 		ApplyDamageEX(mobile, hit_qty * 2, "FORCED");
 		if (mobile.dead)
 			return 0;

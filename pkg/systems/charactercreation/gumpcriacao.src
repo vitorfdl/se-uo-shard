@@ -230,7 +230,7 @@ program createchar(who)
 		LearnFeat(who, "Linguagem Élfica", 0, 0);
 	endif
 
-   if (who.Caracteristica("Vinculo com Anar"))
+   if (who.Caracteristica("Clérigo de Anar"))
       SysBook_CreateBook(who.backpack, "clerigo1");
 		Start_Script(":magery:cleric/powerWords", array{who});
 		start_script(":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".milagres\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
