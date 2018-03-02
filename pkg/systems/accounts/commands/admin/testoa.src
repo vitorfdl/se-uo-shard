@@ -17,16 +17,16 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
-   SendSysMessageEx(who, ""+who.Caracteristica("Clérigo de Anar"));
-   return;
-   // var parse := SplitWords(text, " ");
-   // who.setAchievement(parse[1], cint(parse[2]));
-   // SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
+   // SendSysMessageEx(who, ""+who.Caracteristica("Clérigo de Anar"));
+   // return;
+   var parse := SplitWords(text, " ");
+   who.setAchievement(parse[1], cint(parse[2]));
+   SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
 
    // var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
    // SendSysMessageEx(who, ""+GetSkillBonus(who, PERCEPCAO));
    // SendSysMessageEx(who, ""+convertToRoman(cint(text)));
-      var targ := Target(who);
+      // var targ := Target(who);
    // var chardata := GetObjProperty(targ, "chardata");
    // chardata.class_feats := array{6};
    // SetObjProperty(targ, "chardata", chardata);
@@ -50,9 +50,9 @@ program oafeatures_sendpacket(who, text)
       // PlayObjectCenteredEffectEx( who,  0x19AB, 5, 20, 0, 4, 0);
       // sleep(1);
       // printtext(who, "1 sec");
-      var acc := FindAccount(targ.acctname);
+      // var acc := FindAccount(targ.acctname);
 
-      acc.SetProp("expboost", cint(text));
+      // acc.SetProp("expboost", cint(text));
 
       // SendSysMessageEx(who, ""+acc.GetProp("expboost"));
       // PlayMovingEffectEx(who, defender, 0x0F51, 10, 10, 0, 0);

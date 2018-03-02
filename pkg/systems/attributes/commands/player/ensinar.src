@@ -60,7 +60,7 @@ program start_skill(who)
             if (req[1] == "god" && GetObjProperty(targ, "chardata").god != req[2])
                pass := 1;
                break;
-            elseif (req[1] == "charac" && !targ.Caracteristica(req[2]))
+            elseif (req[1] == "charac" && !targ.Caracteristica(StrReplace(req[2], "_", " ")))
                pass := 1;
                break;
             endif
