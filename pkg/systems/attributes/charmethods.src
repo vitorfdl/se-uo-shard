@@ -233,7 +233,7 @@ exported function Caracteristica(who, carac)
 		chardata := struct;
 	endif
 
-   if (lower(carac) in lower(chardata.carac.keys()))
+   if (carac in chardata.carac.keys())
       return 1;
    endif
 

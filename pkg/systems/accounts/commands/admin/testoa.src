@@ -17,6 +17,8 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 
 program oafeatures_sendpacket(who, text)
+   SendSysMessageEx(who, ""+who.Caracteristica("Clérigo de Anar"));
+   return;
    // var parse := SplitWords(text, " ");
    // who.setAchievement(parse[1], cint(parse[2]));
    // SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
