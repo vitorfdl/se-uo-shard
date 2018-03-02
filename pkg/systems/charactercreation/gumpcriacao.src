@@ -24,11 +24,11 @@ program createchar(who)
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
 
-   chardata.Feats := array{};
    // remove later
    if (GetObjProperty(who, "re_stat"))
       SendSysMessageEx(who, "Por favor, distribua novamente seus status.", SSM_INFO);
       var chardata := GetObjProperty(who, "chardata");
+      chardata.Feats := array{};
       while (who.connected)
          if (AttributeGump(who, chardata))
             continue;
@@ -140,6 +140,7 @@ program createchar(who)
    else
       chardata := GetObjProperty(who, "chardata");
       chardata.recriando := 1;
+      chardata.Feats := array{};
    endif
 
    //zeras as skills
