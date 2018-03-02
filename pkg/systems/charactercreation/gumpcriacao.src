@@ -159,6 +159,7 @@ program createchar(who)
       SysBook_CreateBook(who.backpack, "magia1");
       CreateItemInBackpack(who, 0x6100);
       CreateItemInBackpack(who, 0x10e4);
+		LearnFeat(who, "Linguagem Élfica", 0, 0);
    endif
 
 	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
