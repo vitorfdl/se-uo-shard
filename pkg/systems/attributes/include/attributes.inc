@@ -426,7 +426,6 @@ function Wait(mobile, segundos)
 endfunction
  
 function GetHP(mobile)
-	var cons     := CInt(AP_GetTrueStat(mobile, CONSTITUTION));
 	var chardata := GetObjProperty(mobile, "chardata");
 	var hp := 0;
 	if (chardata != error && chardata.hitpoints)

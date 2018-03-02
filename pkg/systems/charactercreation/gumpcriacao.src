@@ -95,6 +95,7 @@ program createchar(who)
          endfor
       endforeach
       SetObjProperty(who, "chardata", chardata);
+      RecalcVitals(who);
       return;
    endif
    //remove later
