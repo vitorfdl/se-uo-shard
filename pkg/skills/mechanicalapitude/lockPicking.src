@@ -96,7 +96,7 @@ function PickTreasureChest(me, lockpick, chest)
 		default: diff := 12; 
 	endcase
 
-	var dice_roll := rollAttrDice(me, DEXTERITY) + GetSkillBonus(me, "Arrombar Fechaduras");
+	var dice_roll := rollAttrDice(me, DEXTERITY) + GetSkillBonus(me, SABOTAGEM);
 	if ( dice_roll > diff )
 		SucessLockPick(me, chest);
       ExpGain(me, diff, dice_roll);
