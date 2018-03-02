@@ -73,8 +73,28 @@ program createchar(who)
       var lento := chardata.carac["Lento"];
       if (lento) chardata.stampoints -= lento; endif
       
-      SetObjProperty(who, "chardata", chardata);
       EraseObjProperty(who, "re_stat");
+
+      var attr := ReadConfigFile(":attributes:attributes");
+      foreach skill_name in (chardata.skills.keys())
+         var value := chardata.skills[skill_name];
+         for i := 1 to value
+            var gives := GetConfigStringArray(attr[skill_name], "Give");
+            foreach giv in gives
+               giv := SplitWords(giv);
+               if (giv[1] == "mana")
+                  chardata.manapoints += cint(giv[2]);
+               elseif (giv[1] == "hits")
+                  chardata.hitpoints  += cint(giv[2]);
+               elseif (giv[1] == "stam")
+                  chardata.stampoints += cint(giv[2]);
+               endif
+               sleepms(2);
+            endforeach
+               sleepms(2);
+         endfor
+      endforeach
+      SetObjProperty(who, "chardata", chardata);
       return;
    endif
    //remove later
