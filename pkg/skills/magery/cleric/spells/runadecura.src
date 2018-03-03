@@ -10,7 +10,7 @@ include "include/tileEffects";
 include ":charactercreation:habilidades";
 include ":ghaia:ghaiaUtil";
 include ":magery:tnmagery";
-include ":magery:basicmagery";
+include ":magery:basicMagery";
 
 program SpellScript(params)
 	var who := params[1];

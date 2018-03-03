@@ -7,7 +7,7 @@ include "include/sounds";
 include "include/say";
 include ":timedscripts:timedScripts";
 include "include/damage";
-include ":magery:basicmagery";
+include ":magery:basicMagery";
 var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
 
 

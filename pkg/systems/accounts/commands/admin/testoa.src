@@ -15,7 +15,7 @@ include ":gumps:gumps_ex";
 include ":timeUtils:time";
 include ":merchants:crafthelp";
 include ":ghaia:objective";
-include ":magery:basicmagery";
+include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
    // print(RandomDiceRoll("1d1+2"));
