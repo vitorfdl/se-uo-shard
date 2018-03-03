@@ -156,12 +156,12 @@ function LogOff(serial, byref timer_list, byref cooldowns)
 		
 		mobile.delBuff(cint(elem_info.Icon));
 		if( elem_info.Script )
-			var script := Start_Script(elem_info.Script, array{mobile, "LogOff", timer.level});
+			var script := Start_Script(elem_info.Script, array{mobile, "End", timer.level});
 			if( script.errortext )
 				print("Error::LogOff() - ["+elem_info.Script+"] "+script.errortext);
 			endif
-
-			script := Start_Script(elem_info.Script, array{mobile, "End", timer.level});
+         
+			script := Start_Script(elem_info.Script, array{mobile, "LogOff", timer.level});
 			if( script.errortext )
 				print("Error::LogOff() - ["+elem_info.Script+"] "+script.errortext);
 			endif

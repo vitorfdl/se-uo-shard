@@ -8,6 +8,7 @@ include "include/say";
 include "include/damage";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
 
 program explosao(params)
 	var who := params[1];

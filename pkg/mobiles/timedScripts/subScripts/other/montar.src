@@ -41,10 +41,15 @@ function EndScript(mobile, level)
    if (!TS_GetTimerInfo(mobile, "fraturaexposta"))
       PlayerSpeedSlower(mobile, 0);
    endif
+
+   if (!mobile.cmdlevel)
+      TS_StartCooldown(mobile, "montar", 15*60,0, 1);
+   endif
    return 1;
 endfunction
 
 function LogOffScript(mobile)
+   TS_LowerDuration(mobile, "montar", -1, 1);
    return 1;
 endfunction
 

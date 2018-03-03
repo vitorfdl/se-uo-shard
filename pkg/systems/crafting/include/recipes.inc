@@ -104,7 +104,7 @@ function LearnRecipe(who, recipe)
    var type             := GetConfigString(obj, "Type");
    var charges_to_learn := RecipeCharges(difficulty);
 
-   if (CheckCharges(who, recipe, charges_to_learn))
+   if (CheckCharges(who, recipe, difficulty, charges_to_learn))
       if (type == "group" || type == "kit")
          var recipes := GetConfigStringArray(obj, "Recipe");
          foreach obj_type in recipes
