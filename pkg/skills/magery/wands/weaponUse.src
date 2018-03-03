@@ -41,7 +41,7 @@ program useWeapon(who, weapon)
 
    var elems := FindAllElemInArray(spell_list, active_spell);
    WriteSpellInfo(active_spell);
-   active_spell.powered := elems.Size()-1;
+   active_spell.powered := elems.Size();
    
 	Start_Script("cast_spell", array{who, active_spell, weapon});
 endprogram

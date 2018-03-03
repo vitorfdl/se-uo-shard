@@ -35,7 +35,7 @@ exported function SetPetProperties(pet, new_props)
       props["loyalt"] := cint(new_props["loyalt"]);
    endif   
    
-   if (new_props["points"] && cint(new_props["points"]))
+   if (typeof(new_props["points"]) == "Integer")
       props["points"] := cint(new_props["points"]);
    endif   
    
@@ -98,6 +98,32 @@ exported function InitPetProperties(pet, reset := 0)
    endif
 
    SetPetProperties(pet, props);
+
+   var hist := GetObjproperty(pet, "pet_hist");
+   if (!hist) hist := struct{}; endif
+
+   foreach k in (hist.keys())
+      case (k)
+         "hits":
+            var hitsmod := cint(GetObjProperty(pet, "hitsmod"));
+            hitsmod -= hist[k];
+            if (hitsmod <= 0) 
+               EraseObjProperty(pet, "hitsmod");
+            else
+               SetObjProperty(pet, "hitsmod", hitsmod);
+            endif
+            break;
+         "str":
+            var str := AP_GetTrueStat(pet, STRENGTH);
+            str -= hist[k];
+            AP_SetTrueStat(pet, STRENGTH, str);
+         "dex":
+            var dex := AP_GetTrueStat(pet, DEXTERITY);
+            dex -= hist[k];
+            AP_SetTrueStat(pet, DEXTERITY, dex);
+      endcase
+   endforeach
+   EraseObjProperty(pet, "pet_hist");
 endfunction
 
 exported function SetLoyalt(pet, amount := 1)
@@ -160,6 +186,14 @@ exported function isTamable(pet)
    endif
    
    return 1;
+endfunction
+
+exported function SetHist(pet, attr, p)
+   var hist := GetObjproperty(pet, "pet_hist");
+   if (!hist) hist := struct{}; endif
+
+   hist[attr] := cint(hist[attr]) + p;
+   SetObjProperty(pet, "pet_hist", hist);
 endfunction
 
 exported function rollPetDice(pet, command, tame_difficulty)

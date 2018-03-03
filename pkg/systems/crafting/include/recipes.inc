@@ -1,11 +1,13 @@
 use polsys;
 use datafile;
+use cfgfile;
 
 include ":gumps:yesno";
 include ":gumps:requestgump";
 include ":timedscripts:timedScripts";
 include "include/say";
 include "include/objtype";
+include ":attributes:attributes";
 
 function HaveRecipe(who, objtype)
    var items := GetObjProperty(who,  "recipes");
@@ -45,35 +47,40 @@ function AddRecipe(who, objtype)
    return 1;
 endfunction
 
-function CheckCharges(who, recipe, charges_to_learn)
+function CheckCharges(who, recipe, recipe_diff, charges_to_learn)
    var charge_list := GetObjProperty(recipe, "learning");
    if (!charge_list)
       charge_list := array{};
    endif
 
-   var already_learning := FindInArray(charge_list, struct{ person := who.serial });
-   
-   if (already_learning)
-      var charges := charge_list[already_learning].charges;
-      if (charges+1 >= charges_to_learn)
-         return 1;
+   var diceroll := rollAttrDice(who, INTELLIGENCE);
+   if (diceroll > cint(recipe_diff)-2)
+      var already_learning := FindInArray(charge_list, struct{ person := who.serial });
+
+      if (already_learning)
+         var charges := charge_list[already_learning].charges;
+         if (charges+1 >= charges_to_learn)
+            return 1;
+         endif
+
+         charge_list[already_learning].charges += charges;
+         SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
+      else
+         var charges := 0;
+         if (charges+1 >= charges_to_learn)
+            return 1;
+         endif
+         
+         var me_learning := struct{ "person" := who.serial, "charges" := 1};
+         charge_list.append(me_learning);
+         SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
       endif
-
-      charge_list[already_learning].charges += charges;
-      SetObjProperty(recipe, "learning", charge_list);
-      TS_StartCooldown(who, "learning_recipe", 60*15);
-      return 0;
+   else
+     SendSysMessageEx(who, "Você não entendeu bem a receita.", SSM_INFO);
    endif
 
-   var charges := 0;
-   if (charges+1 >= charges_to_learn)
-      return 1;
-   endif
-   
-   var me_learning := struct{ "person" := who.serial, "charges" := 1};
-   charge_list.append(me_learning);
    SetObjProperty(recipe, "learning", charge_list);
-   TS_StartCooldown(who, "learning_recipe", 60*15);
+   TS_StartCooldown(who, "learning_recipe", 60*5);
    return 0;
 endfunction
 
@@ -116,6 +123,5 @@ function LearnRecipe(who, recipe)
 endfunction
 
 function SendLearnMessage(who)
-   SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
-   SendSysMessageEx(who, "Sera possivel ler uma receita novamente em 15 minutos.", SSM_INFO);
+   SendSysMessageEx(who, "Será possivel ler uma receita novamente em 5 minutos.", SSM_INFO);
 endfunction

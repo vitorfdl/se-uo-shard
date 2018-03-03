@@ -45,15 +45,22 @@ endprogram
 function addScroll(who, book, scroll)
 	var spell_id    := GetObjProperty(scroll, "spell_id");
 	var spell_list := GetObjProperty(book, "spells");
+	var spells_powered := GetObjProperty(book, "spells_powered");
 	if (spell_list == error)
-		spell_list := array;
+		spell_list := array{};
 	endif
-	
+
+	if (typeof(spells_powered) != "Dictionary")
+		spells_powered := dictionary{};
+	endif
+
+   if (!spells_powered[spell_id]) spells_powered[spell_id] := 0; endif
+
 	if (!spell_id)
 		SendSysMessageEx(who, "Este não parece um pergaminho de magia.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
-	elseif( spell_list.Size() > 15 )
+	elseif( spell_list.Size() > 15 && !FindInArray(spell_list, spell_id) )
 		SendSysMessageEx(who,"Este livro ja esta cheio.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
@@ -61,8 +68,8 @@ function addScroll(who, book, scroll)
 		SendSysMessageEx(who,"Cancelado", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
-	elseif (FindInArray(spell_list, spell_id))
-		SendSysMessageEX(who,"O grimorio já possui esta magia.", SSM_FAIL);
+	elseif (spells_powered[spell_id] >= 13)
+		SendSysMessageEX(who,"Esta magia já está nivelada ao máximo no grimório", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
    elseif (TS_GetCooldown(who, "learning_recipe") && !who.cmdlevel)
@@ -74,25 +81,39 @@ function addScroll(who, book, scroll)
    var spellinfo := spell_id;
    WriteSpellInfo(spellinfo);
 
+   if (spells_powered[spell_id]+1 > AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)))
+		SendSysMessageEX(who,"Você é incapaz de melhorar essa magia por enquanto.", SSM_FAIL);
+		MoveItemToContainer(scroll, who.backpack);
+		return 0;
+   endif
+
    var recipe_charges := (spellinfo.circle * 2) -1;
 
    if (recipe_charges < 1)
       recipe_charges := 1;
    endif
 
-   if (!CheckCharges(who, scroll, recipe_charges))
+   if (!CheckCharges(who, scroll, spellinfo.difficulty, recipe_charges))
 		SendLearnMessage(who);
       MoveItemToContainer(scroll, who.backpack);
       return 0;
    endif
 	
 	Set_Critical(1);
+   if (!FindInArray(spell_list, spell_id))
+      spell_list.Append(spell_id);
+      spells_powered[spell_id] += 1;
 
-	spell_list.Append(spell_id);
+      SetObjProperty(book, "spells", spell_list);
+	   SetObjProperty(book, "spells_powered", spells_powered);
+	   SendSysMessageEx(who, "Você adicionou o pergaminho no livro.", SSM_INFO);
+   else
+      if (cint(spells_powered[spell_id]) <= 0) spells_powered[spell_id] := 1; endif
+      spells_powered[spell_id] += 1;
+	   SetObjProperty(book, "spells_powered", spells_powered);
+      SendSysMessageEx(who, "Você melhorou sua magia no livro.", SSM_INFO);
+   endif
 
-	SetObjProperty(book, "spells", spell_list);
-
-	SendSysMessageEx(who, "Você adicionou o pergaminho no livro.", SSM_INFO);
 	ReleaseItem(scroll);
 	DestroyItem(scroll);
 	Set_Critical(0);

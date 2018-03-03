@@ -17,6 +17,7 @@ include ":charactercreation:habilidades";
 
 program animateSword(params)
 	var who := params[1];
+	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 	
@@ -47,7 +48,9 @@ program animateSword(params)
       var itemcfg := ReadConfigFile(":combat:itemdesc");
       if (itemcfg[hex(targ.objtype)])
          SetObjProperty(summoned, "dicedmg", targ.Damage);
+         SetObjProperty(summoned, "dmgbonus", spellinfo.powered);
       endif
+
       case (targ.objtype)
          0x13b9: summoned.graphic:= 643;
          0xf51: summoned.graphic:= 622;

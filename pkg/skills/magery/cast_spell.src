@@ -202,10 +202,11 @@ endprogram
 function ChooseTarget(mobile, spellinfo)
    var targ;
    var move_script := start_script(":magery:canceltarget_if_move", mobile);
-   if (spellinfo.powered_move)
+   if (spellinfo.powered_move && spellinfo.powered >= 5)
       move_script.kill();
       SendSysMessageEx(mobile, "Você pode se mover para escolher o alvo como resultado de uma magia fortificada.", SSM_INFO);
    endif
+   
    if (spellinfo.alvo == "Self")
       targ := mobile;
    elseif (spellinfo.alvo == "Unico")
@@ -226,7 +227,7 @@ function ChooseTarget(mobile, spellinfo)
                break;
             elseif (spellinfo.targettype == "Mobile" && !targ.isA(POLCLASS_MOBILE))
                SendSysMessageEx(mobile, "Você deve escolher uma criatura como alvo.", SSM_FAIL);
-            elseif (spellinfo.targettype == "Item" && !targ.isA(POLCLASS_ITEM))
+            elseif (spellinfo.targettype == "Item" && !targ.isA(POLCLASS_ITEM) && !targ.isA(POLCLASS_CONTAINER))
                SendSysMessageEx(mobile, "Você deve escolher um objeto como alvo", SSM_FAIL);
             else
                break;

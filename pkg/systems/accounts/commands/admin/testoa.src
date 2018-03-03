@@ -15,13 +15,17 @@ include ":gumps:gumps_ex";
 include ":timeUtils:time";
 include ":merchants:crafthelp";
 include ":ghaia:objective";
+include ":magery:basicmagery";
 
 program oafeatures_sendpacket(who, text)
+   // print(RandomDiceRoll("1d1+2"));
+   var targ := Target(who);
+   targ.SetPoints(1);
    // SendSysMessageEx(who, ""+who.Caracteristica("Clérigo de Anar"));
-   // return;
-   var parse := SplitWords(text, " ");
-   who.setAchievement(parse[1], cint(parse[2]));
-   SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
+   // // return;
+   // var parse := SplitWords(text, " ");
+   // who.setAchievement(parse[1], cint(parse[2]));
+   // SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
 
    // var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
    // SendSysMessageEx(who, ""+GetSkillBonus(who, PERCEPCAO));

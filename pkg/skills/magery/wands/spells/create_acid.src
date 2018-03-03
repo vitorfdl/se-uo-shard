@@ -18,7 +18,7 @@ program animateSword(params)
       var point := randomPlace(targ, 4);
       var item := CreateItemAtLocation(point.x, point.y, targ.z, "acid", 1, who.realm);
       SetObjProperty(item, "owner", who.serial);
-      SetObjProperty(item, "AcidDice", "2d2+{}".format(AP_GetStat(who, INTELLIGENCE, RETURN_BONUS)));
+      SetObjProperty(item, "AcidDice", MageDiceTable("A", cint(spellinfo.powered)));
       PrintText(item, "*ácido se forma no chão*");
       sleepms(2);
    endfor

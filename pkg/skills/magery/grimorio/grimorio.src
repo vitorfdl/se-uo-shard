@@ -6,6 +6,7 @@ include ":gumps:requestgump";
 include ":tn:tngumps";
 include ":magery:tnmagery";
 include "include/say";
+include "include/utils";
 include ":attributes:attributes";
 include ":containers:containers";
 include ":itemutils:itemdesc";
@@ -57,7 +58,8 @@ program book(who, book)
 			SendSysMessageEx(who, "Algum erro ocorreu com sua magia, avise um GM.", SSM_FAIL);
 			return 1;
 		endif
-		WriteMagic(who, spells[spell]);
+	   var powered_list := GetObjProperty(book, "spells_powered");
+		WriteMagic(who, spells[spell], powered_list[spells[spell]]);
 	endif
 
 endprogram
@@ -100,9 +102,15 @@ endfunction
 
 function CreateBookGump(book, can_read := 0, can_trip := 0)
 	var spell_list := GetObjProperty(book, "spells");
+	var powered_list := GetObjProperty(book, "spells_powered");
 	if( TypeOf(spell_list) != "Array" )
 		spell_list := array{};
 		SetObjProperty(book, "spells", spell_list);
+	endif
+
+	if( TypeOf(powered_list) != "Dictionary" )
+		powered_list := dictionary{};
+		SetObjProperty(book, "spells_powered", powered_list);
 	endif
 
 	var book_gump := GFCreateGump();
@@ -164,7 +172,7 @@ function CreateBookGump(book, can_read := 0, can_trip := 0)
          GFAddButton(book_gump, 125, 14, 2205, 2205, GF_PAGE_BTN, book_gump.cur_page-1);
       endif
       
-		GenerateFilledSide(book_gump, spell_list, book_gump.cur_page, side, pOX, pOY, i, can_trip);
+		GenerateFilledSide(book_gump, spell_list, book_gump.cur_page, side, pOX, pOY, i, can_trip, powered_list);
 
 		SleepMS(2);
 	endfor
@@ -176,7 +184,7 @@ endfunction
 // Generate every page of the book. And the button for the First page.
 // Inside generate empty page too
 //-----------------
-function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, spell_pos, can_trip)
+function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byref pOY, spell_pos, can_trip, powered_list)
 	var sOX := 160;
    var difX := 0;
 	if (side == 2)
@@ -185,6 +193,9 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 	endif
    // print(spell_pos);
 	var spell_entry := spell_list[spell_pos];
+   var powered := cint(powered_list[spell_entry]);
+   if (!powered) powered := 1; endif
+
 	WriteSpellInfo(spell_entry);
 	spell_entry.description := "<BASEFONT COLOR=#000066>{}<br>{}<br><br> <BASEFONT COLOR=#330000> Componentes <br>".format(cstr(spell_entry.description), cstr(spell_entry.flavortext));
 
@@ -196,6 +207,7 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 	spell_entry.description := "{}Mana: {}".format(spell_entry.description, spell_entry.mana);
 	if( TypeOf(spell_entry) == "Struct" )
 		if( spell_entry.name )
+         spell_entry.name += " {}".format(convertToRoman(powered));
 			// This puts the rune in page 1's list.
 			GFPage(book_gump, 1);
 			GFTextCrop(book_gump, pOX,  pOY, 115, 17, 995, spell_entry.name);

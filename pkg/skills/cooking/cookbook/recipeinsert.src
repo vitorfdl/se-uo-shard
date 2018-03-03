@@ -77,7 +77,7 @@ function addScrollOnBook(who, book, recipe)
       SendSysMessageEx(who, "Sua mente ainda esta absorvendo a ultima receita que leu.", SSM_FAIL);
       MoveItemToContainer(recipe, who.backpack);
       return 0;
-	elseif (!CheckCharges(who, recipe, RecipeCharges(diff)))
+	elseif (!CheckCharges(who, recipe, diff, RecipeCharges(diff)))
 		SendLearnMessage(who);
       MoveITemToContainer(recipe, who.backpack);
 		return 0;

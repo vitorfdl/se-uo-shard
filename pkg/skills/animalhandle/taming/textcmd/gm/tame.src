@@ -20,6 +20,7 @@ program Tame(who)
 		targ.script := ":ghaia:follower";
 		RestartScript(targ);
       AddPet(who, targ.serial);
+      targ.InitPetProperties(1);
 		targ.SetMaster(who);
 		
 		Run_Script_To_Completion(":death:npcdeath", {targ});

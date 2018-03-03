@@ -52,9 +52,7 @@ endfunction
 
 function TNCheckReagents(who, byref spellinfo, item)
 	if ( item.isa(POLCLASS_ITEM) && spellinfo.charges )
-      if (spellinfo.powered)
-         spellinfo.charges *= spellinfo.powered+1;
-      endif
+      spellinfo.charges *= spellinfo.powered;
 
       if (AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)) >= 9)
          spellinfo.charges /= 2;
@@ -122,7 +120,7 @@ function GetSpellDuration(skill)
 	return cint(skill/10)*60 + 300;
 endfunction
 
-function WriteMagic(who, spell_id)
+function WriteMagic(who, spell_id, spell_power)
 	var items_bag := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
 if (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
 		SendSysMessageEx(who, "Você precisa de uma faca para entalhar", SSM_FAIL);
@@ -165,8 +163,9 @@ if (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.b
 		return;
 	elseif (GetObjProperty(targ, "serialid") && GetObjProperty(targ, "serialid") != who.serial)
 		return;
-	elseif (spell_list.size() >= magic_slot)
+	elseif (spell_list.size()+spell_power > magic_slot)
 		SendSysMessageEx(who, "Este objeto não possui mais espaço para magias!", SSM_FAIL);
+		SendSysMessageEx(who, "Necessário {} slots".format(spell_power), SSM_FAIL);
 		return;
 	elseif (spell_id in spell_list)
 		SendSysMessageEx(who, "O equipamento ja tem essa magia!", SSM_FAIL);
@@ -175,14 +174,6 @@ if (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.b
 		SendSysMessageEx(who, "Você não pode gravar em itens de outra pessoa!", SSM_FAIL);
 		return;
 	endif
-
-   var is_dbl := 0;
-   // if (HaveFeat(who, "Magia Poderosa") && magic_slot - spell_list.size() >= 2)
-   //    if (YesNo(who, "Deseja usar o dobro de slots para esta magia? (Magia Poderosa)", "Sim", "Não"))
-   //       is_dbl := 1;
-   //       spellinfo.difficulty += 1;
-   //    endif
-   // endif
 
 	var loc := array{who.x, who.y};
 	for i := 1 to 2
@@ -211,10 +202,9 @@ if (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.b
 	endif
 
 	ExpGain(who, spellinfo.difficulty+3, dice_roll);
-	spell_list.append(spell_id);
-   if (is_dbl)
-      spell_list.append(spell_id);
-   endif
+   for i := 1 to spell_power
+	   spell_list.append(spell_id);
+   endfor
 	SetObjProperty(targ, "serialid", who.serial);
 	SetObjProperty(targ, "spell_list", spell_list);
 	SetObjProperty(targ, "magicwho", array{ who.serial });

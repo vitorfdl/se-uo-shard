@@ -7,11 +7,13 @@ include "include/sounds";
 include "include/say";
 include ":timedscripts:timedScripts";
 include "include/damage";
+include ":magery:basicmagery";
 var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
 
 
 program SpellScript(params)
 	var who       := params[1];
+   var spellinfo := params[2];
    var dice_roll := params[2].dice_roll;
 	var targ      := params[3];
 	params := 0; // No longer needed
@@ -32,7 +34,7 @@ program SpellScript(params)
    var hostiles := ListHostiles(who);
    var z := who.z;
 
-   var dmg_dice := RandomDiceRoll("2d6+2");
+   var dmg_dice := RandomDiceRoll(MageDiceTable("C", spellinfo.powered));
    foreach p in pos
       if (targ.z > z)
          z += 1;

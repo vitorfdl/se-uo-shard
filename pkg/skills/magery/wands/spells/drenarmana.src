@@ -20,7 +20,8 @@ program drenarmana(params)
    endif
 
    PlayObjectCenteredEffect( targ, 0x3728, 1, 2 );
-   var nums := 3 + cint(spell_info.powered * 2);
+   
+   var nums := 3 + cint(spell_info.powered);
 
    SendSystemReport(targ, "Sente sua alma sendo drenada");
 

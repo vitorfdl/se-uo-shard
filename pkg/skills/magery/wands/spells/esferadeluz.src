@@ -35,7 +35,7 @@ program esferadeluz(params)
       summoned.color := 1939;
 		
       SetName(summoned, "Esfera de Fogo");
-		var duration := AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
+		var duration := spell_info.powered *2;
 		if (duration <= 1)
 			duration := 2;
 		endif
@@ -44,7 +44,7 @@ program esferadeluz(params)
 		TS_StartTimer(summoned, "summon", duration);	
 
       var new_owner := who.serial;
-      if (spell_info.powered)
+      if (spell_info.powered >= 3)
          SendSysMessageEx(who, "Escolha um alvo para a esfera seguir.", SSM_INFO);
          var targ := Target(who);
          if (targ)

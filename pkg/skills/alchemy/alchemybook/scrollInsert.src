@@ -74,7 +74,7 @@ function addScroll(who, book, recipe)
 	elseif (TS_GetCooldown(who, "learning_recipe"))
       SendSysMessageEx(who, "Sua mente ainda esta absorvendo a ultima receita que leu.", SSM_FAIL);
       return 0;
-	elseif (!CheckCharges(who, recipe, RecipeCharges(diff)))
+	elseif (!CheckCharges(who, recipe, diff, RecipeCharges(diff)))
 		SendLearnMessage(who);
 		return 0;
 	endif

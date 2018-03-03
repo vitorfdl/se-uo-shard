@@ -43,13 +43,13 @@ program animateSword(params)
    endif
 
    PrintText(item, "*Fogo se move de forma não natural*");
-   var shards := 3 + (cint(spellinfo.powered)*2);
+   var shards := 2 + cint(spellinfo.powered);
 
    var i;
    for (i := 1; i <= shards; i+=1)
 	   PlayMovingEffect(item, targ, 0x36E4, 10, 3, 1);
       PlaySoundEffect(item, 0x209);
-      var roll_dice := RandomDiceRoll("1d4+1");
+      var roll_dice := RandomDiceRoll(MageDiceTable("B", 1));
       
       if (rollResistDice(targ, DEXTERITY) > spellinfo.dice_roll)
          roll_dice := roll_dice / 2;

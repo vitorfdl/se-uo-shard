@@ -10,6 +10,7 @@ include "include/tileEffects";
 include ":charactercreation:habilidades";
 include ":ghaia:ghaiaUtil";
 include ":magery:tnmagery";
+include ":magery:basicmagery";
 
 program SpellScript(params)
 	var who := params[1];
@@ -27,16 +28,9 @@ program SpellScript(params)
 	SetObjProperty(item, "timeexpire", polcore().systime+30);
 	
 	PrintText(item, "*Surge aos poucos*");
-   var level := who.getLevel();
-   level := Ceil(level / 4);
-   if (level < 1)
-      level := 1;
-   endif
+   var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
 
-   level += 1;
-
-   var dice := "{}d4+3".format(level);
-	var healed := RandomDiceRoll(dice);
+	var healed := RandomDiceRoll(MageDiceTable("B", level));
 
 	SetObjProperty(item, "healamount", healed);
 endprogram

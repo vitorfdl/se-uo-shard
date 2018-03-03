@@ -170,6 +170,7 @@ function taming(who)
 			
 			Run_Script_To_Completion(":death:npcdeath", {targ});
 			AddPet(who, targ.serial);	
+         targ.InitPetProperties(1);
 			break;
 		endif
 		

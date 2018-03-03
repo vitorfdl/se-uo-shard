@@ -121,11 +121,9 @@ program start_skill(who)
       var targstat := AP_GetTrueSkill(targ, skill_name);
       var achiev := SplitWords(attr_cfg.achievement, " ");
       
-      for i := 1 to 2
-         PrintText(who, "ensinando");
-         PrintText(targ, "aprendendo");
-         sleep(1);
-      endfor
+      PrintText(who, "*ensinando algo*");
+      PrintText(targ, "*aprendendo*");
+      sleep(1);
 
       targ.SetAchievement(achiev[1], cint(achiev[2]) * (targstat+1));
 

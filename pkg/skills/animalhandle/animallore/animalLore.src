@@ -56,6 +56,36 @@ program skill_animal_lore( who )
       // Create the Gump
       var al_Gump := AL_LoadGump(who, creature, cfg);
       var input := GFSendGump(who, al_Gump);
+
+      if (input[0] == 401) //hit
+         creature.SetPoints(-1);
+         var hitsmod := cint(GetObjProperty(creature, "hitsmod"));
+         SetObjProperty(creature, "hitsmod", hitsmod+3);
+         creature.SetHist("hits", 3);
+         RecalcVitals(creature);
+         SendSysMessageEx(who, "A vida de {} foi aumentado em 3".format(creature.name), SSM_INFO);
+      elseif (input[0] == 402) //str
+         creature.SetPoints(-1);
+         var str := AP_GetTrueStat(creature, STRENGTH);
+         AP_SetTrueStat(creature, STRENGTH, str+1);
+         creature.SetHist("str", 1);
+         SendSysMessageEx(who, "A força de {} foi aumentado em 1".format(creature.name), SSM_INFO);
+      elseif (input[0] == 403) //dex
+         creature.SetPoints(-1);
+         var str := AP_GetTrueStat(creature, DEXTERITY);
+         AP_SetTrueStat(creature, DEXTERITY, str+1);
+         RecalcVitals(creature);
+         creature.SetHist("dex", 1);
+         SendSysMessageEx(who, "A destreza de {} foi aumentado em 1".format(creature.name), SSM_INFO);
+      elseif (input[0] >= 500)
+         var pet_properties := creature.GetPetProperties();
+         var cmm := input[0]-500;
+         var command := pet_properties.commands.keys()[cmm];
+         if (!command) return; endif
+         creature.SetPoints(-1);
+         creature.SetCommand(command, 1);
+         SendSysMessageEx(who, "O comando {} de {} foi aumentado em 1".format(TranslateComm(command), creature.name), SSM_INFO);
+      endif
    else
       PrintTextAbovePrivate(creature, "Você falha em conseguir examinar este animal.", who);
    endif
@@ -136,9 +166,14 @@ function AL_LoadGump(who, creature, cfg)
    GFHTMLArea(gump, 280, 222,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(str)+"</div>");
    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Destreza");
    GFHTMLArea(gump, 280, 240,  75, 18, "<basefont color=#4A3929><div align=right>"+CStr(dex)+"</div>");
-   GFGumpPic(gump, 128, 278, 2086);
+   if (cint(pet_properties.points) >= 1)
+      GFAddButton(gump, 130, 168, 55, 55, GF_CLOSE_BTN, 401);
+      GFAddButton(gump, 130, 222, 55, 55, GF_CLOSE_BTN, 402);
+      GFAddButton(gump, 130, 240, 55, 55, GF_CLOSE_BTN, 403);
+   endif
    
    if (AP_GetTrueSkill(who, TRATO_ANIMAIS) >= 2)
+      GFGumpPic(gump, 128, 278, 2086);
       GFHTMLArea(gump, 147, 276, 160, 18, "<basefont color=#A52A2A>Detalhes");
       GFHTMLArea(gump, 147, 294, 160, 18, "<basefont color=#4A3929>Personalidade");
       GFHTMLArea(gump, 280, 294, 160, 18, "<basefont color=#4A3929>"+pet_properties.personality);
@@ -151,16 +186,14 @@ function AL_LoadGump(who, creature, cfg)
       GFPage(gump, gump.cur_page+1);
       GFGumpPic(gump, 128, 152, 2086);
       GFHTMLArea(gump, 147, 150, 160, 18, "<basefont color=#A52A2A>Trato de Animais");
-      GFHTMLArea(gump, 153, 168, 160, 18, "<basefont color=#4A3929>Atacar");
-      GFHTMLArea(gump, 320, 168,  35, 18, "<basefont color=#4A3929><div align=right>"+pet_properties.commands.Attack+"</div>");
-      GFHTMLArea(gump, 153, 186, 160, 18, "<basefont color=#4A3929>Defender");
-      GFHTMLArea(gump, 320, 186,  35, 18, "<basefont color=#4A3929><div align=right>"+pet_properties.commands.Defend+"</div>");
-      GFHTMLArea(gump, 153, 204, 160, 18, "<basefont color=#4A3929>Seguir/Ir");
-      GFHTMLArea(gump, 320, 204,  35, 18, "<basefont color=#4A3929><div align=right>"+pet_properties.commands.Follow+"</div>");
-      GFHTMLArea(gump, 153, 222, 160, 18, "<basefont color=#4A3929>Parar");
-      GFHTMLArea(gump, 320, 222,  35, 18, "<basefont color=#4A3929><div align=right>"+pet_properties.commands["Hold"]+"</div>");
-      GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Patrulhar");
-      GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+pet_properties.commands.Patrol+"</div>");
+      foreach comm in (pet_properties.commands.keys())
+         var pos := (_comm_iter-1) * 18;
+         GFHTMLArea(gump, 153, 168+pos, 160, 18, "<basefont color=#4A3929>{}".format(TranslateComm(comm)));
+         GFHTMLArea(gump, 320, 168+pos,  35, 18, "<basefont color=#4A3929><div align=right>"+pet_properties.commands[comm]+"</div>");
+         if (cint(pet_properties.points) >= 1 && pet_properties.commands[comm] < 5)
+            GFAddButton(gump, 130, 168+pos, 55, 55, GF_CLOSE_BTN, _comm_iter+500);
+         endif
+      endforeach
       // GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>");
       // GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+arp+"</div>");
       GFGumpPic(gump, 128, 278, 2086);
@@ -171,8 +204,9 @@ function AL_LoadGump(who, creature, cfg)
       GFHTMLArea(gump, 320, 312,  35, 18, "<basefont color=#4A3929><div align=right>"+cint(pet_properties.points)+"</div>");
       // GFHTMLArea(gump, 153, 312, 160, 18, "<basefont color=#4A3929>Táticas");
       // GFHTMLArea(gump, 320, 312,  35, 18, "<basefont color=#4A3929><div align=right>"+tactStr+"</div>");
+
+
       GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, gump.cur_page-1);
-   endif
 
    // GFAddButton(gump, 340, 358, 5601, 5605, GF_PAGE_BTN, 3);
 
@@ -190,6 +224,18 @@ function AL_LoadGump(who, creature, cfg)
 //    GFHTMLArea(gump, 153, 240, 160, 18, "<basefont color=#4A3929>Veneno");
 //    GFHTMLArea(gump, 320, 240,  35, 18, "<basefont color=#4A3929><div align=right>"+darp+"</div>");
    // GFAddButton(gump, 317, 358, 5603, 5607, GF_PAGE_BTN, 2);
+   endif
 
    return gump;
+endfunction
+
+function TranslateComm(comm)
+   case (comm)
+      "Attack": return "Atacar";
+      "Defend": return "Defender";
+      "Follow": return "Seguir/Ir";
+      "Hold": return "Parar";
+      "Patrol": return "Patrulhar";
+      default: return comm;
+   endcase
 endfunction

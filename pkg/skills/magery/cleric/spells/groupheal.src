@@ -7,6 +7,7 @@ include "include/client";
 include "include/sounds";
 include "include/say";
 include "include/damage";
+include ":magery:basicmagery";
 
 program SpellScript(params)
 	var who := params[1];
@@ -55,7 +56,8 @@ program SpellScript(params)
 	endwhile
 	
 	if (success)
-		var healed := RandomDiceRoll("2d4+4");
+      var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
+		var healed := RandomDiceRoll(MageDiceTable("C", level));
 		
 		PlaySoundEffectXYZ(targ.x, targ.y, targ.z, SFX_SPELL_HEAL);
 		foreach mobile in ListMobilesNearLocation( targ.x, targ.y, targ.z, 2)

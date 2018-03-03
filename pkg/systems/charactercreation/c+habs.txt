@@ -153,7 +153,7 @@ Quem possuir habilidade em carpintaria será capaz de produzir todo o tipo de obj
 +4: Obra Prima
 
 Costura simples
-Este é o artesão que faz trabalhos em pano e couro. Sua abrangéncia vai de camisetas, calças, vestidos, botas, armaduras de couro até selas para montaria.
+Este é o artesão que faz trabalhos em pano e couro. Sua abrangéncia vai de camisetas, calças, vestidos, botas, armaduras de couro até arreio para montaria.
 +2: Outros materiais
 +4: Obra Prima
 
