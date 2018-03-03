@@ -122,7 +122,7 @@ endfunction
 
 function WriteMagic(who, spell_id, spell_power)
 	var items_bag := EnumerateItemsInContainer(who.backpack, ENUMERATE_IGNORE_LOCKED);
-if (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
+   if (!SearchArrayOfModel("objtype", cint(0x10e4), EnumerateItemsInContainer(who.backpack))) 
 		SendSysMessageEx(who, "Você precisa de uma faca para entalhar", SSM_FAIL);
 		return;
 	endif

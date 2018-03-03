@@ -59,7 +59,9 @@ program book(who, book)
 			return 1;
 		endif
 	   var powered_list := GetObjProperty(book, "spells_powered");
-		WriteMagic(who, spells[spell], powered_list[spells[spell]]);
+      var power := cint(powered_list[spells[spell]]);
+      if (power <= 1) power := 1; endif
+		WriteMagic(who, spells[spell], power);
 	endif
 
 endprogram
