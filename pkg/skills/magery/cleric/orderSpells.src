@@ -29,7 +29,7 @@ program orderSpells(who, item)
       cleric_list := array{};
    endif
 
-   var spell_list      := array{};
+   var spell_list := array{};
    var slots_used := 0;
    foreach spell in (GetConfigIntKeys(cfg))
       sleepms(2);

@@ -67,24 +67,10 @@ function check_for_cows(who, theobj)
 endfunction
 
 function check_for_water(who, theobj)
-    if ((theobj.objtype >= 0x1796) && (theobj.objtype <= 0x17b2) )
+   var objt := theobj.objtype;
+    if ((objt >= 0x1796) && (objt <= 0x17b2) || (objt >= 0x346e) && (objt <= 0x3530) || (objt >= 0x00A8) && (objt <= 0x00AB))
         return 1;
-    elseif ((theobj.objtype >= 0x346e) && (theobj.objtype <= 0x3530))
-        return 1;
-    elseif ((theobj.objtype >= 0xb41) && (theobj.objtype <= 0xb44))
-       var agua := GetObjProperty(theobj, "agua");
-       if (!agua)
-          return 0;
-       else
-          if (agua  < 3)
-            return 0;
-          else
-            agua := agua -3;
-          endif
-          SetObjProperty(theobj, "agua", agua);
-          return 1;
-       endif
-    elseif (theobj.objtype == 0x0e7b || theobj.objtype == 0x154d)
+    elseif ((objt >= 0xb41) && (objt <= 0xb44) || (objt == 0x0e7b || objt == 0x154d))
        var agua := GetObjProperty(theobj, "agua");
        if (!agua)
           return 0;

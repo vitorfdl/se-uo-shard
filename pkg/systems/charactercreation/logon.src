@@ -3,10 +3,11 @@ include ":attributes:attributes";
 include ":charactercreation:feats";
 
 program fixTalent(who)
-   if ((AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade")))
+   if (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade") || who.isRace("Elfo"))
       LearnFeat(who, "Linguagem Élfica", 0, 0);
    elseif (who.Caracteristica("Clérigo de Anar"))
       LearnFeat(who, "Linguagem Rúnica", 0, 0);
+      LearnFeat(who, "Cura Divina", 0, 0);
    endif
 
    var attr := ReadConfigFile(":attributes:attributes");
@@ -30,4 +31,12 @@ program fixTalent(who)
       endfor
       sleepms(2);
 	endforeach
+
+   var pnt_amt := cint(GetObjProperty(who, "points_received"));
+   if (!pnt_amt) return; endif
+   var exp := who.GetExp();
+
+   if (pnt_amt * 120 > exp)
+      EraseObjProperty(who, "points_received");
+   endif
 endprogram

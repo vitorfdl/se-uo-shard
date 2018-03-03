@@ -1,0 +1,58 @@
+use uo;
+use os;
+
+include ":gumps:gumps";
+include ":tn:tngumps";
+include "include/say";
+include ":charactercreation:feats";
+
+program gump_book(who, thebook)
+	if(!Accessible(who, thebook))
+		SendSysMessageEx(who, "Você não alcanca o livro.", SSM_FAIL);
+		return;
+	endif
+
+   var talent := GetObjProperty(thebook, "feat");
+   var feat := FeatInfo(talent);
+   if (!talent || feat == talent)
+      SendSysMessageEx(who, "Parece um livro vázio", SSM_FAIL);
+      return; 
+   endif
+
+   var already_used := GetObjProperty(thebook, "already_used");
+   
+	var book := GFCreateGump();
+	
+	GFPage(book, 0);
+   GFSetID(book, 0x9877);
+	GFGumpPic(book, 11, 17, 2201, 0);
+	GFHtmlShadowed(book, 36, 44, 138, 20, "#FFFFFF", "<center>Livro de Talento", 2);
+	GFHTMLArea(book, 36, 76, 135, 56, "<center> {}".format(feat.name));
+	GFHTMLArea(book, 36, 156, 138, 22, "<center><BASEFONT size=2>Pontos de Hab");
+	GFHTMLArea(book, 36, 178, 136, 22, "<center><BASEFONT size=2>{}".format(feat.ph));
+
+	GFHTMLArea(book, 198, 28, 140, 159, feat.desc);
+
+   if (HaveFeat(who, feat.name))
+      GFHTMLArea(book, 198, 191, 140, 24, "<center><BASEFONT size=5 color=#990000>Já Aprendeu", 0, 0);
+	elseif (!already_used)
+	   GFAddButton(book, 218, 191, 2445, 2445, GF_CLOSE_BTN, 70); //Comprar Talento
+      GFHTMLArea(book, 220, 191, 105, 24, "<center>Aprender", 1, 0);
+   else
+      GFHTMLArea(book, 198, 191, 140, 24, "<center><BASEFONT size=5 color=#990000>USADO", 0, 0);
+   endif
+
+	var input := GFSendGump(who, book);
+   if (input[0] == 70)
+      PrintText(who, "*lendo livro de talento*");
+      var points := cint(feat.ph);
+      if (points > who.GetTalentPoints())
+         SendSysMessageEx(who, "Você não tem os pontos de habilidade necessários!", SSM_FAIL);
+         return;
+      endif
+      who.SetTalentPoints(points * -1);
+      SetObjProperty(thebook, "already_used", who.serial);
+      LearnFeat(who, feat.name);
+      SendSysMessageEx(who, "Você aprendeu o talento {}".format(feat.name), SSM_INFO);
+   endif
+endprogram

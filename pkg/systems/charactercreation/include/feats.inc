@@ -1,3 +1,4 @@
+include ":attributes:attributes";
 // function UsoHabilidade(nome)
 // 	var habcfg := ReadConfigFile(":charactercreation:config/habilidades");
 // 	var elem := FindConfigElem( habcfg, nome );
@@ -207,6 +208,7 @@ function FeatInfo(feat, plus := 0)
 		"cooldown" := GetConfigInt( elem, "Cooldown" ),
 
 		"level" := GetConfigInt( elem, "Level" ),
+		"ph" := GetConfigInt( elem, "PH" ),
 		"type" := GetConfigString( elem, "Type" )
 	};
 

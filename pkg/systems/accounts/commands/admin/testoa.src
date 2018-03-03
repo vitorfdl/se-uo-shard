@@ -18,9 +18,12 @@ include ":ghaia:objective";
 include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
+   // SendSysMessageEx(who, "[Part-Msg] Vitor: Test awer awerawe raewr awerawer awer e" , 1159);
+   SendSysMessageEx(who, "[Part-Msg] Vitor: Testaw erawe rweae" , 1169);
+   // SendSysMessageEx(who, "[Part-Msg] Vitor: Tesawera were" , 862);
    // print(RandomDiceRoll("1d1+2"));
-   var targ := Target(who);
-   targ.SetPoints(1);
+   // var targ := Target(who);
+   // targ.SetPoints(1);
    // SendSysMessageEx(who, ""+who.Caracteristica("Clérigo de Anar"));
    // // return;
    // var parse := SplitWords(text, " ");

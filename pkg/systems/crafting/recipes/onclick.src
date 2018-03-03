@@ -26,6 +26,7 @@ program usaPergaminho(who, scroll)
 		SetObjProperty(scroll, "objtype", objtype);
 		Run_Script( ":crafting:recipes/control", scroll );
 	elseif (input[0] == 12)
+      PrintText(who, "*lendo receita*");
 		LearnRecipe(who, scroll);
 	endif
 endprogram

@@ -6,6 +6,7 @@ use os;
 include ":loot:magicLoot";
 
 const RECIPE_OBJ := 0xef1f;
+const FEATBOOK_OBJ := 0xee90;
 
 function Loot_Generate(container, loot_index, is_group := 0)
 	if ( !container.IsA(POLCLASS_CONTAINER) )
@@ -63,6 +64,11 @@ function Loot_Generate(container, loot_index, is_group := 0)
 		sleepms(2);
 	endforeach
 
+	foreach line in GetConfigStringArray(index_elem, "TalentBook")
+		Loot_CreateItem(container, line, "talentbook");
+		sleepms(2);
+	endforeach
+
 	foreach line in GetConfigStringArray(index_elem, "Group")
 		if ( line != loot_index )
 			//To do:
@@ -96,6 +102,11 @@ function Loot_CreateItem(container, line, type := 0)
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
 				endif
+         elseif (type == "talentbook")
+            var item := CreateItemInContainer(container, FEATBOOK_OBJ);
+            var feat := StrReplace(parsed.name, "_", " ");
+            SetObjproperty(item, "feat", feat);
+
 			elseif (type == "recipe")
 				var objtype := GetObjtypeByName(parsed.name);
 
@@ -163,12 +174,16 @@ function Loot_CreateRandom(container, line, forcetype := 0)
 	if ( Loot_ChanceCheck(parsed.chance) )
 		var items := GetConfigStringArray(groups_elem, "Item");
 		var recipes := GetConfigStringArray(groups_elem, "Recipe");
+		var talentbooks := GetConfigStringArray(groups_elem, "TalentBook");
 
-      var num_items := items.size() + recipes.size();
+      var num_items := items.size() + recipes.size() + talentbooks.size();
       var i;
       for ( i:=1; i<=parsed.amount; i:=i+1 )
          var random := RandomInt(num_items)+1;
-         if (random > items.size())
+         if (random > items.size()+recipes.size())
+            random := random - items.size()+recipes.size();
+            Loot_CreateItem(container, talentbooks[random], "talentbook");
+         elseif (random > items.size())
             random := random - items.size();
             if (!forcetype)
                Loot_CreateItem(container, recipes[random], "recipe");

@@ -24,7 +24,7 @@ program clericPowerWords(who)
    endif
    var cleric_list  := GetObjProperty(who, "cleric_list");
    if (!cleric_list) cleric_list := array{}; endif
-   cleric_list := array{ struct{ "id":= 1, "used" := 0, "time" := 0} } + cleric_list;
+   // cleric_list := array{ struct{ "id":= 1, "used" := 0, "time" := 0} } + cleric_list;
    var slots_used := 0;
    foreach spell in cleric_list
       var new_spell := spell.id;

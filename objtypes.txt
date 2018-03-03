@@ -2302,7 +2302,7 @@
 0xee73 boardescuro fls_carpentry
 0xee74 boardcogumelo fls_carpentry
 # 0xee75 - 0xee8f unused
-0xee90 gumpcriacao charactercreation
+0xee90 talentbook charactercreation
 # 0xee91 - 0xee98 unused
 0xee99 calcario gathering
 # 0xee9a - 0xeeef unused

@@ -548,6 +548,10 @@ function GetDetails(item, who)
    if (item.Cprops.lang)
       ret += "Idioma: {}<br>".format(item.Cprops.lang);
    endif
+
+   if (item.Cprops.already_used)
+      ret += "Usado<br>";
+   endif
    
    if (item.CProps.objtype)
       if (item.Cprops.lang && !HaveFeat(who, item.Cprops.lang))

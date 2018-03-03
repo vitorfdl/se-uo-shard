@@ -4,11 +4,12 @@ use os;
 include "include/say";
 include ":magery:tnmagery";
 
-program targetHeal(info)
-   var mobile := info[1];
-   var targ := info[3];
-   info := 0;
+program targetHeal(param)
+   var mobile := param[1];
 
+   SendSysMessageEx(mobile, "Escolha o alvo da sua benção", SSM_REQUEST);
+   var targ := Target(mobile, TGTOPT_HELPFUL+TGTOPT_NOCHECK_LOS);
+   
    SetClericHeal(mobile, targ);
    SendSysMessageEx(mobile, "Alvo selecionado para benção de cura.", SSM_INFO);
    return 1;
