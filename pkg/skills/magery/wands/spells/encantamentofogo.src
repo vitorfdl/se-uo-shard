@@ -7,7 +7,7 @@ include "include/sounds";
 include "include/damage";
 include "include/say";
 include ":attributes:attributes";
-
+include ":magery:basicMagery";
 var fire_items := array{0x0a12, 0xfb1, 0x197a, 0x3709, 0x1f5, 0x1f4, 0x1f6, 0x1f7, 0x398C, 0x398D, 0x398E, 0x0DE3, 0x198A, 0xA12};
 
 program animateSword(params)
