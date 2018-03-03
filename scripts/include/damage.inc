@@ -244,7 +244,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
 		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));
-		if (cleric_healing && dmg >= 1 && Randomint(3) == 1)
+		if (cleric_healing && dmg >= 1 && Randomint(101) <= 85)
 			var targ := SystemFindObjectBySerial(cleric_healing);
 			if (source != targ && Distance(source, targ) > 8 && targ.connected && !targ.dead)
 				targ := source;
