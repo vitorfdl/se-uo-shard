@@ -7,7 +7,7 @@ include "include/sounds";
 include "include/say";
 include "include/utils";
 include "include/damage";
-
+include ":magery:basicMagery";
 program animateSword(params)
 	var who := params[1];
 	var spellinfo := params[2];
