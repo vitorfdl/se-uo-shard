@@ -122,7 +122,7 @@ function StoreSpell(who, spellinfo, byref cleric_list, byref available_slots)
    if (available_slots-spellinfo.circle < 0)
       SendSysMessageEx(who, "Sem slots suficientes para memorizar..", SSM_FAIL);
       return 0;
-   elseif (!AP_ConsumeVital(who, MANA, 5))
+   elseif (!AP_ConsumeVital(who, MANA, 2))
       SendSysMessageEx(who, "Você não consegue se concentrar em sua oração.", SSM_FAIL);
       sleep(2);
       return 0;
