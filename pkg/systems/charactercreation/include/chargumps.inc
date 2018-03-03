@@ -53,15 +53,6 @@ function ItemPickerGump(who, byref chardata)
 			elem := FindConfigElem(cfg, entry);
 			var itens := GetConfigStringDictionary(elem, "item");
 			foreach item in (itens.keys())
-            if (item["/"])
-               var sex_choose := SplitWords(item, "/");
-               if (who.gender == 0)
-                  item := sex_choose[1];
-               else
-                  item := sex_choose[2];
-               endif
-            endif
-
             var item_name := item;
             var objtype := GetObjtypeByName( item );
             if (objtype && itemcfg[objtype].desc)
@@ -126,7 +117,20 @@ function ItemPickerGump(who, byref chardata)
          elseif (buyitem["Book_"])
             buyitem["Book_"] := "";
             SysBook_CreateBook(who.backpack, buyitem);
+         elseif (buyitem["Magia_"])
+            buyitem["Magia_"] := "";
+            var rec := CreateItemInBackpack(who, 0x6116);
+            SetObjProperty(rec, "spell_id", cint(buyitem));
          else
+            if (buyitem["/"])
+               var sex_choose := SplitWords(buyitem, "/");
+               if (who.gender == 0)
+                  buyitem := sex_choose[1];
+               else
+                  buyitem := sex_choose[2];
+               endif
+            endif
+
             var amt := 1;
 
             amt := Cint(GetConfigInt(amtelem, buyitem));
