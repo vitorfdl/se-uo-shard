@@ -110,7 +110,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 		if (wood_amount < 0)
 			wood_amount := cint(0);
 		endif
-		var item := CreateItemInBackPack(who, cint(wood_type), wood_amount);
+		var item := CreateItemInBackPack(who, cint(wood_type), amt);
 		if ( item.errortext )
 			SendSysMessageEx(who, "Não foi possivel criar: "+wood_type+" ->"+item.errortext);
 			return 0;
