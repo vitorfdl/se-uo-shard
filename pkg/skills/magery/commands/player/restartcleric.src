@@ -5,13 +5,12 @@ include "include/say";
 
 program Logon(who)
    var pid := GetProcess(GetObjProperty(who, "#clericpid"));
-   PrintText(who, "pid: "+pid);
    if (pid)
       pid.kill();
       PrintText(who, "Pid Killed");
    endif   
 
-   if (who.isClass("Clérigo"))
+   if (who.Caracteristica("Clérigo de Anar"))
       Start_Script(":magery:cleric/powerWords", array{who});
    endif
 endprogram
