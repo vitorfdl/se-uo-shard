@@ -144,9 +144,9 @@ exported function MegaCliloc( who, byref packet )
          if (elem.Pericia && !item.isMagicWeapon())
 				xDesc += "Perícia: {}<br>".format(StrReplace(elem.Pericia, "_", " "));
          endif
-         if (elem.WeaponType && !item.isMagicWeapon())
-				xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
-         endif
+         // if (elem.WeaponType && !item.isMagicWeapon())
+			// 	xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
+         // endif
 
 			if (item.isA(POLCLASS_WEAPON))
 				if (elem.strrequired)

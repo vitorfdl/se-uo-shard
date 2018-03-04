@@ -540,9 +540,9 @@ function GetDetails(item, who)
       if (item.Pericia)
          ret += "Perícia: {}<br>".format(item.Pericia);
       endif
-      if (item.WeaponType)
-         ret += "Categoria: {}<br>".format(getWeaponType(item.WeaponType));
-      endif
+      // if (item.WeaponType)
+      //    ret += "Categoria: {}<br>".format(getWeaponType(item.WeaponType));
+      // endif
    endif
 
    if (item.Cprops.lang)

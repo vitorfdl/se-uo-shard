@@ -49,7 +49,8 @@ exported function HandleDoubleClick( who, byref packet )
 	endif
 
    if (!defender.warmode && defender.isA(POLCLASS_MOBILE))
-      if (HaveFeat(who, "Assassinato"))
+      var itemcfg := ReadConfigFile(":combat:itemdesc");
+      if (AP_GetTrueSkill(who, LAMINAS_CURTAS) >= 5 && itemcfg[who.weapon.objtype].Pericia == LAMINAS_CURTAS)
          SetObjProperty(defender, "#assinate", who.serial);
       endif
    endif

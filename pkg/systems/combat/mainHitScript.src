@@ -240,9 +240,9 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
       elseif (wpn_a_elem.DamageType == "Veneno" && AP_GetTrueSkill(attacker, "Magia_de_Veneno") >= 2)
          weapon_scripts.append("constrict");
       endif
-   elseif(wpn_a_elem.WeaponType == "bow" && AP_GetTrueSkill(attacker, ARCO) >= 2)
+   elseif(wpn_a_elem.Pericia == ARCO && AP_GetTrueSkill(attacker, ARCO) >= 2)
       weapon_scripts.append("hit_again");
-   elseif(wpn_a_elem.WeaponType == "dualsword" && AP_GetTrueSkill(attacker, ARMAS_DUPLAS) >= 2)
+   elseif(wpn_a_elem.Pericia == ARMAS_DUPLAS && AP_GetTrueSkill(attacker, ARMAS_DUPLAS) >= 2)
       weapon_scripts.append("hit_again");
    elseif (wpn_a_elem.WeaponType == "besta" && AP_GetTrueSkill(attacker, BESTA) >= 2)
       weapon_scripts.append("double_dmg");
@@ -273,7 +273,9 @@ function ApplyFeatChanges(attacker, defender, byref dice_roll, byref dmg)
 
    marca := GetObjProperty(defender, "#assassinate");
    if (marca == attacker.serial)
-      dice_roll.critical := 1;
+      if (RandomInt(2) == 1)
+         dice_roll.critical := 1;
+      endif
       EraseObjProperty(defender, "#assassinate");
    endif
 endfunction

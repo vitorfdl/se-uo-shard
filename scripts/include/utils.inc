@@ -44,32 +44,11 @@ function GetPointsInRadius(mid_x, mid_y, radius)
 endfunction
 
 function PushBack(who, dist, delay, invert := 0)
-	var x := 0;
-	var y := 0;
+   var mod := GetModByFacing(who.facing);
+	var x := mod[1];
+	var y := mod[2];
 
-	if (who.facing == 0)
-		y :=  1;
-	elseif (who.facing == 1)
-		y :=  1;
-		x := - 1;
-	elseif (who.facing == 2)
-		x :=  - 1;
-	elseif (who.facing == 3)
-		x :=  - 1;
-		y :=  - 1;
-	elseif (who.facing == 4)
-		y :=  - 1;
-	elseif (who.facing == 5)
-		x :=   1;
-		y :=  - 1;
-	elseif (who.facing == 6)
-		x :=   1;
-	elseif (who.facing == 7)
-		x :=  1;
-		y :=  1;
-	endif
-
-	if (invert)
+	if (!invert)
 		x := x * -1;
 		y := y * -1;
 	endif

@@ -1,0 +1,31 @@
+use os;
+
+include "include/say";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+
+program startTalent(param)
+   var who := param[1];
+   var talent_name := param[2];
+   var res := golpeduplo(who);
+
+   if (!res)
+      TS_LowerDuration(who, talent_name, -1, 1);
+   endif
+endprogram
+
+function golpeduplo(who)
+   var itemcfg := ReadConfigFile(":combat:itemdesc");
+   if (itemcfg[who.weapon.objtype].Pericia != ESGRIMA)
+      return 0;
+   elseif (!who.opponent || Distance(me, who.opponent) > 1)
+      SendSysMessageEx(who, "Não há oponente ou ele está muito distante.", SSM_FAIL);
+      return 0;
+   endif
+
+   TS_StartCooldown(who, "golpeduplo_actv", 2);
+   attacker.attack_once(who.opponent);
+   sleepms(400);
+   attacker.attack_once(who.opponent);
+   return 1;
+endfunction

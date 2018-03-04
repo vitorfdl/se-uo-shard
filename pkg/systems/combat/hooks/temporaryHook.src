@@ -39,6 +39,7 @@ var bonus_atk := 0;
 program Attack(params)
    var attacker := params[1];
    var defender := params[2];
+   var nofacecheck := cint(params[3]);
 	weapon := attacker.weapon;
 
 	if ( attacker == defender )
@@ -76,7 +77,7 @@ program Attack(params)
 		attacker.concealed := 0;
 	elseif ( !DistanceChecks(attacker, defender) )
 		return 1;
-	elseif ( !FacingChecks(attacker, defender) )
+	elseif ( !FacingChecks(attacker, defender, nofacecheck) )
 		return 1;
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
@@ -308,9 +309,9 @@ function GetDefenderCA(defender, armor, attacker)
       endif
 
       var wpn_elem := GetItemCFGInfo(defender, defender.weapon);
-      // if (defender.weapon.WeaponType == "dualsword" && HaveFeat(defender, "Defesa Perfeita"))
-      //    CA += 1;
-      // endif
+      if (defender.weapon.Pericia ARMAS_DUPLAS && AP_GetTrueSkill(who, ARMAS_DUPLAS) >= 6)
+         CA += 1;
+      endif
 	else
 		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
 		CA := cint(npcelem.AR);
@@ -439,7 +440,7 @@ function ArrowRecovery(attacker, defender)
 endfunction
 
 // Checa direção q ta olhando
-function FacingChecks(attacker, defender)
+function FacingChecks(attacker, defender, nofacecheck)
 	var retval := 1;
 	if ( !IsFacing(attacker, defender.x, defender.y) )
 		if ( attacker.npctemplate )
