@@ -47,7 +47,6 @@ var gump := GFCreateGump();
       	GFAddButton(gump, 470, 555, 2706, 2707, GF_PAGE_BTN, gump.cur_page+1);
 			GFPage(gump, gump.cur_page+1);
 			GFAddButton(gump, 470, 40, 2704, 2705, GF_PAGE_BTN, gump.cur_page-1);
-         GFPage(gump, gump.cur_page+1);
          pos_y := 75;
       endif
       // var chardata := GetObjProperty(mobile, "chardata");
