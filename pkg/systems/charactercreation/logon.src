@@ -36,7 +36,7 @@ program fixTalent(who)
    if (!pnt_amt) return; endif
    var exp := who.GetExp();
 
-   if (pnt_amt * 120 > exp)
+   if ((pnt_amt * 120) > exp)
       EraseObjProperty(who, "points_received");
    endif
 endprogram
