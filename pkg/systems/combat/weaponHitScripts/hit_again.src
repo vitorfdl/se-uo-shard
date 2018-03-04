@@ -14,8 +14,13 @@ program HitScript(params)
 	// var basedamage	:= params[5];
 	// var rawdamage	:= params[6];
 	params := 0; // Not needed anymore.
-   PrintText(attacker, "*Disparo duplo*");
-   sleepms(50);
+   var itemcfg := ReadConfigFile(":*:itemdesc");
+   if (itemcfg[attacker.weapon.objtype].Pericia == ARCO)
+      PrintText(attacker, "*Disparo duplo*");
+   elseif (itemcfg[attacker.weapon.objtype].Pericia == ARMAS_DUPLAS)
+      PrintText(attacker, "*Golpe duplo*");
+   endif
+   sleepms(200);
    attacker.attack_once(defender);
 	
 	return 1;
