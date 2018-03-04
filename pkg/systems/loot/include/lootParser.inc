@@ -117,7 +117,7 @@ function Loot_CreateItem(container, line, type := 0)
                endif
 				endif
 
-				if (!objtype || objtype == 0x0)
+				if (!objtype || objtype == 0x0 || objtype == 0 || objtype == "0x00")
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] -> Objtype not found"};
 				endif
 
