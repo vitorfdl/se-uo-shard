@@ -71,7 +71,7 @@ function ExpGain(mobile, difficulty, value := 0)
   
 	var settings := AP_GetSettingsCfgElem("Skills");
 	//verifica se ja não recebeu exp em 5 segundos
-	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 5;
+	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 10;
 	if ( next_check > ReadGameClock() )
 	//	printtextabove(mobile, "não posso subir skill agora");
 		SkillDbgMsg(mobile, "Não pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
@@ -81,9 +81,9 @@ function ExpGain(mobile, difficulty, value := 0)
 	//calcula a chance de passar
 	var up_amount := 0;
 	if (difficulty == "major")
-		up_amount := 8;
-	elseif (difficulty == "minor")
 		up_amount := 4;
+	elseif (difficulty == "minor")
+		up_amount := 2;
 	elseif (TypeOf(difficulty) == TypeOf( 1 ))
 		var diff := difficulty - value;
 		if (diff <= -1)
@@ -91,11 +91,11 @@ function ExpGain(mobile, difficulty, value := 0)
 		elseif(diff >= 10)
 			up_amount := 2;
 		elseif(diff >= 6)
-			up_amount := 4;
+			up_amount := 3;
 		elseif(diff >= 4)
-			up_amount := 6;
+			up_amount := 4;
 		else
-			up_amount := 8;
+			up_amount := 5;
 		endif
 	else
 		SysLog("Erro em difficulty para ExpGain: {}".format(difficulty));
