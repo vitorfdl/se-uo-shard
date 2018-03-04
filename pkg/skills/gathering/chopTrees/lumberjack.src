@@ -105,10 +105,10 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 		if (amt > wood_amount)
 			amt := wood_amount;
 		endif
-		wood_amount := wood_amount - amt;
+		wood_amount := cint(wood_amount - amt);
 		LJ_SetWoodAmount(who.realm, targ.x, targ.y, wood_amount);
 		if (wood_amount < 0)
-			wood_amount := 0;
+			wood_amount := cint(0);
 		endif
 		var item := CreateItemInBackPack(who, cint(wood_type), wood_amount);
 		if ( item.errortext )
