@@ -60,7 +60,7 @@ program oafeatures_sendpacket(who, text)
       var targ := Target(who);
       var acc := FindAccount(targ.acctname);
 
-      // acc.SetProp("expboost", cint(text));
+      acc.SetProp("expboost", cint(text));
 
       SendSysMessageEx(who, ""+acc.GetProp("expboost"));
       // PlayMovingEffectEx(who, defender, 0x0F51, 10, 10, 0, 0);
