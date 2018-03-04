@@ -103,7 +103,7 @@ function ExpGain(mobile, difficulty, value := 0)
 
    var account := FindAccount(mobile.acctname);
    if (account && account.GetProp("expboost"))
-      if (account.GetProp("expboost") >= mobile.getlevel())
+      if (account.GetProp("expboost") <= mobile.getlevel())
          account.EraseProp("expboost");
       else
          up_amount := up_amount * 3;
