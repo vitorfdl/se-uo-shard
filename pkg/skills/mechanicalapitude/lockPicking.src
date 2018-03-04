@@ -57,7 +57,7 @@ program skill_lockpicking( me, lockpick )
 	if (GetObjProperty(chest,"level"))
 		PickTreasureChest(me, lockpick, chest); //funciona tanto pra chests quando pra portas
 	else
-		SendSysMessageEx(me, "Esse não e um alvo valido.", SSM_FAIL);
+		SendSysMessageEx(me, "Esse não é um alvo valido.", SSM_FAIL);
 		ReleaseItem(lockpick);
 	endif
 

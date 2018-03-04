@@ -1,0 +1,106 @@
+/*
+ * $Id: refresh.src 664 2005-10-27 03:36:13Z muaddiblsd $
+ *
+ */
+
+use uo;
+
+include ":attributes:attributes";
+include ":attributes:attributes";
+include ":charactercreation:characters";
+include ":gumps:yesno";
+include "include/utils";
+
+program testtttt(who, text)
+   showgump(who);
+	SendSysMessage(who, "Done.");
+endprogram
+
+function showgump(who)
+var gump := GFCreateGump();
+	GFSetID(gump, GUMPID_SKILLLIST);
+	GFResizePic(gump, 7, 8, 9380, 500, 600);
+   GFHtmlShadowed(gump, 150, 55, 300, 20, "#99c199", "Escolha o usuário =[", 4);
+   // GFHtmlShadowed(gump, 115, 55+20, 300, 20, "#99c199", "Você não poderá ensinar outra pessoa durante 36 horas.", 2)
+
+   var char_list := array{};
+   var accounts := ListAccounts();
+
+   var pos_x := 83;
+   var pos_y := 75;
+   GFPage(gump, 1);
+   foreach acc_name in accounts
+      var acc    := FindAccount(acc_name);
+      var mobile := acc.getcharacter(1);
+      mobile := SystemFindObjectBySerial(mobile.serial, SYSFIND_SEARCH_OFFLINE_MOBILES);
+      char_list.append(mobile);
+      var charname := mobile.name;
+      if (charname["Desc"])
+         charname := GetObjProperty(mobile, "realname");
+      endif
+
+	   GFHTMLArea(gump, pos_x, pos_y, 300, 28, "<BASEFONT SIZE=4 color=#000066>{} - {} - Boost: {}".format(acc_name, charname, cint(acc.GetProp("expboost"))), 0);
+      GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, _acc_name_iter+200);
+
+      pos_y += 20;
+      if (_acc_name_iter % 25 == 0)
+      	GFAddButton(gump, 470, 555, 2706, 2707, GF_PAGE_BTN, gump.cur_page+1);
+			GFPage(gump, gump.cur_page+1);
+			GFAddButton(gump, 470, 40, 2704, 2705, GF_PAGE_BTN, gump.cur_page-1);
+         pos_y := 75;
+      endif
+      // var chardata := GetObjProperty(mobile, "chardata");
+      // chardata.exppoints := 0;
+      // chardata.Level := 1;
+      // chardata.attpoints := 0;
+      // chardata.talentpoints := 0;
+      // SetObjproperty(mobile, "chardata", chardata);
+      // MoveObjectToLocation(mobile, 4756, 3541, 1, who.realm, MOVEOBJECT_FORCELOCATION);
+      sleepms(2);
+   endforeach
+
+   var input := GFSendGump(who, gump);
+   var index := input[0];
+   
+   if (index >= 200 && index <= 280)
+      var mobile := char_list[index-200];
+      var acc_name := accounts[index-200];
+      var acc := FindAccount(acc_name);
+      var charname := mobile.name;
+      if (charname["Desc"])
+         charname := GetObjProperty(mobile, "realname");
+      endif
+
+      SendSysMessageEx(who, "Alterando {} da conta {}. Atual Boost: {}".format(acc_name, charname, cint(acc.GetProp("expboost"))), SSM_INFO);
+      var entry := GetInput(who, who.backpack, "Entre com o novo boost: 1 - 10: (aperte esc para 0)");
+      acc.SetProp("expboost", cint(entry));
+      showgump(who);
+   endif
+endfunction
+
+// program textcmd_RefreshVitals(who, text)
+//    var accounts := ListAccounts();
+//    foreach acc_name in accounts
+//       var acc := FindAccount(acc_name);
+//       var mobile := acc.getcharacter(1);
+//       var feats := GetFeatList(mobile);
+//       foreach feat in feats
+//          removeFeat(mobile, feat);
+//          sleepms(2);
+//       endforeach
+
+//       mobile.SetTalentPoints(-10);
+//       var lvl := mobile.getLevel();
+//       if (lvl >= 2) mobile.SetTalentPoints(1); endif
+//       if (lvl >= 3) mobile.SetTalentPoints(1); endif
+//       if (lvl >= 6) mobile.SetTalentPoints(1); endif
+//       if (lvl >= 7) mobile.SetTalentPoints(1); endif
+
+//       var chardata := GetObjProperty(who, "chardata");
+//       chardata.class_feats := array{};
+// 	   SetObjProperty(who, "chardata", chardata);
+//       sleepms(2);
+//    endforeach
+
+// 	SendSysMessage(who, "Done.");
+// endprogram

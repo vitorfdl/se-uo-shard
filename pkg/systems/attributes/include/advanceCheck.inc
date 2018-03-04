@@ -101,14 +101,14 @@ function ExpGain(mobile, difficulty, value := 0)
 		SysLog("Erro em difficulty para ExpGain: {}".format(difficulty));
 	endif
 
-   // var account := FindAccount(mobile.acctname);
-   // if (account && account.GetProp("expboost"))
-   //    if (account.GetProp("expboost") >= mobile.getlevel())
-   //       account.EraseProp("expboost");
-   //    else
-   //       up_amount := up_amount * 2;
-   //    endif
-   // endif
+   var account := FindAccount(mobile.acctname);
+   if (account && account.GetProp("expboost"))
+      if (account.GetProp("expboost") <= mobile.getlevel())
+         account.EraseProp("expboost");
+      else
+         up_amount := up_amount * 3;
+      endif
+   endif
 
 	//guarda as skills dos npcs tamados
 	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)

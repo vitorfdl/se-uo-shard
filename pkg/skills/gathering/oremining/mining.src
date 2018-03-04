@@ -123,14 +123,14 @@ function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
          var bonus := HaveLightNear(who) - 1;
 			var dice := rollAttrDice(who, STRENGTH, bonus, struct{ "get_critical" := 1}) + GetSkillBonus(who, EXTRACAO);
 			if ( dice.dice > difficulty )
-				var amt := 1 + AP_GetStat(who, STRENGTH, RETURN_BONUS);
+				var amt := AP_GetStat(who, STRENGTH, RETURN_BONUS) + AP_GetTrueSkill(who, EXTRACAO);
 				if (amt <= 0)
 					amt := 2;
 				endif
 
 				ore_amount := ore_amount - amt;
 				if (ore_amount < 0)
-					ore_amount := AP_GetStat(who, STRENGTH, RETURN_BONUS);
+					ore_amount := amt;
 				endif
 
 				SetOreAmount(who.realm, targx, targy, ore_amount); //feita
