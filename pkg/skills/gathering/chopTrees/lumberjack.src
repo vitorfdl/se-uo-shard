@@ -98,7 +98,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 	endif
 
 	if ( dice_roll > difficulty )
-		var amt := AP_GetStat(who, STRENGTH, RETURN_BONUS) + AP_GetTrueSkill(who, EXTRACAO);
+		var amt := cint(AP_GetStat(who, STRENGTH, RETURN_BONUS) + AP_GetTrueSkill(who, EXTRACAO));
 		if (amt <= 0)
 			amt := 1;
 		endif
@@ -106,11 +106,12 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 			amt := wood_amount;
 		endif
 		wood_amount := cint(wood_amount - amt);
-		LJ_SetWoodAmount(who.realm, targ.x, targ.y, wood_amount);
-		if (wood_amount < 0)
+      if (wood_amount < 0)
 			wood_amount := cint(0);
 		endif
-		var item := CreateItemInBackPack(who, cint(wood_type), amt);
+		LJ_SetWoodAmount(who.realm, targ.x, targ.y, wood_amount);
+
+		var item := CreateItemInBackPack(who, cint(wood_type), cint(amt));
 		if ( item.errortext )
 			SendSysMessageEx(who, "Não foi possivel criar: "+wood_type+" ->"+item.errortext);
 			return 0;
