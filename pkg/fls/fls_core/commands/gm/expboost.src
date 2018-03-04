@@ -39,7 +39,13 @@ var gump := GFCreateGump();
          charname := GetObjProperty(mobile, "realname");
       endif
 
-	   GFHTMLArea(gump, pos_x, pos_y, 300, 28, "<BASEFONT SIZE=4 color=#000066>{} - {} - Boost: {}".format(acc_name, charname, cint(acc.GetProp("expboost"))), 0);
+      var nogains := "";
+      if (GetobjProperty(mobile, "NoGains"))
+         nogains := "<BASEFONT color=#FF2222> - Cap Travado (NoGains)";
+      endif
+
+      print(nogains);
+	   GFHTMLArea(gump, pos_x, pos_y, 420, 28, "<BASEFONT SIZE=4 color=#000066>{} - {} - Boost: {}{}".format(acc_name, charname, cint(acc.GetProp("expboost")), nogains), 0);
       GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, _acc_name_iter+200);
 
       pos_y += 20;

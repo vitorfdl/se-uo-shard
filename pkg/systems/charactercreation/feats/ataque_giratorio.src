@@ -25,33 +25,29 @@ function ataquegiratorio(who)
 	endif
 	who.warmode := 1;
 
-	PlaySoundEffect(who, 0x14A);
-	Performaction(who, elem.Anim);
+	// PlaySoundEffect(who, 0x14A);
+	Performaction(who, 0x1a);
+
 	// PlayMovingEffectXYZ( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, elem.ProjectileAnim, 10, 10, 0, who.realm);
 	sleepms(35);
 	// PlayMovingEffectXYZ( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, 0x377A, 6, 10, 0, who.realm);
 	
-	var distancia := GetCoordsInSquare(who.x, who.y, 1);
-	
 	//lista inimigos e aplica dano
 	var alreadydamaged := array{};
 	// var hostiles := ListHostiles(who);
-	foreach pontos in distancia
-		var mobiles := ListMobilesNearLocation(pontos.x, pontos.y, who.z, 1, who.realm);
-		foreach mobile in mobiles
-         if (rollResistDice(mobile, DEXTERITY) >= )
-			elseif (!(mobile.serial in alreadydamaged) && (mobile != who) && !(mobile in who.party.members))
-            run_script(":combat:hooks/temporaryHook", array{who, mobile, 1});
-				alreadydamaged.Append(mobile.serial);
-	         // var basedamage := CalculateRawDamage(who, elem, who.weapon) / 2;
-				// DamageFLS(mobile, basedamage, DMG_PIERCING, who);
-			endif
-			sleepms(20);
-		endforeach
-		sleepms(20);
-	endforeach
-
 	who.warmode := 1;
+   var mobiles := ListMobilesNearLocation(who.x, who.y, who.z, 1, who.realm);
+   foreach mobile in mobiles
+      if (!(mobile.serial in alreadydamaged) && (mobile != who) && !(mobile in who.party.members))
+         run_script(":combat:hooks/temporaryHook", array{who, mobile, 1});
+         alreadydamaged.Append(mobile.serial);
+         // var basedamage := CalculateRawDamage(who, elem, who.weapon) / 2;
+         // DamageFLS(mobile, basedamage, DMG_PIERCING, who);
+      endif
+      sleepms(20);
+   endforeach
+   sleepms(20);
+
 
    return 1;
 endfunction

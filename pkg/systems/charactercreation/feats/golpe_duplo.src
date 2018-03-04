@@ -17,15 +17,16 @@ endprogram
 function golpeduplo(who)
    var itemcfg := ReadConfigFile(":combat:itemdesc");
    if (itemcfg[who.weapon.objtype].Pericia != ESGRIMA)
+		SendSysMessageEx(who, "Você precisa estar usando uma arma de esgrima.", SSM_INFO);
       return 0;
-   elseif (!who.opponent || Distance(me, who.opponent) > 1)
+   elseif (!who.opponent || Distance(who, who.opponent) > 1)
       SendSysMessageEx(who, "Não há oponente ou ele está muito distante.", SSM_FAIL);
       return 0;
    endif
 
    TS_StartCooldown(who, "golpeduplo_actv", 2);
-   attacker.attack_once(who.opponent);
-   sleepms(400);
-   attacker.attack_once(who.opponent);
+   who.attack_once(who.opponent);
+   sleepms(550);
+   who.attack_once(who.opponent);
    return 1;
 endfunction

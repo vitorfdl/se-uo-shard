@@ -2,6 +2,8 @@ use uo;
 use os;
 use math;
 
+include "include/facings";
+
 function randomPlace(loc, radius := 1)
 	var y, x;
    case (RandomInt(3)+1)

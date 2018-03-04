@@ -43,7 +43,7 @@ function ParalyzeAll(who, trap)
 		PlayStationaryEffect(mobile.x, mobile.y, mobile.z, FX_PARA_F_EW, 0, 5);
 		sleepms(5);
 	endforeach
-	var destro := DestroyItem(trap);
+	DestroyItem(trap);
 endfunction
 
 function HealAndDestroy(who, trap)

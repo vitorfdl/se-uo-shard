@@ -19,15 +19,17 @@ endprogram
 function saltomortal(who)
    var itemcfg := ReadConfigFile(":combat:itemdesc");
    if (itemcfg[who.weapon.objtype].Pericia != ARMAS_DUPLAS)
+		SendSysMessageEx(who, "Você precisa estar usando uma armas duplas.", SSM_INFO);
       return 0;
    endif
    
    var loc := struct{ "x" := who.x, "y" := who.y, "z" := who.z };
-   PushBack(who, 3, 200, 1);
+   PushBack(who, 3, 35, 1);
 
    var hostiles := ListHostiles(who);
    var already_hit := array{};
 
+   who.warmode := 1;
    var mod := GetModByFacing(who.facing);
    for i := 1 to 3
       var x := mod[1] * i;
@@ -36,15 +38,13 @@ function saltomortal(who)
          return 1;
       endif
 
-      foreach mobile in (ListMobilesNearLocationEx( who.x+loc.x, who.y+loc.y, loc.z, 0, LISTEX_FLAG_NORMAL))
+      foreach mobile in (ListMobilesNearLocationEx( loc.x+x, loc.y+y, loc.z, 0, LISTEX_FLAG_NORMAL))
          sleepms(2);
-         if (mobile in already_hit || mobile == who)
-            continue;
-         elseif (!mobile.npctemplate && !(mobile in hostiles) && who.opponent != mobile && !(mobile in who.party.members))
+         if (mobile in already_hit || mobile == who || mobile in who.party.members || (!mobile.npctemplate && !(mobile in hostiles)))
             continue;
          endif
-         who.attack_once(mobile);
-         already_hit.append(mobile);
+            run_script(":combat:hooks/temporaryHook", array{who, mobile, 1});
+            already_hit.append(mobile);
       endforeach
       sleepms(2);
    endfor

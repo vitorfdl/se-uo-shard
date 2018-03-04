@@ -2,12 +2,13 @@ use os;
 
 include "include/say";
 include ":timedscripts:timedScripts";
+include ":attributes:attributeConstants";
 
 program mestreLaminas(param)
    var who := param[1];
    var item_conf := ReadConfigFile(":combat:itemdesc");
    var weapon := item_conf[who.weapon.objtype];
-   if (!weapon || weapon.WeaponType != "sword" )
+   if (!weapon || weapon.Pericia != ESPADAS )
       SendSysMessageEx(who, "Você precisa estar usando uma espada para ativar este talento.");
       return;
    endif

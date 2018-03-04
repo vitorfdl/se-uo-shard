@@ -18,6 +18,9 @@ include ":ghaia:objective";
 include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
+   who.frozen := 0;
+   // who.setswingtimer(cint(text));
+   // who.weapon.speed_mod := cint(text);
    // SendSysMessageEx(who, "[Part-Msg] Vitor: Test awer awerawe raewr awerawer awer e" , 1159);
    // SendSysMessageEx(who, "[Part-Msg] Vitor: Testaw erawe rweae" , 1169);
    // SendSysMessageEx(who, "[Part-Msg] Vitor: Tesawera were" , 862);
@@ -57,12 +60,12 @@ program oafeatures_sendpacket(who, text)
       // PlayObjectCenteredEffectEx( who,  0x19AB, 5, 20, 0, 4, 0);
       // sleep(1);
       // printtext(who, "1 sec");
-      var targ := Target(who);
-      var acc := FindAccount(targ.acctname);
+      // var targ := Target(who);
+      // var acc := FindAccount(targ.acctname);
 
-      acc.SetProp("expboost", cint(text));
+      // acc.SetProp("expboost", cint(text));
 
-      SendSysMessageEx(who, ""+acc.GetProp("expboost"));
+      // SendSysMessageEx(who, ""+acc.GetProp("expboost"));
       // PlayMovingEffectEx(who, defender, 0x0F51, 10, 10, 0, 0);
       // sleep(3);PlayObjectCenteredEffectEx( center, effect, speed, duration := 0, hue := 0, render := 0, layer := 0, effect3d := 0 );
       // PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 50, 0);

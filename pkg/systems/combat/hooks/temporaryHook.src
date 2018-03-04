@@ -77,7 +77,7 @@ program Attack(params)
 		attacker.concealed := 0;
 	elseif ( !DistanceChecks(attacker, defender) )
 		return 1;
-	elseif ( !FacingChecks(attacker, defender, nofacecheck) )
+	elseif ( !FacingChecks(attacker, defender, nofacecheck) && !nofacecheck )
 		return 1;
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
@@ -261,6 +261,10 @@ function GetAttackerChance(attacker, defender)
 		bonus := cint(wpn_a_elem.hitbonus);
 	endif
 
+   if (TS_GetTimerInfo(attacker, "golpeduplo_actv"))
+      bonus -= 2;
+   endif
+
    // bonus += GetAttackerFeatBonus(attacker, 0);
 	
 	var roll := rollAttrDice(attacker, attribute, dice_gain, struct{ "get_critical" := 1});
@@ -309,7 +313,7 @@ function GetDefenderCA(defender, armor, attacker)
       endif
 
       var wpn_elem := GetItemCFGInfo(defender, defender.weapon);
-      if (defender.weapon.Pericia ARMAS_DUPLAS && AP_GetTrueSkill(who, ARMAS_DUPLAS) >= 6)
+      if (defender.weapon.Pericia == ARMAS_DUPLAS && AP_GetTrueSkill(defender, ARMAS_DUPLAS) >= 6)
          CA += 1;
       endif
 	else

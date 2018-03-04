@@ -1,0 +1,43 @@
+use os;
+use cfgfile;
+
+include "include/say";
+include "include/utils";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+
+program startTalent(param)
+   var who := param[1];
+   var talent_name := param[2];
+   var res := berserker(who);
+
+   if (!res)
+      TS_LowerDuration(who, talent_name, -1, 1);
+   endif
+endprogram
+
+function berserker(who)
+   var itemcfg := ReadConfigFile(":combat:itemdesc");
+   if (itemcfg[who.weapon.objtype].Pericia != MACHADOS)
+		SendSysMessageEx(who, "Você precisa estar usando um machado.", SSM_INFO);
+      return 0;
+   endif
+
+   var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * 0.3;
+   if (!AP_ConsumeVital(who, HITS, maxhit))
+		SendSysMessageEx(who, "Você não tem vida o suficiente para entrar em modo berserker", SSM_INFO);
+      return 0;
+   endif
+
+   var weapon := who.weapon;
+   TS_StartTimer(who, "attackspeed", 6, 35);
+
+   while (who.connected)
+      if (who.weapon != weapon)
+         TS_LowerDuration(who, "attackspeed", -1);
+      endif
+      sleep(2);
+   endwhile
+
+   return 1;
+endfunction

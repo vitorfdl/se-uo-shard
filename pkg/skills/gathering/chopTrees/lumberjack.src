@@ -50,7 +50,7 @@ program skill_LumberJack(who,tool)
 		CheckToolWear(who, tool, EXTRACAO );
 		sleep(1);
 		if (LJ_GetWoodAmount(who.realm, targ.x, targ.y)== 0 )
-			PrinttextAbove(who, "*derruba a árvore*");
+			PrintText(who, "*derruba a árvore*");
 			break;
 		endif
 	endwhile
@@ -123,7 +123,7 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 		endif
 	endif
 
-	SendSysMessageEx(who, "Você é incapaz de conseguir madeira usavel dessa árvore.", SSM_FAIL);
+	SendSysMessageEx(who, "Você foi incapaz de conseguir madeira usavel dessa árvore.", SSM_FAIL);
 	return 0;
 endfunction
 
