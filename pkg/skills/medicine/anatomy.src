@@ -14,8 +14,8 @@ program medicineSkill(who)
 
    var rolldice := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PRIMEIROS_SOCORROS);
    if (subject.graphic == 0x2006)
+      PrintText(who, "*examinando corpo*");
 		if( rolldice > 12 ) //SkillCheck(who, MEDICINE, -1)
-         PrintText(who, "*examinando corpo*");
 			if (GetObjProperty(subject, "morto") == 1 || subject.npctemplate)
 				SendSysMessageEx(who, "Parece morto para você.", SSM_INFO);
 				if ( rolldice > 18 ); //valorInicial(who, MEDICINE)
