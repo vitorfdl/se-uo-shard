@@ -50,7 +50,7 @@ program clericPowerWords(who)
       if (!input[0])
          canceled := 1;
       elseif (input[0] >= 200)
-         var slot := input[0] - 200 - 1;
+         var slot := input[0] - 200;
          cleric_list := GetObjProperty(who, "cleric_list");
          cleric_list.Erase(slot);
          SetObjProperty(who, "cleric_list", cleric_list);

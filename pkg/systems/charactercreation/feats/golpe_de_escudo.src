@@ -21,10 +21,13 @@ function amigobesta(who)
    elseif (!who.opponent || who.opponent.dead)
       SendSysMessageEx(who, "Você não tem um oponente selecionado.", SSM_INFO);
       return 0;
+   elseif (Distance(who, who.opponent) > 1)
+      SendSysMessageEx(who, "Você está muito longe do oponente.", SSM_INFO);
+      return 0;
    endif
 
    PrintText(who, "*golpe de escudo*");
 
-   TS_StartCooldown(who.opponent, "tombar", 10);
+   TS_StartTimer(who.opponent, "tombar", 10);
    return 1;
 endfunction

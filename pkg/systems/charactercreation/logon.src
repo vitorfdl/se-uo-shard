@@ -10,6 +10,7 @@ program fixTalent(who)
       LearnFeat(who, "Cura Divina", 0, 0);
    endif
 
+   var chardata := GetObjProperty(who, "chardata");
    var attr := ReadConfigFile(":attributes:attributes");
 	foreach skill in (who.skillList())
       var mystat := cint(AP_GetTrueSkill(who, skill));
@@ -29,8 +30,27 @@ program fixTalent(who)
          endforeach
          sleepms(2);
       endfor
+
+      if (!chardata.fixed)
+         if (skill == ARMADURA_PESADA && mystat > 0)
+            chardata.hitpoints  -= mystat;
+            chardata.hitpoints  += mystat * 5;
+         elseif (skill == ARMADURA_MEDIA && mystat > 0)
+            chardata.hitpoints  -= mystat;
+            chardata.hitpoints  += mystat * 3;
+         elseif (skill == ARMADURA_LEVE && mystat > 0)
+            chardata.stampoints  -= mystat;
+            chardata.hitpoints  += mystat * 2;
+            chardata.stampoints  += mystat * 2;
+         elseif(skill["Magia"] && mystat > 0)
+            chardata.manapoints  -= mystat;
+            chardata.manapoints  += mystat *2;
+         endif
+      endif
       sleepms(2);
 	endforeach
+   chardata.fixed := 1;
+   SetObjProperty(who, "chardata", chardata);
 
    var pnt_amt := cint(GetObjProperty(who, "points_received"));
    if (!pnt_amt) return; endif

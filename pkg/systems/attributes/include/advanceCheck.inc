@@ -119,7 +119,7 @@ function ExpGain(mobile, difficulty, value := 0)
 		mobile.SetExp(exp+up_amount);
 		CheckExpUp(mobile);
       var pnt_amt := cint(GetObjProperty(mobile, "points_received"))+1;
-      if (exp+up_amount >= pnt_amt * 120)
+      if (exp+up_amount >= (pnt_amt * 120))
          mobile.SetTalentPoints(1);
          SetObjProperty(mobile, "points_received", pnt_amt+1);
       endif
@@ -147,20 +147,23 @@ function CheckExpUp(who)
 		if (cint(levelup_cfg.AttributePoints))
 			who.SetPoints(1);
 		endif
+      EraseObjProperty(who, "points_received");
 	endif
 endfunction 
 
 function IncreaseVitalPoints(who)
 	var chardata  := GetObjProperty(who, "chardata");
 
-	var increase_hitpoint := RandomDiceRoll("1d3+2") + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
-	var increase_manapoint := RandomDiceRoll("1d3+2") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
+	var increase_hitpoint := RandomDiceRoll("1d5+2") + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
+	var increase_manapoint := RandomDiceRoll("1d5+2") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
+	var increase_stampoint := 1 + AP_GetStat(who, DEXTERITY, RETURN_BONUS);
 
    var duro_de_matar := chardata.carac["Duro de Matar"];
    if (duro_de_matar) increase_hitpoint += duro_de_matar; endif
 
 	chardata.hitpoints  += cint(increase_hitpoint);
 	chardata.manapoints += increase_manapoint;
+	chardata.stampoints += increase_stampoint;
 
 	SetObjProperty(who, "chardata", chardata);
    RecalcVitals(who);
