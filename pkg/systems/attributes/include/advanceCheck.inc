@@ -161,6 +161,9 @@ function IncreaseVitalPoints(who)
    var duro_de_matar := chardata.carac["Duro de Matar"];
    if (duro_de_matar) increase_hitpoint += duro_de_matar; endif
 
+   var acumulador_mana := chardata.carac["Acumulador de Mana"];
+   if (acumulador_mana) increase_manapoint += acumulador_mana; endif
+
 	chardata.hitpoints  += cint(increase_hitpoint);
 	chardata.manapoints += increase_manapoint;
 	chardata.stampoints += increase_stampoint;

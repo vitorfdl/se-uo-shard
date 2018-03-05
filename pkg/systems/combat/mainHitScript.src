@@ -184,10 +184,12 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
 	endif
 
    if (dice_roll.two_dice_success)
-      if (wpn_a_elem.WeaponType == "mace" && AP_GetTrueSkill(attacker, ARMAS_DE_CONCUSSAO) >= 2)
+      if (wpn_a_elem.Pericia == ARMAS_DE_CONCUSSAO && AP_GetTrueSkill(attacker, ARMAS_DE_CONCUSSAO) >= 2)
          weapon_scripts.append("armorbreak");
-      elseif (wpn_a_elem.WeaponType == "dagger" && AP_GetTrueSkill(attacker, LAMINAS_CURTAS) >= 2)
+      elseif (wpn_a_elem.Pericia == LAMINAS_CURTAS && AP_GetTrueSkill(attacker, LAMINAS_CURTAS) >= 2)
          weapon_scripts.append("bleed");
+      elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2)
+         weapon_scripts.append("double_dmg");
       endif
    endif
 
@@ -228,7 +230,7 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
 		weapon_scripts :=  GetConfigStringArray( npcelem, "CriticalHitScripts" );
 	endif
 
-   if (wpn_a_elem.WeaponType == "greatsword" && AP_GetTrueSkill(attacker, ESPADAS) >= 2)
+   if (wpn_a_elem.Pericia == ESPADAS && AP_GetTrueSkill(attacker, ESPADAS) >= 2)
       weapon_scripts.append("peso_da_montanha");
    elseif (weapon.isMagicWeapon())
       if (wpn_a_elem.DamageType == "Fogo" && AP_GetTrueSkill(attacker, "Magia_de_Fogo") >= 2)
@@ -244,7 +246,9 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
       weapon_scripts.append("hit_again");
    elseif(wpn_a_elem.Pericia == ARMAS_DUPLAS && AP_GetTrueSkill(attacker, ARMAS_DUPLAS) >= 2)
       weapon_scripts.append("hit_again");
-   elseif (wpn_a_elem.WeaponType == "besta" && AP_GetTrueSkill(attacker, BESTA) >= 2)
+   elseif (wpn_a_elem.Pericia == BESTA && AP_GetTrueSkill(attacker, BESTA) >= 2)
+      weapon_scripts.append("double_dmg");
+   elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2 && dice_roll.two_dice_success)
       weapon_scripts.append("double_dmg");
    endif
 
