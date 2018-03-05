@@ -495,5 +495,6 @@ function LearnSkill(who, skill_name)
          who.SetAchievement(achiev[1], nextp);
       endif
    endif
+   who.followers_max := cint(GetMaxPets(who));
    RecalcVitals(who);
 endfunction
