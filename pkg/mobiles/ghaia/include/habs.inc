@@ -264,7 +264,10 @@ function fireWall(mobile, dmg_dice, diff := 14)
       return 0;
    endif
    
-   playCastAnimation();
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    var direction := GetFacing(me.x, me.y, mobile.x, mobile.y);
    var field := cint(direction / 2);
    if (field > 4)
@@ -329,7 +332,11 @@ endfunction
 
 
 function charm(mobile, ts_time, diff)
-   playCastAnimation();
+    
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
 
    if (rollResistDice(mobile, INTELLIGENCE) > diff)
@@ -342,7 +349,11 @@ function charm(mobile, ts_time, diff)
 endfunction
 
 function constrict(mobile, ts_time, diff)
-   playCastAnimation();
+    
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
    PrintText(mobile, "*raizes tentam se prender a você*");
    if (rollResistDice(mobile, STRENGTH) > diff)
@@ -355,7 +366,10 @@ function constrict(mobile, ts_time, diff)
 endfunction
 
 function euforic(mobile, ts_time, diff)
-   playCastAnimation();
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    if (Distance(me, mobile) > 2)
       return 0;
    endif
@@ -384,7 +398,10 @@ function euforic(mobile, ts_time, diff)
 endfunction
 
 function scald(mobile, dmg, diff)
-   playCastAnimation();
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    if (Distance(me, mobile) > 2)
       return 0;
    endif
@@ -412,7 +429,10 @@ function scald(mobile, dmg, diff)
 endfunction
 
 function summonCreature(qty, creatures)
-   playCastAnimation();
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    creatures := SplitWords(creatures);
    for i := 1 to qty
       var rad := randomPlace(me, 5);
@@ -426,7 +446,10 @@ function summonCreature(qty, creatures)
 endfunction
 
 function CancaoSedutora(mobiles, dice)
-   playCastAnimation();
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    if (!mobiles[1]) return 0; endif
    sleep(1);
    PerformAction(me, 0x06);
@@ -487,7 +510,10 @@ function Metamorfose(hab_special)
       endif
    endif
 
-   playCastAnimation();
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    var monsters := SplitWords(hab_special);
    var choose_monster := monsters.randomentry();
    PrintText(me, "*metamorfose*");
@@ -509,7 +535,10 @@ function Healing(targ, heal)
    if (!targ.isA(POLCLASS_MOBILE))
       return 0;
    endif
-   playCastAnimation();
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    PrintText(me, "*magia estranha*");
    PlaysoundEffect(me, 1137);
    PlayObjectCenteredEffect( targ, 0x373a, 7, 0x10 );
@@ -572,13 +601,16 @@ endfunction
 
 function playCastAnimation()
    if ("CastAnimation" in custombehaviors)
-      me.frozen := 1;
       for i := 1 to (RandomDiceRoll("1d4"))
+         if (TS_GetTimerInfo(me, "tombar") || TS_GetTimerInfo(me, "paralyze"))
+            return 0;
+         endif
          PerformAction(me, ANIM_CAST_DIR);
          sleepms(650);
       endfor
-      me.frozen := 0;
    endif
+
+   return 1;
 endfunction
 
 // function throwItem(targ)

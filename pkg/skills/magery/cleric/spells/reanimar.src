@@ -4,7 +4,10 @@ use vitals;
 
 include "include/sounds";
 include "include/say";
+include "include/client";
 include ":magery:tnmagery";
+include ":tn:cooldown";
+include ":ghaia:ghaiaUtil";
 
 program SpellScript(params)
 	var who := params[1];
@@ -73,13 +76,14 @@ program SpellScript(params)
 			
 			if (curado)
 				ghaiaRessurect(targ);
-			endif			
+			endif
 		endif
 	endif
 	
 	sleep(1);
 	foreach gliph in gliphs
-		var destro := DestroyItem(gliph);
+		DestroyItem(gliph);
+      sleepms(2);
 	endforeach
 	return 1;
 endprogram

@@ -19,6 +19,7 @@ function ghaiaRessurect(targ, notame := 0)
 			AddPet(owner, npc.serial);
 		endif
 	endif
+   
 	DestroyItem(targ);
 	SetCooldown(npc, "resurrect", 180);
 	var skills := GetObjProperty(npc, "petskills");

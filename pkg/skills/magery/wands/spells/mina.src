@@ -1,0 +1,34 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/facings";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   PlaySoundEffect(who, 0x1F0);
+   var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0xF00);
+   item.SetOwner(who);
+   item.SetDuration(60);
+   if (spellinfo.type == "Fogo")
+      item.SetEffect(DMG_FIRE);
+      item.color := 2039;
+   endif
+
+	return 1;
+endprogram
+
+//  sound
+// 0xA094
+// 2039 - Fogo HUE

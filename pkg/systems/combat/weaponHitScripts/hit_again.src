@@ -16,8 +16,10 @@ program HitScript(params)
 	params := 0; // Not needed anymore.
    var itemcfg := ReadConfigFile(":*:itemdesc");
    if (itemcfg[attacker.weapon.objtype].Pericia == ARCO)
+      PlaySoundEffect(who, 0x523);
       PrintText(attacker, "*Disparo duplo*");
    elseif (itemcfg[attacker.weapon.objtype].Pericia == ARMAS_DUPLAS)
+      PlaySoundEffect(who, 0x51F);
       PrintText(attacker, "*Golpe duplo*");
    endif
    sleepms(200);

@@ -25,7 +25,7 @@ function ataquegiratorio(who)
 	endif
 	who.warmode := 1;
 
-	// PlaySoundEffect(who, 0x14A);
+	PlaySoundEffect(who, 0x520);
 	Performaction(who, 0x1a);
 
 	// PlayMovingEffectXYZ( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, elem.ProjectileAnim, 10, 10, 0, who.realm);

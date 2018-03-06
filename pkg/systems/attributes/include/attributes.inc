@@ -436,7 +436,7 @@ function GetHP(mobile)
 		hp := 1;
 	endif
 
-	hp := (5 + hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+	hp := (15 + hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
 
 	return cint(hp);
 endfunction

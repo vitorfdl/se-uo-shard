@@ -18,17 +18,16 @@ program animateSword(params)
 	params := 0; // No longer needed
 
    PlaySoundEffect(who, 0x44c);
-   // PlayMovingEffect(who, targ, GFX_LARGE_FIREBALL, 5, 0, 1);
-   sleepms(700);
+   PlayMovingEffect(who, targ, GFX_LARGE_FIREBALL, 10, 0, 1);
+   sleepms(900);
    
-   // PlayMovingEffectXYZEx(who.x+mod[1], who.y+mod[2], who.z+10, targ.x, targ.y, targ.z+10, who.realm, 0x1ECD, 5, 25, 2054);
    foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
-      if (rollResistDice(mobile, DEXTERITY) > spellinfo.dice_roll+2)
-         SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
-         SendSystemReport(mobile, "*esquivou*", SSM_INFO);
-      else
-         DamageFLS(mobile, MageDiceTable("A", spellinfo.powered), DMG_FIRE, who);
+      var dmg := RandomDiceRoll(MageDiceTable("A", spellinfo.powered));
+      if (rollResistDice(mobile, DEXTERITY) > spellinfo.dice_roll+5)
+         dmg /= 2;
       endif
+      PlayStationaryEffect(mobile.x, mobile.y, mobile.z, SelectRandomExplosion(), 10, 10, 0, mobile.realm);
+      DamageFLS(mobile, , DMG_FIRE, who);
       sleepms(2);
    endforeach
 
@@ -36,3 +35,7 @@ program animateSword(params)
 endprogram
 
 //  sound
+function SelectRandomExplosion()
+   var explodes := array{GFX_EXPLODE_2, GFX_EXPLODE_3,GFX_EXPLODE_1 };
+   return explodes.randomentry();
+endfunction

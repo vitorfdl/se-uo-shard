@@ -25,6 +25,11 @@ function saltomortal(who)
    
    var loc := struct{ "x" := who.x, "y" := who.y, "z" := who.z };
    PushBack(who, 3, 35, 1);
+   if (CheckGender(who) == 2)
+	   PlaySoundEffect(who, 0x514);
+   else
+	   PlaySoundEffect(who, 0x515);
+   endif
 
    var hostiles := ListHostiles(who);
    var already_hit := array{};

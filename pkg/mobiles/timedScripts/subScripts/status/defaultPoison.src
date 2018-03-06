@@ -35,6 +35,11 @@ function StartScript(mobile, attacker := 0, level := 0)
          diff := 20;
    endcase
 
+   if (GetObjProperty(mobile, "#custom_poison_diff"))
+      diff := GetObjProperty(mobile, "#custom_poison_diff");
+      EraseObjProperty(mobile, "#custom_poison_diff");
+   endif
+
    var success := 0;
    while (!success && !mobile.dead)
       var dmg := RandomDiceRoll(dicedmg);

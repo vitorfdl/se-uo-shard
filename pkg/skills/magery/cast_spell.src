@@ -25,6 +25,10 @@ program SpellStarter(params)
 		writeSpellInfo(spellinfo, cfg);
 	endif
 
+   if (!spellinfo.powered)
+      spellinfo.powered := 1;
+   endif
+
 	if ( GetObjProperty(mobile, "metamorfose") != error )
 		SendSysMessageEx(mobile, "Esta metamorfoseado e incapaz de castar magias.");
 		return 1;
@@ -96,7 +100,7 @@ program SpellStarter(params)
       orig_hp := AP_GetVital(mobile, "Hits");
 
       // Check if we recieved an event from moveCheck_script, which means the mobile moved while targetting
-      if ( Events_Waiting() )
+      if ( Events_Waiting() || TS_GetTimerInfo(mobile, "tombar") )
          SendSysMessageEx(mobile, "Você não conseguiu se concentrar o suficiente para invocar esta magia.", SSM_FAIL);
          FailSpell(mobile);
          HealMana(mobile, cint(spellinfo.mana*0.5));
@@ -236,7 +240,9 @@ function ChooseTarget(mobile, spellinfo)
             break;
          endif
       endwhile
-      TurnObjectToward(mobile, targ.x, targ.y);
+      if (mobile != targ)
+         TurnObjectToward(mobile, targ.x, targ.y);
+      endif
    elseif (spellinfo.alvo == "Area")
       while (1)
          PrintTextPrivate(mobile, "'Escolha o ponto alvo.'", mobile, SSM_INFO);

@@ -9,6 +9,7 @@ include "include/say";
 include "include/damage";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
 
 program animateSword(params)
 	var who := params[1];
@@ -30,7 +31,7 @@ program animateSword(params)
    endif
 
 
-   DamageFLS(targ, RandomDiceRoll("3d4+1"), DMG_COLD, who);
+   DamageFLS(targ, MageDiceTable("B", spellinfo.powered +1), DMG_COLD, who);
 
 	return 1;
 endprogram

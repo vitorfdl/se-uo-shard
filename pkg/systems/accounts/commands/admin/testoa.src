@@ -18,6 +18,8 @@ include ":ghaia:objective";
 include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
+   var targ := Target(who);
+   PlayMovingEffectXYZ( who.x, who.y, (who.z + 5), targ.x, targ.y, targ.z+5, GFX_LARGE_FIREBALL, 10, 0, 1);
    who.frozen := 0;
    // who.setswingtimer(cint(text));
    // who.weapon.speed_mod := cint(text);
@@ -25,7 +27,6 @@ program oafeatures_sendpacket(who, text)
    // SendSysMessageEx(who, "[Part-Msg] Vitor: Testaw erawe rweae" , 1169);
    // SendSysMessageEx(who, "[Part-Msg] Vitor: Tesawera were" , 862);
    // print(RandomDiceRoll("1d1+2"));
-   // var targ := Target(who);
    // targ.SetPoints(1);
    // SendSysMessageEx(who, ""+who.Caracteristica("Clérigo de Anar"));
    // // return;

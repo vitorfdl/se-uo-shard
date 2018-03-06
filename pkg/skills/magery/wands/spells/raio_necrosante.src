@@ -1,0 +1,39 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/facings";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   PlaySoundEffect(who, 0x211);
+   var dmg_dice := RandomDiceRoll(MageDiceTable("B", spellinfo.powered));
+   DamageFLS(targ, dmg_dice, DMG_PHYSICAL, who);
+   var coords := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
+   foreach c in coords
+      PlayStationaryEffectEx( c.x, c.y, who.z+5, who.realm, 0x36F4, 10, 2, 61 );
+      sleepms(2);
+   endforeach
+   
+   if (rollResistDice(targ, CONSTITUTION) > spellinfo.dice_roll || checkImmunity(targ, DMG_POISON))
+      SendSystemReport(targ, "*resistido*", SSM_INFO);
+      SendSystemReport(targ, "*resistido*", SSM_FAIL, who);
+      return;
+   else
+      SetObjProperty(targ, "#custom_poison_diff", spellinfo.dice_roll);
+      TS_StartTimer(targ, "defaultPoison", 15, Ceil(spellinfo.powered / 2), who);
+   endif
+
+	return 1;
+endprogram

@@ -25,6 +25,7 @@ function golpeduplo(who)
    endif
 
    TS_StartCooldown(who, "golpeduplo_actv", 2);
+   PlaySoundEffect(who, 0x51F);
    who.attack_once(who.opponent);
    sleepms(550);
    who.attack_once(who.opponent);
