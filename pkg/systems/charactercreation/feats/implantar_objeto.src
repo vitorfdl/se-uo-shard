@@ -1,0 +1,60 @@
+use os;
+
+include "include/say";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+
+program startTalent(param)
+   var who := param[1];
+   var talent_name := param[2];
+   var res := amigobesta(who);
+
+   if (!res)
+      TS_LowerDuration(who, talent_name, -1, 1);
+   endif
+endprogram
+
+function implantar(who)
+	SendSysMessageEx(who, "Escolha um item da sua mochila para por na mochila do alvo", SSM_REQUEST);
+	var itm := Target(who);
+	if (!itm)
+		SendSysMessageEx(who, "Cancelado", SSM_FAIL);
+		return;
+	endif
+
+	var aux := itm;
+	while (aux.container)
+		aux := aux.container;
+      sleepms(2);
+	endwhile
+
+	if (aux != who)
+		SendsysMessageEx(who, "O item deve estar na sua mochila.", SSM_FAIL);
+		return;
+	endif
+
+	SendSysMessageEx(who, "Escolha o alvo que vai receber seu item.", SSM_REQUEST);
+	var targ := Target(who);
+	if (!targ.IsA(POLCLASS_MOBILE))
+		SendSysMessageEx(who, "Alvo invalido.", SSM_FAIL);
+		return;
+	endif
+
+	if (Distance(who, targ) > 1)
+		SendSysMessageEx(who, "Voce esta muito longe do alvo.", SSM_FAIL);
+		return 1;
+	endif
+
+   MoveObjectToLocation(itm, 0, 0, 0, who.realm);
+   MoveItemToContainer(itm, targ.backpack);
+   
+   var roll_dice := rollAttrDice(mobile, DEXTREZA) + GetSkillBonus(who, FURTO);
+   var diff := rollAttrDice(targ, SABEDORIA) + GetSkillBonus(who, PERCEPCAO);
+
+	if (roll_dice < diff)
+		SendSysMessageEx(targ, "Você nota algo sendo colocado na sua mochila!" , SSM_FAIL);
+		SendSysMessageEx(who, "Parece que o alvo notou algo." , SSM_INFO);
+	endif
+
+   return 1;
+endfunction
