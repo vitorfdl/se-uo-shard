@@ -41,7 +41,7 @@ program destroyitems(parms)
    endif
 	
 	if( GetObjProperty(item, "broken"))
-		SendSysMessageEx(who,"Isto ja parece estar quebrado.",SSM_FAIL);
+		SendSysMessageEx(who,"Isto parece já estar quebrado.",SSM_FAIL);
 		return 0;
 	elseif(AP_GetVital(who, "Stamina") < 15)
       SendSysMessageEx(who, "Você esta cansado demais.",SSM_FAIL);

@@ -79,7 +79,7 @@ function MobileTracking(who)
    PrintText(who, "*Estudando o local a sua volta*");
 
    if(len(mobiles) < 1)
-      SendSysMessageEx(who, "Não encontrou nenhum rastro ao redor para ser perseguido.", 3, 660);
+      SendSysMessageEx(who, "Não encontrou nenhum rastro ao redor para ser perseguido.", 660);
       return;
    endif
 
@@ -110,7 +110,7 @@ function ItemTracking(who)
    PrintText(who, "*Estudando o local a sua volta*");
 
    if(len(items_found) < 1)
-      SendSysMessageEx(who, "Você não encontrou traços de item algum.", 3, 660);
+      SendSysMessageEx(who, "Você não encontrou traços de item algum.", 660);
       return;
    endif
 
@@ -167,7 +167,7 @@ function TrackGump(who, mobiles)
 	if (ifres[0] != 0)
 		var mobontrack := mobiles[ifres[0]];
 		var mobname := mobarray[ifres[0]];
-		SendSysMessageEx(who, "Você agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 3, 191);
+		SendSysMessageEx(who, "Você agora esta seguindo os rastros de um(a) " + mobname + mobontrack.x +mobontrack.y, 191);
 		CreatureTrack(who, mobontrack,mobname);
 	endif
 endfunction
@@ -216,7 +216,7 @@ function ItemTrackGump(who, items)
 	endforeach
 
 	if (!temcoisa)
-		SendSysMessageEx(who, "Não há itens para serem rastreados", 3, 660);
+		SendSysMessageEx(who, "Não há itens para serem rastreados", 660);
 		return;
 	endif
 	var ifres := GFSendGump(who, gump);	
@@ -273,7 +273,7 @@ function CreatureTrack(who, mobontrack, mobname)
 		end := DistanceCheck(who, mobontrack);
 		if (end != 1)
 			var local := MobLocalizate(who, mobontrack);
-			SendSysMessageEx(who, "" + local, 3, 191);
+			SendSysMessageEx(who, "" + local, 191);
 		endif
 	elseif (ifres[0] == 2)
 		end := DistanceCheck(who, mobontrack);
@@ -281,7 +281,7 @@ function CreatureTrack(who, mobontrack, mobname)
 			var parar := 0;
 			while (parar < 5)
 				var local := MobLocalizate(who, mobontrack);
-				SendSysMessageEx(who, "" + local, 3, 191);
+				SendSysMessageEx(who, "" + local, 191);
 				sleepms(5000);
 				parar := parar + 1;
 			endwhile
@@ -290,7 +290,7 @@ function CreatureTrack(who, mobontrack, mobname)
 		end := DistanceCheck(who, mobontrack);
 		if (end != 1)
 			var dist := MobDistance(who, mobontrack);
-			SendSysMessageEx(who, "" + dist, 3, 660);
+			SendSysMessageEx(who, "" + dist, 660);
 		endif
 	elseif (ifres[0] == 4)
 		end := DistanceCheck(who, mobontrack);
@@ -456,7 +456,7 @@ endfunction
 function DistanceCheck(who, mobontrack)
 	var dist := MobDistance(who, mobontrack);
 	if (dist == "perdeu")
-		SendSysMessageEx(who, "Você não consegue mais identificar os rastros desse alvo", 3, 28);
+		SendSysMessageEx(who, "Você não consegue mais identificar os rastros desse alvo", 28);
 		return 1;
 	else
 		return 0;

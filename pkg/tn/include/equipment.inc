@@ -3,7 +3,6 @@ use cfgfile;
 
 include ":attributes:attributes";
 include ":charactercreation:chargumps";
-include ":charactercreation:habilidades";
 include ":fls_core:fls_characters";
 
 function coverFace(item)

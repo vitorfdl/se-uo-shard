@@ -119,6 +119,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "nuvem":        res := nuvem(hab_dice); break;
       "pullCloser":   res := pullCloser(hab_dice, cint(hab_special)); break;
       "electricCone": res := electricCone(hab_target, hab_dice, cint(hab_special)); break;
+      "fireCone": res := fireCone(hab_target, hab_dice, cint(hab_special)); break;
       "cavar": res := cavar(hab_target, hab_dice, cint(hab_special)); break;
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
@@ -206,6 +207,37 @@ function electricCone(mobile, dmg, dist)
             sleepms(2);
          endforeach
          LightningEffect(struct{ "x" := p[1], "y" := p[2], "z" := me.z, "realm" := me.realm}, 50);
+         sleepms(2);
+      endforeach
+      sleepms(400);
+   endfor
+
+   return 1;
+endfunction
+
+function fireCone(mobile, dmg, dist)
+   if (Distance(me, mobile) > 4)
+      return 0;
+   endif
+   
+   PrintText(me, "*baforada*");
+   var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
+   points.erase(points.size());
+   points.erase(points.size()-2);
+   dmg := "{}d4".format(dmg);
+   for i := 1 to 8
+      foreach p in points
+         var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
+         foreach m in mobs
+            if (CanFight(me, m))
+               DamageFLS(m, RandomDiceRoll(dmg), DMG_FIRE, me);
+            endif
+            sleepms(2);
+         endforeach
+         var item := CreateItemAtLocation(p.x, p.y, z, "FireFieldNS");
+         SetObjProperty(item, "DamageDice", dmg);
+         item.SetDuration(0);
+         item.SetOwner(me);
          sleepms(2);
       endforeach
       sleepms(400);

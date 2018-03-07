@@ -52,7 +52,7 @@ function MineTrigger(field, mobile, dmg_dice)
    if (field.GetOwner() == mobile);
       return;
    endif
-   print(field.GetEffect());
+   
    if (field.GetEffect() == DMG_FIRE)
       var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
       DamageFLS(mobile, dmg, DMG_FIRE, field.GetOwner());

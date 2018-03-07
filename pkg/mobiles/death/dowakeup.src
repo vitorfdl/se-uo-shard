@@ -1,0 +1,12 @@
+use uo;
+use os;
+
+include "include/say";
+include "include/client";
+include ":death:death";
+include ":tn:cooldown";
+include ":timedscripts:timedScripts";
+
+program dowakeup(params)
+   KataWakeUp(params[2], params[1]);
+endprogram

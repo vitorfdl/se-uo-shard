@@ -91,7 +91,7 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
    GFAddButton(bardgump, 310, 136, 2103, 2104, 1, 24);// var G2
    GFAddButton(bardgump, 342, 136, 2103, 2104, 1, 25);// var Gs2
    GFAddButton(bardgump, 374, 136, 2103, 2104, 1, 26);// var A2
-   GFAddButton(bardgump, 406, 136, 2103, 2104, 1, 2);// var Ass2
+   GFAddButton(bardgump, 406, 136, 2103, 2104, 1, 27);// var Ass2
    GFAddButton(bardgump, 438, 136, 2103, 2104, 1, 28);// var B2	
 
 	//terceira oitava

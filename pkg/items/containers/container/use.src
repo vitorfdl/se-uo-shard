@@ -15,6 +15,9 @@ program useContainer(mobile, container)
 	if ( mobile.cmdlevel )
 		SendSysMessageEx(mobile, "Command level is present - container is skipping locks, traps, etc.");
 		SendViewContainer(mobile, container);
+   elseif (GetObjProperty(container, "broken"))
+		SendSysMessageEx(mobile, "Isso parece estar quebrado.");
+      return 0;
    elseif (mobile.warmode && GetObjProperty(container, "breakable") && ContainerIsLocked(mobile, container) && Distance(mobile, container) <= 1)
       start_script(":tn:destroyitems", array{mobile, container});
       return 0;

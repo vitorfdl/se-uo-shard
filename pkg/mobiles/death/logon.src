@@ -20,9 +20,9 @@ function checkdeath(ghost)
 	endif
 
 	EraseObjProperty(corpse, "japrolongou");
-   if (ghost.GetCorpse())
-      start_script("plyrdeath", array{ghost.GetCorpse(), ghost});
+   if (corpse)
+      start_script("plyrdeath", array{corpse, ghost});
    else
-	   KataWakeUp(ghost, corpse);
+      start_script("dowakeup", array{corpse, ghost});
    endif
 endfunction
