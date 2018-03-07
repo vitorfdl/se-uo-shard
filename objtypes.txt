@@ -1740,7 +1740,9 @@
 0x41d0 [n/a] doors
 0x41d1 [n/a] doors
 0x41d2 [n/a] doors
-# 0x41d3 - 0x44f1 unused
+# 0x41d3 - 0x44c7 unused
+0x44c8 minisoulforge magery
+# 0x44c9 - 0x44f1 unused
 0x44f2 largeplantbowl farming
 # 0x44f3 - 0x468b unused
 0x468c jellybeans food
@@ -1751,7 +1753,10 @@
 # 0x46af - 0x490f unused
 0x4910 WoodenReforcedChest containers
 0x4911 WoodenReforcedChest2 containers
-# 0x4912 - 0x5000 unused
+# 0x4912 - 0x4d09 unused
+0x4d0a valanecklace metalworking
+0x4d0b valanecklace2 metalworking
+# 0x4d0c - 0x5000 unused
 0x5001 Stone gathering
 # 0x5002 - 0x5014 unused
 0x5015 wristwatch
@@ -2080,7 +2085,9 @@
 # 0x9f4f - 0x9ff7 unused
 0x9ff8 goldenchest containers
 0x9ff9 goldenchest2 containers
-# 0x9ffa - 0xa1ff unused
+# 0x9ffa - 0xa093 unused
+0xa094 mine walkon
+# 0xa095 - 0xa1ff unused
 0xa200 arenastone arena
 # 0xa201 - 0xa35f unused
 0xa360 sosbottle sosbottles

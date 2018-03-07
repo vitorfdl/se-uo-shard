@@ -82,7 +82,7 @@ function consumeWax(who)
     foreach k in EnumerateItemsInContainer(who.backpack)
         if (k.objtype ==  0x142a)
             DestroyItem(k);
-            var item := CreateItemInContainer (who.backpack, UOBJ_EMPTY_KETTLE, 1);
+            var item := CreateItemInContainer(who.backpack, UOBJ_EMPTY_KETTLE, 1);
             item.movable := 1;
             break;
         endif

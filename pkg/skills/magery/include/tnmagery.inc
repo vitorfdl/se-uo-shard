@@ -137,9 +137,7 @@ function WriteMagic(who, spell_id, spell_power)
 		return;
 	endif
 
-   var char_level := who.getLevel();
-   if ((spellinfo.circle == 2 && char_level < 4) || (spellinfo.circle == 3 && char_level < 6) || (spellinfo.circle == 4 && char_level < 14) 
-     || (spellinfo.circle == 5 && char_level < 18) || (spellinfo.circle == 6 && char_level < 20))
+   if (Ceil(AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)) / 2) < spellinfo.circle)
 		SendSysMessageEx(who, "Você não tem conhecimento o suficiente para inscrever esta magia.", SSM_FAIL);
 		return;
    endif
@@ -194,10 +192,12 @@ function WriteMagic(who, spell_id, spell_power)
    spellinfo.difficulty += 3;
 
 	var dice_roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, "Magia_de_{]".format(spellinfo.type));
-	if (dice_roll <= spellinfo.difficulty && who.cmdlevel < 4)
+	if (dice_roll <= spellinfo.difficulty)
 		SendSysMessageEx(who, "Parece que você errou durante a cópia. O espaço ficou inutilizado.", SSM_FAIL);
 		spell_list.append(0);
 		SetObjProperty(targ, "spell_list", spell_list);
+      SetObjProperty(targ, "magicwho", array{ who.serial });
+      SetName(targ, targ.name);
 		return;
 	endif
 

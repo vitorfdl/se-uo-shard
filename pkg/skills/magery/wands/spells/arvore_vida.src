@@ -1,0 +1,71 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/facings";
+include "include/say";
+include "include/tileEffects";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x4C17);
+   PrintText(item, "*Árvore começa a crescer do chão*");
+   sleepms(800);
+   DestroyItem(item);
+   item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x9DB7);
+
+   var area_hits := dictionary{};
+   var total_heal := 0;
+   for i := 1 to 8
+      var mobs := ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+      foreach mob in mobs
+         var mob_vital := AP_GetVital(mob, HITS);
+         if (area_hits[mob.serial] && area_hits[mob.serial] > mob_vital)
+            total_heal += area_hits[mob.serial] - mob_vital;
+         endif
+         area_hits[mob.serial] := mob_vital;
+         sleepms(2);
+      endforeach
+      PlayStationaryEffect(item.x, item.y+1, item.z+1, FX_SPARK_EFFECT, 0, 10);
+      PlayStationaryEffect(item.x, item.y-1, item.z+1, FX_SPARK_EFFECT, 0, 10);
+      PlayStationaryEffect(item.x+1, item.y, item.z+1, FX_SPARK_EFFECT, 0, 10);
+      PlayStationaryEffect(item.x-1, item.y, item.z+1, FX_SPARK_EFFECT, 0, 10);
+      sleep(1);
+   endfor
+
+   var mobs := ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+   var heal_mobs := array{};
+   foreach mob in mobs
+      sleepms(2);
+      if (CheckifIsAlly(who, mob))
+         heal_mobs.append(mob);
+      endif
+   endforeach
+
+
+   var heal_amt := cint(total_heal / heal_mobs.size());
+   if (heal_amt >= spellinfo.powered * 5)
+      heal_amt := spellinfo.powered * 5;
+   endif
+
+   PlaySoundEffect(who, 0x1FD);
+   foreach mob in heal_mobs
+      HealFLS(mob, cint(heal_amt), who);
+      PlayObjectCenteredEffectEx(mob, 0x9F89, 9, 20, 2128);
+      sleepms(2);
+   endforeach
+
+   DestroyItem(item);
+   
+	return 1;
+endprogram

@@ -10,6 +10,7 @@ include "include/damage";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":magery:basicMagery";
+include ":combat:combat";
 
 program animateSword(params)
 	var who := params[1];
@@ -17,18 +18,36 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   PlaySoundEffect(who, 0x44c);
-   // PlayMovingEffect(who, targ, GFX_LARGE_FIREBALL, 5, 0, 1);
-   sleepms(700);
+   PlaySoundEffect(who, 0x2F5);
+   var coords := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
+   foreach c in coords
+      c.z := who.z;
+      LightningEffect(c);
+      sleepms(2);
+   endforeach
+   sleepms(100);
    
-   // PlayMovingEffectXYZEx(who.x+mod[1], who.y+mod[2], who.z+10, targ.x, targ.y, targ.z+10, who.realm, 0x1ECD, 5, 25, 2054);
-   foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
-      if (rollResistDice(mobile, DEXTERITY) > spellinfo.dice_roll+2)
-         SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
-         SendSystemReport(mobile, "*esquivou*", SSM_INFO);
-      else
-         DamageFLS(mobile, MageDiceTable("A", spellinfo.powered), DMG_FIRE, who);
+   var mobs := ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL);
+   mobs.reverse();
+
+   var sum := 0;
+   foreach mobile in mobs
+      if (_mobile_iter >= 3+sum)
+         break;
+      elseif (CheckifIsAlly(who, mobile))
+         sum += 1;
+         continue;
       endif
+
+      var dmg_dice := MageDiceTable("B", spellinfo.powered);
+      if (rollResistDice(mobile, CONSTITUTION) > spellinfo.dice_roll+2)
+         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, who);
+         SendSystemReport(mobile, "*resistiu*", SSM_INFO);
+         DamageFLS(mobile, (RandomDiceRoll(dmg_dice)+2)/2, DMG_ENERGY, who);
+      else
+         DamageFLS(mobile, RandomDiceRoll(dmg_dice)+2, DMG_ENERGY, who);
+      endif
+      PlayLightningBoltEffect(mobile);
       sleepms(2);
    endforeach
 

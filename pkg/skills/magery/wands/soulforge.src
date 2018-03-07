@@ -1,0 +1,105 @@
+
+use os;
+use uo;
+include "include/say";
+include "include/arrays";
+include ":itemutils:canAccess";
+
+program soulforge(who, item)
+   if(!Accessible(who, item))
+		SendSysMessageEx(who, "Você não pode usar isso (3) " + item.desc);
+		return 0;
+	elseif(!ReserveItem(item))
+		SendSysMessageEx(who, "O item já está em uso.");
+		return 0;
+	endif
+
+   SendSysMessageEx(who, "Selecione o item mágico que você deseja restaurar", SSM_REQUEST);
+   var wand := Target(who);
+   if (!wand.isMagicWeapon())
+		SendSysMessageEx(who, "Este não é um item mágico.", SSM_FAIL);
+		return 0;
+   endif
+
+   var mage := GetObjProperty(wand, "spell_list");
+   if (!(0 in mage))
+		SendSysMessageEx(who, "Não há slots inválidos nesta varinha.", SSM_FAIL);
+      return 0;
+   endif
+   // SendSysMessageEx(who, ". Você precisa de {}.".format(remain_bones), SSM_REQUEST);
+   // var ossos := Target(who);
+   var pay := 0;
+   do
+      SendSysMessageEx(who, "Selecione os ossos de demônio. Você precisará de 8. (Pressione ESC para cancelar)", SSM_REQUEST);
+      var targ := Target(who);
+      if ( !targ )
+         SendSysMessageEx(who, "Cancelado.");
+         return;
+      elseif ( !(targ in EnumerateItemsInContainer(who.backpack)) )
+         SendSysMessageEx(who, "Não esta na sua bolsa.", SSM_FAIL);
+      elseif ( GetObjProperty(targ, "stealed") )
+         SendSysMessageEx(who, "Objeto foi roubado!", SSM_FAIL);
+      elseif ( targ.objtype == 0xF80 )
+         if ( !ReserveItem(targ) )
+            SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
+         else
+            if (!SubtractAmount(targ, 8))
+               SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
+            else
+               pay := 1;
+            endif
+         endif
+      else
+         SendSysMessageEx(who, "Você deve indicar ossos de demônio", SSM_FAIL);
+      endif
+   dowhile ( !pay );
+
+   item.graphic := 0x44C7;
+   PrintText(who, "*restaurando item*");
+   MoveObjectToLocation(wand, item.x, item.y, (item.z+5), item.realm, MOVEOBJECT_FORCELOCATION);
+
+   for i := 1 to 3
+      var z := +2;
+      if (i == 2)
+         z -= 4;
+      endif
+
+      MoveObjectToLocation(wand, item.x, item.y, (item.z+z), item.realm, MOVEOBJECT_FORCELOCATION);
+      sleepms(800);
+   endfor
+
+   item.graphic := 0x44C8;
+   mage := RemoveFromArray(mage, 0);
+   SetObjProperty(wand, "spell_list", mage);
+   SendSysMessageEx(who, "Você recuperou um slot do item mágico.", SSM_INFO);
+   SetName(wand, wand.name);
+   wand.movable := 0;
+   MoveItemToContainer(wand, who.backpack);
+   ReleaseItem(item);
+   // while(item)
+   //    var power := cint(GetObjProperty(item, "power"));
+   //    if (!item.container )
+   //       if (GetGlobalProperty("dia") == "dia")
+   //          if (GetWorldHeight( item.x, item.y, item.realm) >= item.z + 15)
+   //             power -= 5;
+   //          else
+   //             power -= 50;
+   //          endif
+   //       elseif (ListItemsNearLocationWithFlag(item.x, item.y, item.z, item.realm, TILEDATA_FLAG_LIGHTSOURCE).size() > 1)
+   //          power -= 10;
+   //       endif
+   //    endif
+
+   //    if (power <= 0)
+   //       PrintText(item, "Esfarelando...");
+   //       sleep(1);
+   //       DestroyItem(item);
+   //    else
+   //       SetObjProperty(item, "power", power);
+   //    endif
+   //    sleep(10);
+   // endwhile
+endprogram
+
+// 
+// Anim: 

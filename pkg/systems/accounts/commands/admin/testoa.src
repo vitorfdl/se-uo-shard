@@ -18,9 +18,11 @@ include ":ghaia:objective";
 include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
-   var targ := Target(who);
-   PlayMovingEffectXYZ( who.x, who.y, (who.z + 5), targ.x, targ.y, targ.z+5, GFX_LARGE_FIREBALL, 10, 0, 1);
-   who.frozen := 0;
+   PlayObjectCenteredEffectEx(who, 0x9F89, 9, 20, 2128);
+   // var targ := Target(who);
+   // PlayMovingEffectXYZ( who.x, who.y, (who.z + 5), targ.x, targ.y, targ.z+5, GFX_LARGE_FIREBALL, 10, 0, 1);
+   // who.frozen := 0;
+   // SetRegionWeatherLevel(GetRegionName(who), 2, 70);
    // who.setswingtimer(cint(text));
    // who.weapon.speed_mod := cint(text);
    // SendSysMessageEx(who, "[Part-Msg] Vitor: Test awer awerawe raewr awerawer awer e" , 1159);

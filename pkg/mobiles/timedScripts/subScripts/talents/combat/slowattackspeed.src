@@ -12,22 +12,22 @@ include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
    var weapon := mobile.weapon;
-   if (GetObjProperty(mobile, "swingspeed_targ"))
-      weapon := SystemFindObjectBySerial(GetObjProperty(mobile, "swingspeed_targ"));
+   if (GetObjProperty(mobile, "dswingspeed_targ"))
+      weapon := SystemFindObjectBySerial(GetObjProperty(mobile, "dswingspeed_targ"));
    endif
 
-   SetObjProperty(mobile, "swingspeed_targ", weapon.serial);
-   weapon.speed_mod := level;
+   SetObjProperty(mobile, "dswingspeed_targ", weapon.serial);
+   weapon.speed_mod := level * -1;
    while (mobile.connected)
       if (mobile.weapon != weapon)
          weapon.speed_mod := 0;
          weapon := mobile.weapon;
-         SetObjProperty(mobile, "swingspeed_targ", weapon.serial);
-         weapon.speed_mod := level;
+         SetObjProperty(mobile, "dswingspeed_targ", weapon.serial);
+         weapon.speed_mod := level * -1;
       endif
 
-      if (!GetObjProperty(mobile, "swingspeed_targ"))
-         SetObjProperty(mobile, "swingspeed_targ", weapon.serial);
+      if (!GetObjProperty(mobile, "dswingspeed_targ"))
+         SetObjProperty(mobile, "dswingspeed_targ", weapon.serial);
       endif
       sleep(3);
    endwhile
@@ -35,13 +35,13 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile, level)
-   var weapon := GetObjProperty(mobile, "swingspeed_targ");
+   var weapon := GetObjProperty(mobile, "dswingspeed_targ");
    weapon := SystemFindObjectBySerial(weapon);
    if (weapon)
-      weapon.speed_mod -= level;
+      weapon.speed_mod += level;
    endif
 
-   EraseObjProperty(mobile, "swingspeed_targ");
+   EraseObjProperty(mobile, "dswingspeed_targ");
    return 1;
 endfunction
 

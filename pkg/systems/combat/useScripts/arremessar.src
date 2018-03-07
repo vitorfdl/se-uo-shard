@@ -6,7 +6,6 @@ include ":charactercreation:feats";
 include ":timedscripts:timedScripts";
 include "include/facings";
 include "include/damage";
-include ":tn:combat";
 include ":combat:combat";
 
 program lancararma(who, weapon)

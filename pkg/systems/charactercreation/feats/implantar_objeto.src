@@ -7,7 +7,7 @@ include ":ghaia:ghaiaUtil";
 program startTalent(param)
    var who := param[1];
    var talent_name := param[2];
-   var res := amigobesta(who);
+   var res := implantar(who);
 
    if (!res)
       TS_LowerDuration(who, talent_name, -1, 1);
@@ -48,8 +48,8 @@ function implantar(who)
    MoveObjectToLocation(itm, 0, 0, 0, who.realm);
    MoveItemToContainer(itm, targ.backpack);
    
-   var roll_dice := rollAttrDice(mobile, DEXTREZA) + GetSkillBonus(who, FURTO);
-   var diff := rollAttrDice(targ, SABEDORIA) + GetSkillBonus(who, PERCEPCAO);
+   var roll_dice := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, FURTO);
+   var diff := rollAttrDice(targ, WISDOM) + GetSkillBonus(targ, PERCEPCAO);
 
 	if (roll_dice < diff)
 		SendSysMessageEx(targ, "Você nota algo sendo colocado na sua mochila!" , SSM_FAIL);

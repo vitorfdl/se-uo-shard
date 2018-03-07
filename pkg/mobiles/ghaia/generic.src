@@ -197,7 +197,7 @@ function Fight(opponent, alerted := 0)
 
       UseHabs();
 
-      if (npccfgfile.Category == "moriquendi")
+      if (npccfgfile.Category == "moriquendi" && !GetObjProperty(me, "noheal"))
          var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
          if (last_autoheal <= ReadGameClock())
             var next_heal := 2;

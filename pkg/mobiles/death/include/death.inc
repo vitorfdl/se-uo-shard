@@ -74,7 +74,7 @@ function KataWakeUp(ghost, corpse)
       if (last_loc)
          MoveObjectToLocation(ghost, last_loc[1], last_loc[2], last_loc[3], ghost.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
       else
-         MoveObjectToLocation(ghost, 4032, 2581, -25, ghost.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+         MoveObjectToLocation(ghost, 4032, 2581, 10, ghost.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
       endif
 	endif
 

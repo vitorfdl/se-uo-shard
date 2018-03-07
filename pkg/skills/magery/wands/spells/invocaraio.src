@@ -1,0 +1,41 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/facings";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+include ":combat:combat";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   if (!GetGlobalProperty("weather"))
+      var items := ListItemsNearLocationOfType( targ.x, targ.y, targ.z+10, 8, 0x9BCB, targ.realm);
+      if (!items[1])
+         SendSysMessageEx(who, "Essa magia só pode ser usada próxima a nuvens carregadas ou em climas tempestuosos", SSM_FAIL);
+         return;
+      endif
+   endif
+
+   PlaySoundEffect(who, 0x5CF);
+
+   for i:= 1 to 3
+      PlayLightningBoltEffect(targ);
+      sleepms(150);
+   endfor
+
+   var dmg_dice := MageDiceTable("A", spellinfo.powered);
+   DamageFLS(targ, RandomDiceRoll(dmg_dice)+8, DMG_ENERGY, who);
+	return 1;
+endprogram
+
+//  sound

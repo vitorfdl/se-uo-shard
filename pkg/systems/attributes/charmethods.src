@@ -237,7 +237,7 @@ exported function Caracteristica(who, carac)
 endfunction
 
 exported function isCaster(who)
-   if (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade")
+   if (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade"))
       return 1;
    endif
 

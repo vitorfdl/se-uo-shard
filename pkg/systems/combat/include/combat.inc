@@ -239,3 +239,34 @@ function SetHitscript(who, hitscript, remove := 0);
    endif
    SetObjProperty(who, "HitScripts", hitscripts);
 endfunction
+
+use uo;
+use os;
+use cfgfile;
+
+include ":ghaia:ghaiaUtil";
+include ":attributes:attributes";
+
+
+function CheckifIsAlly(who, mobiles)
+   if (typeof(mobiles) != "Array") 
+      if ((mobiles in who.party.members || mobiles == who) && !(mobiles in ListHostiles(who)))
+         return 1;
+      endif
+
+      return 0;
+   endif
+
+   var party := who.party.members;
+   var hostiles := ListHostiles(who);
+   var newarray := array{};
+   foreach mobile in mobiles
+      if (mobile in party || mobile == who)
+      else
+         newarray.append(mobile);
+      endif
+      sleepms(2);
+   endforeach
+
+   return newarray;
+endfunction

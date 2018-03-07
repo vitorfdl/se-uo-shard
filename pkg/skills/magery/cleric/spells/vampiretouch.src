@@ -7,6 +7,7 @@ include "include/sounds";
 include "include/say";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
 
 program animateSword(params)
 	var who := params[1];
@@ -29,7 +30,7 @@ program animateSword(params)
 		who.frozen := 1;
 	endif
 	
-   var amt := RandomDiceRoll(MagicDiceTable("A", 1));
+   var amt := RandomDiceRoll(MageDiceTable("A", 1));
 	while  (time < 10)
 		if ( (who.x != oldx) || (who.y != oldy))
 			SendSysMEssageEx(who, "Você se moveu e cancelou a magia.", SSM_FAIL);

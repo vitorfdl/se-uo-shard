@@ -16,8 +16,8 @@ function StartScript(mobile, attacker := 0, level := 0)
 	mobile.frozen := 1;
    var item_colors := dictionary{};
    item_colors[mobile.serial] := mobile.color;
-   who.color := 2753;
-   foreach item in (ListEquippedItems(who))
+   mobile.color := 2753;
+   foreach item in (ListEquippedItems(mobile))
       item_colors[item.serial] := item.color;
       item.color := 2753;
       sleepms(2);

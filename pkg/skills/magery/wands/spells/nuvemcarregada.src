@@ -14,8 +14,13 @@ program nuvemcarregada(params)
 	params := 0; // No longer needed
 
    for i := 1 to 8
-      var point := RandomPlace(who, 15);
+      var point := RandomPlace(who, 8);
       var item := CreateItemAtLocation(point.x, point.y, GetWorldheight(point.x, point.y), 0x9BCB);
+      while (!item)
+         point := RandomPlace(who, 8);
+         item := CreateItemAtLocation(point.x, point.y, GetWorldheight(point.x, point.y), 0x9BCB);
+         sleepms(2);
+      endwhile
       item.color := 971;
       SetobjProperty(item, "owner", who.serial);
       sleep(1);

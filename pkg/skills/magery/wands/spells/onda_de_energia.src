@@ -1,0 +1,80 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/shapes";
+include "include/utils";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":combat:combat";
+include ":magery:basicMagery";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	// var targ := params[3];
+	params := 0; // No longer needed
+
+   PlaySoundEffect(who, 0x1FB);
+   for i := 0 to 7
+      var mod := GetModByFacing(i);
+      mod[1] *= 4;
+      mod[2] *= 4;
+      PlayMovingEffectXYZ(who.x, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
+      PlayMovingEffectXYZ(who.x, who.y-1, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
+      PlayMovingEffectXYZ(who.x+1, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
+      sleepms(2);
+   endfor
+
+   var mobs := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, LIST_IGNORE_Z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+   var dmg_dice := MageDiceTable("B", spellinfo.powered);
+   foreach mob in mobs
+      PushMobile(who, 5 - Distance(who, mob), 1, mob);
+      sleepms(2);
+   endforeach
+
+   sleepms(1000);
+   foreach mob in mobs
+      if (rollResistDice(mob, CONSTITUTION) > spellinfo.dice_roll+2)
+         SendSystemReport(mob, "*resistiu*", SSM_FAIL, who);
+         SendSystemReport(mob, "*resistiu*", SSM_INFO);
+         DamageFLS(mob, RandomDiceRoll(dmg_dice)/2, DMG_ENERGY, who);
+      else
+         DamageFLS(mob, RandomDiceRoll(dmg_dice), DMG_ENERGY, who);
+         TS_StartTimer(mob, "tombar", 10, 1, who);
+      endif
+      sleepms(2);
+   endforeach
+
+	return 1;
+endprogram
+
+function PushMobile(who, dist, delay, targ)
+   var mod := GetModByFacing(GetFacing(who.x, who.y, targ.x, targ.y));
+	var x := mod[1];
+	var y := mod[2];
+
+	var i := 0;
+	for( i := 1; i <= dist; i := i + 1)
+		var finalx := (targ.x + x);
+		var finaly := (targ.y + y);
+      
+		if (!CanWalk("L", targ.x, targ.y, targ.z, finalx, finaly))
+			break;
+		endif
+
+		var err := MoveObjectToLocation( targ, finalx, finaly, targ.z, targ.realm );
+		sleepms(delay);
+		if (err == error)
+		//	PrintText(who, "*bate no obstaculo*");
+			break;
+		endif
+	endfor
+endfunction
+
+
+//  sound

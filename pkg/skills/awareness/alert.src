@@ -5,7 +5,7 @@ include ":awareness:awareness";
 include "include/say";
 
 program alert(mobile)
-   var plusdiff := 4 + who.Caracteristica("Desatento") - who.Caracteristica("Perspicaz");
+   var plusdiff := 4 + mobile.Caracteristica("Desatento") - mobile.Caracteristica("Perspicaz");
    
 	while ( mobile )
 		SetName(mobile, mobile.name);

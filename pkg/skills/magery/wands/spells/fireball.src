@@ -17,7 +17,7 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   PlaySoundEffect(who, 0x44c);
+   PlaySoundEffect(who, 0x15F);
    PlayMovingEffect(who, targ, GFX_LARGE_FIREBALL, 10, 0, 1);
    sleepms(900);
    
@@ -33,9 +33,3 @@ program animateSword(params)
 
 	return 1;
 endprogram
-
-//  sound
-function SelectRandomExplosion()
-   var explodes := array{GFX_EXPLODE_2, GFX_EXPLODE_3,GFX_EXPLODE_1 };
-   return explodes.randomentry();
-endfunction

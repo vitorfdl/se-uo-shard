@@ -321,6 +321,6 @@ function LightningEffect(point, timing := 50)
 endfunction
 
 function SelectRandomExplosion()
-   var explodes := array{GFX_EXPLODE_2, GFX_EXPLODE_3,GFX_EXPLODE_1 };
+   var explodes := array{GFX_EXPLODE_2, GFX_EXPLODE_3, GFX_EXPLODE_1 };
    return explodes.randomentry();
 endfunction

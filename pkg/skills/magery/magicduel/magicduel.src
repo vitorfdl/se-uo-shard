@@ -10,7 +10,7 @@ include ":attributes:vitals";
 include ":timedscripts:timedScripts";
 
 program magicudel(who, item)
-	var who := params[1];
-   var spell_info := params[2];
+	// var who := params[1];
+   // var spell_info := params[2];
 
 endprogram 

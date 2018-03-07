@@ -82,7 +82,7 @@ function addScroll(who, book, scroll)
    WriteSpellInfo(spellinfo);
 
    if (spells_powered[spell_id]+1 > AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)))
-		SendSysMessageEX(who,"Você é incapaz de melhorar essa magia por enquanto.", SSM_FAIL);
+		SendSysMessageEX(who,"Você é incapaz de melhorar/aprender essa magia por enquanto.", SSM_FAIL);
 		MoveItemToContainer(scroll, who.backpack);
 		return 0;
    endif

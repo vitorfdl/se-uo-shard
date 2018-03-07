@@ -22,7 +22,9 @@ include ":death:resurrection";
 program core_chrDeath(params)
 	var corpse := params[1];
 	var ghost := params[2];
-	
+   
+   corpse.decayat := 0;
+
 	MP_Unmount(ghost);
 	MP_DeathUnmount(corpse);
 	

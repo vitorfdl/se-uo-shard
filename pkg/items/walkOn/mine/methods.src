@@ -9,7 +9,7 @@ program Install()
 	return 1;
 endprogram
 
-exported function IsFireField(field)
+exported function isMine(field)
 	return 1;
 endfunction
 
@@ -57,8 +57,8 @@ exported function SetEffect(field, effect)
 endfunction
 
 exported function GetEffect(field)
-	var effect := GetObjProperty(field, "effect");
-   if (!effect) effect := "Gelo": endif
+	var effect := GetObjProperty(field, "Effect");
+   if (!effect) effect := "Gelo"; endif
 
 	return effect;
 endfunction

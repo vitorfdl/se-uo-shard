@@ -145,8 +145,8 @@ program SpellStarter(params)
       FailSpell(mobile, 1);
       return 1;
    else //senão
-      if (!CheckLOSAt(mobile, targ.x, targ.y, targ.z)) //verifica se o ponto ¿ v¿sivel
-         SendsysMessageEx(mobile, "O ponto que Você selecionou esta fora da sua linha de visão.", SSM_FAIL);
+      if (!CheckLOSAt(mobile, targ.x, targ.y, targ.z+5)) //verifica se o ponto ¿ v¿sivel
+         SendsysMessageEx(mobile, "O ponto que você selecionou esta fora da sua linha de visão.", SSM_FAIL);
          FailSpell(mobile, 1);
          return 1;
       endif

@@ -17,20 +17,23 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   PlaySoundEffect(who, 0x1F0);
-   var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0xA094);
-   item.movable := 0;
-   SetObjProperty(item, "DamageDice", MageDiceTable("A", spellinfo.powered));
-   item.SetOwner(who);
-   item.SetDuration(60);
-   if (spellinfo.type == "Fogo")
-      item.SetEffect(DMG_FIRE);
-      item.color := 2039;
-   endif
+   PlaySoundEffect(who, 0x4B1);
+   var oldx := who.x;
+   var oldy := who.y;
+   SetObjProperty(targ, "noheal", 1);
+   while (who.connected && Distance(who, targ) < 15)
+		if (oldx != who.x || oldy != who.y)
+			break;
+		endif
+
+      PerformAction(who, ANIM_CAST_AREA);
+      sleep(1);
+      if (RandomInt(3) == 1)
+         PlaySoundEffect(who, 0x4B1);
+      endif
+   endwhile
+
+   EraseObjProperty(targ, "noheal");
 
 	return 1;
 endprogram
-
-//  sound
-// 
-// 2039 - Fogo HUE
