@@ -234,7 +234,7 @@ function fireCone(mobile, dmg, dist)
             endif
             sleepms(2);
          endforeach
-         var item := CreateItemAtLocation(p.x, p.y, z, "FireFieldNS");
+         var item := CreateItemAtLocation(p.x, p.y, me.z+1, "FireFieldNS");
          SetObjProperty(item, "DamageDice", dmg);
          item.SetDuration(0);
          item.SetOwner(me);
