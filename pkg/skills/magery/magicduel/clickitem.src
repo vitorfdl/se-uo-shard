@@ -1,0 +1,40 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":attributes:attributes";
+include ":itemutils:canAccess";
+
+program magicudel(who, item)
+	if(!can_access(who, item))
+		return 0;
+	endif
+
+   SendSysMessageEx(who, "Quem você deseja desafiar?", SSM_REQUEST);
+   var targ := Target(who);
+
+   if (!who.isA(POLCLASS_MOBILE) || !who.connected)
+      return SendSysMessageEx(who, "Não é um alvo válido.", SSM_FAIL);
+   elseif (!who.isCaster())
+      return SendSysMessageEx(who, "O alvo não parece ter poder mágico para se defender.", SSM_FAIL);
+   endif
+
+   SendSysMessageEx(who, "Você se concentra na mente do alvo.", SSM_INFO);
+   SendSysMessageEx(who, "Aguarde até que ele responda se aceita o duelo.", SSM_INFO);
+
+   if (!YesNo(targ, "{} está te desafiando para um duelo mental. Deseja aceitar?"))
+      return SendSysMessageEx(who, "O alvo resistiu ao duelo mental.", SSM_INFO);
+   endif
+
+   SetObjProperty(who, "mind_battle", targ.serial);
+   SetObjProperty(targ, "mind_battle", who.serial);
+   start_script(":magery:magicduel/magicduel", who);
+   start_script(":magery:magicduel/magicduel", targ);
+endprogram 
+
+//perde 3 de mana por round
+// tentar fugir = teste de resistencia mental
+//fim da mana = perde 2 de mana permanente

@@ -1,0 +1,16 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":attributes:attributes";
+include ":attributes:vitals";
+include ":timedscripts:timedScripts";
+
+program magicudel(who, item)
+	var who := params[1];
+   var spell_info := params[2];
+
+endprogram 

@@ -154,6 +154,7 @@ function TS_ConsumeMana(mobile, qty)
 endfunction
 
 function MageDiceTable(tabela, nivel)
+   nivel -= 1;
    case (tabela)
       "A":
          case (nivel)

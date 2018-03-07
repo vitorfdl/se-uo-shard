@@ -233,7 +233,11 @@ exported function Caracteristica(who, carac)
 		chardata := struct;
 	endif
 
-   if (carac in chardata.carac.keys())
+   return cint(chardata.carac[carac]);
+endfunction
+
+exported function isCaster(who)
+   if (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade")
       return 1;
    endif
 

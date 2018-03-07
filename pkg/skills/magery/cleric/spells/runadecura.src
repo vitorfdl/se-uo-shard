@@ -30,7 +30,7 @@ program SpellScript(params)
 	PrintText(item, "*Surge aos poucos*");
    var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
 
-	var healed := RandomDiceRoll(MageDiceTable("B", level));
+	var healed := RandomDiceRoll(MageDiceTable("B", level)) + 5;
 
 	SetObjProperty(item, "healamount", healed);
 endprogram

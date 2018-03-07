@@ -29,7 +29,7 @@ program animateSword(params)
 		who.frozen := 1;
 	endif
 	
-   var amt := 4;
+   var amt := RandomDiceRoll(MagicDiceTable("A", 1));
 	while  (time < 10)
 		if ( (who.x != oldx) || (who.y != oldy))
 			SendSysMEssageEx(who, "Você se moveu e cancelou a magia.", SSM_FAIL);

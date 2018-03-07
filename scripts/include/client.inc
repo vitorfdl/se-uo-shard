@@ -319,3 +319,8 @@ function LightningEffect(point, timing := 50)
 	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y+1, point.z+15, GFX_ENERGY, 5, timing);
 	PlayMovingEffectXYZ(point.x, point.y, point.z+15, point.x, point.y-1, point.z+15, GFX_ENERGY, 5, timing);
 endfunction
+
+function SelectRandomExplosion()
+   var explodes := array{GFX_EXPLODE_2, GFX_EXPLODE_3,GFX_EXPLODE_1 };
+   return explodes.randomentry();
+endfunction

@@ -5,6 +5,8 @@ include ":awareness:awareness";
 include "include/say";
 
 program alert(mobile)
+   var plusdiff := 4 + who.Caracteristica("Desatento") - who.Caracteristica("Perspicaz");
+   
 	while ( mobile )
 		SetName(mobile, mobile.name);
 		if ( mobile.connected && !mobile.cmdlevel && ListHostiles(mobile, 6).size() == 0)

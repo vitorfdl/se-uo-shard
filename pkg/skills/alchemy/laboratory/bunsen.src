@@ -8,7 +8,7 @@ include ":attributes:attributes";
 
 program change(who, item )
   var cfg  := ReadConfigFile(":*:itemdesc");
-  var elem := FindConfigElem(cfg, item.objtype);  
+  var elem := FindConfigElem(cfg, item.objtype);
   if(item.graphic != item.objtype)
       if(elem.originsnd)
       PlaySoundEffect(who, elem.originsnd );
@@ -46,7 +46,9 @@ function Destilar(balao, beker, who, item)
   var extrato := CINT(GetObjProperty(balao, "extrato"));
   if (!extrato)
     SendSysmessageEx(who, "Nenhum extrato no balao.", SSM_FAIL);
+    return;
   endif
+  ReleaseItem(item);
    item.movable := 0;
    balao.movable := 0;
    beker.movable := 0;
