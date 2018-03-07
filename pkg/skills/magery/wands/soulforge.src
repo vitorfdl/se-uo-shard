@@ -43,7 +43,9 @@ program soulforge(who, item)
          if ( !ReserveItem(targ) )
             SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
          else
-            if (!SubtractAmount(targ, 8))
+            if (targ.amount < 8)
+               SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
+            elseif (!SubtractAmount(targ, 8))
                SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
             else
                pay := 1;
