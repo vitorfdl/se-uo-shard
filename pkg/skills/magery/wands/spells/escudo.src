@@ -39,6 +39,6 @@ program animateSword(params)
    SetObjproperty(targ, "shieldcolor", color);
    SetObjProperty(targ, "shieldtype", shieldtype);
 
-   TS_StartTimer(targ, "escudo_magico", 120);	
+   TS_StartTimer(targ, "escudo_magico", 80+(spellinfo.powered*40));	
 	return 1;
 endprogram

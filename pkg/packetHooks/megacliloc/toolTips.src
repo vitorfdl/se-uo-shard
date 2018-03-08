@@ -237,7 +237,6 @@ exported function MegaCliloc( who, byref packet )
 
 				var spell_list := GetObjProperty(item, "spell_list");
 				if (spell_list != error && spell_list.size() > 0)
-					xDesc += "{} Magias<br>".format(ORANGE);
 					var active_spell := GetObjProperty(item, "active_spell");
                var lost_slots := 0;
 					foreach spell in spell_list
