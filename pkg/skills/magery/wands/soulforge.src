@@ -59,14 +59,14 @@ program soulforge(who, item)
    item.graphic := 0x44C7;
    PrintText(who, "*restaurando item*");
    MoveObjectToLocation(wand, item.x, item.y, (item.z+5), item.realm, MOVEOBJECT_FORCELOCATION);
-
+   wand.movable := 0;
    for i := 1 to 3
       var z := +2;
       if (i == 2)
          z -= 4;
       endif
 
-      MoveObjectToLocation(wand, item.x, item.y, (item.z+z), item.realm, MOVEOBJECT_FORCELOCATION);
+      MoveObjectToLocation(wand, wand.x, wand.y, (wand.z+z), item.realm, MOVEOBJECT_FORCELOCATION);
       sleepms(800);
    endfor
 
@@ -75,7 +75,7 @@ program soulforge(who, item)
    SetObjProperty(wand, "spell_list", mage);
    SendSysMessageEx(who, "Você recuperou um slot do item mágico.", SSM_INFO);
    SetName(wand, wand.name);
-   wand.movable := 0;
+   wand.movable := 1;
    MoveItemToContainer(wand, who.backpack);
    ReleaseItem(item);
    // while(item)
