@@ -25,7 +25,7 @@ program use_Bladed(who, tool)
       if (TS_GetTimerInfo(who, "posicao_defensiva"))
 		   SendSysMessageEx(who, "Você já está em posição defensiva.", SSM_FAIL);
       elseif (AP_GetTrueSkill(who, ESPADAS) >= 1)
-         AP_ConsumeVital(who, STAM, 10);
+         AP_ConsumeVital(who, "Stamina", 10);
          TS_StartTimer(who, "posicao_defensiva", 10, 1);
       endif
    endif
