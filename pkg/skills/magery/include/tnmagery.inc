@@ -189,8 +189,6 @@ function WriteMagic(who, spell_id, spell_power)
 		return;
 	endif
 
-   spellinfo.difficulty += 3;
-
 	var dice_roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, "Magia_de_{]".format(spellinfo.type));
 	if (dice_roll <= spellinfo.difficulty)
 		SendSysMessageEx(who, "Parece que você errou durante a cópia. O espaço ficou inutilizado.", SSM_FAIL);
