@@ -250,8 +250,8 @@ function GetAttackerChance(attacker, defender)
 		// Verifica se arma tem atributo
 		attribute := SelectAttribute(attacker, attacker.weapon);
 		// Checa Pericia
-		if (HaveSkill(attacker, attribute))
-			bonus := cint(GetSkillBonus(attacker));
+		if (wpn_a_elem.Pericia)
+			bonus := cint(GetSkillBonus(attacker, wpn_a_elem.Pericia));
 		endif
 	else
 		// Pega atributo principal do npc
@@ -264,7 +264,6 @@ function GetAttackerChance(attacker, defender)
    if (TS_GetTimerInfo(attacker, "golpeduplo_actv"))
       bonus -= 2;
    endif
-
    // bonus += GetAttackerFeatBonus(attacker, 0);
 	
 	var roll := rollAttrDice(attacker, attribute, dice_gain, struct{ "get_critical" := 1});
@@ -281,10 +280,10 @@ function GetDefenderCA(defender, armor, attacker)
 			CA := armor.ar_base + armor.ar_mod; //se é armadura `ada, n tem dex
 
 			var armor_elem := GetItemCFGInfo(defender, armor);
-			if (armor_elem.pericia == ARMADURA_LEVE)
+			if (armor_elem.Pericia == ARMADURA_LEVE)
             defender.SetAchievement("lightarmor", 1);
 				CA += GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
-			elseif (armor_elem.pericia == ARMADURA_MEDIA)
+			elseif (armor_elem.Pericia == ARMADURA_MEDIA)
             defender.SetAchievement("mediumarmor", 1);
 				var mod := GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
 				if (mod > 2) //max de mod é 2 pra média
@@ -292,7 +291,7 @@ function GetDefenderCA(defender, armor, attacker)
 				endif
 
 				CA += mod;
-         elseif (armor_elem.pericia == ARMADURA_PESADA)
+         elseif (armor_elem.Pericia == ARMADURA_PESADA)
             defender.SetAchievement("heavyarmor", 1);
 			endif
 
@@ -341,12 +340,12 @@ function WearDownArmor(defender, armor)
 		// endif
 
 		if ( RandomDiceRoll("1d100") <= wearchance )
-			SendSysMessage(defender, "Seu equipamento foi danificado.");
+			SendSysMessageEx(defender, "Seu equipamento foi danificado.");
 			var armorhp := armor.hp;
 			armorhp := armorhp - Cint(armr_elem.WearRate);
 			if ( armorhp <= 0 )
 				armor.hp := 0;
-				SendSysMessage(defender, armor.desc+" foi destruida.");
+				SendSysMessageEx(defender, armor.desc+" foi destruida.");
 				SetName(armor, armor.desc);
 				MoveItemToContainer(armor, defender.backpack);
 			elseif ( armor.hp > armor.maxhp )
@@ -373,7 +372,7 @@ function WearDownWeapon(attacker)
 			var weaponhp := weapon.hp - 1;				
 			if ( weaponhp <= 0 )
 				weapon.hp := 0;
-				SendSysMessage(attacker, weapon.desc+" quebrou.");
+				SendSysMessageEx(attacker, weapon.desc+" quebrou.");
 				MoveObjectToLocation(weapon, 1, 1, 1, attacker.realm, MOVEOBJECT_FORCELOCATION);
 				SetName(weapon, weapon.desc);
 				MoveItemToContainer(weapon, attacker.backpack);

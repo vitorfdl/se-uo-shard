@@ -188,7 +188,7 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
          weapon_scripts.append("armorbreak");
       elseif (wpn_a_elem.Pericia == LAMINAS_CURTAS && AP_GetTrueSkill(attacker, LAMINAS_CURTAS) >= 2)
          weapon_scripts.append("bleed");
-      elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2)
+      elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2 && dice_roll.critical)
          weapon_scripts.append("double_dmg");
       endif
    endif
@@ -248,7 +248,7 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
       weapon_scripts.append("hit_again");
    elseif (wpn_a_elem.Pericia == BESTA && AP_GetTrueSkill(attacker, BESTA) >= 2)
       weapon_scripts.append("double_dmg");
-   elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2 && dice_roll.two_dice_success)
+   elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2)
       weapon_scripts.append("double_dmg");
    endif
 

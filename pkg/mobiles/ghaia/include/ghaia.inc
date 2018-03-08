@@ -171,6 +171,9 @@ function GetEnemiesNear(loc, range := 5, get_hidden := 0)
       endif
 
       if (mobile.npctemplate)
+         if (mobile.master || mobile.master in hostiles)
+            myenemies.append(mobile);
+         endif
          // if ( mobile.my_template() in enemies)
          //       myenemies.append(mobile);
          // endif

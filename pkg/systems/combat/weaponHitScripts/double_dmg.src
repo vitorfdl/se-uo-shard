@@ -11,11 +11,10 @@ program HitScript(params)
 	var defender	:= params[2];
 	//var weapon	:= params[3];
 	//var armor	:= params[4];
-	//var basedamage	:= params[5];
-	var rawdamage	:= params[6];
+	var basedamage	:= params[5];
 	params := 0; // Not needed anymore.
 	
 	//ApplyRawDamage(defender, CInt(rawdamage));
-	DamageFLS(defender, cint(rawdamage), DMG_FORCED, attacker);
+	DamageFLS(defender, cint(basedamage), DMG_FORCED, attacker);
 	return 1;
 endprogram

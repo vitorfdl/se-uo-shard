@@ -42,6 +42,12 @@ include ":timedscripts:timedScripts";
 const BASE_DIFFICULTY := 19;
 const GET_MODIFIER := 1;
 
+function debugMSG(who, text)
+	if (GetObjProperty(who, "debug"))
+		SendSysMessageEx(who, text);	
+	endif
+endfunction
+
 // params.critical -> dice >= value
 // params.failure -> dice <= value
 // params.get_critical -> returns {dice, critical}
@@ -120,6 +126,7 @@ function rollAttrDice(mobile, attribute, penalty := 0, params := struct{})
 endfunction
 
 function GetSkillBonus(mobile, skills := 0)
+   DebugMsg(mobile, "Searching skill bonus for {}".format(skills));
    var bn := 1;
 	if (skills)
 		if (typeof(skills) != "Array") 
@@ -167,6 +174,7 @@ function GetSkillBonus(mobile, skills := 0)
       proficiency := bn;
    endif
 
+   DebugMsg(mobile, "Bonus is: {}".format(proficiency));
 	return proficiency;
 endfunction
 

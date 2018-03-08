@@ -23,6 +23,7 @@ program animateSword(params)
    PrintText(who, "*o gelo começa a se formar a frente*");
    sleep(1);
 
+   var dmg := RandomDiceRoll(MageDiceTable("B", spellinfo.powered+1));
    PlayMovingEffectXYZEx(who.x+mod[1], who.y+mod[2], who.z+10, targ.x, targ.y, targ.z+10, who.realm, 0x1ECD, 5, 25, 2054);
    if (rollResistDice(targ, DEXTERITY) > spellinfo.dice_roll)
       SendSystemReport(targ, "*esquiva*", SSM_INFO);
@@ -30,8 +31,7 @@ program animateSword(params)
       return;
    endif
 
-
-   DamageFLS(targ, MageDiceTable("B", spellinfo.powered +1), DMG_COLD, who);
+   DamageFLS(targ, dmg, DMG_COLD, who);
 
 	return 1;
 endprogram

@@ -101,7 +101,9 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "furtividade":    res := NPC_Sneak(); break;
       "metamorfose":    res := Metamorfose(hab_special); break;
       "curar":          res := Healing(hab_target, hab_dice); break;
+      "curar_area":     res := AreaHeal(hab_dice); break;
       "roubar":         res := Roubar(hab_target); break;
+      "gumeArea":        res := gumeArea(hab_target, hab_dice, cint(hab_special)); break;
       "rajada_acida":   res := RajadaAcida(hab_dice, hab_target, cint(hab_special)); break;
       "teia":           res := SpitWeb(hab_special, hab_target, cint(hab_special)); break;
       "teleport":       res := teleport(hab_target, hab_special); break;
@@ -197,20 +199,18 @@ function electricCone(mobile, dmg, dist)
    points.erase(points.size());
    points.erase(points.size()-2);
    dmg := "{}d4".format(dmg);
-   for i := 1 to 8
-      foreach p in points
-         var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
-         foreach m in mobs
-            if (CanFight(me, m))
-               DamageFLS(m, RandomDiceRoll(dmg), DMG_ENERGY, me);
-            endif
-            sleepms(2);
-         endforeach
-         LightningEffect(struct{ "x" := p[1], "y" := p[2], "z" := me.z, "realm" := me.realm}, 50);
+
+   foreach p in points
+      var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
+      foreach m in mobs
+         if (CanFight(me, m))
+            DamageFLS(m, RandomDiceRoll(dmg), DMG_ENERGY, me);
+         endif
          sleepms(2);
       endforeach
-      sleepms(400);
-   endfor
+      LightningEffect(struct{ "x" := p[1], "y" := p[2], "z" := me.z, "realm" := me.realm}, 50);
+      sleepms(2);
+   endforeach
 
    return 1;
 endfunction
@@ -223,17 +223,13 @@ function fireCone(mobile, dmg, dist)
    PrintText(me, "*baforada*");
    var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
    dmg := "{}d4".format(dmg);
-   for i := 1 to 8
-      foreach p in points
-         var item := CreateItemAtLocation(p[1], p[2], me.z+1, 0x3996);
-         print(item);
-         SetObjProperty(item, "DamageDice", dmg);
-         item.SetDuration(0);
-         item.SetOwner(me);
-         sleepms(2);
-      endforeach
-      sleepms(400);
-   endfor
+   foreach p in points
+      var item := CreateItemAtLocation(p[1], p[2], me.z+1, 0x3996);
+      SetObjProperty(item, "DamageDice", dmg);
+      item.SetDuration(0);
+      item.SetOwner(me);
+      sleepms(2);
+   endforeach
 
    return 1;
 endfunction
@@ -328,6 +324,30 @@ function fireWall(mobile, dmg_dice, diff := 14)
    endforeach
 
    return 1;
+endfunction
+
+function gumeArea(targs, dmg, chance)
+   PrintText(me, "*o gelo começa a se formar ao redor*");
+   PlaySoundEffect(me, 0x24B);
+
+   foreach targ in targs
+      var mod := GetModByFacing(GetFacing(me.x, me.y, targ.x, targ.y));
+      PlayStationaryEffectEx(me.x+mod[1], me.y+mod[2], me.z, me.realm, GFX_GLOW, 9, 20, 0);
+      sleepms(2);
+   endforeach
+
+   sleepms(900);
+
+   foreach targ in targs
+      PlayMovingEffectXYZEx(me.x, me.y, me.z+10, targ.x, targ.y, targ.z+10, me.realm, 0x1ECD, 5, 25, 2054);
+      if (rollResistDice(targ, DEXTERITY) > chance)
+         SendSystemReport(targ, "*esquiva*", SSM_INFO);
+         SendSystemReport(targ, "*esquiva*", SSM_FAIL, me);
+      else
+         DamageFLS(targ, dmg, DMG_COLD, me);
+      endif
+      sleepms(2);
+   endforeach
 endfunction
 
 function IceMine(ts_time)
@@ -563,13 +583,25 @@ function Healing(targ, heal)
       return 1;
    endif
 
-   PrintText(me, "*magia estranha*");
    PlaysoundEffect(me, 1137);
    PlayObjectCenteredEffect( targ, 0x373a, 7, 0x10 );
    HealDamage(targ, heal);
    return 1;
 endfunction
 
+function AreaHeal(heal)
+   if (!playCastAnimation())
+      return 1;
+   endif
+
+   PlaysoundEffect(me, 1137);
+   foreach ally in GetAlliesNear(me, 6)
+      PlayObjectCenteredEffect( ally, 0x373a, 7, 0x10 );
+      HealDamage(ally, heal);
+   endforeach
+
+   return 1;
+endfunction
 
 function NPC_Sneak()
    PrintText(me, "*esconde*");

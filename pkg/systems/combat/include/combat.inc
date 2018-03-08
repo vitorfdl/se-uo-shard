@@ -194,12 +194,6 @@ function GetRawDmg(attacker)
   
 endfunction
 
-function debugMSG(who, text)
-	if (GetObjProperty(who, "debug"))
-		SendSysMessageEx(who, text);	
-	endif
-endfunction
-
 function SetArmorHitscript(who, hitscript, remove := 0);
    var hitscripts := GetObjProperty(who, "ArmorHitScripts");
    if (!hitscripts)

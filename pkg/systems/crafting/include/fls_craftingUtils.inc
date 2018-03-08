@@ -197,6 +197,7 @@ function doRepair(who, craft_skill, recipe_cfg)
   
    if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
       SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
+      ReleaseItem(what);
       DestroyItem(what);
       return;
    endif
