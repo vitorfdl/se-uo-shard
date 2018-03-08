@@ -76,13 +76,15 @@ function MiningLoop(who, scoop, my_x, my_y, my_facing, location_name)
 	
 	SetResource(resource_type, location_elem, resource_amount-1);
 	
-	var difficulty := 15;//CInt(100 - (resource_amount * 100 / MAX_RESOURCE_AMOUNT));
+	var difficulty := 12;//CInt(100 - (resource_amount * 100 / MAX_RESOURCE_AMOUNT));
 	var dice_roll := rollAttrDice(who, STRENGTH) + GetSkillBonus(who, EXTRACAO);
 	if ( dice_roll > difficulty )
 		CreateItemInBackPack(who, SCOOP_OF_SAND, 1);
 		SendSysMessageEx(who, "Você pegou um pouco de areia.", SSM_INFO);
 		who.SetAchievement("oremining", 1);
-		ExpGain(who, difficulty, dice_roll);
+      if (randomInt(3) == 1)
+		   ExpGain(who, "minor");
+      endif
 		return 1;
 	else
 		SendSysMessageEx(who, "Você e incapaz de pegar areia aqui.", SSM_FAIL);

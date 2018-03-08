@@ -222,19 +222,11 @@ function fireCone(mobile, dmg, dist)
    
    PrintText(me, "*baforada*");
    var points := GetConeCoordsInFront(me.x, me.y, me.facing, dist);
-   points.erase(points.size());
-   points.erase(points.size()-2);
    dmg := "{}d4".format(dmg);
    for i := 1 to 8
       foreach p in points
-         var mobs := ListMobilesNearLocation(p[1], p[2], me.z+2, 0, me.realm);
-         foreach m in mobs
-            if (CanFight(me, m))
-               DamageFLS(m, RandomDiceRoll(dmg), DMG_FIRE, me);
-            endif
-            sleepms(2);
-         endforeach
-         var item := CreateItemAtLocation(p.x, p.y, me.z+1, "FireFieldNS");
+         var item := CreateItemAtLocation(p[1], p[2], me.z+1, 0x3996);
+         print(item);
          SetObjProperty(item, "DamageDice", dmg);
          item.SetDuration(0);
          item.SetOwner(me);

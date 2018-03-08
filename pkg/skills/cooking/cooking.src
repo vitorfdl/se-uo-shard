@@ -38,7 +38,7 @@ function cookon(who, item)
     return 0;
   endif
 
-  var cfg := ReadConfigFile(":cooking:cooking");
+  var cfg := ReadConfigFile(":cooking:config/recipes");
   var needoven := cfg[item.objtype].oven;
 
   if (needoven == 1)
