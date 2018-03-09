@@ -231,7 +231,7 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
 	endif
 
    if (wpn_a_elem.Pericia == ESPADAS && AP_GetTrueSkill(attacker, ESPADAS) >= 2)
-      weapon_scripts.append("peso_da_montanha");
+      weapon_scripts.append("double_dmg");
    elseif (weapon.isMagicWeapon())
       if (wpn_a_elem.DamageType == "Fogo" && AP_GetTrueSkill(attacker, "Magia_de_Fogo") >= 2)
          weapon_scripts.append("immolation");

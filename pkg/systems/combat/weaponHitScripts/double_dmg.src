@@ -5,6 +5,7 @@ use vitals;
 include "include/damage";
 include "include/client";
 include "include/sounds";
+include ":attributes:attributes";
 
 program HitScript(params)
 	var attacker	:= params[1];
@@ -15,6 +16,9 @@ program HitScript(params)
 	params := 0; // Not needed anymore.
 	
 	//ApplyRawDamage(defender, CInt(rawdamage));
+   if (Ap_GetTrueSkill(attacker, ESPADAS) >= 6)
+      basedamage += GetSkillBonus(attacker, ESPADAS);
+   endif
 	DamageFLS(defender, cint(basedamage), DMG_FORCED, attacker);
 	return 1;
 endprogram
