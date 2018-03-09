@@ -54,5 +54,6 @@ program gump_book(who, thebook)
       SetObjProperty(thebook, "already_used", who.serial);
       LearnFeat(who, feat.name);
       SendSysMessageEx(who, "Você aprendeu o talento {}".format(feat.name), SSM_INFO);
+      DestroyItem(thebook);
    endif
 endprogram
