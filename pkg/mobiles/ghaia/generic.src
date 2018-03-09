@@ -184,18 +184,20 @@ function Fight(opponent, alerted := 0)
          break;
       endif
 
-      //se eh boss e tem eventos
-      var unique := GetBossStruct(me);
-      if ( unique != error && unique.combatevent.size() > 0 )
-         foreach ce in (unique.combatevent)
-            if (!TS_GetCooldown(me, ce.name))
-               start_script(":ghaia:special/genericspecial" , array{me, ce});
-            endif
-            sleepms(2);
-         endforeach
-      endif
+      if (!me.frozen && !me.paralyzed)
+         //se eh boss e tem eventos
+         var unique := GetBossStruct(me);
+         if ( unique != error && unique.combatevent.size() > 0 )
+            foreach ce in (unique.combatevent)
+               if (!TS_GetCooldown(me, ce.name))
+                  start_script(":ghaia:special/genericspecial" , array{me, ce});
+               endif
+               sleepms(2);
+            endforeach
+         endif
 
-      UseHabs();
+         UseHabs();
+      endif
 
       if (npccfgfile.Category == "moriquendi" && !GetObjProperty(me, "noheal"))
          var last_autoheal := cint(GetObjProperty(me, "demon_heal"));

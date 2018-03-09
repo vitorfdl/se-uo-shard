@@ -49,29 +49,32 @@ program controlScript(field)
 endprogram
 
 function MineTrigger(field, mobile, dmg_dice)
-   if (field.GetOwner() == mobile);
+   var owner := field.GetOwner();
+   if (owner == mobile);
+      return;
+   elseif (owner.npctemplate && mobile.npctemplate && !mobile.master)
       return;
    endif
    
    if (field.GetEffect() == DMG_FIRE)
       var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
-      DamageFLS(mobile, dmg, DMG_FIRE, field.GetOwner());
+      DamageFLS(mobile, dmg, DMG_FIRE, owner);
       var explosion := SelectRandomExplosion();
       PlaySoundEffect(mobile, SFX_EXPLOSION_11);
       PlayObjectCenteredEffect(mobile, explosion, 0, 5);
       if (rollResistDice(mobile, CONSTITUTION) > 12)
          TS_StartTimer(mobile, "tombar", 1);
       else
-         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, field.GetOwner());
+         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);
          SendSystemReport(mobile, "*resistiu*", SSM_INFO);
       endif
    else
       var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
-      DamageFLS(mobile, dmg, DMG_COLD, field.GetOwner());
+      DamageFLS(mobile, dmg, DMG_COLD, owner);
       if (rollResistDice(mobile, CONSTITUTION) > 12)
          TS_StartTimer(mobile, "frozen", 4);
       else
-         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, field.GetOwner());
+         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);
          SendSystemReport(mobile, "*resistiu*", SSM_INFO);
       endif
    endif

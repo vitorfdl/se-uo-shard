@@ -53,6 +53,9 @@ endfunction
 
 
 exported function SetEffect(field, effect)
+   if (effect == "Fogo")
+      field.color := 2039;
+   endif
 	return SetObjProperty(field, "Effect", effect);
 endfunction
 

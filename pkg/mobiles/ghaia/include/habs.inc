@@ -9,7 +9,7 @@ function SetHabCd(hab_name, cd)
 endfunction
 
 function GetHabCd(hab_name)
-   if (polcore().systime >= cint(cooldown_habs[hab_name]))
+   if (cint(polcore().systime) >= cint(cooldown_habs[hab_name]))
       return 0;
    endif
 
@@ -123,6 +123,8 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "electricCone": res := electricCone(hab_target, hab_dice, cint(hab_special)); break;
       "fireCone": res := fireCone(hab_target, hab_dice, cint(hab_special)); break;
       "cavar": res := cavar(hab_target, hab_dice, cint(hab_special)); break;
+      "saltar": res := jumpAttack(hab_target, hab_dice); break;
+      "mina": res := createMine(hab_dice, cint(hab_target), cint(hab_special));
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
@@ -138,6 +140,18 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    endif
 endfunction
 
+
+function jumpAttack(targ, dmg)
+   if (Distance(me, targ) < 3 || Distance(me, targ) > 6)
+      return 0;
+   endif
+   printtext(me, "*salta*");
+   MoveObjectToLocation(me, me.x, me.y, me.z+8, me.realm, MOVEOBJECT_FORCELOCATION);
+   sleepms(600);
+   MoveObjectToLocation(me, targ.x, targ.y, targ.z, me.realm, MOVEOBJECT_FORCELOCATION);
+   DamageFLS(targ, dmg, DMG_BLUDGE, me);
+   return 1;
+endfunction
 
 function nuvem(timing)
    var enemies := GetEnemiesNear(me, 10);
@@ -182,7 +196,7 @@ function pullCloser(dist, times)
             endif
          endforeach
       endif
-      sleepms(300);
+      sleepms(200);
    endfor
    PrintText(me, "Batendo Asas");
    return 1;
@@ -327,6 +341,10 @@ function fireWall(mobile, dmg_dice, diff := 14)
 endfunction
 
 function gumeArea(targs, dmg, chance)
+   if (!playCastAnimation())
+      return 1;
+   endif
+
    PrintText(me, "*o gelo começa a se formar ao redor*");
    PlaySoundEffect(me, 0x24B);
 
@@ -350,8 +368,27 @@ function gumeArea(targs, dmg, chance)
    endforeach
 endfunction
 
-function IceMine(ts_time)
+function createMine(dmg, amount, is_fire := 0)
+   if (!playCastAnimation())
+      return 1;
+   endif
 
+   for i := 1 to amount
+      var item;
+      while (!item)
+         var point := randomPlace(me, 6);
+         item := CreateItemAtLocation(point.x, point.y, me.z, 0xA094);
+         SetObjProperty(item, "DamageDice", "{}d4".format(dmg));
+         item.SetOwner(me);
+         if (is_fire)
+            item.SetEffect(DMG_FIRE);
+         endif
+         sleepms(2);
+      endwhile
+      sleepms(2);
+   endfor
+
+   return 1;
 endfunction
 
 function Iceberg(mobile, ice_damage, diff)
