@@ -39,7 +39,7 @@ function chamapurificadora(who)
    TS_StartTimer(targ, "immolation", 30);
    TS_StartCooldown(targ, "peacemade", 300);
    ghaiaPeaceMade(who, targ);
-   sleep(1);
+   sleep(5);
    ApplyRawDamage(targ, CInt(AP_GetVitalMaximumValue(targ, "Hits")));
    return 1;
 endfunction
