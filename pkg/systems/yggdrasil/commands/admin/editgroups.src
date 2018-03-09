@@ -200,7 +200,7 @@ function ConstructMobList(byref gump)
             GFTextLine(gump, x, y, color, name_string);
             GFAddButton(gump, x-20, y+5, start_button, 0x2623, GF_CLOSE_BTN, GF_SELECTMOB_BTN+n);
         else
-            if (groupdata_size <= 10)
+            if (groupdata_size <= 20)
                 GFTextLine(gump, x+40, y, 1153, "Novo Monstro");
                 GFAddButton(gump, x+40-14, y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_ADDMOB_BTN);
             endif

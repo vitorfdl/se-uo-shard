@@ -279,10 +279,10 @@ function FindPeixePretendido(who, isca)
 endfunction
 
 function FindPeixeId(who, isca)
-	if (isca.objtype == 0x9980) return "0x9987"; 
- 	elseif (isca.objtype == 0x9981) return "0xdd8"; 
- 	elseif (isca.objtype == 0x9982) return "0x9cf"; 
- 	elseif (isca.objtype == 0x9983) return "0x9ce";  
+	if (isca.objtype == 0x9980) return "0x9987";  // minhoca -> lambari
+ 	elseif (isca.objtype == 0x9981) return "0xdd8"; // isca de atum -> atum
+ 	elseif (isca.objtype == 0x9982) return "0x9cf"; // isca de dourado -> dourado
+ 	elseif (isca.objtype == 0x9983) return "0x9ce"; 
  	elseif (isca.objtype == 0x9984) return "0xdd7";  
 	elseif (isca.objtype == 0xdd7) return "0x9cd"; 
 	elseif (isca.objtype == 0xdd6) return "0x9cc"; 

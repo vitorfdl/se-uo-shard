@@ -38,17 +38,13 @@ program SpellScript(params)
 			break;
 		endif
 		
-		newmobiles := ListMobilesNearLocation( who.x ,who.y, who.z, 3);
+		newmobiles := ListMobilesNearLocation( who.x ,who.y, who.z, 4);
 		
 		foreach mobile in newmobiles
-			if (mobile.npctemplate)
-				var elem := NPC_GetNPCConfig(mobile.npctemplate);
-				var category := lower(GetConfigString(elem, "Category"));
-				if (category == "moriquendi")
-               ForceDirection(mobile, 0);
-				endif
+			if (mobile.npctemplate["moriquendi"])
+            ForceDirection(mobile, 0);
 			endif
-			sleepms(5);
+			sleepms(2);
 		endforeach
 
 		foreach gliph in gliphs
