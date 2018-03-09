@@ -243,8 +243,16 @@ include ":attributes:attributes";
 
 
 function CheckifIsAlly(who, mobiles)
-   if (typeof(mobiles) != "Array") 
-      if ((mobiles in who.party.members || mobiles == who) && !(mobiles in ListHostiles(who)))
+   if (typeof(mobiles) != "Array")
+      if (mobiles in ListHostiles(who))
+         return 0;
+      elseif (mobiles.npctemplate)
+         if (mobiles.master == who || mobiles.master in who.party.members)
+            return 1;
+         elseif(mobiles.alignment == 2)
+            return 1;
+         endif
+      elseif (mobiles in who.party.members)
          return 1;
       endif
 
@@ -255,11 +263,20 @@ function CheckifIsAlly(who, mobiles)
    var hostiles := ListHostiles(who);
    var newarray := array{};
    foreach mobile in mobiles
-      if (mobile in party || mobile == who)
-      else
-         newarray.append(mobile);
-      endif
       sleepms(2);
+      if (mobile in ListHostiles(who))
+          newarray.append(mobile);
+      elseif (mobile.npctemplate)
+         if (mobile.master == who || mobile.master in who.party.members)
+            continue;
+         elseif(mobile.alignment == 2)
+            continue;
+         endif
+      elseif (mobile in who.party.members)
+         continue;
+      endif
+
+      newarray.append(mobile);
    endforeach
 
    return newarray;

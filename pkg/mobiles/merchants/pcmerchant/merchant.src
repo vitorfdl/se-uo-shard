@@ -269,6 +269,8 @@ function removeItemMerchant(npc, player, input)
 endfunction
 
 function DoPurchase(npc, player, input)
+   PrintText(npc, "Não posso vender nada agora, desculpe. Volte depois.");
+   return 0;
 	var info := GetItemSoldInfo(npc, input);
 	var cost := info[1];
 	var selling := info[2];
