@@ -10,7 +10,7 @@ include ":magery:tnmagery";
 program HitScript(params)
 	var attacker	:= params[1];
 	var defender	:= params[2];
-	// var weapon	:= params[3];
+	var weapon	:= params[3];
 	// var armor	:= params[4];
 	// var basedamage	:= params[5];
 	// var rawdamage	:= params[6];
@@ -18,6 +18,10 @@ program HitScript(params)
    var shieldtype := GetObjProperty(defender, "shieldtype");
    var effect;
    var dmg_type;
+
+   if (weapon.isMagicWeapon() || weapon.isBow())
+      return;
+   endif
 
    if (shieldtype["Gelo"])
       SendSysMessageEx(attacker, "Um frio intenso vindo de {} te causa intensa dor".format(defender.name));

@@ -4,6 +4,7 @@ include ":ghaia:ghaiaUtil";
 include ":combat:weaponInfo";
 include "include/newperformaction";
 include "include/client";
+include ":attributes:attributes";
 
 const IS_REMOVE := 1;
 
@@ -234,13 +235,25 @@ function SetHitscript(who, hitscript, remove := 0);
    SetObjProperty(who, "HitScripts", hitscripts);
 endfunction
 
-use uo;
-use os;
-use cfgfile;
+function SetCriticalHitscript(who, hitscript, remove := 0);
+   var criticalhitscript := GetObjProperty(who, "CriticalHitScripts");
+   if (!criticalhitscript)
+      criticalhitscript := array{};
+   endif
 
-include ":ghaia:ghaiaUtil";
-include ":attributes:attributes";
+   if (!remove)
+      if (!FindInArray(criticalhitscript, hitscript))
+         criticalhitscript.append(hitscript);
+      endif
+   else
+      criticalhitscript := RemoveFromArray(criticalhitscript, hitscript);
+   endif
 
+   if (criticalhitscript.size() < 1)
+      return EraseObjProperty(who, "CriticalHitScripts");
+   endif
+   SetObjProperty(who, "CriticalHitScripts", criticalhitscript);
+endfunction
 
 function CheckifIsAlly(who, mobiles)
    if (typeof(mobiles) != "Array")

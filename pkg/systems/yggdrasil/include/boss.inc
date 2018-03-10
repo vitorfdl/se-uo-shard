@@ -227,14 +227,18 @@ function CreateBossStructGump(who, byref boss)
 		endforeach
 	endif
 
-	GFTextLine(chargump, cx_pos, y_pos, 1153, "Special: ");
+	GFTextLine(chargump, cx_pos, y_pos, 1153, "Custom Scripts: ");
 	GFAddButton( chargump, cx_pos, y_pos+23, 2103, 2104, 1, 30);
 	if (boss.special)
 		var y := 0;
 		var i := 0;
 		foreach item in (boss.special)
 			GFAddButton( chargump, cx_pos, y_pos+43+y, 2103, 2104, 1, 31+i);
-			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1150, " " + item.name);
+         var item_name = item.name;
+         if (item.hitopt)
+            item_name += " {}".format(item.hitopt);
+         endif
+			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1150, item_name );
 			y += 18;
 			i += 1;
 		endforeach
@@ -386,24 +390,38 @@ function CreateBossStructGump(who, byref boss)
 			endif
 
 		else
-			var opt := RadioGump(who, 250, 270, "Editar item", array{"Special Hit Anim", "Life Drain", "Dmg Return", "Custom Hitscript"});
-			var spec := struct;
-			spec.+name := opt;
-			if (!boss.special)
-				boss.+special := array;
-			endif
-			if ( opt == "Dmg Return")
-				spec.+amt := Cdbl(RequestGump(who, "Digite quanto sera retornado. 0.1 a 1.0:", "", "", 1));
-			elseif (opt == "Custom Hitscript")
-					spec.+hitopt := configurehitscript(who);
-			// elseif (opt == "Special AI")
-			// 	var ainame := Cstr(RequestGump(who, "Digite o nome da IA", "", "", 1));
-			// 	spec.+ai := ainame;
-			elseif (opt == "Special Hit Anim")
-				var hitanim := Hex(RequestGump(who, "Digite o hex/int da Animação", "", "", 1));
-				spec.+anim := hitanim;
-			endif
-			boss.special.append(spec);
+			var opt := RadioGump(who, 250, 270, "Editar item", array{"Armorscript", "AttackHitscript", "Criticalscript", "Special IA", "Cancelar"});
+         var spec := struct{
+            "name" := opt
+         };
+
+         var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
+         if (opt["Armor"])
+            var input_list := array{
+               struct{ "title" := "Escolha o ArmorHitScript", "marked" := 1, "radio" := GetHitScriptsName("ArmorHitScripts") }
+            };
+            var output := QuestionsGump(who, input_list);
+            spec.hitopt := GetHitScript(output[1]);
+         elseif (opt["Critical"])
+            var input_list := array{
+               struct{ "title" := "Escolha o CriticalHitscript", "marked" := 1, "radio" := GetHitScriptsName() }
+            };
+            var output := QuestionsGump(who, input_list);
+            spec.hitopt := GetHitScript(output[1]);
+         elseif (opt["Attack"])
+            var input_list := array{
+               struct{ "title" := "Escolha o AttackHitscript", "marked" := 1, "radio" := GetHitScriptsName() }
+            };
+            var output := QuestionsGump(who, input_list);
+            spec.hitopt := GetHitScript(output[1]);
+         elseif (opt["Special IA"])
+				var ainame := Cstr(RequestGump(who, "Digite o nome da IA", "", "", 1));
+				spec.+ai := ainame;
+         endif
+         
+         if (!opt["Cancelar"])
+			   boss.special.append(spec);
+         endif
 		endif
 	endif
 	CreateBossStructGump(who, boss);
@@ -499,56 +517,25 @@ function SetBoss(npc, boss)
 
 	if (boss.special)
 		foreach spec in (boss.special)
-   //   printtextabove(npc,  " " + spec.name);
-			if (spec.name == "Ice Hit")
-				var hit_scripts := GetObjProperty(npc, "HitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:weaponHitScripts/IceHit");
-				SetObjProperty(npc, "HitScripts", hit_scripts);
-			elseif (spec.name == "Fire Hit")
-				var hit_scripts := GetObjProperty(npc, "HitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:weaponHitScripts/FireHit");
-				SetObjProperty(npc, "HitScripts", hit_scripts);
-			elseif (spec.name == "Energy Hit")
-				var hit_scripts := GetObjProperty(npc, "HitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:weaponHitScripts/LightningHit");
-				SetObjProperty(npc, "HitScripts", hit_scripts);
-			elseif (spec.name == "Life Drain")
-				var hit_scripts := GetObjProperty(npc, "HitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:weaponHitScripts/draintouch");
-				SetObjProperty(npc, "HitScripts", hit_scripts);
-			elseif (spec.name == "Dmg Return")
-				var hit_scripts := GetObjProperty(npc, "ArmorHitScripts");
-				if ( !hit_scripts )
-					hit_scripts := array{};
-				endif
-				hit_scripts.append(":combat:armorHitScripts/dmgreturn");
-				SetObjProperty(npc, "ArmorHitScripts", hit_scripts);
-				SetObjProperty(npc, "dmgreturn",  spec.amt);
+      if (spec.name["Armor"])
+         SetArmorHitscript(npc, spec.hitopt);
+      if (spec.name["Critical"])
+         SetCriticalHitscript(npc, spec.hitopt);
+      if (spec.name["Attack"])
+         SetHitscript(npc, spec.hitopt);
       elseif (spec.name == "Custom Hitscript")
-          SetObjProperty(npc, "generichit", spec.hitopt);
-          var hit_scripts := GetObjProperty(npc, "HitScripts");
-          if ( !hit_scripts )
+         SetObjProperty(npc, "generichit", spec.hitopt);
+         var hit_scripts := GetObjProperty(npc, "HitScripts");
+         if ( !hit_scripts )
             hit_scripts := array{};
-          endif
-          hit_scripts.Append(":combat:weaponHitScripts/generic");
-          SetObjProperty(npc, "HitScripts", hit_scripts);
-        elseif (spec.name == "Special AI")
-            npc.script := spec.ai;
-      //      printtextabove(npc, " " + spec.ai);
-            restartscript(npc);
-			endif
+         endif
+         hit_scripts.Append(":combat:weaponHitScripts/generic");
+         SetObjProperty(npc, "HitScripts", hit_scripts);
+      elseif (spec.name == "Special AI")
+         npc.script := spec.ai;
+   //      printtextabove(npc, " " + spec.ai);
+         restartscript(npc);
+      endif
 		endforeach
 	endif	
 

@@ -18,6 +18,8 @@ const BTN_CHANGE_RACE := 11;
 const BTN_CHANGE_CORPSE := 13;
 const BTN_CHANGE_LEVELUP := 14;
 const BTN_CHANGE_FEAT := 15;
+const BTN_CHANGE_HITS := 16;
+const BTN_CHANGE_MANA := 17;
 
 program command_Message(who)
 	var targ;
@@ -47,18 +49,27 @@ program command_Message(who)
 		GFTextLine(gump, 170, y, 2100, "Raça:");
 		GFTextLine(gump, 220, y, 2103, "{}".format(chardata.raca));
       GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_RACE);
-		GFTextLine(gump, 170, y+20, 2100, "Classe:");
-		GFTextLine(gump, 220, y+20, 2103, "{}".format(chardata.classe));
-      GFAddButton(gump, 150, y+20+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_CLASS);
-
-      GFAddButton(gump, 172, y+20+30, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
-		GFHTMLArea(gump,  170, y+20+30, 115, 25, "<basefont color=#7FFFD4><center>Mudar Aparência", 1);
-      
-      GFAddButton(gump, 172, y+20+20+40, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
-		GFHTMLArea(gump,  170, y+20+20+40, 115, 25, "<basefont color=#7FFFD4><center>Subir Level", 1);
-      
-      GFAddButton(gump, 172, y+40+20+50, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
-		GFHTMLArea(gump,  170, y+40+20+50, 115, 25, "<basefont color=#7FFFD4><center>Adquirir Talento", 1);
+      y+= 20;
+		GFTextLine(gump, 170, y, 2100, "Classe:");
+		GFTextLine(gump, 220, y, 2103, "{}".format(chardata.classe));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_CLASS);
+      y+= 20;
+		GFTextLine(gump, 170, y, 2100, "Vida:");
+		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.hitpoints)));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_HITS);
+      y+= 20;
+		GFTextLine(gump, 170, y, 2100, "Mana:");
+		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.manapoints)));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_MANA);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Mudar Aparência", 1);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Subir Level", 1);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Adquirir Talento", 1);
       
 		var input := GFSendGump(who, gump);
 		input := input[0];
@@ -84,6 +95,14 @@ function handleInput(who, input, byref chardata)
       BTN_CHANGE_CLASS:
          var classe := RadioGump(who, 180, 190, "Qual clase deseja escolher?", array{"Guerreiro", "Ladino", "Mago", "Clérigo"});
          chardata.classe := classe;
+         return;
+      BTN_CHANGE_HITS:
+         var hitpoints := cint(RequestInput(who, who.backpack, "Escreva o número de vida extra"));
+         chardata.hitpoints := hitpoints;
+         return;
+      BTN_CHANGE_MANA:
+         var manapoints := cint(RequestInput(who, who.backpack, "Escreva o número de mana extra"));
+         chardata.manapoints := manapoints;
          return;
       BTN_CHANGE_CORPSE:
          var sexo := RadioGump(who, 180, 160, "Qual sexo deseja escolher?", array{"Homem", "Mulher"});

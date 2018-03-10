@@ -19,6 +19,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile, level)
+   PrintText(mobile, "Redução de Defesa", SSM_FAIL);
    var bonus_ca := cint(GetObjProperty(mobile, "bonus_ca"));
    bonus_ca += (level+2);
 

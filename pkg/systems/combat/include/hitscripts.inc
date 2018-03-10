@@ -1,4 +1,54 @@
+use cfgfile;
 include "include/string";
+
+function GetHitScripts(type := "WeaponHits")
+   var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
+   var elem := FindConfigElem(hitscripts_cfg, type);
+   if (!elem) return array{}; endif
+
+   return ListConfigElemProps(elem);
+endfunction
+
+function GetHitScriptsNames(type := "WeaponHits")
+   var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
+   var elem := FindConfigElem(hitscripts_cfg, type);
+   if (!elem) return array{}; endif
+
+   var hits_list := array{};
+   foreach hit of (ListConfigElemProps(elem))
+      hits_list.append(StrReplace(elem[hit], "_", " "));
+      sleepms(2);
+   endforeach
+
+   return hits_list;
+endfunction
+
+function GetHitScript(name)
+   var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
+   var elem := FindConfigElem(hitscripts_cfg, "WeaponHits");
+   var hit;
+   foreach hit of (ListConfigElemProps(elem))
+      if (elem[hit] == name)
+         hit := hit;
+         break;
+      endif
+      sleepms(2);
+   endforeach
+
+   if (hit) return hit; endif
+
+   elem := FindConfigElem(hitscripts_cfg, "ArmorHits");
+   foreach hit of (ListConfigElemProps(elem))
+      if (elem[hit] == name)
+         hit := hit;
+         break;
+      endif
+      sleepms(2);
+   endforeach
+
+   return hit;
+endfunction
+
 
 function execgenerichit(attacker, defender, hitopt, rawdamage)
 
