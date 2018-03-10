@@ -108,7 +108,7 @@ function HandleSpeech(npc, player, text)
       endwhile
    elseif (text["minhas vendas"])
       DoWithdraw(npc, player);
-   elseif (text["histórico"] && text["vendas"])
+   elseif (text["hist"] && text["vendas"])
       if (GetObjProperty(player, "merchant_owner") == GetRegionName(player) || player.cmdlevel)
          PrintText(npc, "Aqui está o histórico de vendas, Sr.");
          var historico := GetMerchantLog(npc);
