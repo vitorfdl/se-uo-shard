@@ -17,17 +17,32 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   PlaySoundEffect(who, 0x1F0);
-   var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0xA094);
-   item.movable := 0;
-   SetObjProperty(item, "DamageDice", MageDiceTable("A", spellinfo.powered));
-   item.SetOwner(who);
-   item.SetDuration(60);
-   if (spellinfo.type == "Fogo")
-      item.SetEffect(DMG_FIRE);
-      item.color := 2039;
-   endif
+   var amount := 2;
+   if (spellinfo.powered >= 3) amount += 1; endif
+   if (spellinfo.powered >= 6) amount += 1; endif
+   if (spellinfo.powered >= 8) amount += 1; endif
+   if (spellinfo.powered >= 10) amount += 1; endif
+   if (spellinfo.powered >= 12) amount += 1; endif
 
+   for i := 1 to amount
+      if (!targ)
+         break; 
+      elseif (!CheckLOSAt(who, targ.x, targ.y, targ.z+5));
+         continue; 
+      endif
+
+      PlaySoundEffect(who, 0x1F0);
+      var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0xA094);
+      item.movable := 0;
+      SetObjProperty(item, "DamageDice", MageDiceTable("A", spellinfo.powered));
+      item.SetOwner(who);
+      item.SetDuration(60);
+      if (spellinfo.type == "Fogo")
+         item.SetEffect(DMG_FIRE);
+         item.color := 2039;
+      endif
+      targ := TargetCoordinates(who);
+   endfor
 	return 1;
 endprogram
 

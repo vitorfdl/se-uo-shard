@@ -60,37 +60,37 @@ function CreateBossStructGump(who, byref boss)
 	if ( !boss.npctemplate )
 		boss.npctemplate := ":ghaia:";
 	endif
-	GFTextLine(chargump, x_pos, y_pos, 1153,  "NpcTemplate:");
-	template := GFTextEntry( chargump, x_pos+80, y_pos, 150, 20, 1150, boss.npctemplate);
+	GFTextLine(chargump, x_pos, y_pos, 1051,  "NpcTemplate:");
+	template := GFTextEntry( chargump, x_pos+80, y_pos, 150, 20, 1935, boss.npctemplate);
 	GFAddButton(chargump, x_pos+200, y_pos, 0xFBD, 0xFBE, GF_CLOSE_BTN, 101);
 
 	if (!boss.name)
 		boss.name := "-";
 	endif
-	GFTextLine(chargump, x_pos, y_pos+18, 1153, "Nome: ");
-	nome := GFTextEntry( chargump, x_pos+60, y_pos+18, 120, 20, 1150, boss.name);
+	GFTextLine(chargump, x_pos, y_pos+18, 1051, "Nome: ");
+	nome := GFTextEntry( chargump, x_pos+60, y_pos+18, 120, 20, 1935, boss.name);
 
-	GFTextLine(chargump, x_pos, y_pos+(18*2), 1153, "Cor: ");
-	cor := GFTextEntry( chargump, x_pos+60, y_pos+(18*2), 100, 20, 1150, cint(boss.color) + "");
+	GFTextLine(chargump, x_pos, y_pos+(18*2), 1051, "Cor: ");
+	cor := GFTextEntry( chargump, x_pos+60, y_pos+(18*2), 100, 20, 1935, cint(boss.color) + "");
 	if (cfg)
-		GFTextLine(chargump, x_pos, y_pos+(18*3), 1153, "Str ["+ cfg.Strength+ "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*4), 1153, "Int [" + cfg.Intelligence + "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*5), 1153, "Dex [" + cfg.Dexterity + "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*6), 1153, "Con [" + cfg.Constitution + "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*7), 1153, "Wis [" + cfg.Wisdom + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*3), 1051, "Str ["+ cfg.Strength+ "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*4), 1051, "Int [" + cfg.Intelligence + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*5), 1051, "Dex [" + cfg.Dexterity + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*6), 1051, "Con [" + cfg.Constitution + "]:");
+		GFTextLine(chargump, x_pos, y_pos+(18*7), 1051, "Wis [" + cfg.Wisdom + "]:");
 	else
-		GFTextLine(chargump, x_pos, y_pos+(18*3), 1153, "Str: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*4), 1153, "Int: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*5), 1153, "Dex: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*6), 1153, "Con: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*7), 1153, "Wis: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*3), 1051, "Str: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*4), 1051, "Int: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*5), 1051, "Dex: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*6), 1051, "Con: ");
+		GFTextLine(chargump, x_pos, y_pos+(18*7), 1051, "Wis: ");
 	endif
 
-	str := GFTextEntry( chargump, x_pos+60, y_pos+(18*3), 100, 20, 1150, cint(boss.str) + "");
-	int := GFTextEntry( chargump, x_pos+60, y_pos+(18*4), 100, 20, 1150, cint(boss.int) + "");
-	dex := GFTextEntry( chargump, x_pos+60, y_pos+(18*5), 100, 20, 1150, cint(boss.dex) + "");
-	con := GFTextEntry( chargump, x_pos+60, y_pos+(18*6), 100, 20, 1150, cint(boss.con) + "");
-	wis := GFTextEntry( chargump, x_pos+60, y_pos+(18*7), 100, 20, 1150, cint(boss.wis) + "");
+	str := GFTextEntry( chargump, x_pos+60, y_pos+(18*3), 100, 20, 1935, cint(boss.str) + "");
+	int := GFTextEntry( chargump, x_pos+60, y_pos+(18*4), 100, 20, 1935, cint(boss.int) + "");
+	dex := GFTextEntry( chargump, x_pos+60, y_pos+(18*5), 100, 20, 1935, cint(boss.dex) + "");
+	con := GFTextEntry( chargump, x_pos+60, y_pos+(18*6), 100, 20, 1935, cint(boss.con) + "");
+	wis := GFTextEntry( chargump, x_pos+60, y_pos+(18*7), 100, 20, 1935, cint(boss.wis) + "");
 
 	var attacks      := GetNpcAttacks(npctemplate);
 	var boss_attacks := boss.customAttacks;
@@ -113,12 +113,12 @@ function CreateBossStructGump(who, byref boss)
 	endforeach
 	GFAddButton( chargump, x_pos, y+2, 2103, 2104, 1, 90);
 
-	// dmgmod := GFTextEntry( chargump, 180, 200, 100, 20, 1150, cint(boss.dmg) + "");
+	// dmgmod := GFTextEntry( chargump, 180, 200, 100, 20, 1935, cint(boss.dmg) + "");
 
   	//if (cfg.specialai != error)
-	//	GFTextLine(chargump, 50, 200, 1153, "Special AI [" + cfg.specialai+ "]:"); ///////////////////////
+	//	GFTextLine(chargump, 50, 200, 1051, "Special AI [" + cfg.specialai+ "]:"); ///////////////////////
 //	else
-		//GFTextLine(chargump, 50, 200, 1153, "Special AI: ");
+		//GFTextLine(chargump, 50, 200, 1051, "Special AI: ");
 	//endif
   
 	var cx_pos := 280;
@@ -127,17 +127,17 @@ function CreateBossStructGump(who, byref boss)
 	if (cfg)
 		cfg_hp := " [{}]".format(cfg.Hits);
 	endif
-	GFTextLine(chargump, cx_pos, y_pos, 1153, "HP{}:".format(cfg_hp));
-	hits := GFTextEntry( chargump, cx_pos+80, y_pos, 100, 20, 1150, cint(boss.hits) + "");
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "HP{}:".format(cfg_hp));
+	hits := GFTextEntry( chargump, cx_pos+80, y_pos, 100, 20, 1935, cint(boss.hits) + "");
 
 	var cfg_ca := "";
 	if (cfg)
 		cfg_ca := " [{}]".format(cfg.AR);
 	endif
-	GFTextLine(chargump, cx_pos, y_pos+18, 1153, "CA{}:".format(cfg_ca));
-	camod := GFTextEntry( chargump, cx_pos+60, y_pos+18, 100, 20, 1150, cint(boss.CA) + "");
+	GFTextLine(chargump, cx_pos, y_pos+18, 1051, "CA{}:".format(cfg_ca));
+	camod := GFTextEntry( chargump, cx_pos+60, y_pos+18, 100, 20, 1935, cint(boss.CA) + "");
 
-	GFTextLine(chargump, cx_pos, y_pos+(18*2), 1153,  "Resistencias");
+	GFTextLine(chargump, cx_pos, y_pos+(18*2), 1051,  "Resistencias");
 	var resists         := GetConfigStringArray(cfg, "Resistencia");
 	var imunities       := GetConfigStringArray(cfg, "Imunidade");
 	var vulnerabilities := GetConfigStringArray(cfg, "Vulnerabilidade");
@@ -176,10 +176,10 @@ function CreateBossStructGump(who, byref boss)
 	if (boss.skills)
 		skills += boss.skills;
 	endif
-	GFTextLine(chargump, cx_pos, y, 1153, "Pericias: ");
+	GFTextLine(chargump, cx_pos, y, 1051, "Pericias: ");
 	y+= 18;
 	foreach skill in skills
-		GFTextLine(chargump, cx_pos, y, 1153, "{}".format(skill));
+		GFTextLine(chargump, cx_pos, y, 1051, "{}".format(skill));
 		y+= 18;
 		sleepms(2);
 	endforeach
@@ -187,65 +187,65 @@ function CreateBossStructGump(who, byref boss)
 	// y+= 18;
 	
 	y_pos := 340;
-	GFTextLine(chargump, x_pos, y_pos, 1153, "Death Events: ");
+	GFTextLine(chargump, x_pos, y_pos, 1051, "Death Events: ");
 	GFAddButton( chargump, x_pos, y_pos+24, 2103, 2104, 1, 20);
 	if (boss.deathevent)
 		var y := 0;
 		var i := 0;
 		foreach item in (boss.deathevent)
 			GFAddButton( chargump, x_pos, y_pos+43+y, 2103, 2104, 1, 21+i);
-			GFTextLine(chargump, x_pos+10, y_pos+20+y, 1150, " " + item.type);
+			GFTextLine(chargump, x_pos+10, y_pos+20+y, 1935, " " + item.type);
 			y += 18;
 			i += 1;
 		endforeach
 	endif
 
-	GFTextLine(chargump, cx_pos, y_pos, 1153, "Loot: ");
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Loot: ");
 	GFAddButton( chargump, cx_pos, y_pos+24, 2103, 2104, 1, 10);
 	if (boss.loot)
 		var y := 0;
 		var i := 0;
 		foreach lootinfo in (boss.loot)
 			GFAddButton( chargump, cx_pos, y_pos+43+y, 2103, 2104, 1, 11+i);
-			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1150, " " + lootinfo.item.desc + " [" + lootinfo.chance + "%]");
+			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1935, " " + lootinfo.item.desc + " [" + lootinfo.chance + "%]");
 			y += 18;
 			i += 1;
 		endforeach
 	endif
 
 	y_pos := 450;
-   GFTextLine(chargump, x_pos, y_pos, 1153, "Combat Events: ");
+   GFTextLine(chargump, x_pos, y_pos, 1051, "Combat Events: ");
 	GFAddButton( chargump, x_pos, y_pos+23, 2103, 2104, 1, 40);
 	if (boss.combatevent)
 		var y := 0;
 		var i := 0;
 		foreach item in (boss.combatevent)
 			GFAddButton( chargump, x_pos, y_pos+43+y, 2103, 2104, 1, 41+i);
-			GFTextLine(chargump, x_pos+10, y_pos+20+y, 1150, " " + item.name);
+			GFTextLine(chargump, x_pos+10, y_pos+20+y, 1935, " " + item.name);
 			y += 18;
 			i += 1;
 		endforeach
 	endif
 
-	GFTextLine(chargump, cx_pos, y_pos, 1153, "Custom Scripts: ");
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Custom Scripts: ");
 	GFAddButton( chargump, cx_pos, y_pos+23, 2103, 2104, 1, 30);
 	if (boss.special)
 		var y := 0;
 		var i := 0;
 		foreach item in (boss.special)
 			GFAddButton( chargump, cx_pos, y_pos+43+y, 2103, 2104, 1, 31+i);
-         var item_name = item.name;
+         var item_name := item.name;
          if (item.hitopt)
             item_name += " {}".format(item.hitopt);
          endif
-			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1150, item_name );
+			GFTextLine(chargump, cx_pos+12, y_pos+19+y, 1935, item_name );
 			y += 18;
 			i += 1;
 		endforeach
 	endif
 
-	GFAddButton(chargump, 380, 507, 4502, 4502, 1, 1 );
-	GFTextLine(chargump, 350, 520, 1153, "Apply");
+	GFAddButton(chargump, 380, 537, 4502, 4502, 1, 1 );
+	GFTextLine(chargump, 350, 550, 1051, "Apply");
 
 	input := GFSendGump(who, chargump);	
   
@@ -378,6 +378,7 @@ function CreateBossStructGump(who, byref boss)
 				endif
 		endif
 	elseif ( input[0] >= 30 && input[0] <= 35)
+      if (!boss.special) boss.special := array{}; endif
 		var index := input[0] - 29;
 
 		if (boss.special[index] != error)
@@ -398,22 +399,22 @@ function CreateBossStructGump(who, byref boss)
          var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
          if (opt["Armor"])
             var input_list := array{
-               struct{ "title" := "Escolha o ArmorHitScript", "marked" := 1, "radio" := GetHitScriptsName("ArmorHitScripts") }
+               struct{ "title" := "Escolha o ArmorHitScript", "marked" := 1, "radio" := GetHitScriptsName("ArmorHits") }
             };
             var output := QuestionsGump(who, input_list);
-            spec.hitopt := GetHitScript(output[1]);
+            spec.+hitopt := GetHitScript(StrReplace(output[1], " ", "_"));
          elseif (opt["Critical"])
             var input_list := array{
                struct{ "title" := "Escolha o CriticalHitscript", "marked" := 1, "radio" := GetHitScriptsName() }
             };
             var output := QuestionsGump(who, input_list);
-            spec.hitopt := GetHitScript(output[1]);
+            spec.+hitopt := GetHitScript(StrReplace(output[1], " ", "_"));
          elseif (opt["Attack"])
             var input_list := array{
                struct{ "title" := "Escolha o AttackHitscript", "marked" := 1, "radio" := GetHitScriptsName() }
             };
             var output := QuestionsGump(who, input_list);
-            spec.hitopt := GetHitScript(output[1]);
+            spec.+hitopt := GetHitScript(StrReplace(output[1], " ", "_"));
          elseif (opt["Special IA"])
 				var ainame := Cstr(RequestGump(who, "Digite o nome da IA", "", "", 1));
 				spec.+ai := ainame;
@@ -517,25 +518,26 @@ function SetBoss(npc, boss)
 
 	if (boss.special)
 		foreach spec in (boss.special)
-      if (spec.name["Armor"])
-         SetArmorHitscript(npc, spec.hitopt);
-      if (spec.name["Critical"])
-         SetCriticalHitscript(npc, spec.hitopt);
-      if (spec.name["Attack"])
-         SetHitscript(npc, spec.hitopt);
-      elseif (spec.name == "Custom Hitscript")
-         SetObjProperty(npc, "generichit", spec.hitopt);
-         var hit_scripts := GetObjProperty(npc, "HitScripts");
-         if ( !hit_scripts )
-            hit_scripts := array{};
+         if (spec.name["Armor"])
+            SetArmorHitscript(npc, spec.hitopt);
+         elseif (spec.name["Critical"])
+            SetCriticalHitscript(npc, spec.hitopt);
+         elseif (spec.name["Attack"])
+            SetHitscript(npc, spec.hitopt);
+         elseif (spec.name == "Custom Hitscript")
+            SetObjProperty(npc, "generichit", spec.hitopt);
+            var hit_scripts := GetObjProperty(npc, "HitScripts");
+            if ( !hit_scripts )
+               hit_scripts := array{};
+            endif
+            hit_scripts.Append(":combat:weaponHitScripts/generic");
+            SetObjProperty(npc, "HitScripts", hit_scripts);
+         elseif (spec.name == "Special AI")
+            npc.script := spec.ai;
+      //      printtextabove(npc, " " + spec.ai);
+            restartscript(npc);
          endif
-         hit_scripts.Append(":combat:weaponHitScripts/generic");
-         SetObjProperty(npc, "HitScripts", hit_scripts);
-      elseif (spec.name == "Special AI")
-         npc.script := spec.ai;
-   //      printtextabove(npc, " " + spec.ai);
-         restartscript(npc);
-      endif
+         sleepms(2);
 		endforeach
 	endif	
 
@@ -609,22 +611,22 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
 	GFDisposable(gumpcombat, 0);
 	GFResizePic(gumpcombat, 0, 25, 3700, 250, 430);	
 	GFResizePic(gumpcombat, 15, 40, 0x13BE, 220, 400);
-	GFTextMid(gumpcombat, 20, 50, 250, 1153, "Combat Events");
+	GFTextMid(gumpcombat, 20, 50, 250, 1051, "Combat Events");
 	
 	var y := 64;
-	GFTextLine(gumpcombat, 35, y, 1153, "Adicionar Novo ");
+	GFTextLine(gumpcombat, 35, y, 1051, "Adicionar Novo ");
 	GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 100);
 	
 	var i := 1;
 	foreach state in (event.steps)
 		y := y+ 15;
-		GFTextLine(gumpcombat, 35, y, 1153, ""+state.type);
+		GFTextLine(gumpcombat, 35, y, 1051, ""+state.type);
 		GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 400+i);
 		i := i + 1;
 	endforeach
 
 	GFAddButton(gumpcombat, 180, 387, 4502, 4502, 1, 1000 );
-	GFTextLine(gumpcombat, 140, 400, 1153, "Apply");
+	GFTextLine(gumpcombat, 140, 400, 1051, "Apply");
 	
 	var input := GFSendGump(who, gumpcombat);
 

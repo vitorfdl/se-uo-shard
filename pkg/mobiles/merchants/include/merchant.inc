@@ -42,7 +42,7 @@ function AddPaymentForSeller(merchant, seller_serial, item_template)
 
 	data_elem.SetProp("my_payments", my_payments);
 	data_elem.SetProp(Hex(seller_serial), seller_account);
-	var money_stored := cint(data_elem.GetProp("money_stored"));
+	// var money_stored := cint(data_elem.GetProp("money_stored"));
    
 endfunction
 

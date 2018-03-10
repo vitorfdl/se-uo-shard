@@ -709,6 +709,7 @@ function SkillGump(who, byref chardata)
    construirgump(ngump); //monta a aparência da gump
    var god_x := 500;
    var god_y := 80;
+	GFAddButton(ngump, 34+god_x, 14+god_y, 2445, 2445, GF_CLOSE_BTN, 500); //Comprar Talento
    GFResizePic(ngump, 7+god_x, 8+god_y, 9380, 675, 535);
 	GFGumpPicTiled(ngump, 33+god_x, 498+god_y, 623, 11, 2091);
 	GFGumpPicTiled(ngump, 33+god_x, 44+god_y, 626, 11, 2091);
@@ -881,6 +882,8 @@ function SkillGump(who, byref chardata)
          if (mycaracs[car] <= 0)
             mycaracs.erase(car);
          endif
+      elseif (input[0] == 203)
+         OpenURL( who, "http://sussurroseternos.com/atributos-habilidades/" );
       elseif (input[0] == 200)
          if (points > 0)
             SendSysMessageEX(who, "Você deve gastar todos os pontos!", SSM_FAIL);
