@@ -4,6 +4,7 @@ use uo;
 include ":keys:key";
 include "include/say";
 include "plankUtil";
+include ":taming:taming";
 
 program useplank(mob, plank)
   set_critical(1);
@@ -89,8 +90,12 @@ function YankOntoBoat(mob, plank)
   if(sh)
     var nx :=(plank.x + plank.multi.x) / 2;
     var ny :=(plank.y + plank.multi.y) / 2;
+    var pets := ListPetsNear(mob, 4);
     MoveObjectToLocation(mob, nx, ny, plank.z, mob.realm);
-    return;
+    foreach pet in pets
+      MoveObjectToLocation(pet, nx, ny, plank.z, mob.realm);
+      sleepms(2);
+    endforeach
   endif
 endfunction
 
