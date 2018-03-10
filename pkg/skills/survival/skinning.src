@@ -56,7 +56,7 @@ program skinning(parms)
 	elseif((GetObjProperty(cadaver,"npctemplate")== error) && (GetObjProperty(cadaver, "morto")!=1))
       if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo poderá negar o pedido e você não pode sair de perto do corpo", "Nao: nenhuma consequencia.")) //quer matar mesmo
          start_script(":death:permadeath/permanentdeath", array{who, cadaver, blade});
-         SendSysMessageExEx(who, "Aguarde até que o alvo responda. Afaste-se do corpo para cancelar a ação.", SSM_FAIL);
+         SendSysMessageEx(who, "Aguarde até que o alvo responda. Afaste-se do corpo para cancelar a ação.", SSM_FAIL);
       endif
 		//DesmembreCorpse(cadaver);
 	
