@@ -12,61 +12,58 @@ program fixTalent(who)
       LearnFeat(who, "Linguagem Rúnica", 0, 0);
       LearnFeat(who, "Cura Divina", 0, 0);
    endif
-
-   var total_points := who.getTalentPoints();
-
-   var chardata := GetObjProperty(who, "chardata");
-   var attr := ReadConfigFile(":attributes:attributes");
-	foreach skill in (who.skillList())
-      var mystat := cint(AP_GetTrueSkill(who, skill));
-      var levels := GetConfigStringArray(attr[skill], "Level");
-      for i := 1 to mystat
-         total_points += getCost(attr[skill].SkillType, i);
-         foreach giv in levels
-            sleepms(2);
-            giv := SplitWords(giv);
-            if (cint(giv[1]) > mystat)
-               continue;
-            endif
-
-            if (giv[2] == "feat")
-               var new_feat := StrReplace(giv[3], "_", " ");
-               LearnFeat(who, new_feat, 0, 0);
-            endif
-         endforeach
-         sleepms(2);
-      endfor
-
-      if (!chardata.fixed)
-         if (skill == ARMADURA_PESADA && mystat > 0)
-            chardata.hitpoints  -= mystat;
-            chardata.hitpoints  += mystat * 5;
-         elseif (skill == ARMADURA_MEDIA && mystat > 0)
-            chardata.hitpoints  -= mystat;
-            chardata.hitpoints  += mystat * 3;
-         elseif (skill == ARMADURA_LEVE && mystat > 0)
-            chardata.stampoints  -= mystat;
-            chardata.hitpoints  += mystat * 2;
-            chardata.stampoints  += mystat * 2;
-         elseif(skill["Magia"] && mystat > 0)
-            chardata.manapoints  -= mystat;
-            chardata.manapoints  += mystat *2;
-         endif
-      endif
-      sleepms(2);
-	endforeach
-   chardata.fixed := 1;
-   SetObjProperty(who, "chardata", chardata);
-
-   FixPoints(who, total_points);
-
-   var pnt_amt := cint(GetObjProperty(who, "points_received"));
-   if (!pnt_amt) return; endif
-   var exp := who.GetExp();
-
-   if ((pnt_amt * 120) > exp)
-      EraseObjProperty(who, "points_received");
+   EraseObjProperty(who, "fixalert");
+   if (!GetObjProperty(who, "reseted") && !GetObjProperty(who, "criandochar"))
+      resetChar(who);
+      SetObjProperty(who, "reseted", 1);
    endif
+   // var total_points := who.getTalentPoints();
+
+   // var chardata := GetObjProperty(who, "chardata");
+   // var attr := ReadConfigFile(":attributes:attributes");
+	// foreach skill in (who.skillList())
+   //    var mystat := cint(AP_GetTrueSkill(who, skill));
+   //    var levels := GetConfigStringArray(attr[skill], "Level");
+   //    for i := 1 to mystat
+   //       total_points += getCost(attr[skill].SkillType, i);
+   //       foreach giv in levels
+   //          sleepms(2);
+   //          giv := SplitWords(giv);
+   //          if (cint(giv[1]) > mystat)
+   //             continue;
+   //          endif
+
+   //          if (giv[2] == "feat")
+   //             var new_feat := StrReplace(giv[3], "_", " ");
+   //             LearnFeat(who, new_feat, 0, 0);
+   //          endif
+   //       endforeach
+   //       sleepms(2);
+   //    endfor
+
+   //    if (!chardata.fixed)
+   //       if (skill == ARMADURA_PESADA && mystat > 0)
+   //          chardata.hitpoints  -= mystat;
+   //          chardata.hitpoints  += mystat * 5;
+   //       elseif (skill == ARMADURA_MEDIA && mystat > 0)
+   //          chardata.hitpoints  -= mystat;
+   //          chardata.hitpoints  += mystat * 3;
+   //       elseif (skill == ARMADURA_LEVE && mystat > 0)
+   //          chardata.stampoints  -= mystat;
+   //          chardata.hitpoints  += mystat * 2;
+   //          chardata.stampoints  += mystat * 2;
+   //       elseif(skill["Magia"] && mystat > 0)
+   //          chardata.manapoints  -= mystat;
+   //          chardata.manapoints  += mystat *2;
+   //       endif
+   //    endif
+   //    sleepms(2);
+	// endforeach
+
+   // chardata.fixed := 1;
+   // SetObjProperty(who, "chardata", chardata);
+
+   // FixPoints(who, total_points);
 endprogram
 
 function FixPoints(who, total_points)
@@ -84,7 +81,63 @@ function FixPoints(who, total_points)
    if (total_points > expected_points && !GetObjProperty(who, "fixalert"))
       SetObjProperty(who, "fixalert", 1);
 		start_script(":email:emailMessage/sendSystemMail", array{ 999999998, "{} precisa ser arrumado".format(who.name), "O usuário {} precisa ser corrigido. [P] Total de pontos: {} [P] Pontos esperados: {}".format(who.acctname, total_points, expected_points)} );
-		start_script(":email:emailMessage/sendSystemMail", array{ who, "Problema com EXP", "Olá, [P] Seu personagem possui algum problema com pontos de talento. Por isso, estaremos bloqueando o seu ganho de experiência. Contate o administrador <b>vitorfdl</b> para corrigir o problema o mais breve possível."} );
       SetobjProperty(who, "NoGains", 1);
    endif
+endfunction
+
+function resetChar(who)
+   var chardata := GetObjProperty(who, "chardata");
+   var attr := ReadConfigFile(":attributes:attributes");
+   chardata.Feats := array{};
+
+	foreach skill in (who.skillList())
+      var mystat := cint(AP_GetTrueSkill(who, skill));
+
+      var gives := GetConfigStringArray(attr[skill], "Give");
+      for i := 1 to mystat
+         foreach giv in gives
+            giv := SplitWords(giv);
+            if (giv[1] == "mana")
+               chardata.manapoints -= cint(giv[2]);
+            elseif (giv[1] == "hits")
+               chardata.hitpoints  -= cint(giv[2]);
+            elseif (giv[1] == "stam")
+               chardata.stampoints -= cint(giv[2]);
+            endif
+            sleepms(2);
+         endforeach
+         sleepms(2);
+      endfor
+
+      AP_SetTrueSkill(who, skill, 0);
+      sleepms(2);
+	endforeach
+
+   var myskills := chardata.Skills;
+	foreach skill in (myskills.keys())
+      var total := myskills[skill];
+      for i := 1 to total
+         LearnSkill(who, skill);
+         sleepms(2);
+      endfor
+      sleepms(2);
+   endforeach
+
+   var level := who.GetLevel();
+   if (level > 1)
+      var expmod := 0;
+      for i := 1 to level-1
+         expmod += i * 2200;
+         sleepms(2);
+      endfor
+      chardata.storedexp := expmod;
+   endif
+
+   chardata.talentpoints := 0;
+   RecalcVitals(who);
+   EraseObjProperty(who, "points_received");
+   EraseObjProperty(who, "NoGains");
+   SetObjProperty(who, "chardata", chardata);
+
+	start_script(":email:emailMessage/sendSystemMail", array{ who, "Suas habilidades foram resetadas.", "Olá, [P] Infelizmente ocorreram problemas com o sistema de level up do shard. Para corrigir isso, todas suas habilidades foram resetadas para o momento de criação do personagem. [P] Seu level e experiência não sofreram alterações. Você receberá seus pontos de habilidade gradativamente conforme executar tarefas. Em poucos minutos você deve recuperar todos os pontos. Não se surpreenda se receber menos pontos, pode ser que seu personagem estivesse com o problema que esse reset está corrigindo. [P] Sussurros Eternos Shard agradece e bom jogo!"} );
 endfunction
