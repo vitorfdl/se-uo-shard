@@ -13,7 +13,7 @@ program fixTalent(who)
       LearnFeat(who, "Cura Divina", 0, 0);
    endif
    EraseObjProperty(who, "fixalert");
-   if (!GetObjProperty(who, "reseted") && !GetObjProperty(who, "criandochar"))
+   if (!GetObjProperty(who, "reseted") && !GetObjProperty(who, "criandochar") && !who.cmdlevel)
       resetChar(who);
       SetObjProperty(who, "reseted", 1);
    endif
