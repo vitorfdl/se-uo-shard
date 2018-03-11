@@ -89,7 +89,7 @@ function resetChar(who)
    var chardata := GetObjProperty(who, "chardata");
    var attr := ReadConfigFile(":attributes:attributes");
    chardata.Feats := array{};
-
+   set_critical(0);
 	foreach skill in (who.skillList())
       var mystat := cint(AP_GetTrueSkill(who, skill));
 
@@ -113,6 +113,8 @@ function resetChar(who)
       sleepms(2);
 	endforeach
 
+   sleepms(20);
+
    var myskills := chardata.Skills;
 	foreach skill in (myskills.keys())
       var total := myskills[skill];
@@ -122,6 +124,7 @@ function resetChar(who)
       endfor
       sleepms(2);
    endforeach
+   set_critical(1);
 
    var level := who.GetLevel();
    if (level > 1)
