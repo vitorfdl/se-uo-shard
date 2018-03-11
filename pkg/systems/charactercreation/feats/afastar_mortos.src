@@ -15,7 +15,7 @@ program SpellScript(params)
 	var who := params[1];
 	params := 0; // No longer needed
    
-   var diceroll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(who, MILAGRE_DE_NECROMANCIA);
+   var diceroll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, MILAGRE_DE_NECROMANCIA);
 	PlaySoundEffect(who, SFX_SPELL_STRENGTH);
 	var newmobiles := ListMobilesNearLocation( who.x , who.y, who.z, 5);
 	foreach mob in newmobiles
@@ -24,10 +24,10 @@ program SpellScript(params)
          continue; 
       endif
 
-      if (rollResistDice(mobile, WISDOM) <= diceroll)
-         ghaiaFlee(who, mobile);
+      if (rollResistDice(mob, WISDOM) <= diceroll)
+         ghaiaFlee(who, mob);
       else
-         SendSystemReport(mobile, "*resistido*", SSM_FAIL, who);
+         SendSystemReport(mob, "*resistido*", SSM_FAIL, who);
       endif
    endforeach
 	
