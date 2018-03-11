@@ -99,10 +99,12 @@ function handleInput(who, input, byref chardata)
       BTN_CHANGE_HITS:
          var hitpoints := cint(RequestInput(who, who.backpack, "Escreva o número de vida extra"));
          chardata.hitpoints := hitpoints;
+         RecalcVitals(who);
          return;
       BTN_CHANGE_MANA:
          var manapoints := cint(RequestInput(who, who.backpack, "Escreva o número de mana extra"));
          chardata.manapoints := manapoints;
+         RecalcVitals(who);
          return;
       BTN_CHANGE_CORPSE:
          var sexo := RadioGump(who, 180, 160, "Qual sexo deseja escolher?", array{"Homem", "Mulher"});

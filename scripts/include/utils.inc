@@ -54,21 +54,22 @@ function PushBack(who, dist, delay, invert := 0)
 		x := x * -1;
 		y := y * -1;
 	endif
-
-	var i := 0;
-	for( i := 1; i <= dist; i := i + 1)
+   
+   for i:= 1 to dist
 		var finalx := (who.x + x);
 		var finaly := (who.y + y);
 		if (!CheckLosAt(who, finalx, finaly, who.z))
-			break;
+			return 0;
 		endif
 		var err := MoveObjectToLocation( who, finalx, finaly, who.z, who.realm );
 		sleepms(delay);
 		if (err == error)
 		//	PrintText(who, "*bate no obstaculo*");
-			break;
+			return 0;
 		endif
 	endfor
+
+   return 1;
 endfunction
 
 

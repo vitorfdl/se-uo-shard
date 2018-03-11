@@ -55,7 +55,7 @@ function LearnFeat(who, feat, minus_point := 0, gives := 1)
 	endif
 
 	if (typeof(feat) != "Struct")
-		Print(">>>>> ERROR OCURRED, NO FEAT FOUND");
+		Print(">>>>> ERROR OCURRED, NO FEAT FOUND {}".format(feat));
 		return 0;
 	endif
 

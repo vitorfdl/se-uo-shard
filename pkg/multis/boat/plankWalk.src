@@ -6,15 +6,16 @@ include "include/objtype";
 include "util/key";*/
 include "plankUtil";
 include ":keys:key";
+include ":taming:taming";
 
-const DIR_N             :=  0x00;   // North.
-const DIR_NE            :=  0x01;   // Northeast.
-const DIR_E             :=  0x02;   // East.
-const DIR_SE            :=  0x03;   // Southeast.
-const DIR_S             :=  0x04;   // South.
-const DIR_SW            :=  0x05;   // Southwest.
-const DIR_W             :=  0x06;   // West.
-const DIR_NW            :=  0x07;   // Northwest.
+// const DIR_N             :=  0x00;   // North.
+// const DIR_NE            :=  0x01;   // Northeast.
+// const DIR_E             :=  0x02;   // East.
+// const DIR_SE            :=  0x03;   // Southeast.
+// const DIR_S             :=  0x04;   // South.
+// const DIR_SW            :=  0x05;   // Southwest.
+// const DIR_W             :=  0x06;   // West.
+// const DIR_NW            :=  0x07;   // Northwest.
 
 /*
  * the searchoffset matrix is for an east-facing plank.
@@ -132,9 +133,13 @@ program plankwalk( who, plank, lastx, lasty, lastz )
         return;                     // doesn't need our help!
     endif
 
-
+    var pets := ListPetsNear(who, 4);
     foreach offset in searchoffset
         if (TryMove( who, offset[xidx] * xmul, offset[yidx] * ymul ))
+            foreach pet in pets
+               MoveObjectToLocation(pet, who.x, who.y, who.z, pet.realm);
+               sleepms(2);
+            endforeach
             return;
         endif
     endforeach

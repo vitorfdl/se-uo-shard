@@ -1,0 +1,60 @@
+use os;
+
+include "include/say";
+include "include/utils";
+include ":timedscripts:timedScripts";
+include ":attributes:attributes";
+
+program startTalent(param)
+   var who := param[1];
+   var talent_name := param[2];
+   var res := golpeduplo(who);
+
+   if (!res)
+      TS_LowerDuration(who, talent_name, -1, 1);
+      HealStamina(who, 15);
+   endif
+endprogram
+
+function golpeduplo(who)
+   var itemcfg := ReadConfigFile(":combat:itemdesc");
+   if (itemcfg[who.weapon.objtype].Pericia != ARMAS_DE_CONCUSSAO)
+		SendSysMessageEx(who, "Você precisa estar usando uma arma de concussão.", SSM_INFO);
+      return 0;
+   elseif (!who.opponent || Distance(who, who.opponent) > 1)
+      SendSysMessageEx(who, "Não há oponente ou ele está muito distante.", SSM_FAIL);
+      return 0;
+   endif
+
+   PlaySoundEffect(who, 0x510);
+   who.attack_once(who.opponent);
+   if (!PushMobile(who, 4, 50, who.opponent))
+      sleepms(100);
+      TS_StartTimer(who.opponent, "tombar", 2);
+   endif
+   
+   return 1;
+endfunction
+
+function PushMobile(who, dist, delay, targ)
+   var mod := GetModByFacing(GetFacing(who.x, who.y, targ.x, targ.y));
+	var x := mod[1];
+	var y := mod[2];
+
+	for i := 1 to dist
+		var finalx := (targ.x + x);
+		var finaly := (targ.y + y);
+      
+		if (!CanWalk("L", targ.x, targ.y, targ.z, finalx, finaly))
+			return 0;
+		endif
+
+		var err := MoveObjectToLocation( targ, finalx, finaly, targ.z, targ.realm );
+		sleepms(delay);
+		if (err == error)
+			return 0;
+		endif
+	endfor
+
+   return 1;
+endfunction

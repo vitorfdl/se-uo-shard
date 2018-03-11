@@ -282,9 +282,9 @@ function DoSelectedGroupList(byref who, input)
             endif
             break;
         GF_GROUP_REMSPOT_BTN:
-            RemoveSpotInSpotGroup(selected_group, selected_spot);
             var respost := YesNo(who, "Deseja deletar o Spot do mundo?", "Sim", "Não");
             if (respost)
+                RemoveSpotInSpotGroup(selected_group, selected_spot);
                 var spot := SystemFindObjectBySerial(selected_spot);
                 SetObjProperty(spot, "GM_FLAG", 1);
                 DestroyItem(spot);

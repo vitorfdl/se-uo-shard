@@ -270,6 +270,7 @@ function BuyHabs(who)
 
 	var gump := GFCreateGump();
 	GFSetID(gump, GUMPID_SKILLLIST);
+	GFAddButton(gump, 34, 14, 2445, 2445, GF_CLOSE_BTN, 500); //Comprar Talento
 	GFResizePic(gump, 7, 8, 9380, 675, 535);
 	GFGumpPicTiled(gump, 33, 498, 623, 11, 2091);
 	GFGumpPicTiled(gump, 33, 44, 626, 11, 2091);
@@ -340,7 +341,7 @@ function BuyHabs(who)
 
 	var input := GFSendGump(who, gump);
    if (input[0] == 500)
-      
+      OpenURL( who, "http://sussurroseternos.com/atributos-habilidades/" );
    elseif (input[0])
       var skill_name := GetSkillNameByID( input[0] );
       if (!skill_name) return; endif

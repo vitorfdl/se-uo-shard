@@ -157,15 +157,10 @@ endfunction
 
 //pega os pets da pessoa na area
 function ListPetsNear(who, range)
-	var pets := array;
-	var tamed := GetObjProperty(who, "followers");
-	if ( !tamed )
-		return pets;
-	endif
-	
-	foreach serial in tamed
-		var pet := SystemFindObjectBySerial(serial);
-		if ( (pet.master == who)  && (Distance(pet, who) < range))
+   var pets := array{};
+   var mobs := ListMobilesNearLocationEx(who.x, who.y, who.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY, who.realm);
+	foreach pet in mobs
+		if ( pet.master.serial == who.serial )
 			pets.append(pet);
 		endif
 		sleepms(2);

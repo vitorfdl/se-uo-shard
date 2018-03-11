@@ -9,14 +9,14 @@ function GetHitScripts(type := "WeaponHits")
    return ListConfigElemProps(elem);
 endfunction
 
-function GetHitScriptsNames(type := "WeaponHits")
+function GetHitScriptsName(type := "WeaponHits")
    var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
    var elem := FindConfigElem(hitscripts_cfg, type);
    if (!elem) return array{}; endif
 
    var hits_list := array{};
-   foreach hit of (ListConfigElemProps(elem))
-      hits_list.append(StrReplace(elem[hit], "_", " "));
+   foreach hit in (ListConfigElemProps(elem))
+      hits_list.append(StrReplace(GetConfigString(elem, hit), "_", " "));
       sleepms(2);
    endforeach
 
@@ -26,27 +26,28 @@ endfunction
 function GetHitScript(name)
    var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
    var elem := FindConfigElem(hitscripts_cfg, "WeaponHits");
-   var hit;
-   foreach hit of (ListConfigElemProps(elem))
-      if (elem[hit] == name)
-         hit := hit;
+   var hit_found := 0;
+
+   foreach hit in (ListConfigElemProps(elem))
+      if (GetConfigString(elem, hit) == name)
+         hit_found := hit;
          break;
       endif
       sleepms(2);
    endforeach
 
-   if (hit) return hit; endif
+   if (hit_found) return hit_found; endif
 
    elem := FindConfigElem(hitscripts_cfg, "ArmorHits");
-   foreach hit of (ListConfigElemProps(elem))
-      if (elem[hit] == name)
-         hit := hit;
+   foreach hit in (ListConfigElemProps(elem))
+      if (GetConfigString(elem, hit) == name)
+         hit_found := hit;
          break;
       endif
       sleepms(2);
    endforeach
 
-   return hit;
+   return hit_found;
 endfunction
 
 

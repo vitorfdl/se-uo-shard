@@ -108,8 +108,8 @@ function HandleSpeech(npc, player, text)
       endwhile
    elseif (text["minhas vendas"])
       DoWithdraw(npc, player);
-   elseif (text["histórico"] && text["vendas"])
-      if (GetObjProperty(player, "merchant_owner") == GetRegionName(player))
+   elseif (text["hist"] && text["vendas"])
+      if (GetObjProperty(player, "merchant_owner") == GetRegionName(player) || player.cmdlevel)
          PrintText(npc, "Aqui está o histórico de vendas, Sr.");
          var historico := GetMerchantLog(npc);
          historico := "<br> - {}".format("<br> -".join(historico));
@@ -269,8 +269,8 @@ function removeItemMerchant(npc, player, input)
 endfunction
 
 function DoPurchase(npc, player, input)
-   PrintText(npc, "Não posso vender nada agora, desculpe. Volte depois.");
-   return 0;
+   // PrintText(npc, "Não posso vender nada agora, desculpe. Volte depois.");
+   // return 0;
 	var info := GetItemSoldInfo(npc, input);
 	var cost := info[1];
 	var selling := info[2];
@@ -340,7 +340,7 @@ function DoPurchase(npc, player, input)
 			DestroyItem(item);
 		else
 			//template.pay_amt := owed;
-			template.pay_amt := cost.cost_amt;
+			template.amount := owed;
 			AddPaymentForSeller(npc, cost.seller, template);
 			SubtractAmount(item, owed);
 			break;
