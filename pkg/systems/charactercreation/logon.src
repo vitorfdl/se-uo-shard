@@ -6,7 +6,7 @@ include ":email:email";
 
 
 program fixTalent(who)
-   if (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade") || who.isRace("Elfo"))
+   if (who.isCaster() || who.isRace("Elfo"))
       LearnFeat(who, "Linguagem Élfica", 0, 0);
    elseif (who.Caracteristica("Clérigo de Anar"))
       LearnFeat(who, "Linguagem Rúnica", 0, 0);
