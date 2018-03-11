@@ -23,11 +23,18 @@ function CreateFaccao(name, rect)
    guild.setProp("report", array{"Facção Criada"});
    guild.setprop("area", rect);
    guild.setprop("uniforms", array{});
+   guild.setprop("link_to", 0);
 
    return guild;
 endfunction
 
 function GetFaccao(guild)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+
+   if (!guild) return; endif
+
    var faccao_obj := struct{
       "name"     := guild.GetProp("name"),
       "npcs"     := guild.GetProp("npcs"),
@@ -41,29 +48,39 @@ function GetFaccao(guild)
 endfunction
 
 function EditFaccao(guild, props)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+   if (!guild) return; endif
+
    var faccao := GetFaccao(guild);
-   if (props.name)
+   if (props.name) // strimg
       faccao.name := props.name;
    endif
 
-   if (props.npcs)
+   if (props.npcs != null) // array
       faccao.npcs := props.npcs;
    endif
 
-   if (props.laws)
+   if (props.laws  != null) // array
       faccao.laws := props.laws;
    endif
 
-   if (props.area)
+   if (props.area  != null) // array x y x2 y2
       faccao.area := props.area;
    endif
 
-   if (props.leader)
+   if (props.leader != null) // serial string
       faccao.leader := props.leader;
    endif
 
-   if (props.uniforms)
+   if (props.uniforms) // array
       faccao.uniforms := props.uniforms;
+   endif
+
+
+   if (props.link_to != null) // fac string
+      faccao.link_to := props.link_to;
    endif
 
    foreach key in (faccao.keys())
@@ -75,6 +92,11 @@ function EditFaccao(guild, props)
 endfunction
 
 function RemFaccao(guild_obj)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+   if (!guild) return; endif
+
    foreach member in (guild_obj.members)
       guild_obj.removemember(member);
       sleepms(2);
@@ -92,15 +114,15 @@ endfunction
 function AddMember(faccao, mobile)
    faccao.addMember(mobile);
    var member_obj := struct{
-      "above_guards" := 0,
-      "above_merchants" := 0,
-      "addmembers" := 0,
-      "removemembers" := 0,
-      "giveprivs" := 0,
-      "contractnpc" := 0,
-      "fixitems" := 0,
-      "unlockdoors" := 0,
-      "buyuniforms" := 0,
+      "above_guards" := 0, // can control guards
+      "above_merchants" := 0, // can control merchants
+      "addmembers" := 0, // can add members
+      "removemembers" := 0, // can remove members
+      "giveprivs" := 0, // can edit privs
+      "contractnpc" := 0, // can contract npc
+      "fixitems" := 0, // can fix items
+      "unlockdoors" := 0, // can unlock doors
+      "buyuniforms" := 0, // can buy uniform recipes
    };
 
    faccao.SetProp(mobile.serial, member_obj);

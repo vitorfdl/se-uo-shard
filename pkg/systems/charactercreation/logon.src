@@ -1,6 +1,8 @@
 use uo;
 include ":attributes:attributes";
 include ":charactercreation:feats";
+include ":fls_core:fls_characters";
+
 
 program fixTalent(who)
    if (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade") || who.isRace("Elfo"))
@@ -10,12 +12,15 @@ program fixTalent(who)
       LearnFeat(who, "Cura Divina", 0, 0);
    endif
 
+   var total_points := who.getTalentPoints();
+
    var chardata := GetObjProperty(who, "chardata");
    var attr := ReadConfigFile(":attributes:attributes");
 	foreach skill in (who.skillList())
       var mystat := cint(AP_GetTrueSkill(who, skill));
       var levels := GetConfigStringArray(attr[skill], "Level");
       for i := 1 to mystat
+         total_points += getCost(attr[skill].SkillType, i);
          foreach giv in levels
             sleepms(2);
             giv := SplitWords(giv);
@@ -52,6 +57,8 @@ program fixTalent(who)
    chardata.fixed := 1;
    SetObjProperty(who, "chardata", chardata);
 
+   FixPoints(who, total_points);
+
    var pnt_amt := cint(GetObjProperty(who, "points_received"));
    if (!pnt_amt) return; endif
    var exp := who.GetExp();
@@ -60,3 +67,20 @@ program fixTalent(who)
       EraseObjProperty(who, "points_received");
    endif
 endprogram
+
+function FixPoints(who, total_points)
+   var expected_points := 30;
+   var level := who.getLevel();
+   if (level >= 1)
+      for i := 1 to (level-1)
+         expected_points += (i * 2200) / 120;
+         sleepms(2);
+      endfor
+   endif
+
+   expected_points += cint(who.getExp() / 120);
+
+   if (total_points > expected_points)
+      SendSysMessageEx(who, "You need to be fixed");
+   endif
+endfunction

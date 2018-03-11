@@ -45,6 +45,15 @@ function ghaiaPeaceMade(who, npc)
 	sendEvent( npc, ev);
 endfunction
 
+function ghaiaFlee(who, npc)
+	var ev 		:= struct;
+	ev.type 	:= EVID_FLEE;
+	ev.source 	:= who;
+	
+	sendEvent( npc, ev);
+endfunction
+
+
 function CopyProps(origin, destiny)
 	var propnames := GetObjPropertyNames(origin);
 	foreach prop in propnames

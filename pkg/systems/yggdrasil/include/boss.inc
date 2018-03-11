@@ -604,65 +604,63 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
 	var continua := 1;
 
 	while (continua)
-	var gumpcombat := GFCreateGump();
+      var gumpcombat := GFCreateGump();
 
-	GFDisposable(gumpcombat, 0);
-	GFResizePic(gumpcombat, 0, 25, 3700, 250, 430);	
-	GFResizePic(gumpcombat, 15, 40, 0x13BE, 220, 400);
-	GFTextMid(gumpcombat, 20, 50, 250, 1153, "Combat Events");
-	
-	var y := 64;
-	GFTextLine(gumpcombat, 35, y, 1153, "Adicionar Novo ");
-	GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 100);
-	
-	var i := 1;
-	foreach state in (event.steps)
-		y := y+ 15;
-		GFTextLine(gumpcombat, 35, y, 1153, ""+state.type);
-		GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 400+i);
-		i := i + 1;
-	endforeach
+      GFDisposable(gumpcombat, 0);
+      GFResizePic(gumpcombat, 0, 25, 3700, 250, 430);	
+      GFResizePic(gumpcombat, 15, 40, 0x13BE, 220, 400);
+      GFTextMid(gumpcombat, 20, 50, 250, 1153, "Combat Events");
+      
+      var y := 64;
+      GFTextLine(gumpcombat, 35, y, 1153, "Adicionar Novo ");
+      GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 100);
+      
+      var i := 1;
+      foreach state in (event.steps)
+         y := y+ 15;
+         GFTextLine(gumpcombat, 35, y, 1153, ""+state.type);
+         GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 400+i);
+         i := i + 1;
+      endforeach
 
-	GFAddButton(gumpcombat, 180, 387, 4502, 4502, 1, 1000 );
-	GFTextLine(gumpcombat, 140, 400, 1153, "Apply");
-	
-	var input := GFSendGump(who, gumpcombat);
+      GFAddButton(gumpcombat, 180, 387, 4502, 4502, 1, 1000 );
+      GFTextLine(gumpcombat, 140, 400, 1153, "Apply");
+      
+      var input := GFSendGump(who, gumpcombat);
 
-	if (input[0] == 100)
-		var state := CombatEventsOptions(who, struct{});
-		event.steps.append(state);
-	elseif (input[0] == 1000)
-		continua := 0;
-	elseif (input[0] >= 400)
-		input := input[0] - 400;
-      var oldstate := event.steps[input];
-		event.steps.Erase(input);
-      var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover"});
-		if (choice == "Alterar")
-			var state := CombatEventsOptions(who, struct{});
-			event.steps.Insert(input, state);
-      elseif (choice == "Mudar Posição")
-         var position := cint(RequestGump(who, "Qual posição??", "Ex: 1", "1", 1));
-         if (position == 0)
-            position := 1;
-         elseif (position > event.steps.size())
-            position := event.steps.size()+1;
+      if (input[0] == 100)
+         var state := CombatEventsOptions(who, struct{});
+         event.steps.append(state);
+      elseif (input[0] == 1000)
+         continua := 0;
+      elseif (input[0] >= 400)
+         input := input[0] - 400;
+         var oldstate := event.steps[input];
+         event.steps.Erase(input);
+         var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover"});
+         if (choice == "Alterar")
+            var state := CombatEventsOptions(who, struct{});
+            event.steps.Insert(input, state);
+         elseif (choice == "Mudar Posição")
+            var position := cint(RequestGump(who, "Qual posição??", "Ex: 1", "1", 1));
+            if (position == 0)
+               position := 1;
+            elseif (position > event.steps.size())
+               position := event.steps.size()+1;
+            endif
+            event.steps.Insert(position, oldstate);
+         else
+            SendSysMessage(who, "Evento Removido");
          endif
-         event.steps.Insert(position, oldstate);
-		else
-			SendSysMessage(who, "Evento Removido");
-		endif
-	endif
+      endif
 	endwhile
-
-
 
 	return event;
 
 endfunction
 
 function CombatEventsOptions(who, state)
-   var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
+   var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Play Cast Anim", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
 
    var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent"};
    state.type := opt;

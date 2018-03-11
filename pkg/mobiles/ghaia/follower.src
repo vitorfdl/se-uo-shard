@@ -539,12 +539,12 @@ function TakeItem(ev)
    var cfg := ReadConfigFile(":*:itemdesc");
    var item_props := cfg[(ev.item).objtype];
    if ( item_props.script["eat"])
-      if (AP_GetVital(me, "Hunger") <= 10)
+      if (AP_GetVital(me, "Hunger") >= 36)
          MoveItemToContainer(ev.item, ev.source.backpack);
          return PrintTextAbove(me, "*recusa comida*");
       elseif (item_props.foodtype != foodtype)
          MoveItemToContainer(ev.item, ev.source.backpack);
-         return PrintTextAbove(me, "*parece n¿o gostar da comida*");
+         return PrintTextAbove(me, "*parece não gostar da comida*");
       endif
 
       PrintTextAbove(me, "*comendo*");
@@ -556,7 +556,7 @@ function TakeItem(ev)
    elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
       if ((EnumerateItemsInContainer(ev.item)).size() > 0)
          MoveItemToContainer(ev.item, ev.source.backpack);
-         SendSysMessage(ev.source, "Voc¿ precisa esvaziar a mochila antes de coloca-la na montaria.");
+         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
       elseif ( me.my_template() == "Horse3" )
          SetObjProperty(me, "beforepack", me.graphic);
          me.graphic := 291;
@@ -576,7 +576,7 @@ function TakeItem(ev)
       //else
       //    mount := 0;
       //endif
-   SendSysMessageEx(ev.source, "N¿o pode dar esse item!", SSM_FAIL);
+   SendSysMessageEx(ev.source, "Não pode dar esse item!", SSM_FAIL);
    MoveItemToContainer(ev.item, ev.source.backpack);
 endfunction
 

@@ -1,0 +1,35 @@
+use uo;
+use os;
+
+include ":magery:tnmagery";
+include ":attributes:attributes";
+include ":ghaia:ghaiaUtil";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":tn:npcutil";
+include ":yggdrasil:boss";
+include "include/utils";
+
+program SpellScript(params)
+	var who := params[1];
+	params := 0; // No longer needed
+   
+   var diceroll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(who, MILAGRE_DE_NECROMANCIA);
+	PlaySoundEffect(who, SFX_SPELL_STRENGTH);
+	var newmobiles := ListMobilesNearLocation( who.x , who.y, who.z, 5);
+	foreach mob in newmobiles
+      sleepms(2);
+      if (!mob.npctemplate || getnpccategory(mob.npctemplate) != "morto-vivo" || isBoss(mob)) 
+         continue; 
+      endif
+
+      if (rollResistDice(mobile, WISDOM) <= diceroll)
+         ghaiaFlee(who, mobile);
+      else
+         SendSystemReport(mobile, "*resistido*", SSM_FAIL, who);
+      endif
+   endforeach
+	
+	return 1;
+endprogram

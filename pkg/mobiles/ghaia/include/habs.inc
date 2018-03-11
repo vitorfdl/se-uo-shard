@@ -692,8 +692,8 @@ function RajadaAcida(dmg, targ, difficulty)
    return 1;
 endfunction
 
-function playCastAnimation()
-   if ("CastAnimation" in custombehaviors)
+function playCastAnimation(forced := 0)
+   if ("CastAnimation" in custombehaviors || forced)
       for i := 1 to (RandomDiceRoll("1d4"))
          if (TS_GetTimerInfo(me, "tombar") || TS_GetTimerInfo(me, "paralyze"))
             return 0;

@@ -211,7 +211,7 @@ function TameLoop(who, targ, byref info)
 		return 1;
 	endif
 	var dist := Distance(who, targ);
-	SetObjProperty(targ, "#ForceFlee", 1);
+	ghaiaFlee(who, targ);
 	sleepms(160);
 	if ( dist == Distance(who, targ) )
 		SendSysMessageEx(who, targ.name+" não aceitou você como dono.", SSM_FAIL);

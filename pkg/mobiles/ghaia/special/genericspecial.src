@@ -7,6 +7,7 @@ include ":tn:cooldown";
 include "include/damage";
 include "include/shapes";
 include ":ghaia:ghaia";
+include ":ghaia:habs";
 include "include/sysEvent";
 
 var me;
@@ -154,7 +155,10 @@ program loko(params)
 				endif
 				endforeach
 			endif
-
+      elseif (state.type == "Play Cast Anim")
+         if (!playCastAnimation(1))
+            break;
+         endif
 		elseif (state.type == "Dmg")
          var targ := selectOpponent(who, state.target, state.conedist);
 
