@@ -11,6 +11,7 @@ include ":ghaia:habs";
 include "include/sysEvent";
 
 var me;
+var custombehaviors := array{};
 
 program loko(params)
 	var who := params[1];

@@ -608,47 +608,48 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
 	while (continua)
       var gumpcombat := GFCreateGump();
 
-	GFDisposable(gumpcombat, 0);
-	GFResizePic(gumpcombat, 0, 25, 3700, 250, 430);	
-	GFResizePic(gumpcombat, 15, 40, 0x13BE, 220, 400);
-	GFTextMid(gumpcombat, 20, 50, 250, 1051, "Combat Events");
-	
-	var y := 64;
-	GFTextLine(gumpcombat, 35, y, 1051, "Adicionar Novo ");
-	GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 100);
-	
-	var i := 1;
-	foreach state in (event.steps)
-		y := y+ 15;
-		GFTextLine(gumpcombat, 35, y, 1051, ""+state.type);
-		GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 400+i);
-		i := i + 1;
-	endforeach
+      GFDisposable(gumpcombat, 0);
+      GFResizePic(gumpcombat, 0, 25, 3700, 250, 430);	
+      GFResizePic(gumpcombat, 15, 40, 0x13BE, 220, 400);
+      GFTextMid(gumpcombat, 20, 50, 250, 1051, "Combat Events");
+      
+      var y := 64;
+      GFTextLine(gumpcombat, 35, y, 1051, "Adicionar Novo ");
+      GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 100);
+      
+      var i := 1;
+      foreach state in (event.steps)
+         y := y+ 15;
+         GFTextLine(gumpcombat, 35, y, 1051, ""+state.type);
+         GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 400+i);
+         i := i + 1;
+      endforeach
 
-	GFAddButton(gumpcombat, 180, 387, 4502, 4502, 1, 1000 );
-	GFTextLine(gumpcombat, 140, 400, 1051, "Apply");
-	
-	var input := GFSendGump(who, gumpcombat);
+      GFAddButton(gumpcombat, 180, 387, 4502, 4502, 1, 1000 );
+      GFTextLine(gumpcombat, 140, 400, 1051, "Apply");
+      
+      var input := GFSendGump(who, gumpcombat);
 
-	if (input[0] == 100)
-		var state := CombatEventsOptions(who, struct{});
-		event.steps.append(state);
-	elseif (input[0] == 1000)
-		continua := 0;
-	elseif (input[0] >= 400)
-		input := input[0] - 400;
-      var oldstate := event.steps[input];
-		event.steps.Erase(input);
-      var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover"});
-		if (choice == "Alterar")
-			var state := CombatEventsOptions(who, struct{});
-			event.steps.Insert(input, state);
-      elseif (choice == "Mudar Posição")
-         var position := cint(RequestGump(who, "Qual posição??", "Ex: 1", "1", 1));
-         if (position == 0)
-            position := 1;
-         elseif (position > event.steps.size())
-            position := event.steps.size()+1;
+      if (input[0] == 100)
+         var state := CombatEventsOptions(who, struct{});
+         event.steps.append(state);
+      elseif (input[0] == 1000)
+         continua := 0;
+      elseif (input[0] >= 400)
+         input := input[0] - 400;
+         var oldstate := event.steps[input];
+         event.steps.Erase(input);
+         var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover"});
+      if (choice == "Alterar")
+            var state := CombatEventsOptions(who, struct{});
+            event.steps.Insert(input, state);
+         elseif (choice == "Mudar Posição")
+            var position := cint(RequestGump(who, "Qual posição??", "Ex: 1", "1", 1));
+            if (position == 0)
+               position := 1;
+            elseif (position > event.steps.size())
+               position := event.steps.size()+1;
+            endif
          endif
       endif
 	endwhile

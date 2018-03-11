@@ -2,6 +2,7 @@ use uo;
 include ":attributes:attributes";
 include ":charactercreation:feats";
 include ":fls_core:fls_characters";
+include ":email:email";
 
 
 program fixTalent(who)
@@ -80,7 +81,10 @@ function FixPoints(who, total_points)
 
    expected_points += cint(who.getExp() / 120);
 
-   if (total_points > expected_points)
-      SendSysMessageEx(who, "You need to be fixed");
+   if (total_points > expected_points && !GetObjProperty(who, "fixalert"))
+      SetObjProperty(who, "fixalert", 1);
+		start_script(":email:emailMessage/sendSystemMail", array{ 999999998, "{} precisa ser arrumado".format(who.name), "O usuário {} precisa ser corrigido. [P] Total de pontos: {} [P] Pontos esperados: {}".format(who.acctname, total_points, expected_points)} );
+		start_script(":email:emailMessage/sendSystemMail", array{ who, "Problema com EXP", "Olá, [P] Seu personagem possui algum problema com pontos de talento. Por isso, estaremos bloqueando o seu ganho de experiência. Contate o administrador <b>vitorfdl</b> para corrigir o problema o mais breve possível."} );
+      SetobjProperty(who, "NoGains", 1);
    endif
 endfunction
