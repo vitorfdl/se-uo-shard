@@ -53,7 +53,7 @@ endfunction
  */
 
 function SkillDbgMsg(mobile, msg)
-	if (mobile.cmdevel >4)
+	if (mobile.cmdlevel > 4)
 		SendSysMessage(mobile, msg);
 	endif
 endfunction
@@ -64,10 +64,10 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
-  if ( GetExpCap(mobile) < mobile.Getexp())
-  		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
-		return 0;
-   endif
+//   if ( GetExpCap(mobile) < mobile.Getexp())
+//   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
+// 		return 0;
+//    endif
   
 	var settings := AP_GetSettingsCfgElem("Skills");
 	//verifica se ja não recebeu exp em 5 segundos
@@ -119,9 +119,10 @@ function ExpGain(mobile, difficulty, value := 0)
 		mobile.SetExp(exp+up_amount);
 		CheckExpUp(mobile);
       var pnt_amt := cint(GetObjProperty(mobile, "points_received"))+1;
-      if (exp+up_amount >= (pnt_amt * 120))
+      var total_exp := mobile.getTotalExp();
+      if (total_exp >= (pnt_amt * 120))
          mobile.SetTalentPoints(1);
-         SetObjProperty(mobile, "points_received", pnt_amt+1);
+         SetObjProperty(mobile, "points_received", pnt_amt);
       endif
 	endif
 
@@ -134,12 +135,11 @@ function CheckExpUp(who)
 	if (level < 10)
 		var maxexp := who.getMaxExp(); //starts at 2000
 		var exp := who.GetExp();
-
+      
 		if (exp < maxexp)
 			return;
 		endif
-		exp-=maxexp;
-		who.SetExp(exp);
+		who.StoreExp(maxexp);
 		who.setLevel(level+1);
 		IncreaseVitalPoints(who);
 		var levelup_cfg := ReadConfigFile(":attributes:config/levelup");
@@ -147,7 +147,6 @@ function CheckExpUp(who)
 		if (cint(levelup_cfg.AttributePoints))
 			who.SetPoints(1);
 		endif
-      EraseObjProperty(who, "points_received");
 	endif
 endfunction 
 

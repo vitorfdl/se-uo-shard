@@ -123,14 +123,14 @@ function SetEquipmentMods(who, item)
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, Cint( mods["wismod"] ) );
 		elseif (mod == "manamod")
-			SetObjProperty(who, "#manamod", Cint(GetObjProperty(who, "#manamod")) + Cint( mods["manamod"] ));
+			SetObjProperty(who, "manamod", Cint(GetObjProperty(who, "manamod")) + Cint( mods["manamod"] ));
       elseif (mod == "toughmod")
          who.setToughness(cint(mods["toughmod"]));
 		elseif (mod == "hitsmod")
-			var prevhits := Cint(GetObjProperty(who, "#hitsmod"));
-			SetObjProperty(who, "#hitsmod",  prevhits + Cint(mods["hitsmod"] ) );
+			var prevhits := Cint(GetObjProperty(who, "hitsmod"));
+			SetObjProperty(who, "hitsmod",  prevhits + Cint(mods["hitsmod"] ) );
 		elseif (mod == "stammod")
-			SetObjProperty(who, "#stammod", Cint(GetObjProperty(who, "#stammod")) + Cint( mods["stammod"] ) );
+			SetObjProperty(who, "stammod", Cint(GetObjProperty(who, "stammod")) + Cint( mods["stammod"] ) );
 		else // se não eh nada acima eh skillmod ou error :p
 			AP_ModifySkillMod(who, mod, Cint(mods[mod]));
 		endif

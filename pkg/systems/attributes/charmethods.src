@@ -60,19 +60,34 @@ endfunction
 
 exported function GetExp(who)
 	var chardata := GetObjProperty(who, "chardata");
-	var exppoints := chardata["exppoints"];
-	if (exppoints == error || !exppoints)
-		SetExp(who, 0);
-		exppoints := 0;
-	endif
+   if (!chardata) chardata := dictionary{}; endif
+	return cint(chardata.exppoints);
+endfunction
 
-	return exppoints;
+exported function GetTotalExp(who)
+	var chardata := GetObjProperty(who, "chardata");
+   if (!chardata) chardata := dictionary{}; endif
+	return cint(chardata.exppoints) + cint(chardata.storedexp);
 endfunction
 
 exported function SetExp(who, points)
 	var chardata := GetObjProperty(who, "chardata");
-	chardata["exppoints"] := points;
-	SetObjProperty(who, "chardata", chardata);
+   if (!chardata) chardata := dictionary{}; endif
+   chardata.exppoints := cint(points);
+
+   SetObjProperty(who, "chardata", chardata);
+	return 1;
+endfunction
+
+exported function storeExp(who, points)
+	var chardata := GetObjProperty(who, "chardata");
+   if (!chardata) chardata := dictionary{}; endif
+
+   var exppoints := cint(chardata.exppoints) - points;
+   chardata.storedexp := cint(chardata.storedexp) + points;
+   chardata.exppoints := cint(exppoints);
+
+   SetObjProperty(who, "chardata", chardata);
 	return 1;
 endfunction
 

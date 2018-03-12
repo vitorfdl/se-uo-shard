@@ -19,7 +19,7 @@ program EmailMessage( params )
 	var msg := params[3];
 	var rp_rating := params[4];
 
-   if (!mobile.isA(POLCLASS_MOBILE) && mobile != 999999997)
+   if (!mobile.isA(POLCLASS_MOBILE) && mobile != 999999997 && mobile != 999999998)
       mobile := SystemFindObjectBySerial(mobile, SYSFIND_SEARCH_OFFLINE_MOBILES);
    endif
 	SendSystemMail( mobile, subject, msg, rp_rating );

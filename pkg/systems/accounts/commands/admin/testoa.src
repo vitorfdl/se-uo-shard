@@ -18,8 +18,16 @@ include ":ghaia:objective";
 include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
-   PlayObjectCenteredEffectEx(who, 0x9F89, 9, 20, 2128);
-   // var targ := Target(who);
+
+   var targ := Target(who);
+   var chardata := GetObjproperty(targ, "chardata");
+   print(chardata);
+   // AP_SetStatMod(who, "exp", 2600);
+   // who.SetExp(7000);
+   // SendSysMessageEx(who, ""+chardata.storedexp);
+   // SendSysMessageEx(who, ""+AP_GetTrueStat(who, "exp"));
+   // SendSysMessageEx(who, ""+AP_GetStatMod(who, "exp"));
+   // PlayObjectCenteredEffectEx(who, 0x9F89, 9, 20, 2128);
    // PlayMovingEffectXYZ( who.x, who.y, (who.z + 5), targ.x, targ.y, targ.z+5, GFX_LARGE_FIREBALL, 10, 0, 1);
    // who.frozen := 0;
    // SetRegionWeatherLevel(GetRegionName(who), 2, 70);

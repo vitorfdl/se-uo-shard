@@ -1,0 +1,26 @@
+use uo;
+use cfgfile;
+
+include ":gumps:gumps";
+include "include/say";
+include ":charactercreation:habilidades";
+include ":charactercreation:characters";
+
+program reset(who, params)
+	var item;
+	if (who.cmdlevel >= 4)
+		SendSysMessageEx(who, "Escolha o alvo.", SSM_REQUEST);
+		item := target(who);
+	else
+		item := who;
+	endif
+	
+	params := splitwords(params);
+	params := params[1];
+
+	if (!item)
+		return;
+	endif
+	
+	item.SetExp(cint(params));
+endprogram

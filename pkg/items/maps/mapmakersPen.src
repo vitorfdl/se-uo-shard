@@ -179,10 +179,14 @@ program use_MapmakersPen(who, tool)
 		endif
 
 		var rune_list := GetObjProperty(book, "runes");
+		var serialid := GetObjProperty(book, "serialid");
 		if (rune_list == error)
 			rune_list := array;
 		elseif( rune_list.Size() > 15 )
 			SendSysMessageEx(who,"Este livro ja esta cheio.", SSM_FAIL);
+			return 0;
+      elseif (serialid && serialid != who.serial)
+			SendSysMessage(who,"Você não pode usar o livro de runas de outra pessoa.", SSM_FAIL);
 			return 0;
 		endif
 
@@ -210,6 +214,9 @@ program use_MapmakersPen(who, tool)
 		rune_list.Append(rune_name);
 		SetObjProperty(book, "runes", rune_list);
 		SendSysMessageEx(who, "Você transcreveu a runa para o livro.", SSM_INFO);
+      if (!serialid)
+         SetObjProperty(book, "serialid", who.serial);
+      endif
 		return ;
 	endif
 	SendSysMessageEx(who, "Você não pode fazer nada com isto.", SSM_FAIL);
