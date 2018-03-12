@@ -108,6 +108,9 @@ function fixHp(who, byref chardata)
       chardata.hitpoints += RandomDiceRoll("1d5+2") + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
       chardata.manapoints += RandomDiceRoll("1d5+2") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
       chardata.stampoints += 1 + AP_GetStat(who, DEXTERITY, RETURN_BONUS);
+
+      if (acumulador_mana) chardata.manapoints += acumulador_mana; endif
+      if (duro_de_matar) chardata.hitpoints += duro_de_matar; endif
    endfor
    set_critical(1);
 endfunction
