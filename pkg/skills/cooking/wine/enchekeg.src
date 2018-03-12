@@ -5,6 +5,8 @@ include "include/say";
 use uo;
 
 
+include "include/say";
+
 program enchekeg(who, item)
 
 	var nearitens := ListItemsNearLocation(item.x, item.y, item.z, 2);
@@ -12,18 +14,18 @@ program enchekeg(who, item)
 	foreach fundo in nearitens
 		if (fundo.graphic == 5409)
 			if (GetObjProperty(fundo, "doses") >= 1)
-				SendSysMessage(who, "Escolha o barril.");
+				SendSysMessageEx(who, "Escolha o barril.");
 				var barril := target(who);
 				if (!barril)
 					return;
 				endif
 				if (!Accessible(who, barril))
-					SendSysMessage(who, "Você não alcanca o barril.");
+					SendSysMessageEx(who, "Você não alcanca o barril.");
 					return;
 				endif
 				if (barril.objtype == 6870 )
 					if (GetObjProperty(barril, "liquido") != error)
-						SendSysMessage(who, "Você derramou o que tinha no barril para por outro liquido.");
+						SendSysMessageEx(who, "Você derramou o que tinha no barril para por outro liquido.");
 					endif
 					//SetObjProperty(barril, "liquido", "vinho");
 					var bebida := GetObjProperty(barril, "bebida");
@@ -36,15 +38,15 @@ program enchekeg(who, item)
 					SetObjProperty(fundo, "doses", (Cint(GetObjProperty(fundo, "doses")) -1) );
 					SetObjProperty(fundo, "passos", 0);   
 					SetObjProperty(fundo, "carregado", 0);
-					SendSysMessage(who, "Você guardou o liquido no barril.");
+					SendSysMessageEx(who, "Você guardou o liquido no barril.");
 					PlaySoundEffect(who,  0x241);
 					ChangeVatGraphic(item, 1);
 				else
-					SendSysMessage(who, "Você precisa de um barril.");
+					SendSysMessageEx(who, "Você precisa de um barril.");
 					return;
 				endif
 			else
-				SendSysMessage(who, "Não tem nenhum liquido aqui.");
+				SendSysMessageEx(who, "Não tem nenhum liquido aqui.");
 				return;
 			endif
 		endif

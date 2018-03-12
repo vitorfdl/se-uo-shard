@@ -5,6 +5,7 @@
 
 use uo;
 
+include "include/say";
 include ":timedscripts:timedScripts";
 
 program WalkOn(mobile, spiderweb)

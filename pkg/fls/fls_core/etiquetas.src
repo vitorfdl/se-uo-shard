@@ -1,6 +1,7 @@
 use uo;
 use util;
 
+include "include/say";
 include ":gumps:requestgump";
 include ":fls_core:fls_crafting";
 

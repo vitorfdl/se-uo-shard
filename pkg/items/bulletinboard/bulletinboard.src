@@ -25,6 +25,7 @@
 use uo;
 use os;
 
+include "include/say";
 include ":datafile:datafile";
 include ":gumps:include/old/old-gumps";
 include ":timeUtils:time";

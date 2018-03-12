@@ -14,19 +14,24 @@ program fixTalent(who)
    endif
 
    var chardata := GetObjProperty(who, "chardata");
-
+   var fix_chardata;
    EraseObjProperty(who, "fixalert");
    if (!GetObjProperty(who, "reseted") && !GetObjProperty(who, "criandochar") && !who.cmdlevel)
       resetChar(who, chardata);
       SetObjProperty(who, "reseted", 1);
+      fix_chardata := 1;
    endif
 
    if (!GetObjProperty(who, "criandochar")  && !GetObjProperty(who, "fixhp") )
       fixhp(who, chardata);
       SetObjProperty(who, "fixhp", 1);
+      fix_chardata := 1;
    endif
 
    SetObjProperty(who, "chardata", chardata);
+   if (fix_chardata)
+      RecalcVitals(who);
+   endif
    // var total_points := who.getTalentPoints();
 
    // var attr := ReadConfigFile(":attributes:attributes");

@@ -3,6 +3,7 @@ use os;
 use util;
 
 
+include "include/say";
 include ":gumps:gumps";
 
 program usar_serra(who, item)

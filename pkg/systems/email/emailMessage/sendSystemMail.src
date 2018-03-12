@@ -11,6 +11,7 @@
 use uo;
 use os;
 
+include "include/say";
 include ":email:email";
 
 program EmailMessage( params )

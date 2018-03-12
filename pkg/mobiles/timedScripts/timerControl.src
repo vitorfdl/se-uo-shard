@@ -121,7 +121,7 @@ function StartUp(mobile, byref timer_list, byref cooldowns, byref num_poisons, b
 		event.+level := timer.level;
 		event.+mobserial := mobile.serial;
       
-      EndTimedScript(mobile, event.name, 0);
+      EndTimedScript(mobile, event.name, 0, 0);
 		AddTimer(mobile, event, timer_list, cooldowns, num_poisons, num_paralyzed);
 		SleepMS(2);
 	endforeach

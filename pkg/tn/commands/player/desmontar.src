@@ -1,5 +1,6 @@
 use uo;
 
+include "include/say";
 include ":mounts:mounts";
 program dismount(who)
 

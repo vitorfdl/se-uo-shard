@@ -9,6 +9,7 @@
 use uo;
 
 include ":datafile:datafile";
+include "include/say";
 
 var email_datafile := DFOpenDataFile( "Emails", DF_CREATE );
 

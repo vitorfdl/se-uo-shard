@@ -3,6 +3,7 @@ use os;
 
 include ":coords:coords";
 include ":itemutils:canAccess";
+include "include/say";
 include ":gumps:include/gumps";
 
 program use_SOSMessage( who, message )
