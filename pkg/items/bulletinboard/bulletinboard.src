@@ -72,7 +72,7 @@ program BulletinBoard(who, board)
 				sleepms(5);
 			endforeach
 			
-			SendSysMessage(who, "type: "+ typeof(subject)); 
+			SendSysMessageEx(who, "type: "+ typeof(subject)); 
 
 			var post_num := CInt(board_elem.GetProp("NextPost"));
 			var new_num := CInt(board_elem.GetProp("NextPost"))+1;

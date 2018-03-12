@@ -13,7 +13,6 @@ include "include/say";
 function StartScript(mobile, attacker := 0, level := 0)
    PlaySoundEffect(mobile, 0x205);
 	SendSystemReport(mobile, "Incapaz de se mover.");
-	mobile.frozen := 1;
 	while (1)
       PlayStationaryEffect( mobile.x, mobile.y, mobile.z+2, 4317, 7, 10, 1);
       PlayStationaryEffect( mobile.x, mobile.y, mobile.z+2, 4314, 7, 10, 1);
@@ -23,7 +22,6 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-	mobile.frozen := 0;
 	return 1;
 endfunction
 

@@ -48,7 +48,7 @@ exported function HandleAttackRequest( who, byref packet )
 
 
 	if(!CheckLineOfSight(who, defender))
-		SendSysMessage(who, "Você não enxerga esse inimigo para ameaca-lo.");
+		SendSysMessageEx(who, "Você não enxerga esse inimigo para ameaca-lo.");
 		return 1;
 	endif
 

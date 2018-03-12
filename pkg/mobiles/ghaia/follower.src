@@ -262,7 +262,7 @@ function ProcessDoubleClick(ev)
 
    if (targ.mobile == me && me.graphic in pack_animals)
       if ((EnumerateItemsInContainer(me.backpack)).size() > 0)
-         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
+         SendSysMessageEx(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
          return;
       endif
       PrintText(ev.source, "*remove a mochila de "+me.name+"*");
@@ -504,7 +504,7 @@ function ResolveSpeech(ev)
    /// New Master Command
    elseif (text["novo dono"])
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
-         SendSysMessage(owner, "Outros n¿o podem controlar criaturas invocadas por voc¿.");
+         SendSysMessageEx(owner, "Outros n¿o podem controlar criaturas invocadas por voc¿.");
          return;
       endif
 
@@ -512,7 +512,7 @@ function ResolveSpeech(ev)
       // var cfg := ReadConfigFile(":ghaia:npcdesc")[me.my_template()];
 
       // if (me.alignment == "evil")
-         // SendSysMessage(owner, "A criatura n¿o aceita o alvo como novo dono.");
+         // SendSysMessageEx(owner, "A criatura n¿o aceita o alvo como novo dono.");
          // return;
       if ( !targ.acctname )
          return;
@@ -523,7 +523,7 @@ function ResolveSpeech(ev)
    /// Release Command
    elseif (text["livre"])
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
-         SendSysMessage(owner, "Criaturas invocadas n¿o podem ser libertadas normalmente.");
+         SendSysMessageEx(owner, "Criaturas invocadas n¿o podem ser libertadas normalmente.");
          return;
       endif
 
@@ -556,7 +556,7 @@ function TakeItem(ev)
    elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
       if ((EnumerateItemsInContainer(ev.item)).size() > 0)
          MoveItemToContainer(ev.item, ev.source.backpack);
-         SendSysMessage(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
+         SendSysMessageEx(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
       elseif ( me.my_template() == "Horse3" )
          SetObjProperty(me, "beforepack", me.graphic);
          me.graphic := 291;

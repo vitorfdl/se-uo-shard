@@ -32,7 +32,7 @@ program Reconnect( mobile )
         if( new_email )
 		var script := start_script( ":email:emailMessage/newEmail", mobile );
 		if( script.errortext )
-			SendSysMessage( mobile, "Error starting script <:email:emailMessage/newEmail> -->"+script.errortext );
+			SendSysMessageEx( mobile, "Error starting script <:email:emailMessage/newEmail> -->"+script.errortext );
 			return 0;
 		endif
         endif

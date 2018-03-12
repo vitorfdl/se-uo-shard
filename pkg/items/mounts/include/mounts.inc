@@ -157,7 +157,7 @@ endfunction
  */
 function MP_Mount(mobile, npc)
 	if ( Cint(GetObjProperty(mobile, "#desmontar")) == 1)
-		SendSysMessage(mobile, "Você não pode montar.");
+		SendSysMessageEx(mobile, "Você não pode montar.");
 		return 0;
 	endif
 
@@ -181,7 +181,7 @@ function MP_Mount(mobile, npc)
 	mount_piece := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, MOUNT_OBJTYPE, 1);
 	mount_piece.graphic := mount_graphic;
 	mount_piece.color := npc.color;
-	//sendsysmessage(mobile, "cor " + mount_piece.color + " " + npc.color);
+	//sendsysmessageEx(mobile, "cor " + mount_piece.color + " " + npc.color);
 	SetName(mount_piece, npc.name);
 	
 	var result := EquipItem(mobile, mount_piece);
@@ -224,11 +224,11 @@ function MP_Unmount(mobile)
 	var mount_piece := GetEquipmentByLayer(mobile, LAYER_MOUNT);
 
 	if ( !mount_piece )
-		// SendSysMessage(mobile, "Não tem a mount piece");
+		// SendSysMessageEx(mobile, "Não tem a mount piece");
 		return error{"errortext":="Mobile does not have a mount item."};
 	elseif ( Lower(mount_piece.desc) == "mount piece" )
 		// Mount piece exists, but contains no npc information.
-		// SendSysMEssage(mobile, "mount piece desc errada");
+		// SendSysMEssageEx(mobile, "mount piece desc errada");
 		DestroyItem(mount_piece);
 		return 0;
 	else
@@ -282,13 +282,13 @@ function MP_RestoreMountToAnimal(mobile, mount)
 	var orig_serial := CInt(GetObjProperty(mount, "serial"));
 	var animal := SystemFindObjectBySerial(orig_serial);
 
-//	sendsysmessage(mobile, " " + orig_serial + " " + animal);
+//	sendsysmessageEx(mobile, " " + orig_serial + " " + animal);
 
 	if ( animal )
 		// Supports systems where the npc is moved to a storage area rather than killed.
 		var ret := MoveObjectToLocation(animal, mobile.x, mobile.y, mobile.z, mobile.realm, MOVEOBJECT_FORCELOCATION);
 		animal.hidden := 0;
-		SendSysMessage(mobile, " " + ret);
+		SendSysMessageEx(mobile, " " + ret);
 	else
 		var template := MP_GetMountTemplate(mount);
 		if ( !template )

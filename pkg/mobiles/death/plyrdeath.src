@@ -110,7 +110,7 @@ endfunction
 function WakeUp(ghost, corpse)
 	var serialC := ghost.serial;
 	if ( !MoveObjectToLocation(ghost, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION) )
-		SendSysMessage(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Solicite ajude da Staff");
+		SendSysMessageEx(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Solicite ajude da Staff");
 	endif
 
 	Resurrect(ghost);

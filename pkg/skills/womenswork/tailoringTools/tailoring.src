@@ -12,21 +12,21 @@ program use_thread(who, thread)
     return;
   endif
   if(thread.movable == 0)
-    SendSysMessage(who, "You cannot use that.");
+    SendSysMessageEx(who, "You cannot use that.");
     return;
   endif
-  SendSysMessage(who, "Select the loom to use that on.");
+  SendSysMessageEx(who, "Select the loom to use that on.");
   var useon := Target(who);
   if (!useon)
     return;
   endif
   if(!ReserveItem(useon))
-    SendSysMessage(who,"That is already in use.");
+    SendSysMessageEx(who,"That is already in use.");
     return;
   endif
   var obj := useon.objtype;
   if ( (obj < UOBJ_LOOM_START) || (obj > UOBJ_LOOM_END))
-    SendSysMessage(who,"You can only use that on a loom.");
+    SendSysMessageEx(who,"You can only use that on a loom.");
     return;
   else
     MakeCloth(who, thread);
@@ -35,7 +35,7 @@ endprogram
 
 function MakeCloth(character, yarn)
   if(!Accessible(character, yarn))
-    SendSysMessage(character, "You don't have any thread!");
+    SendSysMessageEx(character, "You don't have any thread!");
     return;
   endif
   if(yarn.amount >= 5)
@@ -43,12 +43,12 @@ function MakeCloth(character, yarn)
     if( yarn.amount >= 5)
       if(SubtractAmount(yarn, 5))
         var cloth := CreateItemInBackpack(character, UOBJ_CLOTH, 1);
-        SendSysMessage(character, "You use some thread and create a bolt of cloth.");
+        SendSysMessageEx(character, "You use some thread and create a bolt of cloth.");
       endif
     else
-       SendSysMessage(character, "You don't have enough thread for the bolt of cloth.");
+       SendSysMessageEx(character, "You don't have enough thread for the bolt of cloth.");
     endif
   else
-    SendSysMessage(character, "You don't have enough thread for the bolt of cloth.");
+    SendSysMessageEx(character, "You don't have enough thread for the bolt of cloth.");
   endif
 endfunction

@@ -20,7 +20,7 @@ program use_Carimbo(who, tool)
 		return 0;
 	endif
 	if( !(tool in EnumerateItemsInContainer(who.backpack)) )
-		SendSysMessage(who, "O item precisa estar na sua mochila.", SSM_FAIL);
+		SendSysMessageEx(who, "O item precisa estar na sua mochila.", SSM_FAIL);
 		return 0;
 	endif
 	

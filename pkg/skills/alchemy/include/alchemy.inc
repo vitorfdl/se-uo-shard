@@ -86,28 +86,28 @@ function do_poison(who, potion)
       else
          TS_StartTimer(who, "defaultPoison", 120, 1);
       endif
-      SendSysMessage(who, "Você foi envenenado", 3, 40);
+      SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xbf01:
 	   TS_StartTimer(who, "strPoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xbf02:
 		TS_StartTimer(who, "staminaPoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xbf03:
 		TS_StartTimer(who, "paralyzePoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xbf04:
 		TS_StartTimer(who, "defaultPoison", 120, 3);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xbf06:
 		TS_StartTimer(who, "manaPoison", 120, 5);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xbf05:
 		TS_StartTimer(who, "defaultPoison", 120, 5);
-		SendSysMessage(who, "Você foi envenenado", 3, 40);
+		SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xdc04:
 		TS_StartTimer(who, "defaultPoison", 120, 2);
-		SendSysMessage(who, "Você foi envenenado", 2, 40);
+		SendSysMessageEx(who, "Você foi envenenado", 2, 40);
    endcase
 
 endfunction

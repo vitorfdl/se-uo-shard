@@ -5,21 +5,21 @@ include ":dyes:dyes";
 
 program UseDyes(mobile, dyes)
 	if( !ReserveItem(dyes) )
-		SendSysMessage(mobile, "Those dyes are already in use.");
+		SendSysMessageEx(mobile, "Those dyes are already in use.");
 		return 0;
 	elseif( !(dyes in EnumerateItemsInContainer(mobile.backpack)) )
-		SendSysMessage(mobile, "That item is not in your backpack.");
+		SendSysMessageEx(mobile, "That item is not in your backpack.");
 		return 0;
 	endif
 
-	SendSysMessage(mobile, "What do you want to use these dyes on?");
+	SendSysMessageEx(mobile, "Onde você deseja usar isso?");
 	var targ := target(mobile);
 
 	if ( !targ )
-		SendSysMessage(mobile, "Cancelled");
+		SendSysMessageEx(mobile, "Cancelado");
 		return 0;
 	elseif( !ReserveItem(targ) )
-		SendSysMessage(mobile, "That is already in use.");
+		SendSysMessageEx(mobile, "Já está em uso.");
 		return 0;
 	endif
 
@@ -31,7 +31,7 @@ program UseDyes(mobile, dyes)
 		endif
 		return 1;
 	else
-		SendSysMessage(mobile, "You can not dye that.");
+		SendSysMessageEx(mobile, "Você não pode colorir isso.");
 		return 0;
 	endif
 endprogram

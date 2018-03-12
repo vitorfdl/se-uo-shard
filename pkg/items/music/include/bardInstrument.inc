@@ -17,11 +17,11 @@
  *
  */
 function findInstrument(character)
-
 	var myInstrument := GetObjProperty(character, "#Instrument");
 	if( TypeOf(myInstrument) != "Integer")
 		myInstrument := 0;
 	endif
+   
 	if( myInstrument )
 		myInstrument := SystemFindObjectBySerial(myInstrument);
 	else
@@ -38,8 +38,6 @@ function findInstrument(character)
 	SetObjProperty(character, "#Instrument", CInt(myInstrument.serial));
 
 	return myInstrument;
-
-
 endfunction
 
 
@@ -152,7 +150,6 @@ function playHarp(theskill, iType:=1)
 		2: return 0x46;
 	endcase
 endfunction
-
 
 /*
  * playLute(attribute)

@@ -10,17 +10,17 @@ program potionColor(who, potion)
   if(!Accessible(who, potion))
     return;
   elseif(potion.movable == 0)
-    SendSysMessage(who, "Você não pode usar isto.");
+    SendSysMessageEx(who, "Você não pode usar isto.");
     return;
   endif
 
   SendSysMessageEx(who, "Escolha o balde de tintas", SSM_REQUEST);
   var what := Target(who, TGTOPT_CHECK_LOS);
   if (!what)
-    SendSysMessage(who, "Cancelado");
+    SendSysMessageEx(who, "Cancelado");
     return;
   elseif (what.objtype != 0x0FAB)
-    SendSysMessage(who, "Você precisa usar no balde de tintas");
+    SendSysMessageEx(who, "Você precisa usar no balde de tintas");
     return;
   endif
 

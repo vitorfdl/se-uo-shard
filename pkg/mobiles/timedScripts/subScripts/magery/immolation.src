@@ -28,7 +28,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       PlayObjectCenteredEffectEx( mobile,  0x19AB, 5, 30, 0, 4, 0);
       DamageFLS(mobile, RandomDiceRoll(dmg_roll), DMG_FIRE, attacker);
       if (RandomInt(2) == 1)
-         mobile.paralyzed := 1;
+         mobile.frozen := 1;
          if (!mobile.npctemplate)
             PlayCustomSound(mobile, 23);
          else
@@ -36,7 +36,7 @@ function StartScript(mobile, attacker := 0, level := 0)
          endif
          SendSysMessageEx(mobile, "Você está em pânico", SSM_FAIL);
          sleep(1);
-         mobile.paralyzed := 0;
+         mobile.frozen := 0;
       else
          sleep(1);
       endif
@@ -46,7 +46,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-   mobile.paralyzed := 0;
+   mobile.frozen := 0;
 	return 1;
 endfunction
 

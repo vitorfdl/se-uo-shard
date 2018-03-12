@@ -23,11 +23,11 @@ function CarveFish(who, blade, use_on)
 	var steak;
 	var num_steaks;
 	if( (!Accessible(who, use_on)) or (!CheckLineOfSight(who, use_on)) or (distance(who, use_on) > 2) )
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	if( (!ReserveItem(use_on)) || (use_on.movable == 0) )
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	
@@ -114,13 +114,13 @@ function IsValidFishingSpot(who, targetsquare, locinfo)
 
 	var retval := 1;
 	if(!IsWater(targetsquare, locinfo))
-		SendSysMessage(who, "Você não pode pescar aqui!");
+		SendSysMessageEx(who, "Você não pode pescar aqui!");
 		retval := 0;
 	elseif(!IsInRange(who, targetsquare.x, targetsquare.y, targetsquare.z))
-		SendSysMessage(who, "Isto esta muito longe.");
+		SendSysMessageEx(who, "Isto esta muito longe.");
 		retval := 0;
 	elseif(!CheckLosAt(who, targetsquare.x, targetsquare.y, targetsquare.z))
-		SendSysMessage(who, "Este lugar não esta na sua linha de visao!");
+		SendSysMessageEx(who, "Este lugar não esta na sua linha de visao!");
 		retval := 0;
 	endif
 
@@ -233,9 +233,9 @@ function GetSOSTreasure(who, targetsquare, sosmsg)
 			endif
 			SetName(it, (oldname + " [Recuperado de um navio submerso]"));
 			it.movable := 1;
-			SendSysMessage(who, "Você achou alguma coisa interessante!");
+			SendSysMessageEx(who, "Você achou alguma coisa interessante!");
 		else
-			SendSysMessage(who, "Você achou um tesouro submerso!");
+			SendSysMessageEx(who, "Você achou um tesouro submerso!");
 			var chest := CreateItemInBackpack(who, 0x9e40, 1);
 			case(RandomInt(4) + 1)
 				1: chest.graphic := 0xe40;
@@ -258,7 +258,7 @@ function GetSOSTreasure(who, targetsquare, sosmsg)
 			DestroyItem(sosmsg);
 		endif
 	else
-		SendSysMessage(who, "Alguma coida grande caiu de seu anzol!");
+		SendSysMessageEx(who, "Alguma coida grande caiu de seu anzol!");
 	endif
 
 	return 0;

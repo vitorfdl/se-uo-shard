@@ -61,7 +61,7 @@ program drunk (character)
 	until ( (!drunkness) or (!character) );
 
 	EraseObjProperty( character, "#proof" );
-	SendSysmessage( character , "Seu corpo esta livre do alcool.", FONT_NORMAL, 90);
+	SendSysmessageEx( character , "Seu corpo esta livre do alcool.", FONT_NORMAL, 90);
 
 endprogram
 

@@ -73,7 +73,7 @@ function HealAndDestroy(who, trap)
 	endif
 
 	recalcvitals(who);
-	SendSysMessage(who, "Você foi curado!", SSM_INFO);
+	SendSysMessageEx(who, "Você foi curado!", SSM_INFO);
 	
 	var destro := DestroyItem(trap);
 endfunction

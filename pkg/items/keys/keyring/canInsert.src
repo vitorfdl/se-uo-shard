@@ -7,11 +7,11 @@ use uo;
 
 program OnInsert(who, keyring, movetype, insert_type, adding_item, existing_stack, amt_to_add)
 	if ( !adding_item.IsKey() )
-		SendSysMessage(who, "That is not a key.");
+		SendSysMessageEx(who, "Isso não é uma chave.");
 		return 0;
 	endif
 
-	SendSysMessage(who, "You put the key on the ring.");
+	SendSysMessageEx(who, "Você colocou a chave no molho.");
 	
 	var numkeys := (EnumerateItemsInContainer(keyring).Size())+1;
 	if ( numkeys == 1 )

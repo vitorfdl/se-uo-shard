@@ -13,14 +13,11 @@ include "include/say";
 function StartScript(mobile, attacker := 0, level := 0)
 	PlaySoundEffect(mobile, 0x205);
 	SendSystemReport(mobile, "Incapaz de se mover.");
-	mobile.frozen := 1;
 	
 	return 1;
 endfunction
 
 function EndScript(mobile)
-	mobile.frozen := 0;
-	
 	return 1;
 endfunction
 

@@ -116,7 +116,7 @@ function EmailIndex( who )
 
    var input := GFSendGump( who, gump );
    if( !input || input[CLOSE_EMAIL] )
-      SendSysMessage( who, "Cancelled." );
+      SendSysMessageEx( who, "Cancelled." );
       return 0;
    elseif( input[NEW_LETTER] )
       NewLetter( who );
@@ -637,7 +637,7 @@ function notify_player( serial )
    if( mobile )
       var script := start_script( ":email:emailMessage/newEmail", mobile );
       if( script.errortext )
-         SendSysMessage( mobile, "Error starting script <:email:emailMessage/newEmail> -->"+script.errortext );
+         SendSysMessageEx( mobile, "Error starting script <:email:emailMessage/newEmail> -->"+script.errortext );
          return 0;
       endif
    endif

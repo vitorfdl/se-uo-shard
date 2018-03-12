@@ -46,10 +46,10 @@ function disparoPoderoso(param)
 	var aljava := GetEquipmentByLayer(who, 0x14);
 	var ammo := GetObjProperty(who.weapon, "ammo");
 	if (!ammo)
-		SendSysMessage(who, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
+		SendSysMessageEx(who, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
 		return 0;
 	elseif ( ConsumeSubstance( aljava, ammo, 1 ) == error)
-		SendSysMessage(who, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
+		SendSysMessageEx(who, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco e na flecha]");
 		return 0;
 	endif
 	

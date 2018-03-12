@@ -32,7 +32,7 @@ program TamingSkill(who)
 		SendSysMessageEx(who, "Você não pode adestrar nada agora.", SSM_FAIL);
 		return;
 	elseif ( CInt(GetObjProperty(who, "#tamewait")) > ReadGameClock() )
-		SendSysMessage(who, "Você precisa esperar para usar esta pericia novamente.", SSM_FAIL);
+		SendSysMessageEx(who, "Você precisa esperar para usar esta pericia novamente.", SSM_FAIL);
 		return;
 	endif
 
@@ -92,7 +92,7 @@ function taming(who)
 		SendSysMessageEx(who, "Cancelado", SSM_FAIL);
 		return;
 //	elseif (Distance(who,targ) > 4)
-//		SendSysMessage(who, "Alvo esta muito distante.");
+//		SendSysMessageEx(who, "Alvo esta muito distante.");
 //		return;
 	elseif ( targ.script[":ghaia:follower"] )
 		SendSysMessageEx(who, targ.name+" não pode ser adestrado.", SSM_FAIL);
@@ -101,7 +101,7 @@ function taming(who)
 		SendSysMessageEx(who, "Você atingiu o limite de seguidores.", SSM_FAIL);
 		return 0;
 	/*elseif (who.serial IN GetObjProperty(targ, "#critical"))
-		SendSysMessage(who, targ.name+" não aceita mais ser domado por você.");
+		SendSysMessageEx(who, targ.name+" não aceita mais ser domado por você.");
 		return 0;*/
 	elseif (!TS_GetCooldown(targ, "peacemade") && targ.alignment == 1)
 		SendSysMessageEx(who, "A criatura esta muito hostil para ser domesticada.", SSM_FAIL);
@@ -115,7 +115,7 @@ function taming(who)
 	var npctemplate := targ.npctemplate;
 	npctemplate := npctemplate[10, len(npctemplate)-9];
 	cfg := cfg[npctemplate];
-//	Sendsysmessage(who, " " + cfg.TameDifficulty  + " " + skill);
+//	SendSysMessageEx(who, " " + cfg.TameDifficulty  + " " + skill);
 			
 	var info := struct;
 	info.+x := who.x;
@@ -185,7 +185,7 @@ function TameLoop(who, targ, byref info)
 	var targ_hostiles := ListHostiles(targ, 15);
 	
 	if ( targ.master )
-		SendSysMessage(who, targ.name+" não pode ser adestrado.", SSM_FAIL);
+		SendSysMessageEx(who, targ.name+" não pode ser adestrado.", SSM_FAIL);
 		return 0;
 	elseif ( targ_hostiles.size() > 0 )
 		SendSysMessageEx(who, "alguém está atacando "+targ.name+" .", SSM_FAIL);

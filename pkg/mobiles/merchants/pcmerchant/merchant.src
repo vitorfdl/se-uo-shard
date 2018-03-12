@@ -68,7 +68,7 @@ function HandleItemGiven(npc, player, item)
 		SendSysMessageEX(player, "Você não pode colocar itens a venda nesse vendedor.",SSM_FAIL);
 		return;
 	elseif (onlyplayersells && onlyplayersells != player.name)
-		SendSysMessage(player, "Perdao, somente " + onlyplayersells + " pode fazer vendas comigo");
+		SendSysMessageEx(player, "Perdao, somente " + onlyplayersells + " pode fazer vendas comigo");
 		return;
 	elseif (GetObjproperty(item, "serialid") != error)
 		SendSysMessageEx(player,"Você não pode vender isto.",SSM_FAIL);
@@ -257,7 +257,7 @@ function removeItemMerchant(npc, player, input)
 	if ( purchase == error )
 		purchase := CreateItemAtLocation(player.x, player.y, player.z, selling, selling.amount);
 		if ( purchase == error )
-			SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
+			SendSysMessageEx(player, "Error - Unable to create item! ->"+purchase.errortext);
 		else
 			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
 		endif
@@ -278,7 +278,7 @@ function DoPurchase(npc, player, input)
 	// var confiscar := 0;
 
 	if ( AmountInPack(player, cost.cost_type) < CInt(cost.cost_amt) )
-		SendSysMessage(player, "Você não tem "+GetName(cost.cost_type, 1)+ " suficiente para comprar isto.");
+		SendSysMessageEx(player, "Você não tem "+GetName(cost.cost_type, 1)+ " suficiente para comprar isto.");
 		return 0;
 	endif
 	var amount := cint(Floor(cdbl(selling.amount) / cdbl(cost.lote)));
@@ -300,7 +300,7 @@ function DoPurchase(npc, player, input)
 		SendSysMessageEx(player, "Escolha "+cost_desc+" que Você quer usar para pagar. Você deve mais ["+owed+"].");
 		var targ := Target(player);
 		if ( !targ )
-			SendSysMessage(player, "Cancelado", SSM_INFO);
+			SendSysMessageEx(player, "Cancelado", SSM_INFO);
 			return;
 		elseif ( targ in pay_list )
 			SendSysMessageEx(player, "Você ja esta pagando com isto.", SSM_FAIL);
@@ -517,7 +517,7 @@ function DoWithdraw(npc, player)
 		if( withdraw == error )
 			withdraw := CreateItemAtLocation(player.x, player.y, player.z, item.ObjType, item.amount);
 			if ( withdraw == error )
-				SendSysMessage(player, "Error - Unable to create item! ->"+withdraw.errortext);
+				SendSysMessageEx(player, "Error - Unable to create item! ->"+withdraw.errortext);
 			else
 				PrintText(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
 			endif

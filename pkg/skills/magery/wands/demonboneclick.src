@@ -13,7 +13,7 @@ program doubleClick(who, item)
 	var alvo := Target(who, TGTOPT_CHECK_LOS);
 	SendSysMessageEx(who, "Onde deseja usar isso?", SSM_REQUEST);
 	if (!alvo)
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return;
 	elseif (Distance(who, alvo) > 2)
 		SendSysMessageEx(who, "Você esta muito longe!", SSM_FAIL);
@@ -29,6 +29,6 @@ program doubleClick(who, item)
       SetName(alvo, alvo.desc);
       SubtractAmount(item, 1);
    else
-		SendSysMessage(who, "Nada aconteceu.");
+		SendSysMessageEx(who, "Nada aconteceu.");
    endif
 endprogram

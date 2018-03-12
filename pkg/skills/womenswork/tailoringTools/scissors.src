@@ -16,20 +16,20 @@ program use_scissors( who, scissors )
 	if(!Accessible(who, scissors))
 		return;
 	endif
-	SendSysMessage(who, "Escolha um item para cortar.");
+	SendSysMessageEx(who, "Escolha um item para cortar.");
 	var cloth := Target(who);
 
 	if(!cloth)
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return;
 	elseif(!Accessible(who, cloth))
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return;
 	elseif(cloth.movable == 0)
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return;
 	elseif(cloth in ListEquippedItems(who))
-		SendSysMessage(who, "Você não pode cortar algo que esta vestindo!");
+		SendSysMessageEx(who, "Você não pode cortar algo que esta vestindo!");
 		return;
 	endif
 
@@ -51,10 +51,10 @@ program use_scissors( who, scissors )
 			endif
 			CheckToolWear(who, scissors, COSTURA);
 			PlaySoundEffect(who, 0x0249);
-			SendSysMessage(who, "Você usou a tesoura para cortar o material.");
+			SendSysMessageEx(who, "Você usou a tesoura para cortar o material.");
 			return;
 		else
-			SendSysMessage(who, "Você não pode cortar isto.");
+			SendSysMessageEx(who, "Você não pode cortar isto.");
 			return;
 		endif
 	else
@@ -69,7 +69,7 @@ program use_scissors( who, scissors )
 			leftover := 0x1067;
 			
 			if(!material)
-				SendSysMessage (who, "Você não pode usar as tesouras nisso.");
+				SendSysMessageEx (who, "Você não pode usar as tesouras nisso.");
 				return;
 			endif
 		endif
@@ -85,7 +85,7 @@ program use_scissors( who, scissors )
 				newcloth.color := clr;
 			endif
 		else
-			SendSysMessage(who, "You can't use scissors on that.");
+			SendSysMessageEx(who, "You can't use scissors on that.");
 			return;
 		endif
 	endif
@@ -95,7 +95,7 @@ endprogram
 
 function MakeCartoes (who, papel)
 	if (!ReserveItem (papel))
-		SendSysMessage (who, "Você não pode usar este item!");
+		SendSysMessageEx (who, "Você não pode usar este item!");
 		return;
 	endif
 
@@ -118,14 +118,14 @@ function MakeCartoes (who, papel)
 				return;
 			endif
 
-			SendSysMessage (who, "Você fez os cartoes.");
+			SendSysMessageEx (who, "Você fez os cartoes.");
 
 		if (!papel)
-			SendSysMessage (who, "Você não tem mais pergaminhos");
+			SendSysMessageEx (who, "Você não tem mais pergaminhos");
 			return;
 		endif
 	until (who.x != sx or who.y != sy);
 
-	SendSysMessage (who, "Você parou de fazer.");
+	SendSysMessageEx (who, "Você parou de fazer.");
 endfunction
 

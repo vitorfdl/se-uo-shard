@@ -15,7 +15,6 @@ include ":combat:combat";
 include ":fls_core:fls_characters";
 
 function StartScript(mobile, attacker := 0, level := 0)
-	mobile.paralyzed := 1;
    if (!CheckGender(mobile))
       PerformAction(mobile, 0x14, 5, 1, ACTION_DIR_FORWARD , 0, 1);
       sleepms(750);
@@ -37,7 +36,6 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-	mobile.paralyzed := 0;
 	return 1;
 endfunction
 

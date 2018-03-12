@@ -9,15 +9,15 @@ var female_scream := array(332, 333, 334, 335, 336);
 
 program WhipIt(who, whip)
 
-	SendSysMessage(who, "Quem você deseja chicotear?");
+	SendSysMessageEX(who, "Quem você deseja chicotear?");
 	
 	var targ := target(who);
 	
 	if ( distance(who, targ) > 2 )
-		SendSysMessage(who, "Muito longe.");
+		SendSysMessageEX(who, "Muito longe.");
 		return;
 	elseif ( !targ.isa(POLCLASS_MOBILE) )
-		SendSysMessage(who, "Cancelado");
+		SendSysMessageEX(who, "Cancelado");
 		return;
 	endif
 	

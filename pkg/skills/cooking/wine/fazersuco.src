@@ -14,7 +14,7 @@ program fazersuco(who, item)
 			var i;
 
 			if (passos >= 80) //se tem mtos passos adiciona 1 dose
-				SendSysMessage(who, "As uvas ja estao amassadas.");
+				SendSysMessageEx(who, "As uvas ja estao amassadas.");
 				SetObjProperty(item, "doses", 1);
 				SetObjProperty(item, "passos", 0);   
 				SetObjProperty(item, "carregado", 0);  
@@ -30,10 +30,10 @@ program fazersuco(who, item)
 				SetObjProperty(item, "passos", passos);
 			endif
 		else // se não ta carregado coloca as uvas
-			SendSysMessage(who, "Você precisa por as 50 uvas no balde, este balde esta vazio!");
+			SendSysMessageEx(who, "Você precisa por as 50 uvas no balde, este balde esta vazio!");
 		endif
 	else //balde ta cheio
-		SendSysMessage(who, "Ei! Ainda tem suco aqui! Esvazie o balde!");
+		SendSysMessageEx(who, "Ei! Ainda tem suco aqui! Esvazie o balde!");
 	endif
 
 endprogram

@@ -7,24 +7,24 @@ include ":fls_core:fls_crafting";
 program usar_etiqueta(who, the_item)
 
 	if (!CheckForPen(who.backpack, 0))
-		SendSysMessage(who, "Você não possui uma pena e o tinteiro para escrever.");
+		SendSysMessageEx(who, "Você não possui uma pena e o tinteiro para escrever.");
 		return;
 	endif
 
 	var itemdesc :=  RequestGump(who, "Qual nome deseja escrever aqui?");
 	if(!itemdesc)
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return;
 	endif
-	SendSysMessage(who, "Selecione o item para marcar com a etiqueta.");
+	SendSysMessageEx(who, "Selecione o item para marcar com a etiqueta.");
 	var use_on := Target(who);
 
 	if(use_on.movable == 0)
-		SendSysMessage(who, "Você não pode banhar isto.");
+		SendSysMessageEx(who, "Você não pode banhar isto.");
 		return;
 	endif
 	if(!Accessible(who, use_on))
-		SendSysMessage(who, "Você não alcanca isto.");
+		SendSysMessageEx(who, "Você não alcanca isto.");
 		return;
 	endif
 
@@ -32,7 +32,7 @@ program usar_etiqueta(who, the_item)
 		 SetName(use_on, itemdesc); //
 		 use_on.color := the_item.color;
 	else
-		SendSysMessage(who, "Este item não pode ser rotulado.");
+		SendSysMessageEx(who, "Este item não pode ser rotulado.");
 	endif
 
 

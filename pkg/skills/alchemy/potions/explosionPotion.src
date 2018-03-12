@@ -12,15 +12,15 @@ program use_explosion(who, potion)
 		return;
 	endif
 	if(potion.movable == 0)
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return;
 	endif
 	if(!Accessible( who, potion))
-		SendSysMessage(who,"Você não pode pegar isto!");
+		SendSysMessageEx(who,"Você não pode pegar isto!");
 		return;
 	endif
 	who.hidden := 0;
-	SendSysMessage(who, "Escolha o alvo " );
+	SendSysMessageEx(who, "Escolha o alvo " );
 	if( !Cint(GetObjProperty(potion, "#bomb")))
 		var parms := array{};
 		parms[1] := potion;
@@ -38,7 +38,7 @@ program use_explosion(who, potion)
 	PrintText(who, "*joga um frasco*");
 	if(!CheckLosAt(who, cast_on.x, cast_on.y, cast_on.z))
 		MoveObjectToLocation(potion, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION );
-		SendSysMessage(who, "Você não consegue ver o alvo!");
+		SendSysMessageEx(who, "Você não consegue ver o alvo!");
 		return;
 	endif
 	if(!potion)

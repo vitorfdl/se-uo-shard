@@ -10,6 +10,7 @@ use os;
 use util;
 
 include "include/sounds";
+include "include/say";
 
 program SoundPlay( rune )
    while( rune )
@@ -22,29 +23,29 @@ program SoundPlay( rune )
 
          var delay := cint(rune.GetDelay());
          if( !delay )
-            PrintTextAbove( rune, "Error reading delay for a sound_rune -->"+delay.errortext );
+            PrintText( rune, "Error reading delay for a sound_rune -->"+delay.errortext );
             break;
          endif
 
          var range := cint(rune.GetRange());
          if( !range )
-            PrintTextAbove( rune, "Error reading range for a sound_rune -->"+range.errortext );
+            PrintText( rune, "Error reading range for a sound_rune -->"+range.errortext );
             break;
          endif
 
          var sound_list := rune.GetSounds();
          if( !sound_list || typeof(sound_list) != "Array" )
-            PrintTextAbove( rune, "Error reading sounds for a sound_rune -->"+sound_list.errortext );
+            PrintText( rune, "Error reading sounds for a sound_rune -->"+sound_list.errortext );
             break;
          endif
 
          var effect := sound_list.RandomEntry();
          if( !effect )
-            PrintTextAbove( rune, "Error reading sound effect for a sound_rune -->"+effect.errortext );
+            PrintText( rune, "Error reading sound effect for a sound_rune -->"+effect.errortext );
             break;
          endif
 
-         printtextabove(rune, "playando");
+         PrintText(rune, "playando");
          var mobile_list := ListMobilesNearLocationEx(rune.x, rune.y, LIST_IGNORE_Z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_CONCEALED|LISTEX_FLAG_PLAYERS_ONLY);
          foreach mobile in mobile_list
             PlaySoundEffectPrivate( mobile, cint(effect), mobile);

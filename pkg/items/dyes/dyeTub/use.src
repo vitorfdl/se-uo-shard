@@ -5,18 +5,18 @@ include ":dyes:dyes";
 
 program UseTub(mobile, dyetub)
 	if( !ReserveItem(dyetub) )
-		SendSysMessage(mobile, "That dye tub is aleady in use.");
+		SendSysMessageEx(mobile, "That dye tub is aleady in use.");
 		return 0;
 	endif
 
-	SendSysMessage(mobile, "What do you want to use this dyetub on?");
+	SendSysMessageEx(mobile, "Onde deseja usar isso?");
 	var targ := target(mobile);
 
 	if ( !targ )
-		SendSysMessage(mobile, "Cancelled");
+		SendSysMessageEx(mobile, "Cancelled");
 		return;
 	elseif( !ReserveItem(targ) )
-		SendSysMessage(mobile, "That is already in use.");
+		SendSysMessageEx(mobile, "Isso já está em uso.");
 		return 0;
 	endif
 
@@ -32,7 +32,7 @@ program UseTub(mobile, dyetub)
 		endif
 		
 	else
-		SendSysMessage(mobile, "You can not dye that.");
+		SendSysMessageEx(mobile, "Você não pode colorir isso.");
 	endif
 
 endprogram

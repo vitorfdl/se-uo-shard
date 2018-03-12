@@ -19,7 +19,7 @@ Const MAX_PER_HIVE	:= 10;
 
 program harvest_honey (character, beehive)
 	if (Distance (character, beehive) > 1)
-		sendsysmessage (character, "Você esta muito distante!", 3, 40);
+		SendSysMessageEx (character, "Você esta muito distante!", 3, 40);
 		return;
 	endif
 
@@ -27,11 +27,11 @@ program harvest_honey (character, beehive)
 
 	//if there's no honey or wax, ask the user if they want to destroy the hive
 	if (already_harvested_amount >= MAX_PER_HIVE)
-		SendSysmessage (character, "A colmeia esta vazia.", FONT_NORMAL, 40);
+		SendSysMessageEx (character, "A colmeia esta vazia.", FONT_NORMAL, 40);
 		return;
 	endif
 
-	SendSysmessage (character, "Você comecou a mecher colmeia.", 3, 90);
+	SendSysMessageEx (character, "Você comecou a mecher colmeia.", 3, 90);
 	var characterx := character.x;
 	var charactery := character.y;
 	repeat
@@ -61,17 +61,17 @@ program harvest_honey (character, beehive)
 		if (15 > 0)
 			if (RandomInt (4) == 1)
 				CreateItemAtLocation(beehive.x, beehive.y, beehive.z, ITEM_SWARM, 1, character.realm);
-				SendSysmessage(character, "Uh-oh...", 3, 40);
+				SendSysMessageEx(character, "Uh-oh...", 3, 40);
             DamageFLS(character, RandomDiceRoll("1d2"), DMG_PIERCING);
 				return;
 			endif
 		endif
 		
 		if (already_harvested_amount >= MAX_PER_HIVE)
-			SendSysmessage(character, "Não há mais nada para ser retirado daqui.", 3, 40);
+			SendSysMessageEx(character, "Não há mais nada para ser retirado daqui.", 3, 40);
 			return;
 		endif
 	until(character.x != characterx or character.y != charactery);
 
-	SendSysMessage(character, "Você parou de mecher na colmeia.", 3, 90);
+	SendSysMessageEx(character, "Você parou de mecher na colmeia.", 3, 90);
 endprogram

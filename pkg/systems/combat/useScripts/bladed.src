@@ -17,7 +17,7 @@ include ":tn:cooldown";
 
 program use_Bladed(who, tool)
 	if (who.weapon != tool)
-		SendSysMessage(who, "Você deve estar com a arma em mãos.");
+		SendSysMessageEx(who, "Você deve estar com a arma em mãos.");
 		return 0;
 	endif
 
@@ -30,11 +30,11 @@ program use_Bladed(who, tool)
       endif
    endif
 
-	SendSysMessage(who, "O que você deseja cortar com esta lâmina?");
+	SendSysMessageEx(who, "O que você deseja cortar com esta lâmina?");
 	var targ := TargetCoordinates(who);
 	
 	if ( !targ )
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return 0;
 	endif
 	
@@ -50,49 +50,49 @@ endprogram
 
 function CutCheese(who, cheese)
 	createiteminbackpack(who, 0x97C, 8);
-	SendSysMessage(who, "Você cortou o queijo em oito partes.");
+	SendSysMessageEx(who, "Você cortou o queijo em oito partes.");
 	DestroyItem(cheese);
 	return 1;
 endfunction
 
 function CutCake(who, cake)
 	createiteminbackpack(who, 0xC96C, 8);
-	SendSysMessage(who, "Você cortou o bolo em oito partes.");
+	SendSysMessageEx(who, "Você cortou o bolo em oito partes.");
 	DestroyItem(cake);
 	return 1;
 endfunction
 
 function CutCheese2(who, cheese)
 	createiteminbackpack(who, 0x97C, 5);
-	SendSysMessage(who, "Você cortou o queijo em cinco partes.");
+	SendSysMessageEx(who, "Você cortou o queijo em cinco partes.");
 	DestroyItem(cheese);
 	return 1;
 endfunction
 
 function CutRawHam(who, ham)
 	createiteminbackpack(who, 0x976, 2);
-	SendSysMessage(who, "Você cortou o presunto em duas metades");
+	SendSysMessageEx(who, "Você cortou o presunto em duas metades");
 	DestroyItem(ham);
 	return 1;
 endfunction
 
 function CutBacon(who, bacon)
 	createiteminbackpack(who, 0x979, 8);
-	SendSysMessage(who, "Você cortou o bacon em oito fatias.");
+	SendSysMessageEx(who, "Você cortou o bacon em oito fatias.");
 	DestroyItem(bacon);
 	return 1;
 endfunction
 
 function CutLemon(who, lemon)
 	createiteminbackpack(who, 0x1729, 1);
-	SendSysMessage(who, "Você cortou o limao.");
+	SendSysMessageEx(who, "Você cortou o limao.");
 	DestroyItem(lemon);
 	return 1;
 endfunction
 
 function CutLime(who, lemon)
 	createiteminbackpack(who, 0x172b, 1);
-	SendSysMessage(who, "Você cortou a lima.");
+	SendSysMessageEx(who, "Você cortou a lima.");
 	DestroyItem(lemon);
 	return 1;
 endfunction
@@ -121,16 +121,16 @@ function CarveItems(who, tool, item)
 		MakeBlankScrolls(who, item);
 	elseif ( isfish(item.objtype) )
 		if((!Accessible(who, item)) or (!CheckLineOfSight(who, item)) or (Distance(who, item) > 2))
-			SendSysMessage(who, "Você não pode usar isto.");
+			SendSysMessageEx(who, "Você não pode usar isto.");
 			return;
 		endif
 		if((!ReserveItem(item)) || (item.movable == 0))
-			SendSysMessage(who, "Você não pode usar isto.");
+			SendSysMessageEx(who, "Você não pode usar isto.");
 			return;
 		endif
 		CarveFishNew(who, tool, item);
 	else
-		SendSysMessage(who, "Você não pode cortar este item.");
+		SendSysMessageEx(who, "Você não pode cortar este item.");
 	endif
 	
 	return 1;
@@ -139,7 +139,7 @@ endfunction
 function CarveMobiles(who, tool, mobile)
 	if ( mobile.npctemplate["ovelha"] )
 		if((!CheckLineOfSight(who, mobile)) or (distance(who, mobile) > 2))
-			SendSysMessage(who, "A ovelha esta distante.");
+			SendSysMessageEx(who, "A ovelha esta distante.");
 			return;
 		endif
 		if(mobile.graphic == 207)
@@ -163,7 +163,7 @@ function CarveObject(who, tool, objtype, targ)
 	if ( LJ_IsTree(objtype) )
 		
 		if(CoordinateDistance(who.x, who.y, targ.x, targ.y)>2)
-			SendSysMessage(who, "A arvore esta distante demais.");
+			SendSysMessageEx(who, "A arvore esta distante demais.");
 			return;
 		endif
 
@@ -181,7 +181,7 @@ function CarveObject(who, tool, objtype, targ)
 		        0xd01:   kindling := CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
 		        default: CreateItemInBackpack(who, UOBJ_KINDLING, 1);
 		  endcase      
-		  SendSysMessage(who, "Você colocou alguns gravetos na sua mochila.");
+		  SendSysMessageEx(who, "Você colocou alguns gravetos na sua mochila.");
 		return 1;
 	endif
 	
@@ -201,16 +201,16 @@ endfunction
 function MakeBlankScrolls (who, hides)
 
 	if (!ReserveItem (hides))
-		SendSysMessage (who, "Você não pode usar este item!");
+		SendSysMessageEx (who, "Você não pode usar este item!");
 		return;
 	endif
 
 	var item_skill := 10;
 	var myskill := AP_GetSkill (who, ESCALPELAR);
-	//sendsysmessage(who, "gmdebug: skinning " + myskill);
+	//SendSysMessageEx(who, "gmdebug: skinning " + myskill);
 
 	if (item_skill > myskill)
-		SendSysMessage (who, "Você não sabe como fazer este item.");
+		SendSysMessageEx (who, "Você não sabe como fazer este item.");
 		return;
 	endif
 
@@ -225,7 +225,7 @@ function MakeBlankScrolls (who, hides)
 		endfor
 
 		if (!SubtractAmount (hides, 1))
-			SendSysMessage(who, "Você não pode usar estes couros!");
+			SendSysMessageEx(who, "Você não pode usar estes couros!");
 			return;
 		endif
 		var test := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
@@ -236,18 +236,18 @@ function MakeBlankScrolls (who, hides)
 				return;
 			endif
 
-			SendSysMessage (who, "Você fez o pergaminho.");
+			SendSysMessageEx (who, "Você fez o pergaminho.");
 		else
-			SendSysMessage (who, "Você arruinou os materiais.");
+			SendSysMessageEx (who, "Você arruinou os materiais.");
 		endif
 
 		if (!hides)
-			SendSysMessage (who, "Você não tem mais couros.");
+			SendSysMessageEx (who, "Você não tem mais couros.");
 			return;
 		endif
 	until (who.x != sx or who.y != sy);
 
-	SendSysMessage (who, "Você parou de fazer os pergaminhos.");
+	SendSysMessageEx (who, "Você parou de fazer os pergaminhos.");
 endfunction
 
 function CarveFishNew(who, blade, use_on)
@@ -256,11 +256,11 @@ function CarveFishNew(who, blade, use_on)
 	
 	var myskill := AP_GetSkill (who, ESCALPELAR);
 	if( (!Accessible(who, use_on)) or (!CheckLineOfSight(who, use_on)) or (distance(who, use_on) > 2) )
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return 0;
 	endif
 	if( (!ReserveItem(use_on)) || (use_on.movable == 0) )
-		SendSysMessage(who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.");
 		return 0;
 	endif
 

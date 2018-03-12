@@ -13,7 +13,6 @@ include "include/say";
 function StartScript(mobile, attacker := 0, level := 0)
 	// PlaySoundEffect(mobile, 0x205);
 	SendSystemReport(mobile, "Congelado");
-	mobile.frozen := 1;
    var item_colors := dictionary{};
    item_colors[mobile.serial] := mobile.color;
    mobile.color := 2753;
@@ -29,7 +28,6 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-	mobile.frozen := 0;
    var oldcolors := GetObjProperty(mobile, "frozen_color");
    foreach serial in (oldcolors.keys())
       var item := SystemFindObjectBySerial(serial);

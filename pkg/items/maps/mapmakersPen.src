@@ -182,7 +182,7 @@ program use_MapmakersPen(who, tool)
 		if (rune_list == error)
 			rune_list := array;
 		elseif( rune_list.Size() > 15 )
-			SendSysMessage(who,"Este livro ja esta cheio.", SSM_FAIL);
+			SendSysMessageEx(who,"Este livro ja esta cheio.", SSM_FAIL);
 			return 0;
 		endif
 
@@ -338,15 +338,15 @@ function CreateCraftedMap(who, craft_skill, use_on, objtype, amount, itemname, r
 	var theitem := CreateItemInBackpack(who, objtype, 1);
 	if(theitem)
 		if( !SubtractAmount(use_on, amount) )
-			SendSysMessage(who, "Você não tem materiais suficiente na sua mochila!");
+			SendSysMessageEx(who, "Você não tem materiais suficiente na sua mochila!");
 			DestroyItem(theitem);
 			return -1;
 		endif
 
-		SendSysMessage(who, "Você desenhou o mapa.");
+		SendSysMessageEx(who, "Você desenhou o mapa.");
 		SetName(theitem, itemname);
 	else
-		SendSysMessage(who, "Espaco insuficiente na sua mochila");
+		SendSysMessageEx(who, "Espaco insuficiente na sua mochila");
 		return 0;
 	endif
 	if (theitem.objtype != 0x9923 && YesNo(who, "Você quer escrever o nome do mapa?"))

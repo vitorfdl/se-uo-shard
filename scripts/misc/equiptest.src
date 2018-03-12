@@ -24,14 +24,14 @@ program EquipTest(mobile, item, start_up)
 		return 1;
 	elseif ( (mobile.frozen) || (mobile.paralyzed) )
 		// Frozen players cant equip stuff
-		SendSysMessage(mobile, "Você esta incapaz de se movimentar para equipar isso.");
+		SendSysMessageEx(mobile, "Você esta incapaz de se movimentar para equipar isso.");
 		return 0;
 	endif
 
 	if ( item.graphic IN array{9920, 9930} )
 		var mounted := GetEquipmentByLayer(mobile, 0x19);
 		if ( !mounted )
-			SendSysMessage(mobile, "Você não pode equipar essa arma desmontado.");
+			SendSysMessageEx(mobile, "Você não pode equipar essa arma desmontado.");
 			return 0;
 		endif
 	endif
@@ -44,7 +44,7 @@ program EquipTest(mobile, item, start_up)
 	if (mobile.hidden)
 		var zones := CS_GetArmorZone(item);
 		if ("Body" IN zones || "Arms" IN zones || "Legs/feet" IN zones)
-			SendSysMessage(mobile, "Você apareceu ao colocar "+item.desc+".");
+			SendSysMessageEx(mobile, "Você apareceu ao colocar "+item.desc+".");
 			mobile.hidden := 0;
 			PrintText(mobile, "*aparece*");
 		endif

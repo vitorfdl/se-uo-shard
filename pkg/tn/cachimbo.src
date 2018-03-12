@@ -8,11 +8,11 @@ include "include/client";
 program cachimbo (player, cachimbo)
 var preenchido := GetObjProperty (cachimbo,"preenchido");
 if (!preenchido)
-SendSysMessage( player, "Selecione o fumo:" );
+SendSysMessageEx( player, "Selecione o fumo:" );
 var targ := target(player);
 if (PodeFumar(targ))
 SetObjProperty (cachimbo, "preenchido", 1);
-SendSysMessage( player, "Você colocou o fumo no cachimbo" );
+SendSysMessageEx( player, "Você colocou o fumo no cachimbo" );
 DestroyItem(targ);
 return;
 endif
@@ -37,7 +37,7 @@ Fumaca (player);
 Sleep(4);
 loop := loop + 1;
 endwhile
-SendSysMessage( player, "O fumo do cachimbo acabou" );
+SendSysMessageEx( player, "O fumo do cachimbo acabou" );
 EraseObjProperty (cachimbo, "preenchido");
 endfunction
 

@@ -10,15 +10,15 @@ include ":fls_core:fls_characters";
 
 program corda(who, item)
 	var alvo := Target(who, TGTOPT_CHECK_LOS);
-	SendSysMessage(who, "Selecione um corpo.");
+	SendSysMessageEx(who, "Selecione um corpo.");
 	if (!alvo)
-		SendSysMessage(who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.");
 		return;
 	elseif (Distance(who, alvo) > 2)
-		SendSysMessage(who, "Você esta muito longe!");
+		SendSysMessageEx(who, "Você esta muito longe!");
 		return;
 	elseif (GetObjProperty(alvo, "corda"))
-		SendSysMessage(who, "Este alvo ja esta amarrado!");
+		SendSysMessageEx(who, "Este alvo ja esta amarrado!");
 		return;
 	endif
 
@@ -31,7 +31,7 @@ program corda(who, item)
 		var char := SystemFindObjectBySerial(alvo.ownerserial);
 
 		if (!char)
-			SendSysMessage(who, "Você não pode usar corda nesse corpo!");
+			SendSysMessageEx(who, "Você não pode usar corda nesse corpo!");
 			return;	
 		endif
 
@@ -41,7 +41,7 @@ program corda(who, item)
 		SetObjProperty (char, "corda", diff+mod);
 	elseif (alvo.ip) // Se for player e tiver on
 		if (!alvo.connected)
-			SendSysMessage(who, "Não pode amarrar um jogador deslogado.");
+			SendSysMessageEx(who, "Não pode amarrar um jogador deslogado.");
 			return;
 		endif
 
@@ -52,10 +52,10 @@ program corda(who, item)
 			SetObjProperty(alvo, "corda", diff+mod);
 			alvo.frozen := 1;
 		else
-			SendSysMessage(who, alvo.name+" evitou sua tentativa de amarra-lo!");
+			SendSysMessageEx(who, alvo.name+" evitou sua tentativa de amarra-lo!");
 		endif
 	else
-		SendSysMessage(who, "Você não pode amarrar isso!");
+		SendSysMessageEx(who, "Você não pode amarrar isso!");
 		return;
 	endif
 endprogram
