@@ -659,7 +659,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
 endfunction
 
 function CombatEventsOptions(who, state)
-   var opt := RadioGump(who, 180, 370, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Play Cast Anim", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
+   var opt := RadioGump(who, 180, 0, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Play Cast Anim", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
 
    var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent"};
    state.type := opt;
