@@ -17,14 +17,14 @@ program SpellScript(params)
    
    var diceroll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, MILAGRE_DE_NECROMANCIA);
 	PlaySoundEffect(who, SFX_SPELL_STRENGTH);
-	var newmobiles := ListMobilesNearLocation( who.x , who.y, who.z, 5);
+	var newmobiles := ListMobilesNearLocation( who.x, who.y, who.z, 5);
 	foreach mob in newmobiles
       sleepms(2);
-      if (!mob.npctemplate || getnpccategory(mob.npctemplate) != "morto-vivo" || isBoss(mob)) 
+      if (!mob.npctemplate || getnpccategory(mob.my_template()) != "morto-vivo" || isBoss(mob)) 
          continue; 
       endif
-
       if (rollResistDice(mob, WISDOM) <= diceroll)
+         printtext(mob, "*!*");
          ghaiaFlee(who, mob);
       else
          SendSystemReport(mob, "*resistido*", SSM_FAIL, who);
