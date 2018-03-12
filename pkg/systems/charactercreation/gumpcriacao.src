@@ -254,6 +254,7 @@ program createchar(who)
 	EraseObjProperty(who, "criandochar");
 	EraseObjProperty(who, "recriando");
 	SetObjProperty(who, "reseted", 1);
+	SetObjProperty(who, "fixhp", 1);
    
    if (!chardata.recriando)
       CreateItemInBackpack(who, 0xeed, 8); //dinheiro

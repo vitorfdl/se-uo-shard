@@ -12,14 +12,23 @@ program fixTalent(who)
       LearnFeat(who, "Linguagem Rúnica", 0, 0);
       LearnFeat(who, "Cura Divina", 0, 0);
    endif
+
+   var chardata := GetObjProperty(who, "chardata");
+
    EraseObjProperty(who, "fixalert");
    if (!GetObjProperty(who, "reseted") && !GetObjProperty(who, "criandochar") && !who.cmdlevel)
-      resetChar(who);
+      resetChar(who, chardata);
       SetObjProperty(who, "reseted", 1);
    endif
+
+   if (!GetObjProperty(who, "criandochar")  && !GetObjProperty(who, "fixhp") )
+      fixhp(who, chardata);
+      SetObjProperty(who, "fixhp", 1);
+   endif
+
+   SetObjProperty(who, "chardata", chardata);
    // var total_points := who.getTalentPoints();
 
-   // var chardata := GetObjProperty(who, "chardata");
    // var attr := ReadConfigFile(":attributes:attributes");
 	// foreach skill in (who.skillList())
    //    var mystat := cint(AP_GetTrueSkill(who, skill));
@@ -66,27 +75,39 @@ program fixTalent(who)
    // FixPoints(who, total_points);
 endprogram
 
-function FixPoints(who, total_points)
-   var expected_points := 30;
-   var level := who.getLevel();
-   if (level >= 1)
-      for i := 1 to (level-1)
-         expected_points += (i * 2200) / 120;
-         sleepms(2);
-      endfor
-   endif
+function fixHp(who, byref chardata)
+   set_critical(0);
+	chardata.hitpoints  := cint(GetBonusAttr(chardata.con)) +5;
+   var duro_de_matar := chardata.carac["Duro de Matar"];
+   if (duro_de_matar) chardata.hitpoints += duro_de_matar; endif
 
-   expected_points += cint(who.getExp() / 120);
+	chardata.manapoints := cint(GetBonusAttr(chardata.inte)) +5;
+   var acumulador_mana := chardata.carac["Acumulador de Mana"];
+   if (acumulador_mana) chardata.manapoints += acumulador_mana; endif
 
-   if (total_points > expected_points && !GetObjProperty(who, "fixalert"))
-      SetObjProperty(who, "fixalert", 1);
-		start_script(":email:emailMessage/sendSystemMail", array{ 999999998, "{} precisa ser arrumado".format(who.name), "O usuário {} precisa ser corrigido. [P] Total de pontos: {} [P] Pontos esperados: {}".format(who.acctname, total_points, expected_points)} );
-      SetobjProperty(who, "NoGains", 1);
-   endif
+	chardata.stampoints := cint(GetBonusAttr(chardata.dex)) + 10;
+   var agil := chardata.carac["Ágil"];
+   if (agil) chardata.stampoints += agil; endif
+
+   var armor1 := cint(AP_GetTrueSkill(who, ARMADURA_LEVE));
+   chardata.hitpoints += 2 * armor1;
+   chardata.stampoints += 2 * armor1;
+
+   var armor2 := cint(AP_GetTrueSkill(who, ARMADURA_MEDIA));
+   chardata.hitpoints += 3 * armor2;
+
+   var armor3 := cint(AP_GetTrueSkill(who, ARMADURA_PESADA));
+   chardata.hitpoints += 5 * armor3;
+
+   for i := 2 to (who.getLevel())
+      chardata.hitpoints += RandomDiceRoll("1d5+2") + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
+      chardata.manapoints += RandomDiceRoll("1d5+2") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
+      chardata.stampoints += 1 + AP_GetStat(who, DEXTERITY, RETURN_BONUS);
+   endfor
+   set_critical(1);
 endfunction
 
-function resetChar(who)
-   var chardata := GetObjProperty(who, "chardata");
+function resetChar(who, byref chardata)
    var attr := ReadConfigFile(":attributes:attributes");
    chardata.Feats := array{};
    set_critical(0);
@@ -140,7 +161,6 @@ function resetChar(who)
    RecalcVitals(who);
    EraseObjProperty(who, "points_received");
    EraseObjProperty(who, "NoGains");
-   SetObjProperty(who, "chardata", chardata);
 
 	start_script(":email:emailMessage/sendSystemMail", array{ who, "Suas habilidades foram resetadas.", "Olá, [P] Infelizmente ocorreram problemas com o sistema de level up do shard. Para corrigir isso, todas suas habilidades foram resetadas para o momento de criação do personagem. [P] Seu level e experiência não sofreram alterações. Você receberá seus pontos de habilidade gradativamente conforme executar tarefas. Em poucos minutos você deve recuperar todos os pontos. Não se surpreenda se receber menos pontos, pode ser que seu personagem estivesse com o problema que esse reset está corrigindo. [P] Sussurros Eternos Shard agradece e bom jogo!"} );
 endfunction
