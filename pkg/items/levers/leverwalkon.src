@@ -1,0 +1,25 @@
+use uo;
+use os;
+use cfgfile;
+use util;
+use vitals;
+
+include "include/client";
+include ":attributes:attributes";
+include ":gumps:requestgump";
+include ":lever:lever";
+include "include/damage";
+
+program loko(who, item)
+	if (who.npctemplate)
+		return 1;
+	endif
+
+  if(GetObjProperty(item, "#inuse") == 1)
+   // SendSysMessage(who,"that switch is in use");
+    return;
+  endif
+
+  normalusage(who, item);
+  
+endprogram

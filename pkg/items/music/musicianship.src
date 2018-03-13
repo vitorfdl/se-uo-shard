@@ -80,8 +80,8 @@ program skill_Musicianship(who, item)
 			notas2 := Getobjproperty(partitura, "notas2");
 			tempo := Getobjproperty(partitura, "tempo");
 			letra := Getobjproperty(partitura, "letra");
-			magica := Getobjproperty(partitura, "magica");
-			tocarsound(who,item,notas,notas2,tempo,letra,magica);
+			emocao := Getobjproperty(partitura, "emocao");
+			tocarsound(who,item,notas,notas2,tempo,letra,emocao);
 		else
 			SendSysMessageEx(who, "Isso não é uma partitura!",38);
 			return 1;

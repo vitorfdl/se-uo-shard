@@ -42,10 +42,11 @@ program book(who, book)
 		var spell := result[0] - 300;
 
 		var spells := GetObjProperty(book, "spells");
+	   var powered_list := GetObjProperty(book, "spells_powered");
 		//sendsysmessage(who, " " + bookopt);
 
 		if (spells[spell])
-			CopyRecipe(who, spells[spell]);
+			CopyRecipe(who, spells[spell], powered_list[spells[spell]]);
 		endif
 	elseif (result[0] > 100)
 		var spell    := result[0] - 100;
@@ -69,7 +70,7 @@ endprogram
 Const OBJ_BLANK_SCROLL := 0xE34;
 Const OBJ_RECIPE_SLIP := 0x6116;
 
-function CopyRecipe(who, recipe)
+function CopyRecipe(who, recipe, power)
 	WriteSpellInfo(recipe);
 	//sendsysmessage(who, " " + spellinfo + " " + recipe + "  " + cint(recipe));
 	if (!SearchArrayOfModel("objtype", cint(0x6400), EnumerateItemsInContainer(who.backpack))) 
@@ -98,6 +99,7 @@ function CopyRecipe(who, recipe)
    printtext(who, "*escrevendo pergaminho*");
 
    SetObjProperty(item, "spell_id", recipe.id);
+   SetObjProperty(item, "spell_power", power);
    SendSysMessageEx(who, "Você fez uma cópia do pergaminho.", SSM_INFO);
 endfunction
 

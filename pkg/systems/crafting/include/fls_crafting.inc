@@ -264,7 +264,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 				elseif (thing["monsterpart"])
 					material_cprops["element"] := GetObjProperty(ret[1], "element");
 					material_cprops["elementpower"] := GetObjProperty(ret[1], "elementpower");
-					material_cprops["madeof"] := ret[1].desc;
+					material_cprops["madeof"] := fixItemName(ret[1].desc);
 				endif
 				if (ret[3])
                bonus_diff += cint(ret[3]);
@@ -374,8 +374,9 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 
 			//passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
 			AddMaterialMod(who, recipe, theitem, choosed_material, material_color);
-         if (recipe.exceptional == 1 && (AP_GetTrueSkill(who, crafT_skill) >= 5 && roll.critical == 1) || who.cmdlevel > 3)
+         if (recipe.exceptional == 1 && (AP_GetTrueSkill(who, crafT_skill) >= 4 && roll.critical == 1) || who.cmdlevel > 3)
             SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
+            SendSysMessageEx(who, "Para termina-la, você deve escolher um objeto para molda-lo. É possível descohrir esses objetos com heráldica.", SSM_INFO);
             while (who.connected)
 			      if (CraftExceptional(who, theitem, craft_skill) != 2)
                   break;
@@ -536,6 +537,11 @@ function CraftExceptional(who, theitem, craft_skill)
       return 2;
    endif
 
+   if (special_props.level < AP_GetTrueSkill(who, craft_skill)-4)
+      SendSysMessageEx(who, "Seu nível em {} é muito baixo para usar este recurso".format(craft_skill), SSM_FAIL);
+      return 2;
+   endif
+
 	var item_type := "None";
 	if (theitem.isA(POLCLASS_ARMOR))
 		item_type := "Armaduras";
@@ -593,7 +599,7 @@ function CraftExceptional(who, theitem, craft_skill)
 
    theitem.quality := 1.1;
    who.SetAchievement("exceptional", 1);
-   SetObjProperty(theitem, "madeof", special_obj.name);
+   SetObjProperty(theitem, "madeof", fixItemName(special_obj.desc));
 
    if ( YesNo(who, "Deseja adicionar uma descrição no item?"))
       AddItemDescription(who, theitem);
@@ -601,4 +607,15 @@ function CraftExceptional(who, theitem, craft_skill)
    SetName(theitem, "{} {}".format(theitem.desc, custom_name));
    DestroyItem(special_obj);
    return 1;
+endfunction
+
+function fixItemName(name)
+   for i := 1 to 9
+      name := StrReplace(name, "{}".format(i), "");
+      sleepms(2);
+   endfor
+
+   if (name[1] == " ") name[1] := ""; endif
+
+   return name;
 endfunction

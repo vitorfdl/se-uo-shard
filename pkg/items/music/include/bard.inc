@@ -19,7 +19,7 @@ function isBardable(character, thetarget, bard_skill, bard_difficulty)
 
 endfunction
 
-function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
+function BardNotes(who,item,notas,notas2,tempo,letra,what,emocao)
    if (randomint(5) == 1)
       PrintText(who, "*Compondo uma musica*");
    endif
@@ -123,99 +123,99 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 
 	if (retv[0] == 100)
 		notas.append("C");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 2)
 		notas.append("C#");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 3)
 		notas.append("D");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 4)
 		notas.append("D#");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 5)
 		notas.append("E");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 6)
 		notas.append("F");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 7)
 		notas.append("F#");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 8)
 		notas.append("G");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 9)
 		notas.append("G#");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 10)
 		notas.append("A");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 11)
 		notas.append("A#");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 12)
 		notas.append("B"); 
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 17)
 		notas.append("C2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 18)
 		notas.append("C#2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 19)
 		notas.append("D2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 20)
 		notas.append("D#2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 21)
 		notas.append("E2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 22)
 		notas.append("F2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 23)
 		notas.append("F#2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 24)
 		notas.append("G2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 25)
 		notas.append("G#2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 26)
 		notas.append("A2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 27)
 		notas.append("A#2");
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 28)
 		notas.append("B2"); 
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 29)
 		notas.append("C3"); 
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 13)
 		notas.append("|"); 
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 16)
 		notas.append("L"); 
 		letra.append(Requestgump(who,"Qual o verso a ser adicionado?","","",0));
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 14)
 		notas := array;
 		notas2 := array;
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 60)
 		notas.erase(notas.size());
-		BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+		BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
 	elseif (retv[0] == 61)
       SendSysMessageEx(who, "Selecione o papel pautado em branco.", SSM_REQUEST);
       var partitura := Target(who);
       if (!partitura.isA(POLCLASS_ITEM) || partitura.objtype != 0x9923)
          SendSysMessageEx(who, "Isso não parece um papel pautado", SSM_REQUEST);
-         BardNotes(who,item,notas,notas2,tempo,letra,what,magica);
+         BardNotes(who,item,notas,notas2,tempo,letra,what,emocao);
       else
          return escrevepartitura(who,partitura,notas,notas2,tempo,letra);
       endif
@@ -230,7 +230,7 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 		endwhile
 
 		if (what == 1)		
-		   tocarsound(who,item,notas,notas2,tempo,letra,magica);
+		   tocarsound(who,item,notas,notas2,tempo,letra,emocao);
 		elseif (what == 2)
 		   escrevepartitura(who,item,notas,notas2,tempo,letra);
 		endif
@@ -238,18 +238,16 @@ function BardNotes(who,item,notas,notas2,tempo,letra,what,magica)
 
 endfunction
 
-function tocarsound(who,item,notas,notas2,tempo,letra,magica)
-	var c,cs,d,ds,e,f,fs,g,gs,a,ass,b,c2,cs2,d2,ds2,e2,f2,fs2,g2,gs2,a2,ass2,b2,c3,inst,L,dif,magicause;
+function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
+	var c,cs,d,ds,e,f,fs,g,gs,a,ass,b,c2,cs2,d2,ds2,e2,f2,fs2,g2,gs2,a2,ass2,b2,c3,inst,L,dif,emocaouse;
 
-	if ( magica) 
-		if (who.cmdlevel < 3)
-			SendSysMessageEx(who, "Você não entende essa partitura.", SSM_FAIL);
-			return 0;
-		endif
+	if ( emocao && AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) <= 4 && who.cmdlevel < 3) 
+      SendSysMessageEx(who, "Você não entende essa partitura.", SSM_FAIL);
+      return 0;
 	endif
 
-	// if( Cint(GetObjProperty(who, "#MagicaMusic")) > ReadGameClock() )
-	// 	SendSysMessage(who, "Você deve esperar um momento antes de tocar uma musica magica novamente.",3,38);
+	// if( Cint(GetObjProperty(who, "#emocaoMusic")) > ReadGameClock() )
+	// 	SendSysMessage(who, "Você deve esperar um momento antes de tocar uma musica emocao novamente.",3,38);
 	// 	return 0;
 	// endif
 		
@@ -299,16 +297,16 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 		endcase
 		tempo := Cint(tempo);
 
-		// if (magica != error)
-		// 	magicause := BardBuff(who,item,notas,notas2,tempo,magica);
+		// if (emocao != error)
+		// 	emocaouse := BardBuff(who,item,notas,notas2,tempo,emocao);
 		// endif
-		if (magicause == 999)
-			return 0;
-		endif
+		// if (emocaouse == 999)
+		// 	return 0;
+		// endif
 
 		var result := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
 		if (result < dif && !who.cmdlevel)
-			tocarerrado(who,item,notas,notas2,tempo,letra,magica);
+			tocarerrado(who,item,notas,notas2,tempo,letra,emocao);
 			return 1;
 		endif
 
@@ -331,8 +329,33 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 		TS_StartTimer(who, "staminaPoison", duration, 1);
 
 		sleepms(tempo);
+
+      var emote_text := "";
+      case (emocao)
+         "Enconrajar": "*Você se sente encorajado*"; break;
+         "Entristecer": "*Você se sente triste*"; break;
+         "Alegrar": "*Você se sente alegre*"; break;
+         "Enfurecer": "*Você se sente com raiva*"; break;
+      endcase
 	
 		foreach nota in notas
+         if (_nota_iter == cint(notas.size() / 2))
+            var mobs := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+            foreach mob in mobs
+               SendSystemReport(mob, emote_text, SSM_INFO);
+               sleepms(2);
+            endforeach
+
+            var fogueira := ListItemsNearLocationOfType( x, y, z, 8, 0xDE3 );
+            if (fogueira[1])
+               var serial := GetObjProperty(fogueira[1], "camping");
+               if (serial)
+                  var kidling := SystemFindObjectBySerial(serial);
+                  SetObjProperty(kidling, "encantado", 1);
+               endif
+            endif
+         endif
+
 			if (nota == "C") PlaySoundEffect(who, c); sleepms(tempo);
 				elseif (nota == "C#") PlaySoundEffect(who, cs); sleepms(tempo);
 				elseif (nota == "D") PlaySoundEffect(who, d); sleepms(tempo);
@@ -366,15 +389,16 @@ function tocarsound(who,item,notas,notas2,tempo,letra,magica)
 		endforeach
 
       who.SetAchievement("bard", 1);
+      ExpGain(who, "major");
 
-		if( Cint(GetObjProperty(who, "#MagicaMusic")) > ReadGameClock() )
-			return 0;
-		else 
-			playagain(who,item,notas,notas2,tempo,letra,magica);
-		endif
+		// if( Cint(GetObjProperty(who, "#emocaoMusic")) > ReadGameClock() )
+		// 	return 0;
+		// else 
+			playagain(who,item,notas,notas2,tempo,letra,emocao);
+		// endif
 endfunction
 
-function tocarerrado(who,item,notas,notas2,tempo,letra,magica)
+function tocarerrado(who,item,notas,notas2,tempo,letra,emocao)
    var c,cs,d,ds,e,f,fs,g,gs,a,ass,b,c2,cs2,d2,ds2,e2,f2,fs2,g2,gs2,a2,ass2,b2,c3,inst,L,notanow;
       
    L := 1;
@@ -420,17 +444,17 @@ function tocarerrado(who,item,notas,notas2,tempo,letra,magica)
    endif 		
    endforeach
 
-   playagain(who,item,notas,notas2,tempo,letra,magica);
+   playagain(who,item,notas,notas2,tempo,letra,emocao);
 endfunction
 
 
-function playagain(who,item,notas,notas2,tempo,letra,magica)
+function playagain(who,item,notas,notas2,tempo,letra,emocao)
    var tocardenovo := YesNo(who, "Deseja tentar tocar essa musica denovo?", "Sim", "Não");
    if (tocardenovo == 1)
-      tocarsound(who,item,notas,notas2,tempo,letra,magica);
+      tocarsound(who,item,notas,notas2,tempo,letra,emocao);
       return 0;
    else
-      BardNotes(who,item,notas,notas2,tempo,letra,1,magica);
+      BardNotes(who,item,notas,notas2,tempo,letra,1,emocao);
       return 0;
    endif
 endfunction
@@ -443,25 +467,21 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
    sleepms(2000);
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
-   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
-   for i := 1 to 2
-      if (roll > dif-2)
-         PrintText(who, "*Escrevendo a partitura*");
-      else 
-         SendSysMessage(who, "Você arruinou a partitura");
-         PrintText(who, "*Erra ao escrever as notas*",38);
-         DestroyItem(item);
-         var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
-         if (tryagain == 1)
-            TentarDenovo(who,item,notas,notas2,tempo,letra);
-            return 0;
-         else
-            return 0;
-         endif
+   var roll := rollAttrDice(who, WISDOM, 1) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
+   if (roll > dif)
+      PrintText(who, "*Escrevendo a partitura*");
+   else 
+      SendSysMessage(who, "Você arruinou a partitura");
+      PrintText(who, "*Erra ao escrever as notas*",38);
+      DestroyItem(item);
+      var tryagain := YesNo(who, "Deseja tentar escrever essa partitura denovo?", "Sim", "Nao");
+      if (tryagain == 1)
+         TentarDenovo(who,item,notas,notas2,tempo,letra);
+         return 0;
+      else
+         return 0;
       endif
-
-      sleepms(5000);
-   endfor
+   endif
 
    PrintText(who, "*Escreve a ultima nota*");
    SendSysMessage(who, "Você terminou de escrever a partitura",191);

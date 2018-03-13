@@ -12,7 +12,6 @@ include "include/damage";
 const UOBJ_TORCH := 0x0a12;
 
 program UseWood( who, wood )
-
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 	if( !can_access(who, wood) )
@@ -51,6 +50,7 @@ program UseWood( who, wood )
 		PrintTextAbove( who, "*acendendo uma fogueira*");
 		sleep (5);
 		var campfire := CreateItemAtLocation( x, y, z, UOBJ_CAMPFIRE, 1 );
+      SetObjProperty(campfire, "camping", wood.serial);
 		var torch := CreateItemAtLocation( x, y, z-4, UOBJ_TORCH, 1 );
 		SetName(torch, "fogueira");
 		PrintText( campfire, "Um acampamento foi preparado.");

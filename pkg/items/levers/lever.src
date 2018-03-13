@@ -1,0 +1,267 @@
+use uo;
+use os;
+use cfgfile;
+use util;
+use vitals;
+
+include "include/client";
+include ":attributes:attributes";
+include ":gumps:requestgump";
+include ":gumps:gumps";
+include ":tn:tngumps";
+include "include/damage";
+include ":timedscripts:timedScripts";
+include ":traps:traps";
+
+// var layout := array(
+//     "page 3                            ",
+// 	"gumppic  25  58 1141              ",
+// 	"gumppic  25  88 1141              ",
+//     "textentry 32 60  250 60 910 12 12 ",  //Cprop entry box
+//     "textentry 32 90  250 90 910 13 13 ",  //Cprop entry box
+//     "text    302  60  500   14         ",  //prop name text
+//     "text    302  90  500   15         ",  //prop value text
+//     "button  200 250 1149 1148 1  0 24 ",  //Accept Cprop Entry
+
+function ConstructGump(who)
+   var gump := GFCreateGump();
+	GFSetID(gump, 0x597);
+	GFPage(gump, 0);
+	GFResizePic(gump, 0, 0, 9200, 480, 395);
+   GFTextLine(gump, 165, 20, 900, "Lever Control Interface");
+   GFPage(gump, 1);
+
+   GFTextLine(gump, 45, 48, 500, "SetObjProperty em outros");
+   GFAddButton(gump, 25, 50, 2117, 2118, GF_PAGE_BTN, 3);
+   GFTextLine(gump, 45, 68, 500, "Trancar/destrancar porta");
+   GFAddButton(gump, 25, 70, 2117, 2118, GF_CLOSE_BTN, 2);
+   GFTextLine(gump, 45, 88, 500, "Abrir/Fechar porta");
+   GFAddButton(gump, 25, 90, 2117, 2118, GF_CLOSE_BTN, 102);
+   GFTextLine(gump, 45, 108, 500, "Acender/apagar luzes");
+   GFAddButton(gump, 25, 110, 2117, 2118, GF_CLOSE_BTN, 4);
+   GFTextLine(gump, 45, 128, 500, "Teleportar");
+   GFAddButton(gump, 25, 130, 2117, 2118, GF_CLOSE_BTN, 5);
+   GFTextLine(gump, 45, 148, 500, "Alterar gráfico do alvo");
+   GFAddButton(gump, 25, 150, 2117, 2118, GF_CLOSE_BTN, 98);
+   GFTextLine(gump, 45, 168, 500, "Alterar on/off texto");
+   GFAddButton(gump, 25, 170, 2117, 2118, GF_CLOSE_BTN, 97);
+   GFTextLine(gump, 45, 188, 500, "Adicionar armadilhas");
+   GFAddButton(gump, 25, 190, 2117, 2118, GF_PAGE_BTN, 4);
+   GFTextLine(gump, 45, 208, 500, "Mudar gráfico da alavanca");
+   GFAddButton(gump, 25, 210, 2117, 2118, GF_PAGE_BTN, 2);
+   GFTextLine(gump, 45, 228, 500, "Testar");
+   GFAddButton(gump, 25, 230, 2117, 2118, GF_CLOSE_BTN, 99);
+   GFTextLine(gump, 45, 248, 500, "Subir/descer objetos");
+   GFAddButton(gump, 25, 250, 2117, 2118, GF_CLOSE_BTN, 96);
+   GFTextLine(gump, 45, 268, 500, "Tornar alavanca escondida");
+   GFAddButton(gump, 25, 270, 2117, 2118, GF_CLOSE_BTN, 100);
+   GFTextLine(gump, 45, 288, 500, "Mover objetos");
+   GFAddButton(gump, 25, 290, 2117, 2118, GF_CLOSE_BTN, 101);
+   GFTextLine(gump, 45, 308, 500, "Mover passagem secreta");
+   GFAddButton(gump, 25, 310, 2117, 2118, GF_CLOSE_BTN, 3);
+   
+   GFPage(gump, 2);
+   GFTextLine(gump, 145, 50, 900, "Escolha o gráfico da alavanca");
+
+   GFTilePic(gump, 105, 120, 4237);
+   GFAddButton(gump, 85, 130, 210, 211, GF_CLOSE_BTN, 20);
+   GFTilePic(gump, 355, 120, 4244);
+   GFAddButton(gump, 345, 130, 210, 211, GF_CLOSE_BTN, 21);
+   GFTilePic(gump, 105, 270, 4240);
+   GFAddButton(gump, 85, 270, 210, 211, GF_CLOSE_BTN, 22);
+   GFTilePic(gump, 355, 270, 4241);
+   GFAddButton(gump, 345, 270, 210, 211, GF_CLOSE_BTN, 23);
+
+   GFAddButton(gump, 45, 350, 2453, 2454, GF_PAGE_BTN, 1);
+   
+   GFPage(gump, 3);
+   GFPage(gump, 4);
+   GFTextLine(gump, 145, 50, 900, "Escolha o gráfico da alavanca");
+   
+   GFTilePic(gump, 105, 120, 4347);
+   GFTilePic(gump, 355, 120, 4414);
+   GFTilePic(gump, 105, 270, 4401);
+   GFTilePic(gump, 355, 270, 8128);
+   
+   GFAddButton(gump, 85, 130, 210, 211, GF_CLOSE_BTN, 15);
+   GFAddButton(gump, 345, 130, 210, 211, GF_CLOSE_BTN, 16);
+   GFAddButton(gump, 85, 270, 210, 211, GF_CLOSE_BTN, 17);
+   GFAddButton(gump, 345, 270, 210, 211, GF_CLOSE_BTN, 18);
+   GFAddButton(gump, 45, 350, 2453, 2454, GF_PAGE_BTN, 1);
+
+   return gump;
+endfunction
+
+
+// var data := array(
+
+//     "",                                     //12  Cprop name
+//     "",                                     //13  Cprop value
+//     "Property Name",                        //14
+//     "Property value",                       //15
+//     "Escolha o tipo de armadilha",                  //16
+//     "Setar on/off som", //17 <-
+//     "", //18 <-
+//     "Enviar msg pra area", //19 <-
+//     "", //20
+//     "Mover objetos" //21
+// );
+
+program lever(who, item)
+  if ( !ReserveItem(item) )
+     SendSysMessage(who, "O item esta em uso.");
+     return;
+  endif
+  if(GetObjProperty(item, "#inuse") == 1)
+    SendSysMessage(who,"that switch is in use");
+    return;
+  endif
+   var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
+   if (!trapstrength) trapstrength := 2; endif
+  if(who.cmdlevel > 2)
+    var gump := ConstructGump(who);
+    var res := GFSendGump(who, gump);
+    case(res[0])
+    //
+       2: doorstatus(who, item);
+       3: createpassage(who, item);
+       4: bindlights(who, item);
+       5: linkteleport(who, item);
+       
+      15: 
+         SetObjProperty(item, "HaveTrap", "Explosion");
+         AddTrap(item, "Explosion", trapstrength);
+      16: 
+         SetObjProperty(item, "HaveTrap", "PoisonGas");
+         AddTrap(item, "PoisonGas", trapstrength);
+      17: 
+         SetObjProperty(item, "HaveTrap", "Needle");
+         AddTrap(item, "Needle", trapstrength);
+      18: 
+         SetObjProperty(item, "HaveTrap", "Magic");
+         AddTrap(item, "Magic", trapstrength);
+      
+      20: item.graphic := 0x108e;           // graphic 1
+          item.name    := "alavanca";
+      21: item.graphic := 0x1095;           // graphic 2
+          item.name    := "alavanca";
+      22: item.graphic := 0x108f;           // graphic 3
+          item.name    := "interruptor";
+      23: item.graphic := 0x1092;           // graphic 4
+          item.name    := "interruptor";
+      24: setprp(who, item, res);           // setobjproperty()
+      98: changegraphic(who, item);
+      96: setElevator(who, item);
+      99: normalusage(who, item);           // use item like normal
+      100: setHiding(who, item);
+      101: setMoveObject(who, item);
+      102: setOpenDoor(who, item);
+    endcase
+  else
+    normalusage(who, item);
+  endif
+endprogram
+
+function setMoveObject(who, item)
+  var newarray := array{};
+  var linkarray := array{};
+  linkarray.append(item.serial);
+  SendSysMessage(who,"target the pieces to link to the switch. cancel to end");
+  var trg;
+  while(1)
+    trg := Target(who);
+    if(!trg)
+      break;
+    endif
+    newarray.append(trg.serial);
+  endwhile
+  SendSysMessage(who,"target the item you wish sounds to originate from");
+  var snd := Target(who);
+  var speaker := array{};
+  speaker.append(snd.x);
+  speaker.append(snd.y);
+  speaker.append(snd.z);
+  SendSysMessage(who,"now target any other switches you wish to link together.");
+  while(1)
+    trg := Target(who);
+    if(!trg)
+      break;
+    endif
+    linkarray.append(trg.serial);
+  endwhile  
+  var positionIncrement := Cstr(RequestGump(who, "Escreva o numero de passos e o deslocamento em x y z dos itens."));
+  positionIncrement := SplitWords(positionIncrement);
+  var increment :=Cint(positionIncrement[1]);
+  var it;
+  foreach thing in linkarray
+    it := SystemFindObjectBySerial(CInt(thing));
+    SetObjProperty(it, "increment", increment);
+    SetObjProperty(it, "positionIncrement", positionIncrement);    
+    SetObjProperty(it, "links", linkarray);
+    SetObjProperty(it, "speaker", speaker);
+    SetObjProperty(it, "function", "moveobjects");
+    SetObjProperty(it, "partsarray", newarray);
+  endforeach
+endfunction
+
+function setHiding(who, item)
+
+	var dif := Cint(RadioGump(who, 0, 0, "Qual o level do interruptor?", array{"1", "2", "3", "4", "5", "Remover"}, 0, 1));
+   if (!dif) 
+      EraseObjProperty(item, "level"); 
+      item.invisible := 0;
+      return;
+   endif
+
+	SetObjProperty(item, "level", dif);
+	item.invisible := 1;
+endfunction
+
+function SetElevator(who, item)
+	var maxz := Cint(RequestGump(who, "Qual o valor que você deseja subir ou descer os itens"));
+	if (!maxz)
+		SendSysMessage(who, "Cancelado");
+		return;
+	endif
+	
+	SetObjProperty(item, "z", maxz);
+	SetObjProperty(item, "function", "elevator");
+	
+	var rect := Cstr(RequestGump(who, "Escreva o rect x1 y1 x2 y2 da area onde os itens vao subir."));
+	rect := SplitWords(rect);
+	SetObjProperty(item, "rect", rect);
+	
+	SendSysMessage(who, " " + rect[1] + " " + rect[3] + " " + rect[2] + " " + rect[4]);
+	
+	var items := ListObjectsInBox( Cint(rect[1]), Cint(rect[2]), -180,  Cint(rect[3]), Cint(rect[4]), 180, item.realm );
+
+
+		var serials := array{};
+	foreach item in items
+		serials.append(item.serial);
+	endforeach
+	setobjproperty(item, "items", serials);
+	SendSysMessage(who, "Itens adicionados: " + items.size() );
+endfunction
+
+function changegraphic(who, item)
+  var newarray := array{};
+  SendSysMessage(who,"Escolha os itens que quer adicionar. esc para terminar.");
+  var trg;
+  while(1)
+    trg := Target(who);
+    if(!trg)
+      break;
+    endif
+    SetObjProperty(trg,"switched", 1);
+    SetObjProperty(trg, "originalgraphic", trg.graphic);
+    newarray.append(trg.serial);
+  endwhile
+  
+  SetObjProperty(item,"function", "graphic");
+  SetObjProperty(item,"partsarray", newarray);
+  
+  var graphic := Cint(RequestGump(who, "Para que grafico os itens devem mudar?."));
+  SetObjProperty(item, "graphic", graphic);
+  
+endfunction

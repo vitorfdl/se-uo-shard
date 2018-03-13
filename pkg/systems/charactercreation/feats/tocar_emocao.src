@@ -1,0 +1,47 @@
+use uo;
+use os;
+
+include ":magery:tnmagery";
+include ":attributes:attributes";
+include ":ghaia:ghaiaUtil";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":tn:npcutil";
+include ":yggdrasil:boss";
+include "include/utils";
+
+program SpellScript(params)
+	var who := params[1];
+	params := 0; // No longer needed
+
+   SendSysMessageEx(who, "Escolha a partitura", SSM_INFO);
+   var targ := Target(who);
+   
+   if (!targ.isA(POLCLASS_ITEM) || targ.objtype != 0x9923)
+      return SendSysMessageEx(who, "Isso não parece uma partitura", SSM_FAIL);
+   elseif (GetObjProperty(targ, "emocao"))
+      return SendSysMessageEx(who, "Essa partitura já possui uma emoção atribuida", SSM_FAIL);
+   endif
+
+   var notas := Getobjproperty(partitura, "notas");
+	var notas2 := Getobjproperty(partitura, "notas2");
+   
+   var total := cint(notas.size()) | cint(notas2.size());
+   if (total < 5)
+      return SendSysMessageEx(who, "Você não pode atribuir emoção a partituras curtas", SSM_FAIL);
+   endif
+
+   var emocao := CheckBoxGump(who, 180, 0, "Escolha uma emoção:", array{"Enconrajar", "Entristecer", "Alegrar", "Enfurecer", "Cancelar"}, 1);
+   if (emocao["Cancelar"])
+      return SendSysMessageEx(who, "Cancelado");
+   endif
+
+   SetObjProperty(targ, "emocao", emocao);
+   SetObjProperty(targ, "serialid", who.serial);
+
+   SendSysMessageEx(who, "Você atribuiu a emoção {} a partitura".format(emocao), SSM_INFO);
+   SendSysMessageEx(who, "Sua música irá afetar um número de personagens igual ao seu nível em Insturmento Musical", SSM_INFO);
+
+	return 1;
+endprogram

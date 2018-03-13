@@ -70,7 +70,7 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "Alvo ja foi curado.", SSM_INFO);
 			return 0;
 		elseif (bandage.amount < 5)
-			SendSysMessageEx(mobile, "Você precisa de 5 bandagens.", SSM_FAIL);
+			SendSysMessageEx(mobile, "Você precisa de 5 ataduras.", SSM_FAIL);
 			return 0;
 		endif
 
@@ -96,7 +96,7 @@ program UseBandage(mobile, bandage)
 		return HealNpcCorpse(mobile, targ);
 	endif
 
-	if (targ.isTamable())
+	if (targ.isTamable() && AP_GetTrueSkill(mobile, TRATO_ANIMAIS) < 1)
 		SendSysMessageEX(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 		return 0;
    endif
@@ -132,7 +132,7 @@ endprogram
 
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
    var max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.4);
-   if (AP_GetTrueSkill(mobile, PRIMEIROS_SOCORROS) >= 3)
+   if (AP_GetTrueSkill(mobile, heal_skill) >= 3)
       max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.8);
    endif
 

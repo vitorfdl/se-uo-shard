@@ -23,6 +23,7 @@ program setExcep(who)
    var questions := array{};
    questions.append(struct{ "title" := "Quais craftings podem ser usadas?", "checkbox" := skills});
    questions.append(struct{ "title" := "Quais tipos de item podem ser usados?", "checkbox" := item_types} );
+   questions.append(struct{ "title" := "Qual nível do recurso?", "marked" := 1, "radio" := {"0", "2", "4", "6", "8"} } );
    questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := "custom_name:De Fogo"} );
    questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := "hpmod:30"} );
    questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := ""} );
@@ -32,8 +33,9 @@ program setExcep(who)
 
    special_props.skills := output[1];
    special_props.equips := output[2];
+   special_props.level := output[3];
 
-   for i := 3 to 7
+   for i := 4 to 8
       sleepms(2);
       var prop := output[i];
       if (prop)

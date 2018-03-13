@@ -30,6 +30,7 @@ function AddLaw(guild, law)
    var new_law := struct{
       "type" := law.type,
       "opt" := law.opt,
+      "on" := 1,
    };
 
    var laws := ListLaws(guild);
@@ -40,6 +41,7 @@ function AddLaw(guild, law)
    endif
 
    laws.append(new_law);
+   guild.setProp("laws", laws);
    return 1;
 endfunction
 
@@ -57,15 +59,30 @@ function ListLaws(guild)
 endfunction
 
 function GetLaw(guild, type)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
    var law_list := ListLaws(guild);
 
    return FindAllElemInArray(law_list, struct{ "type" := type });
 endfunction
 
-function RemLaw()
-
+function RemLaw(guild, index)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+   if (typeof(index) == "Integer") 
+      var law_list := ListLaws(guild);
+      law_list.Erase(index);
+      guild.setProp("laws", law_list);
+   endif
 endfunction
 
-function DisableLaw()
-
+function ToggleLaw(guild, index)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+   var law_list := ListLaws(guild);
+   law_list[index].on := !law_list[index].on;
+   guild.setProp("laws", law_list);
 endfunction
