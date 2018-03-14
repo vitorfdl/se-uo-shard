@@ -15,7 +15,7 @@ set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
 function StartScript(mobile, attacker := 0, level := 0)
    var heal := 0;
-   if (AP_GetVital(who, HITS) >= AP_GetVitalMaximumValue(who, HITS))
+   if (AP_GetVital(mobile, HITS) >= AP_GetVitalMaximumValue(mobile, HITS))
       heal := 1;
    endif
 
