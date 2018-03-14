@@ -1,6 +1,7 @@
 use uo;
 use os;
 
+include "include/say";
 include ":water:buckets";
 
 const ITEM_BUCKET	:= 0x14E0;

@@ -3,6 +3,7 @@ use uo;
 use os;
 use util;
 
+include "include/say";
 
 //var bowcraftconfigfile := ReadConfigFile(":bowcraft:bowcraft");
 //var itemcfg := ReadConfigFile(":bowcraft:bowcraft");

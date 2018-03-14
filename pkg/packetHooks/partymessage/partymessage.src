@@ -10,7 +10,6 @@ program partymessage()
 	return 1;
 endprogram
 
-
 exported function PartyMessageSpy( who, byref packet )
 	var length_of_text := ( packet.GetSize() - 5 ) / 2;
 	var message_txt := packet.GetUnicodeString(4, length_of_text);

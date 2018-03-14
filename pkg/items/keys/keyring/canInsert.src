@@ -4,6 +4,7 @@
  */
  
 use uo;
+include "include/say";
 
 program OnInsert(who, keyring, movetype, insert_type, adding_item, existing_stack, amt_to_add)
 	if ( !adding_item.IsKey() )

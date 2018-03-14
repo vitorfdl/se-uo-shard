@@ -14,19 +14,24 @@ program fixTalent(who)
    endif
 
    var chardata := GetObjProperty(who, "chardata");
-
+   var fix_chardata;
    EraseObjProperty(who, "fixalert");
    if (!GetObjProperty(who, "reseted") && !GetObjProperty(who, "criandochar") && !who.cmdlevel)
       resetChar(who, chardata);
       SetObjProperty(who, "reseted", 1);
+      fix_chardata := 1;
    endif
 
    if (!GetObjProperty(who, "criandochar")  && !GetObjProperty(who, "fixhp") )
       fixhp(who, chardata);
       SetObjProperty(who, "fixhp", 1);
+      fix_chardata := 1;
    endif
 
    SetObjProperty(who, "chardata", chardata);
+   if (fix_chardata)
+      RecalcVitals(who);
+   endif
    // var total_points := who.getTalentPoints();
 
    // var attr := ReadConfigFile(":attributes:attributes");
@@ -103,6 +108,9 @@ function fixHp(who, byref chardata)
       chardata.hitpoints += RandomDiceRoll("1d5+2") + AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
       chardata.manapoints += RandomDiceRoll("1d5+2") + AP_GetStat(who, INTELLIGENCE, RETURN_BONUS);
       chardata.stampoints += 1 + AP_GetStat(who, DEXTERITY, RETURN_BONUS);
+
+      if (acumulador_mana) chardata.manapoints += acumulador_mana; endif
+      if (duro_de_matar) chardata.hitpoints += duro_de_matar; endif
    endfor
    set_critical(1);
 endfunction

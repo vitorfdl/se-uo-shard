@@ -4,6 +4,7 @@ use cfgfile;
 use os;
 use util;
 
+include "include/say";
 include ":itemutils:canAccess";
 
 program use_MessageBottle( who, bottle )

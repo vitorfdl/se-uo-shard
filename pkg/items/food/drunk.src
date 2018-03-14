@@ -3,6 +3,7 @@ use uo;
 use os;
 use util;
 
+include "include/say";
 include "include/client";
 
 Const ACTION_BOW	:= 0x0020;

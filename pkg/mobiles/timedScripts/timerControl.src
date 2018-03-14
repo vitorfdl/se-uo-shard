@@ -36,7 +36,7 @@ program TimerControl(mobile)
       endif
 
 		mobile.SetPoisoned((num_poisons > 0));
-		mobile.paralyzed := (num_paralyzed > 0);
+		mobile.SetParalyzed((num_paralyzed > 0));
       RecalcVitals(mobile);
 
 		var event;
@@ -121,7 +121,7 @@ function StartUp(mobile, byref timer_list, byref cooldowns, byref num_poisons, b
 		event.+level := timer.level;
 		event.+mobserial := mobile.serial;
       
-      EndTimedScript(mobile, event.name, 0);
+      EndTimedScript(mobile, event.name, 0, 0);
 		AddTimer(mobile, event, timer_list, cooldowns, num_poisons, num_paralyzed);
 		SleepMS(2);
 	endforeach
@@ -218,18 +218,18 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
                event.amount := 0;
             endif
 
-            if (elem_info.IndicatePoison)
-               num_poisons += 1;
-            endif
-
-
-            if (elem_info.SetParalyzed)
-               num_paralyzed += 1;
-            endif
-
 				mobile.addBuff(cint(elem_info.Icon), cint(event.amount), cint(elem_info.cliloc1), cint(1075834), cAscZ(text));
 			endif
 		endif
+
+      if (elem_info.IndicatePoison)
+         num_poisons += 1;
+      endif
+
+
+      if (elem_info.SetParalyzed)
+         num_paralyzed += 1;
+      endif
 		//SendSysMessage(mobile, "AddNewTimer");
 		result := AddNewTimer(mobile, event, timer_list, num_poisons, num_paralyzed);
 	else
@@ -248,7 +248,7 @@ endfunction
 function AddNewTimer(mobile, byref event, byref timer_list, byref num_poisons, byref num_paralyzed)
 	var elem_info := TS_GetCfgElem(event.name);
 	if ( elem_info.errortext )
-		printtextabove(mobile, "Error::AddNewTimer() - Unable to find config elem ["+event.name+"] - "+elem_info.errortext);
+		SendSysmessageEx(mobile, "Error::AddNewTimer() - Unable to find config elem ["+event.name+"] - "+elem_info.errortext);
 		return 0;
 	endif
 
@@ -256,7 +256,7 @@ function AddNewTimer(mobile, byref event, byref timer_list, byref num_poisons, b
 	if ( elem_info.Script )
 		script := Start_Script(elem_info.Script, array{mobile, event.attacker, event.level});
 		if( script.errortext )
-			printtextabove(mobile, "Error::AddNewTimer() - Unable to start script ["+elem_info.Script+"] ->"+script.errortext);
+			SendSysmessageEx(mobile, "Error::AddNewTimer() - Unable to start script ["+elem_info.Script+"] ->"+script.errortext);
 			return 0;
 		endif
 	endif
@@ -274,7 +274,7 @@ function AddNewTimer(mobile, byref event, byref timer_list, byref num_poisons, b
 	timer.+endtime := event.amount + ReadGameClock();
 	timer.+pid     := script.pid;
 	timer.+level   := event.level;
-//	printtextabove(mobile, "event " + event);
+//	SendSysmessageEx(mobile, "event " + event);
 	if (event.mantain)
 		timer.+mantain := 1;
 		timer.+mage      := event.mage;
@@ -362,9 +362,9 @@ function CheckTimerStatus(mobile, byref timer_list, byref cooldowns, byref num_p
 		endif
 
 		if ( Cint(cfg_info.StopOnEnd) )
-			//printtextabove(mobile, "não stop on end " + timer);
+			//SendSysmessageEx(mobile, "não stop on end " + timer);
 			if ( !GetProcess(timer.pid) )
-				//printtextabove(mobile, "não get process " + timer);
+				//SendSysmessageEx(mobile, "não get process " + timer);
 				var event := struct;
 				event.+name := _timer_iter;
 				event.+amount := -1;

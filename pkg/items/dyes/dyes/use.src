@@ -1,6 +1,7 @@
 use uo;
 use cfgfile;
 
+include "include/say";
 include ":dyes:dyes";
 
 program UseDyes(mobile, dyes)

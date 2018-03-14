@@ -96,7 +96,14 @@ function RemoveEquipmentMods(who, item)
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
 		elseif (mod == "manamod")
-			SetObjProperty(who, "manamod", Cint(GetObjProperty(who, "manamod")) - Cint( mods["manamod"] ));
+			var hitswho := Cint(GetObjProperty(who, "manamod"));
+			var hitsitem :=  Cint( mods["manamod"] );
+			var final := hitswho - hitsitem;
+			if (final <= 0)
+				EraseObjProperty(who, "manamod");
+			else
+				SetObjProperty(who, "manamod", final );
+			endif
       elseif (mod == "toughmod")
          who.setToughness(cint(mods["toughmod"])*(-1));
 		elseif (mod == "hitsmod")
@@ -109,7 +116,14 @@ function RemoveEquipmentMods(who, item)
 				SetObjProperty(who, "hitsmod", final );
 			endif
 		elseif (mod == "stammod")
-			SetObjProperty(who, "stammod", Cint(GetObjProperty(who, "stammod")) - Cint( mods["stammod"] ));
+			var hitswho := Cint(GetObjProperty(who, "stammod"));
+			var hitsitem :=  Cint( mods["stammod"] );
+			var final := hitswho - hitsitem;
+			if (final <= 0)
+				EraseObjProperty(who, "stammod");
+			else
+				SetObjProperty(who, "stammod", final );
+			endif
 		else
 			AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
 		endif
