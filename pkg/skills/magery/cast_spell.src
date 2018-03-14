@@ -27,6 +27,9 @@ program SpellStarter(params)
 
    if (!spellinfo.powered)
       spellinfo.powered := 1;
+      if (mobile.cmdlevel && cint(GetObjProperty(mobile.weapon, "powered")))
+         spellinfo.powered := cint(GetObjProperty(mobile.weapon, "powered"));
+      endif
    endif
 
 	if ( GetObjProperty(mobile, "metamorfose") != error )

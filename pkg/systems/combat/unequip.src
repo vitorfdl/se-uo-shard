@@ -38,7 +38,6 @@ program unequipweapon(who, item)
 	if (who.npctemplate)
 		return 1;
 	endif
-	RemoveEquipmentMods(who, item);
 
 	var mods := GetObjProperty(item, "equip");
 
@@ -47,25 +46,27 @@ program unequipweapon(who, item)
 			RemoveEquipmentMods(who, item);
 		endif
 		return 0;
+   else
+	   RemoveEquipmentMods(who, item);
 	endif
 
-	if ( item.isA(POLCLASS_WEAPON))
-		// EraseObjProperty(who, "twohanded");
-		if (GetCooldown(who, "SequenciaDevastadora") )
-			SetCooldown(who, "SequenciaDevastadora", 0);
-		endif
-		if (GetCooldown(who, "desviararmas") )
-			SetCooldown(who, "desviararmas", 0);
-		endif
-		if ( GetObjProperty(who, "#CriticalChance") )
-			EraseObjProperty(who, "#CriticalChance");
-		endif
-		if (GetObjProperty(who, "movement"))
-			EraseObjproperty(who, "movement");
-			SendSysMessage(who, "Você perdeu seu movimento especial");
-		endif
+	// if ( item.isA(POLCLASS_WEAPON))
+	// 	// EraseObjProperty(who, "twohanded");
+	// 	// if (GetCooldown(who, "SequenciaDevastadora") )
+	// 	// 	SetCooldown(who, "SequenciaDevastadora", 0);
+	// 	// endif
+	// 	// if (GetCooldown(who, "desviararmas") )
+	// 	// 	SetCooldown(who, "desviararmas", 0);
+	// 	// endif
+	// 	// if ( GetObjProperty(who, "#CriticalChance") )
+	// 	// 	EraseObjProperty(who, "#CriticalChance");
+	// 	// endif
+	// 	// if (GetObjProperty(who, "movement"))
+	// 	// 	EraseObjproperty(who, "movement");
+	// 	// 	SendSysMessage(who, "Você perdeu seu movimento especial");
+	// 	// endif
 		
-	endif
+	// endif
 
 
 	set_critical(0);
