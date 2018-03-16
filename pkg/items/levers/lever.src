@@ -12,6 +12,7 @@ include ":tn:tngumps";
 include "include/damage";
 include ":timedscripts:timedScripts";
 include ":traps:traps";
+include ":levers:lever";
 
 // var layout := array(
 //     "page 3                            ",

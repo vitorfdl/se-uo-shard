@@ -24,8 +24,8 @@ program SpellScript(params)
       return SendSysMessageEx(who, "Essa partitura já possui uma emoção atribuida", SSM_FAIL);
    endif
 
-   var notas := Getobjproperty(partitura, "notas");
-	var notas2 := Getobjproperty(partitura, "notas2");
+   var notas := Getobjproperty(targ, "notas");
+	var notas2 := Getobjproperty(targ, "notas2");
    
    var total := cint(notas.size()) | cint(notas2.size());
    if (total < 5)

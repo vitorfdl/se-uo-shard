@@ -332,10 +332,10 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 
       var emote_text := "";
       case (emocao)
-         "Enconrajar": "*Você se sente encorajado*"; break;
-         "Entristecer": "*Você se sente triste*"; break;
-         "Alegrar": "*Você se sente alegre*"; break;
-         "Enfurecer": "*Você se sente com raiva*"; break;
+         "Enconrajar": emote_text := "*Você se sente encorajado*"; break;
+         "Entristecer":  emote_text := "*Você se sente triste*"; break;
+         "Alegrar":  emote_text := "*Você se sente alegre*"; break;
+         "Enfurecer":  emote_text := "*Você se sente com raiva*"; break;
       endcase
 	
 		foreach nota in notas
@@ -346,7 +346,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
                sleepms(2);
             endforeach
 
-            var fogueira := ListItemsNearLocationOfType( x, y, z, 8, 0xDE3 );
+            var fogueira := ListItemsNearLocationOfType( who.x, who.y, who.z, 8, 0xDE3 );
             if (fogueira[1])
                var serial := GetObjProperty(fogueira[1], "camping");
                if (serial)

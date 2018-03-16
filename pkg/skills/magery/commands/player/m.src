@@ -31,10 +31,7 @@ program useMagic(who, spellname, uc_text)
             return;
          endif
 		endif
-      spell.powered := cint(GetObjProperty(who, "powered_mage"));
-      if (who.weapon)
-         spell.powered := ;
-      endif
+
       start_Script(":magery:cast_spell", array{who, spell, 0, 0, cfg_name});
       return;
    endif

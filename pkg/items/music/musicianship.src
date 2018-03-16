@@ -42,6 +42,7 @@ program skill_Musicianship(who, item)
 	var notas := array;
 	var notas2 := array;
 	var letra := array;
+   var emocao;
 	var magica;
 
 	var bardgump := GFCreateGump();
