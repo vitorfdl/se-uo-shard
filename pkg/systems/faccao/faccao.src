@@ -37,8 +37,43 @@ program faccao(params)
    guild := targ.guild;
    var guild_leader := "Nenhum";
 
+   var gump := GFCreateGump();
+	
+	GFPage(gump, 0);
+	GFResizePic(gump, 26, 19, 39925, 573, 417);
+	GFResizePic(gump, 48, 67, 9350, 172, 326);
+	GFTextLine(gump, 73, 70, 0, "Membros");
+	GFResizePic(gump, 226, 29, 9350, 171, 34);
+	GFTextLine(gump, 259, 36, 0, "Ordem da Muralha");
+	GFResizePic(gump, 54, 398, 9350, 518, 29);
+	GFTextLine(gump, 82, 401, 0, "1578 moedas");
+	GFGumpPic(gump, 59, 402, 40022, 0);
+	GFGumpPic(gump, 491, 330, 40034, 0);
+	GFTextLine(gump, 67, 89, 0, "Duranor Ursobranco");
+	GFAddButton(gump, 49, 91, 5605, 248, GF_CLOSE_BTN, 0);
+	
+	GFPage(gump, 1);
+	GFResizePic(gump, 406, 64, 9350, 172, 277);
+	GFResizePic(gump, 228, 66, 9350, 172, 274);
+	GFTextLine(gump, 427, 69, 0, "Agentes Contratados");
+	GFTextLine(gump, 268, 72, 0, "Leis em Vigor");
+	GFAddButton(gump, 192, 404, 1210, 248, GF_CLOSE_BTN, 0);
+	GFTextLine(gump, 211, 402, 0, "Banir");
+	GFTextLine(gump, 426, 94, 0, "Mercador D'Silva Sauro");
+	GFTextLine(gump, 426, 113, 0, "Guarda Alehandro Milcanto");
+	GFAddButton(gump, 408, 96, 5605, 248, GF_CLOSE_BTN, 0);
+	GFTextLine(gump, 405, 402, 0, "Soldo Total: 900 mo");
+	
+	GFPage(gump, 2);
+	GFResizePic(gump, 227, 67, 9350, 346, 326);
+	GFAddButton(gump, 362, 357, 2071, 2073, GF_CLOSE_BTN, 0);
 
+	var input := GFSendGump(who, gump);
 
+   if (input[0] >= BUTTON_SETLEADER && input[0] <= BUTTON_BAN_PLAYER)
+   elseif (input[0] >= BUTTON_CHANGE_PLAYER)
+
+   endif
 endprogram
 
 function guildHandler(guild, param)
