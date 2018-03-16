@@ -183,7 +183,6 @@ function SendRoomGump(npc, player)
             SetObjProperty(targ, "estalagem", npc.serial);
          endif
       endwhile
-      print(porta);
       if (!porta.size()) return 1; endif
 		var room := struct{
          "doors" := porta
@@ -369,7 +368,7 @@ function SendRoomGump(npc, player)
 				SendSysMessageEx(player, "Portas Alteradas.",SSM_INFO);
 				return 1;
 			elseif (gmmenu == "Teleportar na Porta")
-				var porta := SystemFindObjectBySerial(quartos[input[0]].doors[0]);
+				var porta := SystemFindObjectBySerial(quartos[input[0]].doors[1]);
 				if (!porta)
 					SendSysMessageEx(player, "Porta Inexistente.",SSM_FAIL);
 				else

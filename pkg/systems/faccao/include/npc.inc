@@ -1,9 +1,11 @@
 ###########################################
 # 
 # AddNPC
+# remNPC
+# editNPC
 # ContractNpc
 # DismissNPC
-# CheckPrivilegie
+# CheckPrivilegies
 # GetReports
 # 
 ###########################################
