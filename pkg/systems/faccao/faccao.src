@@ -1,0 +1,55 @@
+use uo;
+
+include "include/say";
+include "include/array";
+include ":faccao:npc";
+include ":faccao:faccao";
+include ":faccao:laws";
+
+const BUTTON_SETLEADER = 0x2;
+const BUTTON_ADD_PLAYER = 0x3;
+const BUTTON_BAN_PLAYER = 0x6;
+const BUTTON_CHANGE_PLAYER = 0x1222;
+
+const BUTTON_CREATE_UNIFORM = 0x20;
+const BUTTON_REM_UNIFORM = 0x25;
+const BUTTON_BUY_UNIFORM = 0x35;
+
+const BUTTON_ADD_NPC = 0x100;
+const BUTTON_REM_NPC = 0x105;
+const BUTTON_CONTRACT_NPC = 0x110;
+const BUTTON_DISMISS_NPC = 0x115;
+
+const BUTTON_ADD_LAW = 0x200;
+const BUTTON_REM_LAW = 0x205;
+const BUTTON_TOGGLE_LAW = 0x225;
+
+var guild;
+
+program faccao(params)
+   var who := params;
+   var targ := params;
+   if (typeof(params) == "Array")
+      who := params[1];
+      targ := params[2];
+   endif
+
+   guild := targ.guild;
+   var guild_leader := "Nenhum";
+
+
+
+endprogram
+
+function guildHandler(guild, param)
+
+endfunction
+
+
+function npcHander(guild, param)
+
+endfunction
+
+function lawHandler(guild, param)
+
+endfunction

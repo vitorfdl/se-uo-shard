@@ -65,7 +65,7 @@ function InnKeeperChecks()
 
                foreach door in (quartos[i].doors)
                   door := SystemFindObjectBySerial(door);
-                  EraseObjProperty( door, "LockId" );
+                  SetObjProperty( door, "LockId", 1 );
                   sleepms(2);
                endforeach
 

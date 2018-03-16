@@ -35,11 +35,11 @@ program esferadeluz(params)
       summoned.color := 1939;
 		
       SetName(summoned, "Esfera de Fogo");
-		var duration := spell_info.powered *2;
+		var duration := spell_info.powered * 2;
 		if (duration <= 1)
 			duration := 2;
 		endif
-		duration := duration * 30;
+		duration := duration * 60;
 
 		TS_StartTimer(summoned, "summon", duration);	
 

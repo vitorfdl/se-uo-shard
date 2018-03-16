@@ -19,6 +19,7 @@ function CreateFaccao(name, rect)
    var guild := CreateGuild();
    guild.setProp("name", name);
    guild.setProp("leader", 0);
+   guild.setProp("npcs_active", array{});
    guild.setProp("npcs", array{});
    guild.setProp("report", array{"Facção Criada"});
    guild.setprop("area", rect);
@@ -38,6 +39,7 @@ function GetFaccao(guild)
    var faccao_obj := struct{
       "name"     := guild.GetProp("name"),
       "npcs"     := guild.GetProp("npcs"),
+      "npcs_active"     := guild.GetProp("npcs_active"),
       "laws"     := guild.GetProp("laws"),
       "leader"   := guild.GetProp("leader"),
       "area"     := guild.GetProp("area")

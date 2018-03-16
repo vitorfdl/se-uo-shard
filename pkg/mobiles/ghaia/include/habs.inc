@@ -141,6 +141,34 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
 endfunction
 
 
+function dashAttack(dmg, dist)
+   if (Distance(me, targ) < 2)
+      return 0;
+   endif
+   printtext(me, "*pega impulso*");
+   sleep(1);
+   var last_loc = array{me.x, me.y};
+   var mod := GetModByFacing(me.facing);
+   var mobs = array{};
+   for i := 1 to dist
+      RunTowardLocation(nextx, nexty);
+      if (me.x == last_loc[1] && me.y == last_loc[2]) break; endif
+      mobs += GetEnemiesNear(me, 0);
+      last_loc = array{me.x, me.y};
+      sleepms(5);
+   endfor
+
+   foreach mob in mob
+      DamageFLS(targ, dmg, DMG_BLUDGE, me);
+      if (rollResistDice(mob, CONSTITUTION) <= 14)
+         TS_StartTimer(mob, "tombar", 2);
+      endif
+      sleepms(2);
+   endforeach
+
+   return 1;
+endfunction
+
 function jumpAttack(targ, dmg)
    if (Distance(me, targ) < 3 || Distance(me, targ) > 6)
       return 0;
@@ -204,7 +232,7 @@ endfunction
 
 
 function electricCone(mobile, dmg, dist)
-   if (Distance(me, mobile) > 4)
+   if (Distance(me, mobile) > 2)
       return 0;
    endif
    
@@ -230,7 +258,7 @@ function electricCone(mobile, dmg, dist)
 endfunction
 
 function fireCone(mobile, dmg, dist)
-   if (Distance(me, mobile) > 4)
+   if (Distance(me, mobile) > 2)
       return 0;
    endif
    

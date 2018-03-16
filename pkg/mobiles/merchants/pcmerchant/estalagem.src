@@ -387,15 +387,16 @@ function SendRoomGump(npc, player)
 				quartos[input[0]].inquilino := player.serial;
 				quartos[input[0]].data := polcore().systime;
 				quartos[input[0]].alert := 0;
+				SetObjProperty(npc, "quartos", quartos); //seta prop
             var doors := quartos[input[0]].doors;
 				var lockid := AllocLockId();
 				var key := CreateItemInBackpack( player, "ironkey", 1 );
+            key.desc = "Quarto";
 				SetObjProperty( key, "LockId", lockid );
             foreach door in doors
                door := SystemFindObjectBySerial(door);
                SetObjProperty(door, "LockId", lockid);
                door.locked := 1;
-               SetObjProperty( key, "LockId", lockid );
                sleepms(2);
             endforeach
 
@@ -403,8 +404,6 @@ function SendRoomGump(npc, player)
                DestroyRentItens(loc.x, loc.y, loc.z+5, npc.realm);
                sleepms(2);
             endforeach
-            
-				SetObjProperty(npc, "quartos", quartos); //seta prop
 			endif
 		endif
       return 1;

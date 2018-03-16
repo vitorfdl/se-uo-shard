@@ -60,7 +60,7 @@ program EquipTest(mobile, item, start_up)
 
    SetObjProperty(item, "#EquippedOn", mobile.serial);
    //SetEquipmentMods(mobile, item);
-   if (coverFace(item) && !mobile.npctemplate)
+   if (coverFace(item))
       if (!GetObjProperty(mobile, "realname"))
          SetObjProperty(mobile, "realname", mobile.name);
       endif

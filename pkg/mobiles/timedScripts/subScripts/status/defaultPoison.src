@@ -22,16 +22,16 @@ function StartScript(mobile, attacker := 0, level := 0)
 		SetScriptController(attacker);
 	endif
 
-   var dicedmg := "1d2";
+   var dicedmg := "1d2+2";
    var diff := 13;
    case (level)
-      2: dicedmg := "1d6";
+      2: dicedmg := "1d6+2";
          diff := 15;
-      3: dicedmg := "2d6";
+      3: dicedmg := "2d6+2";
          diff := 16;
-      4: dicedmg := "3d6";
+      4: dicedmg := "3d6+2";
          diff := 18;
-      5: dicedmg := "4d6";
+      5: dicedmg := "4d6+2";
          diff := 20;
    endcase
 
