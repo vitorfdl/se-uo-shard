@@ -13,7 +13,7 @@ include ":ghaia:ghaiaUtil";
 include ":ghaia:ghaia";
 include ":magery:summon";
 include ":taming:taming";
-include ":charactercreation:habilidades";
+
 
 program esferadeluz(params)
 	var who := params[1];

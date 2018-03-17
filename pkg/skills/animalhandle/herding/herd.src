@@ -8,11 +8,11 @@ include "include/client";
 include "include/sysEvent";
 include ":attributes:attributes";
 include "include/say";
-include ":charactercreation:habilidades";
+
 
 program herd(who)
 
-	if (!TemHabilidade(who, "Pastor"))
+	if (!HaveFeat(who, "Pastor"))
 		return;
 	endif
 

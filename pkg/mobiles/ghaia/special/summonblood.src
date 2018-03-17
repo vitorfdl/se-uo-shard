@@ -2,7 +2,7 @@ use uo;
 use os;
 use vitals;
 
-include ":charactercreation:habilidades";
+
 include ":timedscripts:timedScripts";
 include "include/damage";
 include "include/sysEvent";
@@ -14,7 +14,7 @@ program loko(params)
 	var cdname := params[3];
 	//printtextabove(who, "loko");
 
-	if ( IsBloodied(who) && who.opponent) //
+	if (  who.opponent) //
 		if ( !SystemFindObjectBySerial( GetObjProperty(who, "blood") ) )
 			TS_StartCooldown(who, cdname, cdtime);
 			PrintTextAbove(who, "*corta a palma da mao com a espada*", _DEFAULT_TEXT_FONT, 1361);

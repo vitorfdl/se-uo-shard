@@ -3,7 +3,7 @@ use util;
 
 include ":attributes:attributes";
 include "include/say";
-include ":charactercreation:habilidades";
+
 
 program soltar(me)
 	if (!GetObjProperty(me, "corda"))

@@ -1,7 +1,7 @@
 use uo;
 
 include ":magery:tnmagery";
-include ":charactercreation:habilidades";
+
 include ":attributes:include/attributeConstants";
 include ":attributes:include/attributes";
 include ":gumps:include/gumps";

@@ -125,6 +125,8 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "cavar": res := cavar(hab_target, hab_dice, cint(hab_special)); break;
       "saltar": res := jumpAttack(hab_target, hab_dice); break;
       "mina": res := createMine(hab_dice, cint(hab_target), cint(hab_special));
+      "dash": res := dashAttack(hab_target, hab_dice, cint(hab_special));
+      
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
          Print("{} npc hab not exist".format(hab_name));
@@ -141,25 +143,28 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
 endfunction
 
 
-function dashAttack(dmg, dist)
-   if (Distance(me, targ) < 2)
-      return 0;
-   endif
+function dashAttack(targ, dmg, dist)
    printtext(me, "*pega impulso*");
-   sleep(1);
-   var last_loc = array{me.x, me.y};
-   var mod := GetModByFacing(me.facing);
-   var mobs = array{};
-   for i := 1 to dist
-      RunTowardLocation(nextx, nexty);
+   sleepms(750);
+   var last_loc := array{me.x, me.y};
+   var targ_face := GetFacing(me.x, me.y, targ.x, targ.y);
+   var mod := GetModByFacing(targ_face);
+   me.facing := targ_face;
+   var mobs := array{};
+   for i := 0 to dist
+      if (me.paralyzed || me.frozen) break; endif
+      MoveObjectToLocation(me, me.x+mod[1], me.y+mod[2], me.z, me.realm);
+      // RunTowardLocation(me.x+mod[1], me.y+mod[2]);
       if (me.x == last_loc[1] && me.y == last_loc[2]) break; endif
       mobs += GetEnemiesNear(me, 0);
-      last_loc = array{me.x, me.y};
-      sleepms(5);
+      last_loc := array{me.x, me.y};
+      if (i != dist)
+         sleepms(110);
+      endif
    endfor
 
-   foreach mob in mob
-      DamageFLS(targ, dmg, DMG_BLUDGE, me);
+   foreach mob in mobs
+      DamageFLS(mob, dmg, DMG_BLUDGE, me);
       if (rollResistDice(mob, CONSTITUTION) <= 14)
          TS_StartTimer(mob, "tombar", 2);
       endif

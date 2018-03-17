@@ -1,18 +1,19 @@
-###########################################
-#
-# CreateFaccao
-# GetFaccao
-# EditFaccao
-# AddMember
-# GetMember
-# RemMember
-# EditMember
-# SetLeader
-# IsLeader
-# 
-###########################################
-
 use guilds;
+
+// ###########################################
+// #
+// # CreateFaccao
+// # GetFaccao
+// # EditFaccao
+// # AddMember
+// # GetMember
+// # RemMember
+// # EditMember
+// # SetLeader
+// # IsLeader
+// # 
+// ###########################################
+
 
 function CreateFaccao(name, rect)
    if (!name || typeof(name) != "String") return 0; endif

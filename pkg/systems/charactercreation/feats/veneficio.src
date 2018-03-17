@@ -10,7 +10,7 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":fls_core:fls_characters";
 include "include/say";
-include ":charactercreation:habilidades";
+
 
 program do_poisoning(who)
 	EraseObjProperty(who, "IsMeditating");
@@ -123,7 +123,7 @@ program do_poisoning(who)
 		poisonInfo.+acc    := who.acctname;
 		poisonInfo.+time   := 40 + level*10;
 		poisonInfo.+difficulty := roll-2;
-		// if (temHabilidade(who, "Maximizar Veneno"))
+		// if (HaveFeat(who, "Maximizar Veneno"))
 		// 	poisonInfo.dosage := CInt(poisonInfo.dosage * 1.5);
 		// 	poisonInfo.time := CInt(poisonInfo.time * 1.2);
 		// endif

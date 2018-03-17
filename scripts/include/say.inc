@@ -38,34 +38,36 @@ function SendSysMessageUNI(character, uc_text, font := _DEFAULT_UCFONT, color :=
 endfunction
 
 function PrintText(above_object, uc_text, color := _DEFAULT_UCCOLOR, font := _DEFAULT_UCFONT, langcode := "ENG")
-  if (uc_text == error)
-	  return;
-  endif
+   if (uc_text == error)
+      return;
+   endif
 
-  if (above_object.concealed || above_object.hidden)
-	  return 1;
-  endif
+   if (above_object.concealed || above_object.hidden)
+      return 1;
+   endif
 
-  return PrintTextAboveUC(above_object, UC(uc_text), langcode, font, color);
+   return PrintTextAboveUC(above_object, UC(uc_text), langcode, font, color);
 endfunction
 
 function PrintTextPrivate(above_object, uc_text, for_object, color := _DEFAULT_UCCOLOR, font := _DEFAULT_UCFONT, langcode := "ENG")
-  if (uc_text == error)
-      return;
-  endif
+   if (uc_text == error)
+         return;
+   endif
 
-  return PrintTextAbovePrivateUC(above_object, UC(uc_text), langcode, for_object, font, color);
+   return PrintTextAbovePrivateUC(above_object, UC(uc_text), langcode, for_object, font, color);
 endfunction
 
 function SendSystemReport(above_object, text, color := SYSTEM_REPORT, character := 0)
-  if (!character)
-    character := above_object;
-  endif
+   if (above_object.npctemplate)
+      return;
+   elseif (!character)
+      character := above_object;
+   endif
 
-  if (character == "all")
-    return PrintText(above_object, text, 9, color);
-  endif
-  return PrintTextAbovePrivateUC(above_object, UC(text), "ENG", character, 0x10, color);
+   if (character == "all")
+      return PrintText(above_object, text, 9, color);
+   endif
+   return PrintTextAbovePrivateUC(above_object, UC(text), "ENG", character, 0x10, color);
 endfunction
 
 function GetInput(character, item, uc_prompt, langcode := "ENG") // item is a placeholder, pass anything

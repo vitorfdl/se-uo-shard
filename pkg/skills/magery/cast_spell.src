@@ -9,7 +9,7 @@ include ":magery:tnmagery";
 include ":magery:basicMagery";
 include "include/say";
 include "include/client";
-include ":charactercreation:habilidades";
+
 include "include/facings";
 include ":tn:cooldown";
 include ":attributes:attributes";

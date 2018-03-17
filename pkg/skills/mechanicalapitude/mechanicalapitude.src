@@ -6,7 +6,7 @@ include ":itemutils:canAccess";
 include ":attributes:attributes";
 include ":traps:traps";
 include "include/say";
-include ":charactercreation:habilidades";
+
 
 program skillremoveTrap(who)
 	EraseObjProperty(who, "IsMeditating");
@@ -77,7 +77,7 @@ program skillremoveTrap(who)
 
 		if( dice_roll <= dif )
 			SendSysMessageEx( who, "Você falhou em desarmar a armadilha.", SSM_FAIL);
-			// if (!temHabilidade(who, "Especialista em Invasoes") && check < -20)
+			// if (!HaveFeat(who, "Especialista em Invasoes") && check < -20)
 			// 	if (who.hidden)
 			// 		who.hidden := 0;
 			// 	endif

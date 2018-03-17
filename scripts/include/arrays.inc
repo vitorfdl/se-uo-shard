@@ -364,7 +364,6 @@ function SearchArrayOfModel(search_for, equal, to_search)
 endfunction
 
 function FindObjInModel(search_for, equal, to_search)
-    var counter;
 	foreach item in to_search
 		var item_prop := item.get_member(search_for);
 		if ( item_prop == equal)

@@ -129,7 +129,7 @@ program Attack(params)
 
 	//ACERTOU
 	if ( attack_chance > defender_CA )
-		// if ( TemHabilidade(attacker, "golpedesleal") && IsBehind(attacker, defender.x, defender.y) )
+		// if ( HaveFeat(attacker, "golpedesleal") && IsBehind(attacker, defender.x, defender.y) )
 		// 	if (RandomInt(10) < 3)
 		// 		TS_StartTimer(defender, "paralysis", 2);
 		// 	endif
@@ -332,7 +332,7 @@ function WearDownArmor(defender, armor)
 	if ( armor )
 		var armr_elem := CS_GetSettingsCfgElem("Armor");
 		var wearchance := armr_elem.WearChance;
-		// if ( TemHabilidade(defender, "Conservar Equipamento"))
+		// if ( HaveFeat(defender, "Conservar Equipamento"))
 		// 	wearchance := wearchance/2;
 		// 	if (wearchance < 1)
 		// 		wearchance := 1;

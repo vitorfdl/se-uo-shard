@@ -11,7 +11,7 @@ include ":mounts:mounts";
 include ":attributes:attributes";
 include "include/say";
 include ":tn:cooldown";
-include ":charactercreation:habilidades";
+
 
 program death(params)
 	var corpse := params[1];
@@ -114,7 +114,7 @@ program death(params)
 	if ( dmg > CInt(AP_GetVitalMaximumValue(ghost, HITS)/5) )
 		tempo += 60;
 	endif
-	// if ( temhabilidade(ghost, "Instinto de Sobreviv¿ncia"))
+	// if ( HaveFeat(ghost, "Instinto de Sobreviv¿ncia"))
 	// 	tempo := tempo /2;
 	// endif
 	if (save)

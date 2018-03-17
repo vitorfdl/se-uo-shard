@@ -6,6 +6,7 @@ use util;
 include ":attributes:attributes";
 include "include/sysEvent";
 include "include/say";
+include "include/dungeons";
 include ":mounts:mounts";
 include ":taming:taming";
 include ":tn:cooldown";
@@ -65,7 +66,7 @@ program NPCMonitor()
          // 	herd(ev);
          EVID_TAUNT:
             if(ev.source && (!me.master.party || (me.master.party && !(ev.source in me.master.party.members))) )
-               Fight(ev.opponent, 1);
+               Fight(ev.opponent);
             endif
          EVID_FLEE:
             Flee(ev.source);
@@ -85,6 +86,8 @@ program NPCMonitor()
                   var sela := cint(GetObjProperty(me, "sela_hp"));
                   if (sela <= 0 && !ev.source.cmdlevel)
                      SendSysMessageEx(ev.source, "Esse animal precisa de uma sela para ser montado", SSM_FAIL);
+                  elseif (InDungeon(ev.source) && !ev.source.cmdlevel)
+                     SendSysMessageEx(ev.source, "A caverna é muito baixa para montar em uma criatura", SSM_FAIL);
                   elseif (MoveObjectToLocation(ev.source, me.x, me.y, me.z, ev.source.realm))
                      ev.source.hidden := 0;
                      MP_Mount(ev.source, me);
@@ -122,7 +125,7 @@ function OpenPack(ev)
     endif
 endfunction
 
-function Fight(opponent := 0, force := 1)
+function Fight(opponent := 0)
    if (opponent)
       if ( opponent == me || opponent == fighting || !opponent.IsA(POLCLASS_MOBILE) )
          return;

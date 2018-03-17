@@ -4,7 +4,7 @@ use util;
 include "include/client";
 include "include/say";
 include ":attributes:attributes";
-include ":charactercreation:habilidades";
+
 program decode_map( who, map )
 	if(!Accessible(who, map))
 		SendSysMessageEx(who, "Você não alcanca o mapa.", SSM_FAIL);
@@ -20,7 +20,7 @@ program decode_map( who, map )
 	//var maxlevel := GetMaxMapLevel( who );
 
 	//if( maplevel > maxlevel )
-	if (!TemHabilidade(who, "Cartografia") && who.cmdlevel < 3)
+	if (!HaveFeat(who, "Cartografia") && who.cmdlevel < 3)
 		SendSysMessageEx( who, "Você não compreende esse mapa.", SSM_FAIL );
 	else
 		CreateTreasureMap( who, map, maplevel );
@@ -46,7 +46,7 @@ endfunction
 
 function CreateTreasureMap(who, oldmap, maplevel)
 	var map := CreateItemInBackpack( who, GetObjtypeByName("map_nonedit"), 1 );
-	if (TemHabilidade(who, "Tesouro Escondido"))
+	if (HaveFeat(who, "Tesouro Escondido"))
 		SetObjProperty(map, "tesouroescondido", 1);
 	endif
 

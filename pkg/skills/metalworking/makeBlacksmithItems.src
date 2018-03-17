@@ -26,5 +26,5 @@ program use_SmithTool(who, tool)
         "recipe_cfg" := ReadConfigFile(":metalworking:recipes")
     };
 
-	var rinfo := SendCraftGump(who, params);
+	SendCraftGump(who, params);
 endprogram

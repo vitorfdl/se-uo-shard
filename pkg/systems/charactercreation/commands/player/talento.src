@@ -75,7 +75,7 @@ function ProccessHab(who, hab)
 	endif
 	
 	// foreach people in ListMobilesNearLocationEx( who.x, who.y, who.z, 5, LISTEX_FLAG_HIDDEN, who.realm )
-	// 	if (!people.npctemplate && TemHabilidade(people, "Observar Movimentos"))
+	// 	if (!people.npctemplate && HaveFeat(people, "Observar Movimentos"))
 	// 		PrintTextPrivate(who, "*Habilidade Ativada*", people, SSM_HELPFUL);
 	// 	endif
    //    sleepms(2);

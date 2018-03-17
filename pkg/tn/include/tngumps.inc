@@ -346,6 +346,9 @@ function QuestionsGump(who, questions := array{})
 	foreach quest in questions
 		var x_plus := x;
 		GFTextLine(gump, x, y, 2100, quest.title);
+      if (quest.helper)
+         GFTooltipText(gump, quest.helper);
+      endif
 		y += 18;
 		if (quest.radio)
   			GFSetRadioGroup(gump, _quest_iter);

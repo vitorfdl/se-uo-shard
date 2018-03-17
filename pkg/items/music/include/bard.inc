@@ -4,7 +4,7 @@ include "bardInstrument";
 include "bardMagic";
 include ":ghaia:ghaiaUtil";
 include ":timedscripts:timedScripts";
-include ":charactercreation:habilidades";
+
 
 function isBardable(character, thetarget, bard_skill, bard_difficulty)
 

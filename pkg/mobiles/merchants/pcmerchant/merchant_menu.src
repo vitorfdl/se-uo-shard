@@ -18,7 +18,7 @@ include ":merchants:merchant";
 include	":merchants:crafthelp";
 include ":gumps:yesno";
 include "include/say";    
-include ":charactercreation:habilidades";
+
 include ":ghaia:ghaiaUtil";
 
 const ADD_ITEM_SELL_BTN:= 0x1;

@@ -80,11 +80,8 @@ function RemoveEquipmentMods(who, item)
 	if (!mods)
 		mods := struct{};
 	endif
+   
 	foreach mod in (mods.keys())
-		if (GetObjProperty(item,"magic") == 1)
-			continue;
-		endif
-		
 		if (mod == "strmod")
 			AP_ModifyStatMod(who, STRENGTH, (-1)*Cint( mods["strmod"] ));
 		elseif (mod == "dexmod")
@@ -96,34 +93,22 @@ function RemoveEquipmentMods(who, item)
 		elseif (mod == "wismod")
 			AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
 		elseif (mod == "manamod")
-			var hitswho := Cint(GetObjProperty(who, "manamod"));
-			var hitsitem :=  Cint( mods["manamod"] );
-			var final := hitswho - hitsitem;
-			if (final <= 0)
-				EraseObjProperty(who, "manamod");
-			else
-				SetObjProperty(who, "manamod", final );
-			endif
+         SetObjProperty(who, "manamod", Cint(GetObjProperty(who, "manamod") - Cint( mods["manamod"] )));
       elseif (mod == "toughmod")
          who.setToughness(cint(mods["toughmod"])*(-1));
 		elseif (mod == "hitsmod")
-			var hitswho := Cint(GetObjProperty(who, "hitsmod"));
-			var hitsitem :=  Cint( mods["hitsmod"] );
-			var final := hitswho - hitsitem;
-			if (final <= 0)
-				EraseObjProperty(who, "hitsmod");
-			else
-				SetObjProperty(who, "hitsmod", final );
-			endif
+         SetObjProperty(who, "hitsmod", Cint(GetObjProperty(who, "hitsmod") - Cint( mods["hitsmod"] )));
 		elseif (mod == "stammod")
-			var hitswho := Cint(GetObjProperty(who, "stammod"));
-			var hitsitem :=  Cint( mods["stammod"] );
-			var final := hitswho - hitsitem;
-			if (final <= 0)
-				EraseObjProperty(who, "stammod");
-			else
-				SetObjProperty(who, "stammod", final );
-			endif
+         SetObjProperty(who, "stammod", Cint(GetObjProperty(who, "stammod") - Cint( mods["stammod"] )));
+      elseif (mod == "dmg_reduce")
+			var dmg_reduce := GetObjProperty(who, "dmg_reduce");
+         if (!dmg_reduce) dmg_reduce := struct{}; endif
+         foreach type in (mods[mod].keys())
+            dmg_reduce[type] := cint(dmg_reduce[type]) - mods[mod][type];
+            if (dmg_reduce[type] == 0) dmg_reduce.erase(type); endif
+         endforeach
+
+         SetObjProperty(who, "dmg_reduce", dmg_reduce);
 		else
 			AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
 		endif

@@ -5,7 +5,7 @@ use uo;
 use os;
 use cfgfile;
 
-include ":charactercreation:habilidades";
+
 include "include/say";
 include "include/arrays";
 include ":crafting:recipes";

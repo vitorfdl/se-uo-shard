@@ -1,16 +1,16 @@
-###########################################
-# 
-# AddNPC
-# remNPC
-# editNPC
-# listNPC
-# ContractNpc
-# listContractedNPC
-# DismissNPC
-# CheckPrivilegies
-# GetReports
-# 
-###########################################
+// ###########################################
+// # 
+// # AddNPC
+// # remNPC
+// # editNPC
+// # listNPC
+// # ContractNpc
+// # listContractedNPC
+// # DismissNPC
+// # CheckPrivilegies
+// # GetReports
+// # 
+// ###########################################
 
 
 function AddNpc(guild, npc)

@@ -335,9 +335,9 @@ function CraftExceptional(who, theitem, craft_skill)
 		theitem.quality := 0.6;
 		
 		//Checa Habilidades de fundir
-		if ((craft_skill == WOMENSWORK && TemHabilidade(who, "Tricô Aprimorado"))
-			|| (craft_skill == METALWORKING && TemHabilidade(who, "Fundir"))
-			|| (craft_skill == WOODWORKING && TemHabilidade(who, "Modelagem Complexa")))
+		if ((craft_skill == WOMENSWORK && HaveFeat(who, "Tricô Aprimorado"))
+			|| (craft_skill == METALWORKING && HaveFeat(who, "Fundir"))
+			|| (craft_skill == WOODWORKING && HaveFeat(who, "Modelagem Complexa")))
 			if ( YesNo(who, "Deseja unir algum material especial com este objeto?"))
 				SendSysMessageEx(who, "Selecione o material", SSM_REQUEST);
 				var special_obj := Target(who);
@@ -537,9 +537,9 @@ function canUseMaterial(who, use_on, craft_skill)
     return 1;
   endif
 	
-	if (craft_skill == WOMENSWORK && resource_config[use_on].Type == "Leather" && !TemHabilidade(who, "Trabalhar Couro"))
+	if (craft_skill == WOMENSWORK && resource_config[use_on].Type == "Leather" && !HaveFeat(who, "Trabalhar Couro"))
 		return 0;
-	elseif (resource_config[use_on].habilidade && !TemHabilidade(who, resource_config[use_on].habilidade))
+	elseif (resource_config[use_on].habilidade && !HaveFeat(who, resource_config[use_on].habilidade))
 		return 0;
 	endif
   

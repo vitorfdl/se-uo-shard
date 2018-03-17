@@ -356,7 +356,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 		var roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1}) + GetSkillBonus(who, craft_skill);
       var check := roll.dice;
       var diff := recipe.difficulty + bonus_diff;
-		if(check > recipe.difficulty || who.cmdlevel > 4)
+		if(check > diff || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials))
 				SendSysMessageEx(who, "você não possui todos os materiais.", SSM_FAIL);
 				return theitems;
@@ -373,7 +373,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 			theitem.movable := 1;
 
 			//passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
-			AddMaterialMod(who, recipe, theitem, choosed_material, material_color);
+			AddMaterialMod(recipe, theitem, choosed_material, material_color);
          if (recipe.exceptional == 1 && (AP_GetTrueSkill(who, crafT_skill) >= 4 && roll.critical == 1) || who.cmdlevel > 3)
             SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
             SendSysMessageEx(who, "Para termina-la, você deve escolher um objeto para molda-lo. É possível descohrir esses objetos com heráldica.", SSM_INFO);
@@ -469,7 +469,7 @@ function SubtractMaterial(who, targ_materials, amountMod := 1)
 	return 1;
 endfunction
 
-function AddMaterialMod(who, recipe, theitem, principalMaterial, materialColor)
+function AddMaterialMod(recipe, theitem, principalMaterial, materialColor)
 	if (!principalMaterial)
 		return;
 	endif	
@@ -580,7 +580,13 @@ function CraftExceptional(who, theitem, craft_skill)
             if (!equip)
                equip := struct{};
             endif
-            equip[mod] := value;
+            if (mod["rd_"])
+               mod["rd_"] := "";
+               if (!equip.dmg_reduce) equip.dmg_reduce := struct{}; endif
+               equip.dmg_reduce[mod] := cdbl(value);
+            else
+               equip[mod] := value;
+            endif
             SetObjProperty(theitem, "equip", equip);
             break;
          "dmgbonus":

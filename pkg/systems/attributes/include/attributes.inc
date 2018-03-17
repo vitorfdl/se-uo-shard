@@ -33,7 +33,7 @@ include ":attributes:vitals";
 include ":attributes:attributeConstants";
 include ":attributes:advanceCheck";
 include ":datafile:datafile";
-include ":charactercreation:habilidades";
+
 include "include/arrays";
 include ":ghaia:ghaiaUtil";
 include ":charactercreation:characters";

@@ -11,7 +11,7 @@
 ===============================================================*/
 
 include ":fls_core:fls_characters";
-include ":charactercreation:habilidades";
+
 
 use uo;
 

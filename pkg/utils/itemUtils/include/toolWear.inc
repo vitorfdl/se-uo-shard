@@ -1,6 +1,7 @@
 include ":attributes:attributes_ex";
 
 function CheckToolWear (who, tool, skill)
+   skill := 0;
    var swings := GetObjProperty(tool,"swings");
    if (!swings)
       swings := Cint(50 * tool.quality);

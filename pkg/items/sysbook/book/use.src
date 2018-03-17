@@ -2,7 +2,7 @@
 
 use uo;
 include "include/say";
-include ":charactercreation:habilidades";
+
 include ":gumps:include/requestgump";
 include ":gumps:yesno";
 include ":charactercreation:feats";
@@ -28,7 +28,7 @@ program useBook(who,book)
 					SendOpenBook(who, book);
 				endif
 			endif
-			// if (TemHabilidade(who, "Falsificar Aprimorado"))
+			// if (HaveFeat(who, "Falsificar Aprimorado"))
 			// 	var GM := YesNo(who, "Você pode optar por não romper o selo e ainda ler a carta. Deseja faze-lo?" , "Sim.", "Nao.");
 			// 	if (GM)
 			// 		SendOpenBook(who, book);
@@ -49,7 +49,7 @@ program useBook(who,book)
 //	var linguas := GetObjProperty(who, "linguas");
 
 	// if (linguagem != error)
-	// 	if (temHabilidade(who, "Arqueologo"))
+	// 	if (HaveFeat(who, "Arqueologo"))
 	// 		SendOpenBook(who, book);
 	// 	else
 	// 		SendSysMessageEx(who, "Você não conhece essa lingua: " + linguagem);

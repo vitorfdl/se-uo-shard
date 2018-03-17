@@ -13,7 +13,7 @@ program colheReagente(who, item)
 	
 	var amt := 1;
 	
-	// if (temHabilidade(who, "Herbalista Experiente"))
+	// if (HaveFeat(who, "Herbalista Experiente"))
 	// 	if (RandomInt(100) < 30)
 	// 		amt := 2;
 	// 	endif

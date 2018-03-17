@@ -10,7 +10,7 @@ include ":containers:containers";
 include ":itemutils:itemdesc";
 include "include/client";
 include "include/sounds";
-include ":charactercreation:habilidades";
+
 include "include/facings";
 include ":tn:cooldown";
 include "include/arrays";
@@ -55,7 +55,7 @@ endprogram
 Const OBJ_BLANK_SCROLL := 0xE34;
 Const OBJ_RECIPE_SLIP := 0x6116;
 
-function CreateBookGump(book, can_read := 0)
+function CreateBookGump(book)
 	var rune_list := GetObjProperty(book, "runes");
 	if( TypeOf(rune_list) != "Array" )
 		rune_list := array{};
@@ -92,6 +92,7 @@ function CreateBookGump(book, can_read := 0)
 	var pOX       := 130;
 	var pOY       := 65;
 	foreach rune in rune_list
+      rune := 0;
 		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+_rune_iter);
 		GFTooltipText(book_gump, "<BASEFONT color=#ADD8E6>Inscrever");
 		pOY+=15;
@@ -291,11 +292,25 @@ function WriteRune(who, rune_entry)
 		if (set == "maxhp")
 			item.maxhp_mod += value;
 			item.hp += value;
-		elseif (set[1] == ".")
-			set := SplitWords(set, ".")[2];
-			item[set] := value;
+		elseif (set == "prop")
+			set := SplitWords(set, " ")[2];
+			SetObjProperty(item, set[1], value[2]);
+      elseif (set == "equipmod")
+         var special_props := GetObjProperty(item, "equip");
+         if (!special_props) special_props := struct{}; endif
+
+         var prop := SplitWords(set, " ");
+         if (prop[1]["rd_"])
+            prop[1]["rd_"] := "";
+            if (!special_props.dmg_reduce) special_props.dmg_reduce := struct{}; endif
+            special_props.dmg_reduce[prop[1]] := cdbl(prop[2]);
+         else
+            special_props[prop[1]] += cint(prop[2]);
+         endif
+
+         SetObjProperty(item, "equip", special_props);
 		else
-			SetObjProperty(item, set, value);
+			item[set] := value;
 		endif
       sleepms(2);
 	endforeach

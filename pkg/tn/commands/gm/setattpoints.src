@@ -3,7 +3,7 @@ use cfgfile;
 
 include ":gumps:gumps";
 include "include/say";
-include ":charactercreation:habilidades";
+
 include ":charactercreation:characters";
 
 program reset(who, params)

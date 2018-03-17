@@ -1,23 +1,23 @@
-###########################################
-# 
-# RemLaw
-# AddLaw
-# GetLaw
-# ListLaw
-# DisableLaw
-#
-###########################################
-
-# Laws:
-# $ No LockPick - Guards will not allow lockpick around them
-## - Doors
-## - Chests
-# $ No Fight - Guards will not allow fights around them
-# $ No Item - Guards will not allow players using that item around them
-# $ No Weapons - Guards will not allow players to use weapons (if no monsters) around them
-# $ Nobility Above Laws - Guards will ignore all laws if player have title
-# $ No Race 
-# $ No Faction
+// ###########################################
+// # 
+// # RemLaw
+// # AddLaw
+// # GetLaw
+// # ListLaw
+// # DisableLaw
+// #
+// ###########################################
+// 
+// # Laws:
+// # $ No LockPick - Guards will not allow lockpick around them
+// ## - Doors
+// ## - Chests
+// # $ No Fight - Guards will not allow fights around them
+// # $ No Item - Guards will not allow players using that item around them
+// # $ No Weapons - Guards will not allow players to use weapons (if no monsters) around them
+// # $ Nobility Above Laws - Guards will ignore all laws if player have title
+// # $ No Race 
+// # $ No Faction
 
 
 function AddLaw(guild, law)

@@ -33,7 +33,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       endif
       if (randomInt(2) == 1)
          SendSysMessageEx(mobile, "Seu coração acelera", SSM_FAIL);
-         AP_ConsumeVital(mobile, STAM, 3);
+         AP_ConsumeVital(mobile, STAMINA, 3);
       endif      
       sleep(2);
       if (rollResistDice(mobile, CONSTITUTION) > cint(level))

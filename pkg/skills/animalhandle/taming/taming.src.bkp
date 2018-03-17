@@ -214,21 +214,21 @@ function TameLoop(who, targ, byref info)
 		return 0;
 	endif
 	
-	if (info.difficulty >= 90 && !TemHabilidade(who, "Domador Mestre"))
+	if (info.difficulty >= 90 && !HaveFeat(who, "Domador Mestre"))
 		SendSysMessageEx(who, "Você assustou "+targ.name+" .", SSM_FAIL);
 		return 0;
-	elseif (info.difficulty >= 80 && !TemHabilidade(who, "Domador Hábil"))
+	elseif (info.difficulty >= 80 && !HaveFeat(who, "Domador Hábil"))
 		SendSysMessageEx(who, "Você assustou "+targ.name+" .", SSM_FAIL);
 		return 0;
-	elseif (info.difficulty >= 60 && !TemHabilidade(who, "Domador Perito"))
-		SendSysMessageEx(who, "Você assustou "+targ.name+" .", SSM_FAIL);
-		return 0;
-	
-	elseif (info.difficulty >= 40 && !TemHabilidade(who, "Domador Aprendiz"))
+	elseif (info.difficulty >= 60 && !HaveFeat(who, "Domador Perito"))
 		SendSysMessageEx(who, "Você assustou "+targ.name+" .", SSM_FAIL);
 		return 0;
 	
-	elseif (info.difficulty >= 30 && !TemHabilidade(who, "Domador Noviço"))
+	elseif (info.difficulty >= 40 && !HaveFeat(who, "Domador Aprendiz"))
+		SendSysMessageEx(who, "Você assustou "+targ.name+" .", SSM_FAIL);
+		return 0;
+	
+	elseif (info.difficulty >= 30 && !HaveFeat(who, "Domador Noviço"))
 		SendSysMessageEx(who, "Você assustou "+targ.name+" .", SSM_FAIL);
 		return 0;
 	endif

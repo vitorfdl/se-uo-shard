@@ -131,6 +131,13 @@ function SetEquipmentMods(who, item)
 			SetObjProperty(who, "hitsmod",  prevhits + Cint(mods["hitsmod"] ) );
 		elseif (mod == "stammod")
 			SetObjProperty(who, "stammod", Cint(GetObjProperty(who, "stammod")) + Cint( mods["stammod"] ) );
+      elseif (mod == "dmg_reduce")
+			var dmg_reduce := GetObjProperty(who, "dmg_reduce");
+         if (!dmg_reduce) dmg_reduce := struct{}; endif
+         foreach type in (mods[mod].keys())
+            dmg_reduce[type] := cint(dmg_reduce[type]) + mods[mod][type];
+         endforeach
+         SetObjProperty(who, "dmg_reduce", dmg_reduce);
 		else // se não eh nada acima eh skillmod ou error :p
 			AP_ModifySkillMod(who, mod, Cint(mods[mod]));
 		endif

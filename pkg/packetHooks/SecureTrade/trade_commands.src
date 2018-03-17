@@ -1,7 +1,7 @@
 use uo;
 use math;
 use os;
-include ":charactercreation:habilidades";
+
 include "include/say";
 
 program trade_hooks()

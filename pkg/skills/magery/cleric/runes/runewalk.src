@@ -4,7 +4,7 @@ use vitals;
 
 include "include/say";
 include ":tn:cooldown";
-include ":charactercreation:habilidades";
+
 include "include/damage";
 include "include/tileEffects";
 include "include/client";

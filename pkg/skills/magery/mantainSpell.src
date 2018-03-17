@@ -4,7 +4,7 @@ include ":gumps:yesno";
 include ":attributes:attributes";
 include "include/say";
 include ":gumps:gumps";
-include ":charactercreation:habilidades";
+
 
 function SpellYesNo(who, nome, targname)
 	GfCloseGumpTimed(who, GetPid(), 11);

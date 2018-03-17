@@ -3,7 +3,7 @@ use os;
 use vitals;
 use npc;
 
-include ":charactercreation:habilidades";
+
 include ":timedscripts:timedScripts";
 include "include/damage";
 
@@ -14,10 +14,6 @@ program loko(params)
 
 	printtextabove(who, "loko");
 	if (!who.opponent)
-		return;
-	endif
-
-	if (event.onlybloodied && !IsBloodied(who)) 
 		return;
 	endif
 

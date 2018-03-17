@@ -5,7 +5,7 @@ include "include/say";
 include ":timedscripts:timedScripts";
 include ":loot:magicLoot";
 //include "include/damage";
-include ":charactercreation:habilidades";
+
 
 var item_config     := ReadConfigFile(":*:itemdesc");
 

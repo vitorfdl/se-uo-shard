@@ -190,16 +190,16 @@ endfunction
 
 //igual a untame que tem na IA :ghaia:follower
 function destama(serial)
-	var me := SystemFindObjectBySerial(serial);	
-	me.SetMaster(0);
-	var orig_script := GetObjProperty(me, "script");
-	me.script := orig_script;
-	SetName(me, GetObjProperty(me, "name"));
-	EraseObjProperty(me, "owner");
-	EraseObjProperty(me, "name");
-	EraseObjproperty(me, "script");
-	EraseObjProperty(me, "happiness");
-	RestartScript(me);
+	var tamed := SystemFindObjectBySerial(serial);	
+	tamed.SetMaster(0);
+	var orig_script := GetObjProperty(tamed, "script");
+	tamed.script := orig_script;
+	SetName(tamed, GetObjProperty(tamed, "name"));
+	EraseObjProperty(tamed, "owner");
+	EraseObjProperty(tamed, "name");
+	EraseObjproperty(tamed, "script");
+	EraseObjProperty(tamed, "happiness");
+	RestartScript(tamed);
 endfunction
 
 // function isTamable(mob)

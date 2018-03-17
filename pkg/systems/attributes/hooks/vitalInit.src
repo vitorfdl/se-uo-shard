@@ -3,7 +3,7 @@ use util;
 
 include ":attributes:attributes";
 include ":ghaia:ghaiaUtil";
-include ":charactercreation:habilidades";
+
 include ":tn:cooldown";
 
 program Install()
@@ -19,7 +19,7 @@ exported function GetHitsRegenRate(mobile)
 	var regen := base_regen + AP_GetVitalRegenRateMod(mobile, "hits");
 	
 	//No regen if poisoned
-	if ((isBloodied(mobile) || mobile.poisoned || GetObjProperty(mobile, "noheal")) && (!mobile.npctemplate))
+	if ( (mobile.poisoned || GetObjProperty(mobile, "noheal")) && (!mobile.npctemplate))
 		return 0;
 	endif	
 	

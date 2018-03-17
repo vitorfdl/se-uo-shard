@@ -31,7 +31,7 @@ program blessWater(info)
       return 0;
    endif
 
-   var fix_amount := 10 + AP_GetStat(who, WISDOM, RETURN_BONUS);
+   var fix_amount := 5 + (AP_GetTrueSkill(who, MILAGRE_DE_CURA) * 5);
    if (fix_amount > 5)
       fix_amount := 5;
    elseif (fix_amount < 1)
@@ -45,7 +45,7 @@ program blessWater(info)
       targ.hp := fix_amount+targ.hp;
    endif
 
-   targ.quality -= 0.3;
+   targ.quality -= 0.2;
 
    SetName(targ, targ.desc);
 

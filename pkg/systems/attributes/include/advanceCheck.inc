@@ -69,7 +69,7 @@ function ExpGain(mobile, difficulty, value := 0)
 // 		return 0;
 //    endif
   
-	var settings := AP_GetSettingsCfgElem("Skills");
+	// var settings := AP_GetSettingsCfgElem("Skills");
 	//verifica se ja não recebeu exp em 5 segundos
 	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 10;
 	if ( next_check > ReadGameClock() )

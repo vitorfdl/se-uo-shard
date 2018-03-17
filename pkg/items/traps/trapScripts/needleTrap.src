@@ -8,7 +8,7 @@ use util;
 include "include/client";
 include "include/say";
 include "include/damage";
-include ":charactercreation:habilidades";
+
 include ":traps:traps";
 
 program trapScript(params)

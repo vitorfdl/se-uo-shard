@@ -2,7 +2,7 @@ use uo;
 
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":charactercreation:habilidades";
+
 include "include/say";
 
 program skill_Stealth( who )
@@ -15,7 +15,7 @@ program skill_Stealth( who )
 		return 0;
 	endif
 
-	// if (!temHabilidade(who, "Movimento Acolchoado"))
+	// if (!HaveFeat(who, "Movimento Acolchoado"))
 	// 	SendSysMessageEx(who, "Você não consegue se mover furtivamente!", SSM_FAIL);
 	// 	return 0;		
 	// endif
@@ -23,7 +23,7 @@ program skill_Stealth( who )
 	var atual_steps := CInt(GetObjProperty(who, "#steathsteps"));
 	var diff := 16 + atual_steps;
 	// TODO: ADD dayligh check for difficulty
-	/*if (temHabilidade(who, "Misturar-se na Selva"))
+	/*if (HaveFeat(who, "Misturar-se na Selva"))
 		var region := GetRegionName(who);
 		if(region != "aghaja" && region != "zharkia")
 			diff := diff - 50;
@@ -49,7 +49,7 @@ program skill_Stealth( who )
 		who.stealthsteps := cint(base_steps);
 		/*
 		Removido pois agora Furtividade Aprimorada é como se fosse pra habilitar Stealth e não mais dar bonus
-		if (temHabilidade(who, "Furtividade Aprimorada"))
+		if (HaveFeat(who, "Furtividade Aprimorada"))
 			var bonus := cint(who.stealthsteps * 0.5);
 			who.stealthsteps := who.stealthsteps + bonus;
 			SendSysMessageEx(who, "Você ganhou " + bonus + " passos por sua furtividade aprimorada", SSM_INFO);

@@ -10,7 +10,7 @@ include ":alchemy:alchemy";
 include ":timedscripts:timedScripts";
 include ":gumps:gumps";
 include "include/say";
-include ":charactercreation:habilidades";
+
 
 
 const REAGENT_START := 0x0f78;
@@ -143,12 +143,12 @@ function FazPotion(who, item)
 	endforeach
 
 	if (recipes[objtype].magic)
-		if (!TemHabilidade(who, "Mestre da Alquimia") && !FindInBook(who, objtype))
+		if (!HaveFeat(who, "Mestre da Alquimia") && !FindInBook(who, objtype))
 			SendSysMessageEx(who, "Você não sabe a receita dessa formula.", SSM_FAIL);
 			return 1;
 		endif
 	else	
-		if (!TemHabilidade(who, "Boticário"))
+		if (!HaveFeat(who, "Boticário"))
 			SendSysMessageEx(who, "Você precisa de Boticario para inventar suas proprias pocoes.", SSM_FAIL);
 			return 1;
 		endif
@@ -261,7 +261,7 @@ function FalhaCritica(who, item)
 	EraseObjProperty(item, "reagentes");
 	EraseObjProperty(item, "reagamt");
 
-	if (TemHabilidade(who, "Alquimista Precavido"))
+	if (HaveFeat(who, "Alquimista Precavido"))
 		return 1;
 	endif
 

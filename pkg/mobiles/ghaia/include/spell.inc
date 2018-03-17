@@ -79,7 +79,6 @@ function Boss2Fight(opponent ,alerted := 0)
 		endif
 	endif
 
-	var dist;
 	while( me )
 
 		if (me.dead)
@@ -118,18 +117,18 @@ function Boss2Fight(opponent ,alerted := 0)
 			break;
 		endif
 
-		dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
-		if ( dist > 20)
-			if ( isBloodied(opponent) && TemHabilidade(opponent, "Furia") )
-				LogToFile(":fls_core:berserker.log", opponent.name+" ("+opponent.acctname+") peidou pra "+me.name+" em "+opponent.x+" "+opponent.y, LOG_DATETIME);
-				foreach x in EnumerateOnlineCharacters()
-					if (x.cmdlevel > 0)
-						SendSysMessageEx(x, opponent.name+" BERSERKER PEIDAO!", SSM_REQUEST);
-					endif
-				endforeach
-			endif
-			break;
-		endif
+		// dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
+		// if ( dist > 20)
+		// 	if (  HaveFeat(opponent, "Furia") )
+		// 		LogToFile(":fls_core:berserker.log", opponent.name+" ("+opponent.acctname+") peidou pra "+me.name+" em "+opponent.x+" "+opponent.y, LOG_DATETIME);
+		// 		foreach x in EnumerateOnlineCharacters()
+		// 			if (x.cmdlevel > 0)
+		// 				SendSysMessageEx(x, opponent.name+" BERSERKER PEIDAO!", SSM_REQUEST);
+		// 			endif
+		// 		endforeach
+		// 	endif
+		// 	break;
+		// endif
 
 		if (hasSpecial(me))
 			DoSpecial(me);

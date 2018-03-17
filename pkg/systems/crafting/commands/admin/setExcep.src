@@ -16,6 +16,7 @@ program setExcep(who)
          "skills":= array{}
       };
    endif
+   var helper := "custom_name:string (add sufixo);<br>hpmod:num (add item hp);<br>equipmod:toughmod int<br>equipmod:hitsmod int<br>equipmod:statmod int<br>equipmod:skill int<br>equipmod:rd_Fogo int";
 
    var item_types := array{"Armaduras", "Arcos", "Armas","Joias","Containers"}; 
    var skills := array{"Marcenaria", "Costura", "Ferraria"};
@@ -24,12 +25,13 @@ program setExcep(who)
    questions.append(struct{ "title" := "Quais craftings podem ser usadas?", "checkbox" := skills});
    questions.append(struct{ "title" := "Quais tipos de item podem ser usados?", "checkbox" := item_types} );
    questions.append(struct{ "title" := "Qual nível do recurso?", "marked" := 1, "radio" := {"0", "2", "4", "6", "8"} } );
-   questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := "custom_name:De Fogo"} );
+   questions.append(struct{ "title" := "Qual prop quer adicionar? (helper com botão em cima)", "marked" := "custom_name:De Fogo", "helper" := helper});
    questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := "hpmod:30"} );
-   questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := ""} );
+   questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := "equipmod:"} );
    questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := ""} );
    questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := ""} );
    var output := QuestionsGump(who, questions);
+   if (!output) return SendSysMessageEx(who, "Cancelado"); endif
 
    special_props.skills := output[1];
    special_props.equips := output[2];
@@ -41,8 +43,16 @@ program setExcep(who)
       if (prop)
          prop := SplitWords(prop, ":");
          if (prop.size() < 2) continue; endif
-
-         special_props.props[prop[1]] := prop[2];
+         if (prop[1]["rd_"])
+            prop[1]["rd_"] := "";
+            if (!(prop[1] in array{"Concussão", "Perfuração", "Corte", "Fogo", "Gelo", "Veneno", "Eletrecidade"}))
+               continue;
+            endif
+            if (!special_props.props.dmg_reduce) special_props.props.dmg_reduce := struct{}; endif
+            special_props.props.dmg_reduce[prop[1]] := cint(prop[2]);
+         else
+            special_props.props[prop[1]] := prop[2];
+         endif
       endif
    endfor
 

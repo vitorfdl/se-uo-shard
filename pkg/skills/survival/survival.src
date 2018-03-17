@@ -8,7 +8,7 @@ use cfgfile;
 
 include "include/client";
 include ":attributes:attributes";
-include ":charactercreation:habilidades";
+
 include ":fls_core:fls_characters";
 
 include "include/say";

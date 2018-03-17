@@ -391,7 +391,7 @@ function SendRoomGump(npc, player)
             var doors := quartos[input[0]].doors;
 				var lockid := AllocLockId();
 				var key := CreateItemInBackpack( player, "ironkey", 1 );
-            key.desc = "Quarto";
+            key.desc := "Quarto";
 				SetObjProperty( key, "LockId", lockid );
             foreach door in doors
                door := SystemFindObjectBySerial(door);

@@ -6,7 +6,7 @@ use uo;
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
 include "include/say";
-include ":charactercreation:habilidades";
+
 
 program medicineSkill(who)
 	SendSysMessageEx(who, "Quem você deseja examinar?", SSM_REQUEST);
@@ -77,7 +77,7 @@ endprogram
 //         return 0;
 // 	endif
 	
-// 	if (!TemHabilidade(who, "Observar Fisionomia"))
+// 	if (!HaveFeat(who, "Observar Fisionomia"))
 // 		SendSysMessageEX(who, "Parece uma criatura normal para você.", SSM_INFO);
 // 		return;
 // 	endif

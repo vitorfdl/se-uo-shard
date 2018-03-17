@@ -5,7 +5,7 @@ include ":keys:key";
 include ":gumps:requestgump";
 include "include/string";
 include "include/say";
-include ":charactercreation:habilidades";
+
 include ":attributes:attributes";
 
 program UseKey(who, key)

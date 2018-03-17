@@ -898,7 +898,7 @@
 0x1089 longnecklace metalworking
 0x108a ring metalworking
 # 0x108b unused
-0x108c lever tn
+0x108c lever levers
 # 0x108d - 0x10d3 unused
 0x10d4 SpiderWeb walkon
 # 0x10d5 - 0x10d8 unused

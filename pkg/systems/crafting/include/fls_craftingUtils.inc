@@ -166,7 +166,7 @@ function doRepair(who, craft_skill, recipe_cfg)
 	var craft_delay  := menu_config[craft_skill].CraftDelay;
 	var craft_action := menu_config[craft_skill].CraftAnim;
 
-   var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Maquina de Marcenaria"};
+   // var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Maquina de Marcenaria"};
 
 	var craft_loops  := GetConfigInt(elem, "delay")/ 2;
 	if (craft_loops == error || craft_loops < 1)

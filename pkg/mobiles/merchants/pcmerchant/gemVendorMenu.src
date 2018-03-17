@@ -17,7 +17,7 @@
 // include	":merchants:crafthelp";
 // include ":gumps:yesno";
 // include "include/say";    
-// include ":charactercreation:habilidades";
+// 
 // include ":ghaia:ghaiaUtil";
 
 // //Menu Position Constants

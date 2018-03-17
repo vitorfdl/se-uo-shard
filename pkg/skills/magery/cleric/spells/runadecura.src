@@ -7,7 +7,7 @@ include "include/sounds";
 include "include/say";
 include ":timedscripts:timedScripts";
 include "include/tileEffects";
-include ":charactercreation:habilidades";
+
 include ":ghaia:ghaiaUtil";
 include ":magery:tnmagery";
 include ":magery:basicMagery";

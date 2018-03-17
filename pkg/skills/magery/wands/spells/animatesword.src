@@ -13,7 +13,7 @@ include ":ghaia:ghaiaUtil";
 include ":ghaia:ghaia";
 include ":magery:summon";
 include ":taming:taming";
-include ":charactercreation:habilidades";
+
 
 program animateSword(params)
 	var who := params[1];

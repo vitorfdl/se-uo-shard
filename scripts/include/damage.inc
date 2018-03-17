@@ -14,7 +14,7 @@ include ":tn:cooldown";
 include ":ghaia:ghaiaUtil";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
-include ":charactercreation:habilidades";
+
 include "include/say";
 include ":blood:blood";
 include ":combat:combat";
@@ -232,14 +232,16 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		return;
 	endif
 
+   var dmg_reduce := GetObjProperty(defender, "dmg_reduce");
+   if (dmg_reduce)
+      if (type in dmg_reduce.keys())
+         dmg := dmg - cint((cdbl(dmg) * dmg_reduce[type]));
+      endif
+   endif
+   
 	DisplayDamage(defender, cint(dmg), source);
 	ApplyRawDamage(defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 	
-	if (isBloodied(defender))
-		RecalcVitals(defender);
-		MakeBleed(defender);
-	endif
-
 	if (source && type != DMG_FORCED)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);

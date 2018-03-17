@@ -67,7 +67,7 @@ program TrapWalkOn(mobile, trap)
 	// 			var dmg := CInt(RandomDiceRoll("1d10"));
 	// 			SendSysMessageEx(mobile, "Você ativou uma armadilha!", SSM_FAIL);
 	// 			if (rollResistDice(mobile, DEXTERITY) < 12)
-	// 				if (temHabilidade(mobile, "Evasao"))
+	// 				if (HaveFeat(mobile, "Evasao"))
 	// 					SendSysMessageEx(mobile, "Você escapou completamente da armadilha.", SSM_INFO);
 	// 					sleep(10);
 	// 					continue;
@@ -77,7 +77,7 @@ program TrapWalkOn(mobile, trap)
 	// 					dmg := CInt(dmg * 0.5);
 	// 				endif
 	// 			else
-	// 				if (temHabilidade(mobile, "Evasao Aprimorada"))
+	// 				if (HaveFeat(mobile, "Evasao Aprimorada"))
 	// 					SendSysMessageEx(mobile, "Por instinto você se livrou um pouco da armadilha.", SSM_INFO);
 	// 					tempo := 5;
 	// 					dmg := CInt(dmg * 0.5);

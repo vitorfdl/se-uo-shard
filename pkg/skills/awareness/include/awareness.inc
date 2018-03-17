@@ -3,7 +3,7 @@ include ":attributes:attributes";
 include ":itemUtils:itemdesc";
 include ":gumps:yesno";
 include ":traps:traps";
-include ":charactercreation:habilidades";
+
 include ":timedscripts:timedScripts";
 include "include/facings";
 

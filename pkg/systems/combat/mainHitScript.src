@@ -434,7 +434,7 @@ endfunction
 // 		var targ := list[RandomInt(list.size())+1 ];
 // 		if (GetVital(targ, HITS) > 0)
 // 			PrintText(attacker, "*trespassar*" );
-// 			if ( TemHabilidade(attacker, "Trespassar Critico") )
+// 			if ( HaveFeat(attacker, "Trespassar Critico") )
 // 				SetObjProperty(attacker, "#nextcritical", 1);
 // 			endif
 // 			attacker.attack_once(targ);

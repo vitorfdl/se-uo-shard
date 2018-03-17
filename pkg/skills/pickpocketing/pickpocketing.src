@@ -76,10 +76,10 @@ program skill_Stealing(mobile)
       diff := PickPocketDiff(targ, mobile, user_skill) + ((mobiles.size() -1) * 2);
    endif
 	// foreach people in ListMobilesNearLocationEx( mobile.x, mobile.y, mobile.z, 5, LISTEX_FLAG_HIDDEN, mobile.realm )
-	// 	if (!people.npctemplate && TemHabilidade(people, "Vigilante"))
+	// 	if (!people.npctemplate && HaveFeat(people, "Vigilante"))
 	// 		diff += 5;
 	// 	endif
-	// 	if (!people.npctemplate && TemHabilidade(people, "Mestre da Vigília"))
+	// 	if (!people.npctemplate && HaveFeat(people, "Mestre da Vigília"))
 	// 		diff += 5;
 	// 	endif
 	// endforeach
@@ -221,12 +221,12 @@ function PickPocketDiff(steal, mobile, user_skill)
    var diff := 0;
    if (steal.objtype IN {0xeed, 0xba64, 0xba65}) // moeda
       diff := 10 + CInt(steal.amount * 0.3);
-      // if (temHabilidade(mobile, "Ladrao de Bolsas"))
+      // if (HaveFeat(mobile, "Ladrao de Bolsas"))
       // 	diff := cint(diff * 0.5);
       // endif
    elseif (steal.objtype IN {0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70}) // joias
       diff := CInt(steal.weight*2);
-      // if (temHabilidade(mobile, "Ladrao de Bolsas"))
+      // if (HaveFeat(mobile, "Ladrao de Bolsas"))
       // 	diff := cint(diff * 0.5);
       // endif
    elseif (steal.objtype IN {0x1011, 0x100E, 0x100F, 0x1010, 0x1012, 0x1013}) // chaves

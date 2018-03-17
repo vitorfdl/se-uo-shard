@@ -5,7 +5,7 @@ use util;
 include ":attributes:attributes";
 include ":gumps:yesno";
 include "include/say";
-include ":charactercreation:habilidades";
+
 include ":fls_core:fls_characters";
 
 program corda(who, item)

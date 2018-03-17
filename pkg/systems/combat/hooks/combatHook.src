@@ -22,7 +22,7 @@ include "include/packets";
 include "include/facings";
 include "include/say";
 include "include/damage";
-// include ":charactercreation:habilidades";
+// 
 // include ":tn:cooldown";
 include ":timedscripts:timedScripts";
 include ":combat:settings";
@@ -47,7 +47,7 @@ endfunction
 // 	if ( armor )
 // 		var armr_elem := CS_GetSettingsCfgElem("Armor");
 // 		var wearchance := armr_elem.WearChance;
-// 		// if ( TemHabilidade(defender, "Conservar Equipamento"))
+// 		// if ( HaveFeat(defender, "Conservar Equipamento"))
 // 		// 	wearchance := wearchance/2;
 // 		// 	if (wearchance < 1)
 // 		// 		wearchance := 1;

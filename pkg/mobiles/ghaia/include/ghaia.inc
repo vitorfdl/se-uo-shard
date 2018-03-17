@@ -63,7 +63,7 @@ function CanFight(me, mobile)
    if (!mobile.npctemplate) //se for player olha a tendencia do npc
       if (me.alignment == ALIGN_EVIL) //npcs mme.alignmentos atacam todos os players
          //printtextabove(me, "mytemplate " + mytemplate + " " + cint(GetObjProperty(mobile, "empatiacomanimais"))); 
-         // if ( TemHabilidade(mobile, "Aliado da Natureza" )) //verifica se tem empatia por animais
+         // if ( HaveFeat(mobile, "Aliado da Natureza" )) //verifica se tem empatia por animais
          //     var templateList := array{
          //         "giantbat", "giantrat", "gianttoad", "giantserpent", "snake", "mongbat", "naja", "warg", "polarbear", "lynx", "cougar", "alligator",
          //         "panther", "grizzlybear", "wolf", "sapop"
@@ -71,7 +71,7 @@ function CanFight(me, mobile)
          //     if (mytemplate in templateList)
          //         if (isBoss(mobile)) //verifica se é boss
          //             return 1;
-         //         elseif ( TemHabilidade(mobile, "Aliado da Natureza 2" ) || Distance(me, mobile) > 5)
+         //         elseif ( HaveFeat(mobile, "Aliado da Natureza 2" ) || Distance(me, mobile) > 5)
          //             return 0;
          //         endif
          //     endif

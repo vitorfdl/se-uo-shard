@@ -1,0 +1,39 @@
+use os;
+use uo;
+include "include/say";
+include "include/client";
+include ":crafting:craftGumpFLS";
+program setExcep(who)
+   SendSysMessageEx(who, "Selecione o objeto", SSM_REQUEST);
+   var targ := Target(who);
+   if (!targ) return; endif
+
+   var special_props := struct{};
+   var helper := "toughmod:int<br>stammod:int<br>statmod<br>skill:int<br>rd_Fogo:int";
+
+   var questions := array{};
+   questions.append(struct{ "title" := "Qual prop quer adicionar? (deixar mouse em cima para o helper)", "marked" := "hitsmod:30", "helper" := helper} );
+   questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := ""} );
+   questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := ""} );
+   questions.append(struct{ "title" := "Qual prop quer adicionar?", "marked" := ""} );
+   var output := QuestionsGump(who, questions);
+   if (!output) return SendSysMessageEx(who, "Cancelado"); endif
+
+   for i := 1 to 8
+      sleepms(2);
+      var prop := output[i];
+      if (prop)
+         prop := SplitWords(prop, ":");
+         if (prop.size() < 2) continue; endif
+         if (prop[1]["rd_"])
+            prop[1]["rd_"] := "";
+            if (!special_props.dmg_reduce) special_props.dmg_reduce := struct{}; endif
+            special_props.dmg_reduce[prop[1]] := cdbl(prop[2]);
+         else
+            special_props[prop[1]] := prop[2];
+         endif
+      endif
+   endfor
+
+   SetObjProperty(targ, "equip", special_props);
+endprogram

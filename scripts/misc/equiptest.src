@@ -16,47 +16,46 @@ program EquipTest(mobile, item, start_up)
 	elseif ( mobile.npctemplate )
 		// NPCs can wear anything
 		return 1;
-	elseif ( mobile.cmdlevel )
-		// CmdLevel > 0 can equip anything.
-		return 1;
 	elseif ( item.isa(POLCLASS_CONTAINER) )	
 		// Makes backpacks always equippable.
 		return 1;
-	elseif ( (mobile.frozen) || (mobile.paralyzed) )
+	elseif ( (mobile.frozen) || (mobile.paralyzed) && !mobile.cmdlevel )
 		// Frozen players cant equip stuff
 		SendSysMessageEx(mobile, "Você esta incapaz de se movimentar para equipar isso.");
 		return 0;
 	endif
 
-	if ( item.graphic IN array{9920, 9930} )
-		var mounted := GetEquipmentByLayer(mobile, 0x19);
-		if ( !mounted )
-			SendSysMessageEx(mobile, "Você não pode equipar essa arma desmontado.");
-			return 0;
-		endif
-	endif
+	if ( !mobile.cmdlevel )
+      if ( item.graphic IN array{9920, 9930} )
+         var mounted := GetEquipmentByLayer(mobile, 0x19);
+         if ( !mounted )
+            SendSysMessageEx(mobile, "Você não pode equipar essa arma desmontado.");
+            return 0;
+         endif
+      endif
 
-	if ((item.isA(POLCLASS_ARMOR) || item.isA(POLCLASS_WEAPON)) && item.hp == 0)
-		SendSysMessageEx(mobile, "Você não pode equipar um item danificado.", SSM_FAIL);
-		return 0;
-	endif
+      if ((item.isA(POLCLASS_ARMOR) || item.isA(POLCLASS_WEAPON)) && item.hp == 0)
+         SendSysMessageEx(mobile, "Você não pode equipar um item danificado.", SSM_FAIL);
+         return 0;
+      endif
 
-	if (mobile.hidden)
-		var zones := CS_GetArmorZone(item);
-		if ("Body" IN zones || "Arms" IN zones || "Legs/feet" IN zones)
-			SendSysMessageEx(mobile, "Você apareceu ao colocar "+item.desc+".");
-			mobile.hidden := 0;
-			PrintText(mobile, "*aparece*");
-		endif
-	endif
-	
-	if (TS_GetCooldown(mobile, "metamorfose"))
-		SendSysMessageEx(mobile, "Você não pode equipar itens enquanto estiver metamorfoseado.", SSM_FAIL);
-		return 0;
-	elseif (GetObjProperty(mobile, "desarmar") && item.isa(POLCLASS_WEAPON))
-		SendSysMessageEx(mobile, "Você esta incapaz de armar-se.", SSM_FAIL);
-		return 0;		
-	endif
+      if (mobile.hidden)
+         var zones := CS_GetArmorZone(item);
+         if ("Body" IN zones || "Arms" IN zones || "Legs/feet" IN zones)
+            SendSysMessageEx(mobile, "Você apareceu ao colocar "+item.desc+".");
+            mobile.hidden := 0;
+            PrintText(mobile, "*aparece*");
+         endif
+      endif
+      
+      // if (TS_GetCooldown(mobile, "metamorfose"))
+      //    SendSysMessageEx(mobile, "Você não pode equipar itens enquanto estiver metamorfoseado.", SSM_FAIL);
+      //    return 0;
+      // elseif (GetObjProperty(mobile, "desarmar") && item.isa(POLCLASS_WEAPON))
+      //    SendSysMessageEx(mobile, "Você esta incapaz de armar-se.", SSM_FAIL);
+      //    return 0;		
+      // endif
+   endif
 
    SetObjProperty(item, "#EquippedOn", mobile.serial);
    //SetEquipmentMods(mobile, item);

@@ -19,7 +19,7 @@ function TemRequisito(who, habilidade, msg := 1)
 	var erro := 1;
 	var erromsg := "";
 	foreach req in requisitos
-		if ( !TemHabilidade(who, req) )
+		if ( !HaveFeat(who, req) )
 			erromsg := erromsg + " " + req;
 		else
 			erro := 0;
@@ -53,7 +53,7 @@ function retornaRequisitos( habilidade)
 	return requisitos;
 endfunction
 
-function TemHabilidade(who, habilidade)
+function HaveFeat(who, habilidade)
 	// var habs := GetObjProperty(who, "myhabs");
 
 	// foreach hab in habs

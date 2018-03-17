@@ -11,7 +11,7 @@ include ":attributes:attributes";
 include ":containers:containers";
 include ":itemutils:itemdesc";
 include "include/client";
-include ":charactercreation:habilidades";
+
 include "include/facings";
 include ":tn:cooldown";
 include ":timeUtils:time";

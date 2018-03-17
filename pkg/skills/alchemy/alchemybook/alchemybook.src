@@ -10,7 +10,7 @@ include ":tn:tngumps";
 include ":magery:tnmagery";
 include "include/say";
 include ":containers:containers";
-include ":charactercreation:habilidades";
+
 include ":attributes:attributes";
 include ":crafting:fls_crafting";
 

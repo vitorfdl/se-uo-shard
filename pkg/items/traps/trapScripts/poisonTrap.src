@@ -9,7 +9,7 @@ include "include/client";
 include "include/say";
 include "include/damage";
 include ":timedscripts:timedScripts";
-include ":charactercreation:habilidades";
+
 include ":traps:traps";
 
 program trapScript(params)
