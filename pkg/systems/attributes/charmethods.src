@@ -258,3 +258,12 @@ exported function isCaster(who)
 
    return 0;
 endfunction
+
+exported function getName(who)
+   var name := who.name;
+   if (name == "Desconhecido" || name =="Fantasminha")
+      var name := GetObjProperty(who, "realname");
+   endif
+   
+   return name;
+endfunction

@@ -22,9 +22,8 @@ const BUTTON_REM_NPC := 0x105;
 const BUTTON_CONTRACT_NPC := 0x110;
 const BUTTON_DISMISS_NPC := 0x115;
 
-const BUTTON_ADD_LAW := 0x200;
-const BUTTON_REM_LAW := 0x205;
-const BUTTON_TOGGLE_LAW := 0x225;
+const BUTTON_ADD_LAW = 0x200;
+const BUTTON_CHANGE_LAW = 0x225;
 
 var guild;
 
@@ -37,42 +36,104 @@ program faccao(params)
    endif
 
    guild := targ.guild;
-   var guild_leader := "Nenhum";
+   if (!guild)
+      return SendSysMessageEx(who, "Não pertene a uma facção", SSM_FAIL);
+   endif
+
+   var members := guild.members;
+   var guild_obj := GetFaccao(guild);
+   var guild_leader;
+   if (guild_obj.leader)
+      guild_leader := SystemFindObjectBySerial(guild_obj.leader);
+      members := RemoveFromArray(members, guild_leader);
+   endif
 
    var gump := GFCreateGump();
 	
 	GFPage(gump, 0);
-	GFResizePic(gump, 26, 19, 39925, 573, 417);
-	GFResizePic(gump, 48, 67, 9350, 172, 326);
-	GFTextLine(gump, 73, 70, 0, "Membros");
+	GFResizePic(gump, 26, 19, 39925, 573, 417); //background
+
 	GFResizePic(gump, 226, 29, 9350, 171, 34);
 	GFTextLine(gump, 259, 36, 0, "Ordem da Muralha");
-	GFResizePic(gump, 54, 398, 9350, 518, 29);
-	GFTextLine(gump, 82, 401, 0, "1578 moedas");
-	GFGumpPic(gump, 59, 402, 40022, 0);
-	GFGumpPic(gump, 491, 330, 40034, 0);
-	GFTextLine(gump, 67, 89, 0, "Duranor Ursobranco");
-	GFAddButton(gump, 49, 91, 5605, 248, GF_CLOSE_BTN, 0);
-	
-	GFPage(gump, 1);
-	GFResizePic(gump, 406, 64, 9350, 172, 277);
-	GFResizePic(gump, 228, 66, 9350, 172, 274);
+   
+	GFResizePic(gump, 48, 67, 9350, 172, 326); //members background
+	GFTextLine(gump, 73, 70, 0, "Membros");
+
+   GFAddButton(gump, 49, 91, 5605, 248, GF_CLOSE_BTN, BUTTON_CHANGE_PLAYER+guild_obj.leader);
+   var leader_name := guild_leader.getName();
+   if (!leader_name)
+      leader_name := "-";
+   endif
+   GFTextLine(gump, 67, 89, 0, "{}".format(leader_name));
+
+   foreach mob in members
+      var y := 109 + (18 * _mob_iter);
+      GFAddButton(gump, 49, y, 5605, 248, GF_CLOSE_BTN, BUTTON_CHANGE_PLAYER+mob.serial);
+      GFTextLine(gump, 67, y-2, 0, "{}".format(mob.getName()));
+      var permissions := guild.GetProp(mob.serial);
+      var permission_text := "";
+      if (permissions.above_guards) permission_text += "Controle de Guardas;"; endif
+      if (permissions.above_merchants) permission_text += "Controle de Mercadores;"; endif
+      if (permissions.above_members) permission_text += "Controle de Membros;"; endif
+      if (permissions.giveprivs) permission_text += "Controle de Permissões;"; endif
+      if (permissions.contractnpc) permission_text += "Contratar de Agentes;"; endif
+      if (permissions.fixitems) permission_text += "Controle de objetos;"; endif
+      if (permissions.unlockdoors) permission_text += "Controle de portas;"; endif
+      if (permissions.buyuniforms) permission_text += "Controle de Uniformes;"; endif
+      if (!permission_text) permission_text := "Nenhum privilégio"; endif
+
+      GFToolTipText(gump, permission_text);
+      sleepms(2);
+   endforeach
+
+   GFResizePic(gump, 228, 67, 9350, 172, 326); //leis background
+   GFTextLine(gump, 268, 72, 0, "Leis em Vigor");
+   foreach law in guild_obj.laws
+      GFAddButton(gump, 49, 91, 5605, 248, GF_CLOSE_BTN, BUTTON_CHANGE_LAW+_law_iter);
+      var law_desc := "";
+      if (law.item) law_name := "{} [{}]".format(law_name, law.item.desc); endif
+      if (law.race) law_name := "{} [{}]".format(law_name, law.race); endif
+      if (law.guild) law_name := "{} [{}]".format(law_name, FindGuild(law.guild).getProp(name)); endif
+      GFTextLine(gump, 67, 89, 0, "{}".format(law.name));
+      GFToolTipText(gump, law_desc);
+      sleepms(2);
+   endforeach
+
+   var total_soldo := 0;
+	GFResizePic(gump, 48+360, 67, 9350, 172, 326); //agents background
 	GFTextLine(gump, 427, 69, 0, "Agentes Contratados");
-	GFTextLine(gump, 268, 72, 0, "Leis em Vigor");
+   foreach npc in guild_obj.npcs_active
+      var mob := SystemFindObjectBySerial(npc.serial);
+      GFAddButton(gump, 426-18, 91, 5605, 248, GF_CLOSE_BTN, BUTTON_DISMISS_NPC+_npc_iter);
+      GFTextLine(gump, 426, 94, 0, "{}".format(mob.name));
+      var desc := "Soldo: {}<br>Tipo: {}".format(npc.price, npc.type);
+      total_soldo += npc.price;
+      GFToolTipText(gump, desc);
+      sleepms(2);
+   endforeach
+   
 	GFAddButton(gump, 192, 404, 1210, 248, GF_CLOSE_BTN, 0);
-	GFTextLine(gump, 211, 402, 0, "Banir");
-	GFTextLine(gump, 426, 94, 0, "Mercador D'Silva Sauro");
-	GFTextLine(gump, 426, 113, 0, "Guarda Alehandro Milcanto");
 	GFAddButton(gump, 408, 96, 5605, 248, GF_CLOSE_BTN, 0);
-	GFTextLine(gump, 405, 402, 0, "Soldo Total: 900 mo");
 	
-	GFPage(gump, 2);
-	GFResizePic(gump, 227, 67, 9350, 346, 326);
-	GFAddButton(gump, 362, 357, 2071, 2073, GF_CLOSE_BTN, 0);
+	// GFPage(gump, 2);
+	// GFResizePic(gump, 227, 67, 9350, 346, 326);
+	// GFAddButton(gump, 362, 357, 2071, 2073, GF_CLOSE_BTN, 0);
+
+
+	GFResizePic(gump, 54, 398, 9350, 518, 29);
+	GFGumpPic(gump, 491, 330, 40034, 0);
+	GFGumpPic(gump, 59, 402, 40022, 0);
+	GFTextLine(gump, 82, 401, 0, "{} moedas".format(guild_obj.money));
+	GFTextLine(gump, 405, 402, 0, "Soldo Total: {} mo".format(total_soldo));
+	// GFTextLine(gump, 211, 402, 0, "Banir");
+	// GFTextLine(gump, 211, 402, 0, "Uniformes");
 
 	var input := GFSendGump(who, gump);
 
    if (input[0] >= BUTTON_SETLEADER && input[0] <= BUTTON_BAN_PLAYER)
+   elseif (input[0] >= BUTTON_CHANGE_PLAYER)
+   elseif (input[0] >= BUTTON_CHANGE_PLAYER)
+   elseif (input[0] >= BUTTON_CHANGE_PLAYER)
    elseif (input[0] >= BUTTON_CHANGE_PLAYER)
 
    endif

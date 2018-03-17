@@ -119,8 +119,7 @@ function AddMember(faccao, mobile)
    var member_obj := struct{
       "above_guards" := 0, // can control guards
       "above_merchants" := 0, // can control merchants
-      "addmembers" := 0, // can add members
-      "removemembers" := 0, // can remove members
+      "above_members" := 0, // can add members
       "giveprivs" := 0, // can edit privs
       "contractnpc" := 0, // can contract npc
       "fixitems" := 0, // can fix items
