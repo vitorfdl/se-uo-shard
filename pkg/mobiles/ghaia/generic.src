@@ -17,6 +17,7 @@ var areasize;
 var custombehaviors;
 var flee_point   := 0.1;
 var mystate      := INITIALIZING;
+var healing_amount;
 
 program NPCMonitor()
    if (GetObjProperty(me, "%CooldownList%") || GetObjProperty(me, "%TimerList%"))
@@ -200,14 +201,19 @@ function Fight(opponent, alerted := 0)
       endif
 
       if (npccfgfile.Category == "moriquendi" && !GetObjProperty(me, "noheal"))
+         if (!healing_amount)
+            healing_amount := cdbl(AP_GetVitalMaximumValue(me, HITS)) * 0.6;
+         endif
+
          var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
          if (last_autoheal <= ReadGameClock())
-            var next_heal := 2;
+            var reduce_heal := 0;
             if (TS_GetCooldown(me, "divine_damage"))
-               next_heal += GetObjProperty(me, "#delay_heal"); 
+               reduce_heal := cdbl(GetObjProperty(me, "#reduce_heal")); 
             endif
-            SetObjProperty(me, "demon_heal", ReadGameClock() + next_heal);
-            HealFLS(me, 25);
+            SetObjProperty(me, "demon_heal", ReadGameClock() + 1);
+            
+            HealFLS(me, healing_amount - (healing_amount * reduce_heal));
          endif
       endif
 

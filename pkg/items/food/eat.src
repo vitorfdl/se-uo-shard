@@ -30,22 +30,7 @@ program eat_food(who, food)
 	var foodcfg := ReadConfigFile(":*:itemdesc");
 	var themsg;
 	var foodvalue := Cint(foodcfg[food.objtype].foodvalue);
-
-	var elem := foodcfg[food.objtype];
-	foreach line in getconfigstringarray(elem, "leftovers")
-		line := splitwords(line);
-		var item := line[1];
-		var amount := cint(line[2]);
-		if (!createiteminbackpack(who, item, amount))
-			for (amount; amount > 0; amount := amount-1) // For non-stackable items
-				createiteminbackpack(who, item, 1);
-			endfor
-		endif
-	endforeach
-
-	if ( CINT(getObjProperty(food, "blessedfood")) == 1 ) 
-		foodvalue := 5;
-	endif
+   var elem := foodcfg[food.objtype];
 
 	var surprisemsg := "";
 	var surpriseabove := "";
@@ -60,17 +45,25 @@ program eat_food(who, food)
 	endif
 	
 	var poisonInfo := GetObjProperty(food, "poisonInfo");
-	var foodcharge := GetObjProperty(food, "foodcharge");
+	var foodcharge := cint(GetObjProperty(food, "foodcharge"));
 	var subtract;
-	if (foodcharge)
-		if (foodcharge > 0)
-			subtract := "yes";
-			SetObjProperty(food, "foodcharge", foodcharge-1);
-		else
-			subtract := SubtractAmount(food, 1);
-		endif
+   if (foodcharge > 0)
+      subtract := "yes";
+      SetObjProperty(food, "foodcharge", foodcharge-1);
 	else
 		subtract := SubtractAmount(food, 1);
+
+      foreach line in getconfigstringarray(elem, "leftovers")
+         line := splitwords(line);
+         var item := line[1];
+         var amount := cint(line[2]);
+         if (!createiteminbackpack(who, item, amount))
+            for (amount; amount > 0; amount := amount-1) // For non-stackable items
+               createiteminbackpack(who, item, 1);
+            endfor
+         endif
+      endforeach
+
 	endif
 	
 	if(subtract)

@@ -287,16 +287,16 @@ endfunction
 function ApplyInscriptedRunes(attacker, defender, weapon, armor, damage)
    var inscripted := GetObjProperty(weapon, "inscripted");
    if (inscripted["Sagrada"] && defender.my_template()["moriquendi"])
-      var plus_time := 4;
+      var reduce_heal := 0.5;
       if (inscripted["Superior"])
-         plus_time += 3;
+         reduce_heal += 0.4;
       endif
 
-      if (cint(GetObjProperty(defender, "#delay_heal")) < plus_time)
-         SetObjProperty(defender, "#delay_heal", plus_time);
+      if (cint(GetObjProperty(defender, "#reduce_heal")) < reduce_heal)
+         SetObjProperty(defender, "#reduce_heal", reduce_heal);
       endif
 
-      TS_StartCooldown(defender, "divine_damage", 5);
+   TS_StartCooldown(defender, "run", 10);
    endif
 endfunction
 

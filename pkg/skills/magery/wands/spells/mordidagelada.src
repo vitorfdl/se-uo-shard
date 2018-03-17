@@ -18,7 +18,7 @@ program animateSword(params)
 
 
    PlayObjectCenteredEffect( targ, 0x3728, 1, 10 );
-   var dice := MageDiceTable("C", spell_info.powered);
+   var dice := MageDiceTable("C", cint(spell_info.powered));
 
    var roll_dice := RandomDiceRoll(dice);
    DamageFLS(targ, roll_dice, "Gelo", who);

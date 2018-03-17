@@ -201,14 +201,13 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
    if (!powered) powered := 1; endif
 
 	WriteSpellInfo(spell_entry);
-	spell_entry.description := "<BASEFONT COLOR=#000066>{}<br>{}<br><br> <BASEFONT COLOR=#330000> Componentes <br>".format(cstr(spell_entry.description), cstr(spell_entry.flavortext));
-
-	var regkeys := spell_entry.reagents.keys();
-	foreach r in (regkeys)
-		spell_entry.description := "{}{} {}<br>".format(spell_entry.description, cstr( r ), cstr(spell_entry.reagents[cstr(r)]));
-      sleepms(2);
-	endforeach
-	spell_entry.description := "{}Mana: {}".format(spell_entry.description, spell_entry.mana);
+	spell_entry.description := "<BASEFONT COLOR=#000066>{}<br>{}<br><br>".format(cstr(spell_entry.description), cstr(spell_entry.flavortext));
+   spell_entry.description += "<BASEFONT COLOR=#330000>Círculo: {}<br> Mana: {}<br> Cargas: {}".format(spell_entry.circle, spell_entry.mana, cint(spell_entry.charges) * powered);
+	// var regkeys := spell_entry.reagents.keys();
+	// foreach r in (regkeys)
+	// 	spell_entry.description := "{}{} {}<br>".format(spell_entry.description, cstr( r ), cstr(spell_entry.reagents[cstr(r)]));
+   //    sleepms(2);
+	// endforeach
 	if( TypeOf(spell_entry) == "Struct" )
 		if( spell_entry.name )
          spell_entry.name += " {}".format(convertToRoman(powered));
