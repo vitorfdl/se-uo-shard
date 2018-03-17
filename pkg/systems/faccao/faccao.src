@@ -7,6 +7,7 @@ include ":faccao:npc";
 include ":faccao:faccao";
 include ":faccao:laws";
 include ":gumps:gumps";
+include ":tn:tngumps";
 
 const BUTTON_SETLEADER := 0x2;
 const BUTTON_ADD_PLAYER := 0x3;
@@ -22,22 +23,34 @@ const BUTTON_REM_NPC := 0x105;
 const BUTTON_CONTRACT_NPC := 0x110;
 const BUTTON_DISMISS_NPC := 0x115;
 
-const BUTTON_ADD_LAW = 0x200;
-const BUTTON_CHANGE_LAW = 0x225;
+const BUTTON_ADD_LAW := 0x200;
+const BUTTON_CHANGE_LAW := 0x225;
+
+const BTN_FACCAO := 0x100;
+const BTN_NEW_FACCAO := 0x4;
 
 var guild;
 
 program faccao(params)
    var who := params;
    var targ := params;
+   var cmd;
    if (typeof(params) == "Array")
       who := params[1];
       targ := params[2];
+      cmd := params[3];
    endif
 
-   guild := targ.guild;
+   if (cmd == "guild")
+      guild := FindGuild(targ);
+   elseif (cmd)
+      return Faccoes(who);
+   else
+      guild := targ.guild;
+   endif
+
    if (!guild)
-      return SendSysMessageEx(who, "Não pertene a uma facção", SSM_FAIL);
+      return SendSysMessageEx(who, "Não pertence a uma facção", SSM_FAIL);
    endif
 
    var members := guild.members;
@@ -53,8 +66,8 @@ program faccao(params)
 	GFPage(gump, 0);
 	GFResizePic(gump, 26, 19, 39925, 573, 417); //background
 
-	GFResizePic(gump, 226, 29, 9350, 171, 34);
-	GFTextLine(gump, 259, 36, 0, "Ordem da Muralha");
+	GFResizePic(gump, 228, 29, 9350, 171, 34);
+	GFHtmlArea(gump, 232, 36, 165, 20, "<center><BASEFONT size=5>{}".format(guild_obj.name));
    
 	GFResizePic(gump, 48, 67, 9350, 172, 326); //members background
 	GFTextLine(gump, 73, 70, 0, "Membros");
@@ -88,12 +101,12 @@ program faccao(params)
 
    GFResizePic(gump, 228, 67, 9350, 172, 326); //leis background
    GFTextLine(gump, 268, 72, 0, "Leis em Vigor");
-   foreach law in guild_obj.laws
+   foreach law in (guild_obj.laws)
       GFAddButton(gump, 49, 91, 5605, 248, GF_CLOSE_BTN, BUTTON_CHANGE_LAW+_law_iter);
       var law_desc := "";
-      if (law.item) law_name := "{} [{}]".format(law_name, law.item.desc); endif
-      if (law.race) law_name := "{} [{}]".format(law_name, law.race); endif
-      if (law.guild) law_name := "{} [{}]".format(law_name, FindGuild(law.guild).getProp(name)); endif
+      if (law.item) law_desc := "Item: {}".format(law.item.desc); endif
+      if (law.race) law_desc := "Raça: {}".format(law.race); endif
+      if (law.guild) law_desc := "Facção: {}".format(FindGuild(law.guild).getProp("name")); endif
       GFTextLine(gump, 67, 89, 0, "{}".format(law.name));
       GFToolTipText(gump, law_desc);
       sleepms(2);
@@ -102,7 +115,7 @@ program faccao(params)
    var total_soldo := 0;
 	GFResizePic(gump, 48+360, 67, 9350, 172, 326); //agents background
 	GFTextLine(gump, 427, 69, 0, "Agentes Contratados");
-   foreach npc in guild_obj.npcs_active
+   foreach npc in (guild_obj.npcs_active)
       var mob := SystemFindObjectBySerial(npc.serial);
       GFAddButton(gump, 426-18, 91, 5605, 248, GF_CLOSE_BTN, BUTTON_DISMISS_NPC+_npc_iter);
       GFTextLine(gump, 426, 94, 0, "{}".format(mob.name));
@@ -123,10 +136,10 @@ program faccao(params)
 	GFResizePic(gump, 54, 398, 9350, 518, 29);
 	GFGumpPic(gump, 491, 330, 40034, 0);
 	GFGumpPic(gump, 59, 402, 40022, 0);
-	GFTextLine(gump, 82, 401, 0, "{} moedas".format(guild_obj.money));
-	GFTextLine(gump, 405, 402, 0, "Soldo Total: {} mo".format(total_soldo));
-	// GFTextLine(gump, 211, 402, 0, "Banir");
-	// GFTextLine(gump, 211, 402, 0, "Uniformes");
+	GFTextLine(gump, 82, 401, 0, "{} moedas".format(cint(guild_obj.money)));
+	GFTextLine(gump, 405, 401, 0, "Soldo Total: {} mo".format(total_soldo));
+	GFTextLine(gump, 205, 401, 0, "Banimentos");
+	GFTextLine(gump, 310, 401, 0, "Uniformes");
 
 	var input := GFSendGump(who, gump);
 
@@ -138,6 +151,48 @@ program faccao(params)
 
    endif
 endprogram
+
+function Faccoes(who)
+   var gump := GFCreateGump();
+   GFResizePic(gump, 84, 90, 9260, 280, 260);
+
+   GFGumpPicTiled(gump, 100,100,30,235,10460);
+   GFGumpPicTiled(gump, 320,100,30,235,10460);
+   
+   var y := 120;
+
+
+   var guilds := ListGuilds();
+   foreach guild in guilds
+      GFTextLine(gump, 170, y, 2100, "{}".format(guild.GetProp("name")));
+      // GFTextLine(gump, 220, y, 2103, "{}".format(chardata.raca));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_FACCAO+_guild_iter);
+      y+= 20;
+      sleepms(2);
+   endforeach
+   y+=10;
+   GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_NEW_FACCAO);
+   GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#0555D4><center>Nova Facção", 1);
+
+   var input := GFSendGump(who, gump)[0];
+
+   if (input >= BTN_FACCAO)
+      var g := guilds[input - BTN_FACCAO];
+      start_script(":faccao:faccao", array{who, g.guildid, "guild"});
+   elseif (input == BTN_NEW_FACCAO)
+      var questions := array{};
+      questions.append(struct{ "title" := "Nome da facção?", "marked" := ""} );
+      questions.append(struct{ "title" := "Area de poder? x1 y1 x2 y2", "marked" := ""} );
+      questions.append(struct{ "title" := "Dinheiro inicial?", "marked" := "0"} );
+      var output := QuestionsGump(who, questions);
+      if (!output) return SendSysMessageEx(who, "Cancelado"); endif
+      var area := SplitWords(output[2]);
+      if (area.size() < 4) return SendSysMessageEx(who, "Area inválida"); endif
+
+      CreateFaccao(output[1], area, cint(output[3]));
+      Faccoes(who);
+   endif
+endfunction
 
 function guildHandler(guild, param)
 

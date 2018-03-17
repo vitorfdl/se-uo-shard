@@ -15,7 +15,7 @@ use guilds;
 // ###########################################
 
 
-function CreateFaccao(name, rect)
+function CreateFaccao(name, rect, money := 0)
    if (!name || typeof(name) != "String") return 0; endif
    var guild := CreateGuild();
    guild.setProp("name", name);
@@ -24,6 +24,7 @@ function CreateFaccao(name, rect)
    guild.setProp("npcs", array{});
    guild.setProp("report", array{"Facção Criada"});
    guild.setprop("area", rect);
+   guild.setprop("money", 0);
    guild.setprop("uniforms", array{});
    guild.setprop("link_to", 0);
 
@@ -40,10 +41,10 @@ function GetFaccao(guild)
    var faccao_obj := struct{
       "name"     := guild.GetProp("name"),
       "npcs"     := guild.GetProp("npcs"),
-      "npcs_active"     := guild.GetProp("npcs_active"),
+      "npcs_active"  := guild.GetProp("npcs_active"),
       "laws"     := guild.GetProp("laws"),
       "leader"   := guild.GetProp("leader"),
-      "area"     := guild.GetProp("area")
+      "area"     := guild.GetProp("area"),
       "uniforms" := guild.GetProp("uniforms")
    };
 
