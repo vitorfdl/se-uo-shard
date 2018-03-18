@@ -351,51 +351,7 @@ function guildHandler(who, input)
          guild.SetProp("uniforms", uniform_list);
 
          SendSysMessageEx(who, "Uniforme adicionado");
-      elseif (output == options.size())
-         return;
-      else
-         if (who.cmdlevel) 
-            output -= 1;
-            if (!YesNo(who, "O que deseja fazer?", "Criar Uniforme", "Remover Uniforme"))
-               guild_obj.uniforms.Erase(output);
-               guild.SetProp("uniforms", guild_obj.uniforms);
-            endif
-         endif
-
-        if (!ConsumeSubstance(who.backpack, 0xE34, 1) && !who.cmdlevel)
-            SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
-            return;
-         endif
-
-         var uniform := guild_obj.uniforms[output];
-         var props := struct{};
-         props.name := uniform.name;
-         props.difficulty := 14;
-         props.colored := 0;
-         props.mark := 1;
-         props.exceptional := 1;
-         props.delay := 2;
-         props.materials := uniform.materials;
-         props.requires := array{};
-         props.fastcraft := 0;
-         props.craft_skill := uniform.craft_skill;
-         props.pieces := uniform.pieces;
-
-         var item := CreateItemInbackpack(who, 0x46AE);
-         foreach prop in (props.keys())
-            SetObjProperty(item, prop, props[prop]);
-            sleepms(2);
-         endforeach
-
-      // "mark"        := GetConfigInt(elem, "mark"),
-      // "exceptional" := GetConfigInt(elem, "exceptional"),
-      // "delay"       := GetConfigInt(elem, "delay"),
-      // "fastcraft"       := GetConfigInt(elem, "fastcraft"),
-      // "more"       := GetConfigInt(elem, "more"),
-      // "materials"  := materials,
-      // "main_material" := elem.main_material,
-      // "requires"   :=  GetConfigStringArray(elem, "requires")
-      elseif (input == BUTTON_CHANGE_DOORS)
+     elseif (input == BUTTON_CHANGE_DOORS)
          var area := guild_obj.area;
          SendSysMessageEx(who, "Qual porta deseja modificar?", SSM_REQUEST);
          var targ := Target(who);
@@ -452,6 +408,41 @@ function guildHandler(who, input)
             DestroyItem(fechadura);
             SendSysMessageEx(who, "Você instalou a fechadura com sucesso.", SSM_INFO);
          endif
+      elseif (output == options.size())
+         return;
+      else
+         if (who.cmdlevel) 
+            output -= 1;
+            if (!YesNo(who, "O que deseja fazer?", "Criar Uniforme", "Remover Uniforme"))
+               guild_obj.uniforms.Erase(output);
+               guild.SetProp("uniforms", guild_obj.uniforms);
+            endif
+         endif
+
+        if (!ConsumeSubstance(who.backpack, 0xE34, 1) && !who.cmdlevel)
+            SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
+            return;
+         endif
+
+         var uniform := guild_obj.uniforms[output];
+         var props := struct{};
+         props.name := uniform.name;
+         props.difficulty := 14;
+         props.colored := 0;
+         props.mark := 1;
+         props.exceptional := 1;
+         props.delay := 2;
+         props.materials := uniform.materials;
+         props.requires := array{};
+         props.fastcraft := 0;
+         props.craft_skill := uniform.craft_skill;
+         props.pieces := uniform.pieces;
+
+         var item := CreateItemInbackpack(who, 0x46AE);
+         foreach prop in (props.keys())
+            SetObjProperty(item, prop, props[prop]);
+            sleepms(2);
+         endforeach
       endif
    endif
 endfunction
