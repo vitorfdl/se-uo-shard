@@ -45,7 +45,7 @@ program runScript_CharProfileRequest( params )
 	var chr := SystemFindObjectBySerial(id);
 	if( !chr.isa(POLCLASS_MOBILE) )
 		return 0; //don't bother working on nonexistant or items :P
-   elseif (chr["Desconhecido"])
+   elseif (chr.name["Desconhecido"])
       return 0;
 	endif
 

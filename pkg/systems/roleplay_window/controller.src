@@ -29,7 +29,7 @@ program AC_start(who)
 
       var mobiles_around := ListMobilesInLineOfSight( who, 5 );
       foreach mob in mobiles_around
-         if( mob.acctname && !(mob.serial in already_saw) && !mob["Desconhecido"])
+         if( mob.acctname && !(mob.serial in already_saw) && !mob.name["Desconhecido"])
             var cp_datafile := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
             var cp_elem     := DFFindElement(cp_datafile, mob.serial, DF_CREATE);
             var cp_profile  := DFGetProp(cp_elem, "Profile");
