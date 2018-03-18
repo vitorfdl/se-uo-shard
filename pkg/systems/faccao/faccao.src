@@ -295,7 +295,7 @@ function guildHandler(who, input)
       elseif (!(targ.x >= area[1] && targ.x <= area[3] && targ.y >= area[2] && targ.y >= area[4]))
          return SendSysMessageEx(who, "Você está fora da sua área de poder."); 
       endif
-
+      var options := array{};
       var ref_key := GetObjProperty(targ, "LockId");
       if (ref_key)
          options.append("Copiar chave");
