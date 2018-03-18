@@ -125,7 +125,7 @@ function AddMember(faccao, mobile)
       "contractnpc" := 0, // can contract npc
       "fixitems" := 0, // can fix items
       "unlockdoors" := 0, // can unlock doors
-      "buyuniforms" := 0, // can buy uniform recipes
+      "buyuniforms" := 0 // can buy uniform recipes
    };
 
    faccao.SetProp(mobile.serial, member_obj);
@@ -167,6 +167,13 @@ function EditMember(guild, serial, props)
 endfunction
 
 function RemMember(faccao, mobile)
+   if (!mobile.isA(POLCLASS_MOBILE))
+      mobile := SystemFindObjectBySerial(mobile, SYSFIND_SEARCH_OFFLINE_MOBILES);
+   endif
+
+   if (faccao.GetProp("leader") == mobile.serial)
+      faccao.SetProp("leader", 0x0);
+   endif
    faccao.removemember(mobile);
    faccao.EraseProp(mobile.serial);
 endfunction

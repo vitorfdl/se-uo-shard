@@ -26,6 +26,7 @@ include "include/damage";
 include "include/utils";
 include ":timedscripts:timedScripts";
 include ":combat:settings";
+include ":mounts:mounts";
 include ":fls_core:fls_characters";
 
 var item_cff  := ReadConfigFile(":*:itemdesc");
@@ -58,8 +59,8 @@ program Attack(params)
          return 1;
       endif
    elseif ( GetEquipmentByLayer(attacker, LAYER_MOUNT) )
-      if (AP_GetTrueSkill(who, MONTARIA) <= 4)
-
+      if (AP_GetTrueSkill(attacker, MONTARIA) <= 4)
+         return 0;
       endif
 	endif
 
@@ -129,6 +130,13 @@ program Attack(params)
 
    if (wpn_a_elem.WeaponType)
       attacker.SetAchievement(wpn_a_elem.WeaponType, 1);
+   endif
+
+   if ( GetEquipmentByLayer(defender, LAYER_MOUNT) )
+      var roll_mount := rollAttrDice(defender, DEXTERITY) + getSkillBonus(defender, MONTARIA);
+      if (roll_mount <= 23)
+         MP_UnMount(defender);
+      endif
    endif
 
 	//ACERTOU

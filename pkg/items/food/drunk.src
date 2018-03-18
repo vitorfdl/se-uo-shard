@@ -11,7 +11,7 @@ Const ACTION_BOW	:= 0x0020;
 Const ACTION_FALL	:= 0x0016;
 
 function Dismount (character, mount := 0)
-	return MP_Unmount(who);
+	return MP_Unmount(character);
 endfunction
 
 program drunk (character)

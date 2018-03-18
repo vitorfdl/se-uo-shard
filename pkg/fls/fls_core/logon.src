@@ -4,5 +4,7 @@ use os;
 program SendTips(who)
    start_script(":fls_core:tn/character_control", who);
    start_script(":fls_core:tn/expbar", array{who, who.cmdlevel});
+   start_script(":roleplay_window:controller", who);
+   start_script(":roleplay_window:window", who);
 endprogram
 

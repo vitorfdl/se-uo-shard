@@ -202,7 +202,7 @@ function Fight(opponent, alerted := 0)
 
       if (npccfgfile.Category == "moriquendi" && !GetObjProperty(me, "noheal"))
          if (!healing_amount)
-            healing_amount := cdbl(AP_GetVitalMaximumValue(me, HITS)) * 0.6;
+            healing_amount := cdbl(AP_GetVitalMaximumValue(me, HITS)) * 0.4;
          endif
 
          var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
@@ -212,8 +212,8 @@ function Fight(opponent, alerted := 0)
                reduce_heal := cdbl(GetObjProperty(me, "#reduce_heal")); 
             endif
             SetObjProperty(me, "demon_heal", ReadGameClock() + 1);
-            
-            HealFLS(me, healing_amount - (healing_amount * reduce_heal));
+            printtext(me, cint(healing_amount - (healing_amount * reduce_heal)));
+            HealFLS(me, cint(healing_amount - (healing_amount * reduce_heal)));
          endif
       endif
 

@@ -30,7 +30,7 @@ function StartScript(mobile, attacker := 0, level := 0)
          if (sela)
             SetObjProperty(mount_ref, "sela_hp", sela-1);
          elseif (!mobile.cmdlevel)
-            PrintText(who, "*arreio se rompe*", SSM_FAIL);
+            PrintText(mobile, "*arreio se rompe*", SSM_FAIL);
             EraseObjProperty(mount_ref, "sela_hp");
             MP_Unmount(mobile);
             break;

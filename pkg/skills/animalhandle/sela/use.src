@@ -6,7 +6,7 @@ include ":taming:taming";
 include ":mounts:mounts";
 
 program useSela(who, item)
-   if (AP_GetTrueSkill(who, TRATO_DE_ANIMAIS) <= 0)
+   if (AP_GetTrueSkill(who, MONTARIA) <= 0)
       return SendSysMessageEx(who, "Você não tem conhecimento para usar isso", SSM_FAIL);
    endif
 

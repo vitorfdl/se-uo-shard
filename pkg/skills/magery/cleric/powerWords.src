@@ -14,11 +14,11 @@ program clericPowerWords(parms)
    var pid := GetPid();
    SetObjProperty(who, "#clericpid", pid);
 
+   RegisterForSpeechEvents( who, 3 );
+   EnableEvents( SYSEVENT_SPEECH, 1 );
+   
    var event;
    while(who.connected)
-      RegisterForSpeechEvents( who, 1 );
-      EnableEvents( SYSEVENT_SPEECH, 1 );
-
       event := wait_for_event( 120 );
       if ( event && !who.dead && event.source ==  who && event.type == SYSEVENT_SPEECH)
          var cleric_list := GetObjProperty(who, "cleric_list");

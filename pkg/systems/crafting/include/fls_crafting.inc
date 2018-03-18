@@ -246,7 +246,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
    var bonus_diff := 0;
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
-      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone"} || (typeof(thing) == "String" && thing["monsterpart"]))
+      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone", "planta"} || (typeof(thing) == "String" && thing["monsterpart"]))
 			var ret := MaterialSelection(who, thing, 1, craft_skill);
 			if (!ret)
 				SendSysMessageEx(who, "você não possui os materiais necessarios.", SSM_FAIL);
@@ -368,7 +368,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 			endif
 
          foreach item_objtype in item_list
-            theitem := CreateItem(who, recipe.objtype, more);
+            theitem := CreateItem(who, item_objtype, more);
             if(!theitem)
                SendSysMessageEx(who, "você não tem espaço suficiente na sua mochila!", SSM_FAIL);
                return theitems;
@@ -397,7 +397,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             CraftLockable(who, theitem);
 
             ExpGain(who, recipe.difficulty, check);
-            SetObjProperty(who, "#craft_last", recipe.objtype);
+            SetObjProperty(who, "#craft_last", item_objtype);
             who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
             SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
          

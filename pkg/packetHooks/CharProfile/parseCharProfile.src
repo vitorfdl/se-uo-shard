@@ -45,6 +45,8 @@ program runScript_CharProfileRequest( params )
 	var chr := SystemFindObjectBySerial(id);
 	if( !chr.isa(POLCLASS_MOBILE) )
 		return 0; //don't bother working on nonexistant or items :P
+   elseif (chr["Desconhecido"])
+      return 0;
 	endif
 
 	var cp_data_file  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);

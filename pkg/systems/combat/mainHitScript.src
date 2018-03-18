@@ -296,7 +296,7 @@ function ApplyInscriptedRunes(attacker, defender, weapon, armor, damage)
          SetObjProperty(defender, "#reduce_heal", reduce_heal);
       endif
 
-   TS_StartCooldown(defender, "run", 10);
+      TS_StartCooldown(defender, "divine_damage", 10);
    endif
 endfunction
 

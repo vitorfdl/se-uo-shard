@@ -460,7 +460,7 @@ function GetCustom(targ, property)
 		"gotten_item_serial":
 			return targ.GetGottenItem().serial;
 		"experiência":
-			return "{} - {} / {}".format(targ.GetTotalExp(), targ.GetExp(),targ.getMaxExp());
+			return "{} - {} / {}".format(cint(targ.GetTotalExp()), cint(targ.GetExp()), cint(targ.getMaxExp()));
 		"data_de_criação":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
       "tempo_de_vida":

@@ -19,9 +19,38 @@ include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
 
-   var targ := Target(who);
-   var chardata := GetObjproperty(targ, "chardata");
-   print(chardata);
+	var width := 164;
+   var height := 163;
+   while (who.connected)
+	   var gump := GFCreateGump();
+      GFPage(gump, 0);
+      GFSetId(gump, 0x977);
+      GFResizePic(gump, 9, 7, 9270, width, height);
+      GFAddButton(gump, width-4, 7, 5601, 5605, GF_CLOSE_BTN, 5);
+      GFAddButton(gump, width-4, height-5, 5602, 5606, GF_CLOSE_BTN, 6);
+      
+      GFAddAlphaRegion(gump, 21, 19, width-25, height-24);
+      GFHTMLArea(gump,  23, 21, width-25, height-26, "<basefont color=#FAFAFA>Você vê homem desnudo gostoso pra kct na sua frente, uma piroca gigante e deliciosa com goza escorrendo pela cabecinha.", 0, 1);
+      
+      var input := GFSendGump(who, gump)[0];
+
+      if (input == 5)
+         width += 80;
+         if (width >= 400)
+            width := 164;
+         endif
+      elseif (input == 6)
+         height += 20;
+         if (height >= 300)
+            height := 163;
+         endif
+      else
+         break;
+      endif
+   endwhile
+   // var targ := Target(who);
+   // var chardata := GetObjproperty(targ, "chardata");
+   // print(chardata);
    // AP_SetStatMod(who, "exp", 2600);
    // who.SetExp(7000);
    // SendSysMessageEx(who, ""+chardata.storedexp);

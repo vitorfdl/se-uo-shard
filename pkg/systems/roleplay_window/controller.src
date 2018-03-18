@@ -1,0 +1,62 @@
+use uo;
+use os;
+
+include "include/sysEvent";
+include "include/say";
+include ":datafile:datafile";
+
+program AC_start(who)
+   detach();
+   var oldpid := GetObjProperty(who, "#roleplay");
+   if (oldpid)
+      var process := GetProcess(oldpid);
+      process.kill();
+   endif
+
+   SetObjProperty(who, "#roleplay", GetPid());
+   RegisterForSpeechEvents( who, 3 );
+   var last_see := array{};
+   var already_saw := array{};
+   SetObjProperty(who, "last_see", last_see);
+
+   while (who.connected)		
+      var event := wait_for_event(2);
+      var trig := 0;
+      if (event.type == 0x456 && !(event.id in already_saw))
+         last_see.Insert(1, event.text);
+         already_saw.append(event.id);
+      endif
+
+      var mobiles_around := ListMobilesInLineOfSight( who, 5 );
+      foreach mob in mobiles_around
+         if( mob.acctname && !(mob.serial in already_saw) && !mob["Desconhecido"])
+            var cp_datafile := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
+            var cp_elem     := DFFindElement(cp_datafile, mob.serial, DF_CREATE);
+            var cp_profile  := DFGetProp(cp_elem, "Profile");
+            cp_profile := CChrz(cp_profile);
+            if (cp_profile)
+               var charname := SplitWords(mob.name)[1];
+               cp_profile := "<BASEFONT color=#AAAAAA>Você vê: <BASEFONT color=#FFA500>{} <BASEFONT color=#FAFAFA>{}".format(charname, cp_profile);
+               last_see.Insert(1, cp_profile);
+               already_saw.append(mob.serial);
+               SendSysMessage(who, "-> Personagem Avistado.");
+               trig := 1;
+            endif
+         endif
+         sleepms(2);
+      endforeach
+      
+      if (trig)
+         if (last_see.size() > 10)
+            last_see.Erase(last_see.size());
+         endif
+         SetObjProperty(who, "last_see", last_see);
+         CloseGump(who, 0x977, 1);
+         sleepms(100);
+         start_script(":roleplay_window:window", who);
+         sleepms(2);
+      endif
+   endwhile
+		
+	return 1;
+endprogram

@@ -112,6 +112,19 @@ function skillWindow(who)
 		   start_script(":fls_core:tn/expbar", array{who});
       endif
       skillWindow(who);
+	elseif(input[0] == 72)
+      var pid := GetObjProperty(who, "#roleplay");
+      if (pid)
+         EraseObjProperty(who, "#roleplay");
+         var process := GetProcess(pid);
+         process.kill();
+         CloseGump(who, 0x977, 1);
+         sleep(2);
+         CloseGump(who, 0x977, 1);
+      else
+         start_script(":roleplay_window:controller", who);
+         start_script(":roleplay_window:window", who);
+      endif
 	endif
 endfunction
 
@@ -149,6 +162,7 @@ function buildGump(who)
 	GFSetID(gump, GUMPID_SKILLLIST);
 	GFAddButton(gump, 501, 470, 2445, 2445, GF_CLOSE_BTN, 70); //Comprar Talento
 	GFAddButton(gump, 377, 470, 2445, 2445, GF_CLOSE_BTN, 71); //Comprar Talento
+	GFAddButton(gump, 377-100, 470, 2445, 2445, GF_CLOSE_BTN, 72); //Comprar Talento
    
 	GFResizePic(gump, 19, 246, 5170, 613, 255);
 	GFResizePic(gump, 243, 28, 5170, 388, 216);
@@ -215,6 +229,9 @@ function buildGump(who)
 	// GFGumpPic(gump, 581, 55, 4033, 1259);
 	// GFGumpPic(gump, 577, 59, 4033, 1259);
 	// GFTooltipText(gump, "<BASEFONT color=#cece00 size=4>Lista de Talentos disponíveis");
+   GFResizePic(gump, 400-100, 476, 9350, 80, 18);
+	GFHTMLArea(gump, 406-101, 476, 100, 24, "<BASEFONT SIZE=2 COLOR=#003d00>Janela Roleplay", 0);
+
    GFResizePic(gump, 400, 476, 9350, 80, 18);
 	GFHTMLArea(gump, 406, 476, 100, 24, "<BASEFONT SIZE=2 COLOR=#003d00>Barra de EXP", 0);
 

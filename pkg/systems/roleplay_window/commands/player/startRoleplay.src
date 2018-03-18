@@ -1,0 +1,10 @@
+use uo;
+use os;
+
+include "include/sysEvent";
+
+program AC_start(who)
+   start_script(":roleplay_window:controller", who);
+   sleep(1);
+   start_script(":roleplay_window:window", who);
+endprogram

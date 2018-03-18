@@ -1,0 +1,48 @@
+use uo;
+use os;
+
+include "include/say";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+
+program AC_start(who)
+   Attach(who);
+   var setup := GetObjProperty(who, "roleplay_setup");
+   if (!setup)
+      setup := struct{ "width" := 164, "height" := 163};
+   endif
+   while (who.connected)
+      var last_see := GetObjProperty(who, "last_see");
+
+
+      if (!last_see) last_see := array{}; endif
+      last_see := "<br>-----<br>".join(last_see);
+	   var gump := GFCreateGump();
+      GFPage(gump, 0);
+      GFSetId(gump, 0x977);
+      GFResizePic(gump, 9, 7, 9270, setup.width, setup.height);
+      GFAddButton(gump, setup.width-4, 7, 5601, 5605, GF_CLOSE_BTN, 5);
+      GFAddButton(gump, setup.width-4, setup.height-5, 5602, 5606, GF_CLOSE_BTN, 6);
+      
+      GFAddAlphaRegion(gump, 21, 19, setup.width-25, setup.height-24);
+      GFHTMLArea(gump,  23, 21, setup.width-25, setup.height-26, "<basefont color=#FAFAFA>{}".format(last_see), 0, 1);
+      
+      var input := GFSendGump(who, gump)[0];
+
+      if (input == 5)
+         setup.width += 100;
+         if (setup.width >= 400)
+            setup.width := 164;
+         endif
+         SetObjProperty(who, "roleplay_setup", setup);
+      elseif (input == 6)
+         setup.height += 20;
+         if (setup.height >= 300)
+            setup.height := 163;
+         endif
+         SetObjProperty(who, "roleplay_setup", setup);
+      else
+         break;
+      endif
+   endwhile
+endprogram

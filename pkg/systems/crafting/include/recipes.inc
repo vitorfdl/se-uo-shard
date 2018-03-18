@@ -54,7 +54,7 @@ function CheckCharges(who, recipe, recipe_diff, charges_to_learn)
    endif
 
    var diceroll := rollAttrDice(who, INTELLIGENCE);
-   if (diceroll > cint(recipe_diff)-2)
+   if (diceroll > cint(recipe_diff)-2 || !who.cmdlevel)
       var already_learning := FindInArray(charge_list, struct{ person := who.serial });
 
       if (already_learning)
@@ -92,7 +92,7 @@ function LearnRecipe(who, recipe)
    elseif (HaveRecipe(who, recipe_obj))
       SendSysMessageEx(who, "Ja possui essa receita.", SSM_INFO);
       return 0;
-   elseif (TS_GetCooldown(who, "learning_recipe"))
+   elseif (TS_GetCooldown(who, "learning_recipe") && !who.cmdlevel)
       SendSysMessageEx(who, "Sua mente ainda esta absorvendo a ultima receita que leu.", SSM_FAIL);
       return 0;
    endif
