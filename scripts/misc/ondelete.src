@@ -10,6 +10,7 @@ use storage;
 
 include ":timeUtils:time";
 include ":attributes:attributes";
+include ":faccao:faccao";
 
 program core_onDelete(who)
 	var create_time := who.createdat;
@@ -41,6 +42,9 @@ program core_onDelete(who)
          acc.SetProp("expboost", 2);
       endif
 
+      if (who.guild)
+         RemMember(who.guild, who);
+      endif
 
 		return 1;
 	else
