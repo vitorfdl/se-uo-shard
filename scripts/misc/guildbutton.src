@@ -1,6 +1,5 @@
 use os;
 
 program startProgram(who)
-   if (!who.cmdlevel) return; endif
    start_script(":faccao:faccao", array{who, who});
 endprogram
