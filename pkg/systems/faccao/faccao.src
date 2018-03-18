@@ -381,7 +381,7 @@ function guildHandler(who, input)
             var thekey := Target(who);
             if (!thekey) return; endif
 
-	         if ( tathekeyrg.GetLockId() )
+	         if ( thekey.GetLockId() )
                SendSysMessageEx(who, "A chave destino não pode ser cópiada.", SSM_FAIL);
                return 0;
             endif
