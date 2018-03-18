@@ -212,7 +212,6 @@ function Fight(opponent, alerted := 0)
                reduce_heal := cdbl(GetObjProperty(me, "#reduce_heal")); 
             endif
             SetObjProperty(me, "demon_heal", ReadGameClock() + 1);
-            printtext(me, cint(healing_amount - (healing_amount * reduce_heal)));
             HealFLS(me, cint(healing_amount - (healing_amount * reduce_heal)));
          endif
       endif

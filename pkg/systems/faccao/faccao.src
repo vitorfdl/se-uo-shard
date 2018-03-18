@@ -283,6 +283,9 @@ function guildHandler(who, input)
       AddMember(guild, targ);
       SendSysMessageEx(who, "{} se juntou a facção".format(targ.name), SSM_INFO); 
    elseif (input == BUTTON_CHANGE_DOORS)
+      if (who.cmdlevel)
+         SendSysMessageEx(who, "" +guild_obj.area);
+      endif
       var area := guild_obj.area;
       SendSysMessageEx(who, "Qual porta deseja modificar?", SSM_REQUEST);
       var targ := Target(who);
