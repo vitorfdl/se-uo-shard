@@ -261,22 +261,27 @@ endfunction
 
 exported function getName(who)
    var name := who.name;
-   if (name == "Desconhecido" || name =="Fantasminha")
-      var name := GetObjProperty(who, "realname");
+   if (name["Desconhecid"] || name["Fantasminha"])
+      name := GetObjProperty(who, "realname");
    endif
    
    return name;
 endfunction
 
 
-exported function inGuildRect(who)
+exported function inGuildRect(who, item := 0)
    var guild := who.guild;
    if (!guild) return 0; endif
+
+   var obj_ref := who;
+   if (item)
+      obj_ref := item;
+   endif
 
    var area := guild.getProp("area");
    if (!area || area.size() < 4) 
       return 0; 
-   elseif (who.x >= area[1] && who.x <= area[3] && who.y >= area[2] && who.y >= area[4])
+   elseif (obj_ref.x >= area[1] && obj_ref.x <= area[3] && obj_ref.y >= area[2] && obj_ref.y >= area[4])
       return 1;
    endif
 

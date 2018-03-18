@@ -13,6 +13,7 @@ include ":unicos:item_template";
 
 const BUTTON_BUY_UNIFORM := 0x2;
 const BUTTON_ADD_PLAYER := 0x3;
+const BUTTON_CHANGE_DOORS := 0x4;
 const BUTTON_BAN_PLAYER := 0x6;
 const BUTTON_CHANGE_PLAYER := 0x1222;
 
@@ -88,12 +89,12 @@ program faccao(params)
 	GFHtmlArea(gump, 232, 36, 165, 20, "<center><BASEFONT size=5>{}".format(guild_obj.name));
    
 	GFResizePic(gump, 48, 67, 9350, 172, 326); //members background
-	GFTextLine(gump, 73, 70, 0, "Membros");
+	GFTextLine(gump, 88, 70, 0, "Membros");
 
    var leader_name := guild_leader.getName();
    if (!leader_name)
       leader_name := "-";
-   else
+   elseif(who.cmdlevel)
       GFAddButton(gump, 49, 91, 5605, 5605, GF_CLOSE_BTN, BUTTON_CHANGE_PLAYER+guild_obj.leader);
    endif
    GFTextLine(gump, 67, 89, 49, "{}".format(leader_name));
@@ -153,7 +154,7 @@ program faccao(params)
    
    var total_soldo := 0;
 	GFResizePic(gump, 48+360, 67, 9350, 172, 326); //agents background
-	GFTextLine(gump, 427, 69, 0, "Agentes Contratados");
+	GFTextLine(gump, 430, 69, 0, "Agentes Contratados");
    y := 91;
    foreach npc in (guild_obj.npcs_active)
       var mob := SystemFindObjectBySerial(npc.serial);
@@ -185,7 +186,7 @@ program faccao(params)
 	GFGumpPic(gump, 491, 330, 40034, 0);
 	GFGumpPic(gump, 59, 402, 40022, 0);
 	GFTextLine(gump, 82, 401, 0, "{} moedas".format(cint(guild_obj.money)));
-	GFTextLine(gump, 405, 401, 0, "Soldo Total: {} mo".format(total_soldo));
+	GFTextLine(gump, 415, 401, 0, "Soldo Total: {} mo".format(total_soldo));
 
    // if (is_gm_or_leader || privilegies.above_members)
    //    GFAddButton(gump, 205-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_BAN_PLAYER);
@@ -193,8 +194,13 @@ program faccao(params)
    // endif
 
    if (is_gm_or_leader || privilegies.buyuniforms)
-      GFAddButton(gump, 310-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_BUY_UNIFORM);
-      GFTextLine(gump, 310, 401, 0, "Uniformes");
+      GFAddButton(gump, 330-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_BUY_UNIFORM);
+      GFTextLine(gump, 330, 401, 0, "Uniformes");
+   endif
+
+   if (is_gm_or_leader || privilegies.unlockdoors)
+      GFAddButton(gump, 220-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_CHANGE_DOORS);
+      GFTextLine(gump, 220, 401, 0, "Portas");
    endif
 
 	var input := GFSendGump(who, gump);
@@ -389,7 +395,63 @@ function guildHandler(who, input)
       // "materials"  := materials,
       // "main_material" := elem.main_material,
       // "requires"   :=  GetConfigStringArray(elem, "requires")
+      elseif (input == BUTTON_CHANGE_DOORS)
+         var area := guild_obj.area;
+         SendSysMessageEx(who, "Qual porta deseja modificar?", SSM_REQUEST);
+         var targ := Target(who);
+         if (!targ)
+            return SendSysMessageEx(who, "Cancelado"); 
+         elseif (!targ.IsDoor())
+            return SendSysMessageEx(who, "Isso não é uma porta"); 
+         elseif (!GetObjProperty(targ, "estalagem"))
+            return SendSysMessageEx(who, "Você não pode mexer em portas de estalagem"); 
+         elseif (!(targ.x >= area[1] && targ.x <= area[3] && targ.y >= area[2] && targ.y >= area[4]))
+            return SendSysMessageEx(who, "Você está fora da sua área de poder."); 
+         endif
 
+         var ref_key := GetObjProperty(targ, "LockId");
+         if (ref_key)
+            options.append("Copiar chave");
+            options.append("Remover Fechadura");
+            options.append("Trocar Fechadura");
+         else
+            options.append("Adicionar Fechadura");
+         endif
+         options.append("Cancelar");
+         var output := RadioGump(who, 300, 0, "Escolha uma opção", options, 0, 1);
+
+         if (output["Copiar"])
+            SendSysMessageEx(who, "Escolha a chave que vai receber a cópia", SSM_REQUEST);
+            var thekey := Target(who);
+            if (!thekey) return; endif
+
+	         if ( tathekeyrg.GetLockId() )
+               SendSysMessageEx(who, "A chave destino não pode ser cópiada.", SSM_FAIL);
+               return 0;
+            endif
+		      thekey.SetLockId(ref_key);
+            SendSysMessageEx(who, "Você copiou a chave com sucesso.", SSM_INFO);
+         elseif (output["Remover"])
+            targ.locked := 0;
+            EraseObjProperty(targ, "level");
+            EraseObjProperty(targ, "LockId");
+         elseif (output["Adicionar"] || output["Trocar"]) 
+            SendSysMessageEx(who, "Escolha a nova fechadura", SSM_REQUEST);
+            var fechadura := Target(who);
+            if (!fechadura) return; endif
+
+            if (fechadura.objtype != 0xfa1)
+               return SendSysMessageEx(who, "Isso não é uma fechadura."); 
+            endif
+
+            var lvl := Cint(GetObjProperty(fechadura, "level"));
+            if (!lvl) lvl := 1; endif
+
+            var lockid := CInt(GetObjProperty(fechadura, "LockId"));
+            SetObjProperty(targ, "LockId", lockid);
+            DestroyItem(fechadura);
+            SendSysMessageEx(who, "Você instalou a fechadura com sucesso.", SSM_INFO);
+         endif
       endif
    endif
 endfunction

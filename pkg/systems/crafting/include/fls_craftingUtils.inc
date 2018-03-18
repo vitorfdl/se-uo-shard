@@ -76,7 +76,7 @@ function CraftLockable(who, theitem)
 			theitem.movable := 0;
 		endif
 
-		if (KP_IsLockable(theitem ))
+		if (KP_IsLockable(theitem))
 			var fechadura := YesNo(who, "Você deseja por uma fechadura nesse item?");
 			if (fechadura)
 				SendSysMessageEx(who, "Escolha a fechadura para por neste item.", SSM_REQUEST);
