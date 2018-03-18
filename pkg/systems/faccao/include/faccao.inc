@@ -24,7 +24,7 @@ function CreateFaccao(name, rect, money := 0)
    guild.setProp("npcs", array{});
    guild.setProp("report", array{"Facção Criada"});
    guild.setprop("area", rect);
-   guild.setprop("money", 0);
+   guild.setprop("money", cint(money));
    guild.setprop("uniforms", array{});
    guild.setprop("link_to", 0);
 
