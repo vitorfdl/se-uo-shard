@@ -1,0 +1,33 @@
+use uo;
+use os;
+
+include ":attributes:attributes";
+include ":taming:taming";
+include ":mounts:mounts";
+
+program useSela(who, item)
+   if (AP_GetTrueSkill(who, TRATO_DE_ANIMAIS) <= 0)
+      return SendSysMessageEx(who, "Você não tem conhecimento para usar isso", SSM_FAIL);
+   endif
+
+   SendSysMessageEx(who, "Qual criatura você deseja colocar o arreio?", SSM_INFO);
+   var targ := Target(who);
+
+   if (!IsMountable(targ))
+      return SendSysMessageEx(who, "Essa criatura não pode ser montada.", SSM_FAIL);
+   elseif (targ.master != who.serial)
+      return SendSysMessageEx(who, "Este animal não é seu.", SSM_FAIL);
+   endif
+
+   var pet := targ.GetPetProperties();
+   if (!pet)
+      return SendSysMessageEx(who, "Essa criatura não pode ser montada.", SSM_FAIL);
+   elseif (pet.loyalt < 6)
+      return SendSysMessageEx(who, "Esta criatura não aceita o arreio.", SSM_FAIL);
+   endif
+
+   PrintText(who, "*colocando arreio*");
+   DestroyItem(item);
+   SetObjProperty(targ, "sela_hp", 30);
+   PrintText(targ, "*aceita o arreio*");
+endprogram

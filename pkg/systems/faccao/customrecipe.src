@@ -1,0 +1,94 @@
+
+use uo;
+use os;
+use cfgfile;
+
+include ":gumps:yesno";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include "include/say";
+include "include/client";
+include "include/arrays";
+include ":crafting:recipes";
+include ":gumps:requestgump";
+include ":charactercreation:feats";
+
+program usaPergaminho(who, scroll)
+	var input := SendGump(who, scroll);
+	if (input[0] == 99)
+		var recipes := ReadConfigFile(":*:recipes");
+		var objtype := RequestGump(who, "Item objtype:");
+		if (!FindConfigElem(recipes, objtype) && !FindConfigElem(recipes, cint(objtype)) && !FindConfigElem(recipes, hex(objtype)))
+			SendSysMessageEx(who, "Receita para o objtype {} não encontrado.".format(objtype), SSM_FAIL);
+			return;
+		endif
+
+		SetObjProperty(scroll, "objtype", objtype);
+		Run_Script( ":crafting:recipes/control", scroll );
+	elseif (input[0] == 12)
+      PrintText(who, "*lendo receita*");
+		LearnRecipe(who, scroll);
+	endif
+endprogram
+
+function SendGump(who, scroll)
+	
+	// var gump := GFCreateGump();
+	// GFSetID(gump, GUMPID_RECIPES);
+	// GFDisposable(gump, 0);
+	// GFGumpPic(gump, 4, 8, 2080);
+	// GFGumpPic(gump, 22, 45, 2081);
+	// GFGumpPic(gump, 23, 113, 2082);
+	// GFGumpPic(gump, 25, 174, 2083);
+	// GFGumpPicTiled(gump, 37, 43, 234, 11, 2091);
+	// GFGumpPicTiled(gump, 38, 159, 234, 11, 2091);
+	// GFGumpPic(gump, 47, 184, 1209);
+	// GFHTMLArea(gump, 35, 16, 240, 20, "<BASEFONT SIZE=5 {}><CENTER>Receita de {}".format(lang, skill_name));
+
+	// var item_name := recipe.name;
+	// if (!item_name)
+	// 	item_name := item.desc;
+	// endif
+	// GFHTMLArea(gump, 38, 60, 240, 20, "<BASEFONT SIZE=5 COLOR=#8c1a1a {}><CENTER>{}".format(lang, item_name));
+	// var tilepic := item.graphic;
+	// if (!tilepic)
+	// 	tilepic := objtype;
+	// endif
+	
+	// if (cint(tilepic))
+   //    if (!is_lang || HaveFeat(who, is_lang))
+	// 	   GFTilePic(gump, 127, 91, tilepic);
+   //    endif
+   // else
+	//    GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>Um kit lhe permite aprender várias".format(lang));
+	//    GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>receitas de uma vez".format(lang));
+	// endif
+
+   // if (!is_lang || HaveFeat(who, is_lang))
+   //    var my_recipes := GetObjProperty(who, "recipes");
+   //    if (!(cint(objtype) in my_recipes) && !(hex(objtype) in my_recipes) && !(objtype in my_recipes))
+   //       var charge_list    := GetObjProperty(scroll, "learning");
+   //       var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
+   //       var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
+   //       if (!FindConfigElem(book_recipes, objtype) && !FindConfigElem(cook_reecipes, objtype))
+   //          GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2 {}><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(lang, remain_charges));
+   //          if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
+   //             GFTextLine(gump, 205, 182, 995, "Aprender");
+   //             GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
+   //          endif
+   //       else
+   //          GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
+   //          GFHTMLArea(gump, 150, 182, 180, 20, "<BASEFONT SIZE=2><CENTER>Restam {} leituras.".format(remain_charges));
+   //       endif
+   //    else
+   //       GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");
+   //    endif
+   // endif
+
+	// if (who.cmdlevel >= 4)
+	// 	GFTextCrop(gump, 67, 182, 100, 17, 995, "Trocar Receita");
+	// 	GFAddButton(gump, 47, 184, 1209, 1209, GF_CLOSE_BTN, 99);
+	// endif
+
+	// return GFSendGump(who, gump);
+endfunction

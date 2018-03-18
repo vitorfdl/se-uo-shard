@@ -292,6 +292,11 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 	var initialX := who.x;
 	var initialY := who.y;
    var theitem;
+   var item_list := array{recipe.objtype};
+   if (recipe.peaces)
+      item_list := recipe.peaces;
+   endif
+
 	while (counter < amt)
 		counter := counter + 1;
 		if ( (who.x != initialX) || (who.y != initialY) )
@@ -362,58 +367,61 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 				return theitems;
 			endif
 
-			theitem := CreateItem(who, recipe.objtype, more);
-			if(!theitem)
-				SendSysMessageEx(who, "você não tem espaço suficiente na sua mochila!", SSM_FAIL);
-				return theitems;
-         elseif (recipe.colored)
-            theitem.color := material_color;
-			endif
-			CheckToolWear(who, tool, craft_skill);
-			theitem.movable := 1;
+         foreach item_objtype in item_list
+            theitem := CreateItem(who, recipe.objtype, more);
+            if(!theitem)
+               SendSysMessageEx(who, "você não tem espaço suficiente na sua mochila!", SSM_FAIL);
+               return theitems;
+            elseif (recipe.colored)
+               theitem.color := material_color;
+            endif
+            CheckToolWear(who, tool, craft_skill);
+            theitem.movable := 1;
 
-			//passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
-			AddMaterialMod(recipe, theitem, choosed_material, material_color);
-         if (recipe.exceptional == 1 && (AP_GetTrueSkill(who, crafT_skill) >= 4 && roll.critical == 1) || who.cmdlevel > 3)
-            SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
-            SendSysMessageEx(who, "Para termina-la, você deve escolher um objeto para molda-lo. É possível descohrir esses objetos com heráldica.", SSM_INFO);
-            while (who.connected)
-			      if (CraftExceptional(who, theitem, craft_skill) != 2)
-                  break;
-               endif
-               sleepms(2);
-            endwhile
-         endif
+            //passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
+            AddMaterialMod(recipe, theitem, choosed_material, material_color);
+            if (recipe.exceptional == 1 && (AP_GetTrueSkill(who, crafT_skill) >= 4 && roll.critical == 1) || who.cmdlevel > 3)
+               SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
+               SendSysMessageEx(who, "Para termina-la, você deve escolher um objeto para molda-lo. É possível descohrir esses objetos com heráldica.", SSM_INFO);
+               while (who.connected)
+                  if (CraftExceptional(who, theitem, craft_skill) != 2)
+                     break;
+                  endif
+                  sleepms(2);
+               endwhile
+            endif
 
-			foreach key in (material_cprops.Keys())
-				SetObjProperty(theitem, key, material_cprops[key]);
-			endforeach
-			CraftLockable(who, theitem);
+            foreach key in (material_cprops.Keys())
+               SetObjProperty(theitem, key, material_cprops[key]);
+            endforeach
+            CraftLockable(who, theitem);
 
-			ExpGain(who, recipe.difficulty, check);
-         SetObjProperty(who, "#craft_last", recipe.objtype);
-			who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
-			SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
-		
-			// TODO: Gravar feitos para talentos
-			if (theitem.isa(POLCLASS_WEAPON) || theitem.isa(POLCLASS_ARMOR))	
-				SetObjProperty(theitem, "reparos", check * 4); // TODO: Check how this work
-			endif
+            ExpGain(who, recipe.difficulty, check);
+            SetObjProperty(who, "#craft_last", recipe.objtype);
+            who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
+            SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
+         
+            // TODO: Gravar feitos para talentos
+            if (theitem.isa(POLCLASS_WEAPON) || theitem.isa(POLCLASS_ARMOR))	
+               SetObjProperty(theitem, "reparos", check * 4); // TODO: Check how this work
+            endif
 
-			if(theitem.isA(POLCLASS_CONTAINER))
-				SetObjProperty(theitem, "trappable", 1);
-			endif
+            if(theitem.isA(POLCLASS_CONTAINER))
+               SetObjProperty(theitem, "trappable", 1);
+            endif
 
-			if ((theitem.graphic != 11058) && (theitem.graphic != 3903))
-				SetObjProperty(theitem, "crafterserial", who.serial);
-				SetObjProperty(theitem, "crafteracc", who.acctname);
-			endif
+            if ((theitem.graphic != 11058) && (theitem.graphic != 3903))
+               SetObjProperty(theitem, "crafterserial", who.serial);
+               SetObjProperty(theitem, "crafteracc", who.acctname);
+            endif
 
-			if (canFix)
-				SetObjProperty(theitem, "canfix", 1);
-			endif
+            if (canFix)
+               SetObjProperty(theitem, "canfix", 1);
+            endif
 
-			theitems.append( theitem);
+            theitems.append(theitem);
+            sleepms(2);
+         endforeach
 		else
 			SubtractMaterial(who, targ_materials, 0.5); //consome metade do material
 			SendSysMessageEx(who, "você falhou ao fazer o item e perdeu material." , SSM_FAIL);
@@ -422,9 +430,11 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 		sleepms(100);
 	endwhile
 
-	ReleaseItem(theitem);
-	return theitems;	
+   foreach item in theitems
+	   ReleaseItem(item);
+   endforeach
 
+	return theitems;	
 endfunction
 
 function SubtractMaterial(who, targ_materials, amountMod := 1)

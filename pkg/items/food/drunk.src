@@ -5,17 +5,13 @@ use util;
 
 include "include/say";
 include "include/client";
+include ":mounts:mounts";
 
 Const ACTION_BOW	:= 0x0020;
 Const ACTION_FALL	:= 0x0016;
 
 function Dismount (character, mount := 0)
-
-	var parms := array;
-	parms[1] := character;
-	parms[2] := mount;
-	return run_script_to_completion (":drocket:dismount", parms);
-
+	return MP_Unmount(who);
 endfunction
 
 program drunk (character)
@@ -127,8 +123,8 @@ function do_drunk_stuff ( character, drunkness )
 		character.facing := RandomDiceRoll( "1d8" );
 		sleep(3);
 		if ( GetEquipmentByLayer( character, 25 ) )
-			Dismount (character, 0);
-			SendSysmessage (character, "Você caiu do cavalo.", FONT_NORMAL, 90);
+			Dismount(character, 0);
+         PrintText(character, "*cai do cavalo*", SSM_FAIL);
 		else
 			PerformAction( character, ACTION_FALL );
 		endif

@@ -80,3 +80,32 @@ function listContractedNPC(guild)
 
    return npcs_active;
 endfunction
+
+
+function ContractNPC(guild, npc_i, who, loc)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+
+   if (!guild) return; endif
+
+   var npcs := listNpc(guild);
+   var template := npcs[npc_i];
+   if (!template) return; endif
+
+	var agent := CreateNPCFromTemplate(template.template, targ.x, targ.y, targ.z+2);
+   SetObjProperty(agent, "guild", guild.guildid);
+   SetObjProperty(agent, "contract_by", who.serial);
+
+   PrintText(agent, "As suas ordens");
+
+   var npc_list := listContractedNPC(guild);
+   npc_list.append({
+      "serial" := agent.serial,
+      "price" := template.price,
+      "type" := template.name,
+   });
+   guild.setProp("npcs_active", npc_list);
+
+   return 1;
+endfunction

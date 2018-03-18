@@ -57,6 +57,10 @@ program Attack(params)
       if (GetObjProperty(attacker, "#charmed") == defender.serial)
          return 1;
       endif
+   elseif ( GetEquipmentByLayer(attacker, LAYER_MOUNT) )
+      if (AP_GetTrueSkill(who, MONTARIA) <= 4)
+
+      endif
 	endif
 
 	if (attacker.acctname)
@@ -450,14 +454,14 @@ function FacingChecks(attacker, defender, nofacecheck)
 			TurnObjectToward(attacker, defender.x, defender.y);
 		else
 			if ( IsBehind(attacker, defender.x, defender.y) )
-				SendSysMessageEx(attacker, "Você esta de costas para o inimigo!", SSM_FAIL);
+				SendSysMessageEx(attacker, "Você está de costas para o inimigo!", SSM_FAIL);
 				retval := 0;
 			endif
 		endif
-	elseif ( !IsFacing(defender, attacker.x, attacker.y) )
-		if ( defender.npctemplate )
-			TurnObjectToward(defender, attacker.x, attacker.y);
-		endif
+	// elseif ( !IsFacing(defender, attacker.x, attacker.y) )
+		// if ( defender.npctemplate )
+		// 	TurnObjectToward(defender, attacker.x, attacker.y);
+		// endif
 	endif
 
 	return retval;

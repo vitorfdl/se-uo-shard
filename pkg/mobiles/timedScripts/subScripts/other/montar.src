@@ -12,6 +12,7 @@ include "include/say";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":fls_core:packets";
+include ":mounts:mounts";
 
 function StartScript(mobile, attacker := 0, level := 0)
    PlayerSpeedSlower(mobile, 1);
@@ -24,10 +25,15 @@ function StartScript(mobile, attacker := 0, level := 0)
          PlayerSpeedSlower(mobile, 0);
       endif
 
-      if (RandomInt(101) <= 15)
+      if (RandomInt(101) <= 20)
          var sela := GetObjProperty(mount_ref, "sela_hp");
          if (sela)
             SetObjProperty(mount_ref, "sela_hp", sela-1);
+         elseif (!mobile.cmdlevel)
+            PrintText(who, "*arreio se rompe*", SSM_FAIL);
+            EraseObjProperty(mount_ref, "sela_hp");
+            MP_Unmount(mobile);
+            break;
          endif
       endif
 	   mount_ref := GetEquipmentByLayer(mobile, 0x19); //LAYER_MOUNT

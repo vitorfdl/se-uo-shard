@@ -69,8 +69,12 @@ program autostart_boat(param)
 	endif
 	
 	if (!owner)
-		owner := GetObjProperty (tillerman, "owner");
+		owner := GetObjProperty(tillerman, "owner");
 	endif
+
+   if (GetObjProperty(tillerman, "course"))
+      state := STATE_FOLLOWING_COURSE;
+   endif
   
 	EnableEvents(SYSEVENT_SPEECH, 15);
 	RegisterForSpeechEvents(tillerman, 15);

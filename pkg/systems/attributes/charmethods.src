@@ -267,3 +267,18 @@ exported function getName(who)
    
    return name;
 endfunction
+
+
+exported function inGuildRect(who)
+   var guild := who.guild;
+   if (!guild) return 0; endif
+
+   var area := guild.getProp("area");
+   if (!area || area.size() < 4) 
+      return 0; 
+   elseif (who.x >= area[1] && who.x <= area[3] && who.y >= area[2] && who.y >= area[4])
+      return 1;
+   endif
+
+   return 0;
+endfunction
