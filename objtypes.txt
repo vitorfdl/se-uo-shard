@@ -1125,7 +1125,9 @@
 0x1525 torneiravat1 cooking
 # 0x1526 - 0x152d unused
 0x152e ShortPants womenswork
-# 0x152f - 0x1536 unused
+# 0x152f - 0x1532 unused
+0x1533 contract contract
+# 0x1534 - 0x1536 unused
 0x1537 Kilt womenswork
 # 0x1538 unused
 0x1539 LongPants womenswork
@@ -1600,7 +1602,13 @@
 0x2b6e circlet metalworking
 0x2b6f circlet2 metalworking
 0x2b70 circlet3 metalworking
-# 0x2b71 - 0x2be0 unused
+# 0x2b71 - 0x2b73 unused
+0x2b74 HidemailTunic combat
+0x2b75 HidemailGloves combat
+# 0x2b76 unused
+0x2b77 HidemailSleeves combat
+0x2b78 HidemailPants combat
+# 0x2b79 - 0x2be0 unused
 0x2be1 biscuit food
 # 0x2be2 - 0x2d24 unused
 0x2d25 WildStaff combat
@@ -1751,7 +1759,7 @@
 # 0x468d - 0x469e unused
 0x469f merrycake food
 # 0x46a0 - 0x46ad unused
-0x46ae contract contract
+0x46ae customrecipe faccao
 # 0x46af - 0x490f unused
 0x4910 WoodenReforcedChest containers
 0x4911 WoodenReforcedChest2 containers

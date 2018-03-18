@@ -10,6 +10,7 @@
 
 include ":keys:key";
 include ":gumps:yesno";
+include ":unicos:item_template";
 include "include/facings";
 
 function GetBagList(who, materials := 0)
@@ -34,7 +35,9 @@ function CreateItem(who, objtype, more:=0)
 	var cfg           := ReadConfigFile(":crafting:stackingitens");
 	var elem          := FindConfigElem(cfg, "stacks");
 	var stackingitens := ListConfigElemProps( elem );
-	if(cstr(cint(objtype)) in stackingitens)
+   if (typeof(objtype) == "Struct")
+      theitem := CreateIteminBackpackFromTemplate(who, objtype);
+	elseif(cstr(cint(objtype)) in stackingitens)
 		var stacknow := FindObjtypeInContainer( who.backpack, cint(objtype) );
 		if ( stacknow )
 			AddAmount(stacknow, 1+more);

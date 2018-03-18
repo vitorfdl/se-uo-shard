@@ -54,7 +54,6 @@ function InnKeeperChecks()
 				endif
 				
 				var player2 := SystemFindObjectBySerial(quartos[i].inquilino, SYSFIND_SEARCH_OFFLINE_MOBILES);
-				
 				if (ticks >= renttime || !player2)
 					if (player2)
 						var script := start_script( ":email:emailMessage/sendSystemMail", array{ player2, "Aviso de Despejo!", 

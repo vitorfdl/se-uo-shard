@@ -24,7 +24,13 @@ program fix(who)
 	elseif ( Distance(who, alvo) > 2)
 		SendSysMessageEx(who, "Você esta muito distante do alvo.", SSM_FAIL);
 		return 0;
-	elseif (GetObjPRoperty(alvo, "canfix") != 1)
+   elseif (  TypeOf(alvo.container) == "ItemRef")
+		SendSysMessageEx(who, "Você não pode fixar itens dentro de containers.", SSM_FAIL);
+		return 0;
+	endif
+   var isg := 0;
+
+	if (GetObjProperty(alvo, "canfix") != 1)
 		SendSysMessageEx(who, "Você não pode fixar este item.");
 		return 0;
 	elseif ( GetObjProperty(alvo, "crafterserial") == error)
@@ -33,11 +39,16 @@ program fix(who)
 			SendSysMessageEx(who, "Você so pode fixar itens que foram criados por algum player.", SSM_FAIL);
 			return 0;
 		endif
-	elseif (  TypeOf(alvo.container) == "ItemRef")
-		SendSysMessageEx(who, "Você não pode fixar itens dentro de containers.", SSM_FAIL);
-		return 0;
 	endif
-	
+   
+   var guildpw := 0;
+   if (who.inGuildRect())
+      var guild := who.guild;
+      var privs := guild.getProp(cstr(who.serial));
+      if (privs.canfix || guild.getProp("leader") == who.serial)
+         guildpw := 1;
+      endif
+   endif
 
 	if (!GetObjProperty(alvo, "fixer"))
 		if (alvo.movable == 1)
@@ -55,7 +66,7 @@ program fix(who)
 			endif
 		endif
 	else
-		if (GetObjProperty(alvo, "fixer") == who.serial)
+		if (GetObjProperty(alvo, "fixer") == who.serial || guildpw)
 			if (alvo.movable == 0)
 				alvo.movable := 1;
 				GetDeed(who, alvo);

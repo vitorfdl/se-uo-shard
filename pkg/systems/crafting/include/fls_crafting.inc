@@ -293,8 +293,8 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 	var initialY := who.y;
    var theitem;
    var item_list := array{recipe.objtype};
-   if (recipe.peaces)
-      item_list := recipe.peaces;
+   if (recipe.pieces)
+      item_list := recipe.pieces;
    endif
 
 	while (counter < amt)

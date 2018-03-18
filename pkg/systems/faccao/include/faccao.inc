@@ -127,8 +127,7 @@ function AddMember(faccao, mobile)
       "unlockdoors" := 0, // can unlock doors
       "buyuniforms" := 0 // can buy uniform recipes
    };
-
-   faccao.SetProp(mobile.serial, member_obj);
+   faccao.SetProp(cstr(mobile.serial), member_obj);
 endfunction
 
 
@@ -175,7 +174,7 @@ function RemMember(faccao, mobile)
       faccao.SetProp("leader", 0x0);
    endif
    faccao.removemember(mobile);
-   faccao.EraseProp(mobile.serial);
+   faccao.EraseProp(cstr(mobile.serial));
 endfunction
 
 function SetLeader(faccao, serial)

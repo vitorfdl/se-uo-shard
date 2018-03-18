@@ -9,60 +9,69 @@ include ":gumps:gumps_ex";
 include "include/say";
 include "include/client";
 include "include/arrays";
-include ":crafting:recipes";
+include ":crafting:fls_crafting";
 include ":gumps:requestgump";
 include ":charactercreation:feats";
 
 program usaPergaminho(who, scroll)
-	var input := SendGump(who, scroll);
-	if (input[0] == 99)
-		var recipes := ReadConfigFile(":*:recipes");
-		var objtype := RequestGump(who, "Item objtype:");
-		if (!FindConfigElem(recipes, objtype) && !FindConfigElem(recipes, cint(objtype)) && !FindConfigElem(recipes, hex(objtype)))
-			SendSysMessageEx(who, "Receita para o objtype {} não encontrado.".format(objtype), SSM_FAIL);
-			return;
-		endif
-
-		SetObjProperty(scroll, "objtype", objtype);
-		Run_Script( ":crafting:recipes/control", scroll );
-	elseif (input[0] == 12)
-      PrintText(who, "*lendo receita*");
-		LearnRecipe(who, scroll);
+   var item_recipe := struct{
+      "name"  := GetObjproperty(scroll, "name"),
+      "difficulty"  := GetObjproperty(scroll, "difficulty"),
+      "colored"  := GetObjproperty(scroll, "colored"),
+      "mark"  := GetObjproperty(scroll, "mark"),
+      "exceptional" := GetObjproperty(scroll, "exceptional"),
+      "delay" := GetObjproperty(scroll, "delay"),
+      "materials" := GetObjproperty(scroll, "materials"),
+      "requires" := GetObjproperty(scroll, "requires"),
+      "craft_skill" := GetObjproperty(scroll, "craft_skill"),
+      "pieces" := GetObjproperty(scroll, "pieces"),
+      "fastcraft" := GetObjproperty(scroll, "fastcraft")
+   };
+	var input := SendGump(who, item_recipe);
+	if (input[0] == 12)
+      var craft_item;
+      case (item_recipe.craft_skill)
+         "Marcenaria": craft_item := 0x1034;
+         "Ferraria": craft_item := 0x13e3;
+         "Costura": craft_item := 0x0f9d;
+      endcase
+      if (!craft_item) return; endif
+      
+      craft_item := FindObjInModel("objtype", cint(craft_item), EnumerateItemsInContainer(who.backpack));
+      if (!craft_item) 
+         SendSysMessageEx(who, "Você precisa ter um instrumento de {}".format(item_recipe.craft_skill), SSM_FAIL);
+         return;
+      endif
+      PrintText(who, "*Seguindo instruções*");
+      var result := CraftItem(who, item_recipe.craft_skill, craft_item, item_recipe, 1, 1);
+      if (result.size() >= 1)
+         DestroyItem(scroll);
+      endif
 	endif
 endprogram
 
-function SendGump(who, scroll)
-	
-	// var gump := GFCreateGump();
-	// GFSetID(gump, GUMPID_RECIPES);
-	// GFDisposable(gump, 0);
-	// GFGumpPic(gump, 4, 8, 2080);
-	// GFGumpPic(gump, 22, 45, 2081);
-	// GFGumpPic(gump, 23, 113, 2082);
-	// GFGumpPic(gump, 25, 174, 2083);
-	// GFGumpPicTiled(gump, 37, 43, 234, 11, 2091);
-	// GFGumpPicTiled(gump, 38, 159, 234, 11, 2091);
-	// GFGumpPic(gump, 47, 184, 1209);
-	// GFHTMLArea(gump, 35, 16, 240, 20, "<BASEFONT SIZE=5 {}><CENTER>Receita de {}".format(lang, skill_name));
+function SendGump(who, item_recipe)
+   if (!item_recipe.name || !item_recipe.difficulty || !item_recipe.craft_skill)
+      SendSysMessageEx(who, "Esse pergaminho de instrução não tem serventia.");
+      return 0;
+   endif
 
-	// var item_name := recipe.name;
-	// if (!item_name)
-	// 	item_name := item.desc;
-	// endif
-	// GFHTMLArea(gump, 38, 60, 240, 20, "<BASEFONT SIZE=5 COLOR=#8c1a1a {}><CENTER>{}".format(lang, item_name));
-	// var tilepic := item.graphic;
-	// if (!tilepic)
-	// 	tilepic := objtype;
-	// endif
+	var gump := GFCreateGump();
+	GFSetID(gump, GUMPID_RECIPES);
+	GFDisposable(gump, 0);
+	GFGumpPic(gump, 4, 8, 2080);
+	GFGumpPic(gump, 22, 45, 2081);
+	GFGumpPic(gump, 23, 113, 2082);
+	GFGumpPic(gump, 25, 174, 2083);
+	GFGumpPicTiled(gump, 37, 43, 234, 11, 2091);
+	GFGumpPicTiled(gump, 38, 159, 234, 11, 2091);
+	GFGumpPic(gump, 47, 184, 1209);
+	GFHTMLArea(gump, 35, 16, 240, 20, "<CENTER>Instruções de {}".format(item_recipe.craft_skill));
+
+	GFHTMLArea(gump, 38, 60, 240, 20, "<BASEFONT COLOR=#8c1a1a><CENTER>{}".format(item_recipe.name));
 	
-	// if (cint(tilepic))
-   //    if (!is_lang || HaveFeat(who, is_lang))
-	// 	   GFTilePic(gump, 127, 91, tilepic);
-   //    endif
-   // else
-	//    GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>Um kit lhe permite aprender várias".format(lang));
-	//    GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>receitas de uma vez".format(lang));
-	// endif
+   GFHTMLArea(gump, 38, 91, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>Esta instrução permite fazer");
+   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a><CENTER>este item uma vez");
 
    // if (!is_lang || HaveFeat(who, is_lang))
    //    var my_recipes := GetObjProperty(who, "recipes");
@@ -73,8 +82,8 @@ function SendGump(who, scroll)
    //       if (!FindConfigElem(book_recipes, objtype) && !FindConfigElem(cook_reecipes, objtype))
    //          GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2 {}><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(lang, remain_charges));
    //          if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
-   //             GFTextLine(gump, 205, 182, 995, "Aprender");
-   //             GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
+               GFTextLine(gump, 205, 182, 995, "Fazer");
+               GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
    //          endif
    //       else
    //          GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
@@ -90,5 +99,5 @@ function SendGump(who, scroll)
 	// 	GFAddButton(gump, 47, 184, 1209, 1209, GF_CLOSE_BTN, 99);
 	// endif
 
-	// return GFSendGump(who, gump);
+	return GFSendGump(who, gump);
 endfunction

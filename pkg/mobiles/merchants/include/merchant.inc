@@ -2,7 +2,7 @@ use uo;
 
 //include "include/bank";
 include ":datafile:include/datafile";
-include ":merchants:item_template";
+include ":unicos:item_template";
 
 function GetPaymentsDataFile()
 	var data_file := DFOpenDataFile(":merchants:payments", DF_CREATE);

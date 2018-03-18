@@ -6,7 +6,6 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 
 program AC_start(who)
-   Attach(who);
    var setup := GetObjProperty(who, "roleplay_setup");
    if (!setup)
       setup := struct{ "width" := 164, "height" := 163};

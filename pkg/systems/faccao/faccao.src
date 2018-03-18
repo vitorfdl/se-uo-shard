@@ -36,8 +36,8 @@ var priv_list := struct{
    "above_members" := "Controle de Membros;",
    "giveprivs" := "Controle de Permissões;",
    "contractnpc" := "Contratar de Agentes;",
-   "fixitems" := "Controle de objetos;",
-   "unlockdoors" := "Controle de portas;",
+   "fixitems" := "Controle de Objetos;",
+   "unlockdoors" := "Controle de Portas;",
    "buyuniforms" := "Controle de Uniformes;"
 };
 var guild_obj;
@@ -64,6 +64,8 @@ program faccao(params)
       return SendSysMessageEx(who, "Não pertence a uma facção", SSM_FAIL);
    endif
 
+   CloseGump(who, 0x689, 0);
+
    var members := guild.members;
    guild_obj := GetFaccao(guild);
    var guild_leader;
@@ -75,10 +77,11 @@ program faccao(params)
       members := RemoveFromArray(members, guild_leader);
    endif
    is_gm_or_leader := (who == guild_leader || who.cmdlevel);
-   privilegies := guild.getProp(who.serial);
+   privilegies := guild.getProp(cstr(who.serial));
    var gump := GFCreateGump();
 	
 	GFPage(gump, 0);
+   GFSetId(gump, 0x689);
 	GFResizePic(gump, 26, 19, 39925, 573, 417); //background
 
 	GFResizePic(gump, 228, 29, 9350, 171, 34);
@@ -93,7 +96,7 @@ program faccao(params)
    else
       GFAddButton(gump, 49, 91, 5605, 5605, GF_CLOSE_BTN, BUTTON_CHANGE_PLAYER+guild_obj.leader);
    endif
-   GFTextLine(gump, 67, 89, 0, "{}".format(leader_name));
+   GFTextLine(gump, 67, 89, 49, "{}".format(leader_name));
 
    var y := 107;
    foreach mob in members
@@ -102,7 +105,7 @@ program faccao(params)
          GFAddButton(gump, 49, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CHANGE_PLAYER+mob.serial);
       endif
       GFTextLine(gump, 67, y-2, 0, "{}".format(mob.getName()));
-      var permissions := guild.GetProp(mob.serial);
+      var permissions := guild.GetProp(cstr(mob.serial));
       var permission_text := "";
       foreach priv in (permissions.keys())
          if (permissions[priv])
@@ -143,10 +146,10 @@ program faccao(params)
       y  += 18;
    endforeach
 
-   if (is_gm_or_leader)
-      GFAddButton(gump, 246-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_ADD_LAW);
-      GFTextLine(gump, 246+10, y-2, 0, "Adicionar");
-   endif
+   // if (is_gm_or_leader)
+   //    GFAddButton(gump, 246-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_ADD_LAW);
+   //    GFTextLine(gump, 246+10, y-2, 0, "Adicionar");
+   // endif
    
    var total_soldo := 0;
 	GFResizePic(gump, 48+360, 67, 9350, 172, 326); //agents background
@@ -164,8 +167,8 @@ program faccao(params)
    endforeach
 
    if (is_gm_or_leader || privilegies.contractnpc)
-      GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
-      GFTextLine(gump, 426+10, y-2, 0, "Contratar");
+      // GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
+      // GFTextLine(gump, 426+10, y-2, 0, "Contratar");
 
       if (who.cmdlevel)
          GFAddButton(gump, 426-10, y+18, 5605, 5605, GF_CLOSE_BTN, BUTTON_ADD_NPC);
@@ -184,10 +187,10 @@ program faccao(params)
 	GFTextLine(gump, 82, 401, 0, "{} moedas".format(cint(guild_obj.money)));
 	GFTextLine(gump, 405, 401, 0, "Soldo Total: {} mo".format(total_soldo));
 
-   if (is_gm_or_leader || privilegies.above_members)
-      GFAddButton(gump, 205-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_BAN_PLAYER);
-      GFTextLine(gump, 205, 401, 0, "Banimentos");
-   endif
+   // if (is_gm_or_leader || privilegies.above_members)
+   //    GFAddButton(gump, 205-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_BAN_PLAYER);
+   //    GFTextLine(gump, 205, 401, 0, "Banimentos");
+   // endif
 
    if (is_gm_or_leader || privilegies.buyuniforms)
       GFAddButton(gump, 310-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_BUY_UNIFORM);
@@ -280,7 +283,7 @@ function guildHandler(who, input)
       endif
       
       foreach uniform in (guild_obj.uniforms)
-         var desc := "{} [{} mo]".format(uniform.name, uniform.price);
+         var desc := "{}".format(uniform.name);
          options.append(desc);
          sleepms(2);
       endforeach
@@ -307,29 +310,35 @@ function guildHandler(who, input)
          
          var questions := array{};
          questions.append(struct{ "title" := "Qual o nome do Uniforme?", "marked" := ""} );
-         questions.append(struct{ "title" := "Qual craft pode fazer o uniforme?", "marked" := "", "radio" := array{"Costura", "Ferraria", "Marcenaria"}} );
-         questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := "0x0 5", "helper" := "metal, madeira, vidro, couro, pano, pontaflecha, demonbone"} );
+         questions.append(struct{ "title" := "Qual craft pode fazer o uniforme?", "marked" := 1, "radio" := array{"Costura", "Ferraria", "Marcenaria"}} );
+         questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := "", "helper" := "metal, madeira, vidro, couro, pano, pontaflecha, demonbone"} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
 
-         var output := QuestionsGump(who, questions);
-         if (!output || !output[1]) return SendSysMessageEx(who, "Cancelado"); endif
-
+         var form_output := QuestionsGump(who, questions);
+         if (!form_output || !form_output[1]) return SendSysMessageEx(who, "Cancelado"); endif
          var materials := struct{};
-         for i := 2 to 7
-            var prop := SplitWords(output[i]);
-            if (prop.size() < 2) break; endif
-            materials[prop[1]] := prop[2];
+         for i := 3 to 8
+            if (!form_output[i]) break; endif
+            var prop := SplitWords(form_output[i]);
+            if (!prop || prop.size() < 2) 
+               break; 
+            elseif (!prop[1] || !prop[2])
+               break;
+            else
+               materials[prop[1]] := prop[2];
+            endif
             sleepms(2);
          endfor
 
          var new_uniform := struct{
-            "name":= output[1],
+            "name":= form_output[1],
             "materials":= materials,
-            "pieces":= pieces
+            "pieces":= pieces,
+            "craft_skill" := form_output[2]
          };
          var uniform_list := guild.GetProp("uniforms");
          uniform_list.append(new_uniform);
@@ -347,6 +356,11 @@ function guildHandler(who, input)
             endif
          endif
 
+        if (!ConsumeSubstance(who.backpack, 0xE34, 1) && !who.cmdlevel)
+            SendSysMessageEx(who, "Você precisa de um pergaminho em branco.", SSM_FAIL);
+            return;
+         endif
+
          var uniform := guild_obj.uniforms[output];
          var props := struct{};
          props.name := uniform.name;
@@ -355,9 +369,17 @@ function guildHandler(who, input)
          props.mark := 1;
          props.exceptional := 1;
          props.delay := 2;
-         props.materials := array{};
-         props.requires := 0;
+         props.materials := uniform.materials;
+         props.requires := array{};
          props.fastcraft := 0;
+         props.craft_skill := uniform.craft_skill;
+         props.pieces := uniform.pieces;
+
+         var item := CreateItemInbackpack(who, 0x46AE);
+         foreach prop in (props.keys())
+            SetObjProperty(item, prop, props[prop]);
+            sleepms(2);
+         endforeach
 
       // "mark"        := GetConfigInt(elem, "mark"),
       // "exceptional" := GetConfigInt(elem, "exceptional"),
@@ -393,10 +415,22 @@ function playerHandler(who, input)
    if (options.size() < 1) return; endif
 
    var output := RadioGump(who, 300, 0, "Escolha uma opção", options, 0, 1);
+   if (output["Alterar"])
+      var privs := guild.GetProp(cstr(input));
+      var checked := array{};
+      var priv_opts := array{};
+      foreach opt in (privs.keys())
+         checked[_opt_iter] := privs[opt];
+         priv_opts[_opt_iter] := priv_list[opt];
+      endforeach
 
-   if (output["Alterar Privi"])
-      var privs := guild.GetProp(input);
-      var output := CheckBoxGump(who, 300, 0, "Escolha os privilégios que deseja alterar", options, 1);
+      var output := CheckBoxGump(who, 300, 0, "Escolha os privilégios que deseja alterar", priv_opts, checked);
+      foreach opt in (privs.keys())
+         var name := priv_opts[_opt_iter];
+         privs[opt] := (name in output) >= 1;
+      endforeach
+
+      guild.SetProp(cstr(input), privs);
    elseif (output["Líder"])
       guild.SetProp("leader", input);
       SendSysMessageEx(who, "{} agora é o líder da facção".format(player.name), SSM_INFO); 
