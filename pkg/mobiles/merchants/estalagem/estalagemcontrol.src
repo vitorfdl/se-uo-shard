@@ -64,8 +64,8 @@ function InnKeeperChecks()
 					quartos[i].inquilino := 0;
 
                foreach door in (quartos[i].doors)
-                  door := SystemFindObjectBySerial(door);
-                  SetObjProperty( door, "LockId", 1 );
+                  var thedoor := SystemFindObjectBySerial(door);
+                  SetObjProperty( thedoor, "LockId", 1 );
                   sleepms(2);
                endforeach
 
