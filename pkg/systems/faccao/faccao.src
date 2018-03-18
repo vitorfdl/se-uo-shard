@@ -295,7 +295,7 @@ function guildHandler(who, input)
          return SendSysMessageEx(who, "Isso não é uma porta"); 
       elseif (GetObjProperty(targ, "estalagem"))
          return SendSysMessageEx(who, "Você não pode mexer em portas de estalagem"); 
-      elseif (!(targ.x >= area[1] && targ.x <= area[3] && targ.y >= area[2] && targ.y <= area[4]))
+      elseif (!(targ.x >= cint(area[1]) && targ.x <= cint(area[3]) && targ.y >= cint(area[2]) && targ.y <= cint(area[4])))
          return SendSysMessageEx(who, "Você está fora da sua área de poder."); 
       endif
       var options := array{};
