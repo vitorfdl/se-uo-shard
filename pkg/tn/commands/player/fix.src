@@ -1,6 +1,7 @@
 use uo;
 use basic;
 
+include ":faccao:faccao";
 include "include/say";
 
 program fix(who)
