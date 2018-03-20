@@ -181,6 +181,7 @@ function buildGump(who)
 		var skill_name := skill;
 		GFTextLine(gump, s_x+154, s_y+3, 1152, ""+convertToRoman(GetSkillBonus(who, skill_name)+1));
 		skill_name := StrReplace(skill_name, "_", " ");
+      skill_name["Necromância"] := "Necrom.";
 		GFTextLine(gump, s_x+26, s_y+3, 1152, skill_name);
 		s_x += 190;
 		sleepms(5);
