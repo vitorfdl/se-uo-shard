@@ -534,7 +534,6 @@ function gmHandler(who)
       
       if (area.size() < 4) return SendSysMessageEx(who, "Area inválida"); endif
       guild.SetProp("area", area);
-      SendSysMessageEx(who, "Nome alterado pra {}".format(gname));
       SendSysMessageEx(who, "Area alterada");
    elseif (opts["Prisões"])
       var prisoes := array{};
