@@ -1,0 +1,113 @@
+use uo;
+use os;
+use npc;
+use util;
+
+include ":attributes:attributes";
+include "include/sysEvent";
+include "include/say";
+include ":mounts:mounts";
+include ":taming:taming";
+include ":tn:cooldown";
+include ":ghaia:generic";
+include ":ghaia:objective";
+
+set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
+
+var pack_animals   := array{291, 292};
+var me             := self();
+var idlesnd, custombehaviors, personality, npccfgfile;
+var following, fighting, warning;
+var wait_time := 10;
+var tame_difficulty := 0;
+var follow_tries := 0;
+
+//Custom events
+const FOLLOW_CMD     := 0xA001;
+const ATTACK_CMD     := 0xA002;
+const NEW_MASTER_CMD := 0xA003;
+const GUARD_CMD      := 0xA004;
+const GO_LOC_CMD     := 0xA008;
+
+program NPCMonitor()
+   EnablePetMainEvents();
+   Setup();
+   set_critical(1);
+   SetWarMode( 0 );
+   Set_Event_Queue_Size(20);
+   wait_time := 10;
+   SetAnchor(0, 0, 0, 0);
+   while (me)
+      if (GetObjProperty(me, "objloc") != error)
+         DoObjective();
+      endif
+
+      if ( wait_time < 1 )
+         sleepms(10);
+      endif
+
+      Fight();
+      PetFollow();
+      PetGuard();
+
+      if (!following && !fighting && !guarding)
+         wait_time := 30;
+      endif
+
+      var ev := Wait_For_Event(wait_time);
+      case(ev.type)
+         SYSEVENT_ENGAGED:
+         SYSEVENT_DAMAGED:
+            if (!following && !fighting)
+               Fight(ev.source);
+            endif
+         // EVID_HERDING:
+         // 	herd(ev);
+         EVID_TAUNT:
+            if(ev.source && (!me.master.party || (me.master.party && !(ev.source in me.master.party.members))) )
+               Fight(ev.opponent, 1);
+            endif
+         EVID_FLEE:
+            Flee(ev.source);
+         EVID_DOOBJECTIVE:
+            if (ev.destiny)
+               PetGoTo(ev.destiny, ev.move_type);
+            endif
+         SYSEVENT_SPEECH:
+            ResolveSpeech(ev);
+         SYSEVENT_DOUBLECLICKED:
+            if ( ev.source == me.master || ev.source.cmdlevel >= 3 )
+               if( (Distance(ev.source, me) > 1) )
+                  ProcessDoubleClick(ev);
+               elseif ( me.graphic in pack_animals )
+                  OpenPack(ev);
+               elseif ( !GetEquipmentByLayer(ev.source, LAYER_MOUNT) && IsMountable(me.graphic) && (ev.source.cmdlevel || me.HaveTalent("Montar")))
+                  var sela := cint(GetObjProperty(me, "sela_hp"));
+                  if (sela <= 0 && !ev.source.cmdlevel)
+                     SendSysMessageEx(ev.source, "Esse animal precisa de uma sela para ser montado", SSM_FAIL);
+                  elseif (MoveObjectToLocation(ev.source, me.x, me.y, me.z, ev.source.realm))
+                     ev.source.hidden := 0;
+                     MP_Mount(ev.source, me);
+                     me.hidden := 0;
+                  endif
+               else
+                  ProcessDoubleClick(ev);
+               endif
+            endif
+         SYSEVENT_ITEM_GIVEN:
+            TakeItem(ev);
+
+         // Custom events
+         FOLLOW_CMD:
+            PetFollow(ev.targ);
+         ATTACK_CMD:
+            Fight(ev.targ);
+         GUARD_CMD:
+            PetGuard(ev.targ);
+      endcase
+
+      wait_time := 5;
+      CreateAnimalitems();
+      sleepms(10);
+   endwhile
+endprogram

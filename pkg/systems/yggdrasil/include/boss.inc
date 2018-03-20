@@ -638,7 +638,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
       elseif (input[0] >= 400)
          input := input[0] - 400;
          var oldstate := event.steps[input];
-         var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover", "Cancelar", 0, 4});
+         var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover", "Cancelar"}, 0, 4);
          if (choice == "Alterar")
             var state := CombatEventsOptions(who, struct{});
             event.steps.Erase(input);
