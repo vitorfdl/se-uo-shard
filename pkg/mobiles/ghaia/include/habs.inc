@@ -413,6 +413,7 @@ function createMine(dmg, amount, is_fire := 0)
          item := CreateItemAtLocation(point.x, point.y, me.z, 0xA094);
          SetObjProperty(item, "DamageDice", "{}d4".format(dmg));
          item.SetOwner(me);
+         item.SetDuration(60);
          if (is_fire)
             item.SetEffect(DMG_FIRE);
          endif

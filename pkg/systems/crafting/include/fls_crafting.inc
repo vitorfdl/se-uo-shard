@@ -547,7 +547,7 @@ function CraftExceptional(who, theitem, craft_skill)
       return 2;
    endif
 
-   if (special_props.level < AP_GetTrueSkill(who, craft_skill)-4)
+   if (cint(special_props.level) < AP_GetTrueSkill(who, craft_skill)-4)
       SendSysMessageEx(who, "Seu nível em {} é muito baixo para usar este recurso".format(craft_skill), SSM_FAIL);
       return 2;
    endif

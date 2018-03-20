@@ -13,10 +13,10 @@ include "include/utils";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   mobile.frozen := 1;
-   while (1)
-      PlayObjectCenteredEffect(mobile, GFX_EXPLODE_1, 7, 16);
+   while (who.connected)
+      // PlayObjectCenteredEffect(mobile, GFX_EXPLODE_1, 7, 16);
       var point;
+      mobile.frozen := 0;      
       while (!point)
          var point := RandomPlace(mobile, 0);
          if (!CanWalk("L", mobile.x, mobile.y, mobile.z, point.x, point.y, CANWALK_DIR))
@@ -40,6 +40,7 @@ function StartScript(mobile, attacker := 0, level := 0)
          break;
       endif
    endwhile
+   
 	return 1;
 endfunction
 

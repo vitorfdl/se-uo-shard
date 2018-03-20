@@ -270,7 +270,7 @@ function CreateBossStructGump(who, byref boss)
 		var boss_attacks := boss.customAttacks;
 		if (!boss_attacks) boss_attacks := array{}; endif
 		if (boss_attacks[selected])
-			var choice := RadioGump(who, 180, 220, "O que deseja fazer?", array{"Remover", "Editar", "Cancelar"}, 1);
+			var choice := RadioGump(who, 180, 0, "O que deseja fazer?", array{"Remover", "Editar", "Cancelar"}, 3);
 			if (choice == 1)
 				boss_attacks.Erase(selected);
 			elseif (choice == 2)
@@ -295,7 +295,7 @@ function CreateBossStructGump(who, byref boss)
 		// var opts := CheckBoxGump(who, 180, 200+(resist_types.length() * 18), "Escolha as resistências:", resist_types, opt_checked);
 		// boss.resists := opts;
 	elseif ( input[0] == 80)
-		var opt := RadioGump(who, 180, 160, "Qual tipo deseja adicionar?", array{"resists", "imunities", "vulnerabilities"});
+		var opt := RadioGump(who, 180, 0, "Qual tipo deseja adicionar?", array{"resists", "imunities", "vulnerabilities"});
 		var opt_checked := array{};
 		foreach resist in resist_types
 			if (resist in boss[opt])
@@ -309,7 +309,7 @@ function CreateBossStructGump(who, byref boss)
 		//sendsysmessage(who, " " + input[0] + " " + boss.loot[index]);
 
 		if ( boss.loot[index] != error )
-			var opt := RadioGump(who, 180, 220, "Editar item", array{"Criar", "Deletar", "Alterar Chance"});			
+			var opt := RadioGump(who, 180, 0, "Editar item", array{"Criar", "Deletar", "Alterar Chance", "Cancelar"});			
 			if (opt == "Deletar")
 				boss.loot.erase(index);
 				SendSysMEssageEx(who, "O item foi removido.", SSM_INFO);
@@ -320,7 +320,7 @@ function CreateBossStructGump(who, byref boss)
 				endif
 				SendSysMessageEx(who, "Você criou o item na sua mochila."); 
 			elseif (opt == "Alterar Chance")
-				boss.loot[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
+				boss.loot[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", ""+cint(boss.loot[index].chance), 1));
 			endif 
 		else
 			SendSysMessage(who, "Escolha o item do loot.");
@@ -391,7 +391,7 @@ function CreateBossStructGump(who, byref boss)
 			endif
 
 		else
-			var opt := RadioGump(who, 250, 270, "Editar item", array{"Armorscript", "AttackHitscript", "Criticalscript", "Special IA", "Cancelar"});
+			var opt := RadioGump(who, 250, 0, "Editar item", array{"Armorscript", "AttackHitscript", "Criticalscript", "Special IA", "Cancelar"});
          var spec := struct{
             "name" := opt
          };
@@ -638,18 +638,21 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
       elseif (input[0] >= 400)
          input := input[0] - 400;
          var oldstate := event.steps[input];
-         event.steps.Erase(input);
-         var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover"});
-      if (choice == "Alterar")
+         var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover", "Cancelar", 0, 4});
+         if (choice == "Alterar")
             var state := CombatEventsOptions(who, struct{});
             event.steps.Insert(input, state);
-         elseif (choice == "Mudar Posição")
+         elseif (choice["Mudar Posi"])
             var position := cint(RequestGump(who, "Qual posição??", "Ex: 1", "1", 1));
             if (position == 0)
                position := 1;
             elseif (position > event.steps.size())
-               position := event.steps.size()+1;
+               position := event.steps.size();
             endif
+            event.steps.Erase(input);
+            event.steps.Insert(position, state);
+         else
+            event.steps.Erase(input);
          endif
       endif
 	endwhile
@@ -670,7 +673,7 @@ function CombatEventsOptions(who, state)
       state.+y := loc.y;
       state.+z := loc.z;
    elseif ( opt == "Teleport")
-      state.+target := RadioGump(who, 200, 180, "Quem vai sofrer?", targ_opts);
+      state.+target := RadioGump(who, 200, 0, "Quem vai sofrer?", targ_opts);
       var loc := TargetCoordinates(who);
       state.+x := loc.x;
       state.+y := loc.y;

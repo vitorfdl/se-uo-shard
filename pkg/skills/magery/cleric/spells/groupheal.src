@@ -57,7 +57,7 @@ program SpellScript(params)
 	
 	if (success)
       var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
-		var healed := RandomDiceRoll(MageDiceTable("C", level));
+		var healed := RandomDiceRoll(MageDiceTable("A", level)) + 10;
 		
 		PlaySoundEffectXYZ(targ.x, targ.y, targ.z, SFX_SPELL_HEAL);
 		foreach mobile in ListMobilesNearLocation( targ.x, targ.y, targ.z, 2)

@@ -189,3 +189,20 @@ function isLeader(faccao, mobile)
 
    return 0;
 endfunction
+
+function inGuildRect(guild, item := 0)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+
+   if (!guild) return; endif
+
+   var area := guild.getProp("area");
+   if (!area || area.size() < 4) 
+      return 0; 
+   elseif (item.x >= cint(area[1]) && item.x <= cint(area[3]) && item.y >= cint(area[2]) && item.y <= cint(area[4]));
+      return 1;
+   endif
+
+   return 0;
+endfunction
