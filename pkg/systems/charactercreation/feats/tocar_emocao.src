@@ -32,7 +32,7 @@ program SpellScript(params)
       return SendSysMessageEx(who, "Você não pode atribuir emoção a partituras curtas", SSM_FAIL);
    endif
 
-   var emocao := CheckBoxGump(who, 180, 0, "Escolha uma emoção:", array{"Enconrajar", "Entristecer", "Alegrar", "Enfurecer", "Cancelar"}, 1);
+   var emocao := RadioGump(who, 180, 0, "Escolha uma emoção:", array{"Enconrajar", "Entristecer", "Alegrar", "Enfurecer", "Cancelar"}, 0, 1);
    if (emocao["Cancelar"])
       return SendSysMessageEx(who, "Cancelado");
    endif
