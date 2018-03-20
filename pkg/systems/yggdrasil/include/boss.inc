@@ -641,6 +641,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
          var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover", "Cancelar", 0, 4});
          if (choice == "Alterar")
             var state := CombatEventsOptions(who, struct{});
+            event.steps.Erase(input);
             event.steps.Insert(input, state);
          elseif (choice["Mudar Posi"])
             var position := cint(RequestGump(who, "Qual posição??", "Ex: 1", "1", 1));
@@ -650,8 +651,8 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
                position := event.steps.size();
             endif
             event.steps.Erase(input);
-            event.steps.Insert(position, state);
-         else
+            event.steps.Insert(position, oldstate);
+         elseif(choice["Remover"])
             event.steps.Erase(input);
          endif
       endif
