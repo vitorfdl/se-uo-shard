@@ -212,7 +212,7 @@ program faccao(params)
    if (input[0] >= BUTTON_BUY_UNIFORM && input[0] <= BUTTON_BAN_PLAYER)
       guildHandler(who, input[0]);
    elseif (input[0] == BUTTON_GM_OPTS)
-      gmHandler(who)
+      gmHandler(who);
    elseif (input[0] >= BUTTON_CHANGE_PLAYER)
       playerHandler(who, input[0]);
    elseif (input[0] >= BUTTON_ADD_NPC && input[0] <= BUTTON_ADD_NPC+0x100)
