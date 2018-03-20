@@ -265,7 +265,7 @@ function CheckifIsAlly(who, mobiles)
          elseif(mobiles.alignment == 2)
             return 1;
          endif
-      elseif (mobiles in who.party.members)
+      elseif (mobiles in who.party.members || mobiles == who)
          return 1;
       endif
 
@@ -285,7 +285,7 @@ function CheckifIsAlly(who, mobiles)
          elseif(mobile.alignment == 2)
             continue;
          endif
-      elseif (mobile in who.party.members)
+      elseif (mobile in who.party.members || mobile == who)
          continue;
       endif
 
