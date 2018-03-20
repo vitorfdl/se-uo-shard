@@ -104,7 +104,7 @@ function GetHitsInfo(entry)
 	var critstr := "";
 	
 	foreach crit in criticals
-		critstr := critstr + TranslateHit(lower(crit)) + "";
+		critstr := critstr + TranslateHit(lower(crit)) + "<br>";
 	endforeach
 
 	return critstr;

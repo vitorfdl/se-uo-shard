@@ -184,7 +184,7 @@ program faccao(params)
 	// GFResizePic(gump, 227, 67, 9350, 346, 326);
 	// GFAddButton(gump, 362, 357, 2071, 2073, GF_CLOSE_BTN, 0);
 
-
+   GFResizePic(gump, 54, 398, 9350, 518, 29);
    GFAddButton(gump, 54, 398, 518, 518, GF_CLOSE_BTN, BUTTON_MONEY_TRANSFER);
 	GFGumpPic(gump, 491, 330, 40034, 0);
    
