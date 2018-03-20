@@ -18,7 +18,7 @@ program SpellScript(params)
    SendSysMessageEx(who, "Escolha a partitura", SSM_INFO);
    var targ := Target(who);
    
-   if (!targ.isA(POLCLASS_ITEM) || targ.objtype != 0x9923)
+   if (!targ.isA(POLCLASS_ITEM) || targ.objtype != 0x9923 || targ.objtype != 0x9924)
       return SendSysMessageEx(who, "Isso não parece uma partitura", SSM_FAIL);
    elseif (GetObjProperty(targ, "emocao"))
       return SendSysMessageEx(who, "Essa partitura já possui uma emoção atribuida", SSM_FAIL);
