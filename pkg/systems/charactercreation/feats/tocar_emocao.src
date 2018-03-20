@@ -41,7 +41,7 @@ program SpellScript(params)
    SetObjProperty(targ, "serialid", who.serial);
 
    SendSysMessageEx(who, "Você atribuiu a emoção {} a partitura".format(emocao), SSM_INFO);
-   SendSysMessageEx(who, "Sua música irá afetar um número de personagens igual ao seu nível em Insturmento Musical", SSM_INFO);
+   SendSysMessageEx(who, "Sua música irá afetar um número de personagens igual ao seu nível em Instrumento Musical", SSM_INFO);
 
 	return 1;
 endprogram
