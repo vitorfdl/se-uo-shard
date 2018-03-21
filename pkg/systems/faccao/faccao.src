@@ -89,14 +89,20 @@ program faccao(params)
 	GFResizePic(gump, 26, 19, 39925, 573, 417); //background
 
 	GFResizePic(gump, 228, 29, 9350, 171, 34);
-	GFHtmlArea(gump, 232, 36, 165, 20, "<center><BASEFONT size=5>{}".format(guild_obj.name));
+
+   GFHtmlShadowed(gump,232, 36, 165, 20, "#FFC33C", "<center>{}".format(guild_obj.name), 8);
+
+   if (who.cmdlevel >= 2)
+      GFAddButton(gump, 430-20, 42+2, 5605, 5605, GF_CLOSE_BTN, BUTTON_GM_OPTS);
+      GFTextLine(gump, 430, 42, 49, "[GM] Alterar Facção");
+   endif
    
 	GFResizePic(gump, 48, 67, 9350, 172, 326); //members background
-	GFTextLine(gump, 88, 70, 0, "Membros");
+	GFTextLine(gump, 100, 70, 0, "Membros");
 
    var leader_name := guild_leader.getName();
    if (!leader_name)
-      leader_name := "-";
+      leader_name := "";
    elseif(who.cmdlevel)
       GFAddButton(gump, 49, 91, 5605, 5605, GF_CLOSE_BTN, BUTTON_CHANGE_PLAYER+guild_obj.leader);
    endif
@@ -174,7 +180,7 @@ program faccao(params)
       // GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
       // GFTextLine(gump, 426+10, y-2, 0, "Contratar");
 
-      if (who.cmdlevel)
+      if (who.cmdlevel >= 2)
          GFAddButton(gump, 426-10, y+18, 5605, 5605, GF_CLOSE_BTN, BUTTON_ADD_NPC);
          GFTextLine(gump, 426+10, y-2+18, 0, "Adicionar NPC");
       endif
@@ -480,6 +486,12 @@ function playerHandler(who, input)
       options.append("Tornar Líder");
    endif
 
+   if (who.cmdlevel)
+      if (guild_obj.leader == who.serial)
+         options.append("Remover Líder");
+      endif
+   endif
+
    if (is_gm_or_leader || privilegies.above_members)
       options.append("Remover da Facção");
    endif
@@ -505,7 +517,9 @@ function playerHandler(who, input)
       endforeach
 
       guild.SetProp(cstr(input), privs);
-   elseif (output["Líder"])
+   elseif (output["Remover Líder"])
+      guild.SetProp("leader", 0x0);
+   elseif (output["Tornar Líder"])
       guild.SetProp("leader", input);
       SendSysMessageEx(who, "{} agora é o líder da facção".format(player.name), SSM_INFO); 
    elseif (output["Remover"])

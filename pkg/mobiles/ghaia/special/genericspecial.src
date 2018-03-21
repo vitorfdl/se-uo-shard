@@ -9,6 +9,7 @@ include "include/shapes";
 include ":ghaia:ghaia";
 include ":ghaia:habs";
 include "include/sysEvent";
+include "include/utils";
 
 var me;
 var custombehaviors := array{};
@@ -76,7 +77,35 @@ program loko(params)
 				sleepms(100);
     			endwhile
 
+		elseif (state.type == "Pushback")
+			var targ := selectOpponent(who, state.target, state.conedist);
+			foreach t in targ
+            sleepms(2);
+            if (state.behaviour["Para frente"])
+               if (state.behaviour["relacional"])
+                  PushMobile(who, state.dist, 100, t);
+               else
+                  PushBack(t, state.dist, 100, 1);
+               endif
+            elseif (state.behaviour["Para trás"])
+               PushBack(t, state.dist, 100);
+            endif
+			endforeach
 		elseif (state.type == "Teleport")
+			var targ := selectOpponent(who, state.target, state.conedist);
+			foreach t in targ
+            sleepms(2);
+            if (!state.behaviour || state.behaviour["Teleportar X,Y,Z"])
+               MoveObjectToLocation(t, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION);
+            elseif (state.behaviour["Teleportar no Alvo"])
+               MoveObjectToLocation(t, who.opponent.x, who.opponent.y, who.opponent.z, who.opponent.realm, MOVEOBJECT_FORCELOCATION);
+            elseif (state.behaviour["Teleportar no NPC"])
+               MoveObjectToLocation(t, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION);
+            elseif (state.behaviour["Aplicar +-X,Y,Z"])
+               MoveObjectToLocation(t, t.x-state.x, t.y-state.y, t.z-state.z, who.realm, MOVEOBJECT_FORCELOCATION);
+            endif
+			endforeach
+
 			if (state.target == "Self")
 				MoveObjectToLocation(who, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION);
 			elseif (state.target == "Opponent")

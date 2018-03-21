@@ -72,6 +72,29 @@ function PushBack(who, dist, delay, invert := 0)
    return 1;
 endfunction
 
+function PushMobile(who, dist, delay, targ)
+   var mod := GetModByFacing(GetFacing(who.x, who.y, targ.x, targ.y));
+	var x := mod[1];
+	var y := mod[2];
+
+	var i := 0;
+	for( i := 1; i <= dist; i := i + 1)
+		var finalx := (targ.x + x);
+		var finaly := (targ.y + y);
+      
+		if (!CanWalk("L", targ.x, targ.y, targ.z, finalx, finaly))
+			break;
+		endif
+
+		var err := MoveObjectToLocation( targ, finalx, finaly, targ.z, targ.realm );
+		sleepms(delay);
+		if (err == error)
+		//	PrintText(who, "*bate no obstaculo*");
+			break;
+		endif
+	endfor
+endfunction
+
 
 function FLSCreateItem(who, item, amount := 1)
    var created := CreateItemAtLocation(who.x, who.y, who.z, item, amount, who.realm);

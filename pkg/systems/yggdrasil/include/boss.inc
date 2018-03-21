@@ -663,7 +663,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
 endfunction
 
 function CombatEventsOptions(who, state)
-   var opt := RadioGump(who, 180, 0, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Play Cast Anim", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
+   var opt := RadioGump(who, 180, 0, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Play Cast Anim", "Pushback", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
 
    var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent"};
    state.type := opt;
@@ -673,12 +673,29 @@ function CombatEventsOptions(who, state)
       state.+x := loc.x;
       state.+y := loc.y;
       state.+z := loc.z;
+   elseif ( opt == "Pushback")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai sofrer a pushback?", "marked" := 1, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual o comportamento?", "marked" := "", "radio" := array{"Para frente", "Para trás", "Para frente relacional"}});
+      var output := QuestionsGump(who, input_list);
+
+      state.target := output[1];
+      state.behaviour := output[2];
    elseif ( opt == "Teleport")
-      state.+target := RadioGump(who, 200, 0, "Quem vai sofrer?", targ_opts);
-      var loc := TargetCoordinates(who);
-      state.+x := loc.x;
-      state.+y := loc.y;
-      state.+z := loc.z;
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai sofrer a teleporte?", "marked" := 1, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Escolha o comportamento", "marked" := 1, "radio" := array{"Teleportar X,Y,Z", "Teleportar no Alvo (DO NPC)", "Teleportar no NPC", "Aplicar +-X,Y,Z"}});
+      input_list.append(struct{ "title" := "Qual o X Y Z? (Apenas para primeira e ultima opção)", "marked" := ""});
+      var output := QuestionsGump(who, input_list);
+      
+      state.target := output[1];
+      state.behaviour := output[2];
+      if (output[2]["X,Y,Z"])
+         var loc := SplitWords(output[3]);
+         state.+x := cint(loc[1]);
+         state.+y := cint(loc[2]);
+         state.+z := cint(loc[3]);
+      endif
    elseif ( opt == "TimedScript")
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer a action?", "marked" := 1, "radio" := targ_opts});
