@@ -45,7 +45,8 @@ function GetFaccao(guild)
       "laws"     := guild.GetProp("laws"),
       "leader"   := guild.GetProp("leader"),
       "area"     := guild.GetProp("area"),
-      "uniforms" := guild.GetProp("uniforms")
+      "uniforms" := guild.GetProp("uniforms"),
+      "money" := guild.GetProp("money")
    };
 
    return faccao_obj;

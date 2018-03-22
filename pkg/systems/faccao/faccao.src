@@ -192,8 +192,7 @@ program faccao(params)
 
    GFResizePic(gump, 54, 398, 9350, 518, 29);
    
-	// GFGumpPic(gump, 59, 402, 40022, 0);
-   GFAddButton(gump, 59, 402, 518, 518, GF_CLOSE_BTN, BUTTON_MONEY_TRANSFER);
+   GFAddButton(gump, 59, 402, 40022, 40022, GF_CLOSE_BTN, BUTTON_MONEY_TRANSFER);
 	GFTextLine(gump, 82, 401, 0, "{} moedas".format(cint(guild_obj.money)));
 	GFTextLine(gump, 415, 401, 0, "Soldo Total: {} mo".format(total_soldo));
 	GFGumpPic(gump, 491, 330, 40034, 0);
