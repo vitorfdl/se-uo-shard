@@ -355,11 +355,14 @@ function GetPlantDates(destroyin_array)
    var returnvalue := "";
    if (!(1 in destroyin_array))
       returnvalue += "Verão;";
-   elseif (!(2 in destroyin_array))
+   endif
+   if (!(2 in destroyin_array))
       returnvalue += "Outono;";
-   elseif (!(3 in destroyin_array))
+   endif
+   if (!(3 in destroyin_array))
       returnvalue += "Inverno;";
-   elseif (!(5 in destroyin_array))
+   endif
+   if (!(5 in destroyin_array))
       returnvalue += "Primavera;";
    endif
 
