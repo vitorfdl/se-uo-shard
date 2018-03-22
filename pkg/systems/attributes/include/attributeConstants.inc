@@ -52,7 +52,6 @@ enum SKILLS
 	PESCARIA            := "Pescaria",
 	ESCALPELAR          := "Escalpelar",
 	PLANTACAO           := "Plantação",
-	ESCRIBA             := "Escriba",
 	MARCENARIA          := "Marcenaria",
 	COZINHA             := "Cozinha",
 	COSTURA             := "Costura",

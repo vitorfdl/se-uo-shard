@@ -72,8 +72,8 @@ program use_MapmakersPen(who, tool)
       endif
       PrintText(who, "*traduzindo pergaminho*");
 
-      var roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, ESCRIBA);
-      if (roll < 19)
+      var roll := rollAttrDice(who, INTELLIGENCE);
+      if (roll < 14)
          SendSysMessageEx(who, "Você falhou em traduzir o pergaminho.", SSM_FAIL);
          return;
       endif
@@ -145,7 +145,7 @@ program use_MapmakersPen(who, tool)
 				return;
 			endif
 
-			var roll := rollAttrDice(who, INTELLIGENCE) + GetSkillBonus(who, ESCRIBA);
+			var roll := rollAttrDice(who, INTELLIGENCE);
 			if (roll <= 14)
 				SendSysMessageEx(who, "Falhou em cópiar o livro.", SSM_FAIL);
 				return;

@@ -14,6 +14,12 @@ include ":ghaia:objective";
 
 set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
+const DF_ARMS_MSG := ""; 
+const DF_WARN_MSG := "";
+const DF_HELP_MSG := "";
+const DF_ACCEPT_MSG := "";
+const DF_NEGATIVE_MSG := "";
+
 var pack_animals   := array{291, 292};
 var me             := self();
 var idlesnd, custombehaviors, personality, npccfgfile;
@@ -35,7 +41,7 @@ function EnableGuardMainEvents()
    EnableEvents(SYSEVENT_SPEECH, 10);
    EnableEvents(SYSEVENT_ENGAGED);
    EnableEvents(SYSEVENT_DAMAGED);
-   EnableEvents(SYSEVENT_DOUBLECLICKED, 5);
+   // EnableEvents(SYSEVENT_DOUBLECLICKED, 5);
    EnableEvents(SYSEVENT_ITEM_GIVEN, 2);
    EnableEvents(SYSEVENT_ENTEREDAREA, 5);
    DisableEvents(SYSEVENT_OPPONENT_MOVED);
@@ -46,7 +52,7 @@ function DisableGuardMainEvents()
    DisableEvents(SYSEVENT_ENGAGED);
    DisableEvents(SYSEVENT_DAMAGED);
    DisableEvents(SYSEVENT_ITEM_GIVEN);
-   DisableEvents(SYSEVENT_DOUBLECLICKED);
+   // DisableEvents(SYSEVENT_DOUBLECLICKED);
    DisableEvents(SYSEVENT_OPPONENT_MOVED);
    DisableEvents(SYSEVENT_ENTEREDAREA);
 endfunction
@@ -70,8 +76,8 @@ endfunction
 function CheckPlayer(who)
    if (who.npctemplate)
       if (who.alignment == 2)
-         fighting := who;
-         warning := 0;
+         fighting  := who;
+         warning   := 0;
          following := 0;
          warn_type := 0;
          return;
@@ -85,6 +91,15 @@ function CheckPlayer(who)
    elseif (GetCooldown(me, "recentcheck_{}".format(who.serial)))
       return 0;
    endif
+
+   var hostiles := ListHostiles(who, 8);
+   foreach mob in hostiles
+      if (GetObjProperty(mob, "guild") == guild.guildid || mob.guildid == guild.guildid)
+         Fight(mob);
+         return 0;
+      endif
+      sleepms(2);
+   endforeach
 
    foreach law in guild_laws
       case (law.type)
@@ -189,6 +204,164 @@ program NPCMonitor()
    endwhile
 endprogram
 
+function WarnPlayer()
+   if (fighting || !warning)
+      return;
+   elseif (GetCooldown(who, "last_warn_{}".format(warning.serial)))
+      return;
+   endif
+
+   warn_tries += 1;
+
+endfunction
+
+function Fight(opponent)
+   if (opponent)
+      if ( opponent == me || opponent == fighting || !opponent.IsA(POLCLASS_MOBILE) || guild_leader == opponent.serial )
+         return;
+      endif
+
+      fighting := opponent;
+      SetOpponent(opponent);
+      SetWarMode(1);
+      return;
+   endif
+
+   if (!fighting)
+      SetOpponent(0);
+      SetWarMode(0);
+      return;
+   endif
+
+   if (fighting.concealed || fighting.hidden || fighting.dead || Distance(me, fighting) > 15)
+      var hostiles := ListHostiles( me, 8, LH_FLAG_LOS);
+      if (!hostiles[1])
+         fighting := 0;
+         SetOpponent(0);
+         SetWarMode(0);
+         return;
+      else
+         fighting := hostiles[1];
+      endif
+   endif
+
+   var range := 1;
+   var minrange := 0;
+   if (npccfgfile.AttackMaxRange)
+      range := cint(npccfgfile.AttackMaxRange);
+   endif
+
+   if (npccfgfile.AttackMinRange)
+      minrange := cint(npccfgfile.AttackMinRange);
+   endif
+
+   var dist := CoordinateDistance(me.x, me.y, fighting.x, fighting.y);
+   if (dist > range)
+      CalcPathAndMove(me, fighting, 275 - me.run_speed);
+   elseif (dist < minrange)
+      RunAwayFrom(fighting);
+   endif
+
+   wait_time := 0;
+endfunction
+
+function SendToPrison()
+
+endfunction
+
+function StoreWeapon(reverse := 0)
+
+endfunction
+
+function EatSomething()
+   var random_food := CreateItemInBackpack(me, "banana");
+   UseItem(random_food, me);
+endfunction
+
+function CanFight(me, mob)
+   var hostiles := ListHostiles( me, 8, LH_FLAG_LOS);
+
+   if (mob in hostiles)
+      return 1;
+   endif
+
+   return 0;
+endfunction
+
+function PetMovement(what, move_mode)
+   if (!CheckLosAt(me, what.x, what.y, what.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se n¿o consegue correr direto
+		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
+		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
+		
+      if (path == error || ( last_loc && !(what in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se n¿o calculou
+         var flags := FP_IGNORE_MOBILES;
+         if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
+            flags := flags| FP_IGNORE_DOORS;
+         endif
+         path := FindPath(  me.x, me.y, me.z, what.x, what.y, what.z, me.realm, flags, 15); //calcula o path
+         
+         if (!path[1] || !path || path == error)
+            sleepms(2);
+            what := 0;
+         else
+            if (move_mode == 2)
+               RunTowardLocation( path[1].x, path[1].y ); //anda na direcao
+            else
+               WalkTowardLocation( path[1].x, path[1].y ); //anda na direcao
+            endif
+				path.erase(1); //deleta a coordenada e vai pra proxima
+            set_critical(1);
+            SetObjProperty(me, "path", path);
+            SetObjProperty(me, "#enemy_last_loc", array{what.x, what.y, what.z});
+            set_critical(0);
+         endif
+		endif
+
+      var coord := path[1]; //pega a primeira coordenada
+      if (coord); 
+         var coordtry := GetObjProperty(me, "#coordtry");
+         if (coordtry != error && coordtry[1] != coord)
+            SetObjProperty(me, "#coordtry", array{coord, ReadGameClock()+5 }); 
+         endif
+         if (move_mode == 2)
+            RunTowardLocation( coord.x, coord.y ); //anda na direcao
+         else
+            WalkTowardLocation( coord.x, coord.y ); //anda na direcao
+         endif
+         sleepms(2);
+         Opendoors(me); //tenta abrir possiveis portas
+         if (CoordinateDistance(me.x, me.y, coord.x, coord.y) <= 1) //se chegou onde devia 
+            path.erase(1); //deleta a coordenada e vai pra proxima
+            if (path[1])
+               SetObjProperty(me, "path", path);
+            else
+               EraseObjProperty(me, "path");
+            endif
+         else // se n¿o consegue chegar na coord 
+            if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
+               EraseObjProperty(me, "path"); //deleta o path atual
+               what := 0;
+            endif
+         endif
+      else
+         if (move_mode == 2)
+            RunToward( what );
+         else
+            WalkToward( what );
+         endif
+         RunToward( what );
+         sleepms(2);
+      endif
+   else
+      EraseObjProperty(me, "path");
+      EraseObjProperty(me, "#enemy_last_loc");
+      if (move_mode == 2)
+      else
+         WalkToward( what );
+      endif
+      sleepms(2);
+	endif
+endfunction
 
 function Setup()
    var guildid := GetObjProperty(me, "guild");

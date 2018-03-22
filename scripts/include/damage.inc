@@ -232,6 +232,16 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		return;
 	endif
 
+   if (defender.npctemplate && attacker.npctemplate)
+      var guild_id := GetObjProperty(defender, "guild");
+      if (guild_id)
+         var guild_ref := FindGuild(guild_id);
+         if (!InGuildRect(guild_ref, defender))
+            damage *= 3;
+         endif
+      endif
+   endif
+
    var dmg_reduce := GetObjProperty(defender, "dmg_reduce");
    if (dmg_reduce)
       if (type in dmg_reduce.keys())

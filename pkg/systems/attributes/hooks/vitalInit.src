@@ -112,8 +112,11 @@ endfunction
 exported function GetHungerRegenRate(mobile)
 	var base_regen := CInt(AP_GetSettingsCfgElem("Regen").Hunger) * 100;
 
-	return base_regen + AP_GetVitalRegenRateMod(mobile, "hunger");
+   if (mobile.npctemplate)
+      base_regen /= 2;
+   endif
 
+	return base_regen + AP_GetVitalRegenRateMod(mobile, "hunger");
 endfunction
 
 exported function GetHungerMaximumValue(mobile)
