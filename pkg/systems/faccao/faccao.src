@@ -185,12 +185,12 @@ program faccao(params)
 	// GFAddButton(gump, 362, 357, 2071, 2073, GF_CLOSE_BTN, 0);
 
    GFResizePic(gump, 54, 398, 9350, 518, 29);
-   GFAddButton(gump, 54, 398, 518, 518, GF_CLOSE_BTN, BUTTON_MONEY_TRANSFER);
-	GFGumpPic(gump, 491, 330, 40034, 0);
    
-	GFGumpPic(gump, 59, 402, 40022, 0);
+	// GFGumpPic(gump, 59, 402, 40022, 0);
+   GFAddButton(gump, 59, 402, 518, 518, GF_CLOSE_BTN, BUTTON_MONEY_TRANSFER);
 	GFTextLine(gump, 82, 401, 0, "{} moedas".format(cint(guild_obj.money)));
 	GFTextLine(gump, 415, 401, 0, "Soldo Total: {} mo".format(total_soldo));
+	GFGumpPic(gump, 491, 330, 40034, 0);
 
    // if (is_gm_or_leader || privilegies.above_members)
    //    GFAddButton(gump, 205-15, 401+3, 0x845, 0x846, GF_CLOSE_BTN, BUTTON_BAN_PLAYER);

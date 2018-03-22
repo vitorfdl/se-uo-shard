@@ -144,6 +144,13 @@ exported function MegaCliloc( who, byref packet )
          if (elem.Pericia && !item.isMagicWeapon())
 				xDesc += "Perícia: {}<br>".format(StrReplace(elem.Pericia, "_", " "));
          endif
+         if (elem.PlantDifficulty)
+            if (AP_GetTrueSkill(who, PLATANCAO) >= 4)
+				   xDesc += "Fase adulta em {} dias<br>".format(cint(elem.Steps));
+				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigStringArray(elem.DestroyIn)));
+
+            endif
+         endif
          // if (elem.WeaponType && !item.isMagicWeapon())
 			// 	xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
          // endif
@@ -335,4 +342,23 @@ function getbonusname(mod)
 	else
 		return "Bonus " + mod;
 	endif
+endfunction
+
+function GetPlantDates(destroyin_array)
+   if (destroyin_array.size() < 1)
+      return "Todos";
+   endif
+
+   var returnvalue := "";
+   if (!(1 in destroyin_array))
+      returnvalue += "Verão;";
+   elseif (!(2 in destroyin_array))
+      returnvalue += "Outono;";
+   elseif (!(3 in destroyin_array))
+      returnvalue += "Inverno;";
+   elseif (!(5 in destroyin_array))
+      returnvalue += "Primavera;";
+   endif
+
+   return returnvalue;
 endfunction

@@ -184,8 +184,11 @@ function WriteMagic(who, spell_id, spell_power)
 		sleep(2);
 	endfor
 
-	if ((spellinfo.type != "Comando" && spellinfo.type != element) || (spellinfo.circle > elementpower))
-		SendSysMessageEx(who, "A inscrição não reage aos elementos da varinha", SSM_FAIL);
+	if ((spellinfo.type != "Comando" && spellinfo.type != element))
+		SendSysMessageEx(who, "Os hieroglifos não reagem aos elementos da varinha", SSM_FAIL);
+		return;
+   elseif (spellinfo.circle > elementpower)
+		SendSysMessageEx(who, "Os hieroglifos são muito poderosos para essa varinha", SSM_FAIL);
 		return;
 	endif
 

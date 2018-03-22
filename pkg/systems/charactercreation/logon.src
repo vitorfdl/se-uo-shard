@@ -34,45 +34,29 @@ program fixTalent(who)
    endif
    // var total_points := who.getTalentPoints();
 
-   // var attr := ReadConfigFile(":attributes:attributes");
-	// foreach skill in (who.skillList())
-   //    var mystat := cint(AP_GetTrueSkill(who, skill));
-   //    var levels := GetConfigStringArray(attr[skill], "Level");
-   //    for i := 1 to mystat
-   //       total_points += getCost(attr[skill].SkillType, i);
-   //       foreach giv in levels
-   //          sleepms(2);
-   //          giv := SplitWords(giv);
-   //          if (cint(giv[1]) > mystat)
-   //             continue;
-   //          endif
+   var attr := ReadConfigFile(":attributes:attributes");
+	foreach skill in (who.skillList())
+      var mystat := cint(AP_GetTrueSkill(who, skill));
+      var levels := GetConfigStringArray(attr[skill], "Level");
+      for i := 1 to mystat
+         total_points += getCost(attr[skill].SkillType, i);
+         foreach giv in levels
+            sleepms(2);
+            giv := SplitWords(giv);
+            if (cint(giv[1]) > mystat)
+               continue;
+            endif
 
-   //          if (giv[2] == "feat")
-   //             var new_feat := StrReplace(giv[3], "_", " ");
-   //             LearnFeat(who, new_feat, 0, 0);
-   //          endif
-   //       endforeach
-   //       sleepms(2);
-   //    endfor
+            if (giv[2] == "feat")
+               var new_feat := StrReplace(giv[3], "_", " ");
+               LearnFeat(who, new_feat, 0, 0);
+            endif
+         endforeach
+         sleepms(2);
+      endfor
 
-   //    if (!chardata.fixed)
-   //       if (skill == ARMADURA_PESADA && mystat > 0)
-   //          chardata.hitpoints  -= mystat;
-   //          chardata.hitpoints  += mystat * 5;
-   //       elseif (skill == ARMADURA_MEDIA && mystat > 0)
-   //          chardata.hitpoints  -= mystat;
-   //          chardata.hitpoints  += mystat * 3;
-   //       elseif (skill == ARMADURA_LEVE && mystat > 0)
-   //          chardata.stampoints  -= mystat;
-   //          chardata.hitpoints  += mystat * 2;
-   //          chardata.stampoints  += mystat * 2;
-   //       elseif(skill["Magia"] && mystat > 0)
-   //          chardata.manapoints  -= mystat;
-   //          chardata.manapoints  += mystat *2;
-   //       endif
-   //    endif
-   //    sleepms(2);
-	// endforeach
+      sleepms(2);
+	endforeach
 
    // chardata.fixed := 1;
    // SetObjProperty(who, "chardata", chardata);

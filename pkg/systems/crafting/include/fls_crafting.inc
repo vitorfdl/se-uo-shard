@@ -523,6 +523,9 @@ function CraftExceptional(who, theitem, craft_skill)
    var special_obj := Target(who);
    if (!special_obj)
       return;
+   elseif (special_obj.isA(POLCLASS_CONTAINER))
+      UseItem(special_obj, who);
+      return;
    endif
 
    var special_props := GetObjProperty(special_obj, "craftproperty");
@@ -538,7 +541,8 @@ function CraftExceptional(who, theitem, craft_skill)
       special_props := struct{
          "equips" := GetConfigStringArray(item, "equip"),
          "props" := GetConfigStringDictionary(item, "prop"),
-         "skills" := GetConfigStringArray(item, "skill")
+         "skills" := GetConfigStringArray(item, "skill"),
+         "level" := GetConfigInt(item, "level")
       };
    endif
 
@@ -547,7 +551,7 @@ function CraftExceptional(who, theitem, craft_skill)
       return 2;
    endif
 
-   if (cint(special_props.level) < AP_GetTrueSkill(who, craft_skill)-4)
+   if (cint(special_props.level) < cint(AP_GetTrueSkill(who, craft_skill)) - 4)
       SendSysMessageEx(who, "Seu nível em {} é muito baixo para usar este recurso".format(craft_skill), SSM_FAIL);
       return 2;
    endif

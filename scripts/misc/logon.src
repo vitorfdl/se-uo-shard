@@ -16,6 +16,7 @@ program Logon(who)
 	EraseObjProperty(who, "#pegueiesse"); // evitar bugs no stealing.
 	EraseObjProperty(who, "#torobando");
 	EraseObjProperty(who, "#Casting");
+   EraseObjProperty(me, "#lockpicking");
 	SetObjProperty(who, "ConnectTime", polcore().systime);
    who.GrantPrivilege("hiddenattack");
    who.enable("hiddenattack");

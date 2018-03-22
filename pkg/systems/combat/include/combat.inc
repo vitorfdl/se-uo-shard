@@ -282,6 +282,8 @@ function CheckifIsAlly(who, mobiles)
       elseif (mobile.npctemplate)
          if (mobile.master == who || mobile.master in who.party.members)
             continue;
+         elseif (GetObjProperty(mobile, "guildid") == who.guildid)
+            continue;
          elseif(mobile.alignment == 2)
             continue;
          endif

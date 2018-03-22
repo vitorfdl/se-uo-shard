@@ -14,8 +14,8 @@ program GlobalPlantControl()
 	
 	//set_priority(1);
 	while(1)
-		GrowthChecks();
 		sleep(CYCLE_WAIT);
+		GrowthChecks();
 	endwhile
 endprogram
 

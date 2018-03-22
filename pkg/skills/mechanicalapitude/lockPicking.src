@@ -12,8 +12,12 @@ include "include/say";
 include ":gumps:yesno";
 
 program skill_lockpicking( me, lockpick )
-	EraseObjProperty(me, "IsMeditating");
-	EraseObjProperty(me, "HealTimer");
+	SetObjProperty(me, "#lockpicking");
+   doLockpick(who, lockpick);
+   EraseObjProperty(me, "#lockpicking");
+endprogram
+
+function doLockpick(me, lockpick)
 	var inhidden;
 
    if (!maolivre(me, 2))
@@ -60,8 +64,7 @@ program skill_lockpicking( me, lockpick )
 		SendSysMessageEx(me, "Esse não é um alvo valido.", SSM_FAIL);
 		ReleaseItem(lockpick);
 	endif
-
-endprogram
+endfunction
 
 function PickTreasureChest(me, lockpick, chest)
 	var lvl := CInt(GetObjProperty(chest,"level"));

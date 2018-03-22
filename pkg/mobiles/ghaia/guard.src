@@ -1,0 +1,219 @@
+use uo;
+use os;
+use npc;
+use util;
+
+include ":attributes:attributes";
+include "include/sysEvent";
+include "include/say";
+include ":mounts:mounts";
+include ":taming:taming";
+include ":tn:cooldown";
+include ":ghaia:generic";
+include ":ghaia:objective";
+
+set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
+
+var pack_animals   := array{291, 292};
+var me             := self();
+var idlesnd, custombehaviors, personality, npccfgfile;
+var following, fighting, warning, patrolling;
+var warn_type, warn_tries;
+var wait_time := 10;
+var tame_difficulty := 0;
+var follow_tries := 0;
+var guild, guild_leader, guild_laws;
+var tools := array{0xec4, 0x13e3, 0xFB4, 0xFB5, 0x13f6, 0xe85, 0xf43, 0xec2, 0x1F020};
+
+//Custom events
+const FOLLOW_CMD     := 0xA001;
+const ATTACK_CMD     := 0xA002;
+const NEW_MASTER_CMD := 0xA003;
+const GO_LOC_CMD     := 0xA008;
+
+function EnableGuardMainEvents()
+   EnableEvents(SYSEVENT_SPEECH, 10);
+   EnableEvents(SYSEVENT_ENGAGED);
+   EnableEvents(SYSEVENT_DAMAGED);
+   EnableEvents(SYSEVENT_DOUBLECLICKED, 5);
+   EnableEvents(SYSEVENT_ITEM_GIVEN, 2);
+   EnableEvents(SYSEVENT_ENTEREDAREA, 5);
+   DisableEvents(SYSEVENT_OPPONENT_MOVED);
+endfunction
+
+function DisableGuardMainEvents()
+   DisableEvents(SYSEVENT_SPEECH);
+   DisableEvents(SYSEVENT_ENGAGED);
+   DisableEvents(SYSEVENT_DAMAGED);
+   DisableEvents(SYSEVENT_ITEM_GIVEN);
+   DisableEvents(SYSEVENT_DOUBLECLICKED);
+   DisableEvents(SYSEVENT_OPPONENT_MOVED);
+   DisableEvents(SYSEVENT_ENTEREDAREA);
+endfunction
+
+function HasEnemyNear(what)
+   var mobile_list := ListMobilesNearLocationEx(what.x, what.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY);
+   var enemy_near := 0;
+   foreach mob in mobile_list
+      if (mob.alignment == 2 && mob != what && mob != me)
+         enemy_near := 1;
+         break;
+      endif
+      sleepms(2);
+   endforeach
+
+   if (enemy_near)
+      return 1;
+   endif
+endfunction
+
+function CheckPlayer(who)
+   if (who.npctemplate)
+      if (who.alignment == 2)
+         fighting := who;
+         warning := 0;
+         following := 0;
+         warn_type := 0;
+         return;
+      endif
+   endif
+
+   var privs := guild.GetProp(cstr(who.serial));
+   var is_leader := (who == guild.getProp("leader"));
+   if (is_leader || privs.above_guards)
+      return 0;
+   elseif (GetCooldown(me, "recentcheck_{}".format(who.serial)))
+      return 0;
+   endif
+
+   foreach law in guild_laws
+      case (law.type)
+         "nofight": 
+            if (who.warmode == 1)
+               if (!HasEnemyNear(who))
+                  warning := who;
+                  warn_type := 1;
+               endif
+            endif
+            break;
+         "nolockpick":
+            if (GetObjProperty(who, "#lockpicking"))
+               warning := who;
+               warn_type := 2;
+            endif
+         "noweapon":
+            if (!(who.weapon in tools))
+               if (!HasEnemyNear(who))
+                  warning := who;
+                  warn_type := 3;
+               endif
+            endif
+         "noitem":
+            if (CheckItem(who, law.item))
+               warning := who;
+               warn_type := 4;
+            endif
+      endcase
+      sleepms(2);
+   endforeach
+endfunction
+
+program NPCMonitor()
+   EnableGuardMainEvents();
+   Setup();
+   set_critical(1);
+   SetWarMode( 0 );
+   Set_Event_Queue_Size(20);
+   wait_time := 10;
+   SetAnchor(0, 0, 0, 0);
+   while (me)
+      if (GetObjProperty(me, "objloc") != error)
+         DoObjective();
+      endif
+
+      if ( wait_time < 1 )
+         sleepms(10);
+      endif
+
+      Fight();
+      PetFollow();
+      PetGuard();
+
+      if (!following && !fighting && !guarding)
+         wait_time := 30;
+      endif
+
+      var ev := Wait_For_Event(wait_time);
+      case(ev.type)
+         SYSEVENT_ENGAGED:
+         SYSEVENT_DAMAGED:
+            if (!following && !fighting)
+               Fight(ev.source);
+            endif
+         // EVID_HERDING:
+         // 	herd(ev);
+         EVID_TAUNT:
+            if(ev.source && (!me.master.party || (me.master.party && !(ev.source in me.master.party.members))) )
+               Fight(ev.opponent, 1);
+            endif
+         EVID_FLEE:
+            Flee(ev.source);
+         EVID_DOOBJECTIVE:
+            if (ev.destiny)
+               PetGoTo(ev.destiny, ev.move_type);
+            endif
+         SYSEVENT_SPEECH:
+            ResolveSpeech(ev);
+         // SYSEVENT_DOUBLECLICKED:
+         //    if ( ev.source == me.master || ev.source.cmdlevel >= 3 )
+         //       if( (Distance(ev.source, me) > 1) )
+         //          ProcessDoubleClick(ev);
+         //       elseif ( me.graphic in pack_animals )
+         //          OpenPack(ev);
+         //       endif
+         //    endif
+         SYSEVENT_ITEM_GIVEN:
+            TakeItem(ev);
+
+         // Custom events
+         FOLLOW_CMD:
+            PetFollow(ev.targ);
+         ATTACK_CMD:
+            Fight(ev.targ);
+         GUARD_CMD:
+            PetGuard(ev.targ);
+      endcase
+
+      wait_time := 5;
+      sleepms(10);
+   endwhile
+endprogram
+
+
+function Setup()
+   var guildid := GetObjProperty(me, "guild");
+
+   if (guildid)
+      guild := FindGuild(guildid);
+      if (!guild)
+         ApplyRawDamage(me, 600);
+      endif
+   else
+      sleep(5);
+      Setup();
+   endif
+
+   if ( !me.backpack )
+      var new_pack := CreateItemAtLocation(me.x, me.y, me.z, "backpack", 1);
+      EquipItem(me, new_pack);
+   endif
+
+   guild_leader := guild.getProp("leader");
+   guild_laws := guild.getProp("laws");
+   if (!guild_laws)
+      guild_laws := array{};
+   endif
+
+   me.facing := me.facing+1;
+   me.cmdlevel := 2;
+endfunction
