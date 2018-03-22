@@ -10,6 +10,7 @@ include "include/damage";
 
 //const UOBJ_LIGHTSOURCE := 0x1647;
 const UOBJ_TORCH := 0x0a12;
+const enchanted := 0;
 
 program UseWood( who, wood )
 	EraseObjProperty(who, "IsMeditating");
@@ -70,10 +71,11 @@ program UseWood( who, wood )
             break;
          endif
 
-			if (GetObjProperty(campfire, "encantado") == 1)
-				time := time + 10;
+			if (GetObjProperty(campfire, "encantado") == 1 && !enchanted)
+				time := time + 5;
 				healpoints := healpoints+2;
-				EraseObjProperty(campfire, "encantado");
+				PrintText(campfire, "*brilha mais forte*");
+            enchanted := 1;
 			endif
 			time := time - 1;
 			tempocura := tempocura + 1;

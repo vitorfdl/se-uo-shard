@@ -346,13 +346,9 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
                sleepms(2);
             endforeach
 
-            var fogueira := ListItemsNearLocationOfType( who.x, who.y, who.z, 8, 0xDE3 );
+            var fogueira := ListItemsNearLocationOfType( who.x, who.y, who.z, 8, 0x0de3 );
             if (fogueira[1])
-               var serial := GetObjProperty(fogueira[1], "camping");
-               if (serial)
-                  var kidling := SystemFindObjectBySerial(serial);
-                  SetObjProperty(kidling, "encantado", 1);
-               endif
+               SetObjProperty(fogueira[1], "encantado", 1);
             endif
          endif
 
