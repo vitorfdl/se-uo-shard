@@ -187,7 +187,7 @@ exported function MegaCliloc( who, byref packet )
          if (elem.PlantDifficulty)
             if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
 				   xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
-				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigStringArray(elem, "DestroyIn")));
+				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigIntArray(elem, "DestroyIn")));
             endif
          endif
 		endif
@@ -354,16 +354,16 @@ function GetPlantDates(destroyin_array)
 
    var returnvalue := "";
    if (!(1 in destroyin_array))
-      returnvalue += "Verão;";
+      returnvalue += "Verão; ";
    endif
    if (!(2 in destroyin_array))
-      returnvalue += "Outono;";
+      returnvalue += "Outono; ";
    endif
    if (!(3 in destroyin_array))
-      returnvalue += "Inverno;";
+      returnvalue += "Inverno; ";
    endif
    if (!(5 in destroyin_array))
-      returnvalue += "Primavera;";
+      returnvalue += "Primavera; ";
    endif
 
    return returnvalue;
