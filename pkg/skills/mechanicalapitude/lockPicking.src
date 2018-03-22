@@ -12,8 +12,8 @@ include "include/say";
 include ":gumps:yesno";
 
 program skill_lockpicking( me, lockpick )
-	SetObjProperty(me, "#lockpicking");
-   doLockpick(who, lockpick);
+	SetObjProperty(me, "#lockpicking", 1);
+   doLockpick(me, lockpick);
    EraseObjProperty(me, "#lockpicking");
 endprogram
 

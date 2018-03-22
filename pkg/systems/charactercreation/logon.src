@@ -39,7 +39,6 @@ program fixTalent(who)
       var mystat := cint(AP_GetTrueSkill(who, skill));
       var levels := GetConfigStringArray(attr[skill], "Level");
       for i := 1 to mystat
-         total_points += getCost(attr[skill].SkillType, i);
          foreach giv in levels
             sleepms(2);
             giv := SplitWords(giv);

@@ -28,7 +28,7 @@ function golpeduplo(who)
 
    PlaySoundEffect(who, 0x510);
    who.attack_once(who.opponent);
-   if (!PushMobile(who, 4, 50, who.opponent))
+   if (!PushMobileEx(who, 4, 50, who.opponent))
       sleepms(100);
       TS_StartTimer(who.opponent, "tombar", 2);
    endif
@@ -36,7 +36,7 @@ function golpeduplo(who)
    return 1;
 endfunction
 
-function PushMobile(who, dist, delay, targ)
+function PushMobileEx(who, dist, delay, targ)
    var mod := GetModByFacing(GetFacing(who.x, who.y, targ.x, targ.y));
 	var x := mod[1];
 	var y := mod[2];

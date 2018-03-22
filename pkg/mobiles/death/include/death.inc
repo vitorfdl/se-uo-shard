@@ -84,7 +84,7 @@ function KataWakeUp(ghost, corpse)
 	EraseObjProperty(ghost, "corpo");
 	EraseObjProperty(ghost, "curado");
 	EraseObjProperty(corpse, "curado");
-   EraseObjProperty(me, "#lockpicking");
+   EraseObjProperty(ghost, "#lockpicking");
    
 	Resurrect(ghost, RESURRECT_FORCELOCATION);
 	DestroyItem(GetEquipmentByLayer(ghost, 0x16));

@@ -145,10 +145,9 @@ exported function MegaCliloc( who, byref packet )
 				xDesc += "Perícia: {}<br>".format(StrReplace(elem.Pericia, "_", " "));
          endif
          if (elem.PlantDifficulty)
-            if (AP_GetTrueSkill(who, PLATANCAO) >= 4)
-				   xDesc += "Fase adulta em {} dias<br>".format(cint(elem.Steps));
-				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigStringArray(elem.DestroyIn)));
-
+            if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
+				   xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
+				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigStringArray(elem, "DestroyIn")));
             endif
          endif
          // if (elem.WeaponType && !item.isMagicWeapon())

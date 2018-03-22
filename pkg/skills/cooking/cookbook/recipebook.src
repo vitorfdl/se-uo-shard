@@ -295,11 +295,13 @@ function makefood(who, input)
 		foreach element in consumelist
 			allocateresources(who, element.vector, element.amount);
 		endforeach
-			
+
+      var roll := rollAttrDice(who, WISDOM) + getSkillBonus(who, COZINHA);
 		// if (SkillCheck(who, COOKWORK, recipeinfo.skill, recipeinfo.skill*2) > 0)
-		if (15 > 0)
+		if (roll > cint(recipeinfo.difficulty))
 			createiteminbackpack(who, getobjtypebyname(recipeinfo.objtype), 1);
          who.setAchievement("craft_cozinha", 1);
+         ExpGain(who, recipeinfo.difficulty, roll);
 			SendSysMessageEx(who, "Você guardou a comida na sua mochila.", SSM_INFO);
 		else
 			SendSysMessageEx(who, "Você falhou e arruinou a comida!", SSM_FAIL);

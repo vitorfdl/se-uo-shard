@@ -487,7 +487,7 @@ function playerHandler(who, input)
    endif
 
    if (who.cmdlevel)
-      if (guild_obj.leader == who.serial)
+      if (guild_obj.leader == input)
          options.append("Remover Líder");
       endif
    endif
@@ -532,7 +532,7 @@ function playerHandler(who, input)
 endfunction
 
 function gmHandler(who)
-   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Cancelar"};
+   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Pegar GuildID", "Cancelar"};
    var output := RadioGump(who, 300, 0, "Escolha uma opção", opts, 0, opts.size());
 
    if (opts["Nome"])
@@ -541,6 +541,9 @@ function gmHandler(who)
 
       guild.SetProp("name", gname);
       SendSysMessageEx(who, "Nome alterado pra {}".format(gname));
+   elseif (opts["GuildID"])
+      SendSysMessageEx(who, "Guild ID: {}".format(guild.guildid));
+      
    elseif (opts["Area"])
       var area := GetInput(who, who.backpack, "Escreva a area em x1 y1 x2 y2 (aperte esc para cancelar)");
       if (!area) return SendSysMessageEx(who, "Cancelado"); endif

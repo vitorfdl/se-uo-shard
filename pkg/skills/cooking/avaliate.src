@@ -11,24 +11,24 @@ program alchemy(who)
 	SendSysMessageEx(who, "Escolha um alimento para identificar.", SSM_REQUEST);
 	var item := Target(who, TGTOPT_CHECK_LOS);
 
-   if (!targ)
+   if (!item)
       return SendSysMessageEx(who, "Cancelado");
-   elseif (!targ.isA(POCLASS_ITEM))
+   elseif (!item.isA(POLCLASS_ITEM))
       return SendSysMessageEx(who, "Isso não tem nenhuma qualidade nutritiva", SSM_FAIL);
    endif
 
    var itemdesc := ReadConfigFile(":*:itemdesc");
-   var foodtype := itemdesc[targ.objtype].foodtype;
+   var foodtype := itemdesc[item.objtype].foodtype;
    if (!foodtype)
       return SendSysMessageEx(who, "Isso não tem nenhuma qualidade nutritiva", SSM_FAIL);
    endif
 
-   var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(who, COZINHA);
+   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, COZINHA);
    if (roll <= 12)
       return SendSysMessageEx(who, "Não foi capaz de entender as propriedades do alimento", SSM_FAIL);
    endif
 
-   var foodvalue := cint(itemdesc[targ.objtype].foodvalue);
+   var foodvalue := cint(itemdesc[item.objtype].foodvalue);
    SendSysMessageEx(who, "Tipo de alimento: {}".format(foodtype), SSM_INFO);
    SendSysMessageEx(who, "Qualidade do alimento: {}".format(foodvalue), SSM_INFO);
 endprogram

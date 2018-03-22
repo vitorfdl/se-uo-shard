@@ -3,6 +3,7 @@ use uo;
 use os;
 use cfgfile;
 use math;
+use guilds;
 include "include/string";
 include":merchants:crafthelp";
 include ":ghaia:ghaiaUtil";
@@ -69,6 +70,11 @@ endprogram
 function HandleSpeech(npc, player, text)
 	text := lower(text);
    if (text["alugar"] || text["quarto"] || text["ver"])
+      var my_guild := GetObjProperty(npc, "guild");
+      if (my_guild && my_guild != player.guild.guildid)
+         var gname := FindGuild(my_guild).getProp("name");
+         return Printtext(npc, "Infelizmente só alugo quartos para membros da {}".format(gname));
+      endif
 		Printtext(npc, "Em que posso ajudá-lo?");
       while(1)
          var input := SendRoomGump(npc, player);
