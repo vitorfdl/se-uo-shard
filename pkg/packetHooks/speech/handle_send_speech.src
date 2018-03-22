@@ -23,7 +23,7 @@ exported function handleUCOutgoing( character, byref packet )
 
 	var serial := packet.GetInt32(ITEM_ID);
 	var source := SystemFindObjectBySerial(serial);
-	
+   
 	var length_of_text := ( packet.GetInt16(1) - 49 ) / 2;
 	var message_txt := packet.GetUnicodeString(48, length_of_text);
 	message_txt := CChrZ(message_txt);
@@ -45,13 +45,13 @@ exported function handleUCOutgoing( character, byref packet )
 		return 0;
 	endif
 
-	if( !CheckLineOfSight(source, character) ) 
-		if(type != YELL_SPEECH)
-			return 1;
-		elseif (AP_GetTrueSkill(character, FURTIVIDADE) < 6 && (Distance(character, source) > 12 || abs(character.z - source.z ) < 19))
-			return 1;
-		endif
-	endif
+   if (type != YELL_SPEECH)
+      if( !CheckLineOfSight(character, source) ) 
+         if (AP_GetTrueSkill(character, FURTIVIDADE) < 6 && (Distance(character, source) > 12 || abs(character.z - source.z ) < 19))
+            return 1;
+         endif
+      endif
+   endif
 
 	if (GetObjProperty(source, "metamorfose") || GetObjProperty(source, "mudo") || GetObjProperty(source, "#sleep"))
 		if  (type != EMOTE_SPEECH)

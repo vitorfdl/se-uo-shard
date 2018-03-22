@@ -144,12 +144,7 @@ exported function MegaCliloc( who, byref packet )
          if (elem.Pericia && !item.isMagicWeapon())
 				xDesc += "Perícia: {}<br>".format(StrReplace(elem.Pericia, "_", " "));
          endif
-         if (elem.PlantDifficulty)
-            if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
-				   xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
-				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigStringArray(elem, "DestroyIn")));
-            endif
-         endif
+         
          // if (elem.WeaponType && !item.isMagicWeapon())
 			// 	xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
          // endif
@@ -186,6 +181,15 @@ exported function MegaCliloc( who, byref packet )
 					xDesc += "AR: {}<br>".format(elem.AR);
 				endif
 			endif
+      elseif (item.isA(POLCLASS_ITEM))
+			var cfg  := ReadConfigFile(":farming:itemdesc");
+			var elem := FindConfigElem(cfg, item.objtype);
+         if (elem.PlantDifficulty)
+            if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
+				   xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
+				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigStringArray(elem, "DestroyIn")));
+            endif
+         endif
 		endif
 
       var madeof := GetObjProperty(item, "madeof");
