@@ -18,10 +18,11 @@ include ":ghaia:objective";
 include ":magery:basicMagery";
 
 program oafeatures_sendpacket(who, text)
-   var targ := Target(who);
-   var chardata := GetObjProperty(targ, "chardata");
-   chardata.storedexp := 0;
-   SetObjProperty(targ, "chardata", chardata);
+   var targ := TargetCoordinates(who);
+   print(Distance(who, targ));
+   // var chardata := GetObjProperty(targ, "chardata");
+   // chardata.storedexp := 0;
+   // SetObjProperty(targ, "chardata", chardata);
    // print(GetItemDescriptor(targ.objtype));
    // var chardata := GetObjproperty(targ, "chardata");
    // print(chardata);

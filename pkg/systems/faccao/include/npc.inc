@@ -12,6 +12,8 @@
 // # 
 // ###########################################
 
+include ":datafile:include/datafile";
+include ":unicos:item_template";
 
 function AddNpc(guild, npc)
    if (typeof(guild) == "String")
@@ -93,9 +95,14 @@ function ContractNPC(guild, npc_i, who, loc)
    var template := npcs[npc_i];
    if (!template) return; endif
 
-	var agent := CreateNPCFromTemplate(template.template, targ.x, targ.y, targ.z+2);
+	var agent := CreateNPCFromTemplate(template.template, loc.x, loc.y, loc.z+2);
    SetObjProperty(agent, "guild", guild.guildid);
    SetObjProperty(agent, "contract_by", who.serial);
+
+   foreach item_ref in (template.equipment)
+      var item := CreateIteminBackpackFromTemplate(agent, item_ref);
+      EquipItem(agent, item_ref);
+   endforeach
 
    PrintText(agent, "As suas ordens");
 
@@ -103,7 +110,7 @@ function ContractNPC(guild, npc_i, who, loc)
    npc_list.append({
       "serial" := agent.serial,
       "price" := template.price,
-      "type" := template.name,
+      "type" := template.name
    });
    guild.setProp("npcs_active", npc_list);
 

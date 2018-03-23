@@ -9,7 +9,7 @@ use os;
 use npc;
 
 program core_dblClickSelf(who, clicked)
-	if ( HasPDGraphic(clicked) )
+	if ( HasPDGraphic(clicked) && !clicked.npctemplate )
 		return OpenPaperDoll(who, clicked);
 	endif
 	

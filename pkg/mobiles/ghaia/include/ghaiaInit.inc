@@ -62,7 +62,7 @@ function SetupName(mobile)
 
 	var npc_names   := ReadConfigFile(":ghaia:config/names");
 	var nametemplate:= GetConfigString(npccfgfile, "NameTemplate");
-	if (mobile.graphic == 0x191)
+	if (mobile.graphic == 401 || mobile.graphic == 606)
 		nametemplate["Male"] := "Female";
 	endif
 	var name_elem := npc_names[nametemplate];

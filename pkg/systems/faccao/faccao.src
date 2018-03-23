@@ -19,7 +19,6 @@ const BUTTON_BAN_PLAYER := 0x6;
 const BUTTON_CHANGE_PLAYER := 0x1222;
 
 const BUTTON_ADD_NPC := 0x100;
-const BUTTON_REM_NPC := 0x105;
 const BUTTON_CONTRACT_NPC := 0x110;
 const BUTTON_DISMISS_NPC := 0x115;
 
@@ -534,9 +533,11 @@ function playerHandler(who, input)
       guild.SetProp(cstr(input), privs);
    elseif (output["Remover Líder"])
       guild.SetProp("leader", 0x0);
+      ResetAllNpcs();
    elseif (output["Tornar Líder"])
       guild.SetProp("leader", input);
       SendSysMessageEx(who, "{} agora é o líder da facção".format(player.name), SSM_INFO); 
+      ResetAllNpcs();
    elseif (output["Remover"])
       if (YesNo(who, "Deseja mesmo remover este personagem da facção?"))
          RemMember(guild, player);
@@ -550,16 +551,16 @@ function gmHandler(who)
    var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Pegar GuildID", "Cancelar"};
    var output := RadioGump(who, 300, 0, "Escolha uma opção", opts, 0, opts.size());
 
-   if (opts["Nome"])
+   if (output["Nome"])
       var gname := GetInput(who, who.backpack, "Qual o novo nome da facção? (aperte esc para cancelar)");
       if (!gname) return SendSysMessageEx(who, "Cancelado"); endif
 
       guild.SetProp("name", gname);
       SendSysMessageEx(who, "Nome alterado pra {}".format(gname));
-   elseif (opts["GuildID"])
+   elseif (output["GuildID"])
       SendSysMessageEx(who, "Guild ID: {}".format(guild.guildid));
       
-   elseif (opts["Area"])
+   elseif (output["Area"])
       var area := GetInput(who, who.backpack, "Escreva a area em x1 y1 x2 y2 (aperte esc para cancelar)");
       if (!area) return SendSysMessageEx(who, "Cancelado"); endif
       area := SplitWords(area);
@@ -567,7 +568,7 @@ function gmHandler(who)
       if (area.size() < 4) return SendSysMessageEx(who, "Area inválida"); endif
       guild.SetProp("area", area);
       SendSysMessageEx(who, "Area alterada");
-   elseif (opts["Prisões"])
+   elseif (output["Prisões"])
       var prisoes := array{};
       while (who.connected)
          SendSysMessageEx(who, "Selecione um novo ponto de prisão. (Esc para parar)", SSM_INFO);
@@ -583,7 +584,14 @@ function gmHandler(who)
 endfunction
 
 function npcHandler(who, input)
+   // if (input == BUTTON_CONTRACT_NPC)
+   //    ContractNPC(guild, 1, who, who);
+   // elseif (input == BUTTON_ADD_NPC)
+   //    AddNpc(guild, struct{});
+   // else
+   //    input -= BUTTON_DISMISS_NPC;
 
+   // endif
 endfunction
 
 function lawHandler(who, input)
@@ -613,7 +621,7 @@ function lawHandler(who, input)
          endif
          new_law.opt := struct{ "objtype" := targ.objtype, "name" := targ.name};
       elseif (new_law.type["norace"])
-         var raceopts := array{"Humanos", "Elfos", "Meio-Elfos", "Cancelar"};
+         var raceopts := array{"Humano", "Elfo", "Meio-Elfo", "Cancelar"};
          var racenemy := RadioGump(who, 400, 0, "Escolha qual raça será considerada inimiga", raceopts, 0, raceopts.size());
          if (racenemy["Cancelar"]) return SendSysMessageEx(who, "Cancelado");  endif
          new_law.opt := racenemy;
@@ -636,6 +644,7 @@ function lawHandler(who, input)
 
       if (AddLaw(guild, new_law))
          SendSysMessageEx(who, "Lei adicionada", SSM_INFO);
+         ResetAllNpcs();
       else
          SendSysMessageEx(who, "Você não pode adicionar esta lei de novo", SSM_FAIL);
       endif
@@ -647,6 +656,16 @@ function lawHandler(who, input)
          var laws := guild.getProp("laws");
          laws.Erase(input);
          guild.SetProp("laws", laws);
+         ResetAllNpcs();
       endif
    endif
+endfunction
+
+function ResetAllNpcs()
+   var npcs := guild.getProp("npcs_active");
+   foreach npc in npcs
+      npc := SystemFindObjectBySerial(npc.serial);
+      SendEvent(npc, struct{ "type" := 0x78457});
+      sleepms(2);
+   endforeach
 endfunction

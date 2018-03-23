@@ -49,6 +49,9 @@ exported function MegaCliloc( who, byref packet )
          endif
 
 			var raca := GetObjProperty(item, "chardata").raca;
+         if (item.npctemplate && !raca)
+            raca :=  GetObjProperty(item, "force_race");
+         endif
 			if (!Object_Name["Desconhecido"] && raca)
 				Object_Name := "{} [{}]".format(Object_Name, raca);
 			endif
