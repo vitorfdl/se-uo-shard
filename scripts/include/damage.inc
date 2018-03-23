@@ -8,6 +8,7 @@
 use uo;
 use os;
 use math;
+use guilds;
 use cfgfile;
 
 include ":tn:cooldown";
@@ -17,6 +18,7 @@ include ":attributes:attributes";
 
 include "include/say";
 include ":blood:blood";
+include ":faccao:faccao";
 include ":combat:combat";
 include ":magery:tnmagery";
 include ":fls_core:packets";
@@ -232,12 +234,12 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		return;
 	endif
 
-   if (defender.npctemplate && attacker.npctemplate)
+   if (defender.npctemplate && source.npctemplate)
       var guild_id := GetObjProperty(defender, "guild");
       if (guild_id)
          var guild_ref := FindGuild(guild_id);
          if (!InGuildRect(guild_ref, defender))
-            damage *= 3;
+            dmg *= 3;
          endif
       endif
    endif
