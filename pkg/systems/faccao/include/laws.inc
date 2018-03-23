@@ -30,12 +30,12 @@ function AddLaw(guild, law)
    var new_law := struct{
       "type" := law.type,
       "opt" := law.opt,
-      "on" := 1,
+      "on" := 1
    };
 
    var laws := ListLaws(guild);
-   if (new_law.type != "Item" && new_law.type != "Race")
-      if (FindInArray(laws, struct{"type" == new_law.type }))
+   if (new_law.type != "noitem" && new_law.type != "norace")
+      if (FindInArray(laws, struct{"type" := new_law.type }))
          return 0;
       endif
    endif

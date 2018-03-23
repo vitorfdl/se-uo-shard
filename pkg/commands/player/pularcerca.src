@@ -48,8 +48,15 @@ program cabelo(who)
 		if (GetEquipmentByLayer(who, 0x19))
 			MP_Unmount(who);
 		endif
+      var last_loc := struct{ "x" := who.x, "z" := who.z, "y" := who.y };
 		MoveObjectToLocation(who, targ.x, targ.y, targ.z, who.realm, MOVEOBJECT_FORCELOCATION);
 		PrintText(who, "*pulou a cerca*");
+      foreach monster in ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
+         if (GetObjProperty(monster, "guild"))
+            SendEvent(monster, struct{ "type" := 0x78456, source := who, "last_loc" := last_loc});
+         endif
+         sleepms(2);
+      endforeach
 	else
 		SendSysMessageEx(who, "Você não pode pular isto.", SSM_FAIL);
 		return 0;

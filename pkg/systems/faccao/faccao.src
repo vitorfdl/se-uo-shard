@@ -44,6 +44,18 @@ var priv_list := struct{
    "unlockdoors"     := "Controle de Portas;",
    "buyuniforms"     := "Controle de Uniformes;"
 };
+
+var law_list := struct{
+   "nofight"    := "Proibir Combate",
+   "nolockpick" := "Proibir Arrombamentos",
+   "noweapon"   := "Proibir Usar Armas",
+   "noitem"     := "Proibir Item Específico",
+   "norace"     := "Proibir Raça",
+   "noguild"    := "Proibir Facçao",
+   "nocerca"    := "Proibir Pular Cerca",
+   "nooutsider"    := "Proibir Forasteiros"
+};
+
 var guild_obj;
 
 program faccao(params)
@@ -147,19 +159,21 @@ program faccao(params)
          GFAddButton(gump, 246-18, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CHANGE_LAW+_law_iter);
       endif
       var law_desc := "";
-      if (law.item) law_desc := "Item: {}".format(law.item.desc); endif
-      if (law.race) law_desc := "Raça: {}".format(law.race); endif
-      if (law.guild) law_desc := "Facção: {}".format(FindGuild(law.guild).getProp("name")); endif
-      GFTextLine(gump, 246, y-2, 0, "{}".format(law.name));
-      GFToolTipText(gump, law_desc);
+      case (law.type)
+         "noitem": law_desc := "Item: {}".format(law.opt.name);
+         "norace": law_desc := "Raça: {}".format(law.opt);
+         "noguild": law_desc := "Facção: {}".format(FindGuild(law.opt).getProp("name"));
+      endcase
+      GFTextLine(gump, 246, y-2, 0, "{}".format(law_list[law.type]));
+      if (law_desc)  GFToolTipText(gump, law_desc); endif
       sleepms(2);
       y  += 18;
    endforeach
 
-   // if (is_gm_or_leader)
-   //    GFAddButton(gump, 246-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_ADD_LAW);
-   //    GFTextLine(gump, 246+10, y-2, 0, "Adicionar");
-   // endif
+   if (is_gm_or_leader)
+      GFAddButton(gump, 246-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_ADD_LAW);
+      GFTextLine(gump, 246+10, y-2, 0, "Adicionar");
+   endif
    
    var total_soldo := 0;
 	GFResizePic(gump, 48+360, 67, 9350, 172, 326); //agents background
@@ -177,8 +191,10 @@ program faccao(params)
    endforeach
 
    if (is_gm_or_leader || privilegies.contractnpc)
-      // GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
-      // GFTextLine(gump, 426+10, y-2, 0, "Contratar");
+      if (guild_obj.npcs.size() > 1)
+         GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
+         GFTextLine(gump, 426+10, y-2, 0, "Contratar");
+      endif
 
       if (who.cmdlevel >= 2)
          GFAddButton(gump, 426-10, y+18, 5605, 5605, GF_CLOSE_BTN, BUTTON_ADD_NPC);
@@ -220,9 +236,9 @@ program faccao(params)
       gmHandler(who);
    elseif (input[0] >= BUTTON_CHANGE_PLAYER)
       playerHandler(who, input[0]);
-   elseif (input[0] >= BUTTON_ADD_NPC && input[0] <= BUTTON_ADD_NPC+0x100)
+   elseif (input[0] >= BUTTON_ADD_NPC && input[0] <= BUTTON_ADD_NPC+0x50)
       npcHander(who, input[0]);
-   elseif (input[0] >= BUTTON_ADD_LAW && input[0] <= BUTTON_ADD_LAW+0x100)
+   elseif (input[0] >= BUTTON_ADD_LAW && input[0] <= BUTTON_CHANGE_LAW+0x50)
       lawHandler(who, input[0]);
    else
       return;
@@ -571,5 +587,46 @@ function npcHander(who, input)
 endfunction
 
 function lawHandler(who, input)
+   if (input == BUTTON_ADD_LAW)
+      var law_opts := array{};
+      foreach opt in (law_list.keys())
+         law_opts[_opt_iter] := law_list[opt];
+      endforeach
+      law_opts.append("Cancelar");
 
+      var output := RadioGump(who, 400, 0, "Escolha qual lei quer adicionar", law_opts, 1, law_opts.size());
+      if (output == law_opts.size())
+         return;
+      endif
+
+      var new_law := struct{
+         "type" := law_list.keys()[output]
+      };
+
+      if (new_law.type["item"])
+         SendSysMessageEx(who, "Escolha o item que será proíbido (esc para cancelar)", SSM_REQUEST);
+         var targ := Target(who);
+         if (!targ) 
+            return SendSysMessageEx(who, "Cancelado"); 
+         elseif (!targ.isA(POLCLASS_ITEM))
+            return SendSysMessageEx(who, "Cancelado"); 
+         endif
+         new_law.opt := struct{ "objtype" := targ.objtype, "name" := targ.name};
+      endif
+
+      if (AddLaw(guild, new_law))
+         SendSysMessageEx(who, "Lei adicionada", SSM_INFO);
+      else
+         SendSysMessageEx(who, "Você não pode adicionar esta lei de novo", SSM_FAIL);
+      endif
+   else
+      input -= BUTTON_CHANGE_LAW;
+      var law_opts := array{"Remover", "Cancelar"};
+      var output := RadioGump(who, 250, 0, "O que deseja fazer?", law_opts, 0, law_opts.size());
+      if (output["Remover"]);
+         var laws := guild.getProp("laws");
+         laws.Erase(input);
+         guild.SetProp("laws", laws);
+      endif
+   endif
 endfunction

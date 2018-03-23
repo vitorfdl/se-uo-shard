@@ -22,8 +22,18 @@ const GF_STDCOLOR := 1890;
 const MOEDAS      := 0xeed;
 var item_cfg      := ReadConfigFile(":*:itemdesc");
 var npc;
+var guild, above_merchant, is_guild_member;
+var imposto := 0.1;
 
 program HandleMerchant(params)
+   if( GetObjProperty(params.me, "guild"))
+      guild := FindGuild(GetObjProperty(params.me, "guild"));
+      above_merchant := (guild.getProp("leader") == params.source.serial || guild.getProp(params.source.serial).above_merchants || params.source.cmdlevel >= 3);
+      is_guild_member := guild.guildid == params.source.guildid;
+   else
+      above_merchant := params.source.cmdlevel >= 3;
+   endif
+
 	SetObjProperty(params.me, "#occupied", GetPid());
 	case (params.type)
 		"ItemGivenEvent": 
@@ -108,15 +118,18 @@ function HandleSpeech(npc, player, text)
       endwhile
    elseif (text["minhas vendas"])
       DoWithdraw(npc, player);
-   elseif (text["hist"] && text["vendas"])
-      if (GetObjProperty(player, "merchant_owner") == GetRegionName(player) || player.cmdlevel)
+   endif
+
+   if (above_merchant)
+      if (text["hist"] && text["vend"])
          PrintText(npc, "Aqui está o histórico de vendas, Sr.");
          var historico := GetMerchantLog(npc);
          historico := "<br> - {}".format("<br> -".join(historico));
          SendHTMLGump(player, "Histórico de Vendas", historico);
+      elseif (text["regras"] && text["neg"])
+
       endif
    endif
-
 endfunction
 
 function SendItemView(npc, player)
@@ -175,11 +188,11 @@ function SendItemView(npc, player)
 		GFAddButton(gump, x+1, y+132, 40023, 40023, GF_CLOSE_BTN, serial);
 		GFTooltipText(gump, "Comprar");
 
-		if (player.cmdlevel > 3 || GetObjProperty(player, "merchant_owner") == GetRegionName(player))
+		if (player.cmdlevel > 3 || above_merchant)
 			var vendor_name := GetPlayerNameBySerial(cost_info.seller);
   			GFHTMLArea(gump, x+10, y+35, 110, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(vendor_name));
 		endif
-		if (player.cmdlevel >3 || cost_info.seller == player.serial || GetObjProperty(player, "merchant_owner") == GetRegionName(npc))
+		if (cost_info.seller == player.serial || above_merchant)
 			GFAddButton(gump, x+96, y+116, 0x9C4F, 0x9C4F, GF_CLOSE_BTN, 90000+cint(serial));
 		endif
 
@@ -227,7 +240,7 @@ function removeItemMerchant(npc, player, input)
 	var selling := info[2];
 	
 	var confiscar;
-	if ( (player.cmdlevel >= 3 || GetObjProperty(player, "merchant_owner") == GetRegionName(player)) && YesNo(player, "Você deseja confiscar este objeto?") )
+	if ( (above_merchant) && YesNo(player, "Você deseja confiscar este objeto?") )
 		confiscar := 1;
 		var ItensRevogados := dictionary;
 		if ( GetObjProperty(npc, "ItensRevogados") )
@@ -262,7 +275,7 @@ function removeItemMerchant(npc, player, input)
 			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
 		endif
 	endif
-   var return_amt := cost.cost_amt * 0.1;
+   var return_amt := cost.cost_amt * imposto;
    if (return_amt >= 1)
       CreateItemInBackPack(player, cost.cost_type, return_amt);
    endif
@@ -440,13 +453,13 @@ function AddItemToSell(npc, player, item)
 	elseif (cost_amt > 10000)
 		SendSysMessageEx(player, "Você ultrapassou o limite maximo de {} moedas.".format("10000"), SSM_FAIL);
 		return;
-	elseif ( player.cmdlevel < 3 && AmountInPack(player, MOEDAS) < CInt(cost_amt * 0.1) )
+	elseif ( player.cmdlevel < 3 && AmountInPack(player, MOEDAS) < CInt(cost_amt * imposto) )
 		SendSysMessageEx(player, "Você não tem moedas suficiente para pagar o vendedor pelo seu servico.", SSM_FAIL);
 		return 0;
 	endif
 
 	infinite := GFExtractData(input, infinite);
-	var dezperc := CInt(cost_amt * 0.1);
+	var dezperc := CInt(cost_amt * imposto);
 
    if (dezperc <= 1)
       dezperc := 1;

@@ -12,9 +12,7 @@ include "include/say";
 include ":gumps:yesno";
 
 program skill_lockpicking( me, lockpick )
-	SetObjProperty(me, "#lockpicking", 1);
    doLockpick(me, lockpick);
-   EraseObjProperty(me, "#lockpicking");
 endprogram
 
 function doLockpick(me, lockpick)
@@ -81,8 +79,17 @@ function PickTreasureChest(me, lockpick, chest)
       };
 
       foreach monster in ListMobilesNearLocationEx(chest.x, chest.y, chest.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
-         if (!monster.master)
+         if (GetObjProperty(monster, "guild"))
+            SendEvent(monster, struct{ "type" := 0x78455, source := me});
+         elseif (!monster.master)
             SendEvent(monster, event);
+         endif
+         sleepms(2);
+      endforeach
+   else
+      foreach monster in ListMobilesNearLocationEx(chest.x, chest.y, chest.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
+         if (GetObjProperty(monster, "guild"))
+            SendEvent(monster, struct{ "type" := 0x78455, source := me});
          endif
          sleepms(2);
       endforeach
