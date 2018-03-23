@@ -18,7 +18,7 @@ program setExcep(who)
    endif
    var helper := "custom_name:string (add sufixo);<br>hpmod:num (add item hp);<br>equipmod:toughmod int<br>equipmod:hitsmod int<br>equipmod:statmod int<br>equipmod:skill int<br>equipmod:rd_Fogo int";
 
-   var item_types := array{"Armaduras", "Arcos", "Armas","Joias","Containers"}; 
+   var item_types := array{"Armaduras", "Arcos", "Armas", "Joias", "Containers"}; 
    var skills := array{"Marcenaria", "Costura", "Ferraria"};
    
    var questions := array{};

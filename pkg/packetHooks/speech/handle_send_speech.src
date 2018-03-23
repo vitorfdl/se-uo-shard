@@ -46,8 +46,12 @@ exported function handleUCOutgoing( character, byref packet )
 	endif
 
    if (type != YELL_SPEECH)
-      if( !CheckLineOfSight(character, source) ) 
-         if (AP_GetTrueSkill(character, FURTIVIDADE) < 6 && (Distance(character, source) > 12 || abs(character.z - source.z ) < 19))
+      if( !CheckLineOfSight(source, character) ) 
+         if (AP_GetTrueSkill(character, FURTIVIDADE) < 6)
+            return 1;
+         endif
+
+         if (Distance(character, source) > 12 || abs(character.z - source.z ) < 19)
             return 1;
          endif
       endif

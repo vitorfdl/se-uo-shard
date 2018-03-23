@@ -64,7 +64,7 @@ function AutoClose(door)
 	// will get an event from the new one and stop waiting to close it.
 	if ( door.IsOpen() )
 		SetObjProperty(door, "#ClosePid", GetPid());
-		var event := Wait_For_event(10);
+		var event := Wait_For_event(20);
 		if ( !event )
 			door.Close();
 		endif

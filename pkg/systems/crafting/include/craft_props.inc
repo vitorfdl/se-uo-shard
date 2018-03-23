@@ -127,3 +127,20 @@ function getVelStringDesc(elem, item)
 		return "Extremamente Lenta";
 	endif
 endfunction
+
+function GetItemType(item)
+   var item_type := 0;
+	if (item.isA(POLCLASS_ARMOR))
+		item_type := "Armaduras";
+	elseif (item.isBow())
+		item_type := "Arcos";
+	elseif (item.isA(POLCLASS_WEAPON))
+		item_type := "Armas";
+	elseif (item.isA(POLCLASS_EQUIPMENT))
+		item_type := "Joias";
+	elseif (item.isA(POLCLASS_CONTAINER))
+		item_type := "Containers";
+	endif
+
+   return item_type;
+endfunction

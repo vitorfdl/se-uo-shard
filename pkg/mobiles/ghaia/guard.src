@@ -2,6 +2,7 @@ use uo;
 use os;
 use npc;
 use util;
+use guilds;
 
 include ":attributes:attributes";
 include "include/sysEvent";
@@ -152,10 +153,9 @@ program NPCMonitor()
 
       Fight();
       PetFollow();
-      PetGuard();
 
-      if (!following && !fighting && !guarding)
-         wait_time := 30;
+      if (!following && !fighting && !patrolling && !warning)
+         wait_time := 2000;
       endif
 
       var ev := Wait_For_Event(wait_time);
@@ -168,8 +168,8 @@ program NPCMonitor()
          // EVID_HERDING:
          // 	herd(ev);
          EVID_TAUNT:
-            if(ev.source && (!me.master.party || (me.master.party && !(ev.source in me.master.party.members))) )
-               Fight(ev.opponent, 1);
+            if(ev.source && ev.source in ListHostiles(me, 5))
+               Fight(ev.opponent);
             endif
          EVID_FLEE:
             Flee(ev.source);
@@ -187,22 +187,82 @@ program NPCMonitor()
          //          OpenPack(ev);
          //       endif
          //    endif
-         SYSEVENT_ITEM_GIVEN:
-            TakeItem(ev);
+         // SYSEVENT_ITEM_GIVEN:
+         //    TakeItem(ev);
 
          // Custom events
          FOLLOW_CMD:
             PetFollow(ev.targ);
          ATTACK_CMD:
             Fight(ev.targ);
-         GUARD_CMD:
-            PetGuard(ev.targ);
       endcase
 
       wait_time := 5;
       sleepms(10);
    endwhile
 endprogram
+
+
+function ResolveSpeech(ev)
+   var owner := me.master;
+   var text := lower(ev.text);
+   var name := lower(me.name);
+
+   if ( ((ev.source).serial != (me.master).serial))
+      return;
+   elseif(!text[name] && !text["todos"])
+      return;
+   endif
+
+   var targ;
+
+   if (text["-me"])
+      targ := ev.source;
+   endif
+
+   var allevent;
+
+   /// Attack command
+   if (text["mate"] || text["ataque"] || text["prenda"])
+      targ := target(ev.source, TGTOPT_HARMFUL + TGTOPT_CHECK_LOS);
+      Fight(targ);
+      allevent := struct{ targ := targ, type := ATTACK_CMD };
+
+   /// Stop Command
+   elseif (text["pare"])
+      following  := 0;
+      fighting   := 0;
+      patrolling := 0;
+      warning := 0;
+
+   /// Follow Command
+   elseif (text["siga"])
+      if (!targ)
+         targ := target(ev.source);
+      endif
+      PetFollow(targ);
+      allevent := struct{ targ := targ, type := FOLLOW_CMD };
+   endif
+
+   if (text["todos"] && allevent)
+      AllCommand(allevent);
+   endif
+endfunction
+
+function AllCommand(ev)
+   var event := struct;
+   event.+type := ev.type;
+   event.+source := me;
+   event.+targ := ev.targ;
+
+   foreach mobile in(ListMobilesNearLocation( me.x, me.y, me.z, 8, me.realm))
+      if ( GetObjProperty(mobile, "guild") == guild.guildid)
+         SendEvent(mobile, event);
+      endif
+
+      sleepms(2);
+   endforeach
+endfunction
 
 function WarnPlayer()
    if (fighting || !warning)
@@ -215,7 +275,7 @@ function WarnPlayer()
 
 endfunction
 
-function Fight(opponent)
+function Fight(opponent := 0)
    if (opponent)
       if ( opponent == me || opponent == fighting || !opponent.IsA(POLCLASS_MOBILE) || guild_leader == opponent.serial )
          return;
@@ -263,6 +323,35 @@ function Fight(opponent)
    endif
 
    wait_time := 0;
+endfunction
+
+function PetFollow(character := 0)
+   if (character)
+      if ( character == me || character == fighting || !character.IsA(POLCLASS_MOBILE) )
+         return;
+      endif
+      patrolling := 0;
+      warning := 0;
+      following := character;
+      return;
+   elseif (fighting || warning)
+      return;
+   endif
+
+   var dist := Distance(me, following);
+
+   if( dist <= 2 )
+      wait_time := 1;
+   elseif( dist > 25 )
+      following := 0;
+      wait_time := 120;
+   elseif ( dist > 4 )
+      RunTowardLocation( following.x, following.y );
+      wait_time := 0;
+   else
+      WalkTowardLocation( following.x, following.y );
+      wait_time := 0;
+   endif
 endfunction
 
 function SendToPrison()
@@ -361,6 +450,24 @@ function PetMovement(what, move_mode)
       endif
       sleepms(2);
 	endif
+endfunction
+
+function PetGoTo(destiny, move_type)
+   var flags := FP_IGNORE_MOBILES;
+   if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
+      flags := flags| FP_IGNORE_DOORS;
+   endif
+   var path := FindPath(  me.x, me.y, me.z, destiny.x, destiny.y, destiny.z, me.realm, flags, 12); //calcula o path
+   var sleepdelay := 275 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
+   foreach coord in path
+      if (move_type == 1)
+         WalkTowardLocation( coord.x, coord.y ); //anda na direcao
+      else
+         RunTowardLocation( coord.x, coord.y ); //anda na direcao
+      endif
+      OpenDoors(me);
+      sleepms(sleepdelay);
+   endforeach
 endfunction
 
 function Setup()

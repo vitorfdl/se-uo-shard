@@ -17,6 +17,7 @@ include ":attributes:attributes";
 include ":crafting:fls_craftingUtils";
 include ":itemUtils:toolWear";
 include ":tn:tngumps";
+include ":crafting:craft_props";
 
 const OUT_OF_MATERIALS := 1;
 
@@ -551,23 +552,15 @@ function CraftExceptional(who, theitem, craft_skill)
       return 2;
    endif
 
+   print(AP_GetTrueSkill(who, craft_skill) - 4);
+   print(cint(special_props.level));
    if (cint(special_props.level) < cint(AP_GetTrueSkill(who, craft_skill)) - 4)
       SendSysMessageEx(who, "Seu nível em {} é muito baixo para usar este recurso".format(craft_skill), SSM_FAIL);
       return 2;
    endif
 
 	var item_type := "None";
-	if (theitem.isA(POLCLASS_ARMOR))
-		item_type := "Armaduras";
-	elseif (theitem.isBow())
-		item_type := "Arcos";
-	elseif (theitem.isA(POLCLASS_WEAPON))
-		item_type := "Armas";
-	elseif (theitem.isA(POLCLASS_EQUIPMENT))
-		item_type := "Joias";
-	elseif (theitem.isA(POLCLASS_CONTAINER))
-		item_type := "Containers";
-	endif
+   item_type := GetItemType(theitem);
 
    if (!(item_type in special_props.equips))
       SendSysMessageEx(who, "O material não pode ser usado nesse tipo de equipamento.", SSM_FAIL);

@@ -10,9 +10,9 @@ include ":containers:containers";
 include ":itemutils:itemdesc";
 include "include/client";
 include "include/sounds";
-
 include "include/facings";
 include ":tn:cooldown";
+include ":crafting:craft_props";
 include "include/arrays";
 
 var rune_cfg := ReadConfigFile(":magery:config/runes");
@@ -221,19 +221,7 @@ function WriteRune(who, rune_entry)
 		return SendSysMessageEx(who, "Uma runa ja esta gravada neste item.", SSM_FAIL);
    endif
 
-	var item_type;
-	
-	if (item.isA(POLCLASS_ARMOR))
-		item_type := "Armaduras";
-	elseif (item.isBow())
-		item_type := "Arcos";
-	elseif (item.isA(POLCLASS_WEAPON))
-		item_type := "Armas";
-	elseif (item.isA(POLCLASS_EQUIPMENT))
-		item_type := "Joias";
-	elseif (item.isA(POLCLASS_CONTAINER))
-		item_type := "Containers";
-	endif
+	var item_type := GetItemType(item);
 
 	if (!item_type || !(item_type in rune_entry.usos))
 		return SendSysMessageEx(who, "Objeto invalido para esta runa.", SSM_FAIL);
