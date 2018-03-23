@@ -125,10 +125,10 @@ function CheckPlayer(who)
                endif
             endif
          "noitem":
-            if (CheckItem(who, law.item))
-               warning := who;
-               warn_type := 4;
-            endif
+            // if (CheckItem(who, law.item))
+            //    warning := who;
+            //    warn_type := 4;
+            // endif
       endcase
       sleepms(2);
    endforeach
@@ -155,7 +155,7 @@ program NPCMonitor()
       PetFollow();
 
       if (!following && !fighting && !warning)
-         var listmobiles := ListMobilesNearLocation( me.x, me.y, me.z, 8, me.realm))
+         var listmobiles := ListMobilesNearLocation( me.x, me.y, me.z, 8, me.realm);
          foreach mob in listmobiles
             if (CheckPlayer(mob))
                break;
