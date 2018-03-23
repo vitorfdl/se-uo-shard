@@ -256,38 +256,38 @@ function SetCriticalHitscript(who, hitscript, remove := 0);
 endfunction
 
 function CheckifIsAlly(who, mobiles)
+   var party := who.party.members;
+   var hostiles := ListHostiles(who);
    if (typeof(mobiles) != "Array")
-      if (mobiles in ListHostiles(who))
+      if (mobiles in hostiles)
          return 0;
       elseif (mobiles.npctemplate)
-         if (mobiles.master == who || mobiles.master in who.party.members)
+         if (mobiles.master == who || mobiles.master in party)
             return 1;
          elseif(mobiles.alignment == 2)
             return 1;
          endif
-      elseif (mobiles in who.party.members || mobiles == who)
+      elseif (mobiles in party || mobiles == who)
          return 1;
       endif
 
       return 0;
    endif
 
-   var party := who.party.members;
-   var hostiles := ListHostiles(who);
    var newarray := array{};
    foreach mobile in mobiles
       sleepms(2);
-      if (mobile in ListHostiles(who))
+      if (mobile in hostiles)
           newarray.append(mobile);
       elseif (mobile.npctemplate)
-         if (mobile.master == who || mobile.master in who.party.members)
+         if (mobile.master == who || mobile.master in party)
             continue;
          elseif (GetObjProperty(mobile, "guildid") == who.guildid)
             continue;
          elseif(mobile.alignment == 2)
             continue;
          endif
-      elseif (mobile in who.party.members || mobile == who)
+      elseif (mobile in party || mobile == who)
          continue;
       endif
 

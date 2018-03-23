@@ -144,7 +144,7 @@ program Attack(params)
 		// if ( HaveFeat(attacker, "golpedesleal") && IsBehind(attacker, defender.x, defender.y) )
 		// 	if (RandomInt(10) < 3)
 		// 		TS_StartTimer(defender, "paralysis", 2);
-		// 	endif
+		// 	enew\a1,f
 		// endif
 		WearDownWeapon(attacker);
 		PlayHitSounds(attacker, defender);

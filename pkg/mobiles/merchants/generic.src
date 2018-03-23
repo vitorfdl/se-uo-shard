@@ -27,7 +27,7 @@ function EnableMerchantEvents()
    EnableEvents(SYSEVENT_DOUBLECLICKED, unpack(setting_list.DblClickRange));
    EnableEvents(SYSEVENT_SPEECH, unpack(setting_list.HearSpeech));
    EnableEvents(SYSEVENT_ENTEREDAREA, unpack(setting_list.LookingRange));
-   EnableEvents(SYSEVENT_ENGAGED + SYSEVENT_DAMAGED + SYSEVENT_ITEM_GIVEN, areasize);
+   EnableEvents(SYSEVENT_ENGAGED|SYSEVENT_DAMAGED|SYSEVENT_ITEM_GIVEN, 2);
 endfunction
 
 program Merchant()

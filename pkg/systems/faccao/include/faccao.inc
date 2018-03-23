@@ -1,4 +1,5 @@
 use guilds;
+use os;
 
 // ###########################################
 // #
@@ -199,11 +200,14 @@ function inGuildRect(guild, item := 0)
    if (!guild) return; endif
 
    var area := guild.getProp("area");
-   if (!area || area.size() < 4) 
-      return 0; 
-   elseif (item.x >= cint(area[1]) && item.x <= cint(area[3]) && item.y >= cint(area[2]) && item.y <= cint(area[4]));
-      return 1;
-   endif
+   foreach rect in area
+      sleepms(2);
+      if (!rect || rect.size() < 4) 
+         continue;
+      elseif (item.x >= cint(rect[1]) && item.x <= cint(rect[3]) && item.y >= cint(rect[2]) && item.y <= cint(rect[4]));
+         return 1;
+      endif
+   endforeach
 
    return 0;
 endfunction

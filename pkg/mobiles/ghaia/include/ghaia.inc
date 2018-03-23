@@ -160,9 +160,12 @@ function GetEnemiesNear(loc, range := 5, get_hidden := 0)
    // var enemies := GetConfigStringArray( npccfgfile, "enemy" );
    var hostiles := ListHostiles(me, 10);
    var myenemies := array{};
+   var myguild := GetObjProperty(me, "guild");
    
    foreach mobile in ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
       if ((mobile.hidden && !get_hidden || mobile == me))
+         continue;
+      elseif (myguild && mobile.guildid == myguild)
          continue;
       endif
       

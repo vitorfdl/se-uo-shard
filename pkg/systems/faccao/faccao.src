@@ -8,6 +8,7 @@ include ":faccao:faccao";
 include ":faccao:laws";
 include ":gumps:gumps";
 include ":tn:tngumps";
+include ":yggdrasil:boss";
 include ":gumps:yesno";
 include ":unicos:item_template";
 
@@ -178,19 +179,25 @@ program faccao(params)
 	GFResizePic(gump, 48+360, 67, 9350, 172, 326); //agents background
 	GFTextLine(gump, 430, 69, 0, "Agentes Contratados");
    y := 91;
+   var i := 0;
    foreach npc in (guild_obj.npcs_active)
+      sleepms(2);
       var mob := SystemFindObjectBySerial(npc.serial);
-      GFAddButton(gump, 426-18, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_DISMISS_NPC+_npc_iter);
+      if (!mob)
+         DismissNPC(guild, _npc_iter-i);
+         i+=1;
+         continue;
+      endif
+      GFAddButton(gump, 426-18, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_DISMISS_NPC+_npc_iter-i);
       GFTextLine(gump, 426, y-2, 0, "{}".format(mob.name));
       var desc := "Soldo: {}<br>Tipo: {}".format(npc.price, npc.type);
       total_soldo += npc.price;
       GFToolTipText(gump, desc);
-      sleepms(2);
       y  += 18;
    endforeach
 
    if (is_gm_or_leader || privilegies.contractnpc)
-      if (guild_obj.npcs.size() > 1)
+      if (guild_obj.npcs.size() > 0 && InGuildRect(guild, who))
          GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
          GFTextLine(gump, 426+10, y-2, 0, "Contratar");
       endif
@@ -256,6 +263,14 @@ function Faccoes(who)
 
    var guilds := ListGuilds();
    foreach guild in guilds
+      //fix area
+      var area := guild.getprop("area");
+      if (typeof(area[1]) != "Array")
+         area := array{area};
+         guild.setProp("area", area);
+      endif
+      //fix area
+
       GFTextLine(gump, 170, y, 2100, "{}".format(guild.GetProp("name")));
       // GFTextLine(gump, 220, y, 2103, "{}".format(chardata.raca));
       GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_FACCAO+_guild_iter);
@@ -274,14 +289,27 @@ function Faccoes(who)
    elseif (input == BTN_NEW_FACCAO)
       var questions := array{};
       questions.append(struct{ "title" := "Nome da facção?", "marked" := ""} );
-      questions.append(struct{ "title" := "Area de poder? x1 y1 x2 y2", "marked" := ""} );
       questions.append(struct{ "title" := "Dinheiro inicial?", "marked" := "0"} );
       var output := QuestionsGump(who, questions);
       if (!output) return SendSysMessageEx(who, "Cancelado"); endif
-      var area := SplitWords(output[2]);
-      if (area.size() < 4) return SendSysMessageEx(who, "Area inválida"); endif
 
-      CreateFaccao(output[1], area, cint(output[3]));
+      var arearray := array{};
+      while (1)
+         var area := GetInput(who, who.backpack, "Escreva a area em x1 y1 x2 y2 (aperte esc para cancelar)");
+         if (!area) 
+            break;
+         endif
+         area := SplitWords(area);
+         
+         if (area.size() < 4) 
+            SendSysMessageEx(who, "Area inválida");
+         else
+            arearray.append(area);
+            SendSysMessageEx(who, "Area adicionada: {}".format(area));
+         endif
+      endwhile
+
+      CreateFaccao(output[1], arearray, cint(output[2]));
       Faccoes(who);
    endif
 endfunction
@@ -561,12 +589,27 @@ function gmHandler(who)
       SendSysMessageEx(who, "Guild ID: {}".format(guild.guildid));
       
    elseif (output["Area"])
-      var area := GetInput(who, who.backpack, "Escreva a area em x1 y1 x2 y2 (aperte esc para cancelar)");
-      if (!area) return SendSysMessageEx(who, "Cancelado"); endif
-      area := SplitWords(area);
-      
-      if (area.size() < 4) return SendSysMessageEx(who, "Area inválida"); endif
-      guild.SetProp("area", area);
+      var arearray := array{};
+      while (1)
+         var area := GetInput(who, who.backpack, "Escreva a area em x1 y1 x2 y2 (aperte esc para cancelar)");
+         if (!area) 
+            break;
+         endif
+         area := SplitWords(area);
+         
+         if (area.size() < 4) 
+            SendSysMessageEx(who, "Area inválida");
+         else
+            arearray.append(area);
+            SendSysMessageEx(who, "Area adicionada: {}".format(area));
+         endif
+      endwhile
+
+      if (arearray.size() < 1) 
+         return SendSysMessageEx(who, "Cancelado"); 
+      endif
+
+      guild.SetProp("area", arearray);
       SendSysMessageEx(who, "Area alterada");
    elseif (output["Prisões"])
       var prisoes := array{};
@@ -584,14 +627,143 @@ function gmHandler(who)
 endfunction
 
 function npcHandler(who, input)
-   // if (input == BUTTON_CONTRACT_NPC)
-   //    ContractNPC(guild, 1, who, who);
-   // elseif (input == BUTTON_ADD_NPC)
-   //    AddNpc(guild, struct{});
-   // else
-   //    input -= BUTTON_DISMISS_NPC;
+   if (input == BUTTON_CONTRACT_NPC)
+      var opts := array{};
+      foreach agent in (guild_obj.npcs)
+         opts[_agent_iter] := "{} [{} mo]".format(agent.name, agent.price);
+         sleepms(2);
+      endforeach
+      opts.append("Cancelar");
 
-   // endif
+      var npc_choice := RadioGump(who, 400, 0, "Qual agente deseja contratar?", opts, 1, 1);
+      if (opts.size() == npc_choice) return SendSysMessageEx(who, "Cancelado"); endif
+
+      var agent := guild_obj.npcs[npc_choice];
+
+      if (who.cmdlevel)
+         var opt_out := RadioGump(who, 300, 0, "Escolha uma opção", array{"Alterar Configurações", "Estrutura de Boss", "Equipamentos", "Contratar", "Cancelar"}, 0, 1);
+         if (opt_out["Cancelar"])
+            return;
+         endif
+         var npc_list := guild.getProp("npcs");
+         if (opt_out["Configurações"])
+            var questions := array{};
+            questions.append(struct{ "title" := "Template do agente?", "marked" := npc_list[npc_choice].template} );
+            questions.append(struct{ "title" := "Nome (representativo) do agente?", "marked" := npc_list[npc_choice].name} );
+            questions.append(struct{ "title" := "Preço do Soldo (em moedas)?", "marked" := cstr(npc_list[npc_choice].price)} );
+            for i := 1 to 4
+               if (npc_list[npc_choice].habs[i])
+                 questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := npc_list[npc_choice].habs[i], "helper" := "Targets: Enemy, RandomEnemy, Self"} );
+               else
+                  questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
+               endif
+               sleepms(2);
+            endfor
+            var output := QuestionsGump(who, questions);
+            if (!output) return; endif
+            
+            npc_list[npc_choice].template := output[1];
+            npc_list[npc_choice].price := cint(output[3]);
+            npc_list[npc_choice].name := output[2];;
+            npc_list[npc_choice].habs := array{};
+            for i := 4 to 7
+               if (output[i])
+                  npc_list[npc_choice].habs.append(output[i]);
+               endif
+               sleepms(2);
+            endfor
+            guild.SetProp("npcs", npc_list);
+         elseif (opt_out["Boss"])
+            CreatebossStructGump(who, npc_list[npc_choice].bossStruct);
+            guild.SetProp("npcs", npc_list);
+         elseif (opt_out["Equip"])
+             npc_list[npc_choice].equipment := array{};
+            while (who.connected)
+               SendSysMessageEx(who, "Escolha o equipamento. (esc para cancelar)", SSM_REQUEST);
+               var targ := Target(who);
+               if (!targ) 
+                  break;
+               elseif (!targ.isA(POLCLASS_ITEM))
+                  SendSysMessageEx(who, "Item Inválido");
+               else
+                   npc_list[npc_choice].equipment.append(CreateItemTemplate(targ));
+               endif
+            endwhile
+            guild.SetProp("npcs", npc_list);
+         endif
+         
+         if (!opt_out["Contratar"])
+            return;
+         endif
+      endif
+
+      var g_money := cint(guild.getProp("money"));
+      if (g_money < cint(agent.price))
+         return SendSysMessageEx(who, "Moedas de ouro insuficientes", SSM_FAIL);
+      endif
+
+      guild.setProp("money", g_money - cint(agent.price));
+
+      ContractNPC(guild, npc_choice, who, who);
+   elseif (input == BUTTON_ADD_NPC)
+      var questions := array{};
+      questions.append(struct{ "title" := "Template do agente?", "marked" := ":ghaia:"} );
+      questions.append(struct{ "title" := "Nome (representativo) do agente?", "marked" := ""} );
+      questions.append(struct{ "title" := "Preço do Soldo (em moedas)?", "marked" := "20"} );
+      questions.append(struct{ "title" := "Adicionar modificadores de boss?", "marked" := 1, "radio" := array{"Não", "Sim"}} );
+      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
+      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
+      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
+      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
+      var output := QuestionsGump(who, questions);
+      if (!output) return SendSysMessageEx(who, "Cancelado"); endif
+
+      var npc_struct := struct{
+         "template" := output[1],
+         "price" := cint(output[3]),
+         "name" := output[2],
+         "equipment" := array{},
+         "habs" := array{}
+      };
+
+      for i := 5 to 8
+         if (output[i])
+            npc_struct.habs.append(output[i]);
+         endif
+         sleepms(2);
+      endfor
+
+      if (output[4] == "Sim")
+         npc_struct.bossStruct := struct{};
+         CreatebossStructGump(who, npc_struct.bossStruct);
+      endif
+
+      while (who.connected)
+         SendSysMessageEx(who, "Escolha o equipamento. (esc para cancelar)", SSM_REQUEST);
+         var targ := Target(who);
+         if (!targ) 
+            break;
+         elseif (!targ.isA(POLCLASS_ITEM))
+            SendSysMessageEx(who, "Item Inválido");
+         else
+            npc_struct.equipment.append(CreateItemTemplate(targ));
+         endif
+      endwhile
+
+      if (AddNpc(guild, npc_struct))
+         SendSysMessageEx(who, "Agente adicionado");
+      else
+         SendSysMessageEx(who, "Agente deu errado");
+      endif
+   else
+      input -= BUTTON_DISMISS_NPC;
+      var npcs := guild.getProp("npcs_active");
+      var npc_obj := npcs[input];
+      var mob := SystemFindObjectBySerial(npc_obj.serial);
+      if (YesNo(who, "Deseja encerrar o contrato com este agente ({})?".format(mob.name)))
+         DismissNPC(guild, input, mob);
+      endif
+   endif
 endfunction
 
 function lawHandler(who, input)

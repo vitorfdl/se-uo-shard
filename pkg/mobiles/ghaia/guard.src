@@ -13,28 +13,29 @@ include ":tn:cooldown";
 include ":ghaia:generic";
 include ":ghaia:objective";
 include ":ghaia:ghaiaInit";
+include ":ghaia:habs";
+include ":faccao:npc";
+include ":combat:combat";
 
 set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
-const LOCKPICK_EVENT := 0x78455;
-const CERCA_EVENT := 0x78456;
-const RESET_SETUP_EVENT := 0x78457;
-
-var pack_animals   := array{291, 292};
 var me             := self();
-var idlesnd, custombehaviors, personality, npccfgfile;
+var custombehaviors, npccfgfile, myhabilities;
 var following, fighting, warning, patrolling, standing;
 var warn_type, warn_tries, warn_opt := 0;
 var wait_time := 10;
-var tame_difficulty := 0;
 var guild, guild_leader, guild_laws, fix_location;
 var tools := array{0xec4, 0x13e3, 0xFB4, 0xFB5, 0x13f6, 0xe85, 0xf43, 0xec2, 0x1F020};
 
 //Custom events
-const FOLLOW_CMD     := 0xA001;
-const ATTACK_CMD     := 0xA002;
-const NEW_MASTER_CMD := 0xA003;
-const GO_LOC_CMD     := 0xA008;
+const LOCKPICK_EVENT    := 0x78455;
+const CERCA_EVENT       := 0x78456;
+const RESET_SETUP_EVENT := 0x78457;
+const HELP_CMD          := 0x78458;
+const FOLLOW_CMD        := 0xA001;
+const ATTACK_CMD        := 0xA002;
+const NEW_MASTER_CMD    := 0xA003;
+const GO_LOC_CMD        := 0xA008;
 
 function EnableGuardMainEvents()
    EnableEvents(SYSEVENT_SPEECH, 10);
@@ -60,7 +61,7 @@ function HasEnemyNear(what)
    var mobile_list := ListMobilesNearLocationEx(what.x, what.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY);
    var enemy_near := 0;
    foreach mob in mobile_list
-      if (mob.alignment == 2 && mob != what && mob != me)
+      if (mob.alignment != me.alignment && mob != what && mob != me)
          enemy_near := 1;
          break;
       endif
@@ -73,14 +74,16 @@ function HasEnemyNear(what)
 endfunction
 
 function CheckPlayer(who)
-   // Printtext(who, "{} is checking you".format(me.name));
    if (who.npctemplate)
-      if (who.alignment == 2)
-         warning   := 0;
-         warn_type := 0;
-         Fight(who);
-         return;
+      if (who.alignment && who.alignment != me.alignment)
+         if (InGuildRect(guild, who))
+            warning   := 0;
+            warn_type := 0;
+            Fight(who);
+         endif
       endif
+
+      return;
    endif
 
    var privs := guild.GetProp(cstr(who.serial));
@@ -97,7 +100,7 @@ function CheckPlayer(who)
    foreach mob in hostiles
       if (GetObjProperty(mob, "guild") == guild.guildid || mob.guildid == guild.guildid)
          Fight(mob);
-         return 0;
+         return 1;
       endif
       sleepms(2);
    endforeach
@@ -188,12 +191,13 @@ program NPCMonitor()
       Patrol();
 
       if (!following && !fighting && !warning)
-         var listmobiles := ListMobilesNearLocation( me.x, me.y, me.z, 8, me.realm);
+         var listmobiles := ListMobilesInLineOfSight( me, 8);
          foreach mob in listmobiles
             sleepms(2);
-            if (mob == me)
+            if (mob == me || GetObjProperty(mob, "guild"))
                continue;
             endif
+
             if (CheckPlayer(mob))
                wait_time := 0;
                break;
@@ -206,9 +210,15 @@ program NPCMonitor()
             PetGoTo(fix_location, 2);
             me.facing := fix_location.facing;
          endif
-         if (ListMobilesNearLocationEx(me.x, me.y, LIST_IGNORE_Z, 15, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() < 1)
-            if (SendToStartPosition())
-               wait_time := 2000;
+
+         if (!GetCooldown(me, "try_reset"))
+            if (ListMobilesNearLocationEx(me.x, me.y, LIST_IGNORE_Z, 15, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() < 1)
+               if (SendToStartPosition())
+                  wait_time := 2000;
+               endif
+            else
+               SetCooldown(me, "try_reset", 200);
+               wait_time := 3;
             endif
          else
             wait_time := 3;
@@ -224,6 +234,10 @@ program NPCMonitor()
                Fight(ev.source);
             endif
             break;
+         HELP_CMD:
+            if (!fighting)
+               Fight(ev.targ);
+            endif
          LOCKPICK_EVENT:
             if (FindInArray(guild_laws, struct{"type" := "nolockpick" }))
                PrintText(me, "Ei! O que pensa que está fazendo?");
@@ -243,8 +257,10 @@ program NPCMonitor()
             wait_time := 0;
             break;
          SYSEVENT_ENTEREDAREA:
-            CheckPlayer(ev.source);
-            wait_time := 0;
+            if (CheckLineOfSight(me, ev.source))
+               CheckPlayer(ev.source);
+               wait_time := 0;
+            endif
             break;
          EVID_TAUNT:
             if(ev.source && ev.source in ListHostiles(me, 5))
@@ -266,7 +282,7 @@ program NPCMonitor()
          //    if ( ev.source == me.master || ev.source.cmdlevel >= 3 )
          //       if( (Distance(ev.source, me) > 1) )
             ProcessDoubleClick(ev);
-         //       elseif ( me.graphic in pack_animals )
+         //       elseif ( me.graphic in  )
          //          OpenPack(ev);
          //       endif
          //    endif
@@ -337,6 +353,7 @@ function ResolveSpeech(ev, source := 0, order := 0)
       fighting   := 0;
       standing := 1;
       warning := 0;
+      SetWarMode(0);
 
    /// Follow Command
    elseif (text["siga"])
@@ -449,7 +466,7 @@ function AllCommand(ev)
    event.+targ := ev.targ;
 
    foreach mobile in(ListMobilesNearLocation( me.x, me.y, me.z, 8, me.realm))
-      if ( GetObjProperty(mobile, "guild") == guild.guildid)
+      if ( GetObjProperty(mobile, "guild") == guild.guildid && mobile != me)
          SendEvent(mobile, event);
       endif
 
@@ -636,6 +653,14 @@ function Fight(opponent := 0)
          return;
       endif
 
+      foreach monster in ListMobilesNearLocationEx(me.x, me.y, me.z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
+         if (GetObjProperty(monster, "guild") == guild.guildid)
+            SendEvent(monster, struct{ "type" := HELP_CMD, source := me, targ := opponent});
+         endif
+         sleepms(2);
+      endforeach
+      
+
       fighting := opponent;
       disableWarn();
       SetOpponent(opponent);
@@ -687,12 +712,13 @@ function Fight(opponent := 0)
    endif
 
    var dist := CoordinateDistance(me.x, me.y, fighting.x, fighting.y);
-   if (dist > range)
+   if (dist > range || !CheckLineOfSight(me, fighting))
       CalcPathAndMove(me, fighting, 275 - me.run_speed);
    elseif (dist < minrange)
       RunAwayFrom(fighting);
    endif
 
+   UseHabs(myhabilities);
    wait_time := 0;
 endfunction
 
@@ -913,6 +939,56 @@ function Setup()
    patrolling := GetObjProperty(me, "patrolling");
    fix_location := GetObjProperty(me, "fix_loc");
 
+   var npc_list := listNPC(guild);
+   var me_conf := npc_list[GetObjProperty(me, "conf_ref")];
+   if (me_conf)
+      myhabilities := me_conf.habs;
+      if (!myhabilities)
+         myhabilities := array{};
+      endif
+   endif
+   custombehaviors := array{"CastAnimation"};
+
    me.facing := me.facing+1;
    me.cmdlevel := 2;
+endfunction
+
+
+//pega a lista de inimigos proximo, se tiver player perto e a tendencia for evil ele vira inimigo
+function GetEnemiesNear(loc, range := 5, get_hidden := 0)
+   // var enemies := GetConfigStringArray( npccfgfile, "enemy" );
+   var hostiles := ListHostiles(me, 10);
+   var myenemies := array{};
+
+   foreach mobile in ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
+      if ((mobile.hidden && !get_hidden || mobile == me))
+         continue;
+      elseif (mobile.guildid == guild.guildid)
+         continue;
+      endif
+      
+      if (mobile IN hostiles )
+         myenemies.append(mobile);
+      endif
+
+      if (mobile.npctemplate)
+         if (mobile.master || mobile.master in hostiles)
+            myenemies.append(mobile);
+         endif
+         // if ( mobile.my_template() in enemies)
+         //       myenemies.append(mobile);
+         // endif
+      elseif (me.alignment == 1)
+         myenemies.append(mobile);
+      endif
+      sleepms(2);
+   endforeach
+
+   return myenemies;
+endfunction    
+
+function GetAlliesNear(loc, range := 5)
+   var myallies := CheckifIsAlly(me, ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+
+   return myallies;
 endfunction

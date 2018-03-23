@@ -16,7 +16,7 @@ function GetPaymentsDataElem(elem_name)
 	return data_elem;
 endfunction
 
-function AddPaymentForSeller(merchant, seller_serial, item_template)
+function AddPaymentForSeller(merchant, seller_serial, item_template, guild_prop := 0)
 	var data_elem := GetPaymentsDataElem(Hex(merchant.serial));
 	var my_payments := data_elem.GetProp("my_payments");
 	if ( !my_payments )
@@ -33,6 +33,13 @@ function AddPaymentForSeller(merchant, seller_serial, item_template)
 	item_template.amount := Cint(total_amount);
 	item_template.desc := (item_template.amount + " " + item_template.desc);
 	seller_account.Append(item_template);
+
+   if (guild_prop)
+      var guild := guild_prop[1];
+      var guild_money := Ceil(item_template.amount * guild_prop[2]);
+
+      guild.SetProp("money", cint(guild.getProp("money")) + guild_money);
+   endif
 	
 	item_template.amount := Cint(total_amount*0.1);
 	item_template.desc := (item_template.amount + " " + item_template.desc);

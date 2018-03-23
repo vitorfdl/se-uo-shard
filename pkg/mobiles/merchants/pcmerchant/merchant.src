@@ -24,6 +24,7 @@ var item_cfg      := ReadConfigFile(":*:itemdesc");
 var npc;
 var guild, above_merchant, is_guild_member;
 var imposto := 0.1;
+var item_types := array{"Armaduras", "Roupas", "Armas", "Arcos", "Materia-Prima", "Joias", "Varinhas", "Alimentos", "Artigos", "Livros/Receitas"};
 
 program HandleMerchant(params)
    if( GetObjProperty(params.me, "guild"))
@@ -32,6 +33,10 @@ program HandleMerchant(params)
       is_guild_member := guild.guildid == params.source.guildid;
    else
       above_merchant := params.source.cmdlevel >= 3;
+   endif
+
+   if (GetObjproperty(params.me, "imposto") != error)
+      imposto := cdbl(GetObjproperty(params.me, "imposto"));
    endif
 
 	SetObjProperty(params.me, "#occupied", GetPid());
@@ -127,9 +132,56 @@ function HandleSpeech(npc, player, text)
          historico := "<br> - {}".format("<br> -".join(historico));
          SendHTMLGump(player, "Histórico de Vendas", historico);
       elseif (text["regras"] && text["neg"])
-
+         PrintText(npc, "Certo, estou te ouvindo");
+         SetupMerchant(npc, player);
       endif
    endif
+endfunction
+
+function SetupMerchant(npc, player)
+   var my_setup := struct{
+      "imposto"   := cdbl(GetObjproperty(npc, "imposto")),
+      "item_type" := GetObjproperty(npc, "item_type"),
+      "onlyguild" := cint(GetObjproperty(npc, "onlyguild")),
+      "norace"    := GetObjproperty(npc, "norace")
+   };
+   if (!my_setup.imposto) my_setup.imposto := 0.1; endif
+   if (!my_setup.item_type) my_setup.item_type := item_types; endif
+
+   var marked_itemtypes := array{};
+   foreach item in item_types
+      if (item in my_setup.item_type)
+         marked_itemtypes.append(_item_iter);
+      endif
+      sleepms(2);
+   endforeach
+
+   var races := array{"Humano", "Elfo", "Meio-Elfo"};
+   var marked_races := array{};
+   foreach item in races
+      if (item in my_setup.norace)
+         marked_races.append(_item_iter);
+      endif
+      sleepms(2);
+   endforeach
+
+   var questions := array{};
+   questions.append(struct{ "title" := "Imposto em porcentagem", "marked" := cstr(my_setup.imposto * cdbl(100))} );
+   questions.append(struct{ "title" := "Itens que podem ser vendidos", "marked" := marked_itemtypes, "checkbox" := item_types} );
+   questions.append(struct{ "title" := "Vender apenas para membros da facção", "marked" := my_setup.onlyguild+1, "radio" := array{"Não", "Sim"} } );
+   questions.append(struct{ "title" := "Proibir Raça", "marked" := marked_races, "checkbox" := races } );
+   var output := QuestionsGump(player, questions);
+
+   if (!output) return; endif
+
+   if (cint(output[1]))
+      SetObjProperty(npc, "imposto", cdbl(output[1]) / 100);
+   endif
+
+   SetObjProperty(npc, "item_type", output[2]);
+
+   SetObjProperty(npc, "onlyguild", (output[3] == "Sim"));
+   SetObjProperty(npc, "norace", output[4]);
 endfunction
 
 function SendItemView(npc, player)
@@ -272,10 +324,10 @@ function removeItemMerchant(npc, player, input)
 		if ( purchase == error )
 			SendSysMessageEx(player, "Error - Unable to create item! ->"+purchase.errortext);
 		else
-			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
+			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 		endif
 	endif
-   var return_amt := cost.cost_amt * imposto;
+   var return_amt := (cost.cost_amt * cint(cost.lote)) * imposto;
    if (return_amt >= 1)
       CreateItemInBackPack(player, cost.cost_type, return_amt);
    endif
@@ -349,12 +401,12 @@ function DoPurchase(npc, player, input)
 		// template.desc := GetName(item.objtype, CInt( (owed-1)/(owed-1) ));
 		
 		if ( owed > pay_amt )
-			AddPaymentForSeller(npc, cost.seller, template);
+			AddPaymentForSeller(npc, cost.seller, template, array{ guild, imposto});
 			DestroyItem(item);
 		else
 			//template.pay_amt := owed;
 			template.amount := owed;
-			AddPaymentForSeller(npc, cost.seller, template);
+			AddPaymentForSeller(npc, cost.seller, template, array{ guild, imposto});
 			SubtractAmount(item, owed);
 			break;
 		endif
@@ -371,7 +423,6 @@ endfunction
 
 function ChooseAmt(player, amount, lote)
    var gump := GFCreateGump();
-	var infinite;
    var x := 450;
    var y := 250;
 	GFPage(gump, 0);
@@ -397,6 +448,52 @@ function AddItemToSell(npc, player, item)
    var items_sold := GetItemsSoldList(npc);
    if (items_sold.size() >= 15)
       PrintText(npc, "Desculpe, não posso vender mais coisas no momento. Venha outra hora.");
+      return 0;
+   endif
+
+   var item_types := GetObjproperty(npc, "item_type");
+   var onlyguild := cint(GetObjproperty(npc, "onlyguild"));
+   var norace :=  GetObjproperty(npc, "norace");
+   if (item_types)
+      var itemcategory := GetItemType(item);
+      itemcategory["Containers"] := "Artigos";
+      if (!itemcategory)
+         var food := ReadConfigFile(":food:itemdesc");
+         var cook := ReadConfigFile(":cooking:itemdesc");
+
+         var ores := ReadConfigFile(":gathering:itemdesc");
+         var survival := ReadConfigFile(":survival:itemdesc");
+
+         var objtype := item.objtype;
+         if (objtype in array{0xF80, 0x6116, 0x6100, 0x989A, 0x989B, 0x989C, 0x989D, 0x5726, 0x5745})
+            itemcategory := "Varinhas";
+         elseif (food[objtype] || cook[objtype])
+            itemcategory := "Alimentos";
+         elseif (ores[objtype] || survival[objtype])
+            itemcategory := "Materia-Prima";
+         else
+            itemcategory := "Artigos";
+         endif
+      elseif (itemcategory["Armas"] && item.isMagicWeapon())
+         itemcategory := "Varinhas";
+      elseif (itemcategory["Armadura"])
+         var womens := ReadConfigFile(":womenswork:itemdesc");
+         if (womens[item.objtype])
+            itemcategory := "Roupas";
+         endif
+      endif
+
+      if (!(itemcategory in item_types))
+         PrintText(npc, "Desculpe, não posso vender este item. Procure uma vendedora de {}".format(itemcategory));
+         return 0;
+      endif
+   endif
+
+   if (onlyguild && player.guildid != guild.guildid)
+      PrintText(npc, "Desculpe, não posso vender itens para membros fora da {}".format(guild.getProp("name")));
+      return 0;
+   elseif (norace && player.isRace(norace) && player.guildid != guild.guildid)
+      PrintText(npc, "Desculpe, fui proibido(a) de comercializar com sua raça");
       return 0;
    endif
 
@@ -459,7 +556,7 @@ function AddItemToSell(npc, player, item)
 	endif
 
 	infinite := GFExtractData(input, infinite);
-	var dezperc := CInt(cost_amt * imposto);
+	var dezperc := CInt((cost_amt * cost_lote) * imposto);
 
    if (dezperc <= 1)
       dezperc := 1;
@@ -532,7 +629,7 @@ function DoWithdraw(npc, player)
 			if ( withdraw == error )
 				SendSysMessageEx(player, "Error - Unable to create item! ->"+withdraw.errortext);
 			else
-				PrintText(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus p¿s entao.");
+				PrintText(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 			endif
 		endif
 		sleepms(2);

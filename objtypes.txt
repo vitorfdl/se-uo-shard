@@ -600,7 +600,7 @@
 0xdf4 wand04 combat
 0xdf5 wand03 combat
 # 0xdf6 - 0xdf8 unused
-0xdf9 cotton womenswork
+0xdf9 cotton gathering
 # 0xdfa - 0xdfd unused
 0xdfe cuthair hair
 # 0xdff - 0xe07 unused
@@ -751,14 +751,14 @@
 0xf90 Deadwood alchemy
 0xf91 WormHeart alchemy
 # 0xf92 - 0xf94 unused
-0xf95 bolt1 womenswork
-0xf96 bolt2 womenswork
-0xf97 bolt3 womenswork
-0xf98 bolt4 womenswork
-0xf99 bolt5 womenswork
-0xf9a bolt6 womenswork
-0xf9b bolt7 womenswork
-0xf9c bolt8 womenswork
+0xf95 bolt1 gathering
+0xf96 bolt2 gathering
+0xf97 bolt3 gathering
+0xf98 bolt4 gathering
+0xf99 bolt5 gathering
+0xf9a bolt6 gathering
+0xf9b bolt7 gathering
+0xf9c bolt8 gathering
 0xf9d SewingKit womenswork
 0xf9e Scissors womenswork
 # 0xf9f unused
@@ -1202,7 +1202,7 @@
 0x172c peach food
 0x172d pear food
 # 0x172e - 0x1765 unused
-0x1766 clothpiece womenswork
+0x1766 clothpiece gathering
 # 0x1767 unused
 0x1768 panocortado womenswork
 # 0x1769 - 0x182f unused
@@ -1304,7 +1304,7 @@
 # 0x19bc - 0x1a06 unused
 0x1a07 chain fls_core
 # 0x1a08 - 0x1a9b unused
-0x1a9c FlaxBundle womenswork
+0x1a9c FlaxBundle gathering
 # 0x1a9d - 0x1aa1 unused
 0x1aa2 hopscones cooking
 # 0x1aa3 - 0x1ad2 unused
@@ -2290,9 +2290,9 @@
 0xee3b madeiranegra gathering
 0xee3c madeiracogumelo gathering
 # 0xee3d - 0xee44 unused
-0xee45 courocurtido womenswork
+0xee45 courocurtido survival
 0xee46 entranhas survival
-0xee47 cordadearco womenswork
+0xee47 cordadearco survival
 0xee48 kitdetrico womenswork
 # 0xee49 - 0xee4c unused
 0xee4d Stew1 food
@@ -2381,7 +2381,7 @@
 0xeffe TintaAzulClaro2 alchemy
 0xefff CorpseRemains containers
 # 0xf000 - 0xf124 unused
-0xf125 wool womenswork
+0xf125 wool survival
 # 0xf126 - 0xfddd unused
 0xfdde bandages2 medicine
 # 0xfddf - 0xfdf7 unused

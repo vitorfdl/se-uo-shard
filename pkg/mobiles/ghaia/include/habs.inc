@@ -16,8 +16,8 @@ function GetHabCd(hab_name)
    return 1;
 endfunction
 
-function UseHabs()
-   var habs := GetConfigStringArray(npccfgfile, "EspecialAttack");
+function UseHabs(habs := array{})
+   habs += GetConfigStringArray(npccfgfile, "EspecialAttack");
    if (!habs || !habs[1])
       return;
    endif
@@ -112,7 +112,6 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "SoproEuforia":   res := euforic(hab_target, hab_dice, cint(hab_special)); break;
       "hunterMark":     res := hunterMark(hab_target); break;
       "fireWall":       res := fireWall(hab_target, hab_dice); break;
-      "castSpell":      res := castSpell(hab_target, hab_dice, hab_special); break;
       "throwBomb":      res := throwBomb(hab_target, hab_dice, hab_special); break;
       "evasao":         res := evasion(hab_target); break;
       "fireWall":       res := fireWall(hab_target, hab_dice, cint(hab_special)); break;
@@ -307,10 +306,6 @@ function evasion(mobile)
    return 1;
 endfunction
 
-function castSpell(mobile, hab_dice, spellname)
-
-   return 1;
-endfunction
 
 function hunterMark(mobile)
    PlayStationaryEffectEx(mobile.x, mobile.y, mobile.z+20, mobile.realm, 0x9E29, 0, 15, 1650);
@@ -595,10 +590,10 @@ function NPC_Agarrar(dice, targ, difficulty)
    if (rollResistDice(targ, DEXTERITY) <= difficulty)
       PrintText(targ, "*agarrado*", SSM_FAIL);
 
-      TS_StartTimer(targ, "paralysis", 3);
-      TS_StartTimer(me, "paralysis", 3);
+      TS_StartTimer(targ, "paralysis", dice);
+      TS_StartTimer(me, "paralysis", dice);
       MoveObjectToLocation(me, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
-      for i := 1 to 3
+      for i := 1 to dice
          if (!me)
             return;
          endif
@@ -864,7 +859,7 @@ function SpitWeb(difficulty, targ, range)
    PlayMovingEffect(me, targ, web, 10);
 
    me.frozen := 0;
-   TS_StartTimer(targ, "teia", 5);
+   TS_StartTimer(targ, "teia", 5, difficulty);
    return 1;
 endfunction
 

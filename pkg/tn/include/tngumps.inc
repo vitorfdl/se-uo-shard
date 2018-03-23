@@ -327,9 +327,9 @@ function QuestionsGump(who, questions := array{})
 	var total_height := (questions.size() * 2) * 20;
    foreach quest in questions
       if (quest.radio)
-         total_height += cint(quest.radio.size() / 5) * 25;
+         total_height += cint(quest.radio.size() / 4) * 25;
       elseif (quest.checkbox)
-         total_height += cint(quest.checkbox.size() / 5) * 25;
+         total_height += cint(quest.checkbox.size() / 4) * 25;
       else
          total_height += 25;
       endif

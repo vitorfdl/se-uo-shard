@@ -43,6 +43,17 @@ program core_npcDeath(params)
       master.followers := cint(GetNumPets(master));
 	endif
 
+   var guild_ref := GetObjProperty(corpse, "guild");
+   if (guild_ref)
+      var guild := FindGuild(guild_ref);
+      var npcs := guild.getProp("npcs_active");
+      var index := FindInArray(npcs, struct{ "serial" := GetObjProperty(corpse, "serial") });
+      if (index)
+         npcs.Erase(index);
+         guild.setProp("npcs_active", npcs);
+      endif
+   endif
+
 	// foreach mob in (ListMobilesNearLocation(corpse.x, corpse.y, corpse.z, 5, corpse.realm))
 	// 	if (cint(GetObjProperty(mob, "#satisfacaosadica")))
 	// 		if (cint(GetObjProperty(mob, "#satisfacaosadica")) > readgameclock())
@@ -142,10 +153,6 @@ function NoLootCheck(corpse, npc_cfg)
 		// Nothing - Old CProp
 	elseif ( npc_cfg.NoLoot );
 		// Nothing
-	elseif ( GetObjProperty(corpse, "NoCorpse") );
-		// Nothing
-	elseif ( GetObjProperty(corpse, "nocorpse") );
-		// Nothing - Old Cprop
 	elseif ( GetObjProperty(corpse, "summoned") );
 		// Nothing;
       
