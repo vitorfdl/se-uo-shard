@@ -51,7 +51,7 @@ var law_list := struct{
    "noweapon"   := "Proibir Usar Armas",
    "noitem"     := "Proibir Item Específico",
    "norace"     := "Proibir Raça",
-   "noguild"    := "Proibir Facçao",
+   "noguild"    := "Proibir Facção",
    "nocerca"    := "Proibir Pular Cerca",
    "nooutsider"    := "Proibir Forasteiros"
 };
@@ -237,7 +237,7 @@ program faccao(params)
    elseif (input[0] >= BUTTON_CHANGE_PLAYER)
       playerHandler(who, input[0]);
    elseif (input[0] >= BUTTON_ADD_NPC && input[0] <= BUTTON_ADD_NPC+0x50)
-      npcHander(who, input[0]);
+      npcHandler(who, input[0]);
    elseif (input[0] >= BUTTON_ADD_LAW && input[0] <= BUTTON_CHANGE_LAW+0x50)
       lawHandler(who, input[0]);
    else
@@ -582,7 +582,7 @@ function gmHandler(who)
    endif
 endfunction
 
-function npcHander(who, input)
+function npcHandler(who, input)
 
 endfunction
 
@@ -612,6 +612,26 @@ function lawHandler(who, input)
             return SendSysMessageEx(who, "Cancelado"); 
          endif
          new_law.opt := struct{ "objtype" := targ.objtype, "name" := targ.name};
+      elseif (new_law.type["norace"])
+         var raceopts := array{"Humanos", "Elfos", "Meio-Elfos", "Cancelar"};
+         var racenemy := RadioGump(who, 400, 0, "Escolha qual raça será considerada inimiga", raceopts, 0, raceopts.size());
+         if (racenemy["Cancelar"]) return SendSysMessageEx(who, "Cancelado");  endif
+         new_law.opt := racenemy;
+
+      elseif (new_law.type["noguild"])
+         var guild_opts := struct{};
+         var guilds := ListGuilds();
+         foreach guild_ref in guilds
+            if (guild_ref.guildid != guild.guildid)
+               guild_opts[guild_ref.GetProp("name")] := guild_ref.guildid;
+            endif
+            sleepms(2);
+         endforeach
+         guild_opts["Cancelar"] := 0;
+         var guildenemy := RadioGump(who, 400, 0, "Escolha qual facção será considerada inimiga", guild_opts.keys(), 0, guild_opts.keys().size());
+         if (guildenemy["Cancelar"]) return SendSysMessageEx(who, "Cancelado");  endif
+
+         new_law.opt := guild_opts[guildenemy];
       endif
 
       if (AddLaw(guild, new_law))

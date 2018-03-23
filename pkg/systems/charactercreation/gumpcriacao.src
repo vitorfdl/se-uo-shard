@@ -140,6 +140,9 @@ program createchar(who)
    else
       chardata := GetObjProperty(who, "chardata");
       chardata.recriando := 1;
+      chardata.exppoints := 0;
+      chardata.storedexp := 0;
+      EraseObjProperty(who, "points_received");
       chardata.Feats := array{};
    endif
 
