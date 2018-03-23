@@ -154,6 +154,17 @@ program NPCMonitor()
       Fight();
       PetFollow();
 
+      if (!following && !fighting && !warning)
+         var listmobiles := ListMobilesNearLocation( me.x, me.y, me.z, 8, me.realm))
+         foreach mob in listmobiles
+            if (CheckPlayer(mob))
+               break;
+            endif
+            sleepms(2);
+         endforeach
+      endif
+
+
       if (!following && !fighting && !patrolling && !warning)
          wait_time := 2000;
       endif
