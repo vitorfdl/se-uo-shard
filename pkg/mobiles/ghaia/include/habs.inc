@@ -111,7 +111,6 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "charming":       res := charm(hab_target, hab_dice, cint(hab_special)); break;
       "SoproEuforia":   res := euforic(hab_target, hab_dice, cint(hab_special)); break;
       "hunterMark":     res := hunterMark(hab_target); break;
-      "fireWall":       res := fireWall(hab_target, hab_dice); break;
       "throwBomb":      res := throwBomb(hab_target, hab_dice, hab_special); break;
       "evasao":         res := evasion(hab_target); break;
       "fireWall":       res := fireWall(hab_target, hab_dice, cint(hab_special)); break;

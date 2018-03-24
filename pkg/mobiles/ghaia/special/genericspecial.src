@@ -152,7 +152,7 @@ program loko(params)
 		elseif ( state.type == "Graphic Effect")
 			var targ := selectOpponent(who, state.target, state.conedist);
 
-			if (state.target == "Fixed Loc")
+			if (state.type == "Fixed Loc")
 				if (state.graphictype == "Stationary")
 					
 				elseif (state.graphictype == "Moving")

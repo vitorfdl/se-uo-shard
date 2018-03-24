@@ -197,7 +197,7 @@ program faccao(params)
    endforeach
 
    if (is_gm_or_leader || privilegies.contractnpc)
-      if (guild_obj.npcs.size() > 0 && InGuildRect(guild, who))
+      if (guild_obj.npcs.size() >= 0 && InGuildRect(guild, who))
          GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
          GFTextLine(gump, 426+10, y-2, 0, "Contratar");
       endif
