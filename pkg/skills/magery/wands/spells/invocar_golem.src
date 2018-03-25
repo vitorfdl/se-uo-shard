@@ -17,6 +17,7 @@ include ":taming:taming";
 
 program animateSword(params)
 	var who := params[1];
+	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 	
@@ -30,6 +31,7 @@ program animateSword(params)
 	
 	var summoned := CreateNpcFromTemplate(":ghaia:golem", targ.x, targ.y, targ.z);
 	TS_StartTimer(summoned, "summon", 15);	
+   SetObjProperty(summoned, "agarrar_dif", spellinfo.dice_roll);
 	if (summoned)
 		PrintTextAbove(summoned, "*Um golem se levanta*", 3,191);
 		AddPet(who, summoned.serial, 1);

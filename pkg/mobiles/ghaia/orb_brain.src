@@ -30,7 +30,7 @@ program NPCMonitor()
          if (me.opponent)
             Follow(me.opponent);
             if (Distance(me, me.opponent) <= 2)
-               NPC_Agarrar(RandomDiceRoll("1d5"), me.opponent, 12);
+               NPC_Agarrar(RandomDiceRoll("1d5"), me.opponent, GetObjProperty(me, "agarrar_dif")+5);
             endif
          else
             var master := me.master;
