@@ -37,6 +37,7 @@ program changeSpell(params)
       return;
    endif
 
+   Setname(item, item.desc);
    SetObjProperty(item, "active_spell", new_spell);
    SendSysMessageEx(who, "Você alterou o encanto ativo no equipamento.", SSM_INFO);
 endprogram

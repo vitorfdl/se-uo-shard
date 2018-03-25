@@ -149,12 +149,12 @@ endfunction
 
 function GetWeaponSpellList(item)
    var return_text := "";
-
    var spell_list := GetObjProperty(item, "spell_list");
    if (spell_list != error && spell_list.size() > 0)
       var active_spell := GetObjProperty(item, "active_spell");
       var lost_slots := 0;
       var spell_levels := dictionary{};
+      return_text += WHITE;
       
       foreach spell in spell_list
          sleepms(2);
@@ -177,7 +177,7 @@ function GetWeaponSpellList(item)
             return_text += WHITE;
          endif
       endforeach
-
+      
       if (lost_slots > 0)
          return_text += "{}x {}SLOT PERDIDO<br>".format(lost_slots, LIGHTGRAY);
       endif
@@ -187,4 +187,6 @@ function GetWeaponSpellList(item)
          return_text += "{}{}x SLOT VAZIO<br>".format(total_slots, LIGHTGRAY);
       endif
    endif
+
+   return return_text;
 endfunction

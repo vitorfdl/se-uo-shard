@@ -16,10 +16,15 @@ include ":timeUtils:time";
 include ":merchants:crafthelp";
 include ":ghaia:objective";
 include ":magery:basicMagery";
-
+include ":crafting:craft_props";
+const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
+const RED    := "<BASEFONT COLOR=#FF4C4C>";
+const BLUE   := "<BASEFONT COLOR=#4169E1>";
+const ORANGE := "<BASEFONT COLOR=#FFA500>";
+const LIGHTGRAY := "<BASEFONT COLOR=#D3D3D3>";
 program oafeatures_sendpacket(who, text)
-   var targ := TargetCoordinates(who);
-   print(Distance(who, targ));
+   var targ := Target(who);
+   print(GetWeaponSpellList(targ));
    // var chardata := GetObjProperty(targ, "chardata");
    // chardata.storedexp := 0;
    // SetObjProperty(targ, "chardata", chardata);
