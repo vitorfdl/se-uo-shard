@@ -195,6 +195,11 @@ exported function MegaCliloc( who, byref packet )
          endif
 		endif
 
+      var elementpower := GetObjProperty(item, "elementpower");
+      if (who.isCaster() && elementpower != error)
+         xDesc += "{}Círculo {}{}<br>".format(WHITE, ORANGE, cint(elementpower));
+      endif
+      
       var madeof := GetObjProperty(item, "madeof");
       if (madeof)
          xDesc += "{}Feito com: {}{}<br>".format(WHITE, ORANGE, madeof);
@@ -211,75 +216,43 @@ exported function MegaCliloc( who, byref packet )
 
 		var pplmage := GetObjProperty(item, "magicwho"); //research
 		if ( pplmage != error && typeof(pplmage) == "Array")
-         var pocaoname := GetObjProperty(item, "pocaoname");
-         if (pocaoname && (who.serial in pplmage))
-            xDesc +="{}{}<br>".format(WHITE, pocaoname);
-         endif
+			if (who.serial in pplmage || who.cmdlevel >= 3)
+            var pocaoname := GetObjProperty(item, "pocaoname");
+            if (pocaoname)
+               xDesc +="{}{}<br>".format(WHITE, pocaoname);
+            endif
 
-			if (who.serial in pplmage)
 				if (item.isMagicWeapon())
 					var charges := cint(GetObjProperty(item, "charges"));
 					xDesc += WHITE + "Cargas: {}<br>".format(charges);
 				endif
 
-				var mods := GetObjProperty(item, "equip");
-				if (mods != error)
-					foreach mod in (mods.keys())
-						xDesc += "{}{}<br>".format(BLUE, getbonusname(mod));
-					endforeach
-				endif
+            xDesc += GetWeaponSpellList(item);
+				// var mods := GetObjProperty(item, "equip");
+				// if (mods != error)
+				// 	foreach mod in (mods.keys())
+				// 		xDesc += "{}{}<br>".format(BLUE, getbonusname(mod));
+				// 	endforeach
+				// endif
 
-				if (item.dmg_mod > 0 )
-					xDesc += BLUE + "Bônus Dano<br>";
-				endif
+				// if (item.dmg_mod > 0 )
+				// 	xDesc += BLUE + "Bônus Dano<br>";
+				// endif
 				// if (item.hp_mod > 0)
 				// 	xDesc += BLUE + "Bônus Item PVs";
 				// endif
-				var hitsscripts := GetObjProperty(item, "HitScripts");
-				if (hitsscripts != error)
-					foreach hits in hitsscripts
-						if (hits == ":combat:weaponHitScripts/FireHit")
-							xDesc += "{}Dano de Fogo<br>".format(BLUE);
-						elseif ( hits == ":combat:weaponHitScripts/IceHit")
-							xDesc += "{}Dano de Gelo<br>".format(BLUE);
-						elseif ( hits == ":combat:weaponHitScripts/LightningHit")
-							xDesc += "{}Dano de Energia<br>".format(BLUE);
-						endif
-					endforeach
-				endif
-
-				var spell_list := GetObjProperty(item, "spell_list");
-				if (spell_list != error && spell_list.size() > 0)
-					var active_spell := GetObjProperty(item, "active_spell");
-               var lost_slots := 0;
-					foreach spell in spell_list
-						if (spell == 0)
-                     lost_slots += 1;
-							continue;
-						elseif (xDesc.find(GetSpellName(spell)))
-                     XDesc := SubStrReplace(xDesc, "", XDesc.length()-3);
-							xDesc += " II<br>";
-                     continue;
-						elseif (active_spell == spell)
-							xDesc += WHITE;
-						else
-							xDesc += BLUE;
-						endif
-
-						xDesc += "{}<br>".format(GetSpellName(spell));
-                  sleepms(2);
-					endforeach
-
-               if (lost_slots > 0)
-					   xDesc += "{}x {}SLOT PERDIDO<br>".format(lost_slots, LIGHTGRAY);
-               endif
-
-               var total_slots := GetObjProperty(item, "magicslot") - spell_list.size();
-               for i := 1 to total_slots
-					   xDesc += "{}SLOT VAZIO<br>".format(LIGHTGRAY);
-                  sleepms(2);
-               endfor
-				endif
+				// var hitsscripts := GetObjProperty(item, "HitScripts");
+				// if (hitsscripts != error)
+				// 	foreach hits in hitsscripts
+				// 		if (hits == ":combat:weaponHitScripts/FireHit")
+				// 			xDesc += "{}Dano de Fogo<br>".format(BLUE);
+				// 		elseif ( hits == ":combat:weaponHitScripts/IceHit")
+				// 			xDesc += "{}Dano de Gelo<br>".format(BLUE);
+				// 		elseif ( hits == ":combat:weaponHitScripts/LightningHit")
+				// 			xDesc += "{}Dano de Energia<br>".format(BLUE);
+				// 		endif
+				// 	endforeach
+				// endif
 			endif
 		endif
 		

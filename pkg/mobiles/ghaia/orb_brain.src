@@ -19,12 +19,31 @@ var wait_time := 1;
 program NPCMonitor()
    set_critical(1);
    SetWarMode( 0 );
+   var is_golem := me.my_template()["golem"];
    me.enable( "invul" );
    var damage_transfer;
 
    while (me)
       sleep(wait_time);
-      if (me.master && !GetObjProperty(me, "no_follow"))
+      if (is_golem)
+         printtext(me, "opponent: "+me.opponent.name);
+         if (me.opponent)
+            Follow(me.opponent);
+            if (Distance(me, me.opponent) <= 2)
+               NPC_Agarrar(RandomDiceRoll("1d5"), me.opponent, 12);
+            endif
+         else
+            var master := me.master;
+            if (master.opponent)
+					SetOpponent(master.opponent);
+            else
+               var hostiles := ListHostiles(master, 10);
+               if (hostiles[1])
+					   SetOpponent(hostiles[1]);
+               endif
+            endif
+         endif
+      elseif (me.master && !GetObjProperty(me, "no_follow"))
          Follow(me.master);
       endif
 
@@ -67,4 +86,35 @@ function Follow(character := 0)
       WalkToward(character);
       wait_time := 0;
    endif
+endfunction
+
+
+function NPC_Agarrar(dice, targ, difficulty)
+   if (Distance(me, targ) > 2)
+      return 0;
+   endif
+
+   PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
+   if (rollResistDice(targ, DEXTERITY) <= difficulty)
+      PrintText(targ, "*agarrado*", SSM_FAIL);
+
+      TS_StartTimer(targ, "paralysis", dice);
+      TS_StartTimer(me, "paralysis", dice);
+      MoveObjectToLocation(me, targ.x, targ.y, targ.z, targ.realm, MOVEOBJECT_FORCELOCATION);
+      for i := 1 to dice
+         if (!me)
+            return;
+         endif
+         sleep(1);
+         DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
+      endfor
+   else
+      PrintText(targ, "*resistido*".format(me.name), SSM_INFO);
+   endif
+
+   PrintText(me, "*Se desfaz*");
+   sleep(1);
+   ApplyRawDamage(me, 10000);
+   
+   return 1;
 endfunction

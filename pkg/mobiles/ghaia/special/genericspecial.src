@@ -150,6 +150,7 @@ program loko(params)
          HealFLS(who, state.healamt);
          RecalcVitals(who);
 		elseif ( state.type == "Graphic Effect")
+         print(state);
 			var targ := selectOpponent(who, state.target, state.conedist);
 
 			if (state.type == "Fixed Loc")

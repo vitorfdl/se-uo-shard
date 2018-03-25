@@ -58,12 +58,10 @@ program skill_Musicianship(who, item)
 	var livremente  := GFAddButton(bardgump, 71, 118, 2103, 2104, 1, 2);
 
 	var musicas := getObjProperty(who, "musicas");
-	if ((musicas && musicas.size() > 0 && AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) >= 3) || who.cmdlevel >= 3)
-		var i := 1;
+	if ((musicas && musicas.keys().size() > 0 && AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) >= 3) || who.cmdlevel >= 3)
 		foreach musica in (musicas.keys())
-			GFTextLine(bardgump, 86, 113 + i*20, 600, musicas[musica].nome + "" );
-			GFAddButton(bardgump, 71, 118 + i*20, 2103, 2104, 1, 100+i);
-			i := i + 1;
+			GFTextLine(bardgump, 86, 113 + _musica_iter*20, 600, musicas[musica].nome + "" );
+			GFAddButton(bardgump, 71, 118 + _musica_iter*20, 2103, 2104, 1, 100+_musica_iter);
 		endforeach
 	endif
 

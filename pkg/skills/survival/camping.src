@@ -48,7 +48,7 @@ program UseWood( who, wood )
 		var z := wood.z;
   
 		Detach();
-		PrintTextAbove( who, "*acendendo uma fogueira*");
+		PrintText( who, "*acendendo uma fogueira*");
 		sleep (5);
 		var campfire := CreateItemAtLocation( x, y, z, UOBJ_CAMPFIRE, 1 );
       SetObjProperty(campfire, "camping", wood.serial);
@@ -72,20 +72,20 @@ program UseWood( who, wood )
          endif
 
 			if (GetObjProperty(campfire, "encantado") == 1 && !enchanted)
-				time := time + 5;
 				healpoints := healpoints+2;
 				PrintText(campfire, "*brilha mais forte*");
             enchanted := 1;
 			endif
-			time := time - 1;
-			tempocura := tempocura + 1;
+
+			time -= 1;
+			tempocura += 1;
 			if (tempocura == 5)
 				tempocura := 0;
 				var nearbypeople := ListMobilesNearLocation( x ,y, z, 6);
 				foreach char in (nearbypeople)
 					if (char.warmode)
 						continuehealing := 0;
-						PrintText(campfire, "*algo atrapalha o acampamento*");
+                  break;
 					endif
 					sleepms(2);
 				endforeach
@@ -95,6 +95,8 @@ program UseWood( who, wood )
 						healFLS(char, healpoints, 0);
                   sleepms(1);
 					endforeach
+            else
+					PrintText(campfire, "*algo atrapalha o acampamento*");
 				endif
 			endif
 			sleep(5);

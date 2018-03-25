@@ -1,3 +1,5 @@
+include "include/utils";
+
 function TranslateAtt(attribute)
 	case (attribute.lower())
 		"strength": return "Força";
@@ -143,4 +145,46 @@ function GetItemType(item)
 	endif
 
    return item_type;
+endfunction
+
+function GetWeaponSpellList(item)
+   var return_text := "";
+
+   var spell_list := GetObjProperty(item, "spell_list");
+   if (spell_list != error && spell_list.size() > 0)
+      var active_spell := GetObjProperty(item, "active_spell");
+      var lost_slots := 0;
+      var spell_levels := dictionary{};
+      
+      foreach spell in spell_list
+         sleepms(2);
+         if (spell == 0)
+            lost_slots += 1;
+            continue;
+         endif
+
+         spell_levels[spell] := cint(spell_levels[spell]) + 1;
+      endforeach
+
+      foreach spell in (spell_levels.keys())
+         sleepms(2);
+         if (spell == active_spell)
+            return_text += BLUE;
+         endif
+         return_text += "{} {}<br>".format(GetSpellName(spell), convertToRoman(spell_levels[spell]));
+
+         if (spell == active_spell)
+            return_text += WHITE;
+         endif
+      endforeach
+
+      if (lost_slots > 0)
+         return_text += "{}x {}SLOT PERDIDO<br>".format(lost_slots, LIGHTGRAY);
+      endif
+
+      var total_slots := GetObjProperty(item, "magicslot") - spell_list.size();
+      if (total_slots > 0)
+         return_text += "{}{}x SLOT VAZIO<br>".format(total_slots, LIGHTGRAY);
+      endif
+   endif
 endfunction

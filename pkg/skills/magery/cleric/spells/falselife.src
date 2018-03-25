@@ -25,11 +25,7 @@ program divineOrientation(info)
       sleepms(2);
 	endwhile
 
-   var level := who.getLevel();
-   level := Ceil(level / 4)+1;
-   if (level < 1)
-      level := 1;
-   endif
+   var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);;
 
    PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
    PlaySoundEffect(targ, SFX_1EA);

@@ -29,29 +29,15 @@ program animateSword(params)
 	sleepms(500);
 	
 	var summoned := CreateNpcFromTemplate(":ghaia:golem", targ.x, targ.y, targ.z);
+	TS_StartTimer(summoned, "summon", 15);	
 	if (summoned)
 		PrintTextAbove(summoned, "*Um golem se levanta*", 3,191);
 		AddPet(who, summoned.serial, 1);
 		summoned.SetMaster(who);
-		summoned.script := ":ghaia:follower";
+      summoned.script := ":ghaia:orb_brain";
 		RestartScript(summoned);
-
-		if (!summoned.backpack)
-			var mochila := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, 0x9b2, 1, summoned.realm);
-			EquipItem(summoned, mochila);
-		endif
-
-		if (who.opponent)
-         ghaiaAttack(who.opponent, summoned);
-      else
-         var hostiles := ListHostiles(who, 10);
-         if (hostiles[0])
-            ghaiaAttack(hostiles[0], summoned);
-         endif
-      endif
 		// SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
 		// var mobile := target(who);
-		TS_StartTimer(summoned, "summon", 15);	
 	endif
    
 	return 1;

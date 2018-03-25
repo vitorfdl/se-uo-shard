@@ -339,7 +339,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
       endcase
 	
 		foreach nota in notas
-         if (_nota_iter == cint(notas.size() / 2))
+         if (_nota_iter == cint(notas.size() / 2) && emocao)
             var mobs := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
             foreach mob in mobs
                SendSystemReport(mob, emote_text, SSM_INFO);

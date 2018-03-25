@@ -39,7 +39,7 @@ program esferadeluz(params)
 		if (duration <= 1)
 			duration := 2;
 		endif
-		duration := duration * 60;
+		duration := duration * 100;
 
 		TS_StartTimer(summoned, "summon", duration);	
 
