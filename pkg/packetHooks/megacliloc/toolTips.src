@@ -193,6 +193,15 @@ exported function MegaCliloc( who, byref packet )
 				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigIntArray(elem, "DestroyIn")));
             endif
          endif
+
+         if (GetObjProperty(item, "craftproperty"))
+            xDesc += "{}Item de craft<br>".format(ORANGE);
+         else
+			   var craftcfg  := ReadConfigFile(":crafting:exceptional_cfg");
+            if (craftcfg[item.objtype])
+               xDesc += "{}Item de craft<br>".format(ORANGE);
+            endif
+         endif
 		endif
 
       var elementpower := GetObjProperty(item, "elementpower");

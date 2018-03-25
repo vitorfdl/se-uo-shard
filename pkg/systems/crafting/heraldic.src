@@ -1,0 +1,94 @@
+use cfgfile;
+use uo;
+include ":attributes:attributes";
+include "include/say";
+// include ":timedscripts:timedScripts";
+//include "include/damage";
+
+var item_config     := ReadConfigFile(":*:itemdesc");
+
+program alchemy(who)
+	SendSysMessageEx(who, "Escolha um alimento para identificar.", SSM_REQUEST);
+	var item := Target(who, TGTOPT_CHECK_LOS);
+
+   if (!item)
+      return SendSysMessageEx(who, "Cancelado");
+   elseif (item.isA(POLCLASS_MOBILE))
+      return SendSysMessageEx(who, "Isso não parece um objeto.", SSM_FAIL);
+   endif
+
+   var diff := 5;
+   var history := GetObjProperty(item, "history");
+   if (history) diff += 3; endif
+   
+   var craftprop := GetObjProperty(item, "craftproperty");
+   if (!craftprop)
+	   var craftcfg  := ReadConfigFile(":crafting:exceptional_cfg");
+      if (craftcfg[item.objtype])
+         craftprop := struct{
+            "equips" := GetConfigStringArray(craftcfg[item.objtype], "equip"),
+            "props" := GetConfigStringDictionary(craftcfg[item.objtype], "prop"),
+            "skills" := GetConfigStringArray(craftcfg[item.objtype], "skill"),
+            "level" := GetConfigInt(craftcfg[item.objtype], "level")
+         };
+         diff += 7;
+      endif
+   endif
+
+   var crafterserial := GetObjProperty(item, "crafterserial");
+
+   if (!craftprop && !history && !crafterserial)
+      return SendSysMessageEx(who, "Este objeto não tem nenhum significado.", SSM_FAIL);
+   endif
+
+   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, HERALDICA);
+   if (roll <= diff)
+      return SendSysMessageEx(who, "Você não foi capaz de decifrar o objeto.", SSM_FAIL);
+   endif
+
+   if (history)
+      SendSysMessageEx(who, "História: {}".format(history), SSM_INFO);
+   endif
+
+   if (craftprop)
+      SendSysMessageEx(who, "Level de Craft: {}".format(craftprop.level/2), SSM_INFO);
+      SendSysMessageEx(who, "Usado em {}".format(", ".join(craftprop.skills)), SSM_INFO);
+      SendSysMessageEx(who, "Para fabricar {}".format(", ".join(craftprop.equips)), SSM_INFO);
+      var props_text := "";
+      var prop_list := craftprop.props;
+      foreach prop in (prop_list.keys())
+         var mod := prop_list[prop];
+         var case_text := "Aumento";
+         if (cint(mod) < 0) case_text := "Redução"; endif
+         case (prop)
+            "hpmod": props_text += "{} de Durabilidade; ".format(case_text); break;
+            "dmgbonus": props_text += "{} de Dano; ".format(case_text); break;
+            "armod": props_text += "{} de Armadura; ".format(case_text); break;
+            "equipmod":
+               prop := SplitWords(mod);
+               mod := prop[2];
+               var case_text := "Aumento";
+               if (cint(mod) < 0) case_text := "Redução"; endif
+               case (prop[1])
+                  "strmod": props_text += "{} de Força; ".format(case_text); break;
+                  "dexmod": props_text += "{} de Dextreza; ".format(case_text); break;
+                  "intmod": props_text += "{} de Inteligência; ".format(case_text); break;
+                  "conmod": props_text += "{} de Constituição; ".format(case_text); break;
+                  "wismod": props_text += "{} de Sabedoria; ".format(case_text); break;
+                  "toughmod": props_text += "{} de Tenacidade; ".format(case_text); break;
+                  "hitsmod": props_text += "{} de Vida; ".format(case_text); break;
+                  "manamod": props_text += "{} de Mana; ".format(case_text); break;
+                  "stammod": props_text += "{} de Vigor; ".format(case_text); break;
+                  default: props_text += "{} de {}; ".format(case_text, prop); break;
+               endcase
+         endcase
+         sleepms(2);
+      endforeach
+      SendSysMessageEx(who, "Efeitos: {}".format(props_text), SSM_INFO);
+   endif
+
+   if (crafterserial)
+      var crafter := SystemFindObjectBySerial(crafterserial, SYSFIND_SEARCH_OFFLINE_MOBILES);
+      SendSysMessageEx(who, "Feito por: {}".format(crafter.getName()), SSM_INFO);
+   endif
+endprogram

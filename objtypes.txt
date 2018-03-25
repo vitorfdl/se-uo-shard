@@ -1642,7 +1642,9 @@
 # 0x2df6 - 0x2fb6 unused
 0x2fb7 aljavapequena bowcrafting
 0x2fb8 oculos womenswork
-# 0x2fb9 - 0x2fdd unused
+0x2fb9 ValaRobe womenswork
+0x2fba SeredhAtarRobe womenswork
+# 0x2fbb - 0x2fdd unused
 0x2fde ladder walkon
 # 0x2fdf - 0x308b unused
 0x308c OrnateElvenTable woodworking
@@ -1683,7 +1685,8 @@
 0x317d LeafGorget combat
 0x317e LeafArms combat
 0x317f LeafLeggings combat
-# 0x3180 - 0x31f3 unused
+0x3180 LeafSkirt combat
+# 0x3181 - 0x31f3 unused
 0x31f4 dirt farming
 # 0x31f5 - 0x352c unused
 0x352d splash survival
@@ -1765,7 +1768,10 @@
 # 0x46af - 0x490f unused
 0x4910 WoodenReforcedChest containers
 0x4911 WoodenReforcedChest2 containers
-# 0x4912 - 0x4d09 unused
+# 0x4912 - 0x4b9d unused
+0x4b9e AnarAtarRobe womenswork
+0x4b9f SeredhTuraRobe womenswork
+# 0x4ba0 - 0x4d09 unused
 0x4d0a valanecklace metalworking
 0x4d0b valanecklace2 metalworking
 # 0x4d0c - 0x5000 unused
@@ -2001,7 +2007,14 @@
 0x70b3 dontcreateme_gamepiece games
 # 0x70b4 - 0x7104 unused
 0x7105 HairDye hair
-# 0x7106 - 0x790c unused
+# 0x7106 - 0x7818 unused
+0x7819 jokershoes womenswork
+0x781a chefhat womenswork
+0x781b Kilt01 womenswork
+0x781c Kilt02 womenswork
+0x781d Kilt03 womenswork
+0x781e FlowerDress womenswork
+# 0x781f - 0x790c unused
 0x790d runespells magery
 # 0x790e unused
 0x790f Nothing tn
@@ -2099,7 +2112,12 @@
 0x9ff9 goldenchest2 containers
 # 0x9ffa - 0xa093 unused
 0xa094 mine walkon
-# 0xa095 - 0xa1ff unused
+# 0xa095 - 0xa0ab unused
+0xa0ac AnarEmelRobe womenswork
+0xa0ad AnarTuraRobe womenswork
+0xa0ae SeredhEmelRobe womenswork
+0xa0af SeredhTuraRobe womenswork
+# 0xa0b0 - 0xa1ff unused
 0xa200 arenastone arena
 # 0xa201 - 0xa35f unused
 0xa360 sosbottle sosbottles
