@@ -8,7 +8,7 @@ include "include/say";
 var item_config     := ReadConfigFile(":*:itemdesc");
 
 program alchemy(who)
-	SendSysMessageEx(who, "Escolha um alimento para identificar.", SSM_REQUEST);
+	SendSysMessageEx(who, "Escolha um objeto para identificar.", SSM_REQUEST);
 	var item := Target(who, TGTOPT_CHECK_LOS);
 
    if (!item)
