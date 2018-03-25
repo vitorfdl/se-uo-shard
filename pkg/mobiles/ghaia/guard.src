@@ -74,7 +74,7 @@ function HasEnemyNear(what)
 endfunction
 
 function CheckPlayer(who)
-   if (who.npctemplate)
+   if (who.npctemplate && !who.master)
       if (who.alignment && who.alignment != me.alignment)
          if (InGuildRect(guild, who))
             warning   := 0;
@@ -354,7 +354,16 @@ function ResolveSpeech(ev, source := 0, order := 0)
       standing := 1;
       warning := 0;
       SetWarMode(0);
-
+   elseif (text["ir"])
+      var where := TargetCoordinates(ev.source);
+      PrintText(me, "Sim senhor");
+      disableWarn();
+      following  := 0;
+      fighting   := 0;
+      standing := 0;
+      warning := 0;
+      SetWarMode(0);
+      PetGoTo(where, 2);
    /// Follow Command
    elseif (text["siga"])
       PrintText(me, "As suas ordens");
@@ -430,26 +439,37 @@ function ProcessDoubleClick(ev)
    //GFGumpPic(gump, 0, 0, 0x254E);
    GFResizePic(gump, 0, 0, 0x254E, 125, 160);
 
-   GFTextLine(gump, 30, 15, 2100, "Parar");
-   GFAddButton(gump, 15, 17, 2117, 2118, 1, 10);
+   GFTextLine(gump, 30, 15, 2100, "Ir");
+	GFTooltipText(gump, "Ordena o guarda ir até um local");
+   GFAddButton(gump, 15, 17, 2117, 2118, 1, 70);
 
-   GFTextLine(gump, 30, 35, 2100, "Seguir ");
-   GFAddButton(gump, 15, 37, 2117, 2118, 1, 20);
+   GFTextLine(gump, 30, 35, 2100, "Parar");
+	GFTooltipText(gump, "Ordena o guarda a parar suas atividades. Deve-se usar Assumir Postos para restaura-las.");
+   GFAddButton(gump, 15, 37, 2117, 2118, 1, 10);
 
-   GFTextLine(gump, 30, 55, 2100, "Atacar");
-   GFAddButton(gump, 15, 57, 2117, 2118, 1, 30);
+   GFTextLine(gump, 30, 55, 2100, "Seguir ");
+	GFTooltipText(gump, "Ordena o guarda a seguir algo.");
+   GFAddButton(gump, 15, 57, 2117, 2118, 1, 20);
 
-   GFTextLine(gump, 30, 75, 2100, "Patrulhar");
-   GFAddButton(gump, 15, 77, 2117, 2118, 1, 40);
+   GFTextLine(gump, 30, 75, 2100, "Atacar");
+	GFTooltipText(gump, "Ordena o guarda a atacar algo.");
+   GFAddButton(gump, 15, 77, 2117, 2118, 1, 30);
 
-   GFTextLine(gump, 30, 95, 2100, "Manter Posição");
-   GFAddButton(gump, 15, 97, 2117, 2118, 1, 50);
+   GFTextLine(gump, 30, 95, 2100, "Patrulhar");
+	GFTooltipText(gump, "Ordena o guarda a ptrulhar entre dois pontos.");
+   GFAddButton(gump, 15, 97, 2117, 2118, 1, 40);
 
-   GFTextLine(gump, 30, 115, 2100, "Assumir Postos");
-   GFAddButton(gump, 15, 117, 2117, 2118, 1, 60);
+   GFTextLine(gump, 30, 115, 2100, "Manter Posição");
+	GFTooltipText(gump, "Ordena o guarda a assumir a mesma posição que o seu personagem está.");
+   GFAddButton(gump, 15, 117, 2117, 2118, 1, 50);
+
+   GFTextLine(gump, 30, 135, 2100, "Assumir Postos");
+	GFTooltipText(gump, "Ordena o guarda a restaurar suas atividades normais.");
+   GFAddButton(gump, 15, 137, 2117, 2118, 1, 60);
 
    var input := GFSendGump(ev.source, gump)[0];
    case (input)
+      70: ; ResolveSpeech(0, ev.source, "Ir"); break;
       10: ; ResolveSpeech(0, ev.source, "Pare"); break;
       20: ; ResolveSpeech(0, ev.source, "Siga"); break;
       30: ; ResolveSpeech(0, ev.source, "Ataque"); break;

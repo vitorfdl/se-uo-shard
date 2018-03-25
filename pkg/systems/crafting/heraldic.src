@@ -51,7 +51,7 @@ program alchemy(who)
    endif
 
    if (craftprop)
-      SendSysMessageEx(who, "Level de Craft: {}".format(craftprop.level/2), SSM_INFO);
+      SendSysMessageEx(who, "Level de Craft: {}".format(cint(craftprop.level)/2), SSM_INFO);
       SendSysMessageEx(who, "Usado em {}".format(", ".join(craftprop.skills)), SSM_INFO);
       SendSysMessageEx(who, "Para fabricar {}".format(", ".join(craftprop.equips)), SSM_INFO);
       var props_text := "";

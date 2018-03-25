@@ -1,0 +1,14 @@
+use uo;
+use party;
+
+include "include/say";
+
+program textcmd_ident( who )
+    SendSysMessageEx( who, "Escolha algum membro que esteja na party." );
+
+    var what := Target( who, TGTOPT_NOCHECK_LOS );
+    if (what)
+      var text := RequestInputUC(who, who.backpack, UC("O que deseja falar? (esc para cancelar)"), "ENG");
+      SendPartyMsg( what.party, who, text );
+    endif
+endprogram

@@ -124,6 +124,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "saltar": res := jumpAttack(hab_target, hab_dice); break;
       "mina": res := createMine(hab_dice, cint(hab_target), cint(hab_special));
       "dash": res := dashAttack(hab_target, hab_dice, cint(hab_special));
+      "comerCriatura": res := eatCreature(hab_dice, hab_special);
       
       // "pelede_de_arvore": res := PeleDeArvore(hab_dice); break;
       default:
@@ -140,6 +141,29 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
    endif
 endfunction
 
+function eatCreature(hab_radius, cria_template)
+   var cria := 0;
+   foreach mob in ListMobilesNearLocation(me.x, me.y, me.z, hab_radius)
+      if (mob.npctemplate[cria_template])
+         cria := mob;
+         break;
+      endif
+      sleepms(2);
+   endforeach
+
+   if (!cria)
+      return 0;
+   endif
+
+   PrintText(me, "*come {}".format(cria.name));
+   SetObjProperty(cria, "GuardKill", 1);
+   SetObjProperty(cria, "nocorpse", 1);
+   var cria_hp := AP_GetVital(cria, HITS);
+   ApplyRawDamage(cria, 500);
+
+   HealFLS(me, cria_hp);
+   return 1;
+endfunction
 
 function dashAttack(targ, dmg, dist)
    printtext(me, "*pega impulso*");
@@ -699,7 +723,7 @@ endfunction
 
 function RajadaAcida(dmg, targ, difficulty)
    if (!targ || Distance(me, targ) < 3  || !CheckLineOfSight(me, targ))
-      return;
+      return 0;
    endif
 
    PrintText(me, "*cospe ácido*");

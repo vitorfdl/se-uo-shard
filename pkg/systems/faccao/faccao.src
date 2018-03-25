@@ -197,7 +197,7 @@ program faccao(params)
    endforeach
 
    if (is_gm_or_leader || privilegies.contractnpc)
-      if (guild_obj.npcs.size() >= 0 && InGuildRect(guild, who))
+      if (guild_obj.npcs.size() >= 0 && (InGuildRect(guild, who) || who.cmdlevel >= 2))
          GFAddButton(gump, 426-10, y, 5605, 5605, GF_CLOSE_BTN, BUTTON_CONTRACT_NPC);
          GFTextLine(gump, 426+10, y-2, 0, "Contratar");
       endif
@@ -696,7 +696,9 @@ function npcHandler(who, input)
             return;
          endif
       endif
-
+      if (!InGuildRect(guild, who) && !who.cmdlevel)
+         return SendSysMessageEx(who, "Você não pode contratar agentes estando fora da sua área de poder.", SSM_FAIL);
+      endif
       var g_money := cint(guild.getProp("money"));
       if (g_money < cint(agent.price))
          return SendSysMessageEx(who, "Moedas de ouro insuficientes", SSM_FAIL);
