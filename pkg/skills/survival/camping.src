@@ -75,6 +75,7 @@ program UseWood( who, wood )
 				healpoints := healpoints+2;
 				PrintText(campfire, "*brilha mais forte*");
             enchanted := 1;
+            EraseObjProperty(campfire, "encantado")
 			endif
 
 			time -= 1;
