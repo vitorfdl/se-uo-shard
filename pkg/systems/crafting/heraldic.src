@@ -79,7 +79,9 @@ program alchemy(who)
                   "hitsmod": props_text += "{} de Vida; ".format(case_text); break;
                   "manamod": props_text += "{} de Mana; ".format(case_text); break;
                   "stammod": props_text += "{} de Vigor; ".format(case_text); break;
-                  default: props_text += "{} de {}; ".format(case_text, prop); break;
+                  default:
+                     prop[1]["rd_"] := "";
+                     props_text += "{} de {}; ".format(case_text, prop[1]); break;
                endcase
          endcase
          sleepms(2);
