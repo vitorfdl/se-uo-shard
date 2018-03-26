@@ -272,7 +272,7 @@ function SendRoomGump(npc, player)
 			return;
 		endif
 		quartos[meuquarto].+alert := 0;
-		quartos[meuquarto].data := polcore().systime;
+		quartos[meuquarto].data := polcore().systime + (polcore().systime - quartos[meuquarto].data);
 		setobjproperty(npc, "quartos", quartos);
 		SendSysMessageEx(player, "Você pagou o aluguel para a próxima semana.");
 

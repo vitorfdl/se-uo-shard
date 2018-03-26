@@ -8,18 +8,13 @@ include "include/say";
 const MAX_RESOURCE_AMOUNT := 10;
 
 function Garimpeiro(who)
+   var cfg := ReadConfigFile(":gems:itemdesc");
+   var keys := GetConfigStringKeys( cfg );
 
-	if (randomint(200) <= 1)	
+   SendSysMessageEx(who, "Você achou uma pedra preciosa!", SSM_INFO);
+   CreateItemInBackPack(who, keys.randomentry(), 1);
 
-		var cfg := ReadConfigFile(":gems:itemdesc");
-		var keys := GetConfigStringKeys( cfg );
-
-		SendSysMessageEx(who, "Você achou uma pedra preciosa!", SSM_INFO);
-		CreateItemInBackPack(who, keys.randomentry(), 1);
-
-	endif
 	return 1;
-
 endfunction
 
 function GetMapsInBackpack(who)

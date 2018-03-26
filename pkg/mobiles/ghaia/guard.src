@@ -49,6 +49,7 @@ endfunction
 
 function DisableGuardMainEvents()
    DisableEvents(SYSEVENT_SPEECH);
+   
    DisableEvents(SYSEVENT_ENGAGED);
    DisableEvents(SYSEVENT_DAMAGED);
    DisableEvents(SYSEVENT_ITEM_GIVEN);

@@ -7,8 +7,6 @@ include ":attributes:attributes";
 
 var leatherArmors := { 0x13C7, 0x13CD, 0x13C6, 0x1DB9, 0x13CB, 0x13CC, 0x13D3, 0x13D6, 0x13D5, 0x13D4, 0x13DA, 0x13DB, 0x170B, 0x1711};
 
-
-
 program neve(params)
 
 	var who := params[1];
@@ -97,9 +95,9 @@ program neve(params)
 		
 		var penalty := cint(GetObjProperty(who, "penalidadeclima"));
 		
-		var resistcheck := CheckResist(who, CONSTITUTION);
+		var resistcheck := rollResistDice(mobile, CONSTITUTION);
 		
-		if (resistcheck)
+		if (resistcheck > 10)
 			SendSysMessageEx(who, "Você resiste aos efeito do frio.", SSM_INFO);
 			if (penalty == 1)
 				penalty := 0;
@@ -127,7 +125,6 @@ endprogram
 
 
 function RemoveColdMod(who, mod)
-			
 	if ( GetObjProperty(who, "penalidadetaiga") != error )
 		var stammod := cint(GetObjProperty(who, "stammod"));
 		var penalidade := GetObjProperty(who, "penalidadetaiga");
@@ -135,7 +132,6 @@ function RemoveColdMod(who, mod)
 		EraseObjProperty(who, "penalidadetaiga");
 		RecalcVitals(who);
 	endif
-	
 endfunction
 			
 function ApplyColdMod(who, mod)
