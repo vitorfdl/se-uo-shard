@@ -95,7 +95,7 @@ program neve(params)
 		
 		var penalty := cint(GetObjProperty(who, "penalidadeclima"));
 		
-		var resistcheck := rollResistDice(mobile, CONSTITUTION);
+		var resistcheck := rollResistDice(who, CONSTITUTION);
 		
 		if (resistcheck > 10)
 			SendSysMessageEx(who, "Você resiste aos efeito do frio.", SSM_INFO);
