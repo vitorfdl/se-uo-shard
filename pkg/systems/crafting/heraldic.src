@@ -80,7 +80,7 @@ program alchemy(who)
                   "manamod": props_text += "{} de Mana; ".format(case_text); break;
                   "stammod": props_text += "{} de Vigor; ".format(case_text); break;
                   default:
-                     prop[1]["rd_"] := "";
+                     prop[1]["rd_"] := "Defesa em ";
                      props_text += "{} de {}; ".format(case_text, prop[1]); break;
                endcase
          endcase
