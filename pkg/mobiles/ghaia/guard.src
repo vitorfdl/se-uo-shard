@@ -88,13 +88,22 @@ function CheckPlayer(who)
    endif
 
    var privs := guild.GetProp(cstr(who.serial));
+   var is_member := guild.guildid == who.guildid;
    var is_leader := (who.serial == guild_leader);
    if (is_leader || privs.above_guards)
+      SetCooldown(me, "recentcheck_{}".format(who.serial), 10);
       return 0;
    elseif (GetCooldown(me, "recentcheck_{}".format(who.serial)))
+      SetCooldown(me, "recentcheck_{}".format(who.serial), 10);
       return 0;
    elseif (!InGuildRect(guild, who))
+      SetCooldown(me, "recentcheck_{}".format(who.serial), 2);
       return 0;
+   elseif (is_member)
+      if (privs.abovelaws || privs.above_guards)
+         SetCooldown(me, "recentcheck_{}".format(who.serial), 10);
+         return 0;
+      endif
    endif
 
    var hostiles := ListHostiles(who, 8);
@@ -109,6 +118,9 @@ function CheckPlayer(who)
    foreach law in guild_laws
       case (law.type)
          "nofight": 
+            if (is_member && law.opt)
+               break;
+            endif
             if (who.warmode == 1)
                if (!HasEnemyNear(who))
                   warning := who;
@@ -117,6 +129,9 @@ function CheckPlayer(who)
             endif
             break;
          "noweapon":
+            if (is_member && law.opt)
+               break;
+            endif
             if (!(who.weapon.objtype in tools))
                if (!HasEnemyNear(who))
                   warning := who;
@@ -151,8 +166,7 @@ function CheckPlayer(who)
       endcase
       sleepms(2);
    endforeach
-
-   SetCooldown(me, "recentcheck_{}".format(who.serial), 3);
+   SetCooldown(me, "recentcheck_{}".format(who.serial), 2);
 endfunction
 
 function Checkitem(what, itemobj)

@@ -13,7 +13,7 @@ program useSela(who, item)
    SendSysMessageEx(who, "Qual criatura você deseja colocar o arreio?", SSM_INFO);
    var targ := Target(who);
 
-   if (!IsMountable(targ))
+   if (!IsMountable(targ.graphic))
       return SendSysMessageEx(who, "Essa criatura não pode ser montada.", SSM_FAIL);
    elseif (targ.master != who.serial)
       return SendSysMessageEx(who, "Este animal não é seu.", SSM_FAIL);

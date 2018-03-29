@@ -42,7 +42,8 @@ var priv_list := struct{
    "contractnpc"     := "Contratar de Agentes;",
    "fixitems"        := "Controle de Objetos;",
    "unlockdoors"     := "Controle de Portas;",
-   "buyuniforms"     := "Controle de Uniformes;"
+   "buyuniforms"     := "Controle de Uniformes;",
+   "abovelaws"     := "Leis não se aplicam a este personagem;"
 };
 
 var law_list := struct{
@@ -53,7 +54,7 @@ var law_list := struct{
    "norace"     := "Proibir Raça",
    "noguild"    := "Proibir Facção",
    "nocerca"    := "Proibir Pular Cerca",
-   "nooutsider"    := "Proibir Forasteiros"
+   "nooutsider" := "Proibir Forasteiros"
 };
 
 var guild_obj;
@@ -163,6 +164,8 @@ program faccao(params)
          "noitem": law_desc := "Item: {}".format(law.opt.name);
          "norace": law_desc := "Raça: {}".format(law.opt);
          "noguild": law_desc := "Facção: {}".format(FindGuild(law.opt).getProp("name"));
+         "nofight": law_desc := "{}".format(law.opt);
+         "noweapon": law_desc := "{}".format(law.opt);
       endcase
       GFTextLine(gump, 246, y-2, 0, "{}".format(law_list[law.type]));
       if (law_desc)  GFToolTipText(gump, law_desc); endif
@@ -361,7 +364,7 @@ function guildHandler(who, input)
          return SendSysMessageEx(who, "Isso não é uma porta"); 
       elseif (GetObjProperty(targ, "estalagem"))
          return SendSysMessageEx(who, "Você não pode mexer em portas de estalagem"); 
-      elseif (!(targ.x >= cint(area[1]) && targ.x <= cint(area[3]) && targ.y >= cint(area[2]) && targ.y <= cint(area[4])))
+      elseif (!InGuildRect(guild, targ))
          return SendSysMessageEx(who, "Você está fora da sua área de poder."); 
       endif
       var options := array{};
@@ -814,6 +817,11 @@ function lawHandler(who, input)
          if (guildenemy["Cancelar"]) return SendSysMessageEx(who, "Cancelado");  endif
 
          new_law.opt := guild_opts[guildenemy];
+      elseif (new_law.type["nofight"] || new_law.type["noweapon"])
+         var forceonguild := YesNo(who, "Esta lei será aplicada a membros da facção?");
+         if (!forceonguild)
+            new_law.opt := "Não aplicada a membros";
+         endif
       endif
 
       if (AddLaw(guild, new_law))
