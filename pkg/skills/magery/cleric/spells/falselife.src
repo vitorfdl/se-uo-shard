@@ -25,7 +25,7 @@ program divineOrientation(info)
       sleepms(2);
 	endwhile
 
-   var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);;
+   var level := AP_GetTrueSkill(who, MILAGRE_DE_NECROMANCIA);;
 
    PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
    PlaySoundEffect(targ, SFX_1EA);

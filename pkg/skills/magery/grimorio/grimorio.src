@@ -210,6 +210,8 @@ function GenerateFilledSide(byref book_gump, spell_list, i, side, byref pOX, byr
 	// endforeach
 	if( TypeOf(spell_entry) == "Struct" )
 		if( spell_entry.name )
+         spell_entry.name["Encantamento"] := "Enc.";
+         
          spell_entry.name += " {}".format(convertToRoman(powered));
 			// This puts the rune in page 1's list.
 			GFPage(book_gump, 1);

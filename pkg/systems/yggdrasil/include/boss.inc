@@ -489,7 +489,7 @@ function SetBoss(npc, boss)
 		if (RandomInt(100) < iteminfo.chance)
 			var theitem := CreateItemInBackpackFromTemplate(npc, iteminfo.item);
 			//printtextabove(npc, " " + theitem);
-    			theitem.movale := 1;
+    			theitem.movable := 1;
     			if (theitem.amount == 1)
         			Setname(theitem, iteminfo.item.desc);
 	    		endif

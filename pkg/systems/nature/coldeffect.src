@@ -26,78 +26,76 @@ program neve(params)
 			return;
 		endif
 	
-		var dif := 140; //dif base		
+		var dif := 16; //dif base		
 		
 		if (GetGlobalProperty("dia") == "noite") 
-			dif := dif + 20;
+			dif := dif + 2;
 		endif
 	
 		if ( cint( GetGlobalProperty("season")) == 3) //inverno
-			dif := dif + 20;
+			dif := dif + 2;
 		endif
 	
 		if ( GetGlobalProperty("weater") != error) //ta chovendo ou nevando
-			dif := dif + 40;
+			dif := dif + 2;
 		endif
 		
 		var survivalBonus := AP_GetStat(who, CONSTITUTION, RETURN_BONUS);
 		dif := dif - survivalBonus;
 		
 		foreach item in (ListEquippedITems(who))
-		
 			if (item in leatherArmors)
-				dif := dif - 2;
+				dif := dif - 1;
 			endif
 			
 			if ( (GetObjProperty(item, "material") == 0xee58) || (GetObjProperty(item, "material") == 0xef26) )
-				dif := dif - 6;
+				dif := dif - 4;
 			endif
 		
 		endforeach
 
 		foreach item in ( ListItemsNearLocation( who.x, who.y, who.z, 4, who.realm ) )
 			 if ((item.objtype >= 0x0461) and (item.objtype <= 0x046f))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
      			elseif ((item.objtype >= 0x092b) and (item.objtype <= 0x0934))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
     			elseif((item.objtype >= 0x08cf) && (item.objtype <= 0x08df))
-      				dif := dif - 40;
+      				dif := dif - 10;
 				break;
     			elseif((item.objtype >= 0x092b) && (item.objtype <= 0x096c))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
     			elseif((item.objtype >= 0x45d) && (item.objtype <= 0x48e))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
    			elseif((item.objtype >= 0x0de3) && (item.objtype <= 0x0de9))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
     			elseif((item.objtype >= 0x0e31) && (item.objtype <= 0x0e33))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
     			elseif((item.objtype >= 0x1849) && (item.objtype <= 0x1850))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
    			elseif((item.objtype >= 0x197a) && (item.objtype <= 0x19a9))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
     			elseif((item.objtype >= 0x0de3) && (item.objtype <= 0x0de9))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
     			elseif((item.objtype == 0x19bb) || (item.objtype == 0x0fb1))
-				dif := dif - 40;
+				dif := dif - 10;
 				break;
      			endif
 			sleepms(20);
 		endforeach
 		
 		var penalty := cint(GetObjProperty(who, "penalidadeclima"));
-		
 		var resistcheck := rollResistDice(who, CONSTITUTION);
 		
-		if (resistcheck > 10)
+		if (resistcheck > dif)
 			SendSysMessageEx(who, "Você resiste aos efeito do frio.", SSM_INFO);
 			if (penalty == 1)
 				penalty := 0;
@@ -136,15 +134,13 @@ endfunction
 			
 function ApplyColdMod(who, mod)
 
-//	sendsysmessage(who, "mod "+ mod);	
-
 	if (mod == 1)
 		var stammod := cint(GetObjProperty(who, "stammod"));
 		SetObjProperty(who, "stammod",  stammod + (0 - cint(AP_GetVitalMaximumValue(who, STAMINA)/2) ));
 		SetObjProperty(who, "penalidadetaiga", (0 - cint(AP_GetVitalMaximumValue(who, STAMINA)/2)));
 		RecalcVitals(who);
 	elseif ( mod == 2)
-		var dmg := AP_GetVital(who, HITS) -  GetHP(who);
+		var dmg := AP_GetVital(who, HITS) -  cint(cdbl(GetHP(who)) * 0.2);
 //		sendsysmessage(who, "dmg " + dmg + "  " + GetPH(who));
 //		if (dmg >= GetPH(who))
 		//	sendsysmessage(who, "dano fls");

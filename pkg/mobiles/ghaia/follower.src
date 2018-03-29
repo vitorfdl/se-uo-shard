@@ -348,7 +348,7 @@ function Setup()
 
    if ( !owner )
       UnTame();
-   elseif (owner_property != me.master)
+   elseif (owner_property != me.master.serial)
       var last_owner := SystemFindObjectBySerial(owner_property, SYSFIND_SEARCH_OFFLINE_MOBILES);
       me.InitPetProperties(1);
       SetObjProperty(me, "last_owner", last_owner.serial);
@@ -542,7 +542,8 @@ function TakeItem(ev)
    var cfg := ReadConfigFile(":*:itemdesc");
    var item_props := cfg[(ev.item).objtype];
    if ( item_props.script["eat"])
-      if (AP_GetVital(me, "Hunger") <= 100)
+      var hunger_level := AP_GetVital(me, "Hunger");
+      if (hunger_level <= 100)
          MoveItemToContainer(ev.item, ev.source.backpack);
          return PrintTextAbove(me, "*recusa comida*");
       elseif (item_props.foodtype != foodtype)
@@ -553,6 +554,9 @@ function TakeItem(ev)
       PrintTextAbove(me, "*comendo*");
       PlaySoundEffect(me, CInt(0x3b)+ RandomInt(3));
       DestroyItem(ev.item);
+      hunger_level -= cint(item_props.foodvalue)*60;
+      if (hunger_level < 0) hunger_level := 0; endif
+      AP_SetVital(me, "Hunger", hunger_level);
       PrintTextAbovePrivate(me,"*O animal parece feliz*", ev.source);
       me.SetExp((cint(item_props.foodvalue) + 1) * 5);
       return;
