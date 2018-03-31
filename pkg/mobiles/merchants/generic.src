@@ -211,7 +211,7 @@ function HandleSpeech(byref event)
 
    var privs := guild.GetProp(cstr(event.source.serial));
    var is_leader := (event.source.serial == guild_leader);
-   if ((privs.above_merchant || is_leader) && text[name] || event.text["todos"] )
+   if ((privs.above_merchant || is_leader) && event.text[name] || event.text["todos"] )
       if (event.text["siga"] || event.text["seguir"])
          PrintText(me, "As suas ordens");
          Follow(event.source);
