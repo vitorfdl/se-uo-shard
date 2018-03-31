@@ -1,0 +1,71 @@
+use uo;
+use util;
+use os;
+
+include "include/facings";
+include "include/say";
+const BALL_FLAG := LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN;
+
+program usedardo(ball)
+   sleep(600);
+   while (ball)
+      var owner := ball.GetOwner();
+      var direction := ball.GetDirection();
+      if (direction)
+         if (direction <= 8)
+            var mod := GetModByFacing(direction);
+            MoveObjectToLocation(ball, ball.x+mod[1], ball.y+mod[2], ball.z+1, ball.realm, MOVEOBJECT_FORCELOCATION);
+         else
+            var targ := SystemFindObjectBySerial(direction);
+            if (!targ)
+               return DestroyItem(ball);
+            endif
+
+            var mod := GetModByFacing(GetFacing(ball.x, ball.y, targ.x, targ.y));
+            MoveObjectToLocation(ball, ball.x+mod[1], ball.y+mod[2], ball.z+1, ball.realm, MOVEOBJECT_FORCELOCATION);
+         endif
+      endif
+
+      var type := ball.GetType();
+      var effect := ball.GetEffect();
+      var dmg_info := ball.GetDmgInfo();
+      case (type)
+         0:default:
+            var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 0, BALL_FLAG, ball.realm)).randomentry();
+            if (mobile)
+               PlayObjectCenteredEffect(mob, effect, 10, 10);
+               DamageFLS(mob, RandomDiceRoll(dmg_info.dice), dmg_info.type);
+               DestroyItem(ball);
+            endif
+            break;
+         1:
+            var mobs := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 3, BALL_FLAG, ball.realm));
+            if (mobs.size() > 1)
+               foreach mob in mobs
+                  PlayObjectCenteredEffect(mob, effect, 10, 10);
+                  DamageFLS(mob, RandomDiceRoll(dmg_info.dice), dmg_info.type);
+                  sleepms(2);
+               endforeach
+               DestroyItem(ball);
+            endif
+            break;
+         2:
+            var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 3, BALL_FLAG, ball.realm)).randomentry();
+            if (mobile)
+               var newball := CreateItemAtLocation(0x, ball.x, ball.y, ball.z);
+               newball.SetDuration(8);
+               newball.SetDirection(mobile.serial);
+               newball.SetDmgInfo(dmg_info);
+               newball.SetEffect(effect);
+               sleep(4);
+            endif
+            break;
+      endcase
+
+      if (ball && ball.IsExpired())
+         DestroyItem(ball);
+      endif
+
+      sleep(800);
+   endwhile
+endprogram

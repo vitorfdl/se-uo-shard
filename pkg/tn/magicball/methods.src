@@ -1,0 +1,96 @@
+/* $Id: methods.src 938 2005-11-07 06:22:45Z muaddiblsd $
+ * 
+ */
+ 
+use uo;
+
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program Install()
+	return 1;
+endprogram
+
+exported function isMagicBall(ball)
+	return 1;
+endfunction
+
+exported function SetDuration(ball, seconds)
+	seconds := CInt(seconds);
+	
+	return SetObjProperty(ball, "Duration", ReadGameClock()+seconds);
+endfunction
+
+exported function GetDuration(ball)
+	var duration := CInt(GetObjProperty(ball, "Duration"));
+	
+	return duration;
+endfunction
+
+exported function IsExpired(ball)
+	var duration := GetDuration(ball);
+	if ( !duration )
+		return 0;
+	endif
+	
+	return ( duration < ReadGameClock() );
+endfunction
+
+exported function SetOwner(ball, serial)
+	if ( serial.IsA(POLCLASS_UOBJECT) )
+		serial := serial.serial;
+	endif
+	
+	return SetObjProperty(ball, "Owner", serial);
+endfunction
+
+exported function GetOwner(ball)
+	var owner := CInt(GetObjProperty(ball, "Owner"));
+	if ( owner )
+		owner := SystemFindObjectBySerial(owner);
+	endif
+	
+	return owner;
+endfunction
+
+exported function SetType(ball, type := 1)
+	return SetObjProperty(ball, "type", type);
+endfunction
+
+exported function GetType(ball)
+	return cint(GetObjProperty(ball, "type"));
+endfunction
+
+exported function SetDirection(ball, direction)
+	return SetObjProperty(ball, "direction", direction);
+endfunction
+
+exported function GetDirection(ball)
+	return GetObjProperty(ball, "direction");
+endfunction
+
+exported function SetEffect(ball, effect := 1)
+	return SetObjProperty(ball, "effect", effect);
+endfunction
+
+exported function GetEffect(ball)
+	return cint(GetObjProperty(ball, "effect"));
+endfunction
+
+exported function SetDmgInfo(ball, dmginfo)
+	return SetObjProperty(ball, "DmgInfo", dmginfo);
+endfunction
+
+exported function GetDmgInfo(ball)
+	var dmg_info := GetObjProperty(ball, "DmgInfo");
+   if (!dmg_info)
+      dmg_info := struct{
+         "dice" := "2d4+2",
+         "type" := DMG_ENERGY
+      };
+   endif
+
+   return dmg_info;
+endfunction
+
