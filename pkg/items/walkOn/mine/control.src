@@ -55,6 +55,8 @@ function MineTrigger(field, mobile, dmg_dice)
    elseif (owner.npctemplate && mobile.npctemplate && !mobile.master)
       return;
    endif
+
+   var diff := field.GetDifficulty();
    
    if (field.GetEffect() == DMG_FIRE)
       var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
@@ -62,7 +64,7 @@ function MineTrigger(field, mobile, dmg_dice)
       var explosion := SelectRandomExplosion();
       PlaySoundEffect(mobile, SFX_EXPLOSION_11);
       PlayObjectCenteredEffect(mobile, explosion, 0, 5);
-      if (rollResistDice(mobile, CONSTITUTION) > 12)
+      if (rollResistDice(mobile, CONSTITUTION) > diff)
          TS_StartTimer(mobile, "tombar", 1);
       else
          SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);
@@ -71,7 +73,7 @@ function MineTrigger(field, mobile, dmg_dice)
    else
       var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
       DamageFLS(mobile, dmg, DMG_COLD, owner);
-      if (rollResistDice(mobile, CONSTITUTION) > 12)
+      if (rollResistDice(mobile, CONSTITUTION) > diff)
          TS_StartTimer(mobile, "frozen", 4);
       else
          SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);

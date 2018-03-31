@@ -25,6 +25,19 @@ exported function GetDuration(field)
 	return duration;
 endfunction
 
+exported function SetDifficulty(field, difficulty)
+	difficulty := CInt(difficulty);
+	
+	return SetObjProperty(field, "Difficulty", difficulty);
+endfunction
+
+exported function GetDifficulty(field)
+	var difficulty := CInt(GetObjProperty(field, "Difficulty"));
+   if (!difficulty) difficulty := 14; endif
+   
+	return difficulty;
+endfunction
+
 exported function IsExpired(field)
 	var duration := GetDuration(field);
 	if ( !duration )

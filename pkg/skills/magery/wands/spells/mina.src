@@ -41,6 +41,7 @@ program animateSword(params)
       item.movable := 0;
       SetObjProperty(item, "DamageDice", MageDiceTable("A", spellinfo.powered));
       item.SetOwner(who);
+      item.SetDifficulty(spellinfo.dice_roll+8);
       item.SetDuration(60);
       if (spellinfo.type == "Fogo")
          item.SetEffect(DMG_FIRE);
