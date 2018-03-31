@@ -16,7 +16,8 @@ var idlesnd, areasize, custombehaviors;
 var mystate      := INITIALIZING;
 var flee_point   := 0.1;
 var alert_allies := 0;
-var align, throwinfo;
+var align, throwinfo, following;
+var wait_time := 50;
 
 var g_settings:= dictionary; //"setting name"->value
 var g_scripts := dictionary; // "script type"->value{.flags, .script}
@@ -31,26 +32,35 @@ function EnableMerchantEvents()
 endfunction
 
 program Merchant()
-    var ev;
-    var wanders;
+   var ev;
 
-    set_critical(1);
-    //printtextabove(me, "vai inicializr");
-    InitializeSettings();
+   set_critical(1);
+   //printtextabove(me, "vai inicializr");
+   InitializeSettings();
 
-    InitializeNpc(me);
-    set_critical(0);
-    SetWarMode( 0 );
-    ev := os::wait_for_event(0);
-    EnableMerchantEvents();
-    Set_Event_Queue_Size(10);
+   InitializeNpc(me);
+   set_critical(0);
+   SetWarMode( 0 );
+   ev := os::wait_for_event(0);
+   EnableMerchantEvents();
+   Set_Event_Queue_Size(10);
+
+   if (!following) 
+      wait_time := 50;
+   else
+      wanders := 0
+   endif
+
     while(me)
       if(wanders >= 30)
          wanders := 0;
          ev := sleepmode();
       else
-         ev := os::wait_for_event(50);
+         ev := os::wait_for_event(wait_time);
       endif
+
+      Follow();
+      // Flee();
 
       if(ev)
          case(ev.type)
@@ -114,6 +124,32 @@ function HandleSeeEvent(byref event)
    return 0;
 endfunction
 
+function Follow(character := 0)
+   if (character)
+      if ( character == me || !character.IsA(POLCLASS_MOBILE) )
+         return;
+      endif
+      following := character;
+      return;
+   elseif (!following)
+      return;
+   endif
+
+   var dist := Distance(me, following);
+
+   if( dist <= 2 )
+      wait_time := 1;
+   elseif( dist > 25 )
+      following := 0;
+   elseif ( dist > 4 )
+      RunTowardLocation( following.x, following.y );
+      wait_time := 0;
+   else
+      WalkTowardLocation( following.x, following.y );
+      wait_time := 0;
+   endif
+endfunction
+
 function ItemGivenEvent(byref event)
    var occupied := GetObjProperty(me, "#occupied");
    if (occupied && GetProcess(occupied))
@@ -165,6 +201,21 @@ function HandleSpeech(byref event)
    if (Distance(event.source, me) > cint(g_settings["HearSpeech"]))
       return 0;
    endif
+
+   var privs := guild.GetProp(cstr(ev.source.serial));
+   var is_leader := (ev.source.serial == guild_leader);
+   if ((privs.above_merchant || is_leader) && text[name] || ev.text["todos"] )
+      if (ev.text["siga"] || ev.text["seguir"])
+         PrintText(me, "As suas ordens");
+         Follow(ev.source);
+         return;  
+      if (ev.text["pare"] || ev.text["parar"])
+         PrintText(me, "As suas ordens");
+         following := 0;
+         return;  
+      endif
+   endif
+
 
    var process := start_script(g_scripts["TalkEvent"], packed);
 

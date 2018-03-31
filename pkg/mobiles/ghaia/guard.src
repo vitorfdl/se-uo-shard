@@ -254,14 +254,14 @@ program NPCMonitor()
                Fight(ev.targ);
             endif
          LOCKPICK_EVENT:
-            if (FindInArray(guild_laws, struct{"type" := "nolockpick" }))
+            if (FindInArray(guild_laws, struct{"type" := "nolockpick" }) && InGuildRect(guild, ev.source))
                PrintText(me, "Ei! O que pensa que está fazendo?");
                Fight(ev.source);
                disableWarn();
             endif
             wait_time := 0;
          CERCA_EVENT:
-            if (FindInArray(guild_laws, struct{"type" := "nocerca" }))
+            if (FindInArray(guild_laws, struct{"type" := "nocerca" }) && InGuildRect(guild, ev.source))
                PrintText(me, "Ei! O que pensa que está fazendo?");
                var storeloc := struct{ "x" := ev.source.x, "z" := ev.source.z, "y" := ev.source.y };
                PetGoTo(ev.last_loc, 2);
@@ -369,16 +369,6 @@ function ResolveSpeech(ev, source := 0, order := 0)
       standing := 1;
       warning := 0;
       SetWarMode(0);
-   elseif (text["ir"])
-      var where := TargetCoordinates(ev.source);
-      PrintText(me, "Sim senhor");
-      disableWarn();
-      following  := 0;
-      fighting   := 0;
-      standing := 0;
-      warning := 0;
-      SetWarMode(0);
-      PetGoTo(where, 2);
    /// Follow Command
    elseif (text["siga"])
       PrintText(me, "As suas ordens");
@@ -436,6 +426,17 @@ function ResolveSpeech(ev, source := 0, order := 0)
       fighting := 0;
       standing := 0;
       disableWarn();
+   elseif (text["ir"] && text["at"])
+      var where := TargetCoordinates(ev.source);
+      PrintText(me, "Sim senhor");
+      disableWarn();
+      following  := 0;
+      fighting   := 0;
+      standing := 0;
+      warning := 0;
+      SetWarMode(0);
+      PetGoTo(where, 2);
+      standing := 1;
    endif
 
    if (text["todos"] && allevent)
@@ -484,13 +485,13 @@ function ProcessDoubleClick(ev)
 
    var input := GFSendGump(ev.source, gump)[0];
    case (input)
-      70: ; ResolveSpeech(0, ev.source, "Ir"); break;
+      70: ; ResolveSpeech(0, ev.source, "Ir até"); break;
       10: ; ResolveSpeech(0, ev.source, "Pare"); break;
       20: ; ResolveSpeech(0, ev.source, "Siga"); break;
       30: ; ResolveSpeech(0, ev.source, "Ataque"); break;
       40: ; ResolveSpeech(0, ev.source, "Patrulha"); break;
       50: ; ResolveSpeech(0, ev.source, "Manter Posição"); break;
-      60: ; ResolveSpeech(0, ev.source, "Assumir Posto"); break;
+      60: ; ResolveSpeech(0, ev.source, "Assumir Postos"); break;
    endcase
 endfunction
 
@@ -540,6 +541,7 @@ function WarnPlayer()
       1: //nofight
          if (!warning.warmode)
             PrintText(me, "Muito bem.");
+            AddReport(guild, "{} alertou {} sobre combate não permitido".format(me.name, warning.name));
             disableWarn();
             return;
          endif
@@ -559,6 +561,7 @@ function WarnPlayer()
       2: //nooutsider, noguild, norace
          if (!InGuildRect(guild, warning))
             PrintText(me, "Muito bem.");
+            AddReport(guild, "{} alertou {} sobre presença não permitida na área".format(me.name, warning.name));
             disableWarn();
             return;
          endif
@@ -579,6 +582,7 @@ function WarnPlayer()
       3: //noweapon
          if (warning.weapon.objtype in tools)
             PrintText(me, "Muito bem.");
+            AddReport(guild, "{} alertou {} sobre uso de armas".format(me.name, warning.name));
             disableWarn();
             return;
          endif
@@ -598,6 +602,7 @@ function WarnPlayer()
       4: //noitem
          if (!CheckItem(warning, warn_opt))
             PrintText(me, "Muito bem.");
+            AddReport(guild, "{} alertou {} sobre item equipável não permitido".format(me.name, warning.name));
             disableWarn();
             return;
          endif
@@ -712,6 +717,7 @@ function Fight(opponent := 0)
 
    // PrintText(me, "Engaged");
    if (fighting.concealed || fighting.hidden || fighting.dead || Distance(me, fighting) > 15)
+      AddReport(guild, "{} entrou em combate com {}".format(me.name, fighting.name));
       var hostiles := ListHostiles( me, 8, LH_FLAG_LOS);
       if (!hostiles[1])
          fighting := 0;
@@ -720,6 +726,17 @@ function Fight(opponent := 0)
          return;
       else
          fighting := hostiles[1];
+      endif
+   endif
+
+   if (fighting.npctemplate && !GetObjProperty(fighting, "guild"))
+      if (!InGuildRect(guild, fighting))
+         RunAwayFrom(fighting);
+         wait_time := 0;
+         if (Distance(me, fighting) >= 15)
+            fighting := 0;
+         endif
+         return;
       endif
    endif
 

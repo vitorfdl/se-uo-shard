@@ -211,3 +211,21 @@ function inGuildRect(guild, item := 0)
 
    return 0;
 endfunction
+
+function AddReport(guild, report)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+
+   if (!guild) return; endif
+
+   var reports := guild.getProp("reports");
+   if (!reports) reports := array{}; endif
+   reports.Insert(1, report);
+
+   if (reports.size() > 30)
+      reports.Erase(reports.size());
+   endif
+
+   guild.setProp("reports");
+endfunction

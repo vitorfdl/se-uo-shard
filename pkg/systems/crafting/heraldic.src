@@ -17,7 +17,7 @@ program alchemy(who)
       return SendSysMessageEx(who, "Isso não parece um objeto.", SSM_FAIL);
    endif
 
-   var diff := 5;
+   var diff := 7;
    var history := GetObjProperty(item, "history");
    if (history) diff += 3; endif
    
@@ -31,7 +31,7 @@ program alchemy(who)
             "skills" := GetConfigStringArray(craftcfg[item.objtype], "skill"),
             "level" := GetConfigInt(craftcfg[item.objtype], "level")
          };
-         diff += 7;
+         diff += 8;
       endif
    endif
 
@@ -42,7 +42,7 @@ program alchemy(who)
    endif
 
    var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, HERALDICA);
-   if (roll <= diff)
+   if (roll <= diff && who.cmdlevel < 2)
       return SendSysMessageEx(who, "Você não foi capaz de decifrar o objeto.", SSM_FAIL);
    endif
 

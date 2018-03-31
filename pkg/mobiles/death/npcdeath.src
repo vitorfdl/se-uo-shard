@@ -22,6 +22,7 @@ include "include/say";
 include "include/damage";
 include ":yggdrasil:spawnSpot";
 include ":yggdrasil:boss";
+include ":faccao:faccao";
 
 //include ":spawnnet:spawnnet";
 //include ":spawnregion:spawn";
@@ -49,6 +50,12 @@ program core_npcDeath(params)
       var npcs := guild.getProp("npcs_active");
       var index := FindInArray(npcs, struct{ "serial" := GetObjProperty(corpse, "serial") });
       if (index)
+         var who_name := corpse.desc["A corpse of"] := "";;
+         if (!GetObjProperty(corpse, "GuardKill"))
+            AddReport(guild, "{} foi morto".format(who_name));
+         else
+            AddReport(guild, "{} foi dispensado do serviço".format(who_name));
+         endif
          npcs.Erase(index);
          guild.setProp("npcs_active", npcs);
       endif

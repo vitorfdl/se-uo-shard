@@ -104,6 +104,12 @@ endfunction
 function HandleSpeech(npc, player, text)
    var canceled := 0;
 	text := lower(text);
+   if (guild)
+      if (!InGuildRect(guild, npc))
+         return;
+      endif
+   endif
+
    if (text["artigo"] || text["compra"] || text["ver"])
       while(!canceled)
          if (!player.concealed)

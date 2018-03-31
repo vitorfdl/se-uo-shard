@@ -109,6 +109,11 @@ function HealFLS(targ, amt, show_heal := 1)
 		return;
 	endif
 
+   var redu_heal := GetObjProperty(targ, "heal_reduce");
+   if (redu_heal)
+      amt := cint(cdbl(amt) - (cdbl(amt) * redu_heal));
+   endif
+
    var start_vital := AP_GetVital(targ, HITS);
 	HealDamage(targ, amt);
    var amt_healed := AP_GetVital(targ, HITS) - start_vital;

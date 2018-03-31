@@ -436,7 +436,7 @@ function ConstructGroupList(byref gump)
     GFTextLine(gump, 48, 23, 555, "Dynamic Group List");
 
     var page     := 1;
-    var max_page := 10;
+    var max_page := 11;
     for i:=1 to dynamiceventgroups.Size()+1
         GFPage(gump, page);
         var x := 50;
@@ -462,6 +462,9 @@ function ConstructGroupList(byref gump)
          //change page
         if (i == (page+1) * max_page)
             page += 1;
+            GFAddButton(gump, 40, y+18, 0x938, 0x938, GF_PAGE_BTN, page);
+            GFPage(gump, page);
+            GFAddButton(gump, 100, y+18, 0x938, 0x938, GF_PAGE_BTN, page-1);
         endif
     endfor
 endfunction

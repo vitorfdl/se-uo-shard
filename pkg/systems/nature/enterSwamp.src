@@ -1,0 +1,14 @@
+
+use uo;
+use os;
+use vitals;
+
+include ":timedscripts:timedScripts";
+
+program neve(who, regioname)
+   TS_StartTimer(who, "swampEnvironment", 10);
+/*
+*/
+endprogram
+
+
