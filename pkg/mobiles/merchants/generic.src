@@ -216,7 +216,7 @@ function HandleSpeech(byref event)
          PrintText(me, "As suas ordens");
          Follow(event.source);
          return;  
-      if (event.text["pare"] || event.text["parar"])
+      elseif (event.text["pare"] || event.text["parar"])
          PrintText(me, "As suas ordens");
          following := 0;
          return;  
