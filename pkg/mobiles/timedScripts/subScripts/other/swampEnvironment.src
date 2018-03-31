@@ -21,8 +21,8 @@ function StartScript(mobile, attacker := 0, level := 0)
       if (posx != mobile.x || posy != mobile.y)
          AP_ConsumeVital(mobile, "Stamina", 4);
       endif
-      posx := mobile.x
-      posy := mobile.y
+      posx := mobile.x;
+      posy := mobile.y;
       sleep(10);
    endwhile
 
