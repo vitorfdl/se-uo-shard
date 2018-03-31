@@ -39,6 +39,7 @@ function ControleDeSoldo()
                SetObjProperty(npc, "GuardKill", 1);
                ApplyRawDamage(npc, 900);
             else
+               SetObjProperty(npc, "DaysOfService", polcore().systime);
                money -= soldo;
             endif
          endif

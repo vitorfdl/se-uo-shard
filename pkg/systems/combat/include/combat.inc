@@ -267,11 +267,9 @@ function CheckifIsAlly(who, mobiles)
          elseif(mobiles.alignment == 2)
             return 1;
          endif
-      elseif (mobiles in party || mobiles == who)
-         return 1;
       endif
 
-      return 0;
+      return 1;
    endif
 
    var newarray := array{};

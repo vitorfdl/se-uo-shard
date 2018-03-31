@@ -15,7 +15,7 @@ program useSela(who, item)
 
    if (!IsMountable(targ.graphic))
       return SendSysMessageEx(who, "Essa criatura não pode ser montada.", SSM_FAIL);
-   elseif (targ.master != who.serial)
+   elseif (targ.master.serial != who.serial)
       return SendSysMessageEx(who, "Este animal não é seu.", SSM_FAIL);
    endif
 

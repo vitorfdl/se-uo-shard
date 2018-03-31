@@ -43,7 +43,7 @@ program animateSword(params)
       sleep(1);
    endfor
 
-   var mobs := ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+   var mobs := ListMobilesNearLocationEx( item.x, item.y, LIST_IGNORE_Z, 6, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
    var heal_mobs := array{};
    foreach mob in mobs
       sleepms(2);
