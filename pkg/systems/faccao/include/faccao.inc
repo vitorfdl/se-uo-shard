@@ -227,5 +227,5 @@ function AddReport(guild, report)
       reports.Erase(reports.size());
    endif
 
-   guild.setProp("reports");
+   guild.setProp("reports", reports);
 endfunction
