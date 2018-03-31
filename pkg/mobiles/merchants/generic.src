@@ -48,7 +48,7 @@ program Merchant()
    if (!following) 
       wait_time := 50;
    else
-      wanders := 0
+      wanders := 0;
    endif
 
     while(me)
