@@ -1,0 +1,48 @@
+	/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":fls_core:packets";
+include ":mounts:mounts";
+
+function StartScript(mobile, attacker := 0, level := 0)
+   while(1)
+      AP_ConsumeVital(mobile, "Stamina", 2);
+      sleep(10);
+   endwhile
+
+   return 1;
+endfunction
+
+function EndScript(mobile, level)
+   return 1;
+endfunction
+
+function LogOffScript(mobile)
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile, level);
+      elseif (type == "LogOff")
+         return LogOffScript(mobile);
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram
