@@ -638,7 +638,7 @@ function npcHandler(who, input)
    if (input == BUTTON_REPORT_NPC)
       var historico := guild.GetProp("reports");
       historico := "<br> - {}".format("<br> -".join(historico));
-      SendHTMLGump(player, "Histórico dos Guardas", historico);
+      SendHTMLGump(who, "Histórico dos Guardas", historico);
    elseif (input == BUTTON_CONTRACT_NPC)
       var opts := array{};
       foreach agent in (guild_obj.npcs)
