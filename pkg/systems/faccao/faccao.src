@@ -11,6 +11,7 @@ include ":tn:tngumps";
 include ":yggdrasil:boss";
 include ":gumps:yesno";
 include ":unicos:item_template";
+include ":gumps:htmlgump";
 
 const BUTTON_BUY_UNIFORM := 0x2;
 const BUTTON_ADD_PLAYER := 0x3;
