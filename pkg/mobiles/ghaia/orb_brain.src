@@ -26,7 +26,6 @@ program NPCMonitor()
    while (me)
       sleep(wait_time);
       if (is_golem)
-         printtext(me, "opponent: "+me.opponent.name);
          if (me.opponent)
             Follow(me.opponent);
             if (Distance(me, me.opponent) <= 2)
@@ -43,6 +42,7 @@ program NPCMonitor()
                endif
             endif
          endif
+         wait_time := 0;
       elseif (me.master && !GetObjProperty(me, "no_follow"))
          Follow(me.master);
       endif
@@ -106,7 +106,7 @@ function NPC_Agarrar(dice, targ, difficulty)
             return;
          endif
          sleep(1);
-         DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
+         DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me.owner);
       endfor
    else
       PrintText(targ, "*resistido*".format(me.name), SSM_INFO);

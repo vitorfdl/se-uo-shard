@@ -15,9 +15,9 @@ program stamPotion(who, potion)
 	var healed := 0;
 	healed := AP_GetVitalMaximumValue(who, STAMINA);
 	if(potion.objtype == 0xdc0f)
-		healed := RandomDiceRoll("4d4+8");
+		healed := RandomDiceRoll("4d4+20");
 	else
-		healed := RandomDiceRoll("2d4+4");
+		healed := RandomDiceRoll("3d4+10");
 	endif
 
 	EmptyBottle(who, potion);
@@ -28,7 +28,6 @@ program stamPotion(who, potion)
 			break;
 		endif
 		AP_SetVital(who, STAMINA, AP_GetVital(who, STAMINA)+1 );
-		i := i + 1;
 		sleepms(500);
 	endfor
 	SendSysMessageEx(who, "Terminou o efeito da pocao.", SSM_INFO);	

@@ -159,50 +159,50 @@ function MageDiceTable(tabela, nivel)
       "A":
          case (nivel)
             0:default: return "2d8";
-            1: return "2d8+1";
-            2: return "2d10";
-            3: return "2d10+1";
-            4: return "3d6";
-            5: return "3d6+1";
-            6: return "3d8";
-            7: return "3d8+1";
-            8: return "3d10";
-            9: return "3d10+1";
-            10: return "3d12";
-            11: return "3d12+1";
-            12: return "3d12+2";
+            1: return "2d8+2";
+            2: return "2d10+3";
+            3: return "2d10+4";
+            4: return "3d6+5";
+            5: return "3d6+6";
+            6: return "3d8+7";
+            7: return "3d8+8";
+            8: return "3d10+9";
+            9: return "3d10+10";
+            10: return "3d12+11";
+            11: return "3d12+12";
+            12: return "3d12+13";
          endcase
       "B":
          case (nivel)
             0: default: return "2d4";
-            1: return "2d4+1";
-            2: return "2d6";
-            3: return "2d6+1";
-            4: return "2d8";
-            5: return "2d8+1";
-            6: return "2d10";
-            7: return "2d10+1";
-            8: return "2d12";
-            9: return "2d12+1";
-            10: return "2d12+2";
-            11: return "2d12+3";
-            12: return "2d12+4";
+            1: return "2d4+2";
+            2: return "2d6+3";
+            3: return "2d6+4";
+            4: return "2d8+5";
+            5: return "2d8+6";
+            6: return "2d10+7";
+            7: return "2d10+8";
+            8: return "2d12+9";
+            9: return "2d12+10";
+            10: return "2d12+11";
+            11: return "2d12+12";
+            12: return "2d12+13";
          endcase
       "C":default:
          case (nivel)
             0:default: return "2d6";
-            1: return "2d6+1";
-            2: return "2d8";
-            3: return "2d8+1";
-            4: return "2d10";
-            5: return "2d10+1";
-            6: return "3d6";
-            7: return "3d6+1";
-            8: return "3d8";
-            9: return "3d8+1";
-            10: return "3d10";
-            11: return "3d10+1";
-            12: return "3d12";
+            1: return "2d6+2";
+            2: return "2d8+3";
+            3: return "2d8+4";
+            4: return "2d10+5";
+            5: return "2d10+6";
+            6: return "3d6+7";
+            7: return "3d6+8";
+            8: return "3d8+9";
+            9: return "3d8+10";
+            10: return "3d10+11";
+            11: return "3d10+12";
+            12: return "3d12+13";
          endcase
    endcase
 

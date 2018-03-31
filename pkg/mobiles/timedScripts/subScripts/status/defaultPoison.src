@@ -23,16 +23,16 @@ function StartScript(mobile, attacker := 0, level := 0)
 	endif
 
    var dicedmg := "1d2+2";
-   var diff := 13;
+   var diff := 15;
    case (level)
       2: dicedmg := "1d6+2";
-         diff := 15;
+         diff := 17;
       3: dicedmg := "2d6+2";
-         diff := 16;
+         diff := 19;
       4: dicedmg := "3d6+2";
-         diff := 18;
+         diff := 21;
       5: dicedmg := "4d6+2";
-         diff := 20;
+         diff := 24;
    endcase
 
    if (GetObjProperty(mobile, "#custom_poison_diff"))

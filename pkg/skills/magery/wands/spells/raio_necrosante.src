@@ -26,7 +26,7 @@ program animateSword(params)
       sleepms(2);
    endforeach
    
-   if (rollResistDice(targ, CONSTITUTION) > spellinfo.dice_roll || checkImmunity(targ, DMG_POISON))
+   if (rollResistDice(targ, CONSTITUTION) > spellinfo.dice_roll+5 || checkImmunity(targ, DMG_POISON))
       SendSystemReport(targ, "*resistido*", SSM_INFO);
       SendSystemReport(targ, "*resistido*", SSM_FAIL, who);
       return;

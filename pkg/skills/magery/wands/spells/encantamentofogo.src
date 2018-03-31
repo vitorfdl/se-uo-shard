@@ -52,7 +52,7 @@ program animateSword(params)
       PlaySoundEffect(item, 0x209);
       var dmg := RandomDiceRoll(dmg_dice);
       
-      if (rollResistDice(targ, DEXTERITY) > spellinfo.dice_roll)
+      if (rollResistDice(targ, DEXTERITY) > spellinfo.dice_roll+5)
          dmg := dmg / 2;
          SendSysMessageEx(who, "O alvo conseguiu evitar parte do dano.");
          SendSysMessageEx(targ, "Você se esquiva e recebe metade do dano.");

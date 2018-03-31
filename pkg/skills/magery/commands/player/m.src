@@ -16,10 +16,16 @@ program useMagic(who, spellname, uc_text)
       var cfg := ReadConfigFile(":magery:config/mage");
       if (spellname == "mage")
          var allspells := getspelloncfg( cfg );
-         spellname := RadioGump(who, 220, 120+(allspells.size() * 20), "Qual magia deseja escolher?", allspells);
+         var output := QuestionsGump(who, array{
+            struct{ "title" := "Escolha a magia", "marked" := 1, "radio" := allspells }
+         });
+         spellname := output[1];
       elseif (spellname == "cleric")
          var allspells := getspelloncfg(ReadConfigFile(":magery:config/cleric"));
-         spellname := RadioGump(who, 220, 110+(allspells.size() * 20), "Qual magia deseja escolher?", allspells);
+         var output := QuestionsGump(who, array{
+            struct{ "title" := "Escolha a magia", "marked" := 1, "radio" := allspells }
+         });
+         spellname := output[1];
       endif
 		var spell := FindSpell(cfg, spellname);
 		if (!spell)
