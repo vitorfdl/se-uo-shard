@@ -5,6 +5,7 @@ use guilds;
 
 include ":faccao:faccao";
 include ":timeUtils:time";
+include ":attributes:attributes";
 
 program startprogram()
    while (1)
