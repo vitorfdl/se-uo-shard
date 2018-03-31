@@ -15,8 +15,14 @@ include ":fls_core:packets";
 include ":mounts:mounts";
 
 function StartScript(mobile, attacker := 0, level := 0)
+   var posx;
+   var posy;
    while(1)
-      AP_ConsumeVital(mobile, "Stamina", 2);
+      if (posx != mobile.x || posy != mobile.y)
+         AP_ConsumeVital(mobile, "Stamina", 4);
+      endif
+      posx := mobile.x
+      posy := mobile.y
       sleep(10);
    endwhile
 
