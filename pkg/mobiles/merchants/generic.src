@@ -203,14 +203,14 @@ function HandleSpeech(byref event)
       return 0;
    endif
 
-   var privs := guild.GetProp(cstr(ev.source.serial));
-   var is_leader := (ev.source.serial == guild_leader);
-   if ((privs.above_merchant || is_leader) && text[name] || ev.text["todos"] )
-      if (ev.text["siga"] || ev.text["seguir"])
+   var privs := guild.GetProp(cstr(event.source.serial));
+   var is_leader := (event.source.serial == guild_leader);
+   if ((privs.above_merchant || is_leader) && text[name] || event.text["todos"] )
+      if (event.text["siga"] || event.text["seguir"])
          PrintText(me, "As suas ordens");
-         Follow(ev.source);
+         Follow(event.source);
          return;  
-      if (ev.text["pare"] || ev.text["parar"])
+      if (event.text["pare"] || event.text["parar"])
          PrintText(me, "As suas ordens");
          following := 0;
          return;  
