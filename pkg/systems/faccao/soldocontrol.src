@@ -27,7 +27,7 @@ function ControleDeSoldo()
          var soldo_last := GetObjProperty(npc, "DaysOfService");
          var soldo := npcs_conf[GetObjProperty(npc, "conf_ref")].price;
 
-         if (!config) soldo := npc_obj.price; endif
+         if (!soldo) soldo := npc_obj.price; endif
          if (!soldo_last) soldo_last := polcore().systime; endif
 
          var diff := GetTimeBetween(soldo_last, GetTime(), "days");
