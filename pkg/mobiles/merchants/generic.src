@@ -19,7 +19,7 @@ var alert_allies := 0;
 var align, throwinfo, following;
 var wait_time := 50;
 var wanders := 0;
-var guild;
+var guild, guild_leader;
 
 var g_settings:= dictionary; //"setting name"->value
 var g_scripts := dictionary; // "script type"->value{.flags, .script}
@@ -49,6 +49,7 @@ program Merchant()
 
    if (GetObjProperty(me, "guild"))
       guild := FindGuild(GetObjProperty(me, "guild"));
+      guild_leader := guild.GetProp("leader");
    endif
 
    if (!following) 
