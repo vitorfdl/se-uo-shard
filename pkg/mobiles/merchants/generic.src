@@ -90,7 +90,7 @@ program Merchant()
                 DblClickScript(ev);
                 break;
             SYSEVENT_SPEECH:
-               if (g_scripts["TalkEvent"] && CheckLineOfSight(me, ev.source))
+               if (CheckLineOfSight(me, ev.source))
                   HandleSpeech(ev);
                endif
                break;
@@ -211,10 +211,11 @@ function HandleSpeech(byref event)
 
    var privs := guild.GetProp(cstr(event.source.serial));
    var is_leader := (event.source.serial == guild_leader);
-   if ((privs.above_merchant || is_leader) && event.text[me.name] || event.text["todos"] )
+   if ((privs.above_merchant || is_leader || event.source.cmdlevel >= 2) && event.text[me.name] || event.text["todos"] )
       if (event.text["siga"] || event.text["seguir"])
          PrintText(me, "As suas ordens");
          Follow(event.source);
+         wait_time := 0;
          return;  
       elseif (event.text["pare"] || event.text["parar"])
          PrintText(me, "As suas ordens");
@@ -222,7 +223,10 @@ function HandleSpeech(byref event)
          return;  
       endif
    endif
-
+   
+   if (!g_scripts["TalkEvent"])
+      return;
+   endif
 
    var process := start_script(g_scripts["TalkEvent"], packed);
 

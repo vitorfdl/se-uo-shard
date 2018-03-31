@@ -2116,7 +2116,7 @@
 0xa0ac AnarEmelRobe womenswork
 0xa0ad AnarTuraRobe womenswork
 0xa0ae SeredhEmelRobe womenswork
-0xa0af SeredhTuraRobe womenswork
+0xa0af ValaTuraRobe womenswork
 # 0xa0b0 - 0xa1ff unused
 0xa200 arenastone arena
 # 0xa201 - 0xa35f unused
@@ -2410,7 +2410,9 @@
 0xff97 armadilhafogo traps
 0xff98 armadilhaflecha traps
 0xff99 atrairinimigo traps
-# 0xff9a - 0xffe0 unused
+# 0xff9a - 0xffbd unused
+0xffbe magicball tn
+# 0xffbf - 0xffe0 unused
 0xffe1 mushrooms2 food
 # 0xffe2 - 0x10fff unused
 0x11000 SmallBoat boat

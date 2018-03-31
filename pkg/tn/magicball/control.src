@@ -4,17 +4,20 @@ use os;
 
 include "include/facings";
 include "include/say";
+include ":combat:combat";
 const BALL_FLAG := LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN;
 
 program usedardo(ball)
-   sleep(600);
+   sleep(1);
+   var owner := ball.GetOwner();
+   var direction := ball.GetDirection();
    while (ball)
-      var owner := ball.GetOwner();
-      var direction := ball.GetDirection();
       if (direction)
-         if (direction <= 8)
+         if (typeof(direction) == "Integer" && direction <= 8)
             var mod := GetModByFacing(direction);
-            MoveObjectToLocation(ball, ball.x+mod[1], ball.y+mod[2], ball.z+1, ball.realm, MOVEOBJECT_FORCELOCATION);
+            ball.movable := 1;
+            MoveObjectToLocation(ball, ball.x+mod[1], ball.y+mod[2], ball.z, ball.realm, MOVEOBJECT_FORCELOCATION);
+            ball.movable := 0;
          else
             var targ := SystemFindObjectBySerial(direction);
             if (!targ)
@@ -22,19 +25,22 @@ program usedardo(ball)
             endif
 
             var mod := GetModByFacing(GetFacing(ball.x, ball.y, targ.x, targ.y));
-            MoveObjectToLocation(ball, ball.x+mod[1], ball.y+mod[2], ball.z+1, ball.realm, MOVEOBJECT_FORCELOCATION);
+            ball.movable := 1;
+            MoveObjectToLocation(ball, ball.x+mod[1], ball.y+mod[2], ball.z, ball.realm, MOVEOBJECT_FORCELOCATION);
+            ball.movable := 0;
          endif
       endif
 
       var type := ball.GetType();
       var effect := ball.GetEffect();
       var dmg_info := ball.GetDmgInfo();
+      print(type);
       case (type)
          0:default:
             var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 0, BALL_FLAG, ball.realm)).randomentry();
             if (mobile)
-               PlayObjectCenteredEffect(mob, effect, 10, 10);
-               DamageFLS(mob, RandomDiceRoll(dmg_info.dice), dmg_info.type);
+               PlayObjectCenteredEffect(mobile, effect, 10, 10);
+               DamageFLS(mobile, RandomDiceRoll(dmg_info.dice), dmg_info.type);
                DestroyItem(ball);
             endif
             break;
@@ -50,15 +56,17 @@ program usedardo(ball)
             endif
             break;
          2:
-            var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 3, BALL_FLAG, ball.realm)).randomentry();
+            var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 4, BALL_FLAG, ball.realm)).randomentry();
+            print(mobile);
             if (mobile)
-               var newball := CreateItemAtLocation(0x, ball.x, ball.y, ball.z);
+               var newball := CreateItemAtLocation(ball.x, ball.y, ball.z, 0xFFBE);
+               newball.SetOwner(owner);
                newball.SetDuration(8);
                newball.SetDirection(mobile.serial);
                newball.SetDmgInfo(dmg_info);
                newball.SetEffect(effect);
-               sleep(4);
             endif
+               sleep(4);
             break;
       endcase
 
@@ -66,6 +74,6 @@ program usedardo(ball)
          DestroyItem(ball);
       endif
 
-      sleep(800);
+      sleepms(800);
    endwhile
 endprogram

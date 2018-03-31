@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////
-// ã
-//	CONSTANTS 
+//
+//	CONSTANTS
 //
 ////////////////////////////////////////////////////////////////
 
@@ -227,13 +227,17 @@ const CLOSE_CONTAINER := 12;
 const CHARPROFILE_NO_UNEDITABLE_TEXT := array;
 const CHARPROFILE_NO_EDITABLE_TEXT := array;
 
+//Accessible
+const ACCESSIBLE_DEFAULT := -1; // uses the default from ssopt
+const ACCESSIBLE_IGNOREDISTANCE := -2; // ignores the range check
+
 ////////////////////////////////////////////////////////////////
 //
 //	FUNCTIONS
 //
 ////////////////////////////////////////////////////////////////
 
-Accessible( by_character, item );
+Accessible( by_character, item, range := ACCESSIBLE_DEFAULT );
 AddAmount( item, amount );
 AddMenuItem( menu, objtype, text, color:=0 );
 ApplyConstraint( objlist, configfile, propertyname, minvalue );
@@ -376,7 +380,7 @@ SendSysMessage( character, text, font := _DEFAULT_TEXT_FONT, color := _DEFAULT_T
 SendTextEntryGump( who, line1, cancel := TE_CANCEL_ENABLE, style := TE_STYLE_NORMAL, maximum := 40, line2 := "" );
 SendViewContainer( character, container );
 SetGlobalProperty( propname, propval );
-SetName( object, name ); 
+SetName( object, name );
 SetObjProperty( object, property_name, property_value );
 SetRegionLightLevel( regionname, lightlevel );
 SetRegionWeatherLevel( region, type, severity, aux := 0, lightoverride := -1);

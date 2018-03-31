@@ -67,7 +67,7 @@ exported function SetDirection(ball, direction)
 endfunction
 
 exported function GetDirection(ball)
-	return GetObjProperty(ball, "direction");
+	var direct := GetObjProperty(ball, "direction");
 endfunction
 
 exported function SetEffect(ball, effect := 1)

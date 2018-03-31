@@ -38,7 +38,7 @@ program HandleMerchant(params)
    if (GetObjproperty(params.me, "imposto") != error)
       imposto := cdbl(GetObjproperty(params.me, "imposto"));
    endif
-
+print("test3");
 	SetObjProperty(params.me, "#occupied", GetPid());
 	case (params.type)
 		"ItemGivenEvent": 

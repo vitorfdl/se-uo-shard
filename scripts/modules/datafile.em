@@ -18,7 +18,7 @@ OpenDataFile( filespec ); // fails if does not exist
 UnloadDataFile( filespec );
 
 // Object: DataFile datafile;
-// datafile methods: 
+// datafile methods:
 //  datafile.FindElement( key : string|integer ) : elemref
 //  datafile.CreateElement( key : string|integer ) : elemref
 //  datafile.DeleteElement( key : string|integer );

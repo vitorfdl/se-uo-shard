@@ -34,7 +34,7 @@ program animateSword(params)
    endfor
 
    var dmg_dice := MageDiceTable("A", spellinfo.powered);
-   DamageFLS(targ, RandomDiceRoll(dmg_dice)+8, DMG_ENERGY, who);
+   DamageFLS(targ, RandomDiceRoll(dmg_dice)+10, DMG_ENERGY, who);
 	return 1;
 endprogram
 

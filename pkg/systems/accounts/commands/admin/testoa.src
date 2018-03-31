@@ -17,150 +17,26 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 include ":magery:basicMagery";
 include ":crafting:craft_props";
-const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
-const RED    := "<BASEFONT COLOR=#FF4C4C>";
-const BLUE   := "<BASEFONT COLOR=#4169E1>";
-const ORANGE := "<BASEFONT COLOR=#FFA500>";
-const LIGHTGRAY := "<BASEFONT COLOR=#D3D3D3>";
+
 program oafeatures_sendpacket(who, text)
    var targ := Target(who);
-   print(GetWeaponSpellList(targ));
+   // var targ := TargetCoordinates(who);
+   var newball := CreateItemAtLocation(who.x, who.y, who.z+2, 0xFFBE);
+   newball.graphic := 0x19AC;
+   newball.SetOwner(who);
+   newball.SetDuration(8);
+   newball.SetType(2);
+   newball.SetDirection(targ.serial);
+   newball.SetDmgInfo(struct{ "dice":= "3d2", "type" := DMG_ENERGY });
+               // newball.SetEffect(effect);
+   // print(GetWeaponSpellList(targ));
    // var chardata := GetObjProperty(targ, "chardata");
    // chardata.storedexp := 0;
    // SetObjProperty(targ, "chardata", chardata);
    // print(GetItemDescriptor(targ.objtype));
    // var chardata := GetObjproperty(targ, "chardata");
    // print(chardata);
-   // AP_SetStatMod(who, "exp", 2600);
-   // who.SetExp(7000);
-   // SendSysMessageEx(who, ""+chardata.storedexp);
-   // SendSysMessageEx(who, ""+AP_GetTrueStat(who, "exp"));
-   // SendSysMessageEx(who, ""+AP_GetStatMod(who, "exp"));
-   // PlayObjectCenteredEffectEx(who, 0x9F89, 9, 20, 2128);
-   // PlayMovingEffectXYZ( who.x, who.y, (who.z + 5), targ.x, targ.y, targ.z+5, GFX_LARGE_FIREBALL, 10, 0, 1);
-   // who.frozen := 0;
-   // SetRegionWeatherLevel(GetRegionName(who), 2, 70);
-   // who.setswingtimer(cint(text));
-   // who.weapon.speed_mod := cint(text);
-   // SendSysMessageEx(who, "[Part-Msg] Vitor: Test awer awerawe raewr awerawer awer e" , 1159);
-   // SendSysMessageEx(who, "[Part-Msg] Vitor: Testaw erawe rweae" , 1169);
-   // SendSysMessageEx(who, "[Part-Msg] Vitor: Tesawera were" , 862);
-   // print(RandomDiceRoll("1d1+2"));
-   // targ.SetPoints(1);
-   // SendSysMessageEx(who, ""+who.Caracteristica("ClÈrigo de Anar"));
-   // // return;
-   // var parse := SplitWords(text, " ");
-   // who.setAchievement(parse[1], cint(parse[2]));
-   // SendSysMessageEx(who, "Achievement setado {}, {}".format(parse[1], parse[2]));
-
-   // var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PERCEPCAO);
-   // SendSysMessageEx(who, ""+GetSkillBonus(who, PERCEPCAO));
-   // SendSysMessageEx(who, ""+convertToRoman(cint(text)));
-      // var targ := Target(who);
-   // var chardata := GetObjProperty(targ, "chardata");
-   // chardata.class_feats := array{6};
-   // SetObjProperty(targ, "chardata", chardata);
-
-
-   // PlayMovingEffectXYZEx( who.x, who.y, who.z-10, who.x, who.y, who.z, who.realm, 0x08E0, 1, 5, 2050);
-      // who.setexp(cint(text));
-      // sleep(3);
-      // PlayObjectCenteredeffect(who, 0x19AB, 5, 20);
-   // var it := CreateItemAtLocation(mobile.x, mobile.y, mobile.z+1, 4317, 1);
-   // var it2 := CreateItemAtLocation(mobile.x, mobile.y, mobile.z+1, 4314, 1);
-      // var points := GetConeCoordsInFront(who.x, who.y, who.facing, 3);
-      // points.erase(points.size());
-      // points.erase(points.size()-2);
-      //    PlayMovingEffectXYZ(p[1], p[2], who.z+15, p[1]-1, p[2], who.z+15, GFX_ENERGY, 5, 25);
-      //    PlayMovingEffectXYZ(p[1], p[2], who.z+15, p[1]+1, p[2], who.z+15, GFX_ENERGY, 5, 25);
-      //    PlayMovingEffectXYZ(p[1], p[2], who.z+15, p[1], p[2]+1, who.z+15, GFX_ENERGY, 5, 25);
-      //    PlayMovingEffectXYZ(p[1], p[2], who.z+15, p[1], p[2]-1, who.z+15, GFX_ENERGY, 5, 25);
-      //    sleepms(2);
-
-      // PlayObjectCenteredEffectEx( who,  0x19AB, 5, 20, 0, 4, 0);
-      // sleep(1);
-      // printtext(who, "1 sec");
-      // var targ := Target(who);
-      // var acc := FindAccount(targ.acctname);
-
-      // acc.SetProp("expboost", cint(text));
-
-      // SendSysMessageEx(who, ""+acc.GetProp("expboost"));
-      // PlayMovingEffectEx(who, defender, 0x0F51, 10, 10, 0, 0);
-      // sleep(3);PlayObjectCenteredEffectEx( center, effect, speed, duration := 0, hue := 0, render := 0, layer := 0, effect3d := 0 );
-      // PlayStationaryEffectEx(who.x, who.y+1, who.z, who.realm, 0x0CEE, 9, 50, 0);
-   // var coord := SplitWords(text);
-   // var ret := array{};
-   // var targ := lineBresenham(who.x, who.y, cint(coord[1]), cint(coord[2]));
-   // MoveObjectToLocation(who, targ[1], targ[2], who.z, who.realm, MOVEOBJECT_FORCELOCATION);
-   // print(targ);
-   // SendSysMessageEx(who, ""+GetCharAge(targ));
-   // SendSysMessageEx(who, ""+GetExpCap(targ));
-   // var mobs := ListMobilesNearLocationEx(targ.x, targ.y, targ.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
-   // start_script(":death:permadeath/permadeath", {who, });
-   // sendsysmessageex(who, GetTimeStamp(polcore().systime));
-   // var targ := Target(who);
-   // targ.SetTalentPoints(-1);
-
-   // var test2 := ListStaticsNearLocation(who.x, who.y, who.z, 5);
-   // var mobs := ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
-   // sendsysmessageex(who, mobs.size()+" "+mobs[1].name);
-   // sendsysmessageex(who, test2.size()+" 2+ "+test2);
-   // SendNewUnicode(who, "balablabla", 0x06, 2, 1300);
-   // PrintText(who, GetHP(who));
-   // var item := GetEquipmentByLayer(who, LAYER_HAIR);
-   // item.color := cint(text);
-   // var test := LearnFeat(who, "Linguagem …lfica", 0);
-   // sendsysmessageex(who, ""+test);
-   // var item := TargetCoordinates(who);
-   // var face := GetFacing(who.x, who.y, item.x, item.y);
-   // item.SetPoints(0);
-   // var owed := 2;
-   // var nam := GetName(item.objtype);
-
-   // SendSysMessageTest(who, "wejrweariwer");
-   // SendSysMessageEx(who, ""+face);
-   // var dd := dictionary{ 2 -> "a"};
-   // sendsysmessageex(who, ""+dd.keys());
-   // sendsysmessageex(who, ""+dd[2]);
-   // targ.squelch(0);
-   // PlaySoundEffectXYZ(targ.x, targ.y, targ.z, cint(text));	
-   // Setregionlightlevel("Background", 30);
-   // print(ListHostiles( targ ));
-   // SendSystemReport(who, text);
-   // var pid := GetProcess(cint(text));
-   // printtext(who, ""+pid);
-   // Print(targ.my_template() );
-
-	// GFGumpPic(gump, 11, 29, 40009, 0); //borders
-	// GFTextLine(gump, 319, 34, 0, "Vendedor de Po√ß√µes");
-
-   // var i;
-   // var x := 48;
-   // for (i := 1; i < 16; i+=1)
-   //    var pos := Floor(i / 5.1);
-   //    if (i % 5 == 1)
-   //       x := 48;
-   //    endif
-   //    var y := 66 + (pos * 170);
-
-	//    GFGumpPic(gump, x, y, 40010, 0);
-   //    GFGumpPic(gump, x+4, y+118, 40032, 0);
-   //    GFGumpPic(gump, x+1, y+132, 40023, 0);
-   //    GFTextLine(gump, x+35, y+35, 0, "Item Name"); //name
-   //    GFTextLine(gump, x+34, y+1, 0, "Item Desc"); //desc
-   //    GFTilePic(gump, x+42, y+78, 0x58, 0); //objtype
-   //    GFTextLine(gump, x+27, y+123, 0, "Unidade");
-   //    GFResizePic(gump, x+25, y+142, 30546, 93, 19);
-   //    GFTextLine(gump, x+27, y+142, 1051, "1,450 moedas");
-   //    x += 140;
-   // endfor
-
-
-   // var res := SendPacket(who, "FC0015A001000000000003F9C30000000007FFFFFF");
-   // if (!res)
-   //    print("SendPacket error: " + res.errortext );
-   // endif
+   // AP_SetStatMod(w
 
    // print(typeof(RandomDiceRoll("1d100")));
    // who.attack_once();

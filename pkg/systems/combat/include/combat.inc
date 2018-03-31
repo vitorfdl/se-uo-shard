@@ -284,7 +284,7 @@ function CheckifIsAlly(who, mobiles)
             continue;
          else
             if (who.npctemplate)
-               if (mobile.alignment == me.alignment)
+               if (mobile.alignment == who.alignment)
                   continue;
                endif
             elseif (mobile.alignment == 2)

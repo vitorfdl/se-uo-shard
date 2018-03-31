@@ -16,10 +16,10 @@ program healpotion(who, potion)
 
 	var healed;
 	case (cint(potion.objtype))
-		56322: healed := RandomDiceRoll("4d4+8");
-		56323: healed := RandomDiceRoll("8d4+8");
-		48914: healed := RandomDiceRoll("10d4+20");
-		default: healed := RandomDiceRoll("2d4+8");
+		56322: healed := RandomDiceRoll("8d4+15"); //maior
+		56323: healed := RandomDiceRoll("10d4+30"); //superior
+		48914: healed := RandomDiceRoll("15d4+45"); //suprema
+		default: healed := RandomDiceRoll("3d4+15");
 	endcase
 
   	EmptyBottle(who, potion, 1);
@@ -29,7 +29,7 @@ program healpotion(who, potion)
 	for i := 0 to cint(healed)
 		HealFLS(who, 1, 0);
 		//HealDamage(who,  1 );
-		sleepms(850);
+		sleepms(300);
 	endfor
 	SendSysMessageEx(who, "Terminou o efeito da pocao.", SSM_INFO);
 endprogram

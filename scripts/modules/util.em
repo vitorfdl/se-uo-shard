@@ -3,7 +3,7 @@ RandomIntMinMax( minValue, maxValue); // returns integer R such that minValue<=R
 RandomFloat( below_this_float );    // returns float R such that 0.0 <= R < B
 
 // formats for RandomDiceRoll dice_string parameter:
-//      4 
+//      4
 //      d4
 //      d6+6
 //      d6-2
