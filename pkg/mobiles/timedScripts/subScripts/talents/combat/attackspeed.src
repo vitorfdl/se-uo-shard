@@ -18,7 +18,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 
    SetObjProperty(mobile, "swingspeed_targ", weapon.serial);
    weapon.speed_mod := level;
-   while (mobile.connected)
+   while (mobile)
       if (mobile.weapon != weapon)
          weapon.speed_mod := 0;
          weapon := mobile.weapon;

@@ -234,8 +234,8 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		dmg := cint(Floor(dmg*2));
 	elseif (type != DMG_FORCED && checkImmunity(defender, type))
 		dmg := 0;
-		SendSystemReport(defender, "*Imune*", SSM_FAIL, defender);
-		SendSystemReport(defender, "*Imune*", SSM_FAIL, source);
+		SendSystemReport(defender, "*Imune*", SSM_FAIL);
+		if (source) SendSystemReport(defender, "*Imune*", SSM_FAIL, source); endif
 		return;
 	endif
 
@@ -331,6 +331,13 @@ function checkImmunity(defender, damage_type)
 		var npcelem := NPC_GetNPCConfig(defender);
 		resist_list := GetConfigStringArray(npcelem, "Imunidade");
 	endif
+
+   if (GetObjProperty(defender, "#ethereal"))
+      resist_list.append(DMG_BLUDGE);
+      resist_list.append(DMG_PHYSICAL);
+      resist_list.append(DMG_PIERCING);
+      resist_list.append(DMG_SLASH);
+   endif
 
 	if (damage_type in resist_list)
 		return 1;

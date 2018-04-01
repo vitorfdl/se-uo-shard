@@ -12,11 +12,11 @@ include "include/say";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   var healamount := ((level+1) * 4);
+   var healamount := (level+1);
    printtext(mobile, "*congelado*");
    SetObjproperty(mobile, "#ethereal", 1);
-   while (mobile.connected)
-      PlayStationaryEffectEx(mobile.x, mobile.y, mobile.z+2, mobile.realm, 0x4539, 9, 60, 2050);
+   while (mobile)
+      PlayStationaryEffectEx(mobile.x, mobile.y, mobile.z+2, mobile.realm, 0x4539, 5, 20, 2050);
       HealFLS(mobile, healamount, attacker);
       sleep(1);
    endwhile
