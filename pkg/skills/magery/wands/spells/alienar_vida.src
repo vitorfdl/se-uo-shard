@@ -16,13 +16,13 @@ program animateSword(params)
 	// var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
-
+   Attach(who);
    PlaySoundEffect(who, 0x4B1);
    var oldx := who.x;
    var oldy := who.y;
    TS_StartTimer(targ, "noheal", 200);
    SetObjProperty(targ, "noheal", 1);
-   while (who.connected && Distance(who, targ) < 15)
+   while (who.connected && Distance(who, targ) < 15 && !targ.dead)
 		if (oldx != who.x || oldy != who.y)
 			break;
 		endif
@@ -31,6 +31,10 @@ program animateSword(params)
       sleep(1);
       if (RandomInt(3) == 1)
          PlaySoundEffect(who, 0x4B1);
+      endif
+
+      if (!AP_ConsumeVital(who, "Stamina", 1))
+         break;
       endif
    endwhile
 
