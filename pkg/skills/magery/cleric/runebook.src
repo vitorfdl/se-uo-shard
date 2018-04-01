@@ -92,7 +92,6 @@ function CreateBookGump(book)
 	var pOX       := 130;
 	var pOY       := 65;
 	foreach rune in rune_list
-      rune := 0;
 		GFAddButton(book_gump, pOX, pOY, 2103, 2104, GF_CLOSE_BTN, 100+_rune_iter);
 		GFTooltipText(book_gump, "<BASEFONT color=#ADD8E6>Inscrever");
 		pOY+=15;

@@ -153,23 +153,6 @@ function clonar(newlook, oldlook)
 		AP_SetSkillMod(newlook, attrib_name, mod);
 		sleepms(2);
 	endforeach
-	
-	var newhits := AP_GetVital(oldlook, "hits");
-	var newmana := AP_GetVital(oldlook, "mana");
-	if ( newhits == AP_GetVitalMaximumValue(oldlook, "hits") )
-		newhits := AP_GetVitalMaximumValue(newlook, "hits");
-	endif
-	if ( newmana == AP_GetVitalMaximumValue(oldlook, "mana") )
-		newmana := AP_GetVitalMaximumValue(newlook, "mana");
-	endif
-	SetVital(newlook, "hits", newhits);
-	SetVital(newlook, "stamina", CInt(AP_GetVitalMaximumValue(newlook, "stamina")));
-	SetVital(newlook, "mana", newmana);
-
-	foreach x in itemlist
-		MoveItemToContainer(x, mypack);
-      sleepms(2);
-	endforeach
 
 	itemlist := ListEquippedItems(oldlook);
 	foreach x in itemlist
@@ -211,6 +194,17 @@ function clonar(newlook, oldlook)
       chardata := struct{};
 	endif
    SetObjProperty(newlook, "chardata", chardata);
+   RecalcVitals(newlook);
+
+	var newhits := cdbl(AP_GetVitalMaximumValue(newlook, HITS)) * (((cdbl(AP_GetVital(oldlook, HITS)) * 100) / cdbl(AP_GetVitalMaximumValue(oldlook, HITS))) / 100);
+	var newmana := cdbl(AP_GetVitalMaximumValue(newlook, MANA)) * (((cdbl(AP_GetVital(oldlook, MANA)) * 100) / cdbl(AP_GetVitalMaximumValue(oldlook, MANA))) / 100);
+	AP_SetVital(newlook, HITS, cint(newhits));
+	AP_SetVital(newlook, STAMINA, AP_GetVitalMaximumValue(newlook, STAMINA));
+	AP_SetVital(newlook, MANA, cint(newmana));
+	foreach x in itemlist
+		MoveItemToContainer(x, mypack);
+      sleepms(2);
+	endforeach
 	//Copia o profile do npc.
 	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
 	var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, oldlook.serial, DF_CREATE);

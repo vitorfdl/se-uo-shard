@@ -192,12 +192,39 @@ function rollResistDice(mobile, type)
 		resist_list  := chardata.resist_list;
 	endif
 
-	var proficiency_bonus := 0;
-	if (type in resist_list)
-		proficiency_bonus := GetSkillBonus(mobile);
-	endif
+   var dice;
+   var bonus := 0;
+   if (type == CONSTITUTION)
+      if (AP_GetTrueSkill(mobile, ARMADURA_PESADA) >= 5)
+         bonus += 1;
+      endif
+   elseif (type == WISDOM)
+      if (AP_GetTrueSkill(mobile, ARMADURA_MEDIA) >= 3)
+         bonus += 1;
+      endif
+   elseif (type == DEXTERITY)
+      if (AP_GetTrueSkill(mobile, ARMADURA_LEVE) >= 3)
+         bonus += 1;
+      endif
+   elseif (type == STRENGTH)
+      if (AP_GetTrueSkill(mobile, ARMADURA_MEDIA) >= 3 || AP_GetTrueSkill(mobile, ARMADURA_PESADA) >= 5)
+         bonus += 1;
+      endif
+   elseif (type == INTELLIGENCE)
+      if (AP_GetTrueSkill(mobile, ARMADURA_LEVE) >= 3)
+         bonus += 1;
+      endif
+   else
+      var proficiency_bonus := 0;
+      if (type in resist_list)
+         proficiency_bonus := GetSkillBonus(mobile);
+      endif
+      dice := RandomDiceRoll("1d20") + proficiency_bonus;
+   endif
 
-	var dice := RandomDiceRoll("1d20") + proficiency_bonus;
+   if (!dice)
+      dice := rollAttrDice(mobile, type, bonus);
+   endif
 
 	return dice;
 endfunction

@@ -265,7 +265,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));
       var chance := 75;
       if (cleric_healing == source.serial)
-         chance := 55;
+         chance := 40;
       endif
 		if (cleric_healing && dmg >= 1 && Randomint(101) <= chance)
 		   var targ := SystemFindObjectBySerial(cleric_healing);

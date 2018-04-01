@@ -24,7 +24,7 @@ function ataquegiratorio(who)
       return 0;
 	endif
 	who.warmode := 1;
-
+   PrintText(who, "Girando a Arma");
 	PlaySoundEffect(who, 0x520);
 	Performaction(who, 0x1a);
 
@@ -36,6 +36,8 @@ function ataquegiratorio(who)
 	var alreadydamaged := array{};
 	// var hostiles := ListHostiles(who);
 	who.warmode := 1;
+   PrintText(who, "*girando {}".format(who.weapon.desc));
+   SetObjproperty(who, "#attackbonus", 1);
    var mobiles := ListMobilesNearLocation(who.x, who.y, who.z, 1, who.realm);
    foreach mobile in mobiles
       if (!(mobile.serial in alreadydamaged) && (mobile != who) && !(mobile in who.party.members))
@@ -47,6 +49,7 @@ function ataquegiratorio(who)
       sleepms(20);
    endforeach
    sleepms(20);
+   EraseObjproperty(who, "#attackbonus");
 
 
    return 1;

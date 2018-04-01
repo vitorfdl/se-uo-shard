@@ -60,7 +60,7 @@ program Attack(params)
       endif
    elseif ( GetEquipmentByLayer(attacker, LAYER_MOUNT) )
       if (AP_GetTrueSkill(attacker, MONTARIA) <= 4)
-         return 0;
+         return 1;
       endif
 	endif
 
@@ -82,7 +82,7 @@ program Attack(params)
 		attacker.concealed := 0;
 	elseif ( !DistanceChecks(attacker, defender) )
 		return 1;
-	elseif ( !FacingChecks(attacker, defender, nofacecheck) && !nofacecheck )
+	elseif ( !FacingChecks(attacker, defender) && !nofacecheck )
 		return 1;
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
@@ -455,7 +455,7 @@ function ArrowRecovery(attacker, defender)
 endfunction
 
 // Checa direção q ta olhando
-function FacingChecks(attacker, defender, nofacecheck)
+function FacingChecks(attacker, defender)
 	var retval := 1;
 	if ( !IsFacing(attacker, defender.x, defender.y) )
 		if ( attacker.npctemplate )

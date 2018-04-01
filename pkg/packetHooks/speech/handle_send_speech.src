@@ -87,9 +87,10 @@ function sendToSpy(source, message_txt)
 		return;
 	endif
 
-	var unvalid := { message_txt[1, 6], message_txt[1, 9], message_txt[1, 9], message_txt[1, 14], message_txt[1,13], message_txt[1,7] };
-	var ignore_messages := array{"*usando ataduras em si mesmo*", "*parou de aplicar bandagens*", "*arrombando a fechadura*", "*desarmando armadilha*", "*preparando um extrato*"};
-	if (unvalid[1] == "*Tirou" || unvalid[1] == "*Você " || unvalid[1] == "Você a" || unvalid[2] == "*Guardou " || unvalid[3] == "*Colocou " || unvalid[4] == "*escalpelando " || unvalid[5] == "*Acrescentou " || unvalid[6] == "*Pegou " || message_txt == "*defende o golpe*" || message_txt in ignore_messages)
+	var unvalid := { message_txt[1, 6], message_txt[1, 9], message_txt[1, 9], message_txt[1, 14], message_txt[1,13]};
+	var ignore_messages := array{"*usando ataduras em si mesmo*", "*parou de aplicar bandagens*", "*arrombando a fechadura*", "*desarmando armadilha*", "*preparando um extrato*", "*Errando todas as notas*", "*defende o golpe*"};
+	var common_messages := array{"*Tirou", "*Você ", "Você a", "*Pegou"};
+   if (unvalid[1] in common_messages || unvalid[2] == "*Guardou " || unvalid[3] == "*Colocou " || unvalid[4] == "*escalpelando " || unvalid[5] == "*Acrescentou " || unvalid[5] == "*Tocando uma " || message_txt in ignore_messages)
 		return;
 	endif
 

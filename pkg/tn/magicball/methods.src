@@ -62,12 +62,16 @@ exported function GetType(ball)
 	return cint(GetObjProperty(ball, "type"));
 endfunction
 
-exported function SetDirection(ball, direction)
-	return SetObjProperty(ball, "direction", direction);
+exported function SetDirection(ball, serial)
+	if ( serial.IsA(POLCLASS_UOBJECT) )
+		serial := serial.serial;
+	endif
+   
+	return SetObjProperty(ball, "direction", serial);
 endfunction
 
 exported function GetDirection(ball)
-	var direct := GetObjProperty(ball, "direction");
+	return GetObjProperty(ball, "direction");
 endfunction
 
 exported function SetEffect(ball, effect := 1)
@@ -94,3 +98,27 @@ exported function GetDmgInfo(ball)
    return dmg_info;
 endfunction
 
+exported function SetBallSound(ball, sound := 0, sfx_ex := 0)
+   if (sfx_ex)
+      SetObjProperty(ball, "sfx_ex", sfx_ex);
+   endif
+
+	return SetObjProperty(ball, "sound", sound);
+endfunction
+
+exported function PlayBallSound(ball)
+	var sfx := cint(GetObjProperty(ball, "sound"));
+   if (sfx)
+      PlaySoundEffect( ball, sfx );
+   endif
+endfunction
+
+exported function SetBallGraphic(ball, graph := 0, color := 0)
+   ball.graphic := graph;
+   ball.color := color;
+endfunction
+
+exported function StoreBallGraphic(ball, graph := 0, color := 0)
+   SetObjProperty(ball, "sfx_graphic", graph);
+   SetObjProperty(ball, "sfx_color", color);
+endfunction

@@ -247,6 +247,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
    var bonus_diff := 0;
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
+		sleepms(5);
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone", "planta"} || (typeof(thing) == "String" && thing["monsterpart"]))
 			var ret := MaterialSelection(who, thing, 1, craft_skill);
 			if (!ret)
@@ -285,7 +286,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
       else
          targ_materials[thing] := materials[thing];
       endif
-		sleepms(5);
 	endforeach
 
 	var counter  := 0;
@@ -440,12 +440,17 @@ endfunction
 
 function SubtractMaterial(who, targ_materials, amountMod := 1)
 	foreach thing in (targ_materials.keys() )
+      sleepms(2);
+      if (amountMod < 1)
+         if (hex(thing) == 0xF80 || (hex(thing) >= 0x989A && hex(thing) <= 0x989D))
+            continue;
+         endif
+      endif
 		//sendsysmessageEx(who, " materiais antes " + thing + " " +  targ_materials[thing] );
 		targ_materials[thing] := Cint( cint(targ_materials[thing])*amountMod);
 		if (targ_materials[thing] == 0 )
 			targ_materials[thing] := 1;
 		endif
-      sleepms(2);
 		//sendsysmessageEx(who, " materiais depois " + thing + " " +  targ_materials[thing] );
 	endforeach
 
@@ -470,8 +475,8 @@ function SubtractMaterial(who, targ_materials, amountMod := 1)
                endif
             endif
          endif
-         sleepms(2);
       endforeach
+
       if (targ_materials[thing] != 0)
          return 0;
       endif

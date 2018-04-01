@@ -332,12 +332,12 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 
       var emote_text := "";
       case (emocao)
-         "Enconrajar": emote_text := "*Você se sente encorajado*"; break;
-         "Entristecer":  emote_text := "*Você se sente triste*"; break;
-         "Alegrar":  emote_text := "*Você se sente alegre*"; break;
-         "Enfurecer":  emote_text := "*Você se sente com raiva*"; break;
+         "Enconrajar":  emote_text := "*Você se sente encorajado*"; break;
+         "Entristecer": emote_text := "*Você se sente triste*"; break;
+         "Alegrar":     emote_text := "*Você se sente alegre*"; break;
+         "Enfurecer":   emote_text := "*Você se sente com raiva*"; break;
       endcase
-	
+
 		foreach nota in notas
          if (_nota_iter == cint(notas.size() / 2) && emocao)
             var mobs := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
@@ -385,7 +385,10 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 		endforeach
 
       who.SetAchievement("bard", 1);
-      ExpGain(who, "major");
+      if (!GetCooldown(who, "musician_exp"))
+         ExpGain(who, dif, result);
+         SetCooldown(who, "musician_exp", RandomInt(20)+15);
+      endif
 
 		// if( Cint(GetObjProperty(who, "#emocaoMusic")) > ReadGameClock() )
 		// 	return 0;
@@ -418,28 +421,18 @@ function tocarerrado(who,item,notas,notas2,tempo,letra,emocao)
 
    sleepms(tempo);
 
+   var notarray := array{b, f, cs, fs, ass, g, c, d, a, ds, gs, e};
    foreach nota in notas
-   notanow := RandomInt(12);
-   if (notanow == 0) PlaySoundEffect(who, b); sleepms(tempo);
-   elseif (notanow == 1) PlaySoundEffect(who, f); sleepms(tempo);
-   elseif (notanow == 2) PlaySoundEffect(who, cs); sleepms(tempo);
-   elseif (notanow == 3) PlaySoundEffect(who, fs); sleepms(tempo);
-   elseif (notanow == 4) PlaySoundEffect(who, ass); sleepms(tempo);
-   elseif (notanow == 5) PlaySoundEffect(who, g); sleepms(tempo);
-   elseif (notanow == 6) PlaySoundEffect(who, c); sleepms(tempo);
-   elseif (notanow == 7) PlaySoundEffect(who, d); sleepms(tempo);
-   elseif (notanow == 8) PlaySoundEffect(who, a); sleepms(tempo);
-   elseif (notanow == 9) PlaySoundEffect(who, ds); sleepms(tempo);
-   elseif (notanow == 10) PlaySoundEffect(who, gs); sleepms(tempo);
-   elseif (notanow == 11) PlaySoundEffect(who, e); sleepms(tempo);
-   elseif (notanow == 12) sleepms(tempo);
-   endif
-   if (nota == "L") 
-   PrintText(who, letra[L],0);
-   L := L + 1;    
-   endif 		
+      notanow := notarray.randomentry();
+      PlaySoundEffect(who, notanow); 
+      sleepms(tempo);
+      if (nota == "L") 
+         PrintText(who, letra[L],0);
+         L := L + 1;    
+      endif 		
    endforeach
 
+   sleep(2);
    playagain(who,item,notas,notas2,tempo,letra,emocao);
 endfunction
 

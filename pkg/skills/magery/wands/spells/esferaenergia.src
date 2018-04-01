@@ -1,0 +1,31 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/facings";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var newball := CreateItemAtLocation(who.x, who.y, who.z+2, 0xFFBE);
+   newball.SetDirection(targ.serial);
+   newball.SetOwner(who);
+   newball.SetDuration(8);
+   newball.SetType(1);
+   newball.SetEffect(0x372A);
+   newball.SetBallSound(0x666, 0);
+   newball.SetBallGraphic(13935, 1990);
+   newball.SetDmgInfo(struct{ "dice":= MageDiceTable("C", spellinfo.powered)+5, "type" := DMG_ENERGY });
+
+	return 1;
+endprogram

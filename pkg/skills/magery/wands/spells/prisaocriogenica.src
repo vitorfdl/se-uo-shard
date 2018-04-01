@@ -1,0 +1,23 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/facings";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   TS_StartTimer(targ, "iceprison", Randomint(4)+4, Ceil(spellinfo.powered / 2));
+
+	return 1;
+endprogram

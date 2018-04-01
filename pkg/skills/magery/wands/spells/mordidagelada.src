@@ -20,7 +20,7 @@ program animateSword(params)
    PlayObjectCenteredEffect( targ, 0x3728, 1, 10 );
    var dice := MageDiceTable("B", cint(spell_info.powered));
 
-   var roll_dice := RandomDiceRoll(dice);
+   var roll_dice := RandomDiceRoll(dice)+1;
    DamageFLS(targ, roll_dice, "Gelo", who);
    PlaySoundEffect(targ, 0x5BF);
    TS_StartTimer(targ, "slowattackspeed", 6+cint(spell_info.powered)*3, 5+(spell_info.powered));	

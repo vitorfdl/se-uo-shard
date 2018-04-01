@@ -34,8 +34,13 @@ program equipweapon(who, item, startup)
 	set_critical(1);
 	var hostiles := ListHostiles( who );
 	if (hostiles.size() > 0 || who.warmode)
-      if (!AP_ConsumeVital(who, STAMINA, 4))
-		   return 0;
+      var c_amt := 1;
+      if (!who.weapon.IsMagicWeapon())
+         c_amt += 3;
+      endif
+
+      if (!AP_ConsumeVital(who, STAMINA, c_amt))
+         return 0;
       endif
 	endif
 

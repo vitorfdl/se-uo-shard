@@ -105,6 +105,7 @@ function PlaySpecialHab(hab_name, hab_cooldown := 0, hab_dice := 0, hab_target :
       "roubar":         res := Roubar(hab_target); break;
       "gumeArea":        res := gumeArea(hab_target, hab_dice, cint(hab_special)); break;
       "rajada_acida":   res := RajadaAcida(hab_dice, hab_target, cint(hab_special)); break;
+      "electricball": res := ElectricBall(hab_target, hab_special); break;
       "teia":           res := SpitWeb(hab_special, hab_target, cint(hab_special)); break;
       "teleport":       res := teleport(hab_target, hab_special); break;
       "constrictSpell": res := constrict(hab_target, hab_dice, cint(hab_special)); break;
@@ -758,6 +759,25 @@ function playCastAnimation(forced := 0)
    return 1;
 endfunction
 
+function ElectricBall(targ, dmg_dice)
+   if (!targ)
+      return 0;
+   endif
+   PrintText(me, "*prepara uma bola de energia*");
+   playCastAnimation();
+   sleep(2);
+   var newball := CreateItemAtLocation(me.x, me.y, me.z+2, 0xFFBE);
+   newball.SetOwner(me);
+   newball.SetDirection(targ);
+   newball.SetDuration(8);
+   newball.SetType(1);
+   newball.SetEffect(0x372A);
+   newball.SetBallSound(0x666, 0);
+   newball.SetBallGraphic(13935, 1990);
+   newball.SetDmgInfo(struct{ "dice":= dmg_dice, "type" := DMG_ENERGY });
+endfunction
+
+
 // function throwItem(targ)
 //    if ( dist < 3 || dist > 15 )
 //       return 0;
@@ -804,8 +824,6 @@ endfunction
 
 //    return 1;
 // endfunction
-
-
 function Firebreath(npc, opponent, byref dist)
    if ( dist < 5 || dist > 15 )
       return 0;

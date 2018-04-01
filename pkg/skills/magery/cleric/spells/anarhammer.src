@@ -45,7 +45,7 @@ program blessWater(info)
       targ.hp := fix_amount+targ.hp;
    endif
 
-   targ.quality -= 0.2;
+   targ.quality -= 0.1;
 
    SetName(targ, targ.desc);
 
