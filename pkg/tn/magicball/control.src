@@ -62,7 +62,7 @@ program usedardo(ball)
             var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 4, BALL_FLAG, ball.realm)).randomentry();
             if (mobile)
                var newball := CreateItemAtLocation(ball.x, ball.y, ball.z, 0xFFBE);
-               nweball.SetBallGraphic(GetObjProperty(ball, "sfx_graphic"), GetObjProperty(ball, "sfx_color"))
+               newball.SetBallGraphic(GetObjProperty(ball, "sfx_graphic"), GetObjProperty(ball, "sfx_color"));
                newball.SetOwner(owner);
                newball.SetDuration(8);
                newball.SetDirection(mobile.serial);
