@@ -442,7 +442,9 @@ function SubtractMaterial(who, targ_materials, amountMod := 1)
 	foreach thing in (targ_materials.keys() )
       sleepms(2);
       if (amountMod < 1)
-         if (hex(thing) == 0xF80 || (hex(thing) >= 0x989A && hex(thing) <= 0x989D))
+         if (cint(thing) == 3968 || (cint(thing) >= 39066 && cint(thing) <= 39069))
+            targ_materials[thing] := 0;
+            targ_materials.Erase(thing);
             continue;
          endif
       endif
@@ -458,6 +460,10 @@ function SubtractMaterial(who, targ_materials, amountMod := 1)
 
 	//no loop anterior procurou os materiais, agora consome.
 	foreach thing in (targ_materials.keys())
+      sleepms(2);
+      if (targ_materials[thing] == 0)
+         continue;
+      endif
       foreach item in (EnumerateItemsInContainer(who.backpack))
          if (cint(item.objtype) == thing)
             if (item.amount >= targ_materials[thing] )
