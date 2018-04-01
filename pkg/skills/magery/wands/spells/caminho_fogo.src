@@ -34,7 +34,7 @@ program SpellScript(params)
    var hostiles := ListHostiles(who);
    var z := who.z;
 
-   var dmg_dice := RandomDiceRoll(MageDiceTable("C", spellinfo.powered));
+   var dmg_dice := RandomDiceRoll(MageDiceTable("C", spellinfo.powered))+8;
    foreach p in pos
       if (targ.z > z)
          z += 1;
@@ -42,12 +42,13 @@ program SpellScript(params)
          z -= 1;
       endif
       var item := CreateItemAtLocation(p.x, p.y, z, cint(flame));
-      item.SetDuration(1);
+      item.SetDuration(3);
       foreach mobile in ListMobilesNearLocationEx( item.x, item.y, item.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
 			if (((!(mobile in who.party.members) && mobile != who) || mobile in hostiles))
-            if (rollResistDice(mobile, DEXTERITY) > dice_roll+3)
+            if (rollResistDice(mobile, DEXTERITY) > dice_roll+5)
                SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
                SendSystemReport(mobile, "*esquivou*", SSM_INFO);
+               DamageFLS(mobile, cint(dmg_dice / 2), DMG_FIRE, who);
             else
                DamageFLS(mobile, dmg_dice, DMG_FIRE, who);
             endif
