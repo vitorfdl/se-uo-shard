@@ -29,7 +29,7 @@ exported function PartyMessageSpy( who, byref packet )
 			endif
 			var leader := who.party.leader.name;
 			
-			if (GetObjProperty(player, "PartySpyOn") == "on")
+			if (GetObjProperty(player, "PartySpyOn") == "on" && who.party != player.party)
 				leader := splitwords(leader);
 				leader := leader[1];
             SendSysMessageEx(player, "[Party-"+leader+"]["+sender+"]: "+message_txt , 1169);

@@ -133,6 +133,11 @@ exported function SetLoyalt(pet, amount := 1)
    return 1;
 endfunction
 
+exported function GetLoyalt(pet)
+   var props := GetObjProperty(pet, "info");
+   return cint(props.loyalt);
+endfunction
+
 exported function SetPoints(pet, amount := 1)
    var props := GetObjProperty(pet, "info");
    var new_points := struct{ "points" := cint(props.points) + amount };
