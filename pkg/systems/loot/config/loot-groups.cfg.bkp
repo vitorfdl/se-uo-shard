@@ -542,6 +542,8 @@ Group Seeds
 	Item	HopsSeed	1
 	Item	mushroomseed	1
 	Item	FlowerSeed	1
+	Item	FlowerSeed2	1
+	Item	FlowerSeed3	1
 	Item	GarlicSeed	1
 	Item	GinsengSeed	1
 	Item	MandrakeSeed	1

@@ -98,7 +98,7 @@ program UseStuff(character, stuff)
         return;
     endif
 
-    if ( skill != 0)
+    if ( skill )
         var test := rollAttrDice(character, attribute) + GetSkillBonus(character, skill);
         if (test > skill_needed)
             if (!dont_destroy_success)

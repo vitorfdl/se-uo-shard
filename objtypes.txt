@@ -570,7 +570,13 @@
 0xc7c cabbage2 food
 # 0xc7d - 0xc81 unused
 0xc82 corn food
-# 0xc83 - 0xd15 unused
+# 0xc83 - 0xc88 unused
+0xc89 florplant2 farming
+# 0xc8a - 0xc8d unused
+0xc8e florplant2 farming
+# 0xc8f - 0xcbe unused
+0xcbf florplant farming
+# 0xcc0 - 0xd15 unused
 0xd16 cogumelo tn
 # 0xd17 - 0xd19 unused
 0xd1a grapes2 food
@@ -1639,7 +1645,9 @@
 0x2df3 rarewoodornamentedchest2 containers
 0x2df4 rarewoodornamentedchest containers
 0x2df5 ElvenReadingDesk woodworking
-# 0x2df6 - 0x2fb6 unused
+# 0x2df6 - 0x2f5b unused
+0x2f5c ramoflor survival
+# 0x2f5d - 0x2fb6 unused
 0x2fb7 aljavapequena bowcrafting
 0x2fb8 oculos womenswork
 0x2fb9 ValaRobe womenswork
@@ -2000,7 +2008,10 @@
 0x7038 GarlicSeed farming
 0x7039 NightshadeSeed farming
 0x703a CantelopeSeed farming
-# 0x703b - 0x70af unused
+# 0x703b - 0x703f unused
+0x7040 FlowerSeed2 farming
+0x7041 FlowerSeed3 farming
+# 0x7042 - 0x70af unused
 0x70b0 checkerboard games
 0x70b1 chessboard games
 0x70b2 backgammon games
