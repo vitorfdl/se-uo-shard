@@ -109,7 +109,7 @@ program faccao(params)
       foreach g_n in (guild_obj.subguilds)
 	      GFResizePic(gump, 570, 40+(_g_n_iter * 38), 0x9C40, 200, 40); //background
          GFHtmlShadowed(gump, 605, 48+(_g_n_iter * 38), 165, 20, "#FBE2B4", "{}".format(FindGuild(g_n).getProp("name")), 8);
-         GFAddButton(gump, 740, 48+(_g_n_iter * 38), 5605, 5605, GF_CLOSE_BTN, BUTTON_CHECK_GUILD+_g_n_iter);
+         GFAddButton(gump, 740, 48+(_g_n_iter * 38), 5605, 5605, GF_CLOSE_BTN, BUTTON_CHECK_GUILD+g_n);
          sleepms(2);
       endforeach
    endif
