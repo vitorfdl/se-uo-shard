@@ -33,6 +33,8 @@ const BUTTON_GM_OPTS := 0x301;
 const BTN_FACCAO := 0x100;
 const BTN_NEW_FACCAO := 0x4;
 
+const BUTTON_CHECK_GUILD := 0x350;
+
 var guild;
 var privilegies;
 var is_gm_or_leader;
@@ -59,7 +61,7 @@ var law_list := struct{
    "nooutsider" := "Proibir Forasteiros"
 };
 
-var guild_obj;
+var guild_obj, aboveguild;
 
 program faccao(params)
    var who := params;
@@ -73,6 +75,9 @@ program faccao(params)
 
    if (cmd == "guild")
       guild := FindGuild(targ);
+   elseif (cmd == "isabove")
+      guild := FindGuild(targ);
+      aboveguild:= 1;
    elseif (cmd)
       return Faccoes(who);
    else
@@ -95,11 +100,20 @@ program faccao(params)
       endif
       members := RemoveFromArray(members, guild_leader);
    endif
-   is_gm_or_leader := (who == guild_leader || who.cmdlevel);
+   is_gm_or_leader := (who == guild_leader || who.cmdlevel || aboveguild);
    privilegies := guild.getProp(cstr(who.serial));
    var gump := GFCreateGump();
-	
 	GFPage(gump, 0);
+
+   if (is_gm_or_leader)
+      foreach g_n in (guild_obj.subguilds)
+	      GFResizePic(gump, 570, 40+(_g_n_iter * 38), 0x9C40, 200, 40); //background
+         GFHtmlShadowed(gump, 605, 48+(_g_n_iter * 38), 165, 20, "#FBE2B4", "{}".format(FindGuild(g_n).getProp("name")), 8);
+         GFAddButton(gump, 740, 48+(_g_n_iter * 38), 5605, 5605, GF_CLOSE_BTN, BUTTON_CHECK_GUILD+_g_n_iter);
+         sleepms(2);
+      endforeach
+   endif
+	
    GFSetId(gump, 0x689);
 	GFResizePic(gump, 26, 19, 39925, 573, 417); //background
 
@@ -118,7 +132,7 @@ program faccao(params)
    var leader_name := guild_leader.getName();
    if (!leader_name)
       leader_name := "";
-   elseif(who.cmdlevel)
+   elseif(who.cmdlevel || aboveguild)
       GFAddButton(gump, 49, 91, 5605, 5605, GF_CLOSE_BTN, BUTTON_CHANGE_PLAYER+guild_obj.leader);
    endif
    GFTextLine(gump, 67, 89, 49, "{}".format(leader_name));
@@ -254,6 +268,8 @@ program faccao(params)
       npcHandler(who, input[0]);
    elseif (input[0] >= BUTTON_ADD_LAW && input[0] <= BUTTON_CHANGE_LAW+0x50)
       lawHandler(who, input[0]);
+   elseif (input[0] >= BUTTON_CHECK_GUILD && input[0] <= BUTTON_CHECK_GUILD+20);
+      return start_script(":faccao:faccao", array{who, input[0]-BUTTON_CHECK_GUILD, "isabove"});
    else
       return;
    endif
@@ -532,17 +548,17 @@ function playerHandler(who, input)
       options.append("Alterar Privilégios");
    endif
 
-   if (is_gm_or_leader)
+   if (is_gm_or_leader || aboveguild)
       options.append("Tornar Líder");
    endif
 
-   if (who.cmdlevel)
+   if (who.cmdlevel || aboveguild)
       if (guild_obj.leader == input)
          options.append("Remover Líder");
       endif
    endif
 
-   if (is_gm_or_leader || privilegies.above_members)
+   if (is_gm_or_leader || privilegies.above_members || aboveguild)
       options.append("Remover da Facção");
    endif
 
@@ -584,7 +600,7 @@ function playerHandler(who, input)
 endfunction
 
 function gmHandler(who)
-   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Pegar GuildID", "Cancelar"};
+   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Pegar GuildID", "Alterar Sub-Guilds", "Cancelar"};
    var output := RadioGump(who, 300, 0, "Escolha uma opção", opts, 0, opts.size());
 
    if (output["Nome"])
@@ -595,7 +611,24 @@ function gmHandler(who)
       SendSysMessageEx(who, "Nome alterado pra {}".format(gname));
    elseif (output["GuildID"])
       SendSysMessageEx(who, "Guild ID: {}".format(guild.guildid));
-      
+   elseif (output["Sub-Guilds"])
+      var guild_opts := struct{};
+      var guilds := ListGuilds();
+      foreach guild_ref in guilds
+         if (guild_ref.guildid != guild.guildid)
+            guild_opts[guild_ref.GetProp("name")] := guild_ref.guildid;
+         endif
+         sleepms(2);
+      endforeach
+      var outputguilds := CheckBoxGump(who, 400, 0, "Escolha as facções subalternas", guild_opts.keys());
+
+      var selected_guilds := array{};
+      foreach guild_name in outputguilds
+         selected_guilds.append(guild_opts[guild_name]);
+         sleepms(2);
+      endforeach
+
+      guild.SetProp("subguilds", selected_guilds);
    elseif (output["Area"])
       var arearray := array{};
       while (1)

@@ -138,7 +138,7 @@ function GetItemType(item)
 		item_type := "Arcos";
 	elseif (item.isA(POLCLASS_WEAPON))
 		item_type := "Armas";
-	elseif (item.isA(POLCLASS_EQUIPMENT))
+	elseif (cint(item.tile_layer) in array{6,8,10,14,18})
 		item_type := "Joias";
 	elseif (item.isA(POLCLASS_CONTAINER))
 		item_type := "Containers";

@@ -89,7 +89,9 @@ function CheckPlayer(who)
 
    var privs := guild.GetProp(cstr(who.serial));
    var is_member := guild.guildid == who.guildid;
-   var is_leader := (who.serial == guild_leader);
+   var user_subguilds := who.guild.getProp("subguilds");
+   if (user_subguilds) user_subguilds := array{}; endif
+   var is_leader := (who.serial == guild_leader || guild.guildid in user_subguilds);
    if (is_leader || privs.above_guards)
       SetCooldown(me, "recentcheck_{}".format(who.serial), 10);
       return 0;
@@ -338,7 +340,9 @@ function ResolveSpeech(ev, source := 0, order := 0)
 
    if (!source)
       var privs := guild.GetProp(cstr(ev.source.serial));
-      var is_leader := (ev.source.serial == guild_leader);
+      var user_subguilds := ev.source.guild.getProp("subguilds");
+      if (user_subguilds) user_subguilds := array{}; endif
+      var is_leader := (ev.source.serial == guild_leader || guild.guildid in user_subguilds);
       if (!privs.above_guards && !is_leader)
          return;
       elseif(!text[name] && !text["todos"])
@@ -831,7 +835,9 @@ endfunction
 
 function TakeItem(ev)
    var privs := guild.GetProp(cstr(ev.source.serial));
-   var is_leader := (ev.source.serial == guild_leader);
+   var user_subguilds := ev.source.guild.getProp("subguilds");
+   if (user_subguilds) user_subguilds := array{}; endif
+   var is_leader := (ev.source.serial == guild_leader || guild.guildid in user_subguilds);
    if (!privs.above_guards && !is_leader)
       MoveItemToContainer(ev.item, ev.source.backpack);
       return;

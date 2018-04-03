@@ -20,14 +20,16 @@ include ":crafting:craft_props";
 
 program oafeatures_sendpacket(who, text)
    var targ := Target(who);
+   printtext(who, ""+targ.tile_layer);
+   // printtext(who, ""+targ.get_member("polclass"));
    // var targ := TargetCoordinates(who);
-   var newball := CreateItemAtLocation(who.x, who.y, who.z+2, 0xFFBE);
-   newball.graphic := 0x19AC;
-   newball.SetOwner(who);
-   newball.SetDuration(8);
-   newball.SetType(2);
-   newball.SetDirection(targ.serial);
-   newball.SetDmgInfo(struct{ "dice":= "3d2", "type" := DMG_ENERGY });
+   // var newball := CreateItemAtLocation(who.x, who.y, who.z+2, 0xFFBE);
+   // newball.graphic := 0x19AC;
+   // newball.SetOwner(who);
+   // newball.SetDuration(8);
+   // newball.SetType(2);
+   // newball.SetDirection(targ.serial);
+   // newball.SetDmgInfo(struct{ "dice":= "3d2", "type" := DMG_ENERGY });
                // newball.SetEffect(effect);
    // print(GetWeaponSpellList(targ));
    // var chardata := GetObjProperty(targ, "chardata");

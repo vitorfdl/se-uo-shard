@@ -23,7 +23,7 @@ function possess(me, npc)
 	SetObjProperty(me, "lastpossessedserial", npc.serial);
 	
 	clonar(oldbody, me);
-	var itemsinbag := EnumerateItemsInContainer( me.backpack );
+	var itemsinbag := EnumerateItemsInContainer( me.backpack, ENUMERATE_ROOT_ONLY );
 	foreach iteminbag in itemsinbag
 		MoveItemToContainer( iteminbag, oldbody.backpack);
 		sleepms(2);
@@ -33,7 +33,7 @@ function possess(me, npc)
 	DestroyItem(me.backpack);
 	var bolsa := CreateItemAtLocation(5384, 923, 0, 0x9B2);
 	EquipItem(me, bolsa);
-	var itemsinbag2 := EnumerateItemsInContainer( npc.backpack );
+	var itemsinbag2 := EnumerateItemsInContainer( npc.backpack, ENUMERATE_ROOT_ONLY);
 	foreach iteminbag in itemsinbag2
 		MoveItemToContainer( iteminbag, me.backpack );
 		sleepms(2);
@@ -139,19 +139,24 @@ function clonar(newlook, oldlook)
 	var mypack := GetEquipmentByLayer(newlook, 0x15);
 	if (!mypack)
 		mypack := CreateItemAtLocation(5383, 923, 0, 0xe75, 1, newlook.realm);
+      EquipItem(newlook, mypack);
 	else
 		MoveObjectToLocation(mypack, 5383, 923, 0, newlook.realm, MOVEOBJECT_FORCELOCATION);
 	endif
-	
-	var itemlist := ListEquippedItems(newlook);
-	var y;
-	
+
 	foreach attrib_name in AP_ListAttributesByType()
 		var valor := AP_GetTrueSkill( oldlook, attrib_name );
       var mod := AP_GetSkillMod( oldlook, attrib_name );
 		AP_SetTrueSkill(newlook, attrib_name, valor);
 		AP_SetSkillMod(newlook, attrib_name, mod);
 		sleepms(2);
+	endforeach
+
+	var itemlist := ListEquippedItems(newlook);
+	var y;
+	foreach x in itemlist
+		MoveItemToContainer(x, mypack);
+      sleepms(2);
 	endforeach
 
 	itemlist := ListEquippedItems(oldlook);
@@ -201,10 +206,6 @@ function clonar(newlook, oldlook)
 	AP_SetVital(newlook, HITS, cint(newhits));
 	AP_SetVital(newlook, STAMINA, AP_GetVitalMaximumValue(newlook, STAMINA));
 	AP_SetVital(newlook, MANA, cint(newmana));
-	foreach x in itemlist
-		MoveItemToContainer(x, mypack);
-      sleepms(2);
-	endforeach
 	//Copia o profile do npc.
 	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
 	var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, oldlook.serial, DF_CREATE);
@@ -215,11 +216,11 @@ function clonar(newlook, oldlook)
 	
 	cp_elem_newlook.SetProp("Profile", cp_profile_oldlook);
 	
-	var newpack := GetEquipmentByLayer(newlook, 0x15);
-	if (newpack)
-		DestroyItem(newpack);
-	endif
-	EquipItem(newlook, mypack);
+	// var newpack := GetEquipmentByLayer(newlook, 0x15);
+	// if (newpack)
+	// 	DestroyItem(newpack);
+	// endif
+	// 
 	
 	if ((GetObjProperty(oldlook,"achievements"))!=error)
 		SetObjProperty(newlook,"achievements",GetObjProperty(oldlook,"achievements"));

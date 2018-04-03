@@ -45,7 +45,7 @@ function PutFire(targ)
 			PrintTextAbove(targ, "*Objeto foi destruido pelo fogo*");
 			DestroyItem(targ);
 		else
-			targ.color := 2887;
+			targ.color := 2783;
 			var name;
 			if ( targ.name )
 				name := targ.name;
