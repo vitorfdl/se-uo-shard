@@ -40,6 +40,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       last_loc := array{mobile.x, mobile.y};
       sleep(5);
    endwhile
+   
    return 1;
 endfunction
 

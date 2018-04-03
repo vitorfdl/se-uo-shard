@@ -276,7 +276,7 @@ function HealNpcCorpse(mobile, targ)
 	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, TRATO_ANIMAIS);
 	if (  !GetObjProperty(targ,"morto") )
 		return;
-	elseif ( roll >= 16 ) // SkillCheck(mobile, PRIMEIROS_SOCORROS, diff) SkillCheck(mobile, , diff)
+	elseif ( roll >= 15 ) // SkillCheck(mobile, PRIMEIROS_SOCORROS, diff) SkillCheck(mobile, , diff)
 		SendSysMessageEx(mobile, "Você estabilizou "+name);
 		ghaiaRessurect(targ);
 	else
