@@ -19,21 +19,20 @@ program textcmd_dupe( who )
         foreach item in items
           newitem := CreateItemCopyAtLocation(who.x,who.y,who.z,item);
           MoveItemToContainer(newitem, copyitem, item.x, item.y);
-		  SetObjProperty(newitem, "createdby", who.acctname + " " + who.name);
+		    SetObjProperty(newitem, "createdby", who.acctname + " " + who.name);
         endforeach
-     
       endif
 
 		if (what.isBook())
 			var bookinfo := what.extractInfo();
-			newitem.setAuthor(bookinfo.Author );
-			newitem.setTitle(bookinfo.Title);
-			newitem.SetContents(bookinfo.Contents);
+			copyitem.setAuthor(bookinfo.Author );
+			copyitem.setTitle(bookinfo.Title);
+			copyitem.SetContents(bookinfo.Contents);
 			
 			if (!what.isWritable())
-				newitem.ReadOnly(1);
+				copyitem.ReadOnly(1);
 			else
-				newitem.ReadOnly(0);
+				copyitem.ReadOnly(0);
 			endif
 		endif
 	  

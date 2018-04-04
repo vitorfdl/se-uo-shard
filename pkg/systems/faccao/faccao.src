@@ -360,6 +360,36 @@ function guildHandler(who, input)
       AddMember(guild, targ);
       SendSysMessageEx(who, "{} se juntou a facção".format(targ.name), SSM_INFO); 
    elseif (input == BUTTON_MONEY_TRANSFER)
+      if (is_gm_or_leader)
+         var output := RadioGump(who, 300, 0, "Escolha uma opção", array{"Acrescentar moedas", "Transferir para outra Facção", "Cancelar"}, 0, 1);
+         if (output["Cancelar"])
+            return;
+         elseif (output["Transferir"])
+            var guild_opts := struct{};
+            var guilds := ListGuilds();
+            foreach guild_ref in guilds
+               if (guild_ref.guildid != guild.guildid)
+                  guild_opts[guild_ref.GetProp("name")] := guild_ref.guildid;
+               endif
+               sleepms(2);
+            endforeach
+            guild_opts["Cancelar"] := 0;
+            var guildenemy := RadioGump(who, 400, 0, "Escolha qual facção receberá o dinheiro", guild_opts.keys(), 0, guild_opts.keys().size());
+            if (guildenemy["Cancelar"]) return SendSysMessageEx(who, "Cancelado");  endif
+
+            var qty := cint(GetInput(who, who.backpack, "Quanto deseja transferir? (aperte esc para cancelar)"));
+            if (qty <= 0)  
+               return SendSysMessageEx(who, "Cancelado");
+            elseif (guild.getProp("money") < qty)
+               return SendSysMessageEx(who, "Dinheiro insuficiente");
+            endif
+            var rec_guild := FindGuild(guild_opts[guildenemy]);
+            guild.setProp("money", guild.getProp("money") - qty);
+            rec_guild.setProp("money", guild.getProp("money") + qty);
+            SendSysMessageEx(who, "Moedas transferidas");
+            return;
+         endif
+      endif
       SendSysMessageEx(who, "Escolha as moedas que deseja transferir para a facção. Não sera possível retira-las. (Esc para parar)?", SSM_REQUEST);
       var money := Target(who);
       if (!money)

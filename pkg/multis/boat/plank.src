@@ -6,6 +6,8 @@ include "include/say";
 include "plankUtil";
 include ":taming:taming";
 
+var guild;
+
 program useplank(mob, plank)
   set_critical(1);
 
@@ -16,12 +18,14 @@ program useplank(mob, plank)
          TimedOpenClose(plank);
       else
          var tillerman := plank.multi.tillerman;
+         var guild_id := GetObjProperty(tillerman, "guild");
+         if (guild_id) guild := FindGuild(guild_id); endif
          var t := GetObjProperty(tillerman, "always_travel");
          if (t)
             var payed := GetObjProperty(tillerman, "payed");
             if (!payed) payed := array{}; endif
             var dest := GetObjProperty(tillerman, "viagem")[t];
-            if (mob.serial in payed)
+            if (mob.serial in payed || (guild && mob.guild.guildid == guild.guildid))
                YankOntoBoat(mob,plank);
             elseif (PayTravel(mob,tillerman, dest))
                PrintText(tillerman, "Suba a bordo marujo!");

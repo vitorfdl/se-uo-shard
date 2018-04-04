@@ -443,7 +443,16 @@ function playagain(who,item,notas,notas2,tempo,letra,emocao)
       tocarsound(who,item,notas,notas2,tempo,letra,emocao);
       return 0;
    else
-      BardNotes(who,item,notas,notas2,tempo,letra,1,emocao);
+      start_script(":musicianship:continueMusic", struct{
+         "who" := who,
+         "item" := item,
+         "notas" := notas,
+         "notas2" := notas2,
+         "tempo" := tempo,
+         "letra" := letra,
+         "emocao" := emocao,
+         "what" := 1
+      });
       return 0;
    endif
 endfunction

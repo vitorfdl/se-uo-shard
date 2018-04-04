@@ -123,7 +123,7 @@ exported function SetTitle(book, title)
 	if ( Len(title) > 0 )
 		SetName(book, title);
 	else
-		SetName(book, "a book");
+		SetName(book, "um livro");
 	endif
 	
 	return SetInfo(book, "Title", CStr(title));
