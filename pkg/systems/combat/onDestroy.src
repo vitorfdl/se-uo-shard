@@ -8,7 +8,7 @@ use uo;
 include ":tn:equipment";
 
 program OnDestroy(item)
-	var equipped := CInt(GetObjProperty(item, "#EquippedOn"));
+	var equipped := CInt(GetObjProperty(item, "EquippedOn"));
 	if ( !equipped )
 		return 1;
 	endif

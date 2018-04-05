@@ -108,6 +108,8 @@ function ExpGain(mobile, difficulty, value := 0)
       else
          up_amount := up_amount * 3;
       endif
+   elseif (mobile.guild.getProp("leader") == mobile.serial)
+      up_amount := up_amount * 2;
    endif
 
 	//guarda as skills dos npcs tamados

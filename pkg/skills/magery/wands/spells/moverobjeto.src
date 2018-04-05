@@ -11,41 +11,47 @@ include "include/say";
 
 program SpellScript(params)
 	var who := params[1];
+	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 
-	SendSysMEssageEx(who, "Escolha para onde quer mover.", SSM_REQUEST);
-	var loc := TargetCoordinates(who);
-   if (!loc)
-		SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
-		return 0;
-   elseif (!CheckLOSAt(who, targ.x, targ.y, targ.z))
-		SendSysMessageEx(who, "Não é capaz de enxergar o ponto alvo.", SSM_FAIL);
-		return 0;
-	endif
+   var tries := spellinfo.powered;
+   for i := 1 to tries
+      SendSysMEssageEx(who, "Escolha para onde quer mover.", SSM_REQUEST);
+      var loc := TargetCoordinates(who);
+      if (!loc)
+         SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+         return 0;
+      elseif (targ.container)
+         SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+         return 0;
+      elseif (!CheckLOSAt(who, targ.x, targ.y, targ.z))
+         SendSysMessageEx(who, "Você deve ser capaz de enxergar o item que está tentando mover.", SSM_FAIL);
+         tries += 1;
+         continue;
+      endif
 
-	PlaySoundEffect(who, SFX_SPELL_TELEKINESIS );	
-
-	if ( targ.Telekinesis(who) );
-		sleepms(20);
-		foreach coord in GetCoordsInLine(loc.x, loc.y, targ.x, targ.y)
-			PlayStationaryEffect(coord.x, coord.y, targ.z, FX_SPARK_EFFECT, 2, 2);
-			sleepms(20);
-		endforeach
-	else
-		if (targ.IsDoor())
-			if (!targ.locked)
-				targ.Toggle();
-			else
-				SendSysMessageEx(who, "A porta não sofreu influência da magia.", SSM_FAIL);
-			endif
-		elseif ( targ.movable || targ.connected )
-			FloatItem(loc, targ);
-		else
-			SendSysMessageEx(who, "Este item não se move.", SSM_FAIL);
-		endif
-	endif
-
+      PlaySoundEffect(who, SFX_SPELL_TELEKINESIS );	
+      if ( targ.Telekinesis(who) );
+         sleepms(20);
+         foreach coord in GetCoordsInLine(loc.x, loc.y, targ.x, targ.y)
+            PlayStationaryEffect(coord.x, coord.y, targ.z, FX_SPARK_EFFECT, 2, 2);
+            sleepms(20);
+         endforeach
+      else
+         if (targ.IsDoor())
+            if (!targ.locked)
+               targ.Toggle();
+            else
+               SendSysMessageEx(who, "A porta não sofreu influência da magia.", SSM_FAIL);
+            endif
+         elseif ( targ.movable || targ.connected )
+            FloatItem(loc, targ);
+         else
+            SendSysMessageEx(who, "Este item não se move.", SSM_FAIL);
+         endif
+      endif
+   endfor
 
 	return 1;
 endprogram

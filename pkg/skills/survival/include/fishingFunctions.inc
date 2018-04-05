@@ -36,8 +36,8 @@ function CarveFish(who, blade, use_on)
 	peso := cint(nomepeixe[4]);
 	num_steaks := Cint((peso / 2));	
 
-	//Verificacao do tipo de peixe para o tipo certo de filé, Alem do peso stack, que concerta o peso.
-	if (use_on.objtype == 0x9987) pesostack := (2 + RandomInt(1)); steak := "0x9972";
+	//Verificacao do tipo de peixe para o tipo certo de filé, Alem do peso stack, que conserta o peso.
+	if (use_on.objtype == 0x9987) pesostack := (2 + RandomInt(1)); steak := "0x9970";
  	elseif (use_on.objtype == 0xdd8)  pesostack := (60 + RandomInt(30)); steak :=  "0x9973";
  	elseif (use_on.objtype == 0x9cf) pesostack := (40 + RandomInt(20)) ; steak :=  "0x9978";
  	elseif (use_on.objtype == 0x9ce) pesostack := (25 + RandomInt(10));  steak :=  "0x9975";
@@ -66,7 +66,6 @@ function CarveFish(who, blade, use_on)
 endfunction
 
 function IsInRange(who, x, y, z)
-
 	z := z;
 	var xd, yd;
 	var retval := 1;
@@ -77,12 +76,10 @@ function IsInRange(who, x, y, z)
 	endif
 
 	return retval;
-
 endfunction
 
 
 function IsWater(thistile, locinfo)
-
 	if(thistile.objtype)
 		if((thistile.objtype >= 0x1797)&&(thistile.objtype <= 0x179c))
 			return 1;
@@ -111,7 +108,6 @@ endfunction
 
 
 function IsValidFishingSpot(who, targetsquare, locinfo)
-
 	var retval := 1;
 	if(!IsWater(targetsquare, locinfo))
 		SendSysMessageEx(who, "Você não pode pescar aqui!");
@@ -130,7 +126,6 @@ endfunction
 
 
 function farout(who)
-
 	var x := who.x, y := who.y;
 	var chk := 0;
 
@@ -182,32 +177,6 @@ function farout(who)
 	endif
 
 	return 0;
-
-endfunction
-
-
-function isSOS(who, targetsquare)
-
-	var packitems;
-	packitems := EnumerateItemsInContainer(who.backpack);
-	var i, sosx, sosy;
-
-	for(i := 1; i <= len(packitems); i := i + 1)
-		if((packitems[i].objtype == 0xa363))
-			sosx := GetObjProperty(packitems[i], "tileX");
-			sosy := GetObjProperty(packitems[i], "tileY");
-			var xd, yd;
-			xd := Abs(targetsquare.x - sosx);
-			yd := Abs(targetsquare.y - sosy);
-			if((xd <= 6)&&(yd <= 6))
-				GetSOSTreasure(who, targetsquare, packitems[i]);
-				return 1;
-			endif
-		endif
-	endfor
-
-	return 0;
-
 endfunction
 
 
@@ -216,7 +185,7 @@ function GetSOSTreasure(who, targetsquare, sosmsg)
 	if( test > 18 )
 		var itemcfg := ReadConfigFile(":*:itemdesc");
 		var it, oldname;
-		if( RandomInt(100) < 75 )
+		if( RandomInt(100) < 85 )
 			var newitem;
 			var artarray;
 			case(RandomInt(3))
@@ -235,60 +204,55 @@ function GetSOSTreasure(who, targetsquare, sosmsg)
 			it.movable := 1;
 			SendSysMessageEx(who, "Você achou alguma coisa interessante!");
 		else
-			SendSysMessageEx(who, "Você achou um tesouro submerso!");
-			var chest := CreateItemInBackpack(who, 0x9e40, 1);
-			case(RandomInt(4) + 1)
-				1: chest.graphic := 0xe40;
-				2: chest.graphic := 0xe41;
-				3: chest.graphic := 0xe7c;
-				4: chest.graphic := 0x9ab;
-			endcase
-			SetName(chest, ("bau [Recuperado de um navio submerso]"));
-			chest.movable := 1;
-			var lvl := RandomDiceRoll("1d5");
-			var lootgroup;
-			case(lvl)
-			      1: lootgroup := "SpawnChest1";  
-			      2: lootgroup := "SpawnChest2";  
-			      3: lootgroup := "SpawnChest3";  
-			      4: lootgroup := "SpawnChest4";  
-			      5: lootgroup := "SpawnChest5";  
-			endcase
-			//MakeLoot(chest, lootgroup);
-			DestroyItem(sosmsg);
+			// SendSysMessageEx(who, "Você achou um tesouro submerso!");
+			// var chest := CreateItemInBackpack(who, 0x9e40, 1);
+			// case(RandomInt(4) + 1)
+			// 	1: chest.graphic := 0xe40;
+			// 	2: chest.graphic := 0xe41;
+			// 	3: chest.graphic := 0xe7c;
+			// 	4: chest.graphic := 0x9ab;
+			// endcase
+			// SetName(chest, ("bau [Recuperado de um navio submerso]"));
+			// chest.movable := 1;
+			// var lvl := RandomDiceRoll("1d5");
+			// var lootgroup;
+			// case(lvl)
+			//       1: lootgroup := "SpawnChest1";  
+			//       2: lootgroup := "SpawnChest2";  
+			//       3: lootgroup := "SpawnChest3";  
+			//       4: lootgroup := "SpawnChest4";  
+			//       5: lootgroup := "SpawnChest5";  
+			// endcase
+			// //MakeLoot(chest, lootgroup);
+			// DestroyItem(sosmsg);
 		endif
 	else
-		SendSysMessageEx(who, "Alguma coida grande caiu de seu anzol!");
+		SendSysMessageEx(who, "Alguma coisa grande caiu de seu anzol!");
 	endif
 
 	return 0;
 
 endfunction
 
-function FindPeixePretendido(who, isca)
-	if (isca.objtype == 0x9980) return "Lambari"; 
- 	elseif (isca.objtype == 0x9981) return "Atum"; 
- 	elseif (isca.objtype == 0x9982) return "Dourado"; 
- 	elseif (isca.objtype == 0x9983) return "Anchova";  
- 	elseif (isca.objtype == 0x9984) return "Sardinha";  
-	elseif (isca.objtype == 0xdd7) return "Perca"; 
-	elseif (isca.objtype == 0xdd6) return "Robalo"; 
- 	elseif (isca.graphic == 0x0C82) return "PeixeGalo";
-	elseif (isca.graphic == 0x1CEF) return "Manjuba";
-	endif
-endfunction
+function GetFishByBait(who, isca)
+   var peixes := array{0x0DD6};
+   case (isca)
+      // "":
+      //    peixes += array{0x4304}; //, "Marlin Negro"
+      // "":
+      //    peixes += array{0x4306}; //, "Lanterna", "Dragão do Inverno"
+      0xc82: // milho
+         peixes += array{0x9cc, 0x9cd, 0x9ce, 0x9cf}; //, "Garoupa Amarelo"
+         break;
+      0x9980: // lambari/peixepequeno
+         peixes += array{0x44C3, 0x44E5, 0x44C6, 0x4303};
+         break;
+      default: 
+         peixes += array{0x9cc, 0x9cd, 0x9ce, 0x9cf}; //, "Peixe da Noite", "Truta"
+         break;
+   endcase
 
-function FindPeixeId(who, isca)
-	if (isca.objtype == 0x9980) return "0x9987";  // minhoca -> lambari
- 	elseif (isca.objtype == 0x9981) return "0xdd8"; // isca de atum -> atum
- 	elseif (isca.objtype == 0x9982) return "0x9cf"; // isca de dourado -> dourado
- 	elseif (isca.objtype == 0x9983) return "0x9ce"; 
- 	elseif (isca.objtype == 0x9984) return "0xdd7";  
-	elseif (isca.objtype == 0xdd7) return "0x9cd"; 
-	elseif (isca.objtype == 0xdd6) return "0x9cc"; 
- 	elseif (isca.graphic == 0x0C82) return "0xdd9";
-	elseif (isca.graphic == 0x1CEF) return "0xdd6"; 
-	endif
+   return peixes;
 endfunction
 
 

@@ -52,9 +52,9 @@ endfunction
 
 function TNCheckReagents(who, byref spellinfo, item)
 	if ( item.isa(POLCLASS_ITEM) && spellinfo.charges )
-      spellinfo.charges *= spellinfo.powered;
+      spellinfo.charges += Ceil(cdbl(spellinfo.charges) * (spellinfo.powered-1) / 10);
 
-      if (AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)) >= 9)
+      if (AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)) >= 6)
          spellinfo.charges /= 2;
       endif
 

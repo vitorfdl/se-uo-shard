@@ -25,7 +25,7 @@ program UnequipTest(mobile, item)
 
 	if ( retval )
 		//RemoveEquipmentMods(mobile, item);
-		EraseObjProperty(item, "#EquippedOn");
+		EraseObjProperty(item, "EquippedOn");
 		if (coverFace(item))
          EraseObjProperty(mobile, "facecovered");
 

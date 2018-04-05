@@ -190,7 +190,7 @@ function setMoveObject(who, item)
     endif
     linkarray.append(trg.serial);
   endwhile  
-  var positionIncrement := Cstr(RequestGump(who, "Escreva o numero de passos e o deslocamento em x y z dos itens."));
+  var positionIncrement := Cstr(RequestGump(who, "Escreva 'passos x y z' de movimento dos itens."));
   positionIncrement := SplitWords(positionIncrement);
   var increment :=Cint(positionIncrement[1]);
   var it;
@@ -206,7 +206,6 @@ function setMoveObject(who, item)
 endfunction
 
 function setHiding(who, item)
-
 	var dif := Cint(RadioGump(who, 0, 0, "Qual o level do interruptor?", array{"1", "2", "3", "4", "5", "Remover"}, 0, 1));
    if (!dif) 
       EraseObjProperty(item, "level"); 

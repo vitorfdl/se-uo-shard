@@ -36,7 +36,7 @@ program HandleMerchant(params)
    endif
 
    if (GetObjproperty(params.me, "imposto") != error)
-      imposto := cdbl(GetObjproperty(params.me, "imposto"));
+      imposto := GetObjproperty(params.me, "imposto");
    endif
 	SetObjProperty(params.me, "#occupied", GetPid());
 	case (params.type)
@@ -180,7 +180,7 @@ function SetupMerchant(npc, player)
    if (!output) return; endif
 
    if (cint(output[1]))
-      SetObjProperty(npc, "imposto", cdbl(output[1]) / 100);
+      SetObjProperty(npc, "imposto", cdbl(output[1]) / cdbl(100));
    endif
 
    SetObjProperty(npc, "item_type", output[2]);
@@ -561,7 +561,7 @@ function AddItemToSell(npc, player, item)
 	endif
 
 	infinite := GFExtractData(input, infinite);
-	var dezperc := CInt((cost_amt * cost_lote) * imposto);
+	var dezperc := CInt(cdbl(cost_amt * cost_lote) * cdbl(imposto));
 
    if (dezperc <= 1)
       dezperc := 1;

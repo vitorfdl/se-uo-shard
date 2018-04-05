@@ -1,0 +1,13 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/sounds";
+
+program Install()
+	return 1;
+endprogram
+
+exported function isFish(bait)
+	return 1;
+endfunction

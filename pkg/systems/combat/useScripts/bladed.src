@@ -189,13 +189,14 @@ function CarveObject(who, tool, objtype, targ)
 endfunction
 
 function isfish(theobj)
-  if((theobj >= UOBJ_FISH_START) && (theobj <= UOBJ_FISH_END) )
+  if (theobj.isFish())
+   return 1;
+  elseif((theobj >= UOBJ_FISH_START) && (theobj <= UOBJ_FISH_END) )
     return 1;
   elseif ((theobj >= UOBJ_SFISH_START) && (theobj <= UOBJ_SFISH_END))
     return 1;
-  else
-    return 0;
   endif
+    return 0;
 endfunction
 
 function MakeBlankScrolls (who, hides)
