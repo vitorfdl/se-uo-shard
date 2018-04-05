@@ -332,7 +332,7 @@ function removeItemMerchant(npc, player, input)
 			Printtext(npc, "Eu não fui capaz de colocar o item na sua bolsa. Coloquei aos seus pés entao.");
 		endif
 	endif
-   var return_amt := (cost.cost_amt * cint(cost.lote)) * imposto;
+   var return_amt := CInt(cdbl(cost.cost_amt * (selling.amount / cost.lote)) * cdbl(imposto));
    if (return_amt >= 1)
       CreateItemInBackPack(player, cost.cost_type, return_amt);
    endif
