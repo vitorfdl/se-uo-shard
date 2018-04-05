@@ -184,7 +184,7 @@ function GetSOSTreasure(who, targetsquare, sosmsg)
 	var test := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, PESCARIA);
 	if( test > 18 )
 		var itemcfg := ReadConfigFile(":*:itemdesc");
-		var it, oldname;
+		var it;
 		if( RandomInt(100) < 85 )
 			var newitem;
 			var artarray;
@@ -196,11 +196,7 @@ function GetSOSTreasure(who, targetsquare, sosmsg)
 					newitem := artarray[RandomInt(14) + 1];
 			endcase
 			it := CreateItemInBackpack(who, newitem, 1);
-			oldname := it.name;
-			if( (!oldname) || (oldname == "") )
-				oldname := itemcfg[newitem].desc;
-			endif
-			SetName(it, (oldname + " [Recuperado de um navio submerso]"));
+			// SetName(it, (oldname + " [Recuperado de um navio submerso]"));
 			it.movable := 1;
 			SendSysMessageEx(who, "Você achou alguma coisa interessante!");
 		else

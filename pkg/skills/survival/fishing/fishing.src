@@ -97,16 +97,17 @@ program use_FishingPole(who, fishingpole)
          difficulty := GetHarvestDifficulty("fish", targetsquare.x, targetsquare.y, locinfo.landtile, who.realm);
       endif
 
-      // if( difficulty == error )
-      //    SendSysMessageEx(who, "Eles não parecem estar mordendo a isca hoje.");
-      //    CreateItemInBackpack(who, hex(isca), 1);
-      //    return 0;
-      // endif
+      if( difficulty == error )
+         SendSysMessageEx(who, "Eles não parecem estar mordendo a isca hoje.");
+         CreateItemInBackpack(who, hex(isca), 1);
+         return 0;
+      endif
+      
       var itemdesc := ReadConfigFile(":*:itemdesc");
       var peixename := itemdesc[thepeixe].desc;
 
       var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, PESCARIA);
-      if( dice_roll > difficulty)
+      if( dice_roll > difficulty+2)
 
          //Acontecimentos diferentes na pescaria
          var otherchance := OtherChances(who, targetsquare, fishingpole);
@@ -276,8 +277,8 @@ endfunction
 
 function FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 	var peso;
-	var tensao := 0;
-	var tensaomax := (100 + (molinete * 10));
+	var tensao := 55 - randomint(25);
+	var tensaomax := (80 + (molinete * 10));
 	var acao;
 	var distancia := cint( sqrt( pow(targetsquare.x - who.x,2) + pow(targetsquare.y - who.y,2) ) ) ;
 	distancia := (distancia + 5);
@@ -307,7 +308,7 @@ function FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 			tensao := Cint(tensao - (tensao * molinete * 0.2));
 			if (tensao <= 0) tensao := 0; endif
 			if (cint(distancia) == 15) 
-				SendSysMessageEx(who, "A linha já esta solta o máximo possivel.",38);
+				SendSysMessageEx(who, "A linha já esta solta o máximo possivel.", SSM_INFO);
 			else
 				distancia := distancia - 2;
 			endif
