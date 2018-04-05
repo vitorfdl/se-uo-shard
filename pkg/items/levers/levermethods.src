@@ -13,8 +13,7 @@ exported function IsLever(lever)
 endfunction
 
 exported function reset(lever)
-
-	if ( cint(GetObjProperty(lever, "FindDiff")) > 0)
+	if ( cint(GetObjProperty(lever, "level")) > 0)
 		lever.invisible := 1;
 	endif
 
