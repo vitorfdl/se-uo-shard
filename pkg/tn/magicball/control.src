@@ -34,7 +34,6 @@ program usedardo(ball)
       var type := ball.GetType();
       var effect := ball.GetEffect();
       var dmg_info := ball.GetDmgInfo();
-            print(type);
       case (type)
          0:default:
             var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 0, BALL_FLAG, ball.realm)).randomentry();

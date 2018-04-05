@@ -54,7 +54,6 @@ function PlayHitSounds(attacker, defender := 0)
 
    if (metamorfose)
 		var npcelem := NPC_GetNPCConfig(":ghaia:{}".format(metamorfose));
-      print(npcelem);
       PlaySoundEffect(attacker, npcelem.AttackSound);
 	elseif ( wpn_a_elem2.HitSound )
 		PlaySoundEffect(attacker, wpn_a_elem2.HitSound);
