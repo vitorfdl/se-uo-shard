@@ -127,7 +127,7 @@ function examinarArea(who, plus_diff := 0)
       var item_diff := getItemDiff(who, item) + plus_diff;
       var custom_diff := cint(GetObjProperty(item, "FindDiff"));
 
-		if ( (item.isTrap() || GetObjProperty(item, "level")) && (dice_roll > item_diff))
+		if ( (item.isTrap() || item.IsLever()) && (dice_roll > item_diff))
 			ExpGain(who, "minor");
 			found := found+1;
 			item.invisible := 0;
