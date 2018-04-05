@@ -39,13 +39,14 @@ program use_FishingPole(who, fishingpole)
 	   molinete := 1;
 	endif
 
-   var isca := fishingpole.GetBait()
+   var isca := fishingpole.GetBait();
    if (!isca || !ConsumeSubstance(who.backpack, isca, 1))
-      isca := fishingpole.SelectBait(who);
+      isca := SelectBait(who, fishingpole);
       if (!isca)
          return;
       endif
    endif
+   printtext(who, ""+isca);
 
 	//Escolha da isca
 	var pretfish := GetFishByBait(who, isca);
@@ -53,7 +54,7 @@ program use_FishingPole(who, fishingpole)
 	SendSysMessageEx(who, "Escolha o local aonde quer pescar?", SSM_REQUEST);
 	var targetsquare := TargetCoordinates(who);
 	if( !targetsquare )
-      CreateItemInBackpack(who, iscausada, 1);
+      CreateItemInBackpack(who, hex(isca), 1);
 		return 0;
 	endif
 
@@ -82,73 +83,73 @@ program use_FishingPole(who, fishingpole)
 		endif
 
 		//Verificando se existe o peixe no local determinado
-	  	var peixeexiste := GetFishRegion(who, targetsquare.x, targetsquare.y, pretfish);
-		
-		if (peixeexiste == 0)
-			CreateItemInBackpack(who, iscausada, 1);
-			SendSysMessageEx(who,"Nenhum peixe nessa regiao parece gostar da sua isca",60);
+	  	var thepeixe := GetFishRegion(who, targetsquare.x, targetsquare.y, pretfish);
+		if (!thepeixe)
+			CreateItemInBackpack(who, hex(isca), 1);
+			SendSysMessageEx(who,"Nenhum peixe nessa região parece gostar da sua isca",60);
 			return 0;
 		endif
 
-		if( !isSOS(who, targetsquare) )
-			var difficulty;
-			if( targetsquare.objtype )
-				difficulty := GetHarvestDifficulty("fish", targetsquare.x, targetsquare.y, targetsquare.objtype, who.realm);
-			else
-				difficulty := GetHarvestDifficulty("fish", targetsquare.x, targetsquare.y, locinfo.landtile, who.realm);
-			endif
-			if( difficulty == error )
-				SendSysMessageEx(who, "Eles não parecem estar mordendo a isca hoje.");
-				CreateItemInBackpack(who, iscausada, 1);
-				return 0;
-			endif
+      var difficulty;
+      if( targetsquare.objtype )
+         difficulty := GetHarvestDifficulty("fish", targetsquare.x, targetsquare.y, targetsquare.objtype, who.realm);
+      else
+         difficulty := GetHarvestDifficulty("fish", targetsquare.x, targetsquare.y, locinfo.landtile, who.realm);
+      endif
 
-			var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, PESCARIA);
-			if( dice_roll > difficulty)
+      // if( difficulty == error )
+      //    SendSysMessageEx(who, "Eles não parecem estar mordendo a isca hoje.");
+      //    CreateItemInBackpack(who, hex(isca), 1);
+      //    return 0;
+      // endif
+      var itemdesc := ReadConfigFile(":*:itemdesc");
+      var peixename := itemdesc[thepeixe].desc;
 
-				//Acontecimentos diferentes na pescaria
-				var otherchance := OtherChances(who, targetsquare, fishingpole);
-				if (otherchance != 0)
-					CreateItemAtLocation(who.x, who.y, who.z, otherchance, 1, who.realm);
-					return 1;
-				endif
+      var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, PESCARIA);
+      if( dice_roll > difficulty)
 
-				SendSysMessageEx(who,"Alguma coisa fisgou a isca!!" ,66);
-			   PrintText(who, "*vara tremendo*");
-			       
-				var fishcatch := FishFight(who, fishingpole, pretfish, targetsquare, molinete);
-				if (fishcatch != 0)
-               who.SetAchievement("fishing", 1);
-					if (randomint(10) == 1)
-						var peixemorto := CreateItemAtLocation(who.x, who.y, who.z, 0x3B0C, 1, who.realm);
-						var newname := pretfish + " morto";
-						Setname(peixemorto, newname );
-						SendSysMessageEx(who,"Você pescou um(a) belo(a) " + pretfish + " comido por outro peixe." ,66);
-						return 1;
-					endif
+         //Acontecimentos diferentes na pescaria
+         var otherchance := OtherChances(who, targetsquare, fishingpole);
+         if (otherchance != 0)
+            CreateItemAtLocation(who.x, who.y, who.z, otherchance, 1, who.realm);
+            return 1;
+         endif
 
-					var peixecriado := CreateItemAtLocation(who.x, who.y, who.z, peixepego, 1, who.realm); // TODO
-					var newname := pretfish + " [ Peso: " + fishcatch + " ]";
-					Setname(peixecriado, newname );
-					SendSysMessageEx(who,"Você pescou um(a) belo(a) " + pretfish + " ." ,66);
-					return 1;
-				endif
-				if (fishcatch == 0)
-					PrintText(who, "*linha estoura*",36);
-					SendSysMessageEx(who,"A linha não aguentou toda a tensao e o peixe escapou." ,36);
-					return 1;
-				endif		
-				
+         SendSysMessageEx(who,"Alguma coisa fisgou a isca!!" ,SSM_INFO);
+         PrintText(who, "*vara tremendo*");
+               
+         var fishcatch := FishFight(who, fishingpole, thepeixe, targetsquare, molinete);
+         if (fishcatch != 0)
+            who.SetAchievement("fishing", 1);
+            if (randomint(10) == 1)
+               var peixemorto := CreateItemAtLocation(who.x, who.y, who.z, 0x3B0C, 1, who.realm);
+               var newname := peixename + " morto";
+               Setname(peixemorto, newname );
+               SendSysMessageEx(who,"Você pescou um(a) belo(a) " + peixename + " comido por outro peixe." , SSM_INFO);
+               return 1;
+            endif
 
-			else
-				if( RandomInt(100) == 0 )
-					CriticalFailure(who, targetsquare);
-				else
-					SendSysMessageEx(who, "Eles não parecem estar mordendo a isca hoje.");
-					CreateItemInBackpack(who, isca, 1);
-				endif
-			endif
-		endif
+            var peixecriado := CreateItemAtLocation(who.x, who.y, who.z, thepeixe, 1, who.realm); // TODO
+            var newname := "{} [ Peso: {} ]".format(peixecriado.desc, fishcatch);
+            Setname(peixecriado, newname );
+            SendSysMessageEx(who,"Você pescou um(a) belo(a) " + peixecriado.desc + " ." ,SSM_INFO);
+            return 1;
+         endif
+         if (fishcatch == 0)
+            PrintText(who, "*linha estoura*",SSM_FAIL);
+            SendSysMessageEx(who,"A linha não aguentou toda a tensao e o peixe escapou." ,SSM_FAIL);
+            return 1;
+         endif		
+         
+
+      else
+         if( RandomInt(100) == 0 )
+            CriticalFailure(who, targetsquare);
+         else
+            SendSysMessageEx(who, "Eles não parecem estar mordendo a isca hoje.");
+            CreateItemInBackpack(who, hex(isca), 1);
+         endif
+      endif
 	endif
 
 	return 1;
@@ -186,15 +187,15 @@ function OtherChances(who, targetsquare, fishingpole)
 		endif
 	endif
 
-	if(fishtype == "sosbottle")
-		var serpent := CreateNpcFromTemplate( "seaserpent", targetsquare.x, targetsquare.y, targetsquare.z );
-		if(farout(who))
-			if( !serpent.backpack )
-				EquipFromTemplate( serpent, "backpack" );
-			endif
-			CreateItemInContainer(serpent.backpack, fishtype, 1);
-		endif
-	elseif( Find("level", fishtype, 0) )
+	// if(fishtype == "sosbottle")
+	// 	var serpent := CreateNpcFromTemplate( "seaserpent", targetsquare.x, targetsquare.y, targetsquare.z );
+	// 	if(farout(who))
+	// 		if( !serpent.backpack )
+	// 			EquipFromTemplate( serpent, "backpack" );
+	// 		endif
+	// 		CreateItemInContainer(serpent.backpack, fishtype, 1);
+	// 	endif
+	if( Find("level", fishtype, 0) )
 		var serpent := CreateNpcFromTemplate( "seaserpent", targetsquare.x, targetsquare.y, targetsquare.z );
 		if(farout(who))
 			if( !serpent.backpack )
@@ -204,9 +205,9 @@ function OtherChances(who, targetsquare, fishingpole)
 		endif
 	else
 		if( CreateItemInContainer(who.backpack, fishtype, 1) )
-			CheckToolWear (who, fishingpole, PESCARIA);
+			CheckToolWear(who, fishingpole, PESCARIA);
 		endif
-        endif
+    endif
 
 
 	return fishtype;
@@ -244,21 +245,22 @@ function GetFishRegion(who, x, y, pretfish)
 		peixesdf :=  createdatafile(":gathering:fishspots");
 	endif
 	
+   var fishlist := array{};
 	foreach spot in (peixesdf.keys())
 		var region := peixesdf.FindElement(spot);
 		var rect := region.getprop("Rect");
 		if ( InRect(who, x, y, rect) )
-			var peixes := splitwords(region.getprop("Peixes"));
+			var peixes := region.getprop("Peixes");
 			foreach peixe in peixes
-				if (peixe == pretfish)
-					return peixe;
+				if (cint(peixe) in pretfish)
+               fishlist.append(cint(peixe));
 				endif
+            sleepms(2);
 			endforeach
 		endif		
 	endforeach
 	
-	return 0;
-
+	return fishlist.randomentry();
 endfunction
 
 function InRect(who, x_pos, y_pos, rect)
@@ -273,7 +275,6 @@ endfunction
 
 
 function FishFight(who, fishingpole, pretfish, targetsquare, molinete);
-	
 	var peso;
 	var tensao := 0;
 	var tensaomax := (100 + (molinete * 10));
@@ -281,15 +282,19 @@ function FishFight(who, fishingpole, pretfish, targetsquare, molinete);
 	var distancia := cint( sqrt( pow(targetsquare.x - who.x,2) + pow(targetsquare.y - who.y,2) ) ) ;
 	distancia := (distancia + 5);
 
-	if (pretfish == "Manjuba") peso := (2 + RandomInt(3)) ;
-	elseif (pretfish == "Lambari") peso := (2 + RandomInt(3)) ;
- 	elseif (pretfish == "Atum") peso := (20 + RandomInt(15)) ; 
- 	elseif (pretfish == "Dourado") peso := (10 + RandomInt(10)) ;
- 	elseif (pretfish == "Anchova") peso := (8 + RandomInt(10)) ; 
- 	elseif (pretfish == "Sardinha") peso := (6 + RandomInt(3)) ; 
-	elseif (pretfish == "Perca") peso := (12 + RandomInt(10)) ; 
- 	elseif (pretfish == "PeixeGalo") peso := (15 + RandomInt(5)) ; 
- 	elseif (pretfish == "Robalo") peso := (12 + RandomInt(10)) ;  
+	if (pretfish == 0x0DD6) peso := (2 + RandomInt(3)) ;
+ 	elseif (pretfish == 0x4306) peso := (20 + RandomInt(15)) ; 
+ 	elseif (pretfish == 0x9cf) peso := (5 + RandomInt(10)) ;
+ 	elseif (pretfish == 0x9ce) peso := (4 + RandomInt(10)) ; 
+	elseif (pretfish == 0x9cd) peso := (6 + RandomInt(10)) ; 
+ 	elseif (pretfish == 0x4304) peso := (15 + RandomInt(5)) ; 
+ 	elseif (pretfish == 0x9cc) peso := (6 + RandomInt(10)) ;  
+ 	elseif (pretfish == 0x4303) peso := (8 + RandomInt(10)) ;  
+ 	elseif (pretfish == 0x44C6) peso := (10 + RandomInt(10)) ;  
+ 	elseif (pretfish == 0x44D1) peso := (2 + RandomInt(10)) ;  
+ 	elseif (pretfish == 0x44D4) peso := (2 + RandomInt(10)) ;  
+ 	elseif (pretfish == 0x44E5) peso := (12 + RandomInt(10)) ;  
+ 	elseif (pretfish == 0x44C3) peso := (7 + RandomInt(10)) ;  
 	endif
 	
 	while ((distancia > 0) && (tensao < tensaomax))

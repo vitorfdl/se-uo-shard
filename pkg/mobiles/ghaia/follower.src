@@ -318,6 +318,7 @@ function ProcessDoubleClick(ev)
          return;
       endif
       PetGoTo(targ, 2);
+      following := 0;
    endif
 endfunction
 

@@ -3,24 +3,17 @@ use os;
 use cfgfile;
 
 include "include/sounds";
+include "include/say";
 
 program Install()
 	return 1;
 endprogram
 
-exported function SelectBait(pole, who)
-	SendSysMessageEx(who, "Qual isca sera usada na pescaria?", SSM_REQUEST);
-	var bait := Target(who);
-
-   if (!bait.isBait())
-      return SendSysMessageEx(who, "Isso não pode ser usado de Isca.", SSM_FAIL);
-   endif
-
-   SetObjProperty(pole, "bait", bait.objtype);
-	return bait.objtype;
+exported function isPole(pole)
+   return 1;
 endfunction
 
-exported function GetBait(pole, who)
+exported function GetBait(pole)
    var bait := GetObjProperty(pole, "bait");
    if (!bait)
       return 0;

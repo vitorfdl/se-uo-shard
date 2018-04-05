@@ -5,6 +5,9 @@ const GREEN_COLOR  := 0xff1;
 const YELLOW_COLOR := 0xffff2a;
 
 include ":timeUtils:time";
+include ":survival:fishingFunctions";
+include "include/say";
+
 program PopUpMenu( who, what )
    var entries;
    if (what.isA(POLCLASS_ITEM))
@@ -79,6 +82,8 @@ program PopUpMenu( who, what )
       Start_Script(":fls_core:ficharp_rating", array{ who, what });
    elseif(input == "ensinar")
       Start_Script(":attributes:commands/player/ensinar", array{ who, what });
+   elseif (input == "bait")
+      SelectBait(who, what);
    endif
 
    return 1;
@@ -153,6 +158,11 @@ function MenuPlayerToItem(who, what)
       if (what.movable != 0)
          entries.+flip := 3002012;
       endif
+
+   endif
+
+   if (what.isPole())
+      entries.+bait :=  struct{ cliloc := 3005101, color := YELLOW_COLOR };
    endif
 
    var spell_list := GetObjProperty(what, "spell_list");

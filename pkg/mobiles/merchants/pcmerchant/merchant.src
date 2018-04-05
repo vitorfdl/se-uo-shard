@@ -561,7 +561,7 @@ function AddItemToSell(npc, player, item)
 	endif
 
 	infinite := GFExtractData(input, infinite);
-	var dezperc := CInt(cdbl(cost_amt * cost_lote) * cdbl(imposto));
+	var dezperc := CInt(cdbl(cost_amt * (item.amount / cost_lote)) * cdbl(imposto));
 
    if (dezperc <= 1)
       dezperc := 1;
@@ -576,7 +576,8 @@ function AddItemToSell(npc, player, item)
 	if (player.cmdlevel < 3 && dezperc != 0)
 		var pay := 0;
 		do
-			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda. Pressione ESC para cancelar.", SSM_REQUEST);
+			SendSysMessageEx(player, "O imposto total é de: {} moedas".format(dezperc), SSM_INFO);
+			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda. (Pressione ESC para cancelar).", SSM_REQUEST);
 			var targ := Target(player);
 			if ( !targ )
 				SendSysMessageEx(player, "Cancelado.");

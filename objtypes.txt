@@ -588,11 +588,8 @@
 # 0xdc1 - 0xdc9 unused
 0xdca fishingnet survival
 # 0xdcb - 0xdd5 unused
-0xdd6 fish5 survival
-0xdd7 fish6 survival
-0xdd8 fish7 survival
-0xdd9 fish8 survival
-# 0xdda - 0xde0 unused
+0xdd6 smallfish survival
+# 0xdd7 - 0xde0 unused
 0xde1 kindling survival
 0xde2 kindling2 survival
 0xde3 campfire lighting
@@ -1763,9 +1760,24 @@
 0x41d0 [n/a] doors
 0x41d1 [n/a] doors
 0x41d2 [n/a] doors
-# 0x41d3 - 0x44c7 unused
+# 0x41d3 - 0x4302 unused
+0x4303 salmon survival
+0x4304 marlinazul survival
+# 0x4305 unused
+0x4306 grouper survival
+# 0x4307 - 0x44c2 unused
+0x44c3 barracuda survival
+# 0x44c4 - 0x44c5 unused
+0x44c6 mahimahi survival
+# 0x44c7 unused
 0x44c8 minisoulforge magery
-# 0x44c9 - 0x44f1 unused
+# 0x44c9 - 0x44d0 unused
+0x44d1 crab survival
+# 0x44d2 - 0x44d3 unused
+0x44d4 lobster survival
+# 0x44d5 - 0x44e4 unused
+0x44e5 dragonfish survival
+# 0x44e6 - 0x44f1 unused
 0x44f2 largeplantbowl farming
 # 0x44f3 - 0x468b unused
 0x468c jellybeans food
@@ -2084,25 +2096,10 @@
 # 0x995b unused
 0x995c leverpad tn
 # 0x995d - 0x996f unused
-0x9970 filedeRobalo cooking
-0x9971 filedeSardinha cooking
-0x9972 filedeLambari cooking
-0x9973 filedeAtum cooking
-0x9974 filedePerca cooking
-0x9975 filedeAnchova cooking
-0x9976 filedeManjuba cooking
-0x9977 filedePeixeGalo cooking
-0x9978 filedeDourado cooking
-# 0x9979 - 0x997f unused
-0x9980 minhoca //Isca pra Manjuba survival
-0x9981 iscaatum survival
-0x9982 iscadourado survival
-0x9983 iscaanchova survival
-0x9984 camarao //Isca pra Sardinha survival
-0x9985 iscaperca survival
-# 0x9986 unused
-0x9987 lambari survival
-# 0x9988 unused
+0x9970 filedepeixe cooking
+# 0x9971 - 0x997f unused
+0x9980 minhoca survival
+# 0x9981 - 0x9988 unused
 0x9989 FishingPoleIron survival
 # 0x998a - 0x9a38 unused
 0x9a39 sewingmachine womenswork
@@ -2138,13 +2135,7 @@
 0xa365 sostile sosbottles
 # 0xa366 - 0xa367 unused
 0xa368 magicfish1 survival
-0xa369 magicfish2 survival
-0xa36a magicfish3 survival
-0xa36b magicfish4 survival
-0xa36c magicfish5 survival
-0xa36d magicfish6 survival
-0xa36e magicfish7 survival
-0xa36f magicfish8 survival
+# 0xa369 - 0xa36f unused
 0xa370 acid acid
 # 0xa371 - 0xa400 unused
 0xa401 SpawnPoint yggdrasil

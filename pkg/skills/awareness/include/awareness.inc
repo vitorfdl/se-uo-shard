@@ -125,9 +125,9 @@ function examinarArea(who, plus_diff := 0)
 		endif
 
       var item_diff := getItemDiff(who, item) + plus_diff;
-      var custom_diff := GetObjProperty(item, "FindDiff");
+      var custom_diff := cint(GetObjProperty(item, "FindDiff"));
 
-		if ( item.isTrap() && (dice_roll > item_diff))
+		if ( (item.isTrap() || GetObjProperty(item, "level")) && (dice_roll > item_diff))
 			ExpGain(who, "minor");
 			found := found+1;
 			item.invisible := 0;
@@ -135,7 +135,7 @@ function examinarArea(who, plus_diff := 0)
 			PrintTextAbovePrivate(item, "*!*", who);
          who.SetAchievement("found_item", 1);
 		elseif (custom_diff && dice_roll >= cint(custom_diff))
-			ExpGain(who, CInt(GetObjProperty(item, "FindDiff")), dice_roll);
+			ExpGain(who, custom_diff, dice_roll);
 			found := found+1;
 			item.invisible := 0;
 			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);

@@ -11,3 +11,9 @@ endprogram
 exported function isFish(bait)
 	return 1;
 endfunction
+
+exported function isBait(bait)
+   if (bait.objtype == 0x0DD6 || bait.objtype == 0x3B0C)
+	   return 1;
+   endif
+endfunction

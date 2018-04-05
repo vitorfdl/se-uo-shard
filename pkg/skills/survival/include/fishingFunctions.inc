@@ -255,5 +255,15 @@ function GetFishByBait(who, isca)
    return peixes;
 endfunction
 
+function SelectBait(who, pole)
 
+	SendSysMessageEx(who, "Qual isca sera usada na pescaria?", SSM_REQUEST);
+	var bait := Target(who);
 
+   if (!bait.isBait())
+      return SendSysMessageEx(who, "Isso não pode ser usado de Isca.", SSM_FAIL);
+   endif
+
+   SetObjProperty(pole, "bait", bait.objtype);
+	return bait.objtype;
+endfunction
