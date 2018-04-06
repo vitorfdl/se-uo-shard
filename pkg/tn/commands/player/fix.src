@@ -57,7 +57,7 @@ program fix(who)
 			alvo.movable := 0;
 			SendSysMEssageEx(who, "O item esta imovel agora e somente você podera solta-lo.", SSM_INFO);
 		else
-			if (CInt(GetObjProperty(alvo, "crafterserial")) == who.serial)
+			if (CInt(GetObjProperty(alvo, "crafterserial")) == who.serial || guildpw)
 				alvo.movable := 1;
 				SendSysMEssageEx(who, "O item esta solto.", SSM_INFO);
 				SetObjProperty(alvo, "fixer", who.serial);
