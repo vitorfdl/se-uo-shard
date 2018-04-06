@@ -46,7 +46,6 @@ program use_FishingPole(who, fishingpole)
          return;
       endif
    endif
-   printtext(who, ""+isca);
 
 	//Escolha da isca
 	var pretfish := GetFishByBait(who, isca);
