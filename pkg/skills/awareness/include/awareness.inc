@@ -133,7 +133,7 @@ function examinarArea(who, plus_diff := 0)
 			item.invisible := 0;
 			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
 			PrintTextAbovePrivate(item, "*!*", who);
-         who.SetAchievement("found_item", 1);
+         who.SetAchievement("found_something", 1);
 		elseif (custom_diff && dice_roll >= cint(custom_diff))
 			ExpGain(who, custom_diff, dice_roll);
 			found := found+1;
