@@ -697,6 +697,8 @@ function NPC_Sneak()
    PrintText(me, "*esconde*");
    me.hidden := 1;
    me.stealthsteps := 15;
+   me.GrantPrivilege("runwhilestealth");
+   me.enable("runwhilestealth");
    return 1;
 endfunction
 
