@@ -266,7 +266,7 @@ function CheckifIsAlly(who, mobiles)
          elseif(mobiles.alignment == 2 && !who.murderer)
             return 1;
          endif
-      elseif (mobiles in party)
+      elseif (mobiles in party || mobiles == who)
          return 1;
       endif
 
