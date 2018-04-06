@@ -13,15 +13,8 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
    endif
 
    // Check to make sure they have at least one hand free to drink the potion
-   var equippedright := GetEquipmentByLayer(character, 0x01);
-   var equippedleft  := GetEquipmentByLayer(character, 0x02);
-   var cfg           := ReadConfigFile(":*:itemdesc");
-   var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
-   if (equippedright and equippedleft || twohanded)
-      TS_StartCooldown(character, "noattack", 2);
-      SendSysMessageEx(character, "Você precisa de pelo menos uma mão livre!");
-      return 0;
-   elseif (GetObjProperty(character, "noheal") && type == "healingpot")
+
+   if (GetObjProperty(character, "noheal") && type == "healingpot")
       SendSysMessageEx(character, "Essa poção não fará efeito nas atuais circunstâcias", SSM_FAIL);
       return 0;    
    endif
@@ -32,11 +25,19 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
          return 0;
       elseif (cooldown > 0 )
          TS_StartCooldown(character, type, cooldown);
-         return 1;
       endif
-   else
-      return 1;
    endif
+
+   var equippedright := GetEquipmentByLayer(character, 0x01);
+   var equippedleft  := GetEquipmentByLayer(character, 0x02);
+   var cfg           := ReadConfigFile(":*:itemdesc");
+   var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
+   
+   if (equippedright and equippedleft || twohanded)
+      TS_StartCooldown(character, "noattack", 2);
+   endif
+
+   return 1;
 endfunction
 
 function EmptyBottle(character, potion, potiontype := 0)
