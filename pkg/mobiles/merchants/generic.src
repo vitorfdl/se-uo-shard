@@ -227,7 +227,7 @@ function HandleSpeech(byref event)
       elseif (event.text["manter"] || event.text["posi"])
          PrintText(me, "As suas ordens");
          following := 0;
-         var thefacing := who.facing;
+         var thefacing := event.source.facing;
          NpcGoTo(event.source, 1);
          me.facing := thefacing;
          return;  
