@@ -34,7 +34,7 @@ program SpellScript(params)
       var dmg := RandomDiceRoll("5d6");
 		foreach mobile in (ListMobilesNearLocationEx( item.x, item.y, item.z, 1, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
          sleepms(2);
-			if (!(mobile in alreadydamaged) && !CheckifIsAlly(who, mobile))
+			if (!(mobile in alreadydamaged) && !CheckifIsAlly(who, mobile) && who != mobile)
             if (rollResistDice(mobile, DEXTERITY) > dice_roll)
                SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
                SendSystemReport(mobile, "*esquivou*", SSM_INFO);

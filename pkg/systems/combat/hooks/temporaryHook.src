@@ -52,7 +52,7 @@ program Attack(params)
       return 1;
 	elseif ( !CheckLineOfSight(attacker, defender) )
 		return 1;
-	elseif ( GetObjProperty(attacker, "#Casting") )
+	elseif ( GetObjProperty(attacker, "#Casting") || TS_GetCooldown(attacker, "noattack") )
 		return 1;
    elseif ( TS_GetTimerInfo(attacker, "charmed") )
       if (GetObjProperty(attacker, "#charmed") == defender.serial)

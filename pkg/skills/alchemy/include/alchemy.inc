@@ -18,6 +18,7 @@ function CheckIfCanDrink(character, potion, type := 0, cooldown := 0)
    var cfg           := ReadConfigFile(":*:itemdesc");
    var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
    if (equippedright and equippedleft || twohanded)
+      TS_StartCooldown(character, "noattack", 2);
       SendSysMessageEx(character, "Você precisa de pelo menos uma mão livre!");
       return 0;
    elseif (GetObjProperty(character, "noheal") && type == "healingpot")

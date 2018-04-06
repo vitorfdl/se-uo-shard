@@ -361,9 +361,21 @@ function guildHandler(who, input)
       SendSysMessageEx(who, "{} se juntou a facção".format(targ.name), SSM_INFO); 
    elseif (input == BUTTON_MONEY_TRANSFER)
       if (is_gm_or_leader)
-         var output := RadioGump(who, 300, 0, "Escolha uma opção", array{"Acrescentar moedas", "Transferir para outra Facção", "Cancelar"}, 0, 1);
+         var opt_choice := array{"Acrescentar moedas", "Transferir para outra Facção"};
+         if (who.cmdlevel)
+            opt_choice.append("Remover Moedas");
+         endif
+         opt_choice.append("cancelar");
+         var output := RadioGump(who, 300, 0, "Escolha uma opção", , 0, 1);
          if (output["Cancelar"])
             return;
+         elseif(output["Remover"])
+            var qty := cint(GetInput(who, who.backpack, "Quanto deseja remover? (aperte esc para cancelar)"));
+            if (qty <= 0)
+               return SendSysMessageEx(who, "Cancelado");
+            endif           
+            guild.setProp("money", guild.getProp("money") - qty);
+            SendSysMessageEx(who, "Moedas removidas");
          elseif (output["Transferir"])
             var guild_opts := struct{};
             var guilds := ListGuilds();
@@ -385,7 +397,7 @@ function guildHandler(who, input)
             endif
             var rec_guild := FindGuild(guild_opts[guildenemy]);
             guild.setProp("money", guild.getProp("money") - qty);
-            rec_guild.setProp("money", guild.getProp("money") + qty);
+            rec_guild.setProp("money", rec_guild.getProp("money") + qty);
             SendSysMessageEx(who, "Moedas transferidas");
             return;
          endif

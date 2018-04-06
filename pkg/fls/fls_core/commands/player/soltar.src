@@ -27,7 +27,7 @@ program soltar(me)
 
 	var check := dice_roll.dice + GetSkillBonus(me, IMOBILIZACAO);
 
-	if (check >= diff)
+	if (check > diff)
 		if (dice_roll.critical == 1)
 			SendSysMessage(me, "Você conseguiu se soltar discretamente...");
 			var corda := CreateItemInBackpack (me, "rope");
