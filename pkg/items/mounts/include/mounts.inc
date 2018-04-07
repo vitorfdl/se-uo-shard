@@ -18,7 +18,7 @@ use cfgfile;
 const MOUNT_OBJTYPE := 0x1F021;
 
 include "include/client";
-
+include ":tn:cooldown";
 
 /*
  * MP_GetMountsCfgFile()
@@ -156,7 +156,7 @@ endfunction
  *
  */
 function MP_Mount(mobile, npc)
-	if ( Cint(GetObjProperty(mobile, "#desmontar")) == 1)
+	if ( Cint(GetObjProperty(mobile, "#desmontar")) == 1 && mobile.cmdlevel <= 2)
 		SendSysMessageEx(mobile, "Você não pode montar.");
 		return 0;
 	endif
@@ -179,6 +179,10 @@ function MP_Mount(mobile, npc)
 	endif
 	
 	mount_piece := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, MOUNT_OBJTYPE, 1);
+   var sela := getObjProperty(npc, "sela_hp");
+   if (sela)
+      SetObjProperty(mount_piece, "sela_hp", sela);
+   endif
 	mount_piece.graphic := mount_graphic;
 	mount_piece.color := npc.color;
 	//sendsysmessageEx(mobile, "cor " + mount_piece.color + " " + npc.color);
@@ -288,7 +292,8 @@ function MP_RestoreMountToAnimal(mobile, mount)
 		// Supports systems where the npc is moved to a storage area rather than killed.
 		var ret := MoveObjectToLocation(animal, mobile.x, mobile.y, mobile.z, mobile.realm, MOVEOBJECT_FORCELOCATION);
 		animal.hidden := 0;
-		SendSysMessageEx(mobile, " " + ret);
+      SetObjProperty(animal, "sela_hp", cint(getObjProperty(mount, "sela_hp")));
+		// SendSysMessageEx(mobile, " " + ret);
 	else
 		var template := MP_GetMountTemplate(mount);
 		if ( !template )
@@ -302,6 +307,7 @@ function MP_RestoreMountToAnimal(mobile, mount)
 		animal.name := mount.desc;
 	endif
 	DestroyItem(mount);
+   SetCooldown(mobile, "desmontar", 30);
 	
 	return animal;
 endfunction

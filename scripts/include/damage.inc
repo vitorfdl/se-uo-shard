@@ -271,7 +271,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		if (cleric_healing && dmg >= 1 && Randomint(101) <= chance)
          var bencao := GetObjProperty(source, "#bencaodivina");
          if (bencao);
-            var mobs := CheckIfIsAlly(ListMobilesNearLocation(source.x, source.y, source.z, 2));
+            var mobs := CheckIfIsAlly(source, ListMobilesNearLocation(source.x, source.y, source.z, 2));
             mobs.append(source);
             foreach mob in mobs
 			      HealFLS(mob, Floor(dmg/2), source);

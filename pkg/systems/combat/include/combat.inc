@@ -26,8 +26,16 @@ function DistanceChecks(attacker, defender)
 endfunction
 
 function GetItemCFGInfo(mobile, wpn)
-	if ( mobile.IsA(POLCLASS_NPC) && wpn.objtype == 0x1F020 )
-		return GetNpcRandomAttack(mobile);
+	if ( mobile.IsA(POLCLASS_NPC) )
+		var to_return := GetNpcRandomAttack(mobile);
+      if (wpn.objtype != 0x1F020)
+         var wpn_elem := GetItemDescriptor(cint(wpn.objtype));
+         wpn_elem.hitbonus := to_return.hitbonus;
+         wpn_elem.dicedmg := to_return.dicedmg;
+         // print(wpn_elem);
+         return wpn_elem;
+      endif
+      return to_return;
 	endif
    
 	var item_cfg2	:= ReadConfigFile(":*:itemdesc");

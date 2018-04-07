@@ -40,7 +40,7 @@ program Merchant()
    //printtextabove(me, "vai inicializr");
    InitializeSettings();
 
-   InitializeNpc(me);
+   Setup(me);
    set_critical(0);
    SetWarMode( 0 );
    ev := os::wait_for_event(0);
@@ -91,7 +91,9 @@ program Merchant()
                 break;
             SYSEVENT_SPEECH:
                if (CheckLineOfSight(me, ev.source))
+                  if (!isBehind(ev.source, me.x, me.y))
                   HandleSpeech(ev);
+                  endif
                endif
                break;
             EVID_DOOBJECTIVE:
@@ -272,6 +274,33 @@ function DblClickScript(event)
    endif
 endfunction
 
+function Setup(me)
+   var npc_cfg     := ReadConfigFile(":*:npcdesc")[me.my_template()];
+   npccfgfile := npc_cfg;
+
+   if (!GetObjProperty(me, "started"))
+      var rndint := RandomInt(3);
+      if (GetObjProperty(me, "forcesex"))
+         rndint := GetObjProperty(me, "forcesex");
+      endif
+      if (rndint == 2)
+         me.objtype := me.objtype+1;
+         me.graphic := me.graphic+1;
+         me.trueobjtype := me.objtype+1;
+         me.gender := 1;
+      endif
+      SetupColor(me);
+      SetupEquip(me);
+      SetupName(me);
+      SetObjProperty(me, "DaysOfService", polcore().systime);
+      SetObjProperty(me, "started", 1);
+   endif
+
+   if ( !me.backpack )
+      var new_pack := CreateItemAtLocation(me.x, me.y, me.z, "backpack", 1);
+      EquipItem(me, new_pack);
+   endif
+endfunction
 
 // function InitScript(params)
 //     var npc := params[1];

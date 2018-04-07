@@ -97,6 +97,7 @@ function DismissNPC(guild, npc_i, npc := 0)
 
    npc.Disable("invul");
    SetObjProperty(npc, "GuardKill", 1);
+   SetObjProperty(npc, "NoCorpse", 1);
    ApplyRawDamage(npc, 500);
 endfunction
 
@@ -114,9 +115,11 @@ function ContractNPC(guild, npc_i, who, loc)
    if (!template) return; endif
 
 	var agent := CreateNPCFromTemplate(template.template, loc.x, loc.y, loc.z+2);
+   SetObjProperty(agent, "noequip", 1);
    SetObjProperty(agent, "guild", guild.guildid);
    SetObjProperty(agent, "contract_by", who.serial);
    SetObjProperty(agent, "conf_ref",npc_i);
+
 
    foreach item_ref in (template.equipment)
       sleepms(2);

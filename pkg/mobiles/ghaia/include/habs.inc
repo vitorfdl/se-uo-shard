@@ -428,7 +428,7 @@ function createMine(dmg, amount, is_fire := 0)
    for i := 1 to amount
       var item;
       while (!item)
-         var point := randomPlace(me, 6);
+         var point := randomPlace(me, 3);
          item := CreateItemAtLocation(point.x, point.y, me.z, 0xA094);
          SetObjProperty(item, "DamageDice", "{}d4".format(dmg));
          item.SetOwner(me);

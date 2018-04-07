@@ -16,7 +16,7 @@ include ":mounts:mounts";
 
 function StartScript(mobile, attacker := 0, level := 0)
    PlayerSpeedSlower(mobile, 1);
-   var mount_ref := 1;
+   var mount_ref := GetEquipmentByLayer(mobile, 0x19);
    var last_loc := array{mobile.x, mobile.y};
    while(mount_ref)
       if (CoordinateDistance(mobile.x, mobile.y, last_loc[1], last_loc[2]) <= 3)
@@ -25,7 +25,7 @@ function StartScript(mobile, attacker := 0, level := 0)
          PlayerSpeedSlower(mobile, 0);
       endif
 
-      if (RandomInt(101) <= 20)
+      if (RandomInt(101) <= 45)
          var sela := GetObjProperty(mount_ref, "sela_hp");
          if (sela)
             SetObjProperty(mount_ref, "sela_hp", sela-1);

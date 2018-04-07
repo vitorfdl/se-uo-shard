@@ -1,0 +1,141 @@
+
+use uo;
+use os;
+use cfgfile;
+use math;
+include "include/sounds";
+include ":gumps:gumps";
+include ":crafting:recipes";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include ":gumps:include/requestgump";
+include ":gumps:htmlgump";
+include "include/client";
+include "include/tileEffects";
+
+const GF_STDCOLOR := 1890;
+const MOEDAS      := 0xeed;
+var item_cfg      := ReadConfigFile(":*:itemdesc");
+var npc;
+var guild, above_merchant, is_guild_member;
+
+program HandleMerchant(params)
+   if( GetObjProperty(params.me, "guild"))
+      guild := FindGuild(GetObjProperty(params.me, "guild"));
+      above_merchant := (guild.getProp("leader") == params.source.serial || guild.getProp(params.source.serial).above_merchants || params.source.cmdlevel >= 3);
+      is_guild_member := guild.guildid == params.source.guildid;
+   else
+      above_merchant := params.source.cmdlevel >= 3;
+   endif
+
+	SetObjProperty(params.me, "#occupied", GetPid());
+	case (params.type)
+		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+      "SeeEvent": HandleSeeEvent(params.me, params.source);
+		"Default": return;
+	endcase
+
+	EraseObjProperty(params.me, "#occupied");
+endprogram
+
+function HandleSpeech(npc, player, text)
+	text := lower(text);
+   if (guild)
+      if (!InGuildRect(guild, npc))
+         return;
+      endif
+   endif
+
+   if (text["ferimento"] && text["grave"])
+      if (TS_GetCooldown(player, "alreadyhealed"))
+			PrintText(npc, "Parece que você já foi recentemente curado");
+			PrintText(npc, "Desculpe, não posso usar mais milagres em você agora");
+			PrintText(npc, "Retorne mais tarde");
+         return;
+      elseif (AP_GetVitalMaximumValue(player, "DP") >= AP_GetVital(player, "DP"))
+			PrintText(npc, "Você parece em perfeito estado");
+         return;
+      endif
+
+      PrintText(npc, "Poderia doar algumas moedas em troca dos meus serviços?");
+      PrintText(npc, "Acredito que 20 moedas bastariam");
+
+      if (cobrarDinheiro(player, 15))
+         PrintText(npc, "*colaca as mãos sobre a cabeça de {}*".format(player.name));
+         PrintText(npc, "Que Anar o abençoe e guie teu caminho");
+         changeGuildMoney(guild, 5);
+         PlayStationaryEffect(player.x, player.y, player.z, FX_SPARK_EFFECT, 0, 5);
+         PlaySoundEffect(player, SFX_SPELL_HEAL);
+         TS_StartCooldown(player, "alreadyhealed", 400);
+         AP_SetVital(player, "DP", AP_GetVital(player, "DP") +10);
+         SetName(player, player.name);
+      else
+         PrintText(npc, "Ora, isso é uma pena...");
+      endif
+   elseif ((text["cura"] || text["cuida"]) && text["feri"])
+      PrintText(npc, "Poderia doar algumas moedas em troca dos meus serviços?");
+      PrintText(npc, "Acredito que 5 moedas bastariam");
+      if (cobrarDinheiro(player, 5))
+         PrintText(npc, "*colaca as mãos sobre a cabeça de {}*".format(player.name));
+         PrintText(npc, "Que Anar o abençoe e guie teu caminho");
+         changeGuildMoney(guild, 2);
+         PlayStationaryEffect(player.x, player.y, player.z, FX_SPARK_EFFECT, 0, 5);
+         PlaySoundEffect(player, SFX_SPELL_HEAL);
+         HealFLS(player, AP_GetVitalMaximumValue(player, HITS));
+      else
+         PrintText(npc, "Ora, isso é uma pena...");
+      endif
+   endif
+endfunction
+
+function HandleSeeEvent(npc, player)
+   if (!GetCooldown(npc, "see_{}".format(player.serial)))
+      SetCooldown(npc, "see_{}".format(player.serial), 500);
+   else
+      return;
+   endif
+
+   var maxhit := cdbl(AP_GetVitalMaximumValue(player, HITS)) * (0.5);
+   if (cdbl(AP_GetVital(player, HITS)) <= maxhit)
+      PrintText(npc, "Você parece muito ferido, gostaria de uma benção?");
+   elseif (AP_GetVitalMaximumValue(player, "DP")-10 > AP_GetVital(player, "DP"))
+      if (TS_GetCooldown(player, "alreadyhealed"))
+         return;
+      endif
+
+      PrintText(npc, "Você parece muito ferido, gostaria de uma benção?");
+      SendSystemReport(player, "{} parece falar com você".format(npc.name), SSM_INFO);
+   endif
+endfunction
+
+function cobrarDinheiro(player, qty)
+	if (player.cmdlevel < 3)
+      return 1;
+   endif
+
+   while(player.connected)
+      SendSysMessageEx(player, "Escolha o montante de moedas para doar. (Pressione ESC para cancelar).", SSM_REQUEST);
+      var targ := Target(player);
+      if ( !targ )
+         SendSysMessageEx(player, "Cancelado.");
+         return 0;
+      elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+         SendSysMessageEx(player, "Não esta na sua bolsa.", SSM_FAIL);
+      elseif ( GetObjProperty(targ, "stealed") )
+         SendSysMessageEx(player, "Objeto foi roubado!", SSM_FAIL);
+      elseif ( targ.objtype == MOEDAS )
+         if ( !ReserveItem(targ) )
+            SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
+         else
+            if (!SubtractAmount(targ, qty))
+               SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
+            else
+               SendSysMessageEx(player, "Pagamento efetuado com sucesso!", SSM_FAIL);
+               return 1;
+            endif
+         endif
+      else
+         SendSysMessageEx(player, "Você deve indicar moedas de cobre.", SSM_FAIL);
+      endif
+   endwhile
+endfunction

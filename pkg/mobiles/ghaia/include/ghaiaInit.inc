@@ -98,6 +98,9 @@ function SetupName(mobile)
 endfunction
 
 function SetupEquip(who)
+   if (GetObjProperty(who, "noequip"))
+      return;
+   endif
 	var group;
 	var categ := GetConfigString(npccfgfile, "Equip");
 

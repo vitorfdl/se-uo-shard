@@ -230,3 +230,17 @@ function AddReport(guild, report)
 
    guild.setProp("reports", reports);
 endfunction
+
+function changeGuildMoney(guild, more_money)
+   if (typeof(guild) == "String")
+      guild := FindGuild(guild);
+   endif
+
+   if (!guild) return; endif
+   
+   var money := cint(guild.getProp("money"));
+
+   money += cint(more_money);
+
+   guild.setProp("money", money);
+endfunction

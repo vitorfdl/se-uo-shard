@@ -19,7 +19,7 @@ program character_control(who)
          if (who.Caracteristica("Clérigo de Anar"))
             tips += GetConfigStringArray(cfgfile["Clérigo"], "tip");
          endif
-         if (AP_GetTrueSkill(who, FURTO) >= 1 || AP_GetTrueSkill(who, SABOTAGEM) >= 1 ))
+         if (AP_GetTrueSkill(who, FURTO) >= 1 || AP_GetTrueSkill(who, SABOTAGEM) >= 1 )
             tips += GetConfigStringArray(cfgfile["Ladino"], "tip");
          endif
       endif
