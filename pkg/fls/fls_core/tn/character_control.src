@@ -7,14 +7,22 @@ include ":attributes:attributes";
 
 program character_control(who)
    var cfgfile := ReadConfigFile(":fls_core:tips");
-   var classe := GetObjProperty(who, "chardata").classe;
+   var tips := array{};
    while(who.connected)
       sleep(2200);
-      if (!classe)
-         classe := GetObjProperty(who, "chardata").classe;
+      if (tips.size() < 1)
+         tips := GetConfigStringArray(cfgfile["general"], "tip");
+         
+         if (who.isCaster())
+            tips += GetConfigStringArray(cfgfile["Mago"], "tip");
+         endif
+         if (who.Caracteristica("Clérigo de Anar"))
+            tips += GetConfigStringArray(cfgfile["Clérigo"], "tip");
+         endif
+         if (AP_GetTrueSkill(who, FURTO) >= 1 || AP_GetTrueSkill(who, SABOTAGEM) >= 1 ))
+            tips += GetConfigStringArray(cfgfile["Ladino"], "tip");
+         endif
       endif
-      var tips := GetConfigStringArray(cfgfile["general"], "tip");
-      tips += GetConfigStringArray(cfgfile[classe], "tip");
       SendSysMessageEX(who, "Você sabia? {}".format(tips.randomentry()), SSM_INFO);
 
 		RecalcVitals(who);

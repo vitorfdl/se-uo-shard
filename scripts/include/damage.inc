@@ -262,12 +262,22 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	if (source && type != DMG_FORCED)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
+
 		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));
       var chance := 75;
       if (cleric_healing == source.serial)
          chance := 40;
       endif
 		if (cleric_healing && dmg >= 1 && Randomint(101) <= chance)
+         var bencao := GetObjProperty(source, "#bencaodivina");
+         if (bencao);
+            var mobs := CheckIfIsAlly(ListMobilesNearLocation(source.x, source.y, source.z, 2));
+            mobs.append(source);
+            foreach mob in mobs
+			      HealFLS(mob, Floor(dmg/2), source);
+            endforeach
+            return dmg;
+         endif
 		   var targ := SystemFindObjectBySerial(cleric_healing);
 			if (source != targ && Distance(source, targ) > 8 && targ.connected && !targ.dead)
 				targ := source;
