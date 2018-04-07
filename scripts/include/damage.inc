@@ -276,6 +276,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
             foreach mob in mobs
 			      HealFLS(mob, Floor(dmg/2), source);
             endforeach
+            EraseObjProperty(source, "#bencaodivina");
             return dmg;
          endif
 		   var targ := SystemFindObjectBySerial(cleric_healing);
