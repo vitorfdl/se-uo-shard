@@ -776,7 +776,7 @@ function Fight(opponent := 0)
       RunAwayFrom(fighting);
    endif
 
-   SetObjProperty(me, "#Casting");
+   SetObjProperty(me, "#Casting", 1);
    UseHabs(myhabilities);
    EraseObjProperty(me, "#Casting");
    wait_time := 0;
