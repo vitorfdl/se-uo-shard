@@ -11,6 +11,7 @@ exported function CanDie(mobile)
 
    if (mobile.npctemplate)
       SetObjProperty(mobile, "serial", mobile.serial);
+      SetObjProperty(mobile, "graphic", mobile.graphic);
    endif
 
 	if (GetObjProperty(mobile, "morrendo") == 1)

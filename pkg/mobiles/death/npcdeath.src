@@ -86,9 +86,11 @@ program core_npcDeath(params)
 	TS_Death(corpse); // Will still get the PID from the corpse.
 
 	var corpse_name := corpse.desc;
+	SetObjProperty(corpse, "corpsename", corpse_name);
+	corpse_name["A corpse of "] := "";
+	SetName(corpse, "corpo de {}".format(corpse_name));
 	SetObjProperty(corpse, "originalname", corpse_name);
-	corpse_name["A corpse of"] := "corpo de";
-	SetName(corpse, corpse_name);
+	SetCooldown(corpse, "resurrect", 200);
 	
 	var template := GetObjProperty(corpse, "npctemplate"); // Set by the core.
 	var npc_cfg := NPC_GetNPCConfig(template);

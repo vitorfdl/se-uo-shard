@@ -6,7 +6,6 @@ var vetements;
 var templt;
 
 function SetupAmmo(mobile)
-
 	if ( npccfgfile[mobile.my_template()].MissileWeapon )
 		var weapon := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, npccfgfile[mobile.my_template()].MissileWeapon, 1, mobile.realm);
 		weapon.quality := 0.6;

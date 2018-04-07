@@ -113,6 +113,18 @@ function AddPet(who, serial, pet_cost := 0)
    else
       who.followers := who.followers + pet_cost;
    endif
+
+   pet.SetMaster(who);
+         
+   SetObjProperty(pet, "owner", who.serial);
+   SetObjProperty(pet, "name", pet.name);
+   
+   if ( !GetObjProperty(pet, "script") )
+      SetObjproperty(pet, "script", pet.script);
+   endif
+      
+   pet.script := ":ghaia:follower";
+   RestartScript(pet);
 	pet.InitPetProperties(0);
 endfunction
 

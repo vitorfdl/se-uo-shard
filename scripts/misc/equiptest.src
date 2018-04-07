@@ -15,6 +15,7 @@ program EquipTest(mobile, item, start_up)
 		return 1;
 	elseif ( mobile.npctemplate )
 		// NPCs can wear anything
+      SetObjProperty(item, "EquippedOn", mobile.serial);
 		return 1;
 	elseif ( item.isa(POLCLASS_CONTAINER) )	
 		// Makes backpacks always equippable.

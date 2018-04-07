@@ -19,7 +19,7 @@ program textcmd_ResGump(who)
 	if ( who.dead )
 		targ := who;
 	else
-		targ := Target(who);
+      targ := Target(who);
       if (GetObjproperty(targ, "npctemplate"))
          return ghaiaRessurect(targ);
 		elseif ( targ.IsA(POLCLASS_CORPSE) && !GetObjproperty(targ, "npctemplate"))
@@ -62,7 +62,6 @@ program textcmd_ResGump(who)
 		endif
 		LogToFile(":fls_core:ress.log", "Detalhes... Morto: "+morto+"... DeathPoints: "+dpoints+"... Assassinado: "+assassinado, LOG_DATETIME);
 	endif
-   Detach();
 	KataWakeUp(targ, targ.GetCorpse());
 	EraseObjProperty(targ, "morto");
 endprogram

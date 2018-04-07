@@ -4,11 +4,9 @@ include "include/say";
 
 function ghaiaRessurect(targ, notame := 0)
 	var npc := CreateNpcFromTemplate( GetObjProperty(targ, "npctemplate"), targ.x, targ.y, targ.z, 0, targ.realm);
-	npc.script := ":ghaia:follower";
 	RestartScript(npc);
-	CopyProps(targ, npc);
 	var ownerserial := GetObjProperty(targ, "owner");
-	var owner := SystemFindObjectBySerial(ownerserial);
+	var owner := SystemFindObjectBySerial(ownerserial, SYSFIND_SEARCH_OFFLINE_MOBILES);
 	if (!owner)
 		destama(npc.serial);
 	else
@@ -17,15 +15,45 @@ function ghaiaRessurect(targ, notame := 0)
 			destama(npc.serial);
 		else
 			AddPet(owner, npc.serial);
+	      npc.script := ":ghaia:follower";
 		endif
 	endif
    
+   if ( !npc.backpack )
+      var new_pack := CreateItemAtLocation(npc.x, npc.y, npc.z, "backpack", 1);
+      EquipItem(npc, new_pack);
+   endif
+
+	CopyProps(targ, npc);
+   RestartScript(npc);
+   SetName(npc, GetObjProperty(npc, "originalname"));
+
+   Detach();
+   var serialC := cint(GetObjProperty(targ, "serial"));
+	foreach item in EnumerateItemsInContainer(targ)
+		if (item.container == targ)
+			MoveObjectToLocation(item, npc.x, npc.y, npc.z, npc.realm);
+			MoveItemToContainer(item, npc.backpack);
+			if ( CInt(GetObjProperty(item, "EquippedOn")) == serialC )
+				if ( !EquipItem(npc, item) )
+					EraseObjProperty(item, "EquippedOn");
+				endif
+			endif
+		endif
+	endforeach
+
+   npc.color := targ.color;
+   npc.truecolor := targ.color;
+   npc.graphic := GetObjProperty(npc, "graphic");
+
 	DestroyItem(targ);
-	SetCooldown(npc, "resurrect", 180);
 	var skills := GetObjProperty(npc, "petskills");
 	foreach skill in (skills.keys())
 		AP_SetTrueSkill(npc, skill, skills[skill]);
 	endforeach
+
+   EraseObjProperty(npc, "GuardKill");
+   EraseObjProperty(npc, "morto");
 endfunction
 
 function ghaiaAttack(who, npc)
