@@ -6,11 +6,11 @@ include ":tn:equipment";
 
 program UnequipTest(mobile, item)
 	var retval := 1;
-
+   var equipmods := GetObjProperty(item, "equip");
 	if ( (mobile.frozen) || (mobile.paralyzed))
 		SendSysMessageEx(mobile, "Você esta incapaz de se mover para desequipar isso.");
 		retval := 0;
-	elseif ("cursed" in (GetObjProperty(item, "equip")) || GetObjProperty(item, "#no_unequip"))
+	elseif (equipmods && "cursed" in (equipmods.keys()) || GetObjProperty(item, "#no_unequip"))
 		retval := 0;
 	endif
 
