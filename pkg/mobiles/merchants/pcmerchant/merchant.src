@@ -190,12 +190,9 @@ function SetupMerchant(npc, player)
 endfunction
 
 function SendItemView(npc, player)
-   var gump;
-   if (player.cmdlevel > 3 || above_merchant)
-      gump := StoreGumpView(npc, player);
-   else
-      gump := GetGumpView(npc, player);
-   endif
+   var gump := GetGumpView(npc, player);
+
+   gump := SetAboveLayer(npc, player, gump);
 
 	return GFSendGump(player, gump);
 endfunction
@@ -203,13 +200,44 @@ endfunction
 function GetGumpView(npc, player)
    var gump := GetMerchantGump(npc);
    if (!gump)
-      gump := StoreGumpView(npc, player, 1);
+      gump := StoreGumpView(npc, player);
    endif
 
    return gump;
 endfunction
 
-function StoreGumpView(npc, player, force_store := 0)
+function SetAboveLayer(npc, player, gump)
+   var items_sold := GetItemsSoldList(npc);	
+	var i := 1;
+	var x := 48;
+
+	foreach serial in items_sold
+		var cost_info := GetItemSoldInfo(npc, serial);
+		var item      := cost_info[2];
+		cost_info     := cost_info[1];
+
+		var pos := Floor(_serial_iter / 5.1);
+		if (_serial_iter % 5 == 1)
+			x := 48;
+		endif
+		var y := 66 + (pos * 170);
+
+      if ((player.cmdlevel >= 3 || above_merchant))
+         var vendor_name := GetPlayerNameBySerial(cost_info.seller);
+         GFHTMLArea(gump, x+10, y+35, 110, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(vendor_name));
+      endif
+
+      if ((cost_info.seller == player.serial || above_merchant))
+         GFAddButton(gump, x+96, y+116, 0x9C4F, 0x9C4F, GF_CLOSE_BTN, 90000+cint(serial));
+      endif
+		x += 140;
+      sleepms(2);
+   endforeach
+
+   return gump;
+endfunction
+
+function StoreGumpView(npc, player)
 	var npc_type := GetObjProperty(npc, "vendor_type");
 	if (!npc_type)
 		npc_type := "Vendedor";
@@ -265,14 +293,6 @@ function StoreGumpView(npc, player, force_store := 0)
 		GFAddButton(gump, x+1, y+132, 40023, 40023, GF_CLOSE_BTN, serial);
 		GFTooltipText(gump, "Comprar");
 
-		if ((player.cmdlevel >= 3 || above_merchant) && !force_store)
-			var vendor_name := GetPlayerNameBySerial(cost_info.seller);
-  			GFHTMLArea(gump, x+10, y+35, 110, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(vendor_name));
-		endif
-		if ((cost_info.seller == player.serial || above_merchant) && !force_store)
-			GFAddButton(gump, x+96, y+116, 0x9C4F, 0x9C4F, GF_CLOSE_BTN, 90000+cint(serial));
-		endif
-
   		GFHTMLArea(gump, x+20, y+1, 90, 20, "<BASEFONT size=4 color=#FFFFFF><center>{}".format(item.desc));
       GFTooltipText(gump, "{}".format(item.desc));
 		GFTilePic(gump, x+42, y+75, item.graphic, 0); //objtype
@@ -308,9 +328,7 @@ function StoreGumpView(npc, player, force_store := 0)
 		GFTextLine(gump, 305, 300, 1051, "Nenhum item a venda!"); //desc
 	endif
 
-	if (player.cmdlevel < 3 && !above_merchant && !force_store)
-      SetMerchantGump(merchant, gump)
-   endif
+   SetMerchantGump(npc, gump);
 
    return gump;
 endfunction
@@ -359,7 +377,7 @@ function removeItemMerchant(npc, player, input)
    if (return_amt >= 1)
       CreateItemInBackPack(player, cost.cost_type, return_amt);
    endif
-   StoreGumpView(npc, player, 1);
+   StoreGumpView(npc, player);
 endfunction
 
 function DoPurchase(npc, player, input)
@@ -448,7 +466,7 @@ function DoPurchase(npc, player, input)
 	CreateItemInBackpackFromTemplate(player, selling);
    SetMerchantLog(npc, player.name, selling.desc, GetPlayerNameBySerial(cost.seller), cost_amnt);
    PlaySoundEffectPrivate( player, 0x37, player ); //some gold
-   StoreGumpView(npc, player, 1);
+   StoreGumpView(npc, player);
 endfunction
 
 function ChooseAmt(player, amount, lote)
@@ -634,7 +652,7 @@ function AddItemToSell(npc, player, item)
 		   PrintText(npc, "Tudo certo. Colocarei seu item a venda.");
       endif
 		SendSysMessageEx(player, "O item foi adicionado com sucesso.", SSM_FAIL);
-      StoreGumpView(npc, player, 1);
+      StoreGumpView(npc, player);
 		return 1;
 	endif
 

@@ -11,6 +11,7 @@ include ":gumps:yesno";
 include "include/client";
 include "include/arrays";
 include ":combat:hitscripts";
+include ":loot:include/lootParser";
 
 var resist_types := array{"Veneno", "Fogo", "Eletricidade", "Gelo", "Perfuração", "Corte", "Contusão", "Strength", "Dexterity", "Intelligence"};
 
@@ -207,7 +208,11 @@ function CreateBossStructGump(who, byref boss)
 		var i := 0;
 		foreach lootinfo in (boss.loot)
 			GFAddButton( chargump, cx_pos, y_pos+43+y, 2103, 2104, 1, 11+i);
-			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1935, " {} [{}%] [E: {}] ".format(lootinfo.item.desc, lootinfo.chance, cint(lootinfo.skinning)));
+         var itemname := lootinfo.item.desc;
+         if (lootinfo.by_group)
+            itemname := lootinfo.by_group;
+         endif
+			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1935, " {} [{}%] [E: {}] ".format(itemname, lootinfo.chance, cint(lootinfo.skinning)));
 			y += 18;
 			i += 1;
 		endforeach
@@ -320,7 +325,12 @@ function CreateBossStructGump(who, byref boss)
 				endif
 				SendSysMessageEx(who, "Você criou o item na sua mochila."); 
 			elseif (opt == "Inverter")
-            boss.loot[index].skinning := cint(boss.loot[index].skinning) * -1;
+            if (cint(boss.loot[index].skinning) == 0)
+               boss.loot[index].skinning := 1;
+            else
+               boss.loot[index].skinning := 0;
+
+            endif
 			elseif (opt == "Alterar Chance")
 				boss.loot[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", ""+cint(boss.loot[index].chance), 1));
 			endif 
@@ -340,7 +350,7 @@ function CreateBossStructGump(who, byref boss)
                   break;
                endif
                foreach glist in (output[1])
-                  var loot := struct{
+                  var lootinfo := struct{
                      "by_group":= glist,
                      "rate":= output[2],
                      "chance":= cint(output[3]),
@@ -507,7 +517,7 @@ function SetBoss(npc, boss)
 		EquipItem(npc, backpack);
 	endif
 
-   var skinning_info = array{};
+   var skinning_info := array{};
    foreach loot in (boss.loot)
       if(loot.by_group)
          Loot_Generate(npc.backpack, loot.by_group, loot);
@@ -516,7 +526,7 @@ function SetBoss(npc, boss)
       elseif( RandomDiceRoll("1d100") <= loot.chance)
          var item := CreateItemAtLocationFromTemplate(npc.x, npc.y, npc.z, _DEFAULT_REALM, loot.item );
          MoveItemToContainer(item, npc.backpack);
-    		theitem.movable := 1;
+    		item.movable := 1;
       endif
       sleepms(2);
    endforeach
