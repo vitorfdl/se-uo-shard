@@ -62,7 +62,7 @@ function fk(me, plank)
   var mykeys := EnumerateItemsInContainer(me.backpack);
   foreach key in mykeys
 	if ( (key.objtype >= KEYSTART ) && (key.objtype <= KEYEND) && (key.objtype != KEYRING ) )
-	  keylockid := GetObjProperty( key, "lockid" );
+	  keylockid := GetObjProperty( key, "LockId" );
 	  if ( (keylockid) && (keylockid == doorlockid) )
 		return 1;
 	  endif

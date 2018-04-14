@@ -13,7 +13,7 @@ program useplank(mob, plank)
 
    if(mob.multi.serial == plank.multi.serial)
       TimedOpenClose(plank);
-   elseif((FK(mob, plank) == 1) ||(!plank.locked))
+   elseif((FK(mob, plank) == 1) || (!plank.locked))
       if(!IsExtended(plank))
          TimedOpenClose(plank);
       else
