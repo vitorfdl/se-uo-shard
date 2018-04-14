@@ -22,7 +22,8 @@ program animateSword(params)
    var oldy := who.y;
    TS_StartTimer(targ, "noheal", 200);
    SetObjProperty(targ, "noheal", 1);
-   while (who.connected && Distance(who, targ) < 15 && !targ.dead)
+   SetObjProperty(who, "#Casting", 1);
+   while (who.connected && Distance(who, targ) < 15 && !targ.dead && !who.dead)
 		if (oldx != who.x || oldy != who.y)
 			break;
 		endif
@@ -39,6 +40,7 @@ program animateSword(params)
    endwhile
 
    TS_LowerDuration(targ, "noheal", -1);
+   EraseObjProperty(who, "#Casting");
 
 	return 1;
 endprogram

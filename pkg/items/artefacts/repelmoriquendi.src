@@ -2,6 +2,8 @@
 
 use uo;
 include ":attributes:attributes";
+include "include/utils";
+include "include/say";
 
 program doRepel(character, item)
    if (GetObjProperty(character, "#userepel"))
@@ -9,10 +11,10 @@ program doRepel(character, item)
       return;
    endif
 
-   Detach(charater);
-   SetObjPropery(character, "#userepel", 1);
+   Detach();
+   SetObjProperty(character, "#userepel", 1);
    for i := 0 to 20
-		var newmobiles := ListMobilesNearLocation( who.x ,who.y, who.z, 4);
+		var newmobiles := ListMobilesNearLocation( character.x ,character.y, character.z, 4);
 		
 		foreach mobile in newmobiles
 			if (mobile.npctemplate["moriquendi"])
@@ -25,5 +27,17 @@ program doRepel(character, item)
    endfor
 
    sleep(10);
-   EraseObjPropery(character, "#userepel");
+   EraseObjProperty(character, "#userepel");
 endprogram
+
+function ForceDirection(mobile, back := 0)
+   if (!mobile.my_template() || !mobile.my_template()["moriquendi"])
+      return;
+   endif
+
+   PushBack(mobile, 8, 100, back);
+   var ev := struct{
+		type := EVID_PEACEMADE
+   };
+   SendEvent(mobile, ev);
+endfunction

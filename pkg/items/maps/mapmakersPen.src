@@ -108,7 +108,7 @@ program use_MapmakersPen(who, tool)
 
 		var amt := 1;
 		var roll := rollAttrDice(who, INTELLIGENCE);
-		if (roll < diff)
+		if (roll < diff && who.cmdlevel <= 2)
 			return SendSysMessageEx(who, "Você não conseguiu mapear o local.", SSM_FAIL);
 		endif
 
@@ -288,7 +288,7 @@ function makeCartographyMap(who, map_objtype, amount, tool)
 					counter := counter + 1;
 					continue;
 				else
-					CheckToolWear (who, tool, craft_skill);
+					CheckToolWear(who, tool, craft_skill);
 					var props;
 					case(theitem.objtype)
 						0x6500:	props := array("local", who.x - 155, who.y - 150, who.x + 155, who.y + 150, 180, 180);

@@ -1750,7 +1750,10 @@
 0x4102 piratechest containers
 # 0x4103 - 0x4105 unused
 0x4106 piratechest2 containers
-# 0x4107 - 0x41c1 unused
+# 0x4107 - 0x4141 unused
+0x4142 mailbox containers
+0x4143 mailbox2 containers
+# 0x4144 - 0x41c1 unused
 0x41c2 [n/a] doors
 0x41c3 [n/a] doors
 0x41c4 [n/a] doors
