@@ -56,7 +56,7 @@ function PlankPartner( planktype )
 endfunction
 
 function fk(me, plank)
-  var doorlockid := GetObjProperty( plank, "lockid" );
+  var doorlockid := GetObjProperty( plank, "LockId" );
   var keylockid;
   var insidering;
   var mykeys := EnumerateItemsInContainer(me.backpack);
