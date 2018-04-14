@@ -52,7 +52,7 @@ function HandleSpeech(npc, player, text)
 			PrintText(npc, "Desculpe, não posso usar mais milagres em você agora");
 			PrintText(npc, "Retorne mais tarde");
          return;
-      elseif (AP_GetVitalMaximumValue(player, "DP") >= AP_GetVital(player, "DP"))
+      elseif (AP_GetVitalMaximumValue(player, "DP") <= AP_GetVital(player, "DP"))
 			PrintText(npc, "Você parece em perfeito estado");
          return;
       endif

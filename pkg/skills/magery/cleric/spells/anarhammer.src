@@ -41,11 +41,14 @@ program blessWater(info)
    fix_amount := dice_roll + fix_amount;
    if (targ.hp + fix_amount > targ.maxhp)
       targ.hp := targ.maxhp;
+      fix_amount := 0;
    else
       targ.hp := fix_amount+targ.hp;
    endif
 
-   targ.quality -= 0.1;
+   if(randomint(2) == 1)
+      targ.quality := targ.quality - (fix_amount/100);
+   endif
 
    SetName(targ, targ.desc);
 

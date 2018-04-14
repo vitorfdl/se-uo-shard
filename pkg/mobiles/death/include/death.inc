@@ -106,6 +106,10 @@ function KataWakeUp(ghost, corpse)
 	// else
 //		printtextabove(ghost, " " + GetHP(ghost));
 	HealDamage(ghost, Floor(GetHP(ghost)*0.4));
+   
+   if (GetObjProperty(corpse, "#healdeath"))
+	   HealDamage(ghost, Floor(GetHP(ghost)*0.4));
+   endif
 	// endif
 	SetVital(ghost, "stamina", CInt(GetVitalMaximumValue(ghost, "stamina")*0.5));
 	SetVital(ghost, "mana", CInt(GetVitalMaximumValue(ghost, "mana")*0.5));

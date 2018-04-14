@@ -11,22 +11,21 @@ include ":timedscripts:timedScripts";
 include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   var bonus_ca := cint(GetObjProperty(mobile, "bonus_ca"));
-   bonus_ca -= (level+2);
-   SetObjProperty(mobile, "bonus_ca", bonus_ca);
-   SendSysmessageEx(mobile, "Sua defesa foi rompida!", SSM_INFO);
-   PrintText(mobile, "Redução de Defesa", SSM_FAIL);
+   var dmgreduction := cint(GetObjProperty(mobile, "dmgreduction"));
+   dmgreduction -= level;
+   SetObjProperty(mobile, "dmgreduction", dmgreduction);
+   PrintText(mobile, "Redução de Dano", SSM_FAIL);
    return 1;
 endfunction
 
 function EndScript(mobile, level)
-   var bonus_ca := cint(GetObjProperty(mobile, "bonus_ca"));
-   bonus_ca += (level+2);
+   var dmgreduction := cint(GetObjProperty(mobile, "dmgreduction"));
+   dmgreduction += level;
 
-   if (bonus_ca <= 0)
-      EraseObjProperty(mobile, "bonus_ca");
+   if (dmgreduction <= 0)
+      EraseObjProperty(mobile, "dmgreduction");
    else
-      SetObjProperty(mobile, "bonus_ca", bonus_ca);
+      SetObjProperty(mobile, "dmgreduction", dmgreduction);
    endif
    return 1;
 endfunction

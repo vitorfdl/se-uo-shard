@@ -207,13 +207,13 @@ function CreateBossStructGump(who, byref boss)
 		var i := 0;
 		foreach lootinfo in (boss.loot)
 			GFAddButton( chargump, cx_pos, y_pos+43+y, 2103, 2104, 1, 11+i);
-			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1935, " " + lootinfo.item.desc + " [" + lootinfo.chance + "%]");
+			GFTextLine(chargump, cx_pos+10, y_pos+20+y, 1935, " {} [{}%] [E: {}] ".format(lootinfo.item.desc, lootinfo.chance, cint(lootinfo.skinning)));
 			y += 18;
 			i += 1;
 		endforeach
 	endif
 
-	y_pos := 450;
+	y_pos := 486;
    GFTextLine(chargump, x_pos, y_pos, 1051, "Combat Events: ");
 	GFAddButton( chargump, x_pos, y_pos+23, 2103, 2104, 1, 40);
 	if (boss.combatevent)
@@ -309,7 +309,7 @@ function CreateBossStructGump(who, byref boss)
 		//sendsysmessage(who, " " + input[0] + " " + boss.loot[index]);
 
 		if ( boss.loot[index] != error )
-			var opt := RadioGump(who, 180, 0, "Editar item", array{"Criar", "Deletar", "Alterar Chance", "Cancelar"});			
+			var opt := RadioGump(who, 180, 0, "Editar item", array{"Criar", "Deletar", "Alterar Chance", "Inverter Escapelar/Loot", "Cancelar"});			
 			if (opt == "Deletar")
 				boss.loot.erase(index);
 				SendSysMEssageEx(who, "O item foi removido.", SSM_INFO);
@@ -319,21 +319,48 @@ function CreateBossStructGump(who, byref boss)
 					SendSysMessageEx(who, "erro: " + retitem);
 				endif
 				SendSysMessageEx(who, "Você criou o item na sua mochila."); 
+			elseif (opt == "Inverter")
+            boss.loot[index].skinning := cint(boss.loot[index].skinning) * -1;
 			elseif (opt == "Alterar Chance")
 				boss.loot[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", ""+cint(boss.loot[index].chance), 1));
 			endif 
 		else
-			SendSysMessage(who, "Escolha o item do loot.");
-			var targ := Target(who);
-			if (targ)
-				if (!boss.loot)
-					boss.+loot := array;
-				endif
-				var lootinfo := struct;
-				lootinfo.+chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
-				lootinfo.+item := CreateItemTemplate(targ);				
-				(boss.loot).append(lootinfo);
-			endif
+         var t_option := RadioGump(who, 180, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
+         case (t_option)
+            "Adicionar lista":
+               var loot_cfg  := ReadConfigFile(":loot:config/loot-groups");
+               var loot_list := GetConfigStringKeys(loot_cfg);
+               var input_list := array{};
+               input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := 1, "checkbox" := loot_list});
+               input_list.append(struct{ "title" := "Quantos itens podem dropar?", "marked" := "1d4" });
+               input_list.append(struct{ "title" := "Qual a chance de drop?", "marked" := "60" });
+               input_list.append(struct{ "title" := "Forçar items em recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
+               var output := QuestionsGump(who, input_list);
+               if (!output)
+                  break;
+               endif
+               foreach glist in (output[1])
+                  var loot := struct{
+                     "by_group":= glist,
+                     "rate":= output[2],
+                     "chance":= cint(output[3]),
+                     "forceitem" := output[4] == "Sim"
+                  };
+                  (boss.loot).append(lootinfo);
+                  sleepms(2);
+               endforeach
+               break;
+            "Adicionar item":
+               SendSysMessage(who, "Escolha o item do loot.");
+               var targ := Target(who);
+               if (targ)
+                     var lootinfo := struct{};
+                     lootinfo.+chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
+                     lootinfo.+item := CreateItemTemplate(targ);				
+                     (boss.loot).append(lootinfo);
+               endif
+               break;		
+         endcase
 		endif
 	elseif ( input[0] >= 20 && input[0] <= 25)
 		var index := input[0] - 19;
@@ -480,21 +507,23 @@ function SetBoss(npc, boss)
 		EquipItem(npc, backpack);
 	endif
 
-	foreach iteminfo in (boss.loot)
-    		var amt := iteminfo.item.Amount;
-    		if (!amt)
-      			amt := 1;
-    		endif
-		//printtextabove(npc, " " + iteminfo);
-		if (RandomInt(100) < iteminfo.chance)
-			var theitem := CreateItemInBackpackFromTemplate(npc, iteminfo.item);
-			//printtextabove(npc, " " + theitem);
-    			theitem.movable := 1;
-    			if (theitem.amount == 1)
-        			Setname(theitem, iteminfo.item.desc);
-	    		endif
-		endif
-	endforeach
+   var skinning_info = array{};
+   foreach loot in (boss.loot)
+      if(loot.by_group)
+         Loot_Generate(npc.backpack, loot.by_group, loot);
+      elseif (loot.skinning)
+         skinning_info.append(loot);
+      elseif( RandomDiceRoll("1d100") <= loot.chance)
+         var item := CreateItemAtLocationFromTemplate(npc.x, npc.y, npc.z, _DEFAULT_REALM, loot.item );
+         MoveItemToContainer(item, npc.backpack);
+    		theitem.movable := 1;
+      endif
+      sleepms(2);
+   endforeach
+
+   if (skinning_info.size())
+      SetObjProperty(npc, "skinninginfo", skinning_info);
+   endif
 
 //printtextabove(npc, " " + boss.special);
 	if (boss.deathevent)

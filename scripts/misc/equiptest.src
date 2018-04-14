@@ -7,8 +7,6 @@ include "include/say";
 include ":timedscripts:timedScripts";
 
 program EquipTest(mobile, item, start_up)
-	var retval := 0;
-	
 	if ( start_up )
 		// POL is starting up, yes the mobile can equip it
       SetObjProperty(item, "EquippedOn", mobile.serial);
@@ -59,7 +57,6 @@ program EquipTest(mobile, item, start_up)
    endif
 
    SetObjProperty(item, "EquippedOn", mobile.serial);
-   //SetEquipmentMods(mobile, item);
    if (coverFace(item))
       if (!GetObjProperty(mobile, "realname"))
          SetObjProperty(mobile, "realname", mobile.name);

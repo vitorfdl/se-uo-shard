@@ -1,0 +1,29 @@
+//$Id: canRemove.src 386 2005-10-03 00:22:39Z muaddiblsd $
+
+use uo;
+include ":attributes:attributes";
+
+program doRepel(character, item)
+   if (GetObjProperty(character, "#userepel"))
+      SendSysMessageEx(character, "A reliquia está em cooldown", SSM_INFO);
+      return;
+   endif
+
+   Detach(charater);
+   SetObjPropery(character, "#userepel", 1);
+   for i := 0 to 20
+		var newmobiles := ListMobilesNearLocation( who.x ,who.y, who.z, 4);
+		
+		foreach mobile in newmobiles
+			if (mobile.npctemplate["moriquendi"])
+            ForceDirection(mobile, 0);
+			endif
+			sleepms(2);
+		endforeach
+
+      sleep(2);
+   endfor
+
+   sleep(10);
+   EraseObjPropery(character, "#userepel");
+endprogram

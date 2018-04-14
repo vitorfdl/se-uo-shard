@@ -20,6 +20,7 @@ program NPCMonitor()
    set_critical(1);
    SetWarMode( 0 );
    var is_golem := me.my_template()["golem"];
+   var is_eagle := me.my_template()["aguia"];
    me.enable( "invul" );
    var damage_transfer;
 
@@ -43,13 +44,14 @@ program NPCMonitor()
             endif
          endif
          wait_time := 0;
+      elseif(is_eagle)
       elseif (me.master && !GetObjProperty(me, "no_follow"))
          Follow(me.master);
       endif
 
       sleepms(2);
 
-      if (!TS_GetTimerInfo(me, "summon")) 
+      if (!TS_GetTimerInfo(me, "summon") && !TS_GetTimerInfo(me, "dynamickill")) 
          ApplyRawDamage(me, 200);
       endif
 
@@ -117,4 +119,28 @@ function NPC_Agarrar(dice, targ, difficulty)
    ApplyRawDamage(me, 10000);
    
    return 1;
+endfunction
+
+function DeliverMessage(who)
+   if (who.serial != GetObjProperty(me, "msg_player"))
+      return;
+   endif
+
+   var messages := GetMessages(who.serial);
+   var rem_indexes := array{};
+   foreach msg in messages
+      if (msg.urgent)
+         rem_indexes.append(_msg_iter);
+         CreateIteminBackpackFromTemplate(who, msg.item);
+      endif
+      sleepms(2);
+   endforeach
+
+   removeIndexes(messages, rem_indexes);
+   UpdateMessages(who.serial, messages);
+
+   me.Disable("invul");
+   SetObjProperty(me, "GuardKill", 1);
+   SetObjProperty(me, "NoCorpse", 1);
+   ApplyRawDamage(me, 500);
 endfunction

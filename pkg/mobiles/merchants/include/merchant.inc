@@ -16,6 +16,18 @@ function GetPaymentsDataElem(elem_name)
 	return data_elem;
 endfunction
 
+function SetMerchantGump(merchant, gump_text)
+	var data_elem := GetPaymentsDataElem(Hex(merchant.serial));
+   data_elem.SetProp("gump", gump_text);
+endfunction
+
+function GetMerchantGump(merchant)
+	var data_elem := GetPaymentsDataElem(Hex(merchant.serial));
+	var merchant_gump := data_elem.GetProp("gump");
+   
+   return merchant_gump;
+endfunction
+
 function AddPaymentForSeller(merchant, seller_serial, item_template, guild_prop := 0)
 	var data_elem := GetPaymentsDataElem(Hex(merchant.serial));
 	var my_payments := data_elem.GetProp("my_payments");

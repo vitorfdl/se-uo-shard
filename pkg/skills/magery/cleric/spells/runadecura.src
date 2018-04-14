@@ -16,21 +16,39 @@ program SpellScript(params)
 	var who := params[1];
    var targ := params[3];
 	params := 0; // No longer needed
-
-	var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x790d);
-	if (!item)
-		SendSysMessageEX(who, "Nao foi possivel criar a runa", SSM_FAIL);
-		return;
-	endif
-	item.graphic := 0x4880;
-	SetObjProperty(item, "spell", 1);
-	SetObjProperty(item, "criador", who.serial);
-	SetObjProperty(item, "timeexpire", polcore().systime+30);
-	
-	PrintText(item, "*Surge aos poucos*");
+   
    var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
 
-	var healed := RandomDiceRoll(MageDiceTable("B", level)) + 5;
+   var amount := 1 + (level / 2);
 
-	SetObjProperty(item, "healamount", healed);
+   for i := 1 to amount
+      if (!targ)
+         targ := TargetCoordinates(who);
+         if (!targ) break; endif
+      endif
+
+      if (!CheckLOSAt(who, targ.x, targ.y, targ.z+5));
+         SendSysMessageEx(who, "Não tem visão do local", SSM_FAIL);
+         amount +=1;
+         continue; 
+      endif
+
+      var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0x790d);
+      if (!item)
+         SendSysMessageEX(who, "Nao foi possivel criar a runa", SSM_FAIL);
+         return;
+      endif
+      
+      item.graphic := 0x4880;
+      SetObjProperty(item, "spell", 1);
+      SetObjProperty(item, "criador", who.serial);
+      SetObjProperty(item, "timeexpire", polcore().systime+30);
+      
+      PrintText(item, "*Surge aos poucos*");
+
+      var healed := RandomDiceRoll(MageDiceTable("B", level)) + 5;
+
+      SetObjProperty(item, "healamount", healed);
+      targ := 0;
+   endfor
 endprogram

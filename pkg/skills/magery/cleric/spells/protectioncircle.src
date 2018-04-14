@@ -38,7 +38,7 @@ program SpellScript(params)
 			break;
 		endif
 		
-		newmobiles := ListMobilesNearLocation( who.x ,who.y, who.z, 4);
+		newmobiles := ListMobilesNearLocation( who.x ,who.y, who.z, 5);
 		
 		foreach mobile in newmobiles
 			if (mobile.npctemplate["moriquendi"])
