@@ -22,7 +22,9 @@ program Tame(who)
       AddPet(who, targ.serial);
       targ.InitPetProperties(1);
 		targ.SetMaster(who);
-		
+		var petname := targ.name;
 		Run_Script_To_Completion(":death:npcdeath", {targ});
+		SetName(targ, petname);
+
 	endif
 endprogram

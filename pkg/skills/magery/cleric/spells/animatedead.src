@@ -89,7 +89,9 @@ program SpellScript(params)
 
 	undead.script := ":ghaia:follower";
 	RestartScript(undead);
-	Run_Script_To_Completion(":death:npcdeath", {undead});
+   var petname := undead.name;
+   Run_Script_To_Completion(":death:npcdeath", {undead});
+   SetName(undead, petname);
 	AddPet(who, undead.serial, 1);
 				
 	TS_StartTimer(undead, "summon", 240);
