@@ -20,7 +20,6 @@ program mining(who)
 		ores := elem.GetProp("Ores");
 		raridades := SplitWords(elem.GetProp("Rarity"));
 	endif
-   print(raridades);
 	var possiveis := {};
 	var raridade := {};
 	var i := 1;
@@ -40,7 +39,6 @@ program mining(who)
 		k := k + 1;
       sleepms(2);
 	endforeach
-   print(raridade);
 
 	var gump := GFCreateGump();
 	GFDisposable(gump, 0);

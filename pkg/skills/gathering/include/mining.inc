@@ -255,7 +255,6 @@ function DetermineOreType(who, where)
   endif
 
 	var i := 1;
-	ores := SplitWords(ores);
 	percent := SplitWords(percent);
 	var chance := RandomInt(1000);
 	var oreToSearch;
