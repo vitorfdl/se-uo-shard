@@ -112,12 +112,12 @@ function DoShutDown(countdown:=0)
 	for( countdown; countdown > 0; countdown:=countdown-1 )
 		var i := 2;
 		for (i:=2; i > 0; i:=i-1)
-			SVR_ReportText("System Message: POL restarting in "+countdown+" minutes.", SAVER_REPORT_ALL);
+			SVR_ReportText("Mensagem de Sistema: POL reiniciara em "+countdown+" minutos, para updates.", SAVER_REPORT_ALL);
 			sleep(30);
 		endfor
 	endfor
 	
-	SVR_ReportText("Shutting down now!", SAVER_REPORT_ALL);
+	SVR_ReportText("Reiniciando agora!", SAVER_REPORT_ALL);
 	sleep(3);
 	
 	ShutDown();
