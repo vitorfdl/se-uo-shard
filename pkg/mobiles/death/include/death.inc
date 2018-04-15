@@ -105,14 +105,17 @@ function KataWakeUp(ghost, corpse)
 	// 	SetVital(ghost, "hits", CInt(GetVitalMaximumValue(ghost, "hits")*0.9));
 	// else
 //		printtextabove(ghost, " " + GetHP(ghost));
-	HealDamage(ghost, Floor(cdbl(GetHP(ghost))*0.4));
+	AP_SetVital(ghost, HITS, 1);
+   print(Floor(cdbl(AP_GetVitalMaximumValue(ghost, HITS))*0.4));
+	HealFLS(ghost, Floor(cdbl(AP_GetVitalMaximumValue(ghost, HITS))*0.4), 0);
    
-   if (GetObjProperty(corpse, "#healdeath"))
-	   HealDamage(ghost, Floor(cdbl(GetHP(ghost))*0.4));
+   if (GetObjProperty(corpse, "#healdeath") || GetObjProperty(ghost, "#healdeath"))
+	   HealFLS(ghost, Floor(cdbl(AP_GetVitalMaximumValue(ghost, HITS))*0.4), 1);
+      EraseObjProperty(ghost, "#healdeath");
    endif
 	// endif
-	SetVital(ghost, "stamina", CInt(GetVitalMaximumValue(ghost, "stamina")*0.5));
-	SetVital(ghost, "mana", CInt(GetVitalMaximumValue(ghost, "mana")*0.5));
+	AP_SetVital(ghost, "stamina", CInt(GetVitalMaximumValue(ghost, "stamina")*0.5));
+	AP_SetVital(ghost, "mana", CInt(GetVitalMaximumValue(ghost, "mana")*0.5));
 	RecalcVitals(ghost);
 
 	DestroyItem(corpse);
