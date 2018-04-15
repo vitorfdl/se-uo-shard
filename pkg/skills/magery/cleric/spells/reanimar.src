@@ -67,7 +67,7 @@ program SpellScript(params)
 			if ( !GetObjProperty(targ, "owner") )
 				SendSysMessageEx(who, "O alvo esta morto.", SSM_FAIL);
 				curado := 0;
-			elseif (GetCooldown(targ, "resurrect") > 0 )
+			elseif (!GetCooldown(targ, "resurrect"))
 				if (!GetObjProperty(targ, "companheiro"))
 					SendSysMessageEx(who, "O alvo esta morto.", SSM_FAIL);
 					SetObjProperty(targ, "morto", 1);

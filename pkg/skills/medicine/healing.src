@@ -267,7 +267,7 @@ function HealNpcCorpse(mobile, targ)
 	name["corpo de "] := "";
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
-	if ( !Wait(mobile, 10) )
+	if ( !Wait(mobile, 5, 0, "*estabilizando*") )
 		SendSysMessageEx(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif

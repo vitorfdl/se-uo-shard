@@ -35,7 +35,7 @@ program clericPowerWords(who)
       cleric_list.Insert(_spell_iter, new_spell);
 
       if (new_spell.id != 1)
-         slots_used += spell.circle;
+         slots_used += cint(new_spell.circle);
       endif
 
       sleepms(2);

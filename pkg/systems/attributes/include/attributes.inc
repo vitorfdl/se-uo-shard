@@ -429,7 +429,7 @@ function AP_ListAttributesByType(type:="")
 	return list;
 endfunction
 
-function Wait(mobile, segundos)
+function Wait(mobile, segundos, play_act := 0, sayabove := 0)
 	if ( GetObjProperty(mobile, "#IsWaiting") > ReadGameClock() )
 		return 0; // Já está esperando
 	else
@@ -452,6 +452,18 @@ function Wait(mobile, segundos)
 			EraseObjProperty(mobile, "#IsWaiting");
 			return 0;
 		endif
+
+      if (play_act || sayabove)
+         if ( segundos % 2 == 0)
+            if (play_act)
+               PerformAction(mobile, play_act);
+            endif
+
+            if (sayabove)
+               PrintText(mobile, sayabove);
+            endif
+         endif
+      endif
 		segundos := segundos - 1;
 	endwhile
 
