@@ -28,7 +28,7 @@ program mining(who)
 	var skill := AP_GetSkill(who, WISDOM);
 	
 	foreach thing in ores 
-		var dif := DetermineMiningDifficulty( GetResourceId(thing) );
+		var dif := DetermineMiningDifficulty( thing );
 
 		if ( (skill + 10) >=  dif)
 			possiveis[i] := thing;
@@ -47,9 +47,10 @@ program mining(who)
 	
 	var y := 80;
 	i := 1;
+   var itemdesc := ReadConfigFile(":*:itemdesc");
 	foreach x in possiveis
-		GFTextLine(gump, 35, y, 1153, x);
-		GFTextLine(gump, 120, y, 1153, GetOreRarityDesc(cint(raridade[i])));
+		GFTextLine(gump, 35, y, 1153, itemdesc[Hex(x)].desc);
+		GFTextLine(gump, 180, y, 1153, GetOreRarityDesc(cint(raridade[i])));
 		GFAddButton(gump, 20, y+2, 2117, 2118, 1, 400+i);
 		i := i + 1;
 		y := y + 20;

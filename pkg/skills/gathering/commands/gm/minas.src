@@ -5,7 +5,7 @@ include ":gumps:gumps";
 include ":gumps:requestgump";
 include ":tn:tngumps";
 
-var arrayquestion := array{"ferro","estanho","cristal","adamantino","ouro","pedras","prata","arenito","marmore","diamante"};
+var arrayquestion := array{0x5001, 0x6300, 0x6990, 0x6992, 0x6451, 0x6453, 0x6455, 0x6457, 0x645A, 0x645C, 0x645E, 0x6460 };
 
 program configmining(who)
 	while(who.connected)
@@ -58,14 +58,21 @@ program configmining(who)
 			var gump2 := GFCreateGump(220, 300);
 			GFResizePic(gump2, 0,  0, 3600, 220, 200);
 			
-			GFTextLine(gump2, 45, 15, 2100, "Name: "+elem.getprop("Name"));
-			GFTextLine(gump2, 45, 35, 2100, "Ores: "+elem.getprop("Ores"));
-			GFTextLine(gump2, 45, 55, 2100, "Rariry: "+elem.getprop("Rarity"));
-			GFTextLine(gump2, 45, 70, 2100, "Rect: "+elem.getprop("Rect"));
-			GFTextLine(gump2, 45,  85, 2100, "Deletar  Mina ");
-			GFAddButton(gump2, 20, 87, 2117, 2118, 1, 100);
-			GFTextLine(gump2, 45, 100, 2100, "Editar Mina ");
-			GFAddButton(gump2, 20, 102, 2117, 2118, 1, 200);
+         var itemdesc := ReadConfigFile(":*:itemdesc");
+         var orenames := elem.getprop("Ores");
+         foreach fish in orenames
+            fish := itemdesc[fish].desc;
+         endforeach
+
+			GFTextLine(gump2, 30, 15, 2100, "Name: "+elem.getprop("Name"));
+			GFTextLine(gump2, 30, 35, 2100, "Rect: "+elem.getprop("Rect"));
+			GFTextLine(gump2, 30, 55, 2100, "Rarity: "+elem.getprop("Rarity"));
+			GFHTMLArea(gump2, 30, 72, 160, 70, "<BASEFONT color=#A1A5A2>"+", ".join(orenames), 0, 1);
+			
+			GFTextLine(gump2, 45,  140+10, 2100, "Deletar Spot");
+			GFAddButton(gump2, 20, 142+10, 2117, 2118, 1, 100);
+			GFTextLine(gump2, 45, 155+10, 2100, "Editar Spot");
+			GFAddButton(gump2, 20, 157+10, 2117, 2118, 1, 200);
 
 			var input2 := GFSendGump(who, gump2);
 			input2 := input2[0];
@@ -93,21 +100,40 @@ endprogram
 
 function SelectOres(who, oldores := 0)
 	var oreoption := array{};
+   var orechoices := dictionary{};
+   var itemdesc := ReadConfigFile(":*:itemdesc");
 	foreach question in arrayquestion
-		if (oldores[question])
-			oreoption.append(1);
-		else
-			oreoption.append(0);
-		endif
+      orechoices[itemdesc[question].desc] := question;
+      oreoption.append((question in oldores));
 		sleepms(5);
 	endforeach	
-	var selectedores := CheckBoxGump(who, 300, 100+cint(20*len(arrayquestion)), "Quais minerios deseja encontrar aqui?",  arrayquestion, oreoption);
-	var ores := selectedores[1];
-	selectedores.Erase(1);
+	var selectedores := CheckBoxGump(who, 300, 100+cint(20*len(arrayquestion)), "Quais Minérios deseja encontrar aqui?",  orechoices.keys(), oreoption);
+   var ores := array{};
 	foreach ore in selectedores
-		ores := ores + " " + ore;
+		ores.append(orechoices[ore]);
 	endforeach
-	
-	return ores;
 
+	return ores;
 endfunction
+
+
+// function SelectOres(who, oldores := 0)
+// 	var oreoption := array{};
+// 	foreach question in arrayquestion
+// 		if (oldores[question])
+// 			oreoption.append(1);
+// 		else
+// 			oreoption.append(0);
+// 		endif
+// 		sleepms(5);
+// 	endforeach	
+// 	var selectedores := CheckBoxGump(who, 300, 100+cint(20*len(arrayquestion)), "Quais minerios deseja encontrar aqui?",  arrayquestion, oreoption);
+// 	var ores := selectedores[1];
+// 	selectedores.Erase(1);
+// 	foreach ore in selectedores
+// 		ores := ores + " " + ore;
+// 	endforeach
+	
+// 	return ores;
+
+// endfunction

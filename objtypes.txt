@@ -1630,7 +1630,9 @@
 0x2d33 LongScimitar combat
 # 0x2d34 unused
 0x2d35 FeericMachete combat
-# 0x2d36 - 0x2d9c unused
+# 0x2d36 - 0x2d4e unused
+0x2d4f fruitcook food
+# 0x2d50 - 0x2d9c unused
 0x2d9d runebook magery
 # 0x2d9e - 0x2de2 unused
 0x2de3 OrnateElvenChair woodworking
@@ -1736,8 +1738,7 @@
 0x3d4c fishcook food
 0x3d4d meatcook food
 0x3d4e leavescook food
-0x3d4f fruitcook food
-# 0x3d50 - 0x3dd7 unused
+# 0x3d4f - 0x3dd7 unused
 0x3dd8 deerhead survival
 # 0x3dd9 - 0x4024 unused
 0x4025 gorgoyglechest containers
@@ -1794,7 +1795,9 @@
 # 0x4912 - 0x4b9d unused
 0x4b9e AnarAtarRobe womenswork
 0x4b9f SeredhTuraRobe womenswork
-# 0x4ba0 - 0x4d09 unused
+# 0x4ba0 - 0x4ba2 unused
+0x4ba3 merrycake food
+# 0x4ba4 - 0x4d09 unused
 0x4d0a valanecklace metalworking
 0x4d0b valanecklace2 metalworking
 # 0x4d0c - 0x5000 unused
@@ -1932,19 +1935,11 @@
 0x6216 portal walkon
 # 0x6217 - 0x62ff unused
 0x6300 IronOre gathering
-0x6301 AdamantiumOre gathering
-# 0x6302 - 0x6305 unused
-0x6306 DurangOre gathering
-0x6307 GalvornOre gathering
-0x6308 MithrilOre gathering
+# 0x6301 - 0x6308 unused
 0x6309 IronIngot gathering
-0x630a AdamantiumIngot gathering
-# 0x630b - 0x630d unused
+# 0x630a - 0x630d unused
 0x630e goldenIngot gathering
-# 0x630f unused
-0x6310 GalvornIngot gathering
-0x6311 MithrilIngot gathering
-0x6312 ArioOre gathering
+# 0x630f - 0x6312 unused
 0x6313 ArioIngot gathering
 # 0x6314 - 0x63ff unused
 0x6400 mapmakerspen1 cartography
@@ -1954,11 +1949,23 @@
 0x641e map_nonedit cartography
 # 0x641f - 0x644f unused
 0x6450 CopperOre gathering
-0x6451 ArgonilOre gathering
-0x6452 GromrilOre gathering
-# 0x6453 - 0x645f unused
-0x6460 ArgonilIngot gathering
-0x6461 GromrilIngot gathering
+0x6451 OnixOre gathering
+0x6452 OnixIngot gathering
+0x6453 VitriolOre gathering
+0x6454 VitriolIngot gathering
+0x6455 lazuriteOre gathering
+0x6456 lazuriteIngot gathering
+0x6457 bloodOre gathering
+0x6458 bloodIngot gathering
+# 0x6459 unused
+0x645a pirofitaOre gathering
+0x645b pirofitaIngot gathering
+0x645c sunOre gathering
+0x645d sunIngot gathering
+0x645e nevarriteOre gathering
+0x645f nevarriteIngot gathering
+0x6460 quartzoveuOre gathering
+0x6461 quartzoveuIngot gathering
 # 0x6462 - 0x6464 unused
 0x6465 CopperIngot gathering
 # 0x6466 - 0x64ff unused
@@ -2116,7 +2123,11 @@
 0x9e40 soschest containers
 # 0x9e41 - 0x9e80 unused
 0x9e81 anaraltar magery
-# 0x9e82 - 0x9f4d unused
+# 0x9e82 - 0x9f3e unused
+0x9f3f veuantigo womenswork
+# 0x9f40 - 0x9f46 unused
+0x9f47 cartola womenswork
+# 0x9f48 - 0x9f4d unused
 0x9f4e jackinthebox
 # 0x9f4f - 0x9ff7 unused
 0x9ff8 goldenchest containers

@@ -243,56 +243,6 @@ function GetOreAmount(realm, x_pos, y_pos)
 	return CInt(amount);
 endfunction
 
-function GetResourceId(oreToSearch)
-
-	case (oreToSearch)
-		"ferro": return 0x6300; //TN USED
-		"estanho": return 0x6990; //TN USED		
-		"ouro": return 0x6305;
-		"cristal": return 0x6992;
-		"adamantino": return 0x6301;
-		"diamante": return 0x4079;
-		
-		/*"areia": return 0x6075;
-		
-		"argila": return 0x6074;
-		
-		"lithtan": return 0x6301;
-		
-		"helce": return 0x6302;
-		
-		"sinque": return 0x6303;
-		
-		"figin": return 0x6304;*/
-
-		
-		//"durang": return 0x6306;
-		
-		"galvorn": return 0x6307; //TN USED
-		
-		"mithril": return 0x6308; //TN USED
-
-		"argonil": return 0x6451; //TN USED
- 
-		//"gromril": return 0x6452; //TN USED
-
-		//"cobre": return 0x6450; //TN USED
-
-		"prata": return 0x6992; //TN USED
- 
-		
-		//"ario": return 0x6312;
-		
-		"pedras": return 0x5001;
-
-		"marmore": return 0x8850;
-
-		"arenito": return 0x8852;				
-	
-	endcase
-
-endfunction
-
 function DetermineOreType(who, where)
 	var cfg := ReadConfigFile(":gathering:config/miningspots");
 	var ores := cfg[where].Ores;
@@ -334,13 +284,12 @@ function DetermineOreType(who, where)
 	endif
 	
 	if ( chance <= Cint(percent[i]))
-		var oreid := GetResourceId(oreToSearch);
 		//var oreid := GetResourceId("ario");
-		if (oreid == 0x6666)
+		if (oreToSearch == 0x6666)
 			return 0x5001;
 		endif
 
-		return oreid;
+		return oreToSearch;
 	else
 		SendSysMessageEx(who, "Você não conseguiu achar o minerio que procura.", SSM_FAIL);
 		return 999;
@@ -356,14 +305,23 @@ function DetermineMiningDifficulty(oretype)
 		0xee99: return 0;  //calcario
 
 		// 0x4079: return 10; //diamantemagico
-		0x6300: return 14;  //iron ore
-		0x6992: return 80; //cristal
-		0x6301: return 21; //adamant
+		0x6300: return 10;  //iron ore
 
-		0x6992: return 19; //prata 
- 		0x6990: return 17; //estanho 
+ 		0x6990: return 12; //estanho 
+ 		0x6451: return 14; //onix
+		0x6992: return 15; //prata 
+ 		0x6453: return 15; //vitriol 
 
-		0x6075:  return 5; //areia
+ 		0x645E: return 17; //nevarrite
+ 		0x6455: return 17; //lazurite
+
+ 		0x6457: return 19; //blood
+ 		0x645A: return 19; //pirofita
+
+ 		0x645C: return 21; //sunore
+ 		0x6460: return 21; //quartzo
+
+		0x6075:  return 8; //areia
 		
 		0x6666: return 0; //id falso de pedra
 		0x8850: return 40; //marmore
