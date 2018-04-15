@@ -23,7 +23,6 @@ program mining(who)
    print(raridades);
 	var possiveis := {};
 	var raridade := {};
-	ores := SplitWords(ores);
 	var i := 1;
 	var k := 1;
 	
