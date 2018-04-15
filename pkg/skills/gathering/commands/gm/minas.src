@@ -89,7 +89,7 @@ program configmining(who)
             foreach fish in orenames
                fish := itemdesc[fish].desc;
             endforeach
-				var rarity := RequestGump(who, "Descreva a raridade para cada ore adicionado anteriormente  (de 0 a 999)", ",".join(ores), elem.getprop("Rarity"));
+				var rarity := RequestGump(who, "Descreva a raridade para cada ore adicionado anteriormente  (de 0 a 999)", ",".join(orenames), elem.getprop("Rarity"));
 				var rect :=  RequestGump(who, "Qual o rect da mina?","", elem.getprop("Rect"));
 			
 				elem.setprop("Name", nome);
