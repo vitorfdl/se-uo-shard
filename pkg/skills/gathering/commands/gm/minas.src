@@ -84,11 +84,15 @@ program configmining(who)
 				var nome := RequestGump(who, "Escolha o nome da mina", "",elem.getprop("Name"));
 				var ores := SelectOres(who, elem.getprop("Ores"));
 				
-				var rarity := RequestGump(who, "Descreva a raridade para cada ore adicionado anteriormente  (de 0 a 999)", "", elem.getprop("Rarity"));
+				elem.setprop("Ores", ores);
+            var orenames := ores;
+            foreach fish in orenames
+               fish := itemdesc[fish].desc;
+            endforeach
+				var rarity := RequestGump(who, "Descreva a raridade para cada ore adicionado anteriormente  (de 0 a 999)", ",".join(ores), elem.getprop("Rarity"));
 				var rect :=  RequestGump(who, "Qual o rect da mina?","", elem.getprop("Rect"));
 			
 				elem.setprop("Name", nome);
-				elem.setprop("Ores", ores);
 				elem.setprop("Rarity", rarity);
 				elem.setprop("Rect", rect);		
 			endif
@@ -104,9 +108,14 @@ function SelectOres(who, oldores := 0)
    var itemdesc := ReadConfigFile(":*:itemdesc");
 	foreach question in arrayquestion
       orechoices[itemdesc[question].desc] := question;
-      oreoption.append((question in oldores));
 		sleepms(5);
 	endforeach	
+
+   foreach choice in (orechoices.keys())
+      oreoption.append((orechoices[choice] in oldores));
+		sleepms(2);
+   endforeach
+
 	var selectedores := CheckBoxGump(who, 300, 100+cint(20*len(arrayquestion)), "Quais Minérios deseja encontrar aqui?",  orechoices.keys(), oreoption);
    var ores := array{};
 	foreach ore in selectedores
