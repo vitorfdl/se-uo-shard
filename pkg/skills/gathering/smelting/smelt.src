@@ -149,7 +149,7 @@ function SmeltOre(who, item, ore)
     0x645C:  ingot := 0x645D; //
     0x645E:  ingot := 0x645F; //
     0x6460:  ingot := 0x6461; //
-   //  0x6990:  ingot := 0x6991; //estanho*
+    0x6990:  ingot := 0x6991; //estanho*
     0x6992:  ingot := 0x6993; //prata
 	
 	// //novos ores
