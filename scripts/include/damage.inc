@@ -257,6 +257,16 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
    endif
    
 	DisplayDamage(defender, cint(dmg), source);
+
+   var barrier := cint(GetObjProperty(who, "#barrier"));
+   if (barrier > 0)
+      barrier -= cint(dmg);
+      dmg := 0;
+      if (barrier < 0)
+         dmg := barrier * -1;
+      endif
+   endif
+
 	ApplyRawDamage(defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 	
 	if (source && type != DMG_FORCED)
