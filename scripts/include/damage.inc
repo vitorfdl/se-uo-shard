@@ -49,7 +49,7 @@ function SelectAttribute(attacker, attacker_weapon)
 		if (attribute == "Versatil")
 			var dex := AP_GetTrueStat(attacker, DEXTERITY);
 			var str := AP_GetTrueStat(attacker, STRENGTH);
-			if (str > dex)
+			if (str < dex)
 				attribute := DEXTERITY;
 			else
 				attribute := STRENGTH;

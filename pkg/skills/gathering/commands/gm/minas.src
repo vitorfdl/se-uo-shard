@@ -107,7 +107,7 @@ function SelectOres(who, oldores := 0)
       oreoption.append((question in oldores));
 		sleepms(5);
 	endforeach	
-	var selectedores := CheckBoxGump(who, 300, 100+cint(20*len(arrayquestion)), "Quais Minérios deseja encontrar aqui?",  orechoices.keys(), oreoption);
+	var selectedores := CheckBoxGump(who, 300, 100+cint(20*len(arrayquestion)), "Quais Minérios deseja encontrar aqui?", orechoices.keys(), oreoption);
    var ores := array{};
 	foreach ore in selectedores
 		ores.append(orechoices[ore]);
