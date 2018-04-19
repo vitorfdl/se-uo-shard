@@ -14,9 +14,10 @@ include "include/say";
 include ":magery:tnmagery";
 include ":attributes:attributes";
 
-set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
 program TimerControl(mobile)
+   set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
+   set_script_option(SCRIPTOPT_NO_RUNAWAY, 1);
 	if ( !mobile.IsA(POLCLASS_MOBILE) && !mobile.isA(POLCLASS_NPC) )
 		mobile := mobile[1];
 	endif
