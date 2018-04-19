@@ -255,7 +255,6 @@ function DetermineOreType(who, where)
   endif
 
 	var i := 1;
-	ores := SplitWords(ores);
 	percent := SplitWords(percent);
 	var chance := RandomInt(1000);
 	var oreToSearch;
@@ -308,18 +307,18 @@ function DetermineMiningDifficulty(oretype)
 		0x6300: return 10;  //iron ore
 
  		0x6990: return 12; //estanho 
- 		0x6451: return 14; //onix
-		0x6992: return 15; //prata 
- 		0x6453: return 15; //vitriol 
+ 		0x6451: return 13; //onix
+		0x6992: return 14; //prata
+ 		0x6453: return 14; //vitriol 
 
- 		0x645E: return 17; //nevarrite
- 		0x6455: return 17; //lazurite
+ 		0x645E: return 15; //nevarrite
+ 		0x6455: return 15; //lazurite
 
- 		0x6457: return 19; //blood
- 		0x645A: return 19; //pirofita
+ 		0x6457: return 17; //blood
+ 		0x645A: return 17; //pirofita
 
- 		0x645C: return 21; //sunore
- 		0x6460: return 21; //quartzo
+ 		0x645C: return 18; //sunore
+ 		0x6460: return 18; //quartzo
 
 		0x6075:  return 8; //areia
 		

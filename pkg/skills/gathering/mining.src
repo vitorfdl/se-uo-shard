@@ -13,6 +13,7 @@ program mining(who)
 	var cfg := ReadconfigFile(":gathering:config/miningspots");
 	var ores := cfg[where].Ores;
 	var raridades := SplitWords(cfg[where].Rarity);
+
 	if (ores == error)
 		var df := opendatafile(":gathering:miningspots");
 		var elem := df.FindElement(where);
@@ -21,11 +22,10 @@ program mining(who)
 	endif
 	var possiveis := {};
 	var raridade := {};
-	ores := SplitWords(ores);
 	var i := 1;
 	var k := 1;
 	
-	var skill := AP_GetSkill(who, WISDOM);
+	var skill := AP_GetStat(who, WISDOM, RETURN_BONUS) + AP_GetTrueSkill(who, EXTRACAO);
 	
 	foreach thing in ores 
 		var dif := DetermineMiningDifficulty( thing );
@@ -35,6 +35,7 @@ program mining(who)
 			raridade[i] := raridades[k];
 			i := i + 1;
 		endif
+
 		k := k + 1;
       sleepms(2);
 	endforeach

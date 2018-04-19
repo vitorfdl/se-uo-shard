@@ -68,7 +68,7 @@ var gump := GFCreateGump();
    var input := GFSendGump(who, gump);
    var index := input[0];
    
-   if (index >= 200 && index <= 280)
+   if (index >= 200 && index <= 400)
       var mobile := char_list[index-200];
       var acc_name := accounts[index-200];
       var acc := FindAccount(acc_name);

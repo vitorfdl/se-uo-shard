@@ -20,6 +20,7 @@ function isBardable(character, thetarget, bard_skill, bard_difficulty)
 endfunction
 
 function BardNotes(who,item,notas,notas2,tempo,letra,what,emocao)
+   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    if (randomint(5) == 1)
       PrintText(who, "*Compondo uma musica*");
    endif
@@ -246,52 +247,63 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
       return 0;
 	endif
 
-	// if( Cint(GetObjProperty(who, "#emocaoMusic")) > ReadGameClock() )
-	// 	SendSysMessage(who, "Você deve esperar um momento antes de tocar uma musica emocao novamente.",3,38);
-	// 	return 0;
-	// endif
+	if( Cint(GetObjProperty(who, "#emocaoMusic")) > ReadGameClock() )
+		SendSysMessage(who, "Você deve esperar um momento antes de tocar uma musica emocao novamente.",3,38);
+		return 0;
+	endif
+
+   var total := notas.size() + notas2.size();
+   var max_allowed := AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) * 15;
+   if (max_allowed < 5)
+      max_allowed := 5;
+   endif
+
+   //REDUCAO PARA MADEIRAS DIFERENTES
+   case(Cstr(item.color))
+      "2307": max_allowed += 20;
+      "2109": max_allowed += 20;
+      "2312": max_allowed += 10;
+      "2317": max_allowed += 10;
+      "2117": max_allowed += 4;
+   endcase
+
+   //REDUCAO PARA INSTRUMENTOS EXCEP
+   case(Cstr(item.quality))
+      "1.1": max_allowed += 10;
+      "1.2": max_allowed += 15;
+      "1.3": max_allowed += 20;
+      "1.4": max_allowed += 25;
+   endcase
+   
+   if (total > max_allowed)
+		SendSysMessageEx(who, "O máximo de nota que você pode tocar é {}".format(max_allowed),SSM_FAIL);
+		return 0;
+   endif
 		
       //DIFICULDADE PELO TANTO DE NOTAS
-		dif := 2 + cint(notas.size() / 2) + cint(notas2.size() / 2);
+		// dif := 2 + cint(notas.size() / 2) + cint(notas2.size() / 2);
 
-      //DIFICULDADE PELA VELOCIDADE
-		if (Cint(tempo) < 100) dif := (dif + 1);
-		elseif (Cint(tempo) < 200) dif := (dif + 2);		
-		elseif (Cint(tempo) < 400) dif := (dif + 3);
-		elseif (Cint(tempo) < 600) dif := (dif + 4);
-		endif
+      // //DIFICULDADE PELA VELOCIDADE
+		// if (Cint(tempo) < 100) dif := (dif + 1);
+		// elseif (Cint(tempo) < 200) dif := (dif + 2);		
+		// elseif (Cint(tempo) < 400) dif := (dif + 3);
+		// elseif (Cint(tempo) < 600) dif := (dif + 4);
+		// endif
 
-		var difskill := (dif / 2);
-
-		//REDUCAO PARA MADEIRAS DIFERENTES
-		case(Cstr(item.color))
-			"2307": dif := dif - 4;
-			"2109": dif := dif - 4;
-			"2312": dif := dif - 3;
-			"2317": dif := dif - 2;
-			"2117": dif := dif - 1;
-		endcase
-
-		//REDUCAO PARA INSTRUMENTOS EXCEP
-		case(Cstr(item.quality))
-			"1.1": dif := dif - 2;
-			"1.2": dif := dif - 3;
-			"1.3": dif := dif - 4;
-			"1.4": dif := dif - 5;
-		endcase
+		// var difskill := (dif / 2);
 
 		L := 1;	
 		case(item.graphic)
 			0x0eb1:  c := 0x49E; cs := 0x4A1; d := 0x4A3 ; ds := 0x4A5; e := 0x4A7; f := 0x4A9; fs := 0x4AB; g := 0x4AD; gs := 0x4AF; a := 0x498; ass := 0x49A; b := 0x49C; inst := "Harpa Grande";
 				  c2 := 0x49F; cs2 := 0x4A2; d2 := 0x4A4 ; ds2 := 0x4A6; e2 := 0x4A8; f2 := 0x4AA; fs2 := 0x4AC; g2 := 0x4AE; gs2 := 0x4B0; a2 := 0x499; ass2 := 0x49B; b2 := 0x49D; inst := "Harpa Grande";
 				  c3 := 0x4A0;
+
 			0x0eb2:  c := 0x3D1; cs := 0x3D4; d := 0x3D6 ; ds := 0x3D8; e := 0x3DA; f := 0x3DC; fs := 0x3DE; g := 0x3E0; gs := 0x3E2; a := 0x3CB; ass := 0x3CD; b := 0x3CF; inst := "Harpa Pequena";
 				  c2 := 0x3D2; cs2 := 0x3D5; d2 := 0x3D7 ; ds2 := 0x3D9; e2 := 0x3DB; f2 := 0x3DD; fs2 := 0x3DF; g2 := 0x3E1; gs2 := 0x3E3; a2 := 0x3CC; ass2 := 0x3CE; b2 := 0x3D0;
 				  c3 := 0x3D3;
-			0x0eb3:  c := 0x405; cs := 0x408; d := 0x40A ; ds := 0x40D; e := 0x40F; f := 0x411; fs := 0x413; g := 0x415; gs := 0x417; a := 0x3FE; ass := 0x400; b := 0x402; inst := "Alaude";
-				  c2 := 0x406; cs2 := 0x409; d2 := 0x40B ; ds2 := 0x40E; e2 := 0x410; f2 := 0x412; fs2 := 0x414; g2 := 0x416; gs2 := 0x418; a2 := 0x3FF; ass2 := 0x401; b2 := 0x403;
-				  c3 := 0x407;
-			0x0eb4:  c := 0x405; cs := 0x408; d := 0x40A ; ds := 0x40D; e := 0x40F; f := 0x411; fs := 0x413; g := 0x415; gs := 0x417; a := 0x3FE; ass := 0x400; b := 0x402; inst := "Alaude";
+			0x0eb3:
+         0x0eb4:
+              c := 0x405; cs := 0x408; d := 0x40A ; ds := 0x40D; e := 0x40F; f := 0x411; fs := 0x413; g := 0x415; gs := 0x417; a := 0x3FE; ass := 0x400; b := 0x402; inst := "Alaude";
 				  c2 := 0x406; cs2 := 0x409; d2 := 0x40B ; ds2 := 0x40E; e2 := 0x410; f2 := 0x412; fs2 := 0x414; g2 := 0x416; gs2 := 0x418; a2 := 0x3FF; ass2 := 0x401; b2 := 0x403;
 				  c3 := 0x407;
 		endcase
@@ -305,7 +317,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 		// endif
 
 		var result := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
-		if (result < dif && !who.cmdlevel)
+		if (result <= 10 && !who.cmdlevel)
 			tocarerrado(who,item,notas,notas2,tempo,letra,emocao);
 			return 1;
 		endif
@@ -458,15 +470,12 @@ function playagain(who,item,notas,notas2,tempo,letra,emocao)
 endfunction
 
 function escrevepartitura(who,item,notas,notas2,tempo,letra)
-   //DIFICULDADE PELO TANTO DE NOTAS
-   var dif := cint(notas.size() /2) + cint(notas2.size() /2);
-
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
-   var roll := rollAttrDice(who, WISDOM, 1) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
-   if (roll > dif)
+   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
+   if (roll > 12)
       PrintText(who, "*Escrevendo a partitura*");
    else 
       SendSysMessage(who, "Você arruinou a partitura");
