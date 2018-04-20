@@ -89,7 +89,7 @@ program SpellScript(params)
 		PerformAction(who, ANIM_CAST_AREA);
 		sleepms(800);
 	endwhile
-   EraseObjProperty(who, "#Casting", 1);
+   EraseObjProperty(who, "#Casting");
 	
 	foreach gliph in gliphs
 		DestroyItem(gliph);
