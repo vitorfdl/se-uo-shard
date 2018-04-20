@@ -33,7 +33,8 @@ program SpellScript(params)
 	CreateRandomGliph(gliphs, who.x+3, who.y-2, who.z);
 	SendSystemReport(who, "'Mova-se para parar a conjuração!'", SSM_INFO);
 
-	while ( who.connected )
+   SetObjProperty(who, "#Casting", 1);
+	while ( who.connected && !who.frozen && !who.paralyzed )
 		if (oldx != who.x || oldy != who.y)
 			break;
 		endif
@@ -88,6 +89,7 @@ program SpellScript(params)
 		PerformAction(who, ANIM_CAST_AREA);
 		sleepms(800);
 	endwhile
+   EraseObjProperty(who, "#Casting", 1);
 	
 	foreach gliph in gliphs
 		DestroyItem(gliph);
