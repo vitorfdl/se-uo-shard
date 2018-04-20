@@ -19,8 +19,9 @@ include ":magery:basicMagery";
 include ":crafting:craft_props";
 
 program oafeatures_sendpacket(who, text)
-   var targ := Target(who);
-   printtext(who, ""+targ.tile_layer);
+   
+   // var targ := Target(who);
+   // printtext(who, ""+targ.tile_layer);
    // printtext(who, ""+targ.get_member("polclass"));
    // var targ := TargetCoordinates(who);
    // var newball := CreateItemAtLocation(who.x, who.y, who.z+2, 0xFFBE);

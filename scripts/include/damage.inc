@@ -56,7 +56,6 @@ function SelectAttribute(attacker, attacker_weapon)
 			endif
 		endif
 	endif
-
 	return attribute;
 endfunction
 
@@ -258,12 +257,15 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
    
 	DisplayDamage(defender, cint(dmg), source);
 
-   var barrier := cint(GetObjProperty(who, "#barrier"));
+   var barrier := cint(GetObjProperty(defender, "#barrier"));
    if (barrier > 0)
       barrier -= cint(dmg);
       dmg := 0;
       if (barrier < 0)
          dmg := barrier * -1;
+         EraseObjProperty(defender, "#barrier");
+      else
+         SetObjProperty(defender, "#barrier", barrier);
       endif
    endif
 
@@ -276,10 +278,10 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));
       var chance := 75;
       if (cleric_healing == source.serial)
-         chance := 40;
+         chance := 100;
       endif
 		if (cleric_healing && dmg >= 1 && Randomint(101) <= chance)
-         var bencao := GetObjProperty(source, "#bencaodivina");
+         var bencao := GetObjProperty(source, "#bencaosacrificio");
          if (bencao);
             var mobs := ListMobilesNearLocation(source.x, source.y, source.z, 2);
             foreach mob in mobs
@@ -288,7 +290,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
                endif
                sleepms(2);
             endforeach
-            EraseObjProperty(source, "#bencaodivina");
+            EraseObjProperty(source, "#bencaosacrificio");
             return dmg;
          endif
 		   var targ := SystemFindObjectBySerial(cleric_healing);

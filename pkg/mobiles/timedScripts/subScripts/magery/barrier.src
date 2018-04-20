@@ -1,0 +1,55 @@
+	/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include ":attributes:attributes";
+
+function StartScript(mobile, attacker := 0, level := 0)
+   var barrier := cint(GetObjProperty(mobile, "#barrier"));
+   SetObjProperty(mobile, "#barrier", barrier+level);
+
+   while (mobile)
+      PlayObjectCenteredEffectEx(mobile, 0x377A, 5, 20, 60);
+      barrier := cint(GetObjProperty(mobile, "#barrier")) - 1;
+      if (barrier <= 0)
+         break;
+      endif
+
+      SetObjProperty(mobile, "#barrier", barrier);
+      sleep(2);
+   endwhile
+
+   return 1;
+endfunction
+
+function EndScript(mobile)
+   EraseObjproperty(mobile, "#barrier");
+   return 1;
+endfunction
+
+function LogOffScript(mobile)
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile);
+      elseif (type == "LogOff")
+         return LogOffScript(mobile);
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

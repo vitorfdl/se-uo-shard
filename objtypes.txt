@@ -1796,7 +1796,7 @@
 0x4b9e AnarAtarRobe womenswork
 0x4b9f SeredhTuraRobe womenswork
 # 0x4ba0 - 0x4ba2 unused
-0x4ba3 merrycake food
+0x4ba3 weddingcake food
 # 0x4ba4 - 0x4d09 unused
 0x4d0a valanecklace metalworking
 0x4d0b valanecklace2 metalworking

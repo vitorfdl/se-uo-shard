@@ -11,8 +11,14 @@ include ":timedscripts:timedScripts";
 include ":fls_core:fls_characters";
 include "include/say";
 
+program startTalent(param)
+   var who := param[1];
+   // var talent_name := param[2];
+   do_poisoning(who);
 
-program do_poisoning(who)
+endprogram
+
+function do_poisoning(who)
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 
@@ -157,4 +163,4 @@ program do_poisoning(who)
 		endif
 	endif
 
-endprogram
+endfunction
