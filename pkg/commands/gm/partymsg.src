@@ -11,8 +11,9 @@ program textcmd_ident( who, ign_text, uc_text )
       var text := uc_text;
       if (!uc_text || !uc_text.size())
          text := RequestInputUC(who, who.backpack, UC("O que deseja falar? (esc para cancelar)"), "ENG");
+         text := text.uc_text;
       endif
-      print(uc_text);
-      print(SendPartyMsg( what.party, what, text.uc_text));
+      
+      print(SendPartyMsg( what.party, what, text));
     endif
 endprogram
