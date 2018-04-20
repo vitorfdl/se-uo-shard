@@ -9,7 +9,7 @@ program textcmd_ident( who )
     var what := Target( who, TGTOPT_NOCHECK_LOS );
     if (what)
       var text := RequestInputUC(who, who.backpack, UC("O que deseja falar? (esc para cancelar)"), "ENG");
-      print(cascz(text));
-      print(SendPartyMsg( what.party, what, cascz(text) ));
+      print(text);
+      print(SendPartyMsg( what.party, who, text.uc_text));
     endif
 endprogram
