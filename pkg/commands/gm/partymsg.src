@@ -3,13 +3,15 @@ use party;
 
 include "include/say";
 
-program textcmd_ident( who )
+program textcmd_ident( who, ign_text, uc_text )
     SendSysMessageEx( who, "Escolha algum membro que esteja na party." );
 
     var what := Target( who, TGTOPT_NOCHECK_LOS );
     if (what)
-      var text := RequestInputUC(who, who.backpack, UC("O que deseja falar? (esc para cancelar)"), "ENG");
-      print(text);
-      print(SendPartyMsg( what.party, who, text.uc_text));
+      var text = uc_text;
+      if (!uc_text || !uc_text.size())
+         text := RequestInputUC(who, who.backpack, UC("O que deseja falar? (esc para cancelar)"), "ENG");
+      endif
+      print(SendPartyMsg( what.party, what, text.uc_text));
     endif
 endprogram
