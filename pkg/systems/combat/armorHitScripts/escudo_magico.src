@@ -23,20 +23,26 @@ program HitScript(params)
       return;
    endif
 
+   if (randomint(100) > 60)
+      return;
+   endif
+
+   var dmg;
    if (shieldtype["Gelo"])
       SendSysMessageEx(attacker, "Um frio intenso vindo de {} te causa intensa dor".format(defender.name));
       // effect := ;
       dmg_type := DMG_COLD;
+      dmg := RandomDiceRoll("1d3");
    elseif (shieldtype["Fogo"])
       SendSysMessageEx(attacker, "As chamas de {} entra em erupção te ferindo".format(defender.name));
       SendSysMessageEx(defender, "Um frio intenso vindo de {} te causa intensa dor".format(defender.name));
       // effect := ;
       dmg_type := DMG_FIRE;
+      dmg := RandomDiceRoll("2d3+1");
    else
       return;
    endif
 
-   var dmg := RandomDiceRoll("2d8");
    DamageFLS(attacker, dmg, dmg_type, defender);
 	// var time := cdbl(GetObjProperty(defender, "armaduraglacial"));
 	// if (!time)

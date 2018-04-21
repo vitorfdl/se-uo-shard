@@ -114,7 +114,7 @@ function do_poisoning(who)
 	endif
 
    difficulty += level;
-   var roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, VENEFICIO);
+   var roll := rollAttrDice(who, DEXTERITY);
 	if(roll >= difficulty || who.cmdlevel > 1)
 		//if (GetObjProperty(who, "classe") == "ladino")
 		//	SkillCheck(who, BEGGING, -1);
