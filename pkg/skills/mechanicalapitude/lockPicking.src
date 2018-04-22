@@ -118,12 +118,12 @@ function PickTreasureChest(me, lockpick, chest)
 		SendSysMessageEx(me, "Você falhou em arrombar a fechadura.", SSM_FAIL);
 		PlaySoundEffect(chest,0xef);
       
-      // if (HaveFeat(me, "Gazua Inquebrável"))
-      //    if (randomint(101) <= 50)
-	   //       ReleaseItem(lockpick);
-      //       return;
-      //    endif
-	   // endif
+      if (HaveFeat(me, "Gazua Inquebrável"))
+         if (randomint(101) <= 50)
+	         ReleaseItem(lockpick);
+            return;
+         endif
+	   endif
 
 		SendSysMessageEx(me,"Sua gazua quebrou!", SSM_FAIL);
 		SubtractAmount(lockpick,1);

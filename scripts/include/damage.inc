@@ -251,7 +251,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
    var dmg_reduce := GetObjProperty(defender, "dmg_reduce");
    if (dmg_reduce)
       if (type in dmg_reduce.keys())
-         dmg := dmg - cint((cdbl(dmg) * dmg_reduce[type]));
+         dmg := dmg - cint((cdbl(dmg) * cdbl(dmg_reduce[type])));
       endif
    endif
    
