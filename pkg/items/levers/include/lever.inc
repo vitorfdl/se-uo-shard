@@ -301,7 +301,7 @@ function openthedoors(item, opts)
       snd_effect := 0x200;
    endif
 
-   foreach item in (opts.doorstatus)
+   foreach item in (opts.opendoors)
       item := SystemFindObjectBySerial(cint(item));
       item.doToggle();
       PlaySoundEffect(item, snd_effect);
