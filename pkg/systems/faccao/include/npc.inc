@@ -115,7 +115,9 @@ function ContractNPC(guild, npc_i, who, loc)
    if (!template) return; endif
 
 	var agent := CreateNPCFromTemplate(template.template, loc.x, loc.y, loc.z+2);
-   SetObjProperty(agent, "noequip", 1);
+   if (agent.npctemplaye["merchant"])
+      SetObjProperty(agent, "noequip", 1);
+   endif
    SetObjProperty(agent, "guild", guild.guildid);
    SetObjProperty(agent, "contract_by", who.serial);
    SetObjProperty(agent, "conf_ref",npc_i);
