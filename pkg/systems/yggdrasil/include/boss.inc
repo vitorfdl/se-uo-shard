@@ -299,7 +299,7 @@ function CreateBossStructGump(who, byref boss)
 		// endforeach
 		// var opts := CheckBoxGump(who, 180, 200+(resist_types.length() * 18), "Escolha as resistências:", resist_types, opt_checked);
 		// boss.resists := opts;
-	elseif ( input[0] == 80)
+	elseif ( input[0] == 80)      
 		var opt := RadioGump(who, 180, 0, "Qual tipo deseja adicionar?", array{"resists", "imunities", "vulnerabilities"});
 		var opt_checked := array{};
 		foreach resist in resist_types
@@ -312,6 +312,7 @@ function CreateBossStructGump(who, byref boss)
 	elseif ( input[0] >= 10 && input[0] <= 15)
 		var index := input[0] - 9;
 		//sendsysmessage(who, " " + input[0] + " " + boss.loot[index]);
+      if (!boss.loot) boss.loot := array{}; endif
 
 		if ( boss.loot[index] != error )
 			var opt := RadioGump(who, 180, 0, "Editar item", array{"Criar", "Deletar", "Alterar Chance", "Inverter Escapelar/Loot", "Cancelar"});			
