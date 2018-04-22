@@ -33,19 +33,19 @@ program SpellScript(params)
 		return 0;
 	endif
 
-   var level := who.GetLevel();
+   var level := Ceil(AP_GetTrueSkill(who, MILAGRE_DE_NECROMANCIA) / 2);
    var npclevel := cdbl(npc_info.Level);
 
-   if (level < 4 && npclevel > 1.5)
+   if (level < 2 && npclevel > 1.5)
 		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
 		return 0;
-   elseif (level < 8 && npclevel > 2)
+   elseif (level < 3 && npclevel > 2)
 		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
 		return 0;
-   elseif (level < 12 && npclevel > 4)
+   elseif (level < 4 && npclevel > 4)
 		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
 		return 0;
-   elseif (level < 16 && npclevel > 6)
+   elseif (level < 5 && npclevel > 6)
 		SendSysMessageEx(who, "Seu milagre não é poderoso o suficiente para levantar esta criatura.", SSM_FAIL);
 		return 0;
    endif

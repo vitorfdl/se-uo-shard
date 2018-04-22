@@ -309,60 +309,55 @@ function doRepair(who, craft_skill, recipe_cfg)
    // endif
 endfunction
 
-function makeTinkeringItems(who, what, amt, tool)
-	// if (what == 0x1085 || what == 0x1086 || what == 0x1087 || what == 0x1088 || what == 0x1089 || what == 0x108a || what == 0x2b6e || what == 0x2b6f || what == 0x2b70 || what ==  4001 || what == 0x376a || what == 0xff97 || what == 0xff98)
-	// 	amt := 1;
-	// endif
+function makeTinkeringItems(who, what)
+      // if (theitem.graphic in array{0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70})
+		// 	var gem;
+		// 	var gems := dictionary;
+		// 	var gemprop;
+		// 	while(1)
+		// 		if (YesNo(who, "Você deseja incrustar alguma gema na joia?") )
+		// 			SendSysMessageEx(who, "Escolha a pedra preciosa.", SSM_REQUEST);
+		// 			var gemtarg := target(who);
+		// 			if (gemtarg.isGem())
+		// 				theitem.color := gemtarg.getGemColor();
+		// 				//sendsysmessageEx(who, "name " + gemtarg.getGemName() );
+		// 				var gemname := gemtarg.GetGemName();
+		// 				gemprop := GetObjProperty(gemtarg,"tamanho");
+		// 				if (gemprop != error)
+		// 					gemprop := gemprop + " " + GetObjProperty(gemtarg,"brilho");
+		// 					gemname := gemname + gemprop;
+		// 				endif
+		// 				gems[gemname] := gemtarg.amount;
+		// 				gem := 1;
+		// 				DestroyITem(gemtarg);
+		// 			endif
+		// 		else
+		// 			break;
+		// 		endif
+		// 	endwhile
 
-	foreach theitem in (theitems)
-      if (theitem.graphic in array{0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70})
+		// 	if (gem)
+		// 		SetupGemName(theitem, gems);
+		// 		//sendsysmessageEx(who, " " + gems);
+		// 		if (YesNo(who, "Você deseja adicionar uma descricao na joia?") )
+		// 			AddItemDescription(who, theitem);
+		// 		endif
+		// 		increvision(theitem);
+		// 	endif
 
-			var gem;
-			var gems := dictionary;
-			var gemprop;
-			while(1)
-				if (YesNo(who, "Você deseja incrustar alguma gema na joia?") )
-					SendSysMessageEx(who, "Escolha a pedra preciosa.", SSM_REQUEST);
-					var gemtarg := target(who);
-					if (gemtarg.isGem())
-						theitem.color := gemtarg.getGemColor();
-						//sendsysmessageEx(who, "name " + gemtarg.getGemName() );
-						var gemname := gemtarg.GetGemName();
-						gemprop := GetObjProperty(gemtarg,"tamanho");
-						if (gemprop != error)
-							gemprop := gemprop + " " + GetObjProperty(gemtarg,"brilho");
-							gemname := gemname + gemprop;
-						endif
-						gems[gemname] := gemtarg.amount;
-						gem := 1;
-						DestroyITem(gemtarg);
-					endif
-				else
-					break;
-				endif
-			endwhile
-
-			if (gem)
-				SetupGemName(theitem, gems);
-				//sendsysmessageEx(who, " " + gems);
-				if (YesNo(who, "Você deseja adicionar uma descricao na joia?") )
-					AddItemDescription(who, theitem);
-				endif
-				increvision(theitem);
-			endif
-
-		elseif (theitem.objtype == 4001) // Fechadura
+		if (what.objtype == 4001) // Fechadura
 			var key := CreateItemInBackpack(who, "ironkey", 1);
-			var lvl := Floor(AP_GetSkill(who, INTELLIGENCE)/20);
+			var lvl := Ceil(AP_GetTrueSkill(who, FERRARIA) / 2);
 			var lockid := AllocLockId();
 			if (lvl < 1)
 				lvl := 1;
 			endif
-			SetObjProperty(theitem, "LockId", lockid);
+			SetObjProperty(what, "LockId", lockid);
 			SetObjProperty(key, "LockId", lockid);
-			SetObjProperty(theitem, "level", lvl);
+			SetObjProperty(what, "level", lvl);
 			SendSysMessageEx(who, "Você fez a fechadura e a chave.", SSM_INFO);
-		// elseif ( theitem.objtype == 0x367a)
+      endif
+		// elseif ( what.objtype == 0x367a)
 		// 	SendSysMessageEx(who, "Escolha a pocao do gas venenoso.", SSM_REQUEST);
 		// 	var pot := Target(who);
 		// 	if (!pot)
@@ -430,9 +425,7 @@ function makeTinkeringItems(who, what, amt, tool)
 		// elseif (theitem.objtype == 0xff98)
 		// 	SetObjProperty(theitem, "traplevel", Cint( AP_GetSkill(who, INTELLIGENCE)/20 ));
 		// endif
-	endforeach
-
-	return 0;
+	return 1;
 endfunction
 
 //

@@ -201,7 +201,9 @@ program SpellStarter(params)
          ExpGain(mobile, "minor");
       endif
    endif
-   // SetCooldown(mobile, spellinfo.name, spellinfo.cooldown);
+   if (spellinfo.cooldown)
+      SetCooldown(mobile, spellinfo.name, spellinfo.cooldown);
+   endif
 
    EraseObjProperty(mobile, "#magiasilenciosa");
    EraseObjProperty(mobile, "#Casting");

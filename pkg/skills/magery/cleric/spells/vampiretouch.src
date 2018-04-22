@@ -47,7 +47,7 @@ program animateSword(params)
 		endif
 
 		//ApplyRawDamage( targ, 10, 0, DAMAGE_SHOW );
-		ApplyRawDamage( targ, amt );
+		DamageFLS( targ, amt, DMG_FORCED, who );
 		HealDamage( who, amt );
 		
 		if(targ.dead)

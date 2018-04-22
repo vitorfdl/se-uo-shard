@@ -12,6 +12,7 @@ include ":yggdrasil:boss";
 include ":gumps:yesno";
 include ":unicos:item_template";
 include ":gumps:htmlgump";
+include ":keys:key";
 
 const BUTTON_BUY_UNIFORM := 0x2;
 const BUTTON_ADD_PLAYER := 0x3;
@@ -470,7 +471,10 @@ function guildHandler(who, input)
          if (!lvl) lvl := 1; endif
 
          var lockid := CInt(GetObjProperty(fechadura, "LockId"));
+         if (!lockid) lockid := AllocLockId(); endif
+
          SetObjProperty(targ, "LockId", lockid);
+         SetObjProperty(targ, "level", lvl);
          DestroyItem(fechadura);
          SendSysMessageEx(who, "Você instalou a fechadura com sucesso.", SSM_INFO);
       endif

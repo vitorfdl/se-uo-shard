@@ -1,0 +1,69 @@
+use uo;
+use os;
+
+include "include/say";
+include "include/shapes";
+include "include/sounds";
+include ":attributes:attributes";
+include ":combat:combat";
+include ":magery:basicMagery";
+
+program blessWater(info)
+   var who := info[1];
+   var dice_roll := info[2].dice_roll;
+   var targ := info[3];
+   info := 0;
+
+	var npctemplate := targ.my_template();
+   var npc_info := NPC_GetNPCConfig(targ.npctemplate);
+	if ( npc_info.Category != "morto-vivo" || targ.isBoss())
+		SendSysMessageEx(who, "Esta criatura não pode ser dominada;", SSM_FAIL);
+		return 0;
+	elseif (!npctemplate)
+		SendSysMessageEx(who, "Essa magia nao pode ser usada em players", SSM_FAIL);
+		return 0;
+	endif
+   
+   var level := AP_GetTrueSkill(who, MILAGRE_DE_NECROMANCIA);
+	var dmg := RandomDiceRoll(MageDiceTable("C", level)) + 8;
+	PlaySoundEffect(targ, 0x658);
+
+   if (!targ.owner || targ.owner != who)
+      if (rollResistDice(targ, CONSTITUTION) > dice_roll+5)
+         SendSystemReport(targ, "*resistido*", SSM_FAIL, who);
+         return 0;
+      endif
+   endif
+
+   var undead_hp := AP_GetVital(targ, HITS);
+   if (undead_hp < dmg)
+      dmg := dmg - (undead_hp - dmg);
+   endif
+
+   var coords := GetCoordsInSquare(targ.x, targ.y, 2);
+   var mobiles := ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+
+   foreach c in coords
+      PlayStationaryEffect(c.x, c.y, targ.z, GFX_FIRE_FIELD_EW, 10, 10, 0, targ.realm);
+      sleepms(2);
+   endforeach
+
+   DamageFLS(targ, dmg, DMG_FORCED, who);
+
+   foreach mob in mobiles
+      sleepms(2);
+      if (mob == targ || CheckifisAlly(who, mob))
+         continue;
+      endif
+
+      DamageFLS(mob, dmg/2, DMG_FIRE, who);
+   endforeach
+
+   sleepms(300);
+   foreach c in coords
+      PlayStationaryEffect(c.x, c.y, targ.z, 0x3735, 10, 15, 0, targ.realm);
+      sleepms(2);
+   endforeach
+
+   return 1;
+endprogram

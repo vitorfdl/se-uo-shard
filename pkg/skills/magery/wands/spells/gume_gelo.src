@@ -17,7 +17,7 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   PlaySoundEffect(who, 0x24B);
+   PlaySoundEffect(who, 0x5C7);
    var mod := GetModByFacing(GetFacing(who.x, who.y, targ.x, targ.y));
    PlayStationaryEffectEx(who.x+mod[1], who.y+mod[2], who.z, who.realm, GFX_GLOW, 9, 20, 0);
    PrintText(who, "*o gelo começa a se formar a frente*");

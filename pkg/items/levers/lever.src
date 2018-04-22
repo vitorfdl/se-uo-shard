@@ -24,7 +24,8 @@ include ":levers:lever";
 //     "text    302  90  500   15         ",  //prop value text
 //     "button  200 250 1149 1148 1  0 24 ",  //Accept Cprop Entry
 
-function ConstructGump(who)
+function ConstructGump(item)
+   var opts := item.GetLeverOpts();
    var gump := GFCreateGump();
 	GFSetID(gump, 0x597);
 	GFPage(gump, 0);
@@ -32,35 +33,119 @@ function ConstructGump(who)
    GFTextLine(gump, 165, 20, 900, "Lever Control Interface");
    GFPage(gump, 1);
 
-   GFTextLine(gump, 45, 48, 500, "SetObjProperty em outros");
-   GFAddButton(gump, 25, 50, 2117, 2118, GF_PAGE_BTN, 3);
-   GFTextLine(gump, 45, 68, 500, "Trancar/destrancar porta");
-   GFAddButton(gump, 25, 70, 2117, 2118, GF_CLOSE_BTN, 2);
-   GFTextLine(gump, 45, 88, 500, "Abrir/Fechar porta");
-   GFAddButton(gump, 25, 90, 2117, 2118, GF_CLOSE_BTN, 102);
-   GFTextLine(gump, 45, 108, 500, "Acender/apagar luzes");
-   GFAddButton(gump, 25, 110, 2117, 2118, GF_CLOSE_BTN, 4);
-   GFTextLine(gump, 45, 128, 500, "Teleportar");
-   GFAddButton(gump, 25, 130, 2117, 2118, GF_CLOSE_BTN, 5);
-   GFTextLine(gump, 45, 148, 500, "Alterar gráfico do alvo");
-   GFAddButton(gump, 25, 150, 2117, 2118, GF_CLOSE_BTN, 98);
-   GFTextLine(gump, 45, 168, 500, "Alterar on/off texto");
-   GFAddButton(gump, 25, 170, 2117, 2118, GF_CLOSE_BTN, 97);
-   GFTextLine(gump, 45, 188, 500, "Adicionar armadilhas");
-   GFAddButton(gump, 25, 190, 2117, 2118, GF_PAGE_BTN, 4);
-   GFTextLine(gump, 45, 208, 500, "Mudar gráfico da alavanca");
-   GFAddButton(gump, 25, 210, 2117, 2118, GF_PAGE_BTN, 2);
-   GFTextLine(gump, 45, 228, 500, "Testar");
-   GFAddButton(gump, 25, 230, 2117, 2118, GF_CLOSE_BTN, 99);
-   GFTextLine(gump, 45, 248, 500, "Subir/descer objetos");
-   GFAddButton(gump, 25, 250, 2117, 2118, GF_CLOSE_BTN, 96);
-   GFTextLine(gump, 45, 268, 500, "Tornar alavanca escondida");
-   GFAddButton(gump, 25, 270, 2117, 2118, GF_CLOSE_BTN, 100);
-   GFTextLine(gump, 45, 288, 500, "Mover objetos");
-   GFAddButton(gump, 25, 290, 2117, 2118, GF_CLOSE_BTN, 101);
-   GFTextLine(gump, 45, 308, 500, "Mover passagem secreta");
-   GFAddButton(gump, 25, 310, 2117, 2118, GF_CLOSE_BTN, 3);
-   
+   var y := 48;
+   var colored := 500;
+   GFTextLine(gump, 45, y, 560, "Testar");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 99);
+   // y += 20;
+   // colored := 500;
+   // if (opts.setprops)
+   //    colored := 520;
+   // endif
+   // GFTextLine(gump, 45, y, colored, "SetObjProperty em outros");
+   // GFAddButton(gump, 25, y+2, 2117, 2118, GF_PAGE_BTN, 3);
+   y += 20;
+   colored := 500;
+   if (opts.doorstatus)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Trancar/destrancar porta");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 2);
+   y += 20;
+   colored := 500;
+   if (opts.opendoors)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Abrir/Fechar porta");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 102);
+   // y += 20;
+   // colored := 500;
+   // if (opts.lights)
+   //    colored := 520;
+   // endif
+   // GFTextLine(gump, 45, y, colored, "Acender/apagar luzes");
+   // GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 4);
+   // y += 20;
+   // colored := 500;
+   // if (opts.graphicarrays)
+   //    colored := 520;
+   // endif
+   // GFTextLine(gump, 45, y, colored, "Alterar gráfico de algo");
+   // GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 98);
+   y += 20;
+   colored := 500;
+   if (opts.moveitems)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Mover objetos");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 101);
+   y += 20;
+   colored := 500;
+   if (opts.teleport_to)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Teleportar usuário");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 5);
+   y += 20;
+   colored := 500;
+   if (opts.graphicarrays)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Mudar gráfico da alavanca");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_PAGE_BTN, 2);
+   y += 20;
+   colored := 500;
+   if (GetObjProperty(item, "HaveTrap"))
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Adicionar armadilhas");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_PAGE_BTN, 4);
+   y += 20;
+   colored := 500;
+   if (GetObjProperty(item, "level"))
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Esconder Alavanca");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 100);
+   y += 20;
+   colored := 500;
+   if (GetObjProperty(item, "powerword"))
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Esconder Alavanca e revelar por fala");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 9);
+   y += 20;
+   colored := 500;
+   if (opts.ontext)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Mudar on/off texto");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 97);
+   y += 20;
+   colored := 500;
+   if (opts.linked_to || opts.is_linked)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Linkar outras alavancas");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 3);
+   y += 20;
+   GFTextLine(gump, 45, y, colored, "Unlink alavancas");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 6);
+   y += 20;
+   colored := 500;
+   if (opts.walkon)
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Ativar ao andar por cima");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 7);
+   y += 20;
+   colored := 500;
+   if (GetObjProperty(item, "status") == "on")
+      colored := 520;
+   endif
+   GFTextLine(gump, 45, y, colored, "Resetar agora");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 8);
+
    GFPage(gump, 2);
    GFTextLine(gump, 145, 50, 900, "Escolha o gráfico da alavanca");
 
@@ -77,7 +162,7 @@ function ConstructGump(who)
    
    GFPage(gump, 3);
    GFPage(gump, 4);
-   GFTextLine(gump, 145, 50, 900, "Escolha o gráfico da alavanca");
+   GFTextLine(gump, 145, 50, 900, "Escolha a armadilha da alavanca");
    
    GFTilePic(gump, 105, 120, 4347);
    GFTilePic(gump, 355, 120, 4414);
@@ -93,116 +178,102 @@ function ConstructGump(who)
    return gump;
 endfunction
 
-
-// var data := array(
-
-//     "",                                     //12  Cprop name
-//     "",                                     //13  Cprop value
-//     "Property Name",                        //14
-//     "Property value",                       //15
-//     "Escolha o tipo de armadilha",                  //16
-//     "Setar on/off som", //17 <-
-//     "", //18 <-
-//     "Enviar msg pra area", //19 <-
-//     "", //20
-//     "Mover objetos" //21
-// );
-
 program lever(who, item)
-  if ( !ReserveItem(item) )
-     SendSysMessage(who, "O item esta em uso.");
-     return;
-  endif
-  if(GetObjProperty(item, "#inuse") == 1)
-    SendSysMessage(who,"that switch is in use");
-    return;
-  endif
-   var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
-   if (!trapstrength) trapstrength := 2; endif
-  if(who.cmdlevel > 2)
-    var gump := ConstructGump(who);
-    var res := GFSendGump(who, gump);
-    case(res[0])
-    //
-       2: doorstatus(who, item);
-       3: createpassage(who, item);
-       4: bindlights(who, item);
-       5: linkteleport(who, item);
-       
-      15: 
-         SetObjProperty(item, "HaveTrap", "Explosion");
-         AddTrap(item, "Explosion", trapstrength);
-      16: 
-         SetObjProperty(item, "HaveTrap", "PoisonGas");
-         AddTrap(item, "PoisonGas", trapstrength);
-      17: 
-         SetObjProperty(item, "HaveTrap", "Needle");
-         AddTrap(item, "Needle", trapstrength);
-      18: 
-         SetObjProperty(item, "HaveTrap", "Magic");
-         AddTrap(item, "Magic", trapstrength);
-      
-      20: item.graphic := 0x108e;           // graphic 1
-          item.name    := "alavanca";
-      21: item.graphic := 0x1095;           // graphic 2
-          item.name    := "alavanca";
-      22: item.graphic := 0x108f;           // graphic 3
-          item.name    := "interruptor";
-      23: item.graphic := 0x1092;           // graphic 4
-          item.name    := "interruptor";
-      24: setprp(who, item, res);           // setobjproperty()
-      98: changegraphic(who, item);
-      96: setElevator(who, item);
-      99: normalusage(who, item);           // use item like normal
-      100: setHiding(who, item);
-      101: setMoveObject(who, item);
-      102: setOpenDoor(who, item);
-    endcase
-  else
-    normalusage(who, item);
-  endif
+   if ( !ReserveItem(item) || GetObjProperty(item, "#inuse") == 1 )
+      SendSysMessage(who, "O item esta em uso.");
+      return;
+   endif
+
+   if(who.cmdlevel > 2)
+      var gump := ConstructGump(item);
+      var res  := GFSendGump(who, gump);
+
+      var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
+      if (!trapstrength) trapstrength := 2; endif
+
+      case(res[0])
+      //
+         2: doorstatus(who, item);
+         3: bindlevers(who, item);
+         4: bindlights(who, item);
+         5: linkteleport(who, item);
+         6: unbindlevers(who, item);
+         7: togglewalkon(who, item);
+         8: reset(item, 1);
+         9: setPowerEvent(who, item);
+         
+         15: 
+            SetObjProperty(item, "HaveTrap", "Explosion");
+            AddTrap(item, "Explosion", trapstrength);
+         16: 
+            SetObjProperty(item, "HaveTrap", "PoisonGas");
+            AddTrap(item, "PoisonGas", trapstrength);
+         17: 
+            SetObjProperty(item, "HaveTrap", "Needle");
+            AddTrap(item, "Needle", trapstrength);
+         18: 
+            SetObjProperty(item, "HaveTrap", "Magic");
+            AddTrap(item, "Magic", trapstrength);
+         
+         20: item.graphic := 0x108e;           // graphic 1
+            item.name    := "alavanca";
+         21: item.graphic := 0x1095;           // graphic 2
+            item.name    := "alavanca";
+         22: item.graphic := 0x108f;           // graphic 3
+            item.name    := "interruptor";
+         23: item.graphic := 0x1092;           // graphic 4
+            item.name    := "interruptor";
+         24: setprp(who, item);           // setobjproperty()
+         98: changegraphic(who, item);
+         // 96: setElevator(who, item);
+         97: setOnofftext(who, item);
+         99: normalusage(who, item);           // use item like normal
+         100: setHiding(who, item);
+         101: setMoveObject(who, item);
+         102: setOpenDoor(who, item);
+      endcase
+      return;
+   endif
+
+   normalusage(who, item);
 endprogram
 
 function setMoveObject(who, item)
-  var newarray := array{};
-  var linkarray := array{};
-  linkarray.append(item.serial);
-  SendSysMessage(who,"target the pieces to link to the switch. cancel to end");
-  var trg;
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    newarray.append(trg.serial);
-  endwhile
-  SendSysMessage(who,"target the item you wish sounds to originate from");
-  var snd := Target(who);
-  var speaker := array{};
-  speaker.append(snd.x);
-  speaker.append(snd.y);
-  speaker.append(snd.z);
-  SendSysMessage(who,"now target any other switches you wish to link together.");
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    linkarray.append(trg.serial);
-  endwhile  
-  var positionIncrement := Cstr(RequestGump(who, "Escreva 'passos x y z' de movimento dos itens."));
-  positionIncrement := SplitWords(positionIncrement);
-  var increment :=Cint(positionIncrement[1]);
-  var it;
-  foreach thing in linkarray
-    it := SystemFindObjectBySerial(CInt(thing));
-    SetObjProperty(it, "increment", increment);
-    SetObjProperty(it, "positionIncrement", positionIncrement);    
-    SetObjProperty(it, "links", linkarray);
-    SetObjProperty(it, "speaker", speaker);
-    SetObjProperty(it, "function", "moveobjects");
-    SetObjProperty(it, "partsarray", newarray);
-  endforeach
+   var opts := item.GetLeverOpts();
+
+   SendSysMessageEx(who, "Escolha os itens que você deseja mover.");
+   var trg;
+   var newarray := array{};
+   while(1 && who.connected)
+      trg := Target(who);
+      if(!trg)
+         break;
+      endif
+      newarray.append(trg.serial);
+      sleepms(2);
+      SendSysMessageEx(who, "Objeto conectado", SSM_INFO);
+   endwhile
+
+   if (!newarray.size()) return; endif
+   if (!opts.movefinal) opts.movefinal := array{0, 0, 1}; endif
+   if (!opts.movetime) opts.movetime := 15; endif
+
+   var input_list := array{};
+   input_list.append(struct{ "title" := "Quantas vezes será repetido o movimento?", "marked" := ""+cint(opts.movetime) });
+   input_list.append(struct{ "title" := "Qual posição será movida? (+x +y +z)", "marked" := " ".join(opts.movefinal) });
+   var output := QuestionsGump(who, input_list);
+   if (!output)
+      return;
+   elseif (SplitWords(output[2]).size() < 3)
+      return;
+   endif
+
+   opts.moveitems := newarray;
+   opts.movetime := cint(output[1]);
+   opts.movefinal := SplitWords(output[2]);
+
+   EraseObjProperty(item, "moveinital");
+   item.setLeverOpts(opts);
 endfunction
 
 function setHiding(who, item)
@@ -217,51 +288,248 @@ function setHiding(who, item)
 	item.invisible := 1;
 endfunction
 
-function SetElevator(who, item)
-	var maxz := Cint(RequestGump(who, "Qual o valor que você deseja subir ou descer os itens"));
-	if (!maxz)
-		SendSysMessage(who, "Cancelado");
-		return;
-	endif
-	
-	SetObjProperty(item, "z", maxz);
-	SetObjProperty(item, "function", "elevator");
-	
-	var rect := Cstr(RequestGump(who, "Escreva o rect x1 y1 x2 y2 da area onde os itens vao subir."));
-	rect := SplitWords(rect);
-	SetObjProperty(item, "rect", rect);
-	
-	SendSysMessage(who, " " + rect[1] + " " + rect[3] + " " + rect[2] + " " + rect[4]);
-	
-	var items := ListObjectsInBox( Cint(rect[1]), Cint(rect[2]), -180,  Cint(rect[3]), Cint(rect[4]), 180, item.realm );
+function setPowerEvent(who, item)
+   var powerword := GetObjProperty(item, "powerword");
+   if (!powerword) powerword := ""; endif
 
+   var input_list := array{};
+   input_list.append(struct{ "title" := "Qual frase irá revelar a alavanca? (em branco para remover)", "marked" := powerword });
+   var output := QuestionsGump(who, input_list);
+   if (!output)
+      return;
+   endif
 
-		var serials := array{};
-	foreach item in items
-		serials.append(item.serial);
-	endforeach
-	setobjproperty(item, "items", serials);
-	SendSysMessage(who, "Itens adicionados: " + items.size() );
+   if (!output[1])
+      EraseObjProperty(item, "powerword");
+      if (!GetObjProperty(item, "level"))
+         item.invisible := 1;
+      endif
+   else
+      item.invisible := 1;
+      SetObjProperty(item, "powerword", lower(output[1]));
+   endif
+
+   SendSysMessageEx(who, "Frase para revelar alavanca adicionado", SSM_INFO);
 endfunction
 
 function changegraphic(who, item)
-  var newarray := array{};
-  SendSysMessage(who,"Escolha os itens que quer adicionar. esc para terminar.");
-  var trg;
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    SetObjProperty(trg,"switched", 1);
-    SetObjProperty(trg, "originalgraphic", trg.graphic);
-    newarray.append(trg.serial);
-  endwhile
-  
-  SetObjProperty(item,"function", "graphic");
-  SetObjProperty(item,"partsarray", newarray);
-  
-  var graphic := Cint(RequestGump(who, "Para que grafico os itens devem mudar?."));
-  SetObjProperty(item, "graphic", graphic);
-  
+   var opts := item.GetLeverOpts();
+   var newarray := array{};
+   SendSysMessage(who,"Escolha os itens que quer adicionar. esc para terminar.");
+   var trg;
+   while(1)
+      trg := Target(who);
+      if(!trg)
+         break;
+      endif
+      SetObjProperty(trg, "switched", 1);
+      SetObjProperty(trg, "originalgraphic", trg.graphic);
+      newarray.append(trg.serial);
+   endwhile
+
+   if (!newarray.size()) return; endif
+
+   var graphic := Cint(RequestGump(who, "Para que grafico os itens devem mudar?."));
+   opts.graphicto := graphic;
+   opts.graphicarrays := newarray;
+
+   item.setLeverOpts(opts);
+   SendSysMessageEx(who,"Os objetos foram ligados a alavanca.");
+endfunction
+
+function setOpenDoor(who, item)
+   var opts := item.GetLeverOpts();
+   var newarray := array{};
+   SendSysMessageEx(who,"Escolha a porta que você deseja linkar com esta alavanca. Esc para cancelar");
+   var trg;
+   while(1)
+         trg := Target(who);
+         if(!trg)
+            break;
+         elseif (!trg.isDoor())
+            SendSysMessageEx(who, "Isso não é uma porta", SSM_FAIL);
+            continue;
+         endif
+         newarray.append(trg.serial);
+         trg.locked := 1;
+         SendSysMessageEx(who,"Porta conectada.");
+   endwhile
+   if (!newarray.size()) return; endif
+
+   opts.opendoors := newarray;
+
+   item.setLeverOpts(opts);
+   SendSysMessageEx(who,"A alavanca foi ligada com as porta(s)");
+endfunction
+
+function setprp(who, item)
+   var opts := item.GetLeverOpts();
+
+
+   item.setLeverOpts(opts);
+
+   SendSysMessageEx(who,"As proprieades foram ligadas a alavanca");
+endfunction
+
+
+function setOnofftext(who, item)
+   var opts := item.GetLeverOpts();
+   
+   if (!opts.ontext) opts.ontext := ""; endif
+
+   var input_list := array{};
+   input_list.append(struct{ "title" := "Qual frase será enviada quando alavanca for ativada?", "marked" := opts.ontext });
+   var output := QuestionsGump(who, input_list);
+   if (!output)
+      return;
+   endif
+
+   if (!output[1])
+      opts.-"ontext";
+   else
+      opts.ontext := output[1];
+   endif
+
+   item.setLeverOpts(opts);
+   SendSysMessageEx(who, "Frase de acionamento adicionado", SSM_INFO);
+endfunction
+
+function linkteleport(who, item)
+   var opts := item.GetLeverOpts();
+   
+   item.setLeverOpts(opts);
+   SendSysMessageEx(who,"O teleporte foi adicionado a alavanca");
+endfunction
+
+function doorstatus(who, item)
+   var opts := item.GetLeverOpts();
+   var newarray := array{};
+   SendSysMessageEx(who,"Escolha a porta que você deseja linkar com esta alavanca. Esc para cancelar", SSM_REQUEST);
+   var trg;
+   while(1)
+      trg := Target(who);
+      if(!trg)
+         break;
+      elseif (!trg.isDoor())
+         SendSysMessageEx(who, "Isso não é uma porta", SSM_FAIL);
+         continue;
+      endif
+      newarray.append(trg.serial);
+   endwhile
+
+   if (!newarray.size()) return; endif
+
+   opts.doorstatus := newarray;
+   item.setLeverOpts(opts);
+
+   SendSysMessageEx(who,"As portas foram ligadas a alavanca");
+endfunction
+
+function bindlights(who, item)
+   var opts := item.GetLeverOpts();
+   var newarray := array{};
+   SendSysMessageEx(who,"Escolha as luzes que você deseja linkar com esta alavanca. Esc para cancelar", SSM_REQUEST);
+   var trg;
+   while(1)
+      trg := Target(who);
+      if(!trg)
+         break;
+      endif
+      newarray.append(trg.serial);
+       SetObjProperty(trg,"switched", 1);
+      SendSysMessageEx(who,"Luz conectada.");
+   endwhile
+
+   if (!newarray.size()) return; endif
+
+   opts.lights := newarray;
+   item.setLeverOpts(opts);
+
+   SendSysMessageEx(who,"As luzes foram ligadas a alavanca");
+endfunction
+
+function bindlevers(who, item)
+   var opts := item.GetLeverOpts();
+   SendSysMessageEx(who,"Escolha as alavancas que você deseja linkar com esta alavanca. Esc para cancelar", SSM_REQUEST);
+   SendSysMessageEx(who,"As alavancas escolhidas perderão suas proprieades e funcionarão", SSM_INFO);
+   SendSysMessageEx(who,"em conjunto com esta alavanca", SSM_INFO);
+   var trg;
+   var newarray := array{};
+   while(1)
+      trg := Target(who);
+      if(!trg)
+         break;
+      elseif (trg.objtype != 0x108c)
+         SendSysMessageEx(who,"Isso não é uma alavanca.");
+         continue;
+      endif
+
+      newarray.append(trg.serial);
+      SetObjProperty(item, "switched", 0);
+      trg.setLeverOpts(struct{ "is_linked" := item.serial });
+      SendSysMessageEx(who,"Alavanca conectada.");
+   endwhile
+
+   if (!newarray.size()) return; endif
+
+   opts.linked_to := newarray;
+   var input_list := array{};
+   input_list.append(struct{ "title" := "Todas as alavancas devem ser acionadas?", "marked" := cint(opts.all_levers)+1, "radio" := array{"Não", "Sim"} });
+   input_list.append(struct{ "title" := "Precisam ordem para serem acionadas (random)?", "marked" := cint(opts.all_levers_order)+1, "radio" := array{"Não", "Sim"} });
+   var output := QuestionsGump(who, input_list);
+   if (!output)
+      return;
+   endif
+
+   opts.all_levers := cint(output[1] == "Sim");
+   opts.all_levers_order := cint(output[2] == "Sim");
+
+   item.setLeverOpts(opts);
+   if (opts.all_levers_order)
+      SetRandomOrder(item);
+   else
+      EraseObjProperty(item, "leverorder");
+   endif
+   SendSysMessageEx(who,"As alavancas foram ligadas a esta alavancas");
+endfunction
+
+function unbindlevers(who, item)
+   var opts := item.GetLeverOpts();
+   if (opts.linked_to)
+      foreach item in (opts.linked_to)
+         item := SystemFindObjectBySerial(item);
+         item.SetLeverOpts(struct{});
+         sleepms(2);
+      endforeach
+      opts.-"linked_to";
+      item.setLeverOpts(opts);
+   elseif (opts.is_linked)
+      var origin_lever := SystemFindObjectBySerial(opts.is_linked);
+      var origin_props := origin_lever.GetLeverOpts();
+      if (origin_props.linked_to)
+         var index := FindInArray(origin_props.linked_to, item.serial);
+         if (index)
+            origin_props.linked_to.Erase(index);
+            if (!origin_props.linked_to.size())
+               origin_props.-"linked_to";
+            endif
+            origin_lever.setLeverOpts(origin_props);
+         endif
+         SetRandomorder(origin_lever);
+      endif
+      opts.-"is_linked";
+      item.setLeverOpts(opts);
+   endif
+endfunction
+
+function togglewalkon(who, item)
+   var opts := item.GetLeverOpts();
+   if (opts.walkon)
+      SendSysMessageEx(who, "O item não será mais ativado ao andar por cima", SSM_FAIL);
+      opts.-"walkon";
+   else
+      SendSysMessageEx(who, "O item será mais ativado ao andar por cima", SSM_INFO);
+      opts.walkon := 1;
+   endif
+   item.setLeverOpts(opts);
 endfunction

@@ -396,7 +396,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, key, material_cprops[key]);
             endforeach
             CraftLockable(who, theitem);
-
+            makeTinkeringItems(who, theitem);
             ExpGain(who, recipe.difficulty, check);
             SetObjProperty(who, "#craft_last", item_objtype);
             who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);

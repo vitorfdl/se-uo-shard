@@ -1,875 +1,410 @@
-const FX_POISON_GAS := 0x113a;
-const FX_EXPLODE_3      :=  0x36b0; //
-const SFX_SPELL_LIGHTNING           :=  0x002a;
+const ONLY_ON := 0x11;
+
+include ":traps:traps";
+include "include/arrays";
+
+function ChangeLeverStatus(la, only_on_levers := 0)
+   if (typeof(la) != "Array")
+      la := array{la};
+   endif
+    
+   var mid := 0;
+   var fin, snd, obj, gfx;
+   foreach entry in la
+      obj := SystemFindObjectBySerial(CInt(entry));
+      var status := GetObjProperty(obj, "status");
+      if (only_on_levers && status != "on")
+         continue;
+      endif
+      gfx := obj.graphic;
+      mid := 0;
+      case(gfx)
+         0x108c: mid := 0x108d;
+               fin := 0x108e;
+               snd := 0x4c;
+         0x108e: mid := 0x108d;
+               fin := 0x108c;
+               snd := 0x4c;
+         0x1093: mid := 0x1094;
+               fin := 0x1095;
+               snd := 0x4c;
+         0x1095: mid := 0x1094;
+               fin := 0x1093;
+               snd := 0x4c;
+         0x108f: fin := 0x1090;
+               snd := 0x4b;
+         0x1090: fin := 0x108f;
+               snd := 0x4b;
+         0x1091: fin := 0x1092;
+               snd := 0x4b;
+         0x1092: fin := 0x1091;
+               snd := 0x4b;
+         default:
+            fin := gfx;
+            mid := gfx;
+      endcase
+
+      if(mid == 0)
+         mid := fin;
+      endif
+
+      sleepms(500);
+      PlaySoundEffect( obj, snd);
+      obj.graphic := mid;
+      sleepms(500);
+      obj.graphic := fin;
+
+      if (!status || status == "off")
+         SetObjProperty(obj, "status", "on");
+         SetObjProperty(obj, "reset_cd", polcore().systime+2400);
+      else
+         SetObjProperty(obj, "status", "off");
+         EraseObjProperty(obj, "reset_cd");
+      endif
+   endforeach
+endfunction
+
+function SetRandomorder(item)
+   var opts := item.GetLeverOpts();
+   if (opts.linked_to && opts.linked_to.size() && opts.all_levers_order)
+      var randomorder := array{};
+      var leverarray := array{item.serial} + opts.linked_to;
+      for i := 1 to (leverarray.size())
+         var choosen_one := leverarray.randomentry();
+         randomorder.append(choosen_one);
+         var index := FindInArray(leverarray, choosen_one);
+         leverarray.erase(index);
+         sleepms(2);
+      endfor
+      SetObjProperty(item, "leverorder", randomorder);
+   endif
+endfunction
+
+function CheckAllLevers(lever, lever_list, opts)
+   ChangeLeverStatus(lever.serial);
+   if (opts.all_levers_order)
+      var order := GetObjProperty(opts.item_ref, "leverorder");
+      foreach serial in order
+         var item := SystemFindObjectBySerial(serial);
+         if (item.serial == lever.serial)
+            if (_serial_iter == order.size())
+               break;
+            endif
+            return 0;
+         endif
+
+         if (GetObjProperty(item, "status") != "on")
+            ChangeLeverStatus(lever.serial);
+            return 0;
+         endif
+         sleepms(2);
+      endforeach
+   else
+      var all_levers := 0;
+      foreach item in (lever_list)
+         item := SystemFindObjectBySerial(item);
+         if (GetObjProperty(item, "status") == "on")
+            all_levers += 1;
+         endif
+         sleepms(2);
+      endforeach
+
+      if (GetObjProperty(lever, "status") == "off" && all_levers == lever_list.size()-1)
+         return 1;
+      elseif (all_levers != lever_list.size())
+         return 0;
+      endif
+   endif
+
+   return 1;
+endfunction
 
 function normalusage(who, item)
-  var firstclick := GetObjProperty (item, "firstclick");
-  if ( firstclick )
-    SetObjProperty (item, "firstclick", 0);
-    PrintTextAbove(who, "*Desativa*");
-  else
-    PrintTextAbove(who, "*Ativa*");
-    SetObjProperty (item, "firstclick", 1);
-  endif	
-  var funct  := GetObjProperty(item, "function");
-  if(!funct)
-    SendSysMessage(who,"this switch seems to be broken");
-    return;
-  endif
-  var status := GetObjProperty(item, "status");
-  if(!status)
-    status := "off";
-    SetObjProperty( item, "status", status);
-  endif
-  var mid := 0;
-  var fin;
-  var snd;
-  var obj;
-  var gfx;
-  var la := GetObjProperty(item,"links");
-  if(!la)
-    la := array{};
-    la.append(item.serial);
-    SetObjProperty(item,"links", la);
-  endif
-  foreach entry in la
-    obj := SystemFindObjectBySerial(CInt(entry));
-    gfx := obj.graphic;
-    mid := 0;
-    case(gfx)
-      0x108c: mid := 0x108d;
-              fin := 0x108e;
-              snd := 0x4c;
-      0x108e: mid := 0x108d;
-              fin := 0x108c;
-              snd := 0x4c;
-      0x1093: mid := 0x1094;
-              fin := 0x1095;
-              snd := 0x4c;
-      0x1095: mid := 0x1094;
-              fin := 0x1093;
-              snd := 0x4c;
-      0x108f: fin := 0x1090;
-              snd := 0x4b;
-      0x1090: fin := 0x108f;
-              snd := 0x4b;
-      0x1091: fin := 0x1092;
-              snd := 0x4b;
-      0x1092: fin := 0x1091;
-              snd := 0x4b;
-      default:
-		fin := gfx;
-		mid := gfx;
-    endcase
-    if(mid == 0)
-      mid := fin;
-    endif
-    sleepms(500);
-    PlaySoundEffect( obj, snd);
-    obj.graphic := mid;
-    sleepms(500);
-    obj.graphic := fin;
-  endforeach
-   var msg := GetObjProperty(obj, "msg");
-   if(!msg)
-      msg := "Você ouve algo se movendo longe...";
+   if (GetObjProperty(item, "#inuse"))
+      return;
    endif
-   SendSysMessageEx(who, msg);
+
+   var status := GetObjProperty(item, "status");
+   if(!status)
+      status := "off";
+      SetObjProperty( item, "status", status);
+   endif
+
+   var opts  := item.GetLeverOpts();
+   if(!opts || !opts.keys().size())
+      SendSysMessage(who,"esta alavanca parece quebrada");
+      return;
+   endif
+
+   if (status == "off")
+      PrintTextAbove(who, "*Ativa*");
+   else
+      PrintTextAbove(who, "*Desativa*");
+   endif
+
+   var lever_list := array{item.serial};
+   if (opts.linked_to)
+      lever_list := opts.linked_to;
+      if (!lever_list) lever_list := array{}; endif
+      lever_list.append(item.serial);
+      opts.item_ref := item;
+   elseif (opts.is_linked)
+      var origin := SystemFindObjectBySerial(CInt(opts.is_linked));
+      opts := origin.GetLeverOpts();
+      opts.item_ref := origin;
+      lever_list := opts.linked_to;
+      if (!lever_list) lever_list := array{}; endif
+      lever_list.append(origin.serial);
+   endif
+
+   if (opts.all_levers)
+      if (!CheckAllLevers(item, lever_list, opts)) 
+         SendSysMessageEx(who, "Você não percebe nada de diferente", SSM_FAIL);
+         if (RunTraps(item, who)) //se estiver errado, vai cair no outro runtraps
+            SetObjProperty(item, "trapSpoted", 1);
+            PrintText(who, "*dispara armadilha*"); 
+         endif
+         return;
+      endif
+      lever_list := array{item.serial};
+   else
+      ChangeLeverStatus(lever_list);
+   endif
+   
    if (RunTraps(item, who))
       SetObjProperty(item, "trapSpoted", 1);
       PrintText(who, "*dispara armadilha*");
-      item.graphic := mid;
-      sleepms(500);
-      item.graphic := gfx;
+      ChangeLeverStatus(lever_list);
       return;
    endif
-  case(funct)
-    "setobj"  : stobj(who, item);
-    "door"    : linkdoor(who,item);
-    "passage" : alterpassage(who, item, gfx, snd);
-    "lights"  : lightswitch(who, item);
-    "tele"    : teleporter(who, item, mid, gfx, snd);
-    "graphic": changegraphiclever(who, item);
-    "elevator": doElevator(who, item);
-    "moveobjects": moveObjects(who, item, gfx, snd);
-    "opendoor": openthedoors(who, item);
-  endcase
+
+   var msg := opts.ontext;
+   if(!msg)
+      msg := "Você ouve algo se movendo longe...";
+   endif
+   SendSysMessageEx(who, msg, SSM_INFO);
+
+   if (opts.lights)
+      lightswitch(item, opts);
+   endif
+
+   if (opts.graphicarrays)
+      changegraphiclever(item, opts);
+   endif
+   if (opts.opendoors)
+      openthedoors(item, opts);
+   endif
+   if (opts.doorstatus)
+      changedoorstatuses(item, opts);
+   endif
+   // if (opts.setprops)
+   //    lightswitch(who, item, opts);
+   // endif
+   if (opts.moveitems)
+      moveObjects(item, opts);
+   endif
+   if (opts.teleport_to)
+      teleporter(item, opts);
+   endif
+
 endfunction
 
-
-function doElevator(who, item)
-	var rect := GetObjProperty(item, "rect");
-	var maxz := Cint(GetObjProperty(item, "z"));
-	var x, y, z;
-	var startz := 0;
-	var items := GetObjProperty(item, "items");
-	if (items == error)
-		SendSysMessage(who, "não foi possivel localizar os itens");
-		return;
-	endif
-	
-	var stat := GetObjProperty(item, "status");
-	if ( (stat == error) || (stat == "up"))
-      var modifier := 1;
-      if (maxz < 0)
-         modifier := -1;
-      endif
-		//sendsysmessage(who, "subindo2");
-		while (startz != maxz )
-			foreach obj in items
-				var coisa := SystemFindObjectBySerial(obj);
-				//SendSysMessage(who, " " + coisa);
-				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z + modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
-			endforeach
-			startz := startz + modifier;
-			sleepms(50);
-		endwhile
-		SetObjProperty(item, "status", "down");
-	else
-      maxz := maxz * -1;
-      var modifier := 1;
-      if (maxz < 0)
-         modifier := -1;
-      endif
-		while (startz != maxz )
-			foreach obj in items
-				var coisa := SystemFindObjectBySerial(obj);
-				MoveObjectToLocation(coisa, coisa.x, coisa.y, coisa.z + modifier, coisa.realm, MOVEOBJECT_FORCELOCATION); 
-			endforeach
-			startz := startz + modifier;
-			sleepms(50);
-		endwhile
-		SetObjProperty(item, "status", "up");		
-	endif
-	
-endfunction
-
-function changegraphiclever(who, item)
+function changegraphiclever(item, opts)
   SetObjProperty(item, "#inuse", 1);
   
-  var pl := GetObjProperty(item,"partsarray");
-  var thing;
+//   var pl := GetObjProperty(item,"partsarray");
+//   var thing;
   
-  foreach thingie in pl
-    thing := SystemFindObjectBySerial(CInt(thingie));
-    var stat :=  GetObjProperty(item, "status");
-    if ( (stat == error) || (stat == "released"))
-       thing.graphic := GetObjProperty(item, "graphic");
-       setobjproperty(item, "status", "unreleased");
-    else
-       thing.graphic := GetObjProperty(thing, "originalgraphic");
-       setobjproperty(item, "status", "released");
-    endif
+//   foreach thingie in pl
+//     thing := SystemFindObjectBySerial(CInt(thingie));
+//     var stat :=  GetObjProperty(item, "status");
+//     if ( (stat == error) || (stat == "released"))
+//        thing.graphic := GetObjProperty(item, "graphic");
+//        setobjproperty(item, "status", "unreleased");
+//     else
+//        thing.graphic := GetObjProperty(thing, "originalgraphic");
+//        setobjproperty(item, "status", "released");
+//     endif
     
-  endforeach
+//   endforeach
   
   EraseObjProperty(item, "#inuse");
 endfunction
 
 function stobj(who, item)
-  SetObjProperty(item, "#inuse", 1);
-  var il := GetObjProperty(item, "il");
-  var note := GetObjProperty(item,"note");
-  var subnote := GetObjProperty(item,"subnote");
-  var itm;
-  var oldnote;
-  Detach();
-  foreach thingie in il
-    itm := SystemFindObjectBySerial(CInt(thingie));
-    oldnote := SetObjProperty(itm,"oldnote", GetObjProperty(itm, note));
-    SetObjProperty(itm, note, subnote);
-  endforeach
-  sleep(120);
-  foreach thingie in il
-    itm := SystemFindObjectBySerial(CInt(thingie));
-    oldnote := GetObjProperty(itm,"oldnote");
-    SetObjProperty(itm, note, oldnote);
-  endforeach
-  EraseObjProperty(item, "#inuse");
+
 endfunction
 
-function moveObjects(who, item, stt, snd)
-  var increment := GetObjProperty(item,"increment");
-  var positionIncrement := GetObjProperty(item,"positionIncrement");
-   var la := GetObjProperty(item,"links");
-  var obj;
-  foreach entry in la
-    obj := SystemFindObjectBySerial(CInt(entry));
-    SetObjProperty(obj, "#inuse", 1);
-  endforeach
-  Detach();
-  var newsound := CInt(GetObjProperty(item, "sound"));
-  var speaker  := GetObjProperty(item, "speaker");
-  var x := speaker[1];
-  var y := speaker[2];
-  var z := speaker[3];
-  var speakr :=CreateItemAtLocation( x, y, z, 0xeed, 1);
-  speakr.movable := 0;
-  speakr.graphic := 0x1;
-  var pl := GetObjProperty(item,"partsarray");
-  var i;
-  var stp;
-  var a := 0;
-  if(GetObjProperty(item, "status") == "on")
-    stp := 1;
-    while(stp <= increment)
-       foreach entry in pl
-        obj := SystemFindObjectBySerial(CInt(entry));
-        obj.movable := 1;
-        MoveObjectToLocation(obj, obj.x - CInt(positionIncrement[2]), obj.y - CInt(positionIncrement[3]), obj.z - CInt(positionIncrement[4]), obj.realm, MOVEOBJECT_FORCELOCATION);
-        obj.movable := 0;
+function moveObjects(item, opts)
+   SetObjProperty(item, "#inuse", 1);
+   Detach();
+   
+   var move := opts.movefinal;
+   move[1] := cint(move[1]);
+   move[2] := cint(move[2]);
+   move[3] := cint(move[3]);
+   if (GetObjProperty(item, "status") == "off")
+      move[1] *= -1;
+      move[2] *= -1;
+      move[3] *= -1;
+   endif
+
+   for i := 1 to (opts.movetime)
+      foreach item in (opts.moveitems)
+         if (!item.isA(POLCLASS_UOBJECT))
+            item := SystemFindObjectBySerial(cint(item));
+         endif
+		   MoveObjectToLocation(item, item.x+move[1], item.y+move[2], item.z+move[3], item.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+         sleepms(2);
       endforeach
-      if(a == 2)
-        PlaySoundEffect(speakr, newsound);
-        a := 0;
-      else
-        a := a + 1;
-      endif
-      stp := stp+1;
       sleep(1);
-    endwhile
-    foreach entry in la
-      obj := SystemFindObjectBySerial(CInt(entry));
-      SetObjProperty(obj, "status", "off");
-    endforeach
-  elseif(GetObjProperty(item, "status") == "off")
-    stp := 1;
-    while(stp <= increment)
-      foreach entry in pl
-        obj := SystemFindObjectBySerial(CInt(entry));
-        obj.movable := 1;
-        MoveObjectToLocation(obj, obj.x + CInt(positionIncrement[2]), obj.y + CInt(positionIncrement[3]), obj.z + CInt(positionIncrement[4]), obj.realm, MOVEOBJECT_FORCELOCATION);
-        obj.movable := 0;
-      endforeach
-      if(a == 2)
-        PlaySoundEffect(speakr, newsound);
-        a := 0;
-      else
-        a := a + 1;
+   endfor
+
+   EraseObjProperty(item, "#inuse");
+endfunction
+
+function teleporter(item, opts)
+   SetObjProperty(item, "#inuse", 1);
+   Detach();
+   
+   ChangeLeverStatus(opts.linked_to);
+   EraseObjProperty(item, "#inuse");
+endfunction
+
+function changedoorstatuses(item, opts)
+   SetObjProperty(item, "#inuse", 1);
+   Detach();
+
+   var set_prop := 1;
+   var snd_effect := 0x1f5;
+   if (GetObjProperty(item, "status") == "on")
+      set_prop := 0;
+      snd_effect := 0x200;
+   endif
+
+   foreach item in (opts.doorstatus)
+      item := SystemFindObjectBySerial(cint(item));
+      item.locked := set_prop;
+      PlaySoundEffect(item, snd_effect);
+      sleepms(2);
+   endforeach
+   
+   EraseObjProperty(item, "#inuse");
+endfunction
+
+function openthedoors(item, opts)
+   SetObjProperty(item, "#inuse", 1);
+   Detach();
+   
+   var snd_effect := 0x1f5;
+   if (GetObjProperty(item, "status") == "on")
+      snd_effect := 0x200;
+   endif
+
+   foreach item in (opts.doorstatus)
+      item := SystemFindObjectBySerial(cint(item));
+      item.doToggle();
+      PlaySoundEffect(item, snd_effect);
+      sleepms(2);
+   endforeach
+
+   EraseObjProperty(item, "#inuse");
+endfunction
+
+function lightswitch(item, opts)
+   SetObjProperty(item, "#inuse", 1);
+   Detach();
+   
+   EraseObjProperty(item, "#inuse");
+endfunction
+
+// function lightswitch(who, item )
+//   SetObjProperty(item, "#inuse", 1);
+//   var cfg := ReadConfigFile(":*:itemdesc");
+//   Detach();
+//   var pl := GetObjProperty(item,"partsarray");
+//   var thing;
+//   foreach thingie in pl
+//     thing := SystemFindObjectBySerial(CInt(thingie));
+//     if(thing.graphic == thing.objtype)
+//       if(cfg[thing.objtype]."changesnd")
+//         PlaySoundEffect(who, cfg[thing.objtype]."changesnd");
+//       endif
+//       thing.graphic := cfg[thing.objtype]."change";
+//     else
+//       if(cfg[thing.objtype]."originsnd")
+//         PlaySoundEffect(who, cfg[thing.objtype]."originsnd");
+//       endif
+//       thing.graphic := thing.objtype;
+//     endif
+//   endforeach
+//   EraseObjProperty(item, "#inuse");
+// endfunction
+
+
+function reset(item, force_reset := 0)
+   var opts := item.GetLeverOpts();
+   if ( GetObjProperty(item, "status") != "on" || GetObjProperty(item, "#inuse"))
+      return;
+   endif
+
+   var reset_cd := GetObjProperty(item, "reset_cd");
+   if (reset_cd && reset_cd > polcore().systime && !force_reset)
+      return;
+   endif
+   
+	if ( cint(GetObjProperty(item, "level")) > 0 || GetObjProperty(item, "powerword"))
+		item.invisible := 1;
+	endif
+
+	if ( GetObjProperty(item, "HaveTrap") && !ExistTrap(item))
+      var trapstrength := CInt(GetObjProperty(item,"trap_strength"));
+      if (!trapstrength) trapstrength := 2; endif
+      AddTrap(item, GetObjProperty(item, "HaveTrap"), trapstrength);
+	endif
+
+   var lever_list := array{item.serial};
+   if (opts.linked_to)
+      lever_list := opts.linked_to;
+      if (!lever_list) lever_list := array{}; endif
+      lever_list.append(item.serial);
+   elseif (opts.is_linked)
+      var original := SystemFindObjectBySerial(opts.is_linked);
+      if (GetObjProperty(original, "status") == "off")
+         ChangeLeverStatus(item.serial);
       endif
-      stp := stp+1;
-      sleep(1);
-    endwhile
-    foreach entry in la
-      obj := SystemFindObjectBySerial(CInt(entry));
-      SetObjProperty(obj, "status", "on");
-    endforeach
-  endif
-  var timer := CInt(GetObjProperty(item, "timer"));
-  if(timer > 0)
-    sleep(timer);
-    var mid := 0;
-    var gfx;
-    var fin;
-    foreach entry in la
-      obj := SystemFindObjectBySerial(CInt(entry));
-      gfx := obj.graphic;
-      mid := 0;
-      case(gfx)
-        0x108c: mid := 0x108d;
-                fin := 0x108e;
-                snd := 0x4c;
-        0x108e: mid := 0x108d;
-                fin := 0x108c;
-                snd := 0x4c;
-        0x1093: mid := 0x1094;
-                fin := 0x1095;
-                snd := 0x4c;
-        0x1095: mid := 0x1094;
-                fin := 0x1093;
-                snd := 0x4c;
-        0x108f: fin := 0x1090;
-                snd := 0x4b;
-        0x1090: fin := 0x108f;
-                snd := 0x4b;
-        0x1091: fin := 0x1092;
-                snd := 0x4b;
-        0x1092: fin := 0x1091;
-                snd := 0x4b;
-      endcase
-      if(mid == 0)
-        mid := fin;
+      return;
+   endif
+
+   if (opts.all_levers)
+      if (!CheckAllLevers(item, lever_list, opts))
+         return;
       endif
-      sleepms(500);
-      PlaySoundEffect( obj, snd);
-      obj.graphic := mid;
-      sleepms(500);
-      obj.graphic := fin;
-    endforeach
-    if(GetObjProperty(item, "status") == "on")
-      stp := 1;
-      while(stp <= increment)
-        foreach entry in pl
-          obj := SystemFindObjectBySerial(CInt(entry));
-          obj.movable := 1;
-          MoveObjectToLocation(obj, obj.x - CInt(positionIncrement[2]), obj.y - CInt(positionIncrement[3]), obj.z - CInt(positionIncrement[4]), obj.realm, MOVEOBJECT_FORCELOCATION);
-          obj.movable := 0;
-        endforeach
-        if(a == 2)
-          PlaySoundEffect(speakr, newsound);
-          a := 0;
-        else
-          a := a + 1;
-        endif
-        stp := stp+1;
-        sleep(1);
-      endwhile
-      foreach entry in la
-        obj := SystemFindObjectBySerial(CInt(entry));
-        SetObjProperty(obj, "status", "off");
-      endforeach
-    elseif(GetObjProperty(item, "status") == "off")
-      stp := 1;
-      while(stp <= increment)
-        foreach entry in pl
-          obj := SystemFindObjectBySerial(CInt(entry));
-          obj.movable := 1;
-          MoveObjectToLocation(obj, obj.x + CInt(positionIncrement[2]), obj.y + CInt(positionIncrement[3]), obj.z + CInt(positionIncrement[4]), obj.realm, MOVEOBJECT_FORCELOCATION);
-          obj.movable := 0;
-        endforeach
-        if(a == 2)
-          PlaySoundEffect(speakr, newsound);
-          a := 0;
-        else
-          a := a + 1;
-        endif
-        stp := stp+1;
-        sleep(1);
-      endwhile
-      foreach entry in la
-        obj := SystemFindObjectBySerial(CInt(entry));
-        SetObjProperty(obj, "status", "on");
-      endforeach
-    endif
-  endif
-  DestroyItem(speakr);
-  EraseObjProperty(item, "#inuse");
-  foreach entry in la
-    obj := SystemFindObjectBySerial(CInt(entry));
-    EraseObjProperty(obj, "#inuse");
-  endforeach
-endfunction
-
-function alterpassage(who, item, stt, snd);
-   var la := GetObjProperty(item,"links");
-  var obj;
-  foreach entry in la
-    obj := SystemFindObjectBySerial(CInt(entry));
-    SetObjProperty(obj, "#inuse", 1);
-  endforeach
-  Detach();
-  var newsound := CInt(GetObjProperty(item, "sound"));
-  var speaker  := GetObjProperty(item, "speaker");
-  var x := speaker[1];
-  var y := speaker[2];
-  var z := speaker[3];
-  var speakr :=CreateItemAtLocation( x, y, z, 0xeed, 1);
-  speakr.movable := 0;
-  speakr.graphic := 0x1;
-  var pl := GetObjProperty(item,"partsarray");
-  var i;
-  var stp;
-  var a := 0;
-  if(GetObjProperty(item, "status") == "on")
-    stp := 1;
-    while(stp <= 11)
-       foreach entry in pl
-        obj := SystemFindObjectBySerial(CInt(entry));
-        obj.movable := 1;
-		if (!GetObjProperty(item, "reversepassage" ))
-			MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
-		else
-			MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
-		endif
-        obj.movable := 0;
-      endforeach
-      if(a == 2)
-        PlaySoundEffect(speakr, newsound);
-        a := 0;
-      else
-        a := a + 1;
-      endif
-      stp := stp+1;
-      sleep(1);
-    endwhile
-    foreach entry in la
-      obj := SystemFindObjectBySerial(CInt(entry));
-      SetObjProperty(obj, "status", "off");
-    endforeach
-  elseif(GetObjProperty(item, "status") == "off")
-    stp := 1;
-    while(stp <= 11)
-      foreach entry in pl
-        obj := SystemFindObjectBySerial(CInt(entry));
-        obj.movable := 1;
-		if (!GetObjProperty(item, "reversepassage" ))
-			MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
-		else
-			MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
-		endif
-        obj.movable := 0;
-      endforeach
-      if(a == 2)
-        PlaySoundEffect(speakr, newsound);
-        a := 0;
-      else
-        a := a + 1;
-      endif
-      stp := stp+1;
-      sleep(1);
-    endwhile
-    foreach entry in la
-      obj := SystemFindObjectBySerial(CInt(entry));
-      SetObjProperty(obj, "status", "on");
-    endforeach
-  endif
-  var timer := CInt(GetObjProperty(item, "timer"));
-  if(timer > 0)
-    sleep(timer);
-    var mid := 0;
-    var gfx;
-    var fin;
-    foreach entry in la
-      obj := SystemFindObjectBySerial(CInt(entry));
-      gfx := obj.graphic;
-      mid := 0;
-      case(gfx)
-        0x108c: mid := 0x108d;
-                fin := 0x108e;
-                snd := 0x4c;
-        0x108e: mid := 0x108d;
-                fin := 0x108c;
-                snd := 0x4c;
-        0x1093: mid := 0x1094;
-                fin := 0x1095;
-                snd := 0x4c;
-        0x1095: mid := 0x1094;
-                fin := 0x1093;
-                snd := 0x4c;
-        0x108f: fin := 0x1090;
-                snd := 0x4b;
-        0x1090: fin := 0x108f;
-                snd := 0x4b;
-        0x1091: fin := 0x1092;
-                snd := 0x4b;
-        0x1092: fin := 0x1091;
-                snd := 0x4b;
-      endcase
-      if(mid == 0)
-        mid := fin;
-      endif
-      sleepms(500);
-      PlaySoundEffect( obj, snd);
-      obj.graphic := mid;
-      sleepms(500);
-      obj.graphic := fin;
-    endforeach
-    if(GetObjProperty(item, "status") == "on")
-      stp := 1;
-      while(stp <= 11)
-        foreach entry in pl
-          obj := SystemFindObjectBySerial(CInt(entry));
-          obj.movable := 1;
-          MoveObjectToLocation(obj, obj.x, obj.y, obj.z - 2, obj.realm, MOVEOBJECT_FORCELOCATION);
-          obj.movable := 0;
-        endforeach
-        if(a == 2)
-          PlaySoundEffect(speakr, newsound);
-          a := 0;
-        else
-          a := a + 1;
-        endif
-        stp := stp+1;
-        sleep(1);
-      endwhile
-      foreach entry in la
-        obj := SystemFindObjectBySerial(CInt(entry));
-        SetObjProperty(obj, "status", "off");
-      endforeach
-    elseif(GetObjProperty(item, "status") == "off")
-      stp := 1;
-      while(stp <= 11)
-        foreach entry in pl
-          obj := SystemFindObjectBySerial(CInt(entry));
-          obj.movable := 1;
-          MoveObjectToLocation(obj, obj.x, obj.y, obj.z + 2, obj.realm, MOVEOBJECT_FORCELOCATION);
-          obj.movable := 0;
-        endforeach
-        if(a == 2)
-          PlaySoundEffect(speakr, newsound);
-          a := 0;
-        else
-          a := a + 1;
-        endif
-        stp := stp+1;
-        sleep(1);
-      endwhile
-      foreach entry in la
-        obj := SystemFindObjectBySerial(CInt(entry));
-        SetObjProperty(obj, "status", "on");
-      endforeach
-    endif
-  endif
-  DestroyItem(speakr);
-  EraseObjProperty(item, "#inuse");
-  foreach entry in la
-    obj := SystemFindObjectBySerial(CInt(entry));
-    EraseObjProperty(obj, "#inuse");
-  endforeach
-endfunction
-
-function teleporter(who, item, mid, stt, snd)
-  SetObjProperty(item, "#inuse", 1);
-  Detach();
-  var tiled := GetObjProperty( item, "tiled");
-  var tile;
-  var tilea;
-  var visual;
-  var origin1, origin2, origin3, origin4;
-  var destination1, destination2, destination3, destination4;
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    foreach person in ListMobilesNearLocation( tile.x, tile.y, tile.z, 0);
-      visual := person.graphic;
-      SetObjProperty(person, "inside", 1);
-      SetObjProperty(person, "visual", visual);
-      SetObjProperty(person, "recallgraphic", person.objtype);
-      person.frozen :=1;
-      PlaySoundEffect(person, 0x210);
-    endforeach
-    origin1      := CreateItemAtLocation( tile.x,  tile.y,  tile.z, 0x373a, 1);
-    destination1 := CreateItemAtLocation(tilea.x, tilea.y, tilea.z, 0x373a, 1);
-    origin1.movable := 0;
-    destination1.movable := 0;
-  endforeach
-  sleep(2);
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    origin2      := CreateItemAtLocation( tile.x,  tile.y,  tile.z, 0x374a, 1);
-    destination2 := CreateItemAtLocation(tilea.x, tilea.y, tilea.z, 0x374a, 1);
-    origin2.movable := 0;
-    destination2.movable := 0;
-  endforeach
-  sleep(2);
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    foreach person in ListMobilesNearLocation( tile.x, tile.y, tile.z, 0);
-      if(GetObjProperty(person, "inside") == 1)
-        person.graphic := 0x33;
-      endif
-    endforeach
-    origin3      := CreateItemAtLocation( tile.x,  tile.y,  tile.z, 0x375a, 1);
-    destination3 := CreateItemAtLocation(tilea.x, tilea.y, tilea.z, 0x375a, 1);
-    origin3.movable := 0;
-    destination3.movable := 0;
-  endforeach
-    sleep(2);
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    origin4      := CreateItemAtLocation( tile.x,  tile.y,  tile.z, 0x3779, 1);
-    destination4 := CreateItemAtLocation(tilea.x, tilea.y, tilea.z, 0x3779, 1);
-    origin4.movable := 0;
-    destination4.movable := 0;
-  endforeach
-  sleep(2);
-  PlaySoundEffect( item, snd);
-  item.graphic := mid;
-  sleepms(500);
-  item.graphic := stt;
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    foreach person in ListMobilesNearLocation( tile.x, tile.y, tile.z, 0);
-      if(GetObjProperty(person, "inside") == 1)
-        MoveObjectToLocation( person, tilea.x, tilea.y, tilea.z , person.realm, MOVEOBJECT_FORCELOCATION);
-      endif
-    endforeach
-  endforeach
-  sleep(2);
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    foreach thingie in ListItemsNearLocationOfType(tile.x, tile.y, tile.z, 0, 0x373a )
-      DestroyItem(thingie);
-    endforeach
-    foreach thingie in ListItemsNearLocationOfType(tilea.x, tilea.y, tilea.z, 0, 0x373a )
-      DestroyItem(thingie);
-    endforeach
-  endforeach
-  sleep(2);
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    foreach thingie in ListItemsNearLocationOfType(tile.x, tile.y, tile.z, 0, 0x374a )
-      DestroyItem(thingie);
-    endforeach
-    foreach person in ListMobilesNearLocation( tilea.x, tilea.y, tilea.z, 0);
-      if(GetObjProperty(person, "inside") == 1)
-        EraseObjProperty(person, "inside");
-        PlaySoundEffect(person, 0x1fd);
-        person.graphic := GetObjProperty(person, "visual");
-        if(person.dead)
-          person.objtype := 0x192;
-          person.graphic := 0x192;
-        endif
-      endif
-    endforeach
-    foreach thingie in ListItemsNearLocationOfType(tilea.x, tilea.y, tilea.z, 0, 0x374a )
-      DestroyItem(thingie);
-    endforeach
-  endforeach
-  sleep(2);
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    foreach thingie in ListItemsNearLocationOfType(tile.x, tile.y, tile.z, 0, 0x375a )
-      DestroyItem(thingie);
-    endforeach
-    foreach thingie in ListItemsNearLocationOfType(tilea.x, tilea.y, tilea.z, 0, 0x375a )
-      DestroyItem(thingie);
-    endforeach
-  endforeach
-  sleep(2);
-  foreach obj in tiled
-    tile := SystemFindObjectBySerial(CInt(obj));
-    tilea := SystemFindObjectBySerial(CInt(GetObjProperty(tile,"link")));
-    foreach thingie in ListItemsNearLocationOfType(tile.x, tile.y, tile.z, 0, 0x3779 )
-      DestroyItem(thingie);
-    endforeach
-    foreach thingie in ListItemsNearLocationOfType(tilea.x, tilea.y, tilea.z, 0, 0x3779)
-      DestroyItem(thingie);
-    endforeach
-    foreach person in ListMobilesNearLocation( tilea.x, tilea.y, tilea.z, 0);
-      EraseObjProperty(person, "recallgraphic");
-      EraseObjProperty(person, "visual");
-      person.frozen := 0;
-    endforeach
-  endforeach
-  EraseObjProperty(item, "#inuse");
-endfunction
-
-function linkdoor(who, item)
-  SetObjProperty(item, "#inuse", 1);
-  Detach();
-  var da := GetObjProperty(item, "ds");
-  var status := GetObjProperty(item, "status");
-  var door;
-  if(status == "off");
-    foreach dr in da
-      door := SystemFindObjectBySerial(CInt(dr));
-      door.locked := 0;
-      PlaySoundEffect(door, 0x200);
-    endforeach
-    SetObjProperty(item,"status", "on");
-  elseif(status == "on")
-    foreach dr in da
-      door := SystemFindObjectBySerial(CInt(dr));
-      door.locked := 1;
-      PlaySoundEffect(door, 0x1f5);
-    endforeach
-    SetObjProperty(item,"status", "off");
-  endif
-  EraseObjProperty(item, "#inuse");
-endfunction
-
-function openthedoors(who, item)
-  SetObjProperty(item, "#inuse", 1);
-  Detach();
-
-  var da := GetObjProperty(item, "ds");
-  var status := GetObjProperty(item, "status");
-  var door;
-  
-  if(status == "off");
-    foreach dr in da
-      door := SystemFindObjectBySerial(CInt(dr));
-      door.doToggle();
-      PlaySoundEffect(door, 0x200);
-    endforeach
-    SetObjProperty(item,"status", "on");
-  elseif(status == "on")
-    foreach dr in da
-      door := SystemFindObjectBySerial(CInt(dr));
-      door.doToggle();
-      PlaySoundEffect(door, 0x1f5);
-    endforeach
-    SetObjProperty(item,"status", "off");
-  endif
-
-  EraseObjProperty(item, "#inuse");
-endfunction
+      lever_list.Erase(lever_list.size());
+      ChangeLeverStatus(lever_list, ONLY_ON);
+   else
+      ChangeLeverStatus(lever_list, ONLY_ON);
+   endif
 
 
-function lightswitch(who, item )
-  SetObjProperty(item, "#inuse", 1);
-  var cfg := ReadConfigFile(":*:itemdesc");
-  Detach();
-  var pl := GetObjProperty(item,"partsarray");
-  var thing;
-  foreach thingie in pl
-    thing := SystemFindObjectBySerial(CInt(thingie));
-    if(thing.graphic == thing.objtype)
-      if(cfg[thing.objtype]."changesnd")
-        PlaySoundEffect(who, cfg[thing.objtype]."changesnd");
-      endif
-      thing.graphic := cfg[thing.objtype]."change";
-    else
-      if(cfg[thing.objtype]."originsnd")
-        PlaySoundEffect(who, cfg[thing.objtype]."originsnd");
-      endif
-      thing.graphic := thing.objtype;
-    endif
-  endforeach
-  EraseObjProperty(item, "#inuse");
-endfunction
+   if (opts.lights)
+      lightswitch(item, opts);
+   endif
+   if (opts.graphicarrays)
+      changegraphiclever(item, opts);
+   endif
+   if (opts.opendoors)
+      openthedoors(item, opts);
+   endif
+   if (opts.doorstatus)
+      changedoorstatuses(item, opts);
+   endif
+   // if (opts.setprops)
+   //    lightswitch(who, item, opts);
+   // endif
+   if (opts.moveitems)
+      moveObjects(item, opts);
+   endif
 
-
-function bindlights(who, item)
-  var newarray := array{};
-  SendSysMessage(who,"Escolha as luzes que você deseja ligar com a alavanca. cancel to end");
-  var trg;
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    SetObjProperty(trg,"switched", 1);
-    newarray.append(trg.serial);
-  endwhile
-  SetObjProperty(item,"function", "lights");
-  SetObjProperty(item,"partsarray", newarray);
-endfunction
-
-function createpassage(who, item)
-  var newarray := array{};
-  var linkarray := array{};
-  linkarray.append(item.serial);
-  SendSysMessage(who,"Escolhas as peças que você deseja ligar com a alavanca. cancel to end");
-  var trg;
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    newarray.append(trg.serial);
-  endwhile
-  SendSysMessage(who,"Escolha o item que você quer que o som seja originado");
-  var snd := Target(who);
-  var speaker := array{};
-  speaker.append(snd.x);
-  speaker.append(snd.y);
-  speaker.append(snd.z);
-  SendSysMessage(who,"Agora escolha qualquer outra alavanca que queira sincronizar com esta.");
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    linkarray.append(trg.serial);
-  endwhile  
-  var it;
-  foreach thing in linkarray
-    it := SystemFindObjectBySerial(CInt(thing));    
-    SetObjProperty(it, "links", linkarray);
-    SetObjProperty(it, "speaker", speaker);
-    SetObjProperty(it, "function", "passage");
-    SetObjProperty(it, "partsarray", newarray);
-  endforeach
-endfunction
-
-function doorstatus(who, item)
-  var newarray := array{};
-  SendSysMessage(who,"Escolha a porta que você deseja linkar com esta alavanca. Esc para cancelar");
-  var trg;
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    newarray.append(trg.serial);
-  endwhile
-  SetObjProperty(item,"function", "door");
-  SetObjProperty(item,"ds", newarray);
-  SendSysMessage(who,"A alavanca foi ligada com as porta(s)");
-endfunction
-function setOpenDoor(who, item)
-  var newarray := array{};
-  SendSysMessageEx(who,"Escolha a porta que você deseja linkar com esta alavanca. Esc para cancelar");
-  var trg;
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    newarray.append(trg.serial);
-    trg.locked := 1;
-  SendSysMessageEx(who,"Alavanca ligada.");
-  endwhile
-  SetObjProperty(item,"function", "opendoor");
-  SetObjProperty(item,"ds", newarray);
-  SendSysMessageEx(who,"A alavanca foi ligada com as porta(s)");
-endfunction
-function setprp(who, item, result)
-  var newarray := array{};
-  var note:=result[12];
-  note[1, find(note, ": ", 1)+1]:="";
-  var subnote;
-  var i;
-  subnote:=result[13];
-  subnote[1, find(subnote, ": ", 1)+1]:="";
-  var trg;
-  while(1)
-    trg := Target(who);
-    if(!trg)
-      break;
-    endif
-    newarray.append(trg.serial);
-  endwhile
-  SetObjProperty(item, "note", note);
-  SetObjProperty(item, "subnote", subnote);
-  SetObjProperty(item,"function", "setobj");
-  SetObjProperty(item,"il", newarray);
-endfunction
-
-function linkteleport(who, item)
-  SendSysMessage(who, "target the rune you wish this switch to teleport the user to");
-  var darray := array{};
-  var trgd, trga;
-  while(1)
-    SendSysMessage(who,"target the departure tile");
-    trgd := Target(who);
-    SendSysMessage(who,"target the arrival tile");
-    trga := Target(who);
-    if((!trgd) ||(!trga))
-      break;
-    endif
-    SetObjProperty(trgd, "link", trga.serial);
-    darray.append(trgd.serial);
-  endwhile
-  SetObjProperty(item, "tiled", darray);
-  SetObjProperty(item,"function", "tele");
-endfunction
-
-function Resisted(who, amt)
-  var magery  := CInt(RandomInt(99)+1);
-  var evalint := CInt(RandomInt(99)+1);
-  var halfamt := amt/2;
-  var rezamt := CInt(((RandomInt(halfamt)+1) * evalint ) / 100);
-/*  if(SkillCheck(who, RESISTING_SPELLS, 70))
-	SendSysMessage(who, "You feel yourself resisting magical energy!");
-	PlaySoundEffect(who, 0x01e7);
-	PlayObjectCenteredEffect( who, 0x374a, 5,5);
-	if(evalint > 0)
-	  amt := rezamt + halfamt;
-	else
-	  amt := halfamt;
-    endif
-	return amt;
-  else*/
-	return amt;
-  //endif
+   SetRandomOrder(item);
 endfunction

@@ -1,0 +1,32 @@
+use uo;
+use os;
+
+include "include/say";
+include "include/sounds";
+include ":attributes:attributes";
+include ":combat:combat";
+include ":magery:basicMagery";
+
+program blessWater(info)
+   var who := info[1];
+   var dice_roll := info[2].dice_roll;
+   var targ := info[3];
+   info := 0;
+
+   var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
+   var heal_dice := MageDiceTable("C", level);
+
+   for i := 1 to 6
+      var mob := (CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, who.z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)) + array{who}).randomentry();
+      if (mob)
+         PlayStationaryEffectEx( mob.x, mob.y, mob.z+3, mob.realm, 0x376A, 1, 15, 2168 );
+         PlayStationaryEffectEx( mob.x, mob.y, mob.z+15, mob.realm, 0x376A, 1, 15, 2168 );
+         PlayStationaryEffectEx( mob.x, mob.y, mob.z+30, mob.realm, 0x375A, 1, 15, 2168 );
+         PlaySoundEffect(mob, 0x5CA);
+         HealFLS(mob, RandomDiceRoll(heal_dice) + 5, mob);
+      endif
+      sleep(5);
+   endfor
+   
+   return 1;
+endprogram

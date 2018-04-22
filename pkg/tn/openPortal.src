@@ -30,7 +30,7 @@ program openPortal(item_recebe)
 	var z:=GetObjProperty(item_recebe,"z");
 	
 	RegisterForSpeechEvents( item_recebe, 1 );
-        EnableEvents( SYSEVENT_SPEECH, 1 );
+   EnableEvents( SYSEVENT_SPEECH, 1 );
 
 if(GetObjProperty(item_recebe,"magicword")== error)
 	SetObjProperty(item_recebe,"magicword","Informe a palavra");

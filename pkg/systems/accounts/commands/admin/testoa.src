@@ -19,7 +19,10 @@ include ":magery:basicMagery";
 include ":crafting:craft_props";
 
 program oafeatures_sendpacket(who, text)
-   
+   PlayStationaryEffectEx( who.x, who.y, who.z+3, who.realm, 0x376A, 1, 15, 2168 );
+   PlayStationaryEffectEx( who.x, who.y, who.z+15, who.realm, 0x376A, 1, 15, 2168 );
+   PlayStationaryEffectEx( who.x, who.y, who.z+30, who.realm, 0x375A, 1, 15, 2168 );
+   PlaySoundEffect(who, 0x5CA);
    // var targ := Target(who);
    // printtext(who, ""+targ.tile_layer);
    // printtext(who, ""+targ.get_member("polclass"));
