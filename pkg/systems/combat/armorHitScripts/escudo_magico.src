@@ -23,7 +23,7 @@ program HitScript(params)
       return;
    endif
 
-   if (randomint(100) > 60)
+   if (randomint(100) > 80)
       return;
    endif
 
