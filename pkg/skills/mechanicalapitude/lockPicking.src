@@ -80,7 +80,9 @@ function PickTreasureChest(me, lockpick, chest)
 
       foreach monster in ListMobilesNearLocationEx(chest.x, chest.y, chest.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
          if (GetObjProperty(monster, "guild"))
-            SendEvent(monster, struct{ "type" := 0x78455, source := me});
+            if (CheckLineOfSight(monster, me))
+               SendEvent(monster, struct{ "type" := 0x78455, source := me});
+            endif
          elseif (!monster.master)
             SendEvent(monster, event);
          endif
@@ -88,7 +90,7 @@ function PickTreasureChest(me, lockpick, chest)
       endforeach
    else
       foreach monster in ListMobilesNearLocationEx(chest.x, chest.y, chest.z, 12, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY)
-         if (GetObjProperty(monster, "guild"))
+         if (GetObjProperty(monster, "guild") && CheckLineOfSight(monster, me))
             SendEvent(monster, struct{ "type" := 0x78455, source := me});
          endif
          sleepms(2);

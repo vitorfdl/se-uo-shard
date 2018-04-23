@@ -103,22 +103,25 @@ function resolveEvent(ev, byref wanders)
             me.paralyzed := 0;
          endif
 
-         var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
-         foreach mob in mobs
-            if (mob == ev.source)
-               me.setAggro(mob.serial, mob.getToughness()+12);
-               // if (HaveFeat(mob, "Cadeia de Comando"))
-               //    var followers := ListPetsNear(mob, 5);
-               //    foreach follower in followers
-               //       me.setAggro(follower.serial, 5);
-               //       sleepms(2);
-               //    endforeach
-               // endif
-            elseif (CanFight(me, mob))
-               me.setAggro(mob.serial, mob.getToughness()+10);
-            endif
-            sleepms(2);
-         endforeach
+         // if (!me.listAggro().size())
+            me.setAggro(mob.serial, mob.getToughness()+12);
+         // endif
+         // var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
+         // foreach mob in mobs
+         //    if (mob == ev.source)
+         //       me.setAggro(mob.serial, mob.getToughness()+12);
+         //       // if (HaveFeat(mob, "Cadeia de Comando"))
+         //       //    var followers := ListPetsNear(mob, 5);
+         //       //    foreach follower in followers
+         //       //       me.setAggro(follower.serial, 5);
+         //       //       sleepms(2);
+         //       //    endforeach
+         //       // endif
+         //    elseif (CanFight(me, mob))
+         //       me.setAggro(mob.serial, mob.getToughness()+8);
+         //    endif
+         //    sleepms(2);
+         // endforeach
 
          Fight(ev.source);
          break;

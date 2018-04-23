@@ -130,10 +130,6 @@ function Boss2Fight(opponent ,alerted := 0)
 		// 	break;
 		// endif
 
-		if (hasSpecial(me))
-			DoSpecial(me);
-		endif
-
     //se pode castar spell, manda v
   if (CheckLineOfSight(me, opponent))
     if (GetCooldown(me, "npcspell") == 0)

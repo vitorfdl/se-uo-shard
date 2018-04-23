@@ -201,10 +201,12 @@ function PetFollow(character := 0)
       following := 0;
       wait_time := 120;
    elseif ( dist > 4 )
-      RunTowardLocation( following.x, following.y );
+      PetMovement(2);
+      // RunTowardLocation( following.x, following.y );
       wait_time := 0;
    else
-      WalkTowardLocation( following.x, following.y );
+      PetMovement(1);
+      // WalkTowardLocation( following.x, following.y );
       wait_time := 0;
    endif
 endfunction
@@ -604,7 +606,7 @@ endfunction
 function PetMovement(move_mode)
    if (!CheckLosAt(me, following.x, following.y, following.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se n¿o consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
-		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
+		var last_loc := GetObjProperty(me, "#ally_last_loc"); //procura se ja calculou o path
 		
       if (path == error || ( last_loc && !(following in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se n¿o calculou
          var flags := FP_IGNORE_MOBILES;
@@ -625,7 +627,7 @@ function PetMovement(move_mode)
 				path.erase(1); //deleta a coordenada e vai pra proxima
             set_critical(1);
             SetObjProperty(me, "path", path);
-            SetObjProperty(me, "#enemy_last_loc", array{following.x, following.y, following.z});
+            SetObjProperty(me, "#ally_last_loc", array{following.x, following.y, following.z});
             set_critical(0);
          endif
 		endif
@@ -667,7 +669,7 @@ function PetMovement(move_mode)
       endif
    else
       EraseObjProperty(me, "path");
-      EraseObjProperty(me, "#enemy_last_loc");
+      EraseObjProperty(me, "#ally_last_loc");
       if (move_mode == 2)
       else
          WalkToward( following );

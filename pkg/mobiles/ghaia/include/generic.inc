@@ -8,59 +8,6 @@ include "include/sysEvent";
 include ":attributes:attributes";
 include ":yggdrasil:boss";
 
-function hasSpecial(me)
-    if (npccfgfile.Special && !GetCooldown(me, npccfgfile.Special))
-      return 1;
-    endif
-    return 0;
-endfunction
-
-
-function doSpecial(me)
-  //checa as condicoes
-  var conds :=  GetConfigStringArray( npccfgfile, "SpecialCondition" );
-  
-  foreach cond in  conds
-    if (cond == "enemies")
-    
-    endif
-    
-    if (cond == "closedist")
-      if  (distance(me, me.opponent)  >= 2)
-        return;
-      endif
-    endif
-  endforeach
-
-  SetCooldown(me, npccfgfile.Special, npccfgfile.SpecialCooldown);
-  
-  var says := GetConfigStringArray( npccfgfile, "SpecialSpeak" );
-  var text := says[RandomInt(says.size())+1];
-  if (says != error)
-    SayUC(UC(text));
-  endif
-  
-  if (npccfgfile.SpecialAnimation)
-    var e := PerformAction(me, cint(npccfgfile.SpecialAnimation));
-  endif
-
-  var effect := SplitWords(GetconfigString(npccfgfile, "SpecialEffect" ));
-  if (effect)
-    if (effect[1] == "timer")
-      if (effect[2] == "area")
-        foreach  m in (ListMobilesNearLocation( me.x, me.y, me.z, 3, me.realm))
-          if (!m.npctemplate)
-          TS_StartTimer(m, effect[3], cint(effect[4]), cint(effect[5]), me);
-          endif
-        endforeach
-      else
-        TS_StartTimer(me.opponent, effect[3], cint(effect[4]), cint(effect[5]), me);
-      endif
-    endif
-  endif
-
-endfunction
-
 function EnableMainEvents()
    DisableEvents(/*SYSEVENT_SPEECH +*/ SYSEVENT_LEFTAREA|SYSEVENT_DISENGAGED /*+ SYSEVENT_OPPONENT_MOVED*/);
    EnableEvents(SYSEVENT_ENTEREDAREA, cint(areasize));
@@ -222,36 +169,35 @@ function sleepmode()
       ev := os::wait_for_event(30);
       repeat
          CreateAnimalitems();
-
          PlayIdleSound();
 
          case (ev.type)
-          SYSEVENT_ENGAGED:    
-            // if (me.hidden)
-            //   me.hidden := 0;
-            // endif
-            EnableMainEvents();
-            return ev;
-          SYSEVENT_DAMAGED:
-            if (me.hidden)
-               me.hidden := 0;
-            endif
-            EnableMainEvents();
-            return ev;
-          SYSEVENT_ENTEREDAREA: 
-            if (ev.source && ev.source.connected && !ev.source.concealed)
+            SYSEVENT_ENGAGED:    
+               // if (me.hidden)
+               //   me.hidden := 0;
+               // endif
                EnableMainEvents();
                return ev;
-            endif
-          EVID_HERDING:
-          EVID_FLEE:
-          EVID_DOOBJECTIVE:
-          EVID_ALERT_ALLIES:	
-          EVID_TAUNT:
-          SYSEVENT_ITEM_GIVEN:
-          SYSEVENT_SPEECH:
-            EnableMainEvents(); 
-            return ev;
+            SYSEVENT_DAMAGED:
+               if (me.hidden)
+                  me.hidden := 0;
+               endif
+               EnableMainEvents();
+               return ev;
+            SYSEVENT_ENTEREDAREA: 
+               if (ev.source && !ev.source.npctemplate && !ev.source.cmdlevel)
+                  EnableMainEvents();
+                  return ev;
+               endif
+            // EVID_HERDING:
+            EVID_FLEE:
+            EVID_DOOBJECTIVE:
+            EVID_ALERT_ALLIES:	
+            // EVID_TAUNT:
+            // SYSEVENT_ITEM_GIVEN:
+            //  SYSEVENT_SPEECH:
+               EnableMainEvents(); 
+               return ev;
          endcase
       until(!(ev := os::wait_for_event(30)));
    endwhile

@@ -47,7 +47,7 @@ function CanFight(me, mobile)
       return 0;
    endif
  
-   if (mobile.hidden && AP_getStat(me, WISDOM) >= 9 && (!mobile.npctemplate && me.master != mobile))
+   if (mobile.hidden && AP_getStat(me, WISDOM) >= 9 && (!mobile.npctemplate && me.master != mobile) && CheckLineOfSight(me, mobile))
       var diff := CalculateDhDiff(me, mobile);
       var roll := rollAttrDice(me, WISDOM) + GetSkillBonus(me, PERCEPCAO);
 

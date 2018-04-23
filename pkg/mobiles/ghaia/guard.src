@@ -229,7 +229,7 @@ program NPCMonitor()
          endif
 
          if (!GetCooldown(me, "try_reset"))
-            if (ListMobilesNearLocationEx(me.x, me.y, LIST_IGNORE_Z, 15, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() < 1)
+            if (!HasPlayerNear(me.x, me.y, me.realm))
                if (SendToStartPosition())
                   wait_time := 2000;
                endif
@@ -671,24 +671,26 @@ function SendToStartPosition()
    endif
 
    if (fix_location)
-      if (CoordinateDistance(fix_location.x, fix_location.y, me.x, me.y) > 1)
-         if (ListMobilesNearLocationEx(fix_location.x, fix_location.y, LIST_IGNORE_Z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 1)
+      if (CoordinateDistance(fix_location.x, fix_location.y, me.x, me.y) > 20)
+         if (HasPlayerNear(fix_location.x, fix_location.y, me.realm))
             return 0;
          endif
       endif
 
       MoveObjectToLocation(me, fix_location.x, fix_location.y, fix_location.z, me.realm, MOVEOBJECT_FORCELOCATION);
       me.facing := fix_location.facing;
-      return 1;
    endif
 
-   if (CoordinateDistance(fix_location.x, fix_location.y, me.x, me.y) > 20)
-      if (ListMobilesNearLocationEx(patrolling[1].x, patrolling[1].y, LIST_IGNORE_Z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 1)
-         return 0;
+   if (patrolling)
+      if (CoordinateDistance(patrolling.x, patrolling.y, me.x, me.y) > 20)
+         if (HasPlayerNear(patrolling[1].x, patrolling[1].y, me.realm))
+            return 0;
+         endif
+
+         MoveObjectToLocation(me, patrolling[1].x, patrolling[1].y, patrolling[1].z, me.realm, MOVEOBJECT_FORCELOCATION);
       endif
-
-      MoveObjectToLocation(me, patrolling[1].x, patrolling[1].y, patrolling[1].z, me.realm, MOVEOBJECT_FORCELOCATION);
    endif
+
    return 1;
 endfunction
 

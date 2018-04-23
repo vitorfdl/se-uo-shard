@@ -8,7 +8,11 @@ include ":gumps:gumps_ex";
 
 program oafeatures_sendpacket(who, text)
    SendSysMessageEx(who, "Avaliando recursos, por favor aguarde...",SSM_INFO);
-   var res := PerformanceMeasure();
+   var time := 10;
+   if (text)
+      time := cint(text);
+   endif
+   var res := PerformanceMeasure(time);
 
    var gump := GFCreateGump();
    GFResizePic(gump, 200,200, 9260, 450, 600);
