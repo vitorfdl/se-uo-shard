@@ -104,7 +104,7 @@ function resolveEvent(ev, byref wanders)
          endif
 
          // if (!me.listAggro().size())
-            me.setAggro(mob.serial, mob.getToughness()+12);
+         me.setAggro(ev.source.serial, ev.source.getToughness()+12);
          // endif
          // var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
          // foreach mob in mobs
