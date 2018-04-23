@@ -12,7 +12,6 @@ exported function allnames(who, byref packet)
 	if (mobile.iSA(POLCLASS_MOBILE) && !CheckLineOfSight(who, mobile) && mobile != who && who.cmdlevel < 3)
 		creaturename := "Desconhecido";
 	endif
-	git
 	if ( mobile.dead && who.cmdlevel >= 3)
 		creaturename := mobile.getName();
 	elseif (GetObjProperty(mobile, "realname") && who.cmdlevel >= 3)
