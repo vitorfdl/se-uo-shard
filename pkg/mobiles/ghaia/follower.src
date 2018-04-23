@@ -671,6 +671,7 @@ function PetMovement(move_mode)
       EraseObjProperty(me, "path");
       EraseObjProperty(me, "#ally_last_loc");
       if (move_mode == 2)
+         RunToward( following );
       else
          WalkToward( following );
       endif

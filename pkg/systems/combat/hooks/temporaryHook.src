@@ -97,7 +97,7 @@ program Attack(params)
 	endif
 
 	var attacker_roll := GetAttackerChance(attacker, defender);
-   if (weapon.isBow() && (attacker_roll.critical < 0 || TS_GetTimerInfo(attacker, "hallucination")))
+   if (weapon.isBow() && ((attacker_roll.critical < 0 && AP_GetTrueSkill(who, wpn_a_elem.Pericia) < 3) || TS_GetTimerInfo(attacker, "hallucination")))
       SendSysMessageEx(attacker, "Você erra o alvo", SSM_FAIL);
       var mobiles := ListMobilesNearLocation(defender.x, defender.y, defender.z, 2);
       mobiles := RemoveFromArray(mobiles, attacker);
