@@ -1,0 +1,39 @@
+use uo;
+use os;
+use math;
+
+include "include/say";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+
+program oafeatures_sendpacket(who, text)
+   SendSysMessageEx(who, "Avaliando recursos, por favor aguarde...",SSM_INFO);
+   var res := PerformanceMeasure(1);
+
+   var gump := GFCreateGump();
+   GFResizePic(gump, 200,200, 9260, 450, 600);
+
+   GFPage(gump, 1);
+   GFTextLine(gump, 380, 205, 2100, "Scripts analisados");
+   var y := 225;
+   foreach item in (res.scripts)
+      y += 18;
+      GFTextLine(gump, 230, y, 2103, "{}".format(item.name));
+      GFTextLine(gump, 600, y, 2101, "{}%".format(Ceil(item.percent)));
+      // GFTextLine(gump, 100, y, 2103, "{}".format(item.raca));
+      if (_item_iter % 30 == 0)
+			GFAddButton(gump, 214, 765, 2706, 2707, GF_PAGE_BTN, gump.cur_page+1);
+         GFPage(gump, gump.cur_page+1);
+			GFAddButton(gump, 214, 210, 2704, 2705, GF_PAGE_BTN, gump.cur_page-1);
+         y := 225;
+      endif
+
+      if (_item_iter >= 240)
+         return;
+      endif
+      sleepms(2);
+   endforeach
+
+		var input := GFSendGump(who, gump);
+
+endprogram

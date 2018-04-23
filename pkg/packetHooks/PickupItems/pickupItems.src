@@ -15,7 +15,6 @@ program pickupItems()
 endprogram
 
 exported function HandleItemPickup( who, byref packet )
-
  	if ( GetProcess(CInt(GetObjProperty(who, "#PickPid"))) )
 		SendSysMessageEx(who, "Você esta ocupado roubando alguem");
 		SendPacket(who, "2700");

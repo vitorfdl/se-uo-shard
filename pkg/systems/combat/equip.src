@@ -47,6 +47,19 @@ program equipweapon(who, item, startup)
 	var ret := SetEquipmentMods(who, item);
 	set_critical(0);
 
+   if (ret)
+      if (coverFace(item))
+         if (!GetObjProperty(who, "realname"))
+            SetObjProperty(who, "realname", who.name);
+         endif
+         if (GetObjProperty(who, "description"))
+            SetObjProperty(who, "olddescription", GetObjProperty(who, "description"));
+            EraseObjProperty(who, "description");
+         endif
+         SetName(who, "Desconhecido");
+      endif
+   endif
+
 	return ret;
 endprogram
 
