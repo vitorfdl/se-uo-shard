@@ -208,3 +208,25 @@ function MageDiceTable(tabela, nivel)
 
    return 0;
 endfunction
+
+function getUndeads(who)
+   var undeads := GetObjProperty(who, "undeads");
+   if (!undeads) undeads := array{}; endif
+
+   for i := (undeads.size() ) to 1
+      const mob := SystemFindObjectBySerial(uneads[i]);
+      if (!mob) undeads.Erase(i);
+      sleepms(2);
+   endfor
+
+   return undeads;
+endfunction
+
+function AddUndead(who, mob)
+   var undeads := GetObjProperty(who, "undeads");
+   if (!undeads) undeads := array{}; endif
+
+   if (mob.isA(POLCLASS_MOBILE)) mob := mob.serial; endif
+   undeads.append(mob);
+   SetObjProperty(who, "undeads", undeads);
+endfunction

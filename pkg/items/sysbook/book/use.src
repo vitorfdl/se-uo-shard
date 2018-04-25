@@ -55,6 +55,14 @@ program useBook(who,book)
 	// 		SendSysMessageEx(who, "Você não conhece essa lingua: " + linguagem);
 	// 	endif
 	// else
-		SendOpenBook(who, book);
+   var writed := GetObjProperty(book, "writed");
+   if (writed && writed != who.serial && !book.AlreadyRead(who))
+      writed := SystemFindObjectBySerial(writed);
+      if (writed)
+         ExpGain(writed, 6);
+         book.SetReader(who);
+      endif
+   endif
+	SendOpenBook(who, book);
 	// endif
 endprogram

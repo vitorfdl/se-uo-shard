@@ -279,3 +279,28 @@ function SetInfo(book, prop_name, prop_value)
 	var book_elem := DFFindElement(book_data_file, Hex(book.serial), DF_CREATE);
 	return book_elem.SetProp(CStr(prop_name), prop_value);
 endfunction
+
+exported function AlreadyRead(book, who)
+   var readers := GetObjProperty(book, "readers");
+   if (!readers) readers := array{}; endif
+
+   var book_lines := "";
+   foreach line in GetContents(book);
+      book_lines += line;
+      sleepms(2);
+   endforeach
+
+   if (book_lines.size() <= 300 ) return 1; endif
+
+   if (who.serial in readers)
+      return 1;
+   endif
+endfunction
+
+exported function SetReader(book, who)
+   var readers := GetObjProperty(book, "readers");
+   if (!readers) readers := array{}; endif
+
+   readers.append(who.serial);
+   setobjproperty(book, "readers", readers);
+endfunction

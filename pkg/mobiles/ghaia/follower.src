@@ -201,11 +201,11 @@ function PetFollow(character := 0)
       following := 0;
       wait_time := 120;
    elseif ( dist > 4 )
-      PetMovement(2);
+      PetMovement(following, 2);
       // RunTowardLocation( following.x, following.y );
       wait_time := 0;
    else
-      PetMovement(1);
+      PetMovement(following, 1);
       // WalkTowardLocation( following.x, following.y );
       wait_time := 0;
    endif
@@ -603,21 +603,21 @@ function CanFight(me, mob)
    return 0;
 endfunction
 
-function PetMovement(move_mode)
-   if (!CheckLosAt(me, following.x, following.y, following.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se n¿o consegue correr direto
+function PetMovement(what, move_mode)
+   if (!CheckLosAt(me, what.x, what.y, what.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se n¿o consegue correr direto
 		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
 		var last_loc := GetObjProperty(me, "#ally_last_loc"); //procura se ja calculou o path
 		
-      if (path == error || ( last_loc && !(following in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se n¿o calculou
+      if (path == error || ( last_loc && !(what in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se n¿o calculou
          var flags := FP_IGNORE_MOBILES;
          if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
             flags := flags| FP_IGNORE_DOORS;
          endif
-         path := FindPath(  me.x, me.y, me.z, following.x, following.y, following.z, me.realm, flags, 15); //calcula o path
+         path := FindPath(  me.x, me.y, me.z, what.x, what.y, what.z, me.realm, flags, 15); //calcula o path
          
          if (!path[1] || !path || path == error)
             sleepms(2);
-            following := 0;
+            return 0;
          else
             if (move_mode == 2)
                RunTowardLocation( path[1].x, path[1].y ); //anda na direcao
@@ -627,7 +627,7 @@ function PetMovement(move_mode)
 				path.erase(1); //deleta a coordenada e vai pra proxima
             set_critical(1);
             SetObjProperty(me, "path", path);
-            SetObjProperty(me, "#ally_last_loc", array{following.x, following.y, following.z});
+            SetObjProperty(me, "#ally_last_loc", array{what.x, what.y, what.z});
             set_critical(0);
          endif
 		endif
@@ -655,26 +655,28 @@ function PetMovement(move_mode)
          else // se n¿o consegue chegar na coord 
             if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
                EraseObjProperty(me, "path"); //deleta o path atual
-               following := 0;
+               return 0;
             endif
          endif
       else
          if (move_mode == 2)
-            RunToward( following );
+            RunToward( what );
          else
-            WalkToward( following );
+            WalkToward( what );
          endif
-         RunToward( following );
+         RunToward( what );
          sleepms(2);
       endif
    else
       EraseObjProperty(me, "path");
       EraseObjProperty(me, "#ally_last_loc");
       if (move_mode == 2)
-         RunToward( following );
+         RunToward( what );
       else
-         WalkToward( following );
+         WalkToward( what );
       endif
       sleepms(2);
 	endif
+
+   return 1;
 endfunction

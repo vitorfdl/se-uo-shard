@@ -22,7 +22,7 @@ program SpellScript(params)
 	if ( npc_info.Category != "morto-vivo" || targ.isBoss())
 		SendSysMessageEx(who, "Esta criatura não pode ser dominada;", SSM_FAIL);
 		return 0;
-	elseif (GetMaxPEts(who) <= GetNumPets(who)+1 )
+	elseif (getUndeads(who) >= 3)
 		SendSysMessageEx(who, "Voce já tem mortos demais para sua capacidade", SSM_FAIL);
 		return 0;
 	elseif (!npctemplate)
@@ -67,11 +67,12 @@ program SpellScript(params)
 	PlaySoundEffect(targ, 383);
 
    targ.CA        := targ.CA - 4;
-   SetObjProperty(targ, "dmgbonus", -4);
+   SetObjProperty(targ, "dmgbonus", -2);
 	targ.SetMaster(who);
    var petname := targ.name;
+   var hitsmod := cint(GetObjproperty(targ, "hitsmod"));
+   SetObjProperty(targ, "hitsmod", hitsmod - cint(cdbl(AP_GetVitalMaximumValue(targ, HITS)) * 0.2));
    Run_Script_To_Completion(":death:npcdeath", {targ});
-	SetObjProperty(targ, "pet_cost", 1);	
 	SetObjProperty(targ, "owner", who.serial);
 	SetObjProperty(targ, "name", targ.name);
 	SetObjproperty(targ, "script", targ.script);
@@ -80,7 +81,7 @@ program SpellScript(params)
 	targ.script := ":ghaia:follower";
 	RestartScript(targ);
    SetName(targ, petname);
-	AddPet(who, targ.serial, 1);
+	AddUndead(who, targ);
 				
 	TS_StartTimer(targ, "summon", 240);
 		

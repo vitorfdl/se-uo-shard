@@ -22,7 +22,7 @@ program SpellScript(params)
 	if ( npc_info.Category in array{"morto-vivo", "fada", "elemental"}  )
 		SendSysMessageEx(who, "Não resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
 		return 0;
-	elseif (GetMaxPEts(who) <= GetNumPets(who) )
+	elseif (getUndeads(who) >= 3)
 		SendSysMessageEx(who, "Voce ja levantou corpos demais para sua capacidade", SSM_FAIL);
 		return 0;
 	elseif ( !targ.isa(POLCLASS_CORPSE) )
@@ -77,10 +77,11 @@ program SpellScript(params)
    undead.truecolor := 2301;
    undead.run_speed := 5;
    undead.CA        := undead.CA - 4;
-   SetObjProperty(undead, "dmgbonus", -4);
+   SetObjProperty(undead, "dmgbonus", -2);
+   var hitsmod := cint(GetObjproperty(undead, "hitsmod"));
+   SetObjProperty(undead, "hitsmod", hitsmod - cint(cdbl(AP_GetVitalMaximumValue(undead, HITS)) * 0.2));
 	undead.SetMaster(who);
 	SetObjProperty(undead, "GuardKill", 1);	
-	SetObjProperty(undead, "pet_cost", 1);	
 	SetObjProperty(undead, "owner", who.serial);
 	SetObjProperty(undead, "name", targ.name);
 	SetObjproperty(undead, "script", targ.script);
@@ -92,10 +93,9 @@ program SpellScript(params)
    var petname := undead.name;
    Run_Script_To_Completion(":death:npcdeath", {undead});
    SetName(undead, petname);
-	AddPet(who, undead.serial, 1);
-				
-	TS_StartTimer(undead, "summon", 240);
-		
+	AddUndead(who, undead);
+	TS_StartTimer(undead, "summon", 250 + (level * 10));
+	
 	SendSysMEssageEx(who, "Você teve sucesso ao levantar o corpo", SSM_INFO);
 	
 	return 1;
