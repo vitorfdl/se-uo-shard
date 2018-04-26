@@ -47,7 +47,7 @@ program SpellScript(params)
 		sleepms(300);
 	endforeach
 	
-	sleep(12);
+	sleep(60);
 	foreach pilar in pilarlist
 		DestroyItem(pilar);
       sleepms(2);
