@@ -28,7 +28,7 @@ program animateSword(params)
    var mobiles := ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
    foreach mob in mobiles
       if (CheckIfIsAlly(who, mob) || mob == who)
-         TS_StartTimer(mob, "barrier", 15, 10 + (spellinfo.powered * 5));	
+         TS_StartTimer(mob, "barrier", 20, 10 + (spellinfo.powered * 5));	
       endif
       sleepms(2);
    endforeach

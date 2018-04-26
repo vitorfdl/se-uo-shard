@@ -14,8 +14,18 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
+   var phase_coords := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
+   foreach coord in phase_coords
+      if (randomInt(3) == 1)
+         var item := CreateItemAtLocation(coord.x, coord.y, targ.z, "acid", 1, who.realm);
+         SetObjProperty(item, "owner", who.serial);
+         SetObjProperty(item, "AcidDice", MageDiceTable("A", cint(spellinfo.powered)));
+         PrintText(item, "*ácido se forma no chão*");
+      endif
+   endforeach
+
    for i := 0 to 8
-      var point := randomPlace(targ, 4);
+      var point := randomPlace(targ, 3);
       var item := CreateItemAtLocation(point.x, point.y, targ.z, "acid", 1, who.realm);
       SetObjProperty(item, "owner", who.serial);
       SetObjProperty(item, "AcidDice", MageDiceTable("A", cint(spellinfo.powered)));

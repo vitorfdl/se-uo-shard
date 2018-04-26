@@ -8,6 +8,8 @@ include ":timedscripts:timedScripts";
 include "include/sounds";
 include "include/damage";
 
+const MAX_UNDEAD := 3;
+
 function ManterMagia(magia, mage, mobile)
 	var mana;
 	if (magia == "bless")
@@ -213,9 +215,9 @@ function getUndeads(who)
    var undeads := GetObjProperty(who, "undeads");
    if (!undeads) undeads := array{}; endif
 
-   for i := (undeads.size() ) to 1
-      const mob := SystemFindObjectBySerial(uneads[i]);
-      if (!mob) undeads.Erase(i);
+   for i := (undeads.size()) to 1
+      var mob := SystemFindObjectBySerial(undeads[i]);
+      if (!mob) undeads.Erase(i); endif
       sleepms(2);
    endfor
 

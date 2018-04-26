@@ -1,0 +1,23 @@
+use uo;
+use os;
+
+include ":magery:tnmagery";
+include ":attributes:attributes";
+include ":ghaia:ghaiaUtil";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":tn:npcutil";
+include ":yggdrasil:boss";
+include "include/utils";
+
+program SpellScript(params)
+	var who := params[1];
+	params := 0; // No longer needed
+   
+   var maxstam := cdbl(AP_GetVitalMaximumValue(who, STAMINA));
+	AP_SetVital(who, STAMINA, AP_GetVital(who, STAMINA) + cint(maxstam * 0.5) );
+   PlayCustomSound(who, 10);
+
+	return 1;
+endprogram

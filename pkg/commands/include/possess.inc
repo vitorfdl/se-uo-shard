@@ -204,7 +204,7 @@ function clonar(newlook, oldlook)
 	var newhits := cdbl(AP_GetVitalMaximumValue(newlook, HITS)) * (((cdbl(AP_GetVital(oldlook, HITS)) * 100) / cdbl(AP_GetVitalMaximumValue(oldlook, HITS))) / 100);
 	var newmana := cdbl(AP_GetVitalMaximumValue(newlook, MANA)) * (((cdbl(AP_GetVital(oldlook, MANA)) * 100) / cdbl(AP_GetVitalMaximumValue(oldlook, MANA))) / 100);
 	AP_SetVital(newlook, HITS, cint(newhits));
-	AP_SetVital(newlook, STAMINA, AP_GetVitalMaximumValue(newlook, STAMINA));
+	AP_SetVital(newlook, STAMINA, cint( cdbl(AP_GetVitalMaximumValue(newlook, STAMINA)) * 0.5 ));
 	AP_SetVital(newlook, MANA, cint(newmana));
 	//Copia o profile do npc.
 	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);

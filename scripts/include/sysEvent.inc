@@ -28,6 +28,9 @@ const EVID_PET_GUARD  := 0x913;
 const EVID_PET_PATROL := 0x914;
 const EVID_BLINDED    := 0x915;
 
+const EVID_ITEM_PLACED    := 0x916;
+const EVID_ITEM_GOTTEN    := 0x917;
+
 const EVID_SPEAK           := 0x9113;
 const EVID_ENGAGED         := 0x0002;
 const EVID_DISENGAGED      := 0x0004;

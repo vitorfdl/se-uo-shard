@@ -18,11 +18,20 @@ program HitScript(params)
       return;
    endif
 
-   SetCooldown(attacker, "morehits_done", 1);
+   SetCooldown(attacker, "morehits_done", 2);
 
-   var n_hits := cint(GetObjproperty(attacker, "morehits"));
+   var n_hits;
+   if (attacker.connected)
+      if (AP_GetTrueSkill(attacker, MACHADOS) >= 4 || AP_GetTrueSkill(attacker, ESPADAS) >= 4)
+         n_hits := 1;
+      endif
+   else
+      n_hits := cint(GetObjproperty(attacker, "morehits"));
+   endif
+
    for i := 1 to n_hits
       attacker.attack_once(defender);
+      sleepms(2);
    endfor
 	
 	return 1;

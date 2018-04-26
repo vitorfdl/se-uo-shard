@@ -25,6 +25,7 @@ program createchar(who)
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
 
+   var account := FindAccount(who.acctname);
    // remove later
    if (GetObjProperty(who, "re_stat"))
       SendSysMessageEx(who, "Por favor, distribua novamente seus status.", SSM_INFO);
@@ -137,6 +138,14 @@ program createchar(who)
             sleepms(2);
          endforeach
          equiped := 0;
+      endif
+
+      if (account.getProp("heir"))
+         var heir := SystemFindObjectBySerial(account.getProp("heir"));
+         if (heir)
+            chardata.heir := GetObjProperty(heir, "chardata");
+            chardata.heir_ref := heir;
+         endif
       endif
    else
       chardata := GetObjProperty(who, "chardata");

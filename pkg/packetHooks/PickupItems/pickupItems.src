@@ -47,6 +47,11 @@ exported function HandleItemPickup( who, byref packet )
 				endif
 			endif
 		endif
+
+      foreach item_ref in (ListItemsAtLocation( item.x, item.y, item.z, item.realm))
+         SendEvent(item_ref, struct{ item := item, type := EVID_ITEM_GOTTEN, source := who });
+         sleepms(2);
+      endforeach
 	endif
    
    EraseObjProperty(item, "erguido");

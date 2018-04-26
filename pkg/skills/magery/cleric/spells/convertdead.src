@@ -8,21 +8,19 @@ include ":timedscripts:timedScripts";
 include ":attributes:attributes";
 include ":tn:npcutil";
 include ":ghaia:ghaia";
-include ":tn:npcutil";
-
+include ":magery:basicMagery";
 
 program SpellScript(params)
 	var who := params[1];
 	var targ := params[3];
 	params := 0; // No longer needed
 
-	var maxsummons := 2;
 	var npctemplate := targ.my_template();
    var npc_info := NPC_GetNPCConfig(targ.npctemplate);
 	if ( npc_info.Category != "morto-vivo" || targ.isBoss())
 		SendSysMessageEx(who, "Esta criatura não pode ser dominada;", SSM_FAIL);
 		return 0;
-	elseif (getUndeads(who) >= 3)
+	elseif (getUndeads(who) >= MAX_UNDEAD)
 		SendSysMessageEx(who, "Voce já tem mortos demais para sua capacidade", SSM_FAIL);
 		return 0;
 	elseif (!npctemplate)

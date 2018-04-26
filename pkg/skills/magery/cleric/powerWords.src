@@ -6,6 +6,7 @@ include "include/client";
 include "include/sysEvent";
 include "include/say";
 include ":magery:tnmagery";
+include ":fls_core:fls_characters";
 
 program clericPowerWords(parms)
    detach();
@@ -56,7 +57,7 @@ program clericPowerWords(parms)
          endforeach
 
          if (spell_id)
-            if (!maoLivre(mobile, 1))
+            if (!maoLivre(who, 1))
                SendSysMessageEx(who, "Você não pode invocar milagres sem pelo menos uma mão livre", SSM_FAIL);
             else
                Start_Script(":magery:cast_spell", {who, spell_id, 0, 0, ":magery:config/cleric"});
