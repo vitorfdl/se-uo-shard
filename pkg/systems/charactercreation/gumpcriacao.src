@@ -420,6 +420,8 @@ function RaceGump(who, byref  chardata)
 		if (len(first_name) < 3 || cint(len(first_name) + len(last_name)) > 17)
 			SendSysMessageEX(who, "A combinação do seu nome com sobrenome não pode ser menor que 3 letras e nem maior que 17 letras", SSM_FAIL);
 			RaceGump(who, chardata);
+      elseif (!last_name)
+			RaceGump(who, chardata);
 		endif
 
 		foreach thing in (input.keys)
