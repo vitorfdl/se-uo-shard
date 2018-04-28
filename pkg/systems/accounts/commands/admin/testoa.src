@@ -25,7 +25,7 @@ program oafeatures_sendpacket(who, text)
    var chardata := GetObjproperty(player, "chardata");
    chardata.raca := text;
    chardata.heritage := array{ array{ chardata.heritage }};
-   var res := SetObjProperty(player, "chardata");
+   var res := SetObjProperty(player, "chardata", chardata);
    Sendsysmessageex(who, "done" + res);
 
 
