@@ -8,11 +8,14 @@ include ":gumps:gumps";
 include ":gumps:yesno";
 include ":fls_core:fls_characters";
 
-program testgump(who)
+program testgump(who, test)
    var targ := who;
    if (typeof(targ) == "Array")
       who := targ[1];
       targ := targ[2];
+   elseif (test)
+      targ := Target(who);
+      who := targ;
    elseif (who.cmdlevel > 2)
       targ := Target(who);
    endif
@@ -20,6 +23,7 @@ program testgump(who)
    if (!targ)
       return;
    endif
+
    var chardata := GetObjproperty(targ, "chardata");
    LookGump(who, targ, chardata);
 endprogram
