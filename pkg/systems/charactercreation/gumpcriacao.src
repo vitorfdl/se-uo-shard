@@ -233,7 +233,7 @@ program createchar(who)
 	/*=====  End of Section comment block  ======*/
 
 	//Mudar Aparência
-   if (!chardata.recriando && !chardata.heir)
+   if (!chardata.recriando && (!chardata.heir && !chardata.can_look))
 	   LookGump(who, chardata);
    endif
 
