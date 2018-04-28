@@ -84,7 +84,7 @@ function GetCharactersList( cmdlevel );
  	 	 	endif
  	 	 	i += 1;
  	 	 	SleepMS(5);
-                endwhile
+      endwhile
 		SleepMS(5);
 	endforeach
 
