@@ -53,8 +53,8 @@ program askDeath(params)
       var newchardata := struct{
          nome :=  SplitWords(heir.name)[1],
          nomefinal := SplitWords(heir.name)[2],
-         raca := array{ array{heir_data.raca} },
-         heritage := who.getName(),
+         raca := heir_data.raca,
+         heritage := array{ array{who.getName()} },
          Feats := array{},
          gender := heir_data.gender,
          exppoints := (cint(chardata.level / 2) * 2200) + randomint(1000),
