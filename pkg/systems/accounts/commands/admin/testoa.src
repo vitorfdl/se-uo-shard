@@ -17,6 +17,7 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 include ":magery:basicMagery";
 include ":crafting:craft_props";
+include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
    const player := SelectCharacter( who, who.cmdlevel );
