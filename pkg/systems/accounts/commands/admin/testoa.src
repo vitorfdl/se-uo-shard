@@ -20,7 +20,7 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   const player := SelectCharacter( who, who.cmdlevel );
+   var player := SelectCharacter( who, who.cmdlevel );
 
    var chardata := GetObjproperty(player, "chardata");
    chardata.raca := text;
