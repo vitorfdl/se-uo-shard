@@ -27,7 +27,6 @@ program reset(who, params)
 	// endif
 	
 	var exp := item.getMaxExp();
-   printtext(who, ""+exp);
 	item.SetExp(exp+1);
 
 	CheckExpUp(item);

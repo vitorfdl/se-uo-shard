@@ -64,4 +64,5 @@ program textcmd_ResGump(who)
 	endif
 	KataWakeUp(targ, targ.GetCorpse());
 	EraseObjProperty(targ, "morto");
+   CloseGump(who, 0x8777);
 endprogram

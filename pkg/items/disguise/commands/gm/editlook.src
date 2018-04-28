@@ -8,9 +8,12 @@ include ":gumps:gumps";
 include ":gumps:yesno";
 include ":fls_core:fls_characters";
 
-program testgump(who, cmder)
+program testgump(who)
    var targ := who;
-   if (who.cmdlevel > 3 && cmder)
+   if (typeof(targ) == "Array")
+      who := targ[1];
+      targ := targ[2];
+   elseif (who.cmdlevel > 2)
       targ := Target(who);
    endif
 
@@ -18,11 +21,11 @@ program testgump(who, cmder)
       return;
    endif
    var chardata := GetObjproperty(targ, "chardata");
-   LookGump(targ, chardata);
+   LookGump(who, targ, chardata);
 endprogram
 
 
-function LookGump(who, chardata, aparencia := 0)
+function LookGump(who, targ, chardata, aparencia := 0)
 	var params := struct{
 		"race"  := chardata.raca,
 		"barba" := (chardata.raca != "Elfo")
@@ -31,24 +34,24 @@ function LookGump(who, chardata, aparencia := 0)
 	aparencia := disguiseGump(who, params, aparencia);
 
 	//equipa os itens de aparencia tudo
-	who.color    := aparencia.corpele;
-	who.truecolor:= aparencia.corpele;
+	targ.color    := aparencia.corpele;
+	targ.truecolor:= aparencia.corpele;
 	//barba
-	var mybarba  := GetEquipmentByLayer(who, LAYER_BEARD);
+	var mybarba  := GetEquipmentByLayer(targ, LAYER_BEARD);
 	DestroyItem(mybarba);
 
-	var newbarba := CreateItemAtLocation(who.x, who.y, who.z, aparencia.barba, 1, who.realm);
+	var newbarba := CreateItemAtLocation(targ.x, targ.y, targ.z, aparencia.barba, 1, targ.realm);
 	newbarba.color := 1109;
 	newbarba.color := aparencia.corcabelo;
-	EquipItem(who, newbarba);
+	EquipItem(targ, newbarba);
 	
-	var myhair := GetEquipmentByLayer(who, LAYER_HAIR);
+	var myhair := GetEquipmentByLayer(targ, LAYER_HAIR);
 	DestroyItem(myhair);
 
-	var newhair:= CreateItemAtLocation(who.x, who.y, who.z, aparencia.cabelo, 1, who.realm);
+	var newhair:= CreateItemAtLocation(targ.x, targ.y, targ.z, aparencia.cabelo, 1, targ.realm);
 	newhair.color := 1109;
 	newhair.color := aparencia.corcabelo;
-	EquipItem(who, newhair);
+	EquipItem(targ, newhair);
 
 	if ((!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1) && !who.cmdlevel)
 		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
@@ -56,6 +59,6 @@ function LookGump(who, chardata, aparencia := 0)
 	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
 		return 1;
 	else
-		LookGump(who, chardata, aparencia);
+		LookGump(who, targ, chardata, aparencia);
 	endif
 endfunction

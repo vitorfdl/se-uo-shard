@@ -47,7 +47,7 @@ program AC_start(who)
       endforeach
       
       if (trig)
-         if (last_see.size() > 10)
+         if (last_see.size() > 8)
             last_see.Erase(last_see.size());
          endif
          SetObjProperty(who, "last_see", last_see);

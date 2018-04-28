@@ -93,6 +93,8 @@ program SpellStarter(params)
       SendSystemReport(mobile, "*Conjuração Rápida*", SSM_INFO);
       cycles := Floor(cycles / 3);
       SetCooldown(mobile, "#fastcast", 60);
+   elseif (GetObjProperty(mobile, "zerocast"))
+      cycles := 0;
    endif
    
    while(cycles)

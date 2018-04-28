@@ -465,7 +465,7 @@ function GetCustom(targ, property)
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
       "tempo_de_vida":
          var chardata := getObjProperty(targ, "chardata");
-         return GetTimeStamp((polcore().systime) - cint(chardata.lifetime_penalty));
+         return GetTimeStamp((chardata.lifetime) - cint(chardata.lifetime_penalty));
 	endcase
 
 	return "Unknown custom type!";

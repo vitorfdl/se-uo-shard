@@ -1,0 +1,89 @@
+	use uo;
+use os;
+
+include "include/say";
+include ":gumps:gumps_ex";
+include ":survival:skinning";
+include ":commands:possess";
+
+program askDeath(params)
+   var who := params[2];
+   var corpse := params[1];
+   params := 0;
+
+   var acc := FindAccount(who.acctname);
+   var deathgump := GFCreateGump(350, 250);
+	GFSetID(deathgump, 0x8777);
+   GFClosable(deathgump, 0);
+   GFGumpPic(deathgump, 4, 4, 30566, 0);
+   GFResizePic(deathgump, 81, 103, 9250, 309, 203);
+   GFResizePic(deathgump, 90, 113, 9350, 291, 184);
+   GFHTMLArea(deathgump, 195, 118, 200, 20, "<BASEFONT size=4 color=#111111>Você morreu...", 0, 0);
+
+   if (acc.getProp("heir"))
+      GFAddButton(deathgump, 140, 151, 1043, 1043, GF_CLOSE_BTN, 2);
+      GFResizePic(deathgump, 128, 139, 40000, 218, 53);
+      GFHTMLArea(deathgump, 150, 156, 200, 20, "<BASEFONT size=5 color=#F0F0F0>Tomar posse de herdeiro", 0, 0);
+   endif
+
+   GFAddButton(deathgump, 140, 215, 1043, 1043, GF_CLOSE_BTN, 1);
+   GFResizePic(deathgump, 128, 202, 40000, 218, 53);
+   GFHTMLArea(deathgump, 188, 217, 200, 20, "<BASEFONT size=5 color=#F0F0F0>Novo Personagem", 0, 0);
+
+   var input := GFSendGump(who, deathgump);
+
+   if (input[0] == 1)
+      Detach();
+	   DisconnectClient( who );
+      sleep(3);
+      acc.deletecharacter(1);
+      acc.deletecharacter(2);
+   elseif (input[0] == 2)
+      var heir := SystemFindObjectBySerial(acc.getProp("heir"));
+      if (!heir)
+         SendSysMessageEx(who, "Parece que seu herdeiro morreu...", SSM_FAIL);
+         start_script(":death:deathgump", array{who});
+      endif
+
+      var recipes := GetObjProperty(who, "recipes");
+      var achievements := GetObjProperty(who, "achievements");
+      var chardata := GetObjProperty(who, "chardata");
+      var heir_data := GetObjProperty(heir, "chardata");
+
+      var newchardata := struct{
+         nome :=  SplitWords(heir.name)[1],
+         nomefinal := SplitWords(heir.name)[2],
+         raca := heir_data.raca,
+         Feats := array{},
+         gender := heir_data.gender,
+         exppoints := (cint(chardata.level / 2) * 2200) + randomint(1000),
+         heir := 1
+      };
+
+      if (heir_data.expboost)
+         acc.SetProp("expboost", who.GetLevel());
+      endif
+      
+      Resurrect(who, RESURRECT_FORCELOCATION);
+      DestroyItem(GetEquipmentByLayer(who, 0x16));
+      clonar(who, heir);
+      var propnames := GetObjPropertyNames(who);
+      foreach prop in propnames
+         EraseObjProperty(who, prop);
+      endforeach
+
+      SetObjProperty(who, "recipes", recipes);
+      SetObjProperty(who, "achievements", achievements);
+      SetObjProperty(who, "chardata", newchardata);
+      SetObjProperty(who, "criandochar", 1);
+      MoveObjectToLocation(who, heir.x,heir.y, heir.z, heir.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+      SetObjProperty(heir, "GuardKill", 1);
+      SetObjProperty(heir, "NoCorpse", 1);
+      ApplyRawDamage(heir, 500);
+      acc.EraseProp("heir");
+	   DisconnectClient( who );
+   endif
+
+   // SendSysMessageEx(who, "O alvo negou sua tentativa de mata-lo. Tente resolver com o jogador no Discord ou peça ajuda a um GM.", SSM_FAIL);
+   // SendSysMessageEx(who, "Matar outro jogador não é uma decisão banal, então não insista se não tiver motivos reais.", SSM_FAIL);
+endprogram

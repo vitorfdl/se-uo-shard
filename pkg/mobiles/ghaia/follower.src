@@ -60,7 +60,9 @@ program NPCMonitor()
          SYSEVENT_ENGAGED:
          SYSEVENT_DAMAGED:
             if (!following && !fighting)
-               Fight(ev.source);
+               if (CheckLosAt(me, ev.source.x, ev.source.y, ev.source.z) && Distance(me, ev.source) <= 6)
+                  Fight(ev.source);
+               endif
             endif
          // EVID_HERDING:
          // 	herd(ev);
@@ -142,7 +144,7 @@ function Fight(opponent := 0)
       return;
    endif
 
-   if (fighting.concealed || fighting.hidden || fighting.dead || Distance(me, fighting) > 15)
+   if (fighting.concealed || fighting.hidden || fighting.dead || Distance(me, fighting) > 10)
       if (personality == "Agressivo" && randomInt(4) == 1)
          var mobs := ListMobilesInLineOfSight(me, 8);
          if (mobs[1])

@@ -13,7 +13,6 @@ include ":datafile:datafile";
 include ":attributes:attributes";
 include ":tn:tngumps";
 
-const BTN_CHANGE_CLASS := 12;
 const BTN_CHANGE_RACE := 11;
 const BTN_CHANGE_CORPSE := 13;
 const BTN_CHANGE_LEVELUP := 14;
@@ -49,10 +48,6 @@ program command_Message(who)
 		GFTextLine(gump, 170, y, 2100, "Raça:");
 		GFTextLine(gump, 220, y, 2103, "{}".format(chardata.raca));
       GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_RACE);
-      y+= 20;
-		GFTextLine(gump, 170, y, 2100, "Classe:");
-		GFTextLine(gump, 220, y, 2103, "{}".format(chardata.classe));
-      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_CLASS);
       y+= 20;
 		GFTextLine(gump, 170, y, 2100, "Vida:");
 		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.hitpoints)));
@@ -92,10 +87,6 @@ function handleInput(who, input, byref chardata)
          chardata.raca := raca;
          SetName(who, who.name);
          return;
-      BTN_CHANGE_CLASS:
-         var classe := RadioGump(who, 180, 190, "Qual clase deseja escolher?", array{"Guerreiro", "Ladino", "Mago", "Clérigo"});
-         chardata.classe := classe;
-         return;
       BTN_CHANGE_HITS:
          var hitpoints := cint(RequestInput(who, who.backpack, "Escreva o número de vida extra"));
          chardata.hitpoints := hitpoints;
@@ -130,7 +121,7 @@ function handleInput(who, input, byref chardata)
             who.gender := 1;
          endif
          Start_Script(":disguise:commands/gm/editlook", who);
-         return 1;
+         return;
       BTN_CHANGE_LEVELUP:
          Start_Script(":fls_core:commands/gm/uplevel", who);
          return;

@@ -16,6 +16,7 @@ endprogram
 function checkdeath(ghost)
 	var corpse := ghost.GetCorpse();
 	if (CInt(GetObjProperty(ghost, "morto")) || CInt(GetObjProperty(corpse, "morto")))
+      start_script(":death:deathgump", array{corpse, ghost});
 		return 0;
 	endif
 

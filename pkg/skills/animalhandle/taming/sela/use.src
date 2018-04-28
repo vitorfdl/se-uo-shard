@@ -27,7 +27,7 @@ program useSela(who, item)
    endif
 
    PrintText(who, "*colocando arreio*");
-   SetObjProperty(targ, "sela_hp", 30);
+   SetObjProperty(targ, "sela_hp", 45);
    PrintText(targ, "*aceita o arreio*");
    DestroyItem(item);
 endprogram

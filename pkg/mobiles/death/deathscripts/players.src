@@ -200,6 +200,7 @@ function checkIfDead(corpse, ghost := 0)
 		SetObjProperty(ghost, "morto", 1);
 		SetObjProperty(corpse, "deathtimer", polcore().systime);
 		SetObjProperty(corpse, "charname", GetObjProperty(ghost, "realname"));
+      start_script(":death:deathgump", array{corpse, ghost});
       return 1;
    endif
 endfunction
