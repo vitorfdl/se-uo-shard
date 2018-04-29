@@ -14,10 +14,10 @@ program animateSword(params)
 	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
-   PlayObjectCenteredEffectEx(targ, 0x3773, 5, 20, 50);
+   PlayObjectCenteredEffectEx(targ, 0x3773, 5, 35, 50);
    PlaySoundEffect(who, SFX_SPELL_PROTECTION);
 
-   TS_StartTimer(targ, "healovertime", 200);
+   TS_StartTimer(targ, "healovertime", 10, spellinfo.powered, who);
 
 	return 1;
 endprogram
