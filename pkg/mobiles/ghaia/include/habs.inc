@@ -466,7 +466,6 @@ endfunction
 
 
 function charm(mobile, ts_time, diff)
-    
    if (!playCastAnimation())
       return 1;
    endif

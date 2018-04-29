@@ -11,26 +11,26 @@ include ":combat:combat";
 program lancararma(who, weapon)
    if (weapon != who.weapon)
       return;
-   elseif (AP_GetTrueSkill(who, LANCA_E_ALABARDA) <= 3)
+   elseif (AP_GetTrueSkill(who, LANCA_E_ALABARDA) < 3)
       return;
    endif
-
+   
 	SendSysMessageEX(who, "Selecione onde deve para lançar a arma. (esc para cancelar)", SSM_INFO);
 	var targ := TargetCoordinates(who);
+
 	if (!targ)
 		SendSysMessageEX(who, "Cancelado.", SSM_FAIL);
 		return;
    elseif (weapon != who.weapon)
       return;
+	elseif (CoordinateDistance(who.x, who.y, targ.x, targ.y) > 10 || !CheckLosAt(who, targ.x, targ.y, targ.z))
+		SendSysMessageEX(who, "O alvo esta muito distante ou você não pode vê-lo.", SSM_FAIL);
+		return;
    elseif(!AP_ConsumeVital(who, STAMINA, 2))
       SendSysMessageEx(who, "Você está sem fôlego para arremessar a arma.", SSM_FAIL);
       return;
 	endif
 	
-	if (CoordinateDistance(who.x, who.y, targ.x, targ.y) > 10 || !CheckLosBetween(who.x, who.y, who.z, targ.x, targ.y, targ.z))
-		SendSysMessageEX(who, "O alvo esta muito distante ou você não pode vê-lo.", SSM_FAIL);
-		return;
-	endif
 	
 	PlayMovingEffectXYZ( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, weapon.objtype, 10, 10, 0, who.realm);
 	PlaySoundEffect(who, 0x5D3);

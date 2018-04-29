@@ -150,9 +150,7 @@ program loko(params)
          HealFLS(who, state.healamt);
          RecalcVitals(who);
 		elseif ( state.type == "Graphic Effect")
-         print(state);
 			var targ := selectOpponent(who, state.target, state.conedist);
-
 			if (state.type == "Fixed Loc")
 				if (state.graphictype == "Stationary")
 					
@@ -161,29 +159,30 @@ program loko(params)
 					var starty :=  Cint(state.starty) + RandomInt(2 * state.startradius) - state.startradius;
 					var endx := Cint(state.endx) + RandomInt(2 * state.endradius) - state.endradius;
 					var endy := Cint(state.endy) + RandomInt(2 * state.endradius) - state.endradius;
-					PlayMovingEffectXYZ(startx,  starty, Cint(state.startz), endx, endy, Cint(state.endz), state.fxid, state.speed, state.loop); 
+					PlayMovingEffectXYZ(startx,  starty, Cint(state.startz), endx, endy, Cint(state.endz), cint(state.fxid), state.speed, state.loop); 
 				endif
          elseif (state.target == "Cone in front")
             var points := GetConeCoordsInFront(who.x, who.y, who.facing, cint(state.conedist));
 				foreach t in points
-               PlayStationaryEffect( t[1], t[2], who.z+2, state.fxid, state.speed, state.loops+20);
+               PlayStationaryEffect( t[1], t[2], who.z+2, cint(state.fxid), state.speed, state.loops+20);
                sleepms(2);
             endforeach
 			else
 				foreach t in targ
-				if (state.graphictype == "Stationary")
-					if (state.fxid == "Lightning")
-						PlayLightningBoltEffect(t);
-					else
-						PlayObjectCenteredEffect(t, state.fxid, state.speed, state.loops);
-					endif
-				elseif (state.graphictype == "Moving")
-					if (state.direction == "Mob->Player")
-						PlayMovingEffect(who, t, state.fxid, state.speed, state.loops);
-					else
-						PlayMovingEffect(t, who, state.fxid, state.speed, state.loops); 
-					endif
-				endif
+               if (state.graphictype == "Stationary")
+                  if (state.fxid == "Lightning")
+                     PlayLightningBoltEffect(t);
+                  else
+                     PlayObjectCenteredEffect(t, cint(state.fxid), state.speed, state.loops);
+                  endif
+               elseif (state.graphictype == "Moving")
+                  if (state.direction == "Mob->Player")
+                     PlayMovingEffect(who, t, cint(state.fxid), state.speed, state.loops);
+                  else
+                     PlayMovingEffect(t, who, cint(state.fxid), state.speed, state.loops); 
+                  endif
+               endif
+               sleepms(2);
 				endforeach
 			endif
       elseif (state.type == "Play Cast Anim")

@@ -680,7 +680,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
          var oldstate := event.steps[input];
          var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover", "Cancelar"}, 0, 4);
          if (choice == "Alterar")
-            var state := CombatEventsOptions(who, struct{});
+            var state := CombatEventsOptions(who, oldstate);
             event.steps.Erase(input);
             event.steps.Insert(input, state);
          elseif (choice["Mudar Posi"])
@@ -703,10 +703,15 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
 endfunction
 
 function CombatEventsOptions(who, state)
-   var opt := RadioGump(who, 180, 0, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Play Cast Anim", "Pushback", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
+   var opt;
+   if (!state.type)
+      opt := RadioGump(who, 180, 0, "Adicionar Estado", array{"Move", "Teleport", "TimedScript", "Play Cast Anim", "Pushback", "Perform Action", "Text", "Play Sound", "Heal", "Dmg", "Graphic Effect",  "Create Items", "Summon Npcs", "Custom HitScript", "Set Cooldown", "Delay"});	
+      state.type := opt;
+   else
+      opt := state.type;
+   endif
 
    var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent"};
-   state.type := opt;
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
       var loc := TargetCoordinates(who);
@@ -741,8 +746,8 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Quem vai sofrer a action?", "marked" := 1, "radio" := targ_opts});
       var timedcfg := TS_GetCfgFile();
       input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := 1, "radio" := GetConfigStringKeys(timedcfg)});
-      input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""});
-      input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := "1"});
+      input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""+cint(state.timerduration)});
+      input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := ""+cint(state.level)});
       input_list.append(struct{ "title" := "Teste de resistência?", "checked" := 1, "radio" :=  array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"} });
       input_list.append(struct{ "title" := "Dificuldade do teste?", "marked" := "12"});
       input_list.append(struct{ "title" := "Distância do cone (cone in front only)?", "marked" := "3"});
@@ -762,37 +767,39 @@ function CombatEventsOptions(who, state)
    elseif ( opt == "Perform Action" )
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai realizar a action?", "marked" := 1, "radio" := targ_opts});
-      input_list.append(struct{ "title" := "Qual o ID da animação?", "marked" := ""});
+      input_list.append(struct{ "title" := "Qual o ID da animação?", "marked" := ""+cint(state.id)});
       var output := QuestionsGump(who, input_list);
 
       state.+target := output[1];
       state.+id := cint(output[2]);
    elseif (opt == "Text")
       var input_list := array{};
+      if (!state.color) state.color := 1000; endif
+      if (!state.text) state.text := ""; endif
       input_list.append(struct{ "title" := "Quem vai falar?", "marked" := 1, "radio" := targ_opts});
-      input_list.append(struct{ "title" := "Qual o texto?", "marked" := ""});
-      input_list.append(struct{ "title" := "Qual a cor do texto?", "marked" := "1000"});
+      input_list.append(struct{ "title" := "Qual o texto?", "marked" := ""+cstr(state.text)});
+      input_list.append(struct{ "title" := "Qual a cor do texto?", "marked" := ""+cint(state.color)});
       var output := QuestionsGump(who, input_list);
 
       state.+target := output[1];
       state.+text := output[2];
       state.+color := cint(output[3]);
    elseif (opt == "Play Sound")
-      state.+id := cint(RequestGump(who, "Qual o ID do som?", "", "", 1));
+      state.+id := cint(RequestGump(who, "Qual o ID do som?", "", ""+cint(state.id), 1));
    elseif (opt == "Delay")
-      state.+delay := cint(RequestGump(who, "Quanto tempo de delay?", "", "", 1));
+      state.+delay := cint(RequestGump(who, "Quanto tempo de delay?", "", ""+cint(state.delay), 1));
    elseif (opt == "Heal")
-      state.healamt := cint(RequestGump(who, "Quanto vai healar?", "", "", 1));
+      state.healamt := cint(RequestGump(who, "Quanto vai healar?", "", ""+cint(state.healamt), 1));
    elseif (opt == "Graphic Effect")
       var input_list := array{};
-      input_list.append(struct{ "title" := "Onde vai aparecer o efeito?", "marked" := 1, "radio" := targ_opts + array{"Fixed Loc"}});
+      input_list.append(struct{ "title" := "Onde vai surgir o efeito?", "marked" := 1, "radio" := targ_opts + array{"Fixed Loc"}});
       input_list.append(struct{ "title" := "Qual o tipo de efeito? (fixed loc deve ser Moving)", "marked" := 1, "radio" := array{"Stationary", "Moving"}});
-      input_list.append(struct{ "title" := "Qual o efeito?", "marked" := "", "radio" := array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Small Fireball", "Large Fireball", "Wavy Fireball", "Outro"}});
-      input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Qual a direção? (Moving, ignore for Cone)", "marked" := "", "radio" := array{"Mob->Player", "Player->Mob"}});
-      input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer: (stationary, ignore for Cone)", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Digite o x y z da posição final do efeito: (stationary, ignore for Cone)", "marked" := "1000"});
-      input_list.append(struct{ "title" := "Digite a distância do cone (somente Cone in Front)", "marked" := "3"});
+      input_list.append(struct{ "title" := "Qual o efeito?", "marked" := 11, "radio" := array{"Lightning", "Red Sparkles", "Blue Sparkles", "Blue and Swirl", "Swirl Sparkles", "Blue Sparkles on Ground", "Fire Column", "Small Fireball", "Large Fireball", "Wavy Fireball", "Outro"}});
+      input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := ""+cint(state.fxid)});
+      input_list.append(struct{ "title" := "Qual a direção? (Moving, ignore for Cone)", "marked" := (state.direction == "Mob->Player")+1, "radio" := array{"Mob->Player", "Player->Mob"}});
+      input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer: (stationary, ignore for Moving/cone)", "marked" := "{} {} {}".format(cint(state.startx), cint(state.starty), cint(state.startz))});
+      input_list.append(struct{ "title" := "Digite o x y z da posição final do efeito: (stationary, ignore for Moving/cone)", "marked" := "{} {} {}".format(cint(state.endx), cint(state.endy), cint(state.endz))});
+      input_list.append(struct{ "title" := "Digite a distância do cone (somente Cone in Front)", "marked" := ""+cint(state.conedist)});
       var output := QuestionsGump(who, input_list);
 
 
