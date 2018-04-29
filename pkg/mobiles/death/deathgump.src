@@ -54,6 +54,7 @@ program askDeath(params)
          nome :=  SplitWords(heir.name)[1],
          nomefinal := SplitWords(heir.name)[2],
          raca := heir_data.raca,
+         heritage := array{ array{who.getName()} },
          Feats := array{},
          gender := heir_data.gender,
          exppoints := (cint(chardata.level / 2) * 2200) + randomint(1000),
@@ -72,6 +73,12 @@ program askDeath(params)
          EraseObjProperty(who, prop);
       endforeach
 
+      var itemsinbag2 := EnumerateItemsInContainer( heir.backpack );
+      foreach iteminbag in itemsinbag2
+         MoveItemToContainer(iteminbag, who.backpack);
+         sleepms(2);
+      endforeach 
+      
       SetObjProperty(who, "recipes", recipes);
       SetObjProperty(who, "achievements", achievements);
       SetObjProperty(who, "chardata", newchardata);

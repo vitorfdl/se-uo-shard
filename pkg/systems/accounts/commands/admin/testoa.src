@@ -17,13 +17,17 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 include ":magery:basicMagery";
 include ":crafting:craft_props";
+include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   SendSysMessageEx(who, "Avaliando recursos, por favor aguarde...",SSM_INFO);
-   var res := PerformanceMeasure(1);
+   var player := SelectCharacter( who, who.cmdlevel );
 
-   var gump := GFCreateGump();
-   GFResizePic(gump, 200,200, 9260, 450, 600);
+   var chardata := GetObjproperty(player, "chardata");
+   chardata.raca := text;
+   chardata.heritage := array{ array{ chardata.heritage }};
+   var res := SetObjProperty(player, "chardata", chardata);
+   Sendsysmessageex(who, "done" + res);
+
 
    // GFGumpPicTiled(gump, 100,100,30,235,10460);
    // GFGumpPicTiled(gump, 320,100,30,235,10460);
@@ -36,28 +40,6 @@ program oafeatures_sendpacket(who, text)
    // endif
 
    // var y := 120;
-   GFPage(gump, 1);
-   GFTextLine(gump, 380, 205, 2100, "Scripts analisados");
-   var y := 225;
-   foreach item in (res.scripts)
-      y += 18;
-      GFTextLine(gump, 230, y, 2103, "{}".format(item.name));
-      GFTextLine(gump, 600, y, 2101, "{}%".format(Ceil(item.percent)));
-      // GFTextLine(gump, 100, y, 2103, "{}".format(item.raca));
-      if (_item_iter % 30 == 0)
-			GFAddButton(gump, 214, 765, 2706, 2707, GF_PAGE_BTN, gump.cur_page+1);
-         GFPage(gump, gump.cur_page+1);
-			GFAddButton(gump, 214, 210, 2704, 2705, GF_PAGE_BTN, gump.cur_page-1);
-         y := 225;
-      endif
-
-      if (_item_iter >= 240)
-         return;
-      endif
-      sleepms(2);
-   endforeach
-
-		var input := GFSendGump(who, gump);
 
    // print(res.scripts[1]);
    // PlayStationaryEffectEx( who.x, who.y, who.z+3, who.realm, 0x376A, 1, 15, 2168 );

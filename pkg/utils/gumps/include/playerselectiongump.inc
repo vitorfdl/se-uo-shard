@@ -78,16 +78,13 @@ function GetCharactersList( cmdlevel );
  	 	 	var character := account.GetCharacter(i);
  	 	 	if( character )
  	 	 	 	if( character.cmdlevel <= cmdlevel )
-					var name := character.name;
-					if (name == "Desconhecido" || name =="Fantasminha")
-						var name := GetObjProperty(character, "realname");
-					endif
+					var name := character.getName();
  	 	 	 	 	the_list.Insert( name, character.serial );
  	 	 	 	endif
  	 	 	endif
  	 	 	i += 1;
  	 	 	SleepMS(5);
-                endwhile
+      endwhile
 		SleepMS(5);
 	endforeach
 
