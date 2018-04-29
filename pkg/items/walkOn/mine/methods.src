@@ -3,7 +3,7 @@
  */
  
 use uo;
-
+use os;
 
 program Install()
 	return 1;
@@ -64,7 +64,6 @@ exported function GetOwner(field)
 	return owner;
 endfunction
 
-
 exported function SetEffect(field, effect)
    if (effect == "Fogo")
       field.color := 2039;
@@ -77,4 +76,27 @@ exported function GetEffect(field)
    if (!effect) effect := "Gelo"; endif
 
 	return effect;
+endfunction
+
+exported function LinkTo(field, serial)
+	return SetObjProperty(field, "Link", serial);
+endfunction
+
+exported function GetAllLinks(field)
+	var link := GetObjProperty(field, "Link");
+   if (!link) return array{field}; endif
+
+   var all_links := array{};
+   if (typeof(link) != "Array")
+      var first := SystemFindObjectBySerial(link);
+      link := GetObjProperty(first, "Link");
+   endif
+
+   foreach serie in link
+      var mine := SystemFindObjectBySerial(serie);
+      all_links.append(mine);
+      sleepms(2);
+   endforeach
+   
+   return all_links;
 endfunction

@@ -13,7 +13,6 @@ include ":timedscripts:timedScripts";
 
 program controlScript(field)
 	SetObjProperty(field, "#PID", GetPid());
-
 	var creator := field.GetOwner();
 	if ( creator )
 		SetScriptController(creator);
@@ -56,24 +55,24 @@ function MineTrigger(field, mobile, dmg_dice)
       return;
    endif
 
-   var diff := field.GetDifficulty();
-   
+   var diff := cint(field.GetDifficulty());
+   var resist_dice := cint(rollResistDice(mobile, CONSTITUTION));
    if (field.GetEffect() == DMG_FIRE)
-      var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
+      var dmg := RandomDiceRoll(dmg_dice)+8; // - resistance ?
       DamageFLS(mobile, dmg, DMG_FIRE, owner);
       var explosion := SelectRandomExplosion();
       PlaySoundEffect(mobile, SFX_EXPLOSION_11);
       PlayObjectCenteredEffect(mobile, explosion, 0, 5);
-      if (rollResistDice(mobile, CONSTITUTION) > diff)
+      if (resist_dice <= diff)
          TS_StartTimer(mobile, "tombar", 1);
       else
          SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);
          SendSystemReport(mobile, "*resistiu*", SSM_INFO);
       endif
    else
-      var dmg := RandomDiceRoll(dmg_dice); // - resistance ?
+      var dmg := RandomDiceRoll(dmg_dice)+5; // - resistance ?
       DamageFLS(mobile, dmg, DMG_COLD, owner);
-      if (rollResistDice(mobile, CONSTITUTION) > diff)
+      if (resist_dice <= diff)
          TS_StartTimer(mobile, "frozen", 4);
       else
          SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);
@@ -81,5 +80,8 @@ function MineTrigger(field, mobile, dmg_dice)
       endif
    endif
 
-   DestroyItem(field);
+   var links := field.GetAllLinks();
+   foreach item in links
+      DestroyItem(item);
+   endforeach
 endfunction

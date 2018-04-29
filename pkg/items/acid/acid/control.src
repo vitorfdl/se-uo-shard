@@ -17,7 +17,7 @@ program ControlScript(acid)
       foreach mob in mobiles
          sleepms(2);
          if (owner)
-            if (mob in owner.party)
+            if (CheckifIsAlly(owner, mob) || owner == mob)
                continue;
             endif
          endif

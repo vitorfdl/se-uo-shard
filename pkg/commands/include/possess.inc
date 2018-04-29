@@ -8,8 +8,10 @@ include ":datafile:datafile";
 include ":attributes:attributes";
 include ":attributes:stats";
 include ":gumps:requestgump";
+include ":timedscripts:timedScripts";
 
 function possess(me, npc)
+   TS_LowerDuration(me, "regenmoriquendi", -1);
 	if (GetObjProperty (me, "lastpossessedserial"))
 		var oldnpc := SystemFindObjectBySerial(GetObjProperty(me, "lastpossessedserial"));
 		if (oldnpc)
@@ -30,6 +32,10 @@ function possess(me, npc)
 	endforeach 
 	
 	clonar(me, npc);
+   if (npc.npctemplate["moriquendi"])
+      TS_StartTimer(me, "regenmoriquendi", 200);	
+   endif
+
 	DestroyItem(me.backpack);
 	var bolsa := CreateItemAtLocation(5384, 923, 0, 0x9B2);
 	EquipItem(me, bolsa);

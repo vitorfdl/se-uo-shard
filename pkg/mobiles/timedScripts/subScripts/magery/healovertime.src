@@ -1,0 +1,48 @@
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include ":attributes:attributes";
+
+function StartScript(mobile, attacker := 0, level := 0)
+   if (!level) level := 1; endif
+
+   while (mobile)
+      HealFLS(mobile, RandomDiceRoll("{}d5+{}".format(level, level)));
+      HealStamina(mobile, RandomDiceRoll("{}d3".format(level)));
+      sleep(2);
+   endwhile
+
+   return 1;
+endfunction
+
+function EndScript(mobile, level)
+   return 1;
+endfunction
+
+function LogOffScript(mobile)
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile, level);
+      elseif (type == "LogOff")
+         return LogOffScript(mobile);
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

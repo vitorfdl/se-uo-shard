@@ -11,18 +11,28 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":magery:basicMagery";
 
+var item_place := array{
+    array{ 0x307f,  0, 0},  
+    array{ 0x3083, -1, -1},  
+    array{ 0x3082,  0, -1},  
+    array{ 0x3081,  1, -1},  
+    array{ 0x3080, -1, 0},  
+    array{ 0x307e,  1, 0},  
+    array{ 0x307d, -1, 1},  
+    array{ 0x307c,  0, 1},  
+    array{ 0x307b,  1, 1}
+};
+
 program animateSword(params)
 	var who := params[1];
 	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var amount := 2;
-   if (spellinfo.powered >= 3) amount += 1; endif
-   if (spellinfo.powered >= 6) amount += 1; endif
+   var amount := 1;
+   if (spellinfo.powered >= 4) amount += 1; endif
    if (spellinfo.powered >= 8) amount += 1; endif
    if (spellinfo.powered >= 10) amount += 1; endif
-   if (spellinfo.powered >= 12) amount += 1; endif
 
    for i := 1 to amount
       if (!targ)
@@ -37,16 +47,36 @@ program animateSword(params)
       endif
 
       PlaySoundEffect(who, 0x1F0);
-      var item := CreateItemAtLocation(targ.x, targ.y, targ.z, 0xA094);
-      item.movable := 0;
-      SetObjProperty(item, "DamageDice", MageDiceTable("A", spellinfo.powered));
-      item.SetOwner(who);
-      item.SetDifficulty(spellinfo.dice_roll+8);
-      item.SetDuration(60);
-      if (spellinfo.type == "Fogo")
-         item.SetEffect(DMG_FIRE);
-         item.color := 2039;
-      endif
+      var first;
+      var all_links := array{};
+      foreach mine in item_place
+         var item := CreateItemAtLocation(targ.x+mine[2], targ.y+mine[3], targ.z, 0xA094);
+         if (!first) 
+            first := item;
+         else
+            item.linkTo(first.serial);
+         endif
+
+         all_links.append(item.serial);
+
+         item.movable := 0;
+         item.graphic := mine[1];
+         SetObjProperty(item, "DamageDice", MageDiceTable("A", spellinfo.powered));
+         item.SetOwner(who);
+         item.SetOwner(who);
+         item.SetDifficulty(spellinfo.dice_roll+7);
+         item.SetDuration(60);
+         if (spellinfo.type == "Fogo")
+            item.SetEffect(DMG_FIRE);
+            item.color := 2039;
+         else
+            item.color := 2051;
+         endif
+         sleepms(2);
+      endforeach
+      
+      first.linkTo(all_links);
+
       targ := 0;
    endfor
 
