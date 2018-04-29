@@ -11,7 +11,6 @@ include ":gumps:requestgump";
 include ":timedscripts:timedScripts";
 
 function possess(me, npc)
-   TS_LowerDuration(me, "regenmoriquendi", -1);
 	if (GetObjProperty (me, "lastpossessedserial"))
 		var oldnpc := SystemFindObjectBySerial(GetObjProperty(me, "lastpossessedserial"));
 		if (oldnpc)
@@ -130,6 +129,7 @@ function unpossess(me, freeze :=1)
 		oldnpc.frozen := 1;
 	endif
 
+   TS_LowerDuration(me, "regenmoriquendi", -1);
    EraseObjProperty(me, "metamorfose");
 
 	AP_RefreshVitals(me);

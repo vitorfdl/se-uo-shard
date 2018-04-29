@@ -28,9 +28,10 @@ function GetExpCap(who)
 		return 0;
 	endif
 
+   var extra_cap := Cint(GetObjProperty(who, "extracap"));
 	var char_age := GetCharAge(who, "weeks") +1;
 	var char_level := who.getLevel() - 1; //hack
-	var result := (char_age*2000) - (char_level*500);
+	var result := ((char_age*2000) + extra_cap) - (char_level*500);
 	return result;
 endfunction
 
@@ -64,10 +65,10 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
-//   if ( GetExpCap(mobile) < mobile.Getexp())
-//   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
-// 		return 0;
-//    endif
+  if ( GetExpCap(mobile) < mobile.Getexp())
+  		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
+		return 0;
+   endif
   
 	// var settings := AP_GetSettingsCfgElem("Skills");
 	//verifica se ja não recebeu exp em 5 segundos
