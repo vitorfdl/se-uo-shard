@@ -171,9 +171,9 @@ function GetWeaponSpellList(item)
          if (spell == active_spell)
             return_text += BLUE;
          endif
-         
+
          var spell_name := GetSpellName(spell);
-         spell_name["Encantamento"] := "Enc."
+         spell_name["Encantamento"] := "Enc.";
          return_text += "{} {}<br>".format(spell_name, convertToRoman(spell_levels[spell]));
 
          if (spell == active_spell)
