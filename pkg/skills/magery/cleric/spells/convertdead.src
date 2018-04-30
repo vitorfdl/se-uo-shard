@@ -20,7 +20,7 @@ program SpellScript(params)
 	if ( npc_info.Category != "morto-vivo" || targ.isBoss())
 		SendSysMessageEx(who, "Esta criatura não pode ser dominada;", SSM_FAIL);
 		return 0;
-	elseif (getUndeads(who) >= MAX_UNDEAD)
+	elseif (getUndeads(who).size() >= MAX_UNDEAD)
 		SendSysMessageEx(who, "Voce já tem mortos demais para sua capacidade", SSM_FAIL);
 		return 0;
 	elseif (!npctemplate)

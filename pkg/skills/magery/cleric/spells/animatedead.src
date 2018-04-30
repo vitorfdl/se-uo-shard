@@ -21,7 +21,7 @@ program SpellScript(params)
 	if ( npc_info.Category in array{"morto-vivo", "fada", "elemental"}  )
 		SendSysMessageEx(who, "Não resta energia vital nesse corpo para ser reanimado", SSM_FAIL);
 		return 0;
-	elseif (getUndeads(who) >= MAX_UNDEAD)
+	elseif (getUndeads(who).size() >= MAX_UNDEAD)
 		SendSysMessageEx(who, "Voce ja levantou corpos demais para sua capacidade", SSM_FAIL);
 		return 0;
 	elseif ( !targ.isa(POLCLASS_CORPSE) )

@@ -74,7 +74,7 @@ function GetCharactersList( cmdlevel );
  	foreach acct_name in ( ListAccounts() )
 		var account := FindAccount( acct_name );
 		var i := 1;
-                while( i <= 5 )
+      while( i <= 5 )
  	 	 	var character := account.GetCharacter(i);
  	 	 	if( character )
  	 	 	 	if( character.cmdlevel <= cmdlevel )
