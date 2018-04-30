@@ -161,12 +161,14 @@ exported function MegaCliloc( who, byref packet )
 					xDesc += "Força Mínima: {}<br>".format(elem.strrequired);
 				endif
             if (elem.intrequired)
-					xDesc += "Inteligência Mínima: {}<br>".format(elem.intrequired);
+					xDesc += "Int. Mínima: {}<br>".format(elem.intrequired);
             endif
-				if (who.cmdlevel > 3)
-					xDesc += "Dano: {}<br>".format(elem.damage);
-					xDesc += "Velocidade: {}<br>".format(elem.speed);
-				endif
+
+				// if (who.cmdlevel > 3)
+				// 	xDesc += "Dano: {}<br>".format(elem.damage);
+				// 	xDesc += "Velocidade: {}<br>".format(elem.speed);
+				// endif
+
 				xDesc += "Atributo: {}<br>".format(TranslateAtt(cstr(item.attribute)));
 				// xDesc += "Velocidade: " + GetVelStringDesc(elem, item) + "";
 				var crits := GetCriticalInfo(elem);
