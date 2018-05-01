@@ -47,7 +47,7 @@ program oafeatures_sendpacket(who, text)
    // PlayStationaryEffectEx( who.x, who.y, who.z+30, who.realm, 0x375A, 1, 15, 2168 );
    // PlaySoundEffect(who, 0x5CA);
    var targ := Target(who);
-   printtext(targ, ""+targ.enabled("runwhilestealth"));
+   printtext(targ, ""+targ.enabled("hiddenattack"));
    // printtext(who, ""+targ.tile_layer);
    // printtext(who, ""+targ.get_member("polclass"));
    // var targ := TargetCoordinates(who);
