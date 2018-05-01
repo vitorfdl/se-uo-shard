@@ -19,15 +19,15 @@ program animateSword(params)
    foreach coord in phase_coords
       var item := CreateItemAtLocation(coord.x, coord.y, targ.z, "acid", 1, who.realm);
       SetObjProperty(item, "owner", who.serial);
-      SetObjProperty(item, "AcidDice", MageDiceTable("A", cint(spellinfo.powered)));
+      SetObjProperty(item, "AcidDice", MageDiceTable("B", cint(spellinfo.powered)));
       PrintText(item, "*ácido se forma no chão*");
    endforeach
 
-   for i := 0 to 4
+   for i := 0 to 2
       var point := randomPlace(targ, 3);
       var item := CreateItemAtLocation(point.x, point.y, targ.z, "acid", 1, who.realm);
       SetObjProperty(item, "owner", who.serial);
-      SetObjProperty(item, "AcidDice", MageDiceTable("A", cint(spellinfo.powered)));
+      SetObjProperty(item, "AcidDice", MageDiceTable("B", cint(spellinfo.powered)));
       PrintText(item, "*ácido se forma no chão*");
       sleepms(2);
    endfor

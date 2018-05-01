@@ -41,12 +41,8 @@ program skill_Hide(who)
 		endif
 		var check := rollAttrDice(who, DEXTERITY, (GetGlobalProperty("dia") == "noite")) + GetSkillBonus(who, "Furtividade");
 		if( check >= dif )
-         if (randomInt(3) == 1)
-            ExpGain(who, "minor");
-         endif
 			SendSysMessageEx(who, "Você se escondeu.", SSM_INFO);
 			who.hidden := 1;
-         who.SetAchievement("sneak", 1);
 			var a := start_script(":sneak:stealthmode", array{who});
 			//sendsysmessage(who, " "+ a);
 			EraseObjProperty(who, "#steathsteps");

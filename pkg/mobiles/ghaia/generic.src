@@ -38,6 +38,7 @@ function CloseDistanceMeele( opponent )
 	if ( GetObjProperty(me, "noclosecombat") == 1)
 		return 0;
    elseif (me.hidden && Distance(me, opponent) <= 1)
+      print("2");
       me.hidden := 0;
 	endif
 

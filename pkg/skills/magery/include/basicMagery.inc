@@ -221,6 +221,7 @@ function getUndeads(who)
       sleepms(2);
    endfor
 
+   print(undeads);
    return undeads;
 endfunction
 

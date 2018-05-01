@@ -6,6 +6,7 @@ include ":attributes:attributes";
 
 program showdfdiff(params)
 	var who := params[1];
+   var expgain_time := 0;
 	while(who.hidden && who.connected)
 
 		var mobs := ListMobilesInLineOfSight(who, 11);
@@ -23,6 +24,13 @@ program showdfdiff(params)
 			sleepms(2);
 		endforeach
 
+      if (expgain_time <= polcore().systime)
+         if (ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() >= 1)
+            ExpGain(who, "minor");
+            who.SetAchievement("sneak", 1);
+            expgain_time := polcore().systime + 120;
+         endif
+      endif
 		sleep(3);
 	endwhile
 endprogram

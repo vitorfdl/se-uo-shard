@@ -180,6 +180,7 @@ function sleepmode()
                return ev;
             SYSEVENT_DAMAGED:
                if (me.hidden)
+                  print("1");
                   me.hidden := 0;
                endif
                EnableMainEvents();
