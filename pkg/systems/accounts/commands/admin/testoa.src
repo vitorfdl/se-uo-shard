@@ -20,13 +20,13 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   var player := SelectCharacter( who, who.cmdlevel );
+   // var player := SelectCharacter( who, who.cmdlevel );
 
-   var chardata := GetObjproperty(player, "chardata");
-   chardata.raca := text;
-   chardata.heritage := array{ array{ chardata.heritage }};
-   var res := SetObjProperty(player, "chardata", chardata);
-   Sendsysmessageex(who, "done" + res);
+   // var chardata := GetObjproperty(player, "chardata");
+   // chardata.raca := text;
+   // chardata.heritage := array{ array{ chardata.heritage }};
+   // var res := SetObjProperty(player, "chardata", chardata);
+   // Sendsysmessageex(who, "done" + res);
 
 
    // GFGumpPicTiled(gump, 100,100,30,235,10460);
@@ -46,7 +46,8 @@ program oafeatures_sendpacket(who, text)
    // PlayStationaryEffectEx( who.x, who.y, who.z+15, who.realm, 0x376A, 1, 15, 2168 );
    // PlayStationaryEffectEx( who.x, who.y, who.z+30, who.realm, 0x375A, 1, 15, 2168 );
    // PlaySoundEffect(who, 0x5CA);
-   // var targ := Target(who);
+   var targ := Target(who);
+   printtext(targ, ""+targ.enabled("runwhilestealth"));
    // printtext(who, ""+targ.tile_layer);
    // printtext(who, ""+targ.get_member("polclass"));
    // var targ := TargetCoordinates(who);

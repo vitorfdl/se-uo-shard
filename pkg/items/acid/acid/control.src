@@ -6,18 +6,19 @@ use os;
 include ":acid:acid";
 
 program ControlScript(acid)
+   sleep(1);
    var owner := GetObjProperty(acid, "owner");
    if (owner)
       owner := SystemFindObjectBySerial(owner);
    endif
 
    var i := 0;
-   while(acid && i <= 10)
+   while(acid && i <= 5)
       var mobiles := ListMobilesNearLocation( acid.x, acid.y, acid.z, 0);
       foreach mob in mobiles
          sleepms(2);
          if (owner)
-            if (CheckifIsAlly(owner, mob) || owner == mob)
+            if (CheckifIsAlly(owner, mob))
                continue;
             endif
          endif

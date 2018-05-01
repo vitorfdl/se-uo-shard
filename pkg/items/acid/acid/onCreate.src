@@ -11,7 +11,7 @@ program OnCreate(acid)
 	var graphics := GetConfigStringArray(graphic_elem, "Graphic");
 
 	if ( graphics.size() > 0 )
-		acid.graphic := CInt(graphics[RandomInt(graphics.size())+1]);
+		acid.graphic := CInt(graphics.randomentry());
 	endif
 
 	return 1;

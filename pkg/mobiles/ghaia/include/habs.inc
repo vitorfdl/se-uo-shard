@@ -429,7 +429,7 @@ function createMine(dmg, amount, is_fire := 0)
       var item;
       while (!item)
          var point := randomPlace(me, 3);
-         item := CreateItemAtLocation(point.x, point.y, me.z, 0xA094);
+         item := CreateItemAtLocation(point.x, point.y, me.z, 0x307f);
          SetObjProperty(item, "DamageDice", "{}d4".format(dmg));
          item.SetOwner(me);
          item.SetDuration(60);
@@ -464,20 +464,27 @@ function Iceberg(mobile, ice_damage, diff)
    return 1;
 endfunction
 
-
 function charm(mobile, ts_time, diff)
    if (!playCastAnimation())
       return 1;
    endif
 
-   PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
-
-   if (rollResistDice(mobile, INTELLIGENCE) > diff)
-      SendSystemReport(mobile, "*resistido*", SSM_INFO);
-      return 1;
+   if (mobile.isA(POLCLASS_MOBILE))
+      mobile := array{mobile};
    endif
 
-   TS_StartTimer(mobile, "charmed", cint(ts_time), diff, me);
+   foreach mob in mobile
+      sleepms(2);
+      PlayObjectCenteredEffect(me, 0x37B9, 2, 15);
+
+      if (rollResistDice(mob, INTELLIGENCE) > diff)
+         SendSystemReport(mob, "*resistido*", SSM_INFO);
+         continue;
+      endif
+
+      TS_StartTimer(mob, "charmed", cint(ts_time), diff, me);
+   endforeach
+
    return 1;
 endfunction
 
@@ -694,10 +701,10 @@ endfunction
 
 function NPC_Sneak()
    PrintText(me, "*esconde*");
+   GrantPrivilege(me, "runwhilestealth");
+   me.enable("runwhilestealth");
    me.hidden := 1;
    me.stealthsteps := 15;
-   me.GrantPrivilege("runwhilestealth");
-   me.enable("runwhilestealth");
    return 1;
 endfunction
 
