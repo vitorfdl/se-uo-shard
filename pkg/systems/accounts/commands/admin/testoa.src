@@ -48,6 +48,8 @@ program oafeatures_sendpacket(who, text)
    // PlaySoundEffect(who, 0x5CA);
    var targ := Target(who);
    printtext(targ, ""+targ.enabled("hiddenattack"));
+   GrantPrivilege(targ, "hiddenattack");
+   targ.enable("hiddenattack");
    // printtext(who, ""+targ.tile_layer);
    // printtext(who, ""+targ.get_member("polclass"));
    // var targ := TargetCoordinates(who);
