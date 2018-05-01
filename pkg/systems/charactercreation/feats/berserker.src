@@ -23,21 +23,21 @@ function berserker(who)
       return 0;
    endif
 
-   var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * 0.2;
+   var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * 0.15;
    if (!AP_ConsumeVital(who, HITS, maxhit))
 		SendSysMessageEx(who, "Você não tem vida o suficiente para entrar em modo berserker", SSM_INFO);
       return 0;
    endif
 
    var weapon := who.weapon;
-   TS_StartTimer(who, "attackspeed", 6, 40);
+   TS_StartTimer(who, "attackspeed", 10, 35);
 
-   while (who.connected)
-      if (who.weapon != weapon)
-         TS_LowerDuration(who, "attackspeed", -1);
-      endif
-      sleep(2);
-   endwhile
+   // while (who.connected)
+   //    if (who.weapon != weapon)
+   //       TS_LowerDuration(who, "attackspeed", -1);
+   //    endif
+   //    sleep(2);
+   // endwhile
 
    return 1;
 endfunction

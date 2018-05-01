@@ -214,8 +214,8 @@ endfunction
 function getUndeads(who)
    var undeads := GetObjProperty(who, "undeads");
    if (!undeads) undeads := array{}; endif
-
-   for i := (undeads.size()) to 1
+   var i;
+   for (i :=  := undeads.size(); i >= 1; i -= 1)
       var mob := SystemFindObjectBySerial(undeads[i]);
       if (!mob) undeads.Erase(i); endif
       sleepms(2);

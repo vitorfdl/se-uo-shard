@@ -18,7 +18,7 @@ program Logon(who)
 	EraseObjProperty(who, "#Casting");
    EraseObjProperty(who, "#lockpicking");
 	SetObjProperty(who, "ConnectTime", polcore().systime);
-   who.GrantPrivilege("hiddenattack");
+   GrantPrivilege(who, "hiddenattack");
    who.enable("hiddenattack");
 
 	var createdat :=  GetObjProperty(who, "createdate");

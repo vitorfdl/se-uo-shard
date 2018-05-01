@@ -23,7 +23,7 @@ program acid_WalkOn(mobile, acid)
    var owner := GetObjProperty(acid, "owner");
    if (owner)
       owner := SystemFindObjectBySerial(owner);
-      if (CheckifIsAlly(owner, mobile) || owner == mobile)
+      if (CheckifIsAlly(owner, mobile))
          return;
       endif
    endif
