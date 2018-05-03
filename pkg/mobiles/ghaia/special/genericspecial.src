@@ -92,6 +92,7 @@ program loko(params)
             endif
 			endforeach
 		elseif (state.type == "Teleport")
+         print(state);
 			var targ := selectOpponent(who, state.target, state.conedist);
 			foreach t in targ
             sleepms(2);
@@ -101,8 +102,8 @@ program loko(params)
                MoveObjectToLocation(t, who.opponent.x, who.opponent.y, who.opponent.z, who.opponent.realm, MOVEOBJECT_FORCELOCATION);
             elseif (state.behaviour["Teleportar no NPC"])
                MoveObjectToLocation(t, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION);
-            elseif (state.behaviour["Aplicar +-X,Y,Z"])
-               MoveObjectToLocation(t, t.x-state.x, t.y-state.y, t.z-state.z, who.realm, MOVEOBJECT_FORCELOCATION);
+            elseif (state.behaviour["+-X,Y,Z"])
+               print(MoveObjectToLocation(t, t.x+cint(state.x), t.y+cint(state.y), t.z+cint(state.z), who.realm, MOVEOBJECT_FORCELOCATION));
             endif
 			endforeach
 
@@ -160,12 +161,16 @@ program loko(params)
 					var starty :=  Cint(state.starty) + RandomInt(2 * state.startradius) - state.startradius;
 					var endx := Cint(state.endx) + RandomInt(2 * state.endradius) - state.endradius;
 					var endy := Cint(state.endy) + RandomInt(2 * state.endradius) - state.endradius;
-					PlayMovingEffectXYZ(startx,  starty, Cint(state.startz), endx, endy, Cint(state.endz), cint(state.fxid), state.speed, state.loop); 
+               PlayMovingEffectXYZEx( startx, starty, cint(state.startz), endx, endy, Cint(state.endz), who.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
 				endif
          elseif (state.target == "Cone in front")
             var points := GetConeCoordsInFront(who.x, who.y, who.facing, cint(state.conedist));
 				foreach t in points
-               PlayStationaryEffect( t[1], t[2], who.z+2, cint(state.fxid), state.speed, state.loops+20);
+               if (state.fxid == "Electric")
+                  LightningEffect(struct{ "x" := t[1], "y" := t[2], "z" := me.z, "realm" := me.realm}, 50);
+               else
+                  PlayStationaryEffectEx( t[1], t[2], who.z+2, who.realm, cint(state.fxid), state.speed, state.loops+20, cint(state.color));
+               endif
                sleepms(2);
             endforeach
 			else
@@ -174,13 +179,13 @@ program loko(params)
                   if (state.fxid == "Lightning")
                      PlayLightningBoltEffect(t);
                   else
-                     PlayObjectCenteredEffect(t, cint(state.fxid), state.speed, state.loops);
+                     PlayObjectCenteredEffectEx(t, cint(state.fxid), state.speed, state.loops, cint(state.color));
                   endif
                elseif (state.graphictype == "Moving")
                   if (state.direction == "Mob->Player")
-                     PlayMovingEffect(who, t, cint(state.fxid), state.speed, state.loops);
+                     PlayMovingEffectEx(who, t, cint(state.fxid), state.speed, state.loops, cint(state.color));
                   else
-                     PlayMovingEffect(t, who, cint(state.fxid), state.speed, state.loops); 
+                     PlayMovingEffectEx(t, who, cint(state.fxid), state.speed, state.loops, cint(state.color)); 
                   endif
                endif
                sleepms(2);
@@ -221,6 +226,107 @@ program loko(params)
 			endforeach
       elseif (state.type == "Set Cooldown")
          SetCooldown(who, state.prop, state.time);
+		elseif (state.type == "Create Mine")
+         var targ;
+         var mineinfo := struct{
+            difficulty := state.diff,
+            type := state.mine_type,
+            dice_dmg := state.dmg
+         };
+
+         for i := 1 to (state.amount)
+            if (state.target["Random"])
+               targ := randomPlace(me, 4);
+            elseif (state.target["Frente"])
+               targ := GetConeCoordsInFront(who.x, who.z, who.facing, 1).randomEntry();
+            elseif (state.target["Costas"])
+               var direct;
+               if (who.facing >= 4)
+                  direct := who.facing -4;
+               else
+                  direct := who.facing + 4;
+               endif
+
+               targ := GetConeCoordsInFront(who.x, who.z, direct, 1).randomEntry();
+            endif
+            if (!targ.z) targ.z := who.z; endif
+            start_script(":magery:wands/spells/mina", array{who, mineinfo, targ});
+         endfor
+      elseif (state.type == "Metamorfose")
+      elseif (state.type == "Hidden")
+         GrantPrivilege(me, "runwhilestealth");
+         me.enable("runwhilestealth");
+         me.hidden := 1;
+         me.stealthsteps := state.stealthsteps;
+         if (state.attackhidden)
+            GrantPrivilege(me, "hiddenattack");
+            me.enable("hiddenattack");
+         endif
+         if (state.flee)
+            ghaiaFlee(who.opponent, who);
+         endif
+      elseif (state.type == "Magicball")
+         var targs := selectOpponent(who, state.target, state.conedist);
+         foreach targ in targs
+            var create_at := Splitwords(state.create_at);
+            var pos;
+            if (create_at.size() == 3)
+               pos := array{who.x+cint(create_at[1]), who.y+cint(create_at[2]), who.z+cint(create_at[3])};
+            else
+               pos := array{who.x, who.y, who.z};
+            endif
+            var direction := targ;
+            if (state.to_where == "Local")
+               direction := GetFacing(who.x, who.y, targ.x, targ.y);
+            endif
+            var newball := CreateItemAtLocation(pos[1], pos[2], pos[3], 0xFFBE);
+            newball.SetOwner(who);
+            newball.SetDirection(direction);
+            newball.SetDuration(state.duration);
+            newball.SetType(state.ball_type);
+            // newball.SetEffect(0x372A);
+            newball.SetBallSound(state.sound, 0);
+            newball.SetBallGraphic(state.graphic, state.color);
+            if (state.subgraphic)
+               newball.StoreBallGraphic(state.subgraphic, state.subcolor);
+            endif
+            newball.SetDmgInfo(struct{ "dice":= state.dmg_dice, "type" := state.dmg_type });
+            sleepms(2);
+         endforeach
+      elseif (state.type == "Steal Player")
+         var targs := selectOpponent(who, state.target, state.conedist);
+         foreach targ in targs
+            sleepms(2);
+            if (state.onlybehind)
+               if (!IsBehind(targ, who.x, who.y))
+                  continue;
+               endif
+            endif
+            var roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, FURTO);
+            foreach item in EnumerateItemsInContainer(targ.backpack, ENUMERATE_ROOT_ONLY)
+               var diff := 10 + CInt(item.amount * 0.3) + cint(item.weight/2);
+               if (roll > diff)
+                  MoveItemToContainer(item, who.backpack);
+                  var user_percep := rollAttrDice(targ, WISDOM) + GetSkillBonus(targ, PERCEPCAO);
+                  if (user_percep > roll)
+                     SendSystemReport(who, "*pegou item da sua mochila*", SSM_FAIL, targ);
+                  endif
+                  break;
+               endif
+            endforeach
+         endforeach
+      elseif (state.type == "Spell Trilha")
+         var targ := selectOpponent(who, state.target, state.conedist);
+         var trilhainfo := struct{
+            dice_roll := state.diff,
+            dice_dmg := state.dice_dmg,
+            type := state.trilha_type
+         };
+			foreach t in targ
+            if (!t.z) t.z := who.z; endif
+            start_script(":magery:wands/spells/caminho_fogo", array{who, trilhainfo, t});
+            sleepms(2);
+         endforeach
 		elseif (state.type == "Summon Npcs") // Summonar NPC
 	      var amt := 0;
          var tries := 0;
@@ -251,6 +357,16 @@ program loko(params)
                endif
                TS_StartTimer(npc, "summon", duracaonpc);
                amt := amt + 1;
+
+               if (state.walk_to && state.walk_to.size())
+                  var coord;
+                  if (state.walk_to[1] == 6 && state.walk_to[2] == 6 && state.walk_to[3] == 6 )
+                     coord := struct{ "x" := who.x, "y" := who.y, "z" := who.z};
+                  else
+                     coord := struct{ "x" := state.walk_to[1], "y" := state.walk_to[2], "z" := state.walk_to[3]};
+                  endif
+                  ghaiaObjective(npc, coord, 2, 1);
+               endif
             endif
             tries += 1;
             sleepms(2);

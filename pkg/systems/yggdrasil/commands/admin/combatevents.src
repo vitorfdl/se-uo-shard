@@ -1,0 +1,38 @@
+
+use uo;
+use datafile;
+use basic;
+
+include ":yggdrasil:spawnGroup";
+include ":yggdrasil:dynamicevents";
+// include ":ghaia:ghaiaUtil";
+include ":gumps:requestgump";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include ":tn:tngumps";
+include "include/say";
+include ":unicos:item_template";
+include ":attributes:attributes";
+
+//Main Menu
+const GF_GROUP_ACTIVE_SWITCH := 2;
+const GF_ADD_BTN        := 3;
+const GF_DEL_BTN        := 4;
+const GF_SELECTELEM_BTN := 10;
+
+Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
+
+//Basic
+var selected_combatevent := ""; //Name of the Elem
+var config_struct;
+var dynamiceventgroups;
+var gumpid := 0x1F9;
+
+program combatevents(who)
+
+endprogram
+
+function showgump(who, filter)
+   var all_events := GetAllVents();
+   
+endfunction

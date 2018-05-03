@@ -256,6 +256,7 @@ function InitializeNpc(mobile)
       Loot_Generate(mobile.backpack, loot);
    endif
 //    GenerateRecipeLoot(mobile);
+   SetupSpecials(mobile);
    SetupAmmo(mobile);
    SetObjProperty(mobile, "started", 1);
    mobile.InitPetProperties(0);

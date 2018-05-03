@@ -9,7 +9,7 @@ use util;
 
 program walkOn(mobile, tile)
 	var pid := CInt(GetObjProperty(tile, "#PID"));
-	if ( pid )
+	if ( pid && !mobile.concealed )
 		var process := GetProcess(pid);
 		process.SendEvent(mobile);
 		

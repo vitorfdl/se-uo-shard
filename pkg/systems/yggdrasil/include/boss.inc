@@ -12,6 +12,7 @@ include "include/client";
 include "include/arrays";
 include ":combat:hitscripts";
 include ":loot:include/lootParser";
+include ":yggdrasil:combatevents";
 
 var resist_types := array{"Veneno", "Fogo", "Eletricidade", "Gelo", "Perfuração", "Corte", "Contusão", "Strength", "Dexterity", "Intelligence"};
 

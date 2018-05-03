@@ -28,6 +28,21 @@ function SetupAmmo(mobile)
 
 endfunction
 
+function SetupSpecials(mobile)
+   var boss_struct := GetBossStruct(mobile);
+   if (boss_struct && boss_struct.combatevent)
+      combatevents := boss_struct.combatevent;
+   endif
+
+   var specials := GetAllVents();
+   foreach special in specials
+      if (special.monsters[mobile.npctemplate])
+         combatevents.push(special);
+      endif
+      sleepms(2);
+   endforeach
+endfunction
+
 function SetupBackPack(mobile)
 	if ( !mobile.backpack )
 		var backpack := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, "BackPack", 1);

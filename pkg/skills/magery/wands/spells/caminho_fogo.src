@@ -8,33 +8,53 @@ include "include/say";
 include ":timedscripts:timedScripts";
 include "include/damage";
 include ":magery:basicMagery";
+include ":combat:combat";
 var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
 
 
 program SpellScript(params)
 	var who       := params[1];
    var spellinfo := params[2];
-   var dice_roll := params[2].dice_roll;
 	var targ      := params[3];
 	params := 0; // No longer needed
-	
    var direction := GetFacing(who.x, who.y, targ.x, targ.y);
    var face := cint(direction / 2);
    if (face > 4)
       face /= 2;
    endif
 
-   var flame := 0x3996;
-   if (face % 2)
-      flame := 0x398C;
+   var flame;
+   if (spellinfo.type == "Fogo")
+      flame := 0x3996;
+      if (face % 2)
+         flame := 0x398C;
+      endif
+   elseif (spellinfo.type == "Veneno")
+      flame := 0x3915;
+      if (face % 2)
+         flame := 0x3920;
+      endif
+   elseif (spellinfo.type == "Eletrecidade")
+      flame := 0x3967;
+      if (face % 2)
+         flame := 0x3979;
+      endif
    endif
 
    var pos := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
    pos.Erase(1);
-   var hostiles := ListHostiles(who);
    var z := who.z;
 
-   var dmg_dice := RandomDiceRoll(MageDiceTable("C", spellinfo.powered))+8;
+   var dmg_dice;
+   var duration := 15;
+   if (who.npctemplate)
+      dmg_dice := spellinfo.dmg_dice;
+      duration := spellinfo.duration;
+   else
+      dmg_dice := RandomDiceRoll(MageDiceTable("C", spellinfo.powered))+8;
+      spellinfo.dice_roll += 5;
+   endif
+
    foreach p in pos
       if (targ.z > z)
          z += 1;
@@ -42,15 +62,16 @@ program SpellScript(params)
          z -= 1;
       endif
       var item := CreateItemAtLocation(p.x, p.y, z, cint(flame));
-      item.SetDuration(3);
+      item.SetDuration(duration);
+      item.SetOwner(who);
       foreach mobile in ListMobilesNearLocationEx( item.x, item.y, item.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
-			if (((!(mobile in who.party.members) && mobile != who) || mobile in hostiles))
-            if (rollResistDice(mobile, DEXTERITY) > dice_roll+5)
+			if (!CheckIfisAlly(who, mobile));
+            if (rollResistDice(mobile, DEXTERITY) > spellinfo.dice_roll)
                SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
                SendSystemReport(mobile, "*esquivou*", SSM_INFO);
-               DamageFLS(mobile, cint(dmg_dice / 2), DMG_FIRE, who);
+               DamageFLS(mobile, cint(dmg_dice / 2), spellinfo.type, who);
             else
-               DamageFLS(mobile, dmg_dice, DMG_FIRE, who);
+               DamageFLS(mobile, dmg_dice, spellinfo.type, who);
             endif
          endif
       endforeach

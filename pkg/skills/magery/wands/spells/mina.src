@@ -29,18 +29,33 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
+   var difficulty := spellinfo.dice_roll+7;
+   var duration := 60;
+   var dice_dmg;
+
    var amount := 1;
-   if (spellinfo.powered >= 4) amount += 1; endif
-   if (spellinfo.powered >= 8) amount += 1; endif
-   if (spellinfo.powered >= 10) amount += 1; endif
+   if (!who.npctemplate)
+      dice_dmg := MageDiceTable("A", spellinfo.powered);
+      if (spellinfo.powered >= 4) amount += 1; endif
+      if (spellinfo.powered >= 8) amount += 1; endif
+      if (spellinfo.powered >= 10) amount += 1; endif
+   else
+      difficulty := spellinfo.difficulty;
+      dice_dmg := spellinfo.dice_dmg;
+      if (spellinfo.duration) duration := spellinfo.duration; endif
+   endif
+
 
    for i := 1 to amount
       if (!targ)
+         if (who.npctemplate)
+            return;
+         endif
          targ := TargetCoordinates(who);
          if (!targ) break; endif
       endif
 
-      if (!CheckLOSAt(who, targ.x, targ.y, targ.z+5));
+      if (!who.npctemplate && !CheckLOSAt(who, targ.x, targ.y, targ.z+5));
          SendSysMessageEx(who, "Não tem visão do local", SSM_FAIL);
          amount +=1;
          continue; 
@@ -61,11 +76,10 @@ program animateSword(params)
 
          item.movable := 0;
          item.graphic := mine[1];
-         SetObjProperty(item, "DamageDice", MageDiceTable("A", spellinfo.powered));
+         SetObjProperty(item, "DamageDice", dice_dmg);
          item.SetOwner(who);
-         item.SetOwner(who);
-         item.SetDifficulty(spellinfo.dice_roll+7);
-         item.SetDuration(60);
+         item.SetDifficulty(difficulty);
+         item.SetDuration(duration);
          if (spellinfo.type == "Fogo")
             item.SetEffect(DMG_FIRE);
             item.color := 2039;

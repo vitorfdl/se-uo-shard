@@ -15,6 +15,7 @@ var npccfgfile := NPC_GetNPCConfig(me, 1);
 var idlesnd;
 var areasize;
 var custombehaviors;
+var combatevents := array{};
 var flee_point   := 0.1;
 var mystate      := INITIALIZING;
 var healing_amount;
@@ -38,7 +39,6 @@ function CloseDistanceMeele( opponent )
 	if ( GetObjProperty(me, "noclosecombat") == 1)
 		return 0;
    elseif (me.hidden && Distance(me, opponent) <= 1)
-      print("2");
       me.hidden := 0;
 	endif
 

@@ -16,6 +16,7 @@ include ":ghaia:ghaiaInit";
 include ":ghaia:habs";
 include ":faccao:npc";
 include ":combat:combat";
+include ":yggdrasil:combatevents";
 
 set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
 
@@ -24,6 +25,7 @@ var custombehaviors, npccfgfile, myhabilities;
 var following, fighting, warning, patrolling, standing;
 var warn_type, warn_tries, warn_opt := 0;
 var wait_time := 10;
+var combatevents := array{};
 var guild, guild_leader, guild_laws, fix_location, area_protect;
 var tools := array{0xec4, 0x13e3, 0xFB4, 0xFB5, 0x13f6, 0xe85, 0xf43, 0xec2, 0x1F020};
 
@@ -975,6 +977,7 @@ function Setup()
       SetupName(me);
       SetObjProperty(me, "DaysOfService", polcore().systime);
       SetObjProperty(me, "started", 1);
+      SetupSpecials(me);
    endif
 
    var guildid := GetObjProperty(me, "guild");
