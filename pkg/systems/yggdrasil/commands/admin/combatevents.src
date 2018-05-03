@@ -34,5 +34,20 @@ endprogram
 
 function showgump(who, filter)
    var all_events := GetAllVents();
-   
+
+   var gump := GFCreateGump(250, 150);
+   GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 500, 90);
+   GFTextLine(gump, 200, 28, 555, "Select a combat event");
+
+   var x := 190;
+   var y := 20;
+   foreach event in all_events
+      GFAddButton(gump, x, 151, 1043, 1043, GF_CLOSE_BTN, 2);
+	   GFHTMLArea(gump, x, 60, 150, 20, "<basefont color=#7FFFD4>Realm");
+      x += 50;
+      if (x >= 680) 
+         x := 190; 
+         y += 20;
+      endif
+   endforeach
 endfunction
