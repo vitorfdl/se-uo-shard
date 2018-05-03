@@ -633,12 +633,6 @@ function NPC_Agarrar(dice, targ, difficulty)
    else
       PrintText(targ, "*resistido*".format(me.name), SSM_INFO);
    endif
-
-   if ("AgarrarDeath" in custombehaviors)
-      PrintText(me, "*Se desfaz*");
-      sleep(1);
-      ApplyRawDamage(me, 10000);
-   endif
    
    return 1;
 endfunction

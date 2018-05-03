@@ -324,3 +324,46 @@ function SelectRandomExplosion()
    var explodes := array{GFX_EXPLODE_2, GFX_EXPLODE_3, GFX_EXPLODE_1 };
    return explodes.randomentry();
 endfunction
+
+function PlayAction(who, action, repeatcount := 1, repeatflag := 0, delay := 1)
+   case (action)
+      1: PerformAction(who, 0x00, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      2: PerformAction(who, 0x01, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      3: PerformAction(who, 0x0f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      4: PerformAction(who, 0x02, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      5: PerformAction(who, 0x03, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      6: PerformAction(who, 0x05, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      7: PerformAction(who, 0x06, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      8: PerformAction(who, 0x10, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      9: PerformAction(who, 0x11, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      10: PerformAction(who, 0x20, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      11: PerformAction(who, 0x21, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;	
+      12: PerformAction(who, 0x22, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      13: PerformAction(who, 0x1e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      14: PerformAction(who, 0x1f, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      15: PerformAction(who, 0x15, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      16: PerformAction(who, 0x16, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      17: PerformAction(who, 0x14, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      18: PerformAction(who, 0x12, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      19: PerformAction(who, 0x13, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      20: PerformAction(who, 0x19, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      21: PerformAction(who, 0x1a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      22: PerformAction(who, 0x1b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      23: PerformAction(who, 0x1c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      24: PerformAction(who, 0x17, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      25: PerformAction(who, 0x18, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      26: PerformAction(who, 0x1d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      27: PerformAction(who, 0x07, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      28: PerformAction(who, 0x08, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      29: PerformAction(who, 0x09, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      30: PerformAction(who, 0x0a, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+
+      31: PerformAction(who, 0xB, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+
+      31: PerformAction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+
+      32: PerformAction(who, 0x0d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      33: PerformAction(who, 0x0c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+      34: PerformAction(who, 0x0e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
+   endcase
+endfunction

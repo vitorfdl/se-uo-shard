@@ -276,9 +276,9 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 		SetScriptController(source);
 
 		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));
-      var chance := 75;
+      var chance := 70;
       if (cleric_healing == source.serial)
-         chance := 35;
+         chance := 25;
       endif
 		if (cleric_healing && dmg >= 1 && Randomint(101) <= chance)
          var bencao := GetObjProperty(source, "#bencaosacrificio");

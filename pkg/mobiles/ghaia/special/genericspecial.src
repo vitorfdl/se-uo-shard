@@ -134,8 +134,9 @@ program loko(params)
 			var targ := selectOpponent(who, state.target, state.conedist);
 
 			foreach t in targ
-				PerformAction(t, state.id);
+            PlayAction(t, cint(state.id));
 			endforeach
+
 		elseif (state.type == "Text")
 			var targ := selectOpponent(who, state.target, state.conedist);
 
