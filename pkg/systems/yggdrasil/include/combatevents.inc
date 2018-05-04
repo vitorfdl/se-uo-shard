@@ -2,32 +2,51 @@
 include ":tn:tngumps";
 
 function LoadCombatEventData()
-    var df := DFOpenDataFile( ":yggdrasil:spawns", DF_CREATE, DF_KEYTYPE_INTEGER);
+    var df := DFOpenDataFile( ":yggdrasil:combatevents", DF_CREATE, DF_KEYTYPE_INTEGER);
     return df;
 endfunction
 
-function GetAllVents()
-    var df := LoadCombatEventData();
+function GetAllVents(filter := 0)
+   var df := LoadCombatEventData();
    var events := array{};
-    foreach event in (df.keys())
-      event := DFFindElement(df, event);
-      events.append(events);
+   foreach event in (DFGetElemNames(df))
+      var df_event := DFFindElementEx(df, event);
+      var monsters := DFGetProp(df_event, "monsters", DF_CREATE, "");
+      if (!filter || filter[monsters])
+         events.append(struct{
+            "number" := event,
+            "name" := DFGetProp(df_event, "name", DF_CREATE, "No Name"),
+            "cd" := DFGetProp(df_event, "cd", DF_CREATE, 0),
+            "dist" := DFGetProp(df_event, "dist", DF_CREATE, 0),
+            "chance" := DFGetProp(df_event, "chance", DF_CREATE, 0),
+            "icon" := DFGetProp(df_event, "icon", DF_CREATE, 0),
+            "description" := DFGetProp(df_event, "description", DF_CREATE, ""),
+            "hp_percent" := DFGetProp(df_event, "hp_percent", DF_CREATE, 0),
+            "combatevent" := DFGetProp(df_event, "combatevent", DF_CREATE, array{}),
+            monsters := monsters
+         });
+      endif
       sleepms(2);
-    endforeach
-    return events;
+   endforeach
+
+   return events;
 endfunction
 
 function UpdateCombatEvent(combatevent, index := 0)
    var df := LoadCombatEventData();
    if (!index)
-      index := df.keys().size() +1;
+      index := DFGetElemNames(df).size() +1;
    endif
 
-   var elem := DFFindElement(df, index, DF_CREATE);
-   elem.SetProp("combatevent", combatevent.combatevent);
-   elem.SetProp("combatevent", combatevent.combatevent);
-   elem.SetProp("combatevent", combatevent.combatevent);
-   elem.SetProp("combatevent", combatevent.combatevent);
+   var elem := DFFindElementEx(df, index, DF_CREATE);
+   elem.SetProp("name", combatevent.name);
+   elem.SetProp("cd", combatevent.cd);
+   elem.SetProp("dist", combatevent.dist);
+   elem.SetProp("chance", combatevent.chance);
+   elem.SetProp("icon", combatevent.icon);
+   elem.SetProp("hp_percent", combatevent.hp_percent);
+   elem.SetProp("monsters", combatevent.monsters);
+   elem.SetProp("description", combatevent.description);
    elem.SetProp("combatevent", combatevent.combatevent);
 endfunction
 
@@ -104,7 +123,6 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
          var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição","Remover", "Cancelar"}, 0, 4);
          if (choice == "Alterar")
             var state := CombatEventsOptions(who, oldstate);
-            print(state);
             event.steps.Erase(input);
             event.steps.Insert(input, state);
          elseif (choice["Mudar Posi"])
@@ -503,4 +521,22 @@ function CombatEventsOptions(who, state)
       state.subcolor   := cint(output[12]);
    endif
    return state;
+endfunction
+
+
+function DFFindElementEx(byref file_ref, elem_name, create:=DF_NO_CREATE)
+	var temp := file_ref.FindElement(elem_name);
+	if ( !temp && create )
+		DF_OutPut("Debug::DFFindElement() - Creating elem: "+CStr(elem_name));
+		file_ref.CreateElement(elem_name);
+		temp := file_ref.FindElement(elem_name);
+	endif
+
+	if ( temp )
+		return temp;
+	elseif (create)
+		var errmsg := error{"errortext":="Error::DFFindElement() - Could not open data elem ["+elem_name+"] - "+temp.errortext};
+		DF_OutPut(errmsg.errortext);
+		return errmsg;
+	endif
 endfunction

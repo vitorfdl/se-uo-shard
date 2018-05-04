@@ -13,12 +13,14 @@ include ":tn:tngumps";
 include "include/say";
 include ":unicos:item_template";
 include ":attributes:attributes";
+include ":yggdrasil:combatevents";
 
 //Main Menu
-const GF_GROUP_ACTIVE_SWITCH := 2;
 const GF_ADD_BTN        := 3;
 const GF_DEL_BTN        := 4;
 const GF_SELECTELEM_BTN := 10;
+
+var selected_event := 1;
 
 Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
 
@@ -29,25 +31,111 @@ var dynamiceventgroups;
 var gumpid := 0x1F9;
 
 program combatevents(who)
-
+   showgump(who, 0);
 endprogram
 
 function showgump(who, filter)
-   var all_events := GetAllVents();
-
+   var all_events := GetAllVents(filter);
    var gump := GFCreateGump(250, 150);
-   GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 500, 90);
+   GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 800, 170);
    GFTextLine(gump, 200, 28, 555, "Select a combat event");
 
-   var x := 190;
-   var y := 20;
+   GFResizePic(gump, 180, 190, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 800, 400);
+
+	GFAddButton(gump, 210, 145+10, 2103, 2104, 1, 2 );
+	GFTextLine(gump, 225, 140+10, 2100, "Nova Habilidade");
+
+   var theevent;
+   if (selected_event)
+      GFAddButton(gump, 210+110, 145+10, 2103, 2104, 1, 2 );
+      GFTextLine(gump, 225+110, 140+10, 335, "Remover Habilidade");
+
+      theevent := FindElemInArray(all_events, struct{ "number" := selected_event});
+      var pos_x := 210;
+      var pos_y := 220;
+      // GFAddButton(gump, 210+150+10, 145, 2103, 2104, 1, 1 );
+      GFTextLine(gump, pos_x, pos_y, 2100, "Habilidade");
+      GFTextLine(gump, pos_x+150, pos_y, 2000, "{}".format(theevent.name));
+      GFTextLine(gump, pos_x, pos_y+18, 2100, "Cooldown");
+      GFTextLine(gump, pos_x+150, pos_y+18, 2000, "{}".format(theevent.cd));
+      GFTextLine(gump, pos_x, pos_y+36, 2100, "Chance");
+      GFTextLine(gump, pos_x+150, pos_y+36, 2000, "{}".format(theevent.chance));
+      GFTextLine(gump, pos_x, pos_y+54, 2100, "Porcentagem de HP:");
+      GFTextLine(gump, pos_x+150, pos_y+54, 2000, "{}".format(theevent.hp_percent));
+      GFTextLine(gump, pos_x, pos_y+72, 2100, "Descrição:");
+      GFAddButton(gump, pos_x+5, pos_y+100, 1141, 1141, GF_CLOSE_BTN, 6);
+	   GFHTMLArea(gump, pos_x, pos_y+90, 300, 52, "<BASEFONT color=#111111>{}".format(theevent.description), 1, 1);
+      GFTextLine(gump, pos_x, pos_y+144, 2100, "Monstros:");
+      GFAddButton(gump, pos_x+5, pos_y+172, 1141, 1141, GF_CLOSE_BTN, 7);
+	   GFHTMLArea(gump, pos_x, pos_y+162, 300, 52, "<BASEFONT color=#111111>{}".format(theevent.monsters), 1, 1);
+
+      GFTextLine(gump, pos_x+30+15, pos_y+234, 2103, "Editar");
+      GFAddButton(gump, pos_x+80+15, pos_y+220, 4502, 4502, GF_CLOSE_BTN, 5);
+   endif
+
+   GFPage(gump, 1);
+   var x := 210;
+   var y := 60;
    foreach event in all_events
-      GFAddButton(gump, x, 151, 1043, 1043, GF_CLOSE_BTN, 2);
-	   GFHTMLArea(gump, x, 60, 150, 20, "<basefont color=#7FFFD4>Realm");
-      x += 50;
-      if (x >= 680) 
-         x := 190; 
-         y += 20;
+      GFAddButton(gump, x+22, y+4, 1274, 1274, GF_CLOSE_BTN, 100+event.number);
+      var color := "#111111";
+      if (selected_event == event.number)
+         color := "#657844";
+      endif
+	   GFHTMLArea(gump, x, y, 140, 25, "<basefont color={}><center>{}".format(color, event.name), 1, 0);
+      x += 150;
+      if (_event_iter % 15 == 0)
+      	GFAddButton(gump, 600, 140+10, 5603, 5607, GF_PAGE_BTN, gump.cur_page+1);
+         GFPage(gump, gump.cur_page+1);
+	      GFAddButton(gump, 620, 140+10, 5601, 5605, GF_PAGE_BTN, gump.cur_page-1);
+         x := 210;
+         y := 60;
+      elseif (x >= 900) 
+         x := 210; 
+         y += 30;
       endif
    endforeach
+
+   var input := GFSendGump(who, gump)[0];
+   if (input == 2)
+      var new_event := ConfigureCombatEvent(who);
+      if (new_event)
+         UpdateCombatEvent(new_event);
+         SendSysMessageEx(who, "Habilidade de combate adicionada");
+      endif
+      showgump(who, filter);
+   elseif (input == 5 && selected_event)
+      var new_event := ConfigureCombatEvent(who, theevent, 1);
+      if (new_event)
+         UpdateCombatEvent(new_event, theevent.number);
+         SendSysMessageEx(who, "Habilidade de combate atualizada");
+      endif
+      showgump(who, filter);
+   elseif (input == 6 && selected_event)
+      showgump(who, filter);
+   elseif (input == 7 && selected_event)
+      var monsters := SplitWords(theevent.monsters);
+      var opts := monsters + array{"Novo Monstro", "Cancelar"};
+		var choice := RadioGump(who, 300, 0, "Escolha um template para remover.", opts, 1, opts.size()-1);
+
+      if (choice == opts.size())
+      elseif (choice == opts.size()-1)
+         var input_list := array{};
+         input_list.append(struct{ "title" := "Qual o template da criatura?", "marked" := ":ghaia:"});
+         var output := QuestionsGump(who, input_list);
+         if (output && output[1])
+            monsters.append(output[1]);
+            theevent.monsters := " ".join(monsters);
+         endif
+      else
+         monsters.Erase(choice);
+         theevent.monsters := " ".join(monsters);
+      endif
+
+      UpdateCombatEvent(theevent, theevent.number);
+      showgump(who, filter);
+   elseif (input >= 100 && input <= 300)
+      selected_event := input - 100;
+      showgump(who, filter);
+   endif
 endfunction
