@@ -68,7 +68,7 @@ function genericControl()
 		lookAround();
       loops += 1;
       if (loops >= 200 && me.alignment != 2)
-         print("I'm stuck: " + me.serial+" "+me.name);
+         SysLog("I'm stuck: " + me.serial+" "+me.name);
          SetObjProperty(me, "GuardKill", 1);	
          ApplyRawDamage(me, 500);
       endif
@@ -86,7 +86,7 @@ function resolveEvent(ev, byref wanders)
 			endif
          break;
 		SYSEVENT_ENTEREDAREA:
-         if (!CheckLineOfSight(me, ev.source)  )
+         if (!CheckLineOfSight(me, ev.source))
             break;
          elseif (!CanFight(me, ev.source) || areasize < Distance(me, ev.source))
             break;

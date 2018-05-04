@@ -64,6 +64,9 @@ function CanFight(me, mobile)
 
    if (!mobile.npctemplate) //se for player olha a tendencia do npc
       if (me.alignment == ALIGN_EVIL) //npcs mme.alignmentos atacam todos os players
+         if (mobile.guildid && mobile.guildid == GetObjProperty(me, guild))
+            return 0;
+         endif
          //printtextabove(me, "mytemplate " + mytemplate + " " + cint(GetObjProperty(mobile, "empatiacomanimais"))); 
          // if ( HaveFeat(mobile, "Aliado da Natureza" )) //verifica se tem empatia por animais
          //     var templateList := array{
@@ -90,22 +93,20 @@ function CanFight(me, mobile)
       endif
          //npcs bons ou neutrals não atacam
       return 0;
-   endif
-
-   if (me.alignment == ALIGN_EVIL && mobile.master)
+   elseif (me.alignment == ALIGN_EVIL && mobile.master)
       return 1;
    endif
 
-   var enemies := GetConfigStringArray( npccfgfile, "enemy" );
-   if (!enemies)
-      return 0;
-   endif
+   // var enemies := GetConfigStringArray( npccfgfile, "enemy" );
+   // if (!enemies)
+   //    return 0;
+   // endif
 
-   foreach enemy in enemies
-      if ( enemy == mobile.my_template() )
-         return 1;
-      endif
-   endforeach
+   // foreach enemy in enemies
+   //    if ( enemy == mobile.my_template() )
+   //       return 1;
+   //    endif
+   // endforeach
 endfunction
 
 function AlertAllies(me, opponent)

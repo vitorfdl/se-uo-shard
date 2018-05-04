@@ -21,13 +21,13 @@ program loko(params)
 	//printtextabove(who, " "  + event); //apagar
 	if (!who.opponent)
 		return;
-   elseif (GetCooldown(who, ""+event.name))
+   elseif (GetCooldown(who, StrReplace(event.name, " ", "_")))
       return;
    endif
 
    if (event.chance != 100 )
       if (Randomint(100)+1 > event.chance)
-         SetCooldown(who, ""+event.name, 2); 
+         SetCooldown(who, StrReplace(event.name, " ", "_") 2); 
          return;
       endif
    endif
@@ -35,7 +35,7 @@ program loko(params)
    if ( event.hp_percent != 100)
       var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * (cdbl(event.hp_percent)/100);
       if (cdbl(AP_GetVital(who, HITS)) > maxhit)
-         SetCooldown(who, ""+event.name, 2); 
+         SetCooldown(who, StrReplace(event.name, " ", "_") 2); 
          return;
       endif
 	endif
@@ -53,12 +53,16 @@ program loko(params)
 
 	//check distancia
 
-
-	SetCooldown(who, event.name, event.cd); 
+   var is_frozed := 1;
+	SetCooldown(who, StrReplace(event.name, " ", "_"), event.cd); 
 	//executa os states
 	foreach state in (event.steps)
-		EraseObjPRoperty(who, "noclosecombat");
+		EraseObjProperty(who, "noclosecombat");
 
+      if (state.type == "Frozen Until End")
+         who.frozen := 1;
+         SetObjProperty(who, "script_frozed", 1);
+         is_frozed := 1;
 		if (state.type == "Move")
 			SetObjProperty(who, "noclosecombat", 1);
 			var ev := struct;
@@ -76,7 +80,6 @@ program loko(params)
 				endif
 				sleepms(100);
     			endwhile
-
 		elseif (state.type == "Pushback")
 			var targ := selectOpponent(who, state.target, state.conedist);
 			foreach t in targ
@@ -97,24 +100,24 @@ program loko(params)
 			foreach t in targ
             sleepms(2);
             if (!state.behaviour || state.behaviour["Teleportar X,Y,Z"])
-               MoveObjectToLocation(t, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION);
+               MoveObjectToLocation(t, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
             elseif (state.behaviour["Teleportar no Alvo"])
-               MoveObjectToLocation(t, who.opponent.x, who.opponent.y, who.opponent.z, who.opponent.realm, MOVEOBJECT_FORCELOCATION);
+               MoveObjectToLocation(t, who.opponent.x, who.opponent.y, who.opponent.z, who.opponent.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
             elseif (state.behaviour["Teleportar no NPC"])
-               MoveObjectToLocation(t, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION);
+               MoveObjectToLocation(t, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
             elseif (state.behaviour["+-X,Y,Z"])
-               print(MoveObjectToLocation(t, t.x+cint(state.x), t.y+cint(state.y), t.z+cint(state.z), who.realm, MOVEOBJECT_FORCELOCATION));
+               print(MoveObjectToLocation(t, t.x+cint(state.x), t.y+cint(state.y), t.z+cint(state.z), who.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE));
             endif
 			endforeach
 
 			if (state.target == "Self")
-				MoveObjectToLocation(who, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION);
+				MoveObjectToLocation(who, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
 			elseif (state.target == "Opponent")
-				MoveObjectToLocation(who.opponent, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION);
+				MoveObjectToLocation(who.opponent, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
 			elseif (state.target == "All Opponents")
 				var opponents := GetAllOpponents(who);
 				foreach op in opponents
-					MoveObjectToLocation(op, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION);
+					MoveObjectToLocation(op, state.x, state.y, state.z, who.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
 				endforeach
 			endif
          
@@ -192,7 +195,7 @@ program loko(params)
 				endforeach
 			endif
       elseif (state.type == "Play Cast Anim")
-         if (!playCastAnimation(1))
+         if (!playCastAnimation(state.times))
             break;
          endif
 		elseif (state.type == "Dmg")
@@ -375,6 +378,10 @@ program loko(params)
 		endif
 		sleepms(100);
 	endforeach
+
+   if (is_frozed)
+      who.frozen := 0;
+   endif
 endprogram
 
 function selectOpponent(who, type, dist := 3)
@@ -422,3 +429,16 @@ function GetAllOpponents(who)
 	return a;
 endfunction
 
+function playCastAnimation(who, times := 0)
+   if (!times) times := RandomDiceRoll("1d4"); endif
+
+   for i := 1 to times
+      if (TS_GetTimerInfo(who, "tombar") || TS_GetTimerInfo(who, "paralyze") || who.paralyzed)
+         return 0;
+      endif
+      PerformAction(who, ANIM_CAST_DIR);
+      sleepms(650);
+   endfor
+
+   return 1;
+endfunction

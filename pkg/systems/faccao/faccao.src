@@ -646,7 +646,7 @@ function playerHandler(who, input)
 endfunction
 
 function gmHandler(who)
-   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Pegar GuildID", "Alterar Sub-Guilds", "Cancelar"};
+   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Pegar GuildID", "Alterar Sub-Guilds", "Remover guilda", "Cancelar"};
    var output := RadioGump(who, 300, 0, "Escolha uma opção", opts, 0, opts.size());
 
    if (output["Nome"])
@@ -710,6 +710,9 @@ function gmHandler(who)
       if (prisoes.size() < 1) return SendSysMessageEx(who, "Cancelado"); endif
       guild.SetProp("prisions", prisoes);
       SendSysMessageEx(who, "Prisões alteradas");
+   elseif (output["Remover"])
+      RemFaccao(guild.guildid);
+      SendSysMessageEx(who, "Guilda removida");
    endif
 endfunction
 

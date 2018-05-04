@@ -780,9 +780,16 @@ function Fight(opponent := 0)
       RunAwayFrom(fighting);
    endif
 
-   SetObjProperty(me, "#Casting", 1);
-   UseHabs(myhabilities);
-   EraseObjProperty(me, "#Casting");
+   if (!me.frozen && !me.paralyzed)
+      SetObjProperty(me, "#Casting", 1);
+      foreach ce in combatevents
+         if (!TS_GetCooldown(me, ce.name))
+            start_script(":ghaia:special/genericspecial" , array{me, ce});
+         endif
+         sleepms(2);
+      endforeach
+      EraseObjProperty(me, "#Casting");
+   endif
    wait_time := 0;
 endfunction
 

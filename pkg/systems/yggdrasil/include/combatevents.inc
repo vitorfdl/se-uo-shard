@@ -150,6 +150,7 @@ function CombatEventsOptions(who, state)
          "title" := "Novo estado:",
          "marked" := 1, 
          "radio" := array{
+            "Frozen Until End",
             "Move", 
             "Teleport", 
             "TimedScript", 
@@ -190,6 +191,12 @@ function CombatEventsOptions(who, state)
       state.x := loc.x;
       state.y := loc.y;
       state.z := loc.z;
+   elseif ( opt == "Play Cast Anim" )
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quantos cycles de cast? (0 para o sistema fazer automático", "marked" := ""+cint(state.times)});
+      var output := QuestionsGump(who, input_list);
+
+      state.times := cint(ouput[1]);
    elseif ( opt == "Pushback")
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer a pushback?", "marked" := state.target in targ_opts, "radio" := targ_opts});
