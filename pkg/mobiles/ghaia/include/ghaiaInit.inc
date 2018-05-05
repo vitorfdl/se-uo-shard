@@ -37,7 +37,7 @@ function SetupSpecials(mobile)
    var specials := GetAllVents();
    foreach special in specials
       if (special.monsters[mobile.npctemplate])
-         combatevents.push(special);
+         combatevents.append(special);
       endif
       sleepms(2);
    endforeach

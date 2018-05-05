@@ -159,7 +159,7 @@ function LogOff(serial, byref timer_list, byref cooldowns)
 		
 		mobile.delBuff(cint(elem_info.Icon));
 		if( elem_info.Script )
-			var script := Start_Script(elem_info.Script, array{mobile, "End", timer.level});
+			var script := Start_Script(elem_info.Script, array{mobile, "End", timer.level, timer.attacker});
 			if( script.errortext )
 				print("Error::LogOff() - ["+elem_info.Script+"] "+script.errortext);
 			endif
@@ -232,7 +232,7 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
          num_paralyzed += 1;
       endif
 		//SendSysMessage(mobile, "AddNewTimer");
-		result := AddNewTimer(mobile, event, timer_list, num_poisons, num_paralyzed);
+		result := AddNewTimer(mobile, event, timer_list);
 	else
 		//SendSysMessage(mobile, "AddExistingTimer");
 		result := AddExistingTimer(mobile, event, timer_list, num_poisons, num_paralyzed);
@@ -246,7 +246,7 @@ function AddTimer(mobile, byref event, byref timer_list, byref cooldowns, byref 
 	return 1;
 endfunction
 
-function AddNewTimer(mobile, byref event, byref timer_list, byref num_poisons, byref num_paralyzed)
+function AddNewTimer(mobile, byref event, byref timer_list)
 	var elem_info := TS_GetCfgElem(event.name);
 	if ( elem_info.errortext )
 		SendSysmessageEx(mobile, "Error::AddNewTimer() - Unable to find config elem ["+event.name+"] - "+elem_info.errortext);
@@ -395,7 +395,7 @@ function LowerDuration(mobile, byref event, byref timer_list, byref cooldowns, b
 		// SendSysMessageEx(mobile, "Você pode usar " + event.name + " novamente.", SSM_INFO);
 
 		if ( event.amount == -1 )
-			var e := cooldowns.Erase(event.name);
+			cooldowns.Erase(event.name);
 			SaveState(mobile, timer_list, cooldowns);
 			return 1;
 		endif
@@ -412,7 +412,7 @@ function LowerDuration(mobile, byref event, byref timer_list, byref cooldowns, b
 
 
 	var timer_info := timer_list[event.name];
-	var elem_info := TS_GetCfgElem(event.name);
+	// var elem_info := TS_GetCfgElem(event.name);
 	if ( event.amount == -1 )
 		EndTimedScript(mobile, event.name, num_poisons, num_paralyzed);
 		KillTimedScript(mobile, timer_info.pid, timer_list, event.name);
@@ -516,7 +516,7 @@ function KillTimedScript(mobile, byref pid, byref timer_list, byref timer_name, 
 	endif
 
    if (!no_save)
-      var e := timer_list.Erase(timer_name);
+      timer_list.Erase(timer_name);
       SaveState(mobile, timer_list, NO_COOLDOWNS);
    endif
 

@@ -27,7 +27,6 @@ function AddNpc(guild, npc)
       "equipment" := npc.equipment,
       "bossStruct" := npc.bossStruct,
       "price" := npc.price,
-      "habs" := npc.habs,
       "name" := npc.name
    };
    if (!new_npc.template) 
@@ -38,8 +37,6 @@ function AddNpc(guild, npc)
       return 0;
    elseif (!new_npc.name)
       return 0;
-   elseif (!new_npc.habs)
-      new_npc.habs := array{};
    endif
 
    var npclist := listNPC(guild);

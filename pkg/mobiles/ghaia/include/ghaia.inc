@@ -12,7 +12,6 @@ include "include/say";
 include ":tn:npcutil";
 include ":tn:cooldown";
 include ":ghaia:ghaiaUtil";
-include ":ghaia:habs";
 include ":awareness:awareness";
 include ":yggdrasil:boss";
 
@@ -64,7 +63,7 @@ function CanFight(me, mobile)
 
    if (!mobile.npctemplate) //se for player olha a tendencia do npc
       if (me.alignment == ALIGN_EVIL) //npcs mme.alignmentos atacam todos os players
-         if (mobile.guildid && mobile.guildid == GetObjProperty(me, guild))
+         if (mobile.guildid && mobile.guildid == GetObjProperty(me, "guild"))
             return 0;
          endif
          //printtextabove(me, "mytemplate " + mytemplate + " " + cint(GetObjProperty(mobile, "empatiacomanimais"))); 
@@ -143,11 +142,13 @@ endfunction
 function GetAlliesNear(loc, range := 5)
    var spotserial := GetObjProperty(me, "spawnspot");
    var spot       := SystemFindObjectBySerial(spotserial);
+   var hostiles := ListHostiles(me, 10);
    spot := spot.GetProps();
    
    var myallies := array{};
    foreach mobile in ListMobilesNearLocation(loc.x, loc.y, loc.z, range)
-      if (GetObjProperty(mobile, "spawnspot") == spotserial)
+      if (mobile in hostiles)
+      elseif (spotserial && GetObjProperty(mobile, "spawnspot") == spotserial)
          myallies.append(mobile);
       elseif (me.alignment == ALIGN_GOOD && !(me in mobile.aggressorto))
          myallies.append(mobile);

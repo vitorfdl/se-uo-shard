@@ -324,14 +324,14 @@ endfunction
    // var res:= QuestionsGump(who, questions);
    // var answer_1 := res[1];
 function QuestionsGump(who, questions := array{})
-	var total_height := (questions.size() * 2) * 20;
+	var total_height := ((questions.size() * 2) * 18) + 20;
    foreach quest in questions
       if (quest.radio)
-         total_height += cint(quest.radio.size() / 4) * 25;
+         total_height += floor(quest.radio.size() / 4) * 20;
       elseif (quest.checkbox)
-         total_height += cint(quest.checkbox.size() / 4) * 25;
+         total_height += floor(quest.checkbox.size() / 4) * 20;
       else
-         total_height += 25;
+         total_height += 18;
       endif
       sleepms(2);
    endforeach

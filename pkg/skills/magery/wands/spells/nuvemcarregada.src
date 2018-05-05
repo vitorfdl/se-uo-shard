@@ -22,7 +22,7 @@ program nuvemcarregada(params)
          sleepms(2);
       endwhile
       item.color := 971;
-      SetobjProperty(item, "owner", who.serial);
+      SetobjProperty(item, "Owner", who.serial);
       sleep(1);
    endfor
 

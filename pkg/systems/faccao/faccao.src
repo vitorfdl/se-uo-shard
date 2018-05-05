@@ -746,27 +746,12 @@ function npcHandler(who, input)
             questions.append(struct{ "title" := "Template do agente?", "marked" := npc_list[npc_choice].template} );
             questions.append(struct{ "title" := "Nome (representativo) do agente?", "marked" := npc_list[npc_choice].name} );
             questions.append(struct{ "title" := "Preço do Soldo (em moedas)?", "marked" := cstr(npc_list[npc_choice].price)} );
-            for i := 1 to 4
-               if (npc_list[npc_choice].habs[i])
-                 questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := npc_list[npc_choice].habs[i], "helper" := "Targets: Enemy, RandomEnemy, Self"} );
-               else
-                  questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
-               endif
-               sleepms(2);
-            endfor
             var output := QuestionsGump(who, questions);
             if (!output) return; endif
             
             npc_list[npc_choice].template := output[1];
             npc_list[npc_choice].price := cint(output[3]);
             npc_list[npc_choice].name := output[2];;
-            npc_list[npc_choice].habs := array{};
-            for i := 4 to 7
-               if (output[i])
-                  npc_list[npc_choice].habs.append(output[i]);
-               endif
-               sleepms(2);
-            endfor
             guild.SetProp("npcs", npc_list);
          elseif (opt_out["Boss"])
             CreatebossStructGump(who, npc_list[npc_choice].bossStruct);
@@ -808,27 +793,15 @@ function npcHandler(who, input)
       questions.append(struct{ "title" := "Nome (representativo) do agente?", "marked" := ""} );
       questions.append(struct{ "title" := "Preço do Soldo (em moedas)?", "marked" := "20"} );
       questions.append(struct{ "title" := "Adicionar modificadores de boss?", "marked" := 1, "radio" := array{"Não", "Sim"}} );
-      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
-      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
-      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
-      questions.append(struct{ "title" := "Habilidade CD % DICE TARG SP (Não mexer se não souber o que é)", "marked" := "", "helper" := "Targets: Enemy, RandomEnemy, Self"} );
-      var output := QuestionsGump(who, questions);
+     var output := QuestionsGump(who, questions);
       if (!output) return SendSysMessageEx(who, "Cancelado"); endif
 
       var npc_struct := struct{
          "template" := output[1],
          "price" := cint(output[3]),
          "name" := output[2],
-         "equipment" := array{},
-         "habs" := array{}
+         "equipment" := array{}
       };
-
-      for i := 5 to 8
-         if (output[i])
-            npc_struct.habs.append(output[i]);
-         endif
-         sleepms(2);
-      endfor
 
       if (output[4] == "Sim")
          npc_struct.bossStruct := struct{};

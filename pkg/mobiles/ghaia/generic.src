@@ -7,7 +7,6 @@ include ":ghaia:generic";
 include ":ghaia:ghaia";
 include ":ghaia:objective";
 include ":ghaia:genericControl";
-include ":ghaia:habs";
 include ":timedscripts:timedScripts";
 
 var me         := self();
@@ -128,7 +127,6 @@ function Fight(opponent, alerted := 0)
    if (!alerted) 
       AlertAllies(me, opponent); 
    endif
-
 /*   var speech := GetConfigStringArray( npccfgfile, "InitCombatSpeech" );
    if (speech.size() > 0)
    if (RandomInt(100)  < 30) //sempre 30% de chance de falar

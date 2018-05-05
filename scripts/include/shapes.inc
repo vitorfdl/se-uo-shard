@@ -159,6 +159,35 @@ function GetConeCoordsInFront(x, y, facing, range)
 	return coords;
 endfunction
 
+
+/*
+ * GetConeCoordsInFront(x, y, facing, range)
+ *
+ * Purpose
+ * Retrieves the coordinates in the cone front of the facing
+ *
+ * Parameters
+ * x:	X coordinate of the start of the cone
+ * y:	Y coordinate of the start of the cone
+ * facing:	mobile facing
+ * range:	range in front
+ *
+ * Return value
+ * Array of arrays where (x, y)
+ * 
+ */
+function GetLineCoordsInFront(x, y, facing, range)
+   var mod := GetModByFacing(facing);
+   var coords := array{};
+   for i := 1 to range
+      var base_x := x+(i*mod[1]);
+      var base_y := y+(i*mod[2]);
+      coords.append(array{ base_x, base_y});
+      sleepms(2);
+   endfor
+
+	return coords;
+endfunction
          //    var t_mod := GetModByFacing(facing, t);
          //    coords.append(array{ x+(i*mod[1])+t_mod[1], y+(i*mod[2])+t_mod[2]});
          // else

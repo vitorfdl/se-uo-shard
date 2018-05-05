@@ -12,7 +12,7 @@ program control(nuvem)
    if (!timing)
       timing := polcore().systime + 40;
    endif
-   var owner := GetObjProperty(nuvem, "owner");
+   var owner := GetObjProperty(nuvem, "Owner");
    var i := 0;
    while (nuvem && polcore().systime < timing )
       sleep(5);
