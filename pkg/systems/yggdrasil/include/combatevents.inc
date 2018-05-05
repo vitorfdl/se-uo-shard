@@ -368,7 +368,7 @@ function CombatEventsOptions(who, state)
       state.timername     := output[2];
       state.timerduration := cint(output[3]);
       state.level         := cint(output[4]);
-      state.conedist      := cint(output[6]);
+      state.conedist      := cint(output[7]);
 
       if (output[5] != "Nenhum")
          state.resist_test := output[5];
