@@ -5,7 +5,6 @@ include ":yggdrasil:treasures";
 include "include/dungeons";
 
 program Creating(nuvem)
-   var heigth := GetWorldHeight(nuvem.x, nuvem.y);
-   var mov := MoveObjectToLocation(nuvem, nuvem.x, nuvem.y, heigth+20, nuvem.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
+   MoveObjectToLocation(nuvem, nuvem.x, nuvem.y, nuvem.z+20, nuvem.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
    sleepms(2);
 endprogram
