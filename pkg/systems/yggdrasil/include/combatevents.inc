@@ -349,12 +349,12 @@ function CombatEventsOptions(who, state)
       var resist_choice := state.resist_test in resists;
       if (!resist_choice) resist_choice := 6; endif
 
-      var timedcfg := GetConfigStringKeys(timedcfg);
+      var timedcfg := TS_GetCfgFile();
+      var timerlist := GetConfigStringKeys(timedcfg);
 
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer a action?", "marked" := state.target in targ_opts, "radio" := targ_opts});
-      var timedcfg := TS_GetCfgFile();
-      input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := state.timername in timedcfg, "radio" := timedcfg });
+      input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := state.timername in timerlist, "radio" := timerlist });
       input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""+cint(state.timerduration)});
       input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := ""+cint(state.level)});
       input_list.append(struct{ "title" := "Teste de resistência?", "marked" := resist_choice, "radio" :=  resists });
