@@ -368,12 +368,11 @@ function CombatEventsOptions(who, state)
       state.timername     := output[2];
       state.timerduration := cint(output[3]);
       state.level         := cint(output[4]);
-      state.conedist      := cint(output[7]);
-
       if (output[5] != "Nenhum")
          state.resist_test := output[5];
          state.resist_diff := cint(output[6]);
       endif
+      state.conedist      := cint(output[7]);
    elseif ( opt == "Perform Action" )
       var input_list := array{}; 
       input_list.append(struct{ "title" := "Quem vai realizar a action?", "marked" := state.target in targ_opts, "radio" := targ_opts});
