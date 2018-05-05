@@ -607,23 +607,35 @@ function CombatEventsOptions(who, state)
       if (!state.amount) state.amount := "2"; endif
       if (!state.range) state.range := "5"; endif
       if (!state.tempo) state.tempo := "120"; endif
+      var loc := "";
+      if (state.x || state.y || state.z) loc := "{} {} {}".format(state.x, state.y, state.z); endif
+
+      var walk_to := "6 6 6";
+      if (state.walk_to) walk_to := " ".join(state.walk_to); endif
+
       var input_list := array{};
+      input_list.append(struct{ "title" := "Onde será spawnado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ""+state.npctemplate});
       input_list.append(struct{ "title" := "Quantos npcs vao ser spawnados?", "marked" := ""+cint(state.amount)});
       input_list.append(struct{ "title" := "Qual o raio de spawn?", "marked" := ""+cint(state.range)});
       input_list.append(struct{ "title" := "Qual o tempo de vida dos monstros? (segundos)", "marked" := ""+cint(state.tempo)});
-      input_list.append(struct{ "title" := "Digite o x y z onde eles vao aparecer: (6 6 6 para onde o boss esta)", "marked" := "6 6 6"});
-      input_list.append(struct{ "title" := "Digite o x y z para onde eles vão andar: (6 6 6 para onde o boss esta)", "marked" := "6 6 6"});
+      input_list.append(struct{ "title" := "Digite o x y z onde eles vao aparecer: (6 6 6 para usar o target)", "marked" := ""+loc});
+      input_list.append(struct{ "title" := "Digite o x y z para onde eles vão andar: (6 6 6 para onde o boss esta)", "marked" := walk_to});
+      if (!state.conedist) state.conedist := 3; endif
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
       
       var output := QuestionsGump(who, input_list);
-      state.npctemplate := output[1];
-      state.amount := output[2];
-      state.range := cint(output[3]);
-      state.tempo := cint(output[4]);
+      state.target := output[1];
+      state.npctemplate := output[2];
+      state.amount := output[3];
+      state.range := cint(output[4]);
+      state.tempo := cint(output[5]);
+
+      state.conedist := cint(output[8]);
       
-      var loc := output[5];
+      loc := output[6];
       if (!loc)
-         SendSysMessageEx(who, "Onde vão ser spawnados? (Esc para mesmo local do boss)");
+         SendSysMessageEx(who, "Onde vão ser spawnados? (Esc para target)");
          loc := TargetCoordinates(who);
          if (!loc)
             loc := array{6, 6, 6};
@@ -638,7 +650,7 @@ function CombatEventsOptions(who, state)
       state.y := cint(loc[2]);
       state.z := cint(loc[3]);
 
-      var walk_to := SplitWords(output[5]);
+      walk_to := SplitWords(output[7]);
       if (walk_to.size() == 3)
          state.walk_to := walk_to;
       endif

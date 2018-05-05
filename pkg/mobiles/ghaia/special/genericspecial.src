@@ -458,18 +458,22 @@ program loko(params)
          else
             amount := cint(amount);
          endif
+
          while (amt < amount)
             if (tries >= 20)
                break;
             endif
-            var npc;
+            var targ;
             if (state.x == 6 && state.y == 6 && state.z == 6)
-               npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(who.x) + RandomInt(2 * state.range) - state.range,
-               Cint(who.y) + RandomInt(2 * state.range) - state.range, Cint(who.z));
+               targ := ReturnPointsByTarget(who, state.target, state.conedist);
+               targ := targ.randomentry();
             else
-               npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(state.x) + RandomInt(2 * state.range) - state.range,
-               Cint(state.y) + RandomInt(2 * state.range) - state.range, Cint(state.z));
+               targ := struct{ x := state.x, y := state.y, z := state.z };
             endif
+
+            if (!targ) break; endif
+            var npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(targ.x) + RandomInt(2 * state.range) - state.range,
+               Cint(targ.y) + RandomInt(2 * state.range) - state.range, Cint(targ.z));
 
 
             if (npc != error)
