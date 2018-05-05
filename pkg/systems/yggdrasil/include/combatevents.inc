@@ -603,11 +603,15 @@ function CombatEventsOptions(who, state)
       if (output[8]) state.p2 := SplitWords(output[8]); endif
       if (output[9]) state.p3 := SplitWords(output[9]); endif
    elseif (opt == "Summon Npcs")
+      if (!state.npctemplate) state.npctemplate := ":ghaia:"; endif
+      if (!state.amount) state.amount := "2"; endif
+      if (!state.range) state.range := "5"; endif
+      if (!state.tempo) state.tempo := "120"; endif
       var input_list := array{};
-      input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ":ghaia:"});
-      input_list.append(struct{ "title" := "Quantos npcs vao ser spawnados?", "marked" := "2"});
-      input_list.append(struct{ "title" := "Qual o raio de spawn?", "marked" := "5"});
-      input_list.append(struct{ "title" := "Qual o tempo de vida dos monstros?", "marked" := "120"});
+      input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ""+state.npctemplate});
+      input_list.append(struct{ "title" := "Quantos npcs vao ser spawnados?", "marked" := ""+cint(state.amount)});
+      input_list.append(struct{ "title" := "Qual o raio de spawn?", "marked" := ""+cint(state.range)});
+      input_list.append(struct{ "title" := "Qual o tempo de vida dos monstros? (segundos)", "marked" := ""+cint(state.tempo)});
       input_list.append(struct{ "title" := "Digite o x y z onde eles vao aparecer: (6 6 6 para onde o boss esta)", "marked" := "6 6 6"});
       input_list.append(struct{ "title" := "Digite o x y z para onde eles vão andar: (6 6 6 para onde o boss esta)", "marked" := "6 6 6"});
       
