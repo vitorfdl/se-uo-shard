@@ -146,7 +146,8 @@ function showgump(who, filter)
       var monsters := SplitWords(theevent.monsters);
       var opts := monsters + array{"Novo Monstro", "Cancelar"};
 		var choice := RadioGump(who, 300, 0, "Escolha um template para remover.", opts, 1, opts.size()-1);
-
+      print(choice);
+      print(opts.size());
       if (choice == opts.size())
       elseif (choice == opts.size()-1)
          var input_list := array{};
