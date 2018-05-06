@@ -150,7 +150,6 @@ function showgump(who, filter)
       elseif (choice == opts.size() - 1)
          var input_list := array{};
          input_list.append(struct{ "title" := "Qual o template da criatura?", "marked" := ":ghaia:"});
-         print(input_list);
          var monster_output := QuestionsGump(who, input_list);
 
          if (monster_output && monster_output[1])
