@@ -146,14 +146,14 @@ function showgump(who, filter)
       var monsters := SplitWords(theevent.monsters);
       var opts := monsters + array{"Novo Monstro", "Cancelar"};
 		var choice := RadioGump(who, 300, 0, "Escolha um template para remover.", opts, 1, opts.size()-1);
-
       if (choice == opts.size())
-      elseif (choice == opts.size()-1)
+      elseif (choice == opts.size() - 1)
          var input_list := array{};
          input_list.append(struct{ "title" := "Qual o template da criatura?", "marked" := ":ghaia:"});
-         var output := QuestionsGump(who, input_list);
-         if (output && output[1])
-            monsters.append(output[1]);
+         var monster_output := QuestionsGump(who, input_list);
+
+         if (monster_output && monster_output[1])
+            monsters.append(monster_output[1]);
             theevent.monsters := " ".join(monsters);
          endif
       else

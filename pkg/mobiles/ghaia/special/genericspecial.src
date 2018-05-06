@@ -443,7 +443,7 @@ program loko(params)
             newball.SetDirection(direction);
             newball.SetDuration(state.duration);
             newball.SetType(state.ball_type);
-            // newball.SetEffect(0x372A);
+            newball.SetEffect(state.effect);
             newball.SetBallSound(state.sound, 0);
             newball.SetBallGraphic(state.graphic, state.color);
             if (state.subgraphic)
