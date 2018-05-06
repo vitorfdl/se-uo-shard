@@ -34,9 +34,10 @@ function SetupSpecials(mobile)
       combatevents := boss_struct.combatevent;
    endif
 
-   var specials := GetAllVents();
+   var specials := GetAllVents(mobile.npctemplate);
    foreach special in specials
-      if (special.monsters[mobile.npctemplate])
+      special.monsters := SplitWords(special.monsters);
+      if (mobile.npctemplate in special.monsters)
          combatevents.append(special);
       endif
       sleepms(2);

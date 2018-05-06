@@ -224,6 +224,7 @@ function CombatEventsOptions(who, state)
             "Create Mine",
             "Create Item",
             "Consume Creature",
+            "Dash",
             "Dmg", 
             "Frozen Until End",
             "Graphic Effect", 
@@ -239,6 +240,7 @@ function CombatEventsOptions(who, state)
             "Perform Action", 
             "Pull Target",
             "Play Sound", 
+            "Resist Test", 
             "Summon Npcs", 
             "Set Cooldown", 
             "Stop Monster",
@@ -259,7 +261,8 @@ function CombatEventsOptions(who, state)
       opt := state.type;
    endif
 
-   var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally"};
+   var resists := array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"};
+   var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally", "Previous Targets"};
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
       var loc := TargetCoordinates(who);
@@ -290,9 +293,10 @@ function CombatEventsOptions(who, state)
 
       state.times := cint(output[1]);
    elseif ( opt == "Pushback")
+      var behaviours := array{"Para frente", "Para trás", "Para frente relacional", "Direção do Monstro"};
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer a pushback?", "marked" := state.target in targ_opts, "radio" := targ_opts});
-      input_list.append(struct{ "title" := "Qual o comportamento?", "marked" := "", "radio" := array{"Para frente", "Para trás", "Para frente relacional", "Direção do Monstro"}});
+      input_list.append(struct{ "title" := "Qual o comportamento?", "marked" := state.behaviour in behaviours, "radio" := behaviours});
       input_list.append(struct{ "title" := "Quantas vezes será aplicado?", "marked" := ""+cint(state.times)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
@@ -342,10 +346,39 @@ function CombatEventsOptions(who, state)
       state.x := cint(loc[1]);
       state.y := cint(loc[2]);
       state.z := cint(loc[3]);
+   elseif ( opt == "Resist Test")
+      var resist_choice := state.resist_test in resists;
+      if (!state.resist_diff) state.resist_diff := 14; endif
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai sofrer o teste de resistência?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual o teste que será feito?", "marked" := resist_choice, "radio" :=  resists });
+      input_list.append(struct{ "title" := "Dificuldade do teste?", "marked" := ""+cint(state.resist_diff)});
+      input_list.append(struct{ "title" := "Passar para 'Previous Target'?", "marked" := cint(state.successonly)+1, "radio" :=  array{"Não Resistido", "Resistido"} });
+      if (!state.conedist) state.conedist := 3; endif
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
+      var output := QuestionsGump(who, input_list);
+      
+      state.target        := output[1];
+      state.resist_test := output[2];
+      state.resist_diff := cint(output[3]);
+      state.successonly := output[4] == "Resistido";
+      state.conedist    := cint(output[5]);
+   elseif ( opt == "Dash")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Qual alvo do dash?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual distância a percorrer? [até 120s]", "marked" := ""+cint(state.dist)});
+      input_list.append(struct{ "title" := "Lançar mobiles no Previous Target?", "marked" := ""+cint(state.nosetprevious)+1, radio := array{"Sim", "Não"}});
+      if (!state.conedist) state.conedist := 3; endif
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
+
+      var output := QuestionsGump(who, input_list);
+      state.target        := output[1];
+      state.dist        := cint(output[2]);
+      state.nosetprevious := cint(output[3] == "Não");
+      state.conedist      := cint(output[4]);
    elseif ( opt == "TimedScript")
       if (!state.resist_diff) state.resist_diff := 14; endif
 
-      var resists := array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"};
       var resist_choice := state.resist_test in resists;
       if (!resist_choice) resist_choice := 6; endif
 
@@ -368,10 +401,8 @@ function CombatEventsOptions(who, state)
       state.timername     := output[2];
       state.timerduration := cint(output[3]);
       state.level         := cint(output[4]);
-      if (output[5] != "Nenhum")
-         state.resist_test := output[5];
-         state.resist_diff := cint(output[6]);
-      endif
+      state.resist_test := output[5];
+      state.resist_diff := cint(output[6]);
       state.conedist      := cint(output[7]);
    elseif ( opt == "Perform Action" )
       var input_list := array{}; 
@@ -530,7 +561,6 @@ function CombatEventsOptions(who, state)
          vit := vit in dmg_types;
       endforeach
 
-      var resists := array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"};
       var resist_choice := state.resist_test in resists;
       if (!resist_choice) resist_choice := 6; endif
 
@@ -582,9 +612,9 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "O item pode ser pego por players?", "marked" := cint(state.movable)+1, "radio" := array{"Não", "Sim"} });
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      input_list.append(struct{ "title" := "Custom property (key value)", "marked" := p1 });
-      input_list.append(struct{ "title" := "Custom property (key value)", "marked" := p2 });
-      input_list.append(struct{ "title" := "Custom property (key value)", "marked" := p3 });
+      input_list.append(struct{ "title" := "Custom property (key value) integer", "marked" := p1 });
+      input_list.append(struct{ "title" := "Custom property (key value) integer", "marked" := p2 });
+      input_list.append(struct{ "title" := "Custom property (key value) string", "marked" := p3 });
 
       var output := QuestionsGump(who, input_list);
       state.target := output[1];

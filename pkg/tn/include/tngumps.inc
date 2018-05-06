@@ -324,14 +324,14 @@ endfunction
    // var res:= QuestionsGump(who, questions);
    // var answer_1 := res[1];
 function QuestionsGump(who, questions := array{})
-	var total_height := ((questions.size() * 2) * 18) + 20;
+	var total_height := ((questions.size() * 2) * 20) + 20;
    foreach quest in questions
       if (quest.radio)
          total_height += floor(quest.radio.size() / 4) * 20;
       elseif (quest.checkbox)
          total_height += floor(quest.checkbox.size() / 4) * 20;
       else
-         total_height += 18;
+         total_height += 20;
       endif
       sleepms(2);
    endforeach
@@ -341,6 +341,7 @@ function QuestionsGump(who, questions := array{})
 	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 100+total_height);
 
 	var entries := dictionary{};
+   var previousiter := 0;
 	var x := 270;
 	var y := 270;
 	foreach quest in questions
@@ -351,7 +352,12 @@ function QuestionsGump(who, questions := array{})
       endif
 		y += 18;
 		if (quest.radio)
-  			GFSetRadioGroup(gump, _quest_iter);
+  			if (!quest.continueradio) 
+            GFSetRadioGroup(gump, _quest_iter);
+         else
+            previousiter := quest.radio.size();
+         endif
+
 			foreach entry in (quest.radio)
 				GFTextLine(gump, x_plus+25, y+3, 1153, entry);
             GFRadioButton(gump, x_plus, y+3, 210, 211, (_entry_iter == cint(quest.marked)), _entry_iter+(_quest_iter * 100));

@@ -14,7 +14,7 @@ program HitScript(params)
 	// //var basedamage	:= params[5];
 	// var rawdamage	:= params[6];
 	// params := 0; // Not needed anymore.
-	var rawdamage	:= params[6];
+	var basedamage	:= params[5];
    
-   AP_ConsumeVitalForced(defender, STAMINA, rawdamage);
+   AP_ConsumeVitalForced(defender, STAMINA, cint(basedamage));
 endprogram
