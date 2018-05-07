@@ -25,7 +25,7 @@ program showdfdiff(params)
 		endforeach
 
       if (expgain_time <= polcore().systime)
-         if (ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() >= 1)
+         if (ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 1)
             ExpGain(who, "minor");
             who.SetAchievement("sneak", 1);
             expgain_time := polcore().systime + 120;
