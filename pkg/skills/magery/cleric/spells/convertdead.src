@@ -17,7 +17,7 @@ program SpellScript(params)
 
 	var npctemplate := targ.my_template();
    var npc_info := NPC_GetNPCConfig(targ.npctemplate);
-	if ( npc_info.Category != "morto-vivo" || targ.isBoss())
+	if ( npc_info.Category != "morto-vivo" || isBoss(targ))
 		SendSysMessageEx(who, "Esta criatura não pode ser dominada;", SSM_FAIL);
 		return 0;
 	elseif (getUndeads(who).size() >= MAX_UNDEAD)

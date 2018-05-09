@@ -59,7 +59,10 @@ var law_list := struct{
    "norace"     := "Proibir Raça",
    "noguild"    := "Proibir Facção",
    "nocerca"    := "Proibir Pular Cerca",
-   "nooutsider" := "Proibir Forasteiros"
+   "nooutsider" := "Proibir Forasteiros",
+   "nooutsideron" := "Proibir Forasteiros em área",
+   "nolawon" := "Não aplicar leis em"
+   "userban" := "Banir usuário"
 };
 
 var guild_obj, aboveguild;
@@ -183,6 +186,9 @@ program faccao(params)
          "noguild": law_desc := "Facção: {}".format(FindGuild(law.opt).getProp("name"));
          "nofight": law_desc := "{}".format(law.opt);
          "noweapon": law_desc := "{}".format(law.opt);
+         "nooutsideron": law_desc := "{}".format(law.opt.name); 
+         "nolawon": law_desc := "{}".format(SystemFindObjectBySerial(law.opt, SYSFIND_SEARCH_OFFLINE_MOBILES).getName()); 
+         "userban": law_desc := "{}".format(SystemFindObjectBySerial(law.opt, SYSFIND_SEARCH_OFFLINE_MOBILES).getName()); 
       endcase
       GFTextLine(gump, 246, y-2, 0, "{}".format(law_list[law.type]));
       if (law_desc)  GFToolTipText(gump, law_desc); endif
@@ -646,7 +652,7 @@ function playerHandler(who, input)
 endfunction
 
 function gmHandler(who)
-   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões", "Pegar GuildID", "Alterar Sub-Guilds", "Remover guilda", "Cancelar"};
+   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões","Pegar GuildID", "Alterar Sub-Guilds", "Remover guilda", "Cancelar"};
    var output := RadioGump(who, 300, 0, "Escolha uma opção", opts, 0, opts.size());
 
    if (output["Nome"])
@@ -703,12 +709,34 @@ function gmHandler(who)
       while (who.connected)
          SendSysMessageEx(who, "Selecione um novo ponto de prisão. (Esc para parar)", SSM_INFO);
          var targ := TargetCoordinates(who);
-         if (!targ) break; endif
+         if (!targ) 
+            break;
+         elseif(targ.isDoor())
+            targ.doToggle();
+            continue;
+         endif
          prisoes.append(targ);
       endwhile
 
       if (prisoes.size() < 1) return SendSysMessageEx(who, "Cancelado"); endif
       guild.SetProp("prisions", prisoes);
+
+      var soltar := array{};
+      while (who.connected)
+         SendSysMessageEx(who, "Selecione um novo ponto de soltura. (Esc para parar)", SSM_INFO);
+         var targ := TargetCoordinates(who);
+         if (!targ) 
+            break;
+         elseif(targ.isDoor())
+            targ.doToggle();
+            continue;
+         endif
+         soltar.append(targ);
+      endwhile
+
+      if (soltar.size() < 1) return SendSysMessageEx(who, "Cancelado"); endif
+      guild.SetProp("prision_leave", soltar);
+
       SendSysMessageEx(who, "Prisões alteradas");
    elseif (output["Remover"])
       RemFaccao(guild.guildid);
@@ -882,11 +910,40 @@ function lawHandler(who, input)
          if (guildenemy["Cancelar"]) return SendSysMessageEx(who, "Cancelado");  endif
 
          new_law.opt := guild_opts[guildenemy];
+      elseif (new_law.type["nolawon"] || new_law.type["userban"] )
+         SendSysMessageEx(who, "Escolha o alvo para aplicar esta lei", SSM_FAIL);
+         var targ := Target(who);
+         if (!targ)
+            return;
+         elseif (!targ.isA(POLCLASS_MOBILE) || targ.npctemplate)
+            return SendSysMessageEx(who, "Esta lei só pode ser aplicada em jogadores", SSM_FAIL);
+         endif
+
+         new_law.opt := targ.serial;
       elseif (new_law.type["nofight"] || new_law.type["noweapon"])
          var forceonguild := YesNo(who, "Esta lei será aplicada a membros da facção?");
          if (!forceonguild)
             new_law.opt := "Não aplicada a membros";
          endif
+      elseif (new_law.type["nooutsideron"])
+         SendSysMessageEx(who, "Clique no canto superior do retangulo", SSM_FAIL);
+         var targ1 := TargetCoordinates(who);
+
+         if (!targ)
+            return;
+         endif
+         SendSysMessageEx(who, "Clique no canto inferior do retangulo", SSM_FAIL);
+         var targ2 := TargetCoordinates(who);
+
+         if (!targ2)
+            return;
+         endif
+
+         var gname := GetInput(who, who.backpack, "Qual o nome da área? (aperte esc para cancelar)");
+         if (!gname) return SendSysMessageEx(who, "Cancelado"); endif
+         
+         targ.opt.ret := array{targ1.x, targ1.y, targ2.x, targ2.y, targ1.z};
+         targ.opt.name := gname;
       endif
 
       if (AddLaw(guild, new_law))

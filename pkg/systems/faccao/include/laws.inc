@@ -34,7 +34,7 @@ function AddLaw(guild, law)
    };
 
    var laws := ListLaws(guild);
-   if (new_law.type != "noitem" && new_law.type != "norace" && new_law.type != "noguild")
+   if (!(new_law.type in array{"noitem", "norace", "noguild", "nooutsideron", "nolawon", "userban"}))
       if (FindInArray(laws, struct{"type" := new_law.type }))
          return 0;
       endif

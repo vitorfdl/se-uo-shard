@@ -51,7 +51,7 @@ function MineTrigger(field, mobile, dmg_dice)
    var owner := field.GetOwner();
    if (owner == mobile);
       return;
-   elseif (owner.npctemplate && mobile.npctemplate && !mobile.master)
+   elseif (CheckIfIsAlly(owner, mobile))
       return;
    endif
 

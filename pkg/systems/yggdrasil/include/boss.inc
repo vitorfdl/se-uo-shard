@@ -16,17 +16,21 @@ include ":yggdrasil:combatevents";
 
 var resist_types := array{"Veneno", "Fogo", "Eletricidade", "Gelo", "Perfuração", "Corte", "Contusão", "Strength", "Dexterity", "Intelligence"};
 
-function GetBossStruct(targ)
+function GetBossStruct(targ, serial := 0)
+   if (serial) serial := targ.serial; endif
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
 	var monsters   := GetObjProperty(spawnpoint, "monsters");
-	var me         := FindElemInArray(monsters, struct{ "serial" := targ.serial });
+	var me         := FindElemInArray(monsters, struct{ "serial" := serial });
+
 	return me.bossParams;
 endfunction
 
-function isBoss(targ)
+function isBoss(targ, serial := 0)
+   if (serial) serial := targ.serial; endif
 	var spawnpoint := SystemFindObjectBySerial( GetObjProperty(targ, "spawnpoint") );
 	var monsters   := GetObjProperty(spawnpoint, "monsters");
-	var me         := FindElemInArray(monsters, struct{ "serial" := targ.serial });
+	var me         := FindElemInArray(monsters, struct{ "serial" := serial });
+
 	if (me.isBoss == 1)
 		return 1;
 	endif

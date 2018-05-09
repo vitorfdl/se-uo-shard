@@ -65,14 +65,15 @@ function ExpGain(mobile, difficulty, value := 0)
 		return 0;
 	endif
 
+   var incr_gain := 10;
   if ( GetExpCap(mobile) < mobile.Getexp())
   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
-		return 0;
+		incr_gain += 200;
    endif
   
 	// var settings := AP_GetSettingsCfgElem("Skills");
 	//verifica se ja não recebeu exp em 5 segundos
-	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + 10;
+	var next_check := CInt(GetObjProperty(mobile, "#LastSkillGain")) + incr_gain;
 	if ( next_check > ReadGameClock() )
 	//	printtextabove(mobile, "não posso subir skill agora");
 		SkillDbgMsg(mobile, "Não pode subir skill ainda. Next: " + next_check + " Current: " + ReadGameClock()  );
