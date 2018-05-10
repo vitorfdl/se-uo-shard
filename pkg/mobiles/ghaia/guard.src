@@ -78,9 +78,9 @@ endfunction
 
 function CheckIfHavePlayerGuild(player_array)
    foreach player in player_array
-      if (guild.guildid == who.guildid)
-         var privs := guild.GetProp(cstr(ev.source.serial));
-         if (who.serial == guild_leader || privs.above_guards)
+      if (guild.guildid == player.guildid)
+         var privs := guild.GetProp(cstr(player.serial));
+         if (player.serial == guild_leader || privs.above_guards)
             return 1;
          endif
       endif
@@ -599,7 +599,7 @@ function WarnPlayer()
          break;
       2: //nooutsider, noguild, norace
          if (warn_rect)
-            if ((who.x >= cint(warn_rect[1]) && who.x <= cint(warn_rect[3]) && who.y >= cint(warn_rect[2]) && who.y <= cint(warn_rect[4])))
+            if ((warning.x >= cint(warn_rect[1]) && warning.x <= cint(warn_rect[3]) && warning.y >= cint(warn_rect[2]) && warning.y <= cint(warn_rect[4])))
                PrintText(me, "Muito bem.");
                AddReport(guild, "{} alertou {} sobre presença não permitida na área".format(me.name, warning.name));
                disableWarn();

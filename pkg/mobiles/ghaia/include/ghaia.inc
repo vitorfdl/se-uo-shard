@@ -240,6 +240,7 @@ function InitializeNpc(mobile)
    endif
 
 //printtextabove(mobile, "initialize npc");
+   SetupSpecials(mobile);
    if (GetObjProperty(mobile, "started"))
       return 0;
    endif
@@ -260,7 +261,6 @@ function InitializeNpc(mobile)
       Loot_Generate(mobile.backpack, loot);
    endif
 //    GenerateRecipeLoot(mobile);
-   SetupSpecials(mobile);
    SetupAmmo(mobile);
    SetObjProperty(mobile, "started", 1);
    mobile.InitPetProperties(0);

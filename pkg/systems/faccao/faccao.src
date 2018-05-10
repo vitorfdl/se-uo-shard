@@ -61,7 +61,7 @@ var law_list := struct{
    "nocerca"    := "Proibir Pular Cerca",
    "nooutsider" := "Proibir Forasteiros",
    "nooutsideron" := "Proibir Forasteiros em área",
-   "nolawon" := "Não aplicar leis em"
+   "nolawon" := "Não aplicar leis em",
    "userban" := "Banir usuário"
 };
 
@@ -929,9 +929,10 @@ function lawHandler(who, input)
          SendSysMessageEx(who, "Clique no canto superior do retangulo", SSM_FAIL);
          var targ1 := TargetCoordinates(who);
 
-         if (!targ)
+         if (!targ1)
             return;
          endif
+
          SendSysMessageEx(who, "Clique no canto inferior do retangulo", SSM_FAIL);
          var targ2 := TargetCoordinates(who);
 
@@ -942,8 +943,8 @@ function lawHandler(who, input)
          var gname := GetInput(who, who.backpack, "Qual o nome da área? (aperte esc para cancelar)");
          if (!gname) return SendSysMessageEx(who, "Cancelado"); endif
          
-         targ.opt.ret := array{targ1.x, targ1.y, targ2.x, targ2.y, targ1.z};
-         targ.opt.name := gname;
+         new_law.opt.ret := array{targ1.x, targ1.y, targ2.x, targ2.y, targ1.z};
+         new_law.opt.name := gname;
       endif
 
       if (AddLaw(guild, new_law))
