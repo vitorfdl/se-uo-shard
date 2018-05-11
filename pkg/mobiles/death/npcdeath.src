@@ -110,7 +110,7 @@ program core_npcDeath(params)
 	var death_script := npc_cfg.DeathScript;
 	if (GetObjProperty(corpse, "spawnkill") == error)
       removeFromSpawn(getobjProperty(corpse, "spawnpoint"), corpse);
-	   var boss := GetBossStruct(corpse);	
+	   var boss := GetBossStruct(corpse, GetObjProperty(corpse, "serial") );	
 		if (boss && boss.deathevent)
          foreach nevent in (boss.deathevent)
          //	printtextabove(corpse, " " + nevent.type);
