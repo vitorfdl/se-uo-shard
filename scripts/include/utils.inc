@@ -72,15 +72,21 @@ function PushBack(who, dist, delay, invert := 0)
    return 1;
 endfunction
 
-function PushMobile(who, dist, delay, targ)
+function PushMobile(who, dist, delay, targ, invert := 0)
    var mod := GetModByFacing(GetFacing(who.x, who.y, targ.x, targ.y));
 	var x := mod[1];
 	var y := mod[2];
 
+   if (invert) 
+      invert := -1;
+   else
+      invert := 1;
+   endif
+
 	var i := 0;
 	for( i := 1; i <= dist; i := i + 1)
-		var finalx := (targ.x + x);
-		var finaly := (targ.y + y);
+		var finalx := (targ.x + x) * invert;
+		var finaly := (targ.y + y) * invert;
       
 		if (!CanWalk("L", targ.x, targ.y, targ.z, finalx, finaly))
 			break;

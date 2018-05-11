@@ -16,8 +16,8 @@ program blessWater(info)
 
 	var npctemplate := targ.my_template();
    var npc_info := NPC_GetNPCConfig(targ.npctemplate);
-	if ( npc_info.Category != "morto-vivo" || targ.isBoss())
-		SendSysMessageEx(who, "Esta criatura não pode ser dominada;", SSM_FAIL);
+	if ( npc_info.Category != "morto-vivo" || isBoss(targ))
+		SendSysMessageEx(who, "Esta criatura não pode ser alvejada;", SSM_FAIL);
 		return 0;
 	elseif (!npctemplate)
 		SendSysMessageEx(who, "Essa magia nao pode ser usada em players", SSM_FAIL);

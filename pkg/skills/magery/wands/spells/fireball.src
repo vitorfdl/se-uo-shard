@@ -18,18 +18,27 @@ program animateSword(params)
 	params := 0; // No longer needed
 
    PlaySoundEffect(who, 0x15F);
-   PlayMovingEffect(who, targ, GFX_LARGE_FIREBALL, 10, 0, 1);
+   PlayMovingEffect(who, targ, GFX_LARGE_FIREBALL, 5, 0, 0);
    sleepms(900);
    
    foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
-      var dmg := RandomDiceRoll(MageDiceTable("A", spellinfo.powered));
+      var dmg := RandomDiceRoll(MageDiceTable("A", spellinfo.powered))+10;
       if (rollResistDice(mobile, DEXTERITY) > spellinfo.dice_roll+5)
          dmg /= 2;
       endif
       PlayStationaryEffect(mobile.x, mobile.y, mobile.z, SelectRandomExplosion(), 10, 10, 0, mobile.realm);
-      DamageFLS(mobile, , DMG_FIRE, who);
+      DamageFLS(mobile, dmg, DMG_FIRE, who);
       sleepms(2);
    endforeach
+
+   var flames := array{0x3996, 0x398C};
+   for i := 1 to 8
+      var point := RandomPlace(who.opponent, 1);
+      var item := CreateItemAtLocation(point[1], point[2], targ.z, cint(flames.randomentry()));
+      item.SetDuration(15);
+      item.SetOwner(who);
+      sleepms(2);
+   endfor
 
 	return 1;
 endprogram

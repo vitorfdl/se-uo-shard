@@ -113,13 +113,13 @@ program loko(params)
             if (t.paralyzed) break; endif
             if (state.behaviour["Para frente"])
                if (state.behaviour["relacional"])
-                  PushMobile(who, state.dist, 100, t);
+                  PushMobile(who, state.dist, 100, t, 1);
                else
                   PushBack(t, state.dist, 100, 1);
                endif
             elseif (state.behaviour["Para trás"])
                if (state.behaviour["relacional"])
-                  PushMobile(t, state.dist, 100, who);
+                  PushMobile(who, state.dist, 100, t);
                else
                   PushBack(t, state.dist, 100);
                endif

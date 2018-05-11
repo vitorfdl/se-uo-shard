@@ -95,6 +95,7 @@ function CheckAllLevers(lever, lever_list, opts)
 
          if (GetObjProperty(item, "status") != "on")
             ChangeLeverStatus(lever.serial);
+            PrintText(lever, "*desativa*");
             return 0;
          endif
          sleepms(2);

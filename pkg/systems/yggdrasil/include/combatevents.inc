@@ -293,7 +293,7 @@ function CombatEventsOptions(who, state)
 
       state.times := cint(output[1]);
    elseif ( opt == "Pushback")
-      var behaviours := array{"Para frente", "Para trás", "Para frente relacional", "Direção do Monstro"};
+      var behaviours := array{"Para frente", "Para trás", "Para frente relacional", "Para trás relacional"};
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer a pushback?", "marked" := state.target in targ_opts, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o comportamento?", "marked" := state.behaviour in behaviours, "radio" := behaviours});
