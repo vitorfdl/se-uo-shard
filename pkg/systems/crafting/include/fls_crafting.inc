@@ -18,6 +18,7 @@ include ":crafting:fls_craftingUtils";
 include ":itemUtils:toolWear";
 include ":tn:tngumps";
 include ":crafting:craft_props";
+include ":crafting:excep_gump";
 
 const OUT_OF_MATERIALS := 1;
 
@@ -540,9 +541,10 @@ function CraftExceptional(who, theitem, craft_skill)
       return;
    endif
 
-   var special_props := GetObjProperty(special_obj, "craftproperty");
-
-   if (!special_props)
+   var craft_index := GetObjProperty(special_obj, "craftproperty");
+   var custom_name :=  GetObjProperty(special_obj, "craftcustomname");;
+   
+   if (!craft_index)
       var exceptional_cfg := ReadConfigFile(":crafting:exceptional_cfg");
       var item := exceptional_cfg[hex(special_obj.objtype)];
       if (!item)
@@ -550,12 +552,20 @@ function CraftExceptional(who, theitem, craft_skill)
          return 2;
       endif
       
-      special_props := struct{
-         "equips" := GetConfigStringArray(item, "equip"),
-         "props" := GetConfigStringDictionary(item, "prop"),
-         "skills" := GetConfigStringArray(item, "skill"),
-         "level" := GetConfigInt(item, "level")
-      };
+      craft_index := GetConfigInt(item, "excepID");
+      custom_name := GetConfigStringArray(item, "custom_name");
+      // special_props := struct{
+      //    "equips" := GetConfigStringArray(item, "equip"),
+      //    "props" := GetConfigStringDictionary(item, "prop"),
+      //    "skills" := GetConfigStringArray(item, "skill"),
+      //    "level" := GetConfigInt(item, "level")
+      // };
+   endif
+
+   var special_props := GetItemEvent(craft_index);
+   if (!special_props)
+      SendSysMessageEx(who, "Material inválido, selecione outro.", SSM_FAIL);
+      return 2;
    endif
 
    if (!(craft_skill in special_props.skills))
@@ -563,7 +573,7 @@ function CraftExceptional(who, theitem, craft_skill)
       return 2;
    endif
 
-   if (cint(special_props.level) > cint(AP_GetTrueSkill(who, craft_skill)) - 4)
+   if (cint(special_props.diff) > cint(AP_GetTrueSkill(who, craft_skill)) - 4)
       SendSysMessageEx(who, "Seu nível em {} é muito baixo para usar este recurso".format(craft_skill), SSM_FAIL);
       return 2;
    endif
@@ -571,62 +581,24 @@ function CraftExceptional(who, theitem, craft_skill)
 	var item_type := "None";
    item_type := GetItemType(theitem);
 
-   if (!(item_type in special_props.equips))
+   if (!(item_type in special_props.uso))
       SendSysMessageEx(who, "O material não pode ser usado nesse tipo de equipamento.", SSM_FAIL);
       return 2;
    endif
    
-   var custom_name := "";
-   var prop_list := special_props.props;
-   foreach prop in (prop_list.keys())
-      case (prop)
-         "custom_name":
-            custom_name := prop_list[prop];
-            break;
-         "hpmod":
-            theitem.maxhp_mod := theitem.maxhp_mod + cint(prop_list[prop]);
-            theitem.hp := theitem.maxhp;
-            break;
-         "equipmod":
-            prop := SplitWords(prop_list[prop]);
-            var mod := prop[1];
-            var value := cint(prop[2]);
-
-            var equip := GetObjProperty(theitem, "equip");
-            if (!equip)
-               equip := struct{};
-            endif
-            if (mod["rd_"])
-               mod["rd_"] := "";
-               if (!equip.dmg_reduce) equip.dmg_reduce := struct{}; endif
-               equip.dmg_reduce[mod] := cdbl(value);
-            else
-               equip[mod] := value;
-            endif
-            SetObjProperty(theitem, "equip", equip);
-            break;
-         "dmgbonus":
-            SetObjProperty(theitem, "dmgbonus", cint(prop_list[prop]));
-            break;
-         "armod":
-            theitem.ar_mod += cint(prop_list[prop]);
-            break;
-         "imunity":
-            break;
-         "resist":
-            break;
-      endcase
-      sleepms(2);
-   endforeach
+   applyEffect(theitem, special_props.effects);
 
    theitem.quality := 1.1;
    who.SetAchievement("exceptional", 1);
    SetObjProperty(theitem, "madeof", fixItemName(special_obj.desc));
 
+   if (custom_name)
+      theitem.name_suffix := custom_name;
+   endif
+
    if ( YesNo(who, "Deseja adicionar uma descrição no item?"))
       AddItemDescription(who, theitem);
    endif
-   SetName(theitem, "{} {}".format(theitem.desc, custom_name));
    DestroyItem(special_obj);
    return 1;
 endfunction

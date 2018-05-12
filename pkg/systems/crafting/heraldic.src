@@ -2,6 +2,8 @@ use cfgfile;
 use uo;
 include ":attributes:attributes";
 include "include/say";
+include ":crafting:excep_gump";
+
 // include ":timedscripts:timedScripts";
 //include "include/damage";
 
@@ -21,22 +23,19 @@ program alchemy(who)
    var history := GetObjProperty(item, "history");
    if (history) diff += 3; endif
    
-   var craftprop := GetObjProperty(item, "craftproperty");
-   if (!craftprop)
-	   var craftcfg  := ReadConfigFile(":crafting:exceptional_cfg");
-      if (craftcfg[item.objtype])
-         craftprop := struct{
-            "equips" := GetConfigStringArray(craftcfg[item.objtype], "equip"),
-            "props" := GetConfigStringDictionary(craftcfg[item.objtype], "prop"),
-            "skills" := GetConfigStringArray(craftcfg[item.objtype], "skill"),
-            "level" := GetConfigInt(craftcfg[item.objtype], "level")
-         };
-         diff += 8;
+
+   var craft_index := GetObjProperty(item, "craftproperty");
+   
+   if (!craft_index)
+      var exceptional_cfg := ReadConfigFile(":crafting:exceptional_cfg");
+      var item := exceptional_cfg[hex(item.objtype)];
+      if (item)
+         craft_index := GetConfigInt(item, "excepID");
       endif
    endif
 
+   var craftprop := GetItemEvent(craft_index);
    var crafterserial := GetObjProperty(item, "crafterserial");
-
    if (!craftprop && !history && !crafterserial)
       return SendSysMessageEx(who, "Este objeto não tem nenhum significado.", SSM_FAIL);
    endif
@@ -51,40 +50,37 @@ program alchemy(who)
    endif
 
    if (craftprop)
-      SendSysMessageEx(who, "Level de Craft: {}".format(cint(craftprop.level)/2), SSM_INFO);
+      SendSysMessageEx(who, "Level de Craft: {}".format(cint(craftprop.diff)/2), SSM_INFO);
       SendSysMessageEx(who, "Usado em {}".format(", ".join(craftprop.skills)), SSM_INFO);
-      SendSysMessageEx(who, "Para fabricar {}".format(", ".join(craftprop.equips)), SSM_INFO);
+      SendSysMessageEx(who, "Para fabricar {}".format(", ".join(craftprop.uso)), SSM_INFO);
       var props_text := "";
-      var prop_list := craftprop.props;
-      foreach prop in (prop_list.keys())
-         var mod := prop_list[prop];
-         var case_text := "Aumento";
-         if (cint(mod) < 0) case_text := "Redução"; endif
-         case (prop)
-            "hpmod": props_text += "{} de Durabilidade; ".format(case_text); break;
-            "dmgbonus": props_text += "{} de Dano; ".format(case_text); break;
-            "armod": props_text += "{} de Armadura; ".format(case_text); break;
-            "equipmod":
-               prop := SplitWords(mod);
-               mod := prop[2];
-               var case_text := "Aumento";
-               if (cint(mod) < 0) case_text := "Redução"; endif
-               case (prop[1])
-                  "strmod": props_text += "{} de Força; ".format(case_text); break;
-                  "dexmod": props_text += "{} de Dextreza; ".format(case_text); break;
-                  "intmod": props_text += "{} de Inteligência; ".format(case_text); break;
-                  "conmod": props_text += "{} de Constituição; ".format(case_text); break;
-                  "wismod": props_text += "{} de Sabedoria; ".format(case_text); break;
-                  "toughmod": props_text += "{} de Tenacidade; ".format(case_text); break;
-                  "hitsmod": props_text += "{} de Vida; ".format(case_text); break;
-                  "manamod": props_text += "{} de Mana; ".format(case_text); break;
-                  "stammod": props_text += "{} de Vigor; ".format(case_text); break;
-                  default:
-                     prop[1]["rd_"] := "Defesa em ";
-                     props_text += "{} de {}; ".format(case_text, prop[1]); break;
-               endcase
-         endcase
+
+      foreach prop in (craftprop.effects)
          sleepms(2);
+         if (prop.type == "ObjProperty") continue; endif
+
+         var effect := prop.type;
+         var prefix := "";
+         var suffix := "";
+
+         if (prop.amount)
+            if (prop.incr)
+               prefix += "Redução";
+            else
+               prefix += "Aumento";
+            endif
+         endif
+
+         if (prop.vital) suffix += "{}".format(prop.vital);  endif
+         if (prop.property) suffix += "{}".format(prop.property);  endif
+         if (prop.dmgtype) suffix += "{}".format(prop.dmgtype);  endif
+
+         if (suffix) effect := "{} {}".format(effect, suffix); endif
+         if (prefix) effect := "{} {}".format(prefix, effect); endif
+         props_text += "{}; ".format(effect);
+
+         // if (it.property) suffix += "{}".format(it.property);  endif
+         // if (it.hitopt) suffix += "{}".format(it.hitopt);  endif
       endforeach
       SendSysMessageEx(who, "Efeitos: {}".format(props_text), SSM_INFO);
    endif
@@ -94,3 +90,60 @@ program alchemy(who)
       SendSysMessageEx(who, "Feito por: {}".format(crafter.getName()), SSM_INFO);
    endif
 endprogram
+
+function LoadItemEventData()
+    var df := DFOpenDataFile( ":crafting:excepitems", DF_CREATE, DF_KEYTYPE_INTEGER);
+    return df;
+endfunction
+
+function TranslateToPlayer(text)
+   case (text)
+      "strmod": return "Força";
+      "dexmod": return "Dextreza";
+      "intmod": return "Inteligência";
+      "conmod": return "Constituição";
+      "wismod": return "Sabedoria";
+      "toughmod": return "Tenacidade";
+      "hitsmod":"hits": return "Vida";
+      "manamod":"mana": return "Mana";
+      "stammod":"stamina": return "Vigor";
+      "dp": return "P. de Desmaio";
+      "castmod": return "Vel. Conjuração";
+      "ar_mod": return "Defesa";
+      "hp_max": return "Durabilidade";
+      "insured": return "Não Dropável Temp.";
+      "newbie": return "Não Dropável";
+      "dmg_mod": return "Dano";
+      "hunger": return "Fome";
+   endcase
+endfunction
+
+
+// var mod := prop_list[prop];
+//          var case_text := "Aumento";
+//          if (cint(mod) < 0) case_text := "Redução"; endif
+//          case (prop)
+//             "hpmod": props_text += "{} de Durabilidade; ".format(case_text); break;
+//             "dmgbonus": props_text += "{} de Dano; ".format(case_text); break;
+//             "armod": props_text += "{} de Armadura; ".format(case_text); break;
+//             "equipmod":
+//                prop := SplitWords(mod);
+//                mod := prop[2];
+//                var case_text := "Aumento";
+//                if (cint(mod) < 0) case_text := "Redução"; endif
+//                case (prop[1])
+//                   "strmod": props_text += "{} de Força; ".format(case_text); break;
+//                   "dexmod": props_text += "{} de Dextreza; ".format(case_text); break;
+//                   "intmod": props_text += "{} de Inteligência; ".format(case_text); break;
+//                   "conmod": props_text += "{} de Constituição; ".format(case_text); break;
+//                   "wismod": props_text += "{} de Sabedoria; ".format(case_text); break;
+//                   "toughmod": props_text += "{} de Tenacidade; ".format(case_text); break;
+//                   "hitsmod": props_text += "{} de Vida; ".format(case_text); break;
+//                   "manamod": props_text += "{} de Mana; ".format(case_text); break;
+//                   "stammod": props_text += "{} de Vigor; ".format(case_text); break;
+//                   default:
+//                      prop[1]["rd_"] := "Defesa em ";
+//                      props_text += "{} de {}; ".format(case_text, prop[1]); break;
+//                endcase
+//          endcase
+//          sleepms(2);

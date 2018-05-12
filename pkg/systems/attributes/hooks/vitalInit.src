@@ -168,7 +168,7 @@ endfunction
 // Note: This vital is to kill all.
 // *****
 exported function GetDPRegenRate(mobile)
-	return 24; // 1 DP por 20min
+	return 24 + AP_GetVitalRegenRateMod(mobile, "dp");; // 1 DP por 20min
 endfunction
 
 exported function GetDPMaximumValue(mobile)

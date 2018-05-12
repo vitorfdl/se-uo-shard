@@ -20,6 +20,7 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
+   print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 
    // var chardata := GetObjproperty(player, "chardata");
@@ -47,14 +48,14 @@ program oafeatures_sendpacket(who, text)
    // PlayStationaryEffectEx( who.x, who.y, who.z+30, who.realm, 0x375A, 1, 15, 2168 );
    // PlaySoundEffect(who, 0x5CA);
 
-   var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "In Line"};
-      var input_list := array{};
-      input_list.append(struct{ "title" := "Onde será criado?", "marked" := 1, "radio" := targ_opts});
-      input_list.append(struct{ "title" := "Qual ID ou nome do item a ser criado?", "marked" := "" });
-      input_list.append(struct{ "title" := "Criar em X Y Z (deixa em branco para usar target)", "marked" := "" });
-      input_list.append(struct{ "title" := "Qual cor o item terá?", "marked" := "" });
-      input_list.append(struct{ "title" := "O item pode ser pego por players?", "marked" := 1, "radio" := array{"Não", "Sim"} });
-      var output := QuestionsGump(who, input_list);
+   // var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "In Line"};
+   //    var input_list := array{};
+   //    input_list.append(struct{ "title" := "Onde será criado?", "marked" := 1, "radio" := targ_opts});
+   //    input_list.append(struct{ "title" := "Qual ID ou nome do item a ser criado?", "marked" := "" });
+   //    input_list.append(struct{ "title" := "Criar em X Y Z (deixa em branco para usar target)", "marked" := "" });
+   //    input_list.append(struct{ "title" := "Qual cor o item terá?", "marked" := "" });
+   //    input_list.append(struct{ "title" := "O item pode ser pego por players?", "marked" := 1, "radio" := array{"Não", "Sim"} });
+   //    var output := QuestionsGump(who, input_list);
 
    // printtext(targ, ""+targ.enabled("hiddenattack"));
    // GrantPrivilege(targ, "hiddenattack");

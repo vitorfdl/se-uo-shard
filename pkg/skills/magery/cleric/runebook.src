@@ -14,23 +14,9 @@ include "include/facings";
 include ":tn:cooldown";
 include ":crafting:craft_props";
 include "include/arrays";
+include ":crafting:excep_gump";
 
 var rune_cfg := ReadConfigFile(":magery:config/runes");
-
-function getRune(rune)
-   var rune_info := FindConfigElem(rune_cfg, rune);
-   if (!rune_info) return 0; endif;
-
-	var obj := struct{
-		"name":= "Runa {}".format(rune),
-		"desc":= rune_info.desc,
-		"diff":= cint(rune_info.Difficulty),
-		"usos":= GetConfigStringArray(rune_info, "Uso"),
-		"sets":= GetConfigStringDictionary(rune_info, "Set")
-	};
-
-	return obj;
-endfunction
 
 program book(who, book)
 	var book_gump := CreateBookGump(book);
@@ -49,7 +35,6 @@ program book(who, book)
 		endif
 		WriteRune(who, runes[rune]);
 	endif
-
 endprogram
 
 Const OBJ_BLANK_SCROLL := 0xE34;
@@ -142,10 +127,15 @@ function GenerateSide(byref book_gump, rune_list, i, side, byref pOX, byref pOY,
 		sOX := 302;
 	endif
 
-	var rune_entry := getRune(rune_list[rune_pos]);
+	var rune_entry := GetItemEvent(rune_list[rune_pos]);
 	rune_entry.desc := "<BASEFONT COLOR=#000066>{}<br><br> <BASEFONT COLOR=#330000> Tipos <br>".format(cstr(rune_entry.desc));
 
-	foreach r in (rune_entry.usos)
+	foreach r in (rune_entry.skills)
+		rune_entry.desc := "{}{}<br>".format(rune_entry.desc, cstr( r ));
+      sleepms(2);
+	endforeach
+
+	foreach r in (rune_entry.uso)
 		rune_entry.desc := "{}{}<br>".format(rune_entry.desc, cstr( r ));
       sleepms(2);
 	endforeach
@@ -197,12 +187,15 @@ function GenerateEmptySide(byref book_gump, side, pOX, pOY, page_num)
 endfunction
 
 function WriteRune(who, rune_entry)
-	rune_entry := getRune(rune_entry);
+	rune_entry := GetItemEvent(rune_entry);
    var my_backpack := EnumerateItemsInContainer(who.backpack);
 	if( TypeOf(rune_entry) != "Struct" )
 		return SendSysMessageEx(who, "Algo esta errado com seu livro.", SSM_FAIL);
 	elseif (!SearchArrayOfModel("objtype", cint(0x10e4), my_backpack)) 
 		SendSysMessageEx(who, "Você precisa de uma faca para entalhar", SSM_FAIL);
+		return;
+   elseif (floor(AP_GetTrueSkill(who, INSCRICAO_RUNICA) / 2) < rune_entry.diff)
+		SendSysMessageEx(who, "Essa runa parece muito complexa para você", SSM_FAIL);
 		return;
 	endif
 
@@ -224,7 +217,7 @@ function WriteRune(who, rune_entry)
 
 	var item_type := GetItemType(item);
 
-	if (!item_type || !(item_type in rune_entry.usos))
+	if (!item_type || !(item_type in rune_entry.uso))
 		return SendSysMessageEx(who, "Objeto invalido para esta runa.", SSM_FAIL);
 	elseif (item.hp <= (item.maxhp / 3))
 		return SendSysMessageEx(who, "Este objeto esta muito danificado para receber uma runa..", SSM_FAIL);
@@ -253,7 +246,7 @@ function WriteRune(who, rune_entry)
    ReleaseItem(item);
 
 	var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSCRICAO_RUNICA);
-	if (roll <= rune_entry.diff)
+	if (roll <= 10+(rune_entry.diff * 2))
 		item.hp -= Floor(item.maxhp / 4);
 		SetName(item, item.desc);
 		return SendSysMessageEx(who, "Você falhou em inscrever a runa e danificou o objeto.", SSM_FAIL);
@@ -272,41 +265,17 @@ function WriteRune(who, rune_entry)
       SetObjProperty(water, "doses", doses);
    endif
 
-	foreach set in (rune_entry.sets.Keys())
-		var value := rune_entry.sets[set];
-		if (cint(value) != error)
-			value := cint(value);
-		endif
-
-		if (set == "maxhp")
-			item.maxhp_mod += value;
-			item.hp += value;
-		elseif (set == "prop")
-			set := SplitWords(set, " ")[2];
-			SetObjProperty(item, set[1], value[2]);
-      elseif (set == "equipmod")
-         var special_props := GetObjProperty(item, "equip");
-         if (!special_props) special_props := struct{}; endif
-
-         var prop := SplitWords(set, " ");
-         if (prop[1]["rd_"])
-            prop[1]["rd_"] := "";
-            if (!special_props.dmg_reduce) special_props.dmg_reduce := struct{}; endif
-            special_props.dmg_reduce[prop[1]] := cdbl(prop[2]);
-         else
-            special_props[prop[1]] += cint(prop[2]);
-         endif
-
-         SetObjProperty(item, "equip", special_props);
-		else
-			item[set] := value;
-		endif
-      sleepms(2);
-	endforeach
+   applyEffect(item, rune_entry.effects);
 
 	ExpGain(who,roll, rune_entry.diff);
 	who.SetAchievement("rune_inscription", 1);
-	SetObjProperty(item, "inscripted", rune_entry.name);
+	SetObjProperty(item, "inscripted", rune_entry.index);
 	SendSysMessageEx(who, "Você gravou a runa.", SSM_FAIL);
    SetName(item, item.desc);
+endfunction
+
+
+function LoadItemEventData()
+    var df := DFOpenDataFile( ":magery:runes", DF_CREATE, DF_KEYTYPE_INTEGER);
+    return df;
 endfunction

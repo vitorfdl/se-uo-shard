@@ -107,8 +107,13 @@ function RemoveEquipmentMods(who, item)
             dmg_reduce[type] := cint(dmg_reduce[type]) - mods[mod][type];
             if (dmg_reduce[type] == 0) dmg_reduce.erase(type); endif
          endforeach
-
-         SetObjProperty(who, "dmg_reduce", dmg_reduce);
+      elseif (mod == "regen_rate")
+			var regen_rate := AP_LoadVitalRegenRateProp(who);
+         foreach type in (mods[mod].keys())
+            regen_rate[type] := cint(regen_rate[type]) - mods[mod][type];
+            if (regen_rate[type] == 0) regen_rate.erase(type); endif
+         endforeach
+         AP_SaveVitalRegenRateProp(who, regen_rate);
 		else
 			AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
 		endif

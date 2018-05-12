@@ -13,9 +13,16 @@ include "include/say";
 include ":crafting:fls_crafting";
 include ":tn:tngumps";
 include ":gumps:yesno";
+include ":crafting:excep_gump";
 
 var item_config     := ReadConfigFile(":cartography:itemdesc");
 var craft_config    := ReadConfigFile(":cartography:cartography");
+
+
+function LoadItemEventData()
+    var df := DFOpenDataFile( ":magery:runes", DF_CREATE, DF_KEYTYPE_INTEGER);
+    return df;
+endfunction
 
 program use_MapmakersPen(who, tool)
 	if(!can_access(who, tool))
@@ -190,8 +197,8 @@ program use_MapmakersPen(who, tool)
 			return 0;
 		endif
 
-		var rune_name := GetObjProperty(targ, "inscripted");
-      if (rune_name in rune_list)
+		var rune_id := GetObjProperty(targ, "inscripted");
+      if (rune_id in rune_list)
 			SendSysMessageEx(who,"Já existe esta runa no livro.", SSM_FAIL);
          return 0;
       elseif (!ConsumeSubstance(who.backpack, 0xE34, 1))
@@ -204,14 +211,14 @@ program use_MapmakersPen(who, tool)
 			return;
 		endif
 
-      var rune := getRune(rune_name);
+      var rune := GetItemEvent(rune_id);
 		var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSCRICAO_RUNICA);
-		if (roll >= rune.diff+2 && !who.cmdlevel)
+		if (roll >= rune.diff+12 && !who.cmdlevel)
 			SendSysMessageEx(who, "Falhou em transcrever a runa.", SSM_FAIL);
 			return;
 		endif
 
-		rune_list.Append(rune_name);
+		rune_list.Append(rune_id);
 		SetObjProperty(book, "runes", rune_list);
 		SendSysMessageEx(who, "Você transcreveu a runa para o livro.", SSM_INFO);
       if (!serialid)

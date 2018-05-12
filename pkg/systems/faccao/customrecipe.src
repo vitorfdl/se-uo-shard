@@ -101,3 +101,10 @@ function SendGump(who, item_recipe)
 
 	return GFSendGump(who, gump);
 endfunction
+
+
+function LoadItemEventData()
+    var df := DFOpenDataFile( ":crafting:excepitems", DF_CREATE, DF_KEYTYPE_INTEGER);
+    return df;
+endfunction
+

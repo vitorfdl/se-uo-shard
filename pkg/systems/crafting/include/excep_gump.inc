@@ -85,6 +85,10 @@ function applyEffect(item, effects)
          if (!mods.dmg_reduce) mods.dmg_reduce := struct{}; endif
          mods.dmg_reduce[event.dmgtype] := cdbl(mods.dmg_reduce[event.dmgtype]) + (cdbl(event.amount) / 100);
       elseif (event.type == "Monstro +dmg")
+         var dmg_increase := GetObjProperty(item, "dmg_increase");
+         if (!dmg_increase) dmg_increase := struct{}; endif
+         
+         dmg_increase[event.property] := cint(dmg_increase[event.property]) + event.amount;
       elseif (event.type == "ObjProperty")
          var value := event.value;
          if (event.vartype == "Integer") 
@@ -99,11 +103,17 @@ function applyEffect(item, effects)
             item.hp += event.amount;
          endif
       elseif (event.type == "Tamanho +dmg")
+         var dmg_increase := GetObjProperty(item, "dmg_increase");
+         if (!dmg_increase) dmg_increase := struct{}; endif
+         
+         dmg_increase[event.property] := cint(dmg_increase[event.property]) + event.amount;
       elseif (event.type == "Alterar Equipmod")
          mods[event.vital] := cint(mods[event.vital]) + event.amount;
       elseif (event.type == "Alterar Regen")
          if (!mods.regen_rate) mods.regen_rate := struct{}; endif
-         mods.regen_rate[event.vital] := cdbl(mods.regen_rate[event.vital]) + (cdbl(event.amount) / 100);
+         mods.regen_rate[event.vital] := cdbl(mods.regen_rate[event.vital]) + (event.amount*100);
+      elseif (event.type == "Regen Moriquendi")
+         SetObjProperty(item, "decrease_moriquendi", (cdbl(event.amount) / 100));
       elseif (event.type == "Efeito Ativável")
          SetObjProperty(item, "active_effect", event.effect);
          SetObjProperty(item, "charges", 10);
@@ -128,7 +138,7 @@ function sendUserGump(who, index := 0)
 	GFResizePic(gump, 209, 31, 9200, 466, 434);
 	GFResizePic(gump, 217, 37, 9270, 447, 422);
 
-	GFAddButton(gump, 81, 29, 5020, 248, GF_CLOSE_BTN, 2);
+	GFAddButton(gump, 81, 29, 5020, 5020, GF_CLOSE_BTN, 2);
 	GFTextLine(gump, 89, 31, 2100, "Novo");
    foreach item in allitems
       GFHTMLArea(gump, 35, 59, 142+(_item_iter * 18), 27, "{}".format(item.name), 1, 0);
@@ -227,7 +237,8 @@ function HandleInput(who, input)
             "ObjProperty",
             "Propriedade",
             "Tamanho +dmg",
-            "Red. de Dano"
+            "Red. de Dano",
+            "Regen Moriquendi"
             }
          }
       };
@@ -272,7 +283,10 @@ function HandleInput(who, input)
       selected_item := input - 300;
    elseif (input >= 100 && input <= 150)
       var pos := input -100;
-      if (YesNo(who, "Deseja mesmo remover o efeito {} ?".format(iteminfo.effects[pos].type)))
+      if (YesNo(who, "O que deseja fazer com {} ?".format(iteminfo.effects[pos].type), "Editar", "Remover"))
+         iteminfo.effects[pos] := ConfigureEvents(who, iteminfo.effects[pos]);
+         UpdateItemEvent(iteminfo, selected_item);
+      else
          iteminfo.effects.Erase(pos);
          UpdateItemEvent(iteminfo, selected_item);
       endif
@@ -342,13 +356,13 @@ function ConfigureEvents(who, event)
       event.amount := cint(output[2]);
    elseif (event.type == "Monstro +dmg")
       var input_list := array{};
-      if (!event.category) event.category := ""; endif
+      if (!event.property) event.property := ""; endif
       if (!event.amount) event.amount := 1; endif
-      input_list.append(struct{ "title" := "Qual categoria de monstro?", "marked" := ""+event.category});
+      input_list.append(struct{ "title" := "Qual categoria de monstro?", "marked" := ""+event.property});
       input_list.append(struct{ "title" := "Quanto de dano extra?", "marked" := ""+cint(event.amount) });
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
-      event.category := output[1];
+      event.property := output[1];
       event.amount := cint(output[2]);
    elseif (event.type == "ObjProperty")
       var var_types := array{"Integer", "Float", "String"};
@@ -365,7 +379,7 @@ function ConfigureEvents(who, event)
       event.vartype := output[2];
       event.value := output[3];
    elseif (event.type == "Propriedade")
-      var prop_types := array{"hp_max", "speed_mod", "ar_mod", "ar_mod", "color", "dmg_mod", "attribute", "name_suffix", "insured", "newbie"};
+      var prop_types := array{"hp_max", "speed_mod", "ar_mod", "color", "dmg_mod", "attribute", "name_suffix", "insured", "newbie"};
       var input_list := array{};
       if (!event.amount) event.amount := 3; endif
       input_list.append(struct{ "title" := "Qual propriedade?", "marked" := event.property in prop_types, radio := prop_types });
@@ -378,11 +392,11 @@ function ConfigureEvents(who, event)
       var size_list := array{"pequeno", "medio", "grande", "gigante"};
       var input_list := array{};
       if (!event.amount) event.amount := "1"; endif
-      input_list.append(struct{ "title" := "Qual tamanho?", "marked" := event.size in size_list, radio := size_list });
+      input_list.append(struct{ "title" := "Qual tamanho?", "marked" := event.property in size_list, radio := size_list });
       input_list.append(struct{ "title" := "Quanto de dano extra?", "marked" := ""+cint(event.amount) });
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
-      event.size := output[1];
+      event.property := output[1];
       event.amount := cint(output[2]);
    elseif (event.type == "Alterar Equipmod")
       var vital_list := array{"hitsmod", "manamod", "stammod", "toughmod", "castmod"};
@@ -395,11 +409,11 @@ function ConfigureEvents(who, event)
       event.vital := output[1];
       event.amount := cint(output[2]);
    elseif (event.type == "Alterar Regen")
-      var vital_list := array{"Hits", "Stam", "Mana"};
+      var vital_list := array{"hits", "stamina", "mana", "dp", "hunger"};
       var input_list := array{};
       if (!event.amount) event.amount := "1"; endif
       input_list.append(struct{ "title" := "Qual vital a regeneração será alterado?", "marked" := event.vital in vital_list, radio := vital_list });
-      input_list.append(struct{ "title" := "Qual o modificador? (por segundo)", "marked" := ""+cint(event.amount) });
+      input_list.append(struct{ "title" := "Qual o modificador? (100 = 10 pontos p/ segundo)", "marked" := ""+cint(event.amount) });
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       event.vital := output[1];
@@ -418,6 +432,13 @@ function ConfigureEvents(who, event)
    //    event.special := output[1];
    //    event.incr := output[2] == "Reduzir";
    //    event.amount := cint(output[2]);
+   elseif (event.type == "Regen Moriquendi")
+      var input_list := array{};
+      if (!event.amount) event.amount := "20"; endif
+      input_list.append(struct{ "title" := "Reduzir em qual porcentagem? (por segundo)", "marked" := ""+cint(event.amount) });
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+
+      event.amount := cint(output[1]);
    elseif (event.type == "Efeito Ativável")
       if (event.effect)
          event.effect := ConfigureCombatEvent(who, event.effect, 1);

@@ -11,6 +11,7 @@ include ":attributes:attributes";
 include ":magery:tnmagery";
 include ":yggdrasil:boss";
 include ":crafting:craft_props";
+include ":crafting:excep_gump";
 
 const OFFSET_OBJECT_SERIAL   := 0x05;
 const OFFSET_CLILOC_ID       := 0x0F;
@@ -221,12 +222,9 @@ exported function MegaCliloc( who, byref packet )
       endif
 
       var inscripted := GetObjProperty(item, "inscripted");
-      if (inscripted)
-         var rune_prefix := "";
-         if (!inscripted["Runa"])
-            rune_prefix := "Runa ";
-         endif
-         xDesc += "{}{}{}<br>".format(BLUE, rune_prefix, inscripted);
+      if (inscripted && typeof(inscripted) != "String")
+         inscripted := GetItemEvent(inscripted);
+         xDesc += "{} Runa {}<br>".format(BLUE, inscripted.name);
       endif
 
 		var pplmage := GetObjProperty(item, "magicwho"); //research
@@ -358,4 +356,9 @@ function GetPlantDates(destroyin_array)
    endif
 
    return returnvalue;
+endfunction
+
+function LoadItemEventData()
+    var df := DFOpenDataFile( ":magery:runes", DF_CREATE, DF_KEYTYPE_INTEGER);
+    return df;
 endfunction

@@ -6,12 +6,14 @@ use os;
 
 include ":gumps:gumps";
 include ":crafting:excep_gump";
+
 Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
 
 program gump_gump(who)
+   var index := 0;
    while (who.connected)
-      var res := sendUserGump(who);
-      if (res)
+      var res := sendUserGump(who, index);
+      if (typeof(res) == "Struct")
          if (YesNo(who, "Como deseja aplicar?", "Apenas Efeitos", "Tornar Recurso"))
             SendSysMessageEx(who, "Selecione o objeto", SSM_REQUEST);
             var targ := Target(who);
@@ -26,7 +28,7 @@ program gump_gump(who)
             SetObjProperty(targ, "craftproperty", res.index);
             SetName(targ, targ.name);
          endif
-         sendUserGump(who, res.index);
+         index := res.index;
       else
          break;
       endif

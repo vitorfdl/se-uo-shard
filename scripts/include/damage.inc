@@ -202,7 +202,7 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	// endif
 
 	//Bonus de prop da arma    
-	var weapon := cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus"));
+	var weapon := cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus")) + who.weapon.dmg_mod;
 
 	//Bonus de prop do mobile
 	var other := cint(GetObjProperty(who, "dmgbonus")) + cint(GetObjProperty(who, "#dmgbonus")) ;
@@ -210,6 +210,15 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	//Bonus de Spells
 	other := other - cint(GetObjProperty(defender, "dmgreduction"));
   
+   var dmg_increase := GetObjProperty(who.weapon, "dmg_increase");
+   if (dmg_increase)
+      if (defender.npctemplate)
+         var template := NPC_GetNPCConfig(defender.npctemplate);
+         other += cint(dmg_increase[template.Category]);
+
+         other += cint(dmg_increase[template.size]);
+      endif
+   endif
 	// TODO: adicionar backstab
 
 	// TODO: ADicionar talentos de dano aqui
