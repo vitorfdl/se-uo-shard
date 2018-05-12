@@ -49,7 +49,7 @@ function GetItemEvent(index := 0, elem := 0)
    return struct{
       "index" := index,
       "name" := DFGetProp(elem, "name", DF_CREATE, "No Name"),
-      "diff" := DFGetProp(elem, "diff", DF_CREATE, 10),
+      "diff" := cint(DFGetProp(elem, "diff", DF_CREATE, 0)),
       "desc" := DFGetProp(elem, "desc", DF_CREATE, ""),
       "uso" := DFGetProp(elem, "uso", DF_CREATE, array{}),
       "skills" := DFGetProp(elem, "skills", DF_CREATE, array{}),
