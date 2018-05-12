@@ -141,7 +141,7 @@ function sendUserGump(who, index := 0)
 	GFAddButton(gump, 81, 29, 5020, 5020, GF_CLOSE_BTN, 2);
 	GFTextLine(gump, 89, 31, 2100, "Novo");
    foreach item in allitems
-      GFHTMLArea(gump, 35, 59, 142+(_item_iter * 18), 27, "{}".format(item.name), 1, 0);
+      GFHTMLArea(gump, 35, 59+(_item_iter * 18), 142, 27, "{}".format(item.name), 1, 0);
       if (item.index != selected_item)
          GFAddButton(gump, 22, 42+(_item_iter * 18), 5540, 5541, GF_CLOSE_BTN, 300+item.index);
       endif
