@@ -5,6 +5,8 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include "include/client";
 
+const HIDDEN_CANCEL := 1;
+
 function AutoCheckBox(mobile, prompt, options, returnKeys := 0)
 
 	var sizex;
@@ -323,7 +325,7 @@ endfunction
    //    };
    // var res:= QuestionsGump(who, questions);
    // var answer_1 := res[1];
-function QuestionsGump(who, questions := array{})
+function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 	var total_height := ((questions.size() * 2) * 20) + 20;
    foreach quest in questions
       if (quest.radio)
@@ -392,8 +394,10 @@ function QuestionsGump(who, questions := array{})
 
 	GFAddButton(gump, x+150, y, 4011, 4030, GF_CLOSE_BTN, 5); //confirm
    GFTextLine(gump, x+185, y+3, 1153, "Confirmar");
-	GFAddButton(gump, x+260, y, 4011, 4030, GF_CLOSE_BTN, 1); //cancel;
-   GFTextLine(gump, x+295, y+3, 1153, "Cancelar");
+   if (!hidden_cancel_btn)
+      GFAddButton(gump, x+260, y, 4011, 4030, GF_CLOSE_BTN, 1); //cancel;
+      GFTextLine(gump, x+295, y+3, 1153, "Cancelar");
+   endif
 
 	var input := GFSendGump(who, gump);
 	if (input[0] == 1) return 0; endif

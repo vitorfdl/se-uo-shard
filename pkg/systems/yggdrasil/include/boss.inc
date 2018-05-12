@@ -439,7 +439,6 @@ function CreateBossStructGump(who, byref boss)
             "name" := opt
          };
 
-         var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
          if (opt["Armor"])
             var input_list := array{
                struct{ "title" := "Escolha o ArmorHitScript", "marked" := 1, "radio" := GetHitScriptsName("ArmorHits") }

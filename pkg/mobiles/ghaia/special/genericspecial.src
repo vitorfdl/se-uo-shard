@@ -627,7 +627,12 @@ function ReturnPointsByTarget(who, type, conedist := 3)
          sleepms(2);
       endforeach
    elseif (type == "Opponent")
-      targ.append( struct{x := who.opponent.x, y := who.opponent.y, z := who.opponent.z} );
+      if (who.connected)
+         var user_targ := Target(who);
+         targ.append( struct{x := user_targ.x, y := user_targ.y, z := user_targ.z} );
+      else
+         targ.append( struct{x := who.opponent.x, y := who.opponent.y, z := who.opponent.z} );
+      endif
    elseif (type == "Around Opponent")
       targ := GetCoordsInSquare(who.opponent.x, who.opponent.y, conedist);
    elseif (type== "Cone in front")

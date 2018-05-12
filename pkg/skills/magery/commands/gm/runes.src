@@ -1,0 +1,36 @@
+// Created 11/05/2018 22:41:09, with Gump Studio.
+// Exported with POLGumpExporter ver 1.1 for gump pkg
+
+use uo;
+use os;
+
+include ":gumps:gumps";
+include ":crafting:excep_gump";
+Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
+
+program gump_gump(who)
+   while (who.connected)
+      var res := sendUserGump(who);
+      if (res)
+         SendSysMessageEx(who, "Selecione o objeto", SSM_REQUEST);
+         var targ := Target(who);
+         if (targ.isA(POLCLASS_ITEM) || targ.isA(POLCLASS_EQUIPMENT) || targ.isA(POLCLASS_ARMOR) || targ.isA(POLCLASS_WEAPON))
+            applyEffect(targ, res.effects);
+            SetObjProperty(targ, "inscripted", res.index);
+         else
+            SendSysMessageEx(who, "Alvo inválido", SSM_FAIL);
+         endif
+      
+         sendUserGump(who, res.index);
+      else
+         break;
+      endif
+      sleepms(10);
+   endwhile
+endprogram
+
+
+function LoadItemEventData()
+    var df := DFOpenDataFile( ":magery:runes", DF_CREATE, DF_KEYTYPE_INTEGER);
+    return df;
+endfunction

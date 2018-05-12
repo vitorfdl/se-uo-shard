@@ -6,6 +6,7 @@ include "include/shapes";
 include "include/sounds";
 include ":attributes:attributes";
 include ":combat:combat";
+include ":yggdrasil:boss";
 include ":magery:basicMagery";
 
 program blessWater(info)

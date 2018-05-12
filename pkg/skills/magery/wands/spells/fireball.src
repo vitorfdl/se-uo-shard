@@ -6,6 +6,7 @@ include "include/client";
 include "include/sounds";
 include "include/facings";
 include "include/say";
+include "include/utils";
 include "include/damage";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";

@@ -279,7 +279,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual ação o monstro executará?", "marked" := ""+cint(state.action)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
       state.times := cint(output[2]);
@@ -289,7 +289,7 @@ function CombatEventsOptions(who, state)
    elseif ( opt == "Play Cast Anim" )
       var input_list := array{};
       input_list.append(struct{ "title" := "Quantos cycles de cast? (0 para o sistema fazer automático", "marked" := ""+cint(state.times)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.times := cint(output[1]);
    elseif ( opt == "Pushback")
@@ -300,7 +300,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Quantas vezes será aplicado?", "marked" := ""+cint(state.times)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
       state.behaviour := output[2];
@@ -315,7 +315,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Parar script se alvo não for encontrado?", "marked" := cint(state.stopscript == "Sim")+1, "radio" := array{"Não", "Sim"} });
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       
       state.target := output[1];
       state.what_type := output[2];
@@ -336,7 +336,7 @@ function CombatEventsOptions(who, state)
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
 
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       
       state.target := output[1];
       state.behaviour := output[2];
@@ -356,7 +356,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Passar para 'Previous Target'?", "marked" := cint(state.successonly)+1, "radio" :=  array{"Não Resistido", "Resistido"} });
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       
       state.target        := output[1];
       state.resist_test := output[2];
@@ -371,7 +371,7 @@ function CombatEventsOptions(who, state)
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
 
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       state.target        := output[1];
       state.dist        := cint(output[2]);
       state.nosetprevious := cint(output[3] == "Não");
@@ -395,7 +395,7 @@ function CombatEventsOptions(who, state)
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
 
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       
       state.target        := output[1];
       state.timername     := output[2];
@@ -410,7 +410,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual o ID da animação?", "marked" := ""+cint(state.id)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
       state.id := cint(output[2]);
@@ -424,7 +424,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual a cor do texto?", "marked" := ""+cint(state.color)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
       state.text := output[2];
@@ -436,7 +436,7 @@ function CombatEventsOptions(who, state)
       var input_list := array{};
       input_list.append(struct{ "title" := "Especificar em:", "marked" := cint(state.delaytype == "milissegundos")+1, radio := array{"segundos", "milissegundos"} });
       input_list.append(struct{ "title" := "Quanto tempo?", "marked" := ""+cint(state.delay) });
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.delaytype := output[1];
       state.delay := cint(output[2]);
@@ -448,7 +448,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := state.vital in vital_list, "radio":= vital_list});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       
       state.target := output[1];
       state.healamt := output[2];
@@ -473,7 +473,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual a cor do efeito?", "marked" := ""+cint(state.color)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
 
       state.style := output[1];
@@ -573,7 +573,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual a dificuldade do teste?", "marked" := ""+cint(state.resist_diff)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
       state.dmg := output[2];
@@ -616,7 +616,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Custom property (key value) integer", "marked" := p2 });
       input_list.append(struct{ "title" := "Custom property (key value) string", "marked" := p3 });
 
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       state.target := output[1];
 
       if (output[2]) state.target := Splitwords(output[2]); endif
@@ -654,7 +654,7 @@ function CombatEventsOptions(who, state)
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
       
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       state.target := output[1];
       state.npctemplate := output[2];
       state.amount := output[3];
@@ -691,7 +691,7 @@ function CombatEventsOptions(who, state)
       var input_list := array{};
       input_list.append(struct{ "title" := "Qual o cooldown?", "marked" := "lockaggro" });
       input_list.append(struct{ "title" := "Quanto tempo vai durar?", "marked" := "10"});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       state.prop := output[1];
       state.time := cint(output[2]);
    elseif (opt == "Create Mine")
@@ -709,7 +709,7 @@ function CombatEventsOptions(who, state)
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
 
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
       state.amount := cint(output[2]);
@@ -724,7 +724,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Quantos passos?", "marked" := ""+stealthsteps });
       input_list.append(struct{ "title" := "Ataca sem sair do modo furtivo?", "marked" := 1+cint(state.attackhidden), radio := array{"Não", "Sim"} });
       input_list.append(struct{ "title" := "Fugir do alvo enquanto furtivo?", "marked" := 1+cint(state.flee), radio := array{"Não", "Sim"} });
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       state.stealthsteps := cint(output[1]);
       state.attackhidden := output[2] == "Sim";
       state.flee := output[3] == "Sim";
@@ -747,7 +747,7 @@ function CombatEventsOptions(who, state)
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
 
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target      := output[1];
       state.trilha_type := output[2];
@@ -769,7 +769,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Quais bombas pode lançar?", "marked" := marked, "checkbox" := bomb_opts});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
       state.bombs := output[2];
@@ -780,7 +780,7 @@ function CombatEventsOptions(who, state)
       var input_list := array{};
       input_list.append(struct{ "title" := "Para qual npctemplate? (separar por espaço para mais opções, sem :ghaia:)", "marked" := metamorf });
       input_list.append(struct{ "title" := "Quanto tempo de duração?", "marked" := ""+cint(state.time) });
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.monsters := Splitwords(output[1]);
       state.time := cint(output[2]);
@@ -806,7 +806,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Qual o efeito da ball", "marked" := ""+cint(state.effect) });
       input_list.append(struct{ "title" := "Qual gráfico de sub ball? (type 3)", "marked" := ""+cint(state.subgraphic) });
       input_list.append(struct{ "title" := "Qual cor do sub ball? (type 3)", "marked" := ""+cint(state.subcolor) });
-      var output := QuestionsGump(who, input_list);
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target     := output[1];
       state.create_at  := output[2];
