@@ -140,13 +140,30 @@ function sendUserGump(who, index := 0)
 
 	GFAddButton(gump, 81, 29, 5020, 5020, GF_CLOSE_BTN, 2);
 	GFTextLine(gump, 89, 31, 2100, "Novo");
+
+   GFPage(gump, 1);
+   var pos_y := 40;
    foreach item in allitems
-      GFHTMLArea(gump, 35, 59+(_item_iter * 18), 142, 27, "{}".format(item.name), 1, 0);
+      var color := "#333333";
+      if (item.index == selected_item)
+         color := "#66666";
+      endif
+      GFHTMLArea(gump, 35, pos_y, 155, 27, "<basefont color={}>{}".format(color, item.name), 1, 0);
       if (item.index != selected_item)
-         GFAddButton(gump, 22, 42+(_item_iter * 18), 5540, 5541, GF_CLOSE_BTN, 300+item.index);
+         GFAddButton(gump, 22, pos_y+2, 5540, 5541, GF_CLOSE_BTN, 300+item.index);
+      endif
+
+      pos_y += 28;
+      if (_item_iter % 14 == 0)
+	      GFAddButton(gump, 110, pos_y+5, 5601, 5605, GF_PAGE_BTN, gump.cur_page+1);
+         GFPage(gump, gump.cur_page+1);
+      	GFAddButton(gump, 80, pos_y+5, 5603, 5607, GF_PAGE_BTN, gump.cur_page-1);
+         pos_y := 40;
       endif
       sleepms(2);
    endforeach
+
+	GFPage(gump, 0);
 
    if (selected_item)
       var iteminfo := GetItemEvent(selected_item);
