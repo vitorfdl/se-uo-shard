@@ -215,7 +215,6 @@ function CalculateTotalDamageBonus(dmg, who, defender)
       if (defender.npctemplate)
          var template := NPC_GetNPCConfig(defender.npctemplate);
          other += cint(dmg_increase[template.Category]);
-
          other += cint(dmg_increase[template.size]);
       endif
    endif
