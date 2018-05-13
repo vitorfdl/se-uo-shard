@@ -530,7 +530,7 @@ program loko(params)
                      coord := struct{ "x" := state.walk_to[1], "y" := state.walk_to[2], "z" := state.walk_to[3]};
                   endif
                   ghaiaObjective(npc, coord, 2, 1);
-                  ghaiaAttack(npc, hostile_list.randomentry());
+                  ghaiaAttack(hostile_list.randomentry(), npc);
                endif
             endif
             tries += 1;
