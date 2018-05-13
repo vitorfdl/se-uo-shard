@@ -15,6 +15,7 @@ include ":combat:combat";
 include ":fls_core:fls_characters";
 
 function StartScript(mobile, attacker := 0, level := 0)
+   GrantPrivilege(mobile, "invul");
 	mobile.Enable("invul");
 	return 1;
 endfunction
