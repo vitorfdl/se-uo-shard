@@ -292,6 +292,17 @@ function CombatEventsOptions(who, state)
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.times := cint(output[1]);
+   elseif ( opt == "Steal Player")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quem vai ser roubado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Apenas roubar se estiver atrás do alvo?", "marked" := 1+cint(state.onlybehind), "radio" := array{"Sim", "Não"}});
+      if (!state.conedist) state.conedist := 3; endif
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+
+      state.target := output[1];
+      state.onlybehind := output[2] == "Não";
+      state.conedist := cint(output[3]);
    elseif ( opt == "Pushback")
       var behaviours := array{"Para frente", "Para trás", "Para frente relacional", "Para trás relacional"};
       var input_list := array{};

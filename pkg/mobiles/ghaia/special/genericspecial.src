@@ -456,7 +456,7 @@ program loko(params)
          var targs := selectOpponent(who, state.target, state.conedist);
          foreach targ in targs
             sleepms(2);
-            if (state.onlybehind)
+            if (!state.onlybehind)
                if (!IsBehind(targ, who.x, who.y))
                   continue;
                endif
