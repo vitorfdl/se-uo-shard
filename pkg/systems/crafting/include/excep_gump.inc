@@ -138,8 +138,8 @@ function sendUserGump(who, index := 0)
 	GFResizePic(gump, 209, 31, 9200, 466, 434);
 	GFResizePic(gump, 217, 37, 9270, 447, 422);
 
-	GFAddButton(gump, 81, 29, 5020, 5020, GF_CLOSE_BTN, 2);
-	GFTextLine(gump, 89, 31, 2100, "Novo");
+	GFAddButton(gump, 81, 29-5, 5020, 5020, GF_CLOSE_BTN, 2);
+	GFTextLine(gump, 89, 31-5, 2100, "Novo");
 
    GFPage(gump, 1);
    var pos_y := 40;
@@ -167,8 +167,8 @@ function sendUserGump(who, index := 0)
 
    if (selected_item)
       var iteminfo := GetItemEvent(selected_item);
-      GFAddButton(gump, 137, 29, 5020, 5020, GF_CLOSE_BTN, 20);
-      GFTextLine(gump, 145, 31, 2100, "Deletar");
+      GFAddButton(gump, 137, 29-5, 5020, 5020, GF_CLOSE_BTN, 20);
+      GFTextLine(gump, 145, 31-5, 2100, "Deletar");
 
       // GFHTMLArea(gump, 35, 88, 160, 27, "HtmlElement", 1, 0);
       GFTextLine(gump, 239, 50, 2100, "Nome:");
