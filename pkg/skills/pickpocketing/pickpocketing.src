@@ -106,7 +106,7 @@ program skill_Stealing(mobile)
    else
       SendSysMessageEx(mobile, "Você roubou o item.", SSM_INFO);
       MoveItemToContainer(targ, mobile.backpack);
-      if (ListMobilesInLineOfSight(mobile, 4).size() >= 1)
+      if (ListMobilesNearLocationEx(mobile.x, mobile.y, mobile.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY).size() > 1)
          mobile.SetAchievement("pickpocket", 1);
       endif
       return;
