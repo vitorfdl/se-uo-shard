@@ -514,7 +514,7 @@ program loko(params)
                Cint(targ.y) + RandomInt(2 * state.range) - state.range, Cint(targ.z));
 
             if (npc != error)
-               SetObjProperty(npc, "spawnpoint", GetObjProperty(who, "spawnpoint"));
+               SetObjProperty(npc, "spawnspot", GetObjProperty(who, "spawnspot"));
                var duracaonpc := state.duracao;
                if (!duracaonpc)
                   duracaonpc := 120;
@@ -587,9 +587,9 @@ function selectOpponent(who, type, dist := 3)
          sleepms(2);
       endforeach
    elseif (type == "All Allies")
-      targ := GetAlliesNear(me, dist);
+      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, dist));
    elseif (type == "Random Ally")
-      targ := GetAlliesNear(me, dist);
+      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, dist));
       targ := array{ targ.randomEntry() };
    endif
 
@@ -655,9 +655,9 @@ function ReturnPointsByTarget(who, type, conedist := 3)
          sleepms(2);
       endforeach
    elseif (type == "All Allies")
-      targ := GetAlliesNear(me, conedist);
+      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, conedist));
    elseif (type == "Random Ally")
-      targ := GetAlliesNear(me, conedist);
+      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, conedist));
       targ := array{ targ.randomEntry() };
    endif
 

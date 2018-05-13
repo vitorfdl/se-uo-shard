@@ -309,3 +309,36 @@ function CheckifIsAlly(who, mobiles)
 
    return newarray;
 endfunction
+
+function CheckifIsNotEnemy(who, mobiles)
+   var spotserial := GetObjProperty(me, "spawnspot");
+   var hostiles := ListHostiles(who);
+   var party := who.party.members;
+   var newarray := array{};
+   foreach mobile in mobiles
+      sleepms(2);
+      if (mobile in hostiles)
+         continue;
+      elseif (mobile.npctemplate)
+         if (mobile.master == who || mobile.master in party)
+            newarray.append(mobile);
+         elseif (GetObjProperty(mobile, "guildid") == who.guildid)
+            newarray.append(mobile);
+         elseif ((spotserial && GetObjProperty(mobile, "spawnspot") == spotserial))
+            newarray.append(mobile);
+         else
+            if (who.npctemplate)
+               if (mobile.alignment == who.alignment)
+                  newarray.append(mobile);
+               endif
+            elseif (mobile.alignment == 2)
+               newarray.append(mobile);
+            endif
+         endif
+      elseif (mobile in party || mobile == who)
+         newarray.append(mobile);
+      endif
+   endforeach
+
+   return newarray;
+endfunction
