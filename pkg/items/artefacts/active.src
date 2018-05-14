@@ -19,7 +19,7 @@ include ":crafting:excep_gump";
 program useArtefact(who, item) 
    if (GetCooldown(who, "use_excep") && who.cmdlevel < 3)
       return SendSysMessageEx(who, "Você deve aguardar 5 segundos para usar um item ativável novamente", SSM_FAIL);
-   elseif (!GetObjProperty(item, "weakened"))
+   elseif (!GetObjProperty(item, "awaken"))
       return SendSysMessageEx(who, "Este item não foi despertado por um mago ainda.", SSM_FAIL);
    endif
 
@@ -29,7 +29,7 @@ program useArtefact(who, item)
    endif
 
    var charges       := cint(GetObjProperty(item, "charges"));
-   var craftproperty := GetObjProperty(item, "craftproperty");
+   var craftproperty := GetObjProperty(item, "active_index");
    var iteminfo      := GetItemEvent(craftproperty);
 
    var required_charges := (cint(iteminfo.diff)+1) * 10;
