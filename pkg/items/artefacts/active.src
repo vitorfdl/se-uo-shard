@@ -37,7 +37,7 @@ program useArtefact(who, item)
 
    if (GetCooldown(who, "excep_".format(craftproperty)) && who.cmdlevel < 3)
       return SendSystemReport(who, "'Item em Cooldown!'", SSM_FAIL);
-   if (required_charges < charges)
+   elseif (required_charges < charges)
       return SendSysMessageEx(who, "Cargas insuficientes. Você precisa de {} cargas.".format(required_charges), SSM_FAIL);
    endif
 

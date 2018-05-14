@@ -382,7 +382,7 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 		else
          var marked := "";
          if (quest.marked)
-            marked := quest.marked;
+            marked += quest.marked;
          endif
 	      GFResizePic(gump, x, y+2, 0x7752, 500, 30);
 			entries[_quest_iter] := GFTextEntry(gump, x+5, y+5, 500, 20, 2100, marked);

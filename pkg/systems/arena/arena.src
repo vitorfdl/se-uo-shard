@@ -6,13 +6,16 @@ use cfgfile;
 include "include/client";
 include "include/utils";
 include ":gumps:gumps";
+include ":tn:tngumps";
 include ":gumps:yesno";
 include ":ghaia:include/ghaiaUtil";
 include ":attributes:attributes";
+include ":death:death";
 include "include/say";
 
 Const FIGHTTYPE_BASIC_PVM		:= 1001;
 Const FIGHTTYPE_BASIC_PVP		:= 1002;
+const GM_OPT := 1003;
 Const STARTHAIR			:= 0x203b;
 Const ENDHAIR				:= 0x204d;
 Const UOBJ_STARTHAIR		:= 0x203b;
@@ -34,14 +37,31 @@ program ArenaRegistryControl (character, arena_stone)
 
 	case (fight_option)
 		FIGHTTYPE_BASIC_PVM:
-			DoBasicPVMBattle (character, arena_stone);
+			DoBasicPVMBattle(character, arena_stone);
 		FIGHTTYPE_BASIC_PVP:
-			DoBasicPVPBattle (character, arena_stone);
+			DoBasicPVPBattle(character, arena_stone);
+      GM_OPT:
+         DoGMOpts(character, arena_stone);
 		default:
 			SendSysMessageEx(character, "Error: unknown option");
 	endcase
 endprogram
 
+function DoGMOpts(who, arena_stone)
+   var rect_anser := GetObjProperty(arena_stone, "rect");
+   var st_anser   := GetObjProperty(arena_stone, "start");
+   var st2_anser  := GetObjProperty(arena_stone, "start2");
+
+   var input_list := array{};
+   input_list.append(struct{ "title" := "Rect da arena? x y x2 y2", "marked" := rect_anser});
+   input_list.append(struct{ "title" := "Posição inicial desafiante? x y z", "marked" := st_anser});
+   input_list.append(struct{ "title" := "Qual posição final desafiado? x y z", "marked" := st2_anser});
+   var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+   
+   SetObjProperty(arena_stone, "rect", output[1]);
+   SetObjProperty(arena_stone, "start", output[2]);
+   SetObjProperty(arena_stone, "start2", output[3]);
+endfunction
 
 function SelectFightType (character)
 	var gump_layout := array {
@@ -58,11 +78,17 @@ function SelectFightType (character)
 		"button 150 230 2119 2120 1 0 0"
 	};
 
+   if (character.cmdlevel)
+		gump_layout.append("button 50 140 2104 2103 1 0 " + GM_OPT);
+		gump_layout.append("text 70 135 35 4");
+   endif    
+
 	var gump_data := array {
 		"Bem vindo a Arena!",
 		"O que você quer fazer??",
 		"Enfrentar uma criatura",
-		"Enfrentar outra pessoa"
+		"Enfrentar outra pessoa",
+		"Configurar Arena (GM)"
 	};
 
 	var gump_return := SendDialogGump (character, gump_layout, gump_data);
@@ -96,10 +122,10 @@ function DoBasicPVMBattle (character, arena_stone)
 	var cfgfile := ReadConfigFile (":arena:arena");
 	var elem;
 	case (groupselection)
-		1:	elem := FindConfigElem (cfgfile, "weakmonsters");
-		2:	elem := FindConfigElem (cfgfile, "averagemonsters");
-		3:	elem := FindConfigElem (cfgfile, "strongmonsters");
-		4:	elem := FindConfigElem (cfgfile, "humans");
+		1:	elem := FindConfigElem(cfgfile, "weakmonsters");
+		2:	elem := FindConfigElem(cfgfile, "averagemonsters");
+		3:	elem := FindConfigElem(cfgfile, "strongmonsters");
+		4:	elem := FindConfigElem(cfgfile, "humans");
 		default:
 			SendSysMessageEx(character, "What you selected doesn't exist");
 			return;
@@ -107,13 +133,10 @@ function DoBasicPVMBattle (character, arena_stone)
 	
 	var NPCmenu := CreateMenu ("Selecione uma criatura para combater");
 	foreach npcstring in GetConfigStringArray (elem, "monster")
-		var npcelem := FindConfigElem (cfgfile, npcstring);
-		if (npcelem)
-			AddMenuItem (NPCmenu, 0, npcelem.name);
-		endif
+		AddMenuItem(NPCmenu, 0, npcstring);
 	endforeach
 	
-	var npcselection := SelectMenuItem2 (character, NPCmenu);
+	var npcselection := SelectMenuItem2(character, NPCmenu);
 	npcselection := npcselection.index;
 	if (!npcselection)
 		SendSysMessageEx(character, "Cancelado.");
@@ -122,20 +145,18 @@ function DoBasicPVMBattle (character, arena_stone)
 
    rect := GetObjProperty(arena_stone, "rect");
    if (!rect || SplitWords(rect).size() != 4)
-      return SendSysMessageEx(opponent, "Não foi possível iniciar o duelo.");
+      return SendSysMessageEx(character, "Não foi possível iniciar o duelo.");
    endif
 	
    var start  := SplitWords(GetObjProperty(arena_stone, "start"));
    var start2 := SplitWords(GetObjProperty(arena_stone, "start2"));
       if (!start || start.size() != 3 || !start2 || start2.size() != 3)
-      return SendSysMessageEx(opponent, "Não foi possível iniciar o duelo.");
+      return SendSysMessageEx(character, "Não foi possível iniciar o duelo.");
    endif
 
-	var npcarray := GetConfigStringArray (elem, "monster");
-	var npcelem := FindConfigElem (cfgfile, npcarray[npcselection]);
-	var npctemplate := npcelem.npctemplate;
-	
-	var opponent := CreateNPCFromTemplate(npctemplate, 1375, 1383, 0, 0, character.realm);
+	var npcarray := GetConfigStringArray(elem, "monster");
+	var npctemplate := npcarray[npcselection];
+	var opponent := CreateNPCFromTemplate(":ghaia:{}".format(npctemplate), cint(start[1]), cint(start[2]), cint(start[3]), 0, character.realm);
 	if (!opponent)
 		SendSysMessageEx(character, "Error creating NPC.");
 		return;
@@ -148,7 +169,10 @@ function DoBasicPVMBattle (character, arena_stone)
 		item.newbie := 1;
       sleepms(2);
 	endforeach
-   
+
+	SendSystemReport(character, "Prepare-se para o combate!");
+	SendSystemReport(character, "Regras: Quem desmaiar ou sair da arena, perde.");
+
 	MoveObjectToLocation( character, cint(start[1]), cint(start[2]), cint(start[3]), _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
 	MoveObjectToLocation( opponent, cint(start2[1]), cint(start2[2]), cint(start2[3]), _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
 	sleep(5);

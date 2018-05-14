@@ -20,7 +20,8 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   print(AP_GetVitalRegenRateMod(who, "Hits"));
+   SendSystemReport(who, text);
+   // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 
    // var chardata := GetObjproperty(player, "chardata");

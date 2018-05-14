@@ -250,7 +250,7 @@ function GetFishRegion(who, x, y, pretfish)
 	foreach spot in (peixesdf.keys())
 		var region := peixesdf.FindElement(spot);
 		var rect := region.getprop("Rect");
-		if ( InRect(who, x, y, rect) )
+		if ( InRect(x, y, rect) )
 			var peixes := region.getprop("Peixes");
 			foreach peixe in peixes
 				if (cint(peixe) in pretfish)
