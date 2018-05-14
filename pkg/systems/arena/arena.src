@@ -300,10 +300,7 @@ function KillNPC (npc)
 		if (item.container and item.container == npc.backpack)
 			if (!item.newbie and item.movable)
 				if ((item.objtype < UOBJ_STARTHAIR or item.objtype > UOBJ_ENDHAIR))
-	            MoveObjectToLocation( item, npc.x, npc.y, npc.z, npc.realm, flags := MOVEOBJECT_FORCELOCATION );
-					if (item.decayat)
-						item.decayat := ReadGameClock() + 600;
-					endif
+	            Destroyitem( item );
 				endif
 			endif
 		endif
@@ -311,6 +308,7 @@ function KillNPC (npc)
 
 	MoveObjectToLocation( npc, 5288, 1176, 0, realm := REALM_BRITANNIA, flags := MOVEOBJECT_FORCELOCATION );
 	SetObjProperty(npc, "guardkill", 1);
+	SetObjProperty(npc, "summon", 1);
 	RevokePrivilege(npc, "invul");
 	ApplyRawDamage(npc, CINT(GetVital(npc, "Hits")/100) + 100);
 endfunction
