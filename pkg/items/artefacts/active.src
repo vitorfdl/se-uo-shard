@@ -1,0 +1,58 @@
+/* $Id: bladed.src 1344 2006-05-12 08:12:38Z austin $
+ *
+ *
+ */
+ 
+use uo;
+use os;
+use util;
+
+include ":gathering:lumberJack";
+include ":survival:fishingFunctions";
+include "include/objtype";
+include ":attributes:attributes";
+include "include/client";
+include "include/say";
+include ":tn:cooldown";
+include ":crafting:excep_gump";
+
+program useArtefact(who, item) 
+   if (GetCooldown(who, "use_excep") && who.cmdlevel < 3)
+      return SendSysMessageEx(who, "Você deve aguardar 5 segundos para usar um item ativável novamente", SSM_FAIL);
+   elseif (!GetObjProperty(item, "weakened"))
+      return SendSysMessageEx(who, "Este item não foi despertado por um mago ainda.", SSM_FAIL);
+   endif
+
+   var effect := GetObjProperty(item, "active_effect");
+   if (!effect)
+      return SendSysMessageEx(who, "Algo errado com o item. Jogue ele fora.", SSM_FAIL);
+   endif
+
+   var charges       := cint(GetObjProperty(item, "charges"));
+   var craftproperty := GetObjProperty(item, "craftproperty");
+   var iteminfo      := GetItemEvent(craftproperty);
+
+   var required_charges := (cint(iteminfo.diff)+1) * 10;
+   if(!craftproperty) craftproperty := item.objtype; endif
+
+   if (GetCooldown(who, "excep_".format(craftproperty)) && who.cmdlevel < 3)
+      return SendSystemReport(who, "'Item em Cooldown!'", SSM_FAIL);
+   if (required_charges < charges)
+      return SendSysMessageEx(who, "Cargas insuficientes. Você precisa de {} cargas.".format(required_charges), SSM_FAIL);
+   endif
+
+   if(randomint(2) == 1)
+      item.quality -= 0.1;
+   endif
+
+   SetObjProperty(item, "charges", charges-required_charges);
+   SetCooldown(who, "use_excep", 5);
+   SetCooldown(who, "excep_".format(craftproperty), 30);
+   start_script(":ghaia:special/genericspecial" , array{who, effect});
+endprogram		
+
+function LoadItemEventData()
+    var df := DFOpenDataFile( ":crafting:excepitems", DF_CREATE, DF_KEYTYPE_INTEGER);
+    return df;
+endfunction
+    

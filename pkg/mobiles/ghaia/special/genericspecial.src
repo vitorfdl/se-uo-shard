@@ -13,6 +13,7 @@ include "include/utils";
 var me;
 var custombehaviors := array{};
 var previoustarg := array{};
+var selected_opponent;
 
 program loko(params)
 	var who := params[1];
@@ -557,6 +558,18 @@ function selectOpponent(who, type, dist := 3)
    elseif (type == "Around Self")
       targ := GetEnemiesNear(who, dist);
    elseif (type == "Opponent")
+      if (who.connected)
+         if (!selected_opponent)
+            var user_targ := Target(who);
+            selected_opponent := user_targ;
+            targ.append( user_targ );
+         else
+            targ.append( selected_opponent );
+         endif
+      else
+         targ.append( struct{x := who.opponent.x, y := who.opponent.y, z := who.opponent.z} );
+      endif
+
       targ.append(who.opponent);
    elseif (type == "Around Opponent")
       targ := GetEnemiesNear(who.opponent, dist);
@@ -630,8 +643,13 @@ function ReturnPointsByTarget(who, type, conedist := 3)
       endforeach
    elseif (type == "Opponent")
       if (who.connected)
-         var user_targ := Target(who);
-         targ.append( struct{x := user_targ.x, y := user_targ.y, z := user_targ.z} );
+         if (!selected_opponent)
+            var user_targ := Target(who);
+            selected_opponent := user_targ;
+            targ.append( struct{x := user_targ.x, y := user_targ.y, z := user_targ.z} );
+         else
+            targ.append( struct{x := selected_opponent.x, y := selected_opponent.y, z := selected_opponent.z} );
+         endif
       else
          targ.append( struct{x := who.opponent.x, y := who.opponent.y, z := who.opponent.z} );
       endif

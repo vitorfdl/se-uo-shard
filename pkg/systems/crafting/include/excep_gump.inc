@@ -115,6 +115,7 @@ function applyEffect(item, effects)
       elseif (event.type == "Regen Moriquendi")
          SetObjProperty(item, "decrease_moriquendi", (cdbl(event.amount) / 100));
       elseif (event.type == "Efeito Ativável")
+         SetObjProperty(item, "excep_index", event.index);
          SetObjProperty(item, "active_effect", event.effect);
          SetObjProperty(item, "charges", 10);
          item.script := ":artefacts:active";

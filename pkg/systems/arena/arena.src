@@ -4,11 +4,13 @@ use util;
 use cfgfile;
 
 include "include/client";
+include "include/utils";
 include ":gumps:gumps";
 include ":gumps:yesno";
 include ":ghaia:include/ghaiaUtil";
 include ":attributes:attributes";
 include "include/say";
+
 Const FIGHTTYPE_BASIC_PVM		:= 1001;
 Const FIGHTTYPE_BASIC_PVP		:= 1002;
 Const STARTHAIR			:= 0x203b;
@@ -16,9 +18,11 @@ Const ENDHAIR				:= 0x204d;
 Const UOBJ_STARTHAIR		:= 0x203b;
 Const UOBJ_ENDHAIR			:= 0x204d;
 
+var rect;
+
 program ArenaRegistryControl (character, arena_stone)
 	if (!ReserveItem (arena_stone))
-		SendSysMessage (character, "Existe outra luta acontecendo agora mesmo. Tente novamente depois.");
+		SendSysMessageEx(character, "Existe outra luta acontecendo agora mesmo. Tente novamente depois.");
 		return;
 	endif
 	detach ();
@@ -34,7 +38,7 @@ program ArenaRegistryControl (character, arena_stone)
 		FIGHTTYPE_BASIC_PVP:
 			DoBasicPVPBattle (character, arena_stone);
 		default:
-			SendSysMessage (character, "Error: unknown option");
+			SendSysMessageEx(character, "Error: unknown option");
 	endcase
 endprogram
 
@@ -55,15 +59,15 @@ function SelectFightType (character)
 	};
 
 	var gump_data := array {
-		"Welcome to the arena!",
-		"What do you want to do?",
-		"Basic PvM fight",
-		"Basic PvP fight"
+		"Bem vindo a Arena!",
+		"O que você quer fazer??",
+		"Enfrentar uma criatura",
+		"Enfrentar outra pessoa"
 	};
 
 	var gump_return := SendDialogGump (character, gump_layout, gump_data);
 	if (!gump_return or !gump_return[0])
-		SendSysMessage (character, "Canceled.");
+		SendSysMessageEx(character, "Cancelado.");
 		return;
 	endif
 	return gump_return[0];
@@ -81,11 +85,11 @@ function DoBasicPVMBattle (character, arena_stone)
 	AddMenuItem (groupmenu, 0, "Monstros fracos");
 	AddMenuItem (groupmenu, 0, "Monstros veteranos");
 	AddMenuItem (groupmenu, 0, "Monstros fortes");
-	AddMenuItem (groupmenu, 0, "Humanos");
+	// AddMenuItem (groupmenu, 0, "Humanos");
 	var groupselection := SelectMenuItem2 (character, groupmenu);
 	groupselection := groupselection.index;
 	if (!groupselection)
-		SendSysMessage (character, "Canceled");
+		SendSysMessageEx(character, "Canceled");
 		return;
 	endif
 	
@@ -97,7 +101,7 @@ function DoBasicPVMBattle (character, arena_stone)
 		3:	elem := FindConfigElem (cfgfile, "strongmonsters");
 		4:	elem := FindConfigElem (cfgfile, "humans");
 		default:
-			SendSysMessage (character, "What you selected doesn't exist");
+			SendSysMessageEx(character, "What you selected doesn't exist");
 			return;
 	endcase
 	
@@ -112,44 +116,58 @@ function DoBasicPVMBattle (character, arena_stone)
 	var npcselection := SelectMenuItem2 (character, NPCmenu);
 	npcselection := npcselection.index;
 	if (!npcselection)
-		SendSysMessage (character, "Cancelado.");
+		SendSysMessageEx(character, "Cancelado.");
 		return;
 	endif
+
+   rect := GetObjProperty(arena_stone, "rect");
+   if (!rect || SplitWords(rect).size() != 4)
+      return SendSysMessageEx(opponent, "Não foi possível iniciar o duelo.");
+   endif
 	
+   var start  := SplitWords(GetObjProperty(arena_stone, "start"));
+   var start2 := SplitWords(GetObjProperty(arena_stone, "start2"));
+      if (!start || start.size() != 3 || !start2 || start2.size() != 3)
+      return SendSysMessageEx(opponent, "Não foi possível iniciar o duelo.");
+   endif
+
 	var npcarray := GetConfigStringArray (elem, "monster");
 	var npcelem := FindConfigElem (cfgfile, npcarray[npcselection]);
 	var npctemplate := npcelem.npctemplate;
 	
-	var opponent := CreateNPCFromTemplate (npctemplate, 1375, 1383, 0, 0, character.realm);
+	var opponent := CreateNPCFromTemplate(npctemplate, 1375, 1383, 0, 0, character.realm);
 	if (!opponent)
-		SendSysMessage (character, "Error creating NPC.");
+		SendSysMessageEx(character, "Error creating NPC.");
 		return;
 	endif
-	SetObjProperty (opponent, "guardkill", 1);
-	SetObjProperty (opponent, "summoned", 1);
-	SendSysMessage (character, "Prepare-se para lutar!");
+	SetObjProperty(opponent, "guardkill", 1);
+	SetObjProperty(opponent, "summoned", 1);
+	SendSysMessageEx(character, "Prepare-se para lutar!");
 //	sleep (4);
-	foreach item in ListEquippedItems (opponent)
+	foreach item in ListEquippedItems(opponent)
 		item.newbie := 1;
+      sleepms(2);
 	endforeach
-	MoveObjectToLocation( character, 1376, 1384, 0, _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
-	MoveObjectToLocation( opponent, 1384, 1383, 0, _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
+   
+	MoveObjectToLocation( character, cint(start[1]), cint(start[2]), cint(start[3]), _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
+	MoveObjectToLocation( opponent, cint(start2[1]), cint(start2[2]), cint(start2[3]), _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
 	sleep(5);
 	while (1)
-		if (!character or !character.ip or character.dead or LeftTheArena (character))
-			SendSysMessage (character, "Boa sorte na próxima vez.");
-			MoveObjectToLocation( character.ghost, 1389, 1384, 1);
-			KillNPC (opponent);
+		if (!character or !character.ip or character.dead or LeftTheArena(character))
+			SendSysMessageEx(character, "Boa sorte na próxima vez.");
+	      if (character.dead) KataWakeUp(character, character.GetCorpse()); endif
+			KillNPC(opponent);
 			return;
 		endif
-		if (!opponent or opponent.dead or LeftTheArena (opponent))
-			PrintText (character, "Parabéns! Você venceu!");
-			KillNPC (opponent);
+		if (!opponent or opponent.dead or LeftTheArena(opponent))
+			PrintText(character, "Parabéns! Você venceu!");
+			KillNPC(opponent);
 			return;
 		endif
 		sleep (3);
 	endwhile
-	KillNPC (opponent);
+
+	KillNPC(opponent);
 	return;
 endfunction
 
@@ -161,53 +179,70 @@ endfunction
 ///////////////////
 
 function DoBasicPVPBattle (character, arena_stone)
-	SendSysMessage (character, "Selecione um jogador para desafiar.");
+	SendSysMessageEx(character, "Selecione um jogador para desafiar.");
 	var opponent := Target (character);
 	if (!opponent)
-		SendSysMessage (character, "Cancelado.");
+		SendSysMessageEx(character, "Cancelado.");
 		return;
 	endif
 	if (!opponent.acctname)
-		SendSysMessage (character, "Isso não e um jogador!");
+		SendSysMessageEx(character, "Isso não e um jogador!");
 		return;
 	endif
 	if (opponent.dead)
-		SendSysMessage (character, "Ele não poder aceitar o desafio, considerando que esta morto..");
+		SendSysMessageEx(character, "Ele não poder aceitar o desafio, considerando que esta morto..");
 		return;
 	endif
 	if (opponent == character)
-		SendSysMessage (character, "Vontade de cometer suicidio?");
+		SendSysMessageEx(character, "Vontade de cometer suicidio?");
 		return;
 	endif
 
-	SendSysMessage (character, "Desafiando oponente:");
-	SendSysMessage (opponent, character.name + " te desafiou para um duelo.");
+	SendSysMessageEx(character, "Desafiando oponente:");
+	SendSysMessageEx(opponent, character.name + " te desafiou para um duelo.");
 	if (!YesNo (opponent,  character.name + " Te desafiou. Deseja Aceitar?", "Sim","Não"))
-		SendSysMessage (character, "seu oponente recusou o duelo.");
+		SendSysMessageEx(character, "seu oponente recusou o duelo.");
 		return;
 	endif
+
+   if (Distance(character, opponent) > 5)
+		SendSysMessageEx(character, "seu oponente esta muito distante.");
+		SendSysMessageEx(opponent, "seu oponente esta muito distante.");
+      return;
+   endif
+
+   rect := GetObjProperty(arena_stone, "rect");
+   if (!rect || SplitWords(rect).size() != 4)
+      return SendSysMessageEx(opponent, "Não foi possível iniciar o duelo.");
+   endif
 	
-	PrintTextAbove (character, "Seu desafio foi aceito!");
-	PrintTextAbove (character, "Prepare-se para o duelo!");
-	PrintTextAbove (opponent, "Prepare-se para o duelo!");
-	PrintTextAbove (character, "Regras: Quem desmaiar ou sair da arena, perde.");
-	PrintTextAbove (opponent, "Regras: Quem desmaiar ou sair da arena, perde.");
+   var start  := SplitWords(GetObjProperty(arena_stone, "start"));
+   var start2 := SplitWords(GetObjProperty(arena_stone, "start2"));
+   if (!start || start.size() != 3 || !start2 || start2.size() != 3)
+      return SendSysMessageEx(opponent, "Não foi possível iniciar o duelo.");
+   endif
+
+	SendSystemReport(character, "Seu desafio foi aceito!");
+	SendSystemReport(character, "Prepare-se para o duelo!");
+	SendSystemReport(opponent, "Prepare-se para o duelo!");
+	SendSystemReport(character, "Regras: Quem desmaiar ou sair da arena, perde.");
+	SendSystemReport(opponent, "Regras: Quem desmaiar ou sair da arena, perde.");
 //	sleep (5);
 
-	MoveObjectToLocation( character, 1376, 1384, 0, _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
-	MoveObjectToLocation( opponent, 1384, 1383, 0, _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
+	MoveObjectToLocation( character, cint(start[1]), cint(start[2]), cint(start[3]), _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
+	MoveObjectToLocation( opponent, cint(start2[1]), cint(start2[2]), cint(start2[3]), _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
 	
 	while (1)
 		if (!character or !character.ip or character.dead or LeftTheArena (character))
 			PrintText (opponent, "Parabéns! Você venceu!");
-			SendSysMessage (character, "Boa sorte na proxima vez.");
-			MoveObjectToLocation( character.ghost, 1389, 1384, 1);
+			SendSysMessageEx(character, "Boa sorte na proxima vez.");
+	      if (character.dead) KataWakeUp(character, character.GetCorpse()); endif
 			return;
 		endif
-		if (!opponent or !opponent.ip or opponent.dead or LeftTheArena (opponent))
+		if (!opponent or !opponent.ip or opponent.dead or LeftTheArena(opponent))
 			PrintText (character, "Parabéns! Você venceu!");
-			SendSysMessage (opponent, "Boa sorte na proxima vez.");
-			MoveObjectToLocation( opponent.ghost, 1389, 1384, 1);
+			SendSysMessageEx(opponent, "Boa sorte na proxima vez.");
+	      if (opponent.dead) KataWakeUp(opponent, opponent.GetCorpse()); endif
 			return;
 		endif
 		sleep (3);
@@ -223,13 +258,10 @@ endfunction
 ///////////////////
 
 function LeftTheArena (player)
-	if (player.x < 1374 or player.x > 1386)
-		return 1;
-	elseif (player.y < 1379 or player.y > 1390)
-		return 1;
-	elseif (player.z > 19)
+	if (!InRect(player.x, player.y, rect))
 		return 1;
 	endif
+
 	return 0;
 endfunction
 
@@ -244,7 +276,7 @@ function KillNPC (npc)
 		if (item.container and item.container == npc.backpack)
 			if (!item.newbie and item.movable)
 				if ((item.objtype < UOBJ_STARTHAIR or item.objtype > UOBJ_ENDHAIR))
-	MoveObjectToLocation( item, npc.x, npc.y, npc.z, npc.realm, flags := MOVEOBJECT_FORCELOCATION );
+	            MoveObjectToLocation( item, npc.x, npc.y, npc.z, npc.realm, flags := MOVEOBJECT_FORCELOCATION );
 					if (item.decayat)
 						item.decayat := ReadGameClock() + 600;
 					endif
@@ -254,9 +286,9 @@ function KillNPC (npc)
 	endforeach
 
 	MoveObjectToLocation( npc, 5288, 1176, 0, realm := REALM_BRITANNIA, flags := MOVEOBJECT_FORCELOCATION );
-	SetObjProperty (npc, "guardkill", 1);
-	RevokePrivilege (npc, "invul");
-	ApplyRawDamage (npc, CINT (GetVital (npc, "Life")/100) + 100);
+	SetObjProperty(npc, "guardkill", 1);
+	RevokePrivilege(npc, "invul");
+	ApplyRawDamage(npc, CINT(GetVital(npc, "Hits")/100) + 100);
 endfunction
 
 
