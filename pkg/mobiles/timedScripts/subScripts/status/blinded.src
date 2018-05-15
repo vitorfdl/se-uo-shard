@@ -34,9 +34,7 @@ function EndScript(mobile)
       SendEvent(mobile, event);
    else
       mobile.SetLightLevel(1, 0);
-      if (HaveReverseVision(mobile))
-         ReverseLight(mobile);
-      endif
+      ApplyElfLightLevel(mobile);
    endif
 
    return 1;

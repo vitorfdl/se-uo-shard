@@ -28,9 +28,7 @@ program Logon(who)
 		SetObjProperty(who, "createdate", polcore().systime);
 	endif
 
-	if (HaveReverseVision(who))
-		ReverseLight(who);
-	endif
+	ApplyElfLightLevel(who);
 
    if (who.getPoints() < 0)
       who.setpoints(0);
@@ -74,7 +72,10 @@ program Logon(who)
 	if (GetObjProperty(who, "criandochar") || GetObjProperty(who, "recriando") || !GetObjProperty(who, "chardata"))
 		start_script(":charactercreation:gumpcriacao", who);
 	endif
-   
+
+   SendPacket(who, "FC0009003200000021");
+   SendPacket(who, "FC0015A0010000000000FFB98300000003FFFFFFFF");
+
 	return 1;
 endprogram
 

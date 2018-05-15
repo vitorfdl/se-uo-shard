@@ -44,12 +44,7 @@ program walkOn(mobile, tile)
 		endforeach
 	endif*/
 
-	if (HaveReverseVision(mobile))
-		if (mobile.cmdlevel > 1)
-			SendsysMessage(mobile, "GM: Ajustando infravisao.");
-		endif
-		ReverseLight(mobile);
-	endif
+   ApplyElfLightLevel(mobile);
 	
 	return 1;
 endprogram

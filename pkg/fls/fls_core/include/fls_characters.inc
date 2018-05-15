@@ -51,25 +51,24 @@ function IsInDungeon(player)
 
 endfunction
 
-function HaveReverseVision(who)
-	var chardata := GetObjProperty(who, "chardata");
-
-	if (chardata.raca["Elfo"])
-		return 1;
-	endif
-   
-	return 0;
-endfunction
-
-function ApllyLightLevel()
-	foreach player in enumerateonlinecharacters()
-		if (HaveReverseVision(player))
-			ReverseLight(player);
-		endif
+function ApplyLightLevel()
+	foreach player in EnumerateOnlineCharacters()
+		ApplyElfLightLevel(player);
+      sleepms(2);
 	endforeach
 endfunction
 
-function ReverseLight(player)
+function ApplyElfLightLevel(player)
+	var chardata := GetObjProperty(player, "chardata");
+	if (!chardata || !chardata.raca["Elfo"])
+	   return;
+   endif
+
+   if (IsInDungeon(player))
+		player.setlightlevel(20, 9000);
+      return 1;
+   endif
+
 	var day_config := readconfigfile(":nature:config/daynight");
 	day_config := day_config["settings"];
 	var darkness := cint(day_config.darkness);
@@ -79,8 +78,10 @@ function ReverseLight(player)
 	if (light > 20)
 		player.setlightlevel(20, 9000);
 	else
-		player.setlightlevel(light, 9000);
+		player.setlightlevel(1, 0);
 	endif
+
+   return 1;
 endfunction
 
 function maolivre(mobile, qtd, checkmount := 1)
