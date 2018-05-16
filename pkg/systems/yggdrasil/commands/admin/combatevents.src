@@ -70,12 +70,12 @@ function showgump(who, filter)
       GFTextLine(gump, pos_x+150, pos_y+36, 2000, "{}".format(theevent.chance));
       GFTextLine(gump, pos_x, pos_y+54, 2100, "Porcentagem de HP:");
       GFTextLine(gump, pos_x+150, pos_y+54, 2000, "{}".format(theevent.hp_percent));
-      GFTextLine(gump, pos_x, pos_y+72, 2100, "Descrição:");
-      GFAddButton(gump, pos_x+5, pos_y+100, 1141, 1141, GF_CLOSE_BTN, 6);
-	   GFHTMLArea(gump, pos_x, pos_y+90, 300, 52, "<BASEFONT color=#111111>{}".format(theevent.description), 1, 1);
-      GFTextLine(gump, pos_x, pos_y+144, 2100, "Monstros:");
-      GFAddButton(gump, pos_x+5, pos_y+172, 1141, 1141, GF_CLOSE_BTN, 7);
-	   GFHTMLArea(gump, pos_x, pos_y+162, 300, 52, "<BASEFONT color=#111111>{}".format(theevent.monsters), 1, 1);
+      GFTextLine(gump, pos_x, pos_y+72+5, 2100, "Descrição:");
+      GFAddButton(gump, pos_x+60, pos_y+76, 0xFBD, 0xFBE, GF_CLOSE_BTN, 6);
+	   GFHTMLArea(gump, pos_x, pos_y+90+5, 300, 52, "<BASEFONT color=#111111>{}".format(theevent.description), 1, 1);
+      GFTextLine(gump, pos_x, pos_y+144+10, 2100, "Monstros:");
+      GFAddButton(gump, pos_x+60, pos_y+149, 0xFBD, 0xFBE, GF_CLOSE_BTN, 7);
+	   GFHTMLArea(gump, pos_x, pos_y+162+10, 300, 52, "<BASEFONT color=#111111>{}".format(theevent.monsters), 1, 1);
 
       GFTextLine(gump, pos_x+480, pos_y, 2100, "Eventos:");
       foreach steep in (theevent.steps)

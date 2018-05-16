@@ -51,7 +51,7 @@ exported function handleUCOutgoing( character, byref packet )
             return 1;
          endif
 
-         if (Distance(character, source) > 12 || abs(character.z - source.z ) < 19)
+         if (Distance(character, source) > 12 || abs(character.z - source.z ) > 19)
             return 1;
          endif
       endif

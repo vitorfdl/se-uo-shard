@@ -42,15 +42,6 @@ function checkGender(object)
 	return gender;
 endfunction
 
-function IsInDungeon(player)
-	if (player.x >= 3749 && player.y >= 0 && player.x <= 6141 && player.y <= 4000)
-		return 1;
-	endif
-
-	return 0;
-
-endfunction
-
 function ApplyLightLevel()
 	foreach player in EnumerateOnlineCharacters()
 		ApplyElfLightLevel(player);
@@ -64,8 +55,8 @@ function ApplyElfLightLevel(player)
 	   return;
    endif
 
-   if (IsInDungeon(player))
-		player.setlightlevel(20, 9000);
+   if (InDungeon(player))
+		player.setlightlevel(20, -1);
       return 1;
    endif
 
@@ -76,9 +67,9 @@ function ApplyElfLightLevel(player)
 	var light := cint(getglobalproperty("lightlevel"));
 
 	if (light > 20)
-		player.setlightlevel(20, 9000);
+		player.setlightlevel(20, -1);
 	else
-		player.setlightlevel(1, 0);
+		player.setlightlevel(-1, 0);
 	endif
 
    return 1;
