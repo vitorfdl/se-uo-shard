@@ -133,7 +133,7 @@ endfunction
 function GetItemType(item)
    var item_type := 0;
 	if (item.isA(POLCLASS_ARMOR))
-      if (item_type.tile_layer == 6)
+      if (item.tile_layer == 6)
          item_type := "Elmos/Mascaras";
       else
 		   item_type := "Armaduras";
