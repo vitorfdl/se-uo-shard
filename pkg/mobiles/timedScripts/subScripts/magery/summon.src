@@ -19,7 +19,7 @@ endfunction
 function EndScript(mobile)
    PrintText(mobile, "*sumindo pouco a pouco*");
 	sleep(5);
-   mobile..Disable("Invul");
+   mobile.Disable("Invul");
 	ApplyRawDamage(mobile, 200);	
 	ApplyRawDamage(mobile, 200);
 	ApplyRawDamage(mobile, 200);
