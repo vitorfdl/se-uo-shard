@@ -21,6 +21,7 @@ function EndScript(mobile)
    if (HasPlayerNear(mobile.x, mobile.y))
       TS_StartTimer(mobile, "dynamickill", 1200);
    else
+      mobile..Disable("Invul");
       ApplyRawDamage(mobile, 200);
 	   ApplyRawDamage(mobile, 200);
    endif
