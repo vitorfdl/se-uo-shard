@@ -42,7 +42,7 @@ exported function HandleItemPickup( who, byref packet )
 			return 1;
 		else
 			if (!(who.hidden || who.concealed))
-				if (item.movable != 0)
+				if (item && item.movable != 0 && item.desc)
 					PrintText(who, "*Pegou "+item.desc+"*");
 				endif
 			endif

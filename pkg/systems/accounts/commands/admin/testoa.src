@@ -20,7 +20,7 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-  ApplyElfLightLevel(who);
+   SendPacket(who, "FC0015A0010000000000FFB98300000003FFFFFFFF");
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 
@@ -64,6 +64,7 @@ program oafeatures_sendpacket(who, text)
    // printtext(who, ""+targ.tile_layer);
    // printtext(who, ""+targ.get_member("polclass"));
    // var targ := TargetCoordinates(who);
+   // printtext(who, ""+abs(targ.z - who.z ));
    // var newball := CreateItemAtLocation(who.x, who.y, who.z+2, 0xFFBE);
    // newball.graphic := 0x19AC;
    // newball.SetOwner(who);

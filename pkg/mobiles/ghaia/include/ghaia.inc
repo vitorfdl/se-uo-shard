@@ -264,6 +264,7 @@ function InitializeNpc(mobile)
    SetupAmmo(mobile);
    SetObjProperty(mobile, "started", 1);
    mobile.InitPetProperties(0);
+   PlayAction(mobile, 33);
 endfunction
 
 //substitui o antigo wander() basicamente checa se tem anchor
