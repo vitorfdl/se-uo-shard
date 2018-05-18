@@ -60,6 +60,7 @@ function HitchAnimal(who, item)
    SetObjProperty(item, "hitched", targ.serial);
    SetObjProperty(item, "owner_serial", who.serial);
    SetObjProperty(item, "old_props", pet_prop);
+   SetObjProperty(item, "hitch_time", polcore().systime);
 
    ErasePet(who, targ);
    targ.SetMaster(0);
