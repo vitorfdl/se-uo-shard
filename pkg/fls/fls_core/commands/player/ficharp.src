@@ -70,7 +70,7 @@ program fichaRP(who)
 	endif
 
 	if (who.cmdlevel >= 3 && !targ)
-		targ := Target(who);
+		targ := Target(who, TGTOPT_NOCHECK_LOS);
 	endif
 	
 	if (!targ)

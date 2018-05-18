@@ -278,9 +278,10 @@ function HealNpcCorpse(mobile, targ)
 	if (  GetObjProperty(targ,"morto") )
 		SendSysMessageEx(mobile, "o alvo está morto", SSM_FAIL);
 		return;
-	elseif ( roll >= 15 ) // SkillCheck(mobile, PRIMEIROS_SOCORROS, diff) SkillCheck(mobile, , diff)
+	elseif ( roll >= 16 ) // SkillCheck(mobile, PRIMEIROS_SOCORROS, diff) SkillCheck(mobile, , diff)
 		SendSysMessageEx(mobile, "Você estabilizou "+name, SSM_INFO);
 		ghaiaRessurect(targ);
+      mobile.SetAchievement("taming", 2);
 	else
 		SendSysMessageEx(mobile, "Você não conseguiu estabilizar {}.".format(name), SSM_FAIL);
 	endif

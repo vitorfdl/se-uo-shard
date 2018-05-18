@@ -1,0 +1,36 @@
+use uo;
+use os;
+
+include ":attributes:attributes";
+include ":taming:taming";
+include ":mounts:mounts";
+
+program useSela(item)
+   while (item);
+      var amarrado := GetObjProperty(item, "hitched");
+      if (amarrado)
+         if (!CheckIfAnimalOrOwnerExist(item, amarrado))
+            EraseObjProperty(item, "hitched");
+            EraseObjProperty(item, "owner_serial");
+            EraseObjProperty(item, "old_props");
+            EraseObjProperty(item, "hitch_time");
+         endif
+      endif
+      sleep(5000);
+   endwhile
+endprogram
+
+function CheckIfAnimalOrOwnerExist(item, serial)
+   var animal := SystemFindObjectBySerial(serial);
+   if (!animal)
+      return 0;
+   endif
+
+   var owner := GetObjProperty(item, "owner_serial");
+
+   if (!SystemFindObjectBySerial(owner, SYSFIND_SEARCH_OFFLINE_MOBILES))
+      return 0;
+   endif
+
+   return 1;
+endfunction

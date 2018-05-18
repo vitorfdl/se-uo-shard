@@ -9,7 +9,7 @@ program mdestroy(who)
 
 	while(targ)
 		DestroyItem(targ);
-		targ := target(who);
+		targ := Target(who, TGTOPT_NOCHECK_LOS);
 	endwhile
 
 	SendSysMessageEx(who, "Cancelado.", SSM_FAIL);

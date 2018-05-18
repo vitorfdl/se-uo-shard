@@ -1,0 +1,72 @@
+use uo;
+use os;
+
+include ":attributes:attributes";
+include ":taming:taming";
+include ":mounts:mounts";
+
+program useSela(who, item)
+   var amarrado := GetObjProperty(item, "hitched");
+   if (amarrado)
+      return AnimalHitched(who, item, amarrado);
+   endif
+
+   HitchAnimal(who, item);
+endprogram
+
+function AnimalHitched(who, item, serial)
+   var animal := SystemFindObjectBySerial(serial);
+   if (!animal)
+      EraseObjProperty(item, "hitched");
+      EraseObjProperty(item, "owner_serial");
+      EraseObjProperty(item, "old_props");
+      HitchAnimal(who, item);
+   endif
+   var owner_serial := GetObjProperty(item, "owner_serial");
+   if (owner_serial != who.serial)
+      return SendSysMessageEx(who, "Você não pode desamarrar o animal de outra pessoa.", SSM_FAIL);
+   elseif ( (GetNumPets(who) + GetPetCost(animal)) > GetMaxPets(who) )
+      return SendSysMessageEx(who, "Seu numero de pets já atingiu o limite, abandone um antes de desamarrar este.", SSM_FAIL);
+   endif
+
+   AddPet(who, animal);
+	animal.Disable("invul");
+   animal.frozen := 0;
+   var pet_props := GetObjProperty(item, "old_props");
+   animal.SetPetProperties(pet_props);
+   animal.SetMaster(who);
+	RestartScript(animal);
+
+   EraseObjProperty(item, "hitched");
+   EraseObjProperty(item, "owner_serial");
+   EraseObjProperty(item, "old_props");
+   PrintText(animal, "*desamarrado*");
+endfunction
+
+function HitchAnimal(who, item)
+   SendSysMessageEx(who, "Qual criatura você deseja amarrar aqui?", SSM_INFO);
+   var targ := Target(who);
+   if (!targ)
+      return SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
+   elseif (targ.master.serial != who.serial)
+      return SendSysMessageEx(who, "Este animal não é seu.", SSM_FAIL);
+   elseif (Distance(item, targ) > 1)
+      return SendSysMessageEx(who, "O animal está muito distante para ser amarrado.", SSM_FAIL);
+   elseif (!ConsumeSubstance( who.backpack, 0x14f8, 1 ))
+      return SendSysMessageEx(who, "Você precisa de uma corda para amarrar o animal.", SSM_FAIL);
+   endif
+
+   var pet_prop := targ.GetPetProperties();
+   SetObjProperty(item, "hitched", targ.serial);
+   SetObjProperty(item, "owner_serial", who.serial);
+   SetObjProperty(item, "old_props", pet_prop);
+   SetObjProperty(item, "hitch_time", polcore().systime);
+
+   ErasePet(who, targ);
+   targ.SetMaster(0);
+   targ.SetFacing(GetFacing(targ.x, targ.y, item.x, item.y));
+   targ.frozen := 1;
+   GrantPrivilege(targ, "invul");
+	targ.Enable("invul");
+   PrintText(targ, "*amarrado*");
+endfunction

@@ -3,7 +3,7 @@ include "include/say";
 program textcmd_sayabovepvt( who, text, uc_text )
     SendSysMessage( who, "Say above what or whom?" );
 
-    var what := Target( who );
+    var what := Target(who, TGTOPT_NOCHECK_LOS);
     if (what)
         PrintTextPrivate( what, CChrZ(uc_text), what );
 		PrintTextPrivate( what, CChrZ(uc_text), who );

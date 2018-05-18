@@ -59,11 +59,11 @@ program alchemy(who)
          sleepms(2);
          if (prop.type == "ObjProperty") continue; endif
 
-         var effect := prop.type;
+         var effect := TranslateToPlayer(prop.type);
          var prefix := "";
          var suffix := "";
 
-         if (prop.amount)
+         if (prop.amount && effect != "Efeito Ativável")
             if (prop.incr)
                prefix += "Redução";
             else
@@ -71,9 +71,9 @@ program alchemy(who)
             endif
          endif
 
-         if (prop.vital) suffix += "{}".format(prop.vital);  endif
+         if (prop.vital) suffix += "{}".format(TranslateToPlayer(prop.vital));  endif
          if (prop.property) suffix += "{}".format(prop.property);  endif
-         if (prop.dmgtype) suffix += "{}".format(prop.dmgtype);  endif
+         if (prop.dmgtype) suffix += "{}".format(TranslateToPlayer(prop.dmgtype));  endif
 
          if (suffix) effect := "{} {}".format(effect, suffix); endif
          if (prefix) effect := "{} {}".format(prefix, effect); endif
@@ -115,7 +115,18 @@ function TranslateToPlayer(text)
       "newbie": return "Não Dropável";
       "dmg_mod": return "Dano";
       "hunger": return "Fome";
+      "Alterar Regen": return "Regeneração";
+      "Monstro +dmg": return "Dano em Criatura";
+      "Propriedade":
+      "Alterar Equipmod":
+      "ObjProperty":
+      "Hitscript": 
+      "Armorscript": 
+      "Criticalscript": 
+         return "";
    endcase
+
+   return text;
 endfunction
 
 
