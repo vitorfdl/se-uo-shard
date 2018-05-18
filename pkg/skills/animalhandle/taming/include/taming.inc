@@ -3,9 +3,9 @@ include ":timedscripts:timedScripts";
 include "include/arrays";
 include "include/damage";
 
-function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
-	var cfg := ReadConfigFile(":ghaia:npcdesc");
+var npc_cfg := ReadConfigFile(":ghaia:npcdesc");
 
+function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	var mobs := array;
 	foreach mob in ListMobilesNearLocationEx(x, y, z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_NPC_ONLY, realm)
 		if (mob.isTamable())
@@ -17,13 +17,15 @@ endfunction
 
 //ve quantos slots custa o npc
 function GetPetCost(pet)
-	var cfg := ReadConfigFile(":ghaia:npcdesc");
+   var pet_cost := GetObjProperty(pet, "pet_cost");
+   if (pet_cost) return pet_cost; endif
+
 	var npctemplate := pet.my_template();
-	cfg := cfg[npctemplate];
-	if (cfg.petslot == error)
+	npc_cfg := npc_cfg[npctemplate];
+	if (npc_cfg.petslot == error)
 		return 1;
 	else
-		return Cint(cfg.petslot);
+		return Cint(npc_cfg.petslot);
 	endif
 endfunction
 
@@ -38,17 +40,10 @@ function GetNumPets(who)
 	endif
 
    var remove_indexes := array{};
-	var cfg := ReadConfigFile(":ghaia:npcdesc");
 	foreach serial in tamed
 		var pet := SystemFindObjectBySerial(serial);
 		if ( pet.master == who )
-			var npctemplate := pet.my_template();
-			var pet_cfg := cfg[npctemplate];
-
-         var pet_num := 1;
-			if (pet_cfg.petslot)
-				pet_num := Cint(pet_cfg.petslot);
-			endif
+         var pet_num := GetPetCost(pet);
 
          if (num_tamed+pet_num > max_followers)
             destama(serial);
@@ -71,33 +66,24 @@ endfunction
 
 //deleta o serial da lista de seriais do char (quando o npc morre ou eh transferido)
 function ErasePet(who, myserial)
+   if (myserial.isA(POLCLASS_MOBILE)) myserial := myserial.serial; endif
+
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )
 		return;
 	endif
-	
-	foreach serial in tamed
-		if ( myserial == serial )
-			MP_Unmount(who);
-			tamed.erase(_serial_iter);
-			var pet := SystemFindObjectBySerial(serial);
-         var custom_cost := GetObjProperty(pet, "pet_cost");
-         if (!custom_cost)
-			   who.followers -= GetPetCost(pet);
-         else
-            who.followers -= custom_cost;
-         endif
-			break;
-		endif
-		sleepms(2);
-	endforeach
+
+   var index := myserial in tamed;
+   tamed.erase(index);
+   MP_Unmount(who);
+   var pet := SystemFindObjectBySerial(myserial);
+   who.followers -= GetPetCost(pet);
 
    SetObjProperty(who, "followers", tamed);
-   GetNumPets(who);
 endfunction
 
 //adiciona o serial do pet 
-function AddPet(who, serial, pet_cost := 0)
+function AddPet(who, serial, no_reset := 0)
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )
 		tamed := array;
@@ -109,11 +95,7 @@ function AddPet(who, serial, pet_cost := 0)
 	var pet := SystemFindObjectBySerial(serial);
    EraseObjProperty(pet, "spawnspot");
    EraseObjProperty(pet, "spawnpoint");
-   if (!pet_cost)
-	   who.followers := who.followers + GetPetCost(pet);
-   else
-      who.followers := who.followers + pet_cost;
-   endif
+	who.followers += GetPetCost(pet);
 
    pet.SetMaster(who);
          
@@ -126,7 +108,8 @@ function AddPet(who, serial, pet_cost := 0)
       
    pet.script := ":ghaia:follower";
    RestartScript(pet);
-	pet.InitPetProperties(0);
+   
+   if (!no_reset) pet.InitPetProperties(0); endif
 endfunction
 
 //numero maximo de pets que alguem pode ter
@@ -220,7 +203,7 @@ endfunction
 // 		return 0;
 // 	endif
 
-// 	var cfg := ReadConfigFile(":ghaia:npcdesc");
+// 	var npc_cfg := ReadConfigFile(":ghaia:npcdesc");
 // 	var npctemplate := mob.npctemplate;
 // 	npctemplate := npctemplate[10, len(npctemplate)-9];
 // 	cfg := cfg[npctemplate];

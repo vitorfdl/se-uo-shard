@@ -171,9 +171,11 @@ function taming(who)
          var petname := targ.name;
          Run_Script_To_Completion(":death:npcdeath", {targ});
          SetName(targ, petname);
-         
-			AddPet(who, targ.serial);	
-         targ.InitPetProperties(1);
+
+         var no_reset := 0;
+         if (GetObjProperty(targ, "last_owner") == who.serial) no_reset := 1; endif
+
+			AddPet(who, targ.serial, no_reset);	
 			break;
 		endif
 		

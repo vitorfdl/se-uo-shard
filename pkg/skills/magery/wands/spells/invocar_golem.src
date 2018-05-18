@@ -34,7 +34,8 @@ program animateSword(params)
    SetObjProperty(summoned, "agarrar_dif", spellinfo.dice_roll);
 	if (summoned)
 		PrintTextAbove(summoned, "*Um golem se levanta*", 3,191);
-		AddPet(who, summoned.serial, 0);
+      SetObjProperty(summoned, "pet_cost", 1);
+		AddPet(who, summoned.serial);
 		summoned.SetMaster(who);
       summoned.script := ":ghaia:orb_brain";
 		RestartScript(summoned);

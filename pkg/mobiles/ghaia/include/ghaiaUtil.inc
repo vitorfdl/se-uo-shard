@@ -14,7 +14,7 @@ function ghaiaRessurect(targ, notame := 0)
 			SendSysMessageEx(owner, "Você ja tem muitos animais.", SSM_FAIL);
 			destama(npc.serial);
 		else
-			AddPet(owner, npc.serial);
+			AddPet(owner, npc.serial, 1);
 	      npc.script := ":ghaia:follower";
 		endif
 	endif

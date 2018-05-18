@@ -29,7 +29,7 @@ function AnimalHitched(who, item, serial)
       return SendSysMessageEx(who, "Seu numero de pets já atingiu o limite, abandone um antes de desamarrar este.", SSM_FAIL);
    endif
 
-   AddPet(who, animal);
+   AddPet(who, animal, 1);
 	animal.Disable("invul");
    animal.frozen := 0;
    var pet_props := GetObjProperty(item, "old_props");
@@ -62,7 +62,7 @@ function HitchAnimal(who, item)
    SetObjProperty(item, "old_props", pet_prop);
    SetObjProperty(item, "hitch_time", polcore().systime);
 
-   ErasePet(who, targ);
+   ErasePet(who, targ.serial);
    targ.SetMaster(0);
    targ.SetFacing(GetFacing(targ.x, targ.y, item.x, item.y));
    targ.frozen := 1;
