@@ -14,7 +14,8 @@ include ":survival:skinning";
 include ":ghaia:ghaiaUtil";
 include ":gumps:yesno";
 include ":fls_core:fls_characters";
-
+include ":loot:include/lootParser";
+include ":unicos:item_template";
 
 program skinning(parms)
 	var who     := parms[1];
@@ -117,12 +118,12 @@ program skinning(parms)
 
    var skinning_info := GetObjProperty(cadaver, "skinninginfo");
    if (skinning_info)
-      foreach thing in skinning_info
+      foreach loot in skinning_info
          var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
-         var dif := (100 - thing.chance) / 4;
+         var dif := (100 - loot.chance) / 4;
          if (dif < 5) dif := 9; endif
          if (dice_roll > dif)
-            if (thing.by_group)
+            if (loot.by_group)
                Loot_Generate(cadaver.backpack, loot.by_group, loot);
             else
                var item := CreateItemAtLocationFromTemplate(cadaver.x, cadaver.y, cadaver.z, _DEFAULT_REALM, loot.item );
