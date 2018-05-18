@@ -42,8 +42,9 @@ program skinning(parms)
 		SendSysMessageEx(who, "Você não esta perto o bastante do alvo.");
 		return;
 	endif
+
 	detach();
-	if(GetObjProperty(cadaver, "cut") == "1")
+	if (GetObjProperty(cadaver, "cut") == "1")
 		SendSysMessageEx( who, "Você não pode pegar mais coisas desse corpo." );
 		foreach thing in EnumerateItemsInContainer(cadaver)
 			MoveObjectToLocation(thing, cadaver.x, cadaver.y, cadaver.z, cadaver.realm, MOVEOBJECT_FORCELOCATION);
@@ -51,83 +52,96 @@ program skinning(parms)
 		endforeach
 		//DestroyItem(cadaver);
 		return;
-		
-
 	elseif((GetObjProperty(cadaver,"npctemplate")== error) && (GetObjProperty(cadaver, "morto")!=1))
       if (YesNo(who, "Você deseja mesmo matar o alvo?", "Sim: o alvo poderá negar o pedido e você não pode sair de perto do corpo", "Nao: nenhuma consequencia.")) //quer matar mesmo
          start_script(":death:permadeath/permanentdeath", array{who, cadaver, blade});
          SendSysMessageEx(who, "Aguarde até que o alvo responda. Afaste-se do corpo para cancelar a ação.", SSM_FAIL);
       endif
-		//DesmembreCorpse(cadaver);
-	
-	// elseif ((CheckGender(cadaver)) && (GetObjProperty(cadaver, "morto")!=1))
-   //    DesmembreCorpse(cadaver);
-   //    PrintTextAbove( who, "*Corta a cabeca*", font := _DEFAULT_TEXT_FONT, color := _DEFAULT_TEXT_COLOR, journal_print := JOURNAL_PRINT_NAME);	
-   //    SetObjProperty(cadaver, "morto",1);
-	else
-		PrintText(who, "*escalpelando "+cadaver.desc+"*");
-		SetObjProperty(cadaver, "morto",1);
-		if(cadaver.corpsetype == 223)
-			CreateItemInContainer(cadaver, 0x9f1, 2);
-			SendSysMessageEx(who, "Você colocou os itens no corpo.", SSM_INFO);
-			MakeBleed(cadaver);
-			return;
-		endif
+      return;
+   endif
+   PrintText(who, "*escalpelando "+cadaver.desc+"*");
+   SetObjProperty(cadaver, "morto",1);
+   if(cadaver.corpsetype == 223)
+      CreateItemInContainer(cadaver, 0x9f1, 2);
+      SendSysMessageEx(who, "Você colocou os itens no corpo.", SSM_INFO);
+      MakeBleed(cadaver);
+      return;
+   endif
 
-		var conf := ReadConfigFile(":ghaia:npcdesc");
-		var tmplate := GetObjProperty(cadaver, "npctemplate");
-		//var tmplate := cadaver.NPCTemplate();
+   var conf    := ReadConfigFile(":ghaia:npcdesc");
+   var tmplate := GetObjProperty(cadaver, "npctemplate");
+   //var tmplate := cadaver.NPCTemplate();
 
-		if(!tmplate)
-			SendSysMessageEx(who, "Escalpelou o corpo, mas nada foi aproveitado.", SSM_FAIL);
-			MakeBleed(cadaver);
-			return;
-		else
-			SetObjProperty(cadaver, "cut","1");
+   if(!tmplate)
+      SendSysMessageEx(who, "Escalpelou o corpo, mas nada foi aproveitado.", SSM_FAIL);
+      MakeBleed(cadaver);
+      return;
+   endif
+   SetObjProperty(cadaver, "cut","1");
 
-			var elem :=  NPC_GetNPCConfig(tmplate);
-			var corpseitm := elem.corpseitm;
-			var corpseamt := elem.corpseamt;
+   var elem :=  NPC_GetNPCConfig(tmplate);
+   var corpseitm := elem.corpseitm;
 
-			if(!corpseitm)
-				MakeBleed(cadaver);
-				SendSysMessageEx(who, "Parece que nada pode ser aproveitado aqui", SSM_FAIL);
-				return;
-			endif
-			var i := 1;
-      			corpseitm := SplitWords(corpseitm);
-			corpseamt := SplitWords(corpseamt);
-			var minamt;
-			var dif := 0;
-			var bonusdif := 0;
-			if (blade.objtype == 0x0ec4)//se for skinning knife da bonus
-				bonusdif := -2;
-			endif
-			var found := 0;
-			foreach thing in corpseitm
-				dif := bonusdif + CINT(GetSkinningDifficulty(corpseitm[i]) );
-            if (dif < 5) dif := 9; endif
-				minamt := GetMinSkinningAmt(corpseitm[i]);
-				var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
-				if(dice_roll > dif)
-					if (minamt > corpseamt[i])
-						minamt := corpseamt[i];
-					endif
-					var item := CreateItemInContainer(cadaver, cstr(thing), cint(minamt) );			
-					found := 1;
-				endif
-				i := i + 1;
-            sleepms(2);
-			endforeach
-			if (found)
-				ExpGain(who, "minor");
-				who.SetAchievement("skinning", 1);
-				SendSysMessageEx(who, "Escalpelou o corpo.", SSM_INFO);
-			else
-				SendSysMessageEx(who, "Nada foi aproveitado.", SSM_FAIL);
-			endif
-			MakeBleed(cadaver);
-		endif
-	endif
+   if(!corpseitm)
+      MakeBleed(cadaver);
+      SendSysMessageEx(who, "Parece que nada pode ser aproveitado aqui", SSM_FAIL);
+      return;
+   endif
+
+   corpseitm := SplitWords(corpseitm);
+   var corpseamt := SplitWords(elem.corpseamt);
+
+   var minamt;
+   var bonusdif := 0;
+
+   if (blade.objtype == 0x0ec4)//se for skinning knife da bonus
+      bonusdif := -2;
+   endif
+
+   var found := 0;
+   foreach thing in corpseitm
+      var dif := bonusdif + CINT(GetSkinningDifficulty(thing) );
+      if (dif < 5) dif := 9; endif
+
+      minamt := GetMinSkinningAmt(thing);
+      var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
+      if(dice_roll > dif)
+         if (minamt > corpseamt[_thing_iter])
+            minamt := corpseamt[_thing_iter];
+         endif
+         var item := CreateItemInContainer(cadaver, cstr(thing), cint(minamt) );			
+         found := 1;
+      endif
+      sleepms(2);
+   endforeach
+
+   var skinning_info := GetObjProperty(cadaver, "skinninginfo");
+   if (skinning_info)
+      foreach thing in skinning_info
+         var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
+         var dif := (100 - thing.chance) / 4;
+         if (dif < 5) dif := 9; endif
+         if (dice_roll > dif)
+            if (thing.by_group)
+               Loot_Generate(cadaver.backpack, loot.by_group, loot);
+            else
+               var item := CreateItemAtLocationFromTemplate(cadaver.x, cadaver.y, cadaver.z, _DEFAULT_REALM, loot.item );
+               MoveItemToContainer(item, cadaver.backpack);
+               item.movable := 1;
+            endif
+         endif
+         sleepms(2);
+      endforeach
+   endif
+
+   if (found)
+      ExpGain(who, "minor");
+      who.SetAchievement("skinning", 1);
+      SendSysMessageEx(who, "Escalpelou o corpo.", SSM_INFO);
+   else
+      SendSysMessageEx(who, "Nada foi aproveitado.", SSM_FAIL);
+   endif
+
+   MakeBleed(cadaver);
 endprogram
 
