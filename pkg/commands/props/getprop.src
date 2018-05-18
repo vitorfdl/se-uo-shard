@@ -12,7 +12,7 @@ use uo;
 include "include/say";
 
 program propertyinfo(who, property)
-	var targ := target(who);
+	var targ := target(who, TGTOPT_NOCHECK_LOS);
 	if ( !targ )
 		SendSysMessage(who, "Cancelled");
 		return;

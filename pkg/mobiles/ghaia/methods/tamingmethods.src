@@ -157,6 +157,11 @@ exported function SetExp(pet, amount := 1)
       new_prop.exp := new_exp - max_exp;
       SetPoints(pet);
       SetLoyalt(pet);
+      
+      var amt := 20;
+      if (props.loyalt+1 == 10) amt := 50; endif
+
+		pet.master.SetAchievement("taming", 5);
    else
       new_prop.exp := new_exp;
    endif

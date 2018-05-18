@@ -1104,7 +1104,9 @@
 0x1452 Bonelegs combat
 # 0x1453 - 0x14df unused
 0x14e0 waterbucket water
-# 0x14e1 - 0x14e8 unused
+# 0x14e1 - 0x14e6 unused
+0x14e7 hitchingpost taming
+# 0x14e8 unused
 0x14e9 padeforno woodworking
 # 0x14ea unused
 0x14eb blankmap cartography

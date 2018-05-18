@@ -19,7 +19,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       mobile.frozen := 0;      
       while (!point)
          var point := RandomPlace(mobile, 0);
-         if (!CanWalk("L", mobile.x, mobile.y, mobile.z, point.x, point.y, CANWALK_DIR))
+         if (!CanWalk("L", mobile.x, mobile.y, mobile.z, point.x, point.y))
             point := 0;
          endif
          sleepms(2);

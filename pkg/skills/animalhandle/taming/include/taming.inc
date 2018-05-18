@@ -93,6 +93,7 @@ function ErasePet(who, myserial)
 	endforeach
 
    SetObjProperty(who, "followers", tamed);
+   GetNumPets(who);
 endfunction
 
 //adiciona o serial do pet 
