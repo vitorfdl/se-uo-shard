@@ -40,6 +40,7 @@ program equipweapon(who, item, startup)
       endif
 
       if (!AP_ConsumeVital(who, STAMINA, c_amt))
+         PrintTextPrivate(who, "Stamina Insuficiente!", SSM_FAIL)
          return 0;
       endif
 	endif

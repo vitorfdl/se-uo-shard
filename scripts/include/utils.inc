@@ -178,3 +178,13 @@ function InRect(x_pos, y_pos, rect)
 
 	return ( (x_pos >= x1 && x_pos <= x2) && (y_pos >= y1 && y_pos <= y2) );
 endfunction
+
+function InverseFacing(facing)
+   if (facing >= 4) 
+      facing -= 4;
+   else
+      facing += 4; 
+   endif
+
+   return facing;
+endfunction

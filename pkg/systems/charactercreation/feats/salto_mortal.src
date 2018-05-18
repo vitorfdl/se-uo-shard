@@ -54,5 +54,6 @@ function saltomortal(who)
       sleepms(2);
    endfor
 
+   who.setFacing(InverseFacing(who.facing));
    return 1;
 endfunction

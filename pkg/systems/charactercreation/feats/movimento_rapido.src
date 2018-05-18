@@ -52,12 +52,7 @@ function movimentoRapido(param)
       sleepms(50);
    endforeach
 
-   var behind := targ.facing;
-   if (behind >= 4) 
-      behind -= 4;
-   else
-      behind += 4; 
-   endif
+   var behind := InverseFacing(targ.facing);
 
    behind := GetModByFacing(behind);
    if (CanWalk("L", who.x, who.y, who.z, targ.x+behind[1], targ.y+behind[2]))

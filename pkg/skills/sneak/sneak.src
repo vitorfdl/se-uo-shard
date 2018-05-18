@@ -90,10 +90,7 @@ function HidingParty(who)
 endfunction
 
 function CanHide(who, orig_x, orig_y, override_hiding := 0)
-	if ( who.warmode )
-		SendSysMessageEx(who, "Você não pode se esconder em posicao de combate.", SSM_FAIL);
-		return 0;
-	elseif ( who.x != orig_x || who.y != orig_y )
+   if ( who.x != orig_x || who.y != orig_y )
 		SendSysMessageEx(who, "Você parou de tentar se esconder.", SSM_FAIL);
 		return 0;
 	elseif ( GetEquipmentByLayer(who, 0x19) ) // Equip de Montaria
