@@ -211,7 +211,7 @@ function WriteRune(who, rune_entry)
 	SendSystemReport(who, "*Onde deseja inscrever?*");
 	var item := Target(who);
 
-	if (GetObjProperty(item, "inscripted"))
+	if (cint(GetObjProperty(item, "inscripted")))
 		return SendSysMessageEx(who, "Uma runa ja esta gravada neste item.", SSM_FAIL);
    endif
 
