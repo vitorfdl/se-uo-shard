@@ -8,7 +8,7 @@ function PlayCustomSound(who, number)
    
    var sounds := dictionary;
    sounds[1] := array{"*Ah*", 0x30B, 0x41A};
-   sounds[2] := array{"*Ahha*", 0x30D, 0x41B};
+   sounds[2] := array{"*Ahha*", 0x30C, 0x41B};
    sounds[3] := array{"*Aplausos*", 0x30D, 0x41C};
    sounds[4] := array{"*Assoando o nariz*", 0x30E, 0x41D};
    sounds[5] := array{"*Comemorando*", 0x310, 0x41F};
@@ -40,7 +40,8 @@ function PlayCustomSound(who, number)
    sounds[32] := array{"*Yeah*", 0x338, 0x44A};
    sounds[31] := array{"*Bocejando*", 0x337, 0x449};
    sounds[33] := array{"*Gritando*", 0x339, 0x44B};
-   sounds[34] := array{"", 0x150, 0x15A};
+   sounds[34] := array{"*Vomitando*", 0x32E, 0x440};
+   sounds[35] := array{"*Arrotando*", 0x30F, 0x41E};
 
    var sound_array := sounds[number];
    if (!sound_array) return; endif

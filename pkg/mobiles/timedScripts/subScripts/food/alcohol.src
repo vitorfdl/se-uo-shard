@@ -6,6 +6,7 @@ use uo;
 use os;
 use util;
 
+include "include/sounds";
 include "include/client";
 include ":timedscripts:timedScripts";
 include "include/say";
@@ -41,6 +42,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 		if ( cycle > 25 ) // Boy this person is wasted.
 			PerformAction(mobile, 32);
 			if ( roll < 3 )
+            PlayCustomSound(mobile, 34);
 				CreateItemAtLocation(mobile.x, mobile.y, mobile.z, "vomit", 1, mobile.realm);
 			endif
 		endif

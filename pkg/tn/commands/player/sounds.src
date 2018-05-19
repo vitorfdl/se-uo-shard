@@ -118,7 +118,9 @@ program sound(who, text)
       "30. Assobiar",
       "31. Bocejar",
       "32. Yeah",
-      "33. Gritar"
+      "33. Gritar",
+      "34. Vomitar",
+      "35. Arrotar"
    );
 
 	var input  := array;

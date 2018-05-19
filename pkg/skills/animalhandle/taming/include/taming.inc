@@ -3,7 +3,7 @@ include ":timedscripts:timedScripts";
 include "include/arrays";
 include "include/damage";
 
-var npc_cfg := ReadConfigFile(":ghaia:npcdesc");
+var tam_npc_cfg := ReadConfigFile(":ghaia:npcdesc");
 
 function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	var mobs := array;
@@ -21,11 +21,11 @@ function GetPetCost(pet)
    if (pet_cost) return pet_cost; endif
 
 	var npctemplate := pet.my_template();
-	npc_cfg := npc_cfg[npctemplate];
-	if (npc_cfg.petslot == error)
+	tam_npc_cfg := tam_npc_cfg[npctemplate];
+	if (tam_npc_cfg.petslot == error)
 		return 1;
 	else
-		return Cint(npc_cfg.petslot);
+		return Cint(tam_npc_cfg.petslot);
 	endif
 endfunction
 
@@ -203,7 +203,7 @@ endfunction
 // 		return 0;
 // 	endif
 
-// 	var npc_cfg := ReadConfigFile(":ghaia:npcdesc");
+// 	var tam_npc_cfg := ReadConfigFile(":ghaia:npcdesc");
 // 	var npctemplate := mob.npctemplate;
 // 	npctemplate := npctemplate[10, len(npctemplate)-9];
 // 	cfg := cfg[npctemplate];
