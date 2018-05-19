@@ -360,7 +360,7 @@ function GetMiningRegion(x, y)
 	
 		var region := FindConfigElem(cfg, elem);
 		var rect := GetConfigString(region, "Rect");
-		if ( InRect (x, y, SplitWords(rect)))
+		if ( InRect (x, y, rect))
 			return elem;
 		endif 
 		
@@ -371,7 +371,7 @@ function GetMiningRegion(x, y)
   
     var region := df.FindElement(elem);
     var rect := region.getProp("Rect");
-    if (inrect(x, y, SplitWords(rect)))
+    if (InRect(x, y, rect))
       return elem;
     endif
   

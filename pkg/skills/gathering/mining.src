@@ -20,6 +20,7 @@ program mining(who)
 		ores := elem.GetProp("Ores");
 		raridades := SplitWords(elem.GetProp("Rarity"));
 	endif
+
 	var possiveis := {};
 	var raridade := {};
 	var i := 1;
@@ -30,7 +31,7 @@ program mining(who)
 	foreach thing in ores 
 		var dif := DetermineMiningDifficulty( thing );
 
-		if ( (skill + 10) >=  dif)
+		if ( (skill + 10) >= dif)
 			possiveis[i] := thing;
 			raridade[i] := raridades[k];
 			i := i + 1;
