@@ -81,6 +81,11 @@ program sound(who, text)
       "text 280 375 500 32",
       "button 260 400 2103 2104 1 1 33",
       "text 280 395 500 33",
+      
+      "button 360 100 2103 2104 1 1 34",
+      "text 380 95 500 34",
+      "button 360 120 2103 2104 1 1 35",
+      "text 380 115 500 35",
       "button 235 440 2121 2120 1 0 0"
    );
 		
@@ -124,7 +129,6 @@ program sound(who, text)
    );
 
 	var input  := array;
-//	sendsysmessage(who, " " + text.size());
 
 	var delay       := 1;
 	var repeatcount := 1;
@@ -139,7 +143,7 @@ program sound(who, text)
 
       var i;
 
-      for (i := 1; i <= 33; i+=1)
+      for (i := 1; i <= 35; i+=1)
          if (input[i])
             PlayCustomSound(who, i);
          endif
