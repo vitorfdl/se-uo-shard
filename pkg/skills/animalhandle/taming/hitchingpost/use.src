@@ -26,7 +26,6 @@ function AnimalHitched(who, item, serial)
    if (owner_serial != who.serial)
       return SendSysMessageEx(who, "Você não pode desamarrar o animal de outra pessoa.", SSM_FAIL);
    elseif ( (GetNumPets(who) + GetPetCost(animal)) > GetMaxPets(who) )
-      if (GetObjProperty(who, "followers").size() >= 1)
       return SendSysMessageEx(who, "Seu numero de pets já atingiu o limite, abandone um antes de desamarrar este.", SSM_FAIL);
    endif
 
@@ -43,14 +42,11 @@ function AnimalHitched(who, item, serial)
    EraseObjProperty(item, "old_props");
    EraseObjProperty(animal, "hitched");
    PrintText(animal, "*desamarrado*");
-	RestartScript(targ);
 endfunction
 
-function HitchAnimal(who, item, targ := 0)
-   if (!targ)
+function HitchAnimal(who, item)
       SendSysMessageEx(who, "Qual criatura você deseja amarrar aqui?", SSM_INFO);
-      targ := Target(who);
-   endif
+   var targ := Target(who);
 
    if (!targ)
       return SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
