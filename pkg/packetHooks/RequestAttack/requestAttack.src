@@ -42,7 +42,6 @@ exported function HandleAttackRequest( who, byref packet )
 				SendSysMessageEx(who, "Você esta muito distante.", SSM_FAIL);
 				return 1;
 			endif
-		
 		endif
 	endif
 

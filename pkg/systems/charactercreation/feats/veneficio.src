@@ -68,9 +68,9 @@ function do_poisoning(who)
 		// 0xbf06: poisonType :="intPoison"; difficulty := 14; 
 		0xbf02: poisonType:="staminaPoison"; difficulty := 14; 
 		0xbf03: poisonType:="paralyzePoison"; difficulty := 16;
-		0xef54: poisonType :="manaPoison"; difficulty := 12;
+		0xef54: poisonType :="manaPoison"; difficulty := 13;
 		0xbf04: level := 3; difficulty := 16;  poisonType := "defaultPoison";
-		0xdc04: level := 2; difficulty := 12;  poisonType := "defaultPoison";
+		0xdc04: level := 2; difficulty := 13;  poisonType := "defaultPoison";
 		0xbf05: level := 4; difficulty := 16;  poisonType := "defaultPoison";
       default:
          SendSysMessageEx(who, "Isso não parece um veneno.", SSM_FAIL);
@@ -125,7 +125,7 @@ function do_poisoning(who)
 		var poisonInfo := struct;
 		poisonInfo.+name   := poisonType;
 		poisonInfo.+level  := level;
-		poisonInfo.+dosage := 20 - (level*2);
+		poisonInfo.+dosage := 20;
 		poisonInfo.+acc    := who.acctname;
 		poisonInfo.+time   := 40 + level*10;
 		poisonInfo.+difficulty := roll-2;

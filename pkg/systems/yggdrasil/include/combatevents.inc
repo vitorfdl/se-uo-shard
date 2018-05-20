@@ -263,7 +263,7 @@ function CombatEventsOptions(who, state)
    endif
 
    var resists := array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"};
-   var targ_opts := array{"Self", "Cone in front", "Cone back", "Cone left", "Cone right" "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally", "Previous Targets"};
+   var targ_opts := array{"Self", "Cone in front", "Cone back", "Cone left", "Cone right", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally", "Previous Targets"};
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
       var loc := TargetCoordinates(who);

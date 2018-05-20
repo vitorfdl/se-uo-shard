@@ -48,12 +48,14 @@ exported function HandleDoubleClick( who, byref packet )
 		return 1;
 	endif
 
-   if (!defender.warmode && defender.isA(POLCLASS_MOBILE))
-      var itemcfg := ReadConfigFile(":combat:itemdesc");
-      if (AP_GetTrueSkill(who, LAMINAS_CURTAS) >= 5 && itemcfg[who.weapon.objtype].Pericia == LAMINAS_CURTAS)
-         SetObjProperty(defender, "#assinate", who.serial);
+   if (who.warmode)
+      if (!defender.warmode && defender.isA(POLCLASS_MOBILE))
+         var itemcfg := ReadConfigFile(":combat:itemdesc");
+         if (AP_GetTrueSkill(who, LAMINAS_CURTAS) >= 5 && itemcfg[who.weapon.objtype].Pericia == LAMINAS_CURTAS)
+            SetObjProperty(defender, "#assinate", who.serial);
+         endif
       endif
    endif
-
+   
 	return 0;
 endfunction

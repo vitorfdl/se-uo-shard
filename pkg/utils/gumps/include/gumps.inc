@@ -141,7 +141,7 @@ function GFMovable(byref gump, bool)
 			gump.base.MoveLoc := (gump.layout).Size();
 			break;
 		1:
-			if ( !gump.base.MoveLoc )\
+			if ( !gump.base.MoveLoc )
 				return XGFError("Gump is already movable.");
 			endif
 
@@ -151,6 +151,7 @@ function GFMovable(byref gump, bool)
 		default:
 			return XGFError("gumps::Movable: Invalid bool value '"+bool+"'");
 	endcase
+   
 	return 1;
 endfunction
 
@@ -176,12 +177,12 @@ function GFResizePic(byref gump, x, y, gump_id, width, height)
 endfunction
 
 function GFAddAlphaRegion(byref gump, x, y, width, height)
-	(gump.layout).Append("CheckerTrans {} {} {} {}".format(cint(x), cint(y) cint(width), cint(height))); 
+	(gump.layout).Append("CheckerTrans {} {} {} {}".format(cint(x), cint(y), cint(width), cint(height))); 
 	return 1;
 endfunction
 
 function GFAddButton(byref gump, x, y, off_id, on_id, btn_type:=GF_PAGE_BTN, btn_value:=0)
-	var line := "Button {} {} {} {}".format(cint(x), cint(y), cint(off_id), cint(on_id)));
+	var line := "Button {} {} {} {}".format(cint(x), cint(y), cint(off_id), cint(on_id));
 
 	btn_value := CInt(btn_value);
 	if ( btn_value < 1 ) // Catch errors (0) and invalid (negative) values
@@ -194,7 +195,7 @@ function GFAddButton(byref gump, x, y, off_id, on_id, btn_type:=GF_PAGE_BTN, btn
 	elseif ( btn_type == GF_DUMMY_BTN )
 		line += " 0 0 {}".format(btn_value);;
 	else // Assume GF_PAGE_BTN
-		line += " 0 {}".format(btn_value);;
+		line += " 0 {}".format(btn_value);
 	endif
 
 	(gump.layout).Append(line);
@@ -216,7 +217,7 @@ function GFCheckBox(byref gump, x, y, unc_id, che_id, status:=0, btn_value:=0)
 endfunction
 
 function GFSetRadioGroup(byref gump, group_id)
-	(gump.layout).Append("Group {}".format(group_id);
+	(gump.layout).Append("Group {}".format(group_id));
 	return 1;
 endfunction
 
@@ -224,7 +225,7 @@ function GFHTMLArea(byref gump, x, y, width, height, text, background:=0, scroll
 	gump.data.Append(CStr(text));
 	var index := gump.data.Size()-1;
 
-	(gump.layout).Append("HTMLGump {} {} {} {} {} {} {}".format(cint(x), cint(y) cint(width), cint(height), cint(background), cint(scrollbar))); 
+	(gump.layout).Append("HTMLGump {} {} {} {} {} {} {}".format(cint(x), cint(y), cint(width), cint(height), cint(background), cint(scrollbar))); 
 	return (index);
 endfunction
 
@@ -246,10 +247,8 @@ function GFGumpPic(byref gump, x, y, gump_id, hue := 0)
 
 	hue := CInt(hue);
 	if ( hue )
-		text += " hue={}".format(hue);
+		gump.layout[gump.layout.size()] += " hue={}".format(hue);
 	endif
-
-	(gump.layout).Append(text);
 
 	return 1;
 endfunction
@@ -351,7 +350,7 @@ function GFTextEntryLimited(byref gump, x, y, width, height, txt_color, ini_text
 		lentxt := cint((width * 22) / 20); //três simples
 	endif
 
-	gump.data.Append(Str(ini_text)); 
+	gump.data.Append(ini_text); 
 	var index := gump.data.Size()-1; 
 	txt_id := CInt(txt_id);  
 	

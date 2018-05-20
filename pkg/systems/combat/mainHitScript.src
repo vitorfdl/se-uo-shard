@@ -277,7 +277,7 @@ function ApplyFeatChanges(attacker, defender, byref dice_roll, byref dmg)
 
    marca := GetObjProperty(defender, "#assassinate");
    if (marca == attacker.serial)
-      if (RandomInt(2) == 1)
+      if (RandomDiceRoll("1d100") <= 85)
          dice_roll.critical := 1;
       endif
       EraseObjProperty(defender, "#assassinate");
@@ -371,6 +371,7 @@ function PoisonChecks(attacker, defender, weapon)
 
 		poisonInfo.dosage := poisonInfo.dosage -1;
 		if (poisonInfo.dosage <= 0) //se não tiver mais cargas de veneno, deleta
+         SendSysMessageEx(attacker, "O veneno da sua arma parece ter perdido o efeito", SSM_FAIL);
 			EraseObjProperty(weapon, "poisonInfo");
 			return 0;
 		else //se ainda tiver atualiza na arma

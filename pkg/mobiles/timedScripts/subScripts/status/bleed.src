@@ -35,15 +35,6 @@ function StartScript(mobile, attacker := 0, level := 0)
 		DamageFLS(mobile, RandomDiceRoll(dmg_dice), DMG_FORCED);
 		MakeBleed(mobile);
 
-		Set_Critical(1);
-		//var curr := CInt(AP_GetVital(who, "Stamina"));
-		//if ( curr >= stam )
-		//	AP_SetVital(who, "Stamina", (curr-stam));
-		//else
-		//	AP_SetVital(who, "Stamina", 0);
-		//endif
-		Set_Critical(0);
-
       if (rollResistDice(mobile, CONSTITUTION) > 16 )
          break;
       endif

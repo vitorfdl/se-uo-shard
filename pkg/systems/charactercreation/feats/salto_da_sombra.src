@@ -22,9 +22,8 @@ endprogram
 
 function movimentoRapido(param)
    var who := param[1];
-   var itemcfg := ReadConfigFile(":combat:itemdesc");
-   if (itemcfg[who.weapon.objtype].Pericia != LAMINAS_CURTAS)
-		SendSysMessageEx(who, "Você precisa estar usando lâmina curta.", SSM_FAIL);
+   if (!who.hidden)
+		SendSysMessageEx(who, "Você precisa estar furtivo.", SSM_FAIL);
       return 0;
    elseif (who.frozen || who.paralyzed)
 		SendSysMessageEx(who, "Você não consegue se mover.", SSM_FAIL);
@@ -38,7 +37,7 @@ function movimentoRapido(param)
    elseif (!targ.isA(POLCLASS_MOBILE))
 		SendSysMessageEx(who, "Alvo Inválido.", SSM_FAIL);
       return 0;
-   elseif (Distance(who, targ) > 2 || abs(who.z - targ.z ) > 19)
+   elseif (Distance(who, targ) > 7 || abs(who.z - targ.z ) > 19)
 		SendSysMessageEx(who, "Alvo muito distante.", SSM_FAIL);
       return 0;
    elseif (!CheckLineOfSight(who, targ))
@@ -46,14 +45,12 @@ function movimentoRapido(param)
       return 0;
    endif
 
-   PrintText(who, "*Movimento Rápido*", SSM_INFO);
-
-   // var coords := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
-   // coords.Erase(coords.size());
-   // foreach coord in coords
-   //    MoveObjectToLocation(who, coord.x, coord.y, targ.z, who.realm, MOVEOBJECT_FORCELOCATION);
-   //    sleepms(50);
-   // endforeach
+   var coords := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
+   coords.Erase(coords.size());
+   foreach coord in coords
+      MoveObjectToLocation(who, coord.x, coord.y, targ.z, who.realm, MOVEOBJECT_FORCELOCATION);
+      sleepms(50);
+   endforeach
 
    var behind := InverseFacing(targ.facing);
 

@@ -14,6 +14,7 @@ var me;
 var custombehaviors := array{};
 var previoustarg := array{};
 var selected_opponent;
+var lock_targ := 0;
 
 program loko(params)
 	var who := params[1];
@@ -59,7 +60,6 @@ program loko(params)
 
 	//check distancia
    var is_frozed := 1;
-   var lock_targ := 0;
 	SetCooldown(who, StrReplace(event.name, " ", "_"), event.cd); 
 	//executa os states
 	foreach state in (event.steps)
@@ -464,11 +464,11 @@ program loko(params)
                   continue;
                endif
             endif
-            new_targ.append(t);
+            new_targs.append(t);
          endforeach
 
          if (!state.noincludeself)
-            new_targ.append(who);
+            new_targs.append(who);
          endif
 
          if (!state.nostopifnotarg)
@@ -642,7 +642,7 @@ function selectOpponent(who, type, dist := 3)
       targ := array{ targ.randomEntry() };
    endif
 
-   if (!locktargs) previoustarg := targ; endif
+   if (!lock_targ) previoustarg := targ; endif
    return targ;
 endfunction
 
@@ -701,7 +701,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
          f := InverseFacing(who.facing, 2);
       endif
 
-      targ := GetConeCoordsInFront(who.x, who.y, f, dist);
+      targ := GetConeCoordsInFront(who.x, who.y, f, conedist);
       foreach p in targ
          p := struct{x := p[1], y := p[2], z := who.z+1};
          sleepms(2);

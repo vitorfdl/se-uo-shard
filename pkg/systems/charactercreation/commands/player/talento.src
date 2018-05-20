@@ -85,5 +85,5 @@ function ProccessHab(who, hab)
    if (e == error)
       return SendSysMessageEx(who, "Script do talento não encontrado.", SSM_FAIL);
    endif
-	TS_StartCooldown(who, hab, feat.cooldown);
+	TS_StartCooldown(who, hab, struct{ stam:=stam, mana:=mana});
 endfunction
