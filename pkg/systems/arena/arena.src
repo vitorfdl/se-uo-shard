@@ -107,29 +107,27 @@ endfunction
 ///////////////////
 
 function DoBasicPVMBattle (character, arena_stone)
-	var groupmenu := CreateMenu ("Selecione uma categoria de monstros:");
-	AddMenuItem (groupmenu, 0, "Monstros fracos");
-	AddMenuItem (groupmenu, 0, "Monstros veteranos");
-	AddMenuItem (groupmenu, 0, "Monstros fortes");
+	var cfgfile     := ReadConfigFile(":arena:arena");
+   var prices    := FindConfigElem(cfgfile, "prices");
+   var names     := FindConfigElem(cfgfile, "names");
+   var keys_list := ListConfigElemProps(prices);
+   keys_list.reverse();
+	var groupmenu := CreateMenu("Selecione uma categoria de monstros:");
+   var price_keys := array{};
+   foreach type in (keys_list)
+      price_keys[_type_iter] := GetConfigInt( prices, type );
+	   AddMenuItem(groupmenu, 0, GetConfigString( names, type ));
+      sleepms(2);
+   endforeach
+
 	// AddMenuItem (groupmenu, 0, "Humanos");
-	var groupselection := SelectMenuItem2 (character, groupmenu);
+	var groupselection := SelectMenuItem2(character, groupmenu);
 	groupselection := groupselection.index;
 	if (!groupselection)
 		SendSysMessageEx(character, "Canceled");
 		return;
 	endif
-	
-	var cfgfile := ReadConfigFile (":arena:arena");
-	var elem;
-	case (groupselection)
-		1:	elem := FindConfigElem(cfgfile, "weakmonsters");
-		2:	elem := FindConfigElem(cfgfile, "averagemonsters");
-		3:	elem := FindConfigElem(cfgfile, "strongmonsters");
-		4:	elem := FindConfigElem(cfgfile, "humans");
-		default:
-			SendSysMessageEx(character, "What you selected doesn't exist");
-			return;
-	endcase
+	var elem := FindConfigElem(cfgfile, keys_list[groupselection]);
 	
 	var NPCmenu := CreateMenu ("Selecione uma criatura para combater");
 	foreach npcstring in GetConfigStringArray (elem, "monster")
@@ -150,8 +148,17 @@ function DoBasicPVMBattle (character, arena_stone)
 	
    var start  := SplitWords(GetObjProperty(arena_stone, "start"));
    var start2 := SplitWords(GetObjProperty(arena_stone, "start2"));
-      if (!start || start.size() != 3 || !start2 || start2.size() != 3)
+   if (!start || start.size() != 3 || !start2 || start2.size() != 3)
       return SendSysMessageEx(character, "Não foi possível iniciar o duelo.");
+   endif
+
+   if (!rect || SplitWords(rect).size() != 4)
+      return SendSysMessageEx(character, "Não foi possível iniciar o duelo.");
+   endif
+
+   print(price_keys[groupselection]);
+   if (!ConsumeSubstance( character.backpack, 0xeed, price_keys[groupselection]))
+      return SendSysMessageEx(character, "Sem dinheiro para pagar a vida da criatura. Você precisa de {} moedas".format(price_keys[groupselection]));
    endif
 
 	var npcarray := GetConfigStringArray(elem, "monster");
@@ -161,6 +168,7 @@ function DoBasicPVMBattle (character, arena_stone)
 		SendSysMessageEx(character, "Error creating NPC.");
 		return;
 	endif
+   
 	SetObjProperty(opponent, "guardkill", 1);
 	SetObjProperty(opponent, "summoned", 1);
 	SendSysMessageEx(character, "Prepare-se para lutar!");
