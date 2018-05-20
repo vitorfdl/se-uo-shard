@@ -43,6 +43,7 @@ function AnimalHitched(who, item, serial)
    EraseObjProperty(item, "old_props");
    EraseObjProperty(animal, "hitched");
    PrintText(animal, "*desamarrado*");
+	RestartScript(targ);
 endfunction
 
 function HitchAnimal(who, item, targ := 0)
