@@ -13,5 +13,4 @@ log/*
 config/servers.cfg
 pol.exe'
 data.zip
-tgit rs --had 0e5
 pol.cfg

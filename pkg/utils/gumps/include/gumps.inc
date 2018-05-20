@@ -225,7 +225,7 @@ function GFHTMLArea(byref gump, x, y, width, height, text, background:=0, scroll
 	gump.data.Append(CStr(text));
 	var index := gump.data.Size()-1;
 
-	(gump.layout).Append("HTMLGump {} {} {} {} {} {} {}".format(cint(x), cint(y), cint(width), cint(height), cint(background), cint(scrollbar))); 
+	(gump.layout).Append("HTMLGump {} {} {} {} {} {} {}".format(cint(x), cint(y), cint(width), cint(height), cint(index), cint(background), cint(scrollbar))); 
 	return (index);
 endfunction
 
