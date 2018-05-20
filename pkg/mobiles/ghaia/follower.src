@@ -350,13 +350,15 @@ function Setup()
    var owner := me.master;
    var owner_property := GetObjProperty(me, "owner");
 
-   if ( !owner )
-      UnTame();
-   elseif (owner_property != me.master.serial)
-      var last_owner := SystemFindObjectBySerial(owner_property, SYSFIND_SEARCH_OFFLINE_MOBILES);
-      me.InitPetProperties(1);
-      SetObjProperty(me, "last_owner", last_owner.serial);
-      SetObjProperty(me, "owner", (me.master).serial);
+   if (GetObjProperty(me, "hitched"))
+      if ( !owner )
+         UnTame();
+      elseif (owner_property != me.master.serial)
+         var last_owner := SystemFindObjectBySerial(owner_property, SYSFIND_SEARCH_OFFLINE_MOBILES);
+         me.InitPetProperties(1);
+         SetObjProperty(me, "last_owner", last_owner.serial);
+         SetObjProperty(me, "owner", (me.master).serial);
+      endif
    endif
 
    if ( !me.backpack )
