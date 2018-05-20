@@ -242,6 +242,7 @@ function CombatEventsOptions(who, state)
             "Play Sound", 
             "Resist Test", 
             "Summon Npcs", 
+            "Simple Target",
             "Set Cooldown", 
             "Stop Monster",
             "Steal Player",
@@ -262,7 +263,7 @@ function CombatEventsOptions(who, state)
    endif
 
    var resists := array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM, "Nenhum"};
-   var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally", "Previous Targets"};
+   var targ_opts := array{"Self", "Cone in front", "Cone back", "Cone left", "Cone right" "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally", "Previous Targets"};
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
       var loc := TargetCoordinates(who);
@@ -303,6 +304,23 @@ function CombatEventsOptions(who, state)
       state.target := output[1];
       state.onlybehind := output[2] == "Não";
       state.conedist := cint(output[3]);
+   elseif ( opt == "Simple Target")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quais alvos?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Checar linha de visão?", "marked" := 1+cint(state.nochecklos), "radio" := array{"Não", "Sim"}});
+      input_list.append(struct{ "title" := "Trancar Previous Target? (Outros targs não substituirão esse valor)", "marked" := 1+cint(state.nolocktargs), "radio" := array{"Não", "Sim"}});
+      input_list.append(struct{ "title" := "Inclur boss nos targets?", "marked" := 1+cint(state.noincludeself), "radio" := array{"Não", "Sim"}});
+      input_list.append(struct{ "title" := "Parar habilidade se não houver targets?", "marked" := 1+cint(state.nostopifnotarg), "radio" := array{"Não", "Sim"}});
+      if (!state.conedist) state.conedist := 3; endif
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+
+      state.target := output[1];
+      state.nochecklos := output[2] == "Sim";
+      state.nolocktargs := output[3] == "Sim";
+      state.noincludeself := output[4] == "Sim";
+      state.nostopifnotarg := output[5] == "Sim";
+      state.conedist := cint(output[6]);
    elseif ( opt == "Pushback")
       var behaviours := array{"Para frente", "Para trás", "Para frente relacional", "Para trás relacional"};
       var input_list := array{};

@@ -59,6 +59,7 @@ program loko(params)
 
 	//check distancia
    var is_frozed := 1;
+   var lock_targ := 0;
 	SetCooldown(who, StrReplace(event.name, " ", "_"), event.cd); 
 	//executa os states
 	foreach state in (event.steps)
@@ -453,6 +454,32 @@ program loko(params)
             newball.SetDmgInfo(struct{ "dice":= state.dmg_dice, "type" := state.dmg_type });
             sleepms(2);
          endforeach
+      elseif (state.type == "Simple Target")
+         var targs := selectOpponent(who, state.target, state.conedist);
+         var new_targs := array{};
+         foreach t in targs
+            sleepms(2);
+            if (!state.nochecklos)
+               if (!CheckLineOfSight(who, t))
+                  continue;
+               endif
+            endif
+            new_targ.append(t);
+         endforeach
+
+         if (!state.noincludeself)
+            new_targ.append(who);
+         endif
+
+         if (!state.nostopifnotarg)
+            if (!new_targs.size()) break; endif
+         endif
+
+         if (state.nolocktargs)
+            lock_targ := 1;
+         endif
+
+         previoustarg := new_targs;
       elseif (state.type == "Steal Player")
          var targs := selectOpponent(who, state.target, state.conedist);
          foreach targ in targs
@@ -575,8 +602,17 @@ function selectOpponent(who, type, dist := 3)
       targ := GetEnemiesNear(who.opponent, dist);
    elseif (type == "All Opponents")
       targ := GetEnemiesNear(who, dist);
-   elseif (type == "Cone in front")
-      var points := GetConeCoordsInFront(who.x, who.y, who.facing, dist);
+   elseif (type["Cone"])
+      var f := who.facing;
+      if (type["back"])
+         f := InverseFacing(who.facing);
+      elseif (type["left"])
+         f := InverseFacing(who.facing, 1);
+      elseif (type["right"])
+         f := InverseFacing(who.facing, 2);
+      endif
+
+      var points := GetConeCoordsInFront(who.x, who.y, f, dist);
       foreach p in points
          var mobs := ListMobilesNearLocation(cint(p[1]), cint(p[2]), who.z, 0);
          targ := targ + mobs;
@@ -606,7 +642,7 @@ function selectOpponent(who, type, dist := 3)
       targ := array{ targ.randomEntry() };
    endif
 
-   previoustarg := targ;
+   if (!locktargs) previoustarg := targ; endif
    return targ;
 endfunction
 
@@ -655,8 +691,17 @@ function ReturnPointsByTarget(who, type, conedist := 3)
       endif
    elseif (type == "Around Opponent")
       targ := GetCoordsInSquare(who.opponent.x, who.opponent.y, conedist);
-   elseif (type== "Cone in front")
-      targ := GetConeCoordsInFront(who.x, who.y, who.facing, conedist);
+   elseif (type["Cone"])
+      var f := who.facing;
+      if (type["back"])
+         f := InverseFacing(who.facing);
+      elseif (type["left"])
+         f := InverseFacing(who.facing, 1);
+      elseif (type["right"])
+         f := InverseFacing(who.facing, 2);
+      endif
+
+      targ := GetConeCoordsInFront(who.x, who.y, f, dist);
       foreach p in targ
          p := struct{x := p[1], y := p[2], z := who.z+1};
          sleepms(2);
