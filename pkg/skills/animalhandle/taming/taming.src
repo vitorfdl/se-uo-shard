@@ -94,7 +94,7 @@ function taming(who)
 //	elseif (Distance(who,targ) > 4)
 //		SendSysMessageEx(who, "Alvo esta muito distante.");
 //		return;
-	elseif ( targ.script[":ghaia:follower"] )
+	elseif ( targ.script[":ghaia:follower"] || targ.owner )
 		SendSysMessageEx(who, targ.name+" não pode ser adestrado.", SSM_FAIL);
 		return 0;
 	elseif ( (GetNumPets(who) + GetPetCost(targ)) > GetMaxPets(who) )

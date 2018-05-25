@@ -51,7 +51,7 @@ program skill_animal_lore( who )
    endif
 
    var roll := rollAttrDice(who, WISDOM, penalty) + GetSkillBonus(who, TRATO_ANIMAIS);
-	if( roll > 14 || who.cmdlevel >= 3)
+	if( roll > 14 || who.cmdlevel >= 3 || creature.owner == who)
       // If the player succeeds, send the gump.
       // Create the Gump
       if (creature.master.serial == who.serial)
