@@ -21,6 +21,10 @@ include "include/damage";
 program npconversation(params)
 	var who := params[2];
 	var npc := params[1];
+endprogram
+
+function start()
+
 	
 	//Possibilidade de configurar o npc, para GM
 	if (who.cmdlevel > 1)
@@ -45,7 +49,7 @@ program npconversation(params)
 		i := i+1;
 	endwhile
 	return;
-endprogram
+endfunction
 
 function ConversationPlayer(who, npc, conversation)
 	//Configuração de Layout
@@ -118,9 +122,6 @@ function ConversationPlayer(who, npc, conversation)
 				answers[input[0]].noagain.wait := polcore().systime + element.noagain.tempo;
 				npcelem.SetProp(conversation + "Options", answers);
 			endif
-		endif
-		if (element.demonista)
-			contrato(who, element);
 		endif
 		
 		if (element.noshow)
@@ -303,7 +304,7 @@ function ConversationGM(who, npc, conversation)
 		var question := RadioGump(who, 300, 410, "O que deseja mudar/adicionar?", array{"Texto da Resposta", "Resultado da Resposta","Inteligencia Minima",
 																		"Alterar Som de Resposta","Checar se Possui Habilidade","Desaparecer",
 																		"Checar Se Possui Kit","Não Mostrar Novamente","Fazer Evento","Pedir Itens","Dar Itens", "Remover Resposta",
-																		"Restaurar Vital","Pacto Demonista", "Acessar Conversa do Resultado","Cancelar"});
+																		"Restaurar Vital", "Acessar Conversa do Resultado","Cancelar"});
 		var elementpos := input[0];
 
 		input := conversation;
@@ -311,20 +312,6 @@ function ConversationGM(who, npc, conversation)
 			answers[elementpos].text := RequestGump(who, "Escreva a Resposta");
 			npcelem.SetProp(conversation + "Options", answers); 
 			SendSysMessageEx(who, "Alterado Texto de Resposta", SSM_INFO);
-		elseif (question == "Pacto Demonista")
-			if (!answers[elementpos].demonista)
-				var cfg_spells := ReadConfigFile(":magery:demonios");
-				var elem := FindConfigElem(cfg_spells, "demonios");
-				elem := GetConfigStringArray (elem, "demonio");
-				answers[elementpos].demonista:= RadioGump(who, 290, 100+(len(elem)*20), "Escolha o demônio que o jogador irá compactuar", elem);
-				answers[elementpos].demonistaMagery := cint(RequestGump(who, "Entre com o Magery mínimo para estabelecer um contrato"));
-				SendSysMessageEx(who, "Novo Contrato estabelecido com sucesso!", SSM_INFO);
-			else
-				SendSysMessageEx(who, "Você removeu o contrato desta resposta: "+ answers[elementpos].demonista, SSM_INFO);
-				answers[elementpos].-demonista;
-				answers[elementpos].-demonistaMagery;
-			endif
-			npcelem.SetProp(conversation + "Options", answers);
 		elseif (question == "Restaurar Vital")
 			if (!answers[elementpos].curar)
 				answers[elementpos].curar := RadioGump(who, 200, 100+60, "Escolha a vitals:", array{"hits", "stam", "mana"});
@@ -507,71 +494,3 @@ function allconversations(who, npcelem, conversation, texto := 0)
 	return RadioGump(who, 350, 100+y, texto, newconversations);
 endfunction
 
-function contrato(who, element)
-	var cfg_demons := ReadConfigFile(":magery:demonios");
-	var elem := FindConfigElem(cfg_demons, element.demonista);
-
-	var gump := GFCreateGump();
-	GFGumpPic(gump, 15, 20, 1247);
-	GFTextCrop(gump, 70, 20+30, 150, 17, 995, "Nome: " + elem.Name);
-	GFTextCrop(gump, 70, 20+50, 150, 17, 995, "Tipo: " + elem.Type);
-	GFTextCrop(gump, 70, 20+70, 150, 17, 995, "Inimigos: " + GetConfigStringArray(elem, "inimigo"));
-	
-	GFHTMLArea(gump, 70, 20+105, 290, 170, "<BASEFONT COLOR=#330000> " + elem.termos, 0, 1);
-	
-	GFTextCrop(gump, 270, 20+30, 100, 17, 995, "Pactuar");
-	GFAddButton(gump, 320, 20+33, 9702, 9703, GF_CLOSE_BTN, 1);
-	
-	var input := GFSendGump(who, gump);
-	input := input[0];
-	
-	if (!input)
-		return;
-	endif
-	
-	var contratos := GetObjProperty(who, "contratos");
-	if (!contratos)
-		contratos := array{};
-	endif
-	foreach enemy in (GetConfigStringArray(elem, "inimigo"))
-		if (enemy in contratos)
-			SendSysMessage(who, "Você não pode realizar este contrato pois ja possui com:" + enemy );
-			return;
-		endif
-	endforeach
-	
-	foreach contract in contratos
-		if (contract == element.demonista)
-			SendSysMessage(who, "Você ja possui contrato com:" + contract);
-			return;
-		endif
-	endforeach
-	
-	SendSysMessageEX(who, "Escolha o grimório que deseja adicionar suas novas magias.", SSM_INFO);
-	var targ := Target(who);
-	
-	if (!targ || targ.objtype != 0x2253)
-		SendSysMessage(who, "Cancelado");
-		return;
-	elseif (len(GetObjProperty(targ, "spells")) >= 12)
-		SendSysMessage(who, "Você já tem o máximo de magias nesse grimório");
-		return;
-	endif
-	
-	contratos.append(elem.Name);
-	var cfg_spells := ReadConfigFile(":magery:allspells");
-	var book_spells := GetObjProperty(targ, "spells");
-	
-	foreach spell in GetConfigIntKeys(cfg_spells)
-		spell := FindConfigElem(cfg_spells, spell);
-		if (spell.Type == elem.type)
-			book_spells.append(spell.SpellId);
-		endif
-		sleepms(5);
-	endforeach
-	
-	SetObjProperty(targ, "spells", book_spells);
-	SetObjProperty(who, "contratos", contratos);
-	SendSysMessage(who, "Você fez um novo contrato!");
-	
-endfunction

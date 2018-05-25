@@ -156,7 +156,6 @@ function DoBasicPVMBattle (character, arena_stone)
       return SendSysMessageEx(character, "Não foi possível iniciar o duelo.");
    endif
 
-   print(price_keys[groupselection]);
    if (!ConsumeSubstance( character.backpack, 0xeed, price_keys[groupselection]))
       return SendSysMessageEx(character, "Sem dinheiro para pagar a vida da criatura. Você precisa de {} moedas".format(price_keys[groupselection]));
    endif
