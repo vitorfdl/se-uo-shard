@@ -53,7 +53,7 @@ function ProccessHab(who, hab)
 		return;
 	endif
 
-	if ( TS_GetCooldown(who, SplitWords(hab, " ", "_")) != error && who.cmdlevel < 3)
+	if ( TS_GetCooldown(who, StrReplace(hab, " ", "_")) != error && who.cmdlevel < 3)
 		SendSystemReport(who, "'Talento em Cooldown!'", SSM_FAIL);
 		return 1;
 	endif
@@ -81,7 +81,7 @@ function ProccessHab(who, hab)
    //    sleepms(2);
 	// endforeach
 
-	TS_StartCooldown(who, SplitWords(hab, " ", "_"), feat.cooldown);
+	TS_StartCooldown(who, StrReplace(hab, " ", "_"), feat.cooldown);
 	var e := start_script(":charactercreation:feats/{}".format(feat.script), array{who, hab, struct{ stam:=stam, mana:=mana}});
    if (e == error)
       return SendSysMessageEx(who, "Script do talento não encontrado.", SSM_FAIL);
