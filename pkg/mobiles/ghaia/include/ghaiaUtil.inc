@@ -91,8 +91,12 @@ function CopyProps(origin, destiny)
 endfunction
 
 function CopyAttributes(origin, destiny)
-    AP_SetTrueStat(destiny, "Strength", GetObjProperty(origin, "str"));
-    AP_SetTrueStat(destiny, "Dexterity", GetObjProperty(origin, "dex"));
+    var stats := GetObjProperty(origin, "stats");
+    AP_SetTrueStat(destiny, "Strength", CInt(stats.str));
+    AP_SetTrueStat(destiny, "Dexterity", CInt(stats.dex));
+    AP_SetTrueStat(destiny, "Intelligence", CInt(stats.int));
+    AP_SetTrueStat(destiny, "Wisdom", CInt(stats.wis));
+    AP_SetTrueStat(destiny, "Constitution", CInt(stats.con));
 endfunction
 
 function ghaiaObjective(npc, destiny, move_type, can_stop := 0)

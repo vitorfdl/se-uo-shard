@@ -3,7 +3,6 @@ use os;
 include "include/say";
 include ":merchants:pcconversation";
 include ":attributes:attributes";
-include ":attributes:stats";
 
 exported function CanDie(mobile)
     // if (mobile.my_template()  == ":merchants:conversation")
@@ -12,8 +11,13 @@ exported function CanDie(mobile)
     // endif
 
     if (GetObjProperty(mobile, "owner"))
-        SetObjProperty(mobile, "str", AP_GetTrueStat(mobile, "Strength"));
-        SetObjProperty(mobile, "dex", AP_GetTrueStat(mobile, "Dexterity"));
+        var stats := struct;
+    	stats.+str := AP_GetTrueStat(mobile, "Strength");
+    	stats.+dex := AP_GetTrueStat(mobile, "Dexterity");
+    	stats.+int := AP_GetTrueStat(mobile, "Intelligence");
+    	stats.+wis := AP_GetTrueStat(mobile, "Wisdom");
+    	stats.+con := AP_GetTrueStat(mobile, "Constitution");
+        SetObjProperty(mobile, "stats", stats);
     endif
 
 
