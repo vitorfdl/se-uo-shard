@@ -2,32 +2,41 @@ use uo;
 use os;
 include "include/say";
 include ":merchants:pcconversation";
+include ":attributes:attributes";
+include ":attributes:stats";
 
 exported function CanDie(mobile)
-	// if (mobile.my_template()  == ":merchants:conversation")
-	// 	var pcdata := GetConversationDataFile();
-	// 	pcdata.DeleteElement(mobile.serial);
-	// endif
+    // if (mobile.my_template()  == ":merchants:conversation")
+    // 	var pcdata := GetConversationDataFile();
+    // 	pcdata.DeleteElement(mobile.serial);
+    // endif
 
-   if (mobile.npctemplate)
-      SetObjProperty(mobile, "serial", mobile.serial);
-      SetObjProperty(mobile, "graphic", mobile.graphic);
-   endif
+    if (GetObjProperty(mobile, "owner"))
+        SetObjProperty(mobile, "str", AP_GetTrueStat(mobile, "Strength"));
+        SetObjProperty(mobile, "dex", AP_GetTrueStat(mobile, "Dexterity"));
+    endif
 
-	if (GetObjProperty(mobile, "morrendo") == 1)
-		return 0;
-	endif
 
-   if (GetObjProperty(mobile, "metamorfose"))
-      mobile.graphic := GetObjProperty(mobile, "oldgraphic");
-	endif
+    if (mobile.npctemplate)
+        SetObjProperty(mobile, "serial", mobile.serial);
+        SetObjProperty(mobile, "graphic", mobile.graphic);
+    endif
 
-	if (GetObjPRoperty(mobile, "Ultimas Palavras") != error)
-		start_script(":death:hooks/speaklastwords", mobile);
-		//if (e == error)
-		//	printtextabove(mobile, "error "+ e);
-		//endif
-		return 0;
-	endif
-	return 1;
+    if (GetObjProperty(mobile, "morrendo") == 1)
+        return 0;
+    endif
+
+    if (GetObjProperty(mobile, "metamorfose"))
+        mobile.graphic := GetObjProperty(mobile, "oldgraphic");
+    endif
+
+    if (GetObjPRoperty(mobile, "Ultimas Palavras") != error)
+        start_script(":death:hooks/speaklastwords", mobile);
+        //if (e == error)
+        //	printtextabove(mobile, "error "+ e);
+        //endif
+        return 0;
+    endif
+
+    return 1;
 endfunction
