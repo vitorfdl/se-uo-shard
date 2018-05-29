@@ -24,7 +24,8 @@ function ghaiaRessurect(targ, notame := 0)
       EquipItem(npc, new_pack);
    endif
 
-	CopyProps(targ, npc);
+   CopyProps(targ, npc);
+   CopyAttributes(targ, npc);
    RestartScript(npc);
    SetName(npc, GetObjProperty(npc, "originalname"));
 
@@ -87,6 +88,15 @@ function CopyProps(origin, destiny)
 	foreach prop in propnames
 		SetObjPRoperty(destiny, prop, GetObjProperty(origin, prop));
 	endforeach
+endfunction
+
+function CopyAttributes(origin, destiny)
+    var stats := GetObjProperty(origin, "stats");
+    AP_SetTrueStat(destiny, "Strength", CInt(stats.str));
+    AP_SetTrueStat(destiny, "Dexterity", CInt(stats.dex));
+    AP_SetTrueStat(destiny, "Intelligence", CInt(stats.int));
+    AP_SetTrueStat(destiny, "Wisdom", CInt(stats.wis));
+    AP_SetTrueStat(destiny, "Constitution", CInt(stats.con));
 endfunction
 
 function ghaiaObjective(npc, destiny, move_type, can_stop := 0)
