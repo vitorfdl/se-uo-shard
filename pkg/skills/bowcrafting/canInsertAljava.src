@@ -14,11 +14,7 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 	movetype       := movetype;
 	inserttype     := inserttype;
 
-	//se for projetil ok
-	if ( item.graphic == 0x1bfb || item.graphic == 0xf3f  )
-
-	else //se não for projetil
-
+	if (item.graphic != 0x1bfb && item.graphic != 0xf3f)
 		if (book.objtype == 0x3bd7 ) //mas for uma aljava com bainha
 			if ( item.usescript == ":combat:useScript/bladed" ) // pode por uma espada
 				var items := enumerateitemsincontainer(book);
@@ -35,7 +31,6 @@ program on_insert(who, book, movetype, inserttype, item, existing_stack, amt);
 			MoveItemToContainer(item, who.backpack);
 			return 0;
 		endif
-
 	endif
 
 //	var items := EnumerateItemsInContainer( book );
