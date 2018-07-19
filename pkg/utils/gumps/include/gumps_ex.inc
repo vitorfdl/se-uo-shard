@@ -347,3 +347,18 @@ function GFWordWrap(text, pixels)
 	
 	return wrap_lines;	
 endfunction
+
+
+	var select := GFCreateGump();
+	
+	GFPage(select, 0);
+	GFResizePic(select, -2, -1, 9200, 1494, 920);
+	GFAddAlphaRegion(select, 1, 2, 1492, 912);
+	GFSetRadioGroup(select, 0);
+	GFRadioButton(select, 1, 3, 1210, 1210, 0, 0);
+	GFRadioButton(select, 53, 4, 1210, 1210, 0, 0);
+	GFRadioButton(select, 52, 49, 1210, 1210, 0, 0);
+	GFRadioButton(select, 0, 48, 1210, 1210, 0, 0);
+	GFTextLine(select, 341, 25, Ultima.Hue, "Clique em um botão para reposicionar");
+
+	GFSendGump(who, select);

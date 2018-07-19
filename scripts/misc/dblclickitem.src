@@ -18,4 +18,8 @@ include "include/say";
 program core_skillWin(who, item)
   EraseObjProperty(who, "IsMeditating");
   EraseObjProperty(who, "HealTimer");
+
+  if (item.tile_layer && item.container)
+      EquipItem( who, item );
+  endif
 endprogram

@@ -39,23 +39,7 @@ exported function isRace(who, race)
 endfunction
 
 exported function SkillList(who)
-	var attributes := AP_ListAttributesByType("Skill");
-	var skill_list := array{};
-	foreach attrib_name in attributes
-		if (AP_GetTrueSkill(who, attrib_name) >= 1)
-			skill_list += attrib_name;
-		endif
-		sleepms(2);
-	endforeach
-
-	// var chardata   := GetObjProperty(who, "chardata");
-	// var skill_list := chardata.Skills;
-
-	// if (!skill_list)
-	// 	skill_list := array{};
-	// endif
-	
-	return skill_list;
+   //TODO: Remover
 endfunction
 
 exported function GetExp(who)
@@ -67,7 +51,7 @@ endfunction
 exported function GetTotalExp(who)
 	var chardata := GetObjProperty(who, "chardata");
    if (!chardata) chardata := dictionary{}; endif
-	return cint(chardata.exppoints) + cint(chardata.storedexp);
+	return cint(chardata.exppoints);
 endfunction
 
 exported function SetExp(who, points)
