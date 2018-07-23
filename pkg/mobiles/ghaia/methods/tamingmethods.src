@@ -39,10 +39,6 @@ exported function SetPetProperties(pet, new_props)
       props["points"] := cint(new_props["points"]);
    endif   
    
-   if (new_props["commands"] && typeOf(new_props["commands"]) == "Dictionary")
-      props["commands"] := new_props["commands"];
-   endif   
-
    if (new_props["talents"] && typeOf(new_props["talents"]) == "Struct")
       props["talents"] := new_props["talents"];
    endif 
@@ -76,11 +72,6 @@ exported function InitPetProperties(pet, reset := 0)
       props.personality := old_props.personality;
    endif
    
-   props.commands := GetConfigStringDictionary(pet_elem, "command");
-   foreach command in (props.commands.keys())
-      props.commands[command] := cint(props.commands[command]);
-      sleepms(2);
-   endforeach
    props.loyalt := 0;
    props.points := 0;
    props.exp    := 0;
@@ -170,17 +161,6 @@ exported function SetExp(pet, amount := 1)
    return 1;
 endfunction
 
-exported function SetCommand(pet, command, amount := 1)
-   var props := GetObjProperty(pet, "info");
-   var command_list := props.commands;
-   if (!command_list[command] || command_list[command] >= 5 || command_list[command] < 0) return 0; endif;
-   
-   command_list[command] += amount;
-   var update := struct{ "commands" := command_list };
-   SetPetProperties(pet, update);
-   return 1;
-endfunction
-
 exported function HaveTalent(pet, talent)
    var props := GetObjProperty(pet, "info");
    if (talent in props.talents)
@@ -204,30 +184,6 @@ exported function SetHist(pet, attr, p)
 
    hist[attr] := cint(hist[attr]) + p;
    SetObjProperty(pet, "pet_hist", hist);
-endfunction
-
-exported function rollPetDice(pet, command, tame_difficulty)
-   if ((pet.master).cmdlevel >= 2 || GetObjProperty(pet, "summoned")) return 1; endif;
-
-   var props := GetPetProperties(pet);
-   if (!props.commands) return; endif;
-
-   var command_list := props.commands;
-   if (!command_list[command]) return; endif;
-
-   var cmd_level := command_list[command];
-   if (!cmd_level || cmd_level == 0) 
-      return;
-   elseif (cmd_level >= 5)
-      return 1;
-   endif
-
-   var dice_roll := rollAttrDice(pet.master, WISDOM) + GetSkillBonus(pet.master, TRATO_ANIMAIS);
-   if (dice_roll >= tame_difficulty-cmd_level)
-      return 1;
-   endif
-
-   return 0;
 endfunction
 
 exported function my_template(pet)

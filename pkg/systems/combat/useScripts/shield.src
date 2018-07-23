@@ -1,0 +1,28 @@
+use uo;
+
+include "include/say";
+include ":attributes:attributes";
+include ":charactercreation:feats";
+include ":timedscripts:timedScripts";
+include "include/facings";
+include "include/damage";
+include ":combat:combat";
+
+program block(who, shield)
+   if (shield != who.shield)
+      return;
+   endif
+   
+   if (!shield)
+		return SendSysMessageEX(who, "Você precisa estar equipando um escudo ou espada gigante!", SSM_FAIL);
+   else if (TS_GetCooldown(who, "dodge_block"))
+		return SendSysMessageEX(who, "Bloqueio em Cooldown!", SSM_FAIL);
+   endif
+
+   var shield_cfg = GetItemCFGInfo(mobile, shield);
+   var shield_cd = cint(shield_cfg.blockcooldown);
+   if (!shield_cd) shield_cd = 15; endif
+
+   TS_StartCooldown(who, "dodge_block", shield_cd, 0, "Bloqueio está disponivel novamente.");
+   TS_StartCooldown(who, "block", 2);
+endprogram 

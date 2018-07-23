@@ -200,22 +200,6 @@ function Fight(opponent, alerted := 0)
          EraseObjProperty(me, "#Casting");
       endif
 
-      if (npccfgfile.Category == "moriquendi" && !GetObjProperty(me, "noheal"))
-         if (!healing_amount)
-            healing_amount := cdbl(AP_GetVitalMaximumValue(me, HITS)) * 0.4;
-         endif
-
-         var last_autoheal := cint(GetObjProperty(me, "demon_heal"));
-         if (last_autoheal <= ReadGameClock())
-            var reduce_heal := 0;
-            if (TS_GetCooldown(me, "divine_damage"))
-               reduce_heal := cdbl(GetObjProperty(me, "#reduce_heal")); 
-            endif
-            SetObjProperty(me, "demon_heal", ReadGameClock() + 1);
-            HealFLS(me, cint(healing_amount - (healing_amount * reduce_heal)));
-         endif
-      endif
-
       if ("openLevers" in custombehaviors)
          var levers := ListItemsNearLocationOfType(me.x, me.y, me.z, 8, 0x108c);
          foreach lever in levers

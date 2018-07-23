@@ -31,72 +31,40 @@ include ":fls_core:packets";
  */
 enum DAMAGE_TYPES
 	DMG_FORCED   := -1, // Ignores resistance
-	DMG_PHYSICAL := "Físico",
-	DMG_FIRE     := "Fogo",
-	DMG_COLD     := "Gelo",
-	DMG_POISON   := "Veneno",
-	DMG_ENERGY   := "Eletrecidade",
-	DMG_PIERCING := "Perfuração",
-	DMG_SLASH    := "Corte",
-	DMG_BLUDGE   := "Concussão",
+	DMG_PHYSICAL := "physical",
+	DMG_FIRE     := "fire",
+	DMG_COLD     := "cold",
+	DMG_POISON   := "poison",
+	DMG_ENERGY   := "energy",
 endenum
 
-function SelectAttribute(attacker, attacker_weapon)
-	var attribute := STRENGTH;
-	if (attacker_weapon.Attribute)
-		attribute := attacker_weapon.Attribute;
-		// Escolhe maior atributo para versatilidade
-		if (attribute == "Versatil")
-			var dex := AP_GetTrueStat(attacker, DEXTERITY);
-			var str := AP_GetTrueStat(attacker, STRENGTH);
-			if (str < dex)
-				attribute := DEXTERITY;
-			else
-				attribute := STRENGTH;
-			endif
-		endif
-	endif
-	return attribute;
-endfunction
 
 function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
-	if (wpn_elem.dicedmg)
-		var dmg       := wpn_elem.dicedmg;
-      if (GetObjProperty(attacker, "dicedmg"))
-         dmg := GetObjProperty(attacker, "dicedmg");
-      endif
-		var attribute := wpn_elem.Attribute;
-		return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
-	endif
-
    if (!wpn) wpn := attacker.weapon; endif
 
-   var attribute := SelectAttribute(attacker, attacker.weapon);
-   var dmg       := wpn_elem.Damage;
-   if (GetObjProperty(attacker, "dicedmg"))
-      dmg := GetObjProperty(attacker, "dicedmg");
+   if (!wpn_elem)
+      wpn_elem := GetItemCFGInfo(attacker, weapon);
    endif
-   dmg :=  RandomDiceRoll(cstr(dmg)) + AP_GetStat(attacker, attribute, RETURN_BONUS) + GetAttackerDMGBonus(attacker);
+	// if (wpn_elem.dicedmg)
+	// 	var dmg       := wpn_elem.dicedmg;
+   //    if (GetObjProperty(attacker, "dicedmg"))
+   //       dmg := GetObjProperty(attacker, "dicedmg");
+   //    endif
+	// 	var attribute := wpn_elem.Attribute;
+	// 	return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
+	// endif
 
-   return ( dmg + attacker.weapon.dmg_mod );
-endfunction
+   // if (!wpn) wpn := attacker.weapon; endif
 
-function GetAttackerDMGBonus(attacker)
-   var bonus := 0;
+   // var attribute := SelectAttribute(attacker, attacker.weapon);
+   var dmg   := RandomDiceRoll(wpn_elem.Damage);
+   dmg += wpn.dmg_mod;
 
-   // if (wpn_a_elem.WeaponType == "sword" && HaveFeat(attacker, "Mestre das Lâminas"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // elseif (wpn_a_elem.WeaponType == "arco" && HaveFeat(attacker, "Arqueiro Experiente"))
-   //    bonus += 1;
-   // endif
-      
-   return bonus;
+   if (wpn_elem.LowDamage)
+      dmg -= cint(wpn_elem.LowDamage);
+   endif
+
+   return dmg;
 endfunction
 
 function HealFLS(targ, amt, show_heal := 1)
@@ -232,19 +200,12 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	return dmg;
 endfunction
 
-function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
+function DamageFLS(defender, dmg, type := DMG_FORCED, defense, source := 0)
 	dmg := Cint(dmg);
-	
-	if (type != DMG_FORCED && checkResist(defender, type) > 0)
-		dmg := cint(Floor(dmg/2));
-	elseif (type != DMG_FORCED && checkResist(defender, type) < 0)
-		dmg := cint(Floor(dmg*2));
-	elseif (type != DMG_FORCED && checkImmunity(defender, type))
-		dmg := 0;
-		SendSystemReport(defender, "*Imune*", SSM_FAIL);
-		if (source) SendSystemReport(defender, "*Imune*", SSM_FAIL, source); endif
-		return;
-	endif
+
+   if (defense && type != DMG_FORCED)
+      dmg := cint(dmg - (dmg * (defense / 100)));
+   endif
 
    if (defender.npctemplate && source.npctemplate)
       var guild_id := GetObjProperty(defender, "guild");
@@ -256,14 +217,6 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
       endif
    endif
 
-   var dmg_reduce := GetObjProperty(defender, "dmg_reduce");
-   if (dmg_reduce)
-      if (type in dmg_reduce.keys())
-         dmg := dmg - cint((cdbl(dmg) * (cdbl(dmg_reduce[type]) / 100)));
-      endif
-   endif
-   
-	DisplayDamage(defender, cint(dmg), source);
 
    var barrier := cint(GetObjProperty(defender, "#barrier"));
    if (barrier > 0)
@@ -277,104 +230,48 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
       endif
    endif
 
+	DisplayDamage(defender, cint(dmg), source);
 	ApplyRawDamage(defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 	
 	if (source && type != DMG_FORCED)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
-
-		var cleric_healing := cint(GetObjProperty(source, "cleric_spell"));
-      var chance := 70;
-      if (cleric_healing == source.serial)
-         chance := 25;
-      endif
-		if (cleric_healing && dmg >= 1 && Randomint(101) <= chance)
-         var bencao := GetObjProperty(source, "#bencaosacrificio");
-         if (bencao);
-            var mobs := ListMobilesNearLocation(source.x, source.y, source.z, 2);
-            foreach mob in mobs
-               if (CheckIfIsAlly(source, mob) || mob == source)
-			         HealFLS(mob, Floor(dmg/2), source);
-               endif
-               sleepms(2);
-            endforeach
-            EraseObjProperty(source, "#bencaosacrificio");
-            return dmg;
-         endif
-		   var targ := SystemFindObjectBySerial(cleric_healing);
-			if (source != targ && Distance(source, targ) > 8 && targ.connected && !targ.dead)
-				targ := source;
-				SetClericHeal(source, targ);
-			endif
-
-			HealFLS(targ, Floor(dmg/2), source);
-		endif
 	endif
 
 	return dmg;
 endfunction
 
-function checkResist(defender, damage_type)
-	var resist_list        := array{};
-	var vulnerability_list := array{};
-	if (!defender.npctemplate)
-		var chardata := GetObjProperty(defender, "resist_list");
-		if (chardata)
-			foreach resist in (chardata.Keys())
-				if (chardata[resist] != 0)
-					resist_list += resist;
-				endif
-			endforeach
-		endif
-	else
-		var npcelem := NPC_GetNPCConfig(defender);
-		resist_list := GetConfigStringArray(npcelem, "Resistencia");
-		if (GetObjProperty(defender, "resists"))
-			resist_list += GetObjProperty(defender, "resists");
-		endif
-		vulnerability_list := GetConfigStringArray(npcelem, "Vulnerabilidade");
-		if (GetObjProperty(defender, "vulnerabilities"))
-			vulnerability_list += GetObjProperty(defender, "vulnerabilities");
-		endif
-	endif
+// function checkResist(defender, damage_type)
+// 	var resist_list        := array{};
+// 	var vulnerability_list := array{};
+// 	if (!defender.npctemplate)
+// 		var chardata := GetObjProperty(defender, "resist_list");
+// 		if (chardata)
+// 			foreach resist in (chardata.Keys())
+// 				if (chardata[resist] != 0)
+// 					resist_list += resist;
+// 				endif
+// 			endforeach
+// 		endif
+// 	else
+// 		var npcelem := NPC_GetNPCConfig(defender);
+// 		resist_list := GetConfigStringArray(npcelem, "Resistencia");
+// 		if (GetObjProperty(defender, "resists"))
+// 			resist_list += GetObjProperty(defender, "resists");
+// 		endif
+// 		vulnerability_list := GetConfigStringArray(npcelem, "Vulnerabilidade");
+// 		if (GetObjProperty(defender, "vulnerabilities"))
+// 			vulnerability_list += GetObjProperty(defender, "vulnerabilities");
+// 		endif
+// 	endif
 
-	if (damage_type in resist_list)
-		return 1;
-	endif
+// 	if (damage_type in resist_list)
+// 		return 1;
+// 	endif
 
-	if (damage_type in vulnerability_list)
-		return -1;
-	endif
+// 	if (damage_type in vulnerability_list)
+// 		return -1;
+// 	endif
 
-	return 0;
-endfunction
-
-function checkImmunity(defender, damage_type)
-	var resist_list := array{};
-	if (!defender.npctemplate)
-		var chardata := GetObjProperty(defender, "imunity_list");
-		if (chardata)
-			foreach resist in (chardata.Keys())
-				if (chardata[resist] != 0)
-					resist_list += resist;
-				endif
-			endforeach
-		endif
-	else
-		var npcelem := NPC_GetNPCConfig(defender);
-		resist_list := GetConfigStringArray(npcelem, "Imunidade");
-	endif
-
-   if (GetObjProperty(defender, "#ethereal"))
-      resist_list.append(DMG_BLUDGE);
-      resist_list.append(DMG_PHYSICAL);
-      resist_list.append(DMG_PIERCING);
-      resist_list.append(DMG_SLASH);
-   endif
-
-	if (damage_type in resist_list)
-		return 1;
-	endif
-
-	return 0;
-endfunction
+// 	return 0;
+// endfunction

@@ -31,9 +31,6 @@ function possess(me, npc)
 	endforeach 
 	
 	clonar(me, npc);
-   if (npc.npctemplate["moriquendi"])
-      TS_StartTimer(me, "regenmoriquendi", 200);	
-   endif
 
 	DestroyItem(me.backpack);
 	var bolsa := CreateItemAtLocation(5384, 923, 0, 0x9B2);
@@ -129,7 +126,6 @@ function unpossess(me, freeze :=1)
 		oldnpc.frozen := 1;
 	endif
 
-   TS_LowerDuration(me, "regenmoriquendi", -1);
    EraseObjProperty(me, "metamorfose");
 
 	AP_RefreshVitals(me);

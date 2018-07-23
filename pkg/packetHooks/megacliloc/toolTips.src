@@ -136,57 +136,25 @@ exported function MegaCliloc( who, byref packet )
             xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((40-deathpoint)/10));
          endif
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
-			var cond := GetCondition(item);
-         xDesc += "Condição: {}<br>".format(cond);
+         if (item.hp <= 0 && item.maxhp) xDesc += "{}{}<br>{}".format(RED, "Quebrado", WHITE); 
          xDesc += "Qualidade: {}<br>".format(getQuality(item.quality));
 
 			var cfg  := ReadConfigFile(":*:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);
-			if (elem.DamageType)
-				xDesc += "Tipo: {}<br>".format(elem.DamageType);
-			endif
-         if (elem.Pericia && !item.isMagicWeapon())
-				xDesc += "Perícia: {}".format(StrReplace(elem.Pericia, "_", " "));
-            if (elem.ReqPericia)
-               xDesc += " {}".format(convertToRoman(cint(elem.ReqPericia)));
-            endif
-            xDesc += "<br>";
+			if (elem.Damage)
+				xDesc += "Poder: {}<br>".format(cint(elem.Damage) + item.dmg_mod);
          endif
-         
-         // if (elem.WeaponType && !item.isMagicWeapon())
-			// 	xDesc += "Categoria: {}<br>".format(getWeaponType(elem.WeaponType));
-         // endif
+			if (elem.DamageType)
+				xDesc += "Tipo de Dano: {}<br>".format(elem.DamageType);
+			endif
 
 			if (item.isA(POLCLASS_WEAPON))
-				if (elem.strrequired)
-					xDesc += "Força Mínima: {}<br>".format(elem.strrequired);
-				endif
-            if (elem.intrequired)
-					xDesc += "Int. Mínima: {}<br>".format(elem.intrequired);
-            endif
-
-				// if (who.cmdlevel > 3)
-				// 	xDesc += "Dano: {}<br>".format(elem.damage);
-				// 	xDesc += "Velocidade: {}<br>".format(elem.speed);
-				// endif
-
-				xDesc += "Atributo: {}<br>".format(TranslateAtt(cstr(item.attribute)));
-				// xDesc += "Velocidade: " + GetVelStringDesc(elem, item) + "";
-				var crits := GetCriticalInfo(elem);
-				if (crits != "")
-					xDesc += RED + crits;
-				endif
-
 				var hits :=  GetHitsInfo(elem);
 				if (hits != "")
 					xDesc += ORANGE + hits;
 				endif
 
 			elseif (item.isA(POLCLASS_ARMOR))
-				if (cint(elem.strrequired) > 0)
-					xDesc += "Força Mínima: {}<br>".format(elem.strrequired);
-				endif
-
 				if (who.cmdlevel > 3)
 					xDesc += "AR: {}<br>".format(elem.AR);
 				endif
@@ -211,20 +179,9 @@ exported function MegaCliloc( who, byref packet )
          endif
 		endif
 
-      var elementpower := GetObjProperty(item, "elementpower");
-      if (who.isCaster() && elementpower != error)
-         xDesc += "{}Círculo {}{}<br>".format(WHITE, ORANGE, cint(elementpower));
-      endif
-      
       var madeof := GetObjProperty(item, "madeof");
       if (madeof)
          xDesc += "{}Feito com: {}{}<br>".format(WHITE, ORANGE, madeof);
-      endif
-
-      var inscripted := GetObjProperty(item, "inscripted");
-      if (inscripted && typeof(inscripted) != "String")
-         inscripted := GetItemEvent(inscripted);
-         xDesc += "{} Runa {}<br>".format(BLUE, inscripted.name);
       endif
 
 		var pplmage := GetObjProperty(item, "magicwho"); //research
@@ -234,38 +191,6 @@ exported function MegaCliloc( who, byref packet )
             if (pocaoname)
                xDesc +="{}{}<br>".format(WHITE, pocaoname);
             endif
-
-				if (item.isMagicWeapon())
-					var charges := cint(GetObjProperty(item, "charges"));
-					xDesc += WHITE + "Cargas: {}<br>".format(charges);
-				endif
-
-            xDesc += GetWeaponSpellList(item);
-				// var mods := GetObjProperty(item, "equip");
-				// if (mods != error)
-				// 	foreach mod in (mods.keys())
-				// 		xDesc += "{}{}<br>".format(BLUE, getbonusname(mod));
-				// 	endforeach
-				// endif
-
-				// if (item.dmg_mod > 0 )
-				// 	xDesc += BLUE + "Bônus Dano<br>";
-				// endif
-				// if (item.hp_mod > 0)
-				// 	xDesc += BLUE + "Bônus Item PVs";
-				// endif
-				// var hitsscripts := GetObjProperty(item, "HitScripts");
-				// if (hitsscripts != error)
-				// 	foreach hits in hitsscripts
-				// 		if (hits == ":combat:weaponHitScripts/FireHit")
-				// 			xDesc += "{}Dano de Fogo<br>".format(BLUE);
-				// 		elseif ( hits == ":combat:weaponHitScripts/IceHit")
-				// 			xDesc += "{}Dano de Gelo<br>".format(BLUE);
-				// 		elseif ( hits == ":combat:weaponHitScripts/LightningHit")
-				// 			xDesc += "{}Dano de Energia<br>".format(BLUE);
-				// 		endif
-				// 	endforeach
-				// endif
 			endif
 		endif
 		

@@ -12,73 +12,15 @@ function TranslateAtt(attribute)
 endfunction
 
 function getQuality(num)
-	if (num >= 1.1)
-		return "Excepcional";
-	elseif(num  > 0.8)
+	if (num >= 1)
+		return "Exótico";
+	elseif(num  >= 0.8)
+		return "Raro";
+	elseif(num  >= 0.5)
+		return "Bom";
+	else
 		return "Normal";
-	else
-		return "Ruim";
 	endif
-endfunction
-
-function getWeaponType(type)
-   var res;
-   case (type)
-      "axe": res := "Machado"; break;
-      "sword": res := "Espada"; break;
-      "greatsword": res := "Espada Gigante"; break;
-      "spear": res := "Lança"; break;
-      "dagger": res := "Adaga"; break;
-      "dualsword": res := "Arma Dupla"; break;
-      "bow": res := "Arco"; break;
-      "crossbow": res := "Besta"; break;
-      "mace": res := "Maça"; break;
-      "halberd": res := "Arma de Haste"; break;
-   endcase
-
-   return res;
-endfunction
-
-
-function getCondition(item)
-	var c := cdbl(item.hp) / cdbl(item.maxhp);
-
-	if (c > 0.9)
-		return "Boa";
-	elseif (c > 0.6)
-		return "Pouco Danificada";
-	elseif (c > 0.3)
-		return "Bastante Danificada";
-	else
-		return "Quebradiça";
-	endif
-endfunction
-
-function TranslateCritical(crit)
-	if (crit == "damage3")
-		return "Dano Triplo";
-	elseif (crit == "damage2")
-		return "Dano Duplo";
-	elseif (crit == "armorignore")
-		return "Ignorar Armadura";
-	elseif ( crit == "stun")
-		return "Ataque Atordoante";
-	elseif (Crit == "bleed")
-		return "Alvejar Ponto Vital";
-	endif
-endfunction
-
-function GetCriticalInfo(entry)
-	var criticals := GetconfigStringArray(entry, "CriticalHitScripts");
-
-	var critstr := "";
-	
-	var str;
-	foreach crit in criticals
-		critstr := critstr + TranslateCritical(lower(str)) + "";
-	endforeach
-
-	return critstr;
 endfunction
 
 function TranslateHit(crit)
@@ -102,10 +44,12 @@ function TranslateHit(crit)
 endfunction
 
 function GetHitsInfo(entry)
-	var criticals := GetconfigStringArray(entry, "HitScripts");
 	var critstr := "";
-	
-	foreach crit in criticals
+	var active := GetconfigString(entry, "ActiveScript");
+   if (active) critstr += TranslateHit(lower(active)) "<br>"; endif
+
+	var passives := GetconfigStringArray(entry, "HitScripts");
+	foreach crit in passives
 		critstr := critstr + TranslateHit(lower(crit)) + "<br>";
 	endforeach
 
@@ -113,20 +57,14 @@ function GetHitsInfo(entry)
 endfunction
 
 function getVelStringDesc(elem, item)
-	if(speed >= 39)
-		return "Extrema";
-	elseif(speed >= 34)
-		return "Muito rapida";
-	elseif(speed >= 30)
-		return "Rapida";
-	elseif(speed >= 26)
-		return "Mediana";
-	elseif(speed >= 21)
-		return "Lenta";
+	if(speed >= 55)
+		return "Rápido";
+	elseif(speed >= 40)
+		return "Mediano";
 	elseif(speed >= 20)
-		return "Lentissima";
+		return "Lento";
 	else
-		return "Extremamente Lenta";
+		return "Muito Lento";
 	endif
 endfunction
 
@@ -151,51 +89,4 @@ function GetItemType(item)
 	endif
 
    return item_type;
-endfunction
-
-function GetWeaponSpellList(item)
-   var return_text := "";
-   var spell_list := GetObjProperty(item, "spell_list");
-   if (spell_list != error && spell_list.size() > 0)
-      var active_spell := GetObjProperty(item, "active_spell");
-      var lost_slots := 0;
-      var spell_levels := dictionary{};
-      return_text += WHITE;
-      
-      foreach spell in spell_list
-         sleepms(2);
-         if (spell == 0)
-            lost_slots += 1;
-            continue;
-         endif
-
-         spell_levels[spell] := cint(spell_levels[spell]) + 1;
-      endforeach
-
-      foreach spell in (spell_levels.keys())
-         sleepms(2);
-         if (spell == active_spell)
-            return_text += BLUE;
-         endif
-
-         var spell_name := GetSpellName(spell);
-         spell_name["Encantamento"] := "Enc.";
-         return_text += "{} {}<br>".format(spell_name, convertToRoman(spell_levels[spell]));
-
-         if (spell == active_spell)
-            return_text += WHITE;
-         endif
-      endforeach
-      
-      if (lost_slots > 0)
-         return_text += "{}x {}SLOT PERDIDO<br>".format(lost_slots, LIGHTGRAY);
-      endif
-
-      var total_slots := GetObjProperty(item, "magicslot") - spell_list.size();
-      if (total_slots > 0)
-         return_text += "{}{}x SLOT VAZIO<br>".format(total_slots, LIGHTGRAY);
-      endif
-   endif
-
-   return return_text;
 endfunction

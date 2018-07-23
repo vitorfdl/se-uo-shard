@@ -87,256 +87,61 @@ program Attack(params)
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
    elseif ( attacker.hidden)
-      attacker.hidden := 0;
-		attacker.SetAchievement("sneak", 1);
-      if (rollAttrDice(defender, WISDOM) + GetSkillBonus(attacker, PERCEPCAO)  <= rollAttrDice(attacker, DEXTERITY) + GetSkillBonus(attacker, FURTIVIDADE))
-         SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
-         bonus_atk += 1;
-      endif
+      SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
+      bonus_atk += 1;
 	endif
 
-	var attacker_roll := GetAttackerChance(attacker, defender);
-   if (weapon.isBow() && ((attacker_roll.critical < 0 && AP_GetTrueSkill(attacker, wpn_a_elem.Pericia) < 3) || TS_GetTimerInfo(attacker, "hallucination")))
+   if (weapon.isBow() && TS_GetTimerInfo(attacker, "hallucination")))
       SendSysMessageEx(attacker, "Você erra o alvo", SSM_FAIL);
       var mobiles := ListMobilesNearLocation(defender.x, defender.y, defender.z, 2);
       mobiles := RemoveFromArray(mobiles, attacker);
       defender := mobiles.randomentry();
-      attacker_roll := GetAttackerChance(attacker, defender);
    endif
 
-   var attack_chance := attacker_roll.dice;
+   if (TS_GetCooldown(attacker, "dodge") || (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow()) )
+		MissHit(attacker, defender)
+      PrintText(attacker, "ESQUIVA", SSM_FAIL);
+      return;
+   elseif (TS_GetCooldown(attacker, "block"))
+		PlayHitSounds(attacker, defender);
+      PrintText(attacker, "BLOQUEIO", SSM_FAIL);
+      return;
+	endif
 
 	var armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
 	armor     := CS_SelectArmored(armor);
 
-	//Only calculate defender CA if fail/success is not sure
-	var defender_CA   := 0;
-	if (GetObjProperty(attacker, "#attackfail") == 1)
-		EraseObjProperty(attacker, "#attackfail");
-		defender_CA := 100;
-	elseif (GetObjProperty(defender, "#defensefail") == 1)
-		EraseObjProperty(defender, "#defensefail");
-	else
-		defender_CA := GetDefenderCA(defender, armor, attacker);
-	endif
-
-	//Arrow repulse magic
-	if (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow())
-		defender_CA := 100;
-	endif
-
 	PlayAttackAnimation(attacker, wpn_a_elem);
 
-   if (wpn_a_elem.WeaponType)
-      attacker.SetAchievement(wpn_a_elem.WeaponType, 1);
-   endif
-
    if ( GetEquipmentByLayer(defender, LAYER_MOUNT) )
-      var roll_mount := rollAttrDice(defender, DEXTERITY) + getSkillBonus(defender, MONTARIA);
-      if (roll_mount <= 23)
-         MP_UnMount(defender);
-      endif
+      MP_UnMount(defender);
    endif
 
-	//ACERTOU
-	if ( attack_chance > defender_CA )
-		// if ( HaveFeat(attacker, "golpedesleal") && IsBehind(attacker, defender.x, defender.y) )
-		// 	if (RandomInt(10) < 3)
-		// 		TS_StartTimer(defender, "paralysis", 2);
-		// 	enew\a1,f
-		// endif
-		WearDownWeapon(attacker);
-		PlayHitSounds(attacker, defender);
-		var dmg := CalculateRawDamage(attacker, wpn_a_elem, attacker.weapon);
-		ExpGain(attacker, defender_CA, attack_chance);
+   PlayHitSounds(attacker, defender);
+   var dmg := CalculateRawDamage(attacker, wpn_a_elem, attacker.weapon);
+   ExpGain(attacker, defender_CA, attack_chance);
 
-		if (!defender.npctemplate && defender.shield)
-         if (wpn_a_elem.ProjectileAnim)
-            defender.SetAchievement("ragendshield", 1);
-         else
-			   defender.SetAchievement("shield", 1);
-         endif
-		endif
+   // if (!defender.npctemplate && defender.shield)
+   //    if (wpn_a_elem.ProjectileAnim)
+   //       defender.SetAchievement("ragendshield", 1);
+   //    else
+   // 	   defender.SetAchievement("shield", 1);
+   //    endif
+   // endif
 
-      attacker_roll.two_dice_success := (attacker_roll.two_dice > defender_CA);
-		Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, attacker_roll, wpn_a_elem });
-
-	else //ERROU O ATAQUE
-		if ( weapon.isBow() && !attacker.npctemplate )
-			ArrowRecovery(attacker, defender);
-		endif
-
-		EraseObjProperty(attacker, "movement");
-
-      if (!defender.npctemplate && defender.shield)
-         WearDownArmor(defender, defender.shield);
-      elseif (!defender.npctemplate && armor)
-		   WearDownArmor(defender, armor);
-      endif
-
-		var armor_elem := GetItemCFGInfo(defender, armor);
-		// Com armadura leve tem 40% de chance de dar miss
-		if ((!armor_elem.ArmorDexLimit && RandomInt(100) <= 20) || RandomInt(100) <= 20)
-			PlayMissSound(attacker);
-		else
-			PlayHitSounds(attacker);
-			WearDownWeapon(attacker);
-		endif
-	endif
+   Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, dmg, wpn_a_elem });
 
 	return 1;
 endprogram
 
-// Rola o dado de ataque
-function GetAttackerChance(attacker, defender)
-	var dice_gain := bonus_atk;
-	if ( !attacker.npctemplate )
-		if ( GetEquipmentByLayer(attacker, LAYER_MOUNT))
-			dice_gain -= 1;
-		endif
-
-      if (weapon.isBow())
-         if (!HaveLightNear(defender))
-            attacker.SetAchievement("shoot_night", 1);
-            dice_gain -= 1;
-         endif
-
-         if (wpn_a_elem.medrange)
-            if (Distance(attacker,defender) > cint(wpn_a_elem.medrange))
-               dice_gain -= 1;
-            endif
-         endif
-      endif
-
-      if (weapon.isMagicWeapon())
-         if (!HaveLightNear(defender))
-            dice_gain -= 1;
-         endif
-      endif
-	endif
-
-	if (GetObjProperty(attacker, "#attackbonus" ) || GetObjProperty(attacker, "hitbonus") )
-		dice_gain += 1;
-	endif
-
-   if (GetObjProperty(attacker, "#attack_disadvantage") || GetObjProperty(attacker, "#blinded"))
-		dice_gain -= 1;
+function MissHit(attacker, defender)
+   if ( weapon.isBow() && !attacker.npctemplate )
+      ArrowRecovery(attacker, defender);
    endif
 
-   // if (HaveFeat(attacker, "Primeiro Golpe"))
-   //    var hited := GetObjProperty(defender, "#hited");
-   //    if (!hited) hited := array{}; endif
-   //    if (!(attacker.serial in hited))
-   //       dice_gain += 1;
-   //       hited.append(attacker.serial);
-   //       SetObjProperty(defender, "#hited", hited);
-   //    endif
-   // endif
+   EraseObjProperty(attacker, "movement");
 
-	if (!IsFacing(defender, attacker.x, attacker.y))
-      if (AP_GetTrueSkill(defender, ARMADURA_PESADA) < 7 )
-		   dice_gain += 1;
-      endif
-      
-		if (!defender.npctemplate)
-			defender.SetAchievement("backstabed", 1);
-		endif
-
-		if (!attacker.npctemplate)
-			attacker.SetAchievement("backstab", 1);
-		endif
-	endif
-
-   dice_gain += GetAttackerFeatPenalty(attacker, defender);
-   
-   var marca := GetObjProperty(attacker, "#marca_inabalavel");
-   if (marca && marca != defender.serial)
-      dice_gain := -1;
-   endif
-
-
-	var attribute := "Strength";
-	var bonus := 0;
-	if (!attacker.npctemplate)
-		// Verifica se arma tem atributo
-		attribute := SelectAttribute(attacker, attacker.weapon);
-		// Checa Pericia
-		if (wpn_a_elem.Pericia)
-			bonus := cint(GetSkillBonus(attacker, wpn_a_elem.Pericia));
-		endif
-	else
-		// Pega atributo principal do npc
-		if (wpn_a_elem.Attribute)
-			attribute := wpn_a_elem.Attribute;
-		endif
-		bonus := cint(wpn_a_elem.hitbonus);
-	endif
-
-   if (TS_GetTimerInfo(attacker, "golpeduplo_actv"))
-      bonus -= 2;
-   endif
-   // bonus += GetAttackerFeatBonus(attacker, 0);
-	
-	var roll := rollAttrDice(attacker, attribute, dice_gain, struct{ "get_critical" := 1});
-   roll.dice += bonus;
-	return roll;
-endfunction
-
-
-
-function GetDefenderCA(defender, armor, attacker)
-	var CA := 5;
-	if ( !defender.npctemplate )
-		if (armor)
-			CA := armor.ar_base + armor.ar_mod; //se é armadura `ada, n tem dex
-
-			var armor_elem := GetItemCFGInfo(defender, armor);
-			if (armor_elem.Pericia == ARMADURA_LEVE)
-            defender.SetAchievement("lightarmor", 1);
-				CA += GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
-			elseif (armor_elem.Pericia == ARMADURA_MEDIA)
-            defender.SetAchievement("mediumarmor", 1);
-				var mod := GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
-				if (mod > 2) //max de mod é 2 pra média
-					mod := 2;
-				endif
-
-				CA += mod;
-         elseif (armor_elem.Pericia == ARMADURA_PESADA)
-            defender.SetAchievement("heavyarmor", 1);
-			endif
-
-         if (defender.Caracteristica("Homem de Aço"))
-            CA += 1;
-         endif
-		else
-			// Se n tem armadura, usa defesa
-			CA := 10 + GetBonusAttr(AP_GetTrueStat(defender, "Dexterity"));
-		endif
-
-		if (defender.shield && !defender.npctemplate)
-			CA += defender.shield.ar_base + defender.shield.ar_mod;
-		endif
-
-      if (!defender.npctemplate && !attacker.npctemplate)
-         attacker.SetAchievement("player_attack", 1);
-      endif
-
-      var wpn_elem := GetItemCFGInfo(defender, defender.weapon);
-      if (defender.weapon.Pericia == ARMAS_DUPLAS && AP_GetTrueSkill(defender, ARMAS_DUPLAS) >= 6)
-         CA += 1;
-      endif
-	else
-		var npcelem := NPC_GetNPCConfig(defender.npctemplate);
-		CA := cint(npcelem.AR);
-	endif
-
-	var ca_bonus := cint(GetObjProperty(defender, "bonus_ca"));
-	if (ca_bonus)
-		CA += ca_bonus;
-	endif
-
-	return CA;
+   PlayMissSound(attacker);
 endfunction
 
 function WearDownArmor(defender, armor)
@@ -472,23 +277,4 @@ function FacingChecks(attacker, defender)
 	endif
 
 	return retval;
-endfunction
-
-function GetAttackerFeatPenalty(attacker, defender)
-   var bonus := 0;
-   if (defender.acctname && attacker.npctemplate) //mob vs player
-      var mobiles_near := ListMobilesNearLocationEx(defender.x, defender.y, defender.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
-      foreach mob in mobiles_near
-         if (mob.shield && AP_GetTrueSkill(mob, ESCUDO) >= 7)
-            bonus -= 1;
-            break;
-         endif
-      endforeach
-   endif
-
-   if (GetObjProperty(defender, "#assassinate") == attacker.serial)
-      bonus += 1;
-   endif
-
-   return bonus;
 endfunction

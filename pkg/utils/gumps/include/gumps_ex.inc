@@ -348,17 +348,57 @@ function GFWordWrap(text, pixels)
 	return wrap_lines;	
 endfunction
 
+function SelectWindowPosition(who, selected)
+	var gump := GFCreateGump();
+	GFClosable(gump, 0);
+	GFMovable(gump, 0);
+	GFResizePic(gump, 0, 0, 9200, 1800, 1600);
+	GFAddAlphaRegion(gump, 1, 2, 1800, 1600);
 
-	var select := GFCreateGump();
-	
-	GFPage(select, 0);
-	GFResizePic(select, -2, -1, 9200, 1494, 920);
-	GFAddAlphaRegion(select, 1, 2, 1492, 912);
-	GFSetRadioGroup(select, 0);
-	GFRadioButton(select, 1, 3, 1210, 1210, 0, 0);
-	GFRadioButton(select, 53, 4, 1210, 1210, 0, 0);
-	GFRadioButton(select, 52, 49, 1210, 1210, 0, 0);
-	GFRadioButton(select, 0, 48, 1210, 1210, 0, 0);
-	GFTextLine(select, 341, 25, Ultima.Hue, "Clique em um botÃ£o para reposicionar");
+   var x := 1;
+   var y := 3;
+   var i := 1;
+   var positions := array{};
+   var b;
+   while (!b)
+      GFAddButton(gump, x, y, 1209, 1210, GF_CLOSE_BTN, i);
+      positions[i] := array{x, y};
+      x += 52;
+      if (x >= 1800)
+         y += 52;
+         x := 3;
+      endif
 
-	GFSendGump(who, select);
+      if (y >= 1600)
+         b := 1;
+      endif
+      i += 1;
+      sleepms(2);
+   endwhile
+
+	GFTextLine(gump, 341, 25, Ultima.Hue, "Clique em um botão para reposicionar");
+
+	var input := GFSendGump(who, gump);
+
+   if (input[0])
+      return positions[input[0]];
+   endif 
+endfunction
+
+function SelectorGump(who, params)
+   if (TypeOf(params) != "Array") return; endif
+
+   var y := 0;
+   foreach param in params
+      param.id
+      param.image
+      param.item
+      param.color
+      param.text
+      
+      y += 10;
+      sleepms(1);
+   endforeach
+
+   return GFSendGump(who, gump)[0];
+endfunction

@@ -45,19 +45,6 @@ function CanFight(me, mobile)
    //printtextabove(me, "não vou atacar" + mobile.name);
       return 0;
    endif
- 
-   if (mobile.hidden)
-      if (AP_getStat(me, WISDOM) >= 9 && (!mobile.npctemplate && me.master != mobile))
-         var diff := CalculateDhDiff(me, mobile);
-         var roll := rollAttrDice(me, WISDOM) + GetSkillBonus(me, PERCEPCAO);
-
-         if ( roll > diff )
-            mobile.hidden := 0;
-            PrintText(mobile, "*aparece*");
-            SendSysMessageEx(mobile, "{} te encontrou!".format(me.name), SSM_FAIL);
-         endif
-      endif
-   endif
 
 //    var mycategory := lower(getnpccategory( mytemplate ));
 

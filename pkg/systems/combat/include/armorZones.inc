@@ -21,6 +21,9 @@ use cfgfile;
  * String
  *
  */
+
+const RETURN_MEDRES = 1;
+
 function CS_GetRandomArmorZone()
 	// This function assumes that the 'Chance' totals in
 	// armrzone.cfg all add up to 100. You will most likely
@@ -119,12 +122,21 @@ function CS_GetArmorZone(equip)
 	return zones;
 endfunction
 
-function CS_SelectArmored(item_array)
+function CS_SelectArmored(item_array, type)
+   var param := "resist_physical";
+   if (type) param := "resist_{}".format(type); endif
+
+   var found_item;
 	foreach item in ( item_array )
-		if (cint(item.ar_base) > 10)
-			return item;
+		if (cint(item[param]) > 0)
+			found_item := item;
 		endif
 		sleepms(2);
 	endforeach
-	return 0;
+
+	return found_item;
+endfunction
+
+function CS_WarDown(item)
+   item.hp := 0;
 endfunction

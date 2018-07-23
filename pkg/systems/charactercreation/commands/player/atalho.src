@@ -1,0 +1,176 @@
+use uo;
+use vitals;
+use math;
+
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":charactercreation:feats";
+include "include/say";
+
+
+program useHotBar(who, spos)
+   spos := cint(text);
+   if (!text) 
+      return SendSysMessageEx(who, "Você precisa entrar com o número da barra de atalho. Ex: .atalho 1", SSM_FAIL); 
+   else if (who.frozen || who.squelched || who.paralyzed) 
+      return SendSysMessageEx(who, "Você não pode usar uma habilidade enquanto está paralizado, congelado ou silenciado.", SSM_FAIL);
+   else if (!GetObjProperty(who, "#Casting")) 
+      return SendSysMessageEx(who, "Você não pode usar uma habilidade agora.", SSM_FAIL);
+   endif
+
+   const hotbar = GetObjProperty(who, "hotbar");
+   if (!hotbar) hotbar := struct{ shortcuts := array{} }; endif
+
+   const shortcut = hotbar.shortcuts[spos];
+   if (!habID)
+      return SendSysMessageEx(who, "Não há nenhuma habilidade configurada para este atalho '{}'.".format(spos), SSM_FAIL);
+   endif
+
+   if (shortcut.item)
+      return TriggerItem(who, shortcut);
+   endif
+
+   const hab = GetHabilitieByNum(shortcut.id);
+   TriggerHabilitie(who, hab);
+endprogram
+
+function TriggerItem(who, shortcut)
+   
+endfunction
+
+
+function ChooseTarget(mobile, spellinfo)
+   var targ;
+   var move_script := start_script(":magery:canceltarget_if_move", mobile);
+   
+   if (spellinfo.target == "Self")
+      targ := mobile;
+   elseif (spellinfo.target == "Mobile" || spellinfo.target == "Item")
+      while (1)
+         SendSysMessageEx(mobile, "Escolha o alvo da habilidade.", SSM_REQUEST);
+         var noto := TGTOPT_NEUTRAL;
+         if (spellinfo.targetAlign == "Harmful")
+            noto := TGTOPT_HARMFUL;
+         elseif (spellinfo.targetAlign == "Helpful")
+            noto := TGTOPT_HELPFUL;
+         endif
+
+         targ := Target(mobile, noto);
+         if (GetCooldown(targ, "repeal") > 0)
+            SendSysMessageEx(mobile, "O alvo esta invulneravel a habilidades.", SSM_FAIL);
+         elseif (spellinfo.targettype)
+            if (!targ)
+               break;
+            elseif (spellinfo.target == "Mobile" && !targ.isA(POLCLASS_MOBILE))
+               SendSysMessageEx(mobile, "Você deve escolher uma criatura como alvo.", SSM_FAIL);
+            elseif (spellinfo.target == "Item" && !targ.isA(POLCLASS_ITEM) && !targ.isA(POLCLASS_CONTAINER))
+               SendSysMessageEx(mobile, "Você deve escolher um objeto como alvo", SSM_FAIL);
+            else
+               break; 
+            endif
+         else
+            break;
+         endif
+      endwhile
+      if (mobile != targ)
+         TurnObjectToward(mobile, targ.x, targ.y);
+      endif
+   elseif (spellinfo.alvo == "Area")
+      while (1)
+         PrintTextPrivate(mobile, "'Escolha o ponto alvo.'", mobile, SSM_INFO);
+//   		SendSysMessageEx(mobile, "Escolha o ponto onde a magia sera castada.", SSM_REQUEST);
+         targ := TargetCoordinates(mobile);
+         TurnObjectToward(mobile, targ.x, targ.y);
+         if(!spellinfo.radius)
+            break;
+         elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < spellinfo.radius)
+            break;
+         else
+            SendSysMessageEx(mobile, "Muito distante!", SSM_FAIL);
+         endif
+      endwhile
+   endif
+
+   move_script.kill();
+   return targ;
+endfunction
+
+
+function TriggerHabilitie(who, hab)
+	if ( TS_GetCooldown(who, "hab_{}".format(hab.id)) != error && who.cmdlevel < 5)
+		return SendSystemReport(who, "'Habilidade em Cooldown!'", SSM_FAIL);
+	endif
+
+   if (hab.mana)
+      if (!AP_ConsumeVital(who, MANA, hab.mana))
+         SendSystemReport(who, "'Mana Insuficiente!'", SSM_FAIL);
+         return SendSysMessageEx(who, "Você não tem mana suficiente para executar esta habilidade.".format(spos), SSM_FAIL);
+      endif
+   endif
+
+   if (hab.vigor)
+      if (!AP_ConsumeVital(who, STAMINA, hab.vigor))
+         SendSystemReport(who, "'Vigor Insuficiente!'", SSM_FAIL);
+         return SendSysMessageEx(who, "Você não tem vigor suficiente para executar esta habilidade.".format(spos), SSM_FAIL);
+      endif
+   endif
+
+   who.hidden := 0;
+
+   if (hab.castTime)
+      var cycles := hab.castTime;
+      var moveCheck := Start_Script(":magery:moveCheck", array{who, Getpid()});
+
+      while (cycles)
+         if ( Events_Waiting() || TS_GetTimerInfo(who, "tombar") )
+            SendSysMessageEx(who, "Você não conseguiu se concentrar o suficiente para invocar esta magia.", SSM_FAIL);
+            FailSpell(who);
+            return 0;
+         endif
+
+         case ( hab.target )
+            "Mobile":
+               PerformAction(who, ANIM_CAST_DIR);
+               break;
+            "Area":
+               PerformAction(who, ANIM_CAST_AREA);
+               break;
+            default:
+               PerformAction(who, ANIM_CAST_DIR);
+         endcase
+
+         cycles -= 1;
+         sleepms(800);
+      endwhile
+
+      moveCheck.kill();
+   endif
+
+   var targ := ChooseTarget(who, hab);
+   if (!targ) //verifica se o ponto ¿ v¿sivel
+      SendsysMessageEx(who, "Habilidade cancelada", SSM_FAIL);
+      return FailSpell(who, 1);
+   endif
+
+   if (TS_GetCooldown(who, "hallucination") && hab.target != "Self")
+      if (targ.isA(POLCLASS_NPC))
+         var mobile_around := ListMobilesInLineOfSight( who, 10);
+         targ := mobile_around.randomentry();
+      endif
+   endif
+
+   if (targ.isA(POLCLASS_NPC) && hab.targetAlign == "Harmful")
+      targ.setAggro(who.serial, 12);
+   endif
+
+
+	if (hab.cooldown) TS_StartCooldown(who, "hab_{}".format(hab.id), hab.cooldown); endif
+
+   var weapon := who.weapon;
+   var power := CalculateRawDamage(attacker, 0, weapon);
+
+   var e := start_script(":charactercreation:feats/{}".format(hab.script), array{who, hab, weapon, power});
+   if (e == error)
+      return SendSysMessageEx(who, "Script da Habilidade não encontrado.", SSM_FAIL);
+   endif
+endfunction
