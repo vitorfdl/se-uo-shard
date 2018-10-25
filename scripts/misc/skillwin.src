@@ -24,97 +24,492 @@ include "include/client";
 include ":gumps:requestgump";
 include ":gumps:htmlgump";
 
+CONST GF_CHANGE_PAGE := 2;
 
-chardata 
-   habs: [],
-   subclasses: [{
-      selected_habs: [],
-      exp,
-   }],
-   classes: [{
-      selected_habs: [],
-      exp: [],
-      quests: 0,
-   }],
-   hits,
-   mana,
-   stam,
-   god,
-   race,
-   level,
-   exppoint,
+CONST GF_HITS_BTN := 5;
+CONST GF_MANA_BTN := 6;
+CONST GF_STAM_BTN := 7;
 
+CONST GF_BKG_REM_BTN := 200;
+CONST GF_BKG_ADD_BTN := 100;
 
-var gump := GFCreateGump();
+var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
+var ficharp_elem;
 
-	GFPage(gump, 0);
+// chardata
+//    god,
+//    race,
+//    caminhos: [],
+//    classe,
+//    subclasses: [{
+//       habs: [],
+//       selected_habs: [],
+//       exp,
+//    }],
+//    classes: [{
+//       habs: [],
+//       selected_habs: [],
+//       exp: [],
+//       quests: 0,
+//    }],
+//    hits,
+//    mana,
+//    stam,
+//    level,
+//    exppoint,
+
+function buildSubClass(byref gump, subclass, x, y)
+   if (!subclass)
+      GFHtmlShadowed(gump, 307, y+15, 150, 20, "#FFFFFF", "Sem subclasse", 4);
+      return;
+   endif
+
+   var feats := GetClassFeats(subclass.id);
+   GFHtmlShadowed(gump, x, y, 90, 20, "#FFFFFF", "{}".format(subclass.id), 5);
+   buildExpBar(gump, 62, y+19, 96, subclass.exp, 1000);
+   
+   var cur_group := 1;
+   var x_pos := 195;
+   foreach hab in feats
+      if (hab.Group != cur_group)
+         GFGumpPicTiled(gump, x_pos+5, y+9, 1, 20, 2701);  // divisor
+         cur_group := hab.Group;
+         x_pos += 15;
+      endif
+
+      var color := 0;
+      if (!(hab.FeatId in subclass.habs))
+         color := 1000; 
+      endif
+
+      if (hab.Script) GFAddButton(gump, x_pos, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, hab.FeatID); endif;
+
+      GFGumpPic(gump, x_pos, y-2, hab.Icon, color); // hab
+      x_pos += 46;
+      sleepms(2);
+   endforeach
+endfunction
+
+function buildClass(byref gump, classe, extrahabs := array{})
+   var classCfg := ReadConfigFile(":charactercreation:config/classes");
+   var elem := FindConfigElem(classCfg, classe.id);
+   if (!elem) return; endif
+
+   var feats := GetClassFeats(classe.id, elem);
+
+	GFGumpPic(gump, 64, 177, cint(elem.Icon), 0); // Class Icon
+   GFHtmlShadowed(gump, 70, 155, 90, 20, "#FFFFFF", "{}".format(classe.id), 5);
+   buildExpBar(gump, 50, 244, 96, classe.exp, 1000);
+   GFTooltipText(gump, "Experiência de sua classe. Faça missões e tarefas relacionadas a sua classe para aumentar sua experiência e disponibilizar novas habilidades.");
+   
+	// GFGumpPic(gump, 174, 176, 2275, 0); // hab
+	// GFGumpPic(gump, 222, 176, 2275, 0);
+	// GFGumpPic(gump, 174, 223, 2275, 0);
+
+   var cur_group := 1;
+   var x := 174;
+   var y := 178;
+
+   foreach hab in feats
+      if (hab.Group != cur_group)
+         GFGumpPicTiled(gump, x+3, 197, 1, 39, 2701);  // divisor
+         cur_group := hab.Group;
+         x += 10;
+      endif
+
+      var color := 0;
+      if (hab.FeatId in classe.selected_habs)
+         color := 75;
+      elseif (!(hab.FeatId in classe.habs))
+         color := 1000; 
+      endif
+
+      GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, hab.FeatID); // hab
+      GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
+      GFTooltipText(gump, "{}".format(hab.Name));
+      x += 48;
+      sleepms(2);
+   endforeach
+
+   var x := 174;
+   var y := 178;
+   for (cur_group := 1; cur_group <= 4; cur_group += 1)
+      var i;
+      var feats := FindAllElemInArray(feats, struct{ Group := cur_group }) + FindAllElemInArray(extrahabs, struct{ Group := cur_group });
+      for (i := 1; i <= 4; i += 1)
+         var hab := feats[i];
+
+         if (hab)
+            var color := 0;
+            if (hab.FeatId in classe.selected_habs)
+               color := 75;
+            elseif (!(hab.FeatId in classe.habs))
+               color := 1000; 
+            endif
+
+            GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, hab.FeatID); // hab
+            GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
+            GFTooltipText(gump, "{}".format(hab.Name));
+         else
+            GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
+         endif
+
+         if (i == 2)
+            x -= 48;
+            y += 40;
+         else
+            x += 48;
+         endif
+
+         sleepms(2);
+      endfor
+
+      GFGumpPicTiled(gump, x+3, 197, 1, 39, 2701);  // divisor
+      cur_group := hab.Group;
+      y -= 40;
+      sleepms(2);
+   endfor
+
+endfunction
+
+function buildGodGump(byref gump, god, level)
+   GFResizePic(gump, 684, 148, 5170, 138, 352); //background
+   GFHtmlShadowed(gump, 737, 181, 50, 20, "#FFFFFF", "Deus", 5);
+   GFHtmlShadowed(gump, 728-2, 200, 55, 20, "#FFFFFF", "<center>{}".format(god), 4);
+   GFGumpPic(gump, 772, 184, 59, 0); // bar
+   GFGumpPic(gump, 703, 183, 57, 0); // bar
+
+   var god_feats := GetGodFeats(god);
+
+   foreach hab in god_feats
+      var color := 0;
+      if (level < hab.Level) color := 1000; endif
+      
+      if (hab.Script) GFAddButton(gump, 736-7, 221+((_hab_iter-1) * 49), hab.Icon, hab.Icon, GF_CLOSE_BTN, hab.FeatID); endif;
+      GFGumpPic(gump, 736-7, 221+((_hab_iter-1) * 49), cint(hab.Icon), color);
+      GFTextLine(gump, 743-7, 245+((_hab_iter-1) * 49), 1000, "Lv{}".format(hab.Level));
+
+      sleepms(2);
+   endforeach
+   // GFTextLine(gump, 703, 292, 0, "Lv5.");
+   // GFTextLine(gump, 705, 340, 0, "Lv10.");
+   
+   // GFGumpPic(gump, 0, 49, 2275, 0);
+   // GFGumpPic(gump, 0, 98, 2275, 0);
+   // GFGumpPic(gump, 0, 145, 2275, 0);
+   // GFGumpPic(gump, 1, 193, 2275, 0);
+   // GFGumpPic(gump, 1, 243, 2275, 0);
+endfunction
+
+function AddVitalIncreaseButtons(byref gump)
+   GFAddButton(gump, 269, 107, 55, 55, GF_CLOSE_BTN, GF_HITS_BTN);
+   GFTooltipText(gump, "Clique para aumentar sua vida em 100");
+   GFAddButton(gump, 366, 107, 55, 55, GF_CLOSE_BTN, GF_MANA_BTN);
+   GFTooltipText(gump, "Clique para aumentar sua mana em 50");
+   GFAddButton(gump, 468, 107, 55, 55, GF_CLOSE_BTN, GF_STAM_BTN);
+   GFTooltipText(gump, "Clique para aumentar seu vigor em 10");
+endfunction
+
+function buildExpBar(byref gump, x, y, width, value, maxexp) 
+   GFGumpPicTiled(gump, x, y, width, 6, 0x2616);
+
+   var exp_width := cint((value * width) / maxexp);
+   GFGumpPicTiled(gump, x, y, exp_width, 6, 9751);
+endfunction
+
+function SendSkillGump(who, chardata)
+   var gump := GFCreateGump();
+
+   GFSetID(gump, GUMPID_SKILLLIST);
 	GFResizePic(gump, 13, 13, 9380, 712, 510);
-	GFPicTiled(gump, 65, 136, 607, 21, 58);
-	GFGumpPic(gump, 46, 60, 112, Ultima.Hue);
-	GFTextLine(gump, 99, 77, Ultima.Hue, "Level");
-	GFTextLine(gump, 113, 93, Ultima.Hue, "10");
-	GFTextLine(gump, 67, 122, Ultima.Hue, "Exp:");
-	GFGumpPic(gump, 37, 136, 57, Ultima.Hue);
-	GFGumpPic(gump, 667, 136, 59, Ultima.Hue);
-	GFPicTiled(gump, 101, 129, 576, 9, 9750);
-	GFGumpPic(gump, 64, 177, 5591, Ultima.Hue);
-	GFTextLine(gump, 70, 155, Ultima.Hue, "Furioso");
-	GFTextLine(gump, 58, 242, Ultima.Hue, "Exp: 0/10000");
-	GFTextLine(gump, 186, 156, Ultima.Hue, "Habilidade 1");
-	GFTextLine(gump, 292, 157, Ultima.Hue, "Habilidade 2");
-	GFTextLine(gump, 396, 156, Ultima.Hue, "Habilidade 3");
-	GFTextLine(gump, 503, 155, Ultima.Hue, "Habilidade 4");
-	GFTextLine(gump, 604, 155, Ultima.Hue, "Ultimate");
-	GFTextLine(gump, 153, 77, Ultima.Hue, "Pontos");
-	GFTextLine(gump, 164, 93, Ultima.Hue, "10");
-	GFGumpPic(gump, 174, 176, 2275, Ultima.Hue);
-	GFGumpPic(gump, 222, 176, 2275, Ultima.Hue);
-	GFGumpPic(gump, 174, 223, 2275, Ultima.Hue);
-	GFPicTiled(gump, 277, 197, 1, 39, 2701);
-	GFTextLine(gump, 81, 299, Ultima.Hue, "Subclasse");
-	GFGumpPic(gump, 165, 297, 2275, Ultima.Hue);
-	GFGumpPic(gump, 211, 297, 2275, Ultima.Hue);
-	GFGumpPic(gump, 258, 297, 2275, Ultima.Hue);
-	GFPicTiled(gump, 310, 305, 1, 20, 2701);
-	GFGumpPic(gump, 94, 350, 57, Ultima.Hue);
-	GFGumpPic(gump, 624, 350, 59, Ultima.Hue);
-	GFPicTiled(gump, 123, 350, 501, 21, 58);
-	GFTextLine(gump, 74, 316, Ultima.Hue, "Exp: 0/10000");
-	GFGumpPic(gump, 93, 421, 57, Ultima.Hue);
-	GFGumpPic(gump, 623, 421, 59, Ultima.Hue);
-	GFPicTiled(gump, 122, 421, 501, 21, 58);
-	GFTextLine(gump, 307, 445, Ultima.Hue, "Sem Subclasse");
-	GFTextLine(gump, 306, 383, Ultima.Hue, "Sem Subclasse");
-	GFTextLine(gump, 196, 501, Ultima.Hue, "Coloque seu mouse sobre os icones para ver descriÃ§Ãµes detalhadas");
-	GFPicTiled(gump, 67, 274, 607, 21, 58);
-	GFGumpPic(gump, 38, 273, 57, Ultima.Hue);
-	GFGumpPic(gump, 669, 274, 59, Ultima.Hue);
-	GFResizePic(gump, 684, 148, 5170, 138, 401);
-	GFTextLine(gump, 734, 181, Ultima.Hue, "Deus");
-	GFTextLine(gump, 736, 200, Ultima.Hue, "Anar");
-	GFGumpPic(gump, 772, 184, 59, Ultima.Hue);
-	GFGumpPic(gump, 703, 183, 57, Ultima.Hue);
-	GFTextLine(gump, 705, 245, Ultima.Hue, "Lv 1.");
-	GFTextLine(gump, 705, 340, Ultima.Hue, "Lv 10.");
-	GFTextLine(gump, 703, 292, Ultima.Hue, "Lv 5.");
-	GFGumpPic(gump, 0, 0, 2275, Ultima.Hue);
-	GFGumpPic(gump, 0, 49, 2275, Ultima.Hue);
-	GFGumpPic(gump, 0, 98, 2275, Ultima.Hue);
-	GFGumpPic(gump, 0, 145, 2275, Ultima.Hue);
-	GFGumpPic(gump, 1, 193, 2275, Ultima.Hue);
-	GFGumpPic(gump, 1, 243, 2275, Ultima.Hue);
-	GFGumpPic(gump, 580, 81, 2275, Ultima.Hue);
-	GFTextLine(gump, 594, 61, Ultima.Hue, "RaÃ§a: Vala");
-	GFGumpPic(gump, 629, 80, 2275, Ultima.Hue);
-	GFGumpPic(gump, 223, 63, 105, Ultima.Hue);
-	GFGumpPic(gump, 325, 67, 111, Ultima.Hue);
-	GFGumpPic(gump, 422, 69, 107, Ultima.Hue);
-	GFTextLine(gump, 285, 76, Ultima.Hue, "Vida");
-	GFTextLine(gump, 379, 74, Ultima.Hue, "Mana");
-	GFTextLine(gump, 477, 76, Ultima.Hue, "Vigor");
-	GFTextLine(gump, 285, 94, Ultima.Hue, "500");
-	GFTextLine(gump, 382, 94, Ultima.Hue, "100");
-	GFTextLine(gump, 482, 93, Ultima.Hue, "60");
-	GFTextLine(gump, 299, 45, Ultima.Hue, "Planilha de Personagem");
 
-	GFSendGump(who, gump);
+   GFHtmlShadowed(gump, 299, 45, 150, 20, "#FFFFFF", "Ficha de Personagem", 4);
+	GFAddButton(gump, 425, 49, 2224, 2224, GF_CLOSE_BTN, GF_CHANGE_PAGE);
+	GFGumpPic(gump, 46, 60, 112, 0);
+   GFTooltipText(gump, "Este é o level do seu personagem, seguido pelos pontos de habilidade disponíveis. Pontos são gastos para aprender habilidades de classe e subclasse.");
+   GFHtmlShadowed(gump, 99, 77, 60, 20, "#FFFFFF", "Level", 5);
+	GFTextLine(gump, 113, 93, 0, "{}".format(chardata.level));
+   GFHtmlShadowed(gump, 153, 77, 60, 20, "#FFFFFF", "Pontos", 5);
+	GFTextLine(gump, 164, 93, 0, "{}".format(chardata.points));
+   GFTooltipText(gump, "Pontos são gastos para aprender habilidades de classe e subclasse.");
+	GFTextLine(gump, 67, 122, 0, "Exp:");
+   buildExpBar(gump, 101, 129, 576, chardata.exp, 1000);
+   GFTooltipText(gump, "Experiëncia de personagem é adquirida executando diversas tarefas como: matar monstros, criar itens, escrevendo livros e usando habilidades.");
+   
+   if (chardata.vitalpoints >= 0) AddVitalIncreaseButtons(gump); endif
+
+   GFHtmlShadowed(gump, 582, 61, 90, 20, "#FFFFFF", "<center>Raça: {}".format(chardata.race), 4);
+	GFGumpPic(gump, 580, 81, 2275, 0); //hab
+	GFGumpPic(gump, 629, 80, 2275, 0); // hab
+
+	GFGumpPic(gump, 37, 136, 57, 0); // bar
+	GFGumpPicTiled(gump, 65, 136, 607, 21, 58); //bar
+	GFGumpPic(gump, 667, 136, 59, 0); // bar
+
+	GFTextLine(gump, 186, 156, 0, "Habilidade 1");
+	GFTextLine(gump, 292, 157, 0, "Habilidade 2");
+	GFTextLine(gump, 396, 156, 0, "Habilidade 3");
+	GFTextLine(gump, 503, 155, 0, "Habilidade 4");
+	GFTextLine(gump, 604, 155, 0, "Ultimate");
+
+   buildClass(gump, chardata.classes[1]);
+
+	GFGumpPic(gump, 37, 274, 57, 0); // bar
+	GFGumpPicTiled(gump, 67, 274, 607, 21, 58); //bar
+	GFGumpPic(gump, 667, 274, 59, 0); //bar
+
+   buildSubClass(gump, chardata.subclasses[1], 81, 297);
+
+	GFGumpPic(gump, 94, 350, 57, 0); // bar
+	GFGumpPicTiled(gump, 123, 350, 501, 21, 58); // bar
+	GFGumpPic(gump, 624, 350, 59, 0); // bar
+
+   buildSubClass(gump, chardata.subclasses[2], 81, 368);
+
+	GFGumpPic(gump, 93, 421, 57, 0); // bar
+	GFGumpPicTiled(gump, 122, 421, 501, 21, 58); // bar
+	GFGumpPic(gump, 623, 421, 59, 0); // bar
+
+   buildSubClass(gump, chardata.subclasses[3], 81, 439);
+
+	GFGumpPic(gump, 223, 63, 105, 0);
+   GFTooltipText(gump, "Este é seu valor máximo de vida, sem nenhum modificador.");
+   GFHtmlShadowed(gump, 285, 76, 60, 20, "#FFFFFF", "Vida", 5);
+	GFTextLine(gump, 285, 94, 0, "{}".format(chardata.hits));
+	GFGumpPic(gump, 325, 67, 111, 0);
+   GFHtmlShadowed(gump, 379, 74, 60, 20, "#FFFFFF", "Mana", 5);
+   GFTooltipText(gump, "Este é seu valor máximo de mana, sem nenhum modificador. Mana é usado em habilidades mágicas.");
+	GFTextLine(gump, 382, 94, 0, "{}".format(chardata.mana));
+	GFGumpPic(gump, 422, 69, 107, 0);
+   GFHtmlShadowed(gump, 477, 76, 60, 20, "#FFFFFF", "Vigor", 5);
+   GFTooltipText(gump, "Este é seu valor máximo de vigor, sem nenhum modificador. Vigor é usado para tarefas físicas e algumas habilidades.");
+	GFTextLine(gump, 482, 93, 0, "{}".format(chardata.stam));
+
+   buildGodGump(gump, chardata.god, chardata.level);
+   
+	GFTextLine(gump, 196, 501, 0, "Coloque seu mouse sobre os icones para ver descrições detalhadas");
+
+	return GFSendGump(who, gump);
+endfunction
+
+function SendBackgroundGump(who, edit, targ)
+	var valores := ficharp_elem.GetProp("Ficha");
+   var gump := GFCreateGump();
+   GFSetID(gump, GUMPID_SKILLLIST);
+	GFResizePic(gump, 13, 13, 9380, 712, 510);
+
+   GFHtmlShadowed(gump, 299-10, 45, 180, 20, "#FFFFFF", "Background do Personagem", 4);
+	GFAddButton(gump, 275-10, 48, 2223, 2223, GF_CLOSE_BTN, GF_CHANGE_PAGE);
+
+	GFTextLine(gump, 43, 70, 2212, "Característica do Personagem (Max. 6)");
+	GFHTMLArea(gump, 43, 89, 654, 115, OrganizarTexto(ficharp_elem, valores, "Caracteristicas"), 1, 1);
+   if (edit)
+      if (len(valores.Caracteristicas) < 6) 
+         GFAddButton(gump, 663, 69, 55, 55, GF_CLOSE_BTN, GF_BKG_ADD_BTN+1);
+      else
+         GFGumpPic(gump, 663, 69, 55, 1000);
+      endif
+      if (len(valores.Caracteristicas)) GFAddButton(gump, 681, 69, 56, 56, GF_CLOSE_BTN, GF_BKG_REM_BTN+1); 
+      else GFGumpPic(gump, 681, 69, 56, 1000); endif
+      
+   endif
+
+	GFTextLine(gump, 41, 208, 2212, "Anotações do Jogador");
+	GFHTMLArea(gump, 41, 227, 370, 124, OrganizarTexto(ficharp_elem, valores, "Anotacoes"), 1, 1);
+   if (edit)
+      GFAddButton(gump, 378, 207, 55, 55, GF_CLOSE_BTN, GF_BKG_ADD_BTN+2);
+      if (len(valores.Anotacoes)) GFAddButton(gump, 396, 207, 56, 56, GF_CLOSE_BTN, GF_BKG_REM_BTN+2);
+      else GFGumpPic(gump, 396, 207, 56, 1000); endif
+   endif
+
+
+   GFTextLine(gump, 416, 207, 1000, "Avaliações de Interpretação");
+	GFHTMLArea(gump, 416, 227, 282, 261, OrganizarTexto(ficharp_elem, valores, "Avaliacoes"), 1, 1);
+
+	GFTextLine(gump, 41, 353, 1000, "Grandes Feitos / Anotações da Staff");
+	GFHTMLArea(gump, 41, 371, 369, 116, OrganizarTexto(ficharp_elem, valores, "Feitos"), 1, 1);
+   if (edit > 2)
+      GFAddButton(gump, 378, 353, 55, 55, GF_CLOSE_BTN, GF_BKG_ADD_BTN+3);
+      if (len(valores.Feitos)) GFAddButton(gump, 396, 353, 56, 56, GF_CLOSE_BTN, GF_BKG_REM_BTN+3); endif
+   endif
+
+	return GFSendGump(who, gump);
+endfunction
+
+function fichaSetProp(who, prop, value)
+	var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
+	var ficharp_elem := DFFindElement(ficharp_data_file, Hex(who.serial), DF_NO_CREATE);
+	
+	var setvalue := ficharp_elem.SetProp(prop, value);
+	
+	return setvalue;
+	
+endfunction
+
+function OrganizarTexto(ficharp_elem, valores, prop)
+	var texto := "<BASEFONT COLOR=#330000>";
+
+	var i := 1;
+	foreach valor in (valores[prop])
+		texto := texto+i+". "+valor+"<br>";
+		i+=1;
+		sleepms(5);
+	endforeach
+	
+	return texto;
+endfunction
+
+function PegarResposta(who)
+	var gump := GFCreateGump();
+	var num_lines := 14;
+	var msg_array := array;
+	var y_pos := 80;
+	var i;
+
+	GFResizePic(gump, 0, 0, 3600, 420, 405-10);
+	GFResizePic(gump, 15, 15, 0x13BE, 390, 55);
+	GFTextMid(gump, 15, 20, 390, 1153, "Descreva sua nova linha.");
+	GFTextMid(gump, 60, 40, 330, 1153, "Você pode usar <i></i> para itálico e <b></b> para negrito!");
+	GFResizePic(gump, 15, 70+280+2, 0x13BE, 390, 28);
+	GFAddButton(gump, 200, 70+280+5, 2075, 2074, GF_CLOSE_BTN, 20);
+	GFResizePic(gump, 15, 70, 0xA3C, 390, 280);
+	for ( i:=1; i<=num_lines; i:=i+1 )
+		msg_array.Append(GFTextEntry(gump, 20, y_pos, 396, 20, 1153, ""));
+		y_pos := y_pos+19;
+	endfor
+	
+	var input := GFSendGump(who, gump);
+
+	if (input[0] == 20)
+		var i;
+		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
+			var line := GFExtractData(input, msg_array[i]);
+			if ( line )
+				line := " "+line;
+				msg_array[i] := line;
+			else
+				msg_array[i] := "";
+			endif
+		endfor
+	
+		//Clear off empty lines.
+		for ( i := msg_array.Size(); i>=1; i:=i-1 )
+			if ( Len(msg_array[i]) <= 0 )
+				msg_array.Erase(i);
+			endif
+			SleepMS(5);
+		endfor
+		
+		var text := "";
+		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
+			text := text + msg_array[i];
+			SleepMS(5);
+		endfor
+		return text;
+	endif
+endfunction
+
+program skillwin(who)
+   var chardata := struct{
+      current_class := "Guardião",
+      subclasses:= array{
+         struct{
+            id := "Sabotador",
+            exp := 200,
+            habs:= array{}
+         }
+      },
+      classes := array{
+         struct{
+            id := "Furioso",
+            habs := array{81, 9},
+            exp := 450,
+            selected_habs := array{81}
+         }
+      },
+      level := 1,
+      exp := 300,
+      points := 10,
+      vitalpoints := 1,
+      hits := 500,
+      mana := 100,
+      stam := 30,
+      god := "Anar",
+      race := "Vala"
+   };
+
+   ficharp_elem := DFFindElement(ficharp_data_file, Hex(who.serial), DF_NO_CREATE);
+   if (!ficharp_elem)
+      ficharp_elem := DFFindElement(ficharp_data_file, Hex(who.serial), DF_CREATE);
+      var ficha := struct;
+      ficha.+Caracteristicas := array{};
+      ficha.+Feitos          := array{};
+      ficha.+Anotacoes       := array{};
+      ficha.+Avaliacoes      := array{};
+      fichaSetProp(who, "Ficha", ficha);
+   endif
+
+   var cur_page := 0;
+   var res := 1;
+   while (who.connected && res)
+      if (cur_page == 0)
+         res := SendSkillGump(who, chardata)[0];
+      else
+         res := SendBackgroundGump(who, 1, who)[0];
+      endif
+      
+      if (res == GF_CHANGE_PAGE)
+         cur_page := !cur_page;
+      elseif (res)
+         if (!cur_page)
+            HandleSkillPage(who, chardata, res);
+         else
+            HandleBackgroundPage(who, res, who);
+         endif         
+      endif
+
+      sleepms(2);
+   endwhile
+endprogram
+
+function HandleSkillPage(who, chardata, res)
+
+endfunction
+
+function HandleBackgroundPage(who, res, targ)
+   var tips := array{"Caracteristicas", "Anotacoes", "Feitos"};
+   if (res[0] >= GF_BKG_REM_BTN)
+      res := cint(res[0] - GF_BKG_REM_BTN);
+      res := tips[res];
+      
+      var value := ficharp_elem.GetProp("Ficha");
+      var opts := array{};
+      foreach value in (value[res])
+         opts.append("Linha {}".format(_value_iter));
+         sleepms(2);
+      endforeach
+
+      opts.append("Cancelar");
+      
+      var apagar := RadioGump(who, 0, 0, "Quais linhas deseja apagar?", opts, 1, len(opts));
+      if (apagar != len(opts))
+          value[res].erase(apagar);
+          fichaSetProp(targ, "Ficha", value);
+      endif
+   elseif (res[0] >= GF_BKG_ADD_BTN)
+      res := cint(res[0] - GF_BKG_ADD_BTN);
+      res := tips[res];
+
+      var value := ficharp_elem.GetProp("Ficha");
+      var resposta := PegarResposta(who);
+      if (resposta)
+         value[res].append(resposta);
+         var teste := fichaSetProp(targ, "Ficha", value);
+         
+         if (res == "Feitos")
+            PrintTextPrivate(targ, "*Você recebeu uma anotação da Staff!*", targ, SSM_INFO);
+            PrintTextPrivate(targ, "*Você recebeu uma anotação da Staff!*", who, SSM_INFO);			
+         endif
+      endif
+   endif
+endfunction

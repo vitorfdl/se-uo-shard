@@ -26,129 +26,41 @@ program createchar(who)
 	CloseGump(who, GUMPID_EMAIL_INDEX);
 
    var account := FindAccount(who.acctname);
-   // remove later
-   if (GetObjProperty(who, "re_stat"))
-      SendSysMessageEx(who, "Por favor, distribua novamente seus status.", SSM_INFO);
-      var chardata := GetObjProperty(who, "chardata");
-      chardata.Feats := array{};
-      while (who.connected)
-         if (AttributeGump(who, chardata))
-            continue;
-         else
-            break;
-         endif
-      endwhile
-
-      if (chardata.raca["Humano"])
-         chardata.inte += 1;
-         chardata.str += 1;
-         chardata.dex += 1;
-         chardata.wis += 1;
-         chardata.con += 1;
-      elseif (chardata.raca["Meio-Elfo"])
-         chardata.dex += 2;
-         chardata.inte += 1;
-      else
-         chardata.inte += 2;
-         chardata.dex += 1;
-      endif
-
-      //Status
-      AP_SetTrueStat(who, "Strength", chardata.str);
-      AP_SetTrueStat(who, "Dexterity", chardata.dex);
-      AP_SetTrueStat(who, "Intelligence", chardata.inte);
-      AP_SetTrueStat(who, "Constitution", chardata.con);
-      AP_SetTrueStat(who, "Wisdom", chardata.wis);
-      AP_SetTrueStat(who, "Aura", chardata.aura);
-
-      chardata.hitpoints  := cint(GetBonusAttr(chardata.con)) +5;
-      var duro_de_matar := chardata.carac["Duro de Matar"];
-      if (duro_de_matar) chardata.hitpoints += duro_de_matar; endif
-
-      chardata.manapoints := cint(GetBonusAttr(chardata.inte)) +5;
-      var acumulador_mana := chardata.carac["Acumulador de Mana"];
-      if (acumulador_mana) chardata.manapoints += acumulador_mana; endif
-
-      chardata.stampoints := cint(GetBonusAttr(chardata.dex)) + 10;
-      var agil := chardata.carac["Ágil"];
-      if (agil) chardata.stampoints += agil; endif
-
-      var lento := chardata.carac["Lento"];
-      if (lento) chardata.stampoints -= lento; endif
-      
-      EraseObjProperty(who, "re_stat");
-
-      var attr := ReadConfigFile(":attributes:attributes");
-      foreach skill_name in (chardata.skills.keys())
-         var value := chardata.skills[skill_name];
-         for i := 1 to value
-            var gives := GetConfigStringArray(attr[skill_name], "Give");
-            foreach giv in gives
-               giv := SplitWords(giv);
-               if (giv[1] == "mana")
-                  chardata.manapoints += cint(giv[2]);
-               elseif (giv[1] == "hits")
-                  chardata.hitpoints  += cint(giv[2]);
-               elseif (giv[1] == "stam")
-                  chardata.stampoints += cint(giv[2]);
-               endif
-               sleepms(2);
-            endforeach
-               sleepms(2);
-         endfor
-      endforeach
-      SetObjProperty(who, "chardata", chardata);
-      RecalcVitals(who);
-      return;
-   endif
-   //remove later
 
 	AP_SetVital(who, "Hunger", 0);
 	var chardata := struct;
 
-   if (!GetObjProperty(who, "recriando"))
-      if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
-         SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
-         who.frozen := 1;
-         return 1;
-      elseif (GetObjProperty(who, "delete") == 1)
-         SendSysMessageEx(who, "Você não pode ter mais de um personagem por conta.", SSM_FAIL);
-         who.frozen := 1;
-         return 1;
-      endif
+   if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
+      SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
+      who.frozen := 1;
+      return 1;
+   elseif (GetObjProperty(who, "delete") == 1)
+      SendSysMessageEx(who, "Você não pode ter mais de um personagem por conta.", SSM_FAIL);
+      who.frozen := 1;
+      return 1;
+   endif
 
-      if (!who.backpack)
-         var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
-         EquipItem(who, mochila);
-      endif
+   if (!who.backpack)
+      var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
+      EquipItem(who, mochila);
+   endif
 
-      chardata := GetObjProperty(who, "chardata");
-      if (!chardata || !chardata.heir)  //Exceção pra herdeiros
-         chardata := struct{}; 
-         if (who.cmdlevel < 2) //destroi todos os itens equipados e na bag
-            var equiped := listequippeditems(who);
-            foreach item in equiped
-               if (item != who.backpack && item.layer != LAYER_HAIR && item.layer != LAYER_BEARD)
-                  DestroyItem(item);
-               endif
-               sleepms(2);
-            endforeach
-
-            equiped := enumerateitemsincontainer(who.backpack);
-            foreach item in equiped
-               DestroyItem(item);
-               sleepms(2);
-            endforeach
-            equiped := 0;
+   chardata := struct{}; 
+   if (who.cmdlevel < 2) //destroi todos os itens equipados e na bag
+      var equiped := listequippeditems(who);
+      foreach item in equiped
+         if (item != who.backpack && item.layer != LAYER_HAIR && item.layer != LAYER_BEARD)
+            DestroyItem(item);
          endif
-      endif
-   else
-      chardata := GetObjProperty(who, "chardata");
-      chardata.recriando := 1;
-      chardata.exppoints := 0;
-      chardata.storedexp := 0;
-      EraseObjProperty(who, "points_received");
-      chardata.Feats := array{};
+         sleepms(2);
+      endforeach
+
+      equiped := enumerateitemsincontainer(who.backpack);
+      foreach item in equiped
+         DestroyItem(item);
+         sleepms(2);
+      endforeach
+      equiped := 0;
    endif
 
    //zeras as skills
@@ -160,58 +72,16 @@ program createchar(who)
 	//Gumps
 	ShowCreateGumps(who, chardata);
 
-	if (chardata.raca["Humano"])
-		chardata.inte += 1;
-		chardata.str += 1;
-		chardata.dex += 1;
-		chardata.wis += 1;
-		chardata.con += 1;
-	elseif (chardata.raca["Meio-Elfo"])
-		chardata.dex += 2;
-		chardata.inte += 1;
-	else
-		chardata.inte += 2;
-		chardata.dex += 1;
-	endif
-
 	//Status
-	AP_SetTrueStat(who, "Strength", chardata.str);
-	AP_SetTrueStat(who, "Dexterity", chardata.dex);
-	AP_SetTrueStat(who, "Intelligence", chardata.inte);
-	AP_SetTrueStat(who, "Constitution", chardata.con);
-	AP_SetTrueStat(who, "Wisdom", chardata.wis);
-	AP_SetTrueStat(who, "Aura", chardata.aura);
+	AP_SetTrueStat(who, "Strength", 10);
+	AP_SetTrueStat(who, "Dexterity", 10);
+	AP_SetTrueStat(who, "Intelligence", 10);
 
-	chardata.hitpoints  := cint(GetBonusAttr(chardata.con)) +5;
-   var duro_de_matar := chardata.carac["Duro de Matar"];
-   if (duro_de_matar) chardata.hitpoints += duro_de_matar; endif
-
-	chardata.manapoints := cint(GetBonusAttr(chardata.inte)) +5;
-   var acumulador_mana := chardata.carac["Acumulador de Mana"];
-   if (acumulador_mana) chardata.manapoints += acumulador_mana; endif
-
-	chardata.stampoints := cint(GetBonusAttr(chardata.dex)) + 10;
-   var agil := chardata.carac["Ágil"];
-   if (agil) chardata.stampoints += agil; endif
-
-   var lento := chardata.carac["Lento"];
-   if (lento) chardata.stampoints -= lento; endif
-
-	foreach skill in (chardata.skills.keys())
-      var value := chardata.skills[skill];
-      for i := 1 to value
-         LearnSkill(who, skill);
-         sleepms(2);
-      endfor
-      sleepms(2);
-	endforeach
-
-   if (!chardata.heir)
-      chardata.exppoints := 0;
-      chardata.Level := 1;
-   endif
-   chardata.attpoints := 0;
-   chardata.talentpoints := 0;
+	chardata.hits := 500;
+	chardata.mana := 100;
+	chardata.stam := 50;
+   chardata.vitalpoints := 1;
+   chardata.points := 1;
 
    if (!chardata.recriando)
       if (chardata.raca == "Humano")
@@ -225,9 +95,6 @@ program createchar(who)
 
 	who.race := RACE_HUMAN;
 	who.name := chardata.nome;
-	if (chardata.nomefinal && chardata.nomefinal != "" && chardata.nomefinal != " ")
-		who.name := chardata.nome + " " + chardata.nomefinal;
-	endif
 	RecalcVitals(who);
 
 	/*=====  End of Section comment block  ======*/
@@ -1029,4 +896,151 @@ endfunction
 
 function setNotaRP(who, nota)
 	return findAccount(who.acctname).setProp("nota", nota);
+endfunction
+
+
+function nnewgump()
+	var gump := GFCreateGump();
+	
+	GFPage(gump, 0);
+	
+	//
+	GFResizePic(gump, -4, 5, 9380, 441, 547);
+	
+	//
+	GFTextLine(gump, 155, 49, Ultima.Hue, "Nome do Personagem");
+	
+	//
+	GFResizePic(gump, 122, 67, 9350, 195, 25);
+	
+	//header
+	GFPicTiled(gump, 18, 38, 394, 9, 50);
+	
+	//bottom
+	GFPicTiled(gump, 16, 512, 398, 9, 50);
+	
+	//
+	GFTextLine(gump, 36, 105, Ultima.Hue, "RaÃ§a do Personagem");
+	
+	//
+	GFTextLine(gump, 59, 126, Ultima.Hue, "NÃºro");
+	
+	//
+	GFTextLine(gump, 59, 148, Ultima.Hue, "Alayarz");
+	
+	//
+	GFTextLine(gump, 59, 169, Ultima.Hue, "Vala");
+	
+	//god
+	GFResizePic(gump, 396, 29, 5170, 292, 490);
+	
+	//
+	GFTextLine(gump, 499, 58, Ultima.Hue, "Deus Venerado");
+	
+	//god
+	GFGumpPic(gump, 423, 75, 30569, Ultima.Hue);
+	
+	//
+	GFCheckBox(gump, 36, 125, 210, 211, 0, 0);
+	
+	//race
+	GFCheckBox(gump, 36, 147, 210, 211, 0, 0);
+	
+	//race
+	GFCheckBox(gump, 37, 169, 210, 211, 0, 0);
+	
+	//divisor
+	GFPicTiled(gump, 39, 255, 340, 9, 50);
+	
+	//
+	GFTextLine(gump, 193, 103, Ultima.Hue, "Altura");
+	
+	//
+	GFTextLine(gump, 195, 144, Ultima.Hue, "Peso");
+	
+	//
+	GFTextLine(gump, 20, 191, Ultima.Hue, "Marcas e CaracterÃ­sticas  Pessoais");
+	
+	//
+	GFResizePic(gump, 19, 209, 9350, 388, 43);
+	
+	//
+	GFTextLine(gump, 217, 165, Ultima.Hue, "Gordo");
+	
+	//weight
+	GFCheckBox(gump, 194, 164, 210, 211, 0, 0);
+	
+	//
+	GFTextLine(gump, 59, 126, Ultima.Hue, "NÃºro");
+	
+	//race
+	GFCheckBox(gump, 36, 125, 210, 211, 0, 0);
+	
+	//
+	GFTextLine(gump, 219, 126, Ultima.Hue, "Alto");
+	
+	//height
+	GFCheckBox(gump, 196, 125, 210, 211, 0, 0);
+	
+	//
+	GFTextLine(gump, 189, 269, Ultima.Hue, "Caminho");
+	
+	//
+	GFTextLine(gump, 109, 293, Ultima.Hue, "Obstinado");
+	
+	//track
+	GFCheckBox(gump, 85, 291, 210, 211, 1, 0);
+	
+	//
+	GFTextLine(gump, 222, 293, Ultima.Hue, "SÃ¡bio");
+	
+	//tracl
+	GFCheckBox(gump, 199, 292, 210, 211, 0, 0);
+	
+	//
+	GFTextLine(gump, 313, 292, Ultima.Hue, "Sagaz");
+	
+	//tracj
+	GFCheckBox(gump, 290, 291, 210, 211, 0, 0);
+	
+	//
+	GFTextLine(gump, 193, 322, Ultima.Hue, "Classe");
+	
+	//
+	GFTextLine(gump, 138, 345, Ultima.Hue, "GuaridÃ£o");
+	
+	//class
+	GFCheckBox(gump, 115, 344, 210, 211, 1, 0);
+	
+	//
+	GFTextLine(gump, 265, 345, Ultima.Hue, "Furioso");
+	
+	//class
+	GFCheckBox(gump, 242, 344, 210, 211, 0, 0);
+	
+	//
+	GFHTMLArea(gump, 21, 383, 387, 100, "GuardiÃ£o Ã© muito forti, esse bilete Ã© verdade.", 1, 1);
+	
+	//
+	GFAddButton(gump, 189, 489, 2076, 248, GF_CLOSE_BTN, 0);
+	
+	//
+	GFTextEntry(gump, 125, 70, 187, 20, Ultima.Hue, "TextEntry", 0);
+	
+	//
+	GFAddButton(gump, 566, 477, 2224, 248, GF_CLOSE_BTN, 0);
+	
+	//
+	GFTextLine(gump, 526, 473, Ultima.Hue, "Trocar");
+	
+	//
+	GFAddButton(gump, 503, 477, 2223, 248, GF_CLOSE_BTN, 0);
+	
+	//apparence
+	GFTextEntry(gump, 25, 210, 375, 20, Ultima.Hue, "TextEntry", 0);
+	
+	//apparence
+	GFTextEntry(gump, 25, 230, 375, 20, Ultima.Hue, "TextEntry", 0);
+
+	GFSendGump(who, gump);
 endfunction

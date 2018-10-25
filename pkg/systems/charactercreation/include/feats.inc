@@ -1,34 +1,62 @@
 include ":attributes:attributes";
-// function UsoHabilidade(nome)
-// 	var habcfg := ReadConfigFile(":charactercreation:config/habilidades");
-// 	var elem := FindConfigElem( habcfg, nome );
-	
-// 	var uso := lower(GetConfigString(elem, "uso"));
-// 	if (uso == "ativa")
-// 		var delay := GetConfigInt(elem, "delay");
-// 		if (delay)
-// 			nome := nome + " ["+delay+" s]";
-// 		endif
-// 		var stam := GetConfigInt(elem, "stam");
-// 		if (!stam)
-// 			stam := GetConfigInt(elem, "mana");
-// 			if (stam)
-// 				nome := nome + " [" + stam + " mana]";
-// 			endif
-// 		else
-// 			nome := nome + " [" + stam + " stam]";
-// 		endif
-// 	elseif (uso == "passiva")
-// 		nome := nome + " [Passiva]";
-// 	elseif (uso == "tempo")
-// 		nome := nome + " [Ativa]";
-// 		var delay := GetConfigInt(elem, "delay");
-// 		nome := nome + " ["+delay+" s]";
-// 	endif
-	
-// 	return nome;
-	
-// endfunction
+
+function getFeatById(feat_id)
+   var featCfg := ReadConfigFile(":charactercreation:config/feats");
+   var elem := FindConfigElem(featCfg, feat_id);
+
+   return struct{
+      FeatID := GetConfigInt(elem, "FeatID"),
+      Name := GetConfigString(elem, "Name"),
+      Class := GetConfigString(elem, "Class"),
+      Description := GetConfigString(elem, "Description"),
+      Mana := GetConfigInt(elem, "Mana"),
+      Vigor := GetConfigInt(elem, "Vigor"),
+      Cooldown := GetConfigInt(elem, "Cooldown"),
+      Icon := GetConfigInt(elem, "Icon"),
+      CastTime := GetConfigInt(elem, "CastTime"),
+      Script := GetConfigString(elem, "Script"),
+      Targ := GetConfigString(elem, "Target"),
+      Group := GetConfigInt(elem, "Group"),
+      Level := GetConfigInt(elem, "Level"),
+      Experience := GetConfigInt(elem, "Experience"),
+      PointCost := GetConfigInt(elem, "PointCost")
+   };
+endfunction
+
+function GetClassFeats(class_id, elem := 0)
+   if (!elem)
+      var classCfg := ReadConfigFile(":charactercreation:config/classes");
+      elem := FindConfigElem(classCfg, class_id);
+   endif
+
+   if (!elem) return; endif
+
+   var hab_ids := GetConfigStringArray(elem, "Habilidade");
+
+   var feat_list := array{};
+   foreach id in hab_ids
+      feat_list.append(getFeatById(id));
+      sleepms(2);
+   endforeach
+
+   return feat_list;
+endfunction
+
+function GetGodFeats(god)
+   var classCfg := ReadConfigFile(":charactercreation:config/deuses");
+   var godelem := FindConfigElem(classCfg, god);
+   if (!godelem) return; endif
+
+   var hab_ids := GetConfigStringArray(godelem, "Habilidade");
+   var feat_list := array{};
+   foreach id in hab_ids
+      feat_list.append(getFeatById(id));
+      sleepms(2);
+   endforeach
+
+   return feat_list;
+endfunction
+
 function GetFeatList(who)
 	var chardata := GetObjProperty(who, "chardata");
 	var feat_list := chardata.Feats;

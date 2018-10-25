@@ -40,7 +40,7 @@ program equipweapon(who, item, startup)
       endif
 
       if (!AP_ConsumeVital(who, STAMINA, c_amt))
-         PrintTextPrivate(who, "Stamina Insuficiente!", SSM_FAIL);
+         PrintTextPrivate(who, "Vigor Insuficiente!", SSM_FAIL);
          return 0;
       endif
 	endif
@@ -78,30 +78,13 @@ function SetEquipmentMods(who, item)
 	if((restrict == 1) and (CheckGender(who) != 2))
 		SendSysMessageEx(who, "Apenas mulheres podem vestir isto.", SSM_FAIL);
 		return 0;
-   elseif (cint(item_e.intrequired) > AP_GetStat(who, INTELLIGENCE))
-		SendSysMessageEx(who, "Você não tem inteligência o suficiente para usar isso.", SSM_FAIL);
-      return 0;
 	endif
 
-	if (item_e.Pericia)
-      if (item_e.ReqPericia)
-         if (AP_GetTrueSkill(who, item_e.Pericia) < cint(item_e.ReqPericia))
-		      SendSysMessageEx(who, "Você não tem o mínimo de habilidade necessário para equipar este item.", SSM_FAIL);
-            return 0;
-         endif
-      endif
-
-      if (!HaveSkill(who, item_e.Pericia))
-         var value := cint(GetObjProperty(who, "ArmorPenalty")) +1;
-         SetObjProperty(who, "ArmorPenalty", value);
-      endif
-
-      if (item_e.Pericia["Pesada"])
+	if (item_e.ArmorType)
+      if (item_e.ArmorType["Pesada"])
          who.setToughness(3);
-      elseif (item_e.Pericia["Média"])
+      elseif (item_e.ArmorType["Leve"])
          who.setToughness(2);
-      elseif (item_e.Pericia["Leve"])
-         who.setToughness(1);
       endif
 	endif
 
@@ -117,12 +100,6 @@ function SetEquipmentMods(who, item)
 	// if (item.isa(POLCLASS_ARMOR))
 	// 	EraseObjProperty(who, "twohanded");
 	// endif
-
-	//sneak
-	var penalty_list := GetConfigStringArray(item_e, "Penalty");
-	foreach skill in penalty_list
-		AP_ModifySkillMod(who, skill, -1);
-	endforeach
 
 	//verifica se eh magico
 	var mods := GetObjProperty(item, "equip");
