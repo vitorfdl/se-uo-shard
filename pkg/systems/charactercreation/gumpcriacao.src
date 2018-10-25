@@ -52,43 +52,27 @@ program createchar(who)
          if (item != who.backpack && item.layer != LAYER_HAIR && item.layer != LAYER_BEARD)
             DestroyItem(item);
          endif
-         sleepms(2);
-      endforeach
-
-      equiped := enumerateitemsincontainer(who.backpack);
-      foreach item in equiped
-         DestroyItem(item);
-         sleepms(2);
-      endforeach
-      equiped := 0;
+      endif
+   else
+      chardata := GetObjProperty(who, "chardata");
+      chardata.recriando := 1;
+      chardata.exppoints := 0;
    endif
 
-   //zeras as skills
-   foreach attrib in AP_ListAttributesByType()
-      AP_SetTrueSkill(who, attrib, 0);
-      sleepms(2);
-   endforeach
-   
 	//Gumps
-	ShowCreateGumps(who, chardata);
+	StartCharacterCreation(who, chardata);
 
-	//Status
-	AP_SetTrueStat(who, "Strength", 10);
-	AP_SetTrueStat(who, "Dexterity", 10);
-	AP_SetTrueStat(who, "Intelligence", 10);
+	chardata.hitpoints  := 500;
+	chardata.manapoints := 100;
+	chardata.stampoints := 60;
 
-	chardata.hits := 500;
-	chardata.mana := 100;
-	chardata.stam := 50;
-   chardata.vitalpoints := 1;
-   chardata.points := 1;
+   chardata.points := 0;
+   chardata.vitalpoints := 0;
 
-   if (!chardata.recriando)
-      if (chardata.raca == "Humano")
-         chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");
-      else
-         chardata.lifetime := AddTimeTo(POLCore().systime, 42, "weeks");
-      endif
+   if (chardata.raca == "Humano")
+      chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");
+   else
+      chardata.lifetime := AddTimeTo(POLCore().systime, 42, "weeks");
    endif
 
 	SetObjProperty(who, "chardata", chardata);
@@ -100,131 +84,64 @@ program createchar(who)
 	/*=====  End of Section comment block  ======*/
 
 	//Mudar Aparência
-   if (!chardata.recriando && (!chardata.heir && !chardata.can_look))
+   if (!chardata.recriando)
 	   LookGump(who, chardata);
    endif
 
 	// SetProfessions(who, chardata);
 
-	if (chardata.raca == "Elfo")
-		LearnFeat(who, "Linguagem Élfica", 0, 0);
-	endif
-
    if (who.Caracteristica("Clérigo de Anar"))
-		LearnFeat(who, "Linguagem Rúnica", 0, 0);
-      LearnFeat(who, "Cura Divina", 0, 0);
-      SysBook_CreateBook(who.backpack, "clerigo1");
-		Start_Script(":magery:cleric/powerWords", array{who});
-		start_script(":email:emailMessage/sendSystemMail", array{ who, "Você é um clérigo!", "Parece que você decidiu ser um clérigo. [P]Clérigos são servos de Anar e usufruem de um sistema especial de magia. Você pode acessa-lo usando o coamndo \".milagres\" [P]Novas magias são aprendidas indo ao templo de Anar e prestando orações em seu altar."} );
-   elseif (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade"))
+      // SysBook_CreateBook(who.backpack, "clerigo1");
+   elseif ()
       var rec := CreateItemInBackpack(who, 0x6116);
-      SetObjProperty(rec, "spell_id", 0x1);
       SysBook_CreateBook(who.backpack, "magia1");
-      CreateItemInBackpack(who, 0x6100);
-      CreateItemInBackpack(who, 0x10e4);
-		LearnFeat(who, "Linguagem Élfica", 0, 0);
    endif
 
-	// MoveObjectToLocation( who, 4230, 31, 1, who.realm, MOVEOBJECT_FORCELOCATION);
 	AP_RefreshVitals(who);
 	AP_SetVital(who, "Hunger", 0);
 	EraseObjProperty(who, "criandochar");
 	EraseObjProperty(who, "recriando");
-	SetObjProperty(who, "reseted", 1);
-	SetObjProperty(who, "fixhp", 1);
 
    if (!chardata.recriando && !chardata.heir)
       CreateItemInBackpack(who, 0xeed, 8); //dinheiro
 	   start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Sussurros Eternos Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser te comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para te deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Para alterar sua senha digite .senha senhanatiga senhanova [P] [P] Bom Jogo!"} );
       start_Script(":fls_core:commands/player/ficharp", array{who});
    else
-      EraseObjProperty(who, "points_received");
-      while (who.GetExp() >= who.getMaxExp())
-         CheckExpUp(who);
-         sleepms(2);
-      endwhile
 
-      var pnt_amt := cint(GetObjProperty(who, "points_received"));
-      var total_exp := who.getTotalExp();
-      if (total_exp >= (pnt_amt * 120))
-         var pnt := cint((total_exp - (pnt_amt * 120)) / 120);
-         who.SetTalentPoints(pnt);
-         SetObjProperty(who, "points_received", pnt_amt+pnt);
-      endif
    endif
-   // if (getNotaRP(who) == 2)
-	// 	start_script (":email:emailMessage/sendSystemMail", array{ who, "Bonificação Nota 2", "Parabéns! [P] Você se destacou na vida pasasda do seu personagem e foi premiado por isso: [P] [P] + Você receberá +5 pontos em todas suas perícias para inicio de jogo. [P] +Você irá receber +200 moedas para investir na econômia do jogo e destacar seu personagem. [P] [P] Estas bonifcações só irão valer para este personagem. Se recriar, você irá iniciar como um jogador comum [P] Bom Jogo!"} );
-	// 	CreateItemInBackpack(who, 0xeed, 200); //dinheiro
-	// 	setNotaRP(who, 0);
-	// 	// SetSkillPoints(who, GetSkillPoints(who)+3);
-	// 	// who.SetPoints(who.getPoints()+9);
-	// 	who.setLevel(who.getLevel()+3);
-	// endif
 endprogram
 
-function construirgump(byref gump, back := 0) //monta a aparência da gump
-	GFDisposable(gump, 0);
-	GFSetID(gump, GUMPID_CREATECHAR);//9260
-	GFGumpPic(gump, 50,80, 10421);
-	GFResizePic(gump, 84, 90, 0x9c40, 420, 500);
-
-	GFGumpPicTiled(gump, 90,100,30,480,10460);
-	GFGumpPicTiled(gump, 460,100,30,480,10460);
-	// GFGumpPicTiled(gump, 80,88,463,16,10100);
-	// GFGumpPicTiled(gump, 84,610,457,16,10100);
-	GFGumpPic(gump, 85,79, 10420);
-
-//	GFAddAlphaRegion(gump, 127,103,375,509);
-	GFGumpPic(gump, 37,370, 10402);
-
-	GFHTMLArea(gump, 120, 103, 380, 20,"<BASEFONT Size=6 Color=#cccccc><center>Sussurros Eternos Shard");
-
-	GFTextLine(gump, 390,550,2103,"Próximo");
-	GFAddButton(gump, 440, 550, 9903, 9905, GF_CLOSE_BTN, 200);
-
-	if (!back)
-		GFTextLine(gump, 160,550,2103,"Reiniciar");
-		GFAddButton(gump, 130, 550, 9909, 9911, GF_CLOSE_BTN, 201);
-	endif
-endfunction
-
-// function rollBaseDice(sum := 0) 
-// 	var dices := array{ RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6"), RandomDiceRoll("1d6") };
-// 	RemoveLowest(dices);
-
-// 	var final_dice := ArraySum(dices) + sum;
-// 	return final_dice;
-// endfunction
-
-function ShowCreateGumps(who, byref chardata)
+function StartCharacterCreation(who, byref chardata)
 	while (who.connected)
       sleepms(2);
-      if (!chardata.recriando && !chardata.heir)
-		   chardata := struct;
+      
+      chardata := struct{
+         current_class := "",
+         caminhos := array{"Obstinado"},
+         subclasses:= array{},
+         classes := array{struct{
+            id := "Furioso",
+            habs := array{},
+            exp := 0,
+            selected_habs := array{}
+         }},
+         level := 1,
+         points := 1,
+         vitalpoints := 0,
+         hits := 500,
+         mana := 100,
+         stam := 30,
+         god := "Anar",
+         raca := "Humano",
+         height := 2,
+         weight := 2
+      };
+
+      if (CharacterCreationGump(who, chardata))
+         continue;
       endif
 
-		chardata.Skills := dictionary{};
-		chardata.carac := struct{};
-
-      if (!chardata.recriando && !chardata.heir)
-         if (RaceGump(who,chardata))
-            continue;
-         endif
-      endif
-
-		if (ChooseGod(who, chardata))
-			continue;
-		endif
-
-		if (AttributeGump(who, chardata))
-			continue;
-		endif
-
-		if (SkillGump(who, chardata))
-			continue;
-		endif
-
-      if (!chardata.recriando && !chardata.heir)
+      if (!chardata.heir)
          chardata.Credits := 60;
          if (ItemPickerGump(who, chardata))
             continue;
@@ -236,6 +153,7 @@ function ShowCreateGumps(who, byref chardata)
 		// 		continue;
 		// 	endif
 		// endif
+      chardata.-Credits;
 		break;
 	endwhile
 endfunction
@@ -279,17 +197,6 @@ function RaceGump(who, byref  chardata)
 	GFTextLine(gump, choice_x+155, 335,2103,"Mulher");
 	GFRadioButton(gump, choice_x+130, 315, 0x9C4E, 0x9C4F, 1, 11);
 	GFRadioButton(gump, choice_x+130, 335, 0x9C4E, 0x9C4F, 0, 12);
-
-	// GFSetRadioGroup(gump, 3);
-	// GFTextLine(gump, choice_x+1,395,1153,"Escolha sua classe");
-	// GFTextLine(gump, choice_x+25,415,2103,"Guerreiro");
-	// GFTextLine(gump, choice_x+25,435,2103,"Ladino");
-	// GFRadioButton(gump, choice_x, 415, 0x9C4E, 0x9C4F, 1, 5);
-	// GFRadioButton(gump, choice_x, 435, 0x9C4E, 0x9C4F, 0, 6);
-	// GFTextLine(gump, choice_x+155,415,2103,"Mago");
-	// GFTextLine(gump, choice_x+155,435,2103,"Clérigo");
-	// GFRadioButton(gump, choice_x+130, 415, 0x9C4E, 0x9C4F, 0, 7);
-	// GFRadioButton(gump, choice_x+130, 435, 0x9C4E, 0x9C4F, 0, 8);
 
 	var input := GFSendGump(who, gump);
 
@@ -338,464 +245,172 @@ function RaceGump(who, byref  chardata)
 	endif
 endfunction
 
-function ChooseGod(who, byref chardata)
-	var god_choose := "Anar";
-	if (chardata.raca != "Humano")
-		god_choose := "Seredhiel";
-	endif
-	while (who.connected)
-		var gump := GFCreateGump();
-		construirgump(gump); //monta a aparência da gump
-		// GFTextLine(gump, 140,120,1153,"Escolha seu Deus: ");
 
-		case (god_choose)
-			"Anar":
-				GFGumpPic(gump, 180, 130, 0x7770);
-			"Seredhiel":
-				GFGumpPic(gump, 180, 130, 0x7767);
-			"Eredich":
-				GFGumpPic(gump, 180, 130, 0x7774);
-		endcase
-		// GFGumpPic(gump, 160, 200, );
-		// GFGumpPic(gump, 240, 200, 0x7767);
-
-		var name_picx := 230;
-		GFGumpPic(gump, name_picx, 485, 0x2939);
-		GFGumpPicTiled(gump, name_picx+25, 485, 90, 60, 0x293A);
-		GFGumpPic(gump, name_picx+110, 485, 0x293B);
-		
-		GFHTMLArea(gump, name_picx+5, 503, 135, 20, "<BASEFONT SIZE=5 COLOR=#ffffcc><center>{}".format(god_choose));
-		
-		GFTextMid(gump, 235, 545, 140, 1150, "Trocar");
-		GFAddButton(gump, 278, 560, 0x7777, 0x7777, GF_CLOSE_BTN, 7);
-
-		var input := GFSendGump(who, gump);
-		// case (input[0])
-
-		// endcase
-
-		if (input[0] == 7)
-			case (chardata.raca)
-				"Elfo":
-					SendSysMessageEx(who, "Elfos veneram somente a Seredhiel.", SSM_FAIL);
-					god_choose := "Seredhiel";
-				"Humano":
-				"Meio-Elfo":
-					case (god_choose)
-						"Seredhiel":
-							god_choose := "Anar";
-						"Anar":
-                     if (chardata.classe == "Clérigo")
-                        SendSysMessageEx(who, "Clérigos veneram somente a Anar.", SSM_FAIL);
-                        god_choose := "Anar";
-                     else
-							   god_choose := "Seredhiel";
-                     endif
-					endcase
-			endcase
-		elseif (input[0] == 200)
-			chardata.god := god_choose;
-			break;
-		elseif (input[0] == 201)
-			return 1;
-		endif
-	endwhile
-endfunction
-
-function AttributeGump(who, byref  chardata)
-   chardata.str  := 14;
-   chardata.dex  := 13;
-   chardata.inte := 12;
-   chardata.con  := 10;
-   chardata.wis  := 8;
-   chardata.aura := 15;
-	var last_attr := 0;
-	var btn_values := array{"str", "dex", "inte", "con", "wis"};
-	while (who.connected)
-		var gump := GFCreateGump();
-		construirgump(gump); //monta a aparência da gump
-
-		var x := 225;
-		var y := 260;
-
-		GFResizePic(gump, x-60, y-75, 0x7748, 265, 250);
-		
-		GFTextLine(gump, x+5,y-30,1153,"Defina seus atributos: ");
-
-		GFResizePic(gump, x, y, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
-		GFResizePic(gump, x, y+25, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
-		GFResizePic(gump, x, y+50, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
-		GFResizePic(gump, x, y+75, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
-		GFResizePic(gump, x, y+100, GFCfgConst("Backgrounds", "PAPER"), 80, 20);
-		GFTextLine(gump, x+3, y, 1150,"Força:");
-		GFTextLine(gump, x+3, y+25, 1150,"Destreza:");
-		GFTextLine(gump, x+3, y+50, 1150,"Inteligência:");
-		GFTextLine(gump, x+3, y+75, 1150,"Constituição:");
-		GFTextLine(gump, x+3, y+100, 1150,"Sabedoria:");
-
-		GFHtmlShadowed(gump, x-70, y+200, 300, 20, "#FFFFFF", "<i>Selecione dois atributos para inverter os valores", 2);
-
-		GFResizePic(gump, x+80, y, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
-		GFResizePic(gump, x+80, y+25, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
-		GFResizePic(gump, x+80, y+50, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
-		GFResizePic(gump, x+80, y+75, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
-		GFResizePic(gump, x+80, y+100, GFCfgConst("Backgrounds", "PAPER"), 30, 20);
-
-		GFTextLine(gump, x+83,y,2103, chardata.str);
-		GFTextLine(gump, x+83,y+25,2103, chardata.dex);
-		GFTextLine(gump, x+83,y+50,2103, chardata.inte);
-		GFTextLine(gump, x+83,y+75,2103, chardata.con);
-		GFTextLine(gump, x+83,y+100,2103, chardata.wis);
-
-		var btn_hex := array{0x9c4E, 0x9c4E, 0x9c4E, 0x9c4E, 0x9c4E, 0x9c4E};
-		if (last_attr != 0)
-			btn_hex[last_attr] := 0x9c4F;
-		endif
-
-		GFAddButton(gump, x+115, y, btn_hex[2], 0x9c4F, GF_CLOSE_BTN, 2);
-		GFAddButton(gump, x+115, y+25, btn_hex[3], 0x9c4F, GF_CLOSE_BTN, 3);
-		GFAddButton(gump, x+115, y+50, btn_hex[4], 0x9c4F, GF_CLOSE_BTN, 4);
-		GFAddButton(gump, x+115, y+75, btn_hex[5], 0x9c4F, GF_CLOSE_BTN, 5);
-		GFAddButton(gump, x+115, y+100, btn_hex[6], 0x9c4F, GF_CLOSE_BTN, 6);
-
-		var input := GFSendGump(who, gump);
-
-		if (input[0] == 201)
-			return 1;
-		elseif (input[0] == 200)
-			break;
-		elseif (input[0] > 1 && input[0] < 8)
-			if (last_attr == 0)
-				last_attr := input[0];
-			elseif (last_attr == input[0])
-				last_attr := 0;
-			else
-				var atr       := btn_values[last_attr-1];
-				var choose_atr := btn_values[input[0]-1];
-
-				var stored_atr := chardata[choose_atr];
-				chardata[choose_atr] := chardata[atr];
-				chardata[atr] := stored_atr;
-
-				last_attr := 0;
-			endif
-		endif
-      sleepms(2);
-	endwhile
-endfunction
-
-// function ChooseBackground(who, byref chardata)
-
-// 	var cfg         := ReadConfigFile(":charactercreation:config/antecedentes");
-// 	var keys        := GetConfigStringKeys( cfg );
-// 	var kits        := array{};
-// 	var selectedkit := 1;
-// 	foreach key in keys
-// 		var elem         := FindConfigElem(cfg, key);
-// 		var canadd       := 1;
-// 		var racas        := GetConfigStringArray( elem, "Raca" );
-// 		var sexos        := GetConfigStringArray( elem, "Sexo" );
-// 		var reqs      := GetConfigStringDictionary( elem, "Req" );
-// 		var require_nota := GetConfigInt( elem, "NotaRP" );
-
-// 		if ((racas.size() >= 1) && !(chardata.raca in racas))
-// 			//sendsysmessage(who, " racas " + racas + " chardata.raca " + chardata.raca);
-// 			canadd := 0;
-// 		endif
-// 		if ((sexos.size() >= 1) && !(cstr(who.gender) in sexos))
-// 			//sendsysmessage(who, " povos " + povos + " chardata.povo " + chardata.povo);
-// 			canadd := 0;
-// 		endif
-		
-// 		foreach req in (reqs.keys())
-// 			var value := cint(reqs[req]);
-// 			if (chardata[req] < value)
-// 				canadd := 0;
-// 			endif
-// 		endforeach
-
-// 		if (require_nota && getNotaRP(who) != require_nota)
-// 			canadd := 0;
-// 		endif
-
-// 		if (canadd)
-// 			var kit         := struct;
-// 			kit.+nome       := key;
-// 			kit.+desc       := GetconfigString(elem, "Desc");
-// 			kit.+equip_desc := GetconfigString(elem, "ItemDesc");
-// 			// kit.+pericias   := GetConfigStringArray( elem, "Pericia" );
-// 			kits.append(kit);
-// 		endif
-// 		sleepms(5);
-// 	endforeach
-
-
-// 	if (BackgroundGump(who, chardata, selectedkit, kits))
-// 		return 1;
-// 	endif
-// endfunction
-
-// function BackgroundGump(who, byref chardata, byref selectedkit, byref kits)
-// 	while (who.connected)
-// 		var gump := GFCreateGump();
-// 		construirgump(gump); //monta a aparência da gump
-// 		GFTextLine(gump, 148, 140, 2103, "Você pode escolher uma das profissões abaixo:");
-
-// 		var i := 1;
-// 		var x := 170;
-// 		var y := 180;
-// 		for ( i := 1; i <= kits.size(); i := i + 1)
-// 			if ( i == selectedkit)
-// 				GFTextLine(gump, x, y,2105,kits[i].nome);
-// 			else
-// 				GFTextLine(gump, x, y,2103,kits[i].nome);
-// 			endif
-
-// 			var selected := 0;
-// 			if (i == selectedkit)
-// 				selected := 1;
-// 			endif
-
-// 			if  (i == selectedkit)
-// 				GFAddButton(gump, (x-24), y, 0x9c4F, 0x9c4F, GF_CLOSE_BTN, i);
-// 			else
-// 				GFAddButton(gump, (x-24), y, 0x9c4E, 0x9c4F, GF_CLOSE_BTN, i);
-// 			endif
-
-// 			y := y + 24;
-// 			if (i == 10)
-// 				y := 180;
-// 				x := 350;
-// 			endif
-// 		endfor
-
-// 		var str := "";
-// 		// if ( kits[selectedkit].desc)
-// 		// 	str :=  str + kits[selectedkit].desc + "<BR>Pericias: ";
-// 		// endif
-// 		if ( kits[selectedkit].pericias)
-// 			str :=  str + kits[selectedkit].pericias + "<BR>Equipamentos: ";
-// 		endif
-// 		if ( kits[selectedkit].equip_desc)
-// 			str :=  str + kits[selectedkit].equip_desc;
-// 		endif
-// 		GFHTMLArea(gump, 125, 440, 340, 100, str, 3000);
-
-// 		var ret := GFSendGump(who, gump);
-
-// 		//sendsysmessage(who, "ret.keys " + ret.keys[2]);
-
-// 		if (cint(ret[0]) == 200)
-// 			var kitname  := kits[selectedkit].nome;
-// 			var pericias := kits[selectedkit].pericias;
-// 			chardata.backgrouinnd := kitname;
-// 			chardata.skills     := pericias;
-// 			SendSysMessageEx(who, "Sua profissão: " + chardata.background, SSM_INFO);
-// 			break;
-// 		elseif (cint(ret[0]) == 201)
-// 			return 1;
-// 		else
-// 			selectedkit := ret[0];
-// 		endif
-//       sleepms(2);
-// 	endwhile
-// endfunction
-
-function SkillGump(who, byref chardata)
-   var ngump := GFCreateGump();
-   construirgump(ngump); //monta a aparência da gump
-   var god_x := 500;
-   var god_y := 80;
-	GFAddButton(ngump, 34+god_x, 14+god_y, 2445, 2445, GF_CLOSE_BTN, 500); //Comprar Talento
-   GFResizePic(ngump, 7+god_x, 8+god_y, 9380, 675, 535);
-	GFGumpPicTiled(ngump, 33+god_x, 498+god_y, 623, 11, 2091);
-	GFGumpPicTiled(ngump, 33+god_x, 44+god_y, 626, 11, 2091);
-
-   GFResizePic(ngump, 29+god_x, 14+god_y, 9350, 40, 18);
-	GFHTMLArea(ngump, 35+god_x, 14+god_y, 40, 28, "<BASEFONT SIZE=2 COLOR=#003d00>Ajuda", 0);
-
-   var points := 30;
-   var myhabs := struct{};
-   var skill_list := AP_ListAttributesByType("Skill");
-
-
-   var mycaracs := struct{};
-   var cfgcarac := ReadConfigFile("config/caracteristicas");
-   var caraclist := GetConfigStringKeys(cfgcarac);
-
-	while (who.connected)
-      var gump := ngump;
-      var sum := 0;
-      foreach hab in (myhabs.keys())
-         sum += cint(myhabs[hab]) -1;
-         sleepms(2);
-      endforeach
-      var maxup := getMaxUP(myhabs.keys().size(), sum);
-
-      GFHtmlShadowed(gump, 250+god_x, 55+god_y, 300, 20, "#99c199", "Você tem {} pontos de habilidade".format(points), 4);
-
-      GFGumpPic(gump, 627+god_x, 71+god_y, 59, 0);
-      GFGumpPicTiled(gump, 55+god_x, 71+god_y, 573, 11, 58);
-      GFGumpPic(gump, 31+god_x, 71+god_y, 57, 0);
-
-      var attr := ReadConfigFile(":attributes:attributes");
-      var pos_x := 80+god_x;
-      var pos_y := 89++god_y;
-      var i := 1;
-      foreach attribute_name in ( skill_list )
-         sleepms(2);
-         var skill_name := StrReplace(attribute_name, "_", " ");
-         var mystat := cint(myhabs[attribute_name]);
-         var attr_cfg := attr[attribute_name];
-         if (attr_cfg.Req)
-            var requirements := GetConfigStringArray(attr_cfg, "Req");
-            var pass := 0;
-            foreach req in requirements
-               req := SplitWords(req);
-               if (req[1] == "god" && chardata.god != req[2])
-                  pass := 1;
-                  break;
-               elseif (req[1] == "charac" && !(StrReplace(req[2], "_", " ") in mycaracs.keys()))
-                  pass := 1;
-                  break;
-               endif
-            endforeach
-            if (pass) continue; endif
-         endif 
-
-
-         var sk_color := "000066";
-         if (mystat > 0)
-            GFAddButton(gump, pos_x-42, pos_y+1, 0x38, 0x38, GF_CLOSE_BTN, 400+_attribute_name_iter);
-            sk_color := "006600";
-         endif
-
-         var rm_n := convertToRoman(mystat);
-         if (!mystat)
-            rm_n := "";
-         endif
-
-         GFHTMLArea(gump, pos_x, pos_y, 200, 28, "<BASEFONT SIZE=5 color=#{}>{} <BASEFONT SIZE=4>{}".format(sk_color, skill_name, rm_n), 0);
-         GFTooltipText(gump, "{}".format(attr_cfg.desc));
-
-         var custo := getCost(attr_cfg.SkillType, mystat+1);
-         GFTextLine(gump, 185+pos_x, pos_y, 0, "Custo: {}".format(custo));
-
-         if (mystat+1 <= maxup && custo <= points && mystat < 13)
-            GFAddButton(gump, pos_x-24, pos_y+1, 55, 55, GF_CLOSE_BTN, 300+_attribute_name_iter);
-         endif
-
-         pos_x += 321;
-         if (i % 2 == 0)
-            pos_y += 20;
-            pos_x := 80+god_x;
-         endif
-         i += 1;
-      endforeach
-
-		GFTextLine(gump, 160,140,2103,"Escolha suas características e habilidades.");
-	   GFResizePic(gump, 130, 170, 0x2454, 320, 365);
-		var x := 175;
-		var y := 180;
-
-		foreach caract in caraclist
-         if (cfgcarac[caract].god && cfgcarac[caract].god != chardata.god)
-            continue;
-         elseif(cfgcarac[caract].sexo && who.gender != cint(cfgcarac[caract].sexo))
-            continue;
-         elseif(cfgcarac[caract].carac && !(cfgcarac[caract].carac in mycaracs.keys()))
-            continue;
-         endif
-
-
-         var parse := SplitWords(cfgcarac[caract].points, "|");
-         var custo := cint(parse[1]);
-         var maxp := cint(parse[2]);
-         if (!maxp) maxp := 1; endif
-			GFTextLine(gump, x, y, 2100, "{}[{}]".format(caract, maxp - cint(mycaracs[caract])));
-         GFTooltipText(gump, "Custo: {} <br> {}".format(custo, cfgcarac[caract].desc));
-         if (custo <= points && cint(mycaracs[caract]) < maxp)
-            GFAddButton(gump, x-24, y+1, 0x37, 0x37, GF_CLOSE_BTN, 600+_caract_iter);
-         endif
-
-         if (mycaracs[caract])
-            GFAddButton(gump, x-42, y+1, 0x38, 0x38, GF_CLOSE_BTN, 700+_caract_iter);
-         endif
-         
-         y += 25;
-         if (_caract_iter % 14 == 0)
-            y := 180;
-            x += 185;
-         endif
-		endforeach
-
-		var input := GFSendGump(who, gump);
-      if (input[0] >= 300 && input[0] < 400)
-         var i := input[0] - 300;
-         var skill := skill_list[i];
-
-         var attr_cfg := attr[skill];
-         var mystat := cint(myhabs[skill]);
-         
-         var custo := getCost(attr_cfg.SkillType, mystat+1);
-         points -= custo;
-         myhabs[skill] := cint(myhabs[skill]) + 1;
-      elseif (input[0] >= 400 && input[0] < 500)
-         var i := input[0] - 400;
-         var skill := skill_list[i];
-
-         var attr_cfg := attr[skill];
-         var mystat := cint(myhabs[skill]);
-         
-         var custo := getCost(attr_cfg.SkillType, mystat);
-         points += custo;
-         myhabs[skill] -= 1;
-          if (myhabs[skill] <= 0)
-            myhabs.erase(skill);
-         endif
-      elseif (input[0] >= 600 && input[0] < 700)
-         var i := input[0] - 600;
-         var car := caraclist[i];
-
-         var parse := SplitWords(cfgcarac[car].points, "|");
-         var custo := cint(parse[1]);
-         points += custo * -1;
-
-         mycaracs[car] := cint(mycaracs[car]) + 1;
-         
-      elseif (input[0] >= 700 && input[0] < 800)
-         var i := input[0] - 700;
-         var car := caraclist[i];
-         if (car["Clérigo de Anar"] && (myhabs[MILAGRE_DE_CURA] >= 1 || myhabs[MILAGRE_DE_NECROMANCIA] >= 1 || myhabs[INSCRICAO_RUNICA] >= 1 || "Dádiva de Anar'Niel" in mycaracs.keys()))
-            SendSysMessageEX(who, "Para remover essa característica você deve remover os pontos de milagres, inscrição rúnica e características relacionadas a Anar", SSM_FAIL);
-            continue;
-         endif
-
-         var parse := SplitWords(cfgcarac[car].points, "|");
-         var custo := cint(parse[1]);
-         points += custo;
-
-         mycaracs[car] := cint(mycaracs[car]) - 1;
-         if (mycaracs[car] <= 0)
-            mycaracs.erase(car);
-         endif
-      elseif (input[0] == 203)
-         OpenURL( who, "http://sussurroseternos.com/atributos-habilidades/" );
-      elseif (input[0] == 200)
-         if (points > 0 && !who.cmdlevel)
-            SendSysMessageEX(who, "Você deve gastar todos os pontos!", SSM_FAIL);
-            continue;
-         endif
-
-         chardata.skills := myhabs;
-         chardata.carac := mycaracs;
-         break;
-      elseif (input[0] == 201)
-			return 1;
+function CharacterCreationGump(who, byref chardata)
+   var godsCfg := ReadConfigFile(":charactercreation:config/gods");
+   var classCfg := ReadConfigFile(":charactercreation:config/classes");
+   var classes := struct{};
+   foreach classe_name in GetConfigStringKeys(classCfg)
+      classe := FindConfigElem(classCfg, classe_name);
+      if (classe.Caminho && classe.Type == "Main") 
+         if (!classes[classe.Caminho]) classes[classe.Caminho] := array{}; endif
+         classes[classe.Caminho].append(struct{
+            caminho := classe.Caminho,
+            type := classe.Type,
+            name := classe_name
+         });
       endif
-	endwhile
+      sleepms(2);
+   endforeach
+
+   var desc := array{"", ""};
+
+   while (who.connected)
+      var gump := GFCreateGump();
+      
+      GFDisposable(gump, 0);
+      GFClosable(gump, 0);
+      GFSetID(gump, GUMPID_CREATECHAR);//9260
+      GFResizePic(gump, -4, 5, 9380, 441, 547);
+      GFTextLine(gump, 155, 49, Ultima.Hue, "Nome do Personagem");
+      GFResizePic(gump, 122, 67, 9350, 195, 25);
+      GFTextEntry(gump, 125, 70, 187, 20, 0, chardata.nome, 95);
+      
+      //header
+      GFPicTiled(gump, 18, 38, 394, 9, 50);
+      GFPicTiled(gump, 16, 512, 398, 9, 50);
+      //bottom
+
+      GFTextLine(gump, 36, 105, Ultima.Hue, "Raça do Personagem");
+      GFTextLine(gump, 59, 126, Ultima.Hue, "Núro");
+      GFTextLine(gump, 59, 148, Ultima.Hue, "Alayarz");
+      GFTextLine(gump, 59, 169, Ultima.Hue, "Vala");
+      GFAddButton(gump, 36, 125, 210 + (chardata.raca == "Humano" || !chardata.raca), 211, GF_CLOSE_BTN, 44);
+      GFAddButton(gump, 36, 147, 210 + (chardata.raca == "Elfo"), 211, GF_CLOSE_BTN, 45);
+      GFAddButton(gump, 37, 169, 210 + (chardata.raca == "Meio-Elfo") 211, GF_CLOSE_BTN, 46);
+      
+      //god
+      GFResizePic(gump, 396, 29, 5170, 292, 490);
+      GFTextLine(gump, 499, 58, Ultima.Hue, "Deus Venerado");
+      var god := FindConfigElem(godsCfg, chardata.god);
+      GFGumpPic(gump, 423, 75, cint(god.GumpPic), 0);
+      GFAddButton(gump, 566, 477, 2224, 248, GF_CLOSE_BTN, 31);
+      GFTextLine(gump, 526, 473, Ultima.Hue, "Trocar");
+      GFAddButton(gump, 503, 477, 2223, 248, GF_CLOSE_BTN, 32);
+
+      GFPicTiled(gump, 39, 255, 340, 9, 50); //divisor
+
+	   GFSetRadioGroup(gump, 1);
+      GFTextLine(gump, 193, 103, Ultima.Hue, "Altura");
+      GFTextLine(gump, 219, 126, Ultima.Hue, "Alto");
+      GFCheckBox(gump, 193, 125, 210, 211, (chardata.height == 1 || !chardata.height), 11);
+      GFTextLine(gump, 219, 126, Ultima.Hue, "Mediano");
+      GFCheckBox(gump, 193, 125, 210, 211, (chardata.height == 2), 12);
+      GFTextLine(gump, 219, 126, Ultima.Hue, "Baixo");
+      GFCheckBox(gump, 193, 125, 210, 211, (chardata.height == 3), 13);
+
+	   GFSetRadioGroup(gump, 2);
+      GFTextLine(gump, 195, 144, Ultima.Hue, "Peso");
+      GFTextLine(gump, 217, 165, Ultima.Hue, "Gordo");
+      GFCheckBox(gump, 194, 164, 210, 211, (chardata.weight == 1 || !chardata.weight), 14);
+      GFTextLine(gump, 217, 165, Ultima.Hue, "Esbelto");
+      GFCheckBox(gump, 194, 164, 210, 211, (chardata.weight == 2), 15);
+      GFTextLine(gump, 217, 165, Ultima.Hue, "Magro");
+      GFCheckBox(gump, 194, 164, 210, 211, (chardata.weight == 3), 16);
+
+      GFTextLine(gump, 20, 191, Ultima.Hue, "Marcas e Características  Pessoais");
+      GFResizePic(gump, 19, 209, 9350, 388, 43);
+      GFTextEntry(gump, 25, 210, 375, 20, Ultima.Hue, desc[1], 98);
+      GFTextEntry(gump, 25, 230, 375, 20, Ultima.Hue, desc[2], 99);
+      
+      //caminho
+      GFTextLine(gump, 189, 269, Ultima.Hue, "Caminho");
+      GFTextLine(gump, 109, 293, Ultima.Hue, "Obstinado");
+      GFAddButton(gump, 85, 291, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
+      GFTextLine(gump, 222, 293, Ultima.Hue, "Sábio");
+      GFAddButton(gump, 199, 293, 210 + cint(chardata.caminhos[1] == "Sábio"), 211, GF_CLOSE_BTN, 62);
+      GFTextLine(gump, 313, 293, Ultima.Hue, "Sagaz");
+      GFAddButton(gump, 290, 293, 210 + cint(chardata.caminhos[1] == "Sagaz"), 211, GF_CLOSE_BTN, 63);
+      
+      // classe
+      GFTextLine(gump, 193, 322, Ultima.Hue, "Classe");
+      GFTextLine(gump, 138, 345, Ultima.Hue, classes[chardata.caminhos[1]][1].name);
+      GFAddButton(gump, 115, 345, 210 + (chardata.classes[1].id == classes[chardata.caminhos[1]][1].name), 211, GF_CLOSE_BTN, 64);
+      GFTextLine(gump, 265, 345, Ultima.Hue, classes[chardata.caminhos[1]][2].name);
+      GFAddButton(gump, 242, 345, 210+ (chardata.classes[1].id == classes[chardata.caminhos[1]][2].name), 211, GF_CLOSE_BTN, 65);
+
+      var selected_class := FindConfigElem(classCfg, chardata.classes[1].id);
+      GFHTMLArea(gump, 21, 383, 387, 100, selected_class.Description, 1, 1); // class_desc
+      GFAddButton(gump, 189, 489, 2076, 248, GF_CLOSE_BTN, 2);
+
+	   var input := GFSendGump(who, gump);
+
+      chardata.nome := GFExtractData(input, 95);
+      desc[1] := GFExtractData(input, 98);
+      desc[2] := GFExtractData(input, 99);
+
+      if (11 in input.keys)
+         chardata.height := 1;
+      elseif (12 in input.keys)   
+         chardata.height := 2;
+      elseif (13 in input.keys)   
+         chardata.height := 3;
+      endif
+
+      if (14 in input.keys)   
+         chardata.weight := 1;
+      elseif (15 in input.keys)   
+         chardata.weight := 2;
+      elseif (16 in input.keys)   
+         chardata.weight := 3;
+      endif
+
+      switch (input[0])
+         case 44:
+            chardata.raca := "Humano";
+            who.graphic 	:= 400;
+            who.trueobjtype := 400;
+            break;
+         case 45:
+            chardata.raca := "Elfo";
+            who.graphic 	:= 605;
+            who.trueobjtype := 605;
+            if (chardata.god == "Anar") chardata.god := "Seredhiel"; endif
+            break;
+         case 46:
+            chardata.raca := "Meio-Elfo";
+            who.graphic 	:= 605;
+            who.trueobjtype := 605;
+            break;
+         case 61:
+            chardata.caminhos[1] := "Obstinado";
+            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+            break;
+         case 62:
+            chardata.caminhos[1] := "Sábio";
+            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+            break;
+         case 63:
+            chardata.caminhos[1] := "Sagaz";
+            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+            break;
+         case 64:
+            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+            break;
+         case 65:
+            chardata.classes[1].id := classes[chardata.caminhos[1]][2].name;
+            break;
+      endswitch
+
+      if (input[0] == 2)
+         chardata.profile := "{} {}".format(desc[1], desc[2]);
+         current_class.current_class := chardata.classes[1].id;
+         break;
+      endif
+      sleepms(2);
+   endwhile
 endfunction
- 
+
 function LookGump(who, chardata, aparencia := 0)
 	var params := struct{
 		"race"  := chardata.raca,
@@ -805,8 +420,8 @@ function LookGump(who, chardata, aparencia := 0)
 	aparencia := disguiseGump(who, params, aparencia);
 
 	//equipa os itens de aparencia tudo
-	who.color    := aparencia.corpele;
-	who.truecolor:= aparencia.corpele;
+	who.color     := aparencia.corpele;
+	who.truecolor := aparencia.corpele;
 	//barba
 	var mybarba  := GetEquipmentByLayer(who, LAYER_BEARD);
 	DestroyItem(mybarba);
@@ -824,7 +439,7 @@ function LookGump(who, chardata, aparencia := 0)
 	newhair.color := aparencia.corcabelo;
 	EquipItem(who, newhair);
 
-	if (!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1)
+	if ((!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1) && !who.cmdlevel)
 		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
 		LookGump(who, chardata, aparencia);
 	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
@@ -832,215 +447,4 @@ function LookGump(who, chardata, aparencia := 0)
 	else
 		LookGump(who, chardata, aparencia);
 	endif
-endfunction
-
-// function SetProfessions(who, chardata);
-// 	var background := chardata.background;
-// 	var cfg        := ReadConfigFile("config/antecedentes")[background];
-// 	var items      := GetConfigStringArray(cfg, "Item");
-// 	var recipes    := GetConfigStringArray(cfg, "Recipe");
-// 	var books    := GetConfigStringArray(cfg, "Book");
-
-// 	// foreach skill in skills
-// 	// 	AP_SetTrueSkill(who, skill, 1);
-//    //    sleepms(2);
-// 	// endforeach
-
-// 	foreach item in items
-// 		item := SplitWords(item);
-// 		var name := item[1];
-// 		var qty := cint(item[2]);
-
-// 		if (name["/"])
-// 			var sex_choose := SplitWords(name, "/");
-// 			if (who.gender == 0)
-// 				name := sex_choose[1];
-// 			else
-// 				name := sex_choose[2];
-// 			endif
-// 		endif
-		
-// 		var objtype := GetObjtypeByName(name);
-// 		if (!objtype)
-// 			objtype := item[1];
-// 		endif
-
-// 		var obj := CreateItemInBackpack(who, cint(objtype), qty);
-// 		SetObjProperty(obj, "serialid", who.serial);
-// 		sleepms(2);
-// 	endforeach
-
-// 	foreach recipe in recipes
-// 		if (Hex(recipe) != error && cint(Hex(recipe)) != 0)
-// 			recipe := hex(recipe);
-// 		endif
-// 		var obj := CreateItemInBackpack(who, 0xef1f);
-// 		SetObjProperty(obj, "objtype", recipe);
-// 		Run_Script( ":crafting:recipes/oncreate", recipe );
-// 		sleepms(2);
-// 	endforeach
-
-//    foreach book in books
-//       SysBook_CreateBook(who.backpack, book);
-//       sleepms(2);
-//    endforeach
-// endfunction
-
-function getNotaRP(who)
-	var nota := cint(FindAccount(who.acctname).getprop("nota"));
-	if (!nota)
-		setNotaRP(who, 0);
-	endif
-	return nota;
-endfunction
-
-function setNotaRP(who, nota)
-	return findAccount(who.acctname).setProp("nota", nota);
-endfunction
-
-
-function nnewgump()
-	var gump := GFCreateGump();
-	
-	GFPage(gump, 0);
-	
-	//
-	GFResizePic(gump, -4, 5, 9380, 441, 547);
-	
-	//
-	GFTextLine(gump, 155, 49, Ultima.Hue, "Nome do Personagem");
-	
-	//
-	GFResizePic(gump, 122, 67, 9350, 195, 25);
-	
-	//header
-	GFPicTiled(gump, 18, 38, 394, 9, 50);
-	
-	//bottom
-	GFPicTiled(gump, 16, 512, 398, 9, 50);
-	
-	//
-	GFTextLine(gump, 36, 105, Ultima.Hue, "RaÃ§a do Personagem");
-	
-	//
-	GFTextLine(gump, 59, 126, Ultima.Hue, "NÃºro");
-	
-	//
-	GFTextLine(gump, 59, 148, Ultima.Hue, "Alayarz");
-	
-	//
-	GFTextLine(gump, 59, 169, Ultima.Hue, "Vala");
-	
-	//god
-	GFResizePic(gump, 396, 29, 5170, 292, 490);
-	
-	//
-	GFTextLine(gump, 499, 58, Ultima.Hue, "Deus Venerado");
-	
-	//god
-	GFGumpPic(gump, 423, 75, 30569, Ultima.Hue);
-	
-	//
-	GFCheckBox(gump, 36, 125, 210, 211, 0, 0);
-	
-	//race
-	GFCheckBox(gump, 36, 147, 210, 211, 0, 0);
-	
-	//race
-	GFCheckBox(gump, 37, 169, 210, 211, 0, 0);
-	
-	//divisor
-	GFPicTiled(gump, 39, 255, 340, 9, 50);
-	
-	//
-	GFTextLine(gump, 193, 103, Ultima.Hue, "Altura");
-	
-	//
-	GFTextLine(gump, 195, 144, Ultima.Hue, "Peso");
-	
-	//
-	GFTextLine(gump, 20, 191, Ultima.Hue, "Marcas e CaracterÃ­sticas  Pessoais");
-	
-	//
-	GFResizePic(gump, 19, 209, 9350, 388, 43);
-	
-	//
-	GFTextLine(gump, 217, 165, Ultima.Hue, "Gordo");
-	
-	//weight
-	GFCheckBox(gump, 194, 164, 210, 211, 0, 0);
-	
-	//
-	GFTextLine(gump, 59, 126, Ultima.Hue, "NÃºro");
-	
-	//race
-	GFCheckBox(gump, 36, 125, 210, 211, 0, 0);
-	
-	//
-	GFTextLine(gump, 219, 126, Ultima.Hue, "Alto");
-	
-	//height
-	GFCheckBox(gump, 196, 125, 210, 211, 0, 0);
-	
-	//
-	GFTextLine(gump, 189, 269, Ultima.Hue, "Caminho");
-	
-	//
-	GFTextLine(gump, 109, 293, Ultima.Hue, "Obstinado");
-	
-	//track
-	GFCheckBox(gump, 85, 291, 210, 211, 1, 0);
-	
-	//
-	GFTextLine(gump, 222, 293, Ultima.Hue, "SÃ¡bio");
-	
-	//tracl
-	GFCheckBox(gump, 199, 292, 210, 211, 0, 0);
-	
-	//
-	GFTextLine(gump, 313, 292, Ultima.Hue, "Sagaz");
-	
-	//tracj
-	GFCheckBox(gump, 290, 291, 210, 211, 0, 0);
-	
-	//
-	GFTextLine(gump, 193, 322, Ultima.Hue, "Classe");
-	
-	//
-	GFTextLine(gump, 138, 345, Ultima.Hue, "GuaridÃ£o");
-	
-	//class
-	GFCheckBox(gump, 115, 344, 210, 211, 1, 0);
-	
-	//
-	GFTextLine(gump, 265, 345, Ultima.Hue, "Furioso");
-	
-	//class
-	GFCheckBox(gump, 242, 344, 210, 211, 0, 0);
-	
-	//
-	GFHTMLArea(gump, 21, 383, 387, 100, "GuardiÃ£o Ã© muito forti, esse bilete Ã© verdade.", 1, 1);
-	
-	//
-	GFAddButton(gump, 189, 489, 2076, 248, GF_CLOSE_BTN, 0);
-	
-	//
-	GFTextEntry(gump, 125, 70, 187, 20, Ultima.Hue, "TextEntry", 0);
-	
-	//
-	GFAddButton(gump, 566, 477, 2224, 248, GF_CLOSE_BTN, 0);
-	
-	//
-	GFTextLine(gump, 526, 473, Ultima.Hue, "Trocar");
-	
-	//
-	GFAddButton(gump, 503, 477, 2223, 248, GF_CLOSE_BTN, 0);
-	
-	//apparence
-	GFTextEntry(gump, 25, 210, 375, 20, Ultima.Hue, "TextEntry", 0);
-	
-	//apparence
-	GFTextEntry(gump, 25, 230, 375, 20, Ultima.Hue, "TextEntry", 0);
-
-	GFSendGump(who, gump);
 endfunction
