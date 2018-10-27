@@ -90,12 +90,12 @@ program createchar(who)
 
 	// SetProfessions(who, chardata);
 
-   if (who.Caracteristica("Clérigo de Anar"))
+   // if (who.Caracteristica("Clérigo de Anar"))
       // SysBook_CreateBook(who.backpack, "clerigo1");
-   elseif ()
-      var rec := CreateItemInBackpack(who, 0x6116);
-      SysBook_CreateBook(who.backpack, "magia1");
-   endif
+   // elseif ()
+   //    var rec := CreateItemInBackpack(who, 0x6116);
+   //    SysBook_CreateBook(who.backpack, "magia1");
+   // endif
 
 	AP_RefreshVitals(who);
 	AP_SetVital(who, "Hunger", 0);

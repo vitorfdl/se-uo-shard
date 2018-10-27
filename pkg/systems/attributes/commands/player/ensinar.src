@@ -70,9 +70,9 @@ program start_skill(who)
 
       if (AP_GetTrueSkill(who, attribute_name) > targstat)
          var achiev := SplitWords(attr_cfg.achievement, " ");
-         if (targ.GetAchievement(achiev[1]) < cint(achiev[2]) * (targstat+1))
-            can_teach.append(attribute_name);
-         endif
+         // if (targ.GetAchievement(achiev[1]) < cint(achiev[2]) * (targstat+1))
+         //    can_teach.append(attribute_name);
+         // endif
       endif
       sleepms(2);
    endforeach

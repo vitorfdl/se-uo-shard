@@ -13,7 +13,7 @@ program gump_book(who, thebook)
 	endif
 
    var talent := GetObjProperty(thebook, "feat");
-   var feat := FeatInfo(talent);
+   var feat := getFeatById(talent);
    if (!talent || feat == talent)
       SendSysMessageEx(who, "Parece um livro vázio", SSM_FAIL);
       return; 
@@ -52,7 +52,7 @@ program gump_book(who, thebook)
       endif
       who.SetTalentPoints(points * -1);
       SetObjProperty(thebook, "already_used", who.serial);
-      LearnFeat(who, feat.name);
+      // LearnFeat(who, feat.name);
       SendSysMessageEx(who, "Você aprendeu o talento {}".format(feat.name), SSM_INFO);
       DestroyItem(thebook);
    endif

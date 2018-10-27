@@ -665,10 +665,10 @@ function HabEdit(who, targ, input_info)
 		return 0;
 	endif
 	
-   if (!removeFeat(targ, input_info.name))
-      SendSysMessage(who, "Feat invalido");
-      return 0;
-   endif
+   // if (!removeFeat(targ, input_info.name))
+   //    SendSysMessage(who, "Feat invalido");
+   //    return 0;
+   // endif
 
 	if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "Não"))
 		targ.SetTalentPoints(1);

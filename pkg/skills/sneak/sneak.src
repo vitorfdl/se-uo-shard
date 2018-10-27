@@ -43,7 +43,7 @@ program skill_Hide(who)
 		if( check >= dif )
 			SendSysMessageEx(who, "Você se escondeu.", SSM_INFO);
 			who.hidden := 1;
-			var a := start_script(":sneak:stealthmode", array{who});
+			// var a := start_script(":sneak:stealthmode", array{who});
 			//sendsysmessage(who, " "+ a);
 			EraseObjProperty(who, "#steathsteps");
 			if (GetCooldown(who, "partyhiding") > 0) // Se tiver usado habilidade de Emboscada

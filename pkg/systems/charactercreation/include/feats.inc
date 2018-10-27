@@ -59,17 +59,32 @@ endfunction
 
 function GetFeatList(who)
 	var chardata := GetObjProperty(who, "chardata");
-	var feat_list := chardata.Feats;
+   var all_feats := array{};
 
-	if (!feat_list)
-		feat_list := array{};
-	endif
-	
+   if (chardata.classes)
+      foreach classe in (chardata.classes)
+         all_feats := all_feats + classe.selected_habs;
+         sleepms(2);
+      endforeach
+   endif
+
+   if (chardata.subclasses)
+      foreach classe in (chardata.subclasses)
+         all_feats := all_feats + classe.habs;
+         sleepms(2);
+      endforeach
+   endif
+
 	return feat_list;
 endfunction
 
 function HaveFeat(who, feat)
 	var feat_list := GetFeatList(who);
+
+   if (typeOf(feat) != "Integer")
+      return 0;
+   endif
+
 	if (feat in feat_list)
 		return 1;
 	endif
@@ -77,175 +92,24 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
-function LearnFeat(who, feat, minus_point := 0, gives := 1)
-	if (typeof(feat) != "Struct")
-		feat := FeatInfo(feat, 1);
-	endif
+function LearnFeat(who, feat_id)
+   var feat := getFeatById(feat_id);
+   if (!feat) return SysLog("Error: {} feat_id não existe!".format(feat_id)); endif
 
-	if (typeof(feat) != "Struct")
-		Print(">>>>> ERROR OCURRED, NO FEAT FOUND {}".format(feat));
-		return 0;
-	endif
-
-	var chardata := GetObjProperty(who, "chardata");
-	var feat_list := chardata.Feats;
-   if (!feat_list)
-      feat_list := array{};
-   endif
+   var classCfg := ReadConfigFile(":charactercreation:config/classes");
+   var elem := FindConfigElem(classCfg, feat.Class);
    
-	if (feat.name in feat_list)
-		return 0;
-	endif
+   var class_type := "classes";
+   if (elem.Type != "Main") class_type := "subclasses"; endif
 
-   if (feat.type == "Classe")
-      var class_feats := chardata.class_feats;
-      if (!class_feats || typeof(class_feats) != "Array" )
-         class_feats := array{};
-      endif
-      class_feats.append(feat.level);
-      chardata.class_feats := class_feats;
-   endif
+   var chardata := GetObjProperty(who, "chardata");
 
-	feat_list.append(feat.name);
-	chardata.Feats := feat_list;
-	SetObjProperty(who, "chardata", chardata);
-	
-	// if (minus_point)
-	// 	who.SetTalentPoints(-1);
-	// endif
+   var index := FindInArray(chardata[class_type], struct{id := feat.Class});
+   if (!index) return; endif
 
-   if (gives)
-      foreach give_parse in (feat.give)
-         give_parse := SplitWords(give_parse);
-         if (give_parse[1] == "item")
-            createiteminBackpack(who, give_parse[2], give_parse[3]);
-         elseif (give_parse[1] == "stat")
-            AP_SetTrueStat(who, give_parse[2], AP_GetTrueStat(who, give_parse[2]) + cint(give_parse[3]));
-         // else
-         //    var oldskill := AP_GetTrueSkill(who, give_parse[2]);
-         //    AP_SetTrueSkill(who, give_parse[2], oldskill+1);
-         endif
-         sleepms(2);
-      endforeach
-   endif
+   chardata[class_type][index].habs.append(feat_id);
+   who.SetPoints(-1);
    return 1;
-endfunction
-
-
-function removeFeat(mobile, feat_name)
-	var chardata := GetObjProperty(mobile, "chardata");
-	var feat_list := chardata.Feats;
-
-   foreach feat_name2 in feat_list
-      if (lower(feat_name) == lower(feat_name2))
-         feat_list.Erase(_feat_name2_iter);
-      endif
-
-      var feat := FeatInfo(feat_name2);
-      foreach give_parse in (feat.give)
-         give_parse := SplitWords(give_parse);
-         if (give_parse[1] == "stat")
-            AP_SetTrueStat(mobile, give_parse[2], AP_GetTrueStat(mobile, give_parse[2]) - cint(give_parse[3]));
-         else
-            var oldskill := AP_GetTrueSkill(mobile, give_parse[2]);
-            AP_SetTrueSkill(mobile, give_parse[2], oldskill-1);
-         endif
-         sleepms(2);
-      endforeach
-      sleepms(2);
-   endforeach
-
-   chardata.Feats := feat_list;
-   SetObjProperty(mobile, "chardata", chardata);
-   return 1;
-endfunction
-
-function GetNewFeatsList(who, type := "normal", levels := array{})
-	var feat_cfg := ReadConfigFile(":charactercreation:feats");
-	var feat_list := array{};
-	foreach feat in (GetConfigStringKeys(feat_cfg))
-		sleepms(2);
-		if (HaveFeat(who, feat))
-			continue;
-		endif
-
-		feat := FeatInfo(feat, 1);
-		if (feat.level && cint(feat.level) > who.GetLevel() && who.cmdlevel < 3)
-			continue;
-		endif
-
-		var pass := 1;
-      if (!who.cmdlevel)
-         if(type == "Classe")
-            if (feat.type != "Classe")
-               continue;
-            elseif (!(feat.level in levels))
-               continue;
-            endif
-         elseif (feat.type)
-            continue;
-         endif
-         foreach req in (feat.requirements)
-            req := SplitWords(req);
-
-            if (req[1] == "achievement")
-               if(who.GetAchievement(req[2]) < cint(req[3]))
-                  pass := 0;
-                  break;
-               endif
-            elseif (req[1] == "skill")
-               if(!HaveSkill(who, req[2]))
-                  pass := 0;
-                  break;
-               endif
-            elseif (req[1] == "stat")
-               if(AP_GetStat(who, req[2]) < cint(req[3]))
-                  pass := 0;
-                  break;
-               endif
-            endif
-         endforeach
-      else
-         pass := 1;
-      endif
-
-      if (pass)
-         feat_list += feat;
-      endif
-   endforeach
-
-	return feat_list;
-endfunction
-
-function FeatInfo(feat, plus := 0)
-	var habcfg := ReadConfigFile(":charactercreation:feats");
-	var elem   := FindConfigElem( habcfg, feat );
-
-	if (!elem)
-		return feat;
-	endif
-   
-	var feat_info := struct{
-		"name" := feat,
-		"desc" :=   GetConfigString( elem, "Description" ),
-		"script" := GetConfigString( elem, "Script" ),
-
-		"mana" := GetConfigInt( elem, "Mana" ),
-		"stam" := GetConfigInt( elem, "Stam" ),
-
-		"cooldown" := GetConfigInt( elem, "Cooldown" ),
-
-		"level" := GetConfigInt( elem, "Level" ),
-		"ph" := GetConfigInt( elem, "PH" ),
-		"type" := GetConfigString( elem, "Type" )
-	};
-
-	if (plus)
-		feat_info["requirements"] := GetConfigStringArray( elem, "Require" );
-		feat_info["give"] := GetConfigStringArray( elem, "Give" );
-	endif
-
-	return feat_info;
 endfunction
 
 // function IsBloodied(mobile)

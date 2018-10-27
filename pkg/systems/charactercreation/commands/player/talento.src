@@ -42,7 +42,7 @@ endprogram
 		
 
 function ProccessHab(who, hab)
-   var feat := FeatInfo(hab);
+   var feat := getFeatById(hab);
    if (typeof(feat) != "Struct")
       SendSysMessageEx(who, "Algo errado com o seu talento. Chame um GM.", SSM_FAIL);
       return 0;

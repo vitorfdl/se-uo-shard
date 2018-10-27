@@ -104,8 +104,8 @@ exported function SetPoints(who, points)
    endif
 
 	SetObjProperty(who, "chardata", chardata);
-	return 1;
    set_critical(0);
+	return 1;
 endfunction
 
 exported function GetTalentPoints(who)
