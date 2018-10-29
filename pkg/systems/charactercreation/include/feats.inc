@@ -1,5 +1,7 @@
 include ":attributes:attributes";
 
+const RETURN_ACTIVE_ONLY := 1;
+
 function getFeatById(feat_id)
    var featCfg := ReadConfigFile(":charactercreation:config/feats");
    var elem := FindConfigElem(featCfg, feat_id);
@@ -57,15 +59,40 @@ function GetGodFeats(god)
    return feat_list;
 endfunction
 
-function GetFeatList(who)
+function GetFeatList(who, only_active := 0)
 	var chardata := GetObjProperty(who, "chardata");
-	var feat_list := chardata.Feats;
+   var feat_list := array{};
+   
+   if (chardata.current_class && chardata.classes)
+      var classe := FindElemInArray(chardata.classes, struct{ id := chardata.current_class});
+      if (classe)
+         feat_list := feat_list + classe.selected_habs;
+      endif
+      
+      sleepms(2);
+   endif
+
+   foreach classe in (chardata.subclasses)
+      feat_list := feat_list + classe.habs;
+      sleepms(2);
+   endforeach
 
 	if (!feat_list)
 		feat_list := array{};
 	endif
+
+   var return_list := array{};
+   foreach feat in feat_list
+      sleepms(2);
+      feat := GetFeatByid(feat);
+      if (only_active && !feat.Script)
+         continue;
+      endif
+
+      return_list.append(feat);
+   endforeach
 	
-	return feat_list;
+	return return_list;
 endfunction
 
 function HaveFeat(who, feat)

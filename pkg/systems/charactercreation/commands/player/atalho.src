@@ -8,20 +8,20 @@ include ":charactercreation:feats";
 include "include/say";
 
 
-program useHotBar(who, spos)
-   spos := cint(text);
-   if (!text) 
+program useHotBar(who, text)
+   var spos := cint(text);
+   if (!spos) 
       return SendSysMessageEx(who, "Você precisa entrar com o número da barra de atalho. Ex: .atalho 1", SSM_FAIL); 
-   else if (who.frozen || who.squelched || who.paralyzed) 
+   elseif (who.frozen || who.squelched || who.paralyzed) 
       return SendSysMessageEx(who, "Você não pode usar uma habilidade enquanto está paralizado, congelado ou silenciado.", SSM_FAIL);
-   else if (!GetObjProperty(who, "#Casting")) 
+   elseif (!GetObjProperty(who, "#Casting")) 
       return SendSysMessageEx(who, "Você não pode usar uma habilidade agora.", SSM_FAIL);
    endif
 
-   const hotbar = GetObjProperty(who, "hotbar");
-   if (!hotbar) hotbar := struct{ shortcuts := array{} }; endif
+   var hotbar := GetObjProperty(who, "hotbar");
+   if (!hotbar) hotbar := struct{ shortcuts := array{} } endif
 
-   const shortcut = hotbar.shortcuts[spos];
+   var shortcut := hotbar.shortcuts[spos];
    if (!habID)
       return SendSysMessageEx(who, "Não há nenhuma habilidade configurada para este atalho '{}'.".format(spos), SSM_FAIL);
    endif
@@ -30,8 +30,10 @@ program useHotBar(who, spos)
       return TriggerItem(who, shortcut);
    endif
 
-   const hab = GetHabilitieByNum(shortcut.id);
-   TriggerHabilitie(who, hab);
+   var hab = getFeatById(shortcut.id);
+   if (hab)
+      TriggerHabilitie(who, hab);
+   endif
 endprogram
 
 function TriggerItem(who, shortcut)

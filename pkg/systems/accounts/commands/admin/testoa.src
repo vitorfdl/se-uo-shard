@@ -20,7 +20,7 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   SendPacket(who, "FC0015A0010000000000FFB98300000003FFFFFFFF");
+		start_script(":charactercreation:hotbar", who);
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 
