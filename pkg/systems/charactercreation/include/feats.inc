@@ -1,5 +1,7 @@
 include ":attributes:attributes";
 
+const RETURN_ACTIVE_ONLY := 1;
+
 function getFeatById(feat_id)
    var featCfg := ReadConfigFile(":charactercreation:config/feats");
    var elem := FindConfigElem(featCfg, feat_id);
@@ -57,13 +59,99 @@ function GetGodFeats(god)
    return feat_list;
 endfunction
 
-function GetFeatList(who)
+function GetFeatList(who, only_active := 0)
 	var chardata := GetObjProperty(who, "chardata");
-   var all_feats := array{};
+   var feat_list := array{};
+   
+   if (chardata.current_class && chardata.classes)
+      var classe := FindElemInArray(chardata.classes, struct{ id := chardata.current_class});
+      if (classe)
+         feat_list := feat_list + classe.selected_habs;
+      endif
+      
+      sleepms(2);
+   endif
 
-   if (chardata.classes)
-      foreach classe in (chardata.classes)
-         all_feats := all_feats + classe.selected_habs;
+   foreach classe in (chardata.subclasses)
+      feat_list := feat_list + classe.habs;
+      sleepms(2);
+   endforeach
+
+	if (!feat_list)
+		feat_list := array{};
+	endif
+
+   var return_list := array{};
+   foreach feat in feat_list
+      sleepms(2);
+      feat := GetFeatByid(feat);
+      if (only_active && !feat.Script)
+         continue;
+      endif
+
+      return_list.append(feat);
+   endforeach
+	
+	return return_list;
+endfunction
+
+function HaveFeat(who, feat)
+	var feat_list := GetFeatList(who);
+	if (feat in feat_list)
+		return 1;
+	endif
+
+	return 0;
+endfunction
+
+function LearnFeat(who, feat, minus_point := 0, gives := 1)
+	if (typeof(feat) != "Struct")
+		feat := FeatInfo(feat, 1);
+	endif
+
+	if (typeof(feat) != "Struct")
+		Print(">>>>> ERROR OCURRED, NO FEAT FOUND {}".format(feat));
+		return 0;
+	endif
+
+	var chardata := GetObjProperty(who, "chardata");
+	var feat_list := chardata.Feats;
+   if (!feat_list)
+      feat_list := array{};
+   endif
+   
+	if (feat.name in feat_list)
+		return 0;
+	endif
+
+   if (feat.type == "Classe")
+      var class_feats := chardata.class_feats;
+      if (!class_feats || typeof(class_feats) != "Array" )
+         class_feats := array{};
+      endif
+      class_feats.append(feat.level);
+      chardata.class_feats := class_feats;
+   endif
+
+	feat_list.append(feat.name);
+	chardata.Feats := feat_list;
+	SetObjProperty(who, "chardata", chardata);
+	
+	// if (minus_point)
+	// 	who.SetTalentPoints(-1);
+	// endif
+
+   if (gives)
+      foreach give_parse in (feat.give)
+         give_parse := SplitWords(give_parse);
+         if (give_parse[1] == "item")
+            createiteminBackpack(who, give_parse[2], give_parse[3]);
+         elseif (give_parse[1] == "stat")
+            AP_SetTrueStat(who, give_parse[2], AP_GetTrueStat(who, give_parse[2]) + cint(give_parse[3]));
+         // else
+         //    var oldskill := AP_GetTrueSkill(who, give_parse[2]);
+         //    AP_SetTrueSkill(who, give_parse[2], oldskill+1);
+         endif
          sleepms(2);
       endforeach
    endif

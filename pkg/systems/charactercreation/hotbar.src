@@ -1,0 +1,147 @@
+use uo;
+use vitals;
+use math;
+
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":charactercreation:feats";
+include "include/say";
+
+var selector_open := 0;
+
+function BuildSelectorGump(who, byref gump, raw_x, raw_y)
+   var feat_list := GetFeatList(who, RETURN_ACTIVE_ONLY);
+   var width := 15+(48*(feat_list.size()+3));
+   if (selector_open > 1)
+      raw_x += (50 * (selector_open-1));
+   endif
+	GFResizePic(gump, raw_x+22, raw_y+8, 9200, width, 53); //background
+
+   var pos_x := raw_x+31;
+   foreach feat in feat_list
+	   GFAddButton(gump, pos_x, raw_y+13, feat.Icon, feat.Icon, GF_CLOSE_BTN, 900+feat.FeatID);
+      pos_x += 48;
+      sleepms(2);
+   endforeach
+
+	GFAddButton(gump, pos_x, raw_y+13, 2248, 2248, GF_CLOSE_BTN, 897);
+
+	GFAddButton(gump, pos_x+48, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 898);
+	GFGumpPic(gump, pos_x+48+2, raw_y+19, 27, 1485);
+	GFTextLine(gump, pos_x+48+6, raw_y+24, 1152, "Item");
+
+	GFAddButton(gump, pos_x+48+48, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
+	GFGumpPic(gump, pos_x+48+48, raw_y+13, 21012, 1485);
+endfunction
+
+function BuildHotBar(who, byref hotbar)
+   var pos_x := hotbar.pos_x;
+   var pos_y := hotbar.pos_y;
+	var gump := GFCreateGump();
+
+   // GFSetID(gump, 0x945);//9260
+	GFResizePic(gump, pos_x+10, pos_y+64, 9200, 453, 74);
+
+   var i;
+   for (i := 1; i <= 9; i += 1)
+      var pos_plus := pos_x+((i-1) * 48);
+      var shortcut := hotbar.shortcuts[i];
+	   GFAddButton(gump, 34 + pos_plus, pos_y+65, 2086, 2086, GF_CLOSE_BTN, 50 + i);
+	   GFTextLine(gump, 32 + pos_plus, pos_y+121, 1152, "0{}".format(i));
+
+      if (!shortcut)
+	      GFGumpPic(gump, 19 + pos_plus, pos_y+81, 21012, 1485);
+      elseif (shortcut.script)
+         GFAddButton(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, shortcut.Icon, GF_CLOSE_BTN, 450+i);
+      elseif (shortcut.item)
+         GFAddButton(gump, 19 + pos_plus, pos_y+81, 39833, 39833, GF_CLOSE_BTN, 450+i);
+         GFGumpPic(gump, 19 + pos_plus+2, pos_y+81, 27, 1485);
+         GFTilePic(gump, 19 + pos_plus, pos_y+81, shortcut.objtype);
+      elseif (shortcut.id)
+         var feat := GetFeatById(shortcut.id);
+         GFAddButton(gump, 19 + pos_plus, pos_y+81, feat.Icon, feat.Icon, GF_CLOSE_BTN, 500+(feat.FeatID));
+      endif
+
+      sleepms(2);
+   endfor
+
+	GFAddButton(gump, pos_x+446, pos_y+69, 2103, 248, GF_CLOSE_BTN, 2); // resize
+
+   if (selector_open) BuildSelectorGump(who, gump, pos_x, pos_y); endif
+
+	return GFSendGump(who, gump);
+
+endfunction
+
+program startHotBar(who, spos)
+   var chardata := struct{
+      current_class := "Furioso",
+      subclasses:= array{
+         struct{
+            id := "Sabotador",
+            exp := 200,
+            habs:= array{}
+         }
+      },
+      classes := array{
+         struct{
+            id := "Furioso",
+            habs := array{81, 9},
+            exp := 450,
+            selected_habs := array{81}
+         }
+      },
+      level := 1,
+      exp := 300,
+      points := 10,
+      vitalpoints := 1,
+      hits := 500,
+      mana := 100,
+      stam := 30,
+      god := "Anar",
+      race := "Vala"
+   };
+
+   SetObjProperty(who, "chardata", chardata);
+
+   var hotbar := GetObjProperty(who, "hotbar");
+   if (!hotbar) hotbar := struct{ shortcuts := array{}, pos_x := 0, pos_y := 0 }; endif
+   hotbar := struct{ shortcuts := array{}, pos_x := 350, pos_y := 600-25 };
+
+   while (who.connected)
+      var res := BuildHotBar(who, hotbar);
+
+      if (res[0] >= 900)
+         hotbar.shortcuts[selector_open] := struct{ id := res[0] - 900};
+         selector_open := 0;
+         SetobjProperty(who, "hotbar", hotbar);
+      elseif (res[0] >= 897)
+         if (res[0] == 897)
+            hotbar.shortcuts[selector_open] := struct{ script := ":charactercreation:esquiva", Icon := 2248 };
+         endif
+         SetobjProperty(who, "hotbar", hotbar);
+         selector_open := 0;
+      elseif (res[0] == 898)
+         hotbar.shortcuts[selector_open] := 0;
+         SetobjProperty(who, "hotbar", hotbar);
+         selector_open := 0;
+      elseif (res[0] == 899)
+         hotbar.shortcuts[selector_open] := 0;
+         SetobjProperty(who, "hotbar", hotbar);
+         selector_open := 0;
+      elseif (res[0] >= 50 && res[0] <= 70)
+         res := res[0] - 50;
+         if (selector_open != res)
+            selector_open := res;
+         else
+            selector_open := 0;
+         endif
+      elseif(res[0] >= 200 && res[0] <= 250)
+      
+      elseif (res[0] == 2)
+         break;
+      endif
+      sleepms(2);
+   endwhile
+
+endprogram

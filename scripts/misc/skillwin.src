@@ -36,28 +36,6 @@ CONST GF_BKG_ADD_BTN := 100;
 var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
 var ficharp_elem;
 
-// chardata
-//    god,
-//    race,
-//    caminhos: [],
-//    classe,
-//    subclasses: [{
-//       habs: [],
-//       selected_habs: [],
-//       exp,
-//    }],
-//    classes: [{
-//       habs: [],
-//       selected_habs: [],
-//       exp: [],
-//       quests: 0,
-//    }],
-//    hits,
-//    mana,
-//    stam,
-//    level,
-//    exppoint,
-
 function buildSubClass(byref gump, subclass, x, y)
    if (!subclass)
       GFHtmlShadowed(gump, 307, y+15, 150, 20, "#FFFFFF", "Sem subclasse", 4);
