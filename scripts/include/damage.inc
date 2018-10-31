@@ -43,7 +43,7 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
    if (!wpn) wpn := attacker.weapon; endif
 
    if (!wpn_elem)
-      wpn_elem := GetItemCFGInfo(attacker, weapon);
+      wpn_elem := GetItemCFGInfo(attacker, wpn);
    endif
 	// if (wpn_elem.dicedmg)
 	// 	var dmg       := wpn_elem.dicedmg;

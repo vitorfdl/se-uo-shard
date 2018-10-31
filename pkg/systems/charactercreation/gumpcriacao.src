@@ -118,8 +118,8 @@ function StartCharacterCreation(who, byref chardata)
          subclasses:= array{},
          classes := array{struct{
             id := "Furioso",
-            habs := array{},
             exp := 0,
+            habs := array{},
             selected_habs := array{}
          }},
          level := 1,

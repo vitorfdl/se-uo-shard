@@ -1,0 +1,7 @@
+use uo;
+use os;
+
+program fixTalent(who)
+   start_script(":charactercreation:hotbar/controller", who);
+   start_script(":charactercreation:hotbar/hotbar", who);
+endprogram

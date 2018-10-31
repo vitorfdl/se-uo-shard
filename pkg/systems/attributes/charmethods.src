@@ -38,6 +38,21 @@ exported function isRace(who, race)
 	return 0;
 endfunction
 
+exported function getRace(who, translate := 0)
+	var chardata := GetObjProperty(who, "chardata");
+   var race := chardata.raca;
+
+   if (translate)
+      case(chardata.race)
+         "Elfo": race := "Vala"; break;
+         "Humano":  race := "Núro"; break;
+         "Meio-Elfo":  race := "Alayar"; break;
+      endcase
+   endif
+
+	return race;
+endfunction
+
 exported function SkillList(who)
    //TODO: Remover
 endfunction
