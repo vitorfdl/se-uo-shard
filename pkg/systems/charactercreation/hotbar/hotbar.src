@@ -1,0 +1,141 @@
+use uo;
+use vitals;
+use math;
+
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":charactercreation:feats";
+include "include/say";
+
+var selector_open := 0;
+
+function BuildSelectorGump(who, byref gump, raw_x, raw_y)
+   var feat_list := GetFeatList(who, RETURN_ACTIVE_ONLY);
+   var width := 15+(48*(feat_list.size()+3));
+   if (selector_open > 1)
+      raw_x += (50 * (selector_open-1));
+   endif
+	GFResizePic(gump, raw_x+22, raw_y+8, 9200, width, 53); //background
+
+   var pos_x := raw_x+31;
+   foreach feat in feat_list
+	   GFAddButton(gump, pos_x, raw_y+13, feat.Icon, feat.Icon, GF_CLOSE_BTN, 900+feat.FeatID);
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>{}</basefont></center>".format(feat.Name));
+      pos_x += 48;
+      sleepms(2);
+   endforeach
+
+	GFAddButton(gump, pos_x, raw_y+13, 2248, 2248, GF_CLOSE_BTN, 897);
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esquiva</basefont></center>Ativa sua ação de esquiva, permitindo esquivar de golpes e habilidades com alvo único por 2 segundos.");
+
+	GFAddButton(gump, pos_x+48, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 898);
+	GFGumpPic(gump, pos_x+48+2, raw_y+19, 27, 1485);
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Atalho de Item</basefont></center>Selecione um item ou consumível para adicionar a barra de atalho");
+	GFTextLine(gump, pos_x+48+8, raw_y+24, 1152, "Item");
+
+	GFAddButton(gump, pos_x+48+48, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
+	GFGumpPic(gump, pos_x+48+48, raw_y+13, 21012, 1485);
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esvaziar Atalho</basefont></center>");
+endfunction
+
+function BuildHotBar(who, byref hotbar)
+   var pos_x := hotbar.pos_x;
+   var pos_y := hotbar.pos_y;
+	var gump := GFCreateGump();
+
+   GFMovable(gump, 0);//9260
+   GFDisposable(gump, 0);
+   GFSetID(gump, 0x945);//9260
+	GFResizePic(gump, pos_x+10, pos_y+64, 9200, 597, 74);
+
+   var i;
+   for (i := 1; i <= 12; i += 1)
+      var pos_plus := pos_x+((i-1) * 48);
+      var shortcut := hotbar.shortcuts[i];
+	   if (selector_open != i) GFAddButton(gump, 34 + pos_plus, pos_y+65, 2086, 2086, GF_CLOSE_BTN, 50 + i);
+	   else GFAddButton(gump, 34 + pos_plus, pos_y+65, 2087, 2087, GF_CLOSE_BTN, 50 + i); endif
+
+      var z := "0";
+      if (i >= 10) z := ""; endif
+	   GFTextLine(gump, 32 + pos_plus, pos_y+121, 1152, "{}{}".format(z, i));
+
+      if (!shortcut)
+	      GFGumpPic(gump, 19 + pos_plus, pos_y+81, 21012, 1485);
+      elseif (shortcut.script)
+         GFAddButton(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, shortcut.Icon, GF_CLOSE_BTN, 450+i);
+      elseif (shortcut.item)
+         GFAddButton(gump, 19 + pos_plus, pos_y+81, 39833, 39833, GF_CLOSE_BTN, 450+i);
+         GFGumpPic(gump, 19 + pos_plus+2, pos_y+85, 27, 1485);
+         GFTilePic(gump, 19 + pos_plus, pos_y+87, cint(shortcut.graphic), shortcut.color);
+         GFTooltipText(gump, "<basefont color=#7FFFD4>{}</basefont>".format(shortcut.desc));
+      elseif (shortcut.id)
+         var feat := GetFeatById(shortcut.id);
+         if (TS_GetCooldown(who, "hab_{}".format(shortcut.id)))
+            GFGumpPic(gump, 19 + pos_plus, pos_y+81, feat.Icon, 1000);
+	         GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "CD");
+         else
+            GFAddButton(gump, 19 + pos_plus, pos_y+81, feat.Icon, feat.Icon, GF_CLOSE_BTN, 450+i);
+         endif
+         GFTooltipText(gump, "<center><basefont color=#7FFFD4>{}</basefont></center>{}".format(feat.Name, feat.Description));
+      endif
+
+      sleepms(2);
+   endfor
+
+	GFAddButton(gump, pos_x+590, pos_y+69, 2103, 2103, GF_CLOSE_BTN, 2); // resize
+
+   if (selector_open) BuildSelectorGump(who, gump, pos_x, pos_y); endif
+
+	return GFSendGump(who, gump);
+endfunction
+
+program startHotBar(who, spos)
+   var hotbar := GetObjProperty(who, "hotbar");
+   if (!hotbar) hotbar := struct{ shortcuts := array{}, pos_x := 0, pos_y := 0 }; endif
+
+   while (who.connected)
+      hotbar := GetObjProperty(who, "hotbar");
+      var res := BuildHotBar(who, hotbar);
+
+      if (res[0] >= 900 && res[0] < 1500)
+         hotbar.shortcuts[selector_open] := struct{ id := res[0] - 900};
+         selector_open := 0;
+         SetobjProperty(who, "hotbar", hotbar);
+      elseif (res[0] >= 897)
+         if (res[0] == 897)
+            hotbar.shortcuts[selector_open] := struct{ script := ":charactercreation:esquiva", Icon := 2248 };
+         elseif (res[0] == 898)
+            SendSysMessageEx(who, "Qual item deseja adicionar a barra de atalho?", SSM_REQUEST);
+            var item := Target(who);
+            // if (!item.usescript)
+            //    SendSysMessageEx(who, "Este item não é consumível ou ativável.", SSM_FAIL);
+            // else
+               hotbar.shortcuts[selector_open] := struct{
+                  item := item.serial,
+                  objtype := item.objtype,
+                  graphic := item.graphic,
+                  desc := item.desc,
+                  color := item.color
+               };
+            // endif
+         elseif (res[0] == 899)
+            hotbar.shortcuts[selector_open] := 0;
+         endif
+         SetobjProperty(who, "hotbar", hotbar);
+         selector_open := 0;
+      elseif (res[0] >= 50 && res[0] <= 70)
+         res := res[0] - 50;
+         if (selector_open != res)
+            selector_open := res;
+         else
+            selector_open := 0;
+         endif
+      elseif(res[0] >= 450 && res[0] <= 500)
+         start_script(":charactercreation:commands/player/atalho", array{who, res[0]-450});
+      elseif (res[0] == 2)
+         break;
+      endif
+      sleepms(2);
+   endwhile
+
+endprogram

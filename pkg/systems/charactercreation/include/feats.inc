@@ -2,9 +2,19 @@ include ":attributes:attributes";
 
 const RETURN_ACTIVE_ONLY := 1;
 
-function getFeatById(feat_id)
+function getFeatById(feat_id, get_class := 0)
    var featCfg := ReadConfigFile(":charactercreation:config/feats");
    var elem := FindConfigElem(featCfg, feat_id);
+
+   if (get_class)
+      var classCfg := ReadConfigFile(":charactercreation:config/classes");
+      var class_elem := FindConfigElem(classCfg, elem.Class);
+      if (class_elem.Type == "Main")
+         get_class := "classes";
+      else
+         get_class := "subclasses";
+      endif
+   endif
 
    return struct{
       FeatID := GetConfigInt(elem, "FeatID"),
@@ -21,7 +31,8 @@ function getFeatById(feat_id)
       Group := GetConfigInt(elem, "Group"),
       Level := GetConfigInt(elem, "Level"),
       Experience := GetConfigInt(elem, "Experience"),
-      PointCost := GetConfigInt(elem, "PointCost")
+      PointCost := GetConfigInt(elem, "PointCost"),
+      ClassType := get_class
    };
 endfunction
 
@@ -44,12 +55,32 @@ function GetClassFeats(class_id, elem := 0)
    return feat_list;
 endfunction
 
-function GetGodFeats(god)
+function GetRaceFeats(race, return_id := 0)
+   var raceCfg := ReadConfigFile(":charactercreation:config/races");
+   var elem := FindConfigElem(raceCfg, race);
+
+   if (!elem) return; endif
+
+   var hab_ids := GetConfigStringArray(elem, "Habilidade");
+   if (return_id) return hab_ids; endif
+
+   var feat_list := array{};
+   foreach id in hab_ids
+      feat_list.append(getFeatById(id));
+      sleepms(2);
+   endforeach
+
+   return feat_list;
+endfunction
+
+function GetGodFeats(god, return_id := 0)
    var classCfg := ReadConfigFile(":charactercreation:config/deuses");
    var godelem := FindConfigElem(classCfg, god);
    if (!godelem) return; endif
 
    var hab_ids := GetConfigStringArray(godelem, "Habilidade");
+   if (return_id) return hab_ids; endif
+
    var feat_list := array{};
    foreach id in hab_ids
       feat_list.append(getFeatById(id));
@@ -77,6 +108,9 @@ function GetFeatList(who, only_active := 0)
       sleepms(2);
    endforeach
 
+   feat_list := feat_list + GetRaceFeats(chardata.raca, 1);
+   feat_list := feat_list + GetGodFeats(chardata.god, 1);
+
 	if (!feat_list)
 		feat_list := array{};
 	endif
@@ -85,7 +119,7 @@ function GetFeatList(who, only_active := 0)
    foreach feat in feat_list
       sleepms(2);
       feat := GetFeatByid(feat);
-      if (only_active && !feat.Script)
+      if ((only_active && !feat.Script) || (chardata.level < feat.Level))
          continue;
       endif
 

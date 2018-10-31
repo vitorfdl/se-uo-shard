@@ -20,7 +20,8 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-		start_script(":charactercreation:hotbar", who);
+   TS_StartCooldown(who, "hab_81", 5);
+		start_script(":charactercreation:hotbar/hotbar", who);
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 
