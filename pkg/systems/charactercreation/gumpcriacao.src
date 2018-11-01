@@ -104,6 +104,7 @@ program createchar(who)
    if (!chardata.recriando && !chardata.heir)
       CreateItemInBackpack(who, 0xeed, 8); //dinheiro
 	   start_script( ":email:emailMessage/sendSystemMail", array{ who, "Bem-vindo ao SE!", "Seja bem vindo ao Sussurros Eternos Shard. Este é o sistema de conversação por E-Mail. Sempre que o servidor quiser te comunicar algum aviso importante, você será notificado desta forma. Game Masters também podem utilizar deste sistema para te deixar mensagens ou iniciar uma conversação. [P] Você pode acessar esse menu através do comando '.email' ou dando duplo-clique na estrela no topo de seu paperdoll. [P] [P] Para alterar sua senha digite .senha senhanatiga senhanova [P] [P] Bom Jogo!"} );
+      start_script(":charactercreation:hotbar/hotbar", who);
    endif
 endprogram
 
