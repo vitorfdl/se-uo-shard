@@ -65,6 +65,7 @@ function buildSubClass(charlevel, byref gump, subclass, x, y)
       endif
 
       GFGumpPic(gump, x_pos, y-2, hab.Icon, color); // hab
+      GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in subclass.habs)));
       x_pos += 46;
       sleepms(2);
    endforeach
@@ -104,7 +105,7 @@ function buildClass(charlevel, byref gump, classe, extrahabs := array{})
                GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
             endif
             GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
-            GFTooltipText(gump, "<center><basefont color=#7FFFD4><b>{}</b></basefont><br>{}".format(hab.Name, hab.Description));
+            GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in classe.habs)));
          else
             GFGumpPic(gump, x, y, 0x5DD3, 1000);
             GFTooltipText(gump, "Habilidade Indisponível");
@@ -127,6 +128,8 @@ function buildClass(charlevel, byref gump, classe, extrahabs := array{})
       sleepms(2);
    endfor
 
+   GFGumpPic(gump, 603, 192, 0x5DD3, 1000);
+   GFTooltipText(gump, "Habilidade Indisponível");
 endfunction
 
 function buildGodGump(byref gump, god, level)
@@ -144,6 +147,7 @@ function buildGodGump(byref gump, god, level)
       
       if (hab.Script) GFAddButton(gump, 736-7, 221+((_hab_iter-1) * 49), hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); endif;
       GFGumpPic(gump, 736-7, 221+((_hab_iter-1) * 49), cint(hab.Icon), color);
+      GFTooltipText(gump, BuildFeatToolTip(hab));
       GFTextLine(gump, 743-7, 245+((_hab_iter-1) * 49), 1000, "Lv{}".format(hab.Level));
 
       sleepms(2);
@@ -192,6 +196,7 @@ function SendSkillGump(who, chardata)
       var race_habs := GetRaceFeats(chardata.raca);
       foreach hab in race_habs
          GFGumpPic(gump, 580 + ((_hab_iter-1) * 49), 81, hab.Icon, 0 ); //hab
+         GFTooltipText(gump, BuildFeatToolTip(hab));
       endforeach
    else
       GFHtmlShadowed(gump, 582, 61, 90, 20, "#FFFFFF", "<center>Raça Indefinida", 4);

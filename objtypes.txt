@@ -2086,12 +2086,7 @@
 0x981c TrainingAdvDummy2 training
 # 0x981d - 0x9820 unused
 0x9821 TrainingAdvDummy training
-# 0x9822 - 0x9899 unused
-0x989a fogomonterpart magery
-0x989b gelomonterpart magery
-0x989c eletricomonterpart magery
-0x989d venenomonterpart magery
-# 0x989e - 0x9922 unused
+# 0x9822 - 0x9922 unused
 0x9923 papelpautado musicianship
 0x9924 partitura musicianship
 0x9925 partituramagica musicianship

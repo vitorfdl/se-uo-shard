@@ -107,7 +107,7 @@ endprogram
 
 
 function GetDamageType(weapon)
-	var attack_type := DMG_BLUDGE;
+	var attack_type := DMG_PHYSICAL;
 	if (weapon.objtype)
 		var weapon_type := GetConfigString(item_cfg[weapon.objtype], "DamageType");
 		if (weapon_type)

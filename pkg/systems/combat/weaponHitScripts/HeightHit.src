@@ -24,7 +24,7 @@ program HitScript(params)
 	if (dmg > 3)
 		dmg := 3;
 	endif
-	DamageFLS(defender, CInt(dmg), DMG_BLUDGE, attacker);
+	DamageFLS(defender, CInt(dmg), DMG_PHYSICAL, attacker);
 	//endif
 	
 	return 1;

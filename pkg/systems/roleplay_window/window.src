@@ -2,29 +2,33 @@ use uo;
 use os;
 
 include "include/say";
+include "include/colormap";
 include ":gumps:gumps";
+include ":tn:tngumps";
 include ":gumps:gumps_ex";
 
 program AC_start(who)
    var setup := GetObjProperty(who, "roleplay_setup");
    if (!setup)
-      setup := struct{ "width" := 164, "height" := 163};
+      setup := struct{ "width" := 164, "height" := 163, y := 625, x := 273};
    endif
+
    while (who.connected)
       var last_see := GetObjProperty(who, "last_see");
-
 
       if (!last_see) last_see := array{}; endif
       last_see := "<br>-----<br>".join(last_see);
 	   var gump := GFCreateGump();
       GFPage(gump, 0);
-      GFSetId(gump, 0x977);
-      GFResizePic(gump, 9, 7, 9270, setup.width, setup.height);
-      GFAddButton(gump, setup.width-4, 7, 5601, 5605, GF_CLOSE_BTN, 5);
-      GFAddButton(gump, setup.width-4, setup.height-5, 5602, 5606, GF_CLOSE_BTN, 6);
+      GFMovable(gump, 0);
+      GFResizePic(gump, 9+setup.x, 7+setup.y, 9270, setup.width, setup.height);
+      GFAddButton(gump, setup.x+setup.width-4, setup.y+7, 5601, 5605, GF_CLOSE_BTN, 5);
+      GFAddButton(gump, setup.x+setup.width-4, setup.y+setup.height-5, 5602, 5606, GF_CLOSE_BTN, 6);
+      GFAddButton(gump, 9+setup.x, 7+setup.y, 1210, 1210, GF_CLOSE_BTN, 7);
+      GFTooltipText(gump, "Reposicionar");
       
-      GFAddAlphaRegion(gump, 21, 19, setup.width-25, setup.height-24);
-      GFHTMLArea(gump,  23, 21, setup.width-25, setup.height-26, "<basefont color=#FAFAFA>{}".format(last_see), 0, 1);
+      GFAddAlphaRegion(gump, 21+setup.x, 19+setup.y, setup.width-25, setup.height-24);
+      GFHTMLArea(gump,  23+setup.x, 21+setup.y, setup.width-25, setup.height-26, "{}{}<basefont color=#FAFAFA>{}".format(YELLOW, "<center><u>Roleplay Gump</u></center>", last_see), 0, 1);
       
       var input := GFSendGump(who, gump)[0];
 
@@ -39,6 +43,11 @@ program AC_start(who)
          if (setup.height >= 300)
             setup.height := 163;
          endif
+         SetObjProperty(who, "roleplay_setup", setup);
+      elseif (input == 7)
+         var new_pos := PositionGump(who, setup.x, setup.y);
+         setup.x := new_pos[1];
+         setup.y := new_pos[2];
          SetObjProperty(who, "roleplay_setup", setup);
       else
          break;

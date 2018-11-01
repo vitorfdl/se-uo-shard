@@ -187,7 +187,7 @@ function dashAttack(targ, dmg, dist)
    endfor
 
    foreach mob in mobs
-      DamageFLS(mob, dmg, DMG_BLUDGE, me);
+      DamageFLS(mob, dmg, DMG_PHYSICAL, me);
       if (rollResistDice(mob, CONSTITUTION) <= 14)
          TS_StartTimer(mob, "tombar", 2);
       endif
@@ -205,7 +205,7 @@ function jumpAttack(targ, dmg)
    MoveObjectToLocation(me, me.x, me.y, me.z+8, me.realm, MOVEOBJECT_FORCELOCATION);
    sleepms(600);
    MoveObjectToLocation(me, targ.x, targ.y, targ.z, me.realm, MOVEOBJECT_FORCELOCATION);
-   DamageFLS(targ, dmg, DMG_BLUDGE, me);
+   DamageFLS(targ, dmg, DMG_PHYSICAL, me);
    return 1;
 endfunction
 
@@ -628,7 +628,7 @@ function NPC_Agarrar(dice, targ, difficulty)
             return;
          endif
          sleep(1);
-         DamageFLS(targ, RandomDiceRoll("1d4"), DMG_BLUDGE, me);
+         DamageFLS(targ, RandomDiceRoll("1d4"), DMG_PHYSICAL, me);
       endfor
    else
       PrintText(targ, "*resistido*".format(me.name), SSM_INFO);

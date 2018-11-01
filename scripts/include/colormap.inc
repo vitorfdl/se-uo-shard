@@ -1,3 +1,9 @@
+const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
+const RED    := "<BASEFONT COLOR=#FF4C4C>";
+const YELLOW    := "<BASEFONT COLOR=#FFD300>";
+const BLUE   := "<BASEFONT COLOR=#4169E1>";
+const ORANGE := "<BASEFONT COLOR=#FFA500>";
+const LIGHTGRAY := "<BASEFONT COLOR=#D3D3D3>";
 
 function GetMagentaMap(value)
 	case (value)
@@ -12,7 +18,5 @@ function GetMagentaMap(value)
 		8: return 133;
 		9: return 33;
 	endcase
-	
-
 endfunction
 

@@ -74,7 +74,7 @@ function disparoPoderoso(param)
             if (alreadydamaged.size() < 2)
                basedamage += 2;
             endif
-				DamageFLS(mobile, basedamage, DMG_PIERCING, who);
+				DamageFLS(mobile, basedamage, DMG_PHYSICAL, who);
 			endif
 			sleepms(20);
 		endforeach

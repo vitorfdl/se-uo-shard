@@ -42,6 +42,22 @@ include ":timedscripts:timedScripts";
 const BASE_DIFFICULTY := 19;
 const GET_MODIFIER := 1;
 
+function rollAttrDice(a := 1, b:= 1, c :=1, d:= 1, e:= 1)
+   return 0;
+endfunction
+function GetSkillBonus(a := 1, b:= 1)
+   return 0;
+endfunction
+function rollResistDice(a := 1, b:= 1)
+   return 0;
+endfunction
+function checkImmunity(a := 1, b:= 1)
+   return 0;
+endfunction
+function HaveSkill(a := 1, b:= 1, c :=1, d:= 1, e:= 1)
+   return 0;
+endfunction
+
 function debugMSG(who, text)
 	if (GetObjProperty(who, "debug"))
 		SendSysMessageEx(who, text);	
@@ -243,8 +259,8 @@ endfunction
 function GetHP(mobile)
 	var chardata := GetObjProperty(mobile, "chardata");
 	var hp := 0;
-	if (chardata != error && chardata.hitpoints)
-		hp := chardata.hitpoints;
+	if (chardata != error && chardata.hits)
+		hp := chardata.hits;
 	endif
    
 	if (hp < 1) 

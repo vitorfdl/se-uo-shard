@@ -19,6 +19,7 @@ const BTN_CHANGE_LEVELUP := 14;
 const BTN_CHANGE_FEAT := 15;
 const BTN_CHANGE_HITS := 16;
 const BTN_CHANGE_MANA := 17;
+const BTN_CHANGE_VIGOR := 18;
 
 program command_Message(who)
 	var targ;
@@ -50,12 +51,16 @@ program command_Message(who)
       GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_RACE);
       y+= 20;
 		GFTextLine(gump, 170, y, 2100, "Vida:");
-		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.hitpoints)));
+		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.hits)));
       GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_HITS);
       y+= 20;
 		GFTextLine(gump, 170, y, 2100, "Mana:");
-		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.manapoints)));
+		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.mana)));
       GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_MANA);
+      y+= 20;
+		GFTextLine(gump, 170, y, 2100, "Vigor:");
+		GFTextLine(gump, 220, y, 2103, "{}".format(cint(chardata.stam)));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_VIGOR);
       y+= 30;
       GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
 		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Mudar Aparência", 1);
@@ -88,14 +93,20 @@ function handleInput(who, input, byref chardata)
          SetName(who, who.name);
          return;
       BTN_CHANGE_HITS:
-         var hitpoints := cint(RequestInput(who, who.backpack, "Escreva o número de vida extra"));
-         chardata.hitpoints := hitpoints;
+         var hits := cint(RequestInput(who, who.backpack, "Escreva o número de vida extra"));
+         chardata.hits := hits;
          sleepms(300);
          RecalcVitals(who);
          return;
       BTN_CHANGE_MANA:
-         var manapoints := cint(RequestInput(who, who.backpack, "Escreva o número de mana extra"));
-         chardata.manapoints := manapoints;
+         var mana := cint(RequestInput(who, who.backpack, "Escreva o número de mana extra"));
+         chardata.mana := mana;
+         sleepms(300);
+         RecalcVitals(who);
+         return;
+      BTN_CHANGE_VIGOR:
+         var stam := cint(RequestInput(who, who.backpack, "Escreva o número de vigor extra"));
+         chardata.stam := stam;
          sleepms(300);
          RecalcVitals(who);
          return;

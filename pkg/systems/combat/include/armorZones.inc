@@ -22,7 +22,7 @@ use cfgfile;
  *
  */
 
-const RETURN_MEDRES = 1;
+const RETURN_MEDRES := 1;
 
 function CS_GetRandomArmorZone()
 	// This function assumes that the 'Chance' totals in

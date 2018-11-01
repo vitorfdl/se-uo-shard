@@ -91,7 +91,7 @@ program Attack(params)
       bonus_atk += 1;
 	endif
 
-   if (weapon.isBow() && TS_GetTimerInfo(attacker, "hallucination")))
+   if (weapon.isBow() && TS_GetTimerInfo(attacker, "hallucination"))
       SendSysMessageEx(attacker, "Você erra o alvo", SSM_FAIL);
       var mobiles := ListMobilesNearLocation(defender.x, defender.y, defender.z, 2);
       mobiles := RemoveFromArray(mobiles, attacker);
@@ -99,7 +99,7 @@ program Attack(params)
    endif
 
    if (TS_GetCooldown(attacker, "dodge") || (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow()) )
-		MissHit(attacker, defender)
+		MissHit(attacker, defender);
       PrintText(attacker, "ESQUIVA", SSM_FAIL);
       return;
    elseif (TS_GetCooldown(attacker, "block"))
@@ -109,7 +109,7 @@ program Attack(params)
 	endif
 
 	var armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
-	armor     := CS_SelectArmored(armor);
+	armor     := CS_SelectArmored(armor, 1);
 
 	PlayAttackAnimation(attacker, wpn_a_elem);
 
@@ -119,7 +119,7 @@ program Attack(params)
 
    PlayHitSounds(attacker, defender);
    var dmg := CalculateRawDamage(attacker, wpn_a_elem, attacker.weapon);
-   ExpGain(attacker, defender_CA, attack_chance);
+   // ExpGain(attacker, defender_CA, attack_chance);
 
    // if (!defender.npctemplate && defender.shield)
    //    if (wpn_a_elem.ProjectileAnim)

@@ -338,7 +338,7 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
       sleepms(2);
    endforeach
 
-	var gump := GFCreateGump();
+	var gump := GFCreateGump(250, 250);
    GFSetID(gump, GUMPID_TNGUMPS);
 	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 100+total_height);
 
@@ -428,4 +428,94 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 	endforeach
 
 	return res;
+endfunction
+
+////////
+// options = [
+//    { 
+//       text = Essa Opção, 
+//       Icon = 7748, 
+//       Item = item.graphic,
+//       color = 0
+//    }
+// ]
+function ChoiceSelectorGump(who, question := "", options := array{}, allow_cancel := 0)
+	var gump := GFCreateGump(250, 250);
+   GFSetID(gump, GUMPID_TNGUMPS);
+	
+	GFResizePic(gump, 10, 8, 9380, 392, 143+(options.size() * 69)); // background
+   
+	GFGumpPicTiled(gump, 37, 46, 338, 10, 50); // background
+	GFGumpPicTiled(gump, 39, 108+(options.size() * 67), 338, 10, 50); // background
+
+   var y := 87;
+   foreach btn in options
+      GFAddButton(gump, 51, y+9, 5151, 248, GF_CLOSE_BTN, _btn_iter); // button
+      GFAddButton(gump, 195, y+9, 5151, 248, GF_CLOSE_BTN, _btn_iter); // button
+      GFResizePic(gump, 44, y, 5120, 327, 58); // button
+      GFTextLine(gump, 118, y+18, 2212, btn.text);
+
+      GFResizePic(gump, 43, y, 9270, 63, 58); // behind icon
+
+      if (btn.item)
+         GFResizePic(gump, 50, y+7, 9350, 50, 43);
+         GFTilePic(gump, 55, y+16, btn.item, cint(btn.color)); //item
+      elseif (btn.icon)
+         GFGumpPic(gump, 52, y+7, btn.icon, cint(btn.color)); //gump
+      endif
+      y += 62;
+   endforeach
+
+   if (!allow_cancel)
+	   GFAddButton(gump, 179, 85+(options.size() * 64), 2072, 2073, GF_CLOSE_BTN, 50); // cancel
+   else
+	   GFClosable(gump, 0);
+   endif
+
+   GFHtmlShadowed(gump, 42, 59, 326, 20, "#FFFFFF", "<center>{}".format(question), 5);
+
+	var res := GFSendGump(who, gump)[0];
+   if (res[0] == 50) return 0; endif
+   return res;
+
+endfunction
+
+function PositionGump(who, cur_x := 0, cur_y := 0)
+   var gump := GetGlobalProperty("#resize_gump");
+   var positions := array{};
+   if (!gump)
+      gump := GFCreateGump();
+	   GFClosable(gump, 0);
+	   GFMovable(gump, 0);
+
+      GFResizePic(gump, 0, 0, 9200, 1920, 1080);
+      GFAddAlphaRegion(gump, 1, 2, 1920, 1080);
+      GFSetRadioGroup(gump, 0);
+
+      var i := 1;
+      var y;
+      for ( y := 3; y < 1080; y += 45)
+         var x;
+         for (x := 1; x < 1920; x += 52)
+            positions.append(array{x, y});
+            GFAddButton(gump, x, y, 1210, 1210, GF_CLOSE_BTN, positions.size());
+            i += 1;
+            sleepms(2);
+         endfor
+      endfor
+
+      GFTextLine(gump, 433, 336, 2212, "Clique em um botão para reposicionar");
+      GFTextLine(gump, 765, 558, 2212, "Clique em um botão para reposicionar");
+      SetGlobalProperty("#resize_gump", struct{ gump := gump, positions := positions});
+   else
+      positions := gump.positions;
+      gump := gump.gump;
+   endif
+
+   if (cur_x || cur_y)
+      GFGumpPic(gump, cur_x, cur_y, 1210, 2133);
+   endif
+   
+	var res := GFSendGump(who, gump)[0];
+   return positions[res];
 endfunction

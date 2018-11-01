@@ -363,7 +363,7 @@ function ConfigureEvents(who, event)
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       event.hitopt := GetHitScript(StrReplace(output[1], " ", "_"));
    elseif (event.type == "Red. de Dano")
-      var dmgs := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY,DMG_PIERCING,DMG_SLASH,DMG_BLUDGE, "Sem Resistência" };
+      var dmgs := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY,DMG_PHYSICAL,DMG_PHYSICAL,DMG_PHYSICAL, "Sem Resistência" };
       var input_list := array{};
       input_list.append(struct{ "title" := "Qual tipo de dano será reduzido?", "marked" := event.dmgtype in dmgs, "radio" := dmgs});
       if (!event.amount) event.amount := 10; endif

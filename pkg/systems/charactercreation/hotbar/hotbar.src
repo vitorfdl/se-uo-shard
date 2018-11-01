@@ -6,6 +6,7 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":charactercreation:feats";
 include "include/say";
+include ":tn:tngumps";
 
 var selector_open := 0;
 
@@ -40,8 +41,8 @@ endfunction
 
 function BuildHotBar(who, byref hotbar)
    var pos_x := hotbar.pos_x;
-   var pos_y := hotbar.pos_y;
-	var gump := GFCreateGump();
+   var pos_y := hotbar.pos_y - 50;
+	var gump := GFCreateGump(0, 0);
 
    GFMovable(gump, 0);//9260
    GFDisposable(gump, 0);
@@ -91,10 +92,9 @@ endfunction
 
 program startHotBar(who, spos)
    var hotbar := GetObjProperty(who, "hotbar");
-   if (!hotbar) hotbar := struct{ shortcuts := array{}, pos_x := 0, pos_y := 0 }; endif
+   if (!hotbar) hotbar := struct{ shortcuts := array{}, pos_x := 105, pos_y := 543 }; endif
 
    while (who.connected)
-      hotbar := GetObjProperty(who, "hotbar");
       var res := BuildHotBar(who, hotbar);
 
       if (res[0] >= 900 && res[0] < 1500)
@@ -133,9 +133,13 @@ program startHotBar(who, spos)
       elseif(res[0] >= 450 && res[0] <= 500)
          start_script(":charactercreation:commands/player/atalho", array{who, res[0]-450});
       elseif (res[0] == 2)
-         break;
+         var new_pos := PositionGump(who, hotbar.pos_x, hotbar.pos_y);
+         hotbar.pos_x := new_pos[1];
+         hotbar.pos_y := new_pos[2];
+         SetobjProperty(who, "hotbar", hotbar);
       endif
       sleepms(2);
+      hotbar := GetObjProperty(who, "hotbar");
    endwhile
 
 endprogram

@@ -691,7 +691,7 @@ endfunction
 function GetDetails(item, who)
    var ret := "";
    if (item.ObjClass == "Armor" || item.ObjClass == "Weapon")
-      ret += "Condição: {}<br>".format(GetCondition(item));
+      // ret += "Condição: {}<br>".format(GetCondition(item));
       ret += "Qualidade: {}<br>".format(getQuality(item.quality));
       if (item.strrequired)
          ret += "Força Minima: {}<br>".format(item.strrequired);

@@ -46,7 +46,7 @@ endfunction
 function GetHitsInfo(entry)
 	var critstr := "";
 	var active := GetconfigString(entry, "ActiveScript");
-   if (active) critstr += TranslateHit(lower(active)) "<br>"; endif
+   if (active) critstr += TranslateHit(lower(active)) + "<br>"; endif
 
 	var passives := GetconfigStringArray(entry, "HitScripts");
 	foreach crit in passives

@@ -38,6 +38,8 @@ enum DAMAGE_TYPES
 	DMG_ENERGY   := "energy",
 endenum
 
+function CheckResist(a := 1, b:= 2)
+endfunction
 
 function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
    if (!wpn) wpn := attacker.weapon; endif
@@ -200,7 +202,7 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	return dmg;
 endfunction
 
-function DamageFLS(defender, dmg, type := DMG_FORCED, defense, source := 0)
+function DamageFLS(defender, dmg, type := DMG_FORCED, defense := 0, source := 0)
 	dmg := Cint(dmg);
 
    if (defense && type != DMG_FORCED)
