@@ -230,6 +230,7 @@ function CombatEventsOptions(who, state)
             "Graphic Effect", 
             "Heal",
             // "Custom HitScript", 
+            "If Block/Dodge",
             "Delay",
             "Hidden",
             "Move", 
@@ -262,7 +263,7 @@ function CombatEventsOptions(who, state)
       opt := state.type;
    endif
 
-   var resists := array{"Bloqueio", "Esquiva"};
+   var resists := array{"block", "dodge"};
    var targ_opts := array{"Self", "Cone in front", "Cone back", "Cone left", "Cone right", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally", "Previous Targets"};
    if (opt == "Move")
       SendSysMessageEx(who, "Para onde o npc deve andar?");
@@ -376,12 +377,16 @@ function CombatEventsOptions(who, state)
       state.y := cint(loc[2]);
       state.z := cint(loc[3]);
    elseif ( opt == "If Block/Dodge")
-      var resist_choice := state.resist_test in resists;
+      var resist_choice := state.resist_test;
+      if (!resist_choice) resist_choice := array{"block", "dodge"}; endif
+      foreach resist in resist_choice
+         resist := resist in resists;
+      endforeach
       if (!state.resist_diff) state.resist_diff := 14; endif
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai ser checado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
-      input_list.append(struct{ "title" := "Qual o teste que será feito?", "marked" := resist_choice, "radio" :=  resists });
-      input_list.append(struct{ "title" := "Passar para 'Previous Target'?", "marked" := cint(state.successonly)+1, "radio" :=  array{"Ação Ativada", "Ação Não Ativada"} });
+      input_list.append(struct{ "title" := "Qual tipo de defesa será checado?", "marked" := resist_choice, "checkbox" :=  resists });
+      input_list.append(struct{ "title" := "Passar para 'Previous Target'?", "marked" := cint(state.successonly)+1, "radio" :=  array{"Se Def Ativa", "Se Def Não Ativa"} });
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);

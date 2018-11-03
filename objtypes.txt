@@ -1695,7 +1695,9 @@
 0x317e LeafArms combat
 0x317f LeafLeggings combat
 0x3180 LeafSkirt combat
-# 0x3181 - 0x31f3 unused
+# 0x3181 - 0x318d unused
+0x318e envinromentrp roleplay_window
+# 0x318f - 0x31f3 unused
 0x31f4 dirt farming
 # 0x31f5 - 0x352c unused
 0x352d splash survival
@@ -1909,9 +1911,7 @@
 0x608f smallstoneshophouse house
 # 0x6090 - 0x60ff unused
 0x6100 grimorio magery
-# 0x6101 - 0x6115 unused
-0x6116 pergaminhomagico magery
-# 0x6117 - 0x613f unused
+# 0x6101 - 0x613f unused
 0x6140 nystulldeed1 house
 0x6141 scaffolddeed house
 # 0x6142 - 0x6180 unused
@@ -2199,23 +2199,17 @@
 0xbf06 pocaovenenoliche alchemy
 # 0xbf07 - 0xbf08 unused
 0xbf09 pocaoinvisibilidade alchemy
-0xbf0a pocaoinvisibilidadeforte alchemy
-0xbf0b pocaoinvisibilidadepermanente alchemy
+# 0xbf0a - 0xbf0b unused
 0xbf0c podavisao alchemy
 0xbf0d pocaodavelocidade alchemy
 0xbf0e pocaodecola alchemy
 0xbf0f gasvenenofraco alchemy
-0xbf10 gasvenenomedio alchemy
-0xbf11 gasvenenoforte alchemy
-0xbf12 pocaocurasuprema alchemy
+# 0xbf10 - 0xbf12 unused
 0xbf13 pocaoflamejantefraca alchemy
-0xbf14 pocaoflamejantemedia alchemy
-0xbf15 pocaoflamejanteforte alchemy
+# 0xbf14 - 0xbf15 unused
 0xbf16 gasalucinogeno alchemy
 0xbf17 pocaomana alchemy
-0xbf18 pocaomanamaior alchemy
-0xbf19 pocaomanasuperior alchemy
-# 0xbf1a - 0xbffc unused
+# 0xbf18 - 0xbffc unused
 0xbffd TintaAzulClaro1 alchemy
 # 0xbffe - 0xc198 unused
 0xc199 levedura cooking
@@ -2269,21 +2263,11 @@
 0xd4e9 BloodMossSeed farming
 # 0xd4ea - 0xdc00 unused
 0xdc01 pocaocura alchemy
-0xdc02 pocaocuramaior alchemy
-0xdc03 pocaocurasuperior alchemy
-0xdc04 VenenoErvaForte alchemy
-# 0xdc05 - 0xdc07 unused
-0xdc08 FogoGregoLeve alchemy
-# 0xdc09 - 0xdc0d unused
+# 0xdc02 - 0xdc0d unused
 0xdc0e pocaovigor alchemy
-0xdc0f pocaovigorforte alchemy
-# 0xdc10 unused
-0xdc11 pocaovigorsuperior alchemy
-# 0xdc12 - 0xdc13 unused
+# 0xdc0f - 0xdc13 unused
 0xdc14 antidoto alchemy
-0xdc15 antidotomedio alchemy
-0xdc16 antidotoforte alchemy
-# 0xdc17 - 0xdce5 unused
+# 0xdc15 - 0xdce5 unused
 0xdce6 pocaovisaonoturna alchemy
 # 0xdce7 - 0xdd50 unused
 0xdd51 ChickenSoup food
@@ -2392,9 +2376,7 @@
 0xef37 escamasvermelhas survival
 # 0xef38 - 0xef5f unused
 0xef60 FogoGrego alchemy
-0xef61 FogoGregoMedio alchemy
-0xef62 FogoGregoForte alchemy
-# 0xef63 - 0xefef unused
+# 0xef61 - 0xefef unused
 0xeff0 TintaAzul1 alchemy
 0xeff1 TintaAzul2 alchemy
 0xeff2 TintaBege1 alchemy

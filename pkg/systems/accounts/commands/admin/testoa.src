@@ -20,8 +20,11 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   var res:= PositionGump(who, 105, 453);
-   print(res);
+   var targ := Target(who);
+   print(targ.damage_physical);
+   print(targ.get_member("damage_physical"));
+
+   
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 

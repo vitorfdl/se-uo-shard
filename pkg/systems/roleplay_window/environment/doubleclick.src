@@ -1,0 +1,37 @@
+use uo;
+use os;
+use math;
+
+include "include/sysEvent";
+include "include/say";
+include ":datafile:datafile";
+include ":tn:tngumps";
+
+program AC_start(who, item)
+   if (!who.cmdlevel)
+      return;
+   endif
+
+   var item_config := GetObjProperty(item, "config");
+   if (!item_config) item_config := struct{}; endif
+   if (!item_config.rptext) item_config.text := ""; endif
+   if (!item_config.distance) item_config.distance := ""; endif
+   if (!item_config.emote) item_config.emote := ""; endif
+   if (!item_config.char_pos) item_config.char_pos := array{1, 2, 3, 4}; endif
+   
+   var questions := array{
+      struct{"title" := "Texto Roleplay (Deixar em branco para não exibir)", "marked" := item_config.rptext, lines := 3}, 
+      struct{"title" := "Enviar emote (Deixar em branco para não exibir)", "marked" := item_config.emote}, 
+      struct{"title" := "Exibir apenas quando personagem vier das posições", checkbox := array{"Sul", "Leste", "Norte", "Oeste"}, return_number := 1, "marked" := item_config.char_pos},
+      struct{"title" := "Distância para ativar efeito", "marked" := item_config.distance }
+   };
+
+   var res := QuestionsGump(who, questions);
+   if (!res) return; endif
+
+   item_config.rptext := res[1];
+   item_config.char_pos := res[3];
+   item_config.emote := res[2];
+   item_config.distance := cint(res[4]);
+   SetObjProperty(item, "config", item_config);
+endprogram

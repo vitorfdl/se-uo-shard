@@ -326,21 +326,21 @@ endfunction
    // var res:= QuestionsGump(who, questions);
    // var answer_1 := res[1];
 function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
-	var total_height := ((questions.size() * 2) * 20) + 20;
+	var total_height := (questions.size() * 57);
    foreach quest in questions
       if (quest.radio)
-         total_height += floor(quest.radio.size() / 4) * 20;
+         total_height += Floor(quest.radio.size() / 5) * 30;
       elseif (quest.checkbox)
-         total_height += floor(quest.checkbox.size() / 4) * 20;
-      else
-         total_height += 20;
+         total_height += Floor(quest.checkbox.size() / 5) * 30;
+      elseif (quest.lines)
+         total_height += (cint(quest.lines)-1) * 26;
       endif
       sleepms(2);
    endforeach
 
 	var gump := GFCreateGump(250, 250);
    GFSetID(gump, GUMPID_TNGUMPS);
-	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 100+total_height);
+	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 45+total_height);
 
 	var entries := dictionary{};
    var previousiter := 0;
@@ -380,12 +380,24 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
             endif
 			endforeach
 		else
-         var marked := "";
-         if (quest.marked)
-            marked += quest.marked;
+         quest.lines := cint(quest.lines);
+         if (!quest.marked) quest.marked := ""; endif
+         
+         GFResizePic(gump, x, y+3, 0x7752, 500, 28 + (quest.lines * 18));
+         var texts := quest.marked;
+         if (quest.lines > 1) 
+            texts := GFWordWrap(quest.marked, 570);
+         else
+            texts := array{quest.marked};
          endif
-	      GFResizePic(gump, x, y+2, 0x7752, 500, 30);
-			entries[_quest_iter] := GFTextEntry(gump, x+5, y+5, 500, 20, 2100, marked);
+
+         entries[_quest_iter] := array{};
+         for lines := 0 to (quest.lines)
+            if (lines != 0) y += 18; endif
+            var text := texts[lines+1];
+            if (!text) text := ""; endif
+            entries[_quest_iter].append(GFTextEntry(gump, x+5, y+5, 500, 20, 2100, text));
+         endfor
 		endif
 
 		y += 36;
@@ -417,12 +429,21 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 			var result := array{};
 			foreach item in (quest.checkbox)
 				if (_item_iter + (_quest_iter * 500) in input.keys)
-					result.append(item);
+               if (quest.return_number)
+                  result.append(_item_iter);
+               else
+					   result.append(item);
+               endif
 				endif
 			endforeach
 			res[_quest_iter] := result;
 		else
-			res[_quest_iter] := GFExtractData(input, entries[_quest_iter]);
+         res[_quest_iter] := "";
+         foreach i in (entries[_quest_iter])
+            var output :=  GFExtractData(input, i);
+            if (output && output != " " && output != "") res[_quest_iter] += output; endif
+            sleepms(2);
+         endforeach
 		endif
 		sleepms(2);
 	endforeach

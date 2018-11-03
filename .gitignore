@@ -2,8 +2,9 @@
 *.ecl
 *~
 *.so
-*.dep
 *.exe
+*.dmp
+*.dep
 *.dmp
 *.log
 public/*

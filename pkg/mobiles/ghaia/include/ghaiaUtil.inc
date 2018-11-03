@@ -239,10 +239,9 @@ function GetNpcAttacks(npctemplate)
 		var attack_s := struct{
 			"name"    := attack[1],
 			"dicedmg"    := attack[2],
-			"hitbonus"   := cint(attack[3]),
-			"DamageType" := attack[4],
-			"AttackAnim" := cint(attack[5]),
-			"Attribute"  := npctemplate.AttackAttribute,
+			"DamageType" := attack[3],
+			"AttackAnim" := cint(attack[4]),
+         "AttackDamage" := cint(npctemplate.AttackDamage),
 			"MaxRange"   := npctemplate.MaxRange,
 			"MinRange"   := npctemplate.MinRange
 		};

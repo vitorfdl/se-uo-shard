@@ -220,28 +220,22 @@ program loko(params)
 			var targ := selectOpponent(who, state.target, state.conedist);
 			foreach t in targ
             sleepms(2);
-            if (state.resist_test && state.resist_test != "Nenhum")
-               if (rollResistDice(t, state.resist_test) > state.resist_diff)
-                  SendSystemReport(t, "*resistido*");
-                  continue;
-               endif
-            endif
 				TS_StartTimer(t, state.timername, cint(state.timerduration), state.level);
 			endforeach
-      elseif (state.type == "Resist Test")
+      elseif (state.type == "If Block/Dodge")
 			var targ := selectOpponent(who, state.target, state.conedist);
          var resist_list := array{};
 			foreach t in targ
-            if (state.resist_test)
-            sleepms(2);
-               if (rollResistDice(t, state.resist_test) > state.resist_diff)
-                  SendSystemReport(t, "*resistido*");
+            foreach resist in (state.resist_test)
+               if (!TS_GetCooldown(who, resist))
+                  if (!state.successonly) resist_list.append(t); endif
+               else
                   if (state.successonly) resist_list.append(t); endif
-                  continue;
                endif
-               if (!state.successonly) resist_list.append(t); endif
-            endif
+            endforeach
+            sleepms(2);
 			endforeach
+         
          if (!resist_list.size()) break; endif
          previoustarg := resist_list;
 		elseif (state.type == "Perform Action" )
@@ -353,12 +347,12 @@ program loko(params)
 			foreach vital in (state.vitals)
 				foreach t in targ
                sleepms(2);
-               if (state.resist_test && state.resist_test != "Nenhum")
-                  if (rollResistDice(t, state.resist_test) > state.resist_diff)
-                     SendSystemReport(t, "*resistido*");
-                     continue;
-                  endif
-               endif
+               // if (state.resist_test && state.resist_test != "Nenhum")
+               //    if (rollResistDice(t, state.resist_test) > state.resist_diff)
+               //       SendSystemReport(t, "*resistido*");
+               //       continue;
+               //    endif
+               // endif
 
 					if (vital == "Hits")
 						DamageFLS(t, dmg, state.dmgtype, who);

@@ -28,9 +28,7 @@ program MainHitScript( params )
 	var defender    := params[2];
 	var weapon      := params[3];
 	var armor       := params[4];
-	var base_damage := params[5];
-	var dice_roll   := params[6];
-	var wpn_a_elem  := params[7];
+	var wpn_a_elem  := params[6];
 
 	SetScriptController(attacker);
 
@@ -51,8 +49,11 @@ program MainHitScript( params )
 	ArrowRecovery(defender, weapon);
 
 	//calcula os danos
-	base_damage := CalculateTotalDamageBonus(base_damage, attacker, defender);
+	var damage_type := GetDamageType(wpn_a_elem);
 
+	var base_damage :=  CalculateRawDamage(attacker, wpn_a_elem, weapon) + CalculateTotalDamageBonus(base_damage, attacker, defender);
+   print(CalculateDefenseReduction(defender, damage_type, 0, armor));
+   base_damage := base_damage - (base_damage * CalculateDefenseReduction(defender, damage_type, 0, armor) );
 	// Chain Of Pain
 	// TODO: reaproveitar depois
 
@@ -60,7 +61,6 @@ program MainHitScript( params )
 
 	PoisonChecks(attacker, defender, weapon);
 
-	var damage_type := GetDamageType(wpn_a_elem);
 
 	SetLastDamageInfo(defender, base_damage, 0, attacker); //Log 
    if (defender.my_template() == "orb")
@@ -75,15 +75,15 @@ program MainHitScript( params )
    endif
 
 	PlayHurtSound(defender);
-	DamageFLS(defender, base_damage, damage_type, attacker);
+	DamageFLS(defender, base_damage, DMG_FORCED, attacker);
 	EraseObjProperty(attacker, "#backstab");
 
-   ApplyFeatChanges(attacker, defender, dice_roll, base_damage);
+   // ApplyFeatChanges(attacker, defender, base_damage);
 
    
-	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll, wpn_a_elem);
-	ArmorHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll);
-	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll, wpn_a_elem);
+	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
+	ArmorHitScripts(attacker, defender, weapon, armor, base_damage);
+	// CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 
    ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
 
@@ -132,7 +132,7 @@ function FacingChecks(attacker, defender)
 	return 1;
 endfunction
 
-function SkillChecks(attacker, defender, weapon, dice_roll)
+function SkillChecks(attacker, defender, weapon)
    // Não fazer expGain
    // Fazer os achievments
 endfunction
@@ -150,7 +150,7 @@ function ArrowRecovery(defender, weapon)
 	endif
 endfunction
 
-function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll, wpn_a_elem)
+function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem)
 	var weapon_scripts := array{};
 
 	if ( weapon.IsA(POLCLASS_WEAPON) )
@@ -183,18 +183,9 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
 		hitopt := GetObjProperty(weapon, "generichit");
 	endif
 
-   if (dice_roll.two_dice_success)
-      if (wpn_a_elem.Pericia == ARMAS_DE_CONCUSSAO && AP_GetTrueSkill(attacker, ARMAS_DE_CONCUSSAO) >= 2)
-         weapon_scripts.append("armorbreak");
-      elseif (wpn_a_elem.Pericia == LAMINAS_CURTAS && AP_GetTrueSkill(attacker, LAMINAS_CURTAS) >= 2)
-         weapon_scripts.append("bleed");
-      elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2 && dice_roll.critical)
-         weapon_scripts.append("double_dmg");
-      endif
-   endif
 
 	foreach hitscript in weapon_scripts
-		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll, hitopt});
+		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, hitopt});
 		if ( !script || script.errortext )
 			Print("*Attacker* Weapon {} script error starting [{}] : {}".format(weapon.name, hitscript, script.errortext));
 		endif
@@ -204,16 +195,16 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, dice_r
 	return 1;
 endfunction
 
-function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byref dice_roll, wpn_a_elem)
+function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem)
 	var auto_critical := 0;
 	if (GetObjProperty(attacker, "#nextcritical"))
 		EraseObjProperty(attacker, "#nextcritical");
 		auto_critical := 1;
 	endif
 
-   if (!dice_roll.critical && !auto_critical)
-      return;
-   endif
+   // if (!dice_roll.critical && !auto_critical)
+   //    return;
+   // endif
    
 	if (!auto_critical)
 		if (GetCooldown(attacker, "critical") > 0)
@@ -230,27 +221,27 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
 		weapon_scripts :=  GetConfigStringArray( npcelem, "CriticalHitScripts" );
 	endif
 
-   if (wpn_a_elem.Pericia == ESPADAS && AP_GetTrueSkill(attacker, ESPADAS) >= 2)
-      weapon_scripts.append("double_dmg");
-   elseif (weapon.isMagicWeapon())
-      if (wpn_a_elem.DamageType == "Fogo" && AP_GetTrueSkill(attacker, "Magia_de_Fogo") >= 2)
-         weapon_scripts.append("immolation");
-      elseif (wpn_a_elem.DamageType == "Eletrecidade" && AP_GetTrueSkill(attacker, "Magia_de_Eletrecidade") >= 2)
-         weapon_scripts.append("double_dmg");
-      elseif (wpn_a_elem.DamageType == "Gelo" && AP_GetTrueSkill(attacker, "Magia_de_Gelo") >= 2)
-         weapon_scripts.append("attackbreak");
-      elseif (wpn_a_elem.DamageType == "Veneno" && AP_GetTrueSkill(attacker, "Magia_de_Veneno") >= 2)
-         weapon_scripts.append("constrict");
-      endif
-   elseif(wpn_a_elem.Pericia == ARCO && AP_GetTrueSkill(attacker, ARCO) >= 2)
-      weapon_scripts.append("hit_again");
-   elseif(wpn_a_elem.Pericia == ARMAS_DUPLAS && AP_GetTrueSkill(attacker, ARMAS_DUPLAS) >= 2)
-      weapon_scripts.append("hit_again");
-   elseif (wpn_a_elem.Pericia == BESTA && AP_GetTrueSkill(attacker, BESTA) >= 2)
-      weapon_scripts.append("double_dmg");
-   elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2)
-      weapon_scripts.append("double_dmg");
-   endif
+   // if (wpn_a_elem.Pericia == ESPADAS && AP_GetTrueSkill(attacker, ESPADAS) >= 2)
+   //    weapon_scripts.append("double_dmg");
+   // elseif (weapon.isMagicWeapon())
+   //    if (wpn_a_elem.DamageType == "Fogo" && AP_GetTrueSkill(attacker, "Magia_de_Fogo") >= 2)
+   //       weapon_scripts.append("immolation");
+   //    elseif (wpn_a_elem.DamageType == "Eletrecidade" && AP_GetTrueSkill(attacker, "Magia_de_Eletrecidade") >= 2)
+   //       weapon_scripts.append("double_dmg");
+   //    elseif (wpn_a_elem.DamageType == "Gelo" && AP_GetTrueSkill(attacker, "Magia_de_Gelo") >= 2)
+   //       weapon_scripts.append("attackbreak");
+   //    elseif (wpn_a_elem.DamageType == "Veneno" && AP_GetTrueSkill(attacker, "Magia_de_Veneno") >= 2)
+   //       weapon_scripts.append("constrict");
+   //    endif
+   // elseif(wpn_a_elem.Pericia == ARCO && AP_GetTrueSkill(attacker, ARCO) >= 2)
+   //    weapon_scripts.append("hit_again");
+   // elseif(wpn_a_elem.Pericia == ARMAS_DUPLAS && AP_GetTrueSkill(attacker, ARMAS_DUPLAS) >= 2)
+   //    weapon_scripts.append("hit_again");
+   // elseif (wpn_a_elem.Pericia == BESTA && AP_GetTrueSkill(attacker, BESTA) >= 2)
+   //    weapon_scripts.append("double_dmg");
+   // elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2)
+   //    weapon_scripts.append("double_dmg");
+   // endif
 
 	foreach hitscript in weapon_scripts
 		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll});
@@ -263,26 +254,26 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, byre
 	return 1;
 endfunction
 
-function ApplyFeatChanges(attacker, defender, byref dice_roll, byref dmg)
-   var marca := GetObjProperty(attacker, "#marca_inabalavel");
-   if (marca != defender.serial)
-      SetObjProperty(defender, "marca_ativado", attacker.serial);
-   endif
+// function ApplyFeatChanges(attacker, defender, byref dice_roll, byref dmg)
+//    var marca := GetObjProperty(attacker, "#marca_inabalavel");
+//    if (marca != defender.serial)
+//       SetObjProperty(defender, "marca_ativado", attacker.serial);
+//    endif
 
-   marca := GetObjProperty(attacker, "#marca_ativado");
-   if (marca == defender.serial)
-      dice_roll.critical := 1;
-      EraseObjProperty(attacker, "marca_ativado");
-   endif
+//    marca := GetObjProperty(attacker, "#marca_ativado");
+//    if (marca == defender.serial)
+//       dice_roll.critical := 1;
+//       EraseObjProperty(attacker, "marca_ativado");
+//    endif
 
-   marca := GetObjProperty(defender, "#assassinate");
-   if (marca == attacker.serial)
-      if (RandomDiceRoll("1d100") <= 85)
-         dice_roll.critical := 1;
-      endif
-      EraseObjProperty(defender, "#assassinate");
-   endif
-endfunction
+//    marca := GetObjProperty(defender, "#assassinate");
+//    if (marca == attacker.serial)
+//       if (RandomDiceRoll("1d100") <= 85)
+//          dice_roll.critical := 1;
+//       endif
+//       EraseObjProperty(defender, "#assassinate");
+//    endif
+// endfunction
 
 function ApplyInscriptedRunes(attacker, defender, weapon, armor, damage)
    var inscripted := GetObjProperty(weapon, "decrease_moriquendi");
@@ -297,7 +288,7 @@ function ApplyInscriptedRunes(attacker, defender, weapon, armor, damage)
    endif
 endfunction
 
-function ArmorHitScripts(attacker, defender, weapon, armor, base_damage, dice_roll)
+function ArmorHitScripts(attacker, defender, weapon, armor, base_damage)
 	var body_scripts   := GetObjProperty(defender, "ArmorHitScripts");
 	var armor_scripts  := GetObjProperty(armor, "ArmorHitScripts");
 	var others_scripts := GetConfigStringArray( item_cfg[armor.objtype], "ArmorHitScripts" );
@@ -329,7 +320,7 @@ function ArmorHitScripts(attacker, defender, weapon, armor, base_damage, dice_ro
 	armor_scripts := armor_scripts + body_scripts + others_scripts;
 	
 	foreach hitscript in armor_scripts
-		var script := start_script("armorHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll});
+		var script := start_script("armorHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage});
 		if ( script.errortext )
 			Print("*Defender* Weapon script error starting ["+hitscript+"] :" + script.errortext);
 		endif

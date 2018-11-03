@@ -1,4 +1,5 @@
 include "include/utils";
+include "include/colormap";
 
 function TranslateAtt(attribute)
 	case (attribute.lower())
@@ -11,16 +12,41 @@ function TranslateAtt(attribute)
 	endcase
 endfunction
 
-function getQuality(num)
-	if (num >= 1)
-		return "Exótico";
-	elseif(num  >= 0.8)
-		return "Raro";
-	elseif(num  >= 0.5)
-		return "Bom";
+function getQuality(num, color := "")
+   if (color) color := GetQualityColor(num); endif
+   
+	if (num >= 3)
+		return "{}Exótico".format(color);
+	elseif(num  >= 2)
+		return "{}Raro".format(color);
+	elseif(num  >= 1)
+		return "{}Bom".format(color);
 	else
-		return "Normal";
+		return "{}Normal".format(color);
 	endif
+endfunction
+
+function GetQualityColor(num)
+	if (num >= 3)
+		return PURPLE;
+	elseif(num  >= 2)
+		return YELLOW;
+	elseif(num  >= 1)
+		return BLUE;
+	else
+		return LIGHTGRAY;
+	endif
+endfunction
+
+function TranslateDamage(dmg)
+	case (dmg.lower())
+		"physical": return "Físico";
+		"fire": return "Calor";
+		"cold": return "Frio";
+		"energy": return "Energia";
+		"poison": return "Veneno";
+		default: return dmg;
+	endcase
 endfunction
 
 function TranslateHit(crit)

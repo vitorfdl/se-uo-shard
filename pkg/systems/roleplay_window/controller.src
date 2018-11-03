@@ -25,6 +25,8 @@ program AC_start(who)
       if (event.type == 0x456 && !(event.id in already_saw))
          last_see.Insert(1, event.text);
          already_saw.append(event.id);
+         if (event.emote) PrintTextPrivate(who, "*{}*".format(event.emote), who); endif
+         trig := 1;
       endif
 
       var mobiles_around := ListMobilesInLineOfSight( who, 5 );
@@ -53,8 +55,6 @@ program AC_start(who)
          SetObjProperty(who, "last_see", last_see);
          CloseGump(who, 0x977, 1);
          sleepms(100);
-         start_script(":roleplay_window:window", who);
-         sleepms(2);
       endif
    endwhile
 		

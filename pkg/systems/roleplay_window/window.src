@@ -20,7 +20,9 @@ program AC_start(who)
       last_see := "<br>-----<br>".join(last_see);
 	   var gump := GFCreateGump();
       GFPage(gump, 0);
+      GFSetID(gump, 0x977);
       GFMovable(gump, 0);
+      GFClosable(gump, 0);
       GFResizePic(gump, 9+setup.x, 7+setup.y, 9270, setup.width, setup.height);
       GFAddButton(gump, setup.x+setup.width-4, setup.y+7, 5601, 5605, GF_CLOSE_BTN, 5);
       GFAddButton(gump, setup.x+setup.width-4, setup.y+setup.height-5, 5602, 5606, GF_CLOSE_BTN, 6);
@@ -49,6 +51,8 @@ program AC_start(who)
          setup.x := new_pos[1];
          setup.y := new_pos[2];
          SetObjProperty(who, "roleplay_setup", setup);
+      elseif (input == 1)
+         continue;
       else
          break;
       endif
