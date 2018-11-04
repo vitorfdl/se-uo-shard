@@ -3,98 +3,105 @@ use uo;
 
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
+include ":tn:tngumps";
 // include ":gumps:yesno";
 var gumpid := 0x99B7;
 
-var upMenu   := array{"[mTele", "[mDestroy", "[nSight", "[conceal", "[gmpage", "[decayat0", "[itemunico"};
-var downMenu := array{"[teleto", "[Info", "[fichaRP", "[Propedit", "[players", "[movable", "[lockradius"};
-//UpMenu is 100+i
-//Downmenu is 200+i
+var menuCfg := ReadConfigFile(":fls_core:config/gmmenu");
+var main_elem := FindConfigElem(menuCfg, "DefaultList");
+var menu_items := GetConfigStringArray(main_elem, "Menu");
+var last_gump;
 
 program start_gmMeny(who)
-    CloseGump(who, gumpid);
-    var closed := 0;
-    do
-        var gump := ConstructGump();
-        var input := GFSendGump(who, gump);
+   CloseGump(who, gumpid);
+   var menu_config := GetObjProperty(who, "gmmenu");
+   if (!menu_config) menu_config := struct{ x := 20, y := 20, opened := array{}}; endif
+   
+   while (who.connected)
+      var input;
+      if (last_gump)
+         input := GFSendGump(who, last_gump)[0];
+      else
+         input := ConstructGump(who, menu_config)[0];
+      endif
 
-        case (input[0])
-            101://mtele
-                start_script(":commands:coun/mtele", who);
-                break;
-            102://mDestroy
-                start_script(":commands:building/mdestroy", who);
-                break;
-            103://nSight
-                start_script(":commands:coun/nsight", who);
-                break;
-            104://conceal
-                start_script(":commands:coun/conceal", who);
-                break;
-            105://gmpage
-                start_script(":email:commands/gm/gmpage", who);
-                break;
-            106://decayat
-                start_script(":commands:props/setprop", array{who, "decayat 0", 1});
-                break;
-            107://itemunico
-                start_script(":unicos:commands/gm/unicos", who);
-                break;
-            201://teleto
-                 start_script(":commands:seer/teleto", who);
-                break;
-            202://Info
-                start_script(":commands:gm/info", who);
-                break;
-            203://fichaRP
-                 start_script(":fls_core:commands/player/ficharp", who);
-                break;
-            204://Propedit
-                 start_script(":commands:props/propedit", who);
-                break;
-            205://players
-                 start_script(":fls_core:commands/gm/players", who);
-                break;
-            206://movable
-                start_script(":commands:props/setprop", array{who, "movable 0", 1});
-                break;
-            207://lockradius
-                start_script(":commands:building/lockradius", array{who, 5});
-                break;
-            default:
-                closed := 1;
-                break;
-        endcase
-         sleepms(2);
-    dowhile (closed == 0);
+      if (!input)
+         break;
+      elseif (input == 2)
+         var new_pos := PositionGump(who, menu_config.x, menu_config.y);
+         menu_config.x := new_pos[1];
+         menu_config.y := new_pos[2];
+         SetobjProperty(who, "gmmenu", menu_config);
+      elseif (input >= 600)
+         input -= 600;
+         last_gump := 0;
+         menu_config.opened[input] := !menu_config.opened[input];
+         SetObjProperty(who, "gmmenu", menu_config);
+      elseif (input >= 10)
+         input := cstr(input);
+         var key := menu_items[cint(input[1])];
+         var elem := FindConfigElem(menuCfg, key);
+         var command := SplitWords(GetConfigStringArray(elem, "command")[cint(input[2])]);
+
+         var params := who;
+         var other_params := GetConfigStringArray(FindConfigElem(menuCfg, command[1]), "param");
+
+         if (other_params)
+            params := array{params};
+            foreach param in other_params
+               params.append(param);
+            endforeach
+         endif
+         start_script(command[2], params);
+      endif
+      
+      sleepms(2);
+   endwhile
 endprogram
 
-function ConstructGump()
-    var gump := GFCreateGump(250, 150);
-    GFPage(gump, 0);
-    GFSetID(gump, gumpid);
-    GFClosable(gump, 0);
-    var width  := upMenu.Size() * 80;
-    GFResizePic(gump, 0, 0, GFCfgConst("Defaults", "BackGround"), 25+width, 60+60+25); //Spawnpoints Backgroud
-    // GFGumpPic(gump, 0, 5, 0x8B0);
+function ConstructGump(who, menu_config)
+   var gump := GFCreateGump();
+   GFPage(gump, 0);
+   GFSetID(gump, gumpid);
+   GFClosable(gump, 1);
+   GFMovable(gump, 0);
 
-    var basex := 12;
-    var basey := 15;
+   var x := menu_config.x;
+   var pos_y := 0 + menu_config.y;
+	GFResizePic(gump, 3+x, 6+pos_y, 5120, 63, 39 * menu_items.size() );
+	GFAddButton(gump, 5+x, 5+pos_y, 1209, 1210, GF_CLOSE_BTN, 2); //resize
 
-    for i:=1 to upMenu.Size()
-        var x := basex+((i-1)*80);
-        GFAddButton(gump, x, basey, 0x918, 0x919, GF_CLOSE_BTN, 100+i);
-        GFAddAlphaRegion(gump, x, basey, 80, 60);
-        GFTextMid(gump, x, basey+15, 90, 1150, upMenu[i]);
-    endfor
+   foreach key in menu_items
+      sleepms(2);
+      var elem := FindConfigElem(menuCfg, key);
+      if (cint(elem.cmdlevel) > who.cmdlevel) continue; endif
+      GFTextLine(gump, 12+x, 17+pos_y, 1152, "{}".format(key));
+      GFAddButton(gump, 46+x, 17+pos_y, 5540 + (menu_config.opened[_key_iter] == 1), 5541, GF_CLOSE_BTN, 600+_key_iter);
+      if (menu_config.opened[_key_iter] == 1)
+         BuildMenu(gump, who, elem, _key_iter, x, pos_y);
+      endif
 
-    for i:=1 to downMenu.Size()
-        var x := basex+((i-1)*80);
-        var y := basey + 60;
-        GFAddButton(gump, x, y, 0x918, 0x919, GF_CLOSE_BTN, 200+i);
-        GFAddAlphaRegion(gump, x, y, 80, 60);
-        GFTextMid(gump, x, y+15, 90, 1150, downMenu[i]);
-    endfor
+      pos_y += 38;
+   endforeach
 
-    return gump;
+	return GFSendGump(who, gump);
+
+endfunction
+
+function BuildMenu(byref gump, who, elem, i, x, pos_y)
+   
+   var commands := GetConfigStringArray(elem, "command");
+	GFResizePic(gump, 64+x, 6+pos_y, 5120, 79 * commands.size(), 39);
+
+   var pos_x := 0 + x;
+   foreach command in commands
+      command := SplitWords(command);
+      GFAddButton(gump, 73+pos_x, 15+pos_y, 247, 247, GF_CLOSE_BTN, cint("{}{}".format(i, _command_iter)));
+      GFResizePic(gump, 71+pos_x, 13+pos_y, 9350, 71, 26);
+      GFTextLine(gump, 75+pos_x, 16+pos_y, 1051, command[1]);
+      pos_x += 76;
+      sleepms(2);
+   endforeach
+
+
 endfunction

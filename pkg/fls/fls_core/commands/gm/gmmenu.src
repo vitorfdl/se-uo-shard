@@ -2,5 +2,5 @@ use uo;
 use os;
 
 program gmmenu(who)
-    Start_Script(":fls_core:gmmenu", who);
+    Start_Script(":fls_core:tn/gmmenu", who);
 endprogram
