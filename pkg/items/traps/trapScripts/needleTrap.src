@@ -48,7 +48,7 @@ program trapScript(params)
 			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha de dardos.", SSM_FAIL);
 
 			PerformAction(mobile, ANIM_HIT);
-			DamageFLS(mobile, dmgfinal, DMG_PIERCING);
+			DamageFLS(mobile, dmgfinal, DMG_PHYSICAL);
 			mobile.hidden := 0;
 		endif
 	endforeach

@@ -23,6 +23,8 @@ include ":combat:combat";
 include ":magery:tnmagery";
 include ":fls_core:packets";
 
+include ":combat:armorZones";
+
 /*
  * http://uo.stratics.com/content/guides/resistance.shtml
  * These could be attributes, but not every shard will want to
@@ -38,31 +40,34 @@ enum DAMAGE_TYPES
 	DMG_ENERGY   := "energy",
 endenum
 
-
 function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
    if (!wpn) wpn := attacker.weapon; endif
 
    if (!wpn_elem)
       wpn_elem := GetItemCFGInfo(attacker, wpn);
    endif
-	// if (wpn_elem.dicedmg)
-	// 	var dmg       := wpn_elem.dicedmg;
-   //    if (GetObjProperty(attacker, "dicedmg"))
-   //       dmg := GetObjProperty(attacker, "dicedmg");
-   //    endif
-	// 	var attribute := wpn_elem.Attribute;
-	// 	return ( RandomDiceRoll(dmg) + AP_GetStat(attacker, attribute, RETURN_BONUS) );
-	// endif
+
+   var base_dmg;
+   if (attacker.isA(POLCLASS_NPC))
+      base_dmg := wpn_elem.AttackDamage + attacker.damage_physical_mod;
+   else
+      base_dmg := wpn.dmg_mod;
+   endif
+
+	if (wpn_elem.dicedmg)
+		var dmg       := wpn_elem.dicedmg;
+      if (GetObjProperty(attacker, "dicedmg"))
+         dmg := GetObjProperty(attacker, "dicedmg");
+      endif
+		var attribute := wpn_elem.Attribute;
+		return (base_dmg + RandomDiceRoll(dmg) );
+	endif
 
    // if (!wpn) wpn := attacker.weapon; endif
 
    // var attribute := SelectAttribute(attacker, attacker.weapon);
    var dmg   := RandomDiceRoll(wpn_elem.Damage);
    dmg += wpn.dmg_mod;
-
-   if (wpn_elem.LowDamage)
-      dmg -= cint(wpn_elem.LowDamage);
-   endif
 
    return dmg;
 endfunction
@@ -142,6 +147,30 @@ function SetLastDamageInfo(mobile, amount, type, source)
 	return last_damage;
 endfunction
 
+function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor := 0)
+   if (dmg_type == DMG_FORCED) return 0; endif
+   
+   if (defender.isA(POLCLASS_NPC))
+      var npctemplate := NPC_GetNPCConfig(defender.npctemplate);
+      return cint(npctemplate["{}Resist"]) / 100;
+   endif
+
+   if (!is_massive && !armor)
+      armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
+      armor := CS_SelectArmored(armor, 1);
+   endif
+
+   var reduction := 0;
+   if (!armor) return 0; endif
+   
+   if (is_massive)
+      reduction := cint(defender.get_member("resist_{}".format(dmg_type)) / 6);
+   else
+      reduction := armor.get_member("resist_{}".format(dmg_type));
+   endif
+
+   return (reduction / 100);
+endfunction
 /* 
  * GetLastDamageInfo(mobile)
  *
@@ -160,7 +189,6 @@ endfunction
     
 function CalculateTotalDamageBonus(dmg, who, defender)
 	dmg := cint(dmg);
-	var attr_bonus := 0;
 	// if (!who.npctemplate)
 	// 	if (who.weapon && who.weapon.Attribute != "Versatil")
 	// 		attr_bonus := GetBonusAttr(AP_GetStat(who, who.weapon.Attribute));
@@ -170,7 +198,7 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	// endif
 
 	//Bonus de prop da arma    
-	var weapon := cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus")) + who.weapon.dmg_mod;
+	var weapon := cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus"));
 
 	//Bonus de prop do mobile
 	var other := cint(GetObjProperty(who, "dmgbonus")) + cint(GetObjProperty(who, "#dmgbonus")) ;
@@ -190,7 +218,7 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 
 	// TODO: ADicionar talentos de dano aqui
 	
-	var mod := attr_bonus + weapon + other;
+	var mod := weapon + other;
     
 	dmg := dmg + mod;
 	if (dmg < 1)
@@ -200,11 +228,11 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	return dmg;
 endfunction
 
-function DamageFLS(defender, dmg, type := DMG_FORCED, defense, source := 0)
+function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	dmg := Cint(dmg);
 
-   if (defense && type != DMG_FORCED)
-      dmg := cint(dmg - (dmg * (defense / 100)));
+   if (type != DMG_FORCED)
+      dmg := dmg - (dmg * CalculateDefenseReduction(defender, type));
    endif
 
    if (defender.npctemplate && source.npctemplate)
@@ -216,7 +244,6 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, defense, source := 0)
          endif
       endif
    endif
-
 
    var barrier := cint(GetObjProperty(defender, "#barrier"));
    if (barrier > 0)
@@ -233,7 +260,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, defense, source := 0)
 	DisplayDamage(defender, cint(dmg), source);
 	ApplyRawDamage(defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 	
-	if (source && type != DMG_FORCED)
+	if (source)
 		SetLastDamageInfo(defender, dmg, type, source);
 		SetScriptController(source);
 	endif

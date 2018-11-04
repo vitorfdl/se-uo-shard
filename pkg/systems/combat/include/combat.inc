@@ -32,7 +32,6 @@ function GetItemCFGInfo(mobile, wpn)
          var wpn_elem := GetItemDescriptor(cint(wpn.objtype));
          wpn_elem.hitbonus := to_return.hitbonus;
          wpn_elem.dicedmg := to_return.dicedmg;
-         // print(wpn_elem);
          return wpn_elem;
       endif
       return to_return;

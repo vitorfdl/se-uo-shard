@@ -22,7 +22,7 @@ function StartScript(mobile, attacker := 0, level := 0)
          PrintText(mobile, "*se soltou*", SSM_INFO);
          break;
       else
-          DamageFLS(mobile, RandomDiceRoll("{}d4".format(level)), DMG_BLUDGE, attacker);
+          DamageFLS(mobile, RandomDiceRoll("{}d4".format(level)), DMG_PHYSICAL, attacker);
       endif
    endwhile
    

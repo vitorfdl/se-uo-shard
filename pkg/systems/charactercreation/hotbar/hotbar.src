@@ -6,6 +6,7 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":charactercreation:feats";
 include "include/say";
+include ":tn:tngumps";
 
 var selector_open := 0;
 
@@ -40,8 +41,8 @@ endfunction
 
 function BuildHotBar(who, byref hotbar)
    var pos_x := hotbar.pos_x;
-   var pos_y := hotbar.pos_y;
-	var gump := GFCreateGump();
+   var pos_y := hotbar.pos_y - 50;
+	var gump := GFCreateGump(0, 0);
 
    GFMovable(gump, 0);//9260
    GFDisposable(gump, 0);
@@ -62,11 +63,26 @@ function BuildHotBar(who, byref hotbar)
       if (!shortcut)
 	      GFGumpPic(gump, 19 + pos_plus, pos_y+81, 21012, 1485);
       elseif (shortcut.script)
-         GFAddButton(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, shortcut.Icon, GF_CLOSE_BTN, 450+i);
+         if (shortcut.cooldown && TS_GetCooldown(who, "{}".format(shortcut.cooldown)))
+            GFGumpPic(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, 1000);
+	         GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "CD");
+         else
+            GFAddButton(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, shortcut.Icon, GF_CLOSE_BTN, 450+i);
+         endif
       elseif (shortcut.item)
-         GFAddButton(gump, 19 + pos_plus, pos_y+81, 39833, 39833, GF_CLOSE_BTN, 450+i);
+         var cd := 0;
+         var color := shortcut.color;
+         if (shortcut.cooldown && TS_GetCooldown(who, "{}".format(shortcut.cooldown)))
+            cd := 1;
+            color := 1000;
+         else
+            GFAddButton(gump, 19 + pos_plus, pos_y+81, 39833, 39833, GF_CLOSE_BTN, 450+i);
+         endif
          GFGumpPic(gump, 19 + pos_plus+2, pos_y+85, 27, 1485);
-         GFTilePic(gump, 19 + pos_plus, pos_y+87, cint(shortcut.graphic), shortcut.color);
+         GFTilePic(gump, 19 + pos_plus, pos_y+87, cint(shortcut.graphic), color);
+         if (cd)
+            GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "CD");
+         endif
          GFTooltipText(gump, "<basefont color=#7FFFD4>{}</basefont>".format(shortcut.desc));
       elseif (shortcut.id)
          var feat := GetFeatById(shortcut.id);
@@ -90,11 +106,12 @@ function BuildHotBar(who, byref hotbar)
 endfunction
 
 program startHotBar(who, spos)
+   if (!GetObjProperty(who, "chardata")) return; endif 
+   
    var hotbar := GetObjProperty(who, "hotbar");
-   if (!hotbar) hotbar := struct{ shortcuts := array{}, pos_x := 0, pos_y := 0 }; endif
+   if (!hotbar) hotbar := struct{ shortcuts := array{}, pos_x := 105, pos_y := 543 }; endif
 
    while (who.connected)
-      hotbar := GetObjProperty(who, "hotbar");
       var res := BuildHotBar(who, hotbar);
 
       if (res[0] >= 900 && res[0] < 1500)
@@ -103,21 +120,27 @@ program startHotBar(who, spos)
          SetobjProperty(who, "hotbar", hotbar);
       elseif (res[0] >= 897)
          if (res[0] == 897)
-            hotbar.shortcuts[selector_open] := struct{ script := ":charactercreation:esquiva", Icon := 2248 };
+            hotbar.shortcuts[selector_open] := struct{ script := ":combat:esquiva", Icon := 2248, cooldown := "dodge_block" };
          elseif (res[0] == 898)
             SendSysMessageEx(who, "Qual item deseja adicionar a barra de atalho?", SSM_REQUEST);
             var item := Target(who);
-            // if (!item.usescript)
-            //    SendSysMessageEx(who, "Este item não é consumível ou ativável.", SSM_FAIL);
-            // else
+            if (!item)
+               return;
+            endif
+            var itemcfg := ReadConfigFile( ":*:itemdesc" );
+            var elem := FindConfigElem( itemcfg, item.objtype );
+            if (!elem.Script)
+               SendSysMessageEx(who, "Este item não é consumível ou ativável.", SSM_FAIL);
+            else
                hotbar.shortcuts[selector_open] := struct{
                   item := item.serial,
                   objtype := item.objtype,
                   graphic := item.graphic,
                   desc := item.desc,
-                  color := item.color
+                  color := item.color,
+                  cooldown := elem.cooldown
                };
-            // endif
+            endif
          elseif (res[0] == 899)
             hotbar.shortcuts[selector_open] := 0;
          endif
@@ -133,9 +156,13 @@ program startHotBar(who, spos)
       elseif(res[0] >= 450 && res[0] <= 500)
          start_script(":charactercreation:commands/player/atalho", array{who, res[0]-450});
       elseif (res[0] == 2)
-         break;
+         var new_pos := PositionGump(who, hotbar.pos_x, hotbar.pos_y);
+         hotbar.pos_x := new_pos[1];
+         hotbar.pos_y := new_pos[2];
+         SetobjProperty(who, "hotbar", hotbar);
       endif
       sleepms(2);
+      hotbar := GetObjProperty(who, "hotbar");
    endwhile
 
 endprogram

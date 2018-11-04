@@ -1,0 +1,36 @@
+/*
+ * $Id: mpy.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+
+program textcmd_Move(who, params)
+	var x_diff, y_diff, z_diff, objtype;
+
+	params := SplitWords(params);
+	x_diff := cint(params[1]);
+	y_diff := cint(params[2]);
+	z_diff := cint(params[3]);
+
+	var targ := Target(who, TGTOPT_NOCHECK_LOS);
+	if( !targ )
+		SendSysMessage(who, "Cancelled.");
+		return 0;
+	endif
+
+	while( targ )
+		if( targ.movable == 0 )
+			targ.movable := 1;
+		endif
+
+		MoveObjectToLocation(targ, targ.x+x_diff, targ.y+y_diff, targ.z+z_diff, targ.realm, MOVEOBJECT_FORCELOCATION);
+
+		targ.movable := 0;
+
+		targ := Target(who, TGTOPT_NOCHECK_LOS);
+	endwhile
+
+	SendSysMessage(who, "Done.");
+	return 1;
+endprogram

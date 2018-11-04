@@ -29,6 +29,7 @@ CONST GF_CHANGE_PAGE := 2;
 CONST GF_HITS_BTN := 5;
 CONST GF_MANA_BTN := 6;
 CONST GF_STAM_BTN := 7;
+CONST GF_CHANGE_CLASS := 8;
 
 CONST GF_BKG_REM_BTN := 200;
 CONST GF_BKG_ADD_BTN := 100;
@@ -65,6 +66,7 @@ function buildSubClass(charlevel, byref gump, subclass, x, y)
       endif
 
       GFGumpPic(gump, x_pos, y-2, hab.Icon, color); // hab
+      GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in subclass.habs)));
       x_pos += 46;
       sleepms(2);
    endforeach
@@ -77,8 +79,8 @@ function buildClass(charlevel, byref gump, classe, extrahabs := array{})
 
    var feats := GetClassFeats(classe.id, elem);
 
-	GFGumpPic(gump, 64, 177, cint(elem.Icon), 0); // Class Icon
-   GFHtmlShadowed(gump, 70, 155, 90, 20, "#FFFFFF", "{}".format(classe.id), 5);
+   GFAddButton(gump, 64, 177, cint(elem.Icon), cint(elem.Icon)+1, GF_CLOSE_BTN, GF_CHANGE_CLASS); // hab
+   GFHtmlShadowed(gump, 50, 155, 100, 20, "#FFFFFF", "<center>{}".format(classe.id), 5);
    buildExpBar(gump, 50, 244, 96, classe.exp, 3200);
    GFTooltipText(gump, "Experiência de sua classe. Faça missões e tarefas relacionadas a sua classe para aumentar sua experiência e disponibilizar novas habilidades.");
    
@@ -104,7 +106,7 @@ function buildClass(charlevel, byref gump, classe, extrahabs := array{})
                GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
             endif
             GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
-            GFTooltipText(gump, "<center><basefont color=#7FFFD4><b>{}</b></basefont><br>{}".format(hab.Name, hab.Description));
+            GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in classe.habs)));
          else
             GFGumpPic(gump, x, y, 0x5DD3, 1000);
             GFTooltipText(gump, "Habilidade Indisponível");
@@ -127,6 +129,8 @@ function buildClass(charlevel, byref gump, classe, extrahabs := array{})
       sleepms(2);
    endfor
 
+   GFGumpPic(gump, 603, 192, 0x5DD3, 1000);
+   GFTooltipText(gump, "Habilidade Indisponível");
 endfunction
 
 function buildGodGump(byref gump, god, level)
@@ -144,6 +148,7 @@ function buildGodGump(byref gump, god, level)
       
       if (hab.Script) GFAddButton(gump, 736-7, 221+((_hab_iter-1) * 49), hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); endif;
       GFGumpPic(gump, 736-7, 221+((_hab_iter-1) * 49), cint(hab.Icon), color);
+      GFTooltipText(gump, BuildFeatToolTip(hab));
       GFTextLine(gump, 743-7, 245+((_hab_iter-1) * 49), 1000, "Lv{}".format(hab.Level));
 
       sleepms(2);
@@ -192,6 +197,7 @@ function SendSkillGump(who, chardata)
       var race_habs := GetRaceFeats(chardata.raca);
       foreach hab in race_habs
          GFGumpPic(gump, 580 + ((_hab_iter-1) * 49), 81, hab.Icon, 0 ); //hab
+         GFTooltipText(gump, BuildFeatToolTip(hab));
       endforeach
    else
       GFHtmlShadowed(gump, 582, 61, 90, 20, "#FFFFFF", "<center>Raça Indefinida", 4);
@@ -512,6 +518,8 @@ function HandleSkillPage(who, byref chardata, res)
       chardata.vitalpoints -= 1;
       SetObjProperty(who, "chardata", chardata);
       RecalcVitals(who, RECALC_NO_INTRINSIC_MOD);
+   elseif (res[0] == GF_CHANGE_CLASS)
+      changeClass(who, chardata);
    endif
 endfunction
 
@@ -551,4 +559,79 @@ function HandleBackgroundPage(who, res, targ)
          endif
       endif
    endif
+endfunction
+
+
+function changeClass(who, byref chardata)
+   var classCfg := ReadConfigFile(":charactercreation:config/classes");
+   var classes := struct{};
+   foreach classe_name in GetConfigStringKeys(classCfg)
+      var classe := FindConfigElem(classCfg, classe_name);
+      if (classe.Caminho && classe.Type == "Main") 
+         if (!classes[classe.Caminho]) classes[classe.Caminho] := array{}; endif
+         classes[classe.Caminho].append(struct{
+            caminho := classe.Caminho,
+            type := classe.Type,
+            id := classe_name,
+            icon := cint(classe.Icon)
+         });
+      endif
+      sleepms(2);
+   endforeach
+
+	var gump := GFCreateGump();
+
+   GFSetID(gump, GUMPID_SKILLLIST);
+	GFResizePic(gump, 13, 13, 9380, 600, 296);
+	GFGumpPicTiled(gump, 36, 45, 530, 10, 50); // margem
+	GFGumpPicTiled(gump, 39, 266, 523, 10, 50); // margem
+   GFHtmlShadowed(gump, 240, 59, 150, 20, "#FFFFFF", "Selecione uma classe:", 5);
+
+   var x := 0;
+   foreach caminho in (classes.keys())
+      GFHtmlShadowed(gump, 60+x, 104, 132, 20, "#FFD300", "<center>Caminho do {}".format(caminho), 4);
+
+      foreach classe in (classes[caminho])
+         if (FindInArray(chardata.classes, struct{ id := classe.id }) || who.cmdlevel >= 3);
+	         GFAddButton(gump,51+x, 133, classe.icon, classe.icon+1, GF_CLOSE_BTN, "{}{}".format(_caminho_iter, _classe_iter)); // cancel
+         else
+            GFGumpPic(gump, 51+x, 133, classe.icon, 1000);
+         endif
+         GFHtmlShadowed(gump, 45+x, 197, 78, 20, "#FFFFFF", "<center>{}".format(classe.id), 4);
+
+         if (_classe_iter != classes[caminho].size())
+            x += 56;
+	         GFGumpPicTiled(gump, 69+x, 146, 1, 39, 2701); // divisor
+         endif
+
+         x += 35;
+         sleepms(2);
+      endforeach
+
+      x += 60;
+      sleepms(2);
+   endforeach
+   
+	GFAddButton(gump, 280, 229, 2072, 2072, GF_CLOSE_BTN, 1); // cancel
+
+	var res := GFSendGump(who, gump)[0];
+   if (res < 10)
+      return;
+   endif
+
+   res := cstr(res);
+   var caminho := classes.keys()[cint(res[1])];
+   var classe := classes[caminho][cint(res[2])];
+
+   var current_class := chardata.classes[1];
+   var new_class := FindInArray(chardata.classes, struct{ id := classe.id });
+   if (!new_class)
+      chardata.classes.append(struct{ id := classe.id, habs := array{}, selected_habs := array{}, exp := 0 });
+      new_class := chardata.classes.size();
+   endif
+
+   chardata.classes[1] := chardata.classes[new_class];
+   chardata.classes[new_class] := current_class;
+   chardata.current_class := classe.id;
+   SetObjProperty(who, "chardata", chardata);
 endfunction

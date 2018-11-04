@@ -14,7 +14,7 @@ include ":combat:hitscripts";
 include ":loot:include/lootParser";
 include ":yggdrasil:combatevents";
 
-var resist_types := array{"Veneno", "Fogo", "Eletricidade", "Gelo", "Perfuração", "Corte", "Contusão", "Strength", "Dexterity", "Intelligence"};
+var resist_types := array{DMG_COLD, DMG_FIRE, DMG_ENERGY, DMG_POISON, DMG_PHYSICAL};
 
 function GetBossStruct(targ, serial := 0)
    if (!serial) serial := targ.serial; endif
@@ -47,8 +47,9 @@ function CreateBossStructGump(who, byref boss)
 
 	var cfg :=	NPC_GetNPCConfig(boss.npctemplate);
 	var npctemplate := boss.npctemplate;
-	var template, nome, cor, camod;
-	var str, dex, int, con, wis, hits;
+	var template, nome, cor;
+   var power, hits;
+   var phsycal_res, poison_res, fire_res, cold_res, energy_res;
 
 	//GFClosable(chargump, 0);
 	GFDisposable(chargump, 0);
@@ -78,33 +79,17 @@ function CreateBossStructGump(who, byref boss)
 
 	GFTextLine(chargump, x_pos, y_pos+(18*2), 1051, "Cor: ");
 	cor := GFTextEntry( chargump, x_pos+60, y_pos+(18*2), 100, 20, 1935, cint(boss.color) + "");
-	if (cfg)
-		GFTextLine(chargump, x_pos, y_pos+(18*3), 1051, "Str ["+ cfg.Strength+ "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*4), 1051, "Int [" + cfg.Intelligence + "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*5), 1051, "Dex [" + cfg.Dexterity + "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*6), 1051, "Con [" + cfg.Constitution + "]:");
-		GFTextLine(chargump, x_pos, y_pos+(18*7), 1051, "Wis [" + cfg.Wisdom + "]:");
-	else
-		GFTextLine(chargump, x_pos, y_pos+(18*3), 1051, "Str: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*4), 1051, "Int: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*5), 1051, "Dex: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*6), 1051, "Con: ");
-		GFTextLine(chargump, x_pos, y_pos+(18*7), 1051, "Wis: ");
-	endif
 
-	str := GFTextEntry( chargump, x_pos+60, y_pos+(18*3), 100, 20, 1935, cint(boss.str) + "");
-	int := GFTextEntry( chargump, x_pos+60, y_pos+(18*4), 100, 20, 1935, cint(boss.int) + "");
-	dex := GFTextEntry( chargump, x_pos+60, y_pos+(18*5), 100, 20, 1935, cint(boss.dex) + "");
-	con := GFTextEntry( chargump, x_pos+60, y_pos+(18*6), 100, 20, 1935, cint(boss.con) + "");
-	wis := GFTextEntry( chargump, x_pos+60, y_pos+(18*7), 100, 20, 1935, cint(boss.wis) + "");
+	GFTextLine(chargump, x_pos, y_pos+(18*4), 1051, "Poder[{}]: ".format(cint(cfg.AttackDamage)));
+	power := GFTextEntry( chargump, x_pos+65, y_pos+(18*4), 100, 20, 2212, cint(boss.power) + "");
 
 	var attacks      := GetNpcAttacks(npctemplate);
 	var boss_attacks := boss.customAttacks;
-	GFHtmlShadowed(chargump, x_pos+15, y_pos+(18*9), 250, 20,  "#FFA500", "Attack - Dice - Bonus - Type - Anim", 1);
+	GFHtmlShadowed(chargump, x_pos+15, y_pos+(18*9), 250, 20,  "#FFA500", "Attack - Dicedmg - Type - Anim", 1);
 
 	var y := y_pos+(18*9)+15;
 	foreach attack in attacks
-		GFHtmlShadowed(chargump, x_pos+15, y, 250, 20,  "#CCCCCC", "{} - {} - {} - {} - {}".format(attack.name, attack.dicedmg, attack.hitbonus, attack.damageType, attack.AttackAnim), 1);
+		GFHtmlShadowed(chargump, x_pos+15, y, 250, 20,  "#CCCCCC", "{} - {} - {} - {}".format(attack.name, attack.dicedmg, attack.damageType, attack.AttackAnim), 1);
 		y+= 15;
 		sleepms(2);
 	endforeach
@@ -113,7 +98,7 @@ function CreateBossStructGump(who, byref boss)
 	foreach attack in boss_attacks
 		attack := SplitWords(attack, " ");
 		GFAddButton(chargump, x_pos, y+1, 2103, 2104, 1, 90+i);
-		GFHTMLArea(chargump, x_pos+15, y, 250, 20, "<BASEFONT SIZE=1 color=#93c0ff>{} - {} - {} - {} - {}".format(attack[1], attack[2], attack[3], attack[4], attack[5]) );
+		GFHTMLArea(chargump, x_pos+15, y, 250, 20, "<BASEFONT SIZE=1 color=#93c0ff>{} - {} - {} - {}".format(attack[1], attack[2], attack[3], attack[4]) );
 		y+= 15;
 		i += 1;
 	endforeach
@@ -134,64 +119,27 @@ function CreateBossStructGump(who, byref boss)
 		cfg_hp := " [{}]".format(cfg.Hits);
 	endif
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "HP{}:".format(cfg_hp));
-	hits := GFTextEntry( chargump, cx_pos+80, y_pos, 100, 20, 1935, cint(boss.hits) + "");
+	hits := GFTextEntry( chargump, cx_pos+45, y_pos, 100, 20, 1935, "{}".format(cint(boss.hits)));
 
-	var cfg_ca := "";
-	if (cfg)
-		cfg_ca := " [{}]".format(cfg.AR);
-	endif
-	GFTextLine(chargump, cx_pos, y_pos+18, 1051, "CA{}:".format(cfg_ca));
-	camod := GFTextEntry( chargump, cx_pos+60, y_pos+18, 100, 20, 1935, cint(boss.CA) + "");
+   y_pos += 18;
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Fisica[{}]:".format(cint(cfg.PhysicalResist)));
+	phsycal_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.phsycal_res) + "");
+   y_pos += 18;
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Calor[{}]:".format(cint(cfg.FireResist)));
+	fire_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.fire_res) + "");
+   y_pos += 18;
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Frio[{}]:".format(cint(cfg.ColdResist)));
+	cold_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.cold_res) + "");
+   y_pos += 18;
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Energia[{}]:".format(cint(cfg.EnergyResist)));
+	energy_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.energy_res) + "");
+   y_pos += 18;
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Veneno[{}]:".format(cint(cfg.PoisonResist)));
+	poison_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.poison_res) + "");
 
-	GFTextLine(chargump, cx_pos, y_pos+(18*2), 1051,  "Resistencias");
-	var resists         := GetConfigStringArray(cfg, "Resistencia");
-	var imunities       := GetConfigStringArray(cfg, "Imunidade");
-	var vulnerabilities := GetConfigStringArray(cfg, "Vulnerabilidade");
-	if (boss.resists)
-		resists += boss.resists;
-	endif
-	if (boss.imunities)
-		imunities += boss.imunities;
-	endif
-	if (boss.vulnerabilities)
-		vulnerabilities += boss.vulnerabilities;
-	endif
 
 	y := y_pos+(18*3);
-	foreach resist in resist_types
-		var type  := "+";
-		var color := 171;
-		if (resist in imunities)
-			type := "*";
-			color := 51;
-		elseif (resist in vulnerabilities)
-			type := "-";
-			color := 236;
-		elseif (!(resist in resists))
-			sleepms(2);
-			continue;
-		endif
-		GFTextLine(chargump, cx_pos, y, color, "{} {}".format(type, resist));
-		y+= 18;
-	endforeach
-	GFAddButton( chargump, cx_pos, y+3, 2103, 2104, 1, 80);
 
-	y += 20;
-
-	var skills := GetConfigStringArray(cfg, "Pericia");
-	if (boss.skills)
-		skills += boss.skills;
-	endif
-	GFTextLine(chargump, cx_pos, y, 1051, "Pericias: ");
-	y+= 18;
-	foreach skill in skills
-		GFTextLine(chargump, cx_pos, y, 1051, "{}".format(skill));
-		y+= 18;
-		sleepms(2);
-	endforeach
-	GFAddButton( chargump, cx_pos, y+2, 2103, 2104, 1, 70);
-	// y+= 18;
-	
 	y_pos := 340;
 	GFTextLine(chargump, x_pos, y_pos, 1051, "Death Events: ");
 	GFAddButton( chargump, x_pos, y_pos+24, 2103, 2104, 1, 20);
@@ -262,14 +210,14 @@ function CreateBossStructGump(who, byref boss)
 	boss.npctemplate := Cstr(GFExtractData(input, template));
 	boss.name        := Cstr(GFExtractData(input, nome));
 	boss.color       := Cint(GFExtractData(input, cor));
-	boss.str         := Cint(GFExtractData(input, str));
-	boss.dex         := Cint(GFExtractData(input, dex));
-	boss.int         := Cint(GFExtractData(input, int));
-	boss.wis         := Cint(GFExtractData(input, wis));
-	boss.con         := Cint(GFExtractData(input, con));
+	boss.phsycal_res         := Cint(GFExtractData(input, phsycal_res));
+	boss.fire_res         := Cint(GFExtractData(input, fire_res));
+	boss.poison_res         := Cint(GFExtractData(input, poison_res));
+	boss.cold_res         := Cint(GFExtractData(input, cold_res));
+	boss.energy_res         := Cint(GFExtractData(input, energy_res));
 	boss.hits        := Cint(GFExtractData(input, hits));
+	boss.power        := Cint(GFExtractData(input, power));
 	// boss.dmg         := Cdbl(GFExtractData(input, dmgmod));
-	boss.CA    		:= Cint(GFExtractData(input, camod));
 
 	if (input[0] == 1 )
 		//SendSysMessage(who, " " + boss + " " );
@@ -284,12 +232,12 @@ function CreateBossStructGump(who, byref boss)
 			if (choice == 1)
 				boss_attacks.Erase(selected);
 			elseif (choice == 2)
-				var new_attack := RequestGump(who, "Entre com o novo ataque", "Attack name - Dice - Bonus - Type - Anim", boss_attacks[selected], 1);
+				var new_attack := RequestGump(who, "Entre com o novo ataque", "Attack name - Bonus - Type - Anim", boss_attacks[selected], 1);
 				boss_attacks[selected]  := new_attack;
 			endif
 			boss.customAttacks := boss_attacks;
 		else
-			var new_attack := RequestGump(who, "Entre com o novo ataque", "Attack name - Dice - Bonus - Type - Anim", "", 1);
+			var new_attack := RequestGump(who, "Entre com o novo ataque", "Attack name - Bonus - Type - Anim", "", 1);
 			if (new_attack && new_attack != "")
 				boss_attacks.append(new_attack);
 				boss.customAttacks := boss_attacks;
@@ -473,44 +421,29 @@ endfunction
 
   //transforma um npc em boss
 function SetBoss(npc, boss)
+	var cfg :=	NPC_GetNPCConfig(boss.npctemplate);
+
 	if (boss.name != "-" && boss.name != "-random-")
 		SetName(npc, boss.name);
 	endif
+
 	npc.color := boss.color;
 	npc.truecolor := boss.color;
 
-	if (boss.CA)
-		npc.CA := Cint(boss.CA);
-	endif
-
-   if (boss.str) AP_SetTrueStat(npc, STRENGTH, Cint(boss.str)); endif
-   if (boss.dex) AP_SetTrueStat(npc, DEXTERITY, Cint(boss.dex)); endif
-   if (boss.int) AP_SetTrueStat(npc, INTELLIGENCE, Cint(boss.int)); endif
-   if (boss.wis) AP_SetTrueStat(npc, WISDOM, Cint(boss.wis)); endif
-   if (boss.con) AP_SetTrueStat(npc, CONSTITUTION, Cint(boss.con)); endif
+   if (boss.power) npc.damage_physical_mod := boss.power; endif
+   if (boss.phsycal_res) npc.resist_physical_mod := boss.phsycal_res; endif
+   if (boss.fire_res) npc.resist_physical_mod := boss.fire_res; endif
+   if (boss.energy_res) npc.resist_physical_mod := boss.energy_res; endif
+   if (boss.poison_res) npc.resist_physical_mod := boss.poison_res; endif
+   if (boss.cold_res) npc.resist_physical_mod := boss.cold_res; endif
 	
-	foreach skill in (boss.skills)
-		AP_SetTrueSkill(npc, skill, 1);
-		// sleepms(2);
-	endforeach
-
 	if (boss.customAttacks && boss.customAttacks[0])
 		var customAttacks := array{};
 		foreach attack in (boss.customAttacks)
-			attack := FormatAttack(boss.npctemplate, attack);
+			attack := FormatAttack(boss.npctemplate, attack, cint(cfg.AttackDamage) + cint(boss.power));
 			customAttacks.append(attack);
 		endforeach
 		SetObjProperty(npc, "customAttacks", customAttacks);
-	endif
-
-	if (boss.resists)
-		SetObjProperty(npc, "resists", boss.resists);
-	endif
-	if (boss.imunities)
-		SetObjProperty(npc, "imunities", boss.imunities);
-	endif
-	if (boss.vulnerabilities)
-		SetObjProperty(npc, "vulnerabilities", boss.vulnerabilities);
 	endif
 
   	SetObjProperty(npc, "hitsmod", cint(boss.hits));
@@ -589,15 +522,15 @@ function SetBoss(npc, boss)
   
 endfunction
 
-function FormatAttack(npctemplate, new_attack)
+function FormatAttack(npctemplate, new_attack, AttackDamage)
 	var attack := SplitWords(attack, " ");
 
 	attack := struct{
 		"name"    := attack[1],
 		"dicedmg"    := attack[2],
-		"hitbonus"   := cint(attack[3]),
-		"DamageType" := attack[4],
-		"AttackAnim" := cint(attack[5]),
+		"DamageType" := attack[3],
+		"AttackAnim" := cint(attack[4]),
+      "AttackDamage" := AttackDamage,
 		"Attribute"  := npctemplate.AttackAttribute,
 		"MaxRange"   := npctemplate.MaxRange,
 		"MinRange"   := npctemplate.MinRange

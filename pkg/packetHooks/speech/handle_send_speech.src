@@ -32,7 +32,7 @@ exported function handleUCOutgoing( character, byref packet )
 		return 0;
 	endif
 
-   if ((source.hidden == 1 && !character.Enabled("seehidden")) || (source.invisible == 1 && !character.Enabled("seeinvisitems")))
+   if ((source.hidden == 1 && !character.Enabled("seehidden")) || (source.invisible == 1 && !character.Enabled("seeinvisitems")) || source.dead)
       return 1;
    endif
 

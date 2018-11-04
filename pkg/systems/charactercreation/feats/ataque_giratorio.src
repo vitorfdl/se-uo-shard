@@ -44,7 +44,7 @@ function ataquegiratorio(who)
          run_script(":combat:hooks/temporaryHook", array{who, mobile, 1});
          alreadydamaged.Append(mobile.serial);
          // var basedamage := CalculateRawDamage(who, elem, who.weapon) / 2;
-         // DamageFLS(mobile, basedamage, DMG_PIERCING, who);
+         // DamageFLS(mobile, basedamage, DMG_PHYSICAL, who);
       endif
       sleepms(20);
    endforeach

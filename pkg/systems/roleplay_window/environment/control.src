@@ -1,0 +1,40 @@
+use uo;
+use os;
+
+include "include/sysEvent";
+include "include/say";
+include "include/colormap";
+include ":datafile:datafile";
+
+program AC_start(item)
+   var event;
+   while (item)
+      sleepms(2);
+      var config := GetObjProperty(item, "config");
+      if (!config)
+         sleep(10);
+         continue;
+      endif
+
+      EnableEvents( SYSEVENT_ENTEREDAREA , cint(config.distance));
+      event := Wait_For_Event(5);
+      if (event.source.connected)
+         var source_facing := event.source.facing / 2;
+
+         source_facing += 1;
+         
+         if (!(source_facing in config.char_pos))
+            continue;
+         endif
+         
+         if (config.rptext || config.emote)
+            var process := GetProcess(GetObjProperty(event.source, "#roleplay"));
+            if (!process)
+               continue;
+            endif
+            process.SendEvent(struct{ "type" := 0x456, text := "{}Roleplay: {}{}".format(BLUE, WHITE, config.rptext), id := item.serial, emote := config.emote });
+         endif
+      endif
+   endwhile
+endprogram
+

@@ -1,4 +1,5 @@
 include ":attributes:attributes";
+include "include/colormap";
 
 const RETURN_ACTIVE_ONLY := 1;
 
@@ -232,6 +233,18 @@ function LearnFeat(who, feat_id)
    chardata[class_type][index].habs.append(feat_id);
    who.SetPoints(-1);
    return 1;
+endfunction
+
+function BuildFeatToolTip(feat, return_points := 0)
+   var desc := "";
+   if (return_points && feat.PointCost) desc += "{}Custo: {} ponto(s)<br>".format(LIGHTGRAY, feat.PointCost); endif
+   if (feat.Mana) desc += "{}Mana: {}<br>".format(BLUE, feat.Mana); endif
+   if (feat.Vigor) desc += "{}Vigor: {}<br>".format(YELLOW, feat.Vigor); endif
+   if (feat.Cooldown) desc += "{}Cooldown: {}<br>".format(LIGHTGRAY, feat.Cooldown); endif
+   if (feat.Description) desc += "{}{}<br>".format(WHITE, feat.Description); endif
+   var tooltip := "<center><basefont color=#7FFFD4><b>{}</b></basefont><br>{}".format(feat.Name, desc);
+
+   return tooltip;
 endfunction
 
 // function IsBloodied(mobile)

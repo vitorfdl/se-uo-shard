@@ -326,21 +326,21 @@ endfunction
    // var res:= QuestionsGump(who, questions);
    // var answer_1 := res[1];
 function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
-	var total_height := ((questions.size() * 2) * 20) + 20;
+	var total_height := (questions.size() * 57);
    foreach quest in questions
       if (quest.radio)
-         total_height += floor(quest.radio.size() / 4) * 20;
+         total_height += Floor(quest.radio.size() / 5) * 30;
       elseif (quest.checkbox)
-         total_height += floor(quest.checkbox.size() / 4) * 20;
-      else
-         total_height += 20;
+         total_height += Floor(quest.checkbox.size() / 5) * 30;
+      elseif (quest.lines)
+         total_height += (cint(quest.lines)-1) * 26;
       endif
       sleepms(2);
    endforeach
 
-	var gump := GFCreateGump();
+	var gump := GFCreateGump(250, 250);
    GFSetID(gump, GUMPID_TNGUMPS);
-	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 100+total_height);
+	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 45+total_height);
 
 	var entries := dictionary{};
    var previousiter := 0;
@@ -380,12 +380,24 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
             endif
 			endforeach
 		else
-         var marked := "";
-         if (quest.marked)
-            marked += quest.marked;
+         quest.lines := cint(quest.lines);
+         if (!quest.marked) quest.marked := ""; endif
+         
+         GFResizePic(gump, x, y+3, 0x7752, 500, 28 + (quest.lines * 18));
+         var texts := quest.marked;
+         if (quest.lines > 1) 
+            texts := GFWordWrap(quest.marked, 570);
+         else
+            texts := array{quest.marked};
          endif
-	      GFResizePic(gump, x, y+2, 0x7752, 500, 30);
-			entries[_quest_iter] := GFTextEntry(gump, x+5, y+5, 500, 20, 2100, marked);
+
+         entries[_quest_iter] := array{};
+         for lines := 0 to (quest.lines)
+            if (lines != 0) y += 18; endif
+            var text := texts[lines+1];
+            if (!text) text := ""; endif
+            entries[_quest_iter].append(GFTextEntry(gump, x+5, y+5, 500, 20, 2100, text));
+         endfor
 		endif
 
 		y += 36;
@@ -417,15 +429,114 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 			var result := array{};
 			foreach item in (quest.checkbox)
 				if (_item_iter + (_quest_iter * 500) in input.keys)
-					result.append(item);
+               if (quest.return_number)
+                  result.append(_item_iter);
+               else
+					   result.append(item);
+               endif
 				endif
 			endforeach
 			res[_quest_iter] := result;
 		else
-			res[_quest_iter] := GFExtractData(input, entries[_quest_iter]);
+         res[_quest_iter] := "";
+         foreach i in (entries[_quest_iter])
+            var output :=  GFExtractData(input, i);
+            if (output && output != " " && output != "") res[_quest_iter] += output; endif
+            sleepms(2);
+         endforeach
 		endif
 		sleepms(2);
 	endforeach
 
 	return res;
+endfunction
+
+////////
+// options = [
+//    { 
+//       text = Essa Opção, 
+//       Icon = 7748, 
+//       Item = item.graphic,
+//       color = 0
+//    }
+// ]
+function ChoiceSelectorGump(who, question := "", options := array{}, allow_cancel := 0)
+	var gump := GFCreateGump(250, 250);
+   GFSetID(gump, GUMPID_TNGUMPS);
+	
+	GFResizePic(gump, 10, 8, 9380, 392, 143+(options.size() * 69)); // background
+   
+	GFGumpPicTiled(gump, 37, 46, 338, 10, 50); // background
+	GFGumpPicTiled(gump, 39, 108+(options.size() * 67), 338, 10, 50); // background
+
+   var y := 87;
+   foreach btn in options
+      GFAddButton(gump, 51, y+9, 5151, 248, GF_CLOSE_BTN, _btn_iter); // button
+      GFAddButton(gump, 195, y+9, 5151, 248, GF_CLOSE_BTN, _btn_iter); // button
+      GFResizePic(gump, 44, y, 5120, 327, 58); // button
+      GFTextLine(gump, 118, y+18, 2212, btn.text);
+
+      GFResizePic(gump, 43, y, 9270, 63, 58); // behind icon
+
+      if (btn.item)
+         GFResizePic(gump, 50, y+7, 9350, 50, 43);
+         GFTilePic(gump, 55, y+16, btn.item, cint(btn.color)); //item
+      elseif (btn.icon)
+         GFGumpPic(gump, 52, y+7, btn.icon, cint(btn.color)); //gump
+      endif
+      y += 62;
+   endforeach
+
+   if (!allow_cancel)
+	   GFAddButton(gump, 179, 85+(options.size() * 64), 2072, 2073, GF_CLOSE_BTN, 50); // cancel
+   else
+	   GFClosable(gump, 0);
+   endif
+
+   GFHtmlShadowed(gump, 42, 59, 326, 20, "#FFFFFF", "<center>{}".format(question), 5);
+
+	var res := GFSendGump(who, gump)[0];
+   if (res[0] == 50) return 0; endif
+   return res;
+
+endfunction
+
+function PositionGump(who, cur_x := 0, cur_y := 0)
+   var gump := GetGlobalProperty("#resize_gump");
+   var positions := array{};
+   if (!gump)
+      gump := GFCreateGump();
+	   GFClosable(gump, 0);
+	   GFMovable(gump, 0);
+
+      GFResizePic(gump, 0, 0, 9200, 1920, 1080);
+      GFAddAlphaRegion(gump, 1, 2, 1920, 1080);
+      GFSetRadioGroup(gump, 0);
+
+      var i := 1;
+      var y;
+      for ( y := 3; y < 1080; y += 45)
+         var x;
+         for (x := 1; x < 1920; x += 52)
+            positions.append(array{x, y});
+            GFAddButton(gump, x, y, 1210, 1210, GF_CLOSE_BTN, positions.size());
+            i += 1;
+            sleepms(2);
+         endfor
+      endfor
+
+      GFTextLine(gump, 433, 336, 2212, "Clique em um botão para reposicionar");
+      GFTextLine(gump, 765, 558, 2212, "Clique em um botão para reposicionar");
+      SetGlobalProperty("#resize_gump", struct{ gump := gump, positions := positions});
+   else
+      positions := gump.positions;
+      gump := gump.gump;
+   endif
+
+   if (cur_x || cur_y)
+      GFGumpPic(gump, cur_x, cur_y, 1210, 2133);
+   endif
+   
+	var res := GFSendGump(who, gump)[0];
+   return positions[res];
 endfunction

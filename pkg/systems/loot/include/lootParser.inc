@@ -27,7 +27,7 @@ function Loot_Generate(container, loot_index, is_group := 0)
 
       var type := GetConfigStringArray(index_elem, "Type");
       var line := "{} {} {}".format(is_group.by_group, is_group.rate, is_group.chance);
-      Loot_CreateRandom(container, line, is_group.forceitem);
+      Loot_CreateRandom(container, line, is_group.forceitem, is_group.power, is_group.defense);
 
       return 1;
    endif

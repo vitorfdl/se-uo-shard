@@ -1,10 +1,112 @@
-use cfgfile;
 use uo;
-use os;
-use datafile;
+use basic;
 
-program FichaRPButton( character )
-   Start_Script(":fls_core:commands/player/ficharp", array{character});
+include ":charactercreation:characters";
+include ":tn:tngumps";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include "include/say";
+include "include/utils";
+include "include/client";
+include "include/colormap";
+
+var quest_n := 1;
+
+function BuildQuestInfo(byref gump, quest := struct{})
+	//Quest BG
+	GFGumpPic(gump, 303, 21, 1248, 0);
+   GFHTMLArea(gump, 336, 74, 150, 20, "<BASEFONT SIZE=4 COLOR=#A0A0A0>DESCRIÇÃO");
+   GFHtmlShadowed(gump, 342, 96, 233, 20, "#FFD300", "{}".format(quest.title), 5);
+	
+	foreach condition in (quest.conditions)
+      var y := (_condition_iter-1) * 20;
+      var title := condition.title;
+      if (!title)
+         title := "Uhul";
+      endif
+
+      GFTextLine(gump, 371, 120+y, 1000, condition.title);
+
+      var color := 1000;
+      if (condition.done)
+         color := 2451;
+      endif
+      GFGumpPic(gump, 352, 121+y, 4033, color);
+      sleepms(2);
+   endforeach
+	
+	var description := quest.description;
+   if (quest.reward);
+      var rewards := "  - 30 moedas de ouro";
+      description += "<br><br>Recompensas:<br>{}{}".format(rewards);
+   endif
+
+   GFHtmlShadowed(gump, 336, 137+(quest.conditions.size() * 20), 245, 176, "#f2984c", "{}".format(description), 4);
+   // GFHTMLArea(gump, 336, 137+(quest.conditions.size() * 20), 245, 176, "<BASEFONT SIZE=4 COLOR=#2a1d03>{}".format(quest.description));
+endfunction
+
+function BuildQuestGump(who)
+   var quests := GetObjProperty(who, "quests");
+   if (!quests) quests := array{struct{
+         title := "Mate os Goblins!",
+         conditions := array{
+            // struct{ kill_quest := struct{ monster := ":ghaia:goblinarqueiro", qty := 30, calc := 30 }, done := 1 },
+            // struct{ kill_quest := struct{ monster := ":ghaia:goblinxama", qty := 20, calc := 15 }, done := 0  },
+            struct{ title := "Ler livro no Altar", use_item := struct{ serial := 0x478 }, done := 0  }
+         },
+         description := "Há muitos goblins para se matar<br><i>- Vamos! Mate todos eles!</i><br><br>Você pode encontra-los na <b>floresta</b> ao sul"
+      }}; endif
+
+	var gump := GFCreateGump(250, 200);
+	
+	GFPage(gump, 0);
+	
+	//
+	GFResizePic(gump, 40, 25, 9250, 280, 390);
+	
+	//drag
+	GFGumpPic(gump, -10, 361, 10402, 0);
+	GFGumpPic(gump, 19, 194, 10422, 0);
+	GFGumpPic(gump, 6, 22, 10421, 0);
+	GFGumpPic(gump, 37, 15, 10420, 0);
+	
+	GFResizePic(gump, 110, 34, 9400, 145, 30);
+   GFHtmlShadowed(gump, 154, 42, 90, 20, "#FFFFFF", "Missões", 5);
+
+   if (quests.size())
+      foreach quest in quests
+         var y := ((_quest_iter-1) * 33);
+         GFResizePic(gump, 54, 69+y, 5120, 252, 31);
+         GFAddButton(gump, 64, 74+y, 210 + (quest_n == _quest_iter), 211, GF_CLOSE_BTN, 10+_quest_iter);
+         GFTextLine(gump, 92, 74+y, 1969, "{}".format(quest.title));
+      endforeach
+
+      if (quest_n)
+         var selected_quest := quests[quest_n];
+         BuildQuestInfo(gump, selected_quest);
+      endif
+   else
+         GFTextLine(gump, 106, 209, 1938, "Nenhuma missão disponível");
+   endif
+
+
+
+	return GFSendGump(who, gump)[0];
+endfunction
+
+program FichaRPButton( who )
+   while (who.connected)
+   var res := BuildQuestGump(who);
+
+      if (res >= 10)
+         quest_n := res - 10;
+      else
+         break;
+      endif
+
+      sleepms(2);
+   endwhile
 endprogram
 /*
 program virtueachievements(who)

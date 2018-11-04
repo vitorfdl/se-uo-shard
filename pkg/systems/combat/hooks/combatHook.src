@@ -22,7 +22,6 @@ include "include/packets";
 include "include/facings";
 include "include/say";
 include "include/damage";
-// 
 // include ":tn:cooldown";
 include ":timedscripts:timedScripts";
 include ":combat:settings";

@@ -28,6 +28,7 @@ program useHotBar(who, text)
    if (!spos) 
       return SendSysMessageEx(who, "Você precisa entrar com o número da barra de atalho. Ex: .atalho 1", SSM_FAIL); 
    elseif (who.frozen || who.squelched || who.paralyzed) 
+      EraseObjProperty(who, "#Casting");
       return SendSysMessageEx(who, "Você não pode usar uma habilidade enquanto está paralizado, congelado ou silenciado.", SSM_FAIL);
    elseif (GetObjProperty(who, "#Casting")) 
       return SendSysMessageEx(who, "Você não pode usar uma habilidade agora.", SSM_FAIL);
@@ -54,7 +55,22 @@ program useHotBar(who, text)
 endprogram
 
 function TriggerItem(who, shortcut)
+   var item := FindObjtypeInContainer(who.backpack, shortcut.objtype);
+   if (!item)
+      var equiped := listequippeditems(who);
+      foreach obj in equiped
+         if (obj.objtype == shortcut.objtype)
+            item := obj;
+         endif
+         sleepms(2);
+      endforeach
+   endif
    
+   if (!item)
+      return SendSysMessageEx(who, "Item não encontrado na sua mochila", SSM_FAIL);
+   endif
+
+   UseItem(item, who);
 endfunction
 
 function ChooseTarget(mobile, feat)
@@ -112,7 +128,9 @@ function TriggerHabilitie(who, hab)
 	if ( TS_GetCooldown(who, "hab_{}".format(hab.id)) != error && who.cmdlevel < 5)
 		return SendSystemReport(who, "'Habilidade em Cooldown!'", SSM_FAIL);
 	endif
-
+   
+   SetObjProperty(who, "#Casting", 1);
+   
    if (hab.Mana)
       if (!AP_ConsumeVital(who, MANA, hab.Mana))
          SendSystemReport(who, "'Mana Insuficiente!'", SSM_FAIL);
@@ -184,6 +202,10 @@ function TriggerHabilitie(who, hab)
 
    var e := start_script(":charactercreation:feats/{}".format(hab.script), array{who, hab, weapon, power});
    if (e == error)
+      EraseObjProperty(who, "#Casting");
       return SendSysMessageEx(who, "Script da Habilidade não encontrado.", SSM_FAIL);
    endif
+
+   EraseObjProperty(who, "#magiasilenciosa");
+   EraseObjProperty(who, "#Casting");
 endfunction

@@ -12,17 +12,12 @@ include ":magery:tnmagery";
 include ":yggdrasil:boss";
 include ":crafting:craft_props";
 include ":crafting:excep_gump";
+include "include/colormap";
 
 const OFFSET_OBJECT_SERIAL   := 0x05;
 const OFFSET_CLILOC_ID       := 0x0F;
 const OFFSET_LENGTH_ID       := 0x13;
 const OFFSET_UNICODE_TEXT    := 0x14;
-
-const WHITE  := "<BASEFONT COLOR=#FFFFFF>";
-const RED    := "<BASEFONT COLOR=#FF4C4C>";
-const BLUE   := "<BASEFONT COLOR=#4169E1>";
-const ORANGE := "<BASEFONT COLOR=#FFA500>";
-const LIGHTGRAY := "<BASEFONT COLOR=#D3D3D3>";
 
 program Install()
 	 Print("INSTALLING: Outgoing Tooltip PH...");
@@ -117,15 +112,16 @@ exported function MegaCliloc( who, byref packet )
 			 desc:="";
 		endif
 
-		 if(descmods != error)
-			foreach descmod in descmods
-				desc += descmod ;
-			endforeach
-		 endif
+      if(descmods != error)
+         foreach descmod in descmods
+            desc += descmod ;
+         endforeach
+      endif
 		 
 		if (len(desc) > 85)
 			desc := desc[1, 85];
 		endif
+
 		if (desc!=error && desc != "")
 			xDesc += "{}{}<br>".format(WHITE, desc);
 		endif
@@ -136,29 +132,29 @@ exported function MegaCliloc( who, byref packet )
             xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((40-deathpoint)/10));
          endif
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
-         if (item.hp <= 0 && item.maxhp) xDesc += "{}{}<br>{}".format(RED, "Quebrado", WHITE); 
-         xDesc += "Qualidade: {}<br>".format(getQuality(item.quality));
+         xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
 
-			var cfg  := ReadConfigFile(":*:itemdesc");
-			var elem := FindConfigElem(cfg, item.objtype);
-			if (elem.Damage)
-				xDesc += "Poder: {}<br>".format(cint(elem.Damage) + item.dmg_mod);
+         var cfg  := ReadConfigFile(":*:itemdesc");
+         var elem := FindConfigElem(cfg, item.objtype);
+
+         if (item.isA(POLCLASS_WEAPON))
+            xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
+
+            if (elem.DamageType)
+               xDesc += "Tipo de Dano: {}<br>".format(TranslateDamage(elem.DamageType));
+            endif
+            var hits :=  GetHitsInfo(elem);
+            if (hits != "")
+               xDesc += ORANGE + hits;
+            endif
+         elseif (item.isA(POLCLASS_ARMOR) && (item.resist_physical || item.resist_fire || item.resist_poison || item.resist_energy || item.resist_cold))
+            if (item.resist_physical) xDesc += "Def. Física: {}<br>".format(item.resist_physical); endif
+            if (item.resist_fire) xDesc += "Def. Calor: {}<br>".format(item.resist_fire); endif
+            if (item.resist_energy) xDesc += "Def. Energia: {}<br>".format(item.resist_energy); endif
+            if (item.resist_cold) xDesc += "Def. Frio: {}<br>".format(item.resist_cold); endif
+            if (item.resist_poison) xDesc += "Def. Veneno: {}<br>".format(item.resist_poison); endif
          endif
-			if (elem.DamageType)
-				xDesc += "Tipo de Dano: {}<br>".format(elem.DamageType);
-			endif
 
-			if (item.isA(POLCLASS_WEAPON))
-				var hits :=  GetHitsInfo(elem);
-				if (hits != "")
-					xDesc += ORANGE + hits;
-				endif
-
-			elseif (item.isA(POLCLASS_ARMOR))
-				if (who.cmdlevel > 3)
-					xDesc += "AR: {}<br>".format(elem.AR);
-				endif
-			endif
       elseif (item.isA(POLCLASS_ITEM))
 			var cfg  := ReadConfigFile(":farming:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);

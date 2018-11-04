@@ -15,14 +15,17 @@ program block(who, shield)
    
    if (!shield)
 		return SendSysMessageEX(who, "Você precisa estar equipando um escudo ou espada gigante!", SSM_FAIL);
-   else if (TS_GetCooldown(who, "dodge_block"))
+   elseif (TS_GetCooldown(who, "dodge_block"))
 		return SendSysMessageEX(who, "Bloqueio em Cooldown!", SSM_FAIL);
+   elseif (!AP_ConsumeVital(who, STAMINA, 4))
+      return SendSysMessageEX(who, "Vigor insuficiente!", SSM_FAIL);
    endif
 
-   var shield_cfg = GetItemCFGInfo(mobile, shield);
-   var shield_cd = cint(shield_cfg.blockcooldown);
-   if (!shield_cd) shield_cd = 15; endif
+   var shield_cfg := GetItemCFGInfo(who, shield);
+   var shield_cd := cint(shield_cfg.BlockCooldown);
+   if (!shield_cd) shield_cd := 8; endif
 
+   SendSysMessageEX(who, "Você está bloqueando ataques!", SSM_INFO);
    TS_StartCooldown(who, "dodge_block", shield_cd, 0, "Bloqueio está disponivel novamente.");
    TS_StartCooldown(who, "block", 2);
 endprogram 

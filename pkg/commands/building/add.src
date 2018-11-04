@@ -1,0 +1,11 @@
+/*
+ * $Id: create.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+include "include/utils";
+
+program textcmd_Create(who, text)
+   start_script(":commands:building/create", array{who, text});
+endprogram

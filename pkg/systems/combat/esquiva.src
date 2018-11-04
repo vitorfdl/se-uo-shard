@@ -1,0 +1,20 @@
+
+use uo;
+use vitals;
+
+include ":attributes:vitals";
+include ":attributes:attributes";
+include "include/say";
+
+program manobra(who)
+   if (TS_GetCooldown(who, "dodge_block"))
+		return SendSysMessageEX(who, "Esquiva em Cooldown!", SSM_FAIL);
+   elseif (!AP_ConsumeVital(who, STAMINA, 4))
+      return SendSysMessageEX(who, "Vigor insuficiente!", SSM_FAIL);
+   endif
+
+   var cd := 5;
+   SendSysMessageEX(who, "Você está esquivando de ataques!", SSM_INFO);
+   TS_StartCooldown(who, "dodge_block", cd, 0, "Esquiva/Bloqueio está disponivel novamente.");
+   TS_StartCooldown(who, "dodge", 2);
+endprogram

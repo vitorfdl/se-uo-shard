@@ -96,6 +96,7 @@ function GFExtractData(input, data_id)
 	var data_string := input[data_id];
 	var ret_val := data_string[Len(key_string)+1,Len(data_string)];
 
+   if (!ret_val) ret_val := ""; endif
 	return ret_val;
 endfunction
 

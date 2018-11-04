@@ -56,13 +56,8 @@ exported function GetManaMaximumValue(mobile)
 
 	if ( !mana_points )
 		var chardata := GetObjProperty(mobile, "chardata");
-		var bonus    := AP_GetStat(mobile, INTELLIGENCE, 1);
-
-		if (bonus < 1)
-			bonus := 1;
-		endif
-
-		mana_points := (cint(chardata.manapoints) + (bonus * 4)) * 100;
+      
+		mana_points := (cint(chardata.mana) * 100);
 	endif
 
 	mana_points += (Cint(GetObjProperty(mobile, "manamod") ) + Cint( GetObjProperty(mobile, "#manamod")))*100;
@@ -88,7 +83,7 @@ exported function GetStaminaMaximumValue(mobile)
 	vital_points := GetNPCVitalSetting(mobile, "STAM");
 	if (!vital_points);
 		var chardata := GetObjProperty(mobile, "chardata");
-		vital_points := CInt(cint(chardata.stampoints) + (AP_GetStat(mobile, DEXTERITY) * 2)) * 100;
+		vital_points := CInt(cint(chardata.stam) * 100);
 	endif
 
 	vital_points := vital_points + (( Cint( GetObjProperty(mobile, "stammod") ) + Cint( GetObjProperty(mobile, "#stammod") ) )*100);
