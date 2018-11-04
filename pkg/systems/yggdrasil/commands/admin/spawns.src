@@ -521,7 +521,9 @@ function DoTreasureList(who, input)
                      input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := 1, "checkbox" := loot_list});
                      input_list.append(struct{ "title" := "Quantos itens podem dropar?", "marked" := "1d4" });
                      input_list.append(struct{ "title" := "Qual a chance de drop?", "marked" := "60" });
-                     input_list.append(struct{ "title" := "Forçar items em recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
+                     input_list.append(struct{ "title" := "Qual a base de PODER e DEFESA?", "marked" := array{20, 5}, "multipleanswer" := 2 });
+                     input_list.append(struct{ "title" := "Itens incomuns podem vir neste tesouro?", "marked" := array{1}, checkbox := array{"Bom", "Raro", "Exóticos"} });
+                     input_list.append(struct{ "title" := "Retornar itens ao invés de recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
                      var output := QuestionsGump(who, input_list);
                      if (!output)
                         break;
@@ -531,7 +533,10 @@ function DoTreasureList(who, input)
                            "by_group":= glist,
                            "rate":= output[2],
                            "chance":= cint(output[3]),
-                           "forceitem" := output[4] == "Sim"
+                           "power" := cint(output[4][1]),
+                           "defense" := cint(output[4][2]),
+                           "qualities" := output[5],
+                           "forceitem" := output[6] == "Sim"
                         };
                         treasure.loots.append(loot);
                         sleepms(2);
@@ -558,6 +563,7 @@ function DoTreasureList(who, input)
             var available_opts := array{};
             if (!treasure.loots[index].by_group)
                 available_opts.append("Criar");
+                available_opts.append("Alterar PODER e DEFESA");
             else
                 available_opts.append("Alterar rate de drop");
             endif
@@ -579,6 +585,10 @@ function DoTreasureList(who, input)
 				treasure.loots[index].chance := Cint(RequestGump(who, "Digite a chance do item aparecer. 1 a 100:", "", "", 1));
 			elseif (opt == "Alterar rate de drop")
 				treasure.loots[index].rate := Cint(RequestGump(who, "Digite o rate de drop.:", "", "1d2", 1));
+			elseif (opt == "Alterar PODER e DEFESA")
+            var output := QuestionsGump(who, array{struct{ "title" := "Qual a base de PODER e DEFESA?", "marked" := array{cint(treasure.loots[index].power), cint(treasure.loots[index].defense)}, "multipleanswer" := 2} });
+            treasure.loots[index].power := cint(output[1][1]);
+            treasure.loots[index].defense := cint(output[1][2]);
          endif 
          spot.UpdateTreasure(selected_treasure, treasure);
     endcase

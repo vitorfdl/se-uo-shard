@@ -11,6 +11,11 @@ include ":gumps:requestgump";
 include ":attributes:attributes";
 
 program Massacre(who, range)
+   if (typeof(who) == "Array")
+      range := who[2];
+      who := who[1];
+   endif
+   
 	range := CInt(range);
 	if ( !range )
 		range := CInt(RequestGump(who, "Enter the radius to kill npcs.", "", 0));

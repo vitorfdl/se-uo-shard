@@ -379,6 +379,19 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
                x_plus := x;
             endif
 			endforeach
+		elseif(quest.multipleanswer)
+         if (!quest.marked) quest.marked := array{}; endif
+
+         entries[_quest_iter] := array{};
+         var i := 1;
+         for (i; i <= quest.multipleanswer;i+=1)
+            if (!quest.marked[i]) quest.marked[i] := ""; endif
+            var x_plus := x + ((i-1) * 115);
+            GFResizePic(gump, x_plus, y+3, 0x7752, 200-100, 28);
+            entries[_quest_iter].append(GFTextEntry(gump, x_plus+5, y+5, 200-100, 20, 2100, quest.marked[i]));
+
+            sleepms(2);
+         endfor
 		else
          quest.lines := cint(quest.lines);
          if (!quest.marked) quest.marked := ""; endif
@@ -437,6 +450,13 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 				endif
 			endforeach
 			res[_quest_iter] := result;
+      elseif (quest.multipleanswer)
+         res[_quest_iter] := array{};
+         foreach i in (entries[_quest_iter])
+            var output :=  GFExtractData(input, i);
+            if (output && output != " ") res[_quest_iter].append(output); endif
+            sleepms(2);
+         endforeach
 		else
          res[_quest_iter] := "";
          foreach i in (entries[_quest_iter])

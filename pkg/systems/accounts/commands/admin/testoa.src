@@ -20,10 +20,10 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   var targ := Target(who);
-   print(targ.damage_physical);
-   print(targ.get_member("damage_physical"));
-
+   var input_list := array{};
+   input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := array{20, 5}, "multipleanswer" := 4 });
+   var output := QuestionsGump(who, input_list);
+   print(output);
    
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
