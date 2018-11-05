@@ -39,15 +39,16 @@ program animateSword(params)
          continue;
       endif
 
-      var dmg_dice := MageDiceTable("B", spellinfo.powered);
-      if (rollResistDice(mobile, CONSTITUTION) > spellinfo.dice_roll+2)
-         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, who);
-         SendSystemReport(mobile, "*resistiu*", SSM_INFO);
-         DamageFLS(mobile, (RandomDiceRoll(dmg_dice)+2)/2, DMG_ENERGY, who);
-      else
-         DamageFLS(mobile, RandomDiceRoll(dmg_dice)+2, DMG_ENERGY, who);
-      endif
       PlayLightningBoltEffect(mobile);
+      if (CheckBlockDodge(mobile, 0, 1))
+         continue;
+      endif
+
+      if (_mobile_iter > 1+sum)
+         DamageFLS(mobile, spellinfo.PowerMod[2], DMG_ENERGY, who);
+      else
+         DamageFLS(mobile, spellinfo.PowerMod[1], DMG_ENERGY, who);
+      endif
       sleepms(2);
    endforeach
 

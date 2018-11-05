@@ -28,11 +28,16 @@ function getFeatById(feat_id, get_class := 0)
       Icon := GetConfigInt(elem, "Icon"),
       CastTime := GetConfigInt(elem, "CastTime"),
       Script := GetConfigString(elem, "Script"),
+      Range := GetConfigInt(elem, "Range"),
       Targ := GetConfigString(elem, "Target"),
+      TargetAlign := GetConfigString(elem, "TargetAlign"),
       Group := GetConfigInt(elem, "Group"),
       Level := GetConfigInt(elem, "Level"),
+      IgnoreDodge := GetConfigInt(elem, "IgnoreDodge"),
+      IgnoreBlock := GetConfigInt(elem, "IgnoreBlock"),
       Experience := GetConfigInt(elem, "Experience"),
       PointCost := GetConfigInt(elem, "PointCost"),
+      PowerMod := GetConfigStringArray(elem, "PowerMod"),
       ClassType := get_class
    };
 endfunction
@@ -237,12 +242,19 @@ endfunction
 
 function BuildFeatToolTip(feat, return_points := 0)
    var desc := "";
+   if (feat.Script) desc += "{}Habilidade Ativável<br>".format(ORANGE, feat.PointCost);
+   else desc += "{}Habilidade Passiva<br>".format(ORANGE, feat.PointCost); endif
    if (return_points && feat.PointCost) desc += "{}Custo: {} ponto(s)<br>".format(LIGHTGRAY, feat.PointCost); endif
    if (feat.Mana) desc += "{}Mana: {}<br>".format(BLUE, feat.Mana); endif
    if (feat.Vigor) desc += "{}Vigor: {}<br>".format(YELLOW, feat.Vigor); endif
    if (feat.Cooldown) desc += "{}Cooldown: {}<br>".format(LIGHTGRAY, feat.Cooldown); endif
    if (feat.Description) desc += "{}{}<br>".format(WHITE, feat.Description); endif
    var tooltip := "<center><basefont color=#7FFFD4><b>{}</b></basefont><br>{}".format(feat.Name, desc);
+
+   foreach mod in (feat.PowerMod)
+      tooltip["%"] := mod;
+      sleepms(2);
+   endforeach
 
    return tooltip;
 endfunction

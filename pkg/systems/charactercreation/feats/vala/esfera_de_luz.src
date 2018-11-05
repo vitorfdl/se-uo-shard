@@ -17,7 +17,7 @@ include ":taming:taming";
 
 program esferadeluz(params)
 	var who := params[1];
-	var spell_info := params[2];
+	var spellinfo := params[2];
 	params := 0; // No longer needed
 	
 	var summoned := CreateNpcFromTemplate(":ghaia:orb", who.x+1, who.y, who.z);
@@ -35,23 +35,19 @@ program esferadeluz(params)
       summoned.color := 1939;
 		
       SetName(summoned, "Esfera de Fogo");
-		var duration := spell_info.powered * 2;
-		if (duration <= 1)
-			duration := 2;
-		endif
-		duration := duration * 100;
+		var duration := 240;
 
 		TS_StartTimer(summoned, "summon", duration);	
 
       var new_owner := who.serial;
-      if (spell_info.powered >= 3)
-         SendSysMessageEx(who, "Escolha um alvo para a esfera seguir.", SSM_INFO);
-         var targ := Target(who);
-         if (targ)
-		      summoned.SetMaster(targ);
-            new_owner := targ.serial;
-         endif
-      endif
+      // if (spell_info.powered >= 3)
+      //    SendSysMessageEx(who, "Escolha um alvo para a esfera seguir.", SSM_INFO);
+      //    var targ := Target(who);
+      //    if (targ)
+		//       summoned.SetMaster(targ);
+      //       new_owner := targ.serial;
+      //    endif
+      // endif
 		SetObjProperty(summoned, "owner", new_owner);
 		
 		// SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);

@@ -85,7 +85,7 @@ program createchar(who)
 
 	//Mudar Aparência
    if (!chardata.recriando)
-	   // LookGump(who, chardata);
+	   LookGump(who, chardata);
    endif
 
 	// SetProfessions(who, chardata);

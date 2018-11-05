@@ -245,7 +245,10 @@ function InitializeNpc(mobile)
    SetupEquip(mobile);
    var loot := npccfgfile.Loot;
    if (loot)
-      Loot_Generate(mobile.backpack, loot);
+      var power := cint(npccfgfile.AttackDamage) - 20;
+      if (power < 10) power += 10; endif
+
+      Loot_Generate(mobile.backpack, loot, power);
    endif
 //    GenerateRecipeLoot(mobile);
    SetupAmmo(mobile);

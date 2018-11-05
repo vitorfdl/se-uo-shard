@@ -15,7 +15,7 @@ program SpellScript(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var tries := spellinfo.powered;
+   var tries := 1;
    for i := 1 to tries
       SendSysMEssageEx(who, "Escolha para onde quer mover.", SSM_REQUEST);
       var loc := TargetCoordinates(who);

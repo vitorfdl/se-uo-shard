@@ -236,6 +236,12 @@ function Fight(opponent, alerted := 0)
             endif
          endif
       else
+         if (npccfgfile.DodgeCooldown && !TS_GetCooldown(me, "dodge"))
+            TS_StartCooldown(me, "dodge", cint(npccfgfile.DodgeCooldown));
+         elseif (npccfgfile.BlockCooldown && !TS_GetCooldown(me, "block"))
+            TS_StartCooldown(me, "block", cint(npccfgfile.BlockCooldown));
+         endif
+
          if ("matilha" in custombehaviors && RandomInt(2) == 1)
             if (!IsBehind(opponent, me.x, me.y))
                var allies := GetAlliesNear(me, 4);

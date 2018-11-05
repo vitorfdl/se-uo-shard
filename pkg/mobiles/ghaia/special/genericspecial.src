@@ -386,16 +386,16 @@ program loko(params)
          SetCooldown(who, state.prop, state.time);
 		elseif (state.type == "Create Mine")
          var mineinfo := struct{
-            difficulty := state.diff,
-            type := state.mine_type,
-            dice_dmg := state.dmg
+            PowerMod := array{state.dmg},
+            Name := state.mine_type,
+            duration := state.duration
          };
 
          for i := 1 to (state.amount)
             var targ := ReturnPointsByTarget(who, state.target, state.conedist);
             targ := targ.randomentry();
             if (!targ.z) targ.z := who.z; endif
-            start_script(":magery:wands/spells/mina", array{who, mineinfo, targ});
+            start_script(":charactercreation:feats/elementalista/mina", array{who, mineinfo, targ});
          endfor
       elseif (state.type == "Metamorfose")
          var choose_monster := state.monsters.randomentry();
@@ -499,13 +499,12 @@ program loko(params)
       elseif (state.type == "Spell Trilha")
          var targ := selectOpponent(who, state.target, state.conedist);
          var trilhainfo := struct{
-            dice_roll := state.diff,
-            dice_dmg := state.dice_dmg,
-            type := state.trilha_type
+            PowerMod := array{state.dice_dmg},
+            Name := state.trilha_type
          };
 			foreach t in targ
             if (!t.z) t.z := who.z; endif
-            start_script(":magery:wands/spells/caminho_fogo", array{who, trilhainfo, t});
+            start_script(":charactercreation:feats/elementalista/mtrilha_de_fogo", array{who, trilhainfo, t});
             sleepms(2);
          endforeach
 		elseif (state.type == "Summon Npcs") // Summonar NPC

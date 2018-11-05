@@ -13,7 +13,7 @@ function Loot_Generate(container, loot_index, is_group := 0)
 		return error{"errortext" := "`ect passed was not a container."};
 	endif
 
-   if (is_group)
+   if (is_group && is_group.by_group)
 	   var index_cfg := ReadConfigFile(":loot:config/loot-groups");
       if ( index_cfg.errortext )
          return error{"errortext" := "Error - Could not open loot-index.cfg -> "+index_cfg.errortext};
@@ -45,7 +45,7 @@ function Loot_Generate(container, loot_index, is_group := 0)
 	endif
 
 	foreach line in GetConfigStringArray(index_elem, "Item")
-		Loot_CreateItem(container, line);
+		Loot_CreateItem(container, line, cint(is_group.power), cint(is_group.defense));
 		sleepms(2);
 	endforeach
 
@@ -55,17 +55,17 @@ function Loot_Generate(container, loot_index, is_group := 0)
 	endforeach
 
 	foreach line in GetConfigStringArray(index_elem, "Random")
-		Loot_CreateRandom(container, line);
+		Loot_CreateRandom(container, line, 0, cint(is_group.power), cint(is_group.defense));
 		sleepms(2);
 	endforeach
 
 	foreach line in GetConfigStringArray(index_elem, "Recipe")
-		Loot_CreateItem(container, line, "recipe");
+		Loot_CreateItem(container, line, 0, 0, "recipe");
 		sleepms(2);
 	endforeach
 
 	foreach line in GetConfigStringArray(index_elem, "TalentBook")
-		Loot_CreateItem(container, line, "talentbook");
+		Loot_CreateItem(container, line, 0, 0, "talentbook");
 		sleepms(2);
 	endforeach
 
@@ -89,7 +89,7 @@ endfunction
 
 
 
-function Loot_CreateItem(container, line, type := 0)
+function Loot_CreateItem(container, line, power := 0, defense := 0, type := 0)
 	var parsed := Loot_ParseString(line);
 	if ( Loot_ChanceCheck(parsed.chance) )
 		var i;
@@ -101,6 +101,9 @@ function Loot_CreateItem(container, line, type := 0)
 				if ( item.errortext )
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
+            elseif (item.isA(POLCLASS_ARMOR) || item.isA(POLCLASS_WEAPON))
+               if (power) item.dmg_mod := power - RandomInt(20) + RandomInt(20); endif
+               if (defense) item.resist_physical_mod := defense - RandomInt(20) + RandomInt(20); endif
 				endif
          elseif (type == "talentbook")
             var item := CreateItemInContainer(container, FEATBOOK_OBJ);
@@ -159,7 +162,7 @@ function Loot_CreateStack(container, line)
 	return 1;
 endfunction
 
-function Loot_CreateRandom(container, line, forcetype := 0)
+function Loot_CreateRandom(container, line, forcetype := 0, power := 0, defense := 0)
 	var parsed := Loot_ParseString(line);
 	var groups_cfg := ReadConfigFile(":loot:config/loot-groups");
 	if ( groups_cfg.errortext )
@@ -182,16 +185,16 @@ function Loot_CreateRandom(container, line, forcetype := 0)
          var random := RandomInt(num_items)+1;
          if (random > items.size()+recipes.size())
             random := random - items.size()+recipes.size();
-            Loot_CreateItem(container, talentbooks[random], "talentbook");
+            Loot_CreateItem(container, talentbooks[random], 0, 0, "talentbook");
          elseif (random > items.size())
             random := random - items.size();
             if (!forcetype)
-               Loot_CreateItem(container, recipes[random], "recipe");
+               Loot_CreateItem(container, recipes[random], 0, 0, "recipe");
             else
-               Loot_CreateItem(container, recipes[random]);
+               Loot_CreateItem(container, recipes[random], power, defense);
             endif
          else
-            Loot_CreateItem(container, items[random]);
+            Loot_CreateItem(container, items[random], power, defense);
          endif
          sleepms(2);
       endfor
@@ -236,3 +239,35 @@ function Loot_ParseString(line)
 	return result;
 endfunction
 
+function LootGroupGump(who)
+   var loot_cfg  := ReadConfigFile(":loot:config/loot-groups");
+   var loot_list := GetConfigStringKeys(loot_cfg);
+   var input_list := array{};
+   input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := 1, "checkbox" := loot_list});
+   input_list.append(struct{ "title" := "Quantos itens podem dropar?", "marked" := "1d4" });
+   input_list.append(struct{ "title" := "Qual a chance de drop?", "marked" := "60" });
+   input_list.append(struct{ "title" := "Qual a base de PODER e DEFESA?", "marked" := array{20, 5}, "multipleanswer" := 2 });
+   input_list.append(struct{ "title" := "Itens incomuns podem vir neste tesouro?", "marked" := array{1}, checkbox := array{"Bom", "Raro", "Exóticos"} });
+   input_list.append(struct{ "title" := "Retornar itens ao invés de recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
+   var output := QuestionsGump(who, input_list);
+   if (!output)
+      break;
+   endif
+
+   var loot_array := array{};
+   foreach glist in (output[1])
+      var loot := struct{
+         "by_group":= glist,
+         "rate":= output[2],
+         "chance":= cint(output[3]),
+         "power" := cint(output[4][1]),
+         "defense" := cint(output[4][2]),
+         "qualities" := output[5],
+         "forceitem" := output[6] == "Sim"
+      };
+      loot_array.append(loot);
+      sleepms(2);
+   endforeach
+
+   return loot_array;
+endfunction

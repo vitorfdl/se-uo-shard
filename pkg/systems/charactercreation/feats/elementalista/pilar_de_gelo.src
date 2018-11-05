@@ -12,7 +12,7 @@ var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
 
 program SpellScript(params)
 	var who       := params[1];
-   var dice_roll := params[2].dice_roll;
+   var hab := params[2];
 	var targ      := params[3];
 	params := 0; // No longer needed
 	
@@ -31,16 +31,13 @@ program SpellScript(params)
 			pilarlist.append(item);
 		endif
 
-      var dmg := RandomDiceRoll("5d6");
 		foreach mobile in (ListMobilesNearLocationEx( item.x, item.y, item.z, 1, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
          sleepms(2);
 			if (!(mobile in alreadydamaged) && !CheckifIsAlly(who, mobile) && who != mobile)
-            if (rollResistDice(mobile, DEXTERITY) > dice_roll)
-               SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
-               SendSystemReport(mobile, "*esquivou*", SSM_INFO);
+            if (CheckBlockDodge(mobile, 0, 1))
                continue;
             endif
-				DamageFLS(mobile, dmg, "Gelo", who);
+				DamageFLS(mobile, hab.PowerMod[1], DMG_COLD, who);
 				alreadydamaged.append(mobile);
 			endif
 		endforeach

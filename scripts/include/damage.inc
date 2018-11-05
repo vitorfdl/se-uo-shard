@@ -86,6 +86,10 @@ function HealFLS(targ, amt, show_heal := 1)
       amt := cint(cdbl(amt) - (cdbl(amt) * redu_heal));
    endif
 
+   if (77 in GetGodFeats(chardata.god, 1)) // cura acelerada
+      amt += (amt * 0.5);
+   endif
+
    var start_vital := AP_GetVital(targ, HITS);
 	HealDamage(targ, amt);
    var amt_healed := AP_GetVital(targ, HITS) - start_vital;

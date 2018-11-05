@@ -13,9 +13,9 @@ include "include/utils";
 
 program SpellScript(params)
 	var who := params[1];
+   var hab := params[2];
 	params := 0; // No longer needed
    
-   var diceroll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, MILAGRE_DE_NECROMANCIA);
 	PlaySoundEffect(who, SFX_SPELL_STRENGTH);
 	var newmobiles := ListMobilesNearLocation( who.x, who.y, who.z, 5);
 	foreach mob in newmobiles
@@ -23,7 +23,8 @@ program SpellScript(params)
       if (!mob.npctemplate || getnpccategory(mob.my_template()) != "morto-vivo" || isBoss(mob)) 
          continue; 
       endif
-      if (rollResistDice(mob, WISDOM) <= diceroll)
+
+      if (randomInt(100) <= 50)
          printtext(mob, "*!*");
          ghaiaFlee(who, mob);
       else

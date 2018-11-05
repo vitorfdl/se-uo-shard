@@ -25,24 +25,20 @@ var item_place := array{
 
 program animateSword(params)
 	var who := params[1];
-	var spellinfo := params[2];
+	var hab := params[2];
 	var targ := params[3];
+	var power := params[4];
 	params := 0; // No longer needed
 
-   var difficulty := spellinfo.dice_roll+7;
    var duration := 60;
-   var dice_dmg;
 
    var amount := 1;
    if (!who.npctemplate)
-      dice_dmg := MageDiceTable("A", spellinfo.powered);
-      if (spellinfo.powered >= 4) amount += 1; endif
-      if (spellinfo.powered >= 8) amount += 1; endif
-      if (spellinfo.powered >= 10) amount += 1; endif
+      // if (spellinfo.powered >= 4) amount += 1; endif
+      // if (spellinfo.powered >= 8) amount += 1; endif
+      // if (spellinfo.powered >= 10) amount += 1; endif
    else
-      difficulty := spellinfo.difficulty;
-      dice_dmg := spellinfo.dice_dmg;
-      if (spellinfo.duration) duration := spellinfo.duration; endif
+      if (hab.duration) duration := hab.duration; endif
    endif
 
 
@@ -76,11 +72,11 @@ program animateSword(params)
 
          item.movable := 0;
          item.graphic := mine[1];
-         SetObjProperty(item, "DamageDice", dice_dmg);
          item.SetOwner(who);
-         item.SetDifficulty(difficulty);
+         // item.SetDifficulty(difficulty);
          item.SetDuration(duration);
-         if (spellinfo.type == "Fogo")
+         item.SetDamage(hab.PowerMod[1]);
+         if (hab.Name["Fogo"])
             item.SetEffect(DMG_FIRE);
             item.color := 2039;
          else

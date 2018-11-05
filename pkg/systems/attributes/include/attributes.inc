@@ -58,6 +58,27 @@ function HaveSkill(a := 1, b:= 1, c :=1, d:= 1, e:= 1)
    return 0;
 endfunction
 
+function CheckBlockDodge(who, return_block := 1, return_dodge := 1, no_message := 0)
+   if (return_dodge)
+      if (TS_GetCooldown(who, "dodge")) 
+         if (!no_message) 
+			   PlaySoundEffect(who, array{569, 570, 571}.randomentry());
+            SendSystemReport(who, "*esquivou*", SSM_FAIL, "all");
+         endif
+         return 1; 
+      endif
+   endif
+
+   if (return_block)
+      if (TS_GetCooldown(who, "block")) 
+         if (!no_message)
+            SendSystemReport(who, "*bloqueou*", SSM_FAIL, "all");
+         endif
+         return 1; 
+      endif
+   endif
+endfunction
+
 function debugMSG(who, text)
 	if (GetObjProperty(who, "debug"))
 		SendSysMessageEx(who, text);	

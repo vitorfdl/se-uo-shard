@@ -292,27 +292,8 @@ function CreateBossStructGump(who, byref boss)
          var t_option := RadioGump(who, 180, 165, "Você deseja?:", array{"Adicionar lista", "Adicionar item", "Cancelar"});
          case (t_option)
             "Adicionar lista":
-               var loot_cfg  := ReadConfigFile(":loot:config/loot-groups");
-               var loot_list := GetConfigStringKeys(loot_cfg);
-               var input_list := array{};
-               input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := 1, "checkbox" := loot_list});
-               input_list.append(struct{ "title" := "Quantos itens podem dropar?", "marked" := "1d4" });
-               input_list.append(struct{ "title" := "Qual a chance de drop?", "marked" := "60" });
-               input_list.append(struct{ "title" := "Forçar items em recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
-               var output := QuestionsGump(who, input_list);
-               if (!output)
-                  break;
-               endif
-               foreach glist in (output[1])
-                  var lootinfo := struct{
-                     "by_group":= glist,
-                     "rate":= output[2],
-                     "chance":= cint(output[3]),
-                     "forceitem" := output[4] == "Sim"
-                  };
-                  (boss.loot).append(lootinfo);
-                  sleepms(2);
-               endforeach
+               var loot_groups := LootGroupGump(who);
+               if (loot_groups) boss.loot += loot_groups; endif
                break;
             "Adicionar item":
                SendSysMessage(who, "Escolha o item do loot.");

@@ -17,6 +17,7 @@ program SpellScript(params)
    var spellinfo := params[2];
 	var targ      := params[3];
 	params := 0; // No longer needed
+
    var direction := GetFacing(who.x, who.y, targ.x, targ.y);
    var face := cint(direction / 2);
    if (face > 4)
@@ -24,36 +25,32 @@ program SpellScript(params)
    endif
 
    var flame;
-   if (spellinfo.type == "Fogo")
+   var dmg_type := DMG_FIRE:
+   if (spellinfo.Name["Fogo"])
       flame := 0x3996;
       if (face % 2)
          flame := 0x398C;
       endif
-   elseif (spellinfo.type == "Veneno")
+   elseif (spellinfo.Name["Veneno"])
       flame := 0x3915;
       if (face % 2)
          flame := 0x3920;
       endif
-   elseif (spellinfo.type == "Eletrecidade")
+       dmg_type := DMG_POISON:
+   elseif (spellinfo.Name["Eletrecidade"])
       flame := 0x3967;
       if (face % 2)
          flame := 0x3979;
       endif
+      dmg_type := DMG_ENERGY:
    endif
 
    var pos := GetCoordsInLine(who.x, who.y, targ.x, targ.y);
    pos.Erase(1);
    var z := who.z;
 
-   var dmg_dice;
    var duration := 15;
-   if (who.npctemplate)
-      dmg_dice := spellinfo.dmg_dice;
-      duration := spellinfo.duration;
-   else
-      dmg_dice := RandomDiceRoll(MageDiceTable("C", spellinfo.powered))+8;
-      spellinfo.dice_roll += 5;
-   endif
+   if (spellinfo.duration) duration := spellinfo.duration; endif
 
    foreach p in pos
       if (targ.z > z)
@@ -66,13 +63,10 @@ program SpellScript(params)
       item.SetOwner(who);
       foreach mobile in ListMobilesNearLocationEx( item.x, item.y, item.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
 			if (!CheckIfisAlly(who, mobile));
-            if (rollResistDice(mobile, DEXTERITY) > spellinfo.dice_roll)
-               SendSystemReport(mobile, "*esquivou*", SSM_FAIL, who);
-               SendSystemReport(mobile, "*esquivou*", SSM_INFO);
-               DamageFLS(mobile, cint(dmg_dice / 2), spellinfo.type, who);
-            else
-               DamageFLS(mobile, dmg_dice, spellinfo.type, who);
+            if (CheckBlockDodge(mobile, 0, 1))
+               continue;
             endif
+            DamageFLS(mobile, spellinfo.PowerMod[1], dmg_type, who);
          endif
       endforeach
       sleepms(100);

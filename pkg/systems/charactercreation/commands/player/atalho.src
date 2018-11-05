@@ -149,6 +149,9 @@ function TriggerHabilitie(who, hab)
 
    if (hab.CastTime)
       var cycles := hab.CastTime;
+      if (83 in GetGodFeats(who, 1))
+         cycles -= 1;
+      endif
       var moveCheck := Start_Script(":magery:moveCheck", array{who, Getpid()});
 
       while (cycles)
@@ -180,13 +183,20 @@ function TriggerHabilitie(who, hab)
    if (!targ) //verifica se o ponto ¿ v¿sivel
       SendsysMessageEx(who, "Habilidade cancelada", SSM_FAIL);
       return;
-      // FailSpell(who, 1);
    endif
 
-   if (TS_GetCooldown(who, "hallucination") && hab.Target != "Self")
-      if (targ.isA(POLCLASS_NPC))
+   if (hab.Target != "Self")
+      if (TS_GetCooldown(who, "hallucination") && targ.isA(POLCLASS_NPC))
          var mobile_around := ListMobilesInLineOfSight( who, 10);
          targ := mobile_around.randomentry();
+      endif
+
+      if (!hab.IgnoreDodge && TS_GetCooldown(targ, "dodge"))
+         return PrintText(targ, "*esquivado*", SSM_INFO);;
+      endif
+
+      if (!hab.IgnoreBlock && TS_GetCooldown(targ, "block"))
+         return PrintText(targ, "*bloquado*", SSM_INFO);;
       endif
    endif
 
@@ -200,7 +210,12 @@ function TriggerHabilitie(who, hab)
    var weapon := who.weapon;
    var power := CalculateRawDamage(who, 0, weapon);
 
-   var e := start_script(":charactercreation:feats/{}".format(hab.script), array{who, hab, weapon, power});
+   foreach mod in (hab.PowerMod)
+      mod := power + (power * (mod / 100))
+      sleepms(2);
+   endforeach
+
+   var e := start_script(":charactercreation:feats/{}".format(hab.script), array{who, hab, targ, power, weapon});
    if (e == error)
       EraseObjProperty(who, "#Casting");
       return SendSysMessageEx(who, "Script da Habilidade não encontrado.", SSM_FAIL);

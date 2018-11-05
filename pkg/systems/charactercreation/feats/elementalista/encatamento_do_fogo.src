@@ -43,16 +43,19 @@ program animateSword(params)
    endif
 
    PrintText(item, "*Fogo se move de forma não natural*");
-   var shards := 2 + cint(spellinfo.powered);
-   var dmg_dice := MageDiceTable("B", 1);
+   var shards := 5;
 
    var i;
    for (i := 1; i <= shards; i+=1)
 	   PlayMovingEffect(item, targ, 0x36E4, 10, 3, 1);
       PlaySoundEffect(item, 0x209);
-      var dmg := RandomDiceRoll(dmg_dice);
+      var dmg := spellinfo.PowerMod[1];
       
-      if (rollResistDice(targ, DEXTERITY) > spellinfo.dice_roll+5)
+      if (CheckBlockDodge(targ, 1, 0))
+         continue;
+      endif
+
+      if (CheckBlockDodge(targ, 0, 1))
          dmg := dmg / 2;
          SendSysMessageEx(who, "O alvo conseguiu evitar parte do dano.");
          SendSysMessageEx(targ, "Você se esquiva e recebe metade do dano.");
@@ -61,7 +64,8 @@ program animateSword(params)
       if (dmg < 1)
          dmg := 1;
       endif
-      DamageFLS(targ, dmg, "Fogo", who);
+      
+      DamageFLS(targ, dmg, DMG_FIRE, who);
       sleepms(750);
 	endfor
 
