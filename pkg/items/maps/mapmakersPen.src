@@ -79,11 +79,11 @@ program use_MapmakersPen(who, tool)
       endif
       PrintText(who, "*traduzindo pergaminho*");
 
-      var roll := rollAttrDice(who, INTELLIGENCE);
-      if (roll < 14)
-         SendSysMessageEx(who, "Você falhou em traduzir o pergaminho.", SSM_FAIL);
-         return;
-      endif
+      // var roll := rollAttrDice(who, INTELLIGENCE);
+      // if (roll < 14)
+      //    SendSysMessageEx(who, "Você falhou em traduzir o pergaminho.", SSM_FAIL);
+      //    return;
+      // endif
 
       ReleaseItem(targ);
       EraseObjProperty(targ, "lang");
@@ -152,8 +152,8 @@ program use_MapmakersPen(who, tool)
 				return;
 			endif
 
-			var roll := rollAttrDice(who, INTELLIGENCE);
-			if (roll <= 14)
+			var roll := RandomInt(100);
+			if (roll < 30)
 				SendSysMessageEx(who, "Falhou em cópiar o livro.", SSM_FAIL);
 				return;
 			endif

@@ -469,8 +469,8 @@ function CombatEventsOptions(who, state)
       var vital_list := array{"Stam", "Hits", "Mana"};
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai ser curado?", "marked" := state.target in targ_opts, "radio" := targ_opts + array{"Fixed Loc"}});
-      input_list.append(struct{ "title" := "Quanto será curado? ex: 1d2", "marked" := ""+state.healamt});
-      input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := state.vital in vital_list, "radio":= vital_list});
+      input_list.append(struct{ "title" := "Qual porcentagem do poder em dano?", "marked" := ""+state.healamt});
+      input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo heal?", "marked" := state.vital in vital_list, "radio":= vital_list});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
@@ -576,7 +576,7 @@ function CombatEventsOptions(who, state)
       //    endif
       // endif
    elseif ( opt == "Dmg")
-      if (!state.dmg) state.dmg := "1d2"; endif
+      if (!state.dmg) state.dmg := "100"; endif
       if (!state.conedist) state.conedist := 3; endif
       var dmgs := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY, "Sem Resistência" };
       var dmg_types := array{"Stam", "Hits", "Mana"};
@@ -588,7 +588,7 @@ function CombatEventsOptions(who, state)
 
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai sofrer?", "marked" := state.target in targ_opts, "radio" := targ_opts});
-      input_list.append(struct{ "title" := "Quanto de dano vai causar? Ex: 1d2", "marked" := ""+state.dmg});
+      input_list.append(struct{ "title" := "Qual porcentagem de poder em dano? Ex: 100", "marked" := ""+state.dmg});
       input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := state.dmgtype in dmgs, "radio" := dmgs});
       input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := state_vitals, "checkbox":= dmg_types});
       if (!state.conedist) state.conedist := 3; endif
@@ -596,7 +596,7 @@ function CombatEventsOptions(who, state)
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target := output[1];
-      state.dmg := output[2];
+      state.dmg := cint(output[2]);
       state.dmgtype := output[3];
       state.conedist := cint(output[5]);
       if (state.dmgtype == "Sem Resistência")
@@ -709,14 +709,14 @@ function CombatEventsOptions(who, state)
       state.prop := output[1];
       state.time := cint(output[2]);
    elseif (opt == "Create Mine")
-      var dmg := "1d5+2";
+      var dmg := "100";
       if (state.dmg) dmg := state.dmg; endif
 
       var input_list := array{};
       input_list.append(struct{ "title" := "Onde será criado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Quantas minas?", "marked" := ""+cint(state.amount)});
       input_list.append(struct{ "title" := "Qual tipo da mina?", "marked" := 1+(state.mine_type == "Gelo"), radio := array{ "Fogo", "Gelo" }});
-      input_list.append(struct{ "title" := "Qual o dano?", "marked" := dmg});
+      input_list.append(struct{ "title" := "Qual porcentagem de poder em dano?", "marked" := dmg});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
 
@@ -725,7 +725,7 @@ function CombatEventsOptions(who, state)
       state.target := output[1];
       state.amount := cint(output[2]);
       state.mine_type := output[3];
-      state.dmg := output[4];
+      state.dmg := cint(output[4]);
       state.conedist := cint(output[5]);
    elseif (opt == "Hidden")
       var stealthsteps := 15;
@@ -739,7 +739,7 @@ function CombatEventsOptions(who, state)
       state.attackhidden := output[2] == "Sim";
       state.flee := output[3] == "Sim";
    elseif (opt == "Spell Trilha")
-      var dmg := "1d5+2";
+      var dmg := "100";
       var resist := 12;
       var duration := 10;
       if (state.dmg) dmg := state.dmg; endif
@@ -751,7 +751,7 @@ function CombatEventsOptions(who, state)
       var input_list := array{};
       input_list.append(struct{ "title" := "Qual o alvo?", "marked" := state.target in targ_opts, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual tipo de trilha?", "marked" := state.trilha_type in trilha_types, radio := trilha_types });
-      input_list.append(struct{ "title" := "Qual dado de dano?", "marked" := dmg });
+      input_list.append(struct{ "title" := "Qual porcentagem de poder em dano?", "marked" := dmg });
       input_list.append(struct{ "title" := "Qual a dificuldade para esquivar?", "marked" := resist });
       input_list.append(struct{ "title" := "Qual o tempo de duração da mina?", "marked" := duration });
       if (!state.conedist) state.conedist := 3; endif
@@ -761,7 +761,7 @@ function CombatEventsOptions(who, state)
 
       state.target      := output[1];
       state.trilha_type := output[2];
-      state.dice_dmg    := output[3];
+      state.dice_dmg    := cint(output[3]);
       state.diff        := cint(output[4]);
       state.duration    := cint(output[5]);
       state.conedist := cint(output[6]);
@@ -795,7 +795,7 @@ function CombatEventsOptions(who, state)
       state.monsters := Splitwords(output[1]);
       state.time := cint(output[2]);
    elseif (opt == "Magicball")
-      var dmg_dice := "1d5+2";
+      var dmg_dice := 100;
       var duration := 6;
       if (state.dmg_dice) dmg_dice := state.dmg_dice; endif
       if (state.duration) duration := state.duration; endif
@@ -806,7 +806,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Enviar na direção ou seguir target?", "marked" := 1+cint(state.to_where == "Target"), radio := array{"Local", "Target"} });
       input_list.append(struct{ "title" := "Qual type?", "marked" := 1+cint(state.ball_type), radio := array{"0 - Single DMG", "1 - Area DMG", "2 - Token Balls"} });
       input_list.append(struct{ "title" := "Qual duração?", "marked" := duration });
-      input_list.append(struct{ "title" := "Qual dado de dano?", "marked" := dmg_dice });
+      input_list.append(struct{ "title" := "Qual a porcentagem de poder em dano?", "marked" := dmg_dice });
       input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := 1, "radio" := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY, "Sem Resistência" }});
       input_list.append(struct{ "title" := "Qual gráfico de ball?", "marked" := ""+cint(state.graphic) });
       input_list.append(struct{ "title" := "Qual cor do ball?", "marked" := ""+cint(state.color) });
@@ -821,7 +821,7 @@ function CombatEventsOptions(who, state)
       state.to_where   := output[3];
       state.ball_type  := cint(SplitWords(output[4])[1]);
       state.duration   := cint(output[5]);
-      state.dmg_dice   := output[6];
+      state.dmg_dice   := cint(output[6]);
       state.dmg_type   := output[7];
       state.graphic    := cint(output[8]);
       state.color      := cint(output[9]);

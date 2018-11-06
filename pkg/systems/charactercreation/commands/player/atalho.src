@@ -211,7 +211,7 @@ function TriggerHabilitie(who, hab)
    var power := CalculateRawDamage(who, 0, weapon);
 
    foreach mod in (hab.PowerMod)
-      mod := power + (power * (mod / 100))
+      mod := CalculatePowerPercent(power, mod);
       sleepms(2);
    endforeach
 
