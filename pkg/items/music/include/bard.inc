@@ -316,11 +316,11 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 		// 	return 0;
 		// endif
 
-		var result := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
-		if (result <= 10 && !who.cmdlevel)
-			tocarerrado(who,item,notas,notas2,tempo,letra,emocao);
-			return 1;
-		endif
+		// var result := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
+		// if (result <= 10 && !who.cmdlevel)
+		// 	tocarerrado(who,item,notas,notas2,tempo,letra,emocao);
+		// 	return 1;
+		// endif
 
 		PrintText(who, "*Tocando uma melodia com " + inst + "*");
 		var x,y;
@@ -474,8 +474,8 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
    sleepms(2000);
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
-   var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, INSTRUMENTO_MUSICAL);
-   if (roll > 12)
+   var roll := RandomInt(100)
+   if (roll > 20)
       PrintText(who, "*Escrevendo a partitura*");
    else 
       SendSysMessage(who, "Você arruinou a partitura");

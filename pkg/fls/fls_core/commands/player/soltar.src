@@ -18,15 +18,9 @@ program soltar(me)
 	endif
 
 	var diff := cint(GetObjProperty(me, "corda"));
-	var dice_roll;
-	if (AP_GetStat(me, DEXTERITY) > AP_GetStat(me, STRENGTH))
-		dice_roll := rollAttrDice(me, DEXTERITY, 0, struct{ "get_critical" := 1, "failure" := 2});
-	else
-		dice_roll := rollAttrDice(me, STRENGTH, 0, struct{ "get_critical" := 1, "failure" := 2});
-	endif
-
-	var check := dice_roll.dice + GetSkillBonus(me, IMOBILIZACAO);
-
+   if (!diff) diff := 90; endif
+   
+   var check := RandomInt(100);
 	if (check > diff)
 		if (dice_roll.critical == 1)
 			SendSysMessage(me, "Você conseguiu se soltar discretamente...");

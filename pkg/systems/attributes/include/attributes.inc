@@ -58,6 +58,11 @@ function HaveSkill(a := 1, b:= 1, c :=1, d:= 1, e:= 1)
    return 0;
 endfunction
 
+function CalculatePowerPercent(power, percent)
+   percent := cint(percent);
+   return power + (power * (percent / 100));
+endfunction
+
 function CheckBlockDodge(who, return_block := 1, return_dodge := 1, no_message := 0)
    if (return_dodge)
       if (TS_GetCooldown(who, "dodge")) 

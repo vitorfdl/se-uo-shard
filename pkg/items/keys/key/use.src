@@ -75,8 +75,8 @@ function CopyKey(who, key, targ)
 		return 0;
 	endif
 	
-	var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, FERRARIA);
-	if (test > 12)
+	var test := RandomInt(100);
+	if (test > 60)
 		targ.SetLockId(key_id);
 		SendSysMessageEx(who, "Você copiou a chave.", SSM_INFO);
       PrintText(who, "*copia uma chave*");

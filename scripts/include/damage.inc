@@ -54,6 +54,10 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
       base_dmg := wpn.dmg_mod;
    endif
 
+	base_dmg += cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus"));
+	base_dmg += cint(GetObjProperty(who, "dmgbonus")) + cint(GetObjProperty(who, "#dmgbonus")) ;
+
+   // Só pra tornar o dano não fixo
 	if (wpn_elem.dicedmg)
 		var dmg       := wpn_elem.dicedmg;
       if (GetObjProperty(attacker, "dicedmg"))
@@ -63,11 +67,8 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
 		return (base_dmg + RandomDiceRoll(dmg) );
 	endif
 
-   // if (!wpn) wpn := attacker.weapon; endif
-
-   // var attribute := SelectAttribute(attacker, attacker.weapon);
-   var dmg   := RandomDiceRoll(wpn_elem.Damage);
-   dmg += wpn.dmg_mod;
+   var dmg   := base_dmg + RandomDiceRoll(wpn_elem.Damage);
+   // fim
 
    return dmg;
 endfunction
@@ -191,7 +192,7 @@ function GetLastDamageInfo(mobile)
 endfunction
 
     
-function CalculateTotalDamageBonus(dmg, who, defender)
+function CalculateTotalDamageBonus(who, defender)
 	dmg := cint(dmg);
 	// if (!who.npctemplate)
 	// 	if (who.weapon && who.weapon.Attribute != "Versatil")
@@ -202,20 +203,19 @@ function CalculateTotalDamageBonus(dmg, who, defender)
 	// endif
 
 	//Bonus de prop da arma    
-	var weapon := cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus"));
 
-	//Bonus de prop do mobile
-	var other := cint(GetObjProperty(who, "dmgbonus")) + cint(GetObjProperty(who, "#dmgbonus")) ;
 
-	//Bonus de Spells
-	other := other - cint(GetObjProperty(defender, "dmgreduction"));
-  
-   var dmg_increase := GetObjProperty(who.weapon, "dmg_increase");
-   if (dmg_increase)
-      if (defender.npctemplate)
-         var template := NPC_GetNPCConfig(defender.npctemplate);
-         other += cint(dmg_increase[template.Category]);
-         other += cint(dmg_increase[template.size]);
+   if (defender != who)
+      //Bonus de Spells
+      other := other - cint(GetObjProperty(defender, "dmgreduction"));
+   
+      var dmg_increase := GetObjProperty(who.weapon, "dmg_increase");
+      if (dmg_increase)
+         if (defender.npctemplate)
+            var template := NPC_GetNPCConfig(defender.npctemplate);
+            other += cint(dmg_increase[template.Category]);
+            other += cint(dmg_increase[template.size]);
+         endif
       endif
    endif
 	// TODO: adicionar backstab
@@ -238,7 +238,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
    if (type != DMG_FORCED)
       dmg := dmg - (dmg * CalculateDefenseReduction(defender, type));
    endif
-
+   
    if (defender.npctemplate && source.npctemplate)
       var guild_id := GetObjProperty(defender, "guild");
       if (guild_id)

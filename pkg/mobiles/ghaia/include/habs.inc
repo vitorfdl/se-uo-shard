@@ -707,7 +707,7 @@ function Roubar(targ)
       return 0;
    endif
 
-   var roll := rollAttrDice(me, DEXTERITY) + GetSkillBonus(me, FURTO);
+   var roll := RandomInt(30);
    foreach item in EnumerateItemsInContainer(targ.backpack, ENUMERATE_ROOT_ONLY)
       var diff := 10 + CInt(item.amount * 0.3) + cint(item.weight/2);
       if (roll > diff)

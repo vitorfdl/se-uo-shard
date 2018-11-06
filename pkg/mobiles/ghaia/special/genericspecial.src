@@ -337,15 +337,11 @@ program loko(params)
          endforeach
 		elseif (state.type == "Dmg")
          var targ := selectOpponent(who, state.target, state.conedist);
-         var dmg := state.dmg;
-         if (dmg["d"]) 
-            dmg := RandomDiceRoll(state.dmg);
-         else
-            dmg := cint(state.dmg);
-         endif
+         var power := CalculateRawDamage(who, 0);
 
 			foreach vital in (state.vitals)
 				foreach t in targ
+               var f_dmg := CalculatePowerPercent(power, state.dmg);
                sleepms(2);
                // if (state.resist_test && state.resist_test != "Nenhum")
                //    if (rollResistDice(t, state.resist_test) > state.resist_diff)
@@ -385,8 +381,10 @@ program loko(params)
       elseif (state.type == "Set Cooldown")
          SetCooldown(who, state.prop, state.time);
 		elseif (state.type == "Create Mine")
+
+         var dmg := CalculateRawDamage(who, 0);
          var mineinfo := struct{
-            PowerMod := array{state.dmg},
+            PowerMod := array{CalculatePowerPercent(power, state.dmg)},
             Name := state.mine_type,
             duration := state.duration
          };
@@ -445,7 +443,8 @@ program loko(params)
             if (state.subgraphic)
                newball.StoreBallGraphic(state.subgraphic, state.subcolor);
             endif
-            newball.SetDmgInfo(struct{ "dice":= state.dmg_dice, "type" := state.dmg_type });
+
+            newball.SetDmgInfo(struct{ "dmg":= CalculatePowerPercent(power, state.dice_dmg), "type" := state.dmg_type });
             sleepms(2);
          endforeach
       elseif (state.type == "Simple Target")
@@ -498,8 +497,9 @@ program loko(params)
          endforeach
       elseif (state.type == "Spell Trilha")
          var targ := selectOpponent(who, state.target, state.conedist);
+         var dmg := CalculateRawDamage(who, 0);
          var trilhainfo := struct{
-            PowerMod := array{state.dice_dmg},
+            PowerMod := array{CalculatePowerPercent(power, state.dice_dmg)},
             Name := state.trilha_type
          };
 			foreach t in targ
