@@ -37,7 +37,7 @@ CONST GF_BKG_ADD_BTN := 100;
 var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
 var ficharp_elem;
 
-function buildSubClass(charlevel, byref gump, subclass, x, y)
+function buildSubClass(who, charlevel, byref gump, subclass, x, y)
    if (!subclass)
       GFHtmlShadowed(gump, 307, y+15, 150, 20, "#FFFFFF", "Sem subclasse", 4);
       return;
@@ -49,6 +49,7 @@ function buildSubClass(charlevel, byref gump, subclass, x, y)
    
    var cur_group := 1;
    var x_pos := 195;
+   var power := CalculateRawDamage(who, 0, who.weapon);
    foreach hab in feats
       if (hab.Group != cur_group)
          GFGumpPicTiled(gump, x_pos+5, y+9, 1, 20, 2701);  // divisor
@@ -66,13 +67,13 @@ function buildSubClass(charlevel, byref gump, subclass, x, y)
       endif
 
       GFGumpPic(gump, x_pos, y-2, hab.Icon, color); // hab
-      GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in subclass.habs)));
+      GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in subclass.habs), power));
       x_pos += 46;
       sleepms(2);
    endforeach
 endfunction
 
-function buildClass(charlevel, byref gump, classe, extrahabs := array{})
+function buildClass(who, charlevel, byref gump, classe, extrahabs := array{})
    var classCfg := ReadConfigFile(":charactercreation:config/classes");
    var elem := FindConfigElem(classCfg, classe.id);
    if (!elem) return; endif
@@ -88,6 +89,7 @@ function buildClass(charlevel, byref gump, classe, extrahabs := array{})
    var x := 174;
    var y := 178;
 
+   var power := CalculateRawDamage(who, 0, who.weapon);
    for (cur_group := 1; cur_group <= 4; cur_group += 1)
       var i;
       var feat_list := FindAllElemInArray(feats, struct{ Group := cur_group }) + FindAllElemInArray(extrahabs, struct{ Group := cur_group });
@@ -98,15 +100,15 @@ function buildClass(charlevel, byref gump, classe, extrahabs := array{})
             var color := 0;
             if (hab.FeatId in classe.selected_habs)
                color := 75;
-            elseif (!(hab.FeatId in classe.habs))
+            elseif (!(hab.FeatId in classe.habs) && who.cmdlevel < 3)
                color := 1000; 
             endif
 
-            if (color == 75 || (charlevel >= hab.Level && classe.exp >= hab.Experience))
+            if (color == 0 || (charlevel >= hab.Level && classe.exp >= hab.Experience))
                GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
             endif
             GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
-            GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in classe.habs)));
+            GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in classe.habs), power));
          else
             GFGumpPic(gump, x, y, 0x5DD3, 1000);
             GFTooltipText(gump, "Habilidade Indisponível");
@@ -213,25 +215,25 @@ function SendSkillGump(who, chardata)
 	GFTextLine(gump, 503, 155, 0, "Habilidade 4");
 	GFTextLine(gump, 604, 155, 0, "Ultimate");
 
-   buildClass(chardata.level, gump, chardata.classes[1]);
+   buildClass(who, chardata.level, gump, chardata.classes[1], array{});
 
 	GFGumpPic(gump, 37, 274, 57, 0); // bar
 	GFGumpPicTiled(gump, 67, 274, 607, 21, 58); //bar
 	GFGumpPic(gump, 667, 274, 59, 0); //bar
 
-   buildSubClass(chardata.level, gump, chardata.subclasses[1], 81, 297);
+   buildSubClass(who, chardata.level, gump, chardata.subclasses[1], 81, 297);
 
 	GFGumpPic(gump, 94, 350, 57, 0); // bar
 	GFGumpPicTiled(gump, 123, 350, 501, 21, 58); // bar
 	GFGumpPic(gump, 624, 350, 59, 0); // bar
 
-   buildSubClass(chardata.level,gump, chardata.subclasses[2], 81, 368);
+   buildSubClass(who, chardata.level,gump, chardata.subclasses[2], 81, 368);
 
 	GFGumpPic(gump, 93, 421, 57, 0); // bar
 	GFGumpPicTiled(gump, 122, 421, 501, 21, 58); // bar
 	GFGumpPic(gump, 623, 421, 59, 0); // bar
 
-   buildSubClass(chardata.level,gump, chardata.subclasses[3], 81, 439);
+   buildSubClass(who, chardata.level,gump, chardata.subclasses[3], 81, 439);
 
 	GFGumpPic(gump, 223, 63, 105, 0);
    GFTooltipText(gump, "Este é seu valor máximo de vida, sem nenhum modificador.");
@@ -375,34 +377,7 @@ program skillwin(who)
       return;
    endif
 
-   var chardata := struct{
-      current_class := "Guardião",
-      subclasses:= array{
-         struct{
-            id := "Sabotador",
-            exp := 200,
-            habs:= array{}
-         }
-      },
-      classes := array{
-         struct{
-            id := "Guardião",
-            habs := array{1, 2, 3},
-            exp := 3000,
-            selected_habs := array{1}
-         }
-      },
-      level := 5,
-      exp := 300,
-      points := 10,
-      vitalpoints := 1,
-      hits := 500,
-      mana := 100,
-      stam := 30,
-      god := "Anar",
-      raca := "Elfo"
-   };
-   SetObjProperty(who, "chardata", chardata);
+   var chardata := GetObjProperty(who, "chardata");
 
    ficharp_elem := DFFindElement(ficharp_data_file, Hex(who.serial), DF_NO_CREATE);
    if (!ficharp_elem)
@@ -439,8 +414,8 @@ program skillwin(who)
 endprogram
 
 function HandleSkillPage(who, byref chardata, res)
-   if (res[0] >= 300)
-      var hab := getFeatById(res[0] - 300, "RETURN_CLASS");
+   if (res >= 300)
+      var hab := getFeatById(res - 300, "RETURN_CLASS");
       var i := FindInArray(chardata[hab.ClassType], hab.Class);
       if (!i) 
          return SendSysMessageEx(who, "{} não encontrado: {}".format(hab.ClassType, hab.Class)); 
@@ -491,7 +466,7 @@ function HandleSkillPage(who, byref chardata, res)
       else
          SendSysMessageEx(who, "wtf!");
       endif
-   elseif (res[0] == GF_HITS_BTN)
+   elseif (res == GF_HITS_BTN)
       chardata := GetObjProperty(who, "chardata");
       if (chardata.vitalpoints < 1)
          return SendSysMessageEx(who, "Você não tem mais pontos de vitalidade disponíveis.");
@@ -500,7 +475,7 @@ function HandleSkillPage(who, byref chardata, res)
       chardata.vitalpoints -= 1;
       SetObjProperty(who, "chardata", chardata);
       RecalcVitals(who, RECALC_NO_INTRINSIC_MOD);
-   elseif (res[0] == GF_MANA_BTN)
+   elseif (res == GF_MANA_BTN)
       chardata := GetObjProperty(who, "chardata");
       if (chardata.vitalpoints < 1)
          return SendSysMessageEx(who, "Você não tem mais pontos de vitalidade disponíveis.");
@@ -509,7 +484,7 @@ function HandleSkillPage(who, byref chardata, res)
       chardata.vitalpoints -= 1;
       SetObjProperty(who, "chardata", chardata);
       RecalcVitals(who, RECALC_NO_INTRINSIC_MOD);
-   elseif (res[0] == GF_STAM_BTN)
+   elseif (res == GF_STAM_BTN)
       chardata := GetObjProperty(who, "chardata");
       if (chardata.vitalpoints < 1)
          return SendSysMessageEx(who, "Você não tem mais pontos de vitalidade disponíveis.");
@@ -518,7 +493,7 @@ function HandleSkillPage(who, byref chardata, res)
       chardata.vitalpoints -= 1;
       SetObjProperty(who, "chardata", chardata);
       RecalcVitals(who, RECALC_NO_INTRINSIC_MOD);
-   elseif (res[0] == GF_CHANGE_CLASS)
+   elseif (res == GF_CHANGE_CLASS)
       changeClass(who, chardata);
    endif
 endfunction

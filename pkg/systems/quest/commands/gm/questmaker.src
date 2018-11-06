@@ -1,0 +1,324 @@
+// Created 11/6/18 4:42:13 AM, with Gump Studio.
+// Exported with POLGumpExporter ver 1.1 for gump pkg
+
+use uo;
+use os;
+use cfgfile;
+
+include ":gumps:gumps";
+include ":yggdrasil:spawnSpot";
+include ":quest:quest";
+include ":gumps:requestgump";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include ":tn:tngumps";
+include "include/say";
+
+var selected_quest := 0;
+var quest_list;
+var quest;
+
+var quest_title;
+var quest_desc := array{};
+//Main Menu
+const GF_ADD_BTN        := 900;
+const GF_DEL_BTN        := 901;
+const GF_SELECTELEM_BTN := 100;
+
+const GF_QUEST_ACTIVE   := 800;
+const GF_QUEST_CATEGORY := 801;
+const GF_QUEST_LEVEL    := 802;
+const GF_REWARD_ADD     := 803;
+const GF_REWARD_EDIT    := 840;
+const GF_CONDITION_ADD  := 804;
+const GF_CONDITION_EDIT := 850;
+const GF_EXTRA_ADD      := 806;
+const GF_EXTRA_EDIT     := 860;
+
+function GumpQuestInfo(byref gump, who)
+   quest := GetQuestData(selected_quest);
+	GFResizePic(gump, 254, 13, 311, 566, 596);
+	GFGumpPic(gump, 605, 37, 59, 0);
+	GFGumpPic(gump, 456, 36, 57, 0);
+	GFTextLine(gump, 494, 34, 1995, "Editor de Quests");
+
+	GFTextLine(gump, 280, 63, 1152, "Título Quest:");
+	GFResizePic(gump, 365, 61, 9350, 209, 22);
+	quest_title := GFTextEntry(gump, 370, 60, 200, 20, 0, "{}".format(quest.title), 0);
+
+	GFTextLine(gump, 281, 89, 1152, "Quest Ativa:");
+   if (quest.active)
+	   GFAddButton(gump, 364, 92, 2361, 2361, GF_CLOSE_BTN, GF_QUEST_ACTIVE);
+   else
+	   GFAddButton(gump, 364, 92, 2360, 2360, GF_CLOSE_BTN, GF_QUEST_ACTIVE);
+   endif
+
+   var pos_y := 0;
+	GFTextLine(gump, 585, 63, 1152, "Categoria");
+	GFResizePic(gump, 656, 63, 9350, 140, 22);
+	GFAddButton(gump, 660, 70, 2103, 2103, GF_CLOSE_BTN, GF_QUEST_CATEGORY);
+	GFTextLine(gump, 679, 63, 1152, "{}".format(quest.category));
+   
+   GFTextLine(gump, 585, 83, 1152, "Level");
+	GFResizePic(gump, 656, 83, 9350, 90, 22);
+	GFAddButton(gump, 660, 90, 2103, 2103, GF_CLOSE_BTN, GF_QUEST_LEVEL);
+	GFTextLine(gump, 679, 83, 1152, "{}".format(quest.level));
+
+	GFTextLine(gump, 617, 116, 1152, "Recompensas");
+	GFGumpPicTiled(gump, 614, 127, 156, 21, 58);
+	GFGumpPic(gump, 769, 127, 59, 0);
+   pos_y := 0;
+   foreach item in (quest.rewards)
+	   GFAddButton(gump, 610, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_REWARD_ADD);
+      var desc := item.type;
+      if (item.desc) desc += " [{}]".format(item.desc); endif
+      // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
+      if (item.classe) desc += " [{}]".format(item.classe); endif
+      if (item.power) desc += " [P: {}]".format(item.power); endif
+	   GFTextLine(gump, 625, 142+pos_y, 1152, "{}".format(desc));
+      pos_y += 18;
+      sleepms(2);
+   endforeach
+   if (quest.rewards.size() < 10)
+      GFAddButton(gump, 777, 156+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_REWARD_ADD);
+      GFTextLine(gump, 711, 151+pos_y, 1152, "Adicionar");
+   endif
+
+	GFTextLine(gump, 282, 116, 1152, "Condições de Sucesso");
+	GFGumpPic(gump, 532, 127, 59, 0);
+	GFGumpPicTiled(gump, 279, 127, 257, 21, 58);
+   pos_y := 0;
+   foreach item in (quest.conditions)
+	   GFAddButton(gump, 279, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_REWARD_ADD);
+      var desc := item.type;
+      if (item.template) desc += " [{}]".format(item.template); endif
+      // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
+      if (item.qty) desc += " [{}]".format(item.qty); endif
+	   GFTextLine(gump, 295, 142+pos_y, 1152, "{}".format(desc));
+      var tooltip := "";
+      if (item.spawngroup) tooltip += "Spawngroup: {}<br>".format(item.spawngroup); endif
+      if (item.party) tooltip += "Party Contabliza<br>"; endif
+      if (item.boss) tooltip += "Apenas Boss<br>"; endif
+      GFTooltipText(gump, tooltip);
+
+      pos_y += 18;
+      sleepms(2);
+   endforeach
+
+   if (quest.conditions.size() < 10)
+      GFAddButton(gump, 546, 155+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_CONDITION_ADD);
+      GFTextLine(gump, 480, 150+pos_y, 1152, "Adicionar");
+   endif
+
+	GFGumpPicTiled(gump, 578, 154, 1, 258, 2701);
+	GFGumpPic(gump, 766, 277, 59, 0);
+	GFGumpPicTiled(gump, 611, 277, 156, 21, 58);
+
+	GFTextLine(gump, 614, 266, 1152, "Configurações Extras");
+   if (quest.extras.size() < 10)
+      GFAddButton(gump, 782, 306, 2361, 2361, GF_CLOSE_BTN, GF_EXTRA_ADD);
+      GFTextLine(gump, 716, 301, 1152, "Adicionar");
+   endif
+
+	GFTextLine(gump, 280, 458, 1152, "Descrição da Quest (Use <br> para quebrar linha, <i> para itálico e <b> para negrito)");
+	GFResizePic(gump, 277, 478, 9350, 518, 109);
+
+   var i := 1;
+   for (i; i<=4; i+=1)
+	   quest_desc.append(GFTextEntry(gump, 279, 481+((i-1)*18), 512, 20, 0, "{}".format(), 0));
+      sleepms(2);
+   endfor
+endfunction
+
+function GumpQuestList(who)
+	var gump := GFCreateGump();
+   GFSetID(gump, 0x7898);
+	GFResizePic(gump, 5, 12, 311, 242, 600);
+	GFTextLine(gump, 77, 30, 1995, "Criação de Quests");
+	GFGumpPic(gump, 203, 33, 59, 0);
+	GFGumpPic(gump, 36, 32, 57, 0);
+
+   quest_list := DFGetElemNames(LoadQuestData());
+   var pos_y := 0;
+   foreach q in quest_list
+      var quest :=  GetQuestData(q);
+      if (_q_iter == selected_quest)
+	      GFGumpPic(gump, 24, 54+pos_y, 4006, 0);
+      else
+         GFAddButton(gump, 24, 54+pos_y, 4005, 4007, GF_CLOSE_BTN, GF_SELECTELEM_BTN+cint(q));
+      endif
+      GFTextLine(gump, 57, 55+pos_y, 1152, quest.title);
+      pos_y += 24;
+      sleepms(2);
+   endforeach
+
+	GFAddButton(gump, 213, 80-20+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_ADD_BTN);
+	GFTextLine(gump, 150, 74-20+pos_y, 1152, "Adicionar");
+   if (selected_quest)
+      GFAddButton(gump, 119, 80-20+pos_y, 2360, 2360, GF_CLOSE_BTN, GF_DEL_BTN);
+      GFTextLine(gump, 59, 74-20+pos_y, 1152, "Remover");
+
+      GumpQuestInfo(gump, who);
+   endif
+
+   return GFSendGump(who, gump);
+endfunction
+
+program gump_gump(who)
+   while(who.connected)
+      sleepms(2);
+      var res := GumpQuestList(who);
+      
+      var update_quest := struct{};
+      if (selected_quest)
+         update_quest["title"] := GFExtractData(res, quest_title);
+         if (update_quest["title"] != quest.title) SetQuestData(selected_quest, update_quest); endif
+      endif
+
+      if (res[0] <= 5 || !res[0])
+         break;
+      elseif (res[0] >= GF_SELECTELEM_BTN && res[0] <= GF_SELECTELEM_BTN+150)
+         selected_quest := res[0]-GF_SELECTELEM_BTN;
+      endif
+
+      case (res[0])
+         GF_ADD_BTN:
+            var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
+            var id := cint(quest_list[quest_list.size()]) +1 ;
+            SetQuestData(id, struct{ title := quest_name});
+            selected_quest := id;
+            break;
+         GF_DEL_BTN:
+            RemoveQuestData(selected_quest);
+            selected_quest := 0;
+            break;
+         GF_QUEST_LEVEL:
+            var opts := array{"1", "2", "3", "4"};
+            update_quest["level"] := RadioGump(who, 100, 0, "Escolha o level da classe:", opts, 0, quest.level in opts);
+            break;
+         GF_QUEST_CATEGORY:
+            var classCfg := ReadConfigFile(":charactercreation:config/classes");
+            var opts := GetConfigStringKeys(classCfg);
+            opts.append("Todos");
+            update_quest["category"] := RadioGump(who, 200, 0, "Escolha a Categoria:", opts, 0, quest.category in opts);
+            break;
+         GF_QUEST_ACTIVE:
+            update_quest["active"] := !quest.active;
+            break;
+         GF_CONDITION_ADD:
+            var new_condition := QuestConditions(who);
+            if (!new_condition) break; endif
+            quest.conditions.append(new_condition);
+            update_quest["conditions"] := quest.conditions;
+            break;
+         GF_REWARD_ADD:
+            var new_reward := QuestRewards(who);
+            if (!new_reward) break; endif
+            quest.rewards.append(new_reward);
+            update_quest["rewards"] := quest.rewards;
+            break;
+         GF_EXTRA_ADD:
+            var new_extra := QuestExtras(who);
+            if (!new_extra) break; endif
+            quest.extras.append(new_extra);
+            update_quest["extras"] := quest.extras;
+            break;
+      endcase
+      
+      if (selected_quest)
+         SetQuestData(selected_quest, update_quest);
+      endif
+   endwhile
+endprogram
+
+function QuestConditions(who)
+   var new_condition := struct{};
+   var opts := array{
+      "Matar Monstro",
+      "Usar Item",
+      "Entregar Item",
+      "Craftar Item",
+      "Ir até Local",
+      "Cancelar"
+   };
+   var type := RadioGump(who, 300, 0, "Qual condição quer configurar?", opts, 0);
+   new_condition["type"] := type;
+
+   case (type)
+      "Cancelar": return 0;
+      "Matar Monstro":
+         var spawngroups := DFGetElemNames(LoadSpotGroupData());
+         spawngroups.append("Qualquer Um");
+         var quest_gump := array{
+            struct{ title := "Escolha o Spawn onde ele deve matar", radio := spawngroups, marked := spawngroups.size() },
+            struct{ title := "Entre com template do monstro", marked := "" },
+            struct{ title := "Quantidade de monstros que deve matar", marked := "1" },
+            struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := 2 },
+            struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := 1 }
+         };
+         var output := QuestionsGump(who, quest_gump);
+         if (!output) return 0; endif
+
+         new_condition["spawngroup"] := output[1];
+         new_condition["template"]   := output[2];
+         new_condition["qty"]   := cint(output[3]);
+         new_condition["party"]      := output[4] == "Sim";
+         new_condition["onlyboss"]   := output[5] == "Sim";
+      "Usar Item":
+      "Entregar Item":
+      "Craftar Item":
+      "Ir até Local":
+         SendSysMessageEx(who, "Condição não scriptada, srry!", SSM_FAIL);
+         return 0;
+   endcase
+
+   return new_condition;
+endfunction
+
+function QuestRewards(who)
+   var new_reward := struct{};
+   var opts := array{
+      "Experiência",
+      "Item",
+      "Cancelar"
+   };
+
+   var type := RadioGump(who, 350, 0, "Qual tipo de recompensa deseja atribuir?", opts, 0);
+   new_reward["type"] := type;
+
+   case (type)
+      "Cancelar": return 0;
+      "Experiência":
+         var classCfg := ReadConfigFile(":charactercreation:config/classes");
+         var opts := GetConfigStringKeys(classCfg);
+         opts.append("Todos");
+         opts.append("Personagem");
+         new_reward["classe"] := RadioGump(who, 200, 0, "Escolha qual Classe:", opts, 0);
+      "Item":
+         SendSysMessageEx(who, "Recompensa não scriptada, srry!", SSM_FAIL);
+         return 0;
+   endcase
+
+   return new_reward;
+endfunction
+
+function QuestExtras(who)
+   var new_extra := struct{};
+   var opts := array{
+      // "Experiência",
+      // "Item",
+      "Cancelar"
+   };
+
+   var type := RadioGump(who, 200, 0, "Qual tipo de extra deseja configurar?", opts, 0);
+   new_extra["type"] := type;
+
+   case (type)
+      "Cancelar": return 0;
+      "Experiência":
+      "Item":
+         SendSysMessageEx(who, "Extra não scriptado, srry!", SSM_FAIL);
+         return 0;
+   endcase
+   return new_extra;
+endfunction

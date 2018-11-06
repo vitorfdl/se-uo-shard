@@ -125,7 +125,7 @@ function GetFeatList(who, only_active := 0)
    foreach feat in feat_list
       sleepms(2);
       feat := GetFeatByid(feat);
-      if ((only_active && !feat.Script) || (chardata.level < feat.Level))
+      if ((only_active && !feat.Script) || (chardata.level < feat.Level && !who.cmdlevel))
          continue;
       endif
 
@@ -135,14 +135,6 @@ function GetFeatList(who, only_active := 0)
 	return return_list;
 endfunction
 
-function HaveFeat(who, feat)
-	var feat_list := GetFeatList(who);
-	if (feat in feat_list)
-		return 1;
-	endif
-
-	return 0;
-endfunction
 
 function LearnFeat(who, feat, minus_point := 0, gives := 1)
 	if (typeof(feat) != "Struct")
@@ -220,31 +212,12 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
-function LearnFeat(who, feat_id)
-   var feat := getFeatById(feat_id);
-   if (!feat) return SysLog("Error: {} feat_id não existe!".format(feat_id)); endif
-
-   var classCfg := ReadConfigFile(":charactercreation:config/classes");
-   var elem := FindConfigElem(classCfg, feat.Class);
-   
-   var class_type := "classes";
-   if (elem.Type != "Main") class_type := "subclasses"; endif
-
-   var chardata := GetObjProperty(who, "chardata");
-
-   var index := FindInArray(chardata[class_type], struct{id := feat.Class});
-   if (!index) return; endif
-
-   chardata[class_type][index].habs.append(feat_id);
-   who.SetPoints(-1);
-   return 1;
-endfunction
-
-function BuildFeatToolTip(feat, return_points := 0)
+function BuildFeatToolTip(feat, return_points := 0, power := 0)
    var desc := "";
    if (feat.Script) desc += "{}Habilidade Ativável<br>".format(ORANGE, feat.PointCost);
    else desc += "{}Habilidade Passiva<br>".format(ORANGE, feat.PointCost); endif
    if (return_points && feat.PointCost) desc += "{}Custo: {} ponto(s)<br>".format(LIGHTGRAY, feat.PointCost); endif
+   if (return_points && feat.Level) desc += "{}Level: {}<br>".format(LIGHTGRAY, feat.Level); endif
    if (feat.Mana) desc += "{}Mana: {}<br>".format(BLUE, feat.Mana); endif
    if (feat.Vigor) desc += "{}Vigor: {}<br>".format(YELLOW, feat.Vigor); endif
    if (feat.Cooldown) desc += "{}Cooldown: {}<br>".format(LIGHTGRAY, feat.Cooldown); endif
@@ -252,7 +225,12 @@ function BuildFeatToolTip(feat, return_points := 0)
    var tooltip := "<center><basefont color=#7FFFD4><b>{}</b></basefont><br>{}".format(feat.Name, desc);
 
    foreach mod in (feat.PowerMod)
-      tooltip["%"] := mod;
+      if (power)
+         mod := cint(cdbl(power) * (cdbl(mod) / 100));
+         tooltip["$"] := "{}".format(mod);
+      else
+         tooltip["$"] := "{}%".format(mod);
+      endif
       sleepms(2);
    endforeach
 

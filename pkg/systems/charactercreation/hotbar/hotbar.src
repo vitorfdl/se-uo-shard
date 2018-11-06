@@ -21,7 +21,7 @@ function BuildSelectorGump(who, byref gump, raw_x, raw_y)
    var pos_x := raw_x+31;
    foreach feat in feat_list
 	   GFAddButton(gump, pos_x, raw_y+13, feat.Icon, feat.Icon, GF_CLOSE_BTN, 900+feat.FeatID);
-   GFTooltipText(gump, "<center><basefont color=#7FFFD4>{}</basefont></center>".format(feat.Name));
+      GFTooltipText(gump, "<center><basefont color=#7FFFD4>{}</basefont></center>".format(feat.Name));
       pos_x += 48;
       sleepms(2);
    endforeach
@@ -98,7 +98,7 @@ function BuildHotBar(who, byref hotbar)
       sleepms(2);
    endfor
 
-	GFAddButton(gump, pos_x+590, pos_y+69, 2103, 2103, GF_CLOSE_BTN, 2); // resize
+	GFAddButton(gump, pos_x+14, pos_y+67, 2103, 2103, GF_CLOSE_BTN, 2); // resize
 
    if (selector_open) BuildSelectorGump(who, gump, pos_x, pos_y); endif
 
