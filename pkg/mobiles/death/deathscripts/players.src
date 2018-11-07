@@ -24,6 +24,7 @@ program death(params)
 	endif
 
    SetObjProperty(ghost, "death_loc", array{corpse.x, corpse.y, corpse.z});
+	SetObjProperty(corpse, "death_time", polcore().systime);
 	
 	var lastHit := GetObjProperty(ghost, "LastDamage");
 	var killer := SystemFindObjectBySerial(lastHit.serial);
