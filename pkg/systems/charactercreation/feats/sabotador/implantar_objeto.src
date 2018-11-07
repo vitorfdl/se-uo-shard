@@ -6,22 +6,16 @@ include ":ghaia:ghaiaUtil";
 
 program startTalent(param)
    var who := param[1];
-   var talent_name := param[2];
-   var res := implantar(who);
+   var hab := param[2];
+   var itm := param[3];
+   var res := implantar(who, itm);
 
    if (!res)
-      TS_LowerDuration(who, talent_name, -1, 1);
+      TS_LowerDuration(who, "hab_{}".format(hab.FeatID), -1, 1);
    endif
 endprogram
 
-function implantar(who)
-	SendSysMessageEx(who, "Escolha um item da sua mochila para por na mochila do alvo", SSM_REQUEST);
-	var itm := Target(who);
-	if (!itm)
-		SendSysMessageEx(who, "Cancelado", SSM_FAIL);
-		return;
-	endif
-
+function implantar(who, itm)
 	var aux := itm;
 	while (aux.container)
 		aux := aux.container;
@@ -48,13 +42,10 @@ function implantar(who)
    MoveObjectToLocation(itm, 0, 0, 0, who.realm);
    MoveItemToContainer(itm, targ.backpack);
    
-   var roll_dice := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, FURTO);
-   var diff := rollAttrDice(targ, WISDOM) + GetSkillBonus(targ, PERCEPCAO);
-
-	if (roll_dice < diff)
-		SendSysMessageEx(targ, "Você nota algo sendo colocado na sua mochila!" , SSM_FAIL);
-		SendSysMessageEx(who, "Parece que o alvo notou algo." , SSM_INFO);
-	endif
+	// if (roll_dice < diff)
+	// 	SendSysMessageEx(targ, "Você nota algo sendo colocado na sua mochila!" , SSM_FAIL);
+	// 	SendSysMessageEx(who, "Parece que o alvo notou algo." , SSM_INFO);
+	// endif
 
    return 1;
 endfunction

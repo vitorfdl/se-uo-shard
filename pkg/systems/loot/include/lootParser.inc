@@ -251,7 +251,7 @@ function LootGroupGump(who)
    input_list.append(struct{ "title" := "Retornar itens ao invés de recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
    var output := QuestionsGump(who, input_list);
    if (!output)
-      break;
+      return;
    endif
 
    var loot_array := array{};

@@ -22,18 +22,17 @@ program soltar(me)
    
    var check := RandomInt(100);
 	if (check > diff)
-		if (dice_roll.critical == 1)
-			SendSysMessage(me, "Você conseguiu se soltar discretamente...");
+		// if (dice_roll.critical == 1)
+		// 	SendSysMessage(me, "Você conseguiu se soltar discretamente...");
 			var corda := CreateItemInBackpack (me, "rope");
 			SetObjProperty(corda, "diff", GetObjProperty(me, "corda"));
-		else
+		// else
 			PrintText(me, "*consegue se soltar*");
-		endif
+		// endif
 		EraseObjProperty (me, "corda");
 		me.frozen := 0;
-	elseif (dice_roll.critical == -1)
-		PrintText(me, "*tentando se soltar*");
 	else
+		PrintText(me, "*tentando se soltar*");
 		SendSysMessageEx(me, "Você falhou...", SSM_FAIL);
 	endif
 

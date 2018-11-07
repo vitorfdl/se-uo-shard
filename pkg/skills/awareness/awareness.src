@@ -10,36 +10,36 @@ include ":gumps:gumps_ex";
 include ":awareness:awareness";
 
 program skill_Alertness(who)
-	if ( CInt(GetobjProperty(who, "#Alertness")) > ReadGameClock() )
-		SendSysMessageEx(who, "Você precisa esperar 20 segundos para usar essa perícia novamente.", SSM_INFO);
-		return;
-	else
-		SetObjProperty(who, "#Alertness", ReadGameClock()+20);
-	endif
+	// if ( CInt(GetobjProperty(who, "#Alertness")) > ReadGameClock() )
+	// 	SendSysMessageEx(who, "Você precisa esperar 20 segundos para usar essa perícia novamente.", SSM_INFO);
+	// 	return;
+	// else
+	// 	SetObjProperty(who, "#Alertness", ReadGameClock()+20);
+	// endif
 
-	EraseObjProperty(who, "#IsMeditating");
-	EraseObjProperty(who, "#IsWaiting");
+	// EraseObjProperty(who, "#IsMeditating");
+	// EraseObjProperty(who, "#IsWaiting");
 
-	var menu := choose(who);
-	if (menu == 1)
-		if ( !examinarAlvo(who) )
-			SendSysMessageEx(who, "Você não encontrou nada de diferente.", SSM_INFO);
-		endif
-	elseif (menu == 2)
-		PrintText(who, "*procurando algo*");
-		if ( !examinarArea(who) )
-			SendSysMessageEx(who, "Você não encontrou nada de diferente.", SSM_INFO);
-		endif
-	else
-		var ignore := GetObjProperty(who, "IgnoreHidden");
-		if (ignore)
-			SendSysMessageEx(who, "Modo Passivo Ligado!", SSM_INFO);
-			EraseObjProperty(who, "IgnoreHidden");
-		else
-			SendSysMessageEx(who, "Modo Passivo Desligado!", SSM_FAIL);
-			SetObjProperty(who, "IgnoreHidden", 1);
-		endif
-	endif
+	// var menu := choose(who);
+	// if (menu == 1)
+	// 	if ( !examinarAlvo(who) )
+	// 		SendSysMessageEx(who, "Você não encontrou nada de diferente.", SSM_INFO);
+	// 	endif
+	// elseif (menu == 2)
+	// 	PrintText(who, "*procurando algo*");
+	// 	if ( !examinarArea(who) )
+	// 		SendSysMessageEx(who, "Você não encontrou nada de diferente.", SSM_INFO);
+	// 	endif
+	// else
+	// 	var ignore := GetObjProperty(who, "IgnoreHidden");
+	// 	if (ignore)
+	// 		SendSysMessageEx(who, "Modo Passivo Ligado!", SSM_INFO);
+	// 		EraseObjProperty(who, "IgnoreHidden");
+	// 	else
+	// 		SendSysMessageEx(who, "Modo Passivo Desligado!", SSM_FAIL);
+	// 		SetObjProperty(who, "IgnoreHidden", 1);
+	// 	endif
+	// endif
 endprogram
 
 function Choose(mobile)

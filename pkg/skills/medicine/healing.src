@@ -37,34 +37,30 @@ program UseBandage(mobile, bandage)
 	var heal_skill := PRIMEIROS_SOCORROS;
 
 	if ( !targ.IsA(POLCLASS_MOBILE) && !targ.IsA(POLCLASS_CORPSE) )
-		if (AP_GetTrueSkill(mobile, PRIMEIROS_SOCORROS) >= 7)
-			return apllyHerbs(mobile, bandage, targ);
-		endif
+		// if (AP_GetTrueSkill(mobile, PRIMEIROS_SOCORROS) >= 7)
+		// 	return apllyHerbs(mobile, bandage, targ);
+		// endif
 		SendSysMessageEx(mobile, "Cancelado.", SSM_FAIL);
 		return;
 	elseif ( targ.IsA(POLCLASS_MOBILE) && AP_GetVital(targ, "hits") >= AP_GetVitalMaximumValue(targ, "hits") )
-		SendSysMessageEx(mobile, "Alvo ja esta completamente curado.", SSM_INFO);
+		SendSysMessageEx(mobile, "Alvo já esta completamente curado.", SSM_INFO);
 		return;
 	elseif(GetObjProperty(targ, "noheal"))
 		SendSysMessageEx(mobile, "Não há nada que você possa fazer pelo alvo nas atuais circunstacias", 3, SSM_FAIL);
 		return;	
 	elseif ( targ.warmode )
-		SendSysMessageEx(mobile, "Você não pode tratar um alvo que esta muito agitado", SSM_INFO);
+		SendSysMessageEx(mobile, "Você não pode tratar um alvo que está muito agitado", SSM_INFO);
 		return;
 	elseif ( GetObjProperty(targ, "curando") > ReadGameClock() )
-		SendSysMessageEx(mobile, "O alvo ja esta enfaixado", SSM_INFO);
+		SendSysMessageEx(mobile, "O alvo já esta enfaixado", SSM_INFO);
 		return;
 	endif
 
 	EraseObjProperty(targ, "curando");
 	
-	if ( targ.isTamable() || GetObjProperty(targ, "npctemplate") )
-		heal_skill := TRATO_ANIMAIS;
-	endif
-
 	if ( targ.IsA(POLCLASS_CORPSE) )
 		if (GetObjProperty(targ, "morto"))
-			SendSysMessageEx(mobile, "Alvo ja esta morto.", SSM_FAIL);
+			SendSysMessageEx(mobile, "Alvo já esta morto.", SSM_FAIL);
 			return 0;
 		elseif (GetObjProperty(targ, "curado"))
 			SendSysMessageEx(mobile, "Alvo ja foi curado.", SSM_INFO);
@@ -74,17 +70,17 @@ program UseBandage(mobile, bandage)
 			return 0;
 		endif
 
-		var restauraDP := 0;
-		if (GetObjProperty(bandage , "cap") == 1 && randomint(5) <= 2)
-			restauraDP := 1;
-      endif
+		// var restauraDP := 0;
+		// if (GetObjProperty(bandage , "cap") == 1 && randomint(5) <= 2)
+		// 	restauraDP := 1;
+      // endif
 		// elseif (HaveFeat(mobile, "Cirurgião") && randomint(5) <= 2)
 		// 	restauraDP := 1;
 		// endif
 
 		SubtractAmount(bandage, 5);
 		if ( !GetObjProperty(targ, "npctemplate") )
-			return HealCorpse(mobile, targ, restauraDP);
+			return HealCorpse(mobile, targ);
 		elseif ( !GetObjProperty(targ, "owner") )
 			SendSysMessageEx(mobile, "O alvo esta morto.", SSM_FAIL);
 			return 0;
@@ -92,14 +88,11 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "O alvo esta morto.", SSM_FAIL);
 			SetObjProperty(targ, "morto", 1);
 			return;
+      // elseif ()
 		endif
 		return HealNpcCorpse(mobile, targ);
 	endif
 
-	if (targ.isTamable() && AP_GetTrueSkill(mobile, TRATO_ANIMAIS) < 1)
-		SendSysMessageEX(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
-		return 0;
-   endif
 	// elseif (isBloodied(targ) && ((heal_skill == PRIMEIROS_SOCORROS && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !HaveFeat(mobile, "Veterinário") ))))
 	// 	SendSysMessageEx(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
 	// 	return 0;
@@ -230,7 +223,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	return 1;
 endfunction
 
-function HealCorpse(mobile, targ, restauraDP)
+function HealCorpse(mobile, targ)
 	var name := targ.desc;
 	name["corpo de "] := "";
 
@@ -252,9 +245,9 @@ function HealCorpse(mobile, targ, restauraDP)
 		SendSysMessageEx(mobile, "Você estabilizou "+name);
 		SetObjProperty(targ, "curado", 1);
 		var owner := SystemFindObjectBySerial(targ.ownerserial);
-		if (restauraDP && owner)
-			AP_SetVital(owner, "DP", AP_GetVital(owner, "DP")+10);
-		endif
+		// if (restauraDP && owner)
+		// 	AP_SetVital(owner, "DP", AP_GetVital(owner, "DP")+10);
+		// endif
 	else
 		SendSystemReport(mobile, "Você não conseguiu estabilizar "+name+".");
 	endif

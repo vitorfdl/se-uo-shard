@@ -113,38 +113,31 @@ function do_poisoning(who)
 		return;
 	endif
 
-   difficulty += level;
-   var roll := rollAttrDice(who, DEXTERITY);
-	if(roll >= difficulty || who.cmdlevel > 1)
 		//if (GetObjProperty(who, "classe") == "ladino")
 		//	SkillCheck(who, BEGGING, -1);
 		//endif
-      ExpGain(who, difficulty, roll);
-		PlaySoundEffect(who, 0x248);
-		SendSysMessageEx(who, "Você aplicou o veneno com sucesso.", SSM_INFO);
-		var poisonInfo := struct;
-		poisonInfo.+name   := poisonType;
-		poisonInfo.+level  := level;
-		poisonInfo.+dosage := 20;
-		poisonInfo.+acc    := who.acctname;
-		poisonInfo.+time   := 40 + level*10;
-		poisonInfo.+difficulty := roll-2;
-		// if (HaveFeat(who, "Maximizar Veneno"))
-		// 	poisonInfo.dosage := CInt(poisonInfo.dosage * 1.5);
-		// 	poisonInfo.time := CInt(poisonInfo.time * 1.2);
-		// endif
-		if ( the_item.graphic == 0x1bfb || the_item.graphic == 0xf3f  )
-			poisonInfo.dosage := 100;
-			poisonInfo.time := CInt(poisonInfo.dosage * 0.5);
-		endif
-		SetObjProperty(the_item, "poisonInfo", poisonInfo);
-		if (the_item.isA(POLCLASS_WEAPON))
-			the_item.hp := the_item.hp - 10;
-		endif
-	else
-		SendSysMessageEx(who, "Você falhou e envenenou a si mesmo!", SSM_FAIL);
-		TS_StartTimer(who, poisonType, 60, level, who);
-	endif
+   ExpGain(who, 2);
+   PlaySoundEffect(who, 0x248);
+   SendSysMessageEx(who, "Você aplicou o veneno com sucesso.", SSM_INFO);
+   var poisonInfo := struct;
+   poisonInfo.+name   := poisonType;
+   poisonInfo.+level  := level;
+   poisonInfo.+dosage := 20;
+   poisonInfo.+acc    := who.acctname;
+   poisonInfo.+time   := 40 + level*10;
+   // if (HaveFeat(who, "Maximizar Veneno"))
+   // 	poisonInfo.dosage := CInt(poisonInfo.dosage * 1.5);
+   // 	poisonInfo.time := CInt(poisonInfo.time * 1.2);
+   // endif
+   if ( the_item.graphic == 0x1bfb || the_item.graphic == 0xf3f  )
+      poisonInfo.dosage := 100;
+      poisonInfo.time := CInt(poisonInfo.dosage * 0.5);
+   endif
+   SetObjProperty(the_item, "poisonInfo", poisonInfo);
+   if (the_item.isA(POLCLASS_WEAPON))
+      the_item.hp := the_item.hp - 10;
+   endif
+
 
 	if ( GetObjProperty(the_poison, "doses") == error )
 		SetObjProperty(the_poison, "doses", 2);

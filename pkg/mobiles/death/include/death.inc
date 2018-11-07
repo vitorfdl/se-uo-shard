@@ -78,6 +78,8 @@ function KataWakeUp(ghost, corpse)
       endif
 	endif
 
+   ghost.squelch(0);
+   ghost.frozen := 0;
 	// var realname := GetObjProperty(ghost, "realname");
 	SetName(ghost, ghost.name);	
 	EraseObjProperty(ghost, "realname");

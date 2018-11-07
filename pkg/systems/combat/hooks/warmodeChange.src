@@ -1,0 +1,17 @@
+/*
+ * $Id: parryAdv.src 919 2005-11-06 09:23:16Z austin $
+ *
+ */
+use os;
+
+program hook_startup()
+	print("INSTALLING: Warmode hook...");
+	return 1;
+endprogram
+
+exported function warmodeChange(who, new_state)
+   if (who.dead && new_state == 1) who.SetWarmode(0); endif
+
+	return 0;
+endfunction
+

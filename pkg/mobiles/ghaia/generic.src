@@ -236,10 +236,14 @@ function Fight(opponent, alerted := 0)
             endif
          endif
       else
-         if (npccfgfile.DodgeCooldown && !TS_GetCooldown(me, "dodge"))
-            TS_StartCooldown(me, "dodge", cint(npccfgfile.DodgeCooldown));
-         elseif (npccfgfile.BlockCooldown && !TS_GetCooldown(me, "block"))
-            TS_StartCooldown(me, "block", cint(npccfgfile.BlockCooldown));
+         if (!TS_GetCooldown(me, "block_dodge") && RandomInt(100) <= 35)
+            if (npccfgfile.DodgeCooldown)
+               TS_StartCooldown(me, "dodge", 2);
+               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.DodgeCooldown));
+            elseif (npccfgfile.BlockCooldown)
+               TS_StartCooldown(me, "block", 2);
+               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.BlockCooldown));
+            endif
          endif
 
          if ("matilha" in custombehaviors && RandomInt(2) == 1)

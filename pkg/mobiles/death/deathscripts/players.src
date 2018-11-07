@@ -110,13 +110,11 @@ program death(params)
 		return 234;
 	endif
 
-	var tempo := 2*60; // em segundos
+	var tempo := 2*40; // em segundos
 	if ( dmg > CInt(AP_GetVitalMaximumValue(ghost, HITS)/5) )
-		tempo += 60;
+		tempo += 30;
 	endif
-	// if ( HaveFeat(ghost, "Instinto de Sobreviv¿ncia"))
-	// 	tempo := tempo /2;
-	// endif
+
 	if (save)
 		tempo := 0;
 	endif	
@@ -136,9 +134,9 @@ program death(params)
 		endif
 
 		if (tempo % 60 == 0 && tempo != 0)
-			SendSystemReport(ghost, "Você acordara em "+(tempo/60)+" minuto(s).");
+			SendSystemReport(ghost, "Você se recuperará em "+(tempo/60)+" minuto(s).");
 		elseif (tempo <= 10)
-			SendSystemReport(ghost, "Você acordara em "+(tempo)+" segundo(s).");
+			SendSystemReport(ghost, "Você se recuperará em "+(tempo)+" segundo(s).");
 		endif
 
 		tempo -= 1;

@@ -13,6 +13,7 @@ include ":gumps:gumps_ex";
 include ":gumps:yesno";
 include ":tn:tngumps";
 include "include/say";
+include ":unicos:item_template";
 
 var selected_quest := 0;
 var quest_list;
@@ -71,10 +72,10 @@ function GumpQuestInfo(byref gump, who)
    foreach item in (quest.rewards)
 	   GFAddButton(gump, 610, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_REWARD_ADD);
       var desc := item.type;
-      if (item.desc) desc += " [{}]".format(item.desc); endif
+      if (item.item) desc += " [{}]".format(item.item.desc); endif
       // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
       if (item.classe) desc += " [{}]".format(item.classe); endif
-      if (item.power) desc += " [P: {}]".format(item.power); endif
+      if (item.item.dmg_mod) desc += " [P: {}]".format(item.item.dmg_mod); endif
 	   GFTextLine(gump, 625, 142+pos_y, 1152, "{}".format(desc));
       pos_y += 18;
       sleepms(2);
@@ -264,10 +265,31 @@ function QuestConditions(who)
          new_condition["qty"]   := cint(output[3]);
          new_condition["party"]      := output[4] == "Sim";
          new_condition["onlyboss"]   := output[5] == "Sim";
-      "Usar Item":
-      "Entregar Item":
-      "Craftar Item":
       "Ir até Local":
+         SendSysMessage(who, "Escolha o RoleplayItem que irá disparar.");
+         var targ := Target(who);
+         if (!targ || !targ.isA(POLCLASS_ITEM) || Hex(targ.objtype) != 0x318E) return 0; endif
+         new_condition.local := targ.serial;
+      "Usar Item":
+         SendSysMessage(who, "Escolha o item que ele deve usar.");
+         var targ := Target(who);
+         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+         if (YesNo(who, "Escolha uma das seguintes opções", "Qualquer item semelhante.", "Este item específico."))
+            new_condition.item_objtype := targ.objtype;
+         else
+            new_condition.item_serial := targ.serial;
+         endif
+      "Entregar Item":
+         SendSysMessage(who, "Escolha o item que deve ser entregue.");
+         var targ := Target(who);
+         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+         new_condition.delivery := targ.objtype;
+         var output := QuestionsGump(who, array{
+            struct{ title := "Quantidade deste item que deve ser entregue", marked := "1" }
+         });
+
+         new_condition.qty := output[1];
+      "Craftar Item":
          SendSysMessageEx(who, "Condição não scriptada, srry!", SSM_FAIL);
          return 0;
    endcase
@@ -295,7 +317,10 @@ function QuestRewards(who)
          opts.append("Personagem");
          new_reward["classe"] := RadioGump(who, 200, 0, "Escolha qual Classe:", opts, 0);
       "Item":
-         SendSysMessageEx(who, "Recompensa não scriptada, srry!", SSM_FAIL);
+         SendSysMessage(who, "Escolha o item de recompensa.");
+         var targ := Target(who);
+         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+         new_reward.item := CreateItemTemplate(targ);			
          return 0;
    endcase
 

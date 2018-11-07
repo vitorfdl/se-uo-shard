@@ -2,15 +2,15 @@ use uo;
 use os;
 
 include ":magery:tnmagery";
+include "include/damage";
 include "include/client";
 include "include/sounds";
 include "include/say";
 include ":timedscripts:timedScripts";
-include "include/damage";
 include ":magery:basicMagery";
 include ":combat:combat";
-var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
 
+var stalagmites := array{0x08E0, 0x08E1, 0x08E4, 0x08E5, 0x08E0};
 
 program SpellScript(params)
 	var who       := params[1];
@@ -25,7 +25,7 @@ program SpellScript(params)
    endif
 
    var flame;
-   var dmg_type := DMG_FIRE:
+   var dmg_type := DMG_FIRE;
    if (spellinfo.Name["Fogo"])
       flame := 0x3996;
       if (face % 2)
@@ -36,13 +36,13 @@ program SpellScript(params)
       if (face % 2)
          flame := 0x3920;
       endif
-       dmg_type := DMG_POISON:
+      dmg_type := 1;
    elseif (spellinfo.Name["Eletrecidade"])
       flame := 0x3967;
       if (face % 2)
-         flame := 0x3979;
+       flame := 0x3979;
       endif
-      dmg_type := DMG_ENERGY:
+      dmg_type := DMG_ENERGY;
    endif
 
    var pos := GetCoordsInLine(who.x, who.y, targ.x, targ.y);

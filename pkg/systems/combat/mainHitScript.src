@@ -52,7 +52,7 @@ program MainHitScript( params )
 	var damage_type := GetDamageType(wpn_a_elem);
 
 	var base_damage :=  CalculateRawDamage(attacker, wpn_a_elem, weapon);
-   print(CalculateDefenseReduction(defender, damage_type, 0, armor));
+   // print(CalculateDefenseReduction(defender, damage_type, 0, armor));
    base_damage := base_damage - (base_damage * CalculateDefenseReduction(defender, damage_type, 0, armor) );
 	// Chain Of Pain
 	// TODO: reaproveitar depois

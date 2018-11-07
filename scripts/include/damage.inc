@@ -54,8 +54,8 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
       base_dmg := wpn.dmg_mod;
    endif
 
-	base_dmg += cint(GetObjProperty(who.weapon, "dmgbonus")) + cint(GetObjProperty(who.weapon, "#dmgbonus"));
-	base_dmg += cint(GetObjProperty(who, "dmgbonus")) + cint(GetObjProperty(who, "#dmgbonus")) ;
+	base_dmg += cint(GetObjProperty(wpn, "dmgbonus")) + cint(GetObjProperty(wpn, "#dmgbonus"));
+	base_dmg += cint(GetObjProperty(attacker, "dmgbonus")) + cint(GetObjProperty(attacker, "#dmgbonus")) ;
 
    // Só pra tornar o dano não fixo
 	if (wpn_elem.dicedmg)
@@ -87,8 +87,10 @@ function HealFLS(targ, amt, show_heal := 1)
       amt := cint(cdbl(amt) - (cdbl(amt) * redu_heal));
    endif
 
-   if (77 in GetGodFeats(chardata.god, 1)) // cura acelerada
-      amt += (amt * 0.5);
+   if (targ.connected)
+      if (77 in GetGodFeats(targ.GetGod(), 1)) // cura acelerada
+         amt += (amt * 0.5);
+      endif
    endif
 
    var start_vital := AP_GetVital(targ, HITS);
@@ -193,7 +195,6 @@ endfunction
 
     
 function CalculateTotalDamageBonus(who, defender)
-	dmg := cint(dmg);
 	// if (!who.npctemplate)
 	// 	if (who.weapon && who.weapon.Attribute != "Versatil")
 	// 		attr_bonus := GetBonusAttr(AP_GetStat(who, who.weapon.Attribute));

@@ -71,11 +71,12 @@ program core_chrDeath(params)
 	
 	CheckForAutoRes(ghost, corpse);
 
-	MoveObjectToLocation( ghost, 4855, 3592, 2, flags := MOVEITEM_IGNOREMOVABLE+MOVEOBJECT_FORCELOCATION);
+	// MoveObjectToLocation( ghost, 4855, 3592, 2, flags := MOVEITEM_IGNOREMOVABLE+MOVEOBJECT_FORCELOCATION);
 	SetName(ghost, ghost.name);
 	SetObjProperty(ghost, "corpo", corpse.serial);
+   ghost.squelch(-1);
+   ghost.frozen := 1;
 	Start_Script("deathscripts/players", params);
-
 	
 	return 1;
 endprogram

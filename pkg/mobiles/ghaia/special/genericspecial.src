@@ -339,9 +339,9 @@ program loko(params)
          var targ := selectOpponent(who, state.target, state.conedist);
          var power := CalculateRawDamage(who, 0);
 
+         var dmg := CalculatePowerPercent(power, state.dmg);
 			foreach vital in (state.vitals)
 				foreach t in targ
-               var f_dmg := CalculatePowerPercent(power, state.dmg);
                sleepms(2);
                // if (state.resist_test && state.resist_test != "Nenhum")
                //    if (rollResistDice(t, state.resist_test) > state.resist_diff)
@@ -384,7 +384,7 @@ program loko(params)
 
          var dmg := CalculateRawDamage(who, 0);
          var mineinfo := struct{
-            PowerMod := array{CalculatePowerPercent(power, state.dmg)},
+            PowerMod := array{CalculatePowerPercent(dmg, state.dmg)},
             Name := state.mine_type,
             duration := state.duration
          };
@@ -419,6 +419,7 @@ program loko(params)
             ghaiaFlee(who.opponent, who);
          endif
       elseif (state.type == "Magicball")
+         var dmg := CalculateRawDamage(who, 0);
          var targs := selectOpponent(who, state.target, state.conedist);
          foreach targ in targs
             var create_at := Splitwords(state.create_at);
@@ -444,7 +445,7 @@ program loko(params)
                newball.StoreBallGraphic(state.subgraphic, state.subcolor);
             endif
 
-            newball.SetDmgInfo(struct{ "dmg":= CalculatePowerPercent(power, state.dice_dmg), "type" := state.dmg_type });
+            newball.SetDmgInfo(struct{ "dmg":= CalculatePowerPercent(dmg, state.dice_dmg), "type" := state.dmg_type });
             sleepms(2);
          endforeach
       elseif (state.type == "Simple Target")
@@ -482,12 +483,12 @@ program loko(params)
                   continue;
                endif
             endif
-            var roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, FURTO);
+            var roll := RandomInt(25);
             foreach item in EnumerateItemsInContainer(targ.backpack, ENUMERATE_ROOT_ONLY)
                var diff := 10 + CInt(item.amount * 0.3) + cint(item.weight/2);
                if (roll > diff)
                   MoveItemToContainer(item, who.backpack);
-                  var user_percep := rollAttrDice(targ, WISDOM) + GetSkillBonus(targ, PERCEPCAO);
+                  var user_percep := RandomInt(15);
                   if (user_percep > roll)
                      SendSystemReport(who, "*pegou item da sua mochila*", SSM_FAIL, targ);
                   endif
@@ -499,7 +500,7 @@ program loko(params)
          var targ := selectOpponent(who, state.target, state.conedist);
          var dmg := CalculateRawDamage(who, 0);
          var trilhainfo := struct{
-            PowerMod := array{CalculatePowerPercent(power, state.dice_dmg)},
+            PowerMod := array{CalculatePowerPercent(dmg, state.dice_dmg)},
             Name := state.trilha_type
          };
 			foreach t in targ

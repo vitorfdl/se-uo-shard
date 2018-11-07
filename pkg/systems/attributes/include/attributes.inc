@@ -59,8 +59,8 @@ function HaveSkill(a := 1, b:= 1, c :=1, d:= 1, e:= 1)
 endfunction
 
 function CalculatePowerPercent(power, percent)
-   percent := cint(percent);
-   return power + (power * (percent / 100));
+   percent := cdbl(percent);
+   return cint(cdbl(power) * (percent / 100));
 endfunction
 
 function CheckBlockDodge(who, return_block := 1, return_dodge := 1, no_message := 0)
@@ -68,7 +68,7 @@ function CheckBlockDodge(who, return_block := 1, return_dodge := 1, no_message :
       if (TS_GetCooldown(who, "dodge")) 
          if (!no_message) 
 			   PlaySoundEffect(who, array{569, 570, 571}.randomentry());
-            SendSystemReport(who, "*esquivou*", SSM_FAIL, "all");
+            PrintText(who, "*esquivou*", SSM_FAIL);
          endif
          return 1; 
       endif
@@ -77,7 +77,7 @@ function CheckBlockDodge(who, return_block := 1, return_dodge := 1, no_message :
    if (return_block)
       if (TS_GetCooldown(who, "block")) 
          if (!no_message)
-            SendSystemReport(who, "*bloqueou*", SSM_FAIL, "all");
+            PrintText(who, "*bloqueou*", SSM_FAIL);
          endif
          return 1; 
       endif

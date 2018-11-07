@@ -98,13 +98,11 @@ program Attack(params)
       defender := mobiles.randomentry();
    endif
 
-   if (TS_GetCooldown(defender, "dodge") )
+   if ( CheckBlockDodge(defender, 0) )
 		MissHit(attacker, defender);
-      PrintText(defender, "ESQUIVA", SSM_FAIL);
       return;
-   elseif (TS_GetCooldown(defender, "block"))
+   elseif (CheckBlockDodge(defender, 0, 1))
 		PlayHitSounds(attacker, defender);
-      PrintText(defender, "BLOQUEIO", SSM_FAIL);
       return;
    elseif (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow())
 		MissHit(attacker, defender);

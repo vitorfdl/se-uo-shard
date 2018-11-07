@@ -398,7 +398,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 
       who.SetAchievement("bard", 1);
       if (!GetCooldown(who, "musician_exp"))
-         ExpGain(who, dif, result);
+         ExpGain(who, 2);
          SetCooldown(who, "musician_exp", RandomInt(20)+15);
       endif
 
@@ -474,7 +474,7 @@ function escrevepartitura(who,item,notas,notas2,tempo,letra)
    sleepms(2000);
    PrintText(who, "*Escrevendo a partitura*");
    sleepms(2000);
-   var roll := RandomInt(100)
+   var roll := RandomInt(100);
    if (roll > 20)
       PrintText(who, "*Escrevendo a partitura*");
    else 
