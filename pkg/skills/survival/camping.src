@@ -93,7 +93,9 @@ program UseWood( who, wood )
 
 				if (continuehealing == 1)
 					foreach char in (nearbypeople)
-						healFLS(char, healpoints, 0);
+						healFLS(char, AP_GetVitalMaximumValue(char, HITS) * 0.1, 0);
+						healMana(char, AP_GetVitalMaximumValue(char, STAMINA) * 0.1);
+						healStamina(char, AP_GetVitalMaximumValue(char, MANA) * 0.1);
                   sleepms(1);
 					endforeach
             else
