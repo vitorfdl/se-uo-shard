@@ -331,8 +331,8 @@ function DisplayHabs(targ, byref gump, byref y_pos)
 	GFResizePic(gump, 145, y_pos, GFCfgConst("Defaults", "ForeGround"), 340, (num_habs*20));
 	foreach hab_name in ( habilidades )
 		var btn_id := GFAddButton(gump, 150, (y_pos+3), 2117, 2118, GF_CLOSE_BTN);
-		RegisterButton(btn_id, hab_name, "habEdit");
-		GFTextLine(gump, 175, y_pos, 2100, hab_name);
+		RegisterButton(btn_id, hab_name.FeatID, "habEdit");
+		GFTextLine(gump, 175, y_pos, 2100, hab_name.Name);
 		y_pos := y_pos+20;
 		SleepMS(2);
 	endforeach
