@@ -67,8 +67,8 @@ program createchar(who)
 	chardata.mana := 100;
 	chardata.stam := 60;
 
-   chardata.points := 0;
-   chardata.vitalpoints := 0;
+   chardata.points := 1;
+   chardata.vitalpoints := 1;
 
    if (chardata.raca == "Humano")
       chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");
