@@ -15,9 +15,9 @@ program walkOn(mobile, tile)
    elseif (!mobile.cmdlevel && (GetObjProperty(mobile, "criando") || GetObjProperty(mobile, "recriando")))
 		SendSystemReport(mobile, "Termine de criar seu personagem antes de atravessar o portal!");
 		return 0;
-	elseif (!mobile.cmdlevel && !mobile.npctemplate && !GetObjProperty(mobile, "ficharp_complete"))
-		SendSystemReport(mobile, "Complete sua ficharp antes de atravessar os portais do mundo. Use .ficharp");
-		return 0;
+	// elseif (!mobile.cmdlevel && !mobile.npctemplate && !GetObjProperty(mobile, "ficharp_complete"))
+	// 	SendSystemReport(mobile, "Preencha suas caractéristicas antes de atravessar o portal do mundo. Clique em Perícias e vá para a segunda página.");
+	// 	return 0;
 	endif
 
 	var pets := ListPetsNear(mobile, 4);
