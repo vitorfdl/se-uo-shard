@@ -34,7 +34,7 @@ program animateSword(params)
    endfor
 
    var dmg_dice := spellinfo.PowerMod[1] + cint(AP_GetVital(targ, "hits") * 0.2);
-   DamageFLS(targ, RandomDiceRoll(dmg_dice)+14, DMG_ENERGY, who);
+   DamageFLS(targ, dmg_dice, DMG_ENERGY, who);
 	return 1;
 endprogram
 
