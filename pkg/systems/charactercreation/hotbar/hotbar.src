@@ -48,6 +48,7 @@ function BuildHotBar(who, byref hotbar)
 
    GFMovable(gump, 0);//9260
    GFDisposable(gump, 0);
+   GFClosable(gump, 0);
    GFSetID(gump, 0x945);//9260
 	GFResizePic(gump, pos_x+10, pos_y+64, 9200, 597, 74);
 
