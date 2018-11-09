@@ -20,9 +20,9 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   AP_SetTrueSkill(who, "Barrier", -20);
-   print(AP_GetTrueSkill(who, "Barrier"));
-   
+   var chardata := GetObjProperty(who, "chardata");
+   chardata.subclasses[2].id := "Alquimista";
+   SetObjProperty(who, "chardata", chardata);
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 

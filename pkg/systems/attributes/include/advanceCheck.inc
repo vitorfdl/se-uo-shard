@@ -66,10 +66,10 @@ function ExpGain(mobile, difficulty, value := 0)
 	endif
 
    var incr_gain := 10;
-  if ( GetExpCap(mobile) < mobile.Getexp())
-  		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
-		incr_gain += 200;
-   endif
+//   if ( GetExpCap(mobile) < mobile.Getexp())
+//   		SkillDbgMsg(mobile, "Chegou no maximo do limite por tempo: {}".format(GetExpCap(mobile)));
+// 		incr_gain += 200;
+//    endif
   
 	// var settings := AP_GetSettingsCfgElem("Skills");
 	//verifica se ja não recebeu exp em 5 segundos
@@ -103,16 +103,17 @@ function ExpGain(mobile, difficulty, value := 0)
 		SysLog("Erro em difficulty para ExpGain: {}".format(difficulty));
 	endif
 
-   var account := FindAccount(mobile.acctname);
-   if (account && account.GetProp("expboost"))
-      if (account.GetProp("expboost") <= mobile.getlevel())
-         account.EraseProp("expboost");
-      else
-         up_amount := up_amount * 3;
-      endif
-   elseif (mobile.guild.getProp("leader") == mobile.serial)
-      up_amount := up_amount * 2;
-   endif
+   up_amount *= 4;
+   // var account := FindAccount(mobile.acctname);
+   // if (account && account.GetProp("expboost"))
+   //    if (account.GetProp("expboost") <= mobile.getlevel())
+   //       account.EraseProp("expboost");
+   //    else
+   //       up_amount := up_amount * 3;
+   //    endif
+   // elseif (mobile.guild.getProp("leader") == mobile.serial)
+   //    up_amount := up_amount * 2;
+   // endif
 
 	//guarda as skills dos npcs tamados
 	if (mobile.npctemplate && GetObjProperty(mobile, "owner") != error)
@@ -122,33 +123,45 @@ function ExpGain(mobile, difficulty, value := 0)
 		var exp := mobile.GetExp();
 		mobile.SetExp(exp+up_amount);
 		CheckExpUp(mobile);
-      var pnt_amt := cint(GetObjProperty(mobile, "points_received"))+1;
-      var total_exp := mobile.getTotalExp();
-      if (total_exp >= (pnt_amt * 120))
-         mobile.SetTalentPoints(1);
-         SetObjProperty(mobile, "points_received", pnt_amt);
-      endif
 	endif
 
 	SetObjProperty(mobile, "#LastSkillGain", ReadGameClock());
 	return 1;
 endfunction
 
+function GetClassMaxExp(classe)
+   var level := cint(classe.level);
+   if (!level) level := 1; endif
+
+   return level * 2500;
+endfunction
+
+function UpClass(classe)
+   var level := cint(classe.level);
+   var exp := cint(classe.exp);
+   var maxexp := GetClassMaxExp(classe);
+   if (exp > maxexp || classe.level >= 4)
+      return;
+   endif
+
+   classe.exp := 0;
+   classe.level += 1;
+   return classe;
+endfunction
+
 function CheckExpUp(who)
 	var level := who.getLevel();
-	if (level < 10)
+	if (level < 20)
 		var maxexp := who.getMaxExp(); //starts at 2000
 		var exp := who.GetExp();
       
 		if (exp < maxexp)
 			return;
 		endif
+
 		who.StoreExp(maxexp);
 		who.setLevel(level+1);
-		var levelup_cfg := ReadConfigFile(":attributes:config/levelup");
-      levelup_cfg := levelup_cfg[level+1];
-		if (cint(levelup_cfg.AttributePoints))
-			who.SetPoints(1);
-		endif
+      mobile.SetPoints(1);
+      mobile.Setvitalpoints(1);
 	endif
 endfunction

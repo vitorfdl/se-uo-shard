@@ -16,15 +16,27 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var items_near := ListItemsNearLocationWithFlag( who.x, who.y, who.z, 4, TILEDATA_FLAG_LIGHTSOURCE);
-	
+   var items_near := listequippeditems(who);
    var item;
+
    foreach item_n in items_near
       if (item_n.graphic in fire_items)
-         item := item_n;
+         item := who;
       endif
       sleepms(2);
    endforeach
+
+	
+   if (!item)
+      var items_near := ListItemsNearLocationWithFlag( who.x, who.y, who.z, 4, TILEDATA_FLAG_LIGHTSOURCE);
+      foreach item_n in items_near
+         if (item_n.graphic in fire_items)
+            item := item_n;
+         endif
+         sleepms(2);
+      endforeach
+   endif
+
 
    if (!item)
       items_near := ListMobilesNearLocationEx( who.x, who.y, who.z, 5, LISTEX_FLAG_NORMAL);

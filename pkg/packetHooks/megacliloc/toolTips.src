@@ -143,16 +143,28 @@ exported function MegaCliloc( who, byref packet )
             if (elem.DamageType)
                xDesc += "Tipo de Dano: {}<br>".format(TranslateDamage(elem.DamageType));
             endif
+            xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
+            xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
+
             var hits :=  GetHitsInfo(elem);
             if (hits != "")
                xDesc += ORANGE + hits;
             endif
          elseif (item.isA(POLCLASS_ARMOR) && (item.resist_physical || item.resist_fire || item.resist_poison || item.resist_energy || item.resist_cold))
-            if (item.resist_physical) xDesc += "Def. Física: {}<br>".format(item.resist_physical); endif
-            if (item.resist_fire) xDesc += "Def. Calor: {}<br>".format(item.resist_fire); endif
-            if (item.resist_energy) xDesc += "Def. Energia: {}<br>".format(item.resist_energy); endif
-            if (item.resist_cold) xDesc += "Def. Frio: {}<br>".format(item.resist_cold); endif
-            if (item.resist_poison) xDesc += "Def. Veneno: {}<br>".format(item.resist_poison); endif
+            var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+            var res := 0;
+            foreach resist in resists
+               var value := item.get_member("resist_{}".format(resist));
+               if (value)
+                  xDesc += "Def. {}: {}<br>".format(TranslateDamage(resist), value);
+                  if (value > res)
+                     res := value;
+                  endif
+               endif
+            endforeach
+
+            xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((res / 9)+1 <= 20, (res / 9)+1, 20), WHITE);
+            xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((res / 15)+1 <= 4, (res / 15)+1, 4), WHITE);
          endif
 
       elseif (item.isA(POLCLASS_ITEM))

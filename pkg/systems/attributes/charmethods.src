@@ -236,7 +236,7 @@ endfunction
 
 
 exported function getMaxExp(who)
-   return getLevel(who) * 2200;
+   return getLevel(who) * 1600;
 endfunction
 
 exported function Caracteristica(who, carac)

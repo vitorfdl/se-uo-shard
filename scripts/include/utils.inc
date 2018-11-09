@@ -4,6 +4,11 @@ use math;
 
 include "include/facings";
 
+function _ifElse(a,b,c)
+   if (a) return b; endif
+   return c;
+endfunction
+
 function randomPlace(loc, radius := 1)
 	var y, x;
    case (RandomInt(3)+1)

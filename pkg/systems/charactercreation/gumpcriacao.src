@@ -21,9 +21,10 @@ include ":charactercreation:chargumps";
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
    Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
-	sleepms(600);
+	sleepms(850);
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
+	CloseGump(who, 0x977);
 
    var account := FindAccount(who.acctname);
 
@@ -115,11 +116,12 @@ function StartCharacterCreation(who, byref chardata)
       
       chardata := struct{
          current_class := "",
-         caminhos := array{"Obstinado"},
+         caminhos := array{"Sábio"},
          subclasses:= array{},
          classes := array{struct{
-            id := "Furioso",
+            id := "Elementalista",
             exp := 0,
+            level := 1,
             habs := array{},
             selected_habs := array{}
          }},
@@ -216,10 +218,10 @@ function CharacterCreationGump(who, byref chardata)
       GFTextLine(gump, 36+2, 105, 2212, "Raça");
       GFTextLine(gump, 62, 126, 1152, "Núro");
       GFTextLine(gump, 62, 148, 1152, "Vala");
-      GFTextLine(gump, 62, 169, 1152, "Alayarz");
+      // GFTextLine(gump, 62, 169, 1152, "Alayarz");
       GFAddButton(gump, 39, 126, 210 + (chardata.raca == "Humano" || !chardata.raca), 211, GF_CLOSE_BTN, 44);
       GFAddButton(gump, 39, 148, 210 + (chardata.raca == "Elfo"), 211, GF_CLOSE_BTN, 45);
-      GFAddButton(gump, 39, 169, 210 + (chardata.raca == "Meio-Elfo"), 211, GF_CLOSE_BTN, 46);
+      // GFAddButton(gump, 39, 169, 210 + (chardata.raca == "Meio-Elfo"), 211, GF_CLOSE_BTN, 46);
       
       GFTextLine(gump, 145, 103, 2212, "Sexo");
       GFTextLine(gump, 167, 126, 1152, "Homem");
@@ -255,12 +257,12 @@ function CharacterCreationGump(who, byref chardata)
 
       //caminho
       GFTextLine(gump, 189, 269, 2212, "Caminho");
-      GFTextLine(gump, 109-10, 293, 1152, "Obstinado");
-      GFAddButton(gump, 85-10, 293, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
+      // GFTextLine(gump, 109-10, 293, 1152, "Obstinado");
+      // GFAddButton(gump, 85-10, 293, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
       GFTextLine(gump, 222-10, 293, 1152, "Sábio");
       GFAddButton(gump, 199-10, 293, 210 + cint(chardata.caminhos[1] == "Sábio"), 211, GF_CLOSE_BTN, 62);
-      GFTextLine(gump, 313, 293, 1152, "Sagaz");
-      GFAddButton(gump, 290, 293, 210 + cint(chardata.caminhos[1] == "Sagaz"), 211, GF_CLOSE_BTN, 63);
+      // GFTextLine(gump, 313, 293, 1152, "Sagaz");
+      // GFAddButton(gump, 290, 293, 210 + cint(chardata.caminhos[1] == "Sagaz"), 211, GF_CLOSE_BTN, 63);
       
       // classe
       GFTextLine(gump, 193, 322, 2212, "Classe");

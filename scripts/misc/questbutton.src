@@ -48,15 +48,17 @@ endfunction
 
 function BuildQuestGump(who)
    var quests := GetObjProperty(who, "quests");
-   if (!quests) quests := array{struct{
-         title := "Mate os Goblins!",
-         conditions := array{
-            // struct{ kill_quest := struct{ monster := ":ghaia:goblinarqueiro", qty := 30, calc := 30 }, done := 1 },
-            // struct{ kill_quest := struct{ monster := ":ghaia:goblinxama", qty := 20, calc := 15 }, done := 0  },
-            struct{ title := "Ler livro no Altar", use_item := struct{ serial := 0x478 }, done := 0  }
-         },
-         description := "Há muitos goblins para se matar<br><i>- Vamos! Mate todos eles!</i><br><br>Você pode encontra-los na <b>floresta</b> ao sul"
-      }}; endif
+   if (!quests) quests := array{}; endif
+
+// struct{
+//          title := "Mate os Goblins!",
+//          conditions := array{
+//             // struct{ kill_quest := struct{ monster := ":ghaia:goblinarqueiro", qty := 30, calc := 30 }, done := 1 },
+//             // struct{ kill_quest := struct{ monster := ":ghaia:goblinxama", qty := 20, calc := 15 }, done := 0  },
+//             struct{ title := "Ler livro no Altar", use_item := struct{ serial := 0x478 }, done := 0  }
+//          },
+//          description := "Há muitos goblins para se matar<br><i>- Vamos! Mate todos eles!</i><br><br>Você pode encontra-los na <b>floresta</b> ao sul"
+//       }
 
 	var gump := GFCreateGump(250, 200);
 	

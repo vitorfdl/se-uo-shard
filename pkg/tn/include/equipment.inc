@@ -118,3 +118,29 @@ function RemoveEquipmentMods(who, item)
       RecalcVitals(who);
    endif
 endfunction
+
+function CheckLevelRequirement(who, item)
+   // if (who.cmdlevel >= 3) return 1; endif
+   var chardata := GetObjProperty(who, "chardata");
+   if (!chardata) return 1; endif
+
+   var level := cint(chardata.level);
+   var class_level := cint(chardata.classes[1].level);
+   if (item.isA(POLCLASS_WEAPON))
+      var power := item.dmg_mod;
+      if (cint(cdbl(power) / 30.0 )+1 > level || cint(power / 50 )+1 > class_level) return 0; endif
+   elseif (item.isA(POLCLASS_EQUIPMENT))
+      var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+      var res := 0;
+      foreach resist in resists
+         if (item.get_member("resist_{}".format(resist)) > res)
+            res := item.get_member("resist_{}".format(resist));
+         endif
+      endforeach
+
+      if ((res / 9)+1 > level) return 0; endif
+      if ((res / 15)+1 > class_level) return 0; endif
+   endif
+
+   return 1;
+endfunction

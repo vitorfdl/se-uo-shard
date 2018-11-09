@@ -12,6 +12,8 @@ var selector_open := 0;
 
 function BuildSelectorGump(who, byref gump, raw_x, raw_y)
    var feat_list := GetFeatList(who, RETURN_ACTIVE_ONLY);
+   if (!feat_list) return; endif
+   
    var width := 15+(48*(feat_list.size()+3));
    if (selector_open > 1)
       raw_x += (50 * (selector_open-1));

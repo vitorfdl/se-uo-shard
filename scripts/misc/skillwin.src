@@ -44,11 +44,16 @@ function buildSubClass(who, charlevel, byref gump, subclass, x, y)
    endif
 
    var feats := GetClassFeats(subclass.id);
-   GFHtmlShadowed(gump, x, y, 90, 20, "#FFFFFF", "{}".format(subclass.id), 5);
-   buildExpBar(gump, 62, y+19, 96, subclass.exp, 1000);
+   GFHtmlShadowed(gump, x-16, y, 92, 20, "#FFFFFF", "<center>{}".format(subclass.id), 5);
+   if (subclass.level >= 3)
+      GFGumpPicTiled(gump, x-19, y+19, 96, 8, 9753);
+   else
+      buildExpBar(gump, x-19, y+19, 96, subclass.exp, GetClassMaxExp(subclass));
+   endif
+   GFTextLine(gump, x+14, y+29, 1000, "Lv. {}".format(subclass.level));
    
    var cur_group := 1;
-   var x_pos := 195;
+   var x_pos := x+114;
    var power := CalculateRawDamage(who, 0, who.weapon);
    foreach hab in feats
       if (hab.Group != cur_group)
@@ -62,7 +67,7 @@ function buildSubClass(who, charlevel, byref gump, subclass, x, y)
          color := 1000; 
       endif
       
-      if (color != 1000 || (charlevel >= hab.Level && subclass.exp >= hab.Experience))
+      if (color != 1000 || (charlevel >= hab.Level && cint(subclass.level) >= hab.Group))
          GFAddButton(gump,  x_pos, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
       endif
 
@@ -82,8 +87,13 @@ function buildClass(who, charlevel, byref gump, classe, extrahabs := array{})
 
    GFAddButton(gump, 64, 177, cint(elem.Icon), cint(elem.Icon)+1, GF_CLOSE_BTN, GF_CHANGE_CLASS); // hab
    GFHtmlShadowed(gump, 50, 155, 100, 20, "#FFFFFF", "<center>{}".format(classe.id), 5);
-   buildExpBar(gump, 50, 244, 96, classe.exp, 3200);
+   if (classe.level >= 4)
+      GFGumpPicTiled(gump, 50, 244, 96, 8, 9753);
+   else
+      buildExpBar(gump, 50, 244, 96, classe.exp, GetClassMaxExp(classe));
+   endif
    GFTooltipText(gump, "Experiência de sua classe. Faça missões e tarefas relacionadas a sua classe para aumentar sua experiência e disponibilizar novas habilidades.");
+   GFTextLine(gump, 79, 250, 1000, "Lv. {}".format(cint(classe.level)));
    
    var cur_group := 1;
    var x := 174;
@@ -104,7 +114,7 @@ function buildClass(who, charlevel, byref gump, classe, extrahabs := array{})
                color := 1000; 
             endif
 
-            if (color == 0 || (charlevel >= hab.Level && classe.exp >= hab.Experience))
+            if (color == 0 || (charlevel >= hab.Level && cint(classe.level) >= hab.Group))
                GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
             endif
             GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
@@ -166,10 +176,10 @@ function AddVitalIncreaseButtons(byref gump)
 endfunction
 
 function buildExpBar(byref gump, x, y, width, value, maxexp) 
-   GFGumpPicTiled(gump, x, y, width, 6, 0x2616);
+   GFGumpPicTiled(gump, x, y, width, 8, 0x2616);
 
    var exp_width := cint((value * width) / maxexp);
-   GFGumpPicTiled(gump, x, y, exp_width, 6, 9751);
+   GFGumpPicTiled(gump, x, y, exp_width, 8, 9751);
 endfunction
 
 function SendSkillGump(who, chardata)
@@ -188,7 +198,7 @@ function SendSkillGump(who, chardata)
 	GFTextLine(gump, 164, 93, 0, "{}".format(chardata.points));
    GFTooltipText(gump, "Pontos são gastos para aprender habilidades de classe e subclasse.");
 	GFTextLine(gump, 67, 122, 0, "Exp:");
-   buildExpBar(gump, 101, 129, 576, chardata.exppoints, 1000);
+   buildExpBar(gump, 101, 129, 576, chardata.exppoints, who.getMaxExp());
    GFTooltipText(gump, "Experiëncia de personagem é adquirida executando diversas tarefas como: matar monstros, criar itens, escrevendo livros e usando habilidades.");
    
    if (chardata.vitalpoints > 0) AddVitalIncreaseButtons(gump); endif
@@ -220,19 +230,19 @@ function SendSkillGump(who, chardata)
 	GFGumpPicTiled(gump, 67, 274, 607, 21, 58); //bar
 	GFGumpPic(gump, 667, 274, 59, 0); //bar
 
-   buildSubClass(who, chardata.level, gump, chardata.subclasses[1], 81, 297);
+   buildSubClass(who, chardata.level, gump, chardata.subclasses[1], 141, 297);
 
 	GFGumpPic(gump, 94, 350, 57, 0); // bar
 	GFGumpPicTiled(gump, 123, 350, 501, 21, 58); // bar
 	GFGumpPic(gump, 624, 350, 59, 0); // bar
 
-   buildSubClass(who, chardata.level,gump, chardata.subclasses[2], 81, 368);
+   buildSubClass(who, chardata.level,gump, chardata.subclasses[2], 141, 368);
 
 	GFGumpPic(gump, 93, 421, 57, 0); // bar
 	GFGumpPicTiled(gump, 122, 421, 501, 21, 58); // bar
 	GFGumpPic(gump, 623, 421, 59, 0); // bar
 
-   buildSubClass(who, chardata.level,gump, chardata.subclasses[3], 81, 439);
+   buildSubClass(who, chardata.level,gump, chardata.subclasses[3], 141, 439);
 
 	GFGumpPic(gump, 223, 63, 105, 0);
    GFTooltipText(gump, "Este é seu valor máximo de vida, sem nenhum modificador.");
@@ -372,7 +382,7 @@ function PegarResposta(who)
 endfunction
 
 program skillwin(who)
-   if (CloseGump( who, GUMPID_SKILLLIST))
+   if (CloseGump( who, GUMPID_SKILLLIST) || GetObjProperty(who, "criandochar"))
       return;
    endif
 
@@ -547,6 +557,7 @@ function changeClass(who, byref chardata)
             caminho := classe.Caminho,
             type := classe.Type,
             id := classe_name,
+            level := 1,
             icon := cint(classe.Icon)
          });
       endif

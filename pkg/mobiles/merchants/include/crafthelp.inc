@@ -213,3 +213,14 @@ function GetName(obj_type, add_S := 0)
 	return s_first + s_middle + s_last;
 
 endfunction
+
+function TranslateDmg(dmg_type)
+   case (dmg_type)
+      DMG_PHYSICAL: return "Físico";
+      DMG_FIRE: return "Calor";
+      DMG_COLD: return "Frio";
+      DMG_POISON: return "Veneno";
+      DMG_ENERGY: return "Energia";
+      default: return dmg_type;
+   endcase
+endfunction
