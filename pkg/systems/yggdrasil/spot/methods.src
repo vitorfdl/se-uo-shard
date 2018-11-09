@@ -25,11 +25,12 @@ endfunction
 
 exported function SetProps( spot, data := struct{} )
     var old_data := GetProps(spot);
-    if (data.name)
+    var keys := data.keys();
+    if ("name" in keys)
         spot.name := data.name;
     endif
 
-    if (data.location)
+    if ("location" in keys)
         spot.location := data.location;
     endif
 
@@ -45,7 +46,7 @@ exported function SetProps( spot, data := struct{} )
         old_data.timeinterval := data.timeinterval;
     endif
 
-    if (data.evententry)
+    if ("evententry" in keys)
         old_data.evententry := data.evententry;
     endif
 

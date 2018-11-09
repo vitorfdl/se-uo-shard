@@ -24,6 +24,6 @@ program usewand(who, wand)
       Targ := GetConfigString(wand_cfg, "Target"),
       TargetAlign := GetConfigString(wand_cfg, "TargetAlign")
    };
-   print(wand_cfg.SpellCooldown);
+
    TriggerHabilitie(who, spellinfo);
 endprogram 

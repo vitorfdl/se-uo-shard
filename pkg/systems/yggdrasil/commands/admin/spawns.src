@@ -13,6 +13,7 @@ include ":gumps:yesno";
 include ":tn:tngumps";
 include "include/say";
 include ":unicos:item_template";
+include ":yggdrasil:dynamicevents";
 
 //Main Menu
 const GF_ADD_BTN        := 900;
@@ -28,7 +29,6 @@ const GF_GROUP_REMSPAWNGROUP_BTN := 914;
 const GF_GROUP_FORCESPAWN_BTN := 916;
 const GF_GROUP_FORCEKILL_BTN := 917;
 
-
 const GF_SELECTSPOT_BTN            := 300;
 const GF_SELECTSPAWNGROUP_BTN      := 350;
 const GF_SPOT_SELECTSPAWNPOINT_BTN := 400;
@@ -39,7 +39,7 @@ const GF_SPAWNGROUP_ALLIES_BTN  := 500;
 const GF_SPAWNGROUP_ENEMIES_BTN := 510;
 
 //Spot Menu
-var spot_name, spot_timeinterval, spot_location, spot_evententry; 
+var spot_name, spot_timeinterval, spot_location; 
 const GF_SPOT_ACTIVE_SWITCH     := 920;
 const GF_SPOT_ADDSPAWNPOINT_BTN := 921;
 const GF_SPOT_REMSPAWNPOINT_BTN := 922;
@@ -49,6 +49,7 @@ const GF_SPOT_ADDTREASURE_BTN   := 925;
 const GF_SPOT_REMTREASURE_BTN   := 926;
 const GF_SPOT_FORCESPAWN_BTN    := 927;
 const GF_SPOT_FORCEKILL_BTN     := 928;
+const GF_SPOT_DYNAMICEVENT_BTN := 929;
 
 //SpawnPoint Menu
 var spawnpoint_name, spawnpoint_mobnumber, spawnpoint_range;
@@ -139,7 +140,6 @@ program spotGroups(params)
             var new_spot := struct{
                 "active" := active_switch,
                 "name" := GFExtractData(input, spot_name),
-                "evententry" := GFExtractData(input, spot_evententry),
                 "timeinterval" := GFExtractData(input, spot_timeinterval)
             };
             spot.SetProps(new_spot);
@@ -397,6 +397,17 @@ function DoSpotList(who, input)
             break;
         GF_SPOT_TELEPORT_BTN:
             MoveObjectToLocation( who, spot.x, spot.y, spot.z, spot.realm, MOVEOBJECT_FORCELOCATION );
+            break;
+         GF_SPOT_DYNAMICEVENT_BTN:
+            var opts := DFGetElemNames(LoadDynamicGroupData());
+            opts.append("Remover");
+            var output := QuestionsGump(who, array{struct{ "title" := "Qual a base de PODER e DEFESA?", "marked" := data.evententry in opts, radio := opts  } });
+            if (!output) break; endif
+            if (output[1] == "Remover") output[1] := ""; endif
+            var update := struct{
+               evententry := output[1]
+            };
+            spot.SetProps(update);
             break;
         default:
             if (input[0] >= GF_SPOT_SELECTTREASURE_BTN && input[0] < GF_SPOT_SELECTTREASURE_BTN+10)
@@ -722,8 +733,10 @@ function ConstructSpotConfig(byref gump)
     GFTextLine(gump, sx+80, sy+18, 1153, "Intervalo:");
     spot_timeinterval := GFTextEntry(gump, sx+135, sy+18, 30, 18, 2103, data.timeinterval);
 
-    GFTextLine(gump, sx, sy+18+18, 1153, "Dynamic Event:");
-    spot_evententry := GFTextEntry(gump, sx+90, sy+18+18, 140, 18, 2103, data.evententry);
+    GFTextLine(gump, sx, sy+18+18, 1153, "Dyn. Event:");
+    GFAddButton(gump, sx+68, sy+18+18+6, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_DYNAMICEVENT_BTN);
+   // := GFTextEntry(gump, sx+90, sy+18+18, 140, 18, 2103, data.evententry);
+    GFTextLine(gump, sx+80, sy+18+18, 1000, "{}".format(data.evententry));
 
     GFTextLine(gump, sx, sy+54, 1153, "Location:");
     GFTextLine(gump, sx+65, sy+54, 2103, "{}, {}, {}".format(spot.x, spot.y, spot.z));
