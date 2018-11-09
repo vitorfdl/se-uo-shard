@@ -13,15 +13,14 @@ program character_control(who)
       if (tips.size() < 1)
          tips := GetConfigStringArray(cfgfile["general"], "tip");
          
-         if (who.isCaster())
-            tips += GetConfigStringArray(cfgfile["Mago"], "tip");
-         endif
-         if (who.Caracteristica("Clérigo de Anar"))
-            tips += GetConfigStringArray(cfgfile["Clérigo"], "tip");
-         endif
-         if (AP_GetTrueSkill(who, FURTO) >= 1 || AP_GetTrueSkill(who, SABOTAGEM) >= 1 )
-            tips += GetConfigStringArray(cfgfile["Ladino"], "tip");
-         endif
+         // if (who.isCaster())
+         //    tips += GetConfigStringArray(cfgfile["Mago"], "tip");
+         // endif
+         // if (who.Caracteristica("Clérigo de Anar"))
+         //    tips += GetConfigStringArray(cfgfile["Clérigo"], "tip");
+         // endif
+         //    tips += GetConfigStringArray(cfgfile["Ladino"], "tip");
+         // endif
       endif
       SendSysMessageEX(who, "Você sabia? {}".format(tips.randomentry()), SSM_INFO);
 

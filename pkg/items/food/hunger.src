@@ -23,7 +23,7 @@ program Hunger(chr)
 			SendSysMessageEx(chr, "Você está muito faminto e correndo perigo de vida.",  SSM_INFO);
 		elseif (hunger == 6 && !chr.dead && !(chr.x > 6005 && chr.y > 42 && chr.x < 6029 && chr.y < 92 ))
 			SendSysMessageEx(chr, "Você esta muito faminto e correndo perigo de vida!!",  SSM_INFO);
-			if (!GetObjProperty(chr, "criandochar") && rollResistDice(chr, CONSTITUTION) < 8)
+			if (!GetObjProperty(chr, "criandochar") && Randomint(20) < 8)
 				if (AP_GetVital(chr, "DP") >= 30)
 					ApplyRawDamage(chr, CInt(AP_GetVitalMaximumValue(chr, "Hits")));
 					AP_SetVital(chr, "Hunger", AP_GetVital(chr, "DP")+(2*60));

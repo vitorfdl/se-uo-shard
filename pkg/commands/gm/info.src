@@ -382,7 +382,6 @@ function DisplayChardata(targ, byref gump, byref y_pos)
 	GFResizePic(gump, 145, y_pos, GFCfgConst("BackGrounds", "GoldTrim"), 340, 200);
 	//chardataconf
 		var chardata := GetObjProperty(targ, "chardata");
-		chardata.-Skills;
 		chardata.-credits;
 		chardata.-nome;
 		chardata.-nomefinal;

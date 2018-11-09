@@ -31,7 +31,7 @@ program animateSword(params)
    endfor
 
    var mobs := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, LIST_IGNORE_Z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
-   var dmg_dice := MageDiceTable("B", spellinfo.powered);
+   var dmg_dice := spellinfo.PowerMod[1];
    foreach mob in mobs
       PushMobile(who, 5 - Distance(who, mob), 1, mob);
       sleepms(2);
@@ -39,12 +39,8 @@ program animateSword(params)
 
    sleepms(1000);
    foreach mob in mobs
-      if (rollResistDice(mob, CONSTITUTION) > spellinfo.dice_roll+2)
-         SendSystemReport(mob, "*resistiu*", SSM_FAIL, who);
-         SendSystemReport(mob, "*resistiu*", SSM_INFO);
-         DamageFLS(mob, RandomDiceRoll(dmg_dice)/2, DMG_ENERGY, who);
-      else
-         DamageFLS(mob, RandomDiceRoll(dmg_dice), DMG_ENERGY, who);
+      if (!CheckBlockDodge(mob, 1, 0))
+         DamageFLS(mob, dmg_dice, DMG_ENERGY, who);
          TS_StartTimer(mob, "tombar", 10, 1, who);
       endif
       sleepms(2);

@@ -97,7 +97,7 @@ function NPC_Agarrar(dice, targ, difficulty)
    endif
 
    PrintTexT(me, "*tenta agarrar {}*".format(targ.name));
-   if (rollResistDice(targ, DEXTERITY) <= difficulty)
+   if (!CheckBlockDodge(targ, 0, 1))
       PrintText(targ, "*agarrado*", SSM_FAIL);
 
       TS_StartTimer(targ, "paralysis", dice);
@@ -110,8 +110,6 @@ function NPC_Agarrar(dice, targ, difficulty)
          sleep(1);
          DamageFLS(targ, RandomDiceRoll("1d4"), DMG_PHYSICAL, me.owner);
       endfor
-   else
-      PrintText(targ, "*resistido*".format(me.name), SSM_INFO);
    endif
 
    PrintText(me, "*Se desfaz*");

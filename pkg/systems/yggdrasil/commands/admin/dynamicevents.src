@@ -432,11 +432,11 @@ function ConstructGump()
 endfunction
 
 function ConstructGroupList(byref gump)
-    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 180, 450);
+    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 180, 600);
     GFTextLine(gump, 48, 23, 555, "Dynamic Group List");
 
     var page     := 1;
-    var max_page := 11;
+    var max_page := 17;
     for i:=1 to dynamiceventgroups.Size()+1
         GFPage(gump, page);
         var x := 50;

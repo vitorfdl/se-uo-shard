@@ -25,20 +25,23 @@ program animateSword(params)
    var color;
 
    PlaySoundEffect(targ, 0x475);
-   if (spellinfo.type["Gelo"])
-      shieldtype := "Gelo";
+   var sort := RandomInt(3)+1;
+   case (sort)
+      1:
+      shieldtype := DMG_COLD;
       color := 2753;
-   elseif (spellinfo.type["Veneno"])
-      shieldtype := "Veneno";
+      2:
+      shieldtype := DMG_POISON;
       color := 2573;
-   else
-      shieldtype := "Fogo";
+      default:
+      shieldtype := DMG_FIRE;
       color := 2696;
-   endif
+   endcase
 
    SetObjproperty(targ, "shieldcolor", color);
+   SetObjproperty(targ, "shieldamount", spellinfo.PowerMod[1]);
    SetObjProperty(targ, "shieldtype", shieldtype);
 
-   TS_StartTimer(targ, "escudo_magico", 80+(spellinfo.powered*40));	
+   TS_StartTimer(targ, "escudo_magico", 120);	
 	return 1;
 endprogram

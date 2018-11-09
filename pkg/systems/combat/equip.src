@@ -82,8 +82,10 @@ function SetEquipmentMods(who, item)
 
 	if (item_e.ArmorType)
       if (item_e.ArmorType["Pesada"])
+         AP_SetSkillMod(who, "Dodge", AP_GetSkillMod(who, "Dodge") - 1);
          who.setToughness(3);
       elseif (item_e.ArmorType["Leve"])
+         AP_SetTrueSkill(who, "FeatConsume", AP_GetTrueSkill(who, "FeatConsume") + 5);
          who.setToughness(2);
       endif
 	endif
@@ -108,17 +110,17 @@ function SetEquipmentMods(who, item)
 	endif
 //	SendSysMessage(who, " " + mods + " " + mods.keys().size());
 	foreach mod in (mods.keys())
-		if (mod == "strmod")
-			AP_ModifyStatMod(who, STRENGTH, Cint( mods["strmod"] ));
-		elseif (mod == "dexmod")
-			AP_ModifyStatMod(who, DEXTERITY, Cint( mods["dexmod"] ));
-		elseif (mod == "intmod")
-			AP_ModifyStatMod(who, INTELLIGENCE, Cint( mods["intmod"] ));
-		elseif (mod == "conmod")
-			AP_ModifyStatMod(who, CONSTITUTION, Cint( mods["conmod"] ) );
-		elseif (mod == "wismod")
-			AP_ModifyStatMod(who, WISDOM, Cint( mods["wismod"] ) );
-		elseif (mod == "manamod")
+		// if (mod == "strmod")
+		// 	AP_ModifyStatMod(who, STRENGTH, Cint( mods["strmod"] ));
+		// elseif (mod == "dexmod")
+		// 	AP_ModifyStatMod(who, DEXTERITY, Cint( mods["dexmod"] ));
+		// elseif (mod == "intmod")
+		// 	AP_ModifyStatMod(who, INTELLIGENCE, Cint( mods["intmod"] ));
+		// elseif (mod == "conmod")
+		// 	AP_ModifyStatMod(who, CONSTITUTION, Cint( mods["conmod"] ) );
+		// elseif (mod == "wismod")
+		// 	AP_ModifyStatMod(who, WISDOM, Cint( mods["wismod"] ) );
+		if (mod == "manamod")
 			SetObjProperty(who, "manamod", Cint(GetObjProperty(who, "manamod")) + Cint( mods["manamod"] ));
       elseif (mod == "toughmod")
          who.setToughness(cint(mods["toughmod"]));

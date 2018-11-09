@@ -17,34 +17,32 @@ include ":combat:combat";
 function StartScript(mobile, attacker := 0, level := 0)
    var color := GetObjproperty(mobile, "shieldcolor");
    var shieldtype := GetObjproperty(mobile, "shieldtype");
+   var shieldamount := GetObjproperty(mobile, "shieldamount");
    SetObjProperty(mobile, "shield_oldcolor", mobile.color);
 
    mobile.color := color;
    mobile.truecolor := color;
-
-   if (shieldtype["Veneno"])
-      var bonusca := cint(GetObjproperty(mobile, "bonus_ca"));
-      SetObjProperty(mobile, "bonus_ca", bonusca+3);
-   endif
-   SetArmorHitscript(mobile, "escudo_magico");
+   var old_value := mobile.get_member("resist_{}_mod".format(shieldtype));
+   mobile.set_member("resist_{}_mod".format(shieldtype), old_value+shieldamount);
+   // SetArmorHitscript(mobile, "escudo_magico");
 	return 1;
 endfunction
 
 function EndScript(mobile)
-   var color := GetObjproperty(mobile, "shield_oldcolor");
-   var shieldtype := GetObjproperty(mobile, "shieldtype");
+   var color        := GetObjproperty(mobile, "shield_oldcolor");
+   var shieldtype   := GetObjproperty(mobile, "shieldtype");
+   var shieldamount := GetObjproperty(mobile, "shieldamount");
    mobile.color := color;
    mobile.truecolor := color;
 
-   if (shieldtype["Veneno"])
-      var bonusca := cint(GetObjproperty(mobile, "bonus_ca"));
-      SetObjProperty(mobile, "bonus_ca", bonusca-3);
-   endif
+   var old_value := mobile.get_member("resist_{}_mod".format(shieldtype));
+   mobile.set_member("resist_{}_mod".format(shieldtype), old_value-shieldamount);
 
    EraseObjProperty(mobile, "shieldcolor");
    EraseObjProperty(mobile, "shield_oldcolor");
    EraseObjProperty(mobile, "shieldtype");
-   SetArmorHitscript(mobile, "escudo_magico", 1);
+   EraseObjProperty(mobile, "shieldamount");
+   // SetArmorHitscript(mobile, "escudo_magico", 1);
 	return 1;
 endfunction
 

@@ -117,10 +117,6 @@ function ItemPickerGump(who, byref chardata)
          elseif (buyitem["Book_"])
             buyitem["Book_"] := "";
             SysBook_CreateBook(who.backpack, buyitem);
-         elseif (buyitem["Magia_"])
-            buyitem["Magia_"] := "";
-            var rec := CreateItemInBackpack(who, 0x6116);
-            SetObjProperty(rec, "spell_id", cint(buyitem));
          else
             if (buyitem["/"])
                var sex_choose := SplitWords(buyitem, "/");
@@ -139,9 +135,14 @@ function ItemPickerGump(who, byref chardata)
             endif
                
             var created := CreateItemInBackpack( who, buyitem, amt );
-            if (buyitem["wand"])
-               SetObjProperty(created, "charges", 5);
+            if (created.isA(POLCLASS_WEAPON))
+               created.dmg_mod := 20;
+               UpdateItem(created);
+            // elseif (created.isA(POLCLASS_ARMOR))
+
             endif
+
+
          endif
 
 

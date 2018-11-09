@@ -571,11 +571,11 @@ function DoTreasureList(who, input)
 endfunction
 
 function ConstructGroupList(byref gump)
-    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 180, 450);
+    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 180, 600);
     GFTextLine(gump, 50, 28, 555, "Grupos de Spots");
 
     var page     := 1;
-    var max_page := 10;
+    var max_page := 20;
     for i:=1 to spotgroups.Size()+1
         GFPage(gump, page);
         var x := 50;

@@ -331,7 +331,7 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
       if (quest.radio)
          total_height += Floor(quest.radio.size() / 5) * 30;
       elseif (quest.checkbox)
-         total_height += Floor(quest.checkbox.size() / 5) * 30;
+         total_height += Floor(quest.checkbox.size() / 5) * 35;
       elseif (quest.lines)
          total_height += (cint(quest.lines)-1) * 26;
       endif
@@ -340,7 +340,7 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 
 	var gump := GFCreateGump(250, 250);
    GFSetID(gump, GUMPID_TNGUMPS);
-	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 45+total_height);
+	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 50+total_height);
 
 	var entries := dictionary{};
    var previousiter := 0;

@@ -132,9 +132,6 @@ function WriteMagic(who, spell_id, spell_power)
 	if (!WriteSpellInfo(spellinfo))
 		SendSysMessageEx(who, "Ocorreu um erro ao inscrever a magia. Chame um GM.", SSM_FAIL);
 		return;
-   elseif (!HaveSkill(who, "Magia_de_{}".format(spellinfo.type)))
-		SendSysMessageEx(who, "Você não tem conhecimento de magia", SSM_FAIL);
-		return;
 	endif
 
    if (Ceil(AP_GetTrueSkill(who, "Magia_de_{}".format(spellinfo.type)) / 2) < spellinfo.circle)

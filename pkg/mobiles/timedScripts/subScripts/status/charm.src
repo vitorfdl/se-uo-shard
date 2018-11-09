@@ -16,7 +16,7 @@ function StartScript(mobile, attacker := 0, level := 0)
    while (1)
       PlayObjectCenteredEffect(mobile, 0x4AA4, 6, 40);
       sleep(4);
-      if (rollResistDice(mobile, INTELLIGENCE) > level)
+      if (randomInt(20) > level)
          break;
       endif
    endwhile

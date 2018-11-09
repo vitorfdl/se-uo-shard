@@ -25,11 +25,9 @@ program divineOrientation(info)
       sleepms(2);
 	endwhile
 
-   var level := AP_GetTrueSkill(who, MILAGRE_DE_NECROMANCIA);;
-
    PlayStationaryEffect(targ.x, targ.y, targ.z+1, 0x5683, 2, 5);
    PlaySoundEffect(targ, SFX_1EA);
    SendSystemReport(who, "O alvo foi abençoado.", SSM_HELPFUL);
-   TS_StartTimer(targ, "falselife", 600, level);	
+   TS_StartTimer(targ, "falselife", 600, 10);	
    return 1;
 endprogram

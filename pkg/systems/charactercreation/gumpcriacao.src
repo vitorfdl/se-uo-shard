@@ -123,6 +123,7 @@ function StartCharacterCreation(who, byref chardata)
             habs := array{},
             selected_habs := array{}
          }},
+         exppoints := 0,
          level := 1,
          points := 1,
          vitalpoints := 0,
@@ -140,12 +141,12 @@ function StartCharacterCreation(who, byref chardata)
          continue;
       endif
 
-      // if (!chardata.heir)
-      //    chardata.Credits := 60;
-      //    if (ItemPickerGump(who, chardata))
-      //       continue;
-      //    endif
-      // endif
+      if (!chardata.heir)
+         chardata.Credits := 60;
+         if (ItemPickerGump(who, chardata))
+            continue;
+         endif
+      endif
 
 		// if (getNotaRP(who) == 2)
 		// 	if (!YesNo(who, "Você receberá bonificações nesse personagem. Elas não estarão disponíveis no próximo. Deseja continuar?", "Sim", "Não"))

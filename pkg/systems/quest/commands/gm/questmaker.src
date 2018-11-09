@@ -239,6 +239,7 @@ function QuestConditions(who)
       "Usar Item",
       "Entregar Item",
       "Craftar Item",
+      "Coletar Item",
       "Ir até Local",
       "Cancelar"
    };
@@ -279,6 +280,17 @@ function QuestConditions(who)
          else
             new_condition.item_serial := targ.serial;
          endif
+      "Coletar Item":
+         SendSysMessage(who, "Escolha o item que deve ser coletado.");
+         var targ := Target(who);
+         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+            var quest_gump := array{
+            struct{ title := "Quantidade que deve ser coletado?" }
+         };
+         var output := QuestionsGump(who, quest_gump);
+         if (!output) return 0; endif
+         new_condition.collect := targ.objtype;
+         new_condition.qty := cint(output[1]);
       "Entregar Item":
          SendSysMessage(who, "Escolha o item que deve ser entregue.");
          var targ := Target(who);

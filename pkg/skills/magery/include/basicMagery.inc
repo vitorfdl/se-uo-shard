@@ -62,21 +62,6 @@ function CheckDelay(who, spell_elem)
 	endif
 endfunction
 
-function EquipmentCheck(who)
-	var cfg := ReadConfigFile(":combat:itemdesc");
-	var equips := ListEquippedItems( who );
-
-	foreach equip in equips
-		var elem := FindConfigElem( cfg, equip.objtype );
-		if (elem && elem.Pericia && !HaveSkill(who, elem.Pericia))
-			return 0;
-		endif
-      sleepms(2);
-	endforeach
-
-	return 1;
-endfunction
-
 function CheckReagents(who, byref spell_elem, scroll)
 	if ( who.npctemplate )
 		// NPCs don't need reagents to cast.

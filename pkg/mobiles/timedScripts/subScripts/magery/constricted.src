@@ -17,7 +17,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       PlayStationaryEffectEx(mobile.x, mobile.y+1, mobile.z, mobile.realm, 0x0CEE, 9, 60, 0);
       PrintText(mobile, "*tentando se soltar*", SSM_FAIL);
       sleep(3);
-      if (rollResistDice(mobile, STRENGTH) > level)
+      if (RandomInt(20) > level)
          PrintText(mobile, "*se soltou*", SSM_INFO);
          break;
       endif

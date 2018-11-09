@@ -1,0 +1,34 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program explosao(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   PlayStationaryEffect(targ.x, targ.y, targ.z, 0x37C4, 10, 10, 0);
+   sleep(1);
+   var effects := array{GFX_EXPLODE_1, GFX_EXPLODE_2, GFX_EXPLODE_3};
+   PlayStationaryEffect(targ.x, targ.y, targ.z, effects.randomentry(), 10, 10, 0);
+   PlaySoundEffect(targ, SFX_EXPLOSION_11);
+   
+   foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
+      if (CheckBlockDodge(mobile))
+         DamageFLS(mobile, spellinfo.PowerMod[1], DMG_FIRE, who);
+         TS_StartTimer(mobile, "immolation", 10, 0);	
+      endif
+      sleepms(2);
+   endforeach
+   
+	return 1;
+endprogram

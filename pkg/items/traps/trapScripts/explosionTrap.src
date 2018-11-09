@@ -36,20 +36,12 @@ program trapScript(params)
 			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha.", SSM_FAIL);
 			PlayObjectCenteredEffect(mobile, GFX_EXPLODE_3, 10, 10);
 
-			if (rollResistDice(mobile, DEXTERITY) >= diff)
-            if (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
-               SendSysMessageEx(mobile, "Você evitou a armadilha.", SSM_INFO);
-               continue;
-            endif
-            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmgfinal := CInt(dmgfinal * 0.5);
-         elseif (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
-            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmgfinal := CInt(dmgfinal * 0.5);
-			endif
-
-			DamageFLS(mobile, dmgfinal, DMG_FIRE);
-			mobile.hidden := 0;
+		   if (!CheckBlockDodge(mobile))
+            SendSysMessageEx(mobile, "Você evitou a armadilha.", SSM_INFO);
+         else
+            DamageFLS(mobile, dmgfinal, DMG_FIRE);
+            mobile.hidden := 0;
+         endif
 		endif
 	endforeach
 	return 1;

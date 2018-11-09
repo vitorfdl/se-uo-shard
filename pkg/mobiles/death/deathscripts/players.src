@@ -24,7 +24,7 @@ program death(params)
 	endif
 
    SetObjProperty(ghost, "death_loc", array{corpse.x, corpse.y, corpse.z});
-	SetObjProperty(corpse, "death_time", polcore().systime);
+	SetCooldown(corpse, "resurrect", 30);
 	
 	var lastHit := GetObjProperty(ghost, "LastDamage");
 	var killer := SystemFindObjectBySerial(lastHit.serial);
@@ -83,15 +83,12 @@ program death(params)
 		if (!killer.npctemplate || !killer.script["follower"])  //se for tamed n¿o tira dp
 			ghost.ReduceLifeTime(2, "day");
 
-         if (rollResistDice(ghost, CONSTITUTION) <= 15)
 				AP_ConsumeVital(ghost, "DP", 10);
 				SendSystemReport(ghost, "Você sofreu uma fratura!");
             if (AP_GetVital(ghost, "DP") <= 19)
                TS_StartTimer(ghost, "fraturaexposta", 1);
             endif
-         else
-            SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
-			endif
+         //    SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
 
 			if (AP_GetVital(ghost, "DP") <= 10 )
             SetObjProperty(ghost, "morto", 1);

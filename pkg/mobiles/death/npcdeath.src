@@ -90,7 +90,7 @@ program core_npcDeath(params)
 	corpse_name["A corpse of "] := "";
 	SetName(corpse, "corpo de {}".format(corpse_name));
 	SetObjProperty(corpse, "originalname", corpse_name);
-	SetCooldown(corpse, "resurrect", 200);
+	SetCooldown(corpse, "resurrect", 30);
 	
 	var template := GetObjProperty(corpse, "npctemplate"); // Set by the core.
 	var npc_cfg := NPC_GetNPCConfig(template);

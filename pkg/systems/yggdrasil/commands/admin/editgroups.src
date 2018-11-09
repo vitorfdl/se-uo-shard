@@ -127,11 +127,11 @@ function ConstructGump()
 endfunction
 
 function ConstructGroupList(byref gump)
-    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 180, 450);
+    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 180, 600);
     GFTextLine(gump, 48, 28, 555, "Spawn Group List");
 
     var page     := 1;
-    var max_page := 10;
+    var max_page := 27;
     for i:=1 to spawngroups.Size()+1
         GFPage(gump, page);
         var x := 50;
@@ -237,7 +237,7 @@ function constructMobInfo(byref gump)
     GFTextLine(gump, sx, sy, 1153, "Nome:");
     mob_name := GFTextEntry(gump, sx+40, sy, 120, 18, 2103, mob_info.name);
 
-    GFTextLine(gump, sx, sy+18, 1153, "Poder:");
+    GFTextLine(gump, sx, sy+18, 1153, "Level:");
     GFTextLine(gump, sx+40, sy+18, 2103, mob_power);
     GFAddButton(gump, sx-15, sy+21, 2103, 2104, GF_CLOSE_BTN, GF_POWER_BTN);
 
@@ -276,7 +276,7 @@ function MobSetConfigs(byref who, byref input)
             endif
             break;
         GF_POWER_BTN:
-            mob_power := cint(RadioGump(who, 150, 0, "Level de Poder:", array{"1", "2", "3"}));
+            mob_power := cint(RadioGump(who, 150, 0, "Level:", array{"1", "2", "3"}));
             break;
         GF_TYPE_BTN:
             mob_type := lower(RadioGump(who, 190, 0, "Tipo de Monstro:", array{"Melee", "Ranged", "Spellcaster"}));

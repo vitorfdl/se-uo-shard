@@ -54,9 +54,6 @@ endfunction
 function checkImmunity(a := 1, b:= 1)
    return 0;
 endfunction
-function HaveSkill(a := 1, b:= 1, c :=1, d:= 1, e:= 1)
-   return 0;
-endfunction
 
 function CalculatePowerPercent(power, percent)
    percent := cdbl(percent);

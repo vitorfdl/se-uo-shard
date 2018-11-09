@@ -148,7 +148,6 @@ function buildGodGump(byref gump, god, level)
       var color := 0;
       if (level < hab.Level) color := 1000; endif
       
-      if (hab.Script) GFAddButton(gump, 736-7, 221+((_hab_iter-1) * 49), hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); endif;
       GFGumpPic(gump, 736-7, 221+((_hab_iter-1) * 49), cint(hab.Icon), color);
       GFTooltipText(gump, BuildFeatToolTip(hab));
       GFTextLine(gump, 743-7, 245+((_hab_iter-1) * 49), 1000, "Lv{}".format(hab.Level));
@@ -189,7 +188,7 @@ function SendSkillGump(who, chardata)
 	GFTextLine(gump, 164, 93, 0, "{}".format(chardata.points));
    GFTooltipText(gump, "Pontos são gastos para aprender habilidades de classe e subclasse.");
 	GFTextLine(gump, 67, 122, 0, "Exp:");
-   buildExpBar(gump, 101, 129, 576, chardata.exp, 1000);
+   buildExpBar(gump, 101, 129, 576, chardata.exppoints, 1000);
    GFTooltipText(gump, "Experiëncia de personagem é adquirida executando diversas tarefas como: matar monstros, criar itens, escrevendo livros e usando habilidades.");
    
    if (chardata.vitalpoints > 0) AddVitalIncreaseButtons(gump); endif
@@ -464,7 +463,7 @@ function HandleSkillPage(who, byref chardata, res)
          CloseGump( who, 0x945, 1 );
 
       else
-         SendSysMessageEx(who, "wtf!");
+         SendSysMessageEx(who, "Use essa habilidade através da barra de atalhos.", SSM_INFO);
       endif
    elseif (res == GF_HITS_BTN)
       chardata := GetObjProperty(who, "chardata");

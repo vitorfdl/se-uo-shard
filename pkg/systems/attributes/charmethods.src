@@ -93,12 +93,12 @@ endfunction
 
 exported function GetPoints(who)
 	var chardata := GetObjProperty(who, "chardata");
-	var attpoints := chardata["attpoints"];
-	if (attpoints == error || !attpoints)
+	var points := chardata["points"];
+	if (points == error || !points)
 		SetPoints(who, 0);
-		attpoints := 0;
+		points := 0;
 	endif
-	return attpoints;
+	return points;
 endfunction
 
 exported function SetPoints(who, points)
@@ -108,13 +108,13 @@ exported function SetPoints(who, points)
       return;
    endif
 
-	if (!chardata["attpoints"])
-      chardata.attpoints := 0;
+	if (!chardata["points"])
+      chardata.points := 0;
 	endif
 
-	chardata["attpoints"] += points;
-   if (chardata.attpoints < 0)
-      chardata.attpoints := 0;
+	chardata["points"] += points;
+   if (chardata.points < 0)
+      chardata.points := 0;
       Syslog("User "+who.name+" Got -1 Attribute Points");
    endif
 
@@ -123,31 +123,31 @@ exported function SetPoints(who, points)
 	return 1;
 endfunction
 
-exported function GetTalentPoints(who)
+exported function Getvitalpoints(who)
 	var chardata := GetObjProperty(who, "chardata");
-	var talentpoints := chardata["talentpoints"];
-	if (talentpoints == error || !talentpoints)
-		SetTalentPoints(who, 0);
-		talentpoints := 0;
+	var vitalpoints := chardata["vitalpoints"];
+	if (vitalpoints == error || !vitalpoints)
+		Setvitalpoints(who, 0);
+		vitalpoints := 0;
 	endif
 
-	return talentpoints;
+	return vitalpoints;
 endfunction
 
-exported function SetTalentPoints(who, points := 1)
+exported function Setvitalpoints(who, points := 1)
    set_critical(1);
 	var chardata := GetObjProperty(who, "chardata");
    if (!chardata)
       return;
    endif
 
-	if (!chardata["talentpoints"])
-      chardata.talentpoints := 0;
+	if (!chardata["vitalpoints"])
+      chardata.vitalpoints := 0;
 	endif
 
-	chardata["talentpoints"] += points;
-   if (chardata.talentpoints < 0)
-      chardata.talentpoints := 0;
+	chardata["vitalpoints"] += points;
+   if (chardata.vitalpoints < 0)
+      chardata.vitalpoints := 0;
       Syslog("User "+who.name+" Got -1 Talent Points");
    endif
 	SetObjProperty(who, "chardata", chardata);
@@ -225,17 +225,15 @@ exported function IncreaseLifeTime(who, time, type)
 endfunction
 
 exported function getToughness(who)
-	return cint(GetObjProperty(who, "toughness"));
+	return AP_GetTrueSkill(who, "Toughness");
 endfunction
 
 exported function setToughness(who, plus := 1)
-	var toughness := cint(GetObjProperty(who, "toughness"));
+	var toughness := AP_GetTrueSkill(who, "Toughness");
    toughness += plus;
-   if (toughness < 0)
-      toughness := 0;
-   endif
-   SetObjProperty(who, "toughness", toughness);
+   AP_SetTrueSkill(who, "Toughness", toughness);
 endfunction
+
 
 exported function getMaxExp(who)
    return getLevel(who) * 2200;
@@ -251,9 +249,12 @@ exported function Caracteristica(who, carac)
 endfunction
 
 exported function isCaster(who)
-   if (AP_GetTrueSkill(who, "Magia_de_Fogo") || AP_GetTrueSkill(who, "Magia_de_Gelo") || AP_GetTrueSkill(who, "Magia_de_Veneno") || AP_GetTrueSkill(who, "Magia_de_Eletrecidade"))
-      return 1;
-   endif
+	var chardata := GetObjProperty(who, "chardata");
+   if (chardata)
+      if (chardata.classes[1].id == "Elementalista" || chardata.classes[1].id == "Mago do Véu" )
+         return 1;
+      endif
+   endif   
 
    return 0;
 endfunction

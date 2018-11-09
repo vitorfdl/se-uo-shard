@@ -12,17 +12,17 @@ include "include/say";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   var barrier := cint(GetObjProperty(mobile, "#barrier"));
-   SetObjProperty(mobile, "#barrier", barrier+level);
+   var barrier := AP_GetTrueSkill(mobile, "Barrier");
+   AP_SetTrueSkill(mobile, "Barrier", barrier+level);
 
    while (mobile)
       PlayObjectCenteredEffectEx(mobile, 0x377A, 5, 20, 60);
-      barrier := cint(GetObjProperty(mobile, "#barrier")) - 1;
+      barrier := AP_GetTrueSkill(mobile, "Barrier");
+      barrier -= (cdbl(barrier) * 0.1);
+      AP_SetTrueSkill(mobile, "Barrier", barrier);
       if (barrier <= 0)
          break;
       endif
-
-      SetObjProperty(mobile, "#barrier", barrier);
       sleep(2);
    endwhile
 
@@ -30,7 +30,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile)
-   EraseObjproperty(mobile, "#barrier");
+   AP_SetTrueSkill(mobile, "Barrier", 0);;
    return 1;
 endfunction
 

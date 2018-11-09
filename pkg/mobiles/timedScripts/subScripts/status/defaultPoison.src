@@ -45,7 +45,7 @@ function StartScript(mobile, attacker := 0, level := 0)
       var dmg := RandomDiceRoll(dicedmg);
 		damageFLS(mobile, cint(dmg), DMG_POISON, attacker);
 
-      if (rollResistDice(mobile, CONSTITUTION) > diff)
+      if (randomInt(25) > diff)
          success := 1;
       endif
       sleep(2);

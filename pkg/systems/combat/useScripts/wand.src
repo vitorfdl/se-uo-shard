@@ -1,0 +1,29 @@
+use uo;
+
+include "include/say";
+include ":attributes:attributes";
+include ":charactercreation:feats";
+include ":timedscripts:timedScripts";
+include "include/facings";
+include "include/damage";
+include ":combat:combat";
+
+program usewand(who, wand)
+   if (!who.isCaster())
+      SendSysMessageEx(who, "Apenas o caminho do Sábio pode usar armas mágicas");
+   endif
+
+   var wand_cfg := GetItemCFGInfo(who, wand);
+   var spellinfo := struct{
+      FeatID := "obj{}".format(Hex(wand.objtype)),
+      script := GetConfigString(wand_cfg, "Spell"),
+      PowerMod := GetConfigIntArray(wand_cfg, "PowerMod"),
+      Cooldown := GetConfigInt(wand_cfg, "SpellCooldown"),
+      CastTime := GetConfigInt(wand_cfg, "CastTime"),
+      Mana := GetConfigInt(wand_cfg, "Mana"),
+      Targ := GetConfigString(wand_cfg, "Target"),
+      TargetAlign := GetConfigString(wand_cfg, "TargetAlign")
+   };
+   print(wand_cfg.SpellCooldown);
+   TriggerHabilitie(who, spellinfo);
+endprogram 

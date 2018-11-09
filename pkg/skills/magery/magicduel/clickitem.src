@@ -19,8 +19,8 @@ program magicudel(who, item)
 
    if (!who.isA(POLCLASS_MOBILE) || !who.connected)
       return SendSysMessageEx(who, "Não é um alvo válido.", SSM_FAIL);
-   elseif (!who.isCaster())
-      return SendSysMessageEx(who, "O alvo não parece ter poder mágico para se defender.", SSM_FAIL);
+   // elseif (!who.isCaster())
+   //    return SendSysMessageEx(who, "O alvo não parece ter poder mágico para se defender.", SSM_FAIL);
    endif
 
    SendSysMessageEx(who, "Você se concentra na mente do alvo.", SSM_INFO);

@@ -48,8 +48,11 @@ program animateSword(params)
       var itemcfg := ReadConfigFile(":combat:itemdesc");
       if (itemcfg[hex(targ.objtype)])
          SetObjProperty(summoned, "dicedmg", targ.Damage);
-         SetObjProperty(summoned, "dmgbonus", spellinfo.powered);
       endif
+
+      SetObjProperty(summoned, "dmgmod", spellinfo.PowerMod[1]);
+      var life := spellinfo.PowerMod[2] - AP_GetVitalMaximumValue(summoned, HITS);
+      SetObjProperty(summoned, "hitsmod", life);
 
       case (targ.objtype)
          0x13b9: summoned.graphic:= 643;
@@ -64,6 +67,8 @@ program animateSword(params)
 		summoned.SetMaster(who);
 		summoned.script := ":ghaia:follower";
 		RestartScript(summoned);
+      RecalcVitals(summoned);
+      HealFLS(summoned, AP_GetVitalMaximumValue(summoned, HITS));
 
 		if (!summoned.backpack)
 			var mochila := CreateItemAtLocation(summoned.x, summoned.y, summoned.z, 0x9b2, 1, summoned.realm);

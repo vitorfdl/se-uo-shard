@@ -121,30 +121,20 @@ program TrapWalkOn(mobile, trap)
       var diff     := GetTrapAC(danger);
       var dmg := getTrapDamage(strength, danger);
       
-		if (rollResistDice(mobile, DEXTERITY) > diff)
-         if (AP_GetTrueSkill(mobile, SABOTAGEM) < 6)
-            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmg := CInt(cdbl(dmg) * 0.5);
-         else
-            SendSysMessageEx(mobile, "Você evitou a armadilha", SSM_INFO);
-            dmg := 0;
+		if (!CheckBlockDodge(mobile, 0, 1))
+         SendSysMessageEx(mobile, "Você desviou da armadilha.", SSM_INFO);
+      else
+         DamageFLS(mobile, dmg, cfg.dmgtype);
+         performaction(mobile, 0x14);
+         if (dmg > 0)
+            if (CheckGender(mobile) == 2)
+               PlaySoundEffect( mobile, 0x32F );
+            elseif (CheckGender(mobile) == 1)
+               PlaySoundEffect( mobile, 0x441 );
+            endif
          endif
-      elseif (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
-         SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-         dmg := CInt(cdbl(dmg) * 0.5);
 		endif
-      
-      
-		DamageFLS(mobile, dmg, cfg.dmgtype);
-		performaction(mobile, 0x14);
-      if (dmg > 0)
-         if (CheckGender(mobile) == 2)
-            PlaySoundEffect( mobile, 0x32F );
-         elseif (CheckGender(mobile) == 1)
-            PlaySoundEffect( mobile, 0x441 );
-         endif
-      endif
-		sleep(10);
+      sleep(10);
 	dowhile (mobile.x == trap.x && mobile.y == trap.y && mobile.z == trap.z && !GetObjProperty(trap, "trap_inativa"));
 	
 	return 1;

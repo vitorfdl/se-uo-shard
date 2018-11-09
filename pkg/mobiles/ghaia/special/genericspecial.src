@@ -343,13 +343,6 @@ program loko(params)
 			foreach vital in (state.vitals)
 				foreach t in targ
                sleepms(2);
-               // if (state.resist_test && state.resist_test != "Nenhum")
-               //    if (rollResistDice(t, state.resist_test) > state.resist_diff)
-               //       SendSystemReport(t, "*resistido*");
-               //       continue;
-               //    endif
-               // endif
-
 					if (vital == "Hits")
 						DamageFLS(t, dmg, state.dmgtype, who);
 					elseif (vital == "Stam")

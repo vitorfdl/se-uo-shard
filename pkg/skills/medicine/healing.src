@@ -59,6 +59,7 @@ program UseBandage(mobile, bandage)
 	EraseObjProperty(targ, "curando");
 	
 	if ( targ.IsA(POLCLASS_CORPSE) )
+      var cd := GetCooldown(targ, "resurrect");
 		if (GetObjProperty(targ, "morto"))
 			SendSysMessageEx(mobile, "Alvo já esta morto.", SSM_FAIL);
 			return 0;
@@ -67,6 +68,9 @@ program UseBandage(mobile, bandage)
 			return 0;
 		elseif (bandage.amount < 5)
 			SendSysMessageEx(mobile, "Você precisa de 5 ataduras.", SSM_FAIL);
+			return 0;
+		elseif ( cd )
+			SendSysMessageEx(mobile, "Você deve aguardar {} segundos para estabilizar este corpo.".format(cd), SSM_FAIL);
 			return 0;
 		endif
 
@@ -84,19 +88,9 @@ program UseBandage(mobile, bandage)
 		elseif ( !GetObjProperty(targ, "owner") )
 			SendSysMessageEx(mobile, "O alvo esta morto.", SSM_FAIL);
 			return 0;
-		elseif ( !GetCooldown(targ, "resurrect") )
-			SendSysMessageEx(mobile, "O alvo esta morto.", SSM_FAIL);
-			SetObjProperty(targ, "morto", 1);
-			return;
-      // elseif ()
 		endif
 		return HealNpcCorpse(mobile, targ);
 	endif
-
-	// elseif (isBloodied(targ) && ((heal_skill == PRIMEIROS_SOCORROS && !HaveFeat(mobile, "Curandeiro") || ( heal_skill == TRATO_ANIMAIS && !HaveFeat(mobile, "Veterinário") ))))
-	// 	SendSysMessageEx(mobile, "Você não tem conhecimento suficiente para curar "+targ.name+".", SSM_FAIL);
-	// 	return 0;
-	// endif
 
 	var bonus  := 0;
 	var poison := 0;
@@ -125,9 +119,6 @@ endprogram
 
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
    var max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.4);
-   if (AP_GetTrueSkill(mobile, heal_skill) >= 3)
-      max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.8);
-   endif
 
    if ( cint(AP_GetVital(targ, "hits")) >= max_healing )
 		SendSysMessageEx(mobile, "Você não acha que suas ataduras farão mais efeito neste paciente.");
@@ -135,9 +126,9 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
    endif
 
 	var x := targ.x, y := targ.y;
-	var heal_amt := GetHealingAmt(2 * GetSkillBonus(mobile, heal_skill)) + bonus + RandomDiceRoll("2d5");
+	var heal_amt := cint(cdbl(AP_GetVitalMaximumValue(targ, "hits")) * 0.05);
 	if (mobile == targ)
-		heal_amt := heal_amt / 2;
+		// heal_amt := heal_amt / 2;
 		PrintText(mobile, "*usando ataduras em si mesmo*");
 	elseif ( Distance(mobile, targ) > 2 )
 		SendSysMessageEx(mobile, "Seu paciente está muito distante.");
@@ -156,15 +147,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 		return 0;
 	endif
 
-	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, heal_skill);
-	if ( roll <= 14 ) //SkillCheck(mobile, PRIMEIROS_SOCORROS, -1)
-		heal_amt := heal_amt / 2;
-	endif
-
-	if (heal_amt <= 2)
-		SendSysMessageEx(mobile, "A cura foi ineficaz.");
-		return 0;
-	elseif ( GetObjProperty(targ, "curando") > ReadGameClock() )
+	if ( GetObjProperty(targ, "curando") > ReadGameClock() )
 		SendSysMessageEx(mobile, "O alvo ja esta enfaixado", SSM_INFO);
 		return;
 	endif
@@ -228,7 +211,7 @@ function HealCorpse(mobile, targ)
 	name["corpo de "] := "";
 
 	PrintText(mobile, "*tentando estabilizar "+name+"*");
-	if ( !Wait(mobile, 10) )
+	if ( !Wait(mobile, 4) )
 		SendSysMessageEx(mobile, "Você interrompeu a cura.");
 		return 0;
 	endif

@@ -25,6 +25,8 @@ program block(who, shield)
    var shield_cd := cint(shield_cfg.BlockCooldown);
    if (!shield_cd) shield_cd := 8; endif
 
+   shield_cd := shield_cd + ( shield_cd * (AP_GetSkillMod(who, "Block") / 100));
+
    SendSysMessageEX(who, "Você está bloqueando ataques!", SSM_INFO);
    TS_StartCooldown(who, "dodge_block", shield_cd, 0, "Bloqueio está disponivel novamente.");
    TS_StartCooldown(who, "block", 2);

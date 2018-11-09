@@ -29,15 +29,13 @@ program animateSword(params)
    endforeach
    sleepms(100);
 
-   var dmg_dice := MageDiceTable("C", spellinfo.powered);
+   var dmg_dice := spellinfo.PowerMod[1];
    foreach mob in mobs
       PushMobile(who, 5 - Distance(who, mob), 1, mob);
-      if (rollResistDice(mob, CONSTITUTION) > spellinfo.dice_roll+8)
-         SendSystemReport(mob, "*resistiu*", SSM_FAIL, who);
-         SendSystemReport(mob, "*resistiu*", SSM_INFO);
-         DamageFLS(mob, (RandomDiceRoll(dmg_dice)+10)/2, DMG_PHYSICAL, who);
+      if (CheckBlockDodge(mob, 0, 1))
+         DamageFLS(mob, dmg_dice/2, DMG_PHYSICAL, who);
       else
-         DamageFLS(mob, RandomDiceRoll(dmg_dice)+10, DMG_PHYSICAL, who);
+         DamageFLS(mob, dmg_dice, DMG_PHYSICAL, who);
       endif
       sleepms(2);
    endforeach

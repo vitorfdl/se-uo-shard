@@ -35,7 +35,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 		DamageFLS(mobile, RandomDiceRoll(dmg_dice), DMG_FORCED);
 		MakeBleed(mobile);
 
-      if (rollResistDice(mobile, CONSTITUTION) > 16 )
+      if (RandomInt(22) > 16 )
          break;
       endif
 		

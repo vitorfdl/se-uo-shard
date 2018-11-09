@@ -48,7 +48,9 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
    endif
 
    var base_dmg;
-   if (attacker.isA(POLCLASS_NPC))
+   if (GetObjProperty(attacker, "dmgmod"))
+      base_dmg := GetObjProperty(attacker, "dmgmod");
+   elseif (attacker.isA(POLCLASS_NPC))
       base_dmg := wpn_elem.AttackDamage + attacker.damage_physical_mod;
    else
       base_dmg := wpn.dmg_mod;
@@ -158,7 +160,7 @@ function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor :=
    if (dmg_type == DMG_FORCED) return 0; endif
    
    if (defender.isA(POLCLASS_NPC))
-      var npctemplate := NPC_GetNPCConfig(defender.npctemplate);
+      var npctemplate := NPC_GetNPCConfig(defender.npctemplate) + defender.get_member("resist_{}_mod".format(dmg_type));
       return cint(npctemplate["{}Resist"]) / 100;
    endif
 
@@ -173,9 +175,10 @@ function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor :=
    if (is_massive)
       reduction := cint(defender.get_member("resist_{}".format(dmg_type)) / 6);
    else
-      reduction := armor.get_member("resist_{}".format(dmg_type));
+      reduction := armor.get_member("resist_{}".format(dmg_type)) + defender.get_member("resist_{}_mod".format(dmg_type));
    endif
 
+   if (reduction > 60) reduction := 60; endif
    return (reduction / 100);
 endfunction
 /* 
@@ -250,16 +253,10 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
       endif
    endif
 
-   var barrier := cint(GetObjProperty(defender, "#barrier"));
+   var barrier := AP_GetTrueSkill(defender, "Barrier");
    if (barrier > 0)
       barrier -= cint(dmg);
-      dmg := 0;
-      if (barrier < 0)
-         dmg := barrier * -1;
-         EraseObjProperty(defender, "#barrier");
-      else
-         SetObjProperty(defender, "#barrier", barrier);
-      endif
+      AP_SetTrueSkill(defender, "Barrier", barrier);
    endif
 
 	DisplayDamage(defender, cint(dmg), source);

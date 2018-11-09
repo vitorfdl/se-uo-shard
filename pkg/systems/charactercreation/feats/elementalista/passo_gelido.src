@@ -1,0 +1,51 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/shapes";
+include "include/utils";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":combat:combat";
+include ":magery:basicMagery";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	// var targ := params[3];
+	params := 0; // No longer needed
+
+   PlaySoundEffect(who, 0x1FB);
+   for i := 0 to 7
+      var mod := GetModByFacing(i);
+      mod[1] *= 4;
+      mod[2] *= 4;
+      PlayMovingEffectXYZ(who.x, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
+      PlayMovingEffectXYZ(who.x, who.y-1, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
+      PlayMovingEffectXYZ(who.x+1, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
+      sleepms(2);
+   endfor
+
+   var mobs := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, LIST_IGNORE_Z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+   var dmg_dice := spellinfo.PowerMod[1];
+   foreach mob in mobs
+      PushMobile(who, 5 - Distance(who, mob), 1, mob);
+      sleepms(2);
+   endforeach
+
+   sleepms(1000);
+   foreach mob in mobs
+      DamageFLS(mob, dmg_dice, DMG_ENERGY, who);
+      TS_StartTimer(mob, "tombar", 10, 1, who);
+      sleepms(2);
+   endforeach
+
+	return 1;
+endprogram
+
+
+//  sound

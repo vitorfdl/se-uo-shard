@@ -55,18 +55,13 @@ function RemoveEquipmentMods(who, item)
 	endforeach
    
    var item_e := itemdesc[item.objtype];
-	if (item_e.Pericia)
-      if (!HaveSkill(who, item_e.Pericia))
-         var value := cint(GetObjProperty(who, "ArmorPenalty")) -1;
-         SetObjProperty(who, "ArmorPenalty", value);
-      endif
-
-      if (item_e.Pericia["Pesada"])
+	if (item_e.ArmorType)
+      if (item_e.ArmorType["Pesada"])
+         AP_SetSkillMod(who, "Dodge", AP_GetSkillMod(who, "Dodge") + 1);
          who.setToughness(-3);
-      elseif (item_e.Pericia["Média"])
+      elseif (item_e.ArmorType["Leve"])
+         AP_SetTrueSkill(who, "FeatConsume", AP_GetTrueSkill(who, "FeatConsume") - 5);
          who.setToughness(-2);
-      elseif (item_e.Pericia["Leve"])
-         who.setToughness(-1);
       endif
 	endif
 
@@ -82,17 +77,17 @@ function RemoveEquipmentMods(who, item)
 	endif
    
 	foreach mod in (mods.keys())
-		if (mod == "strmod")
-			AP_ModifyStatMod(who, STRENGTH, (-1)*Cint( mods["strmod"] ));
-		elseif (mod == "dexmod")
-			AP_ModifyStatMod(who, DEXTERITY, (-1)*Cint( mods["dexmod"] ));
-		elseif (mod == "intmod")
-			AP_ModifyStatMod(who, INTELLIGENCE, (-1)*Cint( mods["intmod"] ));
-		elseif (mod == "conmod")
-			AP_ModifyStatMod(who, CONSTITUTION, (-1)*Cint( mods["conmod"] ) );
-		elseif (mod == "wismod")
-			AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
-		elseif (mod == "manamod")
+		// if (mod == "strmod")
+		// 	AP_ModifyStatMod(who, STRENGTH, (-1)*Cint( mods["strmod"] ));
+		// elseif (mod == "dexmod")
+		// 	AP_ModifyStatMod(who, DEXTERITY, (-1)*Cint( mods["dexmod"] ));
+		// elseif (mod == "intmod")
+		// 	AP_ModifyStatMod(who, INTELLIGENCE, (-1)*Cint( mods["intmod"] ));
+		// elseif (mod == "conmod")
+		// 	AP_ModifyStatMod(who, CONSTITUTION, (-1)*Cint( mods["conmod"] ) );
+		// elseif (mod == "wismod")
+		// 	AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
+		if (mod == "manamod")
          SetObjProperty(who, "manamod", Cint(GetObjProperty(who, "manamod") - Cint( mods["manamod"] )));
       elseif (mod == "toughmod")
          who.setToughness(cint(mods["toughmod"])*(-1));
@@ -115,7 +110,7 @@ function RemoveEquipmentMods(who, item)
          endforeach
          AP_SaveVitalRegenRateProp(who, regen_rate);
 		else
-			AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
+			// AP_ModifySkillMod(who, mod, (-1)*Cint(mods[mod]));
 		endif
    endforeach
 

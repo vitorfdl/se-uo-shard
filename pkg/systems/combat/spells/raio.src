@@ -18,13 +18,13 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   if (!GetGlobalProperty("weather"))
-      var items := ListItemsNearLocationOfType( targ.x, targ.y, targ.z+10, 8, 0x9BCB, targ.realm);
-      if (!items[1])
-         SendSysMessageEx(who, "Essa magia só pode ser usada próxima a nuvens carregadas ou em climas tempestuosos", SSM_FAIL);
-         return;
-      endif
-   endif
+   // if (!GetGlobalProperty("weather"))
+   //    var items := ListItemsNearLocationOfType( targ.x, targ.y, targ.z+10, 8, 0x9BCB, targ.realm);
+   //    if (!items[1])
+   //       SendSysMessageEx(who, "Essa magia só pode ser usada próxima a nuvens carregadas ou em climas tempestuosos", SSM_FAIL);
+   //       return;
+   //    endif
+   // endif
 
    PlaySoundEffect(who, 0x5CF);
 
@@ -33,7 +33,7 @@ program animateSword(params)
       sleepms(150);
    endfor
 
-   var dmg_dice := MageDiceTable("A", spellinfo.powered);
+   var dmg_dice := spellinfo.PowerMod[1] + cint(AP_GetVital(targ, "hits") * 0.2);
    DamageFLS(targ, RandomDiceRoll(dmg_dice)+14, DMG_ENERGY, who);
 	return 1;
 endprogram
