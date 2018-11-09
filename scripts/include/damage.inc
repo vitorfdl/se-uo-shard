@@ -255,8 +255,14 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 
    var barrier := AP_GetTrueSkill(defender, "Barrier");
    if (barrier > 0)
+      var new_dmg := dmg - barrier;
       barrier -= cint(dmg);
+      dmg := new_dmg;
       AP_SetTrueSkill(defender, "Barrier", barrier);
+   endif
+
+   if (dmg < 0)
+      return;
    endif
 
 	DisplayDamage(defender, cint(dmg), source);
