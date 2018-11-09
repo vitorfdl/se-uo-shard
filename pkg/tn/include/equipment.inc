@@ -120,7 +120,7 @@ function RemoveEquipmentMods(who, item)
 endfunction
 
 function CheckLevelRequirement(who, item)
-   // if (who.cmdlevel >= 3) return 1; endif
+   if (who.cmdlevel >= 3) return 1; endif
    var chardata := GetObjProperty(who, "chardata");
    if (!chardata) return 1; endif
 

@@ -218,11 +218,10 @@ function HealCorpse(mobile, targ)
 
 	CreateItemInBackpack(mobile, 0xE20, RandomInt(5)+1);
 
-	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, PRIMEIROS_SOCORROS);
 	if ( GetObjProperty(targ,"morto") )
 		SendSysMessageEx(mobile, "o alvo está morto", SSM_FAIL);
 		return;
-	elseif ( roll >= 18 )
+	else
 		ExpGain(mobile, "major");
 		mobile.SetAchievement("heal_corpse", 1);
 		SendSysMessageEx(mobile, "Você estabilizou "+name);
@@ -231,8 +230,6 @@ function HealCorpse(mobile, targ)
 		// if (restauraDP && owner)
 		// 	AP_SetVital(owner, "DP", AP_GetVital(owner, "DP")+10);
 		// endif
-	else
-		SendSystemReport(mobile, "Você não conseguiu estabilizar "+name+".");
 	endif
 
 	return 1;
