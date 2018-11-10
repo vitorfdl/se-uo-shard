@@ -248,6 +248,14 @@ exported function Caracteristica(who, carac)
    return cint(chardata.carac[carac]);
 endfunction
 
+exported function getClass(who)
+	var chardata := GetObjProperty(who, "chardata");
+   if (chardata)
+      return chardata.classes[1].id;
+   endif   
+   return "None";
+endfunction
+
 exported function isCaster(who)
 	var chardata := GetObjProperty(who, "chardata");
    if (chardata)

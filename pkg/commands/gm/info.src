@@ -462,6 +462,8 @@ function GetCustom(targ, property)
 			return "{} - {} / {}".format(cint(targ.GetTotalExp()), cint(targ.GetExp()), cint(targ.getMaxExp()));
 		"data_de_criação":
 			return StrFormatTime("%d/%m/%y", cint(GetObjProperty(targ, "createdate")));
+      "classe":
+         return targ.getClass();
       "tempo_de_vida":
          var chardata := getObjProperty(targ, "chardata");
          return GetTimeStamp((chardata.lifetime) - cint(chardata.lifetime_penalty));

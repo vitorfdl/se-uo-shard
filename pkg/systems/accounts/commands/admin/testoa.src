@@ -20,9 +20,12 @@ include ":crafting:craft_props";
 include ":gumps:playerselectiongump";
 
 program oafeatures_sendpacket(who, text)
-   var chardata := GetObjProperty(who, "chardata");
-   chardata.subclasses[2].id := "Alquimista";
-   SetObjProperty(who, "chardata", chardata);
+   var targ := Target(who);
+   if (!targ) return; endif
+
+   var chardata := GetObjProperty(targ, "chardata");
+   chardata.classes[1].level := cint(text);
+   SetObjProperty(targ, "chardata", chardata);
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 
