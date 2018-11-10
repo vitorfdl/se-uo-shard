@@ -33,7 +33,11 @@ program animateSword(params)
       sleepms(150);
    endfor
 
-   var dmg_dice := spellinfo.PowerMod[1] + cint(AP_GetVital(targ, "hits") * 0.2);
+   var dmg_dice := spellinfo.PowerMod[1];
+   if (RandomInt(100) <= 80) 
+      PrintText(targ, "Paralisado", SSM_FAIL);
+      TS_StartTimer(targ, "paralysis", 3, who);
+   endif
    DamageFLS(targ, dmg_dice, DMG_ENERGY, who);
 	return 1;
 endprogram

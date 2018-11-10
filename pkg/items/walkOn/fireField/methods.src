@@ -25,6 +25,19 @@ exported function GetDuration(field)
 	return duration;
 endfunction
 
+exported function SetDamage(field, damage)
+	damage := CInt(damage);
+	
+	return SetObjProperty(field, "damage", damage);
+endfunction
+
+exported function GetDamage(field)
+	var damage := CInt(GetObjProperty(field, "damage"));
+   if (!damage) damage := 40; endif
+   
+	return damage;
+endfunction
+
 exported function IsExpired(field)
 	var duration := GetDuration(field);
 	if ( !duration )

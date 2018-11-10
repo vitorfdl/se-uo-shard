@@ -61,6 +61,7 @@ program SpellScript(params)
       var item := CreateItemAtLocation(p.x, p.y, z, cint(flame));
       item.SetDuration(duration);
       item.SetOwner(who);
+      item.SetDamage(spellinfo.PowerMod[2]);
       foreach mobile in ListMobilesNearLocationEx( item.x, item.y, item.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
 			if (!CheckIfisAlly(who, mobile));
             if (CheckBlockDodge(mobile, 0, 1))

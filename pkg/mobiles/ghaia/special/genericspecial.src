@@ -491,12 +491,12 @@ program loko(params)
          var targ := selectOpponent(who, state.target, state.conedist);
          var dmg := CalculateRawDamage(who, 0);
          var trilhainfo := struct{
-            PowerMod := array{CalculatePowerPercent(dmg, state.dice_dmg)},
+            PowerMod := array{CalculatePowerPercent(dmg, state.dice_dmg), CalculatePowerPercent(dmg, state.dice_dmg-40)},
             Name := state.trilha_type
          };
 			foreach t in targ
             if (!t.z) t.z := who.z; endif
-            start_script(":charactercreation:feats/elementalista/mtrilha_de_fogo", array{who, trilhainfo, t});
+            start_script(":charactercreation:feats/elementalista/trilha_de_fogo", array{who, trilhainfo, t});
             sleepms(2);
          endforeach
 		elseif (state.type == "Summon Npcs") // Summonar NPC

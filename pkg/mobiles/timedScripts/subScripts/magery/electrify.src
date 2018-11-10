@@ -16,33 +16,15 @@ include ":combat:combat";
 
 function StartScript(mobile, attacker := 0, level := 0)
    var dmg_roll;
-   case (level)
-      0: dmg_roll :="2d10+1";
-      1: dmg_roll :="4d10+2";
-      2: dmg_roll :="5d12+6";
-      3: dmg_roll :="6d20+8";
-      4: dmg_roll :="8d20+12";
-      default: dmg_roll := level;
-   endcase
-
    while (1)
-      PlayObjectCenteredEffectEx( mobile,  0x19AB, 5, 30, 0, 4, 0);
-      DamageFLS(mobile, RandomDiceRoll(dmg_roll), DMG_FIRE, attacker);
-      if (RandomInt(2) == 1)
-         mobile.frozen := 1;
-         if (!mobile.npctemplate)
-            PlayCustomSound(mobile, 23);
-         else
-            PlayHurtSound(mobile);
-         endif
-         SendSysMessageEx(mobile, "Você está em pânico", SSM_FAIL);
-         sleep(1);
-         mobile.frozen := 0;
-      else
-         sleep(1);
-      endif
+      var mobiles := ListMobilesNearLocation(mobile.x, mobile.y, mobile.z, 1, mobile.realm);
+      foreach mob in mobiles
+         LightningEffect( mob );
+         DamageFLS(mobile, level, DMG_ENERGY, attacker);
+      endforeach
       sleep(1);
    endwhile
+
 	return 1;
 endfunction
 

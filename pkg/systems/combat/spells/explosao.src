@@ -25,7 +25,7 @@ program explosao(params)
    foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
       if (!CheckBlockDodge(mobile))
          DamageFLS(mobile, spellinfo.PowerMod[1], DMG_FIRE, who);
-         if (RandomInt(100) < 15) TS_StartTimer(mobile, "immolation", 10, 0);	endif
+         if (RandomInt(100) < 15) TS_StartTimer(mobile, "immolation", 10, 1);	endif
       endif
       sleepms(2);
    endforeach
