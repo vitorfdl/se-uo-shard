@@ -386,14 +386,14 @@ function CombatEventsOptions(who, state)
       var input_list := array{};
       input_list.append(struct{ "title" := "Quem vai ser checado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual tipo de defesa será checado?", "marked" := resist_choice, "checkbox" :=  resists });
-      input_list.append(struct{ "title" := "Passar para 'Previous Target'?", "marked" := cint(state.successonly)+1, "radio" :=  array{"Se Def Ativa", "Se Def Não Ativa"} });
+      input_list.append(struct{ "title" := "Passar para 'Previous Target'?", "marked" := cint(state.successonly)+1, "radio" :=  array{"Se Def Não Ativa", "Se Def Ativa"} });
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
       
       state.target        := output[1];
       state.resist_test := output[2];
-      state.successonly := output[4] == "Ação Ativada";
+      state.successonly := output[4] == "Se Def Ativa";
       state.conedist    := cint(output[5]);
    elseif ( opt == "Dash")
       var input_list := array{};

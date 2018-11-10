@@ -393,7 +393,7 @@ function TriggerHabilitie(who, hab)
 
       if (!hab.IgnoreBlock && TS_GetCooldown(targ, "block"))
          EraseObjProperty(who, "#Casting");
-         return PrintText(targ, "*bloquado*", SSM_INFO);;
+         return PrintText(targ, "*bloqueado*", SSM_INFO);;
       endif
    endif
 

@@ -226,13 +226,11 @@ program loko(params)
 			var targ := selectOpponent(who, state.target, state.conedist);
          var resist_list := array{};
 			foreach t in targ
-            foreach resist in (state.resist_test)
-               if (!TS_GetCooldown(who, resist))
-                  if (!state.successonly) resist_list.append(t); endif
-               else
-                  if (state.successonly) resist_list.append(t); endif
-               endif
-            endforeach
+            if (CheckBlockDodge(t, ("block" in state.resist_test), ("dodge" in state.resist_test)))
+               if (state.successonly) resist_list.append(t); endif
+            else
+               if (!state.successonly) resist_list.append(t); endif
+            endif
             sleepms(2);
 			endforeach
          
