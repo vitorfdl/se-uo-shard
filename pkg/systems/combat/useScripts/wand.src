@@ -10,9 +10,9 @@ include ":combat:combat";
 
 program usewand(who, wand)
    if (!who.isCaster())
-      SendSysMessageEx(who, "Apenas o caminho do Sábio pode usar armas mágicas.");
+      return SendSysMessageEx(who, "Apenas o caminho do Sábio pode usar armas mágicas.");
    elseif (wand != who.weapon)
-      SendSysMessageEx(who, "A arma precisa estar equipada para ser usada.");
+      return SendSysMessageEx(who, "A arma precisa estar equipada para ser usada.");
    endif
 
    var wand_cfg := GetItemCFGInfo(who, wand);
