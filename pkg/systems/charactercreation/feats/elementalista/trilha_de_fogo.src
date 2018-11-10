@@ -36,7 +36,7 @@ program SpellScript(params)
       if (face % 2)
          flame := 0x3920;
       endif
-      dmg_type := 1;
+      dmg_type := DMG_POISON;
    elseif (spellinfo.Name["Eletrecidade"])
       flame := 0x3967;
       if (face % 2)
