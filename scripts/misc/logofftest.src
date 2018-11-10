@@ -16,7 +16,7 @@ program core_logoffTest(who)
    sleep(3);
 	// Send event to the 'timed scripts' package to run log off scripts.
 	if ( (FindAccount(who.acctname).defaultcmdlevel > 1) || who.cmdlevel > 1 || (GetObjProperty(who,"Delete")) 
-		|| (who.x > 3991 && who.y > 2589 && who.x < 4074 && who.y < 2645 ))
+		|| (who.x > 3944 && who.y > 2581 && who.x < 4124 && who.y < 2646 ))
 		// Let staff or characters being deleted/banned logout immediately.
 		return 0;
 	endif
