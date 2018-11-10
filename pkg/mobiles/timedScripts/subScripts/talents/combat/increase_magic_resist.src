@@ -1,0 +1,48 @@
+/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include "include/damage";
+
+function StartScript(mobile, attacker := 0, level := 0)
+   var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+   foreach resist in resists
+      var res := mobile.get_member("resist_{}_mod".format(resist));
+      mobile.set_member("resist_{}_mod".format(resist), res + level);
+   endforeach
+   
+   PrintText(mobile, "Aumento de Defesa Mágica", SSM_INFO);
+   return 1;
+endfunction
+
+function EndScript(mobile, level)
+   var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+   foreach resist in resists
+      var res := mobile.get_member("resist_{}_mod".format(resist));
+      mobile.set_member("resist_{}_mod".format(resist), res - level);
+   endforeach
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile, level);
+      elseif (type == "LogOff")
+         return;
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

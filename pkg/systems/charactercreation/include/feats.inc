@@ -33,6 +33,7 @@ function getFeatById(feat_id, get_class := 0)
       TargetAlign := GetConfigString(elem, "TargetAlign"),
       Group := GetConfigInt(elem, "Group"),
       Level := GetConfigInt(elem, "Level"),
+      RequireMagicWeapon := GetConfigInt(elem, "RequireMagicWeapon"),
       IgnoreDodge := GetConfigInt(elem, "IgnoreDodge"),
       IgnoreBlock := GetConfigInt(elem, "IgnoreBlock"),
       Experience := GetConfigInt(elem, "Experience"),
@@ -281,15 +282,16 @@ function ChooseTarget(mobile, feat)
             break;
          endif
       endwhile
-      if (mobile != targ)
+      if (mobile != targ && targ)
          TurnObjectToward(mobile, targ.x, targ.y);
       endif
    elseif (feat.targ == "Area")
       while (1)
          PrintTextPrivate(mobile, "'Escolha o ponto alvo.'", mobile, SSM_INFO);
-//   		SendSysMessageEx(mobile, "Escolha o ponto onde a magia sera castada.", SSM_REQUEST);
          targ := TargetCoordinates(mobile);
-         TurnObjectToward(mobile, targ.x, targ.y);
+         if (targ)
+            TurnObjectToward(mobile, targ.x, targ.y);
+         endif
          if(!feat.radius)
             break;
          elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < feat.radius)
@@ -308,6 +310,8 @@ endfunction
 function TriggerHabilitie(who, hab)
 	if ( TS_GetCooldown(who, "hab_{}".format(hab.FeatID)) != error)
 		return SendSystemReport(who, "'Habilidade em Cooldown!'", SSM_FAIL);
+   elseif (hab.RequireMagicWeapon && !who.weapon.isMagicWeapon())
+		return SendSystemReport(who, "'Você precisa estar equipado com uma arma mágica para esta habilidade.'", SSM_FAIL);
 	endif
    
    SetObjProperty(who, "#Casting", 1);
@@ -340,7 +344,8 @@ function TriggerHabilitie(who, hab)
       var moveCheck := Start_Script(":magery:moveCheck", array{who, Getpid()});
 
       while (cycles)
-         if ( Events_Waiting() || TS_GetTimerInfo(who, "tombar") )
+         if ( Events_Waiting() || TS_GetTimerInfo(who, "tombar") || who.frozen || who.paralyzed )
+            EraseObjProperty(who, "#Casting");
             SendSysMessageEx(who, "Você não conseguiu se concentrar o suficiente para usar esta habilidade.", SSM_FAIL);
             // FailSpell(who);
             return 0;
@@ -382,10 +387,12 @@ function TriggerHabilitie(who, hab)
       endif
 
       if (!hab.IgnoreDodge && TS_GetCooldown(targ, "dodge"))
+         EraseObjProperty(who, "#Casting");
          return PrintText(targ, "*esquivado*", SSM_INFO);;
       endif
 
       if (!hab.IgnoreBlock && TS_GetCooldown(targ, "block"))
+         EraseObjProperty(who, "#Casting");
          return PrintText(targ, "*bloquado*", SSM_INFO);;
       endif
    endif

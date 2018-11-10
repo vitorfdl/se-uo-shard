@@ -239,6 +239,11 @@ endfunction
 function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
 	dmg := Cint(dmg);
 
+   if (defender.connected && source.connected)
+      if (TS_GetCooldown(defender, "attack_low_block"))
+         TS_LowerDuration(defender, "dodge_block", 1, 1);
+      endif
+   endif
    if (type != DMG_FORCED)
       dmg := dmg - (dmg * CalculateDefenseReduction(defender, type));
    endif

@@ -1,0 +1,34 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program defensor(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var item := who.shield;
+   if (!item) 
+      item := who.weapon;
+      if (!item)
+         return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos ou um escudo.", SSM_FAIL);
+      endif
+   endif
+
+   var weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   if (!weapon_cfg.TwoHanded && !who.shield)
+      return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos ou um escudo.", SSM_FAIL);
+   endif
+
+   TS_StartCooldown(who, "blockheal", 3);
+   Start_Script(":combat:useScripts/shield", array{who, who.shield});
+	return 1;
+endprogram

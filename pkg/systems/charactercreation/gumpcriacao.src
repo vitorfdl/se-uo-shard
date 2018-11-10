@@ -116,10 +116,10 @@ function StartCharacterCreation(who, byref chardata)
       
       chardata := struct{
          current_class := "",
-         caminhos := array{"Sábio"},
+         caminhos := array{"Obstinado"},
          subclasses:= array{},
          classes := array{struct{
-            id := "Elementalista",
+            id := "Furioso",
             exp := 0,
             level := 1,
             habs := array{},
@@ -257,8 +257,8 @@ function CharacterCreationGump(who, byref chardata)
 
       //caminho
       GFTextLine(gump, 189, 269, 2212, "Caminho");
-      // GFTextLine(gump, 109-10, 293, 1152, "Obstinado");
-      // GFAddButton(gump, 85-10, 293, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
+      GFTextLine(gump, 109-10, 293, 1152, "Obstinado");
+      GFAddButton(gump, 85-10, 293, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
       GFTextLine(gump, 222-10, 293, 1152, "Sábio");
       GFAddButton(gump, 199-10, 293, 210 + cint(chardata.caminhos[1] == "Sábio"), 211, GF_CLOSE_BTN, 62);
       // GFTextLine(gump, 313, 293, 1152, "Sagaz");

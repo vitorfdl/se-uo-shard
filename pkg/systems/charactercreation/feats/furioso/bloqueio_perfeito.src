@@ -1,0 +1,31 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program defensor(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   if (!who.weapon)
+      return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
+   endif
+
+   var weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   if (!weapon_cfg.TwoHanded)
+      return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
+   endif
+
+   TS_StartCooldown(who, "blockperfect", 3);
+   SetObjProperty(who, "#blockperfect_dmg", spellinfo.PowerMod[1]);
+   Start_Script(":combat:useScripts/shield", array{who, who.shield});
+	return 1;
+endprogram

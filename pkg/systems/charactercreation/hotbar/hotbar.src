@@ -14,7 +14,7 @@ function BuildSelectorGump(who, byref gump, raw_x, raw_y)
    var feat_list := GetFeatList(who, RETURN_ACTIVE_ONLY);
    if (!feat_list) return; endif
    
-   var width := 15+(48*(feat_list.size()+3));
+   var width := 15+(48*(feat_list.size()+4));
    if (selector_open > 1)
       raw_x += (50 * (selector_open-1));
    endif
@@ -29,15 +29,18 @@ function BuildSelectorGump(who, byref gump, raw_x, raw_y)
    endforeach
 
 	GFAddButton(gump, pos_x, raw_y+13, 2248, 2248, GF_CLOSE_BTN, 897);
-   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esquiva</basefont></center>Ativa sua ação de esquiva, permitindo esquivar de golpes e habilidades com alvo único por 2 segundos.");
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esquiva</basefont></center>Ativa sua ação de esquiva, permitindo esquivar de golpes e habilidades por 2 segundos.");
 
-	GFAddButton(gump, pos_x+48, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 898);
-	GFGumpPic(gump, pos_x+48+2, raw_y+19, 27, 1485);
+	GFAddButton(gump, pos_x+48, raw_y+13, 0x9BA5, 0x9BA5, GF_CLOSE_BTN, 896);
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Bloqueio</basefont></center>Ativa sua ação de bloqueio, permitindo bloquear de golpes e habilidades por 2 segundos.");
+
+	GFAddButton(gump, pos_x+48+48, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 898);
+	GFGumpPic(gump, pos_x+48+48+2, raw_y+19, 27, 1485);
    GFTooltipText(gump, "<center><basefont color=#7FFFD4>Atalho de Item</basefont></center>Selecione um item ou consumível para adicionar a barra de atalho");
-	GFTextLine(gump, pos_x+48+8, raw_y+24, 1152, "Item");
+	GFTextLine(gump, pos_x+48+48+8, raw_y+24, 1152, "Item");
 
-	GFAddButton(gump, pos_x+48+48, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
-	GFGumpPic(gump, pos_x+48+48, raw_y+13, 21012, 1485);
+	GFAddButton(gump, pos_x+48+48+48, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
+	GFGumpPic(gump, pos_x+48+48+48, raw_y+13, 21012, 1485);
    GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esvaziar Atalho</basefont></center>");
 endfunction
 
@@ -109,6 +112,7 @@ function BuildHotBar(who, byref hotbar)
 endfunction
 
 program startHotBar(who, spos)
+   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    if (!GetObjProperty(who, "chardata")) return; endif 
    
    var hotbar := GetObjProperty(who, "hotbar");
@@ -121,9 +125,11 @@ program startHotBar(who, spos)
          hotbar.shortcuts[selector_open] := struct{ id := res[0] - 900};
          selector_open := 0;
          SetobjProperty(who, "hotbar", hotbar);
-      elseif (res[0] >= 897)
+      elseif (res[0] >= 896)
          if (res[0] == 897)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:esquiva", Icon := 2248, cooldown := "dodge_block" };
+         elseif(res[0] == 896)
+            hotbar.shortcuts[selector_open] := struct{ script := ":combat:useScripts/shield", Icon := 0x9BA5, cooldown := "dodge_block" };
          elseif (res[0] == 898)
             SendSysMessageEx(who, "Qual item deseja adicionar a barra de atalho?", SSM_REQUEST);
             var item := Target(who);

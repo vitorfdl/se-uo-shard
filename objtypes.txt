@@ -1747,7 +1747,9 @@
 # 0x3dd9 - 0x4024 unused
 0x4025 gorgoyglechest containers
 0x4026 gorgoyglechest2 containers
-# 0x4027 - 0x4043 unused
+# 0x4027 - 0x4036 unused
+0x4037 habsenhorguerra charactercreation
+# 0x4038 - 0x4043 unused
 0x4044 ornamentedmirror woodworking
 # 0x4045 unused
 0x4046 floormirror woodworking

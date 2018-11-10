@@ -14,7 +14,7 @@ function StartScript(mobile, attacker := 0, level := 0)
    var dmgreduction := cint(GetObjProperty(mobile, "dmgreduction"));
    dmgreduction -= level;
    SetObjProperty(mobile, "dmgreduction", dmgreduction);
-   PrintText(mobile, "Redução de Dano", SSM_FAIL);
+   PrintText(mobile, "Redução de Poder", SSM_FAIL);
    return 1;
 endfunction
 

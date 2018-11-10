@@ -101,7 +101,10 @@ program Attack(params)
    if ( CheckBlockDodge(defender, 0) )
 		MissHit(attacker, defender);
       return;
-   elseif (CheckBlockDodge(defender, 0, 1))
+   elseif (CheckBlockDodge(defender, 1, 0))
+      if (TS_GetCooldown(defender, "blockperfect"))
+         Start_Script(":charactercreation:feats/furioso/bloqueio_perfeito_effect", array{defender, attacker});
+      endif
 		PlayHitSounds(attacker, defender);
       return;
    elseif (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow())
@@ -119,7 +122,7 @@ program Attack(params)
    endif
 
    PlayHitSounds(attacker, defender);
-   // ExpGain(attacker, 1);
+   ExpGain(attacker, 2);
 
    // if (!defender.npctemplate && defender.shield)
    //    if (wpn_a_elem.ProjectileAnim)

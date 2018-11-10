@@ -5,24 +5,34 @@ include ":attributes:attributes";
 include ":charactercreation:feats";
 include ":timedscripts:timedScripts";
 include "include/facings";
+include "include/utils";
 include "include/damage";
 include ":combat:combat";
 
 program block(who, shield)
-   if (shield != who.shield)
-      return;
+   _resolveParams(who, shield);
+   if (TS_GetCooldown(who, "dodge_block"))
+		return SendSysMessageEX(who, "Bloqueio em Cooldown!", SSM_FAIL);
+   endif
+
+   var item := who.shield;
+   if (!item) 
+      item := who.weapon;
+      if (!item)
+         return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos ou um escudo.", SSM_FAIL);
+      endif
+   endif
+
+   var weapon_cfg := GetItemCFGInfo(who, item);
+   if (!(weapon_cfg.WeaponType in array{"greatsword", "axe", "spear"}) && !who.shield)
+      return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos ou um escudo.", SSM_FAIL);
    endif
    
-   if (!shield)
-		return SendSysMessageEX(who, "Você precisa estar equipando um escudo ou espada gigante!", SSM_FAIL);
-   elseif (TS_GetCooldown(who, "dodge_block"))
-		return SendSysMessageEX(who, "Bloqueio em Cooldown!", SSM_FAIL);
-   elseif (!AP_ConsumeVital(who, STAMINA, 4))
+   if (!AP_ConsumeVital(who, STAMINA, 4))
       return SendSysMessageEX(who, "Vigor insuficiente!", SSM_FAIL);
    endif
 
-   var shield_cfg := GetItemCFGInfo(who, shield);
-   var shield_cd := cint(shield_cfg.BlockCooldown);
+   var shield_cd := cint(weapon_cfg.BlockCooldown);
    if (!shield_cd) shield_cd := 8; endif
 
    shield_cd := shield_cd + ( shield_cd * (AP_GetSkillMod(who, "Block") / 100));

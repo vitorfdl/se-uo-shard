@@ -9,6 +9,12 @@ function _ifElse(a,b,c)
    return c;
 endfunction
 
+function _resolveParams(byref a, byref b)
+   if (typeof(a) == "Array")
+      b := a[2];
+      a := a[1];
+   endif
+endfunction
 function randomPlace(loc, radius := 1)
 	var y, x;
    case (RandomInt(3)+1)

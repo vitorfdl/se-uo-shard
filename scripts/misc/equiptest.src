@@ -25,6 +25,7 @@ program EquipTest(mobile, item, start_up)
 	endif
 
 	if ( !mobile.cmdlevel )
+   
       if ( item.graphic IN array{9920, 9930} )
          var mounted := GetEquipmentByLayer(mobile, 0x19);
          if ( !mounted )
@@ -38,6 +39,16 @@ program EquipTest(mobile, item, start_up)
          return 0;
       endif
 
+      if (!CheckLevelRequirement(mobile, item))
+         SendSysMessageEx(mobile, "Você não tem mínimo de level exigido para equipar esta arma.", SSM_FAIL);
+         return 0;
+      endif
+
+      if (item.isMagicWeapon() && !mobile.isCaster())
+         SendSysMessageEx(mobile, "Apenas o caminho do Sábio pode equipar isso..", SSM_FAIL);
+         return 0;
+      endif
+      
       if (mobile.hidden)
          var zones := CS_GetArmorZone(item);
          if ("Body" IN zones || "Arms" IN zones || "Legs/feet" IN zones)

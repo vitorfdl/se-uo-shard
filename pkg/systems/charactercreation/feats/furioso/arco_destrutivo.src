@@ -1,0 +1,50 @@
+use os;
+
+include "include/say";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+include ":fls_core:fls_characters";
+include "include/client";
+include "include/shapes";
+
+
+program startTalent(param)
+   var who := param[1];
+   var hab := param[2];
+   var res := ataquegiratorio(who, hab);
+endprogram
+
+function ataquegiratorio(who, hab)
+   var weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   if (!who.weapon || !(weapon_cfg.WeaponType in array{"greatsword", "axe", "spear", "dualsword"}))
+      return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
+   endif
+
+	who.SetWarMode(1);
+   PrintText(who, "Girando a Arma");
+	PlaySoundEffect(who, 0x520);
+
+	var alreadydamaged := array{};
+	who.SetWarMode(1);
+   PrintText(who, "*girando {}".format(who.weapon.desc));
+
+
+   var positions := GetConeCoordsInFront(who.x, who.y, who.facing, 3);
+   foreach pos in positions
+      var mobiles := ListMobilesNearLocation(pos[1], pos[2], who.z, 0, who.realm);
+      foreach mobile in mobiles
+         if (!CheckBlockDodge(mobile) && !CheckIfIsAlly(who, mobile))
+            PlayMovingEffect( who, mobile, 0x22C6, 10);
+            DamageFLS(mobile, hab.PowerMod[1], DMG_PHYSICAL, who);
+         endif
+         sleepms(2);
+      endforeach
+      sleepms(2);
+   endforeach
+
+   for b := 1 to 3
+	   PlayAttackAnimation(who, weapon_cfg);
+      sleepms(300);
+   endfor
+   return 1;
+endfunction

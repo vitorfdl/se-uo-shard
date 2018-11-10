@@ -26,15 +26,10 @@ program equipweapon(who, item, startup)
 
 		SetName(who, who.name);	
 	endif
-				
+
 	if (who.npctemplate)
 		return 1;
 	endif
-
-   if (!CheckLevelRequirement(who, item))
-      SendSysMessageEx(who, "Você não tem mínimo de level exigido para equipar esta arma.", SSM_FAIL);
-      return 0;
-   endif
 
 	set_critical(1);
 	var hostiles := ListHostiles( who );

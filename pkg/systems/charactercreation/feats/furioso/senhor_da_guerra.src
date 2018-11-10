@@ -1,0 +1,24 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program defensor(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var item := CreateItemAtLocation( who.x, who.y, who.z, 0x4037, 1 );
+   if (item)
+      PlaySoundEffect(item, 0x5A8);
+      SetObjProperty(item, "owner", who.serial);
+      PrintText(item, "Estandarte de {}".format(who.name), SSM_INFO);
+   endif
+endprogram

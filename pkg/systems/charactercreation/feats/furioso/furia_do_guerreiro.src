@@ -1,0 +1,26 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program defensor(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+	PlayCustomSound( who, 33 );
+
+   PrintText(who, "*está em fúria*", SSM_FAIL);
+
+   TS_StartCooldown(who, "blockperfect", 3);
+   SetObjProperty(who, "#blockperfect_dmg", spellinfo.PowerMod[1]);
+   Start_Script(":combat:useScripts/shield", array{who, who.shield});
+	return 1;
+endprogram

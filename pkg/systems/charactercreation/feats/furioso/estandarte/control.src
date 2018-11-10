@@ -1,0 +1,38 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/utils";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program estandarte(item)
+   var time := 4;
+   var owner;
+   while (!owner && item && time)
+      owner := GetObjProperty(item, "owner");
+      time -= 1;
+      sleep(1);
+   endwhile
+
+   time := 6;
+   owner := SystemFindObjectBySerial(owner);
+   while (item && time && !owner.dead)
+      TS_LowerDuration(owner, "dodge_block", 1, 1);
+      var mobiles := ListMobilesNearLocationEx( item.x, item.y, item.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+      foreach mob in mobiles
+         if (!CheckIfIsAlly(owner, mob) && mob != owner)
+            TS_StartTimer(mob, "nohealing", 2);
+         endif
+         sleepms(2);
+      endforeach
+      time -= 1;
+      sleep(3);
+   endwhile
+
+   DestroyItem(item);
+	return 1;
+endprogram

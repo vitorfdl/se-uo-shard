@@ -5,33 +5,33 @@ include ":timedscripts:timedScripts";
 include ":ghaia:ghaiaUtil";
 include ":fls_core:fls_characters";
 include "include/client";
+include "include/sounds";
+include "include/utils";
 
 program mestreLaminas(param)
    var who := param[1];
-   // if (!who.shield)
-   //    SendSysMessageEx(who, "Você precisa estar equipado com um escudo para usar este talento.");
-   //    return;
-   // endif
 
-	if (CheckGender(who) == 2)
-		PlaySoundEffect( who, 0x339 );
-	else
-		PlaySoundEffect( who, 0x44B );
-	endif
+	PlayCustomSound( who, 33 );
 
-   PrintText(who, "*grito de guerra*");
+   PrintText(who, "*grito de guerra*", SSM_FAIL);
 	PerformAction(who, ANIM_HIT);
    var nearby := ListMobilesNearLocationEx( who.x ,who.y, who.z, 6, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY);
+   var plus := 0;
    foreach mob in nearby
       mob.setaggro(who.serial, 20);
       ghaiaAttack(who, mob);
       if (cint(getHighestAggro(mob)) == cint(who.serial))
-         SendSystemReport(mob, "*!*", SYSTEM_REPORT, who);
+         PrintText(mob, "*!*", SSM_FAIL);
+         plus += 1;
       else
-         SendSystemReport(mob, "*?*", SYSTEM_REPORT, who);
+         PrintText(mob, "*?*", SSM_FAIL);
       endif
       sleepms(2);
    endforeach
-
+   
+   if (plus)
+      TS_StartTimer(who, "defesa_magica", 6, _ifElse((plus > 8), 8, plus));
+   endif
+   TS_StartCooldown(who, "attack_low_block", 2);
    return 1;
 endprogram

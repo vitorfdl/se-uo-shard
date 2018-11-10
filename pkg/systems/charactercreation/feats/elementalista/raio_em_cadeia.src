@@ -30,7 +30,6 @@ program animateSword(params)
    var mobs := ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 5, LISTEX_FLAG_NORMAL);
    mobs.reverse();
 
-   print(spellinfo.PowerMod);
    var sum := 0;
    foreach mobile in mobs
       if (_mobile_iter >= 3+sum)

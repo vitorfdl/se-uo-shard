@@ -13,13 +13,11 @@ include ":magery:basicMagery";
 
 program SpellScript(params)
 	var who := params[1];
+   var hab := params[2];
    var targ := params[3];
 	params := 0; // No longer needed
    
-   var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
-
-   var amount := 1 + (level / 2);
-
+   var amount := 3;
    for i := 1 to amount
       if (!targ)
          targ := TargetCoordinates(who);
@@ -44,10 +42,7 @@ program SpellScript(params)
       SetObjProperty(item, "timeexpire", polcore().systime+30);
       
       PrintText(item, "*Surge aos poucos*");
-
-      var healed := RandomDiceRoll(MageDiceTable("B", level)) + 5;
-
-      SetObjProperty(item, "healamount", healed);
+      SetObjProperty(item, "healamount", hab.PowerMod[1]);
       targ := 0;
    endfor
 endprogram

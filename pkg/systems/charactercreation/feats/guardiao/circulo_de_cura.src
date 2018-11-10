@@ -11,6 +11,7 @@ include ":magery:basicMagery";
 
 program SpellScript(params)
 	var who := params[1];
+	var hab := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
 
@@ -26,7 +27,7 @@ program SpellScript(params)
 	
 	while (i <= 3)
 		if (who.x != oldx || who.y != oldy)
-			SendSystemReport(who, "'Magia Cancelada!'");
+			SendSystemReport(who, "'Habilidade Cancelada!'");
 			break;
 		endif
 		PerformAction(who, ANIM_CAST_AREA);
@@ -56,16 +57,13 @@ program SpellScript(params)
 	endwhile
 	
 	if (success)
-      var level := AP_GetTrueSkill(who, MILAGRE_DE_CURA);
-		var healed := RandomDiceRoll(MageDiceTable("A", level)) + 10;
-		
 		PlaySoundEffectXYZ(targ.x, targ.y, targ.z, SFX_SPELL_HEAL);
 		foreach mobile in ListMobilesNearLocation( targ.x, targ.y, targ.z, 2)
 			if (mobile.npctemplate)
 				continue;
 			endif
 			PlayObjectCenteredEffect(mobile, 0x3772, 2, 16);
-         healFLS(mobile, healed, who);
+         healFLS(mobile, hab.PowerMod[1], who);
 		endforeach
 	endif
 	
