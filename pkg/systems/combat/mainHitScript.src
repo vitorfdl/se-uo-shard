@@ -33,7 +33,7 @@ program MainHitScript( params )
 	SetScriptController(attacker);
 
 	if ( attacker == defender )
-		sendsysmessage(attacker, "attacker ao igual o defender");
+		// sendsysmessage(attacker, "attacker ao igual o defender");
 		return 0;
 	elseif ( defender.hidden )
 		return 0;

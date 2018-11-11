@@ -100,6 +100,7 @@ endfunction
 function GetFeatList(who, only_active := 0)
 	var chardata := GetObjProperty(who, "chardata");
    var feat_list := array{};
+   if (!chardata) return array{}; endif
    
    if (chardata.current_class && chardata.classes)
       var classe := FindElemInArray(chardata.classes, struct{ id := chardata.current_class});

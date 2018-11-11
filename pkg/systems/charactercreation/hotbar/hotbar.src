@@ -133,28 +133,29 @@ program startHotBar(who, spos)
          elseif (res[0] == 898)
             SendSysMessageEx(who, "Qual item deseja adicionar a barra de atalho?", SSM_REQUEST);
             var item := Target(who);
-            if (!item)
-               return;
-            endif
-            var itemcfg := ReadConfigFile( ":*:itemdesc" );
-            var elem := FindConfigElem( itemcfg, item.objtype );
-            if (!elem.Script)
-               SendSysMessageEx(who, "Este item não é consumível ou ativável.", SSM_FAIL);
-            else
-               hotbar.shortcuts[selector_open] := struct{
-                  item := item.serial,
-                  objtype := item.objtype,
-                  graphic := item.graphic,
-                  desc := item.desc,
-                  color := item.color,
-                  cooldown := elem.cooldown
-               };
+            if (item)
+               var itemcfg := ReadConfigFile( ":*:itemdesc" );
+               var elem := FindConfigElem( itemcfg, item.objtype );
+               if (!elem.Script)
+                  SendSysMessageEx(who, "Este item não é consumível ou ativável.", SSM_FAIL);
+               else
+                  hotbar.shortcuts[selector_open] := struct{
+                     item := item.serial,
+                     objtype := item.objtype,
+                     graphic := item.graphic,
+                     desc := item.desc,
+                     color := item.color,
+                     cooldown := elem.cooldown
+                  };
+                  SetobjProperty(who, "hotbar", hotbar);
+               endif
+               selector_open := 0;
             endif
          elseif (res[0] == 899)
             hotbar.shortcuts[selector_open] := 0;
+            SetobjProperty(who, "hotbar", hotbar);
+            selector_open := 0;
          endif
-         SetobjProperty(who, "hotbar", hotbar);
-         selector_open := 0;
       elseif (res[0] >= 50 && res[0] <= 70)
          res := res[0] - 50;
          if (selector_open != res)

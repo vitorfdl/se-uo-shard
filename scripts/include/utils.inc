@@ -9,8 +9,9 @@ function _ifElse(a,b,c)
    return c;
 endfunction
 
-function _resolveParams(byref a, byref b)
+function _resolveParams(byref a, byref b, byref c := 0)
    if (typeof(a) == "Array")
+      c := a[3];
       b := a[2];
       a := a[1];
    endif

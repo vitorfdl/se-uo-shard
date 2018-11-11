@@ -85,9 +85,6 @@ program death(params)
 
 				AP_ConsumeVital(ghost, "DP", 10);
 				SendSystemReport(ghost, "Você sofreu uma fratura!");
-            if (AP_GetVital(ghost, "DP") <= 19)
-               TS_StartTimer(ghost, "fraturaexposta", 1);
-            endif
          //    SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
 
 			if (AP_GetVital(ghost, "DP") <= 10 )

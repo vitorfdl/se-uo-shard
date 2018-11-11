@@ -29,6 +29,10 @@ program SpellScript(params)
          SendSysMessageEx(who, "Você deve ser capaz de enxergar o item que está tentando mover.", SSM_FAIL);
          tries += 1;
          continue;
+      elseif (CoordinateDistance(targ.x, targ.y, loc.x, loc.y) > 12)
+         SendSysMessageEx(who, "Este ponto é muito distante de onde o objeto está.", SSM_FAIL);
+         tries += 1;
+         continue;
       endif
 
       PlaySoundEffect(who, SFX_SPELL_TELEKINESIS );	

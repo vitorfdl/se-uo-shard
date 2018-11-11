@@ -20,27 +20,43 @@ program animateSword(params)
 	params := 0; // No longer needed
 
    PlaySoundEffect(who, 0x1FB);
-   for i := 0 to 7
-      var mod := GetModByFacing(i);
-      mod[1] *= 4;
-      mod[2] *= 4;
-      PlayMovingEffectXYZ(who.x, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
-      PlayMovingEffectXYZ(who.x, who.y-1, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
-      PlayMovingEffectXYZ(who.x+1, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
-      sleepms(2);
-   endfor
+   var points := GetLineCoordsInFront(who.x, who.y, who.facing, 7);
+   var face := who.facing;
+   var mobs := array{};
+   foreach point in points
+      if (!CanWalk("L", who.x, who.y, who.z, point[1], point[2]))
+         break;
+      endif
 
-   var mobs := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, LIST_IGNORE_Z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
-   var dmg_dice := spellinfo.PowerMod[1];
-   foreach mob in mobs
-      PushMobile(who, 5 - Distance(who, mob), 1, mob);
-      sleepms(2);
+      var err := MoveObjectToLocation( who, point[1], point[2], who.z, who.realm );
+      if (err == error)
+         break;
+      endif
+      
+      var loc := points[_point_iter-1];
+      if (loc)
+         var mob := CreateNpcFromTemplate(":ghaia:orb", loc[1], loc[2], who.z);
+         mob.graphic := who.graphic;
+         mob.facing := face;
+         SetObjProperty(mob, "GuardKill", 1);
+         SetObjProperty(mob, "NoCorpse", 1);
+         mobs.append(mob);
+      endif
+
+      var mobiles := CheckifIsAlly(who, ListMobilesNearLocationEx(who.x, who.y, who.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN, who.realm));
+      foreach mob in mobiles
+         DamageFLS(mob, spellinfo.PowerMod[1], DMG_COLD, who);
+         TS_StartTimer(mob, "lentidao", 3);
+         sleepms(2);
+      endforeach
+
+      sleepms(50);
    endforeach
 
-   sleepms(1000);
    foreach mob in mobs
-      DamageFLS(mob, dmg_dice, DMG_ENERGY, who);
-      TS_StartTimer(mob, "tombar", 10, 1, who);
+      mob.frozen := 0;
+      MoveObjectToLocation( mob, 1, 1, 1, who.realm, MOVEOBJECT_FORCELOCATION);
+      ApplyRawDamage(mob, CInt(AP_GetVitalMaximumValue(mob, "Hits")) + 200, DMG_FORCED);
       sleepms(2);
    endforeach
 

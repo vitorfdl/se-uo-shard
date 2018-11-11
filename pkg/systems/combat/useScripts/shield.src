@@ -10,7 +10,8 @@ include "include/damage";
 include ":combat:combat";
 
 program block(who, shield)
-   _resolveParams(who, shield);
+   var shield_cd;
+   _resolveParams(who, shield, shield_cd);
    if (TS_GetCooldown(who, "dodge_block"))
 		return SendSysMessageEX(who, "Bloqueio em Cooldown!", SSM_FAIL);
    endif
@@ -32,10 +33,12 @@ program block(who, shield)
       return SendSysMessageEX(who, "Vigor insuficiente!", SSM_FAIL);
    endif
 
-   var shield_cd := cint(weapon_cfg.BlockCooldown);
-   if (!shield_cd) shield_cd := 8; endif
+   if (!shield_cd)
+      shield_cd := cint(weapon_cfg.BlockCooldown);
+      if (!shield_cd) shield_cd := 8; endif
 
-   shield_cd := shield_cd + ( shield_cd * (AP_GetSkillMod(who, "Block") / 100));
+      shield_cd := shield_cd + ( shield_cd * (AP_GetSkillMod(who, "Block") / 100));
+   endif
 
    SendSysMessageEX(who, "Você está bloqueando ataques!", SSM_INFO);
    TS_StartCooldown(who, "dodge_block", shield_cd, 0, "Bloqueio está disponivel novamente.");

@@ -28,7 +28,7 @@ program defensor(params)
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos ou um escudo.", SSM_FAIL);
    endif
 
-   TS_StartCooldown(who, "blockheal", 3);
-   Start_Script(":combat:useScripts/shield", array{who, who.shield});
+   TS_StartCooldown(who, "blockheal", 4);
+   Start_Script(":combat:useScripts/shield", array{who, who.shield, spellinfo.Cooldown});
 	return 1;
 endprogram
