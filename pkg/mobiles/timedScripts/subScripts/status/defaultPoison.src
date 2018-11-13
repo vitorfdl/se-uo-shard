@@ -22,11 +22,11 @@ function StartScript(mobile, attacker := 0, level := 0)
 		SetScriptController(attacker);
 	endif
 
-   var dmg := 7 * level;
+   var dmg := 4 * (level+1);
 
    var success := 0;
    while (!mobile.dead)
-      var dmg := RandomIntMinmax(dmg / 2, dmg+1);
+      var dmg := RandomIntMinmax(cint(dmg / 2), dmg+1);
 		damageFLS(mobile, cint(dmg), DMG_POISON, attacker);
       if (RandomInt(100) < 5)
          break;
