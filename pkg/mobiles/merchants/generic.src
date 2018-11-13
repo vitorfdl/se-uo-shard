@@ -61,7 +61,7 @@ program Merchant()
     while(me)
       if(wanders >= 30)
          wanders := 0;
-         ev := os::wait_for_event(120);
+         ev := os::wait_for_event(121);
       else
          ev := os::wait_for_event(wait_time);
       endif
