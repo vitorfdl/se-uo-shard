@@ -186,7 +186,7 @@ function sleepmode()
                EnableMainEvents();
                return ev;
             SYSEVENT_ENTEREDAREA: 
-               if (ev.source && !ev.source.npctemplate && (!ev.source.cmdlevel || !me.npctemplate["merchant"]))
+               if (ev.source && !ev.source.npctemplate && (!ev.source.cmdlevel || me.npctemplate["merchant"]))
                   EnableMainEvents();
                   return ev;
                endif
