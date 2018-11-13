@@ -128,7 +128,7 @@ program Attack(params)
       bonus_atk := 30;
       PlayStationaryEffectEx( defender.x, defender.y, defender.z+15, defender.realm, 0x41A2, 1, 10);
       if (IsBehind(defender, attacker.x, attacker.y))
-         TS_StartCooldown(defender, "paralysis", 3);
+         TS_StartTimer(defender, "paralysis", 3);
       endif
    endif
 
