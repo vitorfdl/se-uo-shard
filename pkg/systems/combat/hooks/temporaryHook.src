@@ -86,9 +86,10 @@ program Attack(params)
 		return 1;
 	elseif ( !AmmoCheck(attacker, defender) )
 		return 1;
-   elseif ( attacker.hidden)
+   elseif ( attacker.hidden )
       SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
       bonus_atk += 20;
+      attacker.hidden := 0;
 	endif
 
    if (weapon.isBow() && TS_GetTimerInfo(attacker, "hallucination"))
