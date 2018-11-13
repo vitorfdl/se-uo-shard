@@ -15,7 +15,7 @@ program hotbarController(who)
          CloseGump( who, 0x945, 1 );
       endif
 
-      if (!GetObjProperty(who, "criando"))
+      if (!GetObjProperty(who, "criandochar"))
          var pid := GetobjProperty(who, "#hotbar_pid");
          if (!GetProcess(pid))
             CloseGump( who, 0x945, 978455 );
