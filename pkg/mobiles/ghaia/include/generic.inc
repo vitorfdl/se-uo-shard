@@ -162,7 +162,6 @@ function sleepmode()
 
    //TODO se tiver skill hiding, usar
    EnableEvents(SYSEVENT_ENTEREDAREA, 25);
-   // EnableEvents(SYSEVENT_SPEECH, 3);
    EnableEvents(SYSEVENT_ENGAGED);
    EnableEvents(SYSEVENT_DAMAGED);
    var ev;
