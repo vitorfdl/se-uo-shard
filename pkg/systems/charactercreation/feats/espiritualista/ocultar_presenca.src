@@ -15,9 +15,7 @@ program hiddepresence(params)
 	params := 0; // No longer needed
    
    SendSystemReport(targ, "*Você sente o frio véu da noite cobrir sua presença*", SSM_HELPFUL);
-   targ.hidden := 1;
-   sleepms(500);
-   targ.hidden := 0;
+   TS_StartTimer(targ, "furtividade", 5, 3);
 
 	return 1;
 endprogram

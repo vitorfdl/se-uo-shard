@@ -21,7 +21,7 @@ program hiddepresence(params)
       sleepms(2);
    endforeach
 
-   PlaySoundEffectXYZ( targ.x, targ.y, targ.z, cint(0x20), who.realm );
+   PlaySoundEffectXYZ( targ.x, targ.y, targ.z, cint(0x20A), who.realm );
 
    foreach p in area
       var mobiles := ListMobilesNearLocationEx(p.x, p.y, targ.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN, who.realm);

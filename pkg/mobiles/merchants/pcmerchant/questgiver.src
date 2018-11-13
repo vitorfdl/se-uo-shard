@@ -52,6 +52,8 @@ function HandleSpeech(npc, player, text)
    elseif (player.cmdlevel >= 3 && text["alterar"] && text["op"])
       SendConfigGump(npc, player);
    endif
+
+	EraseObjProperty(params.me, "#occupied");
 endfunction
 
 function SendQuestGump(npc, player)
