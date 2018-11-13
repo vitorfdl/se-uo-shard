@@ -398,7 +398,7 @@ function PoisonChecks(attacker, defender, weapon)
 	endif
 
    if (randomint(100) < 40)
-      TS_StartTimer(defender, poisonInfo.poisonType, time, poisonInfo.level, attacker);
+      TS_StartTimer(defender, poisonInfo.name, time, poisonInfo.level, attacker);
    endif
 endfunction
 
