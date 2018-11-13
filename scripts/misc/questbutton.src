@@ -62,8 +62,12 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
 	
 	var description := quest.description;
    if (quest.rewards);
-      var rewards := "  - 30 moedas de ouro";
-      description += "<br><br>Recompensas:<br>{}{}".format(rewards);
+      var reward_text := "<br><br>Recompensas:<br>";
+      foreach reward in (quest.rewards)
+         reward_text += "{}<br>".format(reward.type);
+         sleepms(2);
+      endforeach
+      description += "<br><br>Recompensas:<br>{}".format(reward_text);
    endif
 
    GFHtmlShadowed(gump, 336, 137+(quest.conditions.size() * 20), 245, 176, "#f2984c", "{}".format(description), 4);
