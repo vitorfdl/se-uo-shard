@@ -125,7 +125,11 @@ program Attack(params)
    if (GetObjProperty(attacker, "#marca_assassino"))
       EraseObjProperty(attacker, "#marca_assassino");
       TS_StartCooldown(defender, "hab_block", 3);
+      bonus_atk := 30;
       PlayStationaryEffectEx( defender.x, defender.y, defender.z+15, defender.realm, 0x41A2, 1, 10);
+      if (IsBehind(defender, attacker.x, attacker.y))
+         TS_StartCooldown(defender, "paralysis", 3);
+      endif
    endif
 
    PlayHitSounds(attacker, defender);
