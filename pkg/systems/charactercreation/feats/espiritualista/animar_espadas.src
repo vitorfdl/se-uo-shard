@@ -84,7 +84,7 @@ program animateSword(params)
 
 		SetObjProperty(targ, "animatesword", summoned.serial);
 		SetObjProperty(summoned, "animatesword", targ.serial);
-      SetObjProperty(summoned, "started_loc", array{summoned.x, summoned.y, summoned.z});
+      // SetObjProperty(summoned, "started_loc", array{summoned.x, summoned.y, summoned.z});
 		
 		// SendSysMessage(who, "Quem a espada deve ter como alvo?",3,28);
 		// var mobile := target(who);

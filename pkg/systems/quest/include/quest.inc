@@ -128,7 +128,10 @@ function ProgressQuest(who, search, params)
       if (!quest_data[i].done)
          var can_done := 1;
          foreach condition in (quest_data[i].conditions)
-            if (condition.done || condition.type != search.type) continue; endif
+            if (condition.done || condition.type != search.type) continue;
+            elseif (!condition.party && search.party) continue;
+            elseif (condition.onlyboss && !search.onlyboss) continue; endif
+            
             foreach p in (params.Keys())
                condition[p] -= params[p];
                sleepms(2);

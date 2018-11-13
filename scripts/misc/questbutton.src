@@ -41,7 +41,9 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
          title += " {}".format(condition.qty);
       endif
 
-      if (condition.template)
+      if (condition.customname)
+         title += " {}".format(condition.customname);
+      elseif (condition.template)
          var npc_template := NPC_GetNPCConfig(condition.template);
          title += " {}".format(npc_template.Name);
       elseif (condition.item_objtype)
@@ -62,7 +64,7 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
 	
 	var description := quest.description;
    if (quest.rewards);
-      var reward_text := "<br><br>Recompensas:<br>";
+      var reward_text := "";
       foreach reward in (quest.rewards)
          reward_text += "{}<br>".format(reward.type);
          sleepms(2);

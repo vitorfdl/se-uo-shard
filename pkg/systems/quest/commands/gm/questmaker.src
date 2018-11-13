@@ -101,6 +101,7 @@ function GumpQuestInfo(byref gump, who)
       if (item.spawngroup) tooltip += "Spawngroup: {}<br>".format(item.spawngroup); endif
       if (item.party) tooltip += "Party Contabliza<br>"; endif
       if (item.boss) tooltip += "Apenas Boss<br>"; endif
+      if (item.customname) tooltip += "Custom Name: {}<br>".format(item.customname); endif
       GFTooltipText(gump, tooltip);
 
       pos_y += 18;
@@ -178,8 +179,8 @@ program gump_gump(who)
          update_quest["title"] := GFExtractData(res, quest_title);
          update_quest["description"]  := "";
          foreach i in (quest_desc)
-            var output :=  GFExtractData(res, i);
-            if (output && output != " " && output != "") update_quest.description += output; endif
+            var output := GFExtractData(res, i);
+            if (output && output != " " && output != "") update_quest.description += " {}".format(output); endif
             sleepms(2);
          endforeach
          SetQuestData(selected_quest, update_quest);
@@ -270,7 +271,8 @@ function QuestConditions(who)
             struct{ title := "Entre com template do monstro", marked := ":ghaia:" },
             struct{ title := "Quantidade de monstros que deve matar", marked := "1" },
             struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := 2 },
-            struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := 1 }
+            struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := 1 },
+            struct{ title := "Customizar nome do monstro? (deixe em branco se não quiser)", marked := "" }
          };
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
@@ -280,6 +282,7 @@ function QuestConditions(who)
          new_condition["qty"]   := cint(output[3]);
          new_condition["party"]      := output[4] == "Sim";
          new_condition["onlyboss"]   := output[5] == "Sim";
+         new_condition["customname"]   := output[6];
       "Ir até Local":
          SendSysMessage(who, "Escolha o RoleplayItem que irá disparar.");
          var targ := Target(who);

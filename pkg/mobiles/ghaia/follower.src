@@ -296,31 +296,31 @@ function ProcessDoubleClick(ev)
       var input := GFSendGump(owner, gump);
       input  := input[0];
       if (input == 10)
-         if (me.IsTamable() && !me.rollPetDice("Defend", tame_difficulty))
-            PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-            return;
-         endif
+         // if (me.IsTamable() && !me.rollPetDice("Defend", tame_difficulty))
+         //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+         //    return;
+         // endif
          PetGuard(targ.mobile);
       elseif (input ==  20)
-         if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
-            PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-            return;
-         endif
+         // if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
+         //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+         //    return;
+         // endif
          PetFollow(targ.mobile);
       elseif (input == 30)
-         if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
-            PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-            return;
-         endif
+         // if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
+         //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+         //    return;
+         // endif
          Fight(targ.mobile);
       endif
    elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
-      if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
-         PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         return;
+      // if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
+      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+      //    return;
       // elseif(GetObjProperty(me, "animatesword"))
       //    return;
-      endif
+      // endif
       PetGoTo(targ, 2);
       following := 0;
    endif
@@ -465,20 +465,20 @@ function ResolveSpeech(ev)
 
    /// Attack command
    if (text["mate"] || text["ataque"])
-      if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
-         PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         return;
-      endif
+      // if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
+      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+      //    return;
+      // endif
       targ := target(ev.source, TGTOPT_HARMFUL + TGTOPT_CHECK_LOS);
       Fight(targ);
       allevent := struct{ targ := targ, type := ATTACK_CMD };
 
    /// Guard Command
    elseif(text["guarde"] || text["proteja"])
-      if (me.IsTamable() && !me.rollPetDice("Defend", tame_difficulty))
-         PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         return;
-      endif
+      // if (me.IsTamable() && !me.rollPetDice("Defend", tame_difficulty))
+      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+      //    return;
+      // endif
       if (!targ)
          targ := target(ev.source);
       endif
@@ -498,12 +498,12 @@ function ResolveSpeech(ev)
 
    /// Follow Command
    elseif (text["siga"])
-      if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
-         PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         return;
+      // if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
+      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
+      //    return;
       // elseif(GetObjProperty(me, "animatesword"))
       //    return;
-      endif
+      // endif
       if (!targ)
          targ := target(ev.source);
       endif
