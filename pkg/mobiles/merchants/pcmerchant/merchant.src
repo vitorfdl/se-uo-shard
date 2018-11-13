@@ -46,7 +46,7 @@ program HandleMerchant(params)
 			endif
 		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
       "SeeEvent": HandleSeeEvent(params.me, params.source);
-		"Default": return;
+		// "Default": return;
 	endcase
 
 	EraseObjProperty(params.me, "#occupied");
