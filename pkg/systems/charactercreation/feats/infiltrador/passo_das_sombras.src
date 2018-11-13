@@ -17,6 +17,7 @@ program animateSword(params)
 
    PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
    PlaySoundEffect(who, cint(0x513));
+   SetObjProperty(who, "#leavesteps", 1);
    TS_StartTimer(who, "furtividade", 10, 50);	
 	return 1;
 endprogram
