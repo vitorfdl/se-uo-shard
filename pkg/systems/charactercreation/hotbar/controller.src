@@ -18,7 +18,7 @@ program hotbarController(who)
       if (!GetObjProperty(who, "criando"))
          var pid := GetobjProperty(who, "#hotbar_pid");
          if (!GetProcess(pid))
-            CloseGump( who, 0x945, 0 );
+            CloseGump( who, 0x945, 978455 );
             start_script(":charactercreation:hotbar/hotbar", who);
          endif
       endif

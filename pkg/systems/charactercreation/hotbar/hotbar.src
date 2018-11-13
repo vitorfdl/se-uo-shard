@@ -119,6 +119,7 @@ function BuildHotBar(who, byref hotbar)
 endfunction
 
 program startHotBar(who, spos)
+   CloseGump( who, 0x945, 978455 );
    Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    if (!GetObjProperty(who, "chardata")) return; endif 
    
@@ -129,7 +130,9 @@ program startHotBar(who, spos)
    while (who.connected)
       var res := BuildHotBar(who, hotbar);
 
-      if (res[0] >= 900 && res[0] < 1500)
+      if (res[0] == 978455)
+         return;
+      elseif (res[0] >= 900 && res[0] < 1500)
          hotbar.shortcuts[selector_open] := struct{ id := res[0] - 900};
          selector_open := 0;
          SetobjProperty(who, "hotbar", hotbar);

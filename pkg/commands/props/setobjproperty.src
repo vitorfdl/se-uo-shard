@@ -34,6 +34,12 @@ program textcmd_SetObjProperty(who, no_use, uc_text)
 		SendSysMessage(who, "Error setting CProp ->"+ret_val);
 		return 0;
 	endif
-	
+
+   if (targ.isA(POLCLASS_ITEM))
+      SetName(targ, targ.desc);
+   elseif (targ.isA(POLCLASS_MOBILE))
+      SetName(targ, targ.name);
+   endif
+   
  	SendSysMessage(who, "Successful (set as "+TypeOf(value)+")");
 endprogram

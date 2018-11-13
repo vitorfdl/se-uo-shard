@@ -13,6 +13,8 @@ include ":timedscripts:timedScripts";
 
 program controlScript(field)
 	SetObjProperty(field, "#PID", GetPid());
+   sleep(1);
+   clear_event_queue();
 	var creator := field.GetOwner();
 	if ( creator )
 		SetScriptController(creator);
