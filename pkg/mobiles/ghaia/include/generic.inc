@@ -162,6 +162,7 @@ function sleepmode()
 
    //TODO se tiver skill hiding, usar
    EnableEvents(SYSEVENT_ENTEREDAREA, 25);
+   // EnableEvents(SYSEVENT_SPEECH, 3);
    EnableEvents(SYSEVENT_ENGAGED);
    EnableEvents(SYSEVENT_DAMAGED);
    var ev;
@@ -192,7 +193,8 @@ function sleepmode()
             // EVID_HERDING:
             EVID_FLEE:
             EVID_DOOBJECTIVE:
-            EVID_ALERT_ALLIES:	
+            EVID_ALERT_ALLIES:
+            SYSEVENT_SPEECH:
             // EVID_TAUNT:
             // SYSEVENT_ITEM_GIVEN:
             //  SYSEVENT_SPEECH:

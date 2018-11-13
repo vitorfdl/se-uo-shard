@@ -61,7 +61,7 @@ program Merchant()
     while(me)
       if(wanders >= 30)
          wanders := 0;
-         ev := sleepmode();
+         ev := os::wait_for_event(60);
       else
          ev := os::wait_for_event(wait_time);
       endif
@@ -84,12 +84,15 @@ program Merchant()
                // Ignore 'damaged'.
                break;
             SYSEVENT_ITEM_GIVEN:
+               wanders := 0;
                ItemGivenEvent(ev);
                break;
             SYSEVENT_DOUBLECLICKED:
+               wanders := 0;
                 DblClickScript(ev);
                 break;
             SYSEVENT_SPEECH:
+               wanders := 0;
                if (CheckLineOfSight(me, ev.source))
                   if (!isBehind(ev.source, me.x, me.y))
                   HandleSpeech(ev);
