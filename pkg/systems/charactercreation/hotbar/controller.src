@@ -14,7 +14,12 @@ program hotbarController(who)
          stored_cooldowns := new_cooldowns;
          CloseGump( who, 0x945, 1 );
       endif
-      
+      if (!GetObjProperty(who, "criando"))
+         var pid := GetobjProperty(who, "#hotbar_pid");
+         if (!GetProcess(pid))
+            start_script(":charactercreation:hotbar/hotbar", who);
+         endif
+      endif
       sleep(1);
    endwhile
 endprogram

@@ -124,7 +124,8 @@ program startHotBar(who, spos)
    
    var hotbar := GetObjProperty(who, "hotbar");
    if (!hotbar) hotbar := struct{ shortcuts := array{}, pos_x := 105, pos_y := 543 }; endif
-
+   var pid := GetPid();
+   SetobjProperty(who, "#hotbar_pid", pid);
    while (who.connected)
       var res := BuildHotBar(who, hotbar);
 
