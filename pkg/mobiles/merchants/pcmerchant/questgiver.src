@@ -198,6 +198,7 @@ function SendQuestGump(npc, player)
       res -= 10;
       var answer := questions[res];
       GiveQuest(player, FindElemInArray(quest_list, struct{ id := answer.quest_id }));
+      PrintText(npc, "Estarei aguardando aqui para quando tiver terminado.");
    endif
 endfunction
 
