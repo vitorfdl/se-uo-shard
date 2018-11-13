@@ -69,7 +69,11 @@ function BuildHotBar(who, byref hotbar)
       if (!shortcut)
 	      GFGumpPic(gump, 19 + pos_plus, pos_y+81, 21012, 1485);
       elseif (shortcut.script)
-         if (shortcut.cooldown && TS_GetCooldown(who, "{}".format(shortcut.cooldown)))
+         if (TS_GetCooldown(who, "hab_block"))
+            GFGumpPic(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, 1000);
+            GFGumpPic(gump, 22 + pos_plus, pos_y+85, 0x20, 1000);
+	         // GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "BLOCK");
+         elseif (shortcut.cooldown && TS_GetCooldown(who, "{}".format(shortcut.cooldown)))
             GFGumpPic(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, 1000);
 	         GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "CD");
          else
@@ -92,7 +96,10 @@ function BuildHotBar(who, byref hotbar)
          GFTooltipText(gump, "<basefont color=#7FFFD4>{}</basefont>".format(shortcut.desc));
       elseif (shortcut.id)
          var feat := GetFeatById(shortcut.id);
-         if (TS_GetCooldown(who, "hab_{}".format(shortcut.id)))
+         if (TS_GetCooldown(who, "hab_block"))
+            GFGumpPic(gump, 19 + pos_plus, pos_y+81, feat.Icon, 1000);
+            GFGumpPic(gump, 22 + pos_plus, pos_y+85, 0x20, 1000);
+         elseif (TS_GetCooldown(who, "hab_{}".format(shortcut.id)))
             GFGumpPic(gump, 19 + pos_plus, pos_y+81, feat.Icon, 1000);
 	         GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "CD");
          else
@@ -128,8 +135,10 @@ program startHotBar(who, spos)
       elseif (res[0] >= 896)
          if (res[0] == 897)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:esquiva", Icon := 2248, cooldown := "dodge_block" };
+                  SetobjProperty(who, "hotbar", hotbar);
          elseif(res[0] == 896)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:useScripts/shield", Icon := 0x9BA5, cooldown := "dodge_block" };
+                  SetobjProperty(who, "hotbar", hotbar);
          elseif (res[0] == 898)
             SendSysMessageEx(who, "Qual item deseja adicionar a barra de atalho?", SSM_REQUEST);
             var item := Target(who);

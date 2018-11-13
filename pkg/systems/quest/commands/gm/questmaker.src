@@ -90,7 +90,7 @@ function GumpQuestInfo(byref gump, who)
 	GFGumpPicTiled(gump, 279, 127, 257, 21, 58);
    pos_y := 0;
    foreach item in (quest.conditions)
-	   GFAddButton(gump, 279, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_REWARD_ADD);
+	   GFAddButton(gump, 279, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_CONDITION_EDIT+_item_iter);
       var desc := item.type;
       if (item.template) desc += " [{}]".format(item.template); endif
       // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
@@ -178,6 +178,12 @@ program gump_gump(who)
 
       if (res[0] <= 5 || !res[0])
          break;
+      elseif (res[0] >= GF_CONDITION_EDIT && res[0] <= GF_CONDITION_EDIT+10)
+         var answer := RadioGump(who, 100, 0, "O que deseja fazer?:", array{"Editar", "Remover", "Cancelar"}, 3);
+         if (answer["Remover"])
+            quest.conditions.Erase(res[0] - GF_CONDITION_EDIT);
+            update_quest.conditions  := quest.conditions;
+         endif
       elseif (res[0] >= GF_SELECTELEM_BTN && res[0] <= GF_SELECTELEM_BTN+150)
          selected_quest := res[0]-GF_SELECTELEM_BTN;
       endif
@@ -237,7 +243,6 @@ function QuestConditions(who)
    var opts := array{
       "Matar Monstro",
       "Usar Item",
-      "Entregar Item",
       "Craftar Item",
       "Coletar Item",
       "Ir até Local",
@@ -253,7 +258,7 @@ function QuestConditions(who)
          spawngroups.append("Qualquer Um");
          var quest_gump := array{
             struct{ title := "Escolha o Spawn onde ele deve matar", radio := spawngroups, marked := spawngroups.size() },
-            struct{ title := "Entre com template do monstro", marked := "" },
+            struct{ title := "Entre com template do monstro", marked := ":ghaia:" },
             struct{ title := "Quantidade de monstros que deve matar", marked := "1" },
             struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := 2 },
             struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := 1 }
@@ -289,18 +294,8 @@ function QuestConditions(who)
          };
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
-         new_condition.collect := targ.objtype;
+         new_condition.item_objtype := targ.objtype;
          new_condition.qty := cint(output[1]);
-      "Entregar Item":
-         SendSysMessage(who, "Escolha o item que deve ser entregue.");
-         var targ := Target(who);
-         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
-         new_condition.delivery := targ.objtype;
-         var output := QuestionsGump(who, array{
-            struct{ title := "Quantidade deste item que deve ser entregue", marked := "1" }
-         });
-
-         new_condition.qty := output[1];
       "Craftar Item":
          SendSysMessageEx(who, "Condição não scriptada, srry!", SSM_FAIL);
          return 0;
@@ -325,9 +320,9 @@ function QuestRewards(who)
       "Experiência":
          var classCfg := ReadConfigFile(":charactercreation:config/classes");
          var opts := GetConfigStringKeys(classCfg);
-         opts.append("Todos");
+         // opts.append("Todos");
          opts.append("Personagem");
-         new_reward["classe"] := RadioGump(who, 200, 0, "Escolha qual Classe:", opts, 0);
+         new_reward["classe"] := RadioGump(who, 200, 0, "Escolha qual Classe:", opts);
       "Item":
          SendSysMessage(who, "Escolha o item de recompensa.");
          var targ := Target(who);

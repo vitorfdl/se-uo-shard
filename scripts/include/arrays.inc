@@ -156,10 +156,10 @@ function FindElemInArray(byref the_array, find_what)
     endif
 
     foreach index in ( the_array )
-        if ((TypeOf(find_what) == "Struct" || TypeOf(index) == "Struct") || (TypeOf(index) == "Dictionary" || TypeOf(find_what) == "Dictionary"))
+        if ((TypeOf(find_what) == "Struct" || TypeOf(index) == "Struct") || (TypeOf(index) == "Dictionary" || TypeOf(find_what) == "Dictionary") || index.isA(POLCLASS_ITEM))
             var can_return := array{};
             foreach key in (find_what.Keys())
-                if (index.Exists(key) && find_what[key] == index[key])
+                if ((index.Exists(key) && find_what[key] == index[key]) || index.get_member(key) == find_what[key])
                     can_return.append(1);
                 else
                     can_return.append(2);
@@ -201,21 +201,21 @@ function FindAllElemInArray(byref the_array, find_what, return_index := 0)
 
     var to_return := array{};
     foreach index in ( the_array )
-        if ((TypeOf(find_what) == "Struct" || TypeOf(index) == "Struct") || (TypeOf(index) == "Dictionary" || TypeOf(find_what) == "Dictionary"))
-            foreach key in (find_what.Keys())
-                if (index.Exists(key) && find_what[key] == index[key])
-					if (return_index)
-                   		to_return.append(_index_iter);
-					else
-                   		to_return.append(index);
-					endif
-                endif
-                sleepms(2);
-            endforeach
-        elseif ( index == find_what )
-			   to_return.append(index);
-        endif
-        sleepms(2);
+      if ((TypeOf(find_what) == "Struct" || TypeOf(index) == "Struct") || (TypeOf(index) == "Dictionary" || TypeOf(find_what) == "Dictionary") || index.isA(POLCLASS_ITEM))
+         foreach key in (find_what.Keys())
+               if ((index.Exists(key) && find_what[key] == index[key]) || index.get_member(key) == find_what[key])
+                  if (return_index)
+                     to_return.append(_index_iter);
+                  else
+                     to_return.append(index);
+                  endif
+               endif
+               sleepms(2);
+         endforeach
+      elseif ( index == find_what )
+         to_return.append(index);
+      endif
+      sleepms(2);
     endforeach
 
 	if (to_return.size() >= 1)

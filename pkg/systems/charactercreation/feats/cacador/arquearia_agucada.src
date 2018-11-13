@@ -1,0 +1,22 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program animateSword(params)
+	var who := params[1];
+	// var spellinfo := params[2];
+	// var targ := params[3];
+	params := 0; // No longer needed
+
+   PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
+   PlaySoundEffect(who, cint(0x513));
+   TS_StartTimer(who, "furtividade", 10, 50);	
+	return 1;
+endprogram

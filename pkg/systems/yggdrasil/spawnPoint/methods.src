@@ -39,6 +39,7 @@ exported function GetProps( spawnpoint )
    data.+mob_number   := GetObjProperty(spawnpoint, "mob_number");
    data.+spotgroup    := GetObjProperty(spawnpoint, "spotgroup");
    data.+monsters     := GetObjProperty(spawnpoint, "monsters");
+   data.+spawngroup   := GetObjProperty(spawnpoint, "spawngroup");
    data.+spawnqueue   := GetObjProperty(spawnpoint, "spawnqueue");
    data.+groups       := GetObjProperty(spawnpoint, "groups");
    data.+diedmonsters := GetObjProperty(spawnpoint, "diedmonsters");
@@ -385,7 +386,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
       SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
       SetObjProperty(spawned, "spawnspot", config.spot_serial);
-      SetObjProperty(spawned, "spawngroup", config.spawngroup);
+      SetObjProperty(spawned, "spawngroup", GetObjProperty(spot, "activegroup"));
       SetObjProperty(spawned, "range", config.range);
       
       if (monster.bossParams && monster.bossParams.size() >= 1)

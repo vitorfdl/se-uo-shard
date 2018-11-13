@@ -22,45 +22,34 @@ include "include/sysEvent";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
+include ":tn:tngumps";
 
 var BKGND_SILVERTRIM := GFCfgConst("Defaults", "BackGround");
 
-
-program tracking(who)
+program tracking(params)
+   var who := params[1];
+   var spellinfo := params[2];
   EraseObjProperty(who, "IsMeditating");
   EraseObjProperty(who, "HealTimer");
 
-	InitGump(who);
+   var options := array{
+      struct{ text := "Rastreamento de Criaturas", Item := 0x2122 },
+      struct{ text := "Rastreamento de Itens", Item := 0x1B56 }
+   };
+   var ifres := ChoiceSelectorGump(who, "Escolha o tipo de Rastreamento", options);
 
+   if (ifres[0] == 1)
+      MobileTracking(who);	
+   elseif (ifres[0] == 2)
+      ItemTracking(who);
+   else
+      TS_LowerDuration(who, "hab_{}".format(spellinfo.FeatID), -1, 1);
+   endif
 endprogram
 
-function InitGump(who)
-
-	var gump := GFCreateGump(50, 25);
-	GFResizePic(gump, 0, 25, 0x13BE, 300, 200);
-	GFResizePic(gump, 15, 40, 0xBB8, 270, 170);
-//	GFResizePic(gump, 2, 0, BKGND_SILVERTRIM, 300, 200);
-	GFTextLine(gump, 60, 50, 600, "Escolha o tipo de Rastreamento" );
-	GFTextLine(gump, 47, 80, 800, "Rastreamento de Criaturas");
-	GFAddButton(gump, 30, 84,  2103, 2104, GF_CLOSE_BTN, 1 );
-	GFTextLine(gump, 47, 100, 800, "Rastreamento de Itens");
-	GFAddButton(gump, 30, 104,  2103, 2104, GF_CLOSE_BTN, 2 );
-
-	var ifres := GFSendGump(who, gump);	
-
-	if (ifres[0] != 0)
-		if (ifres[0] == 1)
-			MobileTracking(who);	
-		endif
-		if (ifres[0] == 2)
-			ItemTracking(who);
-		endif
-	endif
-endfunction
 
 
 function MobileTracking(who)
-	var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, RASTREAMENTO);
    var tracker := ReadGameClock();
    SetObjProperty(who, "TrackingCounter", tracker);
    var range := 18;
@@ -69,8 +58,7 @@ function MobileTracking(who)
    var mobiles := array;
 
    foreach mob in nmobiles
-      var diff := rollAttrDice(mob, DEXTERITY) + GetSkillBonus(mob, FURTIVIDADE);
-      if ( mob != who && roll > diff )
+      if ( mob != who)
          mobiles.append(mob);
       endif
       sleepms(2);
@@ -89,10 +77,8 @@ endfunction
 
 
 function ItemTracking(who)
-	var roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, RASTREAMENTO);
    SetObjProperty(who, "TrackingCounter", ReadGameClock());
-   var range := 15;
-   var items :=  listitemsnearlocation(who.x, who.y, LIST_IGNORE_Z, range, who.realm);
+   var items :=  listitemsnearlocation(who.x, who.y, LIST_IGNORE_Z, 15, who.realm);
    var items_found := array{};
 
    foreach item in items
@@ -101,9 +87,7 @@ function ItemTracking(who)
          diff := 8;
       endif
 
-      if ( roll > diff )
-         items_found.append(item);
-      endif
+      items_found.append(item);
       sleepms(2);
    endforeach
 
@@ -352,14 +336,14 @@ endfunction
 function MobDistanceColor(who, mobontrack)
 	var dist := Distance(who, mobontrack);
 //	sendsysmessageEx(who, "dist " + dist + " " + mobontrack.x + " " + mobontrack.y);
-	if (dist > 80) return 833;
-		elseif (dist > 70) return 733;
-		elseif (dist > 60) return 633;
-		elseif (dist > 50) return 533;
-		elseif (dist > 40) return 433;
-		elseif (dist > 30) return 333;
-		elseif (dist > 20) return 233;
-		elseif (dist > 10) return 133;
+	if (dist > 40) return 833;
+		elseif (dist > 35) return 733;
+		elseif (dist > 30) return 633;
+		elseif (dist > 25) return 533;
+		elseif (dist > 20) return 433;
+		elseif (dist > 15) return 333;
+		elseif (dist > 10) return 233;
+		elseif (dist > 5) return 133;
 		elseif (dist > 1) return 33;
 	endif
 
@@ -373,23 +357,24 @@ function MobLocalizate(who, critter)
 	//sendsysmessageEx(who, " "+ critter.desc + " " + critter.x +  " " + critter.y);
 
 	if ( critter.y < who.y )
-		ns_desc := "norte ";
+		ns_desc := "Norte";
 	elseif ( critter.y > who.y )
-		ns_desc := "sul ";
+		ns_desc := "Sul";
 	endif
 	if ( critter.x < who.x )
-		ew_desc := "oeste";
+		ew_desc := "Oeste";
 	elseif ( critter.x > who.x )
-		ew_desc := "leste";
+		ew_desc := "Leste";
 	endif
 
 	if ( !ns_desc && !ew_desc )
-		ret_val := "proximo";
+		ret_val := "próximo";
 	else
-		ret_val := "para o "+ns_desc + " e " +ew_desc;
+      ret_val := "Direção: {}".format(ns_desc);
+      if (ew_desc) ret_val := "{} {}".format(ret_val, ew_desc); endif
 	endif
-	return ret_val;
 
+	return ret_val;
 endfunction
 
 //retorna so a sigla
@@ -413,7 +398,7 @@ function MobLocalizateSigla(who, critter)
 	endif
 
 	if ( !ns_desc && !ew_desc )
-		ret_val := "proximo";
+		ret_val := "próximo";
 	else
 		ret_val := ns_desc+ew_desc;
 	endif
@@ -448,7 +433,7 @@ function GetMobDesc(who, mobile)
    endif
 
    if (mobile.isa(POLCLASS_NPC))
-      var npcdesc := NPC_GetNPCConfig(mobile.template);
+      var npcdesc := NPC_GetNPCConfig(mobile.npctemplate);
       return npcdesc.rastro;
    endif
 endfunction

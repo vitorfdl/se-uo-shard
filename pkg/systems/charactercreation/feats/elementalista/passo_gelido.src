@@ -46,7 +46,9 @@ program animateSword(params)
       var mobiles := CheckifIsAlly(who, ListMobilesNearLocationEx(who.x, who.y, who.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN, who.realm));
       foreach mob in mobiles
          DamageFLS(mob, spellinfo.PowerMod[1], DMG_COLD, who);
-         TS_StartTimer(mob, "lentidao", 3);
+         if (!mob.death)
+            TS_StartTimer(mob, "lentidao", 3);
+         endif
          sleepms(2);
       endforeach
 

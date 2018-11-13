@@ -145,7 +145,7 @@ exported function MegaCliloc( who, byref packet )
             endif
             xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
             xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
-
+            
             var hits :=  GetHitsInfo(elem);
             if (hits != "")
                xDesc += ORANGE + hits;

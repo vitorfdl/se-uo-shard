@@ -261,8 +261,8 @@ function CharacterCreationGump(who, byref chardata)
       GFAddButton(gump, 85-10, 293, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
       GFTextLine(gump, 222-10, 293, 1152, "Sábio");
       GFAddButton(gump, 199-10, 293, 210 + cint(chardata.caminhos[1] == "Sábio"), 211, GF_CLOSE_BTN, 62);
-      // GFTextLine(gump, 313, 293, 1152, "Sagaz");
-      // GFAddButton(gump, 290, 293, 210 + cint(chardata.caminhos[1] == "Sagaz"), 211, GF_CLOSE_BTN, 63);
+      GFTextLine(gump, 313, 293, 1152, "Sagaz");
+      GFAddButton(gump, 290, 293, 210 + cint(chardata.caminhos[1] == "Sagaz"), 211, GF_CLOSE_BTN, 63);
       
       // classe
       GFTextLine(gump, 193, 322, 2212, "Classe");

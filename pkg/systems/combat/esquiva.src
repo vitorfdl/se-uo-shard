@@ -5,17 +5,29 @@ use vitals;
 include ":attributes:vitals";
 include ":attributes:attributes";
 include "include/say";
+include "include/utils";
 
 program manobra(who)
+   var dodge_cd;
+   _resolveParams(who, dodge_cd);
+
    if (TS_GetCooldown(who, "dodge_block"))
 		return SendSysMessageEX(who, "Esquiva em Cooldown!", SSM_FAIL);
    elseif (!AP_ConsumeVital(who, STAMINA, 4))
       return SendSysMessageEX(who, "Vigor insuficiente!", SSM_FAIL);
    endif
 
-   var cd := cdbl(5);
-   cd := cd + ( cd * ((AP_GetSkillMod(who, "Dodge") * 0.05) / 100));
+   if (!dodge_cd)
+      dodge_cd := cdbl(5);
+      dodge_cd := dodge_cd + ( dodge_cd * ((AP_GetSkillMod(who, "Dodge") * 0.05) / 100));
+   endif
+
    SendSysMessageEX(who, "Você está esquivando de ataques!", SSM_INFO);
-   TS_StartCooldown(who, "dodge_block", cd, 0, "Esquiva/Bloqueio está disponivel novamente.");
+   TS_StartCooldown(who, "dodge_block", dodge_cd, 0, "Esquiva/Bloqueio está disponivel novamente.");
    TS_StartCooldown(who, "dodge", 2);
+   sleep(1);
+   if (HaveFeatPrimary(who, 43))
+      PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
+      TS_StartTimer(who, "furtividade", 3);
+   endif
 endprogram

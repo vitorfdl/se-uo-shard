@@ -40,7 +40,20 @@ program block(who, shield)
       shield_cd := shield_cd + ( shield_cd * (AP_GetSkillMod(who, "Block") / 100));
    endif
 
+   if (HaveFeatPrimary(who, 1))
+      TS_StartCooldown(who, "blockheal", 4);
+   elseif (HaveFeatPrimary(who, 81) && !who.shield)
+      var feat := getFeatById(81);
+      var power := CalculateRawDamage(who, 0);
+
+      calcPowerMod(feat, power);
+
+      TS_StartCooldown(who, "blockperfect", 3);
+      SetObjProperty(who, "#blockperfect_dmg", feat.PowerMod[1]);
+   endif
+
+   TS_StartCooldown(who, "block", 2);
    SendSysMessageEX(who, "Você está bloqueando ataques!", SSM_INFO);
    TS_StartCooldown(who, "dodge_block", shield_cd, 0, "Bloqueio está disponivel novamente.");
-   TS_StartCooldown(who, "block", 2);
+
 endprogram 

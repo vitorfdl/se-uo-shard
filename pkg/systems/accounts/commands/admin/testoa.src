@@ -17,15 +17,15 @@ include ":merchants:crafthelp";
 include ":ghaia:objective";
 include ":magery:basicMagery";
 include ":crafting:craft_props";
-include ":gumps:playerselectiongump";
+// include ":quest:quest";
 
 program oafeatures_sendpacket(who, text)
-   var targ := Target(who);
-   if (!targ) return; endif
+   // var test := dictiona
+   // PlayObjectCenteredEffect( who, 0x41A2, 1, 20);
+   print(GetObjproperty(who, "quests"));
 
-   var chardata := GetObjProperty(targ, "chardata");
-   chardata.classes[1].level := cint(text);
-   SetObjProperty(targ, "chardata", chardata);
+   // checkItemAmount(who, 56334);
+
    // print(AP_GetVitalRegenRateMod(who, "Hits"));
    // var player := SelectCharacter( who, who.cmdlevel );
 

@@ -214,6 +214,21 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
+function HaveFeatPrimary(who, feat)
+	var chardata := GetObjProperty(who, "chardata");
+   if (!chardata) return 0; endif
+
+   if (typeOf(feat) != "Integer")
+      return 0;
+   endif
+
+	if (feat in (chardata.classes[1].selected_habs))
+		return 1;
+	endif
+
+	return 0;
+endfunction
+
 function BuildFeatToolTip(feat, return_points := 0, power := 0)
    var desc := "";
    if (feat.Script) desc += "{}Habilidade Ativável<br>".format(ORANGE, feat.PointCost);
@@ -405,10 +420,7 @@ function TriggerHabilitie(who, hab)
    var weapon := who.weapon;
    var power := CalculateRawDamage(who, 0, weapon);
 
-   foreach mod in (hab.PowerMod)
-      mod := CalculatePowerPercent(power, mod);
-      sleepms(2);
-   endforeach
+   calcPowerMod(hab, power);
 
    var script := ":charactercreation:feats/{}";
    if (hab.script[":"])
@@ -425,6 +437,15 @@ function TriggerHabilitie(who, hab)
 
    EraseObjProperty(who, "#magiasilenciosa");
    EraseObjProperty(who, "#Casting");
+endfunction
+
+function calcPowerMod(byref hab, power)
+   foreach mod in (hab.PowerMod)
+      mod := CalculatePowerPercent(power, mod);
+      sleepms(2);
+   endforeach
+
+   return hab;
 endfunction
 
 function FailFeat(who, hab)

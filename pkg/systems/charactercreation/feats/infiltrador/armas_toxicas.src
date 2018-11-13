@@ -13,8 +13,12 @@ include "include/say";
 
 program startTalent(param)
    var who := param[1];
+   var spellinfo := param[2];
+   // var targ := param[3];
    // var talent_name := param[2];
-   do_poisoning(who);
+   if (!do_poisoning(who))
+      TS_LowerDuration(who, "hab_{}".format(spellinfo.FeatID), -1, 1);
+   endif
 
 endprogram
 
@@ -55,23 +59,23 @@ function do_poisoning(who)
 	//pega info sobre a poçao
 	var acfgfile := ReadConfigFile(":*:itemdesc");
 	var theitem := acfgfile[the_item.objtype];
-	var level, difficulty, poisonType;
+	var level, poisonType;
 	level := Cint(GetObjProperty(the_poison, "level"));
 	if (!level)
 		level := RandomDiceRoll("1d2");
 	endif
 	//se for uma poçao que não a default a formula eh essa:
 	case(the_poison.objtype)
-		0xbf00: level := 1; difficulty := 10;  poisonType := "defaultPoison";
+		0xbf00: level := 1; poisonType := "defaultPoison";
     	// 0xbf01: poisonType :="strPoison"; difficulty := 14; 
 		// 0xbf07: poisonType :="dexPoison"; difficulty := 14; 
 		// 0xbf06: poisonType :="intPoison"; difficulty := 14; 
-		0xbf02: poisonType:="staminaPoison"; difficulty := 14; 
-		0xbf03: poisonType:="paralyzePoison"; difficulty := 16;
-		0xef54: poisonType :="manaPoison"; difficulty := 13;
-		0xbf04: level := 3; difficulty := 16;  poisonType := "defaultPoison";
-		0xdc04: level := 2; difficulty := 13;  poisonType := "defaultPoison";
-		0xbf05: level := 4; difficulty := 16;  poisonType := "defaultPoison";
+		0xbf02: poisonType:="staminaPoison"; 
+		0xbf03: poisonType:="paralyzePoison"; 
+		0xef54: poisonType :="manaPoison"; 
+		0xbf04: level := 3; poisonType := "defaultPoison";
+		0xdc04: level := 2; poisonType := "defaultPoison";
+		0xbf05: level := 4; poisonType := "defaultPoison";
       default:
          SendSysMessageEx(who, "Isso não parece um veneno.", SSM_FAIL);
          return 0;
@@ -88,8 +92,8 @@ function do_poisoning(who)
 	elseif (the_item.IsA(POLCLASS_WEAPON))
 		canBePoisoned := 1;
 	elseif( the_item.graphic == 0x1bfb || the_item.graphic == 0xf3f  )
-		if(the_item.amount > 10)
-			SendSysMessageEx(who, "Você só pode envenenar 10 flechas de uma vez.", SSM_FAIL);
+		if(the_item.amount > 25)
+			SendSysMessageEx(who, "Você só pode envenenar 25 flechas de uma vez.", SSM_FAIL);
 			return 0;
 		endif
 		canBePoisoned := 1;
@@ -124,11 +128,9 @@ function do_poisoning(who)
    poisonInfo.+level  := level;
    poisonInfo.+dosage := 20;
    poisonInfo.+acc    := who.acctname;
-   poisonInfo.+time   := 40 + level*10;
-   // if (HaveFeat(who, "Maximizar Veneno"))
-   // 	poisonInfo.dosage := CInt(poisonInfo.dosage * 1.5);
-   // 	poisonInfo.time := CInt(poisonInfo.time * 1.2);
-   // endif
+   poisonInfo.+serial := who.serial;
+   poisonInfo.+time   := 15;
+
    if ( the_item.graphic == 0x1bfb || the_item.graphic == 0xf3f  )
       poisonInfo.dosage := 100;
       poisonInfo.time := CInt(poisonInfo.dosage * 0.5);

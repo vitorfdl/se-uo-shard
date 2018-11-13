@@ -1,0 +1,37 @@
+// use uo;
+// use os;
+// use cfgfile;
+
+// include "include/client";
+// include "include/sounds";
+// include "include/say";
+// include "include/utils";
+// include "include/damage";
+// include ":attributes:attributes";
+// include ":timedscripts:timedScripts";
+
+// program animateSword(params)
+// 	var who := params[1];
+// 	var spellinfo := params[2];
+// 	// var targ := params[3];
+// 	params := 0; // No longer needed
+
+//    if (!who.opponent)
+//       SendSysMessageEx(who, "Você precisa estar próximo de um oponente.", SSM_FAIL);
+//       return TS_LowerDuration(who, "hab_{}".format(spellinfo.FeatID), -1, 1);
+//    elseif (Distance(who, who.opponent) > 2)
+//       SendSysMessageEx(who, "Você precisa estar próximo de um oponente.", SSM_FAIL);
+//       return TS_LowerDuration(who, "hab_{}".format(spellinfo.FeatID), -1, 1);
+//    endif
+
+//    PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
+//    PlaySoundEffect(who, cint(0x512));
+
+//    var mobile := who.opponent;
+//    var point := RandomPlace(mobile, 1);
+//    MoveObjectToLocation(who, point.x, point.y, mobile.z, mobile.realm, MOVEOBJECT_FORCELOCATION);
+//    who.facing := GetFacing(who.x, who.y, mobile.x, mobile.y);
+
+//    Start_Script(":combat:esquiva", array{who, spellinfo.Cooldown});
+// 	return 1;
+// endprogram

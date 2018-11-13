@@ -1,0 +1,33 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/facings";
+include "include/utils";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   PrintText(who, "*salta*");
+   var world_z := GetStandingHeight( who.x, who.y, who.z+15, who.realm );
+   if (world_z.z <= who.z+1)
+	   MoveObjectToLocation( who, who.x, who.y, who.z+15, who.realm, MOVEOBJECT_FORCELOCATION );
+   endif
+   sleepms(20);
+   PushBack(who, 4, 50);
+
+   if (who.warmode && who.opponent)
+      run_script(":combat:hooks/temporaryHook", array{who, who.opponent });
+   endif
+ 
+	return 1;
+endprogram

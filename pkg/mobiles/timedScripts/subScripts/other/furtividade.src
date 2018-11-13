@@ -5,40 +5,36 @@
 use uo;
 use os;
 use util;
-use math;
 
 include "include/client";
-include "include/damage";
 include ":timedscripts:timedScripts";
+include "include/utils";
 include "include/say";
-include ":attributes:vitals";
+include ":attributes:attributes";
 
-function StartScript(mobile, attacker := 0, level := 0)
-	if ( !level )
-		level := 1;
-	endif
+var steps := array{0x1E04, 0x1E05, 0x1E06, 0x1E03};
 
-	if ( attacker )
-		SetScriptController(attacker);
-	endif
+function StartScript(mobile, attacker := 0, level := 999)
+   var leave_steps := GetObjProperty(mobile, "#leavesteps");
 
-   var dmg := 7 * level;
-
-   var success := 0;
-   while (!mobile.dead)
-      var dmg := RandomIntMinmax(dmg / 2, dmg+1);
-		damageFLS(mobile, cint(dmg), DMG_POISON, attacker);
-      if (RandomInt(100) < 15)
-         break;
+   mobile.hidden := 1;
+   mobile.stealthsteps := _ifElse(level == 1 || !level, 999, level);
+   while (mobile.hidden)
+      if (leave_steps)
+         var i := (mobile.facing / 2) + 1;
+         CreateItemAtLocation( mobile.x, mobile.y, mobile.z, steps[i] );
       endif
       sleep(2);
    endwhile
-	
-   TS_LowerDuration(mobile, "defaultPoison", -1);
+
+   TS_LowerDuration(mobile, "furtividade", -1);
    return 1;
 endfunction
 
 function EndScript(mobile)
+   mobile.hidden := 0;
+   mobile.stealthsteps := 0;
+   EraseObjProperty(mobile, "#leavesteps");
    return 1;
 endfunction
 

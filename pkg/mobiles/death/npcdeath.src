@@ -18,11 +18,13 @@ include ":death:death";
 include ":mounts:mounts";
 include ":attributes:vitals";
 include ":combat:hitscripts";
+include "include/utils";
 include "include/say";
 include "include/damage";
 include ":yggdrasil:spawnSpot";
 include ":yggdrasil:boss";
 include ":faccao:faccao";
+include ":quest:quest";
 
 //include ":spawnnet:spawnnet";
 //include ":spawnregion:spawn";
@@ -61,7 +63,7 @@ program core_npcDeath(params)
       endif
    endif
 
-	// foreach mob in (ListMobilesNearLocation(corpse.x, corpse.y, corpse.z, 5, corpse.realm))
+	var template := GetObjProperty(corpse, "npctemplate"); // Set by the core.
 	// 	if (cint(GetObjProperty(mob, "#satisfacaosadica")))
 	// 		if (cint(GetObjProperty(mob, "#satisfacaosadica")) > readgameclock())
 	// 			PlayMovingEffect( corpse, mob, 14202, 5, 1,  0 );
@@ -69,8 +71,8 @@ program core_npcDeath(params)
 	// 			HealFLS(mob, 5);
 	// 			recalcvitals(mob);
 	// 		endif
-	// 	endif
-		
+
+
 	// 	if ( (GetObjProperty(mob, "#presenteespiritual") != error) )
 	// 		if (GetObjProperty(mob, "#presenteespiritual") > readgameclock())
 	// 			var souls := Cint(getobjProperty(mob, "souls"));
@@ -92,7 +94,6 @@ program core_npcDeath(params)
 	SetObjProperty(corpse, "originalname", corpse_name);
 	SetCooldown(corpse, "resurrect", 30);
 	
-	var template := GetObjProperty(corpse, "npctemplate"); // Set by the core.
 	var npc_cfg := NPC_GetNPCConfig(template);
 
 	// var speech := GetConfigStringArray( npc_cfg[template], "diespeech" );
@@ -108,9 +109,11 @@ program core_npcDeath(params)
    endif
 
 	var death_script := npc_cfg.DeathScript;
+   var is_boss := 0;
 	if (GetObjProperty(corpse, "spawnkill") == error)
       removeFromSpawn(getobjProperty(corpse, "spawnpoint"), corpse);
-	   var boss := GetBossStruct(corpse, GetObjProperty(corpse, "serial") );	
+	   var boss := GetBossStruct(corpse, GetObjProperty(corpse, "serial") );
+      is_boss := _ifElse(boss, 1, 0);
 		if (boss && boss.deathevent)
          foreach nevent in (boss.deathevent)
          //	printtextabove(corpse, " " + nevent.type);
@@ -134,11 +137,17 @@ program core_npcDeath(params)
 		endif
 	endif
 
-//	if (GetObjProperty(corpse, "spawnnet")) //se for spawnado pelo spawnet
-//		SpawnNet_Clear(corpse);
-//	elseif (GetObjProperty(corpse, "SpawnRegion") )//se for spawnado pelo regionspawn
-//		SpawnRegionDeath(corpse);
-//	endif		
+	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY ,corpse.realm))
+      var search := struct{};
+      search.spawngroup := _ifElse(GetObjProperty(corpse, "spawngroup"), GetObjProperty(corpse, "spawngroup"), 0);
+      search.template := template;
+      search.onlyboss := is_boss;
+      search.type := "Matar Monstro";
+      search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
+      ProgressQuest(mob, search, struct{ qty := 1 });
+      ExpGain(mob, 3);
+      sleepms(2);
+   endforeach
 
 	DP_PlayDeathSound(corpse);
 	CPM_DeleteContainers(corpse);
@@ -170,16 +179,12 @@ function NoLootCheck(corpse, npc_cfg)
 	endif
 	
 	// No corpse. Don't drop backpack contents.
-	//PrintTextAbove(corpse, "*guardkilling*");
 	foreach item in (EnumerateItemsInContainer(corpse))
 		if ( item.container == corpse )
 			DestroyItem(item);
 		endif
 		sleepms(2);
 	endforeach
-	//printtextabove(corpse, "no loot check");
-	//no loot  não destroi o corpo, so NoCorpse
-	//DestroyItem(corpse);
 	
 	return 1;
 endfunction

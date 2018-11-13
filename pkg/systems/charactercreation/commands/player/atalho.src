@@ -32,6 +32,8 @@ program useHotBar(who, text)
       return SendSysMessageEx(who, "Você não pode usar uma habilidade enquanto está paralizado, congelado ou silenciado.", SSM_FAIL);
    elseif (GetObjProperty(who, "#Casting")) 
       return SendSysMessageEx(who, "Você não pode usar uma habilidade agora.", SSM_FAIL);
+   elseif (TS_GetCooldown(who, "hab_block"))
+      return SendSysMessageEx(who, "Suas habilidades foram bloqueadas devido a algum efeito sobre seu personagem.", SSM_FAIL);
    endif
 
    var hotbar := GetObjProperty(who, "hotbar");

@@ -88,7 +88,7 @@ program Attack(params)
 		return 1;
    elseif ( attacker.hidden)
       SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
-      bonus_atk += 1;
+      bonus_atk += 20;
 	endif
 
    if (weapon.isBow() && TS_GetTimerInfo(attacker, "hallucination"))
@@ -121,8 +121,13 @@ program Attack(params)
       MP_UnMount(defender);
    endif
 
+   if (GetObjProperty(attacker, "#marca_assassino"))
+      EraseObjProperty(attacker, "#marca_assassino");
+      TS_StartCooldown(defender, "hab_block", 3);
+      PlayStationaryEffectEx( defender.x, defender.y, defender.z+15, defender.realm, 0x41A2, 1, 10);
+   endif
+
    PlayHitSounds(attacker, defender);
-   ExpGain(attacker, 2);
 
    // if (!defender.npctemplate && defender.shield)
    //    if (wpn_a_elem.ProjectileAnim)
@@ -132,7 +137,7 @@ program Attack(params)
    //    endif
    // endif
 
-   Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, wpn_a_elem });
+   Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, wpn_a_elem, bonus_atk });
 
 	return 1;
 endprogram

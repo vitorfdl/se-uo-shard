@@ -280,7 +280,7 @@ function ProcessDoubleClick(ev)
       //GFGumpPic(gump, 0, 0, 0x254E);
       GFResizePic(gump, 0, 0, 0x254E, 100, 100);
 
-      if(!GetObjProperty(me, "animatesword"))
+      // if(!GetObjProperty(me, "animatesword"))
          GFTextLine(gump, 30, 15, 2100, "Guarda ");
          GFAddButton(gump, 15, 17, 2117, 2118, 1, 10);
 
@@ -291,7 +291,7 @@ function ProcessDoubleClick(ev)
             GFTextLine(gump, 30, 55, 2100, "Ataca ");
             GFAddButton(gump, 15, 57, 2117, 2118, 1, 30);
          endif
-      endif
+      // endif
 
       var input := GFSendGump(owner, gump);
       input  := input[0];
@@ -318,8 +318,8 @@ function ProcessDoubleClick(ev)
       if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
          return;
-      elseif(GetObjProperty(me, "animatesword"))
-         return;
+      // elseif(GetObjProperty(me, "animatesword"))
+      //    return;
       endif
       PetGoTo(targ, 2);
       following := 0;
@@ -501,8 +501,8 @@ function ResolveSpeech(ev)
       if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
          PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
          return;
-      elseif(GetObjProperty(me, "animatesword"))
-         return;
+      // elseif(GetObjProperty(me, "animatesword"))
+      //    return;
       endif
       if (!targ)
          targ := target(ev.source);
@@ -532,7 +532,7 @@ function ResolveSpeech(ev)
    /// Release Command
    elseif (text["livre"])
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
-         SendSysMessageEx(owner, "Criaturas invocadas n¿o podem ser libertadas normalmente.");
+         SendSysMessageEx(owner, "Criaturas invocadas não podem ser libertadas normalmente.");
          return;
       endif
 

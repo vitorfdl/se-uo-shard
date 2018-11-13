@@ -9,12 +9,12 @@ include "include/sounds";
 include":merchants:crafthelp";
 include ":ghaia:ghaiaUtil";
 include ":gumps:gumps";
-include ":crafting:recipes";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
 include ":gumps:include/requestgump";
 include ":crafting:craft_props";
 include ":crafting:fls_crafting";
+include ":quest:quest";
 include ":gumps:htmlgump";
 include ":tn:cooldown";
 
@@ -43,26 +43,161 @@ function HandleSpeech(npc, player, text)
    var canceled := 0;
 	text := lower(text);
 
-   if (text["ol"] && (text["á"] || text["a"]))
-      while(!canceled)
-         if (!player.concealed)
-			   PrintText(npc, "Tudo bem com você?");
-         endif
-         canceled := 1;
-         // // var input := SendItemView(npc, player);
-         // if (!input[0])
-         //    break;
-         // elseif (input[0] == 2)
-			// elseif (input[0] > 90000)
-			// 	var serial := input[0] - 90000;
-			// 	RemoveItemMerchant(npc, player, serial);
-         // else
-         //    DoPurchase(npc, player, input[0]);
-         //    break;
-         // endif
-      endwhile
-   elseif (player.cmdlevel >= 3 && text["alterar"] && text["opc"])
+   if ((text["ol"] && (text["á"] || text["a"])) || (text["miss"] && text["es"]))
+      if (!player.concealed)
+         PrintText(npc, "Tudo bem com você?");
+      endif
+
+      SendQuestGump(npc, player);
+   elseif (player.cmdlevel >= 3 && text["alterar"] && text["op"])
       SendConfigGump(npc, player);
+   endif
+endfunction
+
+function SendQuestGump(npc, player)
+   var quests := GetObjProperty(player, "quests");
+   if (!quests) quests := array{}; endif
+   
+   var myconfigs := GetObjProperty(npc, "config");
+   if (!myconfigs) myconfigs := struct{}; endif
+   if (!myconfigs.text) myconfigs.text := ""; endif
+   if (!myconfigs.type) myconfigs.type := array{}; endif
+   if (!myconfigs.classes) myconfigs.classes := array{}; endif
+
+   var classCfg := ReadConfigFile(":charactercreation:config/classes");
+   var chardata := GetObjProperty(player, "chardata");
+   if (!chardata) PrintText(npc, "Não posso te ajudar, desculpe"); endif
+
+   var questions := array{};
+   foreach classe in (myconfigs.classes)
+      sleepms(2);
+      var elem := FindConfigElem(classCfg, classe);
+      if (elem.Type == "Main")
+         continue;
+      elseif (elem.Type == "Secondary")
+         if (chardata.subclasses.size() >= 3 || FindInArray(chardata.subclasses, struct{ id := classe })) 
+            continue;
+         endif
+      endif
+
+      questions.append(struct{ type := "learn_class", classe := classe });
+   endforeach
+
+   var weekly_quests := GetObjProperty(player, "weekly_quests");
+   if (!weekly_quests) weekly_quests := array{}; endif
+   var quest_list := ListQuests();
+   foreach classe in (myconfigs.type)
+      sleepms(2);
+      var player_quests := FindAllElemInArray(quests, struct{ category := classe } );
+      foreach quest in player_quests
+         sleepms(2);
+         if (!CheckQuest(player, quest))
+            continue;
+         endif
+         questions.append(struct{ type := "delivery", classe := classe, pos := _quest_iter });
+      endforeach
+
+      var weekly_quests_total := FindAllElemInArray(weekly_quests, struct{ classe := classe });
+      var f := _ifElse(player_quests, player_quests.size(), 0) + _ifElse(weekly_quests_total, weekly_quests_total.size(), 0);
+      if (f >= 2)
+         continue;
+      elseif (classe != chardata.current_class && !FindInArray(chardata.subclasses, struct{ id := classe }))
+         continue;
+      endif
+      
+      var quest_giver := FindAllElemInArray(quest_list, struct{ category := classe });
+      if (quest_giver.size())
+         var randomquest := quest_giver.randomentry();
+         questions.append(struct{ type := "quest", classe := classe, quest_id := randomquest.id });
+      endif
+   endforeach
+
+	var gump := GFCreateGump();
+	
+	GFPage(gump, 0);
+   var mod_y := (questions.size() * 26);
+	GFResizePic(gump, 9, 11, 5170, 432, 202+mod_y);
+	GFGumpPicTiled(gump, 32, 38, 384, 12, 50);
+   GFHtmlShadowed(gump, 51, 60, 344, 20, "#FFFFFF", "<center>{}".format(myconfigs.text), 5);
+	GFGumpPic(gump, 44, 91, 57, 0);
+	GFGumpPic(gump, 372, 91, 59, 0);
+	GFGumpPicTiled(gump, 74, 91, 299, 21, 58);
+
+   var pos_y := 0;
+   foreach quest in questions
+      var quest_text := "";
+      var quest_marker := 10;
+      if (quest.type == "learn_class")
+         quest_text := "Iniciar aprendizado em {}".format(quest.classe);
+      elseif (quest.type == "quest")
+         quest_text := "Como melhorar minhas habilidades em {}".format(quest.classe);
+      elseif (quest.type == "delivery")
+         quest_marker := 50;
+         quest_text := "Terminei o que me pediu [{}]".format(quest.classe);
+      endif
+
+      GFTextLine(gump, 97, 116+pos_y, 1152, "{}".format(quest_text));
+      GFAddButton(gump, 72, 115+pos_y, 5540, 5540, GF_CLOSE_BTN, quest_marker+_quest_iter);
+      pos_y += 26;
+      sleepms(2);
+   endforeach
+
+	GFGumpPicTiled(gump, 34, 169+mod_y, 383, 12, 50);
+	GFAddButton(gump, 196, 131+mod_y, 2072, 2073, GF_CLOSE_BTN, 1); // cancel
+
+	var res := GFSendGump(player, gump)[0];
+   
+   if (!res || res == 1)
+      return;
+   elseif (res >= 50)
+      res -= 50;
+      var answer := questions[res];
+      var quest := quests[answer.pos];
+      if (!CheckQuest(player, quest))
+         return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
+      endif
+
+      var consume_list := dictionary{};
+      foreach condition in (quest.conditions)
+         if (condition.type == "Coletar Item")
+            consume_list[condition.item_objtype] := condition.qty;
+         endif
+         sleepms(2);
+      endforeach
+
+      if (consume_list.Keys().size())
+         if (!SubtractMaterial(player, consume_list))
+            return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo está faltando ser completado.", SSM_FAIL);
+         endif
+      endif
+
+      weekly_quests := GetObjProperty(player, "weekly_quests");
+      if (!weekly_quests) weekly_quests := array{}; endif
+      weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id });
+      SetObjProperty(player, "weekly_quests", weekly_quests);
+
+      quests.Erase(answer.pos);
+      SetObjProperty(player, "quests", quests);
+
+      foreach reward in (quest.rewards)
+         case (reward.type)
+            "Experiência":
+               if (reward.classe != "Personagem")
+                  ClassExpGain(player, reward.classe, 1);
+               else
+                  ExpGain(player, 100);
+               endif
+               break;
+            "Item":
+               CreateItemInBackpackFromTemplate(player, reward.item);
+               break;
+         endcase
+      endforeach
+      PrintText(npc, "Ah, aqui estão suas recompensas.");
+   elseif (res >= 10)
+      res -= 10;
+      var answer := questions[res];
+      GiveQuest(player, FindElemInArray(quest_list, struct{ id := answer.quest_id }));
    endif
 endfunction
 
@@ -75,7 +210,6 @@ function SendConfigGump(npc, player)
 
    var classCfg := ReadConfigFile(":charactercreation:config/classes");
    var opts := GetConfigStringKeys(classCfg);
-   opts.append("Todos");
 
    var marked_type := array{};
    var can_teach := array{};

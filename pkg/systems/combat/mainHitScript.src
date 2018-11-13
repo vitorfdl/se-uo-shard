@@ -24,11 +24,12 @@ include "include/sounds";
 var item_cfg := ReadConfigFile(":*:itemdesc");
 
 program MainHitScript( params )
-	var attacker    := params[1];
-	var defender    := params[2];
-	var weapon      := params[3];
-	var armor       := params[4];
-	var wpn_a_elem  := params[6];
+	var attacker   := params[1];
+	var defender   := params[2];
+	var weapon     := params[3];
+	var armor      := params[4];
+	var wpn_a_elem := params[6];
+	var bonus_dmg  := params[7];
 
 	SetScriptController(attacker);
 
@@ -52,6 +53,9 @@ program MainHitScript( params )
 	var damage_type := GetDamageType(wpn_a_elem);
 
 	var base_damage :=  CalculateRawDamage(attacker, wpn_a_elem, weapon);
+   if (bonus_dmg)
+      base_damage += cint(cdbl(base_damage) * (cdbl(bonus_dmg) / 100));
+   endif
    // print(CalculateDefenseReduction(defender, damage_type, 0, armor));
    base_damage := base_damage - (base_damage * CalculateDefenseReduction(defender, damage_type, 0, armor) );
 	// Chain Of Pain
@@ -342,23 +346,21 @@ function PoisonChecks(attacker, defender, weapon)
 		endforeach
 	endif
 
-	var poisonInfo := struct{};
+	var poisonInfo;
 	if (!attacker.npctemplate)//se não for npc checa se tem poison na arma
 		// if (attacker.graphic == 21)
 		// 	if (IsPoisonImune(defender, "defaultPoison") )
 		// 		return 0;
 		// 	endif
 			
-		// 	if (randomint(100) < 20)
-		// 		TS_StartTimer(defender, "defaultPoison", 60, 2, attacker);
-		// 	endif
-
 		// 	return;
 		// endif
 		poisonInfo := GetObjProperty(weapon, "poisonInfo" );
 		if (poisonInfo == error)
 			return 0;
 		endif
+
+
 
 		poisonInfo.dosage := poisonInfo.dosage -1;
 		if (poisonInfo.dosage <= 0) //se não tiver mais cargas de veneno, deleta
@@ -368,17 +370,19 @@ function PoisonChecks(attacker, defender, weapon)
 		else //se ainda tiver atualiza na arma
 			SetObjProperty(weapon, "poisonInfo", poisonInfo);
 		endif
+   else
+      var npcelem  := NPC_GetNPCConfig(attacker.npctemplate);
+      var poison := GetConfigString(npcelem, "Poisoning");
+      if (poison)
+         poison := Splitwords(poison);
+         poisonInfo := struct{
+            name := poison[1],
+            level := Cint(poison[2])
+         };
+      endif
 	endif
 
-	var npcelem      := NPC_GetNPCConfig(attacker.npctemplate);
-   var poison := GetConfigString(npcelem, "Poisoning");
-
-	if (poison)
-      poison := Splitwords(poison);
-		poisonInfo.name  := poison[1];
-		poisonInfo.level := Cint(poison[2]);
-		poisonInfo.difficulty := Cint(poison[3]);
-
+	if (poisonInfo)
 		if (poisonInfo.name == error)
 			return 0;
 		endif
@@ -386,23 +390,16 @@ function PoisonChecks(attacker, defender, weapon)
 		if (!poisonInfo.level)
 			poisonInfo.level := 1;
 		endif
-
-		if (!poisonInfo.time)
-			poisonInfo.time := poisonInfo.level*5;
-		endif
 	endif
 
-	if (checkImmunity(defender, DMG_POISON))
-		return;
-	elseif(rollResistDice(defender, CONSTITUTION) > poisonInfo.difficulty)
-		return;
-	endif
-
+   var time := 15;
 	if (poisonInfo.name == "paralyzePoison")
-		poisonInfo.time := 5;
+		time := 3;
 	endif
 
-	return TS_StartTimer(defender, poisonInfo.name, poisonInfo.time, poisonInfo.level, attacker);
+   if (randomint(100) < 40)
+      TS_StartTimer(defender, poisonInfo.poisonType, time, poisonInfo.level, attacker);
+   endif
 endfunction
 
 // function Trespassar(attacker, defender)

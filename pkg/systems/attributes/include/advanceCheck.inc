@@ -103,7 +103,6 @@ function ExpGain(mobile, difficulty, value := 0)
 		SysLog("Erro em difficulty para ExpGain: {}".format(difficulty));
 	endif
 
-   up_amount *= 4;
    // var account := FindAccount(mobile.acctname);
    // if (account && account.GetProp("expboost"))
    //    if (account.GetProp("expboost") <= mobile.getlevel())
@@ -129,6 +128,28 @@ function ExpGain(mobile, difficulty, value := 0)
 	return 1;
 endfunction
 
+function ClassExpGain(who, classe, major := 0)
+   var classCfg := ReadConfigFile(":charactercreation:config/classes");
+   var elem := FindConfigElem(classCfg, classe);
+
+   var chardata := GetObjProperty(who, "chardata");
+   if (!chardata) return; endif
+
+   var exp_amount := _ifElse(major == 1, 1400, 1000);
+   if (elem.Type == "Main")
+      var i := FindInArray(chardata.classes, struct{ id := classe });
+      if (!i) return; endif
+      chardata.classes[i].exp += exp_amount;
+      UpClass(chardata.classes[i]);
+   else
+      var i := FindInArray(chardata.subclasses, struct{ id := classe });
+      if (!i) return; endif
+      chardata.subclasses[i].exp += exp_amount;
+      UpClass(chardata.subclasses[i], 3);
+   endif
+   SetObjProperty(who, "chardata", chardata);
+endfunction
+
 function GetClassMaxExp(classe)
    var level := cint(classe.level);
    if (!level) level := 1; endif
@@ -136,16 +157,16 @@ function GetClassMaxExp(classe)
    return level * 2500;
 endfunction
 
-function UpClass(classe)
+function UpClass(byref classe, max_level := 4)
    var level := cint(classe.level);
    var exp := cint(classe.exp);
    var maxexp := GetClassMaxExp(classe);
-   if (exp > maxexp || classe.level >= 4)
+   if (exp < maxexp || classe.level >= max_level)
       return;
    endif
 
    classe.exp := 0;
-   classe.level += 1;
+   classe.level := cint(classe.level) + 1;
    return classe;
 endfunction
 
