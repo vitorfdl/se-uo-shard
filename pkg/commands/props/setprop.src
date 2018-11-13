@@ -74,6 +74,9 @@ function ProcessInput(who, targ, byref property, byref value)
 	else
 		// Nothing special was needed to be done, just an ordinary member to change.
 		targ.set_member(property, value);
+      if (targ.isA(POLCLASS_ITEM))
+         SetName(targ, targ.desc);
+      endif
 		return 1;
 	endif
 endfunction
