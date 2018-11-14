@@ -155,7 +155,6 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	PrintText(mobile, "*parou de aplicar bandagens*");
 	detach();
 	SendSysMessageEx(targ, "Aguarde enquanto a cura faz efeito.");
-	ExpGain(mobile, "minor");
 	mobile.SetAchievement("bandages", 1);
 	
 	var i;
@@ -222,7 +221,7 @@ function HealCorpse(mobile, targ)
 		SendSysMessageEx(mobile, "o alvo está morto", SSM_FAIL);
 		return;
 	else
-		ExpGain(mobile, "major");
+		ExpGain(mobile, "minor");
 		mobile.SetAchievement("heal_corpse", 1);
 		SendSysMessageEx(mobile, "Você estabilizou "+name);
 		SetObjProperty(targ, "curado", 1);

@@ -136,7 +136,7 @@ program skinning(parms)
    endif
 
    if (found)
-      ExpGain(who, "minor");
+      // ExpGain(who, "minor");
       who.SetAchievement("skinning", 1);
       SendSysMessageEx(who, "Escalpelou o corpo.", SSM_INFO);
    else

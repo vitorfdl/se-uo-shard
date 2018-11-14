@@ -24,7 +24,7 @@ program animateSword(params)
    sleep(1);
 
    PlayMovingEffectXYZEx(who.x+mod[1], who.y+mod[2], who.z+10, targ.x, targ.y, targ.z+10, who.realm, 0x1ECD, 5, 25, 2054);
-   if (CheckBlockDodge(targ))
+   if (CheckBlockDodge(targ, 1, 1))
       return;
    endif
 

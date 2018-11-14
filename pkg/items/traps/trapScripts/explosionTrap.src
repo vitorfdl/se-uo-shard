@@ -36,7 +36,7 @@ program trapScript(params)
 			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha.", SSM_FAIL);
 			PlayObjectCenteredEffect(mobile, GFX_EXPLODE_3, 10, 10);
 
-		   if (!CheckBlockDodge(mobile))
+		   if (!CheckBlockDodge(mobile, 1, 1))
             SendSysMessageEx(mobile, "Você evitou a armadilha.", SSM_INFO);
          else
             DamageFLS(mobile, dmgfinal, DMG_FIRE);

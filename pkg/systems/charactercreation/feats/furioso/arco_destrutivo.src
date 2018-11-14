@@ -33,7 +33,7 @@ function ataquegiratorio(who, hab)
    foreach pos in positions
       var mobiles := ListMobilesNearLocation(pos[1], pos[2], who.z, 0, who.realm);
       foreach mobile in mobiles
-         if (!CheckBlockDodge(mobile) && !CheckIfIsAlly(who, mobile))
+         if (!CheckBlockDodge(mobile, 1, 1) && !CheckIfIsAlly(who, mobile))
             PlayMovingEffect( who, mobile, 0x22C6, 10);
             DamageFLS(mobile, hab.PowerMod[1], DMG_PHYSICAL, who);
          endif

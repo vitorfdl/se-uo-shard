@@ -60,7 +60,7 @@ function CalculatePowerPercent(power, percent)
    return cint(cdbl(power) * (percent / 100));
 endfunction
 
-function CheckBlockDodge(who, return_block := 1, return_dodge := 1, no_message := 0)
+function CheckBlockDodge(who, return_block := 0, return_dodge := 0, no_message := 0)
    if (return_dodge)
       if (TS_GetCooldown(who, "dodge")) 
          if (!no_message) 

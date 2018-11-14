@@ -113,87 +113,115 @@ function GiveQuest(who, quest)
    var f := _ifElse(quests_of_type, quests_of_type.size(), 0) + _ifElse(weekly_quests_total, weekly_quests_total.size(), 0);
    if (f >= 2) return SendSysMessageEx(who, "Limite de missões dessa classe esgotado.", SSM_FAIL); endif
 
+   var quest_progress := GetObjProperty(who, "quest_progress");
+   if (!quest_progress) quest_progress := array{}; endif
+
+   foreach condition in (quest.conditions)
+      var quest_id := polcore().systime;
+      condition.id := quest_id;
+      quest_progress.append(condition);
+      condition := quest_id;
+      sleepms(2);
+   endforeach
+
    quest_data.append(quest);
    SetObjProperty(who, "quests", quest_data);
+   SetObjProperty(who, "quest_progress", quest_progress);
 endfunction
 
-function ProgressQuest(who, search, params)
-   var quest_data := GetObjProperty(who, "quests");
-   if (!quest_data) return;
-   elseif (quest_data.size() <= 0) return; endif
+function ProgressQuest(who, search, plus_progress := 1)
+   var quest_progress := GetObjProperty(who, "quest_progress");
 
-   var quest_indexes := _ProgressCompare(quest_data, search);
-   if (!quest_indexes.size()) return; endif
-   foreach i in quest_indexes
-      if (!quest_data[i].done)
-         var can_done := 1;
-         foreach condition in (quest_data[i].conditions)
-            if (condition.done || condition.type != search.type) continue;
-            elseif (!condition.party && search.party) continue;
-            elseif (condition.onlyboss && !search.onlyboss) continue; endif
-            
-            foreach p in (params.Keys())
-               condition[p] -= params[p];
-               sleepms(2);
-               if (condition[p] > 0)
-                  can_done := 0;
-               endif
-            endforeach
-
-            if (can_done) 
-               condition.done := 1;
-            endif
-         endforeach
-      endif
+   foreach item in quest_progress
       sleepms(2);
-   endforeach
+      if (item.qty && cint(item.qty) <= item.progress) continue;
+      elseif (item.done) continue; endif
+      
+      if (item.party) search.-party; endif
+      if (item.spawngroup == "Qualquer Um") search.-spawngroup; endif
 
-   SetObjProperty(who, "quests", quest_data);
-endfunction
-
-function _ProgressCompare(quests, search)
-   var return_keys := array{};
-   foreach quest in ( quests )
-      var conditions := quest.conditions;
-      var can_add := 0;
-      foreach condition in conditions
-         var condition_pass := 1;
-         foreach key in (search.Keys())
-            if (key == "spawngroup" && condition[key] == "Qualquer Um")
-            elseif (key == "party")
-               if (search[key] == 1 && condition[key] == 0)
-                  condition_pass := 0;
-               endif
-            elseif (condition[key] != search[key])
-               condition_pass := 0;
-            endif
-         endforeach
-         if (condition_pass == 1) return_keys.append(_quest_iter); break; endif
+      foreach key in (search.Keys())
          sleepms(2);
+         if (condition[key] != search[key]) continue; endif
       endforeach
-      sleepms(2);
+
+      if (item.qty) item.progress := cint(item.progress) + plus_progress; endif
+      else item.done := 1; endif
    endforeach
 
-   return return_keys;
+   SetObjProperty(who, "quest_progress", quest_progress);
 endfunction
 
 function CheckQuest(who, quest)
-   foreach condition in (quest.conditions)
-      if (!CheckCondition(who, condition)) return 0; endif
+   var quest_progress := GetObjProperty(who, "quest_progress");
+   foreach id in (quest.conditions)
+      var item := FindElemInArray(quest_progress, struct{ id := id });
+      if (item.type == "Coletar Item")
+         if (checkItemAmount(who, condition.objtype) < condition.qty)
+            return 0;
+         endif
+      elseif (item.qty && item.qty < cint(item.progress))
+         return 0;
+      elseif (!item.done)
+         return 0;
+      endif
       sleepms(2);
    endforeach
 
    return 1;
 endfunction
 
-function CheckCondition(who, condition)
-   if (condition.done) 
-      return 1;
-   elseif (condition.type == "Coletar Item")
-      if (checkItemAmount(who, condition.objtype) < condition.qty)
-         return 1;
+function CompleteQuest(who, quest_pos)
+   var quest_data := GetObjProperty(who, "quests");
+   var quest := quest[quest_pos];
+   if (!quest) return; endif
+
+   var quest_progress := GetObjProperty(who, "quest_progress");
+   if (!quest_progress) return; endif
+
+   var consume_list := dictionary{};
+   foreach id in (quest.conditions)
+      var i := FindInArray(quest_progress, struct{ id := id }, );
+      var item := quest_progress[i];
+      if (item.type == "Coletar Item")
+         consume_list[item.item_objtype] := item.qty;
+      endif
+
+      quest_progress.Erase(i);
+      sleepms(2);
+   endforeach
+
+   if (consume_list.Keys().size())
+      if (!SubtractMaterial(who, consume_list))
+         return SendSysMessageEx(who, "Não foi possível concluir a missão. Algo está faltando ser completado.", SSM_FAIL);
       endif
    endif
+
+   var weekly_quests := GetObjProperty(who, "weekly_quests");
+   if (!weekly_quests) weekly_quests := array{}; endif
+   weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id });
+   SetObjProperty(who, "weekly_quests", weekly_quests);
+
+   foreach reward in (quest.rewards)
+      case (reward.type)
+         "Experiência":
+            if (reward.classe != "Personagem")
+               ClassExpGain(who, reward.classe, 1);
+               SendSysMessageEx(who, "Você recebeu experiência para a classe {}".format(reward.classe));
+            else
+               ExpGain(who, 100);
+               SendSysMessageEx(who, "Você recebeu experiência de personagem.");
+            endif
+            break;
+         "Item":
+            var item := CreateItemInBackpackFromTemplate(who, reward.item);
+            SendSysMessageEx(who, "Você recebeu o item: {}.".format(item.desc));
+            break;
+      endcase
+   endforeach
+   
+   quests.Erase(quest_pos);
+   SetObjProperty(who, "quests", quests);
 endfunction
 
 function checkItemAmount(who, objtype)

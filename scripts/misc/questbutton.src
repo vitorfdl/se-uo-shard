@@ -16,13 +16,15 @@ var quest_n := 1;
 var itemdesc := ReadConfigFile(":*:itemdesc");
 
 function BuildQuestInfo(who, byref gump, quest := struct{})
+   var quest_progress := GetObjProperty(who, "quest_progress");
 	//Quest BG
 	GFGumpPic(gump, 303, 21, 1248, 0);
    GFHTMLArea(gump, 336, 74, 150, 20, "<BASEFONT SIZE=4 COLOR=#A0A0A0>DESCRIÇÃO");
    GFHtmlShadowed(gump, 342, 96, 233, 20, "#FFD300", "{}".format(quest.title), 5);
 	
-	foreach condition in (quest.conditions)
-      var y := (_condition_iter-1) * 20;
+	foreach id in (quest.conditions)
+      var condition := FindElemInArray(quest_progress, struct{ id := id });
+      var y := (_id_iter-1) * 20;
       var title := condition.type;
       if (!title)
          title := "Erro ao pegar condição";
@@ -35,6 +37,8 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
          if (condition.qty - CheckItemAmount(who, condition.item_objtype) <= 0)
             condition.done := 1;
          endif
+      elseif (condition.qty && cint(condition.qty) - cint(condition.progress) <= 0)
+         condition.done := 1;
       endif
 
       if (condition.qty)
@@ -80,16 +84,6 @@ function BuildQuestGump(who)
    var quests := GetObjProperty(who, "quests");
    if (!quests) quests := array{}; endif
 
-// struct{
-//          title := "Mate os Goblins!",
-//          conditions := array{
-//             // struct{ kill_quest := struct{ monster := ":ghaia:goblinarqueiro", qty := 30, calc := 30 }, done := 1 },
-//             // struct{ kill_quest := struct{ monster := ":ghaia:goblinxama", qty := 20, calc := 15 }, done := 0  },
-//             struct{ title := "Ler livro no Altar", use_item := struct{ serial := 0x478 }, done := 0  }
-//          },
-//          description := "Há muitos goblins para se matar<br><i>- Vamos! Mate todos eles!</i><br><br>Você pode encontra-los na <b>floresta</b> ao sul"
-//       }
-
 	var gump := GFCreateGump(250, 200);
 	
 	GFPage(gump, 0);
@@ -121,8 +115,6 @@ function BuildQuestGump(who)
    else
          GFTextLine(gump, 106, 209, 1938, "Nenhuma missão disponível");
    endif
-
-
 
 	return GFSendGump(who, gump)[0];
 endfunction

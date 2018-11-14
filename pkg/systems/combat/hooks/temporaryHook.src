@@ -99,7 +99,7 @@ program Attack(params)
       defender := mobiles.randomentry();
    endif
 
-   if ( CheckBlockDodge(defender, 0) )
+   if ( CheckBlockDodge(defender, 0, 1) )
 		MissHit(attacker, defender);
       return;
    elseif (CheckBlockDodge(defender, 1, 0))

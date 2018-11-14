@@ -156,43 +156,8 @@ function SendQuestGump(npc, player)
       if (!CheckQuest(player, quest))
          return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
       endif
-
-      var consume_list := dictionary{};
-      foreach condition in (quest.conditions)
-         if (condition.type == "Coletar Item")
-            consume_list[condition.item_objtype] := condition.qty;
-         endif
-         sleepms(2);
-      endforeach
-
-      if (consume_list.Keys().size())
-         if (!SubtractMaterial(player, consume_list))
-            return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo está faltando ser completado.", SSM_FAIL);
-         endif
-      endif
-
-      weekly_quests := GetObjProperty(player, "weekly_quests");
-      if (!weekly_quests) weekly_quests := array{}; endif
-      weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id });
-      SetObjProperty(player, "weekly_quests", weekly_quests);
-
-      quests.Erase(answer.pos);
-      SetObjProperty(player, "quests", quests);
-
-      foreach reward in (quest.rewards)
-         case (reward.type)
-            "Experiência":
-               if (reward.classe != "Personagem")
-                  ClassExpGain(player, reward.classe, 1);
-               else
-                  ExpGain(player, 100);
-               endif
-               break;
-            "Item":
-               CreateItemInBackpackFromTemplate(player, reward.item);
-               break;
-         endcase
-      endforeach
+      
+      CompleteQuest(player, answer.pos);
       PrintText(npc, "Ah, aqui estão suas recompensas.");
    elseif (res >= 10)
       res -= 10;

@@ -116,12 +116,10 @@ program core_npcDeath(params)
       is_boss := _ifElse(boss, 1, 0);
 		if (boss && boss.deathevent)
          foreach nevent in (boss.deathevent)
-         //	printtextabove(corpse, " " + nevent.type);
             if ( (nevent.type == "Criar Npcs") && (cint(nevent.x) == 6) && (cint(nevent.y) == 6) && (cint(nevent.z) == 6)  )
                nevent.x := corpse.x;
                nevent.y := corpse.y;
                nevent.z := corpse.z;
-               //printtextabove(corpse, "mudei o evento");
             endif
             ExecuteEvent(nevent);				
          endforeach
@@ -144,7 +142,7 @@ program core_npcDeath(params)
       search.onlyboss := is_boss;
       search.type := "Matar Monstro";
       search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
-      ProgressQuest(mob, search, struct{ qty := 1 });
+      ProgressQuest(mob, search);
       ExpGain(mob, 3);
       sleepms(2);
    endforeach
