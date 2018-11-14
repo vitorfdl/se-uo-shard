@@ -52,13 +52,14 @@ endprogram
 function MobileTracking(who)
    var tracker := ReadGameClock();
    SetObjProperty(who, "TrackingCounter", tracker);
-   var range := 18;
+   var range := 30;
 
-   var nmobiles := ListMobilesNearLocationEX(who.x,who.y, LIST_IGNORE_Z, range, 0x03, who.realm);
+   var nmobiles := ListMobilesNearLocationEX(who.x, who.y, LIST_IGNORE_Z, range, 0x03, who.realm);
    var mobiles := array;
 
    foreach mob in nmobiles
-      if ( mob != who)
+      if (mob.connected && Distance(who, mob) > 20)
+      elseif ( mob != who)
          mobiles.append(mob);
       endif
       sleepms(2);
