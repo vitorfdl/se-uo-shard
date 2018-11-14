@@ -42,6 +42,9 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
       endif
 
       if (condition.qty)
+         if (condition.progress && cint(condition.qty) - cint(condition.progress) > 0)
+            condition.qty -= cint(condition.progress);
+         endif
          title += " {}".format(condition.qty);
       endif
 

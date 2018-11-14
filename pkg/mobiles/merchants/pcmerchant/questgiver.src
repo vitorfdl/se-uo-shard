@@ -157,8 +157,11 @@ function SendQuestGump(npc, player)
          return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
       endif
       
-      CompleteQuest(player, answer.pos);
-      PrintText(npc, "Ah, aqui estão suas recompensas.");
+      if (CompleteQuest(player, answer.pos))
+         PrintText(npc, "Ah, aqui estão suas recompensas.");
+      else
+         return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
+      endif
    elseif (res >= 10)
       res -= 10;
       var answer := questions[res];

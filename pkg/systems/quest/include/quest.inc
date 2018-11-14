@@ -117,7 +117,7 @@ function GiveQuest(who, quest)
    if (!quest_progress) quest_progress := array{}; endif
 
    foreach condition in (quest.conditions)
-      var quest_id := polcore().systime;
+      var quest_id := "{}{}{}".format(quest.id, polcore().systime, _condition_iter);
       condition.id := quest_id;
       quest_progress.append(condition);
       condition := quest_id;
@@ -140,12 +140,17 @@ function ProgressQuest(who, search, plus_progress := 1)
       if (item.party) search.-party; endif
       if (item.spawngroup == "Qualquer Um") search.-spawngroup; endif
 
+      var no_progress := 0;
       foreach key in (search.Keys())
          sleepms(2);
-         if (condition[key] != search[key]) continue; endif
+         if (item[key] != search[key]) 
+            no_progress := 1;
+            break;
+         endif
       endforeach
 
-      if (item.qty) item.progress := cint(item.progress) + plus_progress; endif
+      if (no_progress)
+      elseif (item.qty) item.progress := cint(item.progress) + plus_progress;
       else item.done := 1; endif
    endforeach
 
@@ -157,11 +162,13 @@ function CheckQuest(who, quest)
    foreach id in (quest.conditions)
       var item := FindElemInArray(quest_progress, struct{ id := id });
       if (item.type == "Coletar Item")
-         if (checkItemAmount(who, condition.objtype) < condition.qty)
+         if (checkItemAmount(who, item.item_objtype) < item.qty)
             return 0;
          endif
-      elseif (item.qty && item.qty < cint(item.progress))
-         return 0;
+      elseif (item.qty)
+         if (item.qty < cint(item.progress))
+            return 0;
+         endif
       elseif (!item.done)
          return 0;
       endif
@@ -173,15 +180,19 @@ endfunction
 
 function CompleteQuest(who, quest_pos)
    var quest_data := GetObjProperty(who, "quests");
-   var quest := quest[quest_pos];
+   var quest := quest_data[quest_pos];
    if (!quest) return; endif
 
    var quest_progress := GetObjProperty(who, "quest_progress");
-   if (!quest_progress) return; endif
+   if (!quest_progress) 
+      quest_data.Erase(quest_pos);
+      SetObjProperty(who, "quests", quest_data);
+      return;
+   endif
 
    var consume_list := dictionary{};
    foreach id in (quest.conditions)
-      var i := FindInArray(quest_progress, struct{ id := id }, );
+      var i := FindInArray(quest_progress, struct{ id := id });
       var item := quest_progress[i];
       if (item.type == "Coletar Item")
          consume_list[item.item_objtype] := item.qty;
@@ -193,14 +204,14 @@ function CompleteQuest(who, quest_pos)
 
    if (consume_list.Keys().size())
       if (!SubtractMaterial(who, consume_list))
-         return SendSysMessageEx(who, "Não foi possível concluir a missão. Algo está faltando ser completado.", SSM_FAIL);
+         return 0;
       endif
    endif
 
-   var weekly_quests := GetObjProperty(who, "weekly_quests");
-   if (!weekly_quests) weekly_quests := array{}; endif
-   weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id });
-   SetObjProperty(who, "weekly_quests", weekly_quests);
+   // var weekly_quests := GetObjProperty(who, "weekly_quests");
+   // if (!weekly_quests) weekly_quests := array{}; endif
+   // weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id });
+   // SetObjProperty(who, "weekly_quests", weekly_quests);
 
    foreach reward in (quest.rewards)
       case (reward.type)
@@ -220,8 +231,10 @@ function CompleteQuest(who, quest_pos)
       endcase
    endforeach
    
-   quests.Erase(quest_pos);
-   SetObjProperty(who, "quests", quests);
+   quest_data.Erase(quest_pos);
+   SetObjProperty(who, "quests", quest_data);
+   SetObjProperty(who, "quest_progress", quest_progress);
+   return 1;
 endfunction
 
 function checkItemAmount(who, objtype)

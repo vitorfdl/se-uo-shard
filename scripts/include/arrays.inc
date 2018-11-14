@@ -198,7 +198,7 @@ function FindAllElemInArray(byref the_array, find_what, return_index := 0)
     if ( Lower(TypeOf(the_array)) != "array" )
         return error{"errortext":="Object passed was not an array."};
     endif
-
+   
     var to_return := array{};
     foreach index in ( the_array )
       if ((TypeOf(find_what) == "Struct" || TypeOf(index) == "Struct") || (TypeOf(index) == "Dictionary" || TypeOf(find_what) == "Dictionary") || index.isA(POLCLASS_ITEM))
@@ -222,7 +222,7 @@ function FindAllElemInArray(byref the_array, find_what, return_index := 0)
 		return to_return;
 	endif
 	
-    return 0;
+   return 0;
 endfunction
 
 
