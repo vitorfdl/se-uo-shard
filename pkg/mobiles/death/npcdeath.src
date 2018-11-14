@@ -136,13 +136,16 @@ program core_npcDeath(params)
 	endif
 
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY ,corpse.realm))
-      var search := struct{};
-      search.spawngroup := _ifElse(GetObjProperty(corpse, "spawngroup"), GetObjProperty(corpse, "spawngroup"), 0);
-      search.template := template;
-      search.onlyboss := is_boss;
-      search.type := "Matar Monstro";
-      search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
-      ProgressQuest(mob, search);
+      var process := GetProcess(GetObjProperty(mob, "#roleplay"));
+      if (process)
+         var search := struct{};
+         search.spawngroup := _ifElse(GetObjProperty(corpse, "spawngroup"), GetObjProperty(corpse, "spawngroup"), 0);
+         search.template := template;
+         search.onlyboss := is_boss;
+         search.type := "Matar Monstro";
+         search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
+         process.SendEvent(struct{ type := 0x4785, search := search });
+      endif
       ExpGain(mob, 3);
       sleepms(2);
    endforeach

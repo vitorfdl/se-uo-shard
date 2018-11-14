@@ -32,7 +32,7 @@ program AC_start(item)
             if (!process)
                continue;
             endif
-            process.SendEvent(struct{ "type" := 0x456, text := "{}Roleplay: {}{}".format(BLUE, WHITE, config.rptext), id := item.serial, emote := config.emote });
+            process.SendEvent(struct{ "type" := 0x456, origin := item.serial, text := "{}Roleplay: {}{}".format(BLUE, WHITE, config.rptext), id := item.serial, emote := config.emote });
          endif
       endif
    endwhile

@@ -4,6 +4,7 @@ use os;
 include "include/sysEvent";
 include "include/say";
 include ":datafile:datafile";
+include ":quest:quest";
 
 program AC_start(who)
    detach();
@@ -19,7 +20,7 @@ program AC_start(who)
    var already_saw := array{};
    SetObjProperty(who, "last_see", last_see);
 
-   while (who.connected)		
+   while (who.connected)	
       var event := wait_for_event(2);
       var trig := 0;
       if (event.type == 0x456 && !(event.id in already_saw))
@@ -27,6 +28,9 @@ program AC_start(who)
          already_saw.append(event.id);
          if (event.emote) PrintTextPrivate(who, "*{}*".format(event.emote), who); endif
          trig := 1;
+         ProgressQuest(who, struct{ type := "Ir até Local", local := event.origin });
+      elseif (event.type == 0x4785)
+         ProgressQuest(who, event.search);
       endif
 
       var mobiles_around := ListMobilesInLineOfSight( who, 5 );
