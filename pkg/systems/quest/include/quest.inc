@@ -139,7 +139,7 @@ function ProgressQuest(who, search, plus_progress := 1)
       
       if (item.party) search.-party; endif
       if (item.spawngroup == "Qualquer Um") search.-spawngroup; endif
-
+      
       var no_progress := 0;
       foreach key in (search.Keys())
          sleepms(2);
