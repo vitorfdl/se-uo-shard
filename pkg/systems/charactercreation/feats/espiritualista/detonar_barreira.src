@@ -1,0 +1,48 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/shapes";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program animateSword(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   if (!TS_GetTimerInfo(targ, "barrier"))
+      HealMana(who, spellinfo.Mana);
+      TS_LowerDuration(who, "hab_".format(spellinfo.FeatID), -1);
+      return SendSysMessageEx(who, "O alvo não está protegido por uma barreira", SSM_FAIL);
+   endif
+
+   TS_LowerDuration(targ, "barrier", -1);
+   var area := GetCoordsInSquare(targ.x, targ.y, 1);
+   foreach p in area
+      if (CoordinateDistance(targ.x+1, targ.y+1, p.x, p.y+1) >= 1)
+         PlayMovingEffectXYZ( targ.x+1, targ.y+1, targ.z+5, p.x+1, p.y+1, targ.z+5, 0x376A, 0 );
+      endif
+      sleepms(2);
+   endforeach
+
+   var mobs := CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, LIST_IGNORE_Z, 1, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+   foreach mob in mobs
+      if (mob != targ)
+         DamageFLS(mob, spellinfo.PowerMod[2], DMG_ENERGY, who);
+      endif
+   endforeach
+
+   PlaySoundEffect(targ, cint(0x214));
+   if (targ in mobs)
+      DamageFLS(targ, spellinfo.PowerMod[1], DMG_ENERGY, who);
+   endif
+   
+
+	return 1;
+endprogram

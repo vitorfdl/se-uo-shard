@@ -1,0 +1,14 @@
+use uo;
+use os;
+
+program controlRune(trap)
+	sleep(1);
+   var pid := GetObjProperty(trap, "thepid");
+   if (!pid) return; endif
+
+   while (GetProcess(pid))
+      sleepms(800);
+   endwhile
+
+   DestroyItem(trap);
+endprogram

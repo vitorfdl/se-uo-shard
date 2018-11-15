@@ -102,7 +102,7 @@ program UseWood( who, wood )
 					PrintText(campfire, "*algo atrapalha o acampamento*");
 				endif
 			endif
-			sleep(5);
+			sleep(3);
 			continuehealing := 1;
 		endwhile
 		DestroyItem(campfire);

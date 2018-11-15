@@ -22,71 +22,28 @@ include ":crafting:craft_props";
 program oafeatures_sendpacket(who, text)
    // var test := dictiona
    // PlayObjectCenteredEffect( who, 0x41A2, 1, 20);
-   print(GetObjproperty(who, "quests"));
+   var targ := who;
+   var area := GetCoordsInSquare(targ.x, targ.y, 1);
+   foreach p in area
+      if (CoordinateDistance(targ.x+1, targ.y+1, p.x, p.y+1) >= 1)
+         PlayMovingEffectXYZ( targ.x+1, targ.y+1, targ.z+5, p.x+1, p.y+1, targ.z+5, 0x9DAC, 0 );
+      endif
+      sleepms(2);
+   endforeach
 
-   // checkItemAmount(who, 56334);
-
-   // print(AP_GetVitalRegenRateMod(who, "Hits"));
-   // var player := SelectCharacter( who, who.cmdlevel );
-
-   // var chardata := GetObjproperty(player, "chardata");
-   // chardata.raca := text;
-   // chardata.heritage := array{ array{ chardata.heritage }};
-   // var res := SetObjProperty(player, "chardata", chardata);
-   // Sendsysmessageex(who, "done" + res);
-
-
-   // GFGumpPicTiled(gump, 100,100,30,235,10460);
-   // GFGumpPicTiled(gump, 320,100,30,235,10460);
-   // GFGumpPicTiled(gump, 80,88,463,16,10100);
-   // GFGumpPicTiled(gump, 84,610,457,16,10100);
-   
-   // var chardata := GetObjProperty(targ, "chardata");
-   // if (!chardata)
-   // 	var chardata := struct{ "level" := 1, "raca" := "", "Feats" := array{}};
-   // endif
-
-   // var y := 120;
-
-   // print(res.scripts[1]);
    // PlayStationaryEffectEx( who.x, who.y, who.z+3, who.realm, 0x376A, 1, 15, 2168 );
    // PlayStationaryEffectEx( who.x, who.y, who.z+15, who.realm, 0x376A, 1, 15, 2168 );
    // PlayStationaryEffectEx( who.x, who.y, who.z+30, who.realm, 0x375A, 1, 15, 2168 );
    // PlaySoundEffect(who, 0x5CA);
-
-   // var targ_opts := array{"Self", "Cone in front", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "In Line"};
-   //    var input_list := array{};
-   //    input_list.append(struct{ "title" := "Onde será criado?", "marked" := 1, "radio" := targ_opts});
-   //    input_list.append(struct{ "title" := "Qual ID ou nome do item a ser criado?", "marked" := "" });
-   //    input_list.append(struct{ "title" := "Criar em X Y Z (deixa em branco para usar target)", "marked" := "" });
-   //    input_list.append(struct{ "title" := "Qual cor o item terá?", "marked" := "" });
-   //    input_list.append(struct{ "title" := "O item pode ser pego por players?", "marked" := 1, "radio" := array{"Não", "Sim"} });
-   //    var output := QuestionsGump(who, input_list);
-
-   // printtext(targ, ""+targ.enabled("hiddenattack"));
-   // GrantPrivilege(targ, "hiddenattack");
-   // targ.enable("hiddenattack");
-   // printtext(who, ""+targ.tile_layer);
-   // printtext(who, ""+targ.get_member("polclass"));
-   // var targ := TargetCoordinates(who);
-   // printtext(who, ""+abs(targ.z - who.z ));
-   // var newball := CreateItemAtLocation(who.x, who.y, who.z+2, 0xFFBE);
-   // newball.graphic := 0x19AC;
-   // newball.SetOwner(who);
-   // newball.SetDuration(8);
-   // newball.SetType(2);
-   // newball.SetDirection(targ.serial);
-   // newball.SetDmgInfo(struct{ "dice":= "3d2", "type" := DMG_ENERGY });
-               // newball.SetEffect(effect);
-   // print(GetWeaponSpellList(targ));
-   // var chardata := GetObjProperty(targ, "chardata");
-   // chardata.storedexp := 0;
-   // SetObjProperty(targ, "chardata", chardata);
-   // print(GetItemDescriptor(targ.objtype));
-   // var chardata := GetObjproperty(targ, "chardata");
-   // print(chardata);
-   // AP_SetStatMod(w
-
-   // print(typeof(RandomDiceRoll("1d100")));
-   // who.attack_once();
+   // MoveObjectToLocation(targ, targ.x, targ.y, targ.z-10, targ.realm, MOVEOBJECT_FORCELOCATION);
+      
+   // foreach p in area
+   //    if (_p_iter == 21) continue; endif
+   //    if (_p_iter == 1) continue; endif
+   //    if (_p_iter == 25) continue; endif
+   //    if (_p_iter == 5) continue; endif
+   //    PlayMovingEffectXYZ( p.x-1, p.y-2, targ.z+20, p.x, p.y, targ.z+10, 0xf3f, 0 );
+   //    sleepms(2);
+   // endforeach
+   
 endprogram

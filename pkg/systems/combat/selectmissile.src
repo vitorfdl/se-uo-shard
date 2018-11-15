@@ -1,7 +1,11 @@
 use uo;
+use os;
 
 include "include/say";
 program select( who, item)
+   if (who.warmode)
+      return start_script(":combat:useScripts/useWeapon", array{who, item});
+   endif
 	SendSysMessageEX(who, "Escolha o tipo de flecha.", SSM_REQUEST);
 	
 	var alvo := target(who);

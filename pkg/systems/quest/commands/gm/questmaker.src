@@ -196,55 +196,56 @@ program gump_gump(who)
          endif
       elseif (res[0] >= GF_SELECTELEM_BTN && res[0] <= GF_SELECTELEM_BTN+150)
          selected_quest := res[0]-GF_SELECTELEM_BTN;
+      else
+         case (res[0])
+            GF_ADD_BTN:
+               var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
+               var id := cint(quest_list[quest_list.size()]) +1 ;
+               SetQuestData(id, struct{ title := quest_name});
+               selected_quest := id;
+               break;
+            GF_DEL_BTN:
+               RemoveQuestData(selected_quest);
+               selected_quest := 0;
+               break;
+            GF_QUEST_LEVEL:
+               var opts := array{"1", "2", "3", "4"};
+               update_quest["level"] := RadioGump(who, 100, 0, "Escolha o level da classe:", opts, 0, quest.level in opts);
+               break;
+            GF_QUEST_CATEGORY:
+               var classCfg := ReadConfigFile(":charactercreation:config/classes");
+               var opts := GetConfigStringKeys(classCfg);
+               opts.append("Todos");
+               update_quest["category"] := RadioGump(who, 200, 0, "Escolha a Categoria:", opts, 0, quest.category in opts);
+               break;
+            GF_QUEST_ACTIVE:
+               update_quest["active"] := !quest.active;
+               break;
+            GF_CONDITION_ADD:
+               var new_condition := QuestConditions(who);
+               if (!new_condition) break; endif
+               quest.conditions.append(new_condition);
+               update_quest["conditions"] := quest.conditions;
+               break;
+            GF_REWARD_ADD:
+               var new_reward := QuestRewards(who);
+               if (!new_reward) break; endif
+               quest.rewards.append(new_reward);
+               update_quest["rewards"] := quest.rewards;
+               break;
+            GF_EXTRA_ADD:
+               var new_extra := QuestExtras(who);
+               if (!new_extra) break; endif
+               quest.extras.append(new_extra);
+               update_quest["extras"] := quest.extras;
+               break;
+         endcase
+         
+         if (selected_quest)
+            SetQuestData(selected_quest, update_quest);
+         endif
       endif
 
-      case (res[0])
-         GF_ADD_BTN:
-            var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
-            var id := cint(quest_list[quest_list.size()]) +1 ;
-            SetQuestData(id, struct{ title := quest_name});
-            selected_quest := id;
-            break;
-         GF_DEL_BTN:
-            RemoveQuestData(selected_quest);
-            selected_quest := 0;
-            break;
-         GF_QUEST_LEVEL:
-            var opts := array{"1", "2", "3", "4"};
-            update_quest["level"] := RadioGump(who, 100, 0, "Escolha o level da classe:", opts, 0, quest.level in opts);
-            break;
-         GF_QUEST_CATEGORY:
-            var classCfg := ReadConfigFile(":charactercreation:config/classes");
-            var opts := GetConfigStringKeys(classCfg);
-            opts.append("Todos");
-            update_quest["category"] := RadioGump(who, 200, 0, "Escolha a Categoria:", opts, 0, quest.category in opts);
-            break;
-         GF_QUEST_ACTIVE:
-            update_quest["active"] := !quest.active;
-            break;
-         GF_CONDITION_ADD:
-            var new_condition := QuestConditions(who);
-            if (!new_condition) break; endif
-            quest.conditions.append(new_condition);
-            update_quest["conditions"] := quest.conditions;
-            break;
-         GF_REWARD_ADD:
-            var new_reward := QuestRewards(who);
-            if (!new_reward) break; endif
-            quest.rewards.append(new_reward);
-            update_quest["rewards"] := quest.rewards;
-            break;
-         GF_EXTRA_ADD:
-            var new_extra := QuestExtras(who);
-            if (!new_extra) break; endif
-            quest.extras.append(new_extra);
-            update_quest["extras"] := quest.extras;
-            break;
-      endcase
-      
-      if (selected_quest)
-         SetQuestData(selected_quest, update_quest);
-      endif
    endwhile
 endprogram
 

@@ -69,7 +69,7 @@ function BuildHotBar(who, byref hotbar)
       if (!shortcut)
 	      GFGumpPic(gump, 19 + pos_plus, pos_y+81, 21012, 1485);
       elseif (shortcut.script)
-         if (TS_GetCooldown(who, "hab_block"))
+         if (who.squelched || who.paralyzed || who.frozen)
             GFGumpPic(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, 1000);
             GFGumpPic(gump, 22 + pos_plus, pos_y+85, 0x20, 1000);
 	         // GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "BLOCK");

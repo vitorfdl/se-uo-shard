@@ -1,0 +1,24 @@
+use uo;
+
+include "include/say";
+include "include/utils";
+include ":attributes:attributes";
+include ":charactercreation:feats";
+include ":timedscripts:timedScripts";
+include "include/facings";
+include "include/damage";
+include ":combat:combat";
+
+program usewand(who, weapon)
+   _resolveParams(who, weapon);
+	if (who.weapon != weapon)
+		SendSysMessageEx(who, "Você deve estar com a arma em mãos.");
+		return 0;
+	endif
+
+   var weapon_cfg := GetItemCFGInfo(who, weapon);
+   if (!weapon_cfg.FeatID) return; endif
+
+   var feat := getFeatById(cint(weapon_cfg.FeatID));
+   TriggerHabilitie(who, feat);
+endprogram 

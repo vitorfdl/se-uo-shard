@@ -22,12 +22,7 @@ program use_Bladed(who, tool)
 	endif
 
    if (who.warmode)
-      if (TS_GetTimerInfo(who, "posicao_defensiva"))
-		   SendSysMessageEx(who, "Você já está em posição defensiva.", SSM_FAIL);
-      elseif (AP_GetTrueSkill(who, ESPADAS) >= 1)
-         AP_ConsumeVital(who, "Stamina", 10);
-         TS_StartTimer(who, "posicao_defensiva", 10, 1);
-      endif
+      return start_script(":combat:useScripts/useWeapon", array{who, tool});
    endif
 
 	SendSysMessageEx(who, "O que você deseja cortar com esta lâmina?");

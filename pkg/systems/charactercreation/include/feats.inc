@@ -401,16 +401,6 @@ function TriggerHabilitie(who, hab)
          var mobile_around := ListMobilesInLineOfSight( who, 10);
          targ := mobile_around.randomentry();
       endif
-
-      if (!hab.IgnoreDodge && TS_GetCooldown(targ, "dodge"))
-         EraseObjProperty(who, "#Casting");
-         return PrintText(targ, "*esquivado*", SSM_INFO);;
-      endif
-
-      if (!hab.IgnoreBlock && TS_GetCooldown(targ, "block"))
-         EraseObjProperty(who, "#Casting");
-         return PrintText(targ, "*bloqueado*", SSM_INFO);;
-      endif
    endif
 
    if (targ.isA(POLCLASS_NPC) && hab.TargetAlign == "Harmful")

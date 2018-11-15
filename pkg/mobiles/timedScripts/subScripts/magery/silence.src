@@ -12,29 +12,12 @@ include "include/say";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   var barrier := AP_GetTrueSkill(mobile, "Barrier");
-   AP_SetTrueSkill(mobile, "Barrier", barrier+level);
-
-   while (mobile)
-      PlayObjectCenteredEffectEx(mobile, 0x377A, 5, 20);
-      barrier := AP_GetTrueSkill(mobile, "Barrier");
-      var reduce := (cdbl(barrier) * 0.1);
-      if (reduce < 5)
-         reduce := 5;
-      endif
-      barrier -= reduce;
-      AP_SetTrueSkill(mobile, "Barrier", barrier);
-      if (barrier <= 0)
-         break;
-      endif
-      sleep(2);
-   endwhile
-
-   return 1;
+   PlaySoundEffectPrivate(mobile, cint(0x658), mobile);
+   mobile.Squelch(-1);
 endfunction
 
 function EndScript(mobile)
-   AP_SetTrueSkill(mobile, "Barrier", 0);;
+   mobile.Squelch(0);
    return 1;
 endfunction
 

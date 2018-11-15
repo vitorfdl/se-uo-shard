@@ -20,15 +20,13 @@ program animateSword(params)
 	params := 0; // No longer needed
 
    PlaySoundEffect(who, 0x1FB);
-   for i := 0 to 7
-      var mod := GetModByFacing(i);
-      mod[1] *= 4;
-      mod[2] *= 4;
-      PlayMovingEffectXYZ(who.x, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
-      PlayMovingEffectXYZ(who.x, who.y-1, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
-      PlayMovingEffectXYZ(who.x+1, who.y, who.z+5, who.x+mod[1], who.y+mod[2], who.z+5, GFX_ENERGY, 5, 55);
+   var area := GetCoordsInSquare(who.x, who.y, 3);
+   foreach p in area
+      if (CoordinateDistance(who.x+1, who.y+1, p.x, p.y+1) >= 3)
+         PlayMovingEffectXYZ( who.x+1, who.y+1, who.z+5, p.x+1, p.y+1, who.z+5, 0x3970, 0 );
+      endif
       sleepms(2);
-   endfor
+   endforeach
 
    var mobs := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, LIST_IGNORE_Z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
    var dmg_dice := spellinfo.PowerMod[1];

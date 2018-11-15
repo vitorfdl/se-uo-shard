@@ -1,0 +1,64 @@
+	/* $Id: alcohol.src 87 2006-05-23 19:04:43Z sroyalty $
+ *
+ */
+
+use uo;
+use os;
+use util;
+
+include "include/client";
+include ":timedscripts:timedScripts";
+include "include/say";
+include ":attributes:attributes";
+
+function StartScript(mobile, attacker := 0, level := 0)
+   var item := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, 0x37CC);
+   SetObjProperty(item, "thepid", GetPid());
+   var item2 := CreateItemAtLocation(mobile.x, mobile.y, mobile.z, 0x376A);
+   SetObjProperty(item2, "thepid", GetPid());
+
+   MoveObjectToLocation(mobile, mobile.x, mobile.y, mobile.z+15, mobile.realm, MOVEOBJECT_FORCELOCATION);
+   while (!mobile.dead)
+      mobile.frozen := 1;
+      sleepms(200);
+      mobile.frozen := 0;
+      mobile.facing += 1;
+      PlaySoundEffect(mobile, 0x212);
+   endwhile
+   
+   return 1;
+endfunction
+
+function EndScript(mobile, level := 0, attacker := 0)
+   sleepms(200);
+   mobile.frozen := 0;
+   mobile.facing += 1;
+   mobile.frozen := 1;
+   sleepms(200);
+   mobile.frozen := 0;
+   MoveObjectToLocation(mobile, mobile.x, mobile.y, mobile.z-15, mobile.realm, MOVEOBJECT_FORCELOCATION);
+   DamageFLS(mobile, level, DMG_ENERGY, attacker);
+   PlaySoundEffect(mobile, cint(0x136));
+   return 1;
+endfunction
+
+function LogOffScript(mobile)
+   return 1;
+endfunction
+
+program TimedScriptInit(params)
+	var mobile := params[1];
+	var type   := params[2];
+	var level  := params[3];
+	var attacker  := params[4];
+
+   if (typeof(type) == "String")
+      if (type == "End")
+         return EndScript(mobile, level, attacker);
+      elseif (type == "LogOff")
+         return LogOffScript(mobile);
+      endif
+   endif
+
+   return StartScript(mobile, type, level);
+endprogram

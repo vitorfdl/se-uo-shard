@@ -67,9 +67,9 @@ function DealAcidDamage(npc, mobile, acid_pool, acid_damage:=0)
 	endif
    
 	if( acid_damage )
-		acid_damage := RandomDiceRoll(acid_damage);
+		acid_damage := acid_damage;
 	elseif( TypeOf(acid_dice) == "String" )
-		acid_damage := RandomDiceRoll(acid_dice);
+		acid_damage := acid_dice;
 	else
 		return 0;
 	endif

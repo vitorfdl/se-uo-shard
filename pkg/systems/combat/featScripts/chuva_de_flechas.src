@@ -1,0 +1,40 @@
+
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/shapes";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program explosao(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var area := GetCoordsInSquare(targ.x, targ.y, 2);
+   foreach p in area
+      if (_p_iter == 21) continue; endif
+      if (_p_iter == 1) continue; endif
+      if (_p_iter == 25) continue; endif
+      if (_p_iter == 5) continue; endif
+      PlayMovingEffectXYZ( p.x-1, p.y-2, targ.z+20, p.x, p.y, targ.z+10, 0xf3f, 0 );
+      sleepms(2);
+   endforeach
+
+   // foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
+   //    if (!CheckBlockDodge(mobile, 1, 1))
+   //       DamageFLS(mobile, spellinfo.PowerMod[1], DMG_FIRE, who);
+   //       if (RandomInt(100) < 15) TS_StartTimer(mobile, "immolation", 10, 1);	endif
+   //    endif
+   //    sleepms(2);
+   // endforeach
+   
+	return 1;
+endprogram

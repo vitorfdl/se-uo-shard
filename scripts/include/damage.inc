@@ -208,7 +208,7 @@ function CalculateTotalDamageBonus(who, defender)
 
 	//Bonus de prop da arma    
 
-
+   var other := 0;
    if (defender != who)
       //Bonus de Spells
       other := other - cint(GetObjProperty(defender, "dmgreduction"));

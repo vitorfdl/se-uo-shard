@@ -1,0 +1,22 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/shapes";
+include "include/say";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":timedscripts:poisonUtil";
+
+program hiddepresence(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+   
+   TS_StartTimer(targ, "levitacao", 5, spellinfo.PowerMod[1]);
+
+	return 1;
+endprogram
