@@ -1,5 +1,6 @@
 include ":attributes:attributes";
 include "include/colormap";
+include "include/utils";
 
 const RETURN_ACTIVE_ONLY := 1;
 
