@@ -154,7 +154,7 @@ function MissHit(attacker, defender)
 
    EraseObjProperty(attacker, "movement");
 
-   PlayMissSound(attacker);
+   PlayMissSound(attacker, wpn_a_elem);
 endfunction
 
 function WearDownArmor(defender, armor)
