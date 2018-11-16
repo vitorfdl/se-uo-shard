@@ -1,0 +1,44 @@
+
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/shapes";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":combat:combat";
+
+program arremessar_arma(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   var weapon := who.weapon;
+
+   PlayMovingEffectXYZEx( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, who.realm, weapon.objtype, 10 ,0, 0, 0, GetFacing(who.x, who.y, targ.x, targ.y) );
+
+	PlaySoundEffect(who, 0x5D3);
+	PrintText(who, "*lança {}".format(weapon.desc));
+
+   sleepms(100);
+	MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+
+   var dmg := CalculateRawDamage(who, 0, weapon);
+	var altura := cint(who.z - targ.z);
+	if (altura < 0)
+		altura := 0;
+	endif
+
+   foreach mobile in CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
+      if (!CheckBlockDodge(mobile, 1, 1))
+         DamageFLS(mobile, spellinfo.PowerMod[1]+cint(altura), DMG_PHYSICAL, who);
+      endif
+      sleepms(2);
+   endforeach
+
+endprogram 

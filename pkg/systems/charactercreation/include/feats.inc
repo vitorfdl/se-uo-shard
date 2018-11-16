@@ -449,5 +449,7 @@ function FailFeat(who, hab)
       HealStamina(who, vigor);
    endif
 
+   TS_LowerDuration(who, "hab_{}".format(hab.FeatID), -1, 1);
+
    EraseObjProperty(who, "#Casting");
 endfunction

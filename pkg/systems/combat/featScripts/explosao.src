@@ -22,7 +22,7 @@ program explosao(params)
    PlayStationaryEffect(targ.x, targ.y, targ.z, effects.randomentry(), 10, 10, 0);
    PlaySoundEffect(targ, SFX_EXPLOSION_11);
    
-   foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
+   foreach mobile in CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
       if (!CheckBlockDodge(mobile, 1, 1))
          DamageFLS(mobile, spellinfo.PowerMod[1], DMG_FIRE, who);
          if (RandomInt(100) < 15) TS_StartTimer(mobile, "immolation", 10, 1);	endif

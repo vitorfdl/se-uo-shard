@@ -6,7 +6,7 @@ include ":ghaia:ghaiaUtil";
 include ":fls_core:fls_characters";
 include "include/client";
 include "include/facings";
-
+include ":combat:combat";
 
 program startTalent(param)
    var who := param[1];
@@ -20,19 +20,15 @@ program startTalent(param)
 	var elem := GetItemCFGInfo(who, who.weapon);
 	
 	if (IsBehind(who, targ.x, targ.y))
-		SendSysMessageEx(who, "Você esta de costas para o alvo!", SSM_FAIL);
+      FailFeat(who, spellinfo);
+		SendSysMessageEx(who, "Você está de costas para o alvo!", SSM_FAIL);
 		return 0;
 	endif
 	
-	var aljava := GetEquipmentByLayer(who, 0x14);
-	var ammo := GetObjProperty(who.weapon, "ammo");
-	if (!ammo)
-		SendSysMessageEx(who, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco fora do modo agressivo e na flecha ]");
-		return 0;
-	elseif ( ConsumeSubstance( aljava, ammo, 1 ) == error)
-		SendSysMessageEx(who, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco fora do modo agressivo e na flecha]");
-		return 0;
-	endif
+	var ammo := CheckForAmmo(who, who.weapon);
+   if (!ammo)
+      return FailFeat(who, spellinfo);
+   endif
 	
 	PlaySoundEffect(who, 0x14A);
 	Performaction(who, elem.Anim);

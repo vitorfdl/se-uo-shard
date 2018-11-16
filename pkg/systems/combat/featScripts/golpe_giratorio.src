@@ -1,0 +1,54 @@
+use os;
+
+include "include/say";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+include ":fls_core:fls_characters";
+include "include/client";
+include "include/shapes";
+
+
+program startTalent(param)
+   var who := param[1];
+   var hab := param[2];
+   var res := ataquegiratorio(who, hab);
+endprogram
+
+function ataquegiratorio(who, hab)
+	who.SetWarMode(1);
+   PrintText(who, "Girando a Arma");
+	PlaySoundEffect(who, 0x520);
+
+	var alreadydamaged := array{};
+	who.SetWarMode(1);
+   PrintText(who, "*girando {}".format(who.weapon.desc));
+
+
+   var positions := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, who.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+   foreach pos in positions
+      var mobiles := CheckIfIsAlly(who, ListMobilesNearLocation(pos[1], pos[2], who.z, 0, who.realm));
+      foreach mobile in mobiles
+         if (!CheckBlockDodge(mobile, 1, 1))
+            PlayMovingEffect( who, mobile, 0x22C6, 10);
+            DamageFLS(mobile, hab.PowerMod[1], DMG_PHYSICAL, who);
+         endif
+         sleepms(2);
+      endforeach
+      sleepms(2);
+   endforeach
+
+   var weapon_cfg := GetItemCfgInfo(who, who.weapon);
+   var area := GetCoordsInSquare(who.x, who.y, 2);
+   for i := 1 to 3
+   foreach p in area
+      if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2-1)
+         PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
+      endif
+
+      sleepms(2);
+   endforeach
+      PlayAttackAnimation(who, weapon_cfg);
+      sleepms(120);
+   endfor
+   return 1;
+endfunction

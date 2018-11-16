@@ -27,10 +27,22 @@ program animateSword(params)
    PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
    PlaySoundEffect(who, cint(0x512));
 
-   var mobile := who.opponent;
-   var point := RandomPlace(mobile, 1);
-   MoveObjectToLocation(who, point.x, point.y, mobile.z, mobile.realm, MOVEOBJECT_FORCELOCATION);
-   who.facing := GetFacing(who.x, who.y, mobile.x, mobile.y);
+   var targ := who.opponent;
+   var behind := InverseFacing(targ.facing);
+
+   behind := GetModByFacing(behind);
+   if (CanWalk("L", who.x, who.y, who.z, targ.x+behind[1], targ.y+behind[2]))
+      MoveObjectToLocation(who, targ.x+behind[1], targ.y+behind[2], targ.z, who.realm, MOVEOBJECT_FORCELOCATION);
+   else
+	   var radius := GetPointsInRadius(targ.x, targ.y, 1);
+      var random := radius.randomentry();
+      while (!MoveObjectToLocation(who,random.x,random.y, targ.z, who.realm))
+         random := radius.randomentry();
+         sleep(2);
+      endwhile
+   endif
+
+   who.SetFacing(GetFacing(who.x, who.y, targ.x, targ.y));
 
    TS_StartCooldown(who, "dodge", 2);
 	return 1;

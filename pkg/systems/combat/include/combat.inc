@@ -341,3 +341,17 @@ function CheckifIsNotEnemy(who, mobiles)
 
    return newarray;
 endfunction
+
+function CheckForAmmo(who, bow, qty := 1)
+	var aljava := GetEquipmentByLayer(who, 0x14);
+	var ammo := GetObjProperty(bow, "ammo");
+	if (!ammo)
+		SendSysMessageEx(who, "Você não definiu o tipo de flecha que vai usar. [clique 2x no arco fora do modo agressivo e na flecha ]");
+		return 0;
+	elseif ( ConsumeSubstance( aljava, ammo, qty ) == error)
+		SendSysMessageEx(who, "Você não definiu o tipo de flecha que vai usar ou ela acabou.");
+		return 0;
+	endif
+
+   return ammo;
+endfunction

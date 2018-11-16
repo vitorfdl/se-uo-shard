@@ -26,6 +26,7 @@ program animateSword(params)
    PushBack(who, 4, 50);
 
    if (who.warmode && who.opponent)
+      who.setswingtimer(50);
       run_script(":combat:hooks/temporaryHook", array{who, who.opponent });
    endif
  

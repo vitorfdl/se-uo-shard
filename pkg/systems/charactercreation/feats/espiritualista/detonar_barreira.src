@@ -17,8 +17,7 @@ program animateSword(params)
 	params := 0; // No longer needed
 
    if (!TS_GetTimerInfo(targ, "barrier"))
-      HealMana(who, spellinfo.Mana);
-      TS_LowerDuration(who, "hab_".format(spellinfo.FeatID), -1, 1);
+      FailFeat(who, spellinfo);
       return SendSysMessageEx(who, "O alvo não está protegido por uma barreira", SSM_FAIL);
    endif
 
@@ -42,7 +41,6 @@ program animateSword(params)
    if (targ in mobs)
       DamageFLS(targ, spellinfo.PowerMod[1], DMG_ENERGY, who);
    endif
-   
 
 	return 1;
 endprogram

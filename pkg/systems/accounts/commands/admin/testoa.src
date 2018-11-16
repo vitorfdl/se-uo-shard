@@ -22,15 +22,24 @@ include ":crafting:craft_props";
 program oafeatures_sendpacket(who, text)
    // var test := dictiona
    // PlayObjectCenteredEffect( who, 0x41A2, 1, 20);
-   var targ := who;
-   var area := GetCoordsInSquare(targ.x, targ.y, 1);
-   foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x, p.y+1) >= 1)
-         PlayMovingEffectXYZ( targ.x+1, targ.y+1, targ.z+5, p.x+1, p.y+1, targ.z+5, 0x9DAC, 0 );
-      endif
-      sleepms(2);
-   endforeach
+   // var targ := TargetCoordinates(who);
 
+      
+
+   // var d := 3;
+   // var area := GetCoordsInSquare(targ.x, targ.y, d);
+   // for i := 1 to 3
+   // foreach p in area
+   //    if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
+   //       PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, targ.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
+   //       // PlayMovingEffectXYZ( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, 0x0F51, 0 );
+   //    endif
+
+   //    sleepms(2);
+   // endforeach
+   // PlayAttackAnimation(who, who.weapon);
+   //    sleepms(120);
+   // endfor
    // PlayStationaryEffectEx( who.x, who.y, who.z+3, who.realm, 0x376A, 1, 15, 2168 );
    // PlayStationaryEffectEx( who.x, who.y, who.z+15, who.realm, 0x376A, 1, 15, 2168 );
    // PlayStationaryEffectEx( who.x, who.y, who.z+30, who.realm, 0x375A, 1, 15, 2168 );
