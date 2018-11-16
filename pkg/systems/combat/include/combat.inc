@@ -94,9 +94,9 @@ function PlayHitSounds(attacker, defender := 0)
 	endif
 endfunction
 
-function PlayMissSound(attacker)
-	if ( wpn_a_elem.MissSound )
-		PlaySoundEffect(attacker, wpn_a_elem.MissSound);
+function PlayMissSound(attacker, wpn_elem)
+	if ( wpn_elem.MissSound )
+		PlaySoundEffect(attacker, wpn_elem.MissSound);
 	else
 		//NPC intrinsic weapon
 		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);

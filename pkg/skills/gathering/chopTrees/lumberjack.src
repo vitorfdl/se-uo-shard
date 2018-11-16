@@ -17,6 +17,10 @@ include "include/sounds";
 program skill_LumberJack(who,tool)
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
+   if (who.warmode)
+      return start_script(":combat:useScripts/useWeapon", array{who, tool});
+   endif
+   
 	SendSysMessageEx(who, "Escolha a árvore para cortar.", SSM_REQUEST);
 	var targ := TargetCoordinates(who);
 	

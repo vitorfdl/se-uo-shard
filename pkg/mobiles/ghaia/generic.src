@@ -230,9 +230,9 @@ function Fight(opponent, alerted := 0)
             SetObjProperty(me, "#charge_enemy", charge+1);
             if (charge+1 == 8) 
                PrintText(me, "*charging*", SSM_FAIL); 
-               TS_StartTimer(me, "npc_run", 20, 50);
+               TS_StartTimer(me, "npcrun", 20, 50);
             elseif (charge == 1 && cint(npccfgfile.RunSpeed) != me.run_speed)
-               TS_LowerDuration(me, "npc_run", -1);
+               TS_LowerDuration(me, "npcrun", -1);
             endif
          endif
       else

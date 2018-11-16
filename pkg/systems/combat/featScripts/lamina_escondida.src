@@ -6,6 +6,7 @@ include "include/client";
 include "include/sounds";
 include "include/say";
 include "include/damage";
+include "include/utils";
 include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":magery:basicMagery";
@@ -16,19 +17,20 @@ program explosao(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   PlayStationaryEffect(targ.x, targ.y, targ.z, 0x37C4, 10, 10, 0);
-   sleep(1);
-   var effects := array{GFX_EXPLODE_1, GFX_EXPLODE_2, GFX_EXPLODE_3};
-   PlayStationaryEffect(targ.x, targ.y, targ.z, effects.randomentry(), 10, 10, 0);
-   PlaySoundEffect(targ, SFX_EXPLOSION_11);
-   
-   foreach mobile in ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 3, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
-      if (!CheckBlockDodge(mobile, 1, 1))
-         DamageFLS(mobile, spellinfo.PowerMod[1], DMG_FIRE, who);
-         if (RandomInt(100) < 15) TS_StartTimer(mobile, "immolation", 10, 1);	endif
-      endif
-      sleepms(2);
-   endforeach
-   
+   var weapon := who.weapon;
+
+   PlayMovingEffectXYZEx( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, who.realm, weapon.objtype, 10 ,0, 0, 0, GetFacing(who.x, who.y, targ.x, targ.y) );
+
+	PlaySoundEffect(who, 0x5D3);
+	PrintText(who, "*joga {}".format(weapon.desc));
+
+   sleepms(150);
+	// MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+   if (!CheckBlockDodge(targ, 1, 1))
+      DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+      var t := _ifElse(targ.isA(POLCLASS_NPC), 5, 3);
+      TS_StartTimer(targ, "lentidao", t, who);
+   endif
+
 	return 1;
 endprogram

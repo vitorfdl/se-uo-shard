@@ -26,7 +26,7 @@ program arremessar_arma(params)
 	PrintText(who, "*lança {}".format(weapon.desc));
 
    sleepms(100);
-	MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+	// MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
 
    var dmg := CalculateRawDamage(who, 0, weapon);
 	var altura := cint(who.z - targ.z);
@@ -37,6 +37,10 @@ program arremessar_arma(params)
    foreach mobile in CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
       if (!CheckBlockDodge(mobile, 1, 1))
          DamageFLS(mobile, spellinfo.PowerMod[1]+cint(altura), DMG_PHYSICAL, who);
+         if (RandomInt(100) <= 20)
+            PrintText(targ, "*Paralisado*", SSM_FAIL);
+            TS_StartTimer(targ, "paralysis", 2, who);
+         endif
       endif
       sleepms(2);
    endforeach

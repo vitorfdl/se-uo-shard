@@ -275,6 +275,20 @@ function ChooseTarget(mobile, feat)
    
    if (feat.Targ == "Self")
       targ := mobile;
+   elseif (feat.Targ == "Opponent")
+      targ := mobile.opponent;
+      var rang := _ifElse(feat.Range, feat.Range, 1);
+
+      if (!targ)
+         targ := ListHostiles(mobile, rang);
+         targ := targ[1];
+      endif
+
+      if (!targ)
+         targ := 0;
+      elseif (feat.Range && CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) > feat.Range)
+         targ := 0;
+      endif
    elseif (feat.Targ == "Mobile" || feat.Targ == "Item")
       while (1)
          SendSysMessageEx(mobile, "Escolha o alvo da habilidade.", SSM_REQUEST);
@@ -301,16 +315,16 @@ function ChooseTarget(mobile, feat)
       if (mobile != targ && targ)
          TurnObjectToward(mobile, targ.x, targ.y);
       endif
-   elseif (feat.targ == "Area")
+   elseif (feat.Targ == "Area")
       while (1)
          PrintTextPrivate(mobile, "'Escolha o ponto alvo.'", mobile, SSM_INFO);
          targ := TargetCoordinates(mobile);
          if (targ)
             TurnObjectToward(mobile, targ.x, targ.y);
          endif
-         if(!feat.radius)
+         if(!feat.Range)
             break;
-         elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < feat.radius)
+         elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < feat.Range)
             break;
          else
             SendSysMessageEx(mobile, "Muito distante!", SSM_FAIL);

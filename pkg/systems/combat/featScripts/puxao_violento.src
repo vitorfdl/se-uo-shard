@@ -1,0 +1,35 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include "include/facings";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+include ":magery:basicMagery";
+
+program explosao(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   if (CheckBlockDodge(targ, 0, 1))
+      PlayMissSound(targ, 0);
+      return;
+   endif
+
+   PrintText(who, "dá um puxão em {}".format(targ.name));
+	PlayHitSounds(who, targ);
+   DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+
+   var mod := GetModByFacing(who.facing);
+   MoveObjectToLocation(targ, who.x+mod[1], who.y+mod[2], who.z, who.realm);
+
+   TS_StartTimer(targ, "lentidao", 3);
+
+	return 1;
+endprogram

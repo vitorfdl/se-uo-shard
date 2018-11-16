@@ -82,6 +82,16 @@ function GetHitsInfo(entry)
 	return critstr;
 endfunction
 
+function GetWeaponFeat(entry)
+	var critstr := "";
+	var featid := GetconfigString(entry, "FeatID");
+   if (!featid) return; endif
+
+   var feat := getFeatById(featid);
+
+	return feat.Name;
+endfunction
+
 function getVelStringDesc(elem, item)
 	if(speed >= 55)
 		return "Rápido";

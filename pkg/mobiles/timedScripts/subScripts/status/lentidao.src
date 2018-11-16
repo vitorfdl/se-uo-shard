@@ -17,8 +17,12 @@ function StartScript(mobile, attacker := 0, level := 0)
    if (!mobile.isA(POLCLASS_NPC))
       PlayerSpeedSlower(mobile, 1);
    else
-      mobile.run_speed -= 40;
+      mobile.run_speed -= 100;
+      print(mobile.run_speed);
    endif
+
+   PrintText(mobile, "'Lentidão'", SSM_FAIL);
+
    return 1;
 endfunction
 
@@ -26,7 +30,7 @@ function EndScript(mobile)
    if (!mobile.isA(POLCLASS_NPC))
       PlayerSpeedSlower(mobile, 1);
    else
-      mobile.run_speed += 40;
+      mobile.run_speed += 100;
    endif
    return 1;
 endfunction

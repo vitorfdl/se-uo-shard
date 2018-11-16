@@ -16,12 +16,9 @@ program explosao(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   if (!CheckBlockDodge(targ, 1, 1))
-      DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
-      PlayAttackAnimation(who, who.weapon);
-		PlayHitSounds(who, targ);
-      TS_StartTimer(targ, "armor_break", 8, 15);
-   endif
-
-	return 1;
+   PlaySoundEffect(who, 0x51F);
+   who.attack_once(who.opponent);
+   sleepms(550);
+   who.attack_once(who.opponent);
+   return 1;
 endprogram

@@ -15,8 +15,10 @@ program hiddepresence(params)
 	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
+   var timer := 4;
+   if (targ.connected) timer := 2; endif
    
-   TS_StartTimer(targ, "levitacao", 5, spellinfo.PowerMod[1]);
+   TS_StartTimer(targ, "levitacao", timer, spellinfo.PowerMod[1]);
 
 	return 1;
 endprogram
