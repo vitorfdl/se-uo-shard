@@ -21,6 +21,7 @@ program AC_start(who)
    SetObjProperty(who, "last_see", last_see);
 
    while (who.connected)	
+      sleepms(30);
       var event := wait_for_event(2);
       var trig := 0;
       if (event.type == 0x456 && !(event.id in already_saw))

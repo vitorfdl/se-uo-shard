@@ -20,6 +20,14 @@ include ":crafting:craft_props";
 // include ":quest:quest";
 
 program oafeatures_sendpacket(who, text)
+   var recipes := GetObjProperty(who, "recipes");
+
+   var new_struct := dictionary{};
+   foreach recipe in (recipes.Keys())
+      new_struct[recipe] := struct{ level := 1, exp := 0 };
+   endforeach
+   SetObjProperty(who, "recipes", new_struct);
+
    // var test := dictiona
    // PlayObjectCenteredEffect( who, 0x41A2, 1, 20);
    // var targ := TargetCoordinates(who);

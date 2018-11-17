@@ -8,38 +8,36 @@ include ":gumps:gumps";
 include ":tn:tngumps";
 
 program usar_serra(who, item)
-
 	if (!Accessible (who, item) )
-		SendSysMessage (who, "Você não alcanca aquilo!");
+		SendSysMessageEx(who, "Você não alcanca aquilo!");
 		return;
 	endif
 
 	if (!ReserveItem (item) )
-		SendSysMessage (who, "você não pode usar isso agora.");
+		SendSysMessageEx(who, "você não pode usar isso agora.");
 		return;
 	endif
 
-	SendSysMessage (who, "O que você deseja fazer com isto?");
+	SendSysMessageEx(who, "O que você deseja fazer com isto?", SSM_REQUEST);
 	var targetted := Target (who);
-
 	if (!targetted)
-		SendSysMessage (who, "Cancelado.");
+		SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
 		return;
 	endif
 	if (!Accessible (who, targetted) )
-		SendSysMessage (who, "Você não alcanca isto!");
+		SendSysMessageEx(who, "Você não alcanca isto!", SSM_FAIL);
 		return;
 	endif
 	if (!targetted.movable)
-		SendSysMessage (who, "Você não pode usar isto.");
+		SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
 		return;
 	endif
 	if (!ReserveItem (targetted) )
-		SendSysMessage (who, "Você não pode usar isto agora.");
+		SendSysMessageEx(who, "Você não pode usar isto agora.", SSM_FAIL);
 		return;
 	endif
 
-	if((targetted.objtype != 0x1bdd) && (targetted.objtype != 0x1bd7) && (targetted.objtype != 0xee36) && (targetted.objtype != 0xee37) && (targetted.objtype != 0xee39)  && (targetted.objtype != 0xee38) && (targetted.objtype != 0xee3) && (targetted.objtype != 0xee3a) && (targetted.objtype != 0xee3b) && (targetted.objtype != 0xee3c) )
+	if((targetted.objtype != 0x1bdd) && (targetted.objtype != 0xee36) && (targetted.objtype != 0xee37) && (targetted.objtype != 0xee39)  && (targetted.objtype != 0xee38) && (targetted.objtype != 0xee3) && (targetted.objtype != 0xee3a) && (targetted.objtype != 0xee3b) && (targetted.objtype != 0xee3c) )
            SendSysMessageEx(who, "Você deve usar a serra nas madeiras!");
            return;
         else

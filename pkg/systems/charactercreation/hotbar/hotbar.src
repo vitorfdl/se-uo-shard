@@ -7,6 +7,7 @@ include ":timedscripts:timedScripts";
 include ":charactercreation:feats";
 include "include/say";
 include ":tn:tngumps";
+var fix_cfg := ReadConfigFile(":fls_core:item_fix");
 
 var selector_open := 0;
 
@@ -88,8 +89,9 @@ function BuildHotBar(who, byref hotbar)
          else
             GFAddButton(gump, 19 + pos_plus, pos_y+81, 39833, 39833, GF_CLOSE_BTN, 450+i);
          endif
+         var fix_p := GetItemFix(shortcut.graphic);
          GFGumpPic(gump, 19 + pos_plus+2, pos_y+85, 27, 1485);
-         GFTilePic(gump, 19 + pos_plus, pos_y+87, cint(shortcut.graphic), color);
+         GFTilePic(gump, 19 + pos_plus+fix_p.x, pos_y+87+fix_p.y, cint(shortcut.graphic), color);
          if (cd)
             GFTextLine(gump, 19 + pos_plus+12, pos_y+81+14, 40, "CD");
          endif
@@ -192,3 +194,15 @@ program startHotBar(who, spos)
    endwhile
 
 endprogram
+
+function GetItemFix(objtype)
+   var elem := FindConfigElem(fix_cfg, Hex(objtype));
+   if (elem)
+      return struct{
+         x := GetConfigInt(elem, "x"),
+         y := GetConfigInt(elem, "y")
+      };
+   endif
+
+   return struct{ x:= 0, y := 0};
+endfunction

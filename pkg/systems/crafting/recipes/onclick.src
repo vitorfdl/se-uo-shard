@@ -39,8 +39,6 @@ function SendGump(who, scroll)
 	endif
 
 	var skill_name := GetObjProperty(scroll, "pericia");
-	var book_recipes    := ReadConfigFile(":alchemy:recipes");
-   var cook_reecipes   := ReadConfigFile(":cooking:recipes");
 
 	var itemdesc    := ReadConfigFile(":*:itemdesc");
 	var recipe_list := ReadConfigFile(":*:recipes");
@@ -63,7 +61,8 @@ function SendGump(who, scroll)
       endif
 	endif
 
-   var is_lang := GetObjProperty(scroll, "lang");
+   // var is_lang := GetObjProperty(scroll, "lang");
+   var is_lang := 0;
    var lang := "";
    if (is_lang && !HaveFeat(who, is_lang))
       if (is_lang == "Linguagem Élfica")
@@ -108,19 +107,22 @@ function SendGump(who, scroll)
 
    if (!is_lang || HaveFeat(who, is_lang))
       var my_recipes := GetObjProperty(who, "recipes");
-      if (!(cint(objtype) in my_recipes) && !(hex(objtype) in my_recipes) && !(objtype in my_recipes))
+      if (!my_recipes) my_recipes := dictionary{}; endif
+      objtype := cint(objtype);
+      var can_learn := 1;
+      if (my_recipes[objtype])
+         if (my_recipes[objtype].level >= 10 || !checkifHasLevel(objtype))
+            can_learn := 0;
+         endif
+      endif
+      if (can_learn)
          var charge_list    := GetObjProperty(scroll, "learning");
          var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
          var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
-         if (!FindConfigElem(book_recipes, objtype) && !FindConfigElem(cook_reecipes, objtype))
-            GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2 {}><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(lang, remain_charges));
-            if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
-               GFTextLine(gump, 205, 182, 995, "Aprender");
-               GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
-            endif
-         else
-            GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Para aprender, arraste para um livro.");
-            GFHTMLArea(gump, 150, 182, 180, 20, "<BASEFONT SIZE=2><CENTER>Restam {} leituras.".format(remain_charges));
+         GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2 {}><CENTER>Você ainda deve ler esse pergaminho {} vezes".format(lang, remain_charges));
+         if (!GetObjProperty(scroll, "serialid") || GetObjProperty(scroll, "serialid") == who.serial)
+            GFTextLine(gump, 205, 182, 995, "Aprender");
+            GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
          endif
       else
          GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");

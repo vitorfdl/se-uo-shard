@@ -95,14 +95,16 @@ function GetRecipeList(who, recipe_cfg, search := "")
 	var items := GetObjProperty(who,  "recipes"); //pega a lista de recipes
 	
 	var recipelist := array{}; //lista temp pra veriicar se os items sao da skill do menu
-	foreach recipe in (items)
-		var elem        := FindConfigElem(recipe_cfg, Hex(recipe));
-      if (!elem) elem := FindConfigElem(recipe_cfg, cint(recipe)); endif
+	foreach recipe_id in (items.keys())
+		var elem        := FindConfigElem(recipe_cfg, Hex(recipe_id));
+      if (!elem) elem := FindConfigElem(recipe_cfg, cint(recipe_id)); endif
 		var recipe_type := GetConfigString(elem, "Type");
 		if (recipe_type == "Recipe")
-         recipe := GetRecipe(recipe, elem);
+         var recipe := GetRecipe(recipe_id, elem);
          var found := Lower(recipe.name).find(Lower(search));
          if (search == "" || found)
+            recipe.level := items[recipe_id].level;
+            recipe.exp := items[recipe_id].exp;
             recipelist.append(recipe);
          endif
       elseif (recipe_type == "group")

@@ -12,7 +12,7 @@ include ":attributes:attributes";
 function HaveRecipe(who, objtype)
    var items := GetObjProperty(who,  "recipes");
 
-   if (objtype in items)
+   if (objtype in items.keys())
       return 1;
    endif
 
@@ -33,50 +33,75 @@ function RecipeCharges(difficulty)
    endif
 endfunction
 
-function AddRecipe(who, objtype)
-   var recipes := GetObjProperty(who, "recipes");
-   if (!recipes)
-      recipes := array{};
-   endif
-   if (HaveRecipe(who, objtype))
-      return 0;
+function checkifHasLevel(objtype)
+   var cfg := ReadConfigFile(":*:itemdesc");
+   var obj := FindConfigElem(cfg, hex(objtype));
+   if (!obj) FindConfigElem(cfg, cint(objtype)); endif
+
+   if (obj.Damage || obj.Haslevel || obj.equipscript)
+      return 1;
    endif
 
-   recipes.append(objtype);
+   return 0;
+endfunction
+
+function AddRecipe(who, objtype, from_smelt := 0)
+   objtype := cint(objtype);
+   var recipes := GetObjProperty(who, "recipes");
+   if (!recipes)
+      recipes := dictionary{};
+   endif
+
+   var item_has_level := checkifHasLevel(objtype);
+
+   if (recipes[objtype])
+      if (recipes[objtype].level >= 10)
+         return 0;
+      endif
+      
+      if (!item_has_level)
+         return 0;
+      endif
+
+      var max_exp := recipes[objtype].level * 100;
+      recipes[objtype].exp += _ifElse(from_smelt, 4, 10);
+      if (recipes[objtype].exp >= max_exp)
+         recipes[objtype].level += 1;
+         recipes[objtype].exp -= max_exp;
+      endif
+   else
+      recipes[objtype] := struct{ level := item_has_level, exp := 0 };
+   endif
+
    SetObjProperty(who, "recipes", recipes);
    return 1;
 endfunction
 
-function CheckCharges(who, recipe, recipe_diff, charges_to_learn)
+function CheckCharges(who, recipe, charges_to_learn)
    var charge_list := GetObjProperty(recipe, "learning");
    if (!charge_list)
       charge_list := array{};
    endif
 
-   var diceroll := rollAttrDice(who, INTELLIGENCE);
-   if (diceroll > cint(recipe_diff)-2 || !who.cmdlevel)
-      var already_learning := FindInArray(charge_list, struct{ person := who.serial });
+   var already_learning := FindInArray(charge_list, struct{ person := who.serial });
 
-      if (already_learning)
-         var charges := charge_list[already_learning].charges;
-         if (charges+1 >= charges_to_learn)
-            return 1;
-         endif
-
-         charge_list[already_learning].charges += charges;
-         SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
-      else
-         var charges := 0;
-         if (charges+1 >= charges_to_learn)
-            return 1;
-         endif
-         
-         var me_learning := struct{ "person" := who.serial, "charges" := 1};
-         charge_list.append(me_learning);
-         SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
+   if (already_learning)
+      var charges := charge_list[already_learning].charges;
+      if (charges+1 >= charges_to_learn)
+         return 1;
       endif
+
+      charge_list[already_learning].charges += charges;
+      SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
    else
-     SendSysMessageEx(who, "Você não entendeu bem a receita.", SSM_INFO);
+      var charges := 0;
+      if (charges+1 >= charges_to_learn)
+         return 1;
+      endif
+      
+      var me_learning := struct{ "person" := who.serial, "charges" := 1};
+      charge_list.append(me_learning);
+      SendSysMessageEx(who, "Aprendeu mais sobre a receita. Leia mais vezes para domina-la.", SSM_INFO);
    endif
 
    SetObjProperty(recipe, "learning", charge_list);
@@ -88,9 +113,6 @@ function LearnRecipe(who, recipe)
    var recipe_obj := GetObjProperty(recipe, "objtype");
    if (hex(recipe.objtype) == error)
       SendSysMessageEx(who, "Esta receita deve ser aprendida de outra forma.", SSM_INFO);
-      return 0;
-   elseif (HaveRecipe(who, recipe_obj))
-      SendSysMessageEx(who, "Ja possui essa receita.", SSM_INFO);
       return 0;
    elseif (TS_GetCooldown(who, "learning_recipe") && !who.cmdlevel)
       SendSysMessageEx(who, "Sua mente ainda esta absorvendo a ultima receita que leu.", SSM_FAIL);
@@ -104,7 +126,7 @@ function LearnRecipe(who, recipe)
    var type             := GetConfigString(obj, "Type");
    var charges_to_learn := RecipeCharges(difficulty);
 
-   if (CheckCharges(who, recipe, difficulty, charges_to_learn))
+   if (CheckCharges(who, recipe, charges_to_learn))
       if (type == "group" || type == "kit")
          var recipes := GetConfigStringArray(obj, "Recipe");
          foreach obj_type in recipes
@@ -114,7 +136,6 @@ function LearnRecipe(who, recipe)
       else
          AddRecipe(who, recipe_obj);
       endif
-
       SendSysMessageEx(who, "A receita foi aprendida.", SSM_INFO);
       DestroyItem(recipe);
       return 1;
