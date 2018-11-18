@@ -231,8 +231,8 @@ function CompleteQuest(who, quest_pos)
                ExpGain(who, 100);
                SendSysMessageEx(who, "Você recebeu experiência de personagem.");
             elseif (reward.classe == "Classe Da Quest")
-               ClassExpGain(who, quest.classe, 1);
-               SendSysMessageEx(who, "Você recebeu experiência para a classe {}".format(quest.classe));
+               ClassExpGain(who, quest.category, 1);
+               SendSysMessageEx(who, "Você recebeu experiência para a classe {}".format(quest.category));
             else
                ClassExpGain(who, reward.classe, 1);
                SendSysMessageEx(who, "Você recebeu experiência para a classe {}".format(reward.classe));
