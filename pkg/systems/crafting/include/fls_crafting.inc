@@ -689,10 +689,14 @@ function SmeltItem(who, item, specific_cfg)
    endforeach
 
    foreach material in (material_recover.Keys())
-      _CreateItemInBackpack(who, cint(material), material_recover[material]);
+      _CreateItemInBackpack(who, cint(material), item.amount * material_recover[material]);
    endforeach
 
    if (RandomInt(100) <= 15)
-      AddRecipe(who, item.objtype);
+      if (!recipe.requireFeat || HaveFeatSecondary(who, recipe.requireFeat) )
+         AddRecipe(who, item.objtype);
+      endif
    endif
+
+   DestroyItem(item);
 endfunction
