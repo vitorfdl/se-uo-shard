@@ -1,6 +1,5 @@
 use uo;
 use os;
-use os;
 
 include ":timeUtils:time";
 include ":yggdrasil:boss";
@@ -20,7 +19,13 @@ include ":crafting:craft_props";
 // include ":quest:quest";
 
 program oafeatures_sendpacket(who, text)
-   start_script(":roleplay_window:controller", who);
+   who.frozen := 1;
+   for i := 1 to 20
+      sleepms(200);
+      who.SetFacing(who.facing+1, 0x1);
+      PlaySoundEffect(who, 0x212);
+   endfor
+   who.frozen := 0;
 
    // var item := _CreateItemInBackpack(who, 0xDC01, 1);
    // var recipes := GetObjProperty(who, "recipes");

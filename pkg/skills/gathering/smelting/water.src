@@ -40,7 +40,7 @@ function EsfriarLiga(user, item)
    var num := cint(GetObjProperty(item, "numMetal"));
    if (!num) return; endif
 
-   if (num >= 1)
+   if (num > 1)
       var metals := {};
       var metal;
       var i := 1;

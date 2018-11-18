@@ -428,7 +428,7 @@ function TriggerHabilitie(who, hab)
       return;
    endif
 
-	if (hab.Cooldown)
+	if (hab.Cooldown && !GetObjProperty(who, "no_cd"))
       TS_StartCooldown(who, "hab_{}".format(hab.FeatID), hab.Cooldown);
    endif
 

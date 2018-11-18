@@ -18,11 +18,10 @@ function StartScript(mobile, attacker := 0, level := 0)
    SetObjProperty(item2, "thepid", GetPid());
 
    MoveObjectToLocation(mobile, mobile.x, mobile.y, mobile.z+15, mobile.realm, MOVEOBJECT_FORCELOCATION);
+   mobile.frozen := 1;
    while (!mobile.dead)
-      mobile.frozen := 1;
       sleepms(200);
-      mobile.frozen := 0;
-      mobile.facing += 1;
+      mobile.SetFacing(mobile.facing+1, 0x1);
       PlaySoundEffect(mobile, 0x212);
    endwhile
    
@@ -31,9 +30,7 @@ endfunction
 
 function EndScript(mobile, level := 0, attacker := 0)
    sleepms(200);
-   mobile.frozen := 0;
-   mobile.facing += 1;
-   mobile.frozen := 1;
+   mobile.SetFacing(mobile.facing+1, 0x1);
    sleepms(200);
    mobile.frozen := 0;
    MoveObjectToLocation(mobile, mobile.x, mobile.y, mobile.z-15, mobile.realm, MOVEOBJECT_FORCELOCATION);
