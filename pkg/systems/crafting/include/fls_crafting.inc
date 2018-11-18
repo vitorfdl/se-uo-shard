@@ -695,6 +695,7 @@ function SmeltItem(who, item, specific_cfg)
    if (RandomInt(100) <= 15)
       if (!recipe.requireFeat || HaveFeatSecondary(who, recipe.requireFeat) )
          AddRecipe(who, item.objtype);
+         SendSysMessageEx(who, "Você aprendeu mais sobre este item!", SSM_INFO);
       endif
    endif
 
