@@ -143,7 +143,7 @@ function MaterialSelection(who, type, chk, recipe, craft_skill)
     	SendSysMessageEx(who, "Escolha o "+lower(type)+" que você deseja trabalhar.");
 	   material := Target(who);
    else
-      var resources := GetConfigStringDictionary(FindConfigElem(menu_config, craft_skill), "Level");
+      var resources := GetConfigStringDictionary(FindConfigElem(menu_config, craft_skill), "Level_{}".format(lower(type)));
       var opts := array{};
       for i := 1 to (recipe.level)
          opts.append("Level {} - {}".format(i, itemdesc_cfg[resources[cstr(i)]].desc));
@@ -392,17 +392,14 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 		endforeach
 
       var diff := _ifElse(level_select, level_select * 10, 0);
-		if(Randomint(100) <= diff || who.cmdlevel > 4)
+		if(Randomint(100) >= 10 || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials))
 				SendSysMessageEx(who, "Você não possui todos os materiais.", SSM_FAIL);
 				return theitems;
 			endif
 
          foreach item_objtype in item_list
-            print(item_objtype);
-            print(more);
             theitem := _CreateItemInBackpack(who, cint(item_objtype), cint(more));
-            print(theitem);
             if(!theitem)
                SendSysMessageEx(who, "Você não tem espaço suficiente na sua mochila!", SSM_FAIL);
                return theitems;
