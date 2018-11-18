@@ -87,7 +87,7 @@ function GetRecipe(objtype, elem)
       "exceptional" := GetConfigInt(elem, "exceptional"),
       "delay"       := GetConfigInt(elem, "delay"),
       "fastcraft"       := GetConfigInt(elem, "fastcraft"),
-      "more"       := GetConfigInt(elem, "more"),
+      "more"       := _ifElse(GetConfigInt(elem, "more"), GetConfigInt(elem, "more"), 1),
       "hasLevel"       := GetConfigInt(elem, "hasLevel"),
       "materials"  := materials,
       "main_material" := elem.main_material,
@@ -257,7 +257,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
  	craft_loops := cint(craft_loops);
 
 	var materials     := recipe.materials;
-	var more          := recipe.more;
+	var more          := cint(recipe.more);
 	var main_material := recipe.main_material;
 	//verifica se tem os objtypes na bag
 	var targ_materials   := GetBagList(who, materials.Keys());
@@ -399,7 +399,10 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 			endif
 
          foreach item_objtype in item_list
-            theitem := CreateItem(who, item_objtype, more);
+            print(item_objtype);
+            print(more);
+            theitem := _CreateItemInBackpack(who, cint(item_objtype), cint(more));
+            print(theitem);
             if(!theitem)
                SendSysMessageEx(who, "Você não tem espaço suficiente na sua mochila!", SSM_FAIL);
                return theitems;
@@ -474,7 +477,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, "level", level_select);
             endif
             SetName(theitem, theitem.desc);
-            MoveItemToContainer( theitem, who.backpack,-1, -1 , 2);
             theitems.append(theitem);
             sleepms(2);
          endforeach

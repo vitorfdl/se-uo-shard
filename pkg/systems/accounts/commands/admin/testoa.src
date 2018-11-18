@@ -20,7 +20,8 @@ include ":crafting:craft_props";
 // include ":quest:quest";
 
 program oafeatures_sendpacket(who, text)
-   _CreateItemInBackpack(who, 0xF85);
+   var item := _CreateItemInBackpack(who, 0xDC01, 1);
+
    // var recipes := GetObjProperty(who, "recipes");
 
    // var new_struct := dictionary{};
