@@ -1,0 +1,28 @@
+use os;
+
+include "include/say";
+include "include/shapes";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+include ":awareness:awareness";
+
+program startTalent(param)
+   var who := param[1];
+   var hab := param[2];
+
+   PlaySoundEffect(who, cint(0x1EA));
+   var d := 15;
+   var area := GetCoordsInSquare(who.x, who.y, d);
+   foreach p in area
+      if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= d-1)
+         PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x9F91, 5 ,0, 0, 4);
+      endif
+
+      sleepms(2);
+   endforeach
+   sleepms(400);
+   examinarArea(who, 15, array{"Item", "Mobile"});
+
+
+   return 1;
+endprogram

@@ -80,43 +80,44 @@ endfunction
 // 	return difficulty;
 // endfunction
 
-function examinarArea(who, range, plus_diff := 0)
+function examinarArea(who, range, types := array{})
    if (range < 1)
       range := 1;
    endif
    
-	var found := 0;
-	foreach mobile in ListMobilesNearLocationEX(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN)
-		if ( mobile == who || GetObjProperty(who, "IgnoreHidden") || mobile in who.party.members ); // Do Nothing
-		elseif ( CheckLineOfSight(who, mobile) && !IsBehind(mobile, who.x, who.y) )
-         found := found+1;
-         mobile.hidden := 0;
-         PrintText(mobile, "*aparece*");
-         SendSystemReport(who, "Você encontrou "+mobile.name+".", SSM_INFO);
-         SendSystemReport(mobile, who.name+" te encontrou!", SSM_FAIL, mobile);
-         who.SetAchievement("found_something", 1);
-		endif
-		sleepms(2);
-	endforeach
+   if ("Mobile" in types)
+      foreach mobile in ListMobilesNearLocationEX(who.x, who.y, who.z, range, LISTEX_FLAG_HIDDEN)
+         if ( mobile == who || GetObjProperty(who, "IgnoreHidden") || mobile in who.party.members ); // Do Nothing
+         elseif ( CheckLineOfSight(who, mobile) )
+            mobile.hidden := 0;
+            TS_LowerDuration(mobile, "furtividade", -1);
+            TS_StartCooldown(mobile, "cant_hide", 1);
+            PrintText(mobile, "*aparece*");
+            SendSystemReport(who, "Você encontrou "+mobile.name+".", SSM_INFO);
+            SendSystemReport(mobile, who.name+" te encontrou!", SSM_FAIL, mobile);
+            who.SetAchievement("found_something", 1);
+         endif
+         sleepms(2);
+      endforeach
+   endif
 
-	foreach item in ListItemsNearLocation(who.x, who.y, who.z, range)
-		sleepms(2);
-		if ( !item.invisible || IsBehind(item, who.x, who.y) )
-			continue;
-		endif
+   if ("Item" in types)
+      foreach item in ListItemsNearLocation(who.x, who.y, who.z, range)
+         sleepms(2);
+         if ( !item.invisible || IsBehind(item, who.x, who.y) )
+            continue;
+         endif
 
-      var custom_diff := cint(GetObjProperty(item, "FindDiff"));
+         var custom_diff := cint(GetObjProperty(item, "FindDiff"));
 
-		if ( item.isTrap() || item.IsLever() || custom_diff)
-			found := found+1;
-			item.invisible := 0;
-			SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
-			PrintTextAbovePrivate(item, "*!*", who);
-         who.SetAchievement("found_something", 1);
-		endif
-	endforeach
-
-	return found;
+         if ( item.isTrap() || item.IsLever() || custom_diff)
+            item.invisible := 0;
+            SendSysMessageEx(who, "Você encontrou "+item.desc+".", SSM_INFO);
+            PrintTextAbovePrivate(item, "*!*", who);
+            who.SetAchievement("found_something", 1);
+         endif
+      endforeach
+   endif
 endfunction
 
 function getItemDiff(who, item) 

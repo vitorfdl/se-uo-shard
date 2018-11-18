@@ -34,19 +34,11 @@ program trapScript(params)
 	foreach mobile in mobiles
       sleepms(2);
 		if (!mobile.master)
-			if (rollResistDice(mobile, DEXTERITY) >= diff)
-            if (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
-               SendSysMessageEx(mobile, "Você evitou a armadilha.", SSM_INFO);
-               continue;
-            endif
-            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmgfinal := CInt(cdbl(dmgfinal) * 0.5);
-         elseif (AP_GetTrueSkill(mobile, SABOTAGEM) >= 6)
-            SendSysMessageEx(mobile, "Você evitou parte do dano da armadilha.", SSM_INFO);
-            dmgfinal := CInt(cdbl(dmgfinal) * 0.5);
+		   if (CheckBlockDodge(mobile, 0, 1))
+            SendSysMessageEx(mobile, "Você evitou a armadilha.", SSM_INFO);
+            continue;
 			endif	
 			SendSysMessageEx(mobile, "Você foi atingido por uma armadilha de dardos.", SSM_FAIL);
-
 			PerformAction(mobile, ANIM_HIT);
 			DamageFLS(mobile, dmgfinal, DMG_PHYSICAL);
 			mobile.hidden := 0;

@@ -118,10 +118,9 @@ program TrapWalkOn(mobile, trap)
          danger := 1;
       endif
 
-      var diff     := GetTrapAC(danger);
-      var dmg := getTrapDamage(strength, danger);
+      var dmg := getTrapDamage(danger, danger);
       
-		if (!CheckBlockDodge(mobile, 0, 1))
+		if (CheckBlockDodge(mobile, 0, 1))
          SendSysMessageEx(mobile, "Você desviou da armadilha.", SSM_INFO);
       else
          DamageFLS(mobile, dmg, cfg.dmgtype);

@@ -211,28 +211,28 @@ function getTrapDamage(strength, danger)
    case (danger)
       3:
          case (strength)
-            4: RandomDiceRoll("24d10");
-            3: RandomDiceRoll("18d10");
-            2: RandomDiceRoll("10d10");
-            default: RandomDiceRoll("4d10");
+            4: RandomDiceRoll("24d10+80");
+            3: RandomDiceRoll("18d10+60");
+            2: RandomDiceRoll("10d10+30");
+            default: RandomDiceRoll("4d10+20");
          endcase
       2: 
          case (strength)
-            4: RandomDiceRoll("18d10");
-            3: RandomDiceRoll("10d10");
-            2: RandomDiceRoll("4d10");
-            default: RandomDiceRoll("2d10");
+            4: RandomDiceRoll("18d10+120");
+            3: RandomDiceRoll("10d10+60");
+            2: RandomDiceRoll("4d10+30");
+            default: RandomDiceRoll("2d10+20");
          endcase
       default: 
          case (strength)
-            4: RandomDiceRoll("10d10");
-            3: RandomDiceRoll("4d10");
-            2: RandomDiceRoll("2d10");
-            default: RandomDiceRoll("1d10");
+            4: RandomDiceRoll("10d10+120");
+            3: RandomDiceRoll("4d10+60");
+            2: RandomDiceRoll("2d10+30");
+            default: RandomDiceRoll("1d10+20");
          endcase
    endcase
 
-   return RandomDiceRoll("1d10");
+   return RandomDiceRoll("1d10+25");
 endfunction
 
 function getTrapAC(danger)

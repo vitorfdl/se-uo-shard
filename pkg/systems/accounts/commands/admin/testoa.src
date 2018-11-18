@@ -19,13 +19,6 @@ include ":crafting:craft_props";
 // include ":quest:quest";
 
 program oafeatures_sendpacket(who, text)
-   who.frozen := 1;
-   for i := 1 to 20
-      sleepms(200);
-      who.SetFacing(who.facing+1, 0x1);
-      PlaySoundEffect(who, 0x212);
-   endfor
-   who.frozen := 0;
 
    // var item := _CreateItemInBackpack(who, 0xDC01, 1);
    // var recipes := GetObjProperty(who, "recipes");
@@ -42,17 +35,7 @@ program oafeatures_sendpacket(who, text)
 
       
 
-   // var d := 3;
-   // var area := GetCoordsInSquare(targ.x, targ.y, d);
-   // for i := 1 to 3
-   // foreach p in area
-   //    if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
-   //       PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, targ.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
-   //       // PlayMovingEffectXYZ( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, 0x0F51, 0 );
-   //    endif
 
-   //    sleepms(2);
-   // endforeach
    // PlayAttackAnimation(who, who.weapon);
    //    sleepms(120);
    // endfor

@@ -19,7 +19,9 @@ program skillremoveTrap(who, item)
 	if(!item)
 		SendSysMessageEx(who, "Cancelado.", SSM_FAIL);
 		return;
-   elseif (!HaveFeat(who, 49) ) // Feat: Desarmar Armadilha
+   elseif (!HaveFeatSecondary(who, 48) && !who.cmdlevel ) // Feat: Desarmar Armadilha
+		SendSysMessageEx(who, "Você precisa ter a habilidade 'Aptitude Mecânica'", SSM_FAIL);
+		return;
 	elseif ( !Accessible(who,item)  )
 		SendSysMessageEx(who, "Você não alcanca o alvo!", SSM_FAIL);
 		return;
@@ -36,19 +38,6 @@ program skillremoveTrap(who, item)
 		SendSysMessageEx(who, "Você está muito cansado para fazer isso.", SSM_FAIL);
 		return;
    endif
-
-   var dif;
-   var lvl := Cint(GetObjProperty(item, "level"));
-   case (lvl)
-      1: dif := 0;
-      2: dif := 10;
-      3: dif := 20;
-      4: dif := 25;
-      5: dif := 30;
-      default: dif := 0; 
-   endcase
-   
-	var chance := RandomDiceRoll("1d100");
 
 	if( GetObjProperty(item, "TrapList") != error )
 		if (!GetObjProperty(item, "trapSpoted"))
@@ -71,19 +60,8 @@ program skillremoveTrap(who, item)
 			return;
 		endif
 
-		if( chance < dif )
-			SendSysMessageEx( who, "Você falhou em desarmar a armadilha.", SSM_FAIL);
-			// if (!HaveFeat(who, "Especialista em Invasoes") && check < -20)
-			// 	if (who.hidden)
-			// 		who.hidden := 0;
-			// 	endif
-			PrintText(who, "*"+who.name+" disparou a armadilha*");
-			RunTraps(item, who);
-			// endif
-			return;
-		endif
-
 		SendSysMessageEx( who, "Você desarmou a armadilha com sucesso.", SSM_INFO);
+      PlaySoundEffect(item, cint(0x140));
 		RemoveTrap(item, 1);
 		item.usescript := "";
 		SetName(item, item.desc);
@@ -102,15 +80,11 @@ program skillremoveTrap(who, item)
 			return;
 		endif
 
-		if (chance >= dif)
-		   ExpGain(who, "minor");
-			SendSysMessageEx( who, "Desativou a armadilha com sucesso.", SSM_INFO);
-			SetObjProperty(item, "trap_inativa", 1);
-         who.SetAchievement("trap", 1);
-			return;
-		endif
-      
-		SendSysMessageEx( who, "Falhou em desarmar a armadilha.", SSM_FAIL);
+      ExpGain(who, "minor");
+      SendSysMessageEx( who, "Desativou a armadilha com sucesso.", SSM_INFO);
+      PlaySoundEffect(item, cint(0x140));
+      SetObjProperty(item, "trap_inativa", 1);
+      who.SetAchievement("trap", 1);
 	else
 		SendSysMessageEx(who, "Não tem armadilhas aqui.", SSM_INFO);
 	endif

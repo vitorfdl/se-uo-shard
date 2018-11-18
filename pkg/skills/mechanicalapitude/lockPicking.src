@@ -29,7 +29,7 @@ function doLockpick(me, lockpick)
 		return;
 	endif
 
-   if (me.hidden && AP_GetTrueSkill(me, SABOTAGEM) < 2)
+   if (me.hidden && HaveFeatSecondary(me, 50))
       me.hidden := 0;
    endif
 
@@ -46,12 +46,7 @@ function doLockpick(me, lockpick)
 		return;
    endif
 
-   var stam_c := 6;
-   if (AP_GetTrueSkill(me, SABOTAGEM) >= 4)
-      stam_c := 4;
-   endif
-   
-   if ( !AP_ConsumeVital(me, STAMINA, stam_c) )
+   if ( !AP_ConsumeVital(me, STAMINA, 10) )
 		SendSysMessageEx(me, "Você está cansado demais para tentar isso.", SSM_FAIL);
 		return;
 	endif
@@ -65,7 +60,6 @@ function doLockpick(me, lockpick)
 endfunction
 
 function PickTreasureChest(me, lockpick, chest)
-	var lvl := CInt(GetObjProperty(chest,"level"));
 	if (!chest.locked || Getobjproperty(chest, "broken"))
 		SendSysMessageEx(me,"O alvo não parece estar tracado.", SSM_INFO);
 		return;
@@ -98,20 +92,10 @@ function PickTreasureChest(me, lockpick, chest)
    endif
    
 	sleepms(250);
-	var diff;
-	case (lvl)
-		1: diff := 13;
-		2: diff := 16;
-		3: diff := 19;
-		4: diff := 22;
-		5: diff := 16;
-		default: diff := 12; 
-	endcase
-
-	var dice_roll := rollAttrDice(me, DEXTERITY) + GetSkillBonus(me, SABOTAGEM);
-	if ( dice_roll > diff )
+	var diff := (CInt(GetObjProperty(chest,"level")) +1) * 10;
+	if ( Randomint(100) >= diff )
 		SucessLockPick(me, chest);
-      ExpGain(me, diff, dice_roll);
+      ExpGain(me, "major");
       me.SetAchievement("trap", 1);
       
       var time_respawn := AddTimeTo(ReadGameClock(), 25+RandomDiceRoll("3d20"), "minutes");
