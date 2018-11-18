@@ -128,6 +128,7 @@ function SendQuestGump(npc, player)
       var quest_marker := 10;
       if (quest.type == "learn_class")
          quest_text := "Iniciar aprendizado em {}".format(quest.classe);
+         quest_marker := 100;
       elseif (quest.type == "quest")
          quest_text := "Como melhorar minhas habilidades em {}".format(quest.classe);
       elseif (quest.type == "delivery")
@@ -148,20 +149,7 @@ function SendQuestGump(npc, player)
    
    if (!res || res == 1)
       return;
-   elseif (res >= 50)
-      res -= 50;
-      var answer := questions[res];
-      var quest := quests[answer.pos];
-      if (!CheckQuest(player, quest))
-         return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
-      endif
-      
-      if (CompleteQuest(player, answer.pos))
-         PrintText(npc, "Ah, aqui estão suas recompensas.");
-      else
-         return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
-      endif
-   elseif (res >= 10)
+ elseif (res >= 100)
       res -= 10;
       var answer := questions[res];
       var elem := FindConfigElem(classCfg, answer.classe);
@@ -186,6 +174,24 @@ function SendQuestGump(npc, player)
       CreateItemsFromClass(player, answer.classe);
       SetObjProperty(player, "chardata", chardata);
       PrintText(npc, "Que você seja próspero na sua jornada de {}. Volte aqui para que eu lhe ensine alguns truques dessa arte.".format(answer.classe));
+   elseif (res >= 50)
+      res -= 50;
+      var answer := questions[res];
+      var quest := quests[answer.pos];
+      if (!CheckQuest(player, quest))
+         return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
+      endif
+      
+      if (CompleteQuest(player, answer.pos))
+         PrintText(npc, "Ah, aqui estão suas recompensas.");
+      else
+         return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
+      endif
+   elseif (res >= 10)
+       res -= 10;
+       var answer := questions[res];
+-      GiveQuest(player, FindElemInArray(quest_list, struct{ id := answer.quest_id }));
+-      PrintText(npc, "Estarei aguardando aqui para quando tiver terminado.");
    endif
 endfunction
 
