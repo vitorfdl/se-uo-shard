@@ -52,6 +52,7 @@ function SendGump(who, scroll)
          recipe := FindConfigElem(recipe_list, cint(objtype));
       endif
    endif
+
 	if (!recipe || (recipe.Type != "group" && !item))
       if (who.cmdlevel < 4)
          SendSysMessageEx(who, "Algo errado com a receita, chame um GM!");
@@ -91,7 +92,7 @@ function SendGump(who, scroll)
 		item_name := item.desc;
 	endif
 	GFHTMLArea(gump, 38, 60, 240, 20, "<BASEFONT SIZE=5 COLOR=#8c1a1a {}><CENTER>{}".format(lang, item_name));
-	var tilepic := item.graphic;
+	var tilepic := GetConfigInt(item, "graphic");
 	if (!tilepic)
 		tilepic := objtype;
 	endif
@@ -115,7 +116,14 @@ function SendGump(who, scroll)
             can_learn := 0;
          endif
       endif
-      if (can_learn)
+
+      if (recipe.requireFeat)
+         if (!HaveFeatSecondary(who, recipe.requireFeat))
+            can_learn := 2;
+         endif
+      endif
+      
+      if (can_learn == 1)
          var charge_list    := GetObjProperty(scroll, "learning");
          var my_charges     := FindElemInArray(charge_list, struct{ "person":= who.serial });
          var remain_charges := RecipeCharges(cint(recipe.difficulty)) - cint(my_charges.charges);
@@ -125,7 +133,13 @@ function SendGump(who, scroll)
             GFAddButton(gump, 265, 186, 2224, 2224, GF_CLOSE_BTN, 12);
          endif
       else
-         GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");
+         if (can_learn == 2)
+            var feat := GetFeatById(recipe.requireFeat);
+            GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Requer Habilidade {}".format(feat.Name));
+         else
+            GFHTMLArea(gump, 38, 140, 240, 20, "<BASEFONT SIZE=2><CENTER>Você já aprendeu esta receita.");
+         endif
+         GFTextLine(gump, 180, 182, 995, "Não pode aprender");
       endif
    endif
 

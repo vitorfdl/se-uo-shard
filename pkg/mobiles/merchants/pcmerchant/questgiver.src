@@ -164,8 +164,28 @@ function SendQuestGump(npc, player)
    elseif (res >= 10)
       res -= 10;
       var answer := questions[res];
-      GiveQuest(player, FindElemInArray(quest_list, struct{ id := answer.quest_id }));
-      PrintText(npc, "Estarei aguardando aqui para quando tiver terminado.");
+      var elem := FindConfigElem(classCfg, answer.classe);
+      var chardata := GetObjProperty(player, "chardata");
+      if (elem.Type == "Main")
+         chardata.subclasses.append(struct{
+            id := answer.classe,
+            exp := 0,
+            level := 1,
+            habs := array{},
+            selected_habs := array{}
+         });
+      elseif (elem.Type == "Secondary")
+         chardata.subclasses.append(struct{
+            id := answer.classe,
+            exp := 0,
+            level := 1,
+            habs := array{}
+         });
+      endif
+
+      CreateItemsFromClass(player, answer.classe);
+      // SetObjProperty(player, "chardata", chardata);
+      PrintText(npc, "Que você seja próspero na sua jornada de {}. Volte aqui para que eu lhe ensine alguns truques dessa arte.".format(answer.classe));
    endif
 endfunction
 
@@ -199,4 +219,47 @@ function SendConfigGump(npc, player)
    myconfigs.classes := output[3];
 
    SetObjProperty(npc, "config", myconfigs);
+endfunction
+
+function CreateItemsFromClass(who, classe)
+   var items_cfg := ReadConfigFile(":charactercreation:config/classItems");
+   var elem := FindConfigElem(items_cfg, classe);
+   if (!elem) return; endif
+
+	var items      := GetConfigStringArray(elem, "Item");
+	var recipes    := GetConfigStringArray(elem, "Recipe");
+
+	foreach item in items
+		item := SplitWords(item);
+		var name := item[1];
+		var qty := cint(item[2]);
+
+		if (name["/"])
+			var sex_choose := SplitWords(name, "/");
+			if (who.gender == 0)
+				name := sex_choose[1];
+			else
+				name := sex_choose[2];
+			endif
+		endif
+		
+		var objtype := GetObjtypeByName(name);
+		if (!objtype)
+			objtype := item[1];
+		endif
+
+		var obj := CreateItemInBackpack(who, cint(objtype), qty);
+		SetObjProperty(obj, "serialid", who.serial);
+		sleepms(2);
+	endforeach
+
+	foreach recipe in recipes
+		if (Hex(recipe) != error && cint(Hex(recipe)) != 0)
+			recipe := hex(recipe);
+		endif
+		var obj := CreateItemInBackpack(who, 0xef1f);
+		SetObjProperty(obj, "objtype", recipe);
+		Run_Script( ":crafting:recipes/oncreate", recipe );
+		sleepms(2);
+	endforeach
 endfunction

@@ -13,6 +13,7 @@ include "include/objtype";
 include ":attributes:attributes";
 include "include/client";
 include "include/say";
+include "include/utils";
 include ":tn:cooldown";
 
 program use_Bladed(who, tool)
@@ -44,49 +45,49 @@ program use_Bladed(who, tool)
 endprogram
 
 function CutCheese(who, cheese)
-	createiteminbackpack(who, 0x97C, 8);
+	var item := _createiteminbackpack(who, 0x97C, 8);
 	SendSysMessageEx(who, "Você cortou o queijo em oito partes.");
 	DestroyItem(cheese);
 	return 1;
 endfunction
 
 function CutCake(who, cake)
-	createiteminbackpack(who, 0xC96C, 8);
+	_createiteminbackpack(who, 0xC96C, 8);
 	SendSysMessageEx(who, "Você cortou o bolo em oito partes.");
 	DestroyItem(cake);
 	return 1;
 endfunction
 
 function CutCheese2(who, cheese)
-	createiteminbackpack(who, 0x97C, 5);
+	_createiteminbackpack(who, 0x97C, 5);
 	SendSysMessageEx(who, "Você cortou o queijo em cinco partes.");
 	DestroyItem(cheese);
 	return 1;
 endfunction
 
 function CutRawHam(who, ham)
-	createiteminbackpack(who, 0x976, 2);
+	_createiteminbackpack(who, 0x976, 2);
 	SendSysMessageEx(who, "Você cortou o presunto em duas metades");
 	DestroyItem(ham);
 	return 1;
 endfunction
 
 function CutBacon(who, bacon)
-	createiteminbackpack(who, 0x979, 8);
+	_createiteminbackpack(who, 0x979, 8);
 	SendSysMessageEx(who, "Você cortou o bacon em oito fatias.");
 	DestroyItem(bacon);
 	return 1;
 endfunction
 
 function CutLemon(who, lemon)
-	createiteminbackpack(who, 0x1729, 1);
+	_createiteminbackpack(who, 0x1729, 1);
 	SendSysMessageEx(who, "Você cortou o limao.");
 	DestroyItem(lemon);
 	return 1;
 endfunction
 
 function CutLime(who, lemon)
-	createiteminbackpack(who, 0x172b, 1);
+	_createiteminbackpack(who, 0x172b, 1);
 	SendSysMessageEx(who, "Você cortou a lima.");
 	DestroyItem(lemon);
 	return 1;
@@ -164,17 +165,17 @@ function CarveObject(who, tool, objtype, targ)
 
 		 var kindling;
 		case (objtype)
-		        0xcd8:   kindling := CreateItemInBackpack(who, 0xee25, 1); kindling.color := 2109; //cedar tree
-		        0xcd6:   kindling := CreateItemInBackpack(who, 0xee25, 1); kindling.color := 2109; //cedar tree
-		        0xcda:   kindling := CreateItemInBackpack(who, 0xee26, 1); kindling.color := 1853; //oak
-		        0xcdd:   kindling := CreateItemInBackpack(who, 0xee26, 1); kindling.color := 1853; //oak
-		        0xce0:   kindling := CreateItemInBackpack(who, 0xee27, 1); kindling.color := 2117; //walnut
-		        0xce3:   kindling := CreateItemInBackpack(who, 0xee27, 1); kindling.color := 2117; //walnut
-		        0xcf8:   kindling := CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
-		        0xcfb:   kindling := CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
-		        0xcfe:   kindling := CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
-		        0xd01:   kindling := CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
-		        default: CreateItemInBackpack(who, UOBJ_KINDLING, 1);
+		        0xcd8:   kindling := _CreateItemInBackpack(who, 0xee25, 1); kindling.color := 2109; //cedar tree
+		        0xcd6:   kindling := _CreateItemInBackpack(who, 0xee25, 1); kindling.color := 2109; //cedar tree
+		        0xcda:   kindling := _CreateItemInBackpack(who, 0xee26, 1); kindling.color := 1853; //oak
+		        0xcdd:   kindling := _CreateItemInBackpack(who, 0xee26, 1); kindling.color := 1853; //oak
+		        0xce0:   kindling := _CreateItemInBackpack(who, 0xee27, 1); kindling.color := 2117; //walnut
+		        0xce3:   kindling := _CreateItemInBackpack(who, 0xee27, 1); kindling.color := 2117; //walnut
+		        0xcf8:   kindling := _CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
+		        0xcfb:   kindling := _CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
+		        0xcfe:   kindling := _CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
+		        0xd01:   kindling := _CreateItemInBackpack(who, 0xee28, 1); kindling.color := 2129; //cypress
+		        default: _CreateItemInBackpack(who, UOBJ_KINDLING, 1);
 		  endcase      
 		  SendSysMessageEx(who, "Você colocou alguns gravetos na sua mochila.");
 		return 1;
@@ -285,17 +286,17 @@ function CarveFishNew(who, blade, use_on)
 	PlaySoundEffect(who, 0x0057);
 	var peixe_tipo:= use_on.objtype;
 	DestroyItem(use_on);
-	var peixescreate := CreateItemInBackpack(who, 0x097a, num_steaks);
+	var peixescreate := _CreateItemInBackpack(who, 0x097a, num_steaks);
 		if (peixe_tipo == 0x9987) // Lambari
-			CreateItemInBackpack(who, 0x9982, 1); // Isca Dourado
+			_CreateItemInBackpack(who, 0x9982, 1); // Isca Dourado
 		elseif (peixe_tipo == 0x9cf) // Dourado
-			CreateItemInBackpack(who, 0x9985, 1); // Isca Perca
+			_CreateItemInBackpack(who, 0x9985, 1); // Isca Perca
 		elseif (peixe_tipo == 0x9cd) // Perca
-			CreateItemInBackpack(who, 0x9981, 1); // Isca Atum
+			_CreateItemInBackpack(who, 0x9981, 1); // Isca Atum
 		elseif (peixe_tipo == 0xdd7) // Sardinha
-			CreateItemInBackpack(who, 0x9983, 1); // Isca Anchova
+			_CreateItemInBackpack(who, 0x9983, 1); // Isca Anchova
 		elseif (peixe_tipo == 0x9cc) // Robalo
-			CreateItemInBackpack(who, 0x9981, 1); // Isca Atum
+			_CreateItemInBackpack(who, 0x9981, 1); // Isca Atum
 		endif
 	Setname(peixescreate, nomefinal);
 	return 1;

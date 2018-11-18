@@ -19,6 +19,7 @@ const BTN_CRAFTIT  := 500;
 const BTN_SEARCH   := 4;
 const BTN_MAKELAST := 5;
 const BTN_REPAIR   := 6;
+const BTN_SMELT    := 7;
 const BTN_FILTER   := 10;
 var search_entry;
 var qty_entry;
@@ -60,6 +61,12 @@ function sendCraftGump(who, params)
             not_closed := 0;
         elseif (input[0] == BTN_REPAIR)
             doRepair(who, params.type, recipe_cfg);
+         elseif (input[0] == BTN_SMELT)
+            SendSysMessageEx(who, "Selecione o item que vai descontruir", SSM_REQUEST);
+            var item := Target(who, TGTOPT_NOCHECK_LOS);
+            if (item)
+               SmeltItem(who, item, recipe_cfg);
+            endif
         elseif (input[0] == BTN_MAKELAST)
             var craft_last := GetObjProperty(who, "#craft_last");
             craft_last := FindElemInArray(player_recipes, struct{ "objtype" := craft_last });
@@ -105,7 +112,7 @@ function createGump(who, recipes, params)
       GFHTMLArea(gump, 402, 190, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Bonus");
    endif
    
-	GFResizePic(gump, 328+216, 324+100, 30546, 135, 88); //options
+	GFResizePic(gump, 328+216, 324+100, 30546, 135, 88+24); //options
 	GFResizePic(gump, 13, 36, 40000, 540, 590);
 
     //Search
@@ -122,8 +129,13 @@ function createGump(who, recipes, params)
     // GFToolTipText(gump, 1062951);
 	GFTextLine(gump, 343+216, 360+100, 1153, "Fazer Ultimo");
 	GFAddButton(gump, 426+216, 360+100, 40017, 40027, GF_CLOSE_BTN, BTN_MAKELAST);
-	GFTextLine(gump, 343+216, 384+100, 1153, "Consertar");
-	GFAddButton(gump, 426+216, 385+100, 40017, 40027, GF_CLOSE_BTN, BTN_REPAIR);
+	GFTextLine(gump, 343+216, 384+100, 1153, "Desconstruir");
+	GFAddButton(gump, 426+216, 384+100, 40017, 40027, GF_CLOSE_BTN, BTN_SMELT);
+
+   if (!params.no_fix)
+      GFTextLine(gump, 343+216, 408+100, 1153, "Consertar");
+      GFAddButton(gump, 426+216, 408+100, 40017, 40027, GF_CLOSE_BTN, BTN_REPAIR);
+   endif
 
 
 	GFTextLine(gump, 260, 600, 1153, "Página");
@@ -157,7 +169,10 @@ function createGump(who, recipes, params)
       GFResizePic(gump, r_x-7, r_y-4, 5120, 205, 49);
       GFResizePic(gump, r_x-49, r_y, 30546, 45, 45);
       var fix_p := GetItemFix(recipe.graphic);
-      GFTilePic(gump, r_x-55+fix_p.x, r_y+4+fix_p.y, recipe.graphic);
+      GFTilePic(gump, r_x-55+fix_p.x, r_y+4+fix_p.y, recipe.graphic, cint(recipe.color));
+      if (recipe.desc)
+         GFTooltipText(gump, recipe.desc);
+      endif
       var recipe_name := recipe.name;
       if (recipe.level)
          recipe_name += " Lv.{}".format(recipe.level);

@@ -4,6 +4,7 @@ use util;
 
 
 include "include/say";
+include "include/utils";
 include ":gumps:gumps";
 include ":tn:tngumps";
 
@@ -108,7 +109,7 @@ function MakeBoardSerra(who, item, nova_tabua)
                 //SubtractAmount(item, item.amount);
 
 		//alterado - Ed.
-		CreateItemInContainer (who.backpack, nova_tabua, item.amount);
+		_CreateItemInBackpack(who, nova_tabua, item.amount);
                 SubtractAmount(item, item.amount);
 
 
@@ -150,7 +151,7 @@ function MakeCaboSerra(who, item)
                    break;
                 endif
                 MakeSerraEfect(who);
-        	CreateItemInContainer (who.backpack, cabo, 1);
+        	_CreateItemInBackpack(who, cabo, 1);
                 SubtractAmount(item, 1);
 
 	until ((who.x != characterx or who.y != charactery));

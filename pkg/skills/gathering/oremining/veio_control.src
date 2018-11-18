@@ -1,0 +1,31 @@
+use uo;
+use datafile;
+use cfgfile;
+use math;
+include ":gumps:gumps";
+include ":gumps:requestgump";
+include ":tn:tngumps";
+include "include/say";
+include "include/dungeons";
+
+program configmining(item)
+   while(item)
+      if (!HasPlayerNear(item.x, item.y, item.realm))
+         var veil := cint(GetObjProperty(item, "veil"));
+
+         if (veil < 14)
+            veil += 1;
+            SetObjProperty(item, "veil", veil);
+         endif
+
+         if (veil >= 6)
+             item.graphic := 0x9CC8;
+         elseif (veil > 2)
+            item.graphic := 0x9CAA;
+         else
+            item.graphic := 0x9CB6;
+         endif
+      endif
+      sleep(120);
+   endwhile
+endprogram

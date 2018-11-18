@@ -98,6 +98,27 @@ function GetGodFeats(god, return_id := 0)
    return feat_list;
 endfunction
 
+function HaveFeatSecondary(who, feat)
+	var chardata := GetObjProperty(who, "chardata");
+   if (!chardata) return 0; endif
+
+   if (typeOf(feat) != "Integer")
+      return 0;
+   endif
+   
+   var feat_list := array{};
+   foreach classe in (chardata.subclasses)
+      feat_list := feat_list + classe.habs;
+      sleepms(2);
+   endforeach
+
+	if (feat in feat_list)
+		return 1;
+	endif
+
+	return 0;
+endfunction
+
 function GetFeatList(who, only_active := 0)
 	var chardata := GetObjProperty(who, "chardata");
    var feat_list := array{};

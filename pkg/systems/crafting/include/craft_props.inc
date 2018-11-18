@@ -12,17 +12,17 @@ function TranslateAtt(attribute)
 	endcase
 endfunction
 
-function getQuality(num, color := "")
+function getQuality(num, color := 0)
    if (color) color := GetQualityColor(num); endif
    
-	if (num >= 3)
+	if (num >= 4)
 		return "{}Exótico".format(color);
-	elseif(num  >= 2)
+	elseif(num  >= 3)
 		return "{}Raro".format(color);
-	elseif(num  >= 1)
+	elseif(num  >= 2)
 		return "{}Bom".format(color);
 	else
-		return "{}Normal".format(color);
+		return "{}Comum".format(color);
 	endif
 endfunction
 
@@ -52,28 +52,29 @@ endfunction
 function TranslateHit(crit)
 	if (crit == "antimountedhit")
 		return "Anti-montaria";
-	elseif (crit == "chargehit")
-		return "Carga";
-	elseif (crit == "concussionhit")
-		return "Concussão";
-	elseif ( crit == "freearmorhit")
-		return "Movimento Livre";
+	elseif (crit == "bleedhit")
+		return "Sangramento";
+	elseif (crit == "riposte")
+		return "Riposte";
+	elseif ( crit == "gopleduplo")
+		return "Duelista";
 	elseif (crit == "heighthit")
 		return "Diferença de Altura";
-	elseif ( crit == "QueimaRoupa")
-		return "Tiro a Queima Roupa";
-	elseif ( crit == "pushback")
-		return "Golpe Esmagador";
-	elseif ( crit == "passivedisarm")
-		return "Disarme Passivo";
+	elseif ( crit == "barrierdestroy")
+		return "Devorar Véu";
+	elseif ( crit == "barrier")
+		return "Barreira";
+	elseif ( crit == "powerhit")
+		return "Poderoso";
+	elseif ( crit == "gigante")
+		return "Gigante";
+	elseif ( crit == "extase")
+		return "Êxtase";
 	endif
 endfunction
 
 function GetHitsInfo(entry)
 	var critstr := "";
-	var active := GetconfigString(entry, "ActiveScript");
-   if (active) critstr += TranslateHit(lower(active)) + "<br>"; endif
-
 	var passives := GetconfigStringArray(entry, "HitScripts");
 	foreach crit in passives
 		critstr := critstr + TranslateHit(lower(crit)) + "<br>";

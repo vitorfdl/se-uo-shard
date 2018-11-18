@@ -64,18 +64,19 @@ function do_poisoning(who)
 	if (!level)
 		level := RandomDiceRoll("1d2");
 	endif
+   
 	//se for uma poçao que não a default a formula eh essa:
 	case(the_poison.objtype)
-		0xbf00: level := 1; poisonType := "defaultPoison";
+		0xbf00:  poisonType := "defaultPoison";
     	// 0xbf01: poisonType :="strPoison"; difficulty := 14; 
 		// 0xbf07: poisonType :="dexPoison"; difficulty := 14; 
 		// 0xbf06: poisonType :="intPoison"; difficulty := 14; 
 		0xbf02: poisonType:="staminaPoison"; 
 		0xbf03: poisonType:="paralyzePoison"; 
 		0xef54: poisonType :="manaPoison"; 
-		0xbf04: level := 3; poisonType := "defaultPoison";
-		0xdc04: level := 2; poisonType := "defaultPoison";
-		0xbf05: level := 4; poisonType := "defaultPoison";
+		// 0xbf04: level := 3; poisonType := "defaultPoison";
+		// 0xdc04: level := 2; poisonType := "defaultPoison";
+		// 0xbf05: level := 4; poisonType := "defaultPoison";
       default:
          SendSysMessageEx(who, "Isso não parece um veneno.", SSM_FAIL);
          return 0;

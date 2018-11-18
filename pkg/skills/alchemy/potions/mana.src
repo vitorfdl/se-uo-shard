@@ -10,45 +10,25 @@ include ":timedscripts:timedScripts";
 include "include/say";
 
 program drink_blue (who, potion)
-	EraseObjProperty(who, "IsMeditating");
-	EraseObjProperty(who, "HealTimer");
-	if(!Accessible(who, potion))
-		return;
-	endif
-	if(potion.movable == 0)
-		SendSysMessageEx(who, "Você não pode beber isto.", SSM_FAIL);
-		return;
-	endif
-
-	if ( TS_GetCooldown(who, "manapot") != error)
-		SendSysMEssageEx(who, "Você não pode usar essa pocao agora.", SSM_FAIL);
+	if (!CheckIfCanDrink(who, potion, "manapot", 10))
 		return 1;
 	endif
-	if (cint(GetObjProperty(who, "#manapotion")))
-		SendSysMessageEx(who, "Você ja esta sob efeito de uma pocao igual.", SSM_FAIL);
-		return;
-	endif
 
-	var obj := potion.objtype;
+   var level := cint(GetObjProperty(potion, "level"));
+   if (!level) level := 1; endif
 
-	var healed;
-	case (potion.objtype)
-		0xbf17: healed := RandomDiceRoll("8d4+15");
-		0xbf18: healed := RandomDiceRoll("10d4+30");
-		0xbf19: healed := RandomDiceRoll("15d4+45");
-	endcase
+	var healed := RandomIntMinMax(30 * level, 60 * level);
 
   	EmptyBottle(who, potion, 1);
-	TS_StartCooldown(who, "manapot", cint(healed)+1);
-	SetObjProperty(who, "#manapotion", 1);
+
 	Detach();
+	SendSysMessageEx(who, "É como se seus orgãos internos se banhassem em energia...", SSM_INFO);
    for i := 1 to healed
 		HealMana(who, 1);
 		sleepms(500);
 	endfor
 
-	EraseObjProperty(who, "#manapotion");
-	SendSysMessageEx(who, "Terminou o efeito da pocao.", SSM_INFO);	
+	SendSysMessageEx(who, "Terminou o efeito da poção.", SSM_INFO);	
 endprogram
  
  

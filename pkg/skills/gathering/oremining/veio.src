@@ -1,0 +1,49 @@
+use uo;
+use datafile;
+use cfgfile;
+use math;
+include ":gumps:gumps";
+include ":gumps:requestgump";
+include ":tn:tngumps";
+include "include/say";
+
+var arrayquestion := array{0x6300, 0x6990, 0x6992, 0x6451, 0x6453, 0x6455, 0x6457, 0x645A, 0x645C, 0x645E, 0x6460 };
+
+program configmining(who, item)
+   if (!who.cmdlevel) return SendSysMessageEx(who, "Use uma picareta neste veio para retirar minérios.", SSM_INFO); endif
+   
+
+   var item_config := GetObjProperty(item, "config");
+   if (!item_config) item_config := struct{}; endif
+   if (!item_config.minerio) item_config.minerio := 0x6300; endif
+   if (!item_config.respawn_time) item_config.respawn_time := "5"; endif
+
+   item_config.minerio := item_config.minerio in arrayquestion;
+   var orechoices := array{};
+   var itemdesc := ReadConfigFile(":*:itemdesc");
+	foreach question in arrayquestion
+      orechoices[_question_iter] := StrReplace(itemdesc[question].desc, "minerio de ", "");
+		sleepms(5);
+	endforeach	
+
+   var questions := array{
+      struct{"title" := "Minério a ser reproduzido", "marked" := item_config.minerio, radio := orechoices }, 
+      struct{"title" := "Tempo mínimo de respawn (em minutos)", "marked" := item_config.respawn_time }
+   };
+
+   var res := QuestionsGump(who, questions);
+   if (!res) return; endif
+
+   item_config.minerio := arrayquestion[res[1] in orechoices];
+   item_config.respawn_time := cint(res[2]);
+   SetObjProperty(item, "config", item_config);
+
+   item.color := itemdesc[item_config.minerio].color;
+   SetName(item, "Veia de {}".format(res[1]));
+
+   SetObjProperty(item, "veil", 14);
+   EraseObjProperty(item, "spawntime");
+   item.invisible := 0;
+   item.graphic := 0x9CC8;
+
+endprogram

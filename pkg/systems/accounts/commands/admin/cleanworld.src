@@ -1,0 +1,43 @@
+use uo;
+use os;
+use os;
+
+include ":timeUtils:time";
+include ":yggdrasil:boss";
+include "include/say";
+include "include/shapes";
+include "include/facings";
+include "include/dungeons";
+include "include/client";
+include ":sysbook:flsbooks";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":timeUtils:time";
+include ":merchants:crafthelp";
+include ":ghaia:objective";
+include ":magery:basicMagery";
+include ":crafting:craft_props";
+// include ":quest:quest";
+
+program oafeatures_sendpacket(who, text)
+   cleanBox(2832, 2556, 4380, 3216);
+   cleanBox(4396, 8, 6076, 4224);
+endprogram
+
+function cleanBox(x1, y1, x2, y2)
+   var items := ListObjectsInBox( x1, y1, 0, x2,y2, 60);
+   foreach item in items
+      if (Hex(item.objtype) in array{0x6116, 0xec29}) 
+         DestroyItem(item);
+      endif
+      if (item.isA(POLCLASS_CONTAINER))
+         var the_item := FindObjtypeInContainer(item, 0x6116);
+         var the_item2 := FindObjtypeInContainer(item, 0xec29);
+         if (the_item) Destroyitem(the_item); Print("destroyed"); endif
+         if (the_item2) Destroyitem(the_item2); Print("destroyed"); endif
+         if (!the_item && !the_item2) break; endif
+         sleepms(2);
+      endif
+      sleepms(2);
+   endforeach
+endfunction

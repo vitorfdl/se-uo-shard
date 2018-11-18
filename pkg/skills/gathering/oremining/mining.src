@@ -25,13 +25,95 @@ program OreMining(who, tool)
 		SendSysMessageEx(who, "Você precisa equipar a picareta para minerar.");
 		return;
 	endif
-	SendSysMessageEx(who, "Onde você deseja minerar?", SSM_REQUEST);
-	var targ := TargetCoordinates(who);
-	
 
+	SendSysMessageEx(who, "Selecione a veia de minério que você deseja minerar.", SSM_REQUEST);
+	var targ := Target(who);
+	
 	if ( CoordinateDistance(who.x, who.y, targ.x, targ.y) > 2 )
 		SendSysMessageEx(who, "Muito longe.");
 		return;
+   elseif (targ.objtype != 0xee99)
+		SendSysMessageEx(who, "isto não é uma veia de minério.");
+		return;
+	endif
+
+	var my_x := who.x;
+	var my_y := who.y;
+	var my_facing := who.facing;
+
+
+	if (!CheckLoop(who, tool, my_x, my_y, my_facing))
+		SendsysMessageEx(who, "Você parou de minerar.", SSM_FAIL);
+		return;
+	endif
+
+	while(MiningLoop(who, tool, my_x, my_y, targ, my_facing))
+		CheckToolWear(who, tool, EXTRACAO);
+		if (!CheckLoop(who, tool, my_x, my_y, my_facing))
+			break;
+		elseif (AP_GetVital(who, "Stamina") < 5)
+			SendSysMessageEx(who, "Você esta muito cansado para minerar.");
+			break;
+		endif
+		AP_ConsumeVital(who, "Stamina", 5);
+		sleep(3);
+	endwhile
+	
+	SendSysMessageEx(who, "Você parou de minerar.");
+endprogram
+
+function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
+	var i;
+	for ( i:=0; i<3; i:=i+1 )
+		if ( !CheckLoop(who, tool, my_x, my_y, my_facing) )
+			return 0;
+		endif
+		PerformAction(who, MINING_ANIMATION);
+		PlaySoundEffect(who, MINING_SOUND);
+		sleep(1);
+	endfor
+
+   var ore_config := GetobjProperty(targ, "config");
+   if (!ore_config) return SendSysMessageEx(who, "Parece não ter mais minerios aqui.", SSM_FAIL); endif
+   var veil := cint(GetobjProperty(targ, "veil"));
+
+   var has_light := HaveLightNear(who);
+
+	if (who.cmdlevel > 2)
+		SendSysMessageEx(who, "veil " + veil);
+		SendSysMessageEx(who, "light " + has_light);
+	endif
+
+   var consume := 2;
+   if (!has_light) consume += 3; endif
+   if (HaveFeat(who, 67)) consume -= 1; endif //escavação
+
+   veil -= consume;
+   if (veil < 0)
+      return SendSysMessageEx(who, "Parece não ter mais minerios aqui.", SSM_FAIL);
+   endif
+
+   SetObjProperty(targ, "veil", veil);
+   var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), RandomIntMinmax(1, 3));
+   minerio.movable := 1;
+   if (Randomint(100) <= 30)
+	   ExpGain(who, "minor");
+   endif
+
+   if (veil <= 2)
+      targ.graphic := 0x9CB6;
+   elseif (veil <= 6)
+      targ.graphic := 0x9CAA;
+   endif
+
+   if (veil <= 0)
+      return 0;
+   endif
+   
+	return 1;
+endfunction
+
+
 	// elseif ( !CanMine(targ, "Stone") )
 	// 	var maps := GetMapsInBackpack(who);
 	// 	//sendsysmessageEx(who, " " + maps);
@@ -50,106 +132,3 @@ program OreMining(who, tool)
 	// 		SendSysMessageEx(who, "Você não pode minerar aqui.", SSM_FAIL);
 	// 		return;
 	// 	endif
-	
-	endif
-
-//	sendsysmessageEx(who, CanMine(targ, "Stone") + " " );
-
-	var my_x := who.x;
-	var my_y := who.y;
-	var my_facing := who.facing;
-
-
-	if (!CheckLoop(who, tool, my_x, my_y, my_facing))
-		SendsysMessageEx(who, "Você parou de minerar.");
-		return;
-	endif
-
-	while(MiningLoop(who, tool, my_x, my_y, targ.x, targ.y, my_facing))
-		CheckToolWear(who, tool, EXTRACAO);
-		if (!CheckLoop(who, tool, my_x, my_y, my_facing))
-			break;
-		elseif (AP_GetVital(who, "Stamina") < 5)
-			SendSysMessageEx(who, "Você esta muito cansado para minerar.");
-			break;
-		endif
-		AP_ConsumeVital(who, "Stamina", 5);
-		sleep(3);
-	endwhile
-	
-	SendSysMessageEx(who, "Você parou de minerar.");
-	
-endprogram
-
-function MiningLoop(who, tool, my_x, my_y, targx, targy, my_facing)
-	var i;
-	for ( i:=0; i<3; i:=i+1 )
-		if ( !CheckLoop(who, tool, my_x, my_y, my_facing) )
-			return 0;
-		endif
-		PerformAction(who, MINING_ANIMATION);
-		PlaySoundEffect(who, MINING_SOUND);
-		sleep(1);
-	endfor
-
-	var miningregion := GetMiningRegion(targx, targy); //feita
-	var ore_type := DetermineOreType(who, miningregion); //feit
-	
-	var ore_amount := GetOreAmount(who.realm, targx, targy ); //feita
-	var difficulty := DetermineMiningDifficulty(ore_type); // feita
-
-	if (who.cmdlevel > 2)
-		SendSysMessageEx(who, "ore " + ore_type);
-		SendSysMessageEx(who, "region " + miningregion);
-		SendSysMessageEx(who, "amount " + ore_amount);
-		SendSysMessageEx(who, "difficulty " + difficulty);
-	endif
-
-	if (!ore_type)
-		return 0;
-/*	elseif (ore_type == 20481) // Se for pedra
-		if ( SkillCheck(who, EXTRACAO, difficulty) > 0 )
-			var minerio := CreateItemInBackPack(who, ore_type, 1);
-			minerio.movable := 1;
-			SendSysMessageEx(who, "Você pegou alguns minerios. " );
-		else
-			SendSysMessageEx(who, "Você falhou em pegar minerios.");
-		endif
-		return 1;*/
-	endif
-
-	if ( ore_amount > 0 )
-		if (ore_type != 999) //999 eh quando não passou na chance de raridade do minerio
-         var bonus := HaveLightNear(who) - 1;
-			var dice := rollAttrDice(who, STRENGTH, bonus, struct{ "get_critical" := 1}) + GetSkillBonus(who, EXTRACAO);
-			if ( dice.dice > difficulty )
-				var amt := AP_GetStat(who, STRENGTH, RETURN_BONUS) + AP_GetTrueSkill(who, EXTRACAO);
-				if (amt <= 0)
-					amt := 2;
-				endif
-
-				ore_amount := ore_amount - amt;
-				if (ore_amount < 0)
-					ore_amount := amt;
-				endif
-
-				SetOreAmount(who.realm, targx, targy, ore_amount); //feita
-				var minerio := CreateItemInBackPack(who, cint(ore_type), cint(amt));
-				minerio.movable := 1;
-				who.SetAchievement("oremining", 1);
-				ExpGain(who, difficulty, dice.dice);
-				SendSysMessageEx(who, "Você pegou alguns minerios. " );
-				if (AP_GetTrueSkill(who, EXTRACAO) > 3 && dice.critical)
-					Garimpeiro(who);
-				endif
-			else
-				SendSysMessageEx(who, "Você falhou em pegar minerios.");
-			endif
-		endif
-	else
-		SendSysMessageEx(who, "Parece não ter mais minerios aqui.");
-		return 0;
-	endif
-
-	return 1;
-endfunction

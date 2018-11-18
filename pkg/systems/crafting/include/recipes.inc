@@ -38,7 +38,7 @@ function checkifHasLevel(objtype)
    var obj := FindConfigElem(cfg, hex(objtype));
    if (!obj) FindConfigElem(cfg, cint(objtype)); endif
 
-   if (obj.Damage || obj.Haslevel || obj.equipscript)
+   if (obj.Damage || obj.hasLevel || obj.equipscript)
       return 1;
    endif
 

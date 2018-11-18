@@ -19,7 +19,7 @@ function GetBagList(who, materials := 0)
    foreach item in (items)
       if (!materials || item.objtype in materials)
          item_list[item.objtype] := cint(item_list[item.objtype]) + item.amount;
-         if (resource_config[item.objtype])
+         if (resource_config[item.objtype] && !materials)
             var type := resource_config[item.objtype].Type.lower();
             item_list[type] := cint(item_list[type]) + item.amount;
          endif
@@ -35,18 +35,19 @@ function CreateItem(who, objtype, more:=0)
 	var cfg           := ReadConfigFile(":crafting:stackingitens");
 	var elem          := FindConfigElem(cfg, "stacks");
 	var stackingitens := ListConfigElemProps( elem );
+
    if (typeof(objtype) == "Struct")
       theitem := CreateIteminBackpackFromTemplate(who, objtype);
-	elseif(cstr(cint(objtype)) in stackingitens)
-		var stacknow := FindObjtypeInContainer( who.backpack, cint(objtype) );
-		if ( stacknow )
-			AddAmount(stacknow, 1+more);
-			theitem := stacknow;
-		else
-			theitem := CreateItemInBackpack(who, objtype, cint(1+more));
-		endif
+	// elseif(cstr(cint(objtype)) in stackingitens)
+	// 	var stacknow := FindObjtypeInContainer( who.backpack, cint(objtype) );
+	// 	if ( stacknow )
+	// 		AddAmount(stacknow, 1+more);
+	// 		theitem := stacknow;
+	// 	else
+	// 		theitem := _CreateItemInBackpack(who, objtype, cint(1+more));
+	// 	endif
 	else
-		theitem := CreateItemInBackpack(who, objtype, cint(1+more));
+		theitem := _CreateItemInBackpack(who, objtype, cint(1+more));
 		//theitem.quality := 0.6;
 		// theitem.name := theitem.desc;
 	endif

@@ -16,6 +16,14 @@ function _resolveParams(byref a, byref b, byref c := 0)
       a := a[1];
    endif
 endfunction
+
+function _CreateItemInBackpack(who, objtype, amount := 1)
+   var item := createiteminbackpack(who, objtype, amount);
+   if (item) MoveItemToContainer( item, who.backpack ); endif
+
+   return item;
+endfunction
+
 function randomPlace(loc, radius := 1)
 	var y, x;
    case (RandomInt(3)+1)

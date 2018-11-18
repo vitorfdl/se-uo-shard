@@ -19,6 +19,7 @@ include ":itemUtils:toolWear";
 include ":tn:tngumps";
 include ":crafting:craft_props";
 include ":crafting:excep_gump";
+include ":crafting:recipes";
 
 const OUT_OF_MATERIALS := 1;
 
@@ -75,15 +76,19 @@ function GetRecipe(objtype, elem)
 
    var recipe_info := struct{
       "graphic"     := cint(graphic),
+      "color" := cint(item.color),
       "name"        := TruncatePlural(objtype),
       "objtype"     := objtype,
+      "requireFeat"  := GetConfigInt(elem, "requireFeat"),
       "difficulty"  := GetConfigInt(elem, "difficulty"),
+      "desc"  := GetConfigString(elem, "desc"),
       "colored"     := GetConfigInt(elem, "colored"),
       "mark"        := GetConfigInt(elem, "mark"),
       "exceptional" := GetConfigInt(elem, "exceptional"),
       "delay"       := GetConfigInt(elem, "delay"),
       "fastcraft"       := GetConfigInt(elem, "fastcraft"),
       "more"       := GetConfigInt(elem, "more"),
+      "hasLevel"       := GetConfigInt(elem, "hasLevel"),
       "materials"  := materials,
       "main_material" := elem.main_material,
       "requires"   :=  GetConfigStringArray(elem, "requires")
@@ -131,18 +136,24 @@ endfunction
 // to check the item for. This is used for example, for boards that
 // was originally colored logs. The colored log objtype is stored
 // in the cprop, and is used to get it's "ResourceList" reference.
-function MaterialSelection(who, type, chk, craft_skill)
-	var name;
-	if (type["monsterpart"])
-		name := "parte de criatura";
-	elseif (type["demonbone"])
-		name := "osso de demônio";
-	else
-		name := type;
-	endif
+function MaterialSelection(who, type, chk, recipe, craft_skill)
+   var material;
+   var levelselect := 0;
+   if (!recipe.level)
+    	SendSysMessageEx(who, "Escolha o "+lower(type)+" que você deseja trabalhar.");
+	   material := Target(who);
+   else
+      var resources := GetConfigStringDictionary(FindConfigElem(menu_config, craft_skill), "Level");
+      var opts := array{};
+      for i := 1 to (recipe.level)
+         opts.append("Level {} - {}".format(i, itemdesc_cfg[resources[cstr(i)]].desc));
+      endfor
+      var res := RadioGump(who, 300, 0, "Qual level você deseja fazer?", opts, 1);
+      if (!res) return; endif
 
- 	SendSysMessageEx(who, "Escolha o "+lower(name)+" que você deseja trabalhar.");
-	var material := Target(who);
+      material := FindObjtypeInContainer(who.backpack, resources[cstr(res)]);
+      levelselect := res;
+   endif
 
 	if(!material)
 		SendSysMessage(who, "Cancelado.");
@@ -160,24 +171,24 @@ function MaterialSelection(who, type, chk, craft_skill)
 		return 0;
 	endif
 	
-   if (AP_GetTrueSkill(who, craft_skill) < 3)
-      if (type == "metal")
-         if (material.objtype != 0x6309)
-            SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
-            return 0;
-         endif
-      elseif (type == "couro")
-         if (material.objtype != 0xee45 && material.color != 0)
-            SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
-            return 0;
-         endif
-      elseif (type == "madeira")
-         if (material.objtype != 0x1BD7 && material.color != 0)
-            SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
-            return 0;
-         endif
-      endif
-   endif
+   // if (AP_GetTrueSkill(who, craft_skill) < 3)
+   //    if (type == "metal")
+   //       if (material.objtype != 0x6309)
+   //          SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
+   //          return 0;
+   //       endif
+   //    elseif (type == "couro")
+   //       if (material.objtype != 0xee45 && material.color != 0)
+   //          SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
+   //          return 0;
+   //       endif
+   //    elseif (type == "madeira")
+   //       if (material.objtype != 0x1BD7 && material.color != 0)
+   //          SendSysMessageEx(who, "Você não sabe trabalhar com isto.", SSM_FAIL);
+   //          return 0;
+   //       endif
+   //    endif
+   // endif
 
 	var materialobjtype := 0;
 	if(chk)
@@ -220,39 +231,56 @@ function MaterialSelection(who, type, chk, craft_skill)
 		material := cloth;
 	endif
 
-   var diff := cint(resource_config[materialobjtype].Skill);
-
 	var retarray := array;
 	retarray.append(material);
 	retarray.append(materialobjtype);
-	retarray.append(diff);
+	retarray.append(levelselect);
 	return retarray;
 endfunction
 
 function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
+   if (recipe.requireFeat)
+      if (!HaveFeatSecondary(who, cint(recipe.RequireFeat)))
+         var feat := GetFeatById(recipe.RequireFeat);
+         return SendSysMessageEx(who, "Este item requer a habilidade {} para ser construido".format(feat.Name), SSM_FAIL);
+      endif
+   endif
 	var craft_sound  := menu_config[craft_skill].CraftSound;
 	var craft_delay  := menu_config[craft_skill].CraftDelay;
 	var craft_action := menu_config[craft_skill].CraftAnim;
    
 	var craft_loops  := recipe.delay;
 	if (craft_loops == error)
-      craft_loops := 2;
+      craft_loops := 1;
 	endif
+
  	craft_loops := cint(craft_loops);
 
 	var materials     := recipe.materials;
-	var more     := recipe.more;
+	var more          := recipe.more;
 	var main_material := recipe.main_material;
 	//verifica se tem os objtypes na bag
 	var targ_materials   := GetBagList(who, materials.Keys());
+   var material_amt := 1;
+   var level_select := 0;
+   if (craft_skill == "Alquimia")
+      if (recipe.level)
+         var opts := array{};
+         for i := 1 to (recipe.level)
+            opts.append("Level {} - {}x mais recursos".format(i, i));
+         endfor
+         var res := RadioGump(who, 300, 0, "Qual level você deseja fazer?", opts, 1);
+         level_select := cint(res);
+      endif
+   endif
+
 	var choosed_material := 0;
 	var material_color   := 0;
-   var bonus_diff := 0;
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
 		sleepms(5);
-      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone", "planta"} || (typeof(thing) == "String" && thing["monsterpart"]))
-			var ret := MaterialSelection(who, thing, 1, craft_skill);
+      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone", "planta"})
+			var ret := MaterialSelection(who, thing, 1, recipe, craft_skill);
 			if (!ret)
 				SendSysMessageEx(who, "você não possui os materiais necessarios.", SSM_FAIL);
 				return OUT_OF_MATERIALS;
@@ -263,21 +291,16 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             SendSysMessageEx(who, "você não pode fabricar estas flechas com a ponta escolhida." , SSM_FAIL);
             return OUT_OF_MATERIALS;
          else
-            targ_materials[ret[1].objtype] := materials[thing];
-				if (thing == "demonbone")
-					material_cprops["magicslot"] := GetObjProperty(ret[1], "power");
-				elseif (thing["monsterpart"])
-					material_cprops["element"] := GetObjProperty(ret[1], "element");
-					material_cprops["elementpower"] := GetObjProperty(ret[1], "elementpower");
-					material_cprops["madeof"] := fixItemName(ret[1].desc);
-				endif
-				if (ret[3])
-               bonus_diff += cint(ret[3]);
+            if (ret[1].objtype in array{0x0F0E, 0x1F91})
+               targ_materials[ret[1].objtype] := materials[thing];
+            else
+               targ_materials[ret[1].objtype] := materials[thing] * material_amt;
             endif
-            
+
             if (thing == main_material)
                material_color   := ret[1].color;
                choosed_material := ret[1].objtype;
+               level_select := ret[3];
             endif
          endif
          continue;
@@ -326,15 +349,19 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
          sleepms(2);
       endforeach
 
-		var work_items := array{"Maquina de Costura", "Maquina de Tensão"};
+		var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Aparato de Aquecimento"};
 		foreach work_item in work_items
 			if (work_item in found.Keys())
+            var req_elem := FindConfigElem(requires_config, work_item);
 				var machine := found[work_item];
 				if (!ReserveItem(machine))
 					SendSysMessageEx(who, "Outra pessoa esta usando {}.".format(work_item), SSM_FAIL);
 				endif
-				PrintText(machine, "*werck*");
-				machine.graphic := machine.graphic-1;
+
+            if (req_elem.PlayText) PrintText(machine, "{}".format(req_elem.PlayText)); endif
+            if (req_elem.StartSound) PlaySoundEffect(machine, cint(req_elem.StartSound)); endif
+            if (req_elem.ChangeGraphic) machine.graphic := machine.graphic + cint(req_elem.ChangeGraphic); endif
+				
 			endif
 		endforeach
 
@@ -356,37 +383,38 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 
 		foreach work_item in work_items
 			if (work_item in found.Keys())
+            var req_elem := FindConfigElem(requires_config, work_item);
 				var machine := found[work_item];
 				ReleaseItem(machine);
-				machine.graphic := machine.graphic+1;
+            if (req_elem.EndSound) PlaySoundEffect(machine, cint(req_elem.EndSound)); endif
+            if (req_elem.ChangeGraphic) machine.graphic := machine.graphic - cint(req_elem.ChangeGraphic); endif
 			endif
 		endforeach
 
-		var roll := rollAttrDice(who, WISDOM, 0, struct{ "get_critical" := 1}) + GetSkillBonus(who, craft_skill);
-      var check := roll.dice;
-      var diff := recipe.difficulty + bonus_diff;
-		if(check > diff || who.cmdlevel > 4)
+      var diff := _ifElse(level_select, level_select * 10, 0);
+		if(Randomint(100) <= diff || who.cmdlevel > 4)
 			if (!SubtractMaterial(who, targ_materials))
-				SendSysMessageEx(who, "você não possui todos os materiais.", SSM_FAIL);
+				SendSysMessageEx(who, "Você não possui todos os materiais.", SSM_FAIL);
 				return theitems;
 			endif
 
          foreach item_objtype in item_list
             theitem := CreateItem(who, item_objtype, more);
             if(!theitem)
-               SendSysMessageEx(who, "você não tem espaço suficiente na sua mochila!", SSM_FAIL);
+               SendSysMessageEx(who, "Você não tem espaço suficiente na sua mochila!", SSM_FAIL);
                return theitems;
             elseif (recipe.colored)
                theitem.color := material_color;
             endif
+
             CheckToolWear(who, tool, craft_skill);
             theitem.movable := 1;
 
             //passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
             AddMaterialMod(recipe, theitem, choosed_material, material_color);
-            if (recipe.exceptional == 1 && (AP_GetTrueSkill(who, crafT_skill) >= 4 && roll.critical == 1) || who.cmdlevel > 3)
-               SendSysMessageEx(who, "Você fez uma obra prima!.", SSM_INFO);
-               SendSysMessageEx(who, "Para termina-la, você deve escolher um objeto para molda-lo. É possível descohrir esses objetos com heráldica.", SSM_INFO);
+            if (recipe.exceptional == 1 &&( HaveFeat(who, 66) && Randomint(100) <= 10 || who.cmdlevel > 3))
+               SendSysMessageEx(who, "Você fez uma obra prima! Seu item tem qualidade {} e se tornará {}.".format(getQuality(theitem.quality), getQuality(theitem.quality+1)), SSM_INFO);
+               SendSysMessageEx(who, "Para validar o objeto, você deve escolher uma joia para o item (Safira, Safira Estrela, Ruby, etc)", SSM_INFO);
                while (who.connected)
                   if (CraftExceptional(who, theitem, craft_skill) != 2)
                      break;
@@ -395,26 +423,45 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                endwhile
             endif
 
-            foreach key in (material_cprops.Keys())
-               SetObjProperty(theitem, key, material_cprops[key]);
-            endforeach
+            // foreach key in (material_cprops.Keys())
+            //    SetObjProperty(theitem, key, material_cprops[key]);
+            // endforeach
+
             CraftLockable(who, theitem);
             makeTinkeringItems(who, theitem);
-            ExpGain(who, recipe.difficulty, check);
+            ExpGain(who, "minor");
             SetObjProperty(who, "#craft_last", item_objtype);
-            who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
+            // who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
             SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
-         
-            // TODO: Gravar feitos para talentos
-            if (theitem.isa(POLCLASS_WEAPON) || theitem.isa(POLCLASS_ARMOR))	
-               SetObjProperty(theitem, "reparos", check * 4); // TODO: Check how this work
+
+            if (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON))
+               var quality := 1;
+               var chance := RandomInt(100);
+               if (chance <= 10)
+                  quality := 3;
+               elseif(chance <= 25)
+                  quality := 2;
+               endif
+
+               if (theitem.isa(POLCLASS_WEAPON))
+                  theitem.dmg_mod := RandomIntMinMax(12 * level_select, 17 * level_select);
+               endif
+
+               if (theitem.isA(POLCLASS_ARMOR))
+                  var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+                  foreach resist in resists
+                     var value := RandomIntMinMax(2 * level_select, 4*level_select);
+                     theitem.set_member("resist_{}_mod".format(resist), value);
+                     sleepms(2);
+                  endforeach
+               endif
             endif
 
             if(theitem.isA(POLCLASS_CONTAINER))
                SetObjProperty(theitem, "trappable", 1);
             endif
 
-            if ((theitem.graphic != 11058) && (theitem.graphic != 3903))
+            if ((theitem.graphic != 11058) && (theitem.graphic != 3903) && (theitem.graphic != 0x0f09))
                SetObjProperty(theitem, "crafterserial", who.serial);
                SetObjProperty(theitem, "crafteracc", who.acctname);
             endif
@@ -423,6 +470,11 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, "canfix", 1);
             endif
 
+            if (craft_skill == "Alquimia")
+               SetObjProperty(theitem, "level", level_select);
+            endif
+            SetName(theitem, theitem.desc);
+            MoveItemToContainer( theitem, who.backpack,-1, -1 , 2);
             theitems.append(theitem);
             sleepms(2);
          endforeach
@@ -575,10 +627,10 @@ function CraftExceptional(who, theitem, craft_skill)
       return 2;
    endif
 
-   if (cint(special_props.diff) > cint(AP_GetTrueSkill(who, craft_skill)) - 4)
-      SendSysMessageEx(who, "Seu nível em {} é muito baixo para usar este recurso".format(craft_skill), SSM_FAIL);
-      return 2;
-   endif
+   // if (cint(special_props.diff) > cint(AP_GetTrueSkill(who, craft_skill)) - 4)
+   //    SendSysMessageEx(who, "Seu nível em {} é muito baixo para usar este recurso".format(craft_skill), SSM_FAIL);
+   //    return 2;
+   // endif
 
 	var item_type := "None";
    item_type := GetItemType(theitem);
@@ -614,4 +666,33 @@ function fixItemName(name)
    if (name[1] == " ") name[1] := ""; endif
 
    return name;
+endfunction
+
+function SmeltItem(who, item, specific_cfg)
+   var elem := FindConfigElem(specific_cfg, Hex(item.objtype));
+   if (!elem) elem := FindConfigElem(specific_cfg, cint(item.objtype)); endif
+   if (!elem) return SendSysMessageEx(who, "Este item não pode ser descontruído usando esta ferramenta.", SSM_FAIL); endif
+
+	var recipe := GetRecipe(item.objtype, elem);
+   var material_recover := dictionary{};
+   foreach material in (recipe.materials.Keys())
+      if (material in array{})
+         return;
+      elseif (material in array{0x0F0E, 0x1F91})
+         material_recover[material] := recipe.materials[material];
+      else
+         var value := cint(cdbl(recipe.materials[material]) / 2);
+         if (value >= 1)
+            material_recover[material] := value;
+         endif
+      endif
+   endforeach
+
+   foreach material in (material_recover.Keys())
+      _CreateItemInBackpack(who, cint(material), material_recover[material]);
+   endforeach
+
+   if (RandomInt(100) <= 15)
+      AddRecipe(who, item.objtype);
+   endif
 endfunction

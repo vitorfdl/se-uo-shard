@@ -21,10 +21,12 @@ program smelt_that_ore(who, item)
     SendSysMessageEx(who, "Cancelado.");
     return;
   endif
+  
   if(!Accessible(who, use_on) || !ReserveItem( use_on ))
     SendSysMessageEx(who, "Você não pode usar isto.");
     return;
   endif
+
   if(!CheckForForge(who))
      SendSysMessageEx(who, "Você precisa estar perto da forja para usar este item.");
      return;
@@ -32,8 +34,8 @@ program smelt_that_ore(who, item)
 
    if (!(use_on.graphic in array{0x19B9, 0x1bf2, 0x1bf5, 0x6075, 0x5738, 3879}))
       return SendSysMessageEx(who,"Você não pode derreter isto.");
-  //elseif ((use_on.isa(POLCLASS_WEAPON)) || (use_on.isa(POLCLASS_ARMOR) || (use_on.objtype == 0x5101)))
-   //  SmeltItem(who, item, use_on);
+//   elseif ((use_on.isa(POLCLASS_WEAPON)) || (use_on.isa(POLCLASS_ARMOR) || (use_on.objtype == 0x5101)))
+//     SmeltItem(who, item, use_on);
   endif
   
   SmeltOre(who, item, use_on);
@@ -164,9 +166,6 @@ function SmeltOre(who, item, ore)
     0x6075:  dif := 16; ingot := 0x1be3; //areia*
     default: SendSysMessageEx(who,"Você não pode derreter isto.", FONT_NORMAL, 40); return 1;
   endcase
-
-  
-   var dice_roll := rollAttrDice(who, WISDOM) + GetSkillBonus(who, FERRARIA);
    if (GetObjProperty(item, "numMetal"))
       var num := CINT(GetObjProperty(item, "amt1"));
       var nummetal := Cint(GetObjProperty(item, "numMetal"));
@@ -175,43 +174,21 @@ function SmeltOre(who, item, ore)
          return;
       endif
 
-      if(dice_roll > dif)
-         SendSysMessageEx(who, "Você fez a fusão entre os metais.", SSM_INFO);
-         PlaySoundEffect(who, 0x22);
-         sleep(4);
-         SetObjProperty(item, "numMetal", nummetal+1);
-         SetObjProperty(item, "amt"+(nummetal+1), ore.amount);
-         SetObjProperty(item, "oreObj"+(nummetal+1), ingot);
-         DestroyItem(ore);
-      else
-         var perdamt := RandomInt(3)+1;
-         if (perdamt > ore.amount)
-            perdamt := ore.amount;
-         endif
-         SubtractAmount(ore, perdamt);
-         SendSysMessageEx(who, "Você perdeu parte dos minerios.", SSM_FAIL);
-         return;
-      endif
+      SendSysMessageEx(who, "Você fez a fusão entre os metais.", SSM_INFO);
+      PlaySoundEffect(who, 0x22);
+      sleep(4);
+      SetObjProperty(item, "numMetal", nummetal+1);
+      SetObjProperty(item, "amt"+(nummetal+1), ore.amount);
+      SetObjProperty(item, "oreObj"+(nummetal+1), ingot);
+      DestroyItem(ore);
    else 
-     if(dice_roll > dif)
-        SendSysMessageEx(who, "Você derreteu o minerio e retirou as impurezas.", SSM_INFO);
-        PlaySoundEffect(who, 0x22);
-        sleep(4);
-        item.color := 0x486;
-        SetObjProperty(item, "numMetal", 1);
-        SetObjProperty(item, "oreObj1", ingot);
-        SetObjProperty(item, "amt1", ore.amount);
-        DestroyItem(ore);
-      else
-         var perdamt := RandomInt(3)+1;
-         if (perdamt > ore.amount)
-            perdamt := ore.amount;
-         endif
-         SubtractAmount(ore, perdamt);
-         SendSysMessageEx(who, "Você perdeu parte dos minerios.", FONT_NORMAL, 40);
-         return;
-      endif
+      SendSysMessageEx(who, "Você derreteu o minerio e retirou as impurezas.", SSM_INFO);
+      PlaySoundEffect(who, 0x22);
+      sleep(4);
+      item.color := 0x486;
+      SetObjProperty(item, "numMetal", 1);
+      SetObjProperty(item, "oreObj1", ingot);
+      SetObjProperty(item, "amt1", ore.amount);
+      DestroyItem(ore);
    endif
-
-
 endfunction

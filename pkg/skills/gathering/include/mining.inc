@@ -302,7 +302,6 @@ function DetermineMiningDifficulty(oretype)
 		0xBD11: return 0;  //pedra pequena
 		0xBD11: return 0;  //pedra media
 		0xBD11: return 0;  //pedra grande
-		0xee99: return 0;  //calcario
 
 		// 0x4079: return 10; //diamantemagico
 		0x6300: return 10;  //iron ore
@@ -410,16 +409,16 @@ endfunction
 
 function CheckLoop(who, tool, my_x, my_y, my_facing)
 	if ( who.hidden )
-		SendSysMessageEx(who, "Você parou de minerar para ficar escondido.");
+		SendSysMessageEx(who, "Você parou de minerar para ficar escondido.", SSM_FAIL);
 		return 0;
 	elseif ( (who.x != my_x) || (who.y != My_y) )
-		SendSysMessageEx(who, "Você saiu de onde estava.");
+		SendSysMessageEx(who, "Você saiu de onde estava.", SSM_FAIL);
 		return 0;
 	elseif ( who.facing != my_facing )
-		SendSysMessageEx(who, "Você virou sua atencao para outra coisa.");
+		SendSysMessageEx(who, "Você virou sua atencão para outra coisa.", SSM_FAIL);
 		return 0;
 	elseif ( GetEquipmentByLayer(who, LAYER_MOUNT) )
-		SendSysMessageEx(who, "Você não pode minerar montado.");
+		SendSysMessageEx(who, "Você não pode minerar montado.", SSM_FAIL);
 		return 0;
 	elseif (!tool)
 		return 0;

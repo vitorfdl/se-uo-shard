@@ -53,7 +53,6 @@ LootIndex treasuremap1
 	Item    LesserPotions	1d6	100
 	Item    MidPotions	1d6	100
 	Item    GreaterPotions	1d6	100
-	Item	pergaminhomagico1 1	100
 	Item	grimorio	1	20
 //	Random	magicwands	1	30
 	Item	recipe1		1	10
@@ -86,7 +85,6 @@ LootIndex treasuremap2
 	Item    LesserPotions	2d6	100
 	Item    MidPotions	2d6	100
 	Item    GreaterPotions	1d6	100
-	Item	pergaminhomagico1 1	100
 	Item	grimorio	1	40
 //	Item	magicwands	1	40
 	Magic	Jewery		1	5	1   daemon
@@ -124,7 +122,6 @@ LootIndex treasuremap3
 	Item    LesserPotions	3d6	100
 	Item    MidPotions	3d6	100
 	Item    GreaterPotions	2d6	100
-	Item	pergaminhomagico2 2	100
 	Item	grimorio	1	40
 //	Item	magicwands	1	50
 	Magic	Jewery		1	5	2   daemon
@@ -161,8 +158,6 @@ LootIndex treasuremap4
 	Item    LesserPotions	3d6	100
 	Item    MidPotions	3d6	100
 	Item    GreaterPotions	2d6	100
-	Item	pergaminhomagico2 3	100
-	Item	pergaminhomagico3	1 100
 	Item	grimorio	1	60
 //	Item	magicwands	1	80
 	Magic	Jewery		1d2	5	3   daemon
@@ -200,8 +195,6 @@ LootIndex treasuremap5
 	Item    LesserPotions	3d6	100
 	Item    MidPotions	3d6	100
 	Item    GreaterPotions	2d6	100
-	Item	pergaminhomagico2 4	100
-	Item	pergaminhomagico3 4	100
 	Item	grimorio	1	80
 //	Item	magicwands	1	100
 	Magic	Jewery		1d2	5	4   daemon
@@ -452,7 +445,6 @@ LootIndex HumanoSabioChest1
 	Random	Writing		1d2	80
 	Item	Alchemy		1	20
 	Item    LesserPotions	1d6	100
-	Item	pergaminhomagico1 1	5
 	Item	staff		 1	100
 }
 
@@ -472,7 +464,6 @@ LootIndex HumanoSabioChest2
 	Item	Alchemy		1	40
 	Item    LesserPotions	2d6	100
 	Item    MidPotions	1d3	40
-	Item	pergaminhomagico1 1	10
 	Item	staff		 1	100
 }
 
@@ -494,8 +485,6 @@ LootIndex HumanoSabioChest3
 	Item    MidPotions	1d6	100
 	Item    GreaterPotions	1d3	60
 	Item	Alchemy		1d3	60
-	Item	pergaminhomagico1 1	15
-	Item	pergaminhomagico2 1	5
 }
 
 LootIndex HumanoSabioChest4
@@ -516,8 +505,6 @@ LootIndex HumanoSabioChest4
 	Item    LesserPotions	2d6	100
 	Item    MidPotions	1d6	100
 	Item    GreaterPotions	1d6	100
-	Item	pergaminhomagico1 1	90
-	Item	pergaminhomagico2 1	30
 	Item	grimorio	1	10
 	Magic	Jewery		1	8	1     wizard
 	Magic	Staff		1	8	1     wizard
@@ -542,8 +529,6 @@ LootIndex HumanoSabioChest5
 	Item    LesserPotions	2d6	100
 	Item    MidPotions	2d6	100
 	Item    GreaterPotions	1d6	100
-	Item	pergaminhomagico2 2	100
-	Item	pergaminhomagico3 1	60
 	Item	grimorio	1	20
 	Magic	Jewery		1	5	2	wizard
 	Magic	Staff		1	5	2	wizard
@@ -627,7 +612,6 @@ LootIndex highmageorc
 	Random 	PoorReagents 	1d4 	100
 Random	reagentMesum	1d4 100
 	Random	LesserPotions	1d2	100
-	Item 	pergaminhomagico1 1 	10
 }
 
 LootIndex troll
@@ -752,7 +736,6 @@ LootIndex ogremage
 	Random	reagentMesum	1d6 100
 	Random	Food		1d3	20
 	Stack 	moedacobre	1d10+5	100
-	Item 	pergaminhomagico1 	1 	15
 	Random 	MidPotions 	1d1 	80
 	Random	Alchemy		1	40
 	Item	MagicKey	1	5
@@ -821,7 +804,6 @@ LootIndex blackeye
 	Random 	PoorReagents 	1d6 	100
 	Random	PoorFood	1d3	80
 	Stack 	moedacobre	20d2+20	100
-	Item 	pergaminhomagico1 	1 	30
 	Random 	MidPotions 	1d3 	100
 	Random	writing		1	100
 	Item	level1map	1	2
@@ -844,7 +826,6 @@ LootIndex liche
 	Random 	Reagents 	1d2 	100
 	Random	reagentMesum	2d6 100
 	Stack 	moedacobre	20d2+20	100
-	Item 	pergaminhomagico3 1 	40
 	Random 	MidPotions 	1d4 	100
 	Random 	GreaterPotions 	1d2 	60
 	Random	writing		1	100
@@ -868,7 +849,6 @@ LootIndex demiliche
 	Random	reagentMesum	2d6 100
 	Random 	PoorReagents 	1d6 	100
 	Stack 	moedacobre	2d20+20	100
-	Item 	pergaminhomagico3 1 	90
 	Random 	MidPotions 	1d4 	100
 	Random 	GreaterPotions 	1d2 	60
 	Random	writing		1	100
@@ -922,8 +902,6 @@ LootIndex magedemon
 	Random	reagentMesum	1d6 100
 	Random 	PoorReagents 	1d10 	100
 	Stack 	moedacobre	20d2+20	100
-	Item 	pergaminhomagico2 1 	60
-	Item 	pergaminhomagico1 3 	10
 	Random 	MidPotions 	1d4 	100
 	Random 	GreaterPotions 	1d4 	60
 	Random	writing		1	100
@@ -940,7 +918,6 @@ LootIndex skeletonmage
 {
 	Random	reagentMesum	1d3 100
 	Stack 	moedacobre	1d6	100
-	Item 	pergaminhomagico2 	1 	10
 	Random 	LesserPotions 	1d3 	25
 }
 
@@ -950,7 +927,6 @@ LootIndex goblinmage
 	Random	reagentMesum	1d3 100
 	Random	PoorFood	1d3	80
 	Stack 	moedacobre	1d6	50
-	Item 	pergaminhomagico1 	1 	2
 	Random 	LesserPotions 	1d3 	50
 	Random  diamantemistico 1	15
 }
@@ -960,7 +936,6 @@ LootIndex evilmage
 	Random	reagentMesum	1d6 100
 	Random	PoorFood	1d3	80
 	Stack 	moedacobre	1d6	100
-	Item 	pergaminhomagico1 	1 	5
 	Random 	LesserPotions 	1d3 	70
 	Random	Alchemy		1	50
 	Random	Writing		1	70
@@ -969,7 +944,6 @@ LootIndex evilmage
 
 LootIndex evilspellbook
 {
-	Item 	pergaminhomagico1 	1 	5
 	Stack	blankscroll		1d10	100
 }
 
@@ -1068,7 +1042,6 @@ LootIndex svirfneblinilusionista
 	Random 	PoorReagents 	1d6 	100
 	Random	PoorFood	1d3	80
 	Stack 	moedacobre	1d3	100
-	Item 	pergaminhomagico1 	1 	5
 	Random 	LesserPotions 	1d1 	40
 	Random	Alchemy		1	50
 	Random	Writing		1	70
@@ -1080,7 +1053,6 @@ LootIndex dracolich
 	Random	reagentMesum	2d6 100
 	Random 	PoorReagents 	1d20 	100
 	Stack 	moedacobre	20d2+100	100
-	Item 	pergaminhomagico3 2 	70
 	Item 	grimorio 1 	50
 	Random 	MidPotions 	1d2 	100
 	Random 	GreaterPotions 	1d6 	80
@@ -1140,7 +1112,6 @@ LootIndex ophidianmage
        Random Food 1d3 100
        Random	reagentMesum	1d6 100
        Random Reagents 1d2 100
-	Item 	pergaminhomagico1 	1 	20
        Random MidPotions 1d2 100
 }
 

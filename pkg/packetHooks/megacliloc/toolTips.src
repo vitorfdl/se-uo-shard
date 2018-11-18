@@ -147,9 +147,18 @@ exported function MegaCliloc( who, byref packet )
             xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
             xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
             
-            var hits :=  GetWeaponFeat(elem);
-            if (hits)
-               xDesc += "{}{}<br>".format(ORANGE, hits);
+            if (item.quality >= 2)
+               var hits := GetWeaponFeat(elem);
+               if (hits)
+                  xDesc += "{}{}<br>".format(ORANGE, hits);
+               endif
+            endif
+
+            if (item.quality >= 3)
+               var hits := GetHitsInfo(elem);
+               if (hits)
+                  xDesc += "Passiva {}{}<br>".format(LIGHTGRAY, hits);
+               endif
             endif
          elseif (item.isA(POLCLASS_ARMOR) && (item.resist_physical || item.resist_fire || item.resist_poison || item.resist_energy || item.resist_cold))
             var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};

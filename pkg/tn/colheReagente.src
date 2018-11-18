@@ -3,6 +3,7 @@ use util;
 use os;
 include ":charactercreation:feats";
 include "include/say";
+include "include/utils";
 
 program colheReagente(who, item)
 
@@ -21,21 +22,21 @@ program colheReagente(who, item)
 
 	var newitem;
 	if (item.objtype == 6368)
-		newitem := CreateItemInBackpack(who, 0x18DE, 1);
+		newitem := _CreateItemInBackpack(who, 0x18DE, 1);
 	elseif (item.objtype == 6370)
-		newitem := CreateItemInBackpack(who, 0x18E4, 1);
+		newitem := _CreateItemInBackpack(who, 0x18E4, 1);
 	elseif (item.objtype == 6373 )
-		newitem := CreateItemInBackpack(who, 0x18E8, 1);
+		newitem := _CreateItemInBackpack(who, 0x18E8, 1);
 	elseif (item.objtype == 6378)
-		newitem := CreateItemInBackpack(who, 0x18EC, 1);
+		newitem := _CreateItemInBackpack(who, 0x18EC, 1);
 	elseif (item.objtype == 6366)
-		newitem := CreateItemInBackpack(who, 0xF86, amt);
+		newitem := _CreateItemInBackpack(who, 0xF86, amt);
 	elseif (item.objtype == 6372)
-		newitem := CreateItemInBackpack(who, 0xF84, amt);
+		newitem := _CreateItemInBackpack(who, 0xF84, amt);
 	elseif (item.objtype == 6376)
-		newitem := CreateItemInBackpack(who, 0xF88, amt);
+		newitem := _CreateItemInBackpack(who, 0xF88, amt);
 	elseif ( item.objtype == 6380)
-		newitem := CreateItemInBackpack(who, 0xF85, amt);
+		newitem := _CreateItemInBackpack(who, 0xF85, amt);
 	endif
 	
 	

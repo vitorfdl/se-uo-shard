@@ -46,7 +46,7 @@ program skill_LumberJack(who,tool)
 
 	//SendSysMessage(who," e" + CanChop(who, tool, targ,  orig_x, orig_y));
 	while(CanChop(who, tool, targ,  orig_x, orig_y) )
-		if ( !AP_ConsumeVital(who, "Stamina", 2))
+		if ( !AP_ConsumeVital(who, "Stamina", 4))
 			SendSysMessageEx(who, "Você esta muito cansado para continuar.", SSM_FAIL);
 			break;
 		endif
@@ -84,28 +84,18 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 
 	var more_dif := CInt(0 + (max_wood - wood_amount));
 
-	if (more_dif > 5)
-		more_dif := 5;
-	endif
-	
 	var difficulty := cint(GetWoodDif(targ) + more_dif);
 	
 	if (difficulty > 22)
 		difficulty := 22;
 	endif
 	
-	var dice_roll := rollAttrDice(who, STRENGTH) + GetSkillBonus(who, EXTRACAO);
 	if ( who.cmdlevel )
-		SendSysMessageEx(who, "more_dif="+more_dif);
 		SendSysMessageEx(who, "MaxWood="+max_wood+"    CurWood="+wood_amount);
-		SendSysMessageEx(who, "Difficulty ->"+difficulty+"    dice_roll="+dice_roll);
 	endif
 
-	if ( dice_roll > difficulty )
-		var amt := cint(AP_GetStat(who, STRENGTH, RETURN_BONUS) + AP_GetTrueSkill(who, EXTRACAO));
-		if (amt <= 0)
-			amt := 1;
-		endif
+		var amt := RandomintMinMax(2,3);
+
 		if (amt > wood_amount)
 			amt := wood_amount;
 		endif
@@ -121,11 +111,9 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 			return 0;
 		else
 			who.SetAchievement("oremining", 1);
-			ExpGain(who, difficulty, dice_roll);
 			SendSysMessageEx(who, "Você colocou a madeira na sua mochila.");
 			return 1;
 		endif
-	endif
 
 	SendSysMessageEx(who, "Você foi incapaz de conseguir madeira usavel dessa árvore.", SSM_FAIL);
 	return 0;
@@ -241,18 +229,10 @@ function GetWoodType(tree)
 	 0x3ff5:
 	 0x3ff6:
 		return 0xee3b;
-	 0x2c0c:
-	 0x2c0d:
-	 0x2c10:
-	 0x2c11:
-	 0x2c12:
-	 0x2c13:
-	 0x2c14:
-	 0x2c15:
-	 0x2c17:
-	 0x2c1c:
-	 0x2c1f:
-	 0x2c23:
+	 0x222E:
+	 0x222F:
+	 0x2230:
+	 0x2231:
 		return 0xee3c;
          default: 
                 return UOBJ_DEFAULT_LOG;

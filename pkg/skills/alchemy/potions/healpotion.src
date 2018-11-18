@@ -14,13 +14,10 @@ program healpotion(who, potion)
 		return 1;
 	endif
 
-	var healed;
-	case (cint(potion.objtype))
-		56322: healed := RandomDiceRoll("8d4+15"); //maior
-		56323: healed := RandomDiceRoll("10d4+30"); //superior
-		48914: healed := RandomDiceRoll("15d4+45"); //suprema
-		default: healed := RandomDiceRoll("3d4+15");
-	endcase
+   var level := cint(GetObjProperty(potion, "level"));
+   if (!level) level := 1; endif
+
+	var healed := RandomIntMinMax(80 * level, 140 * level);
 
   	EmptyBottle(who, potion, 1);
 	Detach();

@@ -1917,7 +1917,9 @@
 0x608f smallstoneshophouse house
 # 0x6090 - 0x60ff unused
 0x6100 grimorio magery
-# 0x6101 - 0x613f unused
+# 0x6101 - 0x6115 unused
+0x6116 pergaminhomagico magery
+# 0x6117 - 0x613f unused
 0x6140 nystulldeed1 house
 0x6141 scaffolddeed house
 # 0x6142 - 0x6180 unused
@@ -2209,11 +2211,10 @@
 0xbf0c podavisao alchemy
 0xbf0d pocaodavelocidade alchemy
 0xbf0e pocaodecola alchemy
-0xbf0f gasvenenofraco alchemy
+0xbf0f gasveneno alchemy
 # 0xbf10 - 0xbf12 unused
 0xbf13 pocaoflamejantefraca alchemy
-# 0xbf14 - 0xbf15 unused
-0xbf16 gasalucinogeno alchemy
+# 0xbf14 - 0xbf16 unused
 0xbf17 pocaomana alchemy
 # 0xbf18 - 0xbffc unused
 0xbffd TintaAzulClaro1 alchemy
@@ -2281,7 +2282,7 @@
 # 0xdd53 - 0xe0e1 unused
 0xe0e2 ambiencerune ambience
 # 0xe0e3 - 0xec28 unused
-0xec29 alchemybook alchemy
+0xec29 alchemybook2 alchemy
 # 0xec2a - 0xed1f unused
 0xed20 courodraconiano survival
 # 0xed21 - 0xedfe unused
@@ -2344,7 +2345,7 @@
 # 0xee75 - 0xee8f unused
 0xee90 talentbook charactercreation
 # 0xee91 - 0xee98 unused
-0xee99 calcario gathering
+0xee99 Veio gathering
 # 0xee9a - 0xeeef unused
 0xeef0 CombineCloth womenswork
 # 0xeef1 - 0xef01 unused
