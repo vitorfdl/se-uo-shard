@@ -25,11 +25,16 @@ endfunction
 function ListQuests(classe := 0)
    var quest_list := DFGetElemNames(LoadQuestData());
    var return_list := array{};
+
    foreach quest_id in quest_list
       sleepms(2);
       var quest := GetQuestData(quest_id, 0);
-      if (classe && classe != quest.category)
+      if (!quest.active)
          continue;
+      elseif (classe && !(classe in quest.category))
+         continue;
+      elseif (classe)
+         quest.category := classe;
       endif
       return_list.append(quest);
    endforeach
@@ -59,6 +64,10 @@ function SetQuestData(id, data := struct{})
    if (data.rewards)
       elem.SetProp("rewards", data.rewards); 
    endif
+
+   if (data.difficulty)
+      elem.SetProp("difficulty", data.difficulty); 
+   endif
    //  if (data.mob_list)
    //      foreach entry in (data.mob_list)
    //          entry := ModelMobListData(entry);
@@ -85,13 +94,14 @@ function GetQuestData(id, create := 1)
     var data := struct{};
     data.+id       := id;
     data.+title       := DFGetProp(elem, "title", create, "");
-    data.+category    := DFGetProp(elem, "category", create, "Todos");
+    data.+category    := DFGetProp(elem, "category", create, array{});
     data.+active      := DFGetProp(elem, "active", create, 0);
     data.+description := DFGetProp(elem, "description", create, "");
     data.+level       := DFGetProp(elem, "level", create, 1);
     data.+rewards     := DFGetProp(elem, "rewards", create, array{});
     data.+conditions  := DFGetProp(elem, "conditions", create, array{});
     data.+extras      := DFGetProp(elem, "extras", create, array{});
+    data.+difficulty      := DFGetProp(elem, "difficulty", create, 1);
 
     return data;
 endfunction
@@ -101,7 +111,9 @@ function RemoveQuestData(id)
     df.DeleteElement(cstr(id));
 endfunction
 
-function GiveQuest(who, quest)
+function GiveQuest(who, quest, classe := 0)
+   quest.category := _ifOr(classe, quest.category[1]);
+
    var quest_data := GetObjProperty(who, "quests");
    if (!quest_data) quest_data := array{}; endif
 
@@ -131,7 +143,6 @@ endfunction
 
 function ProgressQuest(who, search, plus_progress := 1)
    var quest_progress := GetObjProperty(who, "quest_progress");
-
    foreach item in quest_progress
       sleepms(2);
       if (item.qty && cint(item.qty) <= item.progress) continue;
@@ -139,7 +150,8 @@ function ProgressQuest(who, search, plus_progress := 1)
       
       if (item.party) search.-party; endif
       if (item.spawngroup == "Qualquer Um") search.-spawngroup; endif
-      
+      if (!item.onlyboss && search.onlyboss) search.-onlyboss; endif
+
       var no_progress := 0;
       foreach key in (search.Keys())
          sleepms(2);
@@ -153,7 +165,6 @@ function ProgressQuest(who, search, plus_progress := 1)
       elseif (item.qty) item.progress := cint(item.progress) + plus_progress;
       else item.done := 1; endif
    endforeach
-
    SetObjProperty(who, "quest_progress", quest_progress);
 endfunction
 
@@ -166,7 +177,7 @@ function CheckQuest(who, quest)
             return 0;
          endif
       elseif (item.qty)
-         if (item.qty < cint(item.progress))
+         if (item.qty > cint(item.progress))
             return 0;
          endif
       elseif (!item.done)
@@ -216,12 +227,15 @@ function CompleteQuest(who, quest_pos)
    foreach reward in (quest.rewards)
       case (reward.type)
          "Experiência":
-            if (reward.classe != "Personagem")
-               ClassExpGain(who, reward.classe, 1);
-               SendSysMessageEx(who, "Você recebeu experiência para a classe {}".format(reward.classe));
-            else
+            if (reward.classe == "Personagem")
                ExpGain(who, 100);
                SendSysMessageEx(who, "Você recebeu experiência de personagem.");
+            elseif (reward.classe == "Classe Da Quest")
+               ClassExpGain(who, quest.classe, 1);
+               SendSysMessageEx(who, "Você recebeu experiência para a classe {}".format(quest.classe));
+            else
+               ClassExpGain(who, reward.classe, 1);
+               SendSysMessageEx(who, "Você recebeu experiência para a classe {}".format(reward.classe));
             endif
             break;
          "Item":

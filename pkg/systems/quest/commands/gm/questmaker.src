@@ -35,6 +35,7 @@ const GF_REWARD_EDIT    := 840;
 const GF_CONDITION_ADD  := 804;
 const GF_CONDITION_EDIT := 850;
 const GF_EXTRA_ADD      := 806;
+const GF_QUEST_DIFFICULTY := 807;
 const GF_EXTRA_EDIT     := 860;
 
 function GumpQuestInfo(byref gump, who)
@@ -57,21 +58,26 @@ function GumpQuestInfo(byref gump, who)
 
    var pos_y := 0;
 	GFTextLine(gump, 585, 63, 1152, "Categoria");
-	GFResizePic(gump, 656, 63, 9350, 140, 22);
+	GFResizePic(gump, 656, 63, 9350, 140, 44);
 	GFAddButton(gump, 660, 70, 2103, 2103, GF_CLOSE_BTN, GF_QUEST_CATEGORY);
-	GFTextLine(gump, 679, 63, 1152, "{}".format(quest.category));
-   
-   GFTextLine(gump, 585, 83, 1152, "Level");
-	GFResizePic(gump, 656, 83, 9350, 90, 22);
-	GFAddButton(gump, 660, 90, 2103, 2103, GF_CLOSE_BTN, GF_QUEST_LEVEL);
-	GFTextLine(gump, 679, 83, 1152, "{}".format(quest.level));
+   GFHTMLArea(gump, 679, 63, 150, 44, "{}".format(", ".join(quest.category)));
+
+   GFTextLine(gump, 430-45, 89, 1152, "Dificuldade");
+	GFResizePic(gump, 496-45, 89, 9350, 40, 22);
+	GFAddButton(gump, 500-45, 94, 2103, 2103, GF_CLOSE_BTN, GF_QUEST_DIFFICULTY);
+	GFTextLine(gump, 519-45, 89, 1152, "{}".format(quest.difficulty));
+
+   GFTextLine(gump, 540-45, 89, 1152, "Level");
+	GFResizePic(gump, 576-45, 89, 9350, 40, 22);
+	GFAddButton(gump, 580-45, 94, 2103, 2103, GF_CLOSE_BTN, GF_QUEST_LEVEL);
+	GFTextLine(gump, 599-45, 89, 1152, "{}".format(quest.level));
 
 	GFTextLine(gump, 617, 116, 1152, "Recompensas");
 	GFGumpPicTiled(gump, 614, 127, 156, 21, 58);
 	GFGumpPic(gump, 769, 127, 59, 0);
    pos_y := 0;
    foreach item in (quest.rewards)
-	   GFAddButton(gump, 610, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_REWARD_ADD);
+	   GFAddButton(gump, 610, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_REWARD_EDIT+_item_iter);
       var desc := item.type;
       if (item.item) desc += " [{}]".format(item.item.desc); endif
       // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
@@ -189,11 +195,39 @@ program gump_gump(who)
       if (res[0] <= 5 || !res[0])
          break;
       elseif (res[0] >= GF_CONDITION_EDIT && res[0] <= GF_CONDITION_EDIT+10)
-         var answer := RadioGump(who, 100, 0, "O que deseja fazer?:", array{"Editar", "Remover", "Cancelar"}, 3);
-         if (answer["Remover"])
-            quest.conditions.Erase(res[0] - GF_CONDITION_EDIT);
+         var answer := RadioGump(who, 180, 0, "O que deseja fazer?:", array{"Editar", "Remover", "Cancelar"}, 3);
+         var pos := res[0] - GF_CONDITION_EDIT;
+         if (answer == 1)
+            var res := QuestConditions(who, quest.conditions[pos]);
+            if (res) 
+               quest.conditions[pos] := res; 
+               update_quest.conditions  := quest.conditions;
+            endif
+         elseif (answer == 2)
+            quest.conditions.Erase(pos);
             update_quest.conditions  := quest.conditions;
+         else
+            continue;
          endif
+
+         SetQuestData(selected_quest, update_quest);
+      elseif (res[0] >= GF_REWARD_EDIT && res[0] <= GF_REWARD_EDIT+10)
+         var answer := RadioGump(who, 180, 0, "O que deseja fazer?:", array{"Editar", "Remover", "Cancelar"}, 3);
+         var pos := res[0] - GF_REWARD_EDIT;
+         if (answer == 1)
+            var res := QuestRewards(who, quest.rewards[pos]);
+            if (res) 
+               quest.rewards[pos] := res; 
+               update_quest.rewards  := quest.rewards;
+            endif
+         elseif (answer == 2)
+            quest.rewards.Erase(pos);
+            update_quest.rewards  := quest.rewards;
+         else
+            continue;
+         endif
+
+         SetQuestData(selected_quest, update_quest);
       elseif (res[0] >= GF_SELECTELEM_BTN && res[0] <= GF_SELECTELEM_BTN+150)
          selected_quest := res[0]-GF_SELECTELEM_BTN;
       else
@@ -208,15 +242,23 @@ program gump_gump(who)
                RemoveQuestData(selected_quest);
                selected_quest := 0;
                break;
+            GF_QUEST_DIFFICULTY:
+               var opts := array{"Fácil", "Díficil"};
+               update_quest["difficulty"] := RadioGump(who, 200, 0, "Escolha o level de dificuldade:", opts, 1, quest.level in opts);
+               break;
             GF_QUEST_LEVEL:
                var opts := array{"1", "2", "3", "4"};
-               update_quest["level"] := RadioGump(who, 100, 0, "Escolha o level da classe:", opts, 0, quest.level in opts);
+               update_quest["level"] := RadioGump(who, 150, 0, "Escolha o level da classe:", opts, 0, quest.level in opts);
                break;
             GF_QUEST_CATEGORY:
                var classCfg := ReadConfigFile(":charactercreation:config/classes");
                var opts := GetConfigStringKeys(classCfg);
-               opts.append("Todos");
-               update_quest["category"] := RadioGump(who, 200, 0, "Escolha a Categoria:", opts, 0, quest.category in opts);
+               var marked := array{};
+               foreach item in opts
+                  marked[_item_iter] := item in quest.category;
+               endforeach
+
+               update_quest["category"] := CheckBoxGump(who, 200, 0, "Escolha a Categoria:", opts, marked);
                break;
             GF_QUEST_ACTIVE:
                update_quest["active"] := !quest.active;
@@ -249,8 +291,7 @@ program gump_gump(who)
    endwhile
 endprogram
 
-function QuestConditions(who)
-   var new_condition := struct{};
+function QuestConditions(who, new_condition := struct{})
    var opts := array{
       "Matar Monstro",
       "Usar Item",
@@ -259,21 +300,24 @@ function QuestConditions(who)
       "Ir até Local",
       "Cancelar"
    };
-   var type := RadioGump(who, 300, 0, "Qual condição quer configurar?", opts, 0);
-   new_condition["type"] := type;
+   if (!new_condition.type)
+      new_condition.type := RadioGump(who, 300, 0, "Qual condição quer configurar?", opts, 0);
+   endif
 
-   case (type)
+   case (new_condition.type)
       "Cancelar": return 0;
       "Matar Monstro":
          var spawngroups := DFGetElemNames(LoadSpotGroupData());
          spawngroups.append("Qualquer Um");
+
+         new_condition.spawngroup := _ifElse(!new_condition.spawngroup, spawngroups.size(), new_condition.spawngroup in spawngroups);
          var quest_gump := array{
-            struct{ title := "Escolha o Spawn onde ele deve matar", radio := spawngroups, marked := spawngroups.size() },
-            struct{ title := "Entre com template do monstro", marked := ":ghaia:" },
-            struct{ title := "Quantidade de monstros que deve matar", marked := "1" },
-            struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := 2 },
-            struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := 1 },
-            struct{ title := "Customizar nome do monstro? (deixe em branco se não quiser)", marked := "" }
+            struct{ title := "Escolha o Spawn onde ele deve matar", radio := spawngroups, marked := new_condition.spawngroup },
+            struct{ title := "Entre com template do monstro", marked := _IfOr(new_condition.template, ":ghaia:") },
+            struct{ title := "Quantidade de monstros que deve matar", marked := _IfOr(new_condition.qty, "10") },
+            struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := cint(new_condition.party)+1 },
+            struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := cint(new_condition.onlyboss)+1 },
+            struct{ title := "Customizar nome do monstro? (deixe em branco se não quiser)", marked := _IfOr(new_condition.customname, "") }
          };
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
@@ -303,7 +347,7 @@ function QuestConditions(who)
          var targ := Target(who);
          if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
             var quest_gump := array{
-            struct{ title := "Quantidade que deve ser coletado?" }
+            struct{ title := "Quantidade que deve ser coletado?", marked := _ifOr(new_condition.qty, "10") }
          };
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
@@ -317,25 +361,26 @@ function QuestConditions(who)
    return new_condition;
 endfunction
 
-function QuestRewards(who)
-   var new_reward := struct{};
+function QuestRewards(who, new_reward := struct{})
    var opts := array{
       "Experiência",
       "Item",
       "Cancelar"
    };
 
-   var type := RadioGump(who, 350, 0, "Qual tipo de recompensa deseja atribuir?", opts, 0);
-   new_reward["type"] := type;
+   if (!new_reward.type)
+      new_reward.type := RadioGump(who, 350, 0, "Qual tipo de recompensa deseja atribuir?", opts, 0);
+   endif
 
-   case (type)
+   case (new_reward.type)
       "Cancelar": return 0;
       "Experiência":
          var classCfg := ReadConfigFile(":charactercreation:config/classes");
          var opts := GetConfigStringKeys(classCfg);
-         // opts.append("Todos");
+         opts.append("Classe Da Quest");
          opts.append("Personagem");
-         new_reward["classe"] := RadioGump(who, 200, 0, "Escolha qual Classe:", opts);
+         new_reward.classe := _ifOr(new_reward.classe, "Classe da Quest");
+         new_reward.classe := RadioGump(who, 200, 0, "Escolha qual Classe:", opts, 0, new_reward.classe in opts);
       "Item":
          SendSysMessage(who, "Escolha o item de recompensa.");
          var targ := Target(who);

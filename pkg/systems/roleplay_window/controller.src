@@ -21,7 +21,7 @@ program AC_start(who)
    SetObjProperty(who, "last_see", last_see);
 
    while (who.connected)	
-      sleepms(30);
+      sleepms(40);
       var event := wait_for_event(2);
       var trig := 0;
       if (event.type == 0x456 && !(event.id in already_saw))
@@ -42,12 +42,12 @@ program AC_start(who)
             // var cp_profile  := DFGetProp(cp_elem, "Profile");
             // cp_profile := CChrz(cp_profile);
             var cp_profile;
-            var chardata := GetObjProperty(mob, chardata);
+            var chardata := GetObjProperty(mob, "chardata");
             if (chardata)
                var altura := GetCharHeight(chardata.height);
                var peso := GetCharWeight(chardata.weight);
                if (mob.name["Desconhecido"])
-                  cp_profile := "{}, {}".format(altura, peso);
+                  cp_profile := "Altura {}, {}".format(altura, peso);
                else
                   cp_profile := "{}, {}, {}".format(altura, peso, chardata.profile);
                endif

@@ -9,6 +9,13 @@ function _ifElse(a,b,c)
    return c;
 endfunction
 
+
+function _IfOr(a,b)
+   if (a) return a; endif
+   return b;
+endfunction
+
+
 function _resolveParams(byref a, byref b, byref c := 0)
    if (typeof(a) == "Array")
       c := a[3];

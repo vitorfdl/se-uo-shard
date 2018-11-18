@@ -42,7 +42,7 @@ function buildSubClass(who, charlevel, byref gump, subclass, x, y)
       GFHtmlShadowed(gump, 307, y+15, 150, 20, "#FFFFFF", "Sem subclasse", 4);
       return;
    endif
-
+   
    var feats := GetClassFeats(subclass.id);
    GFHtmlShadowed(gump, x-16, y, 92, 20, "#FFFFFF", "<center>{}".format(subclass.id), 5);
    if (subclass.level >= 3)
@@ -236,13 +236,13 @@ function SendSkillGump(who, chardata)
 	GFGumpPicTiled(gump, 123, 350, 501, 21, 58); // bar
 	GFGumpPic(gump, 624, 350, 59, 0); // bar
 
-   buildSubClass(who, chardata.level,gump, chardata.subclasses[2], 141, 368);
+   buildSubClass(who, chardata.level, gump, chardata.subclasses[2], 141, 368);
 
 	GFGumpPic(gump, 93, 421, 57, 0); // bar
 	GFGumpPicTiled(gump, 122, 421, 501, 21, 58); // bar
 	GFGumpPic(gump, 623, 421, 59, 0); // bar
 
-   buildSubClass(who, chardata.level,gump, chardata.subclasses[3], 141, 439);
+   buildSubClass(who, chardata.level, gump, chardata.subclasses[3], 141, 439);
 
 	GFGumpPic(gump, 223, 63, 105, 0);
    GFTooltipText(gump, "Este é seu valor máximo de vida, sem nenhum modificador.");
@@ -425,7 +425,7 @@ endprogram
 function HandleSkillPage(who, byref chardata, res)
    if (res >= 300)
       var hab := getFeatById(res - 300, "RETURN_CLASS");
-      var i := FindInArray(chardata[hab.ClassType], hab.Class);
+      var i := FindInArray(chardata[hab.ClassType], struct{ id := hab.Class });
       if (!i) 
          return SendSysMessageEx(who, "{} não encontrado: {}".format(hab.ClassType, hab.Class)); 
       endif

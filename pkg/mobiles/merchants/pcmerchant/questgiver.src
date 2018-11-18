@@ -89,11 +89,9 @@ function SendQuestGump(npc, player)
       sleepms(2);
       var player_quests := FindAllElemInArray(quests, struct{ category := classe } );
       foreach quest in player_quests
-         sleepms(2);
-         if (!CheckQuest(player, quest))
-            continue;
+         if (CheckQuest(player, quest))
+            questions.append(struct{ type := "delivery", classe := classe, pos := _quest_iter });
          endif
-         questions.append(struct{ type := "delivery", classe := classe, pos := _quest_iter });
       endforeach
 
       var weekly_quests_total := FindAllElemInArray(weekly_quests, struct{ classe := classe });
@@ -104,7 +102,7 @@ function SendQuestGump(npc, player)
          continue;
       endif
       
-      var quest_giver := FindAllElemInArray(quest_list, struct{ category := classe });
+      var quest_giver := FilterQuestByClass(quest_list, classe);
       if (quest_giver.size())
          var randomquest := quest_giver.randomentry();
          questions.append(struct{ type := "quest", classe := classe, quest_id := randomquest.id });
@@ -150,7 +148,7 @@ function SendQuestGump(npc, player)
    if (!res || res == 1)
       return;
  elseif (res >= 100)
-      res -= 10;
+      res -= 100;
       var answer := questions[res];
       var elem := FindConfigElem(classCfg, answer.classe);
       var chardata := GetObjProperty(player, "chardata");
@@ -190,7 +188,7 @@ function SendQuestGump(npc, player)
    elseif (res >= 10)
        res -= 10;
        var answer := questions[res];
--      GiveQuest(player, FindElemInArray(quest_list, struct{ id := answer.quest_id }));
+-      GiveQuest(player, FindElemInArray(quest_list, struct{ id := answer.quest_id }), answer.classe);
 -      PrintText(npc, "Estarei aguardando aqui para quando tiver terminado.");
    endif
 endfunction
@@ -268,4 +266,19 @@ function CreateItemsFromClass(who, classe)
 		Run_Script( ":crafting:recipes/oncreate", recipe );
 		sleepms(2);
 	endforeach
+endfunction
+
+function FilterQuestByClass(quest_data, classe)
+   var return_list := array{};
+   foreach quest in quest_data
+      sleepms(2);
+      if (!(classe in quest.category))
+         continue;
+      endif
+
+      quest.category := classe;
+      return_list.append(quest);
+   endforeach
+
+   return return_list;
 endfunction
