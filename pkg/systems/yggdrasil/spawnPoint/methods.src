@@ -94,7 +94,7 @@ exported function SetProps( spawnpoint, data := struct{});
       old_data.range := cint(data.range);
    endif
 
-   if (data.level)
+   if ("level" in (data.Keys()))
       old_data.level := cint(data.level);
    endif
 
