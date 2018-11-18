@@ -313,7 +313,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
          targ_materials[thing] := materials[thing];
       endif
 	endforeach
-
 	var counter  := 0;
 	var theitems := array{};
 	var initialX := who.x;

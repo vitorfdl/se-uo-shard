@@ -18,6 +18,8 @@ function _resolveParams(byref a, byref b, byref c := 0)
 endfunction
 
 function _CreateItemInBackpack(who, objtype, amount := 1)
+   if (cint(amount) < 1) amount := 1; endif
+   
    var item := CreateItemInContainer(who.backpack, objtype, amount);
    if (item) 
       // MoveObjectToLocation( item, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION );
