@@ -184,7 +184,7 @@ function SendQuestGump(npc, player)
       endif
 
       CreateItemsFromClass(player, answer.classe);
-      // SetObjProperty(player, "chardata", chardata);
+      SetObjProperty(player, "chardata", chardata);
       PrintText(npc, "Que você seja próspero na sua jornada de {}. Volte aqui para que eu lhe ensine alguns truques dessa arte.".format(answer.classe));
    endif
 endfunction
