@@ -20,7 +20,7 @@ function ModelTreasure( data := struct{} )
     endif
 
     if (!data.level || data.level < 1 || data.level > 5)
-        data.level := 1;
+        data.level := 0;
     endif
 
     if (data.protected != 1 && data.protected != 0)
