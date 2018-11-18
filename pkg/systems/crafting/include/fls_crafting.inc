@@ -87,7 +87,7 @@ function GetRecipe(objtype, elem)
       "exceptional" := GetConfigInt(elem, "exceptional"),
       "delay"       := GetConfigInt(elem, "delay"),
       "fastcraft"       := GetConfigInt(elem, "fastcraft"),
-      "more"       := _ifElse(GetConfigInt(elem, "more"), GetConfigInt(elem, "more"), 1),
+      "more"       := GetConfigInt(elem, "more")
       "hasLevel"       := GetConfigInt(elem, "hasLevel"),
       "materials"  := materials,
       "main_material" := elem.main_material,
