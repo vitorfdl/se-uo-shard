@@ -104,7 +104,7 @@ function examinarArea(who, range, types := array{})
    if ("Item" in types)
       foreach item in ListItemsNearLocation(who.x, who.y, who.z, range)
          sleepms(2);
-         if ( !item.invisible || IsBehind(item, who.x, who.y) )
+         if ( !item.invisible )
             continue;
          endif
 
