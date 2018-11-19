@@ -13,7 +13,8 @@ include "include/facings";
 include "include/say";
 include ":ghaia:ghaia";
 
-program skill_Stealing(mobile)
+program skill_Stealing(mobile, spellinfo)
+   _resolveParams(mobile, spellinfo);
 	if ( GetProcess(CInt(GetObjProperty(mobile, "#PickPid"))) )
 		SendSysMessageEx(mobile, "Você ja esta roubando alguem.", SSM_FAIL);
 		return;
@@ -29,7 +30,7 @@ program skill_Stealing(mobile)
 	
 	SendSysMessageEx(mobile, "Selecione que pessoa ou container você deseja roubar.", SSM_REQUEST);
 	var targ := Target(mobile);
-	
+   print(IsBehind(targ, mobile.x, mobile.y));
 	var npc_category := lower(getnpccategory( targ.my_template() ));
 	if (targ == mobile)
 		SendSysMessageEx(mobile, "Espertao você hein..?", SSM_FAIL);
@@ -57,15 +58,9 @@ program skill_Stealing(mobile)
 		return 0;
 	endif
 
-	var advantage := (getglobalproperty("dia") == "noite")*-1;
-   if (HaveLightNear(targ))
-      advantage += 1;
-   endif
-
-	var user_skill := AP_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetSkillBonus(mobile, FURTO);
-	var diff := 2;
+	var diff := 10;
    if (targ.isA(POLCLASS_MOBILE))
-      diff += rollAttrDice(targ, WISDOM, advantage) + GetSkillBonus(targ, PERCEPCAO);
+      // diff += ;
    elseif (targ.isA(POLCLASS_ITEM))
       var check_targ := targ;
       while (check_targ.container)
@@ -73,33 +68,25 @@ program skill_Stealing(mobile)
          sleepms(2);
       endwhile
       var mobiles := ListMobilesNearLocationEx(check_targ.x, check_targ.y, check_targ.z, 6, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
-      diff := PickPocketDiff(targ, mobile, user_skill) + ((mobiles.size() -1) * 2);
+      diff := PickPocketDiff(targ, mobile) + ((mobiles.size() -1) * 2);
    endif
-	// foreach people in ListMobilesNearLocationEx( mobile.x, mobile.y, mobile.z, 5, LISTEX_FLAG_HIDDEN, mobile.realm )
-	// 	if (!people.npctemplate && HaveFeat(people, "Vigilante"))
-	// 		diff += 5;
-	// 	endif
-	// 	if (!people.npctemplate && HaveFeat(people, "Mestre da Vigília"))
-	// 		diff += 5;
-	// 	endif
-	// endforeach
-	var check := rollAttrDice(mobile, DEXTERITY, 0, struct{ "get_critical" := 1, "failure" := 3}) + GetSkillBonus(mobile, FURTO);
-	if ( check.dice <= diff )
+
+	var check := Randomint(100);
+	if ( check <= diff )
       SendSysMessageEx(mobile, "Você percebe que não se disfarçou bem e recua para não chamar atenção.", SSM_FAIL);
       if (targ.isA(POLCLASS_MOBILE))
          SendSystemReport(mobile, "O alvo parece ter percebido algo.", SSM_FAIL);
          SendSystemReport(targ, "Você sentiu algo na sua bolsa.", SSM_INFO, targ);
-      else
-         
+         return;
       endif
 
-		if (check.critical == -1) // Falha Crítica
+		if (check < 5) // Falha Crítica
 			CriticalFailure(mobile, targ);
 		endif
 		return;
 	endif
 
-	SendSystemReport(mobile, "*Success*", mobile, SSM_INFO);
+	SendSystemReport(mobile, "*Sucesso*", mobile, SSM_INFO);
 	//SendSysMessageEx(mobile, "Você conseguiu abrir a mochila de "+targ.name+".", SSM_INFO);
    if (targ.isA(POLCLASS_MOBILE))
 	   SendOpenSpecialContainer(mobile, targ.backpack);
@@ -154,11 +141,11 @@ program skill_Stealing(mobile)
 			continue;
 		endif
 
-      var diff := PickPocketDiff(steal, mobile, user_skill);
+      var diff := PickPocketDiff(steal, mobile);
 
-		var dice_roll := rollAttrDice(mobile, DEXTERITY, advantage, struct{ "get_critical" := 1, "failure" := 3});
-		check := dice_roll.dice + GetSkillBonus(mobile, FURTO);
-		if ( check >= diff )
+		var dice_roll := RandomInt(100);
+      if (diff >= 99)
+		elseif ( dice_roll >= diff )
 			var copyitem := CreateItemCopyAtLocation(0, 0, 0, steal, mobile.realm);
 			MoveItemToContainer(copyitem, mobile.backpack);
 			
@@ -184,7 +171,7 @@ program skill_Stealing(mobile)
 			mobile.SetAchievement("pickpocket", 1);
 		else
 			SendSysMessageEx(mobile, "Você não conseguiu roubar "+steal.desc+".", SSM_FAIL);
-			if ( dice_roll.critical == -1 )
+			if ( dice_roll < 5)
 				CriticalFailure(mobile, targ);
 			endif
 			break;
@@ -203,7 +190,7 @@ function CriticalFailure(mobile, targ)
 	endif
 	SendSysMessageEx(mobile, "Você chamou muita atencao!", SSM_FAIL);
 
-	var range := 22 - (Ap_GetStat(mobile, DEXTERITY, RETURN_BONUS) + GetSkillBonus(mobile, FURTO));
+	var range := 8;
 
 	foreach player in ( ListMobilesInLineOfSight(targ, range) )
 		if ( player.npctemplate );
@@ -222,29 +209,29 @@ function CriticalFailure(mobile, targ)
 	return 1;
 endfunction
 
-function PickPocketDiff(steal, mobile, user_skill)
-   var diff := 0;
+function PickPocketDiff(steal, mobile)
+   var diff;
    if (steal.objtype IN {0xeed, 0xba64, 0xba65}) // moeda
-      diff := 10 + CInt(steal.amount * 0.3);
-      // if (HaveFeat(mobile, "Ladrao de Bolsas"))
-      // 	diff := cint(diff * 0.5);
-      // endif
+      diff := 20 + CInt(steal.amount * 0.3);
    elseif (steal.objtype IN {0x1085, 0x1086, 0x1087, 0x1088, 0x1089, 0x108a, 0x2b6e, 0x2b6f, 0x2b70}) // joias
       diff := CInt(steal.weight*2);
-      // if (HaveFeat(mobile, "Ladrao de Bolsas"))
-      // 	diff := cint(diff * 0.5);
-      // endif
    elseif (steal.objtype IN {0x1011, 0x100E, 0x100F, 0x1010, 0x1012, 0x1013}) // chaves
-      diff := 23;
-   elseif (steal.objtype == 0x6100) // grimório
-      diff := 25;
-   elseif (steal.objtype == 0xef1f) // grimório
-      diff := 17;
+      diff := 60;
+   // elseif (steal.objtype == 0x6100) // grimório
+   //    diff := 25;
+   // elseif (steal.objtype == 0xef1f) // grimório
+   //    diff := 17;
    else
-      diff := 10 + CInt(steal.weight/2);
+      diff := 15 + CInt(steal.weight/2);
    endif
-   
-   if (diff > (20 + user_skill))
+
+
+   if (HaveLightNear(mobile))
+      diff += 30;
+   endif
+
+
+   if (diff > 90)
       SendSysMessageEx(mobile, "Você não tentará roubar isso, pois tem certeza que falhará.", SSM_INFO);
       return 99;
    endif
