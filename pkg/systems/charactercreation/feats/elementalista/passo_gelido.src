@@ -23,12 +23,16 @@ program animateSword(params)
    var points := GetLineCoordsInFront(who.x, who.y, who.facing, 7);
    var face := who.facing;
    var mobs := array{};
-   foreach point in points
-      if (!CanWalk("L", who.x, who.y, who.z, point[1], point[2]))
-         break;
-      endif
 
-      var err := MoveObjectToLocation( who, point[1], point[2], who.z, who.realm );
+   var last_one := points[points.size()];
+   var world_z := GetStandingHeight( last_one[1], last_one[2], who.z, who.realm );
+   var force := _ifElse(world_z.z != error && world_z.z <= who.z, MOVEOBJECT_FORCELOCATION, MOVEOBJECT_NORMAL);  
+   foreach point in points
+		if (!CheckLosAt(who, point[1], point[2], who.z))
+			break;
+		endif
+
+      var err := MoveObjectToLocation( who, point[1], point[2], who.z, who.realm, force );
       if (err == error)
          break;
       endif
