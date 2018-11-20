@@ -66,7 +66,7 @@ function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y)
       endif
 
       var color := 0;
-      if (!(hab.FeatId in subclass.habs) && (who.cmdlevel < 3 && who != targ))
+      if (!(hab.FeatId in subclass.habs) && who.cmdlevel <= 3)
          color := 1000; 
       endif
       
@@ -113,7 +113,7 @@ function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array
             var color := 0;
             if (hab.FeatId in classe.selected_habs)
                color := 75;
-            elseif (!(hab.FeatId in classe.habs) && (who.cmdlevel < 3 && who != targ))
+            elseif (!(hab.FeatId in classe.habs) && who.cmdlevel < 3)
                color := 1000; 
             endif
 
