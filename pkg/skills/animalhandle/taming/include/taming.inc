@@ -62,11 +62,6 @@ endfunction
 
 //adiciona o serial do pet 
 function AddPet(who, serial, no_reset := 0)
-	var combat := GetObjProperty(who, "combat_pet");
-   if (combat && SystemFindObjectBySerial(combat) && !who.cmdlevel)
-      return 0;
-   endif
-   
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )
 		tamed := array;
@@ -302,7 +297,7 @@ function PetSkillGump(who, targ)
    foreach key in (pet_knowledge.Keys())
       var name := FindConfigElem(npcdesc, key).Name;
       var percent := cint((pet_knowledge[key] * 100) / TamingDiff(0, npcdesc[key]));
-	   GFTextLine(gump, 67+x, 202+y, 1152, "{}: {}%".format(name, percent));
+	   GFTextLine(gump, 67+x, 202+y, 1152, "{}: {}%".format(name, _ifELse(percent >= 100, 100, percent)));
       y += 20;
       if (_key_iter % 11 == 0)
          x += 200;
@@ -323,7 +318,7 @@ function TamingDiff(pet, pet_cfg)
       pet_cfg := NPC_GetNPCConfig(pet, 1);
    endif
    
-   return _ifElse(pet_cfg.TamingCombat, 150, 45);
+   return _ifElse(pet_cfg.TamingCombat, 50, 25);
 endfunction
 // function isTamable(mob)
 // 	if (!mob.npctemplate)

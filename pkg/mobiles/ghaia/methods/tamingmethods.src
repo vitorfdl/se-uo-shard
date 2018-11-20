@@ -76,10 +76,10 @@ exported function InitPetProperties(pet, reset := 0)
       props.personality := old_props.personality;
    endif
    
-   props.loyalt := 0;
-   props.points := 0;
+   props.loyalt      := 0;
+   props.points      := 0;
    props.vitalpoints := 0;
-   props.exp    := 0;
+   props.exp         := 0;
    props.feats := array{};
    if (old_props)
       props.personality := old_props.personality;
