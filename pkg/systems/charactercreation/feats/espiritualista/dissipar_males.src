@@ -38,6 +38,7 @@ program hiddepresence(params)
       foreach mob in mobiles
          if (CheckifIsAlly(who, mob))
             TS_CurePoison(who, 1000, "C", 10);
+            TS_CurePoison(who, 1000, "DP", 10);
             SendSysMessageEx(mob, "Qualquer mal sobre você foi removido.", SSM_INFO);
          else
             DamageFLS(mob, spellinfo.PowerMod[1], DMG_PHYSICAL, who);

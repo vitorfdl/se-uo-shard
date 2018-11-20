@@ -27,9 +27,6 @@ program useHotBar(who, text)
    var spos := cint(text);
    if (!spos) 
       return SendSysMessageEx(who, "Você precisa entrar com o número da barra de atalho. Ex: .atalho 1", SSM_FAIL); 
-   elseif (who.frozen || who.squelched || who.paralyzed) 
-      EraseObjProperty(who, "#Casting");
-      return SendSysMessageEx(who, "Você não pode usar uma habilidade enquanto está paralizado, congelado ou silenciado.", SSM_FAIL);
    elseif (GetObjProperty(who, "#Casting")) 
       return SendSysMessageEx(who, "Você não pode usar uma habilidade agora.", SSM_FAIL);
    elseif (TS_GetCooldown(who, "hab_block"))
@@ -42,6 +39,12 @@ program useHotBar(who, text)
    var shortcut := hotbar.shortcuts[spos];
    if (!shortcut)
       return SendSysMessageEx(who, "Não há nenhuma habilidade configurada para este atalho '{}'.".format(spos), SSM_FAIL);
+   endif
+
+   if (!shortcut.id || shortcut.id != 88)
+      if (who.frozen || who.squelched || who.paralyzed)
+         return SendSysMessageEx(who, "Você não pode usar uma habilidade enquanto está paralizado, congelado ou silenciado.", SSM_FAIL);
+      endif
    endif
 
    if (shortcut.item)

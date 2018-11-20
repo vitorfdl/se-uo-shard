@@ -22,26 +22,45 @@ program oafeatures_sendpacket(who, text)
    // var item := _CreateItemInBackpack(who, 0xDC01, 1);
    // var recipes := GetObjProperty(who, "recipes");
 
-   var targ := TargetCoordinates(who);
-   var d := 4;
-   var area := GetCoordsInSquare(targ.x, targ.y, d);
+
+   PlayStationaryEffectEx( who.x, who.y, who.z+1, who.realm, 0x376A, 0, 8, 0 );
+
+   var area := GetCoordsInSquare(who.x, who.y, 1);
    foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
-         PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
+      if (CoordinateDistance(who.x, who.y, p.x, p.y) >= 1)
+         PlayMovingEffectXYZ( who.x, who.y, who.z+5, p.x, p.y, who.z+5, 0x3779, 0 );
       endif
       sleepms(2);
    endforeach
 
-   d := 3;
-   area := GetCoordsInSquare(targ.x, targ.y, d);
-   sleepms(150);
-   foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
-         PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
-      endif
+   // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
+   // foreach p in area
+   //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)
+   //       PlayMovingEffectXYZEx( who.x, who.y, who.z+2, p.x, p.y, who.z+10, who.realm, 0x37C4, 0 ,0, 0, 0, 1);
+   //    endif
+   //    sleepms(2);
+   // endforeach
 
-      sleepms(2);
-   endforeach
+   // var targ := TargetCoordinates(who);
+   // var d := 4;
+   // var area := GetCoordsInSquare(targ.x, targ.y, d);
+   // foreach p in area
+   //    if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
+   //       PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
+   //    endif
+   //    sleepms(2);
+   // endforeach
+
+   // d := 3;
+   // area := GetCoordsInSquare(targ.x, targ.y, d);
+   // sleepms(150);
+   // foreach p in area
+   //    if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
+   //       PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
+   //    endif
+
+   //    sleepms(2);
+   // endforeach
 
    sleepms(600);
 

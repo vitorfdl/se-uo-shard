@@ -80,7 +80,8 @@ program taming(params)
 
       var res := AddPet(who, targ.serial, no_reset);
    if (res)
-      SendSysMessageEx(who, "{} agora é obedece a você".format(targ.name), SSM_FAIL);
+      PrintText(who, "*domestica {}".format(targ.name));
+      SendSysMessageEx(who, "{} agora obedece a você".format(targ.name), SSM_FAIL);
       if (npc_cfg.TamingCombat)
          SetObjProperty(who, "combat_pet", targ.serial);
       endif

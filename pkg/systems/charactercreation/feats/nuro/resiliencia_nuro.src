@@ -1,0 +1,30 @@
+use uo;
+use os;
+use vitals;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/shapes";
+include ":timedScripts:poisonUtil";
+
+program SpellScript(params)
+	var who := params[1];
+	var hab := params[2];
+	params := 0; // No longer needed
+
+   PlayStationaryEffectEx( who.x, who.y, who.z+1, who.realm, 0x376A, 0, 8, 0 );
+
+   PlaySoundEffect(who, cint(0x202));
+   var area := GetCoordsInSquare(who.x, who.y, 1);
+   foreach p in area
+      if (CoordinateDistance(who.x, who.y, p.x, p.y) >= 1)
+         PlayMovingEffectXYZ( who.x, who.y, who.z+5, p.x, p.y, who.z+5, 0x3779, 0 );
+      endif
+      sleepms(2);
+   endforeach
+   TS_CurePoison(who, 1000, "DP", 10);
+	
+	return 1;
+endprogram 

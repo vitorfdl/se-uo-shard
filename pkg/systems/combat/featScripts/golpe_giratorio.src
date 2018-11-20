@@ -32,13 +32,13 @@ program startTalent(param)
    var weapon_cfg := GetItemCfgInfo(who, who.weapon);
    var area := GetCoordsInSquare(who.x, who.y, 2);
    for i := 1 to 3
-   foreach p in area
-      if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2-1)
-         PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
-      endif
+      foreach p in area
+         if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2-1)
+            PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
+         endif
 
-      sleepms(2);
-   endforeach
+         sleepms(2);
+      endforeach
       PlayAttackAnimation(who, weapon_cfg);
       sleepms(120);
    endfor
