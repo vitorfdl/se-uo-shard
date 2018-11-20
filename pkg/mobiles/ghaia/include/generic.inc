@@ -91,11 +91,6 @@ function NpcGoTo(destiny, move_type, stop_if_attacker := 0)
 endfunction
 
 function Flee(opponent, sleepdelay := 0)
-   if((me.script == "immobile") || (me.script == "immobilespell"))
-      sleep(2);
-      return;
-   endif
-
    if ("FleeStealth" in custombehaviors)
       if (!GetCooldown(me, "fleestealth"))
          PrintText(me, "*esconde*");

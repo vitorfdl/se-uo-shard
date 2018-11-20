@@ -4,21 +4,16 @@ use util;
 use cfgfile;
 
 include "include/say";
+include ":alchemy:alchemy";
 
 program use_explosion(who, potion)
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
-	if(!Accessible(who, potion))
-		return;
+
+	if (!CheckIfCanDrink(who, potion, "explosionpot", 10))
+		return 1;
 	endif
-	if(potion.movable == 0)
-		SendSysMessageEx(who, "Você não pode usar isto.");
-		return;
-	endif
-	if(!Accessible( who, potion))
-		SendSysMessageEx(who,"Você não pode pegar isto!");
-		return;
-	endif
+
 	who.hidden := 0;
 	SendSysMessageEx(who, "Escolha o alvo " );
 	if( !Cint(GetObjProperty(potion, "#bomb")))
@@ -27,6 +22,7 @@ program use_explosion(who, potion)
 		parms[2] := who;
 		var t := start_script("potions/explosionTimer", parms);
 	endif
+
 	SetObjProperty(potion, "#bomb", 1);
 	var cast_on := TargetCoordinates( who );
 	if(!cast_on)
@@ -35,6 +31,7 @@ program use_explosion(who, potion)
 	if(!potion)
 		return;
 	endif
+
 	PrintText(who, "*joga um frasco*");
 	if(!CheckLosAt(who, cast_on.x, cast_on.y, cast_on.z))
 		MoveObjectToLocation(potion, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION );

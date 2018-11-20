@@ -203,7 +203,7 @@ function StartDynamicEvent(spot, config, evententry)
       var this_step := StepToStruct(trigged.steps);
       this_step.name := trigged.name;
       if (this_step.name == "Summon Mobs")
-         var loc := this_step.location[1];
+         var loc := this_step.location.randomentry();
          var coord := struct{ "x" := this_step.go_to[1], "y" := this_step.go_to[2], "z" := this_step.go_to[3]};
          if (this_step.player_location && player_found)
             coord := player_found;

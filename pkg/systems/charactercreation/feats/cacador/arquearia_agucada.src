@@ -11,12 +11,32 @@ include ":timedscripts:timedScripts";
 
 program animateSword(params)
 	var who := params[1];
-	// var spellinfo := params[2];
-	// var targ := params[3];
+	var hab := params[2];
+	var targ := params[3];
 	params := 0; // No longer needed
 
-   PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
-   PlaySoundEffect(who, cint(0x513));
-   TS_StartTimer(who, "furtividade", 10, 50);	
+   if (!who.weapon.isBow())
+      SendSysMessageEx(who, "Você precisa estar usando um arco!");
+      return FailFeat(who, hab);
+   elseif (!(targ.objtype in array{ 56328, 48910, 48911, 48915, 48918}))
+      SendSysMessageEx(who, "Isso não parece um explosivo");
+      return FailFeat(who, hab);
+   endif
+
+	var ammo := CheckForAmmo(who, who.weapon);
+   if (!ammo)
+      return FailFeat(who, hab);
+   endif
+
+	var elem := GetItemCFGInfo(who, who.weapon);
+   PrintText(who, "*dispara no explosivo*");
+	PlaySoundEffect(who, 0x14A);
+	Performaction(who, elem.Anim);
+	PlayMovingEffectXYZ( who.x, who.y, who.z+3, targ.x, targ.y, targ.z, elem.ProjectileAnim, 10, 10, 0, who.realm);
+
+   sleepms(600);
+   start_script("potions/exploder", {targ, who});
+
+
 	return 1;
 endprogram

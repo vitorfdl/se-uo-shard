@@ -71,7 +71,10 @@ function AddPet(who, serial, no_reset := 0)
 	if ( !tamed )
 		tamed := array;
 	endif
+
+   if (GetNumPets(who)+1 >= GetMaxPets(who) && !who.cmdlevel) return; endif
    
+   who.followers += 1;
 	tamed.append(serial);
 	SetObjProperty(who, "followers", tamed);
 
@@ -99,7 +102,7 @@ endfunction
 
 //numero maximo de pets que alguem pode ter
 function GetMaxPets(who)
-	return 20;
+	return 10;
 endfunction
 
 //desloga os pets, teleportando eles pra um lugar l

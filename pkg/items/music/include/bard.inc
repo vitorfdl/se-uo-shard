@@ -4,20 +4,8 @@ include "bardInstrument";
 include "bardMagic";
 include ":ghaia:ghaiaUtil";
 include ":timedscripts:timedScripts";
+include ":yggdrasil:boss";
 
-
-function isBardable(character, thetarget, bard_skill, bard_difficulty)
-
-	// if( CalcSuccessPercent(character, bard_skill, bard_difficulty, AP_GetSkill( character, bard_skill)) < 50 )
-	// 	return 0;
-	// endif
-
-	var pTemplate := NPC_GetNPCConfig(thetarget.npctemplate);
-	var ifCanBard := 1;
-
-	return ifCanBard;
-
-endfunction
 
 function BardNotes(who,item,notas,notas2,tempo,letra,what,emocao)
    Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
@@ -242,7 +230,7 @@ endfunction
 function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 	var c,cs,d,ds,e,f,fs,g,gs,a,ass,b,c2,cs2,d2,ds2,e2,f2,fs2,g2,gs2,a2,ass2,b2,c3,inst,L,dif,emocaouse;
 
-	if ( emocao && AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) <= 4 && who.cmdlevel < 3) 
+	if ( emocao && !HaveFeatSecondary(who, 73) && who.cmdlevel < 3) 
       SendSysMessageEx(who, "Você não entende essa partitura.", SSM_FAIL);
       return 0;
 	endif
@@ -253,30 +241,30 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 	endif
 
    var total := notas.size() + notas2.size();
-   var max_allowed := AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) * 15;
-   if (max_allowed < 5)
-      max_allowed := 5;
-   endif
+   // var max_allowed := AP_GetTrueSkill(who, INSTRUMENTO_MUSICAL) * 15;
+   // if (max_allowed < 5)
+   //    max_allowed := 5;
+   // endif
 
-   //REDUCAO PARA MADEIRAS DIFERENTES
-   case(Cstr(item.color))
-      "2307": max_allowed += 20;
-      "2109": max_allowed += 20;
-      "2312": max_allowed += 10;
-      "2317": max_allowed += 10;
-      "2117": max_allowed += 4;
-   endcase
+   // //REDUCAO PARA MADEIRAS DIFERENTES
+   // case(Cstr(item.color))
+   //    "2307": max_allowed += 20;
+   //    "2109": max_allowed += 20;
+   //    "2312": max_allowed += 10;
+   //    "2317": max_allowed += 10;
+   //    "2117": max_allowed += 4;
+   // endcase
 
-   //REDUCAO PARA INSTRUMENTOS EXCEP
-   case(Cstr(item.quality))
-      "1.1": max_allowed += 10;
-      "1.2": max_allowed += 15;
-      "1.3": max_allowed += 20;
-      "1.4": max_allowed += 25;
-   endcase
+   // //REDUCAO PARA INSTRUMENTOS EXCEP
+   // case(Cstr(item.quality))
+   //    "1.1": max_allowed += 10;
+   //    "1.2": max_allowed += 15;
+   //    "1.3": max_allowed += 20;
+   //    "1.4": max_allowed += 25;
+   // endcase
    
-   if (total > max_allowed)
-		SendSysMessageEx(who, "O máximo de nota que você pode tocar é {}".format(max_allowed),SSM_FAIL);
+   if (total > 200)
+		SendSysMessageEx(who, "O máximo de nota que você pode tocar é {}".format(200),SSM_FAIL);
 		return 0;
    endif
 		
@@ -350,6 +338,8 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
          "Enfurecer":   emote_text := "*Você se sente com raiva*"; break;
       endcase
 
+      ActiveMusicEffect(who, emocao, duration);
+
 		foreach nota in notas
          if (_nota_iter == cint(notas.size() / 2) && emocao)
             var mobs := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
@@ -357,12 +347,8 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
                SendSystemReport(mob, emote_text, SSM_INFO);
                sleepms(2);
             endforeach
-
-            var fogueira := ListItemsNearLocationOfType( who.x, who.y, who.z, 8, 0x0de3 );
-            if (fogueira[1])
-               SetObjProperty(fogueira[1], "encantado", 1);
-            endif
          endif
+         who.SetWarmode(0);
 
 			if (nota == "C") PlaySoundEffect(who, c); sleepms(tempo);
 				elseif (nota == "C#") PlaySoundEffect(who, cs); sleepms(tempo);
@@ -515,4 +501,44 @@ function TentarDenovo(who,item,notas,notas2,tempo,letra)
 		SendSysMessageEx(who, "Cancelado.",38);
 		return 0;
 	endif
+endfunction
+
+function ActiveMusicEffect(who, emocao, duration)
+      case (emocao)
+         "Enconrajar":
+            var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+            foreach ally in allies
+               if (ally != who && CheckifisAlly(who, ally))
+                  TS_StartTimer(ally, "aumentar_poder", duration, 15);
+               endif
+               sleepms(2);
+            endforeach
+            break;
+         "Entristecer": 
+            var enemies := CheckifisAlly(who, ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+            foreach enemy in enemies
+               TS_StartTimer(enemy, "diminuir_poder", duration, 10);
+               sleepms(2);
+            endforeach
+            break;
+         "Alegrar":
+            var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+            foreach ally in allies
+               if (ally != who && CheckifisAlly(who, ally))
+                  TS_StartTimer(ally, "healovertime", duration, 1);
+               endif
+               sleepms(2);
+            endforeach
+            break;
+         "Enfurecer":
+            var enemies := CheckifisAlly(who, ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+            foreach enemy in enemies
+               if (enemy.isA(POLCLASS_MOBILE) && !isBoss(enemy) && RandomInt(100) <= 15)
+                  var event := struct{"type":=SYSEVENT_ENGAGED, "source":= enemy.randomentry()};
+                  SendEvent(enemy, event);
+               endif
+               sleepms(2);
+            endforeach
+            break;
+      endcase
 endfunction

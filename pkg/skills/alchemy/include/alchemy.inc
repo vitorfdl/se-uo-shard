@@ -1,5 +1,6 @@
 include ":timedscripts:timedScripts";
 include ":tn:cooldown";
+include "include/utils";
 include "include/say";
 
 CONST DRINK_SOUND := 0x32;
@@ -82,12 +83,8 @@ function do_poison(who, potion)
    EmptyBottle(who, potion);
    case (potion.objtype)
    0xbf00: 
-      var lvl := Cint(GetObjProperty(potion, "strength"));
-      if (lvl)
-         TS_StartTimer(who, "defaultPoison", 120, lvl);
-      else
-         TS_StartTimer(who, "defaultPoison", 120, 1);
-      endif
+      var lvl := Cint(GetObjProperty(potion, "level"));
+      TS_StartTimer(who, "defaultPoison", 15, _ifOr(lvl, 1));
       SendSysMessageEx(who, "Você foi envenenado", 3, 40);
    0xbf01:
 	   TS_StartTimer(who, "strPoison", 120, 2);

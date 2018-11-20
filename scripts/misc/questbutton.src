@@ -11,6 +11,7 @@ include "include/say";
 include "include/utils";
 include "include/client";
 include "include/colormap";
+include ":crafting:fls_crafting";
 
 var quest_n := 1;
 var itemdesc := ReadConfigFile(":*:itemdesc");
@@ -54,9 +55,7 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
          var npc_template := NPC_GetNPCConfig(condition.template);
          title += " {}".format(npc_template.Name);
       elseif (condition.item_objtype)
-         var item := FindConfigElem(itemdesc, hex(condition.item_objtype));
-         if (!item) item := FindConfigElem(itemdesc, cint(condition.item_objtype)); endif
-         title += " {}".format(item.desc);
+         title += " {}".format(TruncatePlural(condition.item_objtype));
       endif
 
       var color := 1000;

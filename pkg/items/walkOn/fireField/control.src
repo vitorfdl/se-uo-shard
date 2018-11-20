@@ -17,13 +17,8 @@ program controlScript(field)
 		SetScriptController(creator);
 	endif
 
-	var dmg_dice := GetObjProperty(field, "DamageDice");
-	if ( !dmg_dice )
-		dmg_dice := "1d5";
-	endif
-
 	while ( field )
-		BurnNearbyMobiles(field, dmg_dice);
+		BurnNearbyMobiles(field);
 
 		if ( ReadGameClock() % 3 == 0 )
 			// Play once every 3 seconds.
@@ -43,7 +38,7 @@ program controlScript(field)
 	endwhile
 endprogram
 
-function BurnNearbyMobiles(field, dmg_dice)
+function BurnNearbyMobiles(field)
    var creator := field.GetOwner();
 	var nearby := ListMobilesNearLocationEX(field.x, field.y, field.z, 0, LISTEX_FLAG_NORMAL+LISTEX_FLAG_HIDDEN, field.realm);
 	foreach mobile in ( nearby )

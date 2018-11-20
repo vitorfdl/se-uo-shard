@@ -15,12 +15,14 @@ include ":gumps:yesno";
 var config;
 
 program composicaoscript(who, item)
-
 	var magica;
 	EraseObjProperty(who, "IsMeditating");
 
 	if( Cint(GetObjProperty(who, "#LastMusic")) > ReadGameClock() )
 		SendSysMessageEx(who, "Você deve esperar um momento antes de compor");
+		return 0;
+   elseif(HaveFeatSecondary(who, 72))
+		SendSysMessageEx(who, "Você precisa da habilidade Tocar Instrumentos para compôr músicas;");
 		return 0;
 	endif
 

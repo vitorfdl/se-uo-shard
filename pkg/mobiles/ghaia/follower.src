@@ -159,6 +159,13 @@ function Fight(opponent := 0)
       return;
    endif
 
+
+    if(!npccfgfile.TamingCombat)
+      RunAwayFrom(fighting);
+      wait_time := 0;
+      return;
+    endif
+
    var range := 1;
    var minrange := 0;
    if (npccfgfile.AttackMaxRange)
@@ -343,7 +350,7 @@ function Setup()
 
    personality     := me.GetPetProperties().personality;
 
-   var npc_cfg     := ReadConfigFile(":*:npcdesc")[me.my_template()];
+   var npc_cfg     := NPC_GetNPCConfig(me, 1);
    tame_difficulty := cint(npc_cfg.TameDifficulty);
    foodtype := npc_cfg.foodtype;
    npccfgfile := npc_cfg;
@@ -362,7 +369,7 @@ function Transfer(targ)
    if (GetObjProperty(me.master, "combat_pet") == me.serial)
       return SendSysMessageEx(me.master, "Você não pode transferir seu animal combatente.", SSM_FAIL);
    endif
-   Speak("*"+me.name+" aceita "+targ.name+" como novo dono*");
+   PrintText(me, "*"+me.name+" aceita "+targ.name+" como novo dono*");
    SetObjProperty(me, "last_owner", (me.master).serial);
    SetObjProperty(me, "owner", targ.serial);
    ErasePet(me.master, me.serial);
@@ -375,7 +382,7 @@ function Transfer(targ)
 endfunction
 
 function UnTame()
-   PrintTextAbovePrivate(me, "*"+me.name+" pode viver livre novamente.*", me.master);
+   PrintTExtPrivate(me, "*"+me.name+" pode viver livre novamente.*", me.master);
    SetObjProperty(me, "last_owner", (me.master).serial);
 
    ErasePet(me.master, me.serial);
@@ -440,20 +447,14 @@ function ResolveSpeech(ev)
 
    /// Attack command
    if (text["mate"] || text["ataque"])
-      // if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
-      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-      //    return;
-      // endif
+      if (!npccfgfile.TamingCombat) return; endif
       targ := target(ev.source, TGTOPT_HARMFUL + TGTOPT_CHECK_LOS);
       Fight(targ);
       allevent := struct{ targ := targ, type := ATTACK_CMD };
 
    /// Guard Command
    elseif(text["guarde"] || text["proteja"])
-      // if (me.IsTamable() && !me.rollPetDice("Defend", tame_difficulty))
-      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-      //    return;
-      // endif
+      if (!npccfgfile.TamingCombat) return; endif
       if (!targ)
          targ := target(ev.source);
       endif
@@ -462,10 +463,6 @@ function ResolveSpeech(ev)
 
    /// Stop Command
    elseif (text["pare"])
-      if (me.IsTamable() && !me.rollPetDice("Hold", tame_difficulty))
-         PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         return;
-      endif
       following  := 0;
       fighting   := 0;
       patrolling := 0;
@@ -473,12 +470,6 @@ function ResolveSpeech(ev)
 
    /// Follow Command
    elseif (text["siga"])
-      // if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
-      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-      //    return;
-      // elseif(GetObjProperty(me, "animatesword"))
-      //    return;
-      // endif
       if (!targ)
          targ := target(ev.source);
       endif
@@ -487,6 +478,8 @@ function ResolveSpeech(ev)
 
    /// New Master Command
    elseif (text["novo dono"])
+      if (GetObjProperty(me.master, "combat_pet") == me.serial) return; endif
+      
       if (GetObjProperty(me, "summon") == 1 || GetObjProperty(me, "animatesword"))
          SendSysMessageEx(owner, "Outros não podem controlar criaturas invocadas por você.");
          return;

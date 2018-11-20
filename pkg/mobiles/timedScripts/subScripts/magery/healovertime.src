@@ -15,8 +15,9 @@ function StartScript(mobile, attacker := 0, level := 0)
    if (!level) level := 1; endif
 
    while (mobile)
-      HealFLS(mobile, RandomDiceRoll("{}d5+{}".format(level, level)));
-      HealStamina(mobile, RandomDiceRoll("{}d3".format(level)));
+      HealFLS(mobile, level*10);
+      HealStamina(mobile, level*2);
+      HealMana(mobile, level*5);
       sleep(2);
    endwhile
 

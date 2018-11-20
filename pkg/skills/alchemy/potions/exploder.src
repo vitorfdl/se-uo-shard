@@ -8,7 +8,6 @@ include "include/shapes";
 include ":timedscripts:timedScripts";
 
 program exploder(parms)
-
 	var potion := parms[1];
 //	if(GetObjProperty(potion,"running"))
 //		return;
@@ -20,33 +19,27 @@ program exploder(parms)
 	if(GetObjProperty(potion,"pause"))
 		sleepms(250);
 	endif
+
 	var thecenter := potion;
 	while(thecenter.container)
 		thecenter := thecenter.container;
 	endwhile
 	SetScriptController(who);
 
-	var dmg;
+   var lvl := GetObjProperty(who, "level");
+   lvl := _IfOr(lvl, 1);
+
 	if (cint(GetObjProperty(potion, "nodmg")) != 1)
 		case (potion.objtype)
-			56328: dmg := RandomDiceRoll("1d4+2"); ExplosionEffect(who, potion, dmg);
-			61280: dmg := RandomDiceRoll("2d6+4"); ExplosionEffect(who, potion, dmg);
-			61281: dmg := RandomDiceRoll("3d6+8"); ExplosionEffect(who, potion, dmg);
-			61282: dmg := RandomDiceRoll("4d6+12"); ExplosionEffect(who, potion, dmg);
-			48910: GlueEffect(who, potion);
-			48911: PoisonEffect(who, potion, 1);
-			48912: PoisonEffect(who, potion, 2);
-			48913: PoisonEffect(who, potion, 3);
-			48915: FlameEffect(who, potion, 1);
-			48916: FlameEffect(who, potion, 2);
-			48917: FlameEffect(who, potion, 3);
-			48918: HalluEffect(who, potion, 3);
+			56328: ExplosionEffect(who, potion, lvl);
+			48910: GlueEffect(who, potion, lvl);
+			48911: PoisonEffect(who, potion, lvl);
+			48915: FlameEffect(who, potion, lvl);
+			48918: HalluEffect(who, potion, lvl);
 		endcase
 	endif
 
 	var e := DestroyItem(potion);
-	//sendsysmessage(who, "alo " + e);
-
 endprogram
 
 function FlameEffect(who, potion, lvl)
@@ -59,6 +52,7 @@ function FlameEffect(who, potion, lvl)
 		var field := CreateItemAtLocation(coord.x, coord.y, potion.z, "FireField_NS", 1);
 		if (checklineofsight(field, potion))
 			field.SetDuration(10);
+         field.SetDamage(lvl*15);
 		else
 			DestroyItem(field);
 		endif
@@ -74,24 +68,20 @@ function FlameEffect(who, potion, lvl)
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);
 			//ApplyDamageEX(critter, lvl*15, DMG_FIRE);
-			DamageFLS(critter, RandomDiceRoll("{}d8".format(lvl)), DMG_FIRE);
+			DamageFLS(critter, 45 * lvl, DMG_FIRE);
 		endif
 	endforeach
 
 	efeitocascata(potion, who);
-        
-
 endfunction
 
 function HalluEffect(who, potion, lvl)
 	foreach critter in (ListMobilesNearLocationEx( potion.x, potion.y, potion.z, 6, LISTEX_FLAG_NORMAL + LISTEX_FLAG_HIDDEN, potion.realm ));
 		if ( CheckLineOfSight(potion, critter) )
 			PlayStationaryEffect(critter.x, critter.y, critter.z, GFX_POISON_GAS, 10,10, 0, critter.realm);
-			TS_StartTimer(critter, "hallucination", 120, lvl);
+			TS_StartTimer(critter, "hallucination", 20, lvl);
 		endif
 	endforeach
-
-
 endfunction
 
 function PoisonEffect(who, potion, lvl)
@@ -109,8 +99,7 @@ function PoisonEffect(who, potion, lvl)
 	endforeach
 endfunction
 
-function GlueEffect(who, potion)
-
+function GlueEffect(who, potion, lvl)
 	var coords := GetCoordsInSquare(potion.x, potion.y, 4);
 	foreach coord in coords;
 		if ( RandomInt(2) != 1 ) // Don't place a fire field
@@ -125,19 +114,17 @@ function GlueEffect(who, potion)
 		sleepms(5);
 	endforeach
 
-	foreach critter in (ListMobilesNearLocationEx( potion.x, potion.y, potion.z, 4, LISTEX_FLAG_NORMAL + LISTEX_FLAG_HIDDEN, potion.realm ));
+	foreach critter in (ListMobilesNearLocationEx( potion.x, potion.y, potion.z, lvl * 2, LISTEX_FLAG_NORMAL + LISTEX_FLAG_HIDDEN, potion.realm ));
 		if (CheckLineOfSight(potion, critter))
 			if ( critter.hidden && critter.acct )
 				critter.hidden := 0;
-				SendSysMessage(critter, "Você foi revelado pela teia!");
+				SendSysMessage(critter, "Você foi revelado pela cola!");
 			endif
 		endif
 	endforeach
-
-
 endfunction
 
-function ExplosionEffect(who, potion, dmg)
+function ExplosionEffect(who, potion, lvl)
 	PlayStationaryEffect( potion.x, potion.y, potion.z, 0x36b0, 7, 10, 1);
 	PlaySoundEffect(potion, 0x208);
 	potion.graphic := 1;
@@ -150,19 +137,15 @@ function ExplosionEffect(who, potion, dmg)
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);
 			//ApplyDamageEX(critter, dmg, DMG_FIRE);
-			DamageFLS(critter, dmg, DMG_FIRE);
+			DamageFLS(critter, 45 * lvl, DMG_FIRE);
 		endif
 	endforeach
 
 	efeitocascata(potion, who);
-
-        
 endfunction
 
 function EfeitoCascata(potion, who)
-
-
-	var potions := {56328, 61280, 61281, 61282, 48915, 48916, 48917 };
+	var potions := { 56328, 61280, 61281, 61282, 48915, 48916, 48917 };
 	var counter := 1;
 	foreach item in (ListItemsNearLocation(potion.x, potion.y, potion.z, 8, potion.realm))
 		if (checklineofsight(potion, item))
@@ -180,7 +163,4 @@ function EfeitoCascata(potion, who)
 			 endif
 		 endif
 	 endforeach
-
-
-
 endfunction

@@ -9,6 +9,6 @@ program drink_blue (who, potion)
 		return;
 	endif
 	EmptyBottle(who, potion);
-	var bonus := cint(GetObjProperty(potion, "crafterskill"));
+	var bonus := cint(GetObjProperty(potion, "level"));
 	TS_StartTimer(who, "velocidade", 8, 20); 
 endprogram
