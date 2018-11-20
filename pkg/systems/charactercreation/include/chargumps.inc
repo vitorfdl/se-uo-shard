@@ -136,15 +136,11 @@ function ItemPickerGump(who, byref chardata)
                
             var created := CreateItemInBackpack( who, buyitem, amt );
             if (created.isA(POLCLASS_WEAPON))
-               created.dmg_mod := 20;
+               created.dmg_mod := 15;
+               created.qualtiy := 2;
                SetName(created, created.desc);
-            // elseif (created.isA(POLCLASS_ARMOR))
-
             endif
-
-
          endif
-
 
          sleepms(2);
       endforeach

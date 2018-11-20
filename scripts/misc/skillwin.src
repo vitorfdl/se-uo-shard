@@ -18,13 +18,16 @@ include ":tn:tngumps";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
+include ":taming:taming";
 include "include/say";
 include "include/utils";
 include "include/client";
 include ":gumps:requestgump";
 include ":gumps:htmlgump";
+include ":crafting:craft_props";
 
 CONST GF_CHANGE_PAGE := 2;
+CONST GF_CHANGE_PAGE_TAME := 3;
 
 CONST GF_HITS_BTN := 5;
 CONST GF_MANA_BTN := 6;
@@ -37,7 +40,7 @@ CONST GF_BKG_ADD_BTN := 100;
 var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
 var ficharp_elem;
 
-function buildSubClass(who, charlevel, byref gump, subclass, x, y)
+function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y)
    if (!subclass)
       GFHtmlShadowed(gump, 307, y+15, 150, 20, "#FFFFFF", "Sem subclasse", 4);
       return;
@@ -54,7 +57,7 @@ function buildSubClass(who, charlevel, byref gump, subclass, x, y)
    
    var cur_group := 1;
    var x_pos := x+114;
-   var power := CalculateRawDamage(who, 0, who.weapon);
+   var power := CalculateRawDamage(targ, 0, targ.weapon);
    foreach hab in feats
       if (hab.Group != cur_group)
          GFGumpPicTiled(gump, x_pos+5, y+9, 1, 20, 2701);  // divisor
@@ -63,11 +66,11 @@ function buildSubClass(who, charlevel, byref gump, subclass, x, y)
       endif
 
       var color := 0;
-      if (!(hab.FeatId in subclass.habs))
+      if (!(hab.FeatId in subclass.habs) && who.cmdlevel <= 3)
          color := 1000; 
       endif
       
-      if (color != 1000 || (charlevel >= hab.Level && cint(subclass.level) >= hab.Group))
+      if (color != 1000 || (charlevel >= hab.Level && cint(subclass.level) >= hab.Group) && who == targ)
          GFAddButton(gump,  x_pos, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
       endif
 
@@ -78,7 +81,7 @@ function buildSubClass(who, charlevel, byref gump, subclass, x, y)
    endforeach
 endfunction
 
-function buildClass(who, charlevel, byref gump, classe, extrahabs := array{})
+function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array{})
    var classCfg := ReadConfigFile(":charactercreation:config/classes");
    var elem := FindConfigElem(classCfg, classe.id);
    if (!elem) return; endif
@@ -99,7 +102,7 @@ function buildClass(who, charlevel, byref gump, classe, extrahabs := array{})
    var x := 174;
    var y := 178;
 
-   var power := CalculateRawDamage(who, 0, who.weapon);
+   var power := CalculateRawDamage(targ, 0, targ.weapon);
    for (cur_group := 1; cur_group <= 4; cur_group += 1)
       var i;
       var feat_list := FindAllElemInArray(feats, struct{ Group := cur_group }) + FindAllElemInArray(extrahabs, struct{ Group := cur_group });
@@ -114,7 +117,7 @@ function buildClass(who, charlevel, byref gump, classe, extrahabs := array{})
                color := 1000; 
             endif
 
-            if (color == 0 || (charlevel >= hab.Level && cint(classe.level) >= hab.Group))
+            if (color == 0 || (charlevel >= hab.Level && cint(classe.level) >= hab.Group) && who == targ)
                GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
             endif
             GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
@@ -182,14 +185,17 @@ function buildExpBar(byref gump, x, y, width, value, maxexp)
    GFGumpPicTiled(gump, x, y, exp_width, 8, 9751);
 endfunction
 
-function SendSkillGump(who, chardata)
+function SendSkillGump(who, chardata, targ)
    var gump := GFCreateGump();
 
    GFSetID(gump, GUMPID_SKILLLIST);
 	GFResizePic(gump, 13, 13, 9380, 712, 510);
 
-   GFHtmlShadowed(gump, 299, 45, 150, 20, "#FFFFFF", "Ficha de Personagem", 4);
-	GFAddButton(gump, 425, 49, 2224, 2224, GF_CLOSE_BTN, GF_CHANGE_PAGE);
+   GFHtmlShadowed(gump, 297+15, 45, 150, 20, "#FFFFFF", "Ficha de Personagem", 4);
+	GFAddButton(gump, 425+13, 49, 2224, 2224, GF_CLOSE_BTN, GF_CHANGE_PAGE);
+   if (HaveFeatSecondary(targ, 53))
+	   GFAddButton(gump, 275+10, 48, 2223, 2223, GF_CLOSE_BTN, GF_CHANGE_PAGE_TAME);
+   endif
 	GFGumpPic(gump, 46, 60, 112, 0);
    GFTooltipText(gump, "Este é o level do seu personagem, seguido pelos pontos de habilidade disponíveis. Pontos são gastos para aprender habilidades de classe e subclasse.");
    GFHtmlShadowed(gump, 99, 77, 60, 20, "#FFFFFF", "Level", 5);
@@ -198,13 +204,13 @@ function SendSkillGump(who, chardata)
 	GFTextLine(gump, 164, 93, 0, "{}".format(chardata.points));
    GFTooltipText(gump, "Pontos são gastos para aprender habilidades de classe e subclasse.");
 	GFTextLine(gump, 67, 122, 0, "Exp:");
-   buildExpBar(gump, 101, 129, 576, chardata.exppoints, who.getMaxExp());
+   buildExpBar(gump, 101, 129, 576, chardata.exppoints, targ.getMaxExp());
    GFTooltipText(gump, "Experiëncia de personagem é adquirida executando diversas tarefas como: matar monstros, criar itens, escrevendo livros e usando habilidades.");
    
-   if (chardata.vitalpoints > 0) AddVitalIncreaseButtons(gump); endif
+   if (chardata.vitalpoints > 0 && who == targ) AddVitalIncreaseButtons(gump); endif
 
    if (chardata.raca)
-      GFHtmlShadowed(gump, 582, 61, 90, 20, "#FFFFFF", "<center>Raça: {}".format(who.getRace(1)), 4);
+      GFHtmlShadowed(gump, 582, 61, 90, 20, "#FFFFFF", "<center>Raça: {}".format(targ.getRace(1)), 4);
       var race_habs := GetRaceFeats(chardata.raca);
       foreach hab in race_habs
          GFGumpPic(gump, 580 + ((_hab_iter-1) * 49), 81, hab.Icon, 0 ); //hab
@@ -224,25 +230,25 @@ function SendSkillGump(who, chardata)
 	GFTextLine(gump, 503, 155, 0, "Habilidade 4");
 	GFTextLine(gump, 604, 155, 0, "Ultimate");
 
-   buildClass(who, chardata.level, gump, chardata.classes[1], array{});
+   buildClass(who, targ, chardata.level, gump, chardata.classes[1], array{});
 
 	GFGumpPic(gump, 37, 274, 57, 0); // bar
 	GFGumpPicTiled(gump, 67, 274, 607, 21, 58); //bar
 	GFGumpPic(gump, 667, 274, 59, 0); //bar
 
-   buildSubClass(who, chardata.level, gump, chardata.subclasses[1], 141, 297);
+   buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 141, 297);
 
 	GFGumpPic(gump, 94, 350, 57, 0); // bar
 	GFGumpPicTiled(gump, 123, 350, 501, 21, 58); // bar
 	GFGumpPic(gump, 624, 350, 59, 0); // bar
 
-   buildSubClass(who, chardata.level, gump, chardata.subclasses[2], 141, 368);
+   buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[2], 141, 368);
 
 	GFGumpPic(gump, 93, 421, 57, 0); // bar
 	GFGumpPicTiled(gump, 122, 421, 501, 21, 58); // bar
 	GFGumpPic(gump, 623, 421, 59, 0); // bar
 
-   buildSubClass(who, chardata.level, gump, chardata.subclasses[3], 141, 439);
+   buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[3], 141, 439);
 
 	GFGumpPic(gump, 223, 63, 105, 0);
    GFTooltipText(gump, "Este é seu valor máximo de vida, sem nenhum modificador.");
@@ -270,8 +276,8 @@ function SendBackgroundGump(who, edit, targ)
    GFSetID(gump, GUMPID_SKILLLIST);
 	GFResizePic(gump, 13, 13, 9380, 712, 510);
 
-   GFHtmlShadowed(gump, 299-10, 45, 180, 20, "#FFFFFF", "Background do Personagem", 4);
-	GFAddButton(gump, 275-10, 48, 2223, 2223, GF_CLOSE_BTN, GF_CHANGE_PAGE);
+   GFHtmlShadowed(gump, 299+5, 45, 180, 20, "#FFFFFF", "Background do Personagem", 4);
+	GFAddButton(gump, 275+5, 48, 2223, 2223, GF_CLOSE_BTN, GF_CHANGE_PAGE);
 
 	GFTextLine(gump, 43, 70, 2212, "Característica do Personagem (Max. 6)");
 	GFHTMLArea(gump, 43, 89, 654, 115, OrganizarTexto(ficharp_elem, valores, "Caracteristicas"), 1, 1);
@@ -381,48 +387,57 @@ function PegarResposta(who)
 	endif
 endfunction
 
-program skillwin(who)
+program skillwin(who, targ)
+   _resolveParams(who, targ);
+   if (!targ) targ := who; endif
+
    if (CloseGump( who, GUMPID_SKILLLIST) || GetObjProperty(who, "criandochar"))
       return;
    endif
 
-   var chardata := GetObjProperty(who, "chardata");
+   var chardata := GetObjProperty(targ, "chardata");
 
-   ficharp_elem := DFFindElement(ficharp_data_file, Hex(who.serial), DF_NO_CREATE);
+   ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_NO_CREATE);
    if (!ficharp_elem)
-      ficharp_elem := DFFindElement(ficharp_data_file, Hex(who.serial), DF_CREATE);
+      ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_CREATE);
       var ficha := struct;
       ficha.+Caracteristicas := array{};
       ficha.+Feitos          := array{};
       ficha.+Anotacoes       := array{};
       ficha.+Avaliacoes      := array{};
-      fichaSetProp(who, "Ficha", ficha);
+      fichaSetProp(targ, "Ficha", ficha);
    endif
 
    var cur_page := 0;
    var res := 1;
    while (who.connected && res)
       if (cur_page == 0)
-         res := SendSkillGump(who, chardata)[0];
-      else
-         res := SendBackgroundGump(who, 1, who)[0];
+         res := SendSkillGump(who, chardata, targ)[0];
+      elseif (cur_page == 1)
+         res := SendBackgroundGump(who, _ifElse(who.cmdlevel >= 3, 3, 1), targ)[0];
+      elseif (cur_page == 2)
+         res := PetSkillGump(who, targ)[0];
       endif
       
       if (res == GF_CHANGE_PAGE)
          cur_page := !cur_page;
+      elseif (res == GF_CHANGE_PAGE_TAME)
+         cur_page := _ifElse(!cur_page, 2, 0);
       elseif (res)
-         if (!cur_page)
-            HandleSkillPage(who, chardata, res);
-         else
-            HandleBackgroundPage(who, res, who);
-         endif         
+         if (cur_page == 0)
+            HandleSkillPage(who, chardata, res, targ);
+         elseif(cur_page == 1)
+            HandleBackgroundPage(who, res, targ);
+         elseif(cur_page == 2)
+            HandleTamingPage(who, res, targ);
+         endif
       endif
 
       sleepms(2);
    endwhile
 endprogram
 
-function HandleSkillPage(who, byref chardata, res)
+function HandleSkillPage(who, byref chardata, res, targ)
    if (res >= 300)
       var hab := getFeatById(res - 300, "RETURN_CLASS");
       var i := FindInArray(chardata[hab.ClassType], struct{ id := hab.Class });
@@ -480,7 +495,7 @@ function HandleSkillPage(who, byref chardata, res)
       if (chardata.vitalpoints < 1)
          return SendSysMessageEx(who, "Você não tem mais pontos de vitalidade disponíveis.");
       endif
-      chardata.hits += 200;
+      chardata.hits += 120;
       chardata.vitalpoints -= 1;
       SetObjProperty(who, "chardata", chardata);
       RecalcVitals(who, RECALC_NO_INTRINSIC_MOD);

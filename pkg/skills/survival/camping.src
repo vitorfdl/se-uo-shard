@@ -93,10 +93,12 @@ program UseWood( who, wood )
 
 				if (continuehealing == 1)
 					foreach char in (nearbypeople)
-						healFLS(char, cint(cdbl(AP_GetVitalMaximumValue(char, HITS)) * 0.15), 0);
-						healMana(char, cint(cdbl(AP_GetVitalMaximumValue(char, MANA)) * 0.15));
-						healStamina(char, cint(cdbl(AP_GetVitalMaximumValue(char, STAMINA)) * 0.15));
-                  sleepms(1);
+                  var hungerlvl := AP_GetVital(who, "Hunger") / 100;
+
+						healFLS(char, cint(cdbl(AP_GetVitalMaximumValue(char, HITS)) * hungerlvl), 0);
+						healMana(char, cint(cdbl(AP_GetVitalMaximumValue(char, MANA)) * hungerlvl));
+						healStamina(char, cint(cdbl(AP_GetVitalMaximumValue(char, STAMINA)) * hungerlvl));
+                  sleepms(2);
 					endforeach
             else
 					PrintText(campfire, "*algo atrapalha o acampamento*");

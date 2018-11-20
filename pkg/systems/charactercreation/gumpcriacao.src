@@ -130,7 +130,7 @@ function StartCharacterCreation(who, byref chardata)
          level := 1,
          points := 1,
          vitalpoints := 0,
-         hits := 500,
+         hits := 300,
          mana := 100,
          stam := 30,
          god := "Anar",

@@ -12,13 +12,10 @@ program stamPotion(who, potion)
 		return 1;
 	endif
 
-	var healed := 0;
-	healed := AP_GetVitalMaximumValue(who, STAMINA);
-	if(potion.objtype == 0xdc0f)
-		healed := RandomDiceRoll("4d4+20");
-	else
-		healed := RandomDiceRoll("3d4+10");
-	endif
+   var level := cint(GetObjProperty(potion, "level"));
+   if (!level) level := 1; endif
+
+	var healed := RandomIntMinMax(5 * level, 15 * level);
 
 	EmptyBottle(who, potion);
 	Detach();

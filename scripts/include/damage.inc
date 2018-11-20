@@ -178,6 +178,10 @@ function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor :=
       reduction := armor.get_member("resist_{}".format(dmg_type)) + defender.get_member("resist_{}_mod".format(dmg_type));
    endif
 
+   if (defender.shield)
+      reduction += defender.shield.get_member("resist_{}".format(dmg_type));
+   endif
+
    if (reduction > 60) reduction := 60; endif
    return (reduction / 100);
 endfunction

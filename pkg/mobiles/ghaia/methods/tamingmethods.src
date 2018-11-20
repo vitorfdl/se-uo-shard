@@ -16,10 +16,10 @@ exported function GetPetProperties(pet)
    var return_obj := dictionary{
       "loyalt" -> cint(props["loyalt"]),
       "personality" -> props["personality"],
-      "commands" -> props["commands"],
-      "talents" -> props["talents"],
+      "feats" -> props["feats"],
       "exp" -> cint(props["exp"]),
-      "points" -> cint(props["points"])
+      "points" -> cint(props["points"]),
+      "vitalpoints" -> cint(props["vitalpoints"])
    };
 
    return return_obj;
@@ -39,8 +39,12 @@ exported function SetPetProperties(pet, new_props)
       props["points"] := cint(new_props["points"]);
    endif   
    
-   if (new_props["talents"] && typeOf(new_props["talents"]) == "Struct")
-      props["talents"] := new_props["talents"];
+   if (typeof(new_props["vitalpoints"]) == "Integer")
+      props["vitalpoints"] := cint(new_props["vitalpoints"]);
+   endif   
+
+   if (new_props["feats"] && typeOf(new_props["feats"]) == "Struct")
+      props["feats"] := new_props["feats"];
    endif 
 
    if (new_props["personality"] && new_props["personality"] in personalities)
@@ -74,16 +78,17 @@ exported function InitPetProperties(pet, reset := 0)
    
    props.loyalt := 0;
    props.points := 0;
+   props.vitalpoints := 0;
    props.exp    := 0;
-   props.talents := array{};
+   props.feats := array{};
    if (old_props)
       props.personality := old_props.personality;
    else
-      var talents := GetConfigStringArray(pet_elem, "Talent");
-      foreach talent in talents
+      var feats := GetConfigStringArray(pet_elem, "Talent");
+      foreach talent in feats
          talent := SplitWords(talent);
          if ( RandomInt(100) <= cint(talent[2]) )
-            props.talents.append(talent[1]);
+            props.feats.append(talent[1]);
          endif
       endforeach
    endif
@@ -136,6 +141,13 @@ exported function SetPoints(pet, amount := 1)
    return 1;
 endfunction
 
+exported function SetVitalPoints(pet, amount := 1)
+   var props := GetObjProperty(pet, "info");
+   var new_vitalpoints := struct{ "vitalpoints" := cint(props.vitalpoints) + amount };
+   SetPetProperties(pet, new_vitalpoints);
+   return 1;
+endfunction
+
 exported function SetExp(pet, amount := 1)
    var props := GetObjProperty(pet, "info");
    if (cint(props.loyalt) >= 10) return; endif
@@ -147,6 +159,7 @@ exported function SetExp(pet, amount := 1)
    if (new_exp >= max_exp)
       new_prop.exp := new_exp - max_exp;
       SetPoints(pet);
+      SetVitalPoints(pet);
       SetLoyalt(pet);
       
       var amt := 20;
@@ -163,7 +176,7 @@ endfunction
 
 exported function HaveTalent(pet, talent)
    var props := GetObjProperty(pet, "info");
-   if (talent in props.talents)
+   if (talent in props.feats)
       return 1;
    endif
 

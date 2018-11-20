@@ -36,6 +36,7 @@ program lever(item)
             endif
          elseif (event.type == SYSEVENT_ENTEREDAREA && event.source.connected && item.invisible && !powerevent)
             item.invisible := 0;
+            PrintText(item, "*!*");
             SetObjProperty(item, "reset_cd", polcore().systime+600);
          endif
       endif

@@ -93,7 +93,7 @@ function PushBack(who, dist, delay, invert := 0)
 		if (!CheckLosAt(who, finalx, finaly, who.z))
 			return 0;
 		endif
-		var err := MoveObjectToLocation( who, finalx, finaly, who.z, who.realm );
+		var err := MoveObjectToLocation( who, finalx, finaly, who.z, who.realm, MOVEITEM_IGNOREMOVABLE );
 		sleepms(delay);
 		if (err == error)
 		//	PrintText(who, "*bate no obstaculo*");
@@ -124,7 +124,7 @@ function PushMobile(who, dist, delay, targ, invert := 0)
 			break;
 		endif
 
-		var err := MoveObjectToLocation( targ, finalx, finaly, targ.z, targ.realm );
+		var err := MoveObjectToLocation( targ, finalx, finaly, targ.z, targ.realm, MOVEITEM_IGNOREMOVABLE );
 		sleepms(delay);
 		if (err == error)
 		//	PrintText(who, "*bate no obstaculo*");

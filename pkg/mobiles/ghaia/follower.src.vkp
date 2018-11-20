@@ -400,12 +400,6 @@ function Transfer(targ)
       return;
    endif
 
-   if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) ) 
-      Say("*" + me.name+ " não aceita " + targ.name + "como dono.");
-      return;
-   endif
-
-
    Say("*"+me.name+" aceita "+targ.name+" como novo dono*");
 
    SetObjProperty(me, "owner", targ.serial);

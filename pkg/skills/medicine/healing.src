@@ -246,16 +246,13 @@ function HealNpcCorpse(mobile, targ)
 
 	CreateItemInBackpack(mobile, 0xE20, RandomInt(3)+1);
 
-	var roll := rollAttrDice(mobile, WISDOM) + GetSkillBonus(mobile, TRATO_ANIMAIS);
 	if (  GetObjProperty(targ,"morto") )
 		SendSysMessageEx(mobile, "o alvo está morto", SSM_FAIL);
 		return;
-	elseif ( roll >= 16 ) // SkillCheck(mobile, PRIMEIROS_SOCORROS, diff) SkillCheck(mobile, , diff)
+	else
 		SendSysMessageEx(mobile, "Você estabilizou "+name, SSM_INFO);
 		ghaiaRessurect(targ);
       mobile.SetAchievement("taming", 2);
-	else
-		SendSysMessageEx(mobile, "Você não conseguiu estabilizar {}.".format(name), SSM_FAIL);
 	endif
 
 	return 1;

@@ -59,7 +59,7 @@ program loko(params)
 	// endif
 
 	//check distancia
-   var is_frozed := 1;
+   var is_frozed := 0;
 	SetCooldown(who, StrReplace(event.name, " ", "_"), event.cd); 
 	//executa os states
 	foreach state in (event.steps)
@@ -90,20 +90,19 @@ program loko(params)
 			var targ := ReturnPointsByTarget(who, state.target, state.conedist);
          targ := targ.randomentry();
          if (!targ) continue; endif
-         var last_loc := array{who.x, who.y};
+
          var targ_face := GetFacing(who.x, who.y, targ.x, targ.y);
          var mod := GetModByFacing(targ_face);
          who.facing := targ_face;
          var mobs := array{};
-         for i := 0 to (state.dist)
+         for i := 0 to (cint(state.dist))
             if (who.paralyzed) break; endif
-            MoveObjectToLocation(me, who.x+mod[1], who.y+mod[2], who.z, who.realm, MOVEITEM_IGNOREMOVABLE);
-            // RunTowardLocation(who.x+mod[1], who.y+mod[2]);
-            if (who.x == last_loc[1] && who.y == last_loc[2]) break; endif
-            mobs += GetEnemiesNear(me, 0);
-            last_loc := array{who.x, who.y};
+            sleepms(30);
+            if (!MoveObjectToLocation(who, who.x+mod[1], who.y+mod[2], who.z, who.realm, MOVEITEM_IGNOREMOVABLE)) break; endif
+
+            mobs += GetEnemiesNear(who, 0);
             if (i != state.dist)
-               sleepms(110);
+               sleepms(80);
             endif
          endfor
 
@@ -556,6 +555,7 @@ program loko(params)
 
    if (is_frozed)
       who.frozen := 0;
+      EraseObjProperty(who, "script_frozed");
    endif
 endprogram
 
@@ -570,7 +570,7 @@ function selectOpponent(who, type, dist := 3)
    elseif (type == "Around Self")
       targ := GetEnemiesNear(who, dist);
    elseif (type == "Opponent")
-      if (who.connected)
+      if (!who.isA(POLCLASS_NPC))
          if (!selected_opponent)
             var user_targ := Target(who);
             selected_opponent := user_targ;
@@ -663,7 +663,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
          sleepms(2);
       endforeach
    elseif (type == "Opponent")
-      if (who.connected)
+      if (!who.isA(POLCLASS_NPC))
          if (!selected_opponent)
             var user_targ := Target(who);
             selected_opponent := user_targ;

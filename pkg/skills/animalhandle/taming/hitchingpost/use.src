@@ -25,8 +25,8 @@ function AnimalHitched(who, item, serial)
    var owner_serial := GetObjProperty(item, "owner_serial");
    if (owner_serial != who.serial)
       return SendSysMessageEx(who, "Você não pode desamarrar o animal de outra pessoa.", SSM_FAIL);
-   elseif ( (GetNumPets(who) + GetPetCost(animal)) > GetMaxPets(who) )
-      return SendSysMessageEx(who, "Seu numero de pets já atingiu o limite, abandone um antes de desamarrar este.", SSM_FAIL);
+   // elseif ( (GetNumPets(who) + GetPetCost(animal)) > GetMaxPets(who) )
+   //    return SendSysMessageEx(who, "Seu numero de pets já atingiu o limite, abandone um antes de desamarrar este.", SSM_FAIL);
    endif
 
    AddPet(who, animal, 1);

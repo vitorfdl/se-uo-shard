@@ -44,6 +44,9 @@ program core_npcDeath(params)
 		var masterserial := getObjProperty(corpse, "owner");
 		var master := SystemFindObjectBySerial(masterserial);
       master.followers := cint(GetNumPets(master));
+      if (GetObjProperty(master, "combat_pet") == GetObjProperty(corpse, "serial"))
+         EraseObjProperty(master, "combat_pet");
+      endif
 	endif
 
    var guild_ref := GetObjProperty(corpse, "guild");
@@ -148,6 +151,10 @@ program core_npcDeath(params)
          process.SendEvent(struct{ type := 0x4785, search := search });
       endif
       ExpGain(mob, 3);
+
+      if (npc_cfg.MethodScript["taming"])
+         mob.UpTameProperty(template);
+      endif
       sleepms(2);
    endforeach
 

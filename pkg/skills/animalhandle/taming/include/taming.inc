@@ -4,6 +4,7 @@ include "include/arrays";
 include "include/damage";
 
 var tam_npc_cfg := ReadConfigFile(":ghaia:npcdesc");
+var pet_commands := array{"Atacar", "Proteger", "Ir Até", "Seguir", "Abandonar", "Novo Dono"};
 
 function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	var mobs := array;
@@ -15,25 +16,8 @@ function ListTamablePetsNearLocation(x, y, z, range, realm := _DEFAULT_REALM)
 	return mobs;
 endfunction
 
-//ve quantos slots custa o npc
-function GetPetCost(pet)
-   var pet_cost := GetObjProperty(pet, "pet_cost");
-   if (pet_cost) return pet_cost; endif
-
-	var npctemplate := pet.my_template();
-	tam_npc_cfg := tam_npc_cfg[npctemplate];
-	if (tam_npc_cfg.petslot == error)
-		return 1;
-	else
-		return Cint(tam_npc_cfg.petslot);
-	endif
-endfunction
-
 /* funcao pega o custo dos pets. tbm atualiza os pets perdidos ou que foram transferidos*/
 function GetNumPets(who)
-	var num_tamed := 0;
-   var max_followers := GetMaxPets(who);
-
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )
 		return 0;
@@ -42,16 +26,7 @@ function GetNumPets(who)
    var remove_indexes := array{};
 	foreach serial in tamed
 		var pet := SystemFindObjectBySerial(serial);
-		if ( pet.master == who )
-         var pet_num := GetPetCost(pet);
-
-         if (num_tamed+pet_num > max_followers)
-            destama(serial);
-            remove_indexes.append(_serial_iter);
-         else
-            num_tamed += pet_num;
-         endif
-		elseif ( !pet || pet.master !=who )
+		if ( !pet || pet.master != who )
 			remove_indexes.append(_serial_iter);
 		endif
 		sleepms(2);
@@ -60,8 +35,8 @@ function GetNumPets(who)
    removeIndexes(tamed, remove_indexes);
 	
 	SetObjProperty(who, "followers", tamed);
-	who.followers := num_tamed;
-	return num_tamed;
+	who.followers := tamed.size();
+	return who.followers;
 endfunction
 
 //deleta o serial da lista de seriais do char (quando o npc morre ou eh transferido)
@@ -76,14 +51,22 @@ function ErasePet(who, myserial)
    var index := myserial in tamed;
    tamed.erase(index);
    MP_Unmount(who);
-   var pet := SystemFindObjectBySerial(myserial);
-   who.followers -= GetPetCost(pet);
+   // var pet := SystemFindObjectBySerial(myserial);
+   who.followers -= 1;
 
+   if (GetObjProperty(who, "combat_pet") == myserial)
+      EraseObjProperty(who, "combat_pet");
+   endif
    SetObjProperty(who, "followers", tamed);
 endfunction
 
 //adiciona o serial do pet 
 function AddPet(who, serial, no_reset := 0)
+	var combat := GetObjProperty(who, "combat_pet");
+   if (combat && SystemFindObjectBySerial(combat) && !who.cmdlevel)
+      return 0;
+   endif
+   
 	var tamed := GetObjProperty(who, "followers");
 	if ( !tamed )
 		tamed := array;
@@ -95,7 +78,7 @@ function AddPet(who, serial, no_reset := 0)
 	var pet := SystemFindObjectBySerial(serial);
    EraseObjProperty(pet, "spawnspot");
    EraseObjProperty(pet, "spawnpoint");
-	who.followers += GetPetCost(pet);
+   EraseObjProperty(pet, "anchor");
 
    pet.SetMaster(who);
          
@@ -110,21 +93,13 @@ function AddPet(who, serial, no_reset := 0)
    RestartScript(pet);
    
    if (!no_reset) pet.InitPetProperties(0); endif
+
+   return 1;
 endfunction
 
 //numero maximo de pets que alguem pode ter
 function GetMaxPets(who)
-   if (who.cmdlevel)
-      return 300;
-   endif
-	// var skill := AP_GetStat(who, WISDOM);
-   var skill := AP_GetTrueSkill(who, TRATO_ANIMAIS);
-   var comando := AP_GetTrueSkill(who, "Magia_de_Comando");
-   if (comando > skill) skill := comando; endif
-
-	var maxpets := 1 + cint( GetObjProperty(who, "extrapets") ) + cint( skill / 2 );
-
-	return maxpets;
+	return 20;
 endfunction
 
 //desloga os pets, teleportando eles pra um lugar l
@@ -196,6 +171,139 @@ function destama(serial)
 	EraseObjproperty(tamed, "script");
 	EraseObjProperty(tamed, "happiness");
 	RestartScript(tamed);
+endfunction
+
+function PetGump(who, pet, pet_cfg := 0)
+   pet_cfg := NPC_GetNPCConfig(pet, 1);
+
+	var gump := GFCreateGump();
+	
+	GFPage(gump, 0);
+   GFSetId(gump, 0x124);
+	GFResizePic(gump, 3, 11, 9380, 276, _ifElse(pet_cfg.TamingCombat, 213, 327));
+	GFGumpPicTiled(gump, 25, 42, 232, 10, 50);
+	GFTextLine(gump, 41, 58, 2212, "CRIATURA");
+	GFTextLine(gump, 40, 74, 1152, "{}".format(pet.name));
+	GFTextLine(gump, 40, 104, 2212, "STATUS");
+	GFTextLine(gump, 40, 119, 1152, "Vida: {}".format(AP_GetVitalMaximumValue(pet, HITS)));
+	GFTextLine(gump, 40, 134, 1152, "Vigor: {}".format(AP_GetVitalMaximumValue(pet, STAMINA)));
+
+	GFTextLine(gump, 169, 59, 2212, "COMANDOS");
+   var y := 0;
+   foreach command in pet_commands
+      sleepms(2);
+      if (!pet_cfg.TamingCombat)
+         if (command in array{"Atacar", "Proteger"}) continue; endif
+      else
+         if (command in array{"Novo Dono"}) continue; endif
+      endif
+
+	   GFTextLine(gump, 180, 77+y, 1152, "{}".format(command));
+	   GFAddButton(gump, 166, 83+y, 2103, 2104, GF_CLOSE_BTN, 10+_command_iter);
+      y+= 17;
+   endforeach
+
+   if (!pet_cfg.TamingCombat)
+      GFTextLine(gump, 64, 171, 2212, "Habilitar I.A Automática");
+      GFAddButton(gump, 84, 188, 10840, 248, GF_CLOSE_BTN, 99);
+      GFHTMLArea(gump, 26, 218, 228, 72, "Habilitar I.A automática permite que a criatura se movimente sozinha, produza itens como ovos, leite e lã, e também habilita sua reprodução caso exista uma fÃªmea e macho prÃ³ximo.", 1, 1);
+      GFGumpPicTiled(gump, 27, _ifElse(pet_cfg.TamingCombat, 179, 295), 232, 10, 50);
+   endif
+
+	var res := GFSendGump(who, gump)[0];
+   return res;
+endfunction
+
+function PetSkillGump(who, targ)
+   var gump := GFCreateGump();
+
+   GFSetID(gump, GUMPID_SKILLLIST);
+	GFResizePic(gump, 13, 13, 9380, 712, 510);
+
+   GFHtmlShadowed(gump, 297+15, 45, 150, 20, "#FFFFFF", "Ficha de Domador", 4);
+	GFAddButton(gump, 425+13, 49, 2224, 2224, GF_CLOSE_BTN, GF_CHANGE_PAGE_TAME);
+   var pet := SystemFindObjectBySerial(GetObjProperty(targ, "combat_pet"));
+   if (pet)
+      var pet_properties := pet.GetPetProperties();
+      var pet_cfg := NPC_GetNPCConfig(pet);
+      GFHtmlShadowed(gump, 57, 90, 128, 20, "#FFFFFF", "<center>{}".format(pet.name), 4);
+      GFTextLine(gump, 51, 134, 1152, "Level");
+      var max_exp := (cint(pet_properties.loyalt) + 1) * 100;
+      buildExpBar(gump, 106, 143, 576, cint(pet_properties.exp), max_exp);
+      // GFGumpPicTiled(gump, 106, 143, 576, 9, 9750); // exp
+      GFTextLine(gump, 88, 134, 1152, "{}".format(pet_properties.loyalt));
+
+      GFTextLine(gump, 406, 68, 2212, "Resistências");
+      var resists := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_ENERGY, DMG_POISON};
+      var x := 0;
+      var y := 0;
+      foreach resist in resists
+         var res_var := cint(GetConfigInt(pet_cfg, "{}Resist".format(resist))) + pet.get_member("resist_{}_mod".format(resist));
+         GFTextLine(gump, 317+x, 84+y, 1152, "Def. {}:".format(TranslateDamage(resist)));
+         GFTextLine(gump, 317+x+80, 84+y, 1152, "{}".format(res_var));
+         
+         y += 18;
+         if (_resist_iter % 3 == 0)
+            y := 0;
+            x += 142;
+         endif
+         sleepms(2);
+      endforeach
+      // GFTextLine(gump, 396, 85, 1152, "60");
+      // GFTextLine(gump, 544, 88, 1152, "60");
+      // GFAddButton(gump, 419, 86, 55, 248, GF_CLOSE_BTN, 0);
+      // GFAddButton(gump, 419, 105, 55, 248, GF_CLOSE_BTN, 0);
+      // GFAddButton(gump, 419, 124, 55, 248, GF_CLOSE_BTN, 0);
+      // GFAddButton(gump, 566, 91, 55, 248, GF_CLOSE_BTN, 0);
+      // GFAddButton(gump, 566, 108, 55, 248, GF_CLOSE_BTN, 0);
+
+      GFTextLine(gump, 210, 69, 2212, "Vitalidades");
+      GFTextLine(gump, 204, 84, 1152, "Vida: {}".format(AP_GetVitalMaximumValue(pet, HITS)));
+      GFTextLine(gump, 198, 101, 1152, "Vigor: {}".format(AP_GetVitalMaximumValue(pet, STAMINA)));
+      // GFAddButton(gump, 281, 85, 55, 248, GF_CLOSE_BTN, 0);
+      // GFAddButton(gump, 281, 103, 55, 248, GF_CLOSE_BTN, 0);
+
+      GFTextLine(gump, 598, 70, 2212, "Habilidades");
+      GFGumpPic(gump, 634, 91, 0x5DD3, 1000);
+      GFTooltipText(gump, "Habilidade Indisponível");
+      GFGumpPic(gump, 587, 91, 0x5DD3, 1000);
+      GFTooltipText(gump, "Habilidade Indisponível");
+   else
+      GFHtmlShadowed(gump, 245, 95, 300, 20, "#AFAFAF", "Nenhuma criatura combatente domesticada", 4);
+   endif
+
+	GFGumpPicTiled(gump, 65, 149, 607, 21, 58);
+	GFGumpPic(gump, 37, 149, 57, 0);
+	GFGumpPic(gump, 667, 149, 59, 0);
+
+	GFTextLine(gump, 233, 175, 2212, "Nível de aprendizado para domesticar criaturas");
+   for i := 0 to 12
+	   GFGumpPicTiled(gump, 59, 221+(i * 20), 611, 1, 2701);
+   endfor
+
+   var pet_knowledge := GetObjProperty(who, "pet_knowledge");
+   if (!pet_knowledge) pet_knowledge := dictionary{}; endif
+
+   var npcdesc := ReadConfigFile(":*:npcdesc");
+   var x := 0;
+   var y := 0;
+   foreach key in (pet_knowledge.Keys())
+      var name := FindConfigElem(npcdesc, key).Name;
+      var percent := cint((pet_knowledge[key] * 100) / 150);
+	   GFTextLine(gump, 67, 202, 1152, "{}: {}%".format(name, percent));
+      y += 20;
+      if (_key_iter % 11 == 0)
+         x += 200;
+         y := 0;
+      endif
+   endforeach
+	// GFTextLine(gump, 67, 223, 1152, "Galinha: 100%");
+
+   return GFSendGump(who, gump);
+endfunction
+
+function HandleTamingPage(who, res, targ)
+   
 endfunction
 
 // function isTamable(mob)

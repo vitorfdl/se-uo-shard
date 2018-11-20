@@ -1,0 +1,130 @@
+use uo;
+use os;
+use util;
+
+include ":attributes:attributes";
+include ":gumps:gumps_ex";
+include "include/shapes";
+include "include/say";
+include ":taming:taming";
+include ":mounts:mounts";
+include ":charactercreation:characters";
+include ":yggdrasil:boss";
+include ":yggdrasil:spawnSpot";
+include ":ghaia:ghaiaUtil";
+
+const START_Y      := 91;
+const END_Y        := 311;
+const BACKGROUND   := 0xBB8;
+const FOREGROUND   := 0xDAC;
+const INIT_DET_PAGE:= 10;
+
+var index_list;
+var info_cfg;
+var entries_list:= dictionary;
+var btn_maxId   := 2;
+var new_list    := array;
+var det_page    := INIT_DET_PAGE; //numero da pagina de detalhes
+
+set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
+
+program taming(params)
+   var who := params[1];
+   var hab := params[2];
+   var targ := params[3];
+
+	if ( who.hidden )
+		who.hidden := 0;
+	endif
+
+	if ( targ.script[":ghaia:follower"] || targ.owner )
+		SendSysMessageEx(who, "{} não pode ser adestrado.".format(targ.name), SSM_FAIL);
+		return FailFeat(who, hab);
+	// elseif ( (GetNumPets(who) + GetPetCost(targ)) > GetMaxPets(who) )
+	// 	SendSysMessageEx(who, "Você atingiu o limite de seguidores.", SSM_FAIL);
+	// 	return FailFeat(who, hab);
+	elseif (!targ.isTamable())
+		SendSysMessageEx(who, "Essa criatura não aceita ser domesticada.", SSM_FAIL);
+		return FailFeat(who, hab);
+	endif
+
+	var npc_cfg := NPC_GetNPCConfig(targ);
+
+   var combat_pet := GetObjProperty(who, "combat_pet");
+
+   TamingEffect(who, targ);
+   sleepms(800);
+
+   if (npc_cfg.TamingCombat && !HaveFeatSecondary(who, 54))
+		SendSysMessageEx(who, "Você não adestrar animais combatentes. É necessário a habilidade Treinador", SSM_FAIL);
+		return FailTaming(who, targ);
+	elseif (npc_cfg.TamingCombat && combat_pet && SystemFindObjectBySerial(combat_pet))
+		SendSysMessageEx(who, "Você não pode adestrar outro animal combatente.", SSM_FAIL);
+		return FailTaming(who, targ);
+   endif
+
+   var pet_knowledge := GetObjProperty(who, "pet_knowledge");
+   if (!pet_knowledge) pet_knowledge := dictionary{}; endif
+
+   if (cint(pet_knowledge[targ.my_template]) < 150)
+		SendSysMessageEx(who, "Não há conhecimento suficiente para adestrar essa criatura. Mate mais delas para adquirir conhecimento.", SSM_FAIL);
+		return FailTaming(who, targ);
+   endif
+
+   PlayStationaryEffectEx( targ.x, targ.y, targ.z+3, targ.realm, 0x375A, 0, 15, 1172 );
+
+   removeFromSpawn(GetObjProperty(targ, "spawnpoint"), targ);
+
+   var no_reset := 0;
+   if (GetObjProperty(targ, "last_owner") == who.serial) no_reset := 1; endif
+
+      var res := AddPet(who, targ.serial, no_reset);
+   if (res)
+      SendSysMessageEx(who, "{} agora é obedece a você".format(targ.name), SSM_FAIL);
+      if (npc_cfg.TamingCombat)
+         SetObjProperty(who, "combat_pet", targ.serial);
+      endif
+   else
+      SendSysMessageEx(who, "Não foi possível domesticar a criatura.");
+   endif
+
+   // var petname := targ.name;
+   // Run_Script_To_Completion(":death:npcdeath", {targ});
+   // SetName(targ, petname);
+endprogram
+
+function FailTaming(who, targ)
+   var d := 3;
+   var area := GetCoordsInSquare(targ.x, targ.y, d);
+   sleepms(150);
+   foreach p in area
+      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
+         PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 1163);
+      endif
+
+      sleepms(2);
+   endforeach
+endfunction
+
+function TamingEffect(who, targ)
+   PlaySoundEffect(who, cint(0x1E1));
+   var d := 4;
+   var area := GetCoordsInSquare(targ.x, targ.y, d);
+   foreach p in area
+      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
+         PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
+      endif
+      sleepms(2);
+   endforeach
+
+   d := 3;
+   area := GetCoordsInSquare(targ.x, targ.y, d);
+   sleepms(150);
+   foreach p in area
+      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
+         PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
+      endif
+
+      sleepms(2);
+   endforeach
+endfunction

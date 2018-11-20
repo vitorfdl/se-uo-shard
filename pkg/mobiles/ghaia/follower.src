@@ -276,50 +276,22 @@ function ProcessDoubleClick(ev)
       CreateItemInBackpack(ev.source, "backpack");
       EraseObjProperty(me, "beforepack");
    elseif (targ.mobile)
-      var gump := GFCreateGump(220, 70);
-      //GFGumpPic(gump, 0, 0, 0x254E);
-      GFResizePic(gump, 0, 0, 0x254E, 100, 100);
 
-      // if(!GetObjProperty(me, "animatesword"))
-         GFTextLine(gump, 30, 15, 2100, "Guarda ");
-         GFAddButton(gump, 15, 17, 2117, 2118, 1, 10);
-
-         GFTextLine(gump, 30, 35, 2100, "Segue ");
-         GFAddButton(gump, 15, 37, 2117, 2118, 1, 20);
-
-         if (targ.mobile.serial != owner.serial)
-            GFTextLine(gump, 30, 55, 2100, "Ataca ");
-            GFAddButton(gump, 15, 57, 2117, 2118, 1, 30);
+      var input := PetGump(owner, me, npccfgfile);
+      if (input >= 10)
+         input -= 10;
+         if (pet_commands[input] == "Atacar")
+            Fight(targ.mobile);
+         elseif (pet_commands[input] == "Proteger")
+            PetGuard(targ.mobile);
+         elseif (pet_commands[input] == "Seguir")
+            PetFollow(targ.mobile);
+         elseif (pet_commands[input] == "Abandonar")
+            UnTame();
+         // elseif (pet_commands[input] == "Atacar")
          endif
-      // endif
-
-      var input := GFSendGump(owner, gump);
-      input  := input[0];
-      if (input == 10)
-         // if (me.IsTamable() && !me.rollPetDice("Defend", tame_difficulty))
-         //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         //    return;
-         // endif
-         PetGuard(targ.mobile);
-      elseif (input ==  20)
-         // if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
-         //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         //    return;
-         // endif
-         PetFollow(targ.mobile);
-      elseif (input == 30)
-         // if (me.IsTamable() && !me.rollPetDice("Attack", tame_difficulty))
-         //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-         //    return;
-         // endif
-         Fight(targ.mobile);
       endif
    elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
-      // if (me.IsTamable() && !me.rollPetDice("Follow", tame_difficulty))
-      //    PrintTextAbovePrivate(me, "*ignora ordens*", ev.source);
-      //    return;
-      // elseif(GetObjProperty(me, "animatesword"))
-      //    return;
       // endif
       PetGoTo(targ, 2);
       following := 0;
@@ -384,11 +356,9 @@ function Transfer(targ)
       return;
    endif
 
-   if ( (GetNumPets(targ) + GetPetCost(me)) > GetMaxPets(targ) )
-      Speak("*" + me.name+ " não aceita " + targ.name + "como dono.");
-      return;
+   if (GetObjProperty(me.master, "combat_pet") == me.serial)
+      return SendSysMessageEx(me.master, "Você não pode transferir seu animal combatente.", SSM_FAIL);
    endif
-
    Speak("*"+me.name+" aceita "+targ.name+" como novo dono*");
    SetObjProperty(me, "last_owner", (me.master).serial);
    SetObjProperty(me, "owner", targ.serial);
@@ -404,6 +374,7 @@ endfunction
 function UnTame()
    PrintTextAbovePrivate(me, "*"+me.name+" pode viver livre novamente.*", me.master);
    SetObjProperty(me, "last_owner", (me.master).serial);
+
    ErasePet(me.master, me.serial);
    me.SetMaster(0);
 
@@ -424,6 +395,7 @@ function UnTame()
    EraseObjProperty(me, "name");
    EraseObjproperty(me, "script");
    // EraseObjProperty(me, "spawnpoint");
+
 
    RestartScript(me);
 endfunction
@@ -594,7 +566,7 @@ function TakeItem(ev)
 endfunction
 
 function CanFight(me, mob)
-   var hostiles := ListHostiles( me.owner, 8, LH_FLAG_LOS);
+   var hostiles := ListHostiles( me.master, 8, LH_FLAG_LOS);
 
    if (guarding)
       hostiles += ListHostiles( guarding, 8, LH_FLAG_LOS);

@@ -3,20 +3,22 @@ include ":taming:taming";
 include "include/say";
 
 function ghaiaRessurect(targ, notame := 0)
-	var npc := CreateNpcFromTemplate( GetObjProperty(targ, "npctemplate"), targ.x, targ.y, targ.z, 0, targ.realm);
+   var template := GetObjProperty(targ, "npctemplate");
+   var npctemplate := NPC_GetNPCConfig(template);
+	var npc := CreateNpcFromTemplate( template, targ.x, targ.y, targ.z, 0, targ.realm);
 	RestartScript(npc);
 	var ownerserial := GetObjProperty(targ, "owner");
 	var owner := SystemFindObjectBySerial(ownerserial, SYSFIND_SEARCH_OFFLINE_MOBILES);
 	if (!owner)
 		destama(npc.serial);
 	else
-		if ( (GetNumPets(owner) + GetPetCost(npc)) > GetMaxPets(owner) )
-			SendSysMessageEx(owner, "Você ja tem muitos animais.", SSM_FAIL);
-			destama(npc.serial);
-		else
-			AddPet(owner, npc.serial, 1);
-	      npc.script := ":ghaia:follower";
-		endif
+      if (npctemplate.TamingCombat && GetObjProperty(owner, "combat_pet"))
+         SendSysMessageEx(owner, "Você já possui um animal combatente. A criatura perde a lealdade a você.", SSM_FAIL);
+         destama(npc.serial);
+      else
+         AddPet(owner, npc.serial, 1);
+         SetObjProperty(owner, "combat_pet", npc.serial);
+      endif
 	endif
    
    if ( !npc.backpack )

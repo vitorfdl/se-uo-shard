@@ -360,8 +360,6 @@ function PoisonChecks(attacker, defender, weapon)
 			return 0;
 		endif
 
-
-
 		poisonInfo.dosage := poisonInfo.dosage -1;
 		if (poisonInfo.dosage <= 0) //se não tiver mais cargas de veneno, deleta
          SendSysMessageEx(attacker, "O veneno da sua arma parece ter perdido o efeito", SSM_FAIL);
@@ -382,15 +380,15 @@ function PoisonChecks(attacker, defender, weapon)
       endif
 	endif
 
-	if (poisonInfo)
-		if (poisonInfo.name == error)
-			return 0;
-		endif
+	if (!poisonInfo)
+      return;
+   elseif (poisonInfo.name == error)
+      return 0;
+   endif
 
-		if (!poisonInfo.level)
-			poisonInfo.level := 1;
-		endif
-	endif
+   if (!poisonInfo.level)
+      poisonInfo.level := 1;
+   endif
 
    var time := 15;
 	if (poisonInfo.name == "paralyzePoison")
