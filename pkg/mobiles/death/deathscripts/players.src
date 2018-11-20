@@ -138,7 +138,7 @@ program death(params)
          endif
       else
          SendSystemReport(ghost, "Você está letárgico e ainda te restam {} minutos".format(240 - cint(GetTimeBetween(letargico, GetTime(), "minutes"))));
-         sleep(2);
+         sleep(15);
       endif
 
       if (ghost.x != corpse.x && ghost.y != corpse.y)
@@ -148,7 +148,7 @@ program death(params)
       if (tempo >= 1)
 		   tempo -= 1;
       endif
-		sleep(15);
+		sleep(2);
 	endwhile
 	
    if (ghost.connected)
