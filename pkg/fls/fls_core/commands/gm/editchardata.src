@@ -16,10 +16,13 @@ include ":tn:tngumps";
 const BTN_CHANGE_RACE := 11;
 const BTN_CHANGE_CORPSE := 13;
 const BTN_CHANGE_LEVELUP := 14;
-const BTN_CHANGE_FEAT := 15;
+const BTN_CHANGE_SUBCLASS := 15;
 const BTN_CHANGE_HITS := 16;
 const BTN_CHANGE_MANA := 17;
 const BTN_CHANGE_VIGOR := 18;
+const BTN_CHANGE_CLASS_LEVELUP := 19;
+const BTN_ADD_SUBCLASS := 11;
+const BTN_CH_SUBCLASS := 20;
 
 program command_Message(who)
 	var targ;
@@ -42,7 +45,30 @@ program command_Message(who)
 		
 		var chardata := GetObjProperty(targ, "chardata");
 		if (!chardata)
-			var chardata := struct{ "level" := 1, "raca" := "", "Feats" := array{}};
+			var chardata := struct{
+         current_class := "",
+         caminhos := array{"Obstinado"},
+         subclasses:= array{},
+         classes := array{struct{
+            id := "Furioso",
+            exp := 0,
+            level := 1,
+            habs := array{},
+            selected_habs := array{}
+         }},
+         exppoints := 0,
+         level := 1,
+         points := 1,
+         vitalpoints := 0,
+         hits := 300,
+         mana := 100,
+         stam := 30,
+         god := "Anar",
+         raca := "Humano",
+         height := 2,
+         weight := 2,
+         nome := ""
+      };
 		endif
 
       var y := 120;
@@ -63,13 +89,16 @@ program command_Message(who)
       GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_VIGOR);
       y+= 30;
       GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
-		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Mudar Aparência", 1);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#006400><center>Mudar Aparência", 1);
       y+= 30;
       GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
-		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Subir Level", 1);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#006400><center>Subir Level", 1);
       y+= 30;
-      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
-		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Adquirir Talento", 1);
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CLASS_LEVELUP);
+		GFHTMLArea(gump,  160, y, 135, 25, "<basefont color=#006400><center>Subir Lev. da Classe", 1);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_SUBCLASS);
+		GFHTMLArea(gump,  160, y, 135, 25, "<basefont color=#006400><center>Alterar Subclasses", 1);
       
 		var input := GFSendGump(who, gump);
 		input := input[0];
@@ -136,7 +165,71 @@ function handleInput(who, input, byref chardata)
       BTN_CHANGE_LEVELUP:
          Start_Script(":fls_core:commands/gm/uplevel", who);
          return;
-      BTN_CHANGE_FEAT:
+      BTN_CHANGE_CLASS_LEVELUP:
+         if (chardata.classes[1].level >= 4) return SendSysMessageEx(who, "Level máximo atingido", SSM_FAIL); endif
+         chardata.classes[1].level := cint(chardata.classes[1].level) + 1;
+         SendSysMessageEx(who, "Level de {} aumentado".format(chardata.classes[1].id), SSM_INFO);
+         return;
+      BTN_CHANGE_SUBCLASS:
+         var res := subclassesgump(who, chardata);
+         if (res == BTN_ADD_SUBCLASS)
+            var classCfg := ReadConfigFile(":charactercreation:config/classes");
+            var opts :=  array{};
+            foreach classe_name in GetConfigStringKeys(classCfg)
+               var classe := FindConfigElem(classCfg, classe_name);
+               if (classe.Type == "Secondary") 
+                  opts.append(classe_name);
+               endif
+               sleepms(2);
+            endforeach
+
+            var subclss := RadioGump(who, 250, 0, "Escolha subclasse para adicionar:", opts);
+            if (!subclss) return; endif
+            chardata.subclasses.append(struct{
+               id := subclss,
+               exp := 0,
+               level := 1,
+               habs := array{}
+            });
+            SendSysMessageEx(who, "Subclasse {} adicionada.".format(subclss), SSM_INFO);
+         elseif (res >= BTN_CH_SUBCLASS && res <= BTN_CH_SUBCLASS+3)
+            res -= BTN_CH_SUBCLASS;
+            var subclasse := chardata.subclasses[res];
+            var opts := array{"Subir Level", "Remover", "Cancelar"};
+            var answ := RadioGump(who, 250, 0, "O que fazer com {}?".format(subclasse.id), opts, 1, 3);
+            if (answ == 1)
+               if (chardata.subclasses[res].level >= 3) return; endif
+               chardata.subclasses[res].level := cint(chardata.subclasses[res].level) + 1;
+               SendSysMessageEx(who, "Level da subclasse aumentado.", SSM_INFO);
+            elseif (answ == 2)
+               chardata.subclasses.erase(res);
+               SendSysMessageEx(who, "Subclasse removida.", SSM_INFO);
+            endif
+         endif
+         return;
       default: return 1;
    endcase
+endfunction
+
+function subclassesgump(who, byref chardata)
+   var gump := GFCreateGump();
+   GFResizePic(gump, 84, 90, 9260, 280, 260);
+
+   GFGumpPicTiled(gump, 100,100,30,235,10460);
+   GFGumpPicTiled(gump, 320,100,30,235,10460);
+
+   GFTextLine(gump, 170, 120, 2212, "Subclasses");
+   var y := 140;
+   foreach subclasse in (chardata.subclasses)
+      GFTextLine(gump, 170, y, 2100, "{} - Lv. {}".format(subclasse.id, subclasse.level));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CH_SUBCLASS+_subclasse_iter);
+      y+= 20;
+   endforeach
+
+   if (chardata.subclasses.keys() < 3)
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_ADD_SUBCLASS);
+      GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#006400><center>Adicionar Subclasse", 1);
+   endif
+
+   return GFSendGump(who, gump)[0];
 endfunction

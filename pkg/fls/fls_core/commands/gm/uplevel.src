@@ -6,7 +6,7 @@ include "include/say";
 
 include ":charactercreation:characters";
 
-program reset(who, params)
+program reset(who)
 	var item;
 	if (who.cmdlevel >= 4)
 		SendSysMessageEx(who, "Escolha o alvo.", SSM_REQUEST);

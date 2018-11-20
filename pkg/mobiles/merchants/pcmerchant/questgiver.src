@@ -266,6 +266,10 @@ function CreateItemsFromClass(who, classe)
 		Run_Script( ":crafting:recipes/oncreate", recipe );
 		sleepms(2);
 	endforeach
+
+   if (elem.emailTitle && elem.emailBody)
+	   start_script( ":email:emailMessage/sendSystemMail", array{ who, elem.emailTitle, elem.emailBody } );
+   endif
 endfunction
 
 function FilterQuestByClass(quest_data, classe)
