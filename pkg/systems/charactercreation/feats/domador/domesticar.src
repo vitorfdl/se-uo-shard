@@ -66,7 +66,7 @@ program taming(params)
    var pet_knowledge := GetObjProperty(who, "pet_knowledge");
    if (!pet_knowledge) pet_knowledge := dictionary{}; endif
 
-   if (cint(pet_knowledge[targ.my_template]) < TamingDiff(targ, npc_cfg))
+   if (cint(pet_knowledge[targ.my_template()]) < TamingDiff(targ, npc_cfg))
 		SendSysMessageEx(who, "Não há conhecimento suficiente para adestrar essa criatura. Mate mais delas para adquirir conhecimento.", SSM_FAIL);
 		return FailTaming(who, targ);
    endif

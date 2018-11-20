@@ -281,7 +281,9 @@ exported function UpTameProperty(who, template)
    template[":ghaia:"] := "";
    var pet_knowledge := GetObjProperty(who, "pet_knowledge");
    if (!pet_knowledge) pet_knowledge := dictionary{}; endif
-
+   
+   if (pet_knowledge[template] >= 150) return; endif
+   
    pet_knowledge[template] := cint(pet_knowledge[template]) +1;
 
    SetObjProperty(who, "pet_knowledge", pet_knowledge);
