@@ -288,7 +288,7 @@ function PetSkillGump(who, targ)
 	   GFGumpPicTiled(gump, 59, 221+(i * 20), 611, 1, 2701);
    endfor
 
-   var pet_knowledge := GetObjProperty(who, "pet_knowledge");
+   var pet_knowledge := GetObjProperty(targ, "pet_knowledge");
    if (!pet_knowledge) pet_knowledge := dictionary{}; endif
 
    var npcdesc := ReadConfigFile(":*:npcdesc");
