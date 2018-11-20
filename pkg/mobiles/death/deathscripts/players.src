@@ -132,12 +132,12 @@ program death(params)
 
       if (!letargico)
          if (tempo % 60 == 0 && tempo != 0)
-            SendSysMessageEx(ghost, "Você se recuperará em "+(tempo/60)+" minuto(s).");
+            SendSystemReport(ghost, "Você se recuperará em "+(tempo/60)+" minuto(s).");
          elseif (tempo <= 10)
-            SendSysMessageEx(ghost, "Você se recuperará em "+(tempo)+" segundo(s).");
+            SendSystemReport(ghost, "Você se recuperará em "+(tempo)+" segundo(s).");
          endif
       else
-         SendSysMessageEx(ghost, "Você está letárgico e ainda te restam {} minutos".format(240 - cint(GetTimeBetween(letargico, GetTime(), "minutes"))));
+         SendSystemReport(ghost, "Você está letárgico e ainda te restam {} minutos".format(240 - cint(GetTimeBetween(letargico, GetTime(), "minutes"))));
          sleep(2);
       endif
 
@@ -148,7 +148,7 @@ program death(params)
       if (tempo >= 1)
 		   tempo -= 1;
       endif
-		sleep(1);
+		sleep(15);
 	endwhile
 	
    if (ghost.connected)
@@ -206,6 +206,7 @@ function checkIfDead(corpse, letargico, ghost)
       var resslocs := _ifOr(GetGlobalProperty("ressloc"), array{});
       foreach pos in resslocs
          if (InRect(corpse.x, corpse.y, " ".join(pos.location)))
+            SendSystemReport(ghost, "O local sagrado começa a restaurar seu espírito.");
             EraseObjProperty(ghost, "letargico");
             EraseObjProperty(corpse, "letargico");
             letargico := 0;

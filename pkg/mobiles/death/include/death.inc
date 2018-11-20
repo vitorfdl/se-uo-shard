@@ -59,6 +59,9 @@ function KataWakeUp(ghost, corpse)
 	if (!ghost.dead)
 		return 1;
 	endif
+   
+   ghost.frozen := 0;
+   if (!ghost.concealed <= 1) ghost.concealed := 0; endif
 
 	var serialC := ghost.serial;
 	//TS_StartTimer(ghost, "mortedelay", 10);
@@ -78,9 +81,8 @@ function KataWakeUp(ghost, corpse)
       endif
 	endif
 
-   ghost.squelch(0);
-   ghost.frozen := 0;
-   ghost.deaf(0);
+   // ghost.squelch(0);
+   // ghost.deaf(0);
 	// var realname := GetObjProperty(ghost, "realname");
 	SetName(ghost, ghost.name);
 	EraseObjProperty(ghost, "realname");
