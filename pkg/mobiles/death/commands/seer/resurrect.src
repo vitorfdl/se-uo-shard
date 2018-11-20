@@ -47,20 +47,7 @@ program textcmd_ResGump(who)
 	
 	if (who.acctname != targ.acctname && who.cmdlevel <= 4)
 		LogToFile(":fls_core:ress.log", who.name+" ("+who.acctname+") ressou "+targ.name+" ("+targ.acctname+"): "+motiveress, LOG_DATETIME);
-		var morto;
-		var dpoints := AP_GetVital(targ, "DP");
-		var assassinado;
-		if (GetObjProperty(targ, "morto"))
-			morto := "Sim";
-		else
-			morto := "Nao";
-		endif
-		if (GetObjProperty(targ, "WeaponKill"))
-			assassinado := "Sim";
-		else
-			assassinado := "Nao";
-		endif
-		LogToFile(":fls_core:ress.log", "Detalhes... Morto: "+morto+"... DeathPoints: "+dpoints+"... Assassinado: "+assassinado, LOG_DATETIME);
+		LogToFile(":fls_core:ress.log", "Detalhes... Morto: {}... DeathPoints: {}... Assassinado: {}".format(_ifElse(GetObjProperty(targ, "morto"), "Sim", "Não"), AP_GetVital(targ, "DP"), _ifElse(GetObjProperty(targ, "WeaponKill"), "Sim", "Não")), LOG_DATETIME);
 	endif
 	KataWakeUp(targ, targ.GetCorpse());
 	EraseObjProperty(targ, "morto");

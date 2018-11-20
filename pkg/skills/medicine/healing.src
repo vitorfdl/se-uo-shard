@@ -63,6 +63,9 @@ program UseBandage(mobile, bandage)
 		if (GetObjProperty(targ, "morto"))
 			SendSysMessageEx(mobile, "Alvo já esta morto.", SSM_FAIL);
 			return 0;
+		elseif (GetObjProperty(targ, "letargico"))
+			SendSysMessageEx(mobile, "O alvo está lertárgico e além dos seus cuidados. Leve-o a uma Igreja ou dê uma Semente de Anar.", SSM_FAIL);
+			return 0;
 		elseif (GetObjProperty(targ, "curado"))
 			SendSysMessageEx(mobile, "Alvo ja foi curado.", SSM_INFO);
 			return 0;
@@ -220,6 +223,9 @@ function HealCorpse(mobile, targ)
 	if ( GetObjProperty(targ,"morto") )
 		SendSysMessageEx(mobile, "o alvo está morto", SSM_FAIL);
 		return;
+   elseif (GetObjProperty(targ, "letargico"))
+      SendSysMessageEx(mobile, "O alvo está lertárgico e além dos seus cuidados. Leve-o a uma Igreja ou dê uma Semente de Anar.", SSM_FAIL);
+      return 0;
 	else
 		ExpGain(mobile, "minor");
 		mobile.SetAchievement("heal_corpse", 1);

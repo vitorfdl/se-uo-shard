@@ -76,6 +76,7 @@ program core_chrDeath(params)
 	SetObjProperty(ghost, "corpo", corpse.serial);
    ghost.squelch(-1);
    ghost.frozen := 1;
+   ghost.deaf(-1);
 	Start_Script("deathscripts/players", params);
 	
 	return 1;

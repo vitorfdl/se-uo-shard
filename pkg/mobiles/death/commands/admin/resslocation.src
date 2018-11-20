@@ -1,0 +1,84 @@
+/*
+ * $Id: resurrect.src 1348 2006-05-12 08:47:00Z austin $
+ *
+ */
+
+use uo;
+use file;
+use os;
+
+include ":death:resurrection";
+include ":tn:tngumps";
+include ":attributes:attributes";
+include ":death:death";
+include ":tn:cooldown";
+include "include/say";
+include "include/utils";
+include ":timedscripts:timedScripts";
+
+const BTN_CH_LOC := 10;
+const BTN_NEW_LOC := 9;
+
+program textcmd_ResGump(who)
+   var resslocs := _ifOr(GetGlobalProperty("ressloc"), array{});
+
+   while (who.connected)
+      var gump := GFCreateGump();
+      GFResizePic(gump, 84, 90, 9260, 280+150, 260+40);
+
+      GFGumpPicTiled(gump, 100,100,30,235+40,10460);
+      GFGumpPicTiled(gump, 320+150,100,30,235+40,10460);
+
+      GFTextLine(gump, 170-20, 120, 2212, "Name");
+      GFTextLine(gump, 170-10+100, 120, 2212, "Location");
+      var y := 140;
+      foreach loc in resslocs
+         GFTextLine(gump, 170-20, y, 2100, "{}".format(loc.name));
+         GFTextLine(gump, 170-10+100, y, 2100, "{}".format(" ".join(loc.location)));
+         GFAddButton(gump, 150-20, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CH_LOC+_loc_iter);
+         y+= 20;
+      endforeach
+         y+= 20;
+
+      GFAddButton(gump, 172+60, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_NEW_LOC);
+      GFHTMLArea(gump,  170+60, y, 115, 25, "<basefont color=#006400><center>Adicionar Local", 1);
+
+      var res := GFSendGump(who, gump)[0];
+      if (res >= BTN_CH_LOC && res <= BTN_CH_LOC+30)
+         res -= BTN_CH_LOC;
+         var loc := resslocs[res];
+         var opts := array{"Alterar", "Remover", "Cancelar"};
+         var answ := RadioGump(who, 250, 0, "O que fazer com {}?".format(loc.name), opts, 1, 3);
+         if (answ == 1)
+            var new_loc := SetLoc(who, resslocs[res]);
+            resslocs[res] := new_loc;
+         elseif (answ == 2)
+            resslocs.erase(res);
+            SendSysMessageEx(who, "Local removida.", SSM_INFO);
+         endif
+      elseif (res == BTN_NEW_LOC)
+         var new_loc := SetLoc(who);
+         resslocs.append(new_loc);
+      else
+         break;
+      endif
+      SetGlobalProperty("ressloc", resslocs);
+   endwhile
+
+endprogram
+
+function SetLoc(who, new_loc := 0)
+   new_loc := _ifOr(new_loc, struct{ name := ""});
+   new_loc.location := array{};
+   while (new_loc.location.size() < 4)
+      SendSysMessageEx(who, "Escolha o ponto {} do retangulo".format(new_loc.location.size()+1));
+      var loc := TargetCoordinates(who);
+      if (!loc) break; endif
+      new_loc.location.append(loc.x);
+      new_loc.location.append(loc.y);
+   endwhile
+
+   if (new_loc.location.size() < 2) return; endif
+   new_loc.name := QuestionsGump(who, array{struct{ title := "Qual o nome do local?", marked := new_loc.name }})[1];
+   return new_loc;
+endfunction

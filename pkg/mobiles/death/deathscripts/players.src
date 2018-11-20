@@ -76,23 +76,24 @@ program death(params)
       return 1;
 	endif
 
-	if (protecao) // Prote¿¿o Contra Morte
+   var letargico := GetObjProperty(ghost, "letargico");
+	if (protecao)
 		EraseObjProperty(ghost, "protecaomorte");
 	elseif (!killer.acctname || ghost.cmdlevel)
 		//if (getCoolDown(ghost, "deathtime") == 0 )
 		if (!killer.npctemplate || !killer.script["follower"])  //se for tamed n¿o tira dp
-			ghost.ReduceLifeTime(2, "day");
+			// ghost.ReduceLifeTime(2, "day");
 
-				AP_ConsumeVital(ghost, "DP", 10);
-				SendSystemReport(ghost, "Você sofreu uma fratura!");
-         //    SendSystemReport(ghost, "Você conseguiu evitar uma fratura ao cair.");
+         AP_ConsumeVital(ghost, "DP", 10);
+         SendSystemReport(ghost, "Você sofreu uma fratura!");
 
-			if (AP_GetVital(ghost, "DP") <= 10 )
-            SetObjProperty(ghost, "morto", 1);
+			if (AP_GetVital(ghost, "DP") <= 10)
+            if (!letargico) SetObjProperty(ghost, "letargico", polcore().systime); endif
+            SendSystemReport(ghost, "Você está em estado letárgico! Somente acordará caso alguém leve seu corpo até uma Igreja ou te entregue uma Semente de Anar");
          endif
 		endif
 
-		if ( checkIfDead(corpse, ghost) )
+		if ( checkIfDead(corpse, letargico, ghost) )
 			sleep(5);
 			return 1;
 		endif
@@ -100,10 +101,10 @@ program death(params)
 
 	SendSystemReport(ghost, "Você desmaiou.");
 
-	var pacto := PactoSepulturaCheck(ghost, corpse);
-	if (pacto == 1)
-		return 234;
-	endif
+	// var pacto := PactoSepulturaCheck(ghost, corpse);
+	// if (pacto == 1)
+	// 	return 234;
+	// endif
 
 	var tempo := 2*40; // em segundos
 	if ( dmg > CInt(AP_GetVitalMaximumValue(ghost, HITS)/5) )
@@ -115,8 +116,9 @@ program death(params)
 	endif	
 
 	var i;
-	while (tempo > 1)
-		var deathprop := DeathProperties(ghost, corpse, tempo, i);
+	while (tempo > 1 && ghost.connected)
+      letargico := GetObjProperty(ghost, "letargico");
+		var deathprop := DeathProperties(ghost, corpse, letargico, tempo, i);
 		if (deathprop == 1)
 			break;
 		elseif (deathprop == 2)
@@ -128,18 +130,31 @@ program death(params)
 			break;
 		endif
 
-		if (tempo % 60 == 0 && tempo != 0)
-			SendSystemReport(ghost, "Você se recuperará em "+(tempo/60)+" minuto(s).");
-		elseif (tempo <= 10)
-			SendSystemReport(ghost, "Você se recuperará em "+(tempo)+" segundo(s).");
-		endif
+      if (!letargico)
+         if (tempo % 60 == 0 && tempo != 0)
+            SendSysMessageEx(ghost, "Você se recuperará em "+(tempo/60)+" minuto(s).");
+         elseif (tempo <= 10)
+            SendSysMessageEx(ghost, "Você se recuperará em "+(tempo)+" segundo(s).");
+         endif
+      else
+         SendSysMessageEx(ghost, "Você está letárgico e ainda te restam {} minutos".format(240 - cint(GetTimeBetween(letargico, GetTime(), "minutes"))));
+         sleep(2);
+      endif
 
-		tempo -= 1;
+      if (ghost.x != corpse.x && ghost.y != corpse.y)
+			MoveObjectToLocation(ghost, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
+      endif
+      
+      if (tempo >= 1)
+		   tempo -= 1;
+      endif
 		sleep(1);
 	endwhile
 	
-	EraseObjProperty(corpse, "japrolongou");
-	KataWakeUp(ghost, corpse);
+   if (ghost.connected)
+      EraseObjProperty(corpse, "japrolongou");
+      KataWakeUp(ghost, corpse);
+   endif
 	
 	return 1;
 endprogram
@@ -166,18 +181,18 @@ function PactoSepulturaCheck(ghost, corpse)
 	return pacto;
 endfunction
 
-function DeathProperties(ghost, corpse, byref tempo, i)
+function DeathProperties(ghost, corpse, letargico, byref tempo, i)
 	if ( GetObjProperty(corpse, "curado") )
 		SendSysMessage(ghost, "Você foi curado e acordara em 2 segundos!");
 		EraseObjProperty(corpse, "prolongardesmaio");
 		sleep(2);
 		return 1;
 	elseif ( GetObjProperty(corpse, "prolongardesmaio") )
-		SendSysMessage(ghost, "Seus batimentos cardiacos se reduzem, e Você tem mais dificuldade em recobrar a consciencia.",3 , 0);
+		SendSysMessage(ghost, "Seus batimentos cardiacos se reduzem, e você tem mais dificuldade em recobrar a consciencia.",3 , 0);
 		EraseObjProperty(corpse, "prolongardesmaio");
 		SetObjProperty(corpse, "japrolongou", 1);
 		tempo := tempo * 2;
-	elseif ( checkIfDead(corpse, ghost) )
+	elseif ( checkIfDead(corpse, letargico, ghost) )
 		return 2;
 	endif
 	
@@ -186,8 +201,22 @@ function DeathProperties(ghost, corpse, byref tempo, i)
 	endif
 endfunction
 
-function checkIfDead(corpse, ghost := 0)
-   if ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) )
+function checkIfDead(corpse, letargico, ghost)
+   if (letargico)
+      var resslocs := _ifOr(GetGlobalProperty("ressloc"), array{});
+      foreach pos in resslocs
+         if (InRect(corpse.x, corpse.y, " ".join(pos.location)))
+            EraseObjProperty(ghost, "letargico");
+            EraseObjProperty(corpse, "letargico");
+            letargico := 0;
+            break;
+         endif
+         sleepms(2);
+      endforeach
+   endif
+
+   // 
+   if ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) || (letargico && GetTimeBetween(letargico, GetTime(), "hours") >= 4) )
 		SendSysMessageEx(ghost, "Algo aconteceu... Você morreu.", SSM_FAIL);
 		SetObjProperty(corpse, "morto", 1);
 		SetObjProperty(ghost, "morto", 1);

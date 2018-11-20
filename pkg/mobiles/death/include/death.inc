@@ -80,8 +80,9 @@ function KataWakeUp(ghost, corpse)
 
    ghost.squelch(0);
    ghost.frozen := 0;
+   ghost.deaf(0);
 	// var realname := GetObjProperty(ghost, "realname");
-	SetName(ghost, ghost.name);	
+	SetName(ghost, ghost.name);
 	EraseObjProperty(ghost, "realname");
 	EraseObjProperty(ghost, "corpo");
 	EraseObjProperty(ghost, "curado");
@@ -136,7 +137,6 @@ function KataWakeUp(ghost, corpse)
 
 		ghost.frozen := 1;
 	endif
-	//SetCoolDown(ghost, "deathtime", 30);
 
 	var save := GetObjPRoperty(ghost, "savegame");
 	if (save != error)
@@ -146,6 +146,8 @@ function KataWakeUp(ghost, corpse)
 		AP_SetVital(ghost, HITS, cint(save.hits));
 		eraseobjproperty(ghost, "savegame");
 	endif
+
+   CloseGump(ghost, 0x8777);
 	
 	// if (TS_GetCooldown(ghost, "metamorfosedruida"))
 		// TS_LowerDuration(ghost, "metamorfosedruida", -1);

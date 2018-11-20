@@ -93,10 +93,11 @@ program UseWood( who, wood )
 
 				if (continuehealing == 1)
 					foreach char in (nearbypeople)
-                  var hungerlvl := AP_GetVital(who, "Hunger") / 100;
-
+                  var hungerlvl := (AP_GetVital(char, "Hunger") / 200.0) / 10.0;
 						healFLS(char, cint(cdbl(AP_GetVitalMaximumValue(char, HITS)) * hungerlvl), 0);
+                  hungerlvl -= 0.05;
 						healMana(char, cint(cdbl(AP_GetVitalMaximumValue(char, MANA)) * hungerlvl));
+                  hungerlvl -= 0.02;
 						healStamina(char, cint(cdbl(AP_GetVitalMaximumValue(char, STAMINA)) * hungerlvl));
                   sleepms(2);
 					endforeach

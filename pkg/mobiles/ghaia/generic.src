@@ -258,6 +258,10 @@ function Fight(opponent, alerted := 0)
                endif
             endif
          endif
+
+         // if ("RunWhenOutnumbered" in custombehaviors)
+
+         // endif
          loops := 0;
          waittime := 1;
       endif
