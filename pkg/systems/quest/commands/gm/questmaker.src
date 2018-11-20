@@ -153,7 +153,7 @@ function GumpQuestList(who)
    var pos_y := 0;
    foreach q in quest_list
       var quest :=  GetQuestData(q);
-      if (_q_iter == selected_quest)
+      if (quest.id == cstr(selected_quest))
 	      GFGumpPic(gump, 24, 54+pos_y, 4006, 0);
       else
          GFAddButton(gump, 24, 54+pos_y, 4005, 4007, GF_CLOSE_BTN, GF_SELECTELEM_BTN+cint(q));
@@ -183,10 +183,9 @@ program gump_gump(who)
       var update_quest := struct{};
       if (selected_quest)
          update_quest["title"] := GFExtractData(res, quest_title);
-         update_quest["description"]  := "";
+         update_quest["description"]  := array{};
          foreach i in (quest_desc)
             var output := GFExtractData(res, i);
-            update_quest.description := array{};
             if (output && output != " " && output != "") update_quest.description.append(output); endif
             sleepms(2);
          endforeach
