@@ -223,7 +223,7 @@ function CompleteQuest(who, quest_pos)
    if (!weekly_quests) weekly_quests := array{}; endif
    weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id });
    SetObjProperty(who, "weekly_quests", weekly_quests);
-
+   print(quest);
    foreach reward in (quest.rewards)
       case (reward.type)
          "Experiência":

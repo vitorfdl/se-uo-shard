@@ -186,9 +186,11 @@ program gump_gump(who)
          update_quest["description"]  := "";
          foreach i in (quest_desc)
             var output := GFExtractData(res, i);
-            if (output && output != " " && output != "") update_quest.description += " {}".format(output); endif
+            update_quest.description := array{};
+            if (output && output != " " && output != "") update_quest.description.append(output); endif
             sleepms(2);
          endforeach
+         update_quest.description := " ".join(update_quest.description);
          SetQuestData(selected_quest, update_quest);
       endif
 
@@ -237,6 +239,7 @@ program gump_gump(who)
                var id := cint(quest_list[quest_list.size()]) +1 ;
                SetQuestData(id, struct{ title := quest_name});
                selected_quest := id;
+               update_quest := struct{};
                break;
             GF_DEL_BTN:
                RemoveQuestData(selected_quest);

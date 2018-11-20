@@ -458,12 +458,13 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
             sleepms(2);
          endforeach
 		else
-         res[_quest_iter] := "";
+         res[_quest_iter] := array{};
          foreach i in (entries[_quest_iter])
-            var output :=  GFExtractData(input, i);
-            if (output && output != " " && output != "") res[_quest_iter] += output; endif
+            var output := GFExtractData(input, i);
+            if (output && output != " " && output != "") res[_quest_iter].append(output); endif
             sleepms(2);
          endforeach
+         res[_quest_iter] := " ".join(res[_quest_iter]);
 		endif
 		sleepms(2);
 	endforeach

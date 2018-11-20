@@ -298,8 +298,8 @@ function PetSkillGump(who, targ)
    var y := 0;
    foreach key in (pet_knowledge.Keys())
       var name := FindConfigElem(npcdesc, key).Name;
-      var percent := cint((pet_knowledge[key] * 100) / 150);
-	   GFTextLine(gump, 67, 202, 1152, "{}: {}%".format(name, percent));
+      var percent := cint((pet_knowledge[key] * 100) / TamingDiff(0, npcdesc[key]));
+	   GFTextLine(gump, 67+x, 202+y, 1152, "{}: {}%".format(name, percent));
       y += 20;
       if (_key_iter % 11 == 0)
          x += 200;
@@ -315,6 +315,13 @@ function HandleTamingPage(who, res, targ)
    
 endfunction
 
+function TamingDiff(pet, pet_cfg)
+   if (!pet_cfg)
+      pet_cfg := NPC_GetNPCConfig(pet, 1);
+   endif
+   
+   return _ifElse(pet_cfg.TamingCombat, 150, 45);
+endfunction
 // function isTamable(mob)
 // 	if (!mob.npctemplate)
 // 		return 0;
