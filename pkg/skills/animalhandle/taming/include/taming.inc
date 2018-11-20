@@ -173,8 +173,8 @@ function destama(serial)
 	RestartScript(tamed);
 endfunction
 
-function PetGump(who, pet, pet_cfg := 0)
-   pet_cfg := NPC_GetNPCConfig(pet, 1);
+function PetGump(who, pet, targ := 0)
+  var pet_cfg := NPC_GetNPCConfig(pet, 1);
 
 	var gump := GFCreateGump();
 	
@@ -194,8 +194,17 @@ function PetGump(who, pet, pet_cfg := 0)
       sleepms(2);
       if (!pet_cfg.TamingCombat)
          if (command in array{"Atacar", "Proteger"}) continue; endif
+         if (!targ || targ == pet)
+            if (command in array{"Novo Dono", "Seguir"}) continue; endif
+         endif
+         if (targ == who || targ.isA(POLCLASS_NPC))
+            if (command in array{"Novo Dono"}) continue; endif
+         endif
       else
          if (command in array{"Novo Dono"}) continue; endif
+         if (!targ || targ == pet)
+            if (command in array{"Atacar", "Proteger", "Seguir"}) continue; endif
+         endif
       endif
 
 	   GFTextLine(gump, 180, 77+y, 1152, "{}".format(command));
@@ -205,7 +214,7 @@ function PetGump(who, pet, pet_cfg := 0)
 
    if (!pet_cfg.TamingCombat)
       GFTextLine(gump, 64, 171, 2212, "Habilitar I.A Automática");
-      GFAddButton(gump, 84, 188, 10840, 248, GF_CLOSE_BTN, 99);
+      GFAddButton(gump, 84, 188, 10840, 10840, GF_CLOSE_BTN, 99);
       GFHTMLArea(gump, 26, 218, 228, 72, "Habilitar I.A automática permite que a criatura se movimente sozinha, produza itens como ovos, leite e lã, e também habilita sua reprodução caso exista uma fÃªmea e macho prÃ³ximo.", 1, 1);
       GFGumpPicTiled(gump, 27, _ifElse(pet_cfg.TamingCombat, 179, 295), 232, 10, 50);
    endif
