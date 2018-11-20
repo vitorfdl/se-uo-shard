@@ -107,9 +107,6 @@ program death(params)
 	// endif
 
 	var tempo := 2*40; // em segundos
-	if ( dmg > CInt(AP_GetVitalMaximumValue(ghost, HITS)/5) )
-		tempo += 30;
-	endif
 
 	if (save)
 		tempo := 0;
