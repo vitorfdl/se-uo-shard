@@ -700,14 +700,34 @@ function GetDetails(item, who)
    if (item.ObjClass == "Armor" || item.ObjClass == "Weapon")
       // ret += "Condição: {}<br>".format(GetCondition(item));
       ret += "Qualidade: {}<br>".format(getQuality(item.quality));
-      if (item.strrequired)
-         ret += "Força Minima: {}<br>".format(item.strrequired);
+
+      if (item.ObjClass == "Armor")
+         var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+         var res := 0;
+         foreach resist in resists
+            var value := item.["resist_{}".format(resist)];
+            if (value)
+               ret += "Def. {}: {}<br>".format(TranslateDamage(resist), value);
+               if (value > res)
+                  res := value;
+               endif
+            endif
+         endforeach
+      
+         ret += "Lv. Personagem: {}<br>{}".format(_ifElse((res / 9)+1 <= 20, (res / 9)+1, 20), WHITE);
+         ret += "Lv. Classe: {}<br>{}".format(_ifElse((res / 15)+1 <= 4, (res / 15)+1, 4), WHITE);
+      elseif (item.ObjClass == "Weapon")
+         ret += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
+
+      ret += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
+      ret += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
       endif
-      if (item.intrequired)
-         ret += "Inteligência Minima: {}<br>".format(item.intrequired);
-      endif
-      if (item.Pericia)
-         ret += "Perícia: {}<br>".format(item.Pericia);
+
+      if (item.quality >= 2)
+         var hits := GetWeaponFeat(elem);
+         if (hits)
+            ret += "{}{}<br>".format(ORANGE, hits);
+         endif
       endif
       // if (item.WeaponType)
       //    ret += "Categoria: {}<br>".format(getWeaponType(item.WeaponType));

@@ -1,0 +1,27 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include ":timedscripts:timedScripts";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	var weapon	:= params[3];
+	params := 0; // Not needed anymore.
+	
+   SendSysMessageEx(defender, "Você sente sua barreira perder força muito mais rapidamente", SSM_FAIL);
+   var barrier := AP_GetTrueSkill(defender, "Barrier");
+   var reduce := (cdbl(barrier) * 0.05);
+   if (reduce < 5)
+      reduce := 5;
+   endif
+   barrier -= reduce;
+   AP_SetTrueSkill(defender, "Barrier", barrier);
+	
+	return 1;
+endprogram
+ 

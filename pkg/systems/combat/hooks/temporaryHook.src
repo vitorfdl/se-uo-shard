@@ -133,6 +133,7 @@ program Attack(params)
    endif
 
    PlayHitSounds(attacker, defender);
+   ExpGain(attacker, "minor");
 
    // if (!defender.npctemplate && defender.shield)
    //    if (wpn_a_elem.ProjectileAnim)

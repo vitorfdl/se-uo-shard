@@ -60,9 +60,9 @@ function TranslateHit(crit)
 		return "Duelista";
 	elseif (crit == "heighthit")
 		return "Diferença de Altura";
-	elseif ( crit == "barrierdestroy")
+	elseif ( crit == "lowbarrier")
 		return "Devorar Véu";
-	elseif ( crit == "barrier")
+	elseif ( crit == "earnbarrier")
 		return "Barreira";
 	elseif ( crit == "powerhit")
 		return "Poderoso";

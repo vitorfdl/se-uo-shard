@@ -23,7 +23,7 @@ program HitScript(params)
 	// endif
    var level := 0;
 	
-   TS_StartTimer(defender, "attack_disadvantage", 8, level);
+   TS_StartTimer(defender, "diminuir_poder", 8, level);
 	
 	// return 1;
 endprogram

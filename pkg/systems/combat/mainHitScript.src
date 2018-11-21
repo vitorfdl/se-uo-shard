@@ -87,9 +87,9 @@ program MainHitScript( params )
    
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage);
-	// CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
+	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 
-   ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
+   // ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
 
 	if( GetObjProperty(defender, "#chain_damage") != error && cint(GetObjProperty(defender, "#chain_damage")) > ReadGameClock() )
 		var cop_mobs   := GetObjProperty(defender, "#chain_serials");
@@ -213,7 +213,10 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
 	if (!auto_critical)
 		if (GetCooldown(attacker, "critical") > 0)
 			return 1;
+      elseif (RandomInt(100) <= 2 + AP_GetSkill(attacker, "Critical"))
+         return 1;
 		endif
+
 		SetCooldown(attacker, "critical", 10);
 	endif
 
@@ -248,7 +251,7 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
    // endif
 
 	foreach hitscript in weapon_scripts
-		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage, dice_roll});
+		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage});
 		if ( !script || script.errortext )
 			Print("*Attacker* Weapon {} script error starting [{}] : {}".format(weapon.name, hitscript, script.errortext));
 		endif
@@ -278,19 +281,6 @@ endfunction
 //       EraseObjProperty(defender, "#assassinate");
 //    endif
 // endfunction
-
-function ApplyInscriptedRunes(attacker, defender, weapon, armor, damage)
-   var inscripted := GetObjProperty(weapon, "decrease_moriquendi");
-   if (inscripted)
-      var reduce_heal := inscripted;
-
-      if (cint(GetObjProperty(defender, "#reduce_heal")) < reduce_heal)
-         SetObjProperty(defender, "#reduce_heal", reduce_heal);
-      endif
-
-      TS_StartCooldown(defender, "divine_damage", 10);
-   endif
-endfunction
 
 function ArmorHitScripts(attacker, defender, weapon, armor, base_damage)
 	var body_scripts   := GetObjProperty(defender, "ArmorHitScripts");
