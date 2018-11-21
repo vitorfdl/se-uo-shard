@@ -63,6 +63,8 @@ function ExpGain(mobile, difficulty, value := 0)
 	if ( GetObjProperty(mobile, "NoGains") ) //exp gain blocked
 		SkillDbgMsg(mobile, "Flag NoGains setada.");
 		return 0;
+   elseif (RandomInt(100) >= 15) 
+      return;
 	endif
 
    var incr_gain := 10;

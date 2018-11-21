@@ -27,6 +27,7 @@ var imposto := 0.1;
 var item_types := array{"Armaduras", "Roupas", "Armas", "Arcos", "Materia-Prima", "Joias", "Varinhas", "Alimentos", "Artigos", "Livros/Receitas"};
 
 program HandleMerchant(params)
+   print(params);
    if( GetObjProperty(params.me, "guild"))
       guild := FindGuild(GetObjProperty(params.me, "guild"));
       above_merchant := (guild.getProp("leader") == params.source.serial || guild.getProp(params.source.serial).above_merchants || params.source.cmdlevel >= 3);
