@@ -33,6 +33,7 @@ program HandleMerchant(params)
 	SetObjProperty(params.me, "#occupied", GetPid());
 	case (params.type)
 		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+      "DblClickEvent": HandleSpeech(params.me, params.source, "alugar");
 		"Default": return;
 	endcase
 

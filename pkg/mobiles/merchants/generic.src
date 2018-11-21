@@ -268,7 +268,13 @@ function DblClickScript(event)
       return;
    endif
 
-   var process := start_script(g_scripts["DblClick"], array{me, event});
+   var packed := struct{
+     "source" := event.source,
+     "me"     := me,
+     "type"   := "DblClickEvent"
+   };
+
+   var process := start_script(g_scripts["DblClick"], packed);
 
    if ( process.errortext )
       var errmsg := "Error::ghaiaDblClick() - ['DblClick'] [{}] failed to start! ->{}".format(g_scripts["DblClick"], process.errortext);

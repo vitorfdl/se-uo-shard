@@ -12,7 +12,6 @@ include "include/say";
 include ":attributes:attributes";
 
 function StartScript(mobile, attacker := 0, level := 0)
-
    return 1;
 endfunction
 
@@ -20,11 +19,15 @@ function EndScript(mobile)
    PrintText(mobile, "*sumindo pouco a pouco*");
 	sleep(5);
    mobile.Disable("Invul");
-	ApplyRawDamage(mobile, 200);	
-	ApplyRawDamage(mobile, 200);
-	ApplyRawDamage(mobile, 200);
-	ApplyRawDamage(mobile, 200);
-	ApplyRawDamage(mobile, 200);
+
+   if (!mobile.dead)
+      if (GetObjProperty(mobile, "damage_transfer"))
+         EraseObjProperty(mobile, "LastDamage");
+      endif
+
+      ApplyRawDamage(mobile, AP_GetVitalMaximumValue(mobile, "Hits"));	
+      ApplyRawDamage(mobile, 200);
+   endif
 	
    return 1;
 endfunction

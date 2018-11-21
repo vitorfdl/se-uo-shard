@@ -240,7 +240,7 @@ function CalculateTotalDamageBonus(who, defender)
 	return dmg;
 endfunction
 
-function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
+function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0, no_display := 0)
 	dmg := Cint(dmg);
 
    if (defender.connected && source.connected)
@@ -248,8 +248,14 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
          TS_LowerDuration(defender, "dodge_block", 1, 1);
       endif
    endif
+   
    if (type != DMG_FORCED)
       dmg := dmg - (dmg * CalculateDefenseReduction(defender, type));
+      if (source)
+         if (defender.my_template() == "orb" && defender.master != source)
+            return 0;
+         endif
+      endif
    endif
    
    if (defender.npctemplate && source.npctemplate)
@@ -274,7 +280,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0)
       return;
    endif
 
-	DisplayDamage(defender, cint(dmg), source);
+	if (!no_display) DisplayDamage(defender, cint(dmg), source); endif
 	ApplyRawDamage(defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 	
 	if (source)

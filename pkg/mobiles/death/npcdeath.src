@@ -66,7 +66,8 @@ program core_npcDeath(params)
       endif
    endif
 
-	var template := GetObjProperty(corpse, "npctemplate"); // Set by the core.
+	var template := GetObjProperty(corpse, "npctemplate"); 
+   // Set by the core.
 	// 	if (cint(GetObjProperty(mob, "#satisfacaosadica")))
 	// 		if (cint(GetObjProperty(mob, "#satisfacaosadica")) > readgameclock())
 	// 			PlayMovingEffect( corpse, mob, 14202, 5, 1,  0 );
@@ -98,7 +99,13 @@ program core_npcDeath(params)
 	SetCooldown(corpse, "resurrect", 30);
 	
 	var npc_cfg := NPC_GetNPCConfig(template);
-
+   if (npc_cfg.Script["orb"] && lastHit)
+      var transfer := SystemFindObjectBySerial(GetObjProperty(corpse, "damage_transfer"));
+      if (transfer && !transfer.dead)
+         DamageFLS(transfer, GetObjProperty(corpse, "finaldmg"), DMG_FIRE);
+         PlayMovingEffectEx( corpse, transfer, 0x36d4, 10,10, 1939, 0,0, 1 );
+      endif
+   endif
 	// var speech := GetConfigStringArray( npc_cfg[template], "diespeech" );
 	// if (speech.size() > 0 && RandomInt(100)  < 30) //sempre 30% de chance de falar
 	// 	PrintTextAbove(corpse, speech[RandomInt(speech.size()+1)]);

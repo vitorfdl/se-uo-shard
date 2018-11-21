@@ -30,6 +30,7 @@ program HandleMerchant(params)
 		// 		MoveItemToContainer(params.item, params.source.backpack);
 		// 	endif
 		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+      "DblClickEvent": PrintText(params.source, "Olá {}".format(params.me.name)); SendQuestGump(params.me, params.source);
       // "SeeEvent": HandleSeeEvent(params.me, params.source);
 		// "Default": return;
 	endcase

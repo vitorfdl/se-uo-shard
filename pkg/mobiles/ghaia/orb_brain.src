@@ -52,7 +52,10 @@ program NPCMonitor()
       sleepms(2);
 
       if (!TS_GetTimerInfo(me, "summon") && !TS_GetTimerInfo(me, "dynamickill")) 
-         ApplyRawDamage(me, 200);
+         if (GetObjProperty(me, "damage_transfer"))
+            EraseObjProperty(me, "LastDamage");
+         endif
+         ApplyRawDamage(me, AP_GetVitalMaximumValue(me, "Hits"));
       endif
 
       if (damage_transfer)
