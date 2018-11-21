@@ -1,0 +1,70 @@
+use uo;
+use os;
+use vitals;
+
+include ":magery:tnmagery";
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/shapes";
+include ":timedScripts:poisonUtil";
+
+program SpellScript(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+	if (!targ.isa(POLCLASS_MOBILE))
+		SendSysMessageEx(who, "Isto nao pode ser alvejado por essa magia.", SSM_FAIL);
+		return;
+	endif
+
+
+	PlaySoundEffect(targ, SFX_SPELL_WEAKEN);
+
+	var time := 0;
+	var oldx := who.x;
+	var oldy := who.y;
+	
+   var apply_dmg := 1;
+	while  (time < 5)
+		if ( (who.x != oldx) || (who.y != oldy))
+			SendSysMEssageEx(who, "Você se moveu e cancelou a magia.", SSM_FAIL);
+         apply_dmg := 0;
+			break;
+		endif
+
+		if (Distance(who, targ) > 5)
+			SendSysMessageEx(who, "O alvo se distanciou muito.", SSM_FAIL);
+         apply_dmg := 0;
+			break;
+		endif
+
+		if(targ.dead)
+         apply_dmg := 0;
+			break;
+		endif
+
+		//ApplyRawDamage( targ, 10, 0, DAMAGE_SHOW );
+      var amt := spellinfo.PowerMod[1];
+      if (!AP_ConsumeVital(targ, MANA, amt))
+         amt := AP_GetVitalMaximumValue(targ, MANA);
+         AP_ConsumeVital(targ, MANA, amt);
+			SendSysMessageEx(who, "A mana do alvo acabou.", SSM_FAIL);
+         break;
+      endif
+
+		DamageFLS( targ, amt, DMG_FORCED, who );
+		HealMana( who, amt );
+
+		PlayMovingEffectEx(targ, who, 3982, 255, 1, 2121);
+		PerformAction(who, ANIM_CAST_AREA);
+		time := time + 1;
+		sleep(1);
+	endwhile
+
+   if (apply_dmg)
+      DamageFLS(targ, spellinfo.PowerMod[2], DMG_FORCED, who);
+   endif
+endprogram
