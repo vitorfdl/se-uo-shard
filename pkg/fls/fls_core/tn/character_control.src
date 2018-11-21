@@ -28,7 +28,7 @@ program character_control(who)
       
       var players := ListMobilesNearLocationEx(who.x, who.y, who.z, 10, LISTEX_FLAG_NORMAL|LISTEX_FLAG_PLAYERS_ONLY);
       if (players.size() >= 1)
-         ExpGain(who, 4);
+         ExpGain(who, "minor");
       endif
 
       var last_rates := GetObjProperty(who, "ficharp_rates");

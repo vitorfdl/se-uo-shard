@@ -35,7 +35,6 @@ endfunction
 
 program Merchant()
    var ev;
-
    set_critical(1);
    //printtextabove(me, "vai inicializr");
    InitializeSettings();
@@ -93,6 +92,7 @@ program Merchant()
                 break;
             SYSEVENT_SPEECH:
                wanders := 0;
+               print(ev);
                if (CheckLineOfSight(me, ev.source))
                   if (!isBehind(ev.source, me.x, me.y))
                   HandleSpeech(ev);

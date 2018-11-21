@@ -25,7 +25,7 @@ program AC_start(who)
       var event := wait_for_event(2);
       var trig := 0;
       if (event.type == 0x456 && !(event.id in already_saw))
-         last_see.Insert(1, event.text);
+         if (event.text) last_see.Insert(1, event.text); endif
          already_saw.append(event.id);
          if (event.emote) PrintTextPrivate(who, "*{}*".format(event.emote), who); endif
          trig := 1;
