@@ -44,6 +44,6 @@ program defensor(params)
 		// var mobile := target(who);
       summoned.disable( "invul" );
       who.setOpponent(summoned);
-		TS_StartTimer(summoned, "summon", 15);	
+		TS_StartTimer(summoned, "summon", 16);	
    endif
 endprogram
