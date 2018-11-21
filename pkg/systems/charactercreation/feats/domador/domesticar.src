@@ -10,6 +10,7 @@ include ":taming:taming";
 include ":mounts:mounts";
 include ":charactercreation:characters";
 include ":yggdrasil:boss";
+include ":yggdrasil:spawnSpot";
 include ":ghaia:ghaiaUtil";
 
 const START_Y      := 91;
@@ -98,6 +99,7 @@ program taming(params)
    if (GetObjProperty(targ, "last_owner") == who.serial) no_reset := 1; endif
 
    if (AddPet(who, targ.serial, no_reset))
+      removeFromSpawn(GetObjProperty(who, "spawnpoint"), who);
       TamingEffect(targ);
       targ.frozen := 0;
       PrintText(who, "*domestica {}*".format(targ.name));

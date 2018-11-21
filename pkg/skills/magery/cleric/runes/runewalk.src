@@ -9,7 +9,6 @@ include "include/damage";
 include "include/tileEffects";
 include "include/client";
 include "include/sounds";
-include ":magery:tnmagery";
 include "include/utils";
 include "include/sysEvent";
 

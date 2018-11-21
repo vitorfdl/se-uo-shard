@@ -9,6 +9,7 @@ include ":tn:tngumps";
 include ":tn:questevent";
 include ":gumps:yesno";
 include "include/client";
+include "include/damage";
 include "include/arrays";
 include ":combat:hitscripts";
 include ":loot:include/lootParser";
