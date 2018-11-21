@@ -18,21 +18,31 @@ include ":magery:basicMagery";
 include ":crafting:craft_props";
 // include ":quest:quest";
 
-program oafeatures_sendpacket(who, text)
-   // var item := _CreateItemInBackpack(who, 0xDC01, 1);
-   // var recipes := GetObjProperty(who, "recipes");
-
-
-   PlayStationaryEffectEx( who.x, who.y, who.z+1, who.realm, 0x376A, 0, 8, 0 );
-
-   var area := GetCoordsInSquare(who.x, who.y, 1);
+function TamingEffect(targ, reverse := 0)
+   PlaySoundEffect(targ, cint(0x1E1));
+   var d := 4;
+   if (!reverse) d -= 3; endif
+   var area := GetCoordsInSquare(targ.x, targ.y, d);
    foreach p in area
-      if (CoordinateDistance(who.x, who.y, p.x, p.y) >= 1)
-         PlayMovingEffectXYZ( who.x, who.y, who.z+5, p.x, p.y, who.z+5, 0x3779, 0 );
+      if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
+         if (!reverse)
+            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z+5, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
+         else
+            PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
+         endif
       endif
       sleepms(2);
    endforeach
+endfunction
 
+program oafeatures_sendpacket(who, text)
+   // var item := _CreateItemInBackpack(who, 0xDC01, 1);
+   // var recipes := GetObjProperty(who, "recipes");
+   var targ := Target(who);
+
+
+   sleep(2);
+   targ.frozen := 0;
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area
    //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)

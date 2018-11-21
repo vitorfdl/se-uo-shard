@@ -10,7 +10,6 @@ include ":taming:taming";
 include ":mounts:mounts";
 include ":charactercreation:characters";
 include ":yggdrasil:boss";
-include ":yggdrasil:spawnSpot";
 include ":ghaia:ghaiaUtil";
 
 const START_Y      := 91;
@@ -52,9 +51,8 @@ program taming(params)
 
    var combat_pet := GetObjProperty(who, "combat_pet");
 
-   TamingEffect(who, targ);
-   sleepms(800);
-
+   TamingEffect(targ, 1);
+   sleepms(200);
    if (npc_cfg.TamingCombat && !HaveFeatSecondary(who, 54))
 		SendSysMessageEx(who, "Você não adestrar animais combatentes. É necessário a habilidade Treinador", SSM_FAIL);
 		return FailTaming(who, targ);
@@ -66,32 +64,53 @@ program taming(params)
    var pet_knowledge := GetObjProperty(who, "pet_knowledge");
    if (!pet_knowledge) pet_knowledge := dictionary{}; endif
 
-   if (cint(pet_knowledge[targ.my_template()]) < TamingDiff(targ, npc_cfg))
+   if (cint(pet_knowledge[targ.my_template()]) < TamingDiff(targ, npc_cfg) && !who.cmdlevel)
 		SendSysMessageEx(who, "Não há conhecimento suficiente para adestrar essa criatura. Mate mais delas para adquirir conhecimento.", SSM_FAIL);
 		return FailTaming(who, targ);
    endif
 
-   PlayStationaryEffectEx( targ.x, targ.y, targ.z+3, targ.realm, 0x375A, 0, 15, 1172 );
+   
+   PrintText(who, "Venha, não vou te fazer mal", SSM_INFO);
+   PerformAction(who, 0x20, 5);
+   sleepms(90);
+   PrintText(who, "*coloca comida no chão*");
+   sleepms(200);
+   PrintText(targ, "*vai até {}*".format(who.name));
+   TS_StartCooldown(targ, "peacemade", 300);
+   ghaiaPeaceMade(who, targ);
 
-   removeFromSpawn(GetObjProperty(targ, "spawnpoint"), targ);
+   var mod := GetModByFacing(who.facing);
+   ghaiaObjective(targ, struct{ x := who.x+mod[1], y := who.y+mod[2], z := who.z}, 1);
+
+   var plus := 1;
+   while (Distance(targ,who) > 1 && plus <= 100)
+      sleepms(200);
+   endwhile
+
+   targ.frozen := 1;
+   if (Distance(targ,who) > 1)
+      targ.frozen := 0;
+      FailTaming(who, targ);
+      return SendSysMessageEx(who, "O animal não consegui se aproximar de você. Você falhou ao domestica-lo", SSM_FAIL);
+   endif
 
    var no_reset := 0;
    if (GetObjProperty(targ, "last_owner") == who.serial) no_reset := 1; endif
 
-      var res := AddPet(who, targ.serial, no_reset);
-   if (res)
-      PrintText(who, "*domestica {}".format(targ.name));
+   if (AddPet(who, targ.serial, no_reset))
+      TamingEffect(targ);
+      targ.frozen := 0;
+      PrintText(who, "*domestica {}*".format(targ.name));
       SendSysMessageEx(who, "{} agora obedece a você".format(targ.name), SSM_FAIL);
       if (npc_cfg.TamingCombat)
          SetObjProperty(who, "combat_pet", targ.serial);
       endif
+      sleepms(500);
+      PerformAction(targ, ANIM_FIDGET_1);
    else
       SendSysMessageEx(who, "Não foi possível domesticar a criatura.");
+      FailTaming(who, targ);
    endif
-
-   // var petname := targ.name;
-   // Run_Script_To_Completion(":death:npcdeath", {targ});
-   // SetName(targ, petname);
 endprogram
 
 function FailTaming(who, targ)
@@ -107,25 +126,20 @@ function FailTaming(who, targ)
    endforeach
 endfunction
 
-function TamingEffect(who, targ)
-   PlaySoundEffect(who, cint(0x1E1));
+function TamingEffect(targ, reverse := 0)
+   targ.frozen := 0;
+   PlaySoundEffect(targ, cint(0x1E1));
    var d := 4;
+   if (!reverse) d -= 3; endif
    var area := GetCoordsInSquare(targ.x, targ.y, d);
    foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
-         PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
+      if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
+         if (!reverse)
+            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z+5, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
+         else
+            PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
+         endif
       endif
-      sleepms(2);
-   endforeach
-
-   d := 3;
-   area := GetCoordsInSquare(targ.x, targ.y, d);
-   sleepms(150);
-   foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
-         PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z, targ.realm, 0x1153, 0 ,0, 0, 1152);
-      endif
-
       sleepms(2);
    endforeach
 endfunction

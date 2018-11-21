@@ -159,12 +159,14 @@ program core_npcDeath(params)
       endif
       ExpGain(mob, 3);
 
-      if (npc_cfg.MethodScript["taming"])
-         mob.UpTameProperty(template);
-      endif
       sleepms(2);
    endforeach
 
+   if (npc_cfg.MethodScript["taming"])
+      var mob := SystemFindObjectBySerial(lastHit.serial);
+      mob.UpTameProperty(template);
+   endif
+   
 	DP_PlayDeathSound(corpse);
 	CPM_DeleteContainers(corpse);
 

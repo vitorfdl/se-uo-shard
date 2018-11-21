@@ -2,6 +2,7 @@ use uo;
 include ":timedscripts:timedScripts";
 include "include/arrays";
 include "include/damage";
+include ":yggdrasil:spawnSpot";
 
 var tam_npc_cfg := ReadConfigFile(":ghaia:npcdesc");
 var pet_commands := array{"Atacar", "Proteger", "Ir Até", "Seguir", "Abandonar", "Novo Dono"};
@@ -91,6 +92,7 @@ function AddPet(who, serial, no_reset := 0)
    RestartScript(pet);
    
    if (!no_reset) pet.InitPetProperties(0); endif
+   removeFromSpawn(GetObjProperty(pet, "spawnpoint"), pet);
 
    return 1;
 endfunction
