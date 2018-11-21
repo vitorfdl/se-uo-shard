@@ -3,6 +3,7 @@ use datafile;
 
 include ":datafile:datafile";
 include ":gumps:yesno";
+include ":yggdrasil:boss";
 include "include/arrays";
 
 /*=============================================
