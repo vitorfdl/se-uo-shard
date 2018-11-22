@@ -279,7 +279,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 	var material_cprops := struct{};
 	foreach thing in (materials.keys())
 		sleepms(5);
-      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "demonbone", "planta"})
+      if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "planta"})
 			var ret := MaterialSelection(who, thing, 1, recipe, craft_skill);
 			if (!ret)
 				SendSysMessageEx(who, "você não possui os materiais necessarios.", SSM_FAIL);

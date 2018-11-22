@@ -23,7 +23,7 @@ program catarminhoca(who, dirt)
       return 0;
 	endif 
 
-   var roll := rollAttrDice(who, DEXTERITY, 0, struct{ "get_critical" := 1 }) + GetSkillBonus(who, PLANTACAO);
+   var roll := RandomInt(100);
 	var minhoca := cint("0x9980");
 
 
@@ -42,7 +42,7 @@ program catarminhoca(who, dirt)
 	// 	return 0;
 	// endif
 
-	if (roll.dice > 14)
+	if (roll.dice <= 40)
 		SendSysMessageEx(who, "Você pegou algumas minhocas", SSM_INFO);
 		CreateItemInBackpack(who, minhoca, 1);
 	else

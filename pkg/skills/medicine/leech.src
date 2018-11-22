@@ -23,9 +23,9 @@ program UseLeech(who, leech)
 		return;
 	endif
 
-	var test := rollAttrDice(who, WISDOM) + GetSkillBonus(who, PRIMEIROS_SOCORROS);
+	var test := RabdomInt(100);
 
-	if ( test > 13 )
+	if ( test <= 20 )
 		who.SetAchievement("leech", 1);
 		SendSysMessageEx(who, "Você aplicou a sanguessuga em "+targ.name);
 		TS_CurePoison(targ, Floor(test/3), "P", 1);

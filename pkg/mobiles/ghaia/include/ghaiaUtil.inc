@@ -84,6 +84,12 @@ function ghaiaFlee(who, npc)
 	sendEvent( npc, ev);
 endfunction
 
+function ghaiaCheckNumber(npc)
+	var ev 		:= struct;
+	ev.type 	:= EVID_CHECK_NUMBER;
+	
+	sendEvent( npc, ev);
+endfunction
 
 function CopyProps(origin, destiny)
 	var propnames := GetObjPropertyNames(origin);

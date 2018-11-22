@@ -23,7 +23,7 @@ program ControlScript(acid)
             endif
          endif
          if( !DealAcidDamage(acid, mob, acid) )
-            DealAcidDamage(acid, mob, acid, "5d2");
+            DealAcidDamage(acid, mob, acid, 15);
          endif
       endforeach
       sleep(10);

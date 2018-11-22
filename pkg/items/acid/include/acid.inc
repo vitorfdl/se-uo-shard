@@ -62,13 +62,13 @@ function DealAcidDamage(npc, mobile, acid_pool, acid_damage:=0)
 		return 0;
 	endif
 	var acid_dice := GetAcidDiceFromTemplate(npc);
-	if( TypeOf(acid_dice) != "String" )
+	if( TypeOf(acid_dice) != "Integer" )
 		acid_dice := GetAcidDiceFromItem(acid_pool);
 	endif
    
 	if( acid_damage )
 		acid_damage := acid_damage;
-	elseif( TypeOf(acid_dice) == "String" )
+	elseif( TypeOf(acid_dice) == "Integer" )
 		acid_damage := acid_dice;
 	else
 		return 0;
@@ -114,7 +114,7 @@ endfunction
 
 function GetAcidDiceFromItem(acid_pool)
 	if( acid_pool.isA(POLCLASS_ITEM) )
-		if( TypeOf(GetObjProperty(acid_pool, "AcidDice")) == "String" )
+		if( TypeOf(GetObjProperty(acid_pool, "AcidDice")) )
 			return GetObjProperty(acid_pool, "AcidDice");
 
 		else

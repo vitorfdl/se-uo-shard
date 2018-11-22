@@ -43,7 +43,7 @@ program taming(params)
 	// elseif ( (GetNumPets(who) + GetPetCost(targ)) > GetMaxPets(who) )
 	// 	SendSysMessageEx(who, "Você atingiu o limite de seguidores.", SSM_FAIL);
 	// 	return FailFeat(who, hab);
-	elseif (!targ.isTamable())
+	elseif (!targ.isTamable() )
 		SendSysMessageEx(who, "Essa criatura não aceita ser domesticada.", SSM_FAIL);
 		return FailFeat(who, hab);
 	endif

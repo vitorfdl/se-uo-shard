@@ -88,7 +88,7 @@ program Attack(params)
 		return 1;
    elseif ( attacker.hidden )
       SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
-      bonus_atk += 20;
+      bonus_atk := 20;
       attacker.hidden := 0;
 	endif
 

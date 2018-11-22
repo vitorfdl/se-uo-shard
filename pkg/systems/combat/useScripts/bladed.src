@@ -198,7 +198,7 @@ endfunction
 function MakeBlankScrolls (who, hides)
 
 	if (!ReserveItem (hides))
-		SendSysMessageEx (who, "Você não pode usar este item!");
+		SendSysMessageEx(who, "Você não pode usar este item!");
 		return;
 	endif
 
@@ -207,7 +207,7 @@ function MakeBlankScrolls (who, hides)
 	//SendSysMessageEx(who, "gmdebug: skinning " + myskill);
 
 	if (item_skill > myskill)
-		SendSysMessageEx (who, "Você não sabe como fazer este item.");
+		SendSysMessageEx(who, "Você não sabe como fazer este item.");
 		return;
 	endif
 
@@ -225,26 +225,21 @@ function MakeBlankScrolls (who, hides)
 			SendSysMessageEx(who, "Você não pode usar estes couros!");
 			return;
 		endif
-		var test := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
-		if (test > 10)
 
 			if (!CreateItemInContainer (who.backpack, UOBJ_BLANK_SCROLL, 1))
 				PrintTextAbovePrivate (who, "*Sua mochila esta cheia!*", who);
 				return;
 			endif
 
-			SendSysMessageEx (who, "Você fez o pergaminho.");
-		else
-			SendSysMessageEx (who, "Você arruinou os materiais.");
-		endif
+			SendSysMessageEx(who, "Você fez o pergaminho.");
 
 		if (!hides)
-			SendSysMessageEx (who, "Você não tem mais couros.");
+			SendSysMessageEx(who, "Você não tem mais couros.");
 			return;
 		endif
 	until (who.x != sx or who.y != sy);
 
-	SendSysMessageEx (who, "Você parou de fazer os pergaminhos.");
+	SendSysMessageEx(who, "Você parou de fazer os pergaminhos.");
 endfunction
 
 function CarveFishNew(who, blade, use_on)

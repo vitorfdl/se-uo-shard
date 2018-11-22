@@ -105,8 +105,8 @@ program skinning(parms)
       if (dif < 5) dif := 9; endif
 
       minamt := GetMinSkinningAmt(thing);
-      var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
-      if(dice_roll > dif)
+      var dice_roll := RandomInt(100);
+      if(dice_roll <= dif)
          if (minamt > corpseamt[_thing_iter])
             minamt := corpseamt[_thing_iter];
          endif
@@ -119,10 +119,9 @@ program skinning(parms)
    var skinning_info := GetObjProperty(cadaver, "skinninginfo");
    if (skinning_info)
       foreach loot in skinning_info
-         var dice_roll := rollAttrDice(who, DEXTERITY) + GetSkillBonus(who, ESCALPELAR);
-         var dif := (100 - loot.chance) / 4;
-         if (dif < 5) dif := 9; endif
-         if (dice_roll > dif)
+         var dice_roll := RandomInt(100);
+         var dif := loot.chance;
+         if (dice_roll <= dif)
             if (loot.by_group)
                Loot_Generate(cadaver.backpack, loot.by_group, loot);
             else

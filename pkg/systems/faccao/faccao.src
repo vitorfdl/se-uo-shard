@@ -519,7 +519,7 @@ function guildHandler(who, input)
          var questions := array{};
          questions.append(struct{ "title" := "Qual o nome do Uniforme?", "marked" := ""} );
          questions.append(struct{ "title" := "Qual craft pode fazer o uniforme?", "marked" := 1, "radio" := array{"Costura", "Ferraria", "Marcenaria"}} );
-         questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := "", "helper" := "metal, madeira, vidro, couro, pano, pontaflecha, demonbone"} );
+         questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := "", "helper" := "metal, madeira, vidro, couro, pano, pontaflecha"} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
          questions.append(struct{ "title" := "Entre com o material: ID Quantidade", "marked" := ""} );
@@ -580,7 +580,7 @@ function guildHandler(who, input)
          props.materials := uniform.materials;
          props.requires := array{};
          props.fastcraft := 0;
-         props.craft_skill := uniform.craft_skill;
+         props.RequireFeat := _ifElse(uniform.craft_skill["Costura"], 63, _ifElse(uniform.craft_skill["Ferraria"], 61, 62);
          props.pieces := uniform.pieces;
 
          var item := CreateItemInbackpack(who, 0x46AE);

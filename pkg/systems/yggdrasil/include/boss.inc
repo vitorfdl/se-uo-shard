@@ -411,13 +411,14 @@ function SetBoss(npc, boss)
 
 	npc.color := boss.color;
 	npc.truecolor := boss.color;
-
-   if (boss.power) npc.damage_physical_mod := boss.power; endif
-   if (boss.phsycal_res) npc.resist_physical_mod := boss.phsycal_res; endif
-   if (boss.fire_res) npc.resist_physical_mod := boss.fire_res; endif
-   if (boss.energy_res) npc.resist_physical_mod := boss.energy_res; endif
-   if (boss.poison_res) npc.resist_physical_mod := boss.poison_res; endif
-   if (boss.cold_res) npc.resist_physical_mod := boss.cold_res; endif
+   
+   var no_tame;
+   if (boss.power) npc.damage_physical_mod := boss.power; no_tame := 1; endif
+   if (boss.phsycal_res) npc.resist_physical_mod := boss.phsycal_res; no_tame := 1; endif
+   if (boss.fire_res) npc.resist_physical_mod := boss.fire_res; no_tame := 1; endif
+   if (boss.energy_res) npc.resist_physical_mod := boss.energy_res; no_tame := 1; endif
+   if (boss.poison_res) npc.resist_physical_mod := boss.poison_res; no_tame := 1; endif
+   if (boss.cold_res) npc.resist_physical_mod := boss.cold_res; no_tame := 1; endif
 	
 	if (boss.customAttacks && boss.customAttacks[0])
 		var customAttacks := array{};
@@ -428,9 +429,11 @@ function SetBoss(npc, boss)
 		SetObjProperty(npc, "customAttacks", customAttacks);
 	endif
 
-  	SetObjProperty(npc, "hitsmod", cint(boss.hits));
+   if (boss.hits) SetObjProperty(npc, "hitsmod", cint(boss.hits)); no_tame := 1; endif
   	RecalcVitals(npc);
 	AP_RefreshVitals(npc);
+
+   if (no_tame) SetObjProperty(npc, "cant_tame", 1); endif
 
 	if (!npc.backpack)
 		var backpack := CreateItemAtLocation(npc.x, npc.y, npc.z,  2482,  1, npc.realm);

@@ -28,8 +28,8 @@ program MainHitScript( params )
 	var defender   := params[2];
 	var weapon     := params[3];
 	var armor      := params[4];
-	var wpn_a_elem := params[6];
-	var bonus_dmg  := params[7];
+	var wpn_a_elem := params[5];
+	var bonus_dmg  := params[6];
 
 	SetScriptController(attacker);
 
