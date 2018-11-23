@@ -76,8 +76,6 @@ program PopUpMenu( who, what )
       return;
    elseif (input == "erguer")
       return;
-   elseif (input == "change_spell")
-      Start_Script(":magery:wands/changeSpell", array{who, what});
    elseif (input == "ficharp_rate")
       Start_Script(":fls_core:ficharp_rating", array{ who, what });
    elseif(input == "ensinar")
@@ -108,16 +106,16 @@ function MenuPlayerToPlayer(who, what)
    endif
 
    var entries := struct{
-      "profile"   := struct{ cliloc := 3002021 }
+      // "profile"   := struct{ cliloc := 3002021 }
    };
 
-   if (Distance(who, what) <= 2 && who != what)
-      entries.+revistar := 3002028;
-      var last_teach := cint(GetObjProperty(who, "last_teach"));
-      if (last_teach <= GetTime())
-         entries.+ensinar := 3002031;
-      endif
-   endif
+   // if (Distance(who, what) <= 2 && who != what)
+   //    entries.+revistar := 3002028;
+   //    var last_teach := cint(GetObjProperty(who, "last_teach"));
+   //    if (last_teach <= GetTime())
+   //       entries.+ensinar := 3002031;
+   //    endif
+   // endif
 
    var disguisable := GetObjProperty(who, "#can_unmask");
    if (disguisable == what.serial && GetObjProperty(what, "disfarce"))
@@ -158,16 +156,10 @@ function MenuPlayerToItem(who, what)
       if (what.movable != 0)
          entries.+flip := 3002012;
       endif
-
    endif
 
    if (what.isPole())
       entries.+bait :=  struct{ cliloc := 3005101, color := YELLOW_COLOR };
-   endif
-
-   var spell_list := GetObjProperty(what, "spell_list");
-   if (what.isMagicWeapon() && GetObjProperty(what, "serialid") == who.serial && spell_list.size() >= 1)
-      entries.+change_spell := 3002015;
    endif
 
    if (what.isA(POLCLASS_CORPSE) && CoordinateDistance(what.x, what.y, who.x, who.y) <= 2)

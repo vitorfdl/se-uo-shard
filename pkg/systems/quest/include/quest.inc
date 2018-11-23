@@ -53,6 +53,7 @@ function SetQuestData(id, data := struct{})
    if ("active" in keys) elem.SetProp("active", data.active); endif
    if ("description" in keys) elem.SetProp("description", data.description); endif
    if ("level" in keys) elem.SetProp("level", data.level); endif
+   if ("difficulty" in keys) elem.SetProp("difficulty", data.difficulty); endif
    if (data.conditions)
       elem.SetProp("conditions", data.conditions); 
    endif
@@ -65,9 +66,6 @@ function SetQuestData(id, data := struct{})
       elem.SetProp("rewards", data.rewards); 
    endif
 
-   if (data.difficulty)
-      elem.SetProp("difficulty", data.difficulty); 
-   endif
    //  if (data.mob_list)
    //      foreach entry in (data.mob_list)
    //          entry := ModelMobListData(entry);
@@ -111,7 +109,7 @@ function RemoveQuestData(id)
     df.DeleteElement(cstr(id));
 endfunction
 
-function GiveQuest(who, quest, classe := 0)
+function GiveQuest(who, quest, classe := 0, forced := 0)
    quest.category := _ifOr(classe, quest.category[1]);
 
    var quest_data := GetObjProperty(who, "quests");
@@ -120,11 +118,13 @@ function GiveQuest(who, quest, classe := 0)
    var weekly_quests := GetObjProperty(who, "weekly_quests");
    if (!weekly_quests) weekly_quests := array{}; endif
 
-   var quests_of_type := FindAllElemInArray(quest_data, struct{ category := quest.category });
-   var weekly_quests_total := FindAllElemInArray(weekly_quests, struct{ classe := quest.category });
-   var f := _ifElse(quests_of_type, quests_of_type.size(), 0) + _ifElse(weekly_quests_total, weekly_quests_total.size(), 0);
-   if (f >= 2) return SendSysMessageEx(who, "Limite de missões dessa classe esgotado.", SSM_FAIL); endif
-
+   if (!forced)
+      var quests_of_type := FindAllElemInArray(quest_data, struct{ category := quest.category });
+      var weekly_quests_total := FindAllElemInArray(weekly_quests, struct{ classe := quest.category });
+      var f := _ifElse(quests_of_type, quests_of_type.size(), 0) + _ifElse(weekly_quests_total, weekly_quests_total.size(), 0);
+      if (f >= 2) return SendSysMessageEx(who, "Limite de missões dessa classe esgotado.", SSM_FAIL); endif
+   endif
+   
    var quest_progress := GetObjProperty(who, "quest_progress");
    if (!quest_progress) quest_progress := array{}; endif
 
@@ -149,7 +149,7 @@ function ProgressQuest(who, search, plus_progress := 1)
       elseif (item.done) continue; endif
       
       if (item.party) search.-party; endif
-      if (item.spawngroup == "Qualquer Um") search.-spawngroup; endif
+      if (!item.spawnpoint) search.-spawnpoint; endif
       if (!item.onlyboss && search.onlyboss) search.-onlyboss; endif
 
       var no_progress := 0;
@@ -221,7 +221,7 @@ function CompleteQuest(who, quest_pos)
 
    var weekly_quests := GetObjProperty(who, "weekly_quests");
    if (!weekly_quests) weekly_quests := array{}; endif
-   weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id });
+   weekly_quests.append(struct{ classe := quest.category, quest_id := quest.id, when := polcore().systime });
    SetObjProperty(who, "weekly_quests", weekly_quests);
    foreach reward in (quest.rewards)
       case (reward.type)

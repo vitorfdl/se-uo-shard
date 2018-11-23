@@ -471,15 +471,24 @@ function HandleSkillPage(who, byref chardata, res, targ)
             SetObjProperty(who, "chardata", chardata);
          endif
       elseif (hab.ClassType == "classes" && !(hab.FeatId in chardata[hab.ClassType][i].selected_habs))
+         var is_changing := 0;
          var hab_index := chardata[hab.ClassType][i].selected_habs.size() + 1;
          foreach hab_id in (chardata[hab.ClassType][i].selected_habs)
             var hab_obj := getFeatById(hab_id);
             if (hab_obj.Group == hab.Group)
                hab_index := _hab_id_iter;
+               is_changing := 1;
                break;
             endif
             sleepms(2);
          endforeach
+
+         if (is_changing)
+            if (TS_GetCooldown(who, "HabUsed"))
+               return SendSysMessageEx(who, "Você deve aguardar 10 minutos fora de combate para trocar habilidades.", SSM_FAIL);
+            endif
+         endif
+         
          var old_hab_id := chardata[hab.ClassType][i].selected_habs[hab_index];
          chardata[hab.ClassType][i].selected_habs[hab_index] := hab.FeatId;
          SetObjProperty(who, "chardata", chardata);

@@ -10,6 +10,7 @@ include "include/utils";
 //TODO seria mais facil olhar o skills.cfg que possuem script e executar ele
 
 program start_skill(who)
+   return;
    var targ;
    if (typeof(who) == "Array")
       targ := who[2];

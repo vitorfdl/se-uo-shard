@@ -145,13 +145,13 @@ program core_npcDeath(params)
 		endif
 	endif
 
-   var my_spawngroup := _ifElse(GetObjProperty(corpse, "spawngroup"), GetObjProperty(corpse, "spawngroup"), 0);
+   var my_spawnpoint := _ifElse(GetObjProperty(corpse, "spawnpoint"), GetObjProperty(corpse, "spawnpoint"), 0);
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
       if (!mob.isA(POLCLASS_NPC))
          var process := GetProcess(GetObjProperty(mob, "#roleplay"));
          if (process)
             var search := struct{};
-            search.spawngroup := my_spawngroup;
+            search.spawnpoint := my_spawnpoint;
             search.template := template;
             search.onlyboss := is_boss;
             search.type := "Matar Monstro";

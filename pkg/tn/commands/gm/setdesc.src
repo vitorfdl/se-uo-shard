@@ -13,5 +13,4 @@ program settooltip(who)
 	endif
 	
 	AddItemDescription(who, item);
-	SetName(item, item.desc);
 endprogram

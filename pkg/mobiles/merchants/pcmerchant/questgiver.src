@@ -95,15 +95,20 @@ function SendQuestGump(npc, player)
          endif
       endforeach
 
+      var f  := _ifElse(player_quests, player_quests.size(), 0);
+      if (f >= 1) continue; endif
+
       var weekly_quests_total := FindAllElemInArray(weekly_quests, struct{ classe := classe });
-      var f := _ifElse(player_quests, player_quests.size(), 0) + _ifElse(weekly_quests_total, weekly_quests_total.size(), 0);
-      if (f >= 2)
+      var wf := _ifElse(weekly_quests_total, weekly_quests_total.size(), 0);
+      if (f+wf >= 2)
          continue;
       elseif (classe != chardata.current_class && !FindInArray(chardata.subclasses, struct{ id := classe }))
          continue;
       endif
       
-      var quest_giver := FilterQuestByClass(quest_list, classe);
+      var diff := _ifElse(f+wf <= 0, 1, 2);
+
+      var quest_giver := FilterQuestByClassAndDiff(quest_list, classe, diff);
       if (quest_giver.size())
          var randomquest := quest_giver.randomentry();
          questions.append(struct{ type := "quest", classe := classe, quest_id := randomquest.id });
@@ -273,11 +278,13 @@ function CreateItemsFromClass(who, classe)
    endif
 endfunction
 
-function FilterQuestByClass(quest_data, classe)
+function FilterQuestByClassAndDiff(quest_data, classe, difficulty := 0)
    var return_list := array{};
    foreach quest in quest_data
       sleepms(2);
       if (!(classe in quest.category))
+         continue;
+      elseif (difficulty && quest.difficulty != difficulty)
          continue;
       endif
 

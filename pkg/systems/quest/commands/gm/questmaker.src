@@ -30,6 +30,7 @@ const GF_SELECTELEM_BTN := 100;
 const GF_QUEST_ACTIVE   := 800;
 const GF_QUEST_CATEGORY := 801;
 const GF_QUEST_LEVEL    := 802;
+const GF_ADD_TOPLAYER_QUEST := 805;
 const GF_REWARD_ADD     := 803;
 const GF_REWARD_EDIT    := 840;
 const GF_CONDITION_ADD  := 804;
@@ -103,11 +104,18 @@ function GumpQuestInfo(byref gump, who)
       // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
       if (item.qty) desc += " [{}]".format(item.qty); endif
 	   GFTextLine(gump, 295, 142+pos_y, 1152, "{}".format(desc));
-      var tooltip := "";
+      var tooltip := "<center>";
       if (item.spawngroup) tooltip += "Spawngroup: {}<br>".format(item.spawngroup); endif
       if (item.party) tooltip += "Party Contabliza<br>"; endif
       if (item.boss) tooltip += "Apenas Boss<br>"; endif
       if (item.customname) tooltip += "Custom Name: {}<br>".format(item.customname); endif
+      if (item.spawnpoint) 
+         var spawnpoint := SystemFindObjectBySerial(item.spawnpoint);
+         tooltip += "Spawnpoint: {}<br>".format(spawnpoint.desc);
+         tooltip += "Spawnpoint Loc: {} {} {}<br>".format(spawnpoint.x, spawnpoint.y, spawnpoint.z);
+      endif
+      if (item.item_specify) tooltip += "Item: {}<br>".format(item.item_specify.desc); endif
+      if (item.item_objtype) tooltip += "Objtype: {}<br>".format(item.item_objtype); endif
       GFTooltipText(gump, tooltip);
 
       pos_y += 18;
@@ -128,6 +136,14 @@ function GumpQuestInfo(byref gump, who)
       GFAddButton(gump, 782, 306, 2361, 2361, GF_CLOSE_BTN, GF_EXTRA_ADD);
       GFTextLine(gump, 716, 301, 1152, "Adicionar");
    endif
+
+	GFGumpPicTiled(gump, 578, 154+100, 1, 258, 2701);
+	GFGumpPic(gump, 766, 277+100, 59, 0);
+	GFGumpPicTiled(gump, 611, 277+100, 156, 21, 58);
+
+	GFTextLine(gump, 614, 266+100, 1152, "Outros");
+   GFAddButton(gump, 782, 306+100, 2103, 2103, GF_CLOSE_BTN, GF_ADD_TOPLAYER_QUEST);
+   GFTextLine(gump, 690, 301+100, 1152, "Receber Quest");
 
 	GFTextLine(gump, 280, 458, 1152, "Descrição da Quest (Use <br> para quebrar linha, <i> para itálico e <b> para negrito)");
 	GFResizePic(gump, 277, 478, 9350, 518, 109);
@@ -283,6 +299,13 @@ program gump_gump(who)
                quest.extras.append(new_extra);
                update_quest["extras"] := quest.extras;
                break;
+            GF_ADD_TOPLAYER_QUEST:
+               SendSysMessageEx(who, "Dar essa quest para quem ?", SSM_REQUEST);
+               var targ := Target(who);
+               if (!targ) break; endif
+
+               GiveQuest(targ, quest, 0, 1);
+               SendSysMessageEx(who, "Quest adicionada.", SSM_REQUEST);
          endcase
          
          if (selected_quest)
@@ -296,12 +319,13 @@ endprogram
 function QuestConditions(who, new_condition := struct{})
    var opts := array{
       "Matar Monstro",
-      "Usar Item",
-      "Craftar Item",
+      // "Usar Item",
+      // "Craftar Item",
       "Coletar Item",
       "Ir até Local",
       "Cancelar"
    };
+
    if (!new_condition.type)
       new_condition.type := RadioGump(who, 300, 0, "Qual condição quer configurar?", opts, 0);
    endif
@@ -311,10 +335,10 @@ function QuestConditions(who, new_condition := struct{})
       "Matar Monstro":
          var spawngroups := DFGetElemNames(LoadSpotGroupData());
          spawngroups.append("Qualquer Um");
-
+         var spawnpoint := SystemFindObjectBySerial(new_condition["spawnpoint"]);
          new_condition.spawngroup := _ifElse(!new_condition.spawngroup, spawngroups.size(), new_condition.spawngroup in spawngroups);
          var quest_gump := array{
-            struct{ title := "Escolha o Spawn onde ele deve matar", radio := spawngroups, marked := new_condition.spawngroup },
+            struct{ title := "Deseja selecionar um spawnpoint? (Atual é: {})".format(_ifElse(spawnpoint, spawnpoint.desc, "Nenhum")), radio := array{"Não", "Sim", "Remover spawnpoint existente" }, marked := 1 },
             struct{ title := "Entre com template do monstro", marked := _IfOr(new_condition.template, ":ghaia:") },
             struct{ title := "Quantidade de monstros que deve matar", marked := _IfOr(new_condition.qty, "10") },
             struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := cint(new_condition.party)+1 },
@@ -324,12 +348,22 @@ function QuestConditions(who, new_condition := struct{})
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
 
-         new_condition["spawngroup"] := output[1];
          new_condition["template"]   := output[2];
-         new_condition["qty"]   := cint(output[3]);
+         new_condition["qty"]        := cint(output[3]);
          new_condition["party"]      := output[4] == "Sim";
          new_condition["onlyboss"]   := output[5] == "Sim";
-         new_condition["customname"]   := output[6];
+         new_condition["customname"] := output[6];
+
+         if (output[1] == "Sim")
+            var targ := Target(who);
+            if (!targ || targ.objtype != 41985) 
+               SendSysMessageEx(who, "Isso não é um spawnpoint");
+            else
+               new_condition["spawnpoint"] := targ.serial;
+            endif
+         elseif (output[1] == "Remover spawnpoint existente")
+            new_condition["spawnpoint"] := 0;
+         endif
       "Ir até Local":
          SendSysMessage(who, "Escolha o RoleplayItem que irá disparar.");
          var targ := Target(who);
@@ -354,6 +388,7 @@ function QuestConditions(who, new_condition := struct{})
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
          new_condition.item_objtype := targ.objtype;
+         new_condition.item_specify := CreateItemTemplate(targ);
          new_condition.qty := cint(output[1]);
       "Craftar Item":
          SendSysMessageEx(who, "Condição não scriptada, srry!", SSM_FAIL);

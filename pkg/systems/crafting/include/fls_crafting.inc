@@ -570,10 +570,10 @@ endfunction
 
  function AddItemDescription(who, item)
 	var repeating := 1;
-   var desc := QuestionsGump(who, array{ struct{ title := "Entre com a descrição do item", lines := 2 }});
+   var desc := QuestionsGump(who, array{ struct{ title := "Entre com a descrição do item", lines := 1 }});
    if (desc)
-	   SetObjProperty(item, "description", desc);
-      SetName(item, item.desc);
+	   SetObjProperty(item, "description", desc[1]);
+	   SetName(item, _ifElse(item.isA(POLCLASS_MOBILE), item.name, item.desc));
    endif
 endfunction
 

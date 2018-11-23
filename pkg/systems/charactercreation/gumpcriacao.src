@@ -67,8 +67,8 @@ program createchar(who)
 	//Gumps
 	StartCharacterCreation(who, chardata);
 
-	chardata.hits  := 500;
-	chardata.mana := 100;
+	chardata.hits  := 300;
+	chardata.mana := 90;
 	chardata.stam := 60;
 
    chardata.points := 1;
