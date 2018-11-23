@@ -262,7 +262,7 @@ program gump_gump(who)
                   var res := QuestionsGump(who, array{ struct{ text := "Escolha quest que irá copiar", radio := quest_names }});
                   if (!res) break; endif
                   if (!res[1]) break; endif
-                  var quest := GetQuestData(quests[res[1] in quest_names]);
+                  var quest := GetQuestData(quest_list[res[1] in quest_names]);
                   var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
                   quest.title := quest_name;
                   SetQuestData(id, struct{ title := quest_name});
