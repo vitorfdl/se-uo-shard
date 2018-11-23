@@ -105,8 +105,8 @@ function DoPurchaseCmd(npc, player, text_type := 0)
    var canceled := 0;
    while(!canceled)
       if (!player.concealed)
-         if (!text_type) PrintText(npc, "O que deseja comprar?");
-         else PrintText(player, "O que tem a venda?"); endif
+         if (!text_type) PrintText(npc, "O que deseja comprar?", SSM_INFO);
+         else PrintText(player, "O que tem a venda?", SSM_INFO); endif
       endif
       var input := SendItemView(npc, player);
       if (!input[0])
@@ -571,9 +571,9 @@ function AddItemToSell(npc, player, item)
 
    var qty_by;
    if (lote_cmd)
-	   GFTextLine(gump, 48+x, 69+y+48, 1891, "Itens por unidade");
+	   GFTextLine(gump, 48+x, 69+y+48, 1891, "Itens por lote");
 	   GFResizePic(gump, 75+x, 89+y+50, 30546, 40, 26);
-   	qty_by := GFTextEntry(gump, 68+20+x, 92+y+50, 30, 20, 1153, "1");
+   	qty_by := GFTextEntry(gump, 68+20+x, 92+y+50, 30, 20, 1153, "{}".format(item.amount));
       GFTooltipText(gump, "Número de items que serão vendidos por unidade. Exemplo: 4 ferros por 1 unidade");
    endif
 
