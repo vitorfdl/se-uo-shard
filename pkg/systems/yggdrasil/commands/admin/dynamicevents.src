@@ -5,6 +5,7 @@ use basic;
 
 include ":yggdrasil:spawnGroup";
 include ":yggdrasil:dynamicevents";
+include ":yggdrasil:boss";
 // include ":ghaia:ghaiaUtil";
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
@@ -327,6 +328,7 @@ function GetEventOptions(who, event)
          new_step.append("Go to Player location");
          new_step.append("Go to location");
          new_step.append("Spawn in player location");
+         new_step.append("Boss Settings");
          new_step.append("Text");
       elseif (event.name["Sound"])
          new_step.append("Spawn in player location");
@@ -344,6 +346,8 @@ function GetEventOptions(who, event)
          event.steps.append(struct{ "location" := array{0,0,0}});
       elseif(choice == "Go to location")
          event.steps.append(struct{ "go_to" := array{0,0,0}});
+      elseif(choice == "Boss Settings")
+         event.steps.append(struct{ "boss" := struct{}});
       elseif(choice == "Spawn in player location")
          event.steps.append(struct{ "spawn_player_loc" := 1});
       elseif(choice == "Text")
@@ -385,6 +389,8 @@ function ChangeStep(who, mystep)
       mystep.timedscript := RadioGump(who, 0, 0, "Escolha um timedscript:", GetConfigStringKeys(timedcfg));
    elseif (mystep.resist_test)
       mystep.resist_test := RadioGump(who, 0, 0, "Escolha um teste:", array{STRENGTH, INTELLIGENCE, DEXTERITY, CONSTITUTION, WISDOM});
+   elseif (mystep.boss)
+      CreateBossStructGump(who, mystep.boss);
    endif
 
    return mystep;
@@ -575,7 +581,7 @@ function ConstructEventConfig(byref gump)
       title := "Condition";
    endif
 
-   GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 220, 100+(event.steps.size()*18));
+   GFResizePic(gump, 415, 15, GFCfgConst("BackGrounds", "TRINKED_HARD_PAPER"), 250, 100+(event.steps.size()*18));
    GFTextLine(gump, 465, 28, 555, "{} Configuration".format(title));
 
    var sy := 45;
@@ -606,6 +612,9 @@ function ConstructEventConfig(byref gump)
          GFTextLine(gump, sx+65, sy, 2103, "{}".format(ev.go_to));
          GFAddButton(gump, sx+52, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
 
+      elseif (ev.boss)
+         GFTextLine(gump, sx, sy, 1153, "Boss Settings:");
+         GFAddButton(gump, sx+90, sy+6, 2103, 2104, GF_CLOSE_BTN, GF_EVENT_BTN+_ev_iter);
       // Create Item
       elseif (ev.environment)
          GFTextLine(gump, sx, sy, 1153, "Clima:");
@@ -638,44 +647,4 @@ function ConstructEventConfig(byref gump)
 
     GFAddButton(gump, 560, sy+10, 0xEF, 0xF0, 1, GF_EVENT_UPDATE_BTN);
     GFAddButton(gump, 500, sy+10, 0x842, 0x843, 1, GF_EVENT_CHANGE_BTN);
-endfunction
-
-function EventSetConfigs(byref who, byref input)
-    var event_entry   := struct{};
-
-    case ( input[0] )
-        GF_BOSS_BTN: 
-            CreateBossStructGump(who, mob_bossparams);
-            break;
-        GF_DAYTIME_BTN:
-            var daytime := CheckBoxGump(who, 150, 165, "Horário de Spawn:", array{"Noite", "Dia", "Lua Nova"});
-            if (daytime.Size() > 1)
-                mob_daytime := "always";
-            else
-                mob_daytime := lower(daytime[1]);
-            endif
-            break;
-        GF_POWER_BTN:
-            mob_power := cint(RadioGump(who, 150, 165, "Nivel de Poder:", array{"1", "2", "3"}));
-            break;
-        GF_TYPE_BTN:
-            mob_type := lower(RadioGump(who, 190, 180, "Tipo de Monstro:", array{"Melee", "Ranged", "Spellcaster", "Boss"}));
-            break;
-         GF_MGROUP_BTN:
-            mob_group := cint(RadioGump(who, 150, 185, "Grupo:", array{"0", "1", "2", "3"}));
-            break;
-    endcase
-
-    event_entry.+name       := GFExtractData(input, mob_name);
-    event_entry.+power      := mob_power;
-    event_entry.+daytime    := mob_daytime;
-    event_entry.+isBoss     := input[INPUT_ISBOSS];
-    event_entry.+bossParams  := mob_bossparams;
-    event_entry.+type       := mob_type;
-    event_entry.+mobgroup       := mob_group;
-
-    UpdateGroupMobData(selected_dynamicevent, event_entry, selected_mob);
-
-    SendSysMessageEx(who, "Mob atualizado no spawnGroup!");
-
 endfunction

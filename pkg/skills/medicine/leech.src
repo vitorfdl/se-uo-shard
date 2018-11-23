@@ -23,7 +23,7 @@ program UseLeech(who, leech)
 		return;
 	endif
 
-	var test := RabdomInt(100);
+	var test := RandomInt(100);
 
 	if ( test <= 20 )
 		who.SetAchievement("leech", 1);

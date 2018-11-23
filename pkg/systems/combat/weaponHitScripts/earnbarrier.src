@@ -11,10 +11,11 @@ program HitScript(params)
 	var attacker	:= params[1];
 	var defender	:= params[2];
 	var weapon	:= params[3];
+	var basedamage	:= params[5];
 	params := 0; // Not needed anymore.
 	
    SendSysMessageEx(defender, "O véu ao seu redor se torna mais denso te protegendo.", SSM_FAIL);
-   var barrier := cint(cdbl(base_damage) * 0.3));
+   var barrier := cint(cdbl(basedamage) * 0.3);
    var current_barrier := AP_GetTrueSkill(defender, "Barrier");
    if (current_barrier)
       barrier += current_barrier;

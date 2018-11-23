@@ -160,7 +160,7 @@ program core_npcDeath(params)
          endif
          ExpGain(mob, 3);
       else
-         ghaiaCheckNumber(npc);
+         ghaiaCheckNumber(mob);
       endif
 
       sleepms(2);

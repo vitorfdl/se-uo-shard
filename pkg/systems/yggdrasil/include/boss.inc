@@ -120,7 +120,7 @@ function CreateBossStructGump(who, byref boss)
 		cfg_hp := " [{}]".format(cfg.Hits);
 	endif
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "HP{}:".format(cfg_hp));
-	hits := GFTextEntry( chargump, cx_pos+45, y_pos, 100, 20, 1935, "{}".format(cint(boss.hits)));
+	hits := GFTextEntry( chargump, cx_pos+55, y_pos, 100, 20, 1935, "{}".format(cint(boss.hits)));
 
    y_pos += 18;
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Fisica[{}]:".format(cint(cfg.PhysicalResist)));

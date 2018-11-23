@@ -60,17 +60,20 @@ function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y)
    var power := CalculateRawDamage(targ, 0, targ.weapon);
    foreach hab in feats
       if (hab.Group != cur_group)
-         GFGumpPicTiled(gump, x_pos+5, y+9, 1, 20, 2701);  // divisor
+         GFGumpPicTiled(gump, x_pos+5, y+9, 1, 20, 2114);  // divisor
          cur_group := hab.Group;
          x_pos += 15;
       endif
 
       var color := 0;
-      if (!(hab.FeatId in subclass.habs) && who.cmdlevel <= 3)
-         color := 1000; 
+      
+      if ( (charlevel < hab.Level || cint(subclass.level) < hab.Group) && targ.cmdlevel < 3 )
+         color := 2114;
+      elseif (!(hab.FeatId in subclass.habs))
+         color := 1000;
       endif
       
-      if (color != 1000 || (charlevel >= hab.Level && cint(subclass.level) >= hab.Group) && who == targ)
+      if (color != 2114 && who == targ)
          GFAddButton(gump,  x_pos, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
       endif
 
@@ -113,17 +116,19 @@ function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array
             var color := 0;
             if (hab.FeatId in classe.selected_habs)
                color := 75;
-            elseif (!(hab.FeatId in classe.habs) && who.cmdlevel < 3)
+            elseif ( (charlevel < hab.Level || cint(classe.level) < hab.Group) && targ.cmdlevel < 3 )
+               color := 2114;
+            elseif (!(hab.FeatId in classe.habs))
                color := 1000; 
             endif
 
-            if (color == 0 || (charlevel >= hab.Level && cint(classe.level) >= hab.Group) && who == targ)
+            if ((color != 2114) && who == targ)
                GFAddButton(gump, x, y-2, hab.Icon, hab.Icon, GF_CLOSE_BTN, 300+hab.FeatID); // hab
             endif
             GFGumpPic(gump, x, y-2, hab.Icon, color); // hab
             GFTooltipText(gump, BuildFeatToolTip(hab, !(hab.FeatId in classe.habs), power));
          else
-            GFGumpPic(gump, x, y, 0x5DD3, 1000);
+            GFGumpPic(gump, x, y, 0x5DD3, 2114);
             GFTooltipText(gump, "Habilidade Indisponível");
             // GFGumpPic(gump, x+2, y+8, 27, 1000);
          endif
@@ -230,25 +235,29 @@ function SendSkillGump(who, chardata, targ)
 	GFTextLine(gump, 503, 155, 0, "Habilidade 4");
 	GFTextLine(gump, 604, 155, 0, "Ultimate");
 
-   buildClass(who, targ, chardata.level, gump, chardata.classes[1], array{});
+   if (chardata.classes)
+      buildClass(who, targ, chardata.level, gump, chardata.classes[1], array{});
+   endif
 
 	GFGumpPic(gump, 37, 274, 57, 0); // bar
 	GFGumpPicTiled(gump, 67, 274, 607, 21, 58); //bar
 	GFGumpPic(gump, 667, 274, 59, 0); //bar
 
-   buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 141, 297);
+   if (chardata.subclasses)
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 141, 297);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[2], 141, 368);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[3], 141, 439);
+   endif
 
 	GFGumpPic(gump, 94, 350, 57, 0); // bar
 	GFGumpPicTiled(gump, 123, 350, 501, 21, 58); // bar
 	GFGumpPic(gump, 624, 350, 59, 0); // bar
 
-   buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[2], 141, 368);
 
 	GFGumpPic(gump, 93, 421, 57, 0); // bar
 	GFGumpPicTiled(gump, 122, 421, 501, 21, 58); // bar
 	GFGumpPic(gump, 623, 421, 59, 0); // bar
 
-   buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[3], 141, 439);
 
 	GFGumpPic(gump, 223, 63, 105, 0);
    GFTooltipText(gump, "Este é seu valor máximo de vida, sem nenhum modificador.");
@@ -281,6 +290,7 @@ function SendBackgroundGump(who, edit, targ)
 
 	GFTextLine(gump, 43, 70, 2212, "Característica do Personagem (Max. 6)");
 	GFHTMLArea(gump, 43, 89, 654, 115, OrganizarTexto(ficharp_elem, valores, "Caracteristicas"), 1, 1);
+   
    if (edit)
       if (len(valores.Caracteristicas) < 6) 
          GFAddButton(gump, 663, 69, 55, 55, GF_CLOSE_BTN, GF_BKG_ADD_BTN+1);

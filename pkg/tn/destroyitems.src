@@ -43,8 +43,8 @@ program destroyitems(parms)
 	if( GetObjProperty(item, "broken"))
 		SendSysMessageEx(who,"Isto parece já estar quebrado.",SSM_FAIL);
 		return 0;
-	elseif(AP_GetVital(who, "Stamina") < 15)
-      SendSysMessageEx(who, "Você esta cansado demais.",SSM_FAIL);
+	elseif(!AP_ConsumeVital(who, "Stamina", 15))
+      SendSysMessageEx(who, "Você está cansado demais.",SSM_FAIL);
       return 0;
    elseif ( who.weapon.isBow() || who.weapon.isMagicWeapo())
       return 0;
@@ -75,8 +75,6 @@ program destroyitems(parms)
       endforeach
    endif
    
-
-      
    var hits     := cint(GetObjProperty(item,"hits"));
    PlayAttackAnimation(who, who.weapon);
    sleepms(600);
@@ -104,7 +102,7 @@ program destroyitems(parms)
       if (item.isA(POLCLASS_CONTAINER))
          var container_items := EnumerateItemsInContainer(item);
          foreach citem in container_items
-            if (RandomInt(100) < 25)
+            if (RandomInt(100) < 30)
                MoveObjectToLocation(citem, item.x, item.y, item.z, item.realm, MOVEOBJECT_FORCELOCATION);
             else
                DestroyItem(citem);

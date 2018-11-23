@@ -15,6 +15,7 @@ const BUTTON_HELP_SENDGMPAGE := 2;
 const BUTTON_HELP_SENDCOUNPAGE := 3;
 const BUTTON_HELP_REPORTBUG := 4;
 const BUTTON_HELP_REPORTUSER := 5;
+const BUTTON_HELP_HOTBAR := 6;
 
 program help_menu(who)
 	var chargump := GFCreateGump();
@@ -34,20 +35,22 @@ program help_menu(who)
 	GFGumpPic(chargump, 0,400, 10402);
 	GFGumpPic(chargump, 368,400, 10412);
 	
-	GFTextMid(chargump, 70, 40, 300, 1153, "Menu de Ajuda");
+	GFTextMid(chargump, 70, 40, 330, 1153, "Menu de Ajuda");
 	GFTextLine(chargump, 70, 75, 2103, "Lista de Comandos");
 
 	var cfgtext := ReadConfigFile(":help:config/commands");
 	var textelem := FindConfigElem( cfgtext, "commands" );
-	var lines := GetConfigString(textelem, "Line");
-	GFHTMLArea(chargump, 70, 100, 310, 290, lines, 9390, 1);
+	var lines := GetConfigStringArray(textelem, "Line");
+	GFHTMLArea(chargump, 70, 100, 310, 235, "<BR><BR>".join(lines), 9390, 1);
 
-	GFTextLine(chargump, 125, 425-20, 1153, "Solicitar ajuda aos GMs");
-	GFTextLine(chargump, 125, 460-20, 1153, "Reportar Bug ou fazer sugestão");
-	GFTextLine(chargump, 125, 495-20, 1153, "Denunciar Jogador");
-	GFAddButton(chargump, 70, 410-20, 4502, 4502, 1, BUTTON_HELP_SENDGMPAGE );
-	GFAddButton(chargump, 70, 444-20, 4502, 4502, 1, BUTTON_HELP_REPORTBUG );
-	GFAddButton(chargump, 70, 479-20, 4502, 4502, 1, BUTTON_HELP_REPORTUSER );
+	GFTextLine(chargump, 125, 390-40, 1153, "Minha Barra de Habilidades Sumiu");
+	GFTextLine(chargump, 125, 425-40, 1153, "Solicitar ajuda aos GMs");
+	GFTextLine(chargump, 125, 460-40, 1153, "Reportar Bug ou fazer sugestão");
+	GFTextLine(chargump, 125, 495-40, 1153, "Denunciar Jogador");
+	GFAddButton(chargump, 70, 375-40, 4502, 4502, 1, BUTTON_HELP_HOTBAR );
+	GFAddButton(chargump, 70, 410-40, 4502, 4502, 1, BUTTON_HELP_SENDGMPAGE );
+	GFAddButton(chargump, 70, 444-40, 4502, 4502, 1, BUTTON_HELP_REPORTBUG );
+	GFAddButton(chargump, 70, 479-40, 4502, 4502, 1, BUTTON_HELP_REPORTUSER );
 
 	input := GFSendGump(who, chargump);
 	input := input[0];
@@ -74,5 +77,12 @@ program help_menu(who)
          endif
 			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998, targ, "Reportar Jogador"} );
 		endif
+   elseif (input == BUTTON_HELP_HOTBAR)
+      var pid := GetobjProperty(who, "#hotbar_pid");
+      if (pid)
+         var process := GetProcess(pid).kill();
+      endif
+
+      start_script(":charactercreation:hotbar/hotbar", who);
 	endif
 endprogram

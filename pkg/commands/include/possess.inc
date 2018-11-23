@@ -76,11 +76,13 @@ function unpossess(me, freeze :=1)
 		MoveItemToContainer(item, container);
 		SleepMS(2);
 	endforeach
+
 	DestroyItem(container);
 	
 	clonar(oldnpc, me);
-	
+
 	DestroyItem(oldnpc.backpack);
+
 	var bolsa := CreateItemAtLocation(5383, 923, 0, 0x9B2);
 	EquipItem(oldnpc, bolsa);
 	var itemsinbag := EnumerateItemsInContainer( me.backpack );
@@ -88,7 +90,7 @@ function unpossess(me, freeze :=1)
 		MoveItemToContainer(iteminbag, oldnpc.backpack);
 	endforeach 
 	oldnpc.facing := me.facing;
-	MoveObjectToLocation (oldnpc, me.x, me.y, me.z, me.realm, MOVEOBJECT_FORCELOCATION);
+	MoveObjectToLocation(oldnpc, me.x, me.y, me.z, me.realm, MOVEOBJECT_FORCELOCATION);
 	oldnpc.frozen    := 1;
 	oldnpc.concealed := 0;
 	me.concealed     := 1;
@@ -170,12 +172,11 @@ function clonar(newlook, oldlook)
 		EquipItem(newlook, y);
 	endforeach
 	
-	var desc_oldlook:=GetObjProperty(oldlook,"description");
-
+	var desc_oldlook := GetObjProperty(oldlook,"description");
 	if (desc_oldlook!=error) 
-		SetObjProperty(newlook,"description",desc_oldlook);
+		SetObjProperty(newlook, "description", desc_oldlook);
 	else
-		EraseObjProperty(newlook,"description");
+		EraseObjProperty(newlook, "description");
 	endif
 
 	newlook.gender       := oldlook.gender;
@@ -194,12 +195,11 @@ function clonar(newlook, oldlook)
       1: newlook.murderer := 1;
    endcase
 
-	var chardata;
-   if (GetObjProperty(oldlook, "chardata"))
-		chardata := GetObjProperty(oldlook, "chardata");
-   else
-      chardata := struct{};
-	endif
+	var chardata := GetObjProperty(oldlook, "chardata");
+   if (!chardata)
+      chardata := struct{ hits := AP_GetVitalMaximumValue(oldlook, HITS), mana := AP_GetVitalMaximumValue(oldlook, MANA), stam := AP_GetVitalMaximumValue(oldlook, STAMINA) };
+   endif
+
    SetObjProperty(newlook, "chardata", chardata);
    RecalcVitals(newlook);
 
@@ -208,21 +208,16 @@ function clonar(newlook, oldlook)
 	AP_SetVital(newlook, HITS, cint(newhits));
 	AP_SetVital(newlook, STAMINA, cint( cdbl(AP_GetVitalMaximumValue(newlook, STAMINA)) * 0.5 ));
 	AP_SetVital(newlook, MANA, cint(newmana));
-	//Copia o profile do npc.
-	var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
-	var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, oldlook.serial, DF_CREATE);
-	var cp_profile_oldlook    := DFGetProp(cp_elem_oldlook, "Profile", DF_CREATE);
 
-	var cp_data_file_newlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
-	var cp_elem_newlook       := DFFindElement(cp_data_file_newlook, newlook.serial, DF_CREATE);
+	//Copia o profile do npc.
+	// var cp_data_file_oldlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
+	// var cp_elem_oldlook       := DFFindElement(cp_data_file_oldlook, oldlook.serial, DF_CREATE);
+	// var cp_profile_oldlook    := DFGetProp(cp_elem_oldlook, "Profile", DF_CREATE);
+
+	// var cp_data_file_newlook  := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
+	// var cp_elem_newlook       := DFFindElement(cp_data_file_newlook, newlook.serial, DF_CREATE);
 	
-	cp_elem_newlook.SetProp("Profile", cp_profile_oldlook);
-	
-	// var newpack := GetEquipmentByLayer(newlook, 0x15);
-	// if (newpack)
-	// 	DestroyItem(newpack);
-	// endif
-	// 
+	// cp_elem_newlook.SetProp("Profile", cp_profile_oldlook);
 	
 	if ((GetObjProperty(oldlook,"achievements"))!=error)
 		SetObjProperty(newlook,"achievements",GetObjProperty(oldlook,"achievements"));

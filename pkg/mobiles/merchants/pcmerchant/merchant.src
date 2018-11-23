@@ -705,7 +705,7 @@ function GetDetails(item, who)
          var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
          var res := 0;
          foreach resist in resists
-            var value := item.["resist_{}".format(resist)];
+            var value := item["resist_{}".format(resist)];
             if (value)
                ret += "Def. {}: {}<br>".format(TranslateDamage(resist), value);
                if (value > res)
@@ -724,7 +724,7 @@ function GetDetails(item, who)
       endif
 
       if (item.quality >= 2)
-         var hits := GetWeaponFeat(elem);
+         var hits := GetWeaponFeat(item);
          if (hits)
             ret += "{}{}<br>".format(ORANGE, hits);
          endif

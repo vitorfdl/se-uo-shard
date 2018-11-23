@@ -219,10 +219,10 @@ function CharacterCreationGump(who, byref chardata)
       GFTextLine(gump, 36+2, 105, 2212, "Raça");
       GFTextLine(gump, 62, 126, 1152, "Núro");
       GFTextLine(gump, 62, 148, 1152, "Vala");
-      // GFTextLine(gump, 62, 169, 1152, "Alayarz");
+      GFTextLine(gump, 62, 169, 1152, "Alayarz");
       GFAddButton(gump, 39, 126, 210 + (chardata.raca == "Humano" || !chardata.raca), 211, GF_CLOSE_BTN, 44);
       GFAddButton(gump, 39, 148, 210 + (chardata.raca == "Elfo"), 211, GF_CLOSE_BTN, 45);
-      // GFAddButton(gump, 39, 169, 210 + (chardata.raca == "Meio-Elfo"), 211, GF_CLOSE_BTN, 46);
+      GFAddButton(gump, 39, 169, 210 + (chardata.raca == "Meio-Elfo"), 211, GF_CLOSE_BTN, 46);
       
       GFTextLine(gump, 145, 103, 2212, "Sexo");
       GFTextLine(gump, 167, 126, 1152, "Homem");

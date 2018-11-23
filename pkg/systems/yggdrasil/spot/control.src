@@ -213,6 +213,7 @@ function StartDynamicEvent(spot, config, evententry)
          endif
          for i := 1 to (this_step.number)
             var summon := CreateNpcFromTemplate(this_step.template, loc[1], loc[2], loc[3]);
+            if (this_step.boss) SetBoss(summon, this_step.boss); endif
             if (summon.errortext) continue; endif
             if (this_step.text) PrintText(summon, this_step.text); endif;
             sleepms(100);

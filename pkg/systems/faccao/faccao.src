@@ -572,15 +572,15 @@ function guildHandler(who, input)
          var uniform := guild_obj.uniforms[output];
          var props := struct{};
          props.name := uniform.name;
-         props.difficulty := 14;
-         props.colored := 0;
-         props.mark := 1;
+         props.difficulty  := 14;
+         props.colored     := 0;
+         props.mark        := 1;
          props.exceptional := 1;
-         props.delay := 2;
-         props.materials := uniform.materials;
-         props.requires := array{};
-         props.fastcraft := 0;
-         props.RequireFeat := _ifElse(uniform.craft_skill["Costura"], 63, _ifElse(uniform.craft_skill["Ferraria"], 61, 62);
+         props.delay       := 2;
+         props.materials   := uniform.materials;
+         props.requires    := array{};
+         props.fastcraft   := 0;
+         props.RequireFeat := _ifElse(uniform.craft_skill["Costura"], 63, _ifElse(uniform.craft_skill["Ferraria"], 61, 62));
          props.pieces := uniform.pieces;
 
          var item := CreateItemInbackpack(who, 0x46AE);
