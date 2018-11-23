@@ -326,21 +326,23 @@ endfunction
    // var res:= QuestionsGump(who, questions);
    // var answer_1 := res[1];
 function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
-	var total_height := (questions.size() * 57);
+	var total_height := (questions.size() * 25);
    foreach quest in questions
       if (quest.radio)
-         total_height += Floor(quest.radio.size() / 5) * 30;
+         total_height += Floor(quest.radio.size() / 4) * 25;
       elseif (quest.checkbox)
-         total_height += Floor(quest.checkbox.size() / 5) * 35;
+         total_height += Floor(quest.checkbox.size() / 4) * 25;
       elseif (quest.lines)
-         total_height += (cint(quest.lines)-1) * 26;
+         total_height += cint(quest.lines+1) * 25;
+      else
+         total_height += 25;
       endif
       sleepms(2);
    endforeach
 
 	var gump := GFCreateGump(250, 250);
    GFSetID(gump, GUMPID_TNGUMPS);
-	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 50+total_height);
+	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 75+total_height);
 
 	var entries := dictionary{};
    var previousiter := 0;

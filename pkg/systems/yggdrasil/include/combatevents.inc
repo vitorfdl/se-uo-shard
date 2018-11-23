@@ -275,7 +275,7 @@ function CombatEventsOptions(who, state)
       if(!state.text) state.text := ""; endif
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai ser puxado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai ser puxado?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Quantas vezes será puxado?", "marked" := ""+cint(state.times) });
       input_list.append(struct{ "title" := "Qual mensagem será reproduzida?", "marked" := ""+state.text});
       input_list.append(struct{ "title" := "Qual ação o monstro executará?", "marked" := ""+cint(state.action)});
@@ -296,7 +296,7 @@ function CombatEventsOptions(who, state)
       state.times := cint(output[1]);
    elseif ( opt == "Steal Player")
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai ser roubado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai ser roubado?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Apenas roubar se estiver atrás do alvo?", "marked" := 1+cint(state.onlybehind), "radio" := array{"Sim", "Não"}});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
@@ -307,7 +307,7 @@ function CombatEventsOptions(who, state)
       state.conedist := cint(output[3]);
    elseif ( opt == "Simple Target")
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quais alvos?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quais alvos?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Checar linha de visão?", "marked" := 1+cint(state.nochecklos), "radio" := array{"Não", "Sim"}});
       input_list.append(struct{ "title" := "Trancar Previous Target? (Outros targs não substituirão esse valor)", "marked" := 1+cint(state.nolocktargs), "radio" := array{"Não", "Sim"}});
       input_list.append(struct{ "title" := "Inclur boss nos targets?", "marked" := 1+cint(state.noincludeself), "radio" := array{"Não", "Sim"}});
@@ -325,7 +325,7 @@ function CombatEventsOptions(who, state)
    elseif ( opt == "Pushback")
       var behaviours := array{"Para frente", "Para trás", "Para frente relacional", "Para trás relacional"};
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai sofrer a pushback?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai sofrer a pushback?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o comportamento?", "marked" := state.behaviour in behaviours, "radio" := behaviours});
       input_list.append(struct{ "title" := "Quantas vezes será aplicado?", "marked" := ""+cint(state.times)});
       if (!state.conedist) state.conedist := 3; endif
@@ -338,7 +338,7 @@ function CombatEventsOptions(who, state)
       state.conedist := cint(output[4]);
    elseif ( opt == "Consume Creature")
       var input_list := array{};
-      input_list.append(struct{ "title" := "Onde vai procurar pelo alvo?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Onde vai procurar pelo alvo?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "O que vai comer?", "marked" := cint(state.what_type == "Item")+1, "radio" := array{"Criatura", "Item"}});
       input_list.append(struct{ "title" := "Template da criatura ou ID do item:", "marked" := cint(state.what) });
       input_list.append(struct{ "title" := "Quanto % vai se curar?", "marked" := cint(state.hp_percent) });
@@ -360,7 +360,7 @@ function CombatEventsOptions(who, state)
       endif
       var tele_opts := array{"Teleportar X,Y,Z", "Alvo (DO NPC)", "Tele no NPC", "Aplicar +-X,Y,Z", "Ao redor (Alvo)", "Ao redor (NPC)"};
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai sofrer a teleporte?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai sofrer a teleporte?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Escolha o comportamento", "marked" := state.behaviour in tele_opts, "radio" := tele_opts });
       input_list.append(struct{ "title" := "Qual o X Y Z? (Apenas para primeira e ultima opção)", "marked" := xyz});
       if (!state.conedist) state.conedist := 3; endif
@@ -384,7 +384,7 @@ function CombatEventsOptions(who, state)
       endforeach
       if (!state.resist_diff) state.resist_diff := 14; endif
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai ser checado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai ser checado?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual tipo de defesa será checado?", "marked" := resist_choice, "checkbox" :=  resists });
       input_list.append(struct{ "title" := "Passar para 'Previous Target'?", "marked" := cint(state.successonly)+1, "radio" :=  array{"Se Def Não Ativa", "Se Def Ativa"} });
       if (!state.conedist) state.conedist := 3; endif
@@ -397,7 +397,7 @@ function CombatEventsOptions(who, state)
       state.conedist    := cint(output[5]);
    elseif ( opt == "Dash")
       var input_list := array{};
-      input_list.append(struct{ "title" := "Qual alvo do dash?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual alvo do dash?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual distância a percorrer? [até 120s]", "marked" := ""+cint(state.dist)});
       input_list.append(struct{ "title" := "Lançar mobiles no Previous Target?", "marked" := ""+cint(state.nosetprevious)+1, radio := array{"Sim", "Não"}});
       if (!state.conedist) state.conedist := 3; endif
@@ -415,7 +415,7 @@ function CombatEventsOptions(who, state)
       var timerlist := GetConfigStringKeys(timedcfg);
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai sofrer a action?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai sofrer a action?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Escolha o timedscript", "marked" := state.timername in timerlist, "radio" := timerlist });
       input_list.append(struct{ "title" := "Qual a duração do timer? [até 120s]", "marked" := ""+cint(state.timerduration)});
       input_list.append(struct{ "title" := "Qual o level do timer?", "marked" := ""+cint(state.level)});
@@ -431,7 +431,7 @@ function CombatEventsOptions(who, state)
       state.conedist      := cint(output[5]);
    elseif ( opt == "Perform Action" )
       var input_list := array{}; 
-      input_list.append(struct{ "title" := "Quem vai realizar a action?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai realizar a action?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o ID da animação?", "marked" := ""+cint(state.id)});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
@@ -444,7 +444,7 @@ function CombatEventsOptions(who, state)
       var input_list := array{};
       if (!state.color) state.color := 1000; endif
       if (!state.text) state.text := ""; endif
-      input_list.append(struct{ "title" := "Quem vai falar?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai falar?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o texto?", "marked" := ""+cstr(state.text)});
       input_list.append(struct{ "title" := "Qual a cor do texto?", "marked" := ""+cint(state.color)});
       if (!state.conedist) state.conedist := 3; endif
@@ -468,7 +468,7 @@ function CombatEventsOptions(who, state)
    elseif (opt == "Heal")
       var vital_list := array{"Stam", "Hits", "Mana"};
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai ser curado?", "marked" := state.target in targ_opts, "radio" := targ_opts + array{"Fixed Loc"}});
+      input_list.append(struct{ "title" := "Quem vai ser curado?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts + array{"Fixed Loc"}});
       input_list.append(struct{ "title" := "Qual porcentagem do poder em dano?", "marked" := ""+state.healamt});
       input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo heal?", "marked" := state.vital in vital_list, "radio":= vital_list});
       if (!state.conedist) state.conedist := 3; endif
@@ -488,7 +488,7 @@ function CombatEventsOptions(who, state)
       if (effect_pos <= 0 || !effect_pos) effect_pos := 12; endif
       var input_list := array{};
       input_list.append(struct{ "title" := "Qual estilo de alvo?", "marked" := state.style in effect_types, "radio" := effect_types });
-      input_list.append(struct{ "title" := "Onde vai surgir o efeito?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Onde vai surgir o efeito?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o tipo de efeito?", "marked" := 1+(state.graphictype == "Moving"), "radio" := array{"Stationary", "Moving"}});
       input_list.append(struct{ "title" := "Qual o efeito?", "marked" := effect_pos, "radio" := effect_opts });
       input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := ""+cint(state.fxid)});
@@ -587,7 +587,7 @@ function CombatEventsOptions(who, state)
       endforeach
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Quem vai sofrer?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quem vai sofrer?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual porcentagem de poder em dano? Ex: 100", "marked" := ""+state.dmg});
       input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := state.dmgtype in dmgs, "radio" := dmgs});
       input_list.append(struct{ "title" := "Qual tipo de vital sera afetado pelo dano?", "marked" := state_vitals, "checkbox":= dmg_types});
@@ -619,7 +619,7 @@ function CombatEventsOptions(who, state)
       if (state.p3) p3 := " ".join(state.p3); endif
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Onde será criado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Onde será criado?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Criar em X Y Z (deixa em branco para usar target)", "marked" := xyz });
       input_list.append(struct{ "title" := "Qual ID ou nome do item a ser criado?", "marked" := state.item });
       input_list.append(struct{ "title" := "Qual cor o item terá?", "marked" := state.color });
@@ -658,7 +658,7 @@ function CombatEventsOptions(who, state)
       if (state.walk_to) walk_to := " ".join(state.walk_to); endif
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Onde será spawnado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Onde será spawnado?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ""+state.npctemplate});
       input_list.append(struct{ "title" := "Quantos npcs vao ser spawnados?", "marked" := ""+cint(state.amount)});
       input_list.append(struct{ "title" := "Qual o raio de spawn?", "marked" := ""+cint(state.range)});
@@ -713,7 +713,7 @@ function CombatEventsOptions(who, state)
       if (state.dmg) dmg := state.dmg; endif
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Onde será criado?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Onde será criado?", "marked" := _ifElse(state.target, _ifElse(state.target, state.target in targ_opts, 1), 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Quantas minas?", "marked" := ""+cint(state.amount)});
       input_list.append(struct{ "title" := "Qual tipo da mina?", "marked" := 1+(state.mine_type == "Gelo"), radio := array{ "Fogo", "Gelo" }});
       input_list.append(struct{ "title" := "Qual porcentagem de poder em dano?", "marked" := dmg});
@@ -749,7 +749,7 @@ function CombatEventsOptions(who, state)
       var trilha_types := array{"Fogo", "Veneno", "Eletrecidade"};
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Qual o alvo?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual o alvo?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual tipo de trilha?", "marked" := state.trilha_type in trilha_types, radio := trilha_types });
       input_list.append(struct{ "title" := "Qual porcentagem de poder em dano?", "marked" := dmg });
       input_list.append(struct{ "title" := "Qual a dificuldade para esquivar?", "marked" := resist });
@@ -775,7 +775,7 @@ function CombatEventsOptions(who, state)
       endforeach
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Qual o alvo?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual o alvo?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Quais bombas pode lançar?", "marked" := marked, "checkbox" := bomb_opts});
       if (!state.conedist) state.conedist := 3; endif
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
@@ -801,7 +801,7 @@ function CombatEventsOptions(who, state)
       if (state.duration) duration := state.duration; endif
 
       var input_list := array{};
-      input_list.append(struct{ "title" := "Qual o alvo?", "marked" := state.target in targ_opts, "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Qual o alvo?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Criar em +X +Y +Z? (vazio para lançar do npc)", marked := "" });
       input_list.append(struct{ "title" := "Enviar na direção ou seguir target?", "marked" := 1+cint(state.to_where == "Target"), radio := array{"Local", "Target"} });
       input_list.append(struct{ "title" := "Qual type?", "marked" := 1+cint(state.ball_type), radio := array{"0 - Single DMG", "1 - Area DMG", "2 - Token Balls"} });

@@ -570,17 +570,11 @@ endfunction
 
  function AddItemDescription(who, item)
 	var repeating := 1;
-	var str;
-	SendSysMessageEx(who, "Utilize apenas 3 linhas da janela.");
-	while (repeating)
-		str := SmallRequestGump(who, "Descreva o item", 1);
-		if (len(str) < 84)
-			break;
-		endif
-		SendSysMessageEx(who, "Você excedeu o número máximo de caracteres! Utilize apenas 3 linhas da janela.");
-	endwhile
-   str := SubStrReplace(str, "", str.length()-4);
-	SetObjProperty(item, "description", str);
+   var desc := QuestionsGump(who, array{ struct{ title := "Entre com a descrição do item", lines := 2 }});
+   if (desc)
+	   SetObjProperty(item, "description", desc);
+      SetName(item, item.desc);
+   endif
 endfunction
 
 function CraftExceptional(who, theitem, craft_skill)
