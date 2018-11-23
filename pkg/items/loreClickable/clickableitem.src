@@ -119,7 +119,7 @@ function handleInput(who, input, item, byref gump_params)
       BTN_CHANGE_TEST:
          showSpecialGump(who, item);
       BTN_CHANGE_TEXT:
-         var text := QuestionsGump(who, array{ struct{ title := "Escreva o conteúdo do gump, use <br></b> para quebrar a linha", lines := 5} });
+         var text := QuestionsGump(who, array{ struct{ title := "Escreva o conteúdo do gump, use <br></b> para quebrar a linha", lines := 5, marked := _ifOr(gump_params.text, "")} });
          if (!text) return 1; endif
          gump_params.text := text;
       default: return 1;
