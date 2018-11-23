@@ -265,7 +265,7 @@ program gump_gump(who)
                   var quest := GetQuestData(quest_list[res[1] in quest_names]);
                   var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
                   quest.title := quest_name;
-                  SetQuestData(id, struct{ title := quest_name});
+                  SetQuestData(id, quest);
                endif
                selected_quest := id;
                update_quest := struct{};
