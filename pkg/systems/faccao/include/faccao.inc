@@ -102,6 +102,7 @@ function RemFaccao(guild_obj)
    if (typeof(guild) == "String")
       guild := FindGuild(guild);
    endif
+
    if (!guild) return; endif
 
    foreach member in (guild_obj.members)
@@ -114,7 +115,7 @@ function RemFaccao(guild_obj)
       sleepms(2);
    endforeach
 
-   return DestroyGuild(guild_obj);
+   return DestroyGuild(guild);
 endfunction
 
 

@@ -268,7 +268,9 @@ program faccao(params)
    if (input[0] >= BUTTON_BUY_UNIFORM && input[0] <= BUTTON_BAN_PLAYER)
       guildHandler(who, input[0]);
    elseif (input[0] == BUTTON_GM_OPTS)
-      gmHandler(who);
+      if (gmHandler(who) == 99)
+         return;
+      endif
    elseif (input[0] >= BUTTON_CHANGE_PLAYER)
       playerHandler(who, input[0]);
    elseif (input[0] >= BUTTON_ADD_NPC && input[0] <= BUTTON_ADD_NPC+0x50)
@@ -652,7 +654,7 @@ function playerHandler(who, input)
 endfunction
 
 function gmHandler(who)
-   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões","Pegar GuildID", "Alterar Sub-Guilds", "Remover guilda", "Cancelar"};
+   var opts := array{"Alterar Nome", "Alterar Area", "Alterar Prisões","Pegar GuildID", "Alterar Sub-Guilds", "Remover Guilda", "Cancelar"};
    var output := RadioGump(who, 300, 0, "Escolha uma opção", opts, 0, opts.size());
 
    if (output["Nome"])
@@ -738,9 +740,10 @@ function gmHandler(who)
       guild.SetProp("prision_leave", soltar);
 
       SendSysMessageEx(who, "Prisões alteradas");
-   elseif (output["Remover"])
+   elseif (output["Remover Guilda"])
       RemFaccao(guild.guildid);
       SendSysMessageEx(who, "Guilda removida");
+      return 99;
    endif
 endfunction
 

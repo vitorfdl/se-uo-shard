@@ -1,0 +1,18 @@
+use os;
+use util;
+
+include "include/say";
+include "include/damage";
+include "include/sounds";
+include ":timedscripts:timedScripts";
+include ":attributes:attributes";
+
+program ultimoSuspiro(param)
+   var who := param[1];
+
+   HealStamina(who, heal, 1);
+
+   PlayCustomSound(who, 25);
+   SendSysMessageEx(who, "Você dá seu ultimo suspiro e sente-se revitalizado.", SSM_INFO);
+   return 1;
+endprogram
