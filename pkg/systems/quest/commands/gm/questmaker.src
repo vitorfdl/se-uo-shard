@@ -19,6 +19,7 @@ include ":unicos:item_template";
 var selected_quest := 0;
 var quest_list;
 var quest;
+var quest_names := array{};
 
 var quest_title;
 var quest_desc := array{};
@@ -149,9 +150,9 @@ function GumpQuestInfo(byref gump, who)
 	GFTextLine(gump, 280, 458, 1152, "Descrição da Quest (Use <br> para quebrar linha, <i> para itálico e <b> para negrito)");
 	GFResizePic(gump, 277, 478, 9350, 518, 109);
 
-   var texts := GFWordWrap(quest.description, 520);
+   var texts := GFWordWrap(quest.description, 535);
    var i := 1;
-   for (i; i<=4; i+=1)
+   for (i; i<=5; i+=1)
       var text := _ifElse(texts[i], texts[i], "");
 	   quest_desc[i] := GFTextEntry(gump, 279, 481+((i-1)*18), 512, 20, 0, "{}".format(text), 0);
       sleepms(2);
@@ -167,9 +168,11 @@ function GumpQuestList(who)
 	GFGumpPic(gump, 36, 32, 57, 0);
 
    quest_list := DFGetElemNames(LoadQuestData());
+   quest_names := array{};
    var pos_y := 0;
    foreach q in quest_list
       var quest :=  GetQuestData(q);
+      quest_names.append(quest.title);
       if (quest.id == cstr(selected_quest))
 	      GFGumpPic(gump, 24, 54+pos_y, 4006, 0);
       else
@@ -251,9 +254,19 @@ program gump_gump(who)
       else
          case (res[0])
             GF_ADD_BTN:
-               var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
                var id := cint(quest_list[quest_list.size()]) +1 ;
-               SetQuestData(id, struct{ title := quest_name});
+               if (!YesNo(who, "Escolha uma opção:", "Copiar Quest", "Nova Quest"))
+                  var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
+                  SetQuestData(id, struct{ title := quest_name});
+               else
+                  var res = QuestionsGump(who, array{ struct{ text := "Escolha quest que irá copiar", radio := quest_names }});
+                  if (!res) break; endif
+                  if (!res[1]) break; endif
+                  var quest := GetQuestData(quests[res[1] in quest_names]);
+                  var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
+                  quest.title := quest_name;
+                  SetQuestData(id, struct{ title := quest_name});
+               endif
                selected_quest := id;
                update_quest := struct{};
                break;
