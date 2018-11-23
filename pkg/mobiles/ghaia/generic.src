@@ -241,10 +241,10 @@ function Fight(opponent, alerted := 0)
          if (!TS_GetCooldown(me, "block_dodge") && RandomInt(100) <= 35)
             if (npccfgfile.DodgeCooldown)
                TS_StartCooldown(me, "dodge", 2);
-               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.DodgeCooldown));
+               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.DodgeCooldown) + AP_GetSkill(me, "Block"));
             elseif (npccfgfile.BlockCooldown)
                TS_StartCooldown(me, "block", 2);
-               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.BlockCooldown));
+               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.BlockCooldown) + AP_GetSkill(me, "Dodge"));
             endif
          endif
 

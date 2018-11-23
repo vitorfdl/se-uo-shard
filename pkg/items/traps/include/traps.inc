@@ -205,6 +205,7 @@ endfunction
 
 function TrapFound(object, founder)
 	SetObjProperty(object, "trapSpoted", founder.serial);
+   SetName(object, object.desc);
 endfunction
 
 function getTrapDamage(strength, danger)

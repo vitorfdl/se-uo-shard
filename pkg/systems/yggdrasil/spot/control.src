@@ -165,6 +165,29 @@ function StartDynamicEvent(spot, config, evententry)
             passed_conditions := 0;
             break;
          endif
+      elseif (this_step.name["Min Player Level"])
+         var locs := this_step.location;
+         var passed_event := 0;
+         foreach loc in locs
+            var mobiles := GetPlayerNear(loc, cint(this_step.range));
+            foreach mob in mobiles
+               if (mob.GetLevel() >= this_step.number)
+                  passed_event := 1;
+                  break;
+               endif
+               sleepms(2);
+            endforeach
+            
+            if (passed_event)
+               break;
+            endif
+            sleepms(2);
+         endforeach
+         
+         if (!passed_event)
+            passed_conditions := 0;
+            break;
+         endif
       elseif (this_step.name["Camping Near"])
          var locs := this_step.location;
          var passed_event := 0;

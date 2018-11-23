@@ -37,7 +37,7 @@ const GF_EVENT_CHANGE_BTN := 302;
 const GF_EVENT_BTN := 320;
 
 var event_options := array{"Summon Mobs", "Create Item", "Change Environment", "Destroy Item", "Apply TimedScript", "Play Sound"};
-var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Cooldown", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping near"};
+var condition_options := array{"Minimum Players", "Mobiles Died", "Boss Died", "Cooldown", "Battle Started", "% of Chance", "Player Class", "Light near", "Camping near", "Min Player Level"};
 
 //Basic
 var selected_dynamicevent := ""; //Name of the Elem
@@ -242,6 +242,11 @@ function GetStepsFor(event_type)
          events.append(struct{ "location" := array{0, 0, 0} });
          break;
       "Camping near": //Light near
+         events.append(struct{ "location" := array{0, 0, 0} });
+         events.append(struct{ "range" := 10 });
+         break;
+      "Min Player Level": //Light near
+         events.append(struct{ "number" := 5 });
          events.append(struct{ "location" := array{0, 0, 0} });
          events.append(struct{ "range" := 10 });
          break;

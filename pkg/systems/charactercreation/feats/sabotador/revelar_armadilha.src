@@ -21,7 +21,9 @@ program startTalent(param)
 
       sleepms(2);
    endforeach
+   
    sleepms(400);
+   PrintText(who, "*busca por itens e armadilhas ao redor*");
    examinarArea(who, 15, array{"Item"});
 
 

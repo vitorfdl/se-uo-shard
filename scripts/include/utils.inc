@@ -1,6 +1,7 @@
 use uo;
 use os;
 use math;
+use cfgfile;
 
 include "include/facings";
 
@@ -233,4 +234,16 @@ function InverseFacing(facing, type := 0)
    endif
 
    return facing;
+endfunction
+
+function GetItemFix(fix_cfg, objtype)
+   var elem := FindConfigElem(fix_cfg, Hex(objtype));
+   if (elem)
+      return struct{
+         x := GetConfigInt(elem, "x"),
+         y := GetConfigInt(elem, "y")
+      };
+   endif
+
+   return struct{ x:= 0, y := 0};
 endfunction

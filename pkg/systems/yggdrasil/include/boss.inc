@@ -49,7 +49,7 @@ function CreateBossStructGump(who, byref boss)
 	var cfg :=	NPC_GetNPCConfig(boss.npctemplate);
 	var npctemplate := boss.npctemplate;
 	var template, nome, cor;
-   var power, hits;
+   var power, hits, cd_block, cd_dodge, critical;
    var phsycal_res, poison_res, fire_res, cold_res, energy_res;
 
 	//GFClosable(chargump, 0);
@@ -83,6 +83,13 @@ function CreateBossStructGump(who, byref boss)
 
 	GFTextLine(chargump, x_pos, y_pos+(18*4), 1051, "Poder[{}]: ".format(cint(cfg.AttackDamage)));
 	power := GFTextEntry( chargump, x_pos+65, y_pos+(18*4), 100, 20, 2212, cint(boss.power) + "");
+
+	GFTextLine(chargump, x_pos, y_pos+(18*5), 1051, "Cd. de Bloqueio [{}]:".format(cint(cfg.BlockCooldown)));
+	cd_block := GFTextEntry( chargump, x_pos+135, y_pos+(18*5), 100, 20, 1935, cint(boss.BlockCooldown) + "");
+	GFTextLine(chargump, x_pos, y_pos+(18*6), 1051, "Cd. de Esquiva [{}]:".format(cint(cfg.DodgeCooldown)));
+	cd_dodge := GFTextEntry( chargump, x_pos+135, y_pos+(18*6), 100, 20, 1935, cint(boss.DodgeCooldown) + "");
+	GFTextLine(chargump, x_pos, y_pos+(18*7), 1051, "Chance de Crítico [{}]:".format(cint(cfg.Critical)));
+	critical := GFTextEntry( chargump, x_pos+155, y_pos+(18*7), 100, 20, 1935, cint(boss.Critical) + "");
 
 	var attacks      := GetNpcAttacks(npctemplate);
 	var boss_attacks := boss.customAttacks;
@@ -137,7 +144,17 @@ function CreateBossStructGump(who, byref boss)
    y_pos += 18;
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Veneno[{}]:".format(cint(cfg.PoisonResist)));
 	poison_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.poison_res) + "");
+   y_pos += 18*2;
 
+	GFTextLine(chargump, cx_pos, y_pos, 1051, "Descrição Roleplay:");
+   GFResizePic(chargump, cx_pos, y_pos+18, 0x2486, 140, 100);
+   var desc_gump := array{};
+   boss.roleplay_desc := GFWordWrap(_ifOr(boss.roleplay_desc, ""), 180);
+   for t := 1 to 5
+      var text := _ifOr(boss.roleplay_desc[t], "");
+      desc_gump.append(GFTextEntry( chargump, cx_pos+2, y_pos+18, 138, 20, 1935, text));
+      y_pos += 18;
+   endfor
 
 	y := y_pos+(18*3);
 
@@ -211,13 +228,27 @@ function CreateBossStructGump(who, byref boss)
 	boss.npctemplate := Cstr(GFExtractData(input, template));
 	boss.name        := Cstr(GFExtractData(input, nome));
 	boss.color       := Cint(GFExtractData(input, cor));
-	boss.phsycal_res         := Cint(GFExtractData(input, phsycal_res));
-	boss.fire_res         := Cint(GFExtractData(input, fire_res));
-	boss.poison_res         := Cint(GFExtractData(input, poison_res));
-	boss.cold_res         := Cint(GFExtractData(input, cold_res));
-	boss.energy_res         := Cint(GFExtractData(input, energy_res));
+	boss.phsycal_res := Cint(GFExtractData(input, phsycal_res));
+	boss.fire_res    := Cint(GFExtractData(input, fire_res));
+	boss.poison_res  := Cint(GFExtractData(input, poison_res));
+	boss.cold_res    := Cint(GFExtractData(input, cold_res));
+	boss.energy_res  := Cint(GFExtractData(input, energy_res));
 	boss.hits        := Cint(GFExtractData(input, hits));
-	boss.power        := Cint(GFExtractData(input, power));
+	boss.power       := Cint(GFExtractData(input, power));
+	boss.cd_block       := Cint(GFExtractData(input, cd_block));
+	boss.cd_dodge       := Cint(GFExtractData(input, cd_dodge));
+	boss.critical       := Cint(GFExtractData(input, critical));
+   boss.roleplay_desc := array{};
+   
+   foreach text_id in desc_gump
+      var text := GFExtractData(input, text_id);
+      if (text) boss.roleplay_desc.append(text); endif
+      sleepms(2);
+   endforeach
+
+   boss.roleplay_desc := " ".join(boss.roleplay_desc);
+
+
 	// boss.dmg         := Cdbl(GFExtractData(input, dmgmod));
 
 	if (input[0] == 1 )
@@ -419,7 +450,11 @@ function SetBoss(npc, boss)
    if (boss.energy_res) npc.resist_physical_mod := boss.energy_res; no_tame := 1; endif
    if (boss.poison_res) npc.resist_physical_mod := boss.poison_res; no_tame := 1; endif
    if (boss.cold_res) npc.resist_physical_mod := boss.cold_res; no_tame := 1; endif
-	
+   if (boss.cd_block) AP_SetTrueSkill(npc, "Block", boss.cd_block); no_tame := 1; endif
+   if (boss.cd_dodge) AP_SetTrueSkill(npc, "Dodge", boss.cd_dodge); no_tame := 1; endif
+   if (boss.critical) AP_SetTrueSkill(npc, "Critical", boss.critical); no_tame := 1; endif
+   if (boss.roleplay_desc) SetObjProperty(npc, "roleplay_desc", boss.roleplay_desc); endif
+
 	if (boss.customAttacks && boss.customAttacks[0])
 		var customAttacks := array{};
 		foreach attack in (boss.customAttacks)

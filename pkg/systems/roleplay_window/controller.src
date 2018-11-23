@@ -61,6 +61,13 @@ program AC_start(who)
                SendSysMessage(who, "-> Personagem Avistado.");
                trig := 1;
             endif
+         elseif (GetObjProperty(mob, "roleplay_desc"))
+            var description := GetObjProperty(mob, "roleplay_desc");
+            description := "<BASEFONT color=#AAAAAA>Você vê: <BASEFONT color=#FFA500>{} <BASEFONT color=#FAFAFA>{}".format(mob.name, description);
+            last_see.Insert(1, description);
+            already_saw.append(mob.serial);
+            SendSysMessage(who, "-> Criatura Avistada.");
+            trig := 1;
          endif
          sleepms(2);
       endforeach

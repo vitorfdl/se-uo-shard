@@ -14,6 +14,7 @@ include ":gumps:requestgump";
 include ":gumps:yesno";
 include ":tn:tngumps";
 include "include/say";
+include "include/utils";
 
 const EXPANSION_START	:= 0xB0000;
 const CHAR_INFO_START	:= 0xC0000;
@@ -68,16 +69,16 @@ function AcctGump(who, account)
 	GFResizePic(gump, 0, 0, GFCfgConst("Defaults", "BackGround"), 640, 480);
 	GFResizePic(gump, 15, 15, GFCfgConst("Defaults", "ForeGround"), 610, 30);
 	
-	GFTextLine(gump, 20, 20, 2100, "Account Name:  "+account.name);
+	GFTextLine(gump, 20, 20, 2100, "Nome da Conta:  "+account.name);
 	var status;
 	if ( account.banned )
-		status := "Banned";
+		status := "Banido";
 	elseif ( !account.enabled )
-		status := "Disabled";
+		status := "Desativado";
 	else
-		status := "Active";
+		status := "Ativo";
 	endif
-	GFTextRight(gump, 605, 20, 2100, "Account Status:  "+status);
+	GFTextRight(gump, 605, 20, 2100, "Status da Conta:  "+status);
 	
 	GFPage(gump, 1);
 	CharListGump(account, gump);
@@ -94,7 +95,7 @@ function CharListGump(account, byref gump)
 	var y_pos := 55;
 	var i := 1;
 	for ( i; i<=5; i:=i+1 )
-		GFTextLine(gump, 20, y_pos+6, 2100, "Character "+i);
+		GFTextLine(gump, 20, y_pos+6, 2100, "Personagem "+i);
 		var name := account.GetCharacter(i).name;
 		if ( name )
 			GFAddButton(gump, 110, y_pos+3, 2440, 2440, GF_CLOSE_BTN, CHAR_INFO_START+i);
@@ -113,24 +114,24 @@ function GeneralInfoGump(account, byref gump)
 	GFResizePic(gump, 290, 50, GFCfgConst("Defaults", "ForeGround"), 335, 140);
 	if ( !account.banned )
 		GFAddButton(gump, 295, 55, 4017, 4018, GF_CLOSE_BTN, BAN_BTN);
-		GFTextLine(gump, 330, 55, 32, "Ban Account");
+		GFTextLine(gump, 330, 55, 32, "Banir Conta");
 	else
 		GFAddButton(gump, 295, 55, 4017, 4018, GF_CLOSE_BTN, BAN_BTN);
-		GFTextLine(gump, 330, 55, 32, "Lift Account Ban");
+		GFTextLine(gump, 330, 55, 32, "Desbanir Conta");
 	endif
 
 	if ( !account.GetProp("ReleaseTime") )
 		GFAddButton(gump, 295, 85, 4020, 4021, GF_CLOSE_BTN, DISABLE_BTN);
-		GFTextLine(gump, 330, 85, 2100, "Disable/Jail Account");
+		GFTextLine(gump, 330, 85, 2100, "Banir por alguns dias");
 	else
-		GFTextLine(gump, 295, 85, 2100, "Conta desativada por");
+		GFTextLine(gump, 295, 85, 2100, "Account está desativada por");
 		GFAddButton(gump, 465, 85, 4020, 4021, GF_CLOSE_BTN, DISABLE_BTN);
 		GFResizePic(gump, 460, 80, 2620, 40, 30);
 		GFTextMid(gump, 460, 85, 40, 2100, CStr(GetNumJailDays(account)));
 		GFTextLine(gump, 505, 85, 2100, "dias.");
 	endif
 	GFAddButton(gump, 295, 130, 4005, 4006, GF_PAGE_BTN, 2);
-	GFTextLine(gump, 330, 130, 2100, "Account Notes");
+	GFTextLine(gump, 330, 130, 2100, "Notas");
 
 	//////
 	// Lower Left Buttons
@@ -150,11 +151,8 @@ function GeneralInfoGump(account, byref gump)
 	GFTextLine(gump, 25, 280, 2100, "Max Characters:");
 	GFAddButton(gump, 150, 280, 4023, 4024, GF_CLOSE_BTN, MAXCHAR_BTN);
 	GFResizePic(gump, 140, 276, 2620, 50, 30);
-	var maximum := account.getprop("maxchars");
-	if (maximum == error)
-		maximum := 1;
-	endif
-	GFTextMid(gump, 140, 281, 60, 2100, maximum );
+	var maxchar := _ifOr(account.getprop("maxchars"), 1);
+	GFTextMid(gump, 140, 281, 60, 2100, maxchar );
 
 
 
@@ -162,34 +160,26 @@ function GeneralInfoGump(account, byref gump)
 	// Mid-Right Buttons
 	/////
 	GFResizePic(gump, 205, 195, GFCfgConst("Defaults", "ForeGround"), 420, 90);
-	var email := account.GetProp("IPShare");
-	if ( !email )
-		email := "Não Divide";
-	endif
-	GFTextRight(gump, 335, 208, 2100, "Divide IP");
-	GFAddButton(gump, 350, 205, 0x476, 0x476, GF_CLOSE_BTN, CHANGE_EMAIL);
-	GFTextMid(gump, 350, 208, 260, 2100, email);
+	var email := _ifOr(account.GetProp("Email"), "Não Definido");
+	GFTextRight(gump, 315, 208, 2100, "Email");
+	GFAddButton(gump, 325, 205, 0x476, 0x476, GF_CLOSE_BTN, CHANGE_EMAIL);
+	GFTextMid(gump, 320, 208, 260, 2100, email);
 
-	var ip := account.GetProp("IP");
-	if ( !ip )
-		ip := "";
-	endif
-	GFTextLine(gump, 220, 238, 2100, "Signup IP: "+ip);
-	var host := account.GetProp("Host");
-	if ( !host )
-		host := "";
-	endif
-	GFTextLine(gump, 220, 258, 2100, "Signup Host: "+host);
+	var ip := _ifOr(account.GetProp("IP"), array{});
+   ip.shrink(4);
+	GFTextLine(gump, 220, 238, 2100, "Lista de IP: "+ ", ".join(ip));
+	var host := _ifOr(account.GetProp("Host"), "");
+	GFTextLine(gump, 220, 258, 2100, "Host: "+host);
 	
 	//////
 	// Lower-Right Buttons
 	/////
 	GFResizePic(gump, 205, 290, GFCfgConst("Defaults", "ForeGround"), 420, 175);
 	GFAddButton(gump, 210, 298, 2117, 2118, GF_CLOSE_BTN, CHANGE_ACCTNAME);
-	GFTextLine(gump, 230, 295, 2100, "Change Account Name");
+	GFTextLine(gump, 230, 295, 2100, "Mudar Nome da Conta");
 
 	GFAddButton(gump, 210, 318, 2117, 2118, GF_CLOSE_BTN, DELETE_CHARACTER);
-	GFTextLine(gump, 230, 315, 2100, "Delete Character");
+	GFTextLine(gump, 230, 315, 2100, "Deletar Personagem");
 	
 	return 1;
 endfunction
@@ -228,19 +218,18 @@ function NotesGump(account, byref gump)
 	return 1;
 endfunction
 
-
 function AccountBanner(who, account)
 	if (account.defaultcmdlevel > who.cmdlevel)
 		SendSysMessage(who, "You can't do that.");
 		return 0;
 	endif
 	if ( account.banned )
-		if ( YesNo(who, "Are you sure you want to unban this account?") )
+		if ( YesNo(who, "Tem certeza que quer desbanir esta conta?") )
 			account.UnBan();
 			return 1;
 		endif
 	else
-		if ( YesNo(who, "Are you sure you want to ban this account?") )
+		if ( YesNo(who, "Tem certeza que quer banir essa conta?") )
 			account.Ban();
 			return 1;
 		endif
@@ -251,7 +240,7 @@ function AccountBanner(who, account)
 endfunction
 
 function SuspendAccount(who, account)
-	var jail_time := RequestGump(who, "How many days do you want to disable this account?","", CStr(GetNumJailDays(account)), 1);
+	var jail_time := RequestGump(who, "Por quantos dias quer desabilitar esta conta?","", CStr(GetNumJailDays(account)), 1);
 	if ( jail_time == error )
 		SendSysMessage(who, "Cancelled");
 		return 0;

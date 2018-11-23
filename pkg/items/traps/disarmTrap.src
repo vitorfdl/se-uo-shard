@@ -6,9 +6,11 @@ include ":itemutils:canAccess";
 include ":attributes:attributes";
 include ":traps:traps";
 include "include/say";
+include "include/utils";
 
 
 program skillremoveTrap(who, item)
+   _resolveParams(who, item);
 	EraseObjProperty(who, "IsMeditating");
 	EraseObjProperty(who, "HealTimer");
 

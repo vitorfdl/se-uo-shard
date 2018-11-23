@@ -168,7 +168,7 @@ function createGump(who, recipes, params)
 
       GFResizePic(gump, r_x-7, r_y-4, 5120, 205, 49);
       GFResizePic(gump, r_x-49, r_y, 30546, 45, 45);
-      var fix_p := GetItemFix(recipe.graphic);
+      var fix_p := GetItemFix(fix_cfg, recipe.graphic);
       GFTilePic(gump, r_x-55+fix_p.x, r_y+4+fix_p.y, recipe.graphic, cint(recipe.color));
       if (recipe.desc)
          GFTooltipText(gump, recipe.desc);
@@ -234,16 +234,4 @@ endfunction
 function LoadItemEventData()
     var df := DFOpenDataFile( ":crafting:excepitems", DF_CREATE, DF_KEYTYPE_INTEGER);
     return df;
-endfunction
-
-function GetItemFix(objtype)
-   var elem := FindConfigElem(fix_cfg, Hex(objtype));
-   if (elem)
-      return struct{
-         x := GetConfigInt(elem, "x"),
-         y := GetConfigInt(elem, "y")
-      };
-   endif
-
-   return struct{ x:= 0, y := 0};
 endfunction

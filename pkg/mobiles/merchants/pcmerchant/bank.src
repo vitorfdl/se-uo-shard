@@ -1,141 +1,147 @@
 
-// use uo;
-// use os;
-// use cfgfile;
-// use math;
-// include ":merchants:merchant";
-// include "include/string";
-// include "include/sounds";
-// include":merchants:crafthelp";
-// include ":ghaia:ghaiaUtil";
-// include ":gumps:gumps";
-// include ":crafting:recipes";
-// include ":gumps:gumps_ex";
-// include ":gumps:yesno";
-// include ":gumps:include/requestgump";
-// include ":crafting:craft_props";
-// include ":crafting:fls_crafting";
-// include ":gumps:htmlgump";
-// include ":tn:cooldown";
+use uo;
+use os;
+use cfgfile;
+use math;
+include ":merchants:merchant";
+include "include/string";
+include "include/sounds";
+include":merchants:crafthelp";
+include ":ghaia:ghaiaUtil";
+include ":gumps:gumps";
+include ":crafting:recipes";
+include ":gumps:gumps_ex";
+include ":gumps:yesno";
+include ":tn:tngumps";
+include ":gumps:htmlgump";
+include ":merchants:bank";
 
-// const GF_STDCOLOR := 1890;
-// const MOEDAS      := 0xeed;
-// var item_cfg      := ReadConfigFile(":*:itemdesc");
-// var npc;
-// var guild, above_merchant, is_guild_member;
-// var imposto := 0.1;
-// var item_types := array{"Armaduras", "Roupas", "Armas", "Arcos", "Materia-Prima", "Joias", "Varinhas", "Alimentos", "Artigos", "Livros/Receitas"};
+const GF_STDCOLOR := 1890;
+const MOEDAS      := 0xeed;
+var item_cfg      := ReadConfigFile(":*:itemdesc");
+var npc;
+var guild, above_merchant, is_guild_member;
+var imposto := 0.1;
+var item_types := array{"Armaduras", "Roupas", "Armas", "Arcos", "Materia-Prima", "Joias", "Varinhas", "Alimentos", "Artigos", "Livros/Receitas"};
 
-// program HandleMerchant(params)
-//    if( GetObjProperty(params.me, "guild"))
-//       guild := FindGuild(GetObjProperty(params.me, "guild"));
-//       above_merchant := (guild.getProp("leader") == params.source.serial || guild.getProp(params.source.serial).above_merchants || params.source.cmdlevel >= 3);
-//       is_guild_member := guild.guildid == params.source.guildid;
-//    else
-//       above_merchant := params.source.cmdlevel >= 3;
-//    endif
+var bank_region := CP_DEFAULT_AREA;
 
-//    if (GetObjproperty(params.me, "imposto") != error)
-//       imposto := GetObjproperty(params.me, "imposto");
-//    endif
-// 	SetObjProperty(params.me, "#occupied", GetPid());
-// 	case (params.type)
-// 		"ItemGivenEvent": 
-// 			if (!HandleItemGiven(params.me, params.source, params.item))
-// 				MoveItemToContainer(params.item, params.source.backpack);
-// 			endif
-// 		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
-//       "SeeEvent": HandleSeeEvent(params.me, params.source);
-//       "DblClickEvent": DoPurchaseCmd(params.me, params.source, 1);
-// 		// "Default": return;
-// 	endcase
+program HandleMerchant(params)
+	bank_region := _ifOr(GetObjProperty(npc, "City"), CP_DEFAULT_AREA);
 
-// 	EraseObjProperty(params.me, "#occupied");
-// endprogram
+	SetObjProperty(params.me, "#occupied", GetPid());
+	case (params.type)
+		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+      // "SeeEvent": HandleSeeEvent(params.me, params.source);
+      "DblClickEvent": BankOptionsGump(params.me, params.source);
+		// "Default": return;
+	endcase
 
-// function HandleSeeEvent(npc, player)
-//    if (GetCooldown(npc, "{}_see".format(player.serial)) || player.cmdlevel)
-//       return;
-//    endif
+	EraseObjProperty(params.me, "#occupied");
+endprogram
 
-// 	var data_elem := GetPaymentsDataElem(Hex(npc.serial));
-// 	var account := data_elem.GetProp(Hex(player.serial));
-   
-//    if (!account || account.size() < 1)
-//       SetCooldown(npc, "{}_see".format(player.serial), 600);
-//       return;
-//    endif
+function SendBankContainer(npc, player)
+   PrintText(player, "Posso ver meu cofre?", SSM_FAIL);
+	var bank_box := CP_GetStorageContainerForMobile(player, bank_region, CP_NOCREATE);
+   if (!bank_box)
+      PrintTextPrivate(npc, "Você não possui conta neste banco. Deseja se registrar ?", player, SSM_INFO);
+      PrintTextPrivate(npc, "Ao se registrar, você pagará impostos semanais, mas terá privilégios de amarzenar moedas, jóias e até itens conosco.", player,SSM_INFO);
+      return BankOptionsGump(npc, player);
+   endif
 
-//    PlayCustomSound(npc, 14);
-//    PrintText(npc, "{}, vendi alguns artigos seu!".format(player.name));
-//    SetCooldown(npc, "{}_see".format(player.serial), 600);
-// endfunction
+   bank_box := CP_GetStorageContainerForMobile(player, bank_region);
+   PayTaxes(player.serial, bank_region, bank_box);
+   if (isDevedor(player, bank_region))
+      var divida := GetDivida(player, bank_region);
+      PrintTextPrivate(npc, "Infelizmente você tem uma dívida conosco de {} moedas".format(divida), player, SSM_INFO);
+      PrintTextPrivate(npc, "Você poderá ter acesso ao seu cofre ao quitar sua divida. Se quiser pode pagar agora.", player, SSM_INFO);
+      if (!PayDebts(npc, player, divida))
+         return;
+      endif
+   endif
 
-// function DoPurchaseCmd(npc, player, text_type := 0)
-//    var canceled := 0;
-//    while(!canceled)
-//       if (!player.concealed)
-//          if (!text_type) PrintText(npc, "O que deseja comprar?");
-//          else PrintText(player, "O que tem a venda?"); endif
-//       endif
-//       var input := SendItemView(npc, player);
-//       if (!input[0])
-//          break;
-//       elseif (input[0] == 2)
-//       elseif (input[0] > 90000)
-//          var serial := input[0] - 90000;
-//          RemoveItemMerchant(npc, player, serial);
-//       else
-//          DoPurchase(npc, player, input[0]);
-//          break;
-//       endif
-//    endwhile
-// endfunction
+   SendOpenSpecialContainer(player, bank_box);
+   PrintText(npc, "Aqui está seu cofre.", SSM_INFO);
+endfunction
 
-// function HandleSpeech(npc, player, text)
-//    var canceled := 0;
-// 	text := lower(text);
-//    if (guild)
-//       if (!InGuildRect(guild, npc))
-//          return;
-//       endif
-//    endif
+function PayDebts(npc, player, divida)
+   SendSysMessageEx(player, "Escolha as moedas que deseja usar para pagar.", SSM_REQUEST);
+   var moeda := Target(player);
+   if (!moeda) return; endif
 
-//    if (text["artigo"] || text["compra"] || text["ver"])
-//       DoPurchaseCmd(npc, player);
-//    elseif (text["minhas vendas"])
-//       DoWithdraw(npc, player);
-//    endif
+   if (moeda.objtype != 0xeed) SendSysMessageEx(player, "Cancelado.", SSM_FAIL); return; endif
+   if (moeda.amount < divida) SendSysMessageEx(player, "Quantidade insuficiente.", SSM_FAIL); return; endif
 
-//    if (above_merchant)
-//       if (text["hist"] && text["vend"])
-//          PrintText(npc, "Aqui está o histórico de vendas, Sr.");
-//          var historico := GetMerchantLog(npc);
-//          historico := "<br> - {}".format("<br> -".join(historico));
-//          SendHTMLGump(player, "Histórico de Vendas", historico);
-//       elseif (text["regras"] && text["neg"])
-//          PrintText(npc, "Certo, estou te ouvindo");
-//          SetupMerchant(npc, player);
-//       endif
-//    endif
-// endfunction
+   SubtractAmount(moeda, divida);
+
+   DeleteDevedor(player, bank_region);
+endfunction
+
+function HandleSpeech(npc, player, text)
+   var canceled := 0;
+	text := lower(text);
+
+   if (text["cofre"] || text["banco"] || text["ver"])
+      SendBankContainer(npc, player);
+   endif
+endfunction
 
 
-// function SendItemView(npc, player)
-//    var gump := GetGumpView(npc, player);
+function BankOptionsGump(npc, player)
+   var cancel := 0;
+   while (!cancel && player.connected)
+      var opts := array{};
+      var opt_values := array{};
+      var bank_box := CP_GetStorageContainerForMobile(player, bank_region, CP_NOCREATE);
+      if (bank_box)
+         if (isDevedor(player, bank_region))
+            var divida := GetDivida(player, bank_region);
+            opts.append(struct{ text := "Pagar dívida de {} com o banco.".format(divida), item := 0x0EEF });
+            opt_values.append("pay_debt");
+         else
+            opts.append(struct{ text := "Abrir seu cofre.", item :=  0x9C18 });
+            // opts.append(struct{ text := "Alterar sua conta no banco" });
+            opt_values.append("open_box");
+            // opt_values.append("new_bank");
+         endif
+      else
+         opts.append(struct{ text := "Abrir sua conta no banco.", item := 0x0FBD });
+         opt_values.append("new_bank");
+      endif
 
-//    gump := SetAboveLayer(npc, player, gump);
+      var res := ChoiceSelectorGump(player, "O que deseja fazer no banco?", opts);
 
-// 	return GFSendGump(player, gump);
-// endfunction
+      if (opt_values[res] == "new_bank")
+         PrintText(player, "Desejo abrir uma conta no banco.", SSM_FAIL);
+         PrintText(npc, "Vou criar sua conta e seu registro aqui na cidade.", SSM_INFO);
+         var oldcity := GetPlayerCity(player.serial);
+         if (oldcity != error )
+            RemovePlayer(player.serial, oldcity);
+         endif
+         
+         var bank_box := CP_GetStorageContainerForMobile(player, bank_region, CP_CREATE);	
+         SetupPlayerAccount(player.serial, bank_region);
+         AddTaxToPlayer(player.serial, struct{ "Conta" := 15 });
+      elseif (opt_values[res] == "open_box")
+         SendBankContainer(npc, player);
+         cancel := 1;
+      elseif (opt_values[res] == "pay_debt")
+         var divida := GetDivida(player, bank_region);
+         PayDebts(npc, player, divida);
+      else
+         cancel := 1;
+      endif
+      sleepms(10);
+   endwhile
+endfunction
 
-// function GetGumpView(npc, player)
-//    var gump := GetMerchantGump(npc);
-//    if (!gump)
-//       gump := StoreGumpView(npc, player);
-//    endif
 
-//    return gump;
-// endfunction
-
-
+////////
+// options = [
+//    { 
+//       text = Essa Opção, 
+//       Icon = 7748, 
+//       Item = item.graphic,
+//       color = 0
+//    }
+// ]

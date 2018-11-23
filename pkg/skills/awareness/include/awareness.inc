@@ -104,6 +104,18 @@ function examinarArea(who, range, types := array{})
    if ("Item" in types)
       foreach item in ListItemsNearLocation(who.x, who.y, who.z, range)
          sleepms(2);
+         
+         if ( !CheckLineOfSight(who, item))
+            continue;
+         endif
+
+         if (GetObjProperty(item, "TrapList") && Distance(item, who) <= 2)
+            if ( !GetObjProperty(item, "trapSpoted") )
+               PrintText(item, "*armadilha revelada por {}*".format(who.name), SSM_INFO);
+               TrapFound(item, who);
+            endif
+         endif
+
          if ( !item.invisible )
             continue;
          endif

@@ -38,11 +38,10 @@ endfunction
 program oafeatures_sendpacket(who, text)
    // var item := _CreateItemInBackpack(who, 0xDC01, 1);
    // var recipes := GetObjProperty(who, "recipes");
-   var targ := Target(who);
-
-
-   sleep(2);
-   targ.frozen := 0;
+   var test := struct{ roleplay_desc := "afwer wear awer awer awer awer awer awer awer awer" };
+   CreateBossStructGump(who, test);
+   print("BOSS");
+   print(test.roleplay_desc);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area
    //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)

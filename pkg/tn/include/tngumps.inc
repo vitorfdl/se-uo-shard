@@ -484,6 +484,7 @@ endfunction
 //    }
 // ]
 function ChoiceSelectorGump(who, question := "", options := array{}, allow_cancel := 0)
+   var fix_cfg := ReadConfigFile(":fls_core:item_fix");
 	var gump := GFCreateGump(250, 250);
    GFSetID(gump, GUMPID_TNGUMPS);
 	
@@ -502,8 +503,9 @@ function ChoiceSelectorGump(who, question := "", options := array{}, allow_cance
       GFResizePic(gump, 43, y, 9270, 63, 58); // behind icon
 
       if (btn.item)
+         var fx := GetItemFix(fix_cfg, btn.item);
          GFResizePic(gump, 50, y+7, 9350, 50, 43);
-         GFTilePic(gump, 55, y+16, btn.item, cint(btn.color)); //item
+         GFTilePic(gump, 55+fx.x, y+16+fx.y, btn.item, cint(btn.color)); //item
       elseif (btn.icon)
          GFGumpPic(gump, 52, y+7, btn.icon, cint(btn.color)); //gump
       endif

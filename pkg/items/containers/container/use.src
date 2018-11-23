@@ -6,6 +6,7 @@ use cfgfile;
 
 include ":keys:key";
 include ":traps:traps";
+include ":charactercreation:feats";
 include "include/say";
 
 program useContainer(mobile, container)
@@ -21,14 +22,18 @@ program useContainer(mobile, container)
    elseif (mobile.warmode && GetObjProperty(container, "breakable") && ContainerIsLocked(mobile, container) && Distance(mobile, container) <= 1)
       start_script(":tn:destroyitems", array{mobile, container});
       return 0;
-	elseif ( ContainerIsLocked(mobile, container) ) 
-      SendSystemReport(container, "*Isto está trancado.*", SSM_FAIL, mobile);
-		return 0;
 	elseif ( GetObjProperty(container, "TrapList") != error )
+      if (GetObjProperty(container, "trapSpoted") && HaveFeatSecondary(mobile, 48))
+         start_script(":traps:disarmTrap", array{mobile, container});
+         return 0;
+      endif
 		if (RunTraps(container, mobile))
          SetObjProperty(container, "trapSpoted", 1);
          PrintText(mobile, "*dispara armadilha*");
       endif
+		return 0;
+	elseif ( ContainerIsLocked(mobile, container) ) 
+      SendSystemReport(container, "*Isto está trancado.*", SSM_FAIL, mobile);
 		return 0;
 	endif
 	

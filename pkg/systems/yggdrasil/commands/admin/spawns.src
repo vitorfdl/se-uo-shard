@@ -847,14 +847,14 @@ function ConstructSpawnPointConfig(byref gump)
     spawnpoint_mobnumber := GFTextEntry(gump, sx+145+15, sy+18, 30, 18, 2103, data.mob_number);
 
     GFTextLine(gump, sx, sy+18+18, 1153, "Grupos:");
-    GFTextLine(gump, sx+40, sy+18+18, 2103, data.groups);
+    GFTextLine(gump, sx+40, sy+18+18, 2103, ", ".join(data.groups));
     GFAddButton(gump, sx-15, sy+21+18, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_MGROUP_BTN);
 
     GFTextLine(gump, sx, sy+18+18+18, 1153, "Range Spawn:");
     spawnpoint_range := GFTextEntry(gump, sx+80, sy+18+18+18, 30, 18, 2103, data.range);
 
     GFTextLine(gump, sx, sy+54+18, 1153, "Tipos:");
-    GFTextLine(gump, sx+40, sy+54+18, 2103, data.type);
+    GFTextLine(gump, sx+40, sy+54+18, 2103, ", ".join(data.type));
     GFAddButton(gump, sx-15, sy+60+18, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_TYPE_BTN);
 
     GFTextLine(gump, sx, sy+54+20+18, 1153, "Location:");
