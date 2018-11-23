@@ -116,6 +116,7 @@ function GumpQuestInfo(byref gump, who)
       endif
       if (item.item_specify) tooltip += "Item: {}<br>".format(item.item_specify.desc); endif
       if (item.item_objtype) tooltip += "Objtype: {}<br>".format(item.item_objtype); endif
+      if (item.color) tooltip += "Color: {}<br>".format(item.color); endif
       GFTooltipText(gump, tooltip);
 
       pos_y += 18;
@@ -343,6 +344,7 @@ function QuestConditions(who, new_condition := struct{})
             struct{ title := "Quantidade de monstros que deve matar", marked := _IfOr(new_condition.qty, "10") },
             struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := cint(new_condition.party)+1 },
             struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := cint(new_condition.onlyboss)+1 },
+            struct{ title := "Cor do monstro, para mobs diferentes.", marked := _IfOr(new_condition.color, "0") },
             struct{ title := "Customizar nome do monstro? (deixe em branco se não quiser)", marked := _IfOr(new_condition.customname, "") }
          };
          var output := QuestionsGump(who, quest_gump);
@@ -352,7 +354,8 @@ function QuestConditions(who, new_condition := struct{})
          new_condition["qty"]        := cint(output[3]);
          new_condition["party"]      := output[4] == "Sim";
          new_condition["onlyboss"]   := output[5] == "Sim";
-         new_condition["customname"] := output[6];
+         new_condition["color"] := output[6];
+         new_condition["customname"] := output[7];
 
          if (output[1] == "Sim")
             var targ := Target(who);
@@ -390,6 +393,7 @@ function QuestConditions(who, new_condition := struct{})
          new_condition.item_objtype := targ.objtype;
          new_condition.item_specify := CreateItemTemplate(targ);
          new_condition.qty := cint(output[1]);
+         new_condition.color := cint(targ.color);
       "Craftar Item":
          SendSysMessageEx(who, "Condição não scriptada, srry!", SSM_FAIL);
          return 0;

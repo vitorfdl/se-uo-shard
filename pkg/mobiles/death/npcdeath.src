@@ -153,6 +153,7 @@ program core_npcDeath(params)
             var search := struct{};
             search.spawnpoint := my_spawnpoint;
             search.template := template;
+            search.color := corpse.color;
             search.onlyboss := is_boss;
             search.type := "Matar Monstro";
             search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
