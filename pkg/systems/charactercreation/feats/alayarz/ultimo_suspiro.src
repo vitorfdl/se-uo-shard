@@ -6,11 +6,13 @@ include "include/damage";
 include "include/sounds";
 include ":timedscripts:timedScripts";
 include ":attributes:attributes";
+include ":attributes:vitals";
 
 program ultimoSuspiro(param)
    var who := param[1];
 
-   HealStamina(who, heal, 1);
+   var heal := cint(AP_GetVitalMaximumValue(who, STAMINA) * 0.3);
+   HealStamina(who, heal);
 
    PlayCustomSound(who, 25);
    SendSysMessageEx(who, "Você dá seu ultimo suspiro e sente-se revitalizado.", SSM_INFO);
