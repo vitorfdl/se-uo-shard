@@ -41,6 +41,10 @@ program createchar(who)
    //    return 1;
    // endif
 
+   AP_SetTrueStat(who, "Strength", 15);
+   AP_SetTrueStat(who, "Dexterity", 15);
+   AP_SetTrueStat(who, "Intelligence", 15);
+
    if (!who.backpack)
       var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
       EquipItem(who, mochila);
