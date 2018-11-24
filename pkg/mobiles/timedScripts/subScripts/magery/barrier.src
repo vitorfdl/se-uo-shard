@@ -18,9 +18,9 @@ function StartScript(mobile, attacker := 0, level := 0)
    while (mobile)
       PlayObjectCenteredEffectEx(mobile, 0x377A, 5, 20);
       barrier := AP_GetTrueSkill(mobile, "Barrier");
-      var reduce := (cdbl(barrier) * 0.1);
-      if (reduce < 5)
-         reduce := 5;
+      var reduce := (cdbl(barrier) * 0.08);
+      if (reduce < 2)
+         reduce := 2;
       endif
       barrier -= reduce;
       AP_SetTrueSkill(mobile, "Barrier", barrier);
