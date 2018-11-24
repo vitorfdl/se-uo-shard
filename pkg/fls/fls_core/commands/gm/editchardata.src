@@ -20,6 +20,7 @@ const BTN_CHANGE_SUBCLASS := 15;
 const BTN_CHANGE_HITS := 16;
 const BTN_CHANGE_MANA := 17;
 const BTN_CHANGE_VIGOR := 18;
+const BTN_CHANGE_GOD := 19;
 const BTN_CHANGE_CLASS_LEVELUP := 19;
 const BTN_ADD_SUBCLASS := 11;
 const BTN_CH_SUBCLASS := 20;
@@ -36,10 +37,10 @@ program command_Message(who)
 
 	while (1)
 		var gump := GFCreateGump();
-		GFResizePic(gump, 84, 90, 9260, 280, 260);
+		GFResizePic(gump, 84, 90, 9260, 280, 260+25);
 
-		GFGumpPicTiled(gump, 100,100,30,235,10460);
-		GFGumpPicTiled(gump, 320,100,30,235,10460);
+		GFGumpPicTiled(gump, 100,100,30,235+25,10460);
+		GFGumpPicTiled(gump, 320,100,30,235+25,10460);
 		// GFGumpPicTiled(gump, 80,88,463,16,10100);
 		// GFGumpPicTiled(gump, 84,610,457,16,10100);
 		
@@ -99,6 +100,9 @@ program command_Message(who)
       y+= 30;
       GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_SUBCLASS);
 		GFHTMLArea(gump,  160, y, 135, 25, "<basefont color=#006400><center>Alterar Subclasses", 1);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_GOD);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#006400><center>Mudar DEUS", 1);
       
 		var input := GFSendGump(who, gump);
 		input := input[0];
@@ -138,6 +142,10 @@ function handleInput(who, input, byref chardata)
          chardata.stam := stam;
          sleepms(300);
          RecalcVitals(who);
+         return;
+      BTN_CHANGE_GOD:
+         var god := RadioGump(who, 180, 160, "Qual o deus que vai louvar? (Atual {})".format(chardata.god), array{"Anar", "Seredhiel"});
+         chardata.god := god;
          return;
       BTN_CHANGE_CORPSE:
          var sexo := RadioGump(who, 180, 160, "Qual sexo deseja escolher?", array{"Homem", "Mulher"});
