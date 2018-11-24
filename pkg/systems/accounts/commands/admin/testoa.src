@@ -36,12 +36,11 @@ function TamingEffect(targ, reverse := 0)
 endfunction
 
 program oafeatures_sendpacket(who, text)
-      var targ := Target(who);
-      var itemsinbag := EnumerateItemsInContainer( targ.backpack );
-      foreach iteminbag in itemsinbag
-         if (iteminbag.name["flechasss"]) SetName( iteminbag, "flecha"); print("found"); endif
-         sleepms(2);
-      endforeach 
+   var targ := Target(who);
+   var roleplay := GetObjProperty(targ, "#roleplay");
+   print(roleplay);
+   var process := GetProcess(roleplay);
+   print(process);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area
    //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)
