@@ -42,39 +42,6 @@ function checkGender(object)
 	return gender;
 endfunction
 
-function ApplyLightLevel()
-	foreach player in EnumerateOnlineCharacters()
-		ApplyElfLightLevel(player);
-      sleepms(2);
-	endforeach
-endfunction
-
-function ApplyElfLightLevel(player)
-	var chardata := GetObjProperty(player, "chardata");
-	if (!chardata || !chardata.raca["Elfo"])
-	   return;
-   endif
-
-   if (InDungeon(player))
-		player.setlightlevel(20, -1);
-      return 1;
-   endif
-
-	var day_config := readconfigfile(":nature:config/daynight");
-	day_config := day_config["settings"];
-	var darkness := cint(day_config.darkness);
-
-	var light := cint(getglobalproperty("lightlevel"));
-
-	if (light > 20)
-		player.setlightlevel(20, -1);
-	else
-		player.setlightlevel(-1, 0);
-	endif
-
-   return 1;
-endfunction
-
 function maolivre(mobile, qtd, checkmount := 1)
 	var rightHand := GetEquipmentByLayer(mobile, 0x01);
 	var leftHand  := GetEquipmentByLayer(mobile, 0x02);

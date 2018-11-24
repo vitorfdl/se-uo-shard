@@ -1,0 +1,17 @@
+use datafile;
+use uo;
+use unicode;
+
+include "include/say";
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+include ":gumps:requestgump";
+program gmtools(who)
+   var targ := Target(who);
+
+   if (targ && targ.isA(POLCLASS_MOBILE) && !targ.isA(POLCLASS_NPC))
+      start_script( "::misc/questbutton", array{ who, targ });
+   else
+      SendSysMessageEx(who, "Cancelado");
+   endif
+endprogram

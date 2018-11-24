@@ -60,7 +60,7 @@ program runScript_CharProfileRequest( params )
       GFTextLine(gump, 39, 61, 2212, "Personagem:");
       GFTextLine(gump, 40, 79, 2212, "Altura:");
       GFTextLine(gump, 41, 98, 2212, "Peso:");
-      GFTextLine(gump, 110, 62, 1152, "{}".format(chr.name));
+      GFTextLine(gump, 115, 62, 1152, "{}".format(chr.name));
       GFTextLine(gump, 90, 79, 1152, "{}".format(altura));
       GFTextLine(gump, 82, 98, 1152, "{}".format(peso));
       GFHTMLArea(gump, 40, 122, 222, 80, "{}".format(chardata.profile), 1, 1);

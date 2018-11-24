@@ -44,14 +44,12 @@ function ApplyHalfDay(darkness, invert := 0)
       for (i:=darkness;i>=0;i:=i-1)
          Setregionlightlevel("Background", i);
          Setglobalproperty("lightlevel", i);
-         ApplyLightLevel();
          sleepms(transspeed);
       endfor
    else
       for (i:=0;i<=darkness;i:=i+1) //noite
          Setregionlightlevel("Background", i);
          Setglobalproperty("lightlevel", i);
-         ApplyLightLevel();
          sleepms(transspeed);
       endfor
    endif

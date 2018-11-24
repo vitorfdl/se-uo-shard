@@ -16,8 +16,8 @@ include ":crafting:fls_crafting";
 var quest_n := 1;
 var itemdesc := ReadConfigFile(":*:itemdesc");
 
-function BuildQuestInfo(who, byref gump, quest := struct{})
-   var quest_progress := GetObjProperty(who, "quest_progress");
+function BuildQuestInfo(who, player, byref gump, quest := struct{})
+   var quest_progress := GetObjProperty(player, "quest_progress");
 	//Quest BG
 	GFGumpPic(gump, 303, 21, 1248, 0);
    GFHTMLArea(gump, 336, 74, 150, 20, "<BASEFONT SIZE=4 COLOR=#A0A0A0>DESCRIÇÃO");
@@ -35,7 +35,7 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
       title[" Item"] := "";
 
       if (condition.type["Coletar"])
-         if (condition.qty - CheckItemAmount(who, condition.item_objtype) <= 0)
+         if (condition.qty - CheckItemAmount(player, condition.item_objtype) <= 0)
             condition.done := 1;
          endif
       elseif (condition.qty && cint(condition.qty) - cint(condition.progress) <= 0)
@@ -78,12 +78,23 @@ function BuildQuestInfo(who, byref gump, quest := struct{})
       description += "<br><br>Recompensas:<br>{}".format(reward_text);
    endif
 
-   GFHtmlShadowed(gump, 336, 137+(quest.conditions.size() * 20), 245, 176, "#f2984c", "{}".format(description), 4);
+
+	GFHTMLArea(gump, 336,  137+(quest.conditions.size() * 20), 245, 176, "{}".format(description), 1, 1);
+
+   if (who.cmdlevel > 3)
+      var x := 70;
+      GFAddButton(gump, 348+x, 74, 247, 247, GF_CLOSE_BTN, 4);
+		GFHTMLArea(gump,  336+x, 74, 90, 25, "<basefont color=#0B6623><center>Completar", 1);
+
+      x += 90;
+      GFAddButton(gump, 348+x, 74, 247, 247, GF_CLOSE_BTN, 5);
+		GFHTMLArea(gump,  336+x, 74, 90, 25, "<basefont color=#cd0000><center>Remover", 1);
+   endif
    // GFHTMLArea(gump, 336, 137+(quest.conditions.size() * 20), 245, 176, "<BASEFONT SIZE=4 COLOR=#2a1d03>{}".format(quest.description));
 endfunction
 
-function BuildQuestGump(who)
-   var quests := GetObjProperty(who, "quests");
+function BuildQuestGump(who, player)
+   var quests := GetObjProperty(player, "quests");
    if (!quests) quests := array{}; endif
 
 	var gump := GFCreateGump(250, 200);
@@ -112,7 +123,7 @@ function BuildQuestGump(who)
 
       if (quest_n)
          var selected_quest := quests[quest_n];
-         BuildQuestInfo(who, gump, selected_quest);
+         BuildQuestInfo(who, player, gump, selected_quest);
       endif
    else
          GFTextLine(gump, 106, 209, 1938, "Nenhuma missão disponível");
@@ -122,11 +133,38 @@ function BuildQuestGump(who)
 endfunction
 
 program QuestButton( who )
+   var player;
+   _resolveParams(who, player);
+   if (!player) player := who; endif
+
    while (who.connected)
-   var res := BuildQuestGump(who);
+      var res := BuildQuestGump(who, player);
 
       if (res >= 10)
          quest_n := res - 10;
+      elseif (res == 4)
+         CompleteQuest(player, quest_n);
+      elseif (res == 5)
+         var quest_data := GetObjProperty(who, "quests");
+         var quest := quest_data[quest_n];
+         if (!quest) continue; endif
+
+         var quest_progress := GetObjProperty(who, "quest_progress");
+         if (!quest_progress) 
+            quest_data.Erase(quest_n);
+            SetObjProperty(who, "quests", quest_data);
+            continue;
+         endif
+
+         foreach id in (quest.conditions)
+            var i := FindInArray(quest_progress, struct{ id := id });
+            quest_progress.Erase(i);
+            sleepms(2);
+         endforeach
+
+         quest_data.Erase(quest_n);
+         SetObjProperty(player, "quests", quest_data);
+         SetObjProperty(player, "quest_progress", quest_progress);
       else
          break;
       endif
