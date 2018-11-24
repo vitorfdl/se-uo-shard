@@ -151,6 +151,8 @@ program death(params)
    if (ghost.connected)
       EraseObjProperty(corpse, "japrolongou");
       KataWakeUp(ghost, corpse);
+   else
+      EraseObjProperty(corpse, "curado");
    endif
 	
 	return 1;
