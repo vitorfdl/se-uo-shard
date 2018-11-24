@@ -49,11 +49,11 @@ program PopUpMenu( who, what )
    if (input == "info")
       return;
    elseif (input == "ficharp")
-      var arr := array{ who, what };
+      var arr := array{ who, what, 1 };
       if (who == what)
          arr := array{who};
       endif
-      Start_Script(":fls_core:commands/player/ficharp", arr);
+      start_script( "::misc/skillwin", arr);
       return;
    elseif (input == "profile")
       start_script(":charprofile:parseCharProfile", array{ who, "0", what });
