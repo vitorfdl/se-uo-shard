@@ -37,8 +37,9 @@ endfunction
 
 program oafeatures_sendpacket(who, text)
       var targ := Target(who);
-      var itemsinbag := EnumerateItemsInContainer( targ.backpack, ENUMERATE_ROOT_ONLY );
+      var itemsinbag := EnumerateItemsInContainer( targ.backpack );
       foreach iteminbag in itemsinbag
+         print(iteminbag.name);
          SetName( iteminbag, iteminbag.name);
          sleepms(2);
       endforeach 
