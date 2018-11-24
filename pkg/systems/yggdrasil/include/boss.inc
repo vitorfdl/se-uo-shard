@@ -147,7 +147,7 @@ function CreateBossStructGump(who, byref boss)
    y_pos += 18*2;
 
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "Descrição Roleplay:");
-   GFResizePic(chargump, cx_pos, y_pos+18, 0x2486, 165, 100);
+   GFResizePic(chargump, cx_pos, y_pos+18, 0x2486, 140, 125);
    var desc_gump := array{};
    boss.roleplay_desc := GFWordWrap(_ifOr(boss.roleplay_desc, ""), 170);
    for t := 1 to 6

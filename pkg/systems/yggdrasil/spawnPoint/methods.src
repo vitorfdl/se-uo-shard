@@ -425,7 +425,11 @@ exported function KillSpawn(spawnpoint, index)
       SetObjProperty(monster, "summoned", 1);
       SetObjProperty(monster, "spawnkill", 1);
       RevokePrivilege(monster, "invul" );
-      ApplyRawDamage(monster, GetVital(monster, HITS)+3);
+      while (monster && !monster.dead)
+         ApplyRawDamage(monster, GetVitalMaximumValue(monster, HITS));
+         ApplyRawDamage(monster, 255);
+         sleepms(2);
+      endwhile
    endif
 
    monsters.Erase(index);

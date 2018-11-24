@@ -275,15 +275,15 @@ program loko(params)
                   if (state.fxid == "Electric")
                      LightningEffect(struct{ "x" := t.x, "y" := t.y, "z" := t.z, "realm" := me.realm}, 60);
                   else
-                     PlayStationaryEffectEx( t.x, t.y, t.z+2, who.realm, cint(state.fxid), state.speed, state.loops, cint(state.color));
+                     PlayStationaryEffectEx( t.x, t.y, t.z+2, who.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
                   endif
                endforeach
 				elseif (state.graphictype == "Moving")
 				   foreach t in targ
                   if (state.direction == "Mob->Player")
-                     PlayMovingEffectXYZEx( who.x, who.y, who.z, t.x, t.y, t.z, who.realm, cint(state.fxid), state.speed, state.loops, cint(state.color));
+                     PlayMovingEffectXYZEx( who.x, who.y, who.z, t.x, t.y, t.z, who.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
                   else
-                     PlayMovingEffectXYZEx( t.x, t.y, t.z, who.x, who.y, who.z, who.realm, cint(state.fxid), state.speed, state.loops, cint(state.color));
+                     PlayMovingEffectXYZEx( t.x, t.y, t.z, who.x, who.y, who.z, who.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
                   endif
                   sleepms(2);
                endforeach
@@ -307,13 +307,13 @@ program loko(params)
                   if (state.fxid == "Lightning")
                      PlayLightningBoltEffect(t);
                   else
-                     PlayObjectCenteredEffectEx(t, cint(state.fxid), state.speed, state.loops, cint(state.color));
+                     PlayObjectCenteredEffectEx(t, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
                   endif
                elseif (state.graphictype == "Moving")
                   if (state.direction == "Mob->Player")
-                     PlayMovingEffectEx(who, t, cint(state.fxid), state.speed, state.loops, cint(state.color));
+                     PlayMovingEffectEx(who, t, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
                   else
-                     PlayMovingEffectEx(t, who, cint(state.fxid), state.speed, state.loops, cint(state.color)); 
+                     PlayMovingEffectEx(t, who, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color)); 
                   endif
                elseif (state.graphictype["Circle"])
                   var type := _ifElse(state.graphictype[" Out"], 0, 1);
@@ -668,6 +668,10 @@ function ReturnPointsByTarget(who, type, conedist := 3)
       targ.append( struct{x := who.x, y := who.y, z := who.z} );
    elseif (type == "Around Self")
       targ := GetCoordsInSquare(who.x, who.y, conedist);
+      foreach t in targ
+         t.z := who.z;
+         sleepms(2);
+      endforeach
    elseif (type== "In Line")
       targ := GetLineCoordsInFront(who.x, who.y, who.facing, conedist);
       foreach p in targ
@@ -738,19 +742,6 @@ function playCastAnimation(who, times := 0)
    return 1;
 endfunction
 
-function EffectCircleOut(from, state)
-   var area := GetCoordsInSquare(targ.x, targ.y, 3);
-   sleepms(150);
-   foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= 2)
-         PlayMovingEffectXYZEx( from.x, from.y, from.z, p.x, p.y, from.z+5, from.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
-      endif
-
-      sleepms(2);
-   endforeach
-endfunction
-
-
 function CircleEffect(targ, state, reverse)
    var d := 4;
    if (!reverse) d -= 3; endif
@@ -758,9 +749,9 @@ function CircleEffect(targ, state, reverse)
    foreach p in area
       if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
          if (!reverse)
-            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
+            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
          else
-            PlayMovingEffectXYZEx( p.x, p.y, targ.z, targ.x, targ.y, targ.z+5, targ.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
+            PlayMovingEffectXYZEx( p.x, p.y, targ.z, targ.x, targ.y, targ.z+5, targ.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
          endif
       endif
       sleepms(2);
