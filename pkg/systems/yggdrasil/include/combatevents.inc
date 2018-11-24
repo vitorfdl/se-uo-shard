@@ -487,9 +487,10 @@ function CombatEventsOptions(who, state)
       var effect_pos := state.fxid in effect_output;
       if (effect_pos <= 0 || !effect_pos) effect_pos := 12; endif
       var input_list := array{};
+      var effects := array{"Stationary", "Moving", "Circle In", "Circle Out"};
       input_list.append(struct{ "title" := "Qual estilo de alvo?", "marked" := _ifOr(state.style in effect_types, 1), "radio" := effect_types });
       input_list.append(struct{ "title" := "Onde vai surgir o efeito?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
-      input_list.append(struct{ "title" := "Qual o tipo de efeito?", "marked" := 1+(state.graphictype == "Moving"), "radio" := array{"Stationary", "Moving"}});
+      input_list.append(struct{ "title" := "Qual o tipo de efeito?", "marked" := _ifOr(state.graphictype in effects, 1), "radio" := effects });
       input_list.append(struct{ "title" := "Qual o efeito?", "marked" := effect_pos, "radio" := effect_opts });
       input_list.append(struct{ "title" := "Qual o ID do efeito? (Outro)", "marked" := ""+cint(state.fxid)});
       input_list.append(struct{ "title" := "Qual a direção? (Moving, ignore for Cone)", "marked" := (state.direction == "Player->Mob")+1, "radio" := array{"Mob->Player", "Player->Mob"}});
@@ -547,10 +548,10 @@ function CombatEventsOptions(who, state)
       elseif (output[4] == "Outro")
          state.fxid := output[5];
          if (state.graphictype == "Stationary")
-            state.speed := 5;
+            state.speed := 1;
             state.loops := 16;
          else
-            state.speed := 5;
+            state.speed := 1;
             state.loops := 0;
          endif
       endif

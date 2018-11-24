@@ -287,6 +287,10 @@ program loko(params)
                   endif
                   sleepms(2);
                endforeach
+            elseif (state.graphictype == "Circle In")
+               CircleEffect(t, state, 1);
+            elseif (state.graphictype == "Circle Out")
+               CircleEffect(t, state);
             endif
                // var startx := Cint(state.startx) + RandomInt(2 * state.startradius) - state.startradius;
                // var starty :=  Cint(state.starty) + RandomInt(2 * state.startradius) - state.startradius;
@@ -726,3 +730,31 @@ function playCastAnimation(who, times := 0)
    return 1;
 endfunction
 
+function EffectCircleOut(from, state)
+   var area := GetCoordsInSquare(targ.x, targ.y, 3);
+   sleepms(150);
+   foreach p in area
+      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= 2)
+         PlayMovingEffectXYZEx( from.x, from.y, from.z, p.x, p.y, from.z+5, from.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
+      endif
+
+      sleepms(2);
+   endforeach
+endfunction
+
+
+function CircleEffect(targ, state, reverse)
+   var d := 4;
+   if (!reverse) d -= 3; endif
+   var area := GetCoordsInSquare(targ.x, targ.y, d);
+   foreach p in area
+      if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
+         if (!reverse)
+            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
+         else
+            PlayMovingEffectXYZEx( p.x, p.y, targ.z, targ.x, targ.y, targ.z+5, targ.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
+         endif
+      endif
+      sleepms(2);
+   endforeach
+endfunction
