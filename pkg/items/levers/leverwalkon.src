@@ -17,9 +17,10 @@ program loko(who, item)
 	endif
 
   if(GetObjProperty(item, "#inuse") == 1)
-   // SendSysMessage(who,"that switch is in use");
-    return;
+      return;
    elseif (!GetObjProperty(item, "lever_opts").walkon)
+      return;
+   elseif (who.concealed)
       return;
   endif
 

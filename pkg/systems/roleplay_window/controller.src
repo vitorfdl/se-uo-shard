@@ -7,6 +7,7 @@ include ":datafile:datafile";
 include ":quest:quest";
 
 program AC_start(who)
+   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    detach();
    var oldpid := GetObjProperty(who, "#roleplay");
    if (oldpid)

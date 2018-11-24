@@ -44,9 +44,9 @@ program HandleMerchant(params)
 			if (!HandleItemGiven(params.me, params.source, params.item))
 				MoveItemToContainer(params.item, params.source.backpack);
 			endif
-		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+		// "SpeechEvent": HandleSpeech(params.me, params.source, params.text);
       "SeeEvent": HandleSeeEvent(params.me, params.source);
-      "DblClickEvent": DoPurchaseCmd(params.me, params.source, 1);
+      "DblClickEvent": DoWithdraw(params.me, params.source); DoPurchaseCmd(params.me, params.source, 1);
 		// "Default": return;
 	endcase
 
@@ -112,6 +112,9 @@ function DoPurchaseCmd(npc, player, text_type := 0)
       if (!input[0])
          break;
       elseif (input[0] == 2)
+      elseif (input[0] == 3)
+         if (!player.concealed) PrintText(npc, "Certo, estou te ouvindo", SSM_INFO); endif
+         SetupMerchant(npc, player);
       elseif (input[0] > 90000)
          var serial := input[0] - 90000;
          RemoveItemMerchant(npc, player, serial);
@@ -131,21 +134,18 @@ function HandleSpeech(npc, player, text)
       endif
    endif
 
-   if (text["artigo"] || text["compra"] || text["ver"])
-      DoPurchaseCmd(npc, player);
-   elseif (text["minhas vendas"])
-      DoWithdraw(npc, player);
+   if (text["minhas vendas"] || text["compra"] || text["ver"])
+      return SendSysMessageEx(who, "Dê duplo clique no vendedor para ver seus produtos a venda.", SSM_REQUEST;
    endif
 
    if (above_merchant)
       if (text["hist"] && text["vend"])
-         PrintText(npc, "Aqui está o histórico de vendas, Sr.");
+         if (!player.concealed) PrintText(npc, "Aqui está o histórico de vendas, Sr."); endif
          var historico := GetMerchantLog(npc);
          historico := "<br> - {}".format("<br> -".join(historico));
          SendHTMLGump(player, "Histórico de Vendas", historico);
       elseif (text["regras"] && text["neg"])
-         PrintText(npc, "Certo, estou te ouvindo");
-         SetupMerchant(npc, player);
+         return SendSysMessageEx(who, "Dê duplo clique no vendedor para ver seus produtos a venda.", SSM_REQUEST;
       endif
    endif
 endfunction
@@ -218,6 +218,9 @@ function SetAboveLayer(npc, player, gump)
 	var i := 1;
 	var x := 48;
 
+   GFHtmlShadowed(gump, 200, 34, 700, 20, "#FFFFFF", "<center>Regras de Negócio", 4);
+   GFAddButton(gump, 200-10, 34, 2103, 2103, GF_CLOSE_BTN, 3);
+
 	foreach serial in items_sold
 		var cost_info := GetItemSoldInfo(npc, serial);
 		var item      := cost_info[2];
@@ -257,7 +260,6 @@ function StoreGumpView(npc, player)
 	GFGumpPic(gump, 11, 29, 40009, 0); //borders
 	GFGumpPicTiled(gump, 42, 59, 700, 513, 30540); //background
 	GFHtmlShadowed(gump, 42, 34, 700, 20, "#FFFFFF", "<center>"+npc_type, 4);
-	
 	var i := 1;
 	var x := 48;
 

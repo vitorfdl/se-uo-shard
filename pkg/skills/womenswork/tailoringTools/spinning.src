@@ -6,6 +6,8 @@ include "include/objtype";
 include ":itemutils:canAccess";
 include "include/say";
 
+var item_cfg := ReadConfigFile(":*:itemdesc");
+
 const uobj_wheel_start := 0x1015;
 const uobj_wheel_end := 0x101e;
 
@@ -14,34 +16,33 @@ program use_wool(who, wool)
   EraseObjProperty(who, "HealTimer");
   if(!can_access(who, wool))
     return;
-  endif
-  if(wool.movable == 0)
+  elseif(wool.movable == 0)
     SendSysMessageEx(who, "Você não pode usar isto.", SSM_FAIL);
     return;
-  endif
-  if(!ReserveItem(wool))
+  elseif(!ReserveItem(wool))
     return;
   endif
+
   SendSysMessageEx( who, "Escolha a roda de fiar.", SSM_REQUEST );
   var use_on := Target(who);
   if (!use_on)
     SendSysMessageEx(who,"Cancelado.", SSM_FAIL);
     return;
   endif
+
   var obj := use_on.objtype;
   if (((obj >= uobj_wheel_start) && (obj <= uobj_wheel_end)) || ((obj >= 0x10a4) && (obj <= 0x10a6)))
 
-
 	var gfx;
 	case(obj)
-			4117:   gfx := 0x1016;
-			4119:   gfx := 0x1016;
-			4121:   gfx := 0x101a;
-			4123:   gfx := 0x101a;
-			4124:   gfx := 0x101d;
-			4126:   gfx := 0x101d;
-			4260:   gfx := 0x10a5;
-			4262:   gfx := 0x10a5;
+      4117:   gfx := 0x1016;
+      4119:   gfx := 0x1016;
+      4121:   gfx := 0x101a;
+      4123:   gfx := 0x101a;
+      4124:   gfx := 0x101d;
+      4126:   gfx := 0x101d;
+      4260:   gfx := 0x10a5;
+      4262:   gfx := 0x10a5;
 	endcase
 
 	var initx := who.x;
@@ -49,14 +50,14 @@ program use_wool(who, wool)
 
 	while (wool.amount >= 1)	
 
-		use_on.graphic := gfx;
-    Detach();
+	   use_on.graphic := gfx;
+      Detach();
 		sleep(3);
 		use_on.graphic := use_on.objtype;
 	
-    if (Makeyarn(who, wool) == 0)
-			break;
-		endif
+         if (Makeyarn(who, wool) == 0)
+            break;
+         endif
 
 		if ((who.x != initx) || (who.y != inity))
 			SendSysMessageEx(who, "Você desviou sua atencao.", SSM_FAIL);
@@ -71,18 +72,24 @@ program use_wool(who, wool)
 endprogram
 
 function Makeyarn(who, item) 
+   if (!Accessible(who, item))
+      SendSysMessageEx(who, "Você não possui o material!", SSM_FAIL);
+      return 0;
+   endif
 
-		if (!Accessible(who, item))
-			SendSysMessageEx(who, "Você não possui o material!", SSM_FAIL);
-			return 0;
-		endif
-		if(SubtractAmount(item, 1))
-			var yarn := CreateItemInBackpack(who, 0xe1f, 2);
-			SendSysMessageEx(who, "Você criou o fio com o material.", SSM_INFO);
-			return 1;
-		else
-			SendSysMessageEx(who, "Você não possui mais material suficiente.", SSM_FAIL);
-			return 0;
-		endif
+   var elem := FindConfigElem(item_cfg, item.objtype);
+   var elem_final := FindConfigElem(item_cfg, elem.Produce);
+   
+   if(SubtractAmount(item, 1))
+      var item_descriptor := GetItemDescriptor(0xe1f);
+      item_descriptor.setprop("produce", cint(elem.Produce));
+      item_descriptor.color := cint(elem_final.color);
 
+      var yarn := _CreateItemInBackpack(who, item_descriptor, 2);
+      SendSysMessageEx(who, "Você criou o fio com o material.", SSM_INFO);
+      return 1;
+   else
+      SendSysMessageEx(who, "Você não possui mais material suficiente.", SSM_FAIL);
+      return 0;
+   endif
 endfunction

@@ -5,6 +5,7 @@ include "include/client";
 include "include/objtype";
 include ":itemutils:canAccess";
 include "include/say";
+include "include/utils";
 
 program use_yarn(who, yarn)
   EraseObjProperty(who, "IsMeditating");
@@ -37,17 +38,19 @@ function MakeCloth(who, yarn)
     SendSysMessageEx(who, "Você não possui mais material!", SSM_FAIL);
     return;
   endif
-  if(yarn.amount >= 5)
-    if( yarn.amount >= 5)
-      if(SubtractAmount(yarn, 5))
-        var cloth := CreateItemInBackpack(who, UOBJ_CLOTH, 1);
+
+   var final_item := GetObjProperty(yarn, "produce");
+   if(yarn.amount >= 5)
+      if( yarn.amount >= 5)
+         if(SubtractAmount(yarn, 5))
+         var cloth := _CreateItemInBackpack(who, final_item, 1);
+         endif
+      else
+         SendSysMessageEx(who, "Você não possui material suficiente para fazer o tecido", SSM_FAIL);
       endif
-    else
-       SendSysMessageEx(who, "Você não possui material suficiente para fazer o tecido", SSM_FAIL);
-    endif
-  else
-    SendSysMessageEx(who, "Você não possui material suficiente para fazer o tecido.", SSM_FAIL);
-  endif
+   else
+      SendSysMessageEx(who, "Você não possui material suficiente para fazer o tecido.", SSM_FAIL);
+   endif
 endfunction
 
 

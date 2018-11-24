@@ -94,7 +94,7 @@ program Merchant()
                wanders := 0;
                if (CheckLineOfSight(me, ev.source))
                   if (!isBehind(ev.source, me.x, me.y))
-                  HandleSpeech(ev);
+                     HandleSpeech(ev);
                   endif
                endif
                break;
