@@ -275,15 +275,15 @@ program loko(params)
                   if (state.fxid == "Electric")
                      LightningEffect(struct{ "x" := t.x, "y" := t.y, "z" := t.z, "realm" := me.realm}, 60);
                   else
-                     PlayStationaryEffectEx( t.x, t.y, t.z+2, who.realm, cint(state.fxid), state.speed, state.loops+20, cint(state.color));
+                     PlayStationaryEffectEx( t.x, t.y, t.z+2, who.realm, cint(state.fxid), state.speed, state.loops, cint(state.color));
                   endif
                endforeach
 				elseif (state.graphictype == "Moving")
 				   foreach t in targ
                   if (state.direction == "Mob->Player")
-                     PlayMovingEffectXYZEx( who.x, who.y, who.z, t.x, t.y, t.z, who.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
+                     PlayMovingEffectXYZEx( who.x, who.y, who.z, t.x, t.y, t.z, who.realm, cint(state.fxid), state.speed, state.loops, cint(state.color));
                   else
-                     PlayMovingEffectXYZEx( t.x, t.y, t.z, who.x, who.y, who.z, who.realm, cint(state.fxid), state.speed, state.loop, cint(state.color));
+                     PlayMovingEffectXYZEx( t.x, t.y, t.z, who.x, who.y, who.z, who.realm, cint(state.fxid), state.speed, state.loops, cint(state.color));
                   endif
                   sleepms(2);
                endforeach
