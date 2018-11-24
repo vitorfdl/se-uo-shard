@@ -145,11 +145,11 @@ program QuestButton( who )
       elseif (res == 4)
          CompleteQuest(player, quest_n);
       elseif (res == 5)
-         var quest_data := GetObjProperty(who, "quests");
+         var quest_data := GetObjProperty(player, "quests");
          var quest := quest_data[quest_n];
          if (!quest) continue; endif
 
-         var quest_progress := GetObjProperty(who, "quest_progress");
+         var quest_progress := GetObjProperty(player, "quest_progress");
          if (!quest_progress) 
             quest_data.Erase(quest_n);
             SetObjProperty(who, "quests", quest_data);
