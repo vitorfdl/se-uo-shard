@@ -51,8 +51,16 @@ endfunction
 
 program oafeatures_sendpacket(who, text)
    var targ     := Target(who);
-   if (cint(text) == 1) return DebugGump(who, targ); endif
-   
+   if (cint(text) == 1) 
+      return DebugGump(who, targ);
+   elseif (cint(text) == 2) 
+      var roleplay := GetObjProperty(targ, "#roleplay");
+      var process  := GetProcess(roleplay);
+      process.kill();
+       start_script(":roleplay_window:controller", targ);
+      return SendSysMessageEx(who, "roleplay resetado");
+   endif
+
    var roleplay := GetObjProperty(targ, "#roleplay");
    var process  := GetProcess(roleplay);
    var search := struct{};
