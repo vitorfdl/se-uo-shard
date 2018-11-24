@@ -743,8 +743,7 @@ function playCastAnimation(who, times := 0)
 endfunction
 
 function CircleEffect(targ, state, reverse)
-   var d := 4;
-   if (!reverse) d -= 3; endif
+   var d := _ifOr(state.circledist, 2);
    var area := GetCoordsInSquare(targ.x, targ.y, d);
    foreach p in area
       if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)

@@ -498,7 +498,7 @@ function CombatEventsOptions(who, state)
       // input_list.append(struct{ "title" := "Digite o x y z da posição final do efeito: (stationary, ignore for Moving/cone)", "marked" := "{} {} {}".format(cint(state.endx), cint(state.endy), cint(state.endz))});
       input_list.append(struct{ "title" := "Qual a cor do efeito?", "marked" := ""+cint(state.color)});
       if (!state.conedist) state.conedist := 3; endif
-      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) e Cone In/Out?", multipleanswer := 2, "marked" := array{cint(state.conedist), cint(state.circledist) } });
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
 
@@ -553,7 +553,8 @@ function CombatEventsOptions(who, state)
 
       state.direction := output[6];
       state.color     := cint(output[7]);
-      state.conedist  := cint(output[8]);
+      state.conedist  := cint(output[8][1]);
+      state.circledist  := cint(output[8][2]);
 
       // if (state.target == "Fixed Loc")
       //    var loc := splitwords(output[6]);
