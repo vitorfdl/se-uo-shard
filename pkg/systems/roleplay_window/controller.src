@@ -23,7 +23,7 @@ program AC_start(who)
 
    while (who.connected)	
       sleepms(15);
-      var event := wait_for_event(2);
+      var event := wait_for_event(5);
       var trig := 0;
       if (event.type == 0x456 && !(event.id in already_saw))
          if (event.text) last_see.Insert(1, event.text); endif
