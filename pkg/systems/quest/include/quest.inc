@@ -145,7 +145,7 @@ function ProgressQuest(who, search, plus_progress := 1)
    var quest_progress := GetObjProperty(who, "quest_progress");
    foreach item in quest_progress
       sleepms(10);
-      if (item.qty && cint(item.qty) <= item.progress) continue;
+      if (item.qty && cint(item.qty) <= cint(item.progress)) continue;
       elseif (item.done) continue; endif
       
       if (item.party) search.-party; endif
@@ -157,18 +157,23 @@ function ProgressQuest(who, search, plus_progress := 1)
          sleepms(2);
          if (key == "color")
             if (cint(item[key] != cint(search[key])))
+               if (who.serial == 182673) print("{} - {} / {}".format(key, search[key], item[key])); endif
                no_progress := 1;
                break;
             endif
          elseif (item[key] != search[key])
+            if (who.serial == 182673) print("{} - {} / {}".format(key, search[key], item[key])); endif
             no_progress := 1;
             break;
          endif
       endforeach
 
       if (no_progress)
-      elseif (item.qty) item.progress := cint(item.progress) + plus_progress;
-      else item.done := 1; endif
+      elseif (item.qty) 
+         item.progress := cint(item.progress) + plus_progress;
+      else 
+         item.done := 1;
+      endif
    endforeach
    SetObjProperty(who, "quest_progress", quest_progress);
 endfunction
