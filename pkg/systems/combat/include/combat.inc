@@ -268,16 +268,14 @@ function CheckifIsAlly(who, mobiles)
       if (mobiles in hostiles)
          return 0;
       elseif (mobiles.npctemplate)
-         if (mobiles.master == who || mobiles.master in party)
-            return 1;
-         elseif(mobiles.alignment == 2 && !who.murderer)
-            return 1;
+         if (mobile.master && (mobiles.master != who && mobiles.master in party))
+            return 0;
+         elseif(mobiles.alignment != 2 || who.murderer)
+            return 0;
          endif
-      elseif (mobiles in party || mobiles == who)
-         return 1;
       endif
 
-      return 0;
+      return 1;
    endif
 
    var newarray := array{};
