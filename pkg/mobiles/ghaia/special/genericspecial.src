@@ -315,6 +315,12 @@ program loko(params)
                   else
                      PlayMovingEffectEx(t, who, cint(state.fxid), state.speed, state.loops, cint(state.color)); 
                   endif
+               elseif (state.graphictype["Circle"])
+                  var type := _ifElse(state.graphictype[" Out"], 0, 1);
+                  foreach t in targ
+                     CircleEffect(t, state, type);
+                     sleepms(2);
+                  endforeach
                endif
                sleepms(2);
 				endforeach
