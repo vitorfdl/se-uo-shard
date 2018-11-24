@@ -34,7 +34,6 @@ function EndScript(mobile)
       SendEvent(mobile, event);
    else
       mobile.SetLightLevel(1, 0);
-      ApplyElfLightLevel(mobile);
    endif
 
    return 1;

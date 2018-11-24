@@ -44,8 +44,6 @@ program walkOn(mobile, tile)
 		endforeach
 	endif*/
 
-   ApplyElfLightLevel(mobile);
-	
 	return 1;
 endprogram
 
