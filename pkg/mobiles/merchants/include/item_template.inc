@@ -128,7 +128,7 @@ function CreateIteminBackpackFromTemplate(player, selling)
 		endif
 	endif
 	if (selling.amount == 1)
-		SetName(purchase, selling.desc);
+		SetName(purchase, selling.name);
 	endif
 	foreach prop in selling
 		//sendsysmessage(player, " " + _prop_iter + " "+ selling[_prop_iter]);
@@ -159,7 +159,7 @@ function CreateItemAtLocationFromTemplate(x, y, z, realm, selling)
 		SendSysMessage(player, "Error - Unable to create item! ->"+purchase.errortext);
 	endif
 	if (selling.amount == 1)
-		SetName(purchase, selling.desc);
+		SetName(purchase, selling.name);
 	endif
 	foreach prop in selling
 		//sendsysmessage(player, " " + _prop_iter + " "+ selling[_prop_iter]);

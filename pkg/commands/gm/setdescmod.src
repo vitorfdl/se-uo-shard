@@ -2,6 +2,7 @@ use uo;
 
 include ":tn:tngumps";
 include "include/say";
+include "include/utils";
 
 program settooltip(who)
 	SendSysMessageEx(who, "Escolha o item.", SSM_REQUEST);
@@ -11,7 +12,7 @@ program settooltip(who)
 	endif
 	 
 	AddItemDescMod(who, item);
-	SetName(item, item.desc);
+	SetName(item, _ifOr(item.name, item.desc));
 endprogram
 
 

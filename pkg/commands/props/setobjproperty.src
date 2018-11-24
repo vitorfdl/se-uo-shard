@@ -5,6 +5,8 @@
  
 use uo;
 
+include "include/utils";
+
 program textcmd_SetObjProperty(who, no_use, uc_text)
 	var text := CChrZ(uc_text);
    var param := SplitWords(text);
@@ -35,11 +37,7 @@ program textcmd_SetObjProperty(who, no_use, uc_text)
 		return 0;
 	endif
 
-   if (targ.isA(POLCLASS_ITEM))
-      SetName(targ, targ.desc);
-   elseif (targ.isA(POLCLASS_MOBILE))
-      SetName(targ, targ.name);
-   endif
+   SetName(targ, _ifOr(targ.name, targ.desc));
    
  	SendSysMessage(who, "Successful (set as "+TypeOf(value)+")");
 endprogram

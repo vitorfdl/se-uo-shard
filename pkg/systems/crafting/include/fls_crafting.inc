@@ -472,7 +472,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             if (craft_skill == "Alquimia")
                SetObjProperty(theitem, "level", level_select);
             endif
-            SetName(theitem, theitem.desc);
+            SetName(theitem, _ifOr(theitem.name, theitem.desc));
             theitems.append(theitem);
             sleepms(2);
          endforeach
@@ -573,7 +573,7 @@ endfunction
    var desc := QuestionsGump(who, array{ struct{ title := "Entre com a descrição do item", lines := 1 }});
    if (desc)
 	   SetObjProperty(item, "description", desc[1]);
-	   SetName(item, _ifElse(item.isA(POLCLASS_MOBILE), item.name, item.desc));
+	   SetName(item, _ifOr(item.name, item.desc));
    endif
 endfunction
 
