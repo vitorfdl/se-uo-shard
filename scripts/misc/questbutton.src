@@ -79,7 +79,7 @@ function BuildQuestInfo(who, player, byref gump, quest := struct{})
    endif
 
 
-	GFHTMLArea(gump, 336,  137+(quest.conditions.size() * 20), 245, 176, "{}".format(description), 1, 1);
+	GFHTMLArea(gump, 336,  137+(quest.conditions.size() * 20), 245, 172, "{}".format(description), 1, 1);
 
    if (who.cmdlevel > 3)
       var x := 70;
