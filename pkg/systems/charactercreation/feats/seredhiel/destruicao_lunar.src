@@ -55,8 +55,7 @@ program SpellScript(params)
          break;
       endif
 
-		DamageFLS( targ, amt, DMG_FORCED, who );
-		HealMana( who, amt );
+		HealMana( who, cint(amt) );
 
 		PlayMovingEffectEx(targ, who, 3982, 255, 1, 2121);
 		PerformAction(who, ANIM_CAST_AREA);
