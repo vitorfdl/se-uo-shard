@@ -3,6 +3,7 @@ use uo;
 use unicode;
 
 include "include/say";
+include "include/utils";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
