@@ -92,7 +92,6 @@ program Merchant()
                 break;
             SYSEVENT_SPEECH:
                wanders := 0;
-               print(ev);
                if (CheckLineOfSight(me, ev.source))
                   if (!isBehind(ev.source, me.x, me.y))
                   HandleSpeech(ev);
