@@ -172,7 +172,7 @@ program spotGroups(params)
             closed := 1;
         endif
 
-        sleepms(2);
+        sleepms(10);
     endwhile
 endprogram
 
@@ -310,7 +310,7 @@ function DoSelectedGroupList(byref who, input)
                if (spot)
                   spot.ForceSpawn();
                endif
-               sleepms(2);
+               sleepms(10);
             endforeach
             break;
          GF_GROUP_FORCEKILL_BTN:
@@ -321,7 +321,7 @@ function DoSelectedGroupList(byref who, input)
                if (spot)
                   spot.ForceKill();
                endif
-               sleepms(2);
+               sleepms(10);
             endforeach
             break;
         default:

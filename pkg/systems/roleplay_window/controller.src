@@ -22,7 +22,7 @@ program AC_start(who)
    SetObjProperty(who, "last_see", last_see);
 
    while (who.connected)	
-      sleepms(40);
+      sleepms(15);
       var event := wait_for_event(2);
       var trig := 0;
       if (event.type == 0x456 && !(event.id in already_saw))
@@ -72,7 +72,7 @@ program AC_start(who)
                trig := 1;
             endif
          endif
-         sleepms(2);
+         sleepms(10);
       endforeach
       
       if (trig)

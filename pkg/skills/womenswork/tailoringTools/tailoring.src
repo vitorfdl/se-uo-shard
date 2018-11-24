@@ -25,6 +25,7 @@ program use_yarn(who, yarn)
   if (!use_on)
     return;
   endif
+  
   var obj_type := GetObjType(use_on);
   if((obj_type < UOBJ_LOOM_START) || (obj_type > UOBJ_LOOM_END))
     SendSysMessageEx(who, "Você precisa de um tear.", SSM_FAIL);

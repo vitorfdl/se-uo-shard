@@ -1,10 +1,13 @@
 use uo;
 use os;
+use cfgfile;
+use polsys;
 
 include "include/client";
 include "include/objtype";
 include ":itemutils:canAccess";
 include "include/say";
+include "include/utils";
 
 var item_cfg := ReadConfigFile(":*:itemdesc");
 
@@ -79,11 +82,11 @@ function Makeyarn(who, item)
 
    var elem := FindConfigElem(item_cfg, item.objtype);
    var elem_final := FindConfigElem(item_cfg, elem.Produce);
-   
+
    if(SubtractAmount(item, 1))
       var item_descriptor := GetItemDescriptor(0xe1f);
-      item_descriptor.setprop("produce", cint(elem.Produce));
-      item_descriptor.color := cint(elem_final.color);
+      item_descriptor.CProps.insert("produce", cint(elem.Produce));
+      item_descriptor.Color := cint(elem_final.color);
 
       var yarn := _CreateItemInBackpack(who, item_descriptor, 2);
       SendSysMessageEx(who, "Você criou o fio com o material.", SSM_INFO);

@@ -144,7 +144,7 @@ endfunction
 function ProgressQuest(who, search, plus_progress := 1)
    var quest_progress := GetObjProperty(who, "quest_progress");
    foreach item in quest_progress
-      sleepms(2);
+      sleepms(10);
       if (item.qty && cint(item.qty) <= item.progress) continue;
       elseif (item.done) continue; endif
       

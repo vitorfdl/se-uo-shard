@@ -36,13 +36,13 @@ function TransformItemCuring(who, useon, result_item)
    var characterx := who.x;
    var charactery := who.y;
    repeat
+      if (useon) PrintText(who, "*curtindo {}*".format(useon.desc)); endif
       if (SubtractAmount(useon, 1))
-         PrintText(who, "*curtindo {}*".format(useon.desc));
          Sleep(1);
          _CreateItemInBackpack(who, result_item, 1);
          PlaySoundEffect(who, 0x49);
       else
-         SendSysMessage(who, "Você não tem mais material para usar aqui");
+         SendSysMessageEx(who, "Você não tem mais material para usar aqui", SSM_FAIL);
          break;
       endif
    until (who.x != characterx or who.y != charactery);
