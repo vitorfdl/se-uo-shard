@@ -268,7 +268,7 @@ function CheckifIsAlly(who, mobiles)
       if (mobiles in hostiles)
          return 0;
       elseif (mobiles.npctemplate)
-         if (mobile.master && (mobiles.master != who && mobiles.master in party))
+         if (mobiles.master && (mobiles.master != who && mobiles.master in party))
             return 0;
          elseif(mobiles.alignment != 2 || who.murderer)
             return 0;
