@@ -73,9 +73,6 @@ function CheckBlockDodge(who, return_block := 0, return_dodge := 0, no_message :
 
    if (return_block)
       if (TS_GetCooldown(who, "block"))
-         if (TS_GetCooldown(who, "blockheal"))
-            HealFLS(who, cint(cdbl(AP_GetVitalMaximumValue(who, "hits")) * 0.1), 1);
-         endif
          if (!no_message)
             PrintText(who, "*bloqueou*", SSM_FAIL);
          endif
