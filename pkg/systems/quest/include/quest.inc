@@ -157,12 +157,12 @@ function ProgressQuest(who, search, plus_progress := 1)
          sleepms(2);
          if (key == "color")
             if (cint(item[key] != cint(search[key])))
-               if (who.serial == 182656) print("{} - {} / {}".format(key, search[key], item[key])); endif
+               if (who.serial == 182656) print("1. {} - {} / {}".format(key, search[key], item[key])); endif
                no_progress := 1;
                break;
             endif
          elseif (item[key] != search[key])
-            if (who.serial == 182656) print("{} - {} / {}".format(key, search[key], item[key])); endif
+            if (who.serial == 182656) print("2. {} - {} / {}".format(key, search[key], item[key])); endif
             no_progress := 1;
             break;
          endif
