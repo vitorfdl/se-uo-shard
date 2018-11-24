@@ -492,7 +492,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Onde vai surgir o efeito?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
       input_list.append(struct{ "title" := "Qual o tipo de efeito?", "marked" := _ifOr(state.graphictype in effects, 1), "radio" := effects });
       input_list.append(struct{ "title" := "Qual o efeito?", "marked" := effect_pos, "radio" := effect_opts });
-      input_list.append(struct{ "title" := "(Outro) Qual o ID, SPEED e LOOPS do efeito?", multipleanswer := 3, "marked" := array{cint(state.fxid), cint(state.speed), cint(state.loops)});
+      input_list.append(struct{ "title" := "(Outro) Qual o ID, SPEED e LOOPS do efeito?", multipleanswer := 3, "marked" := array{cint(state.fxid), cint(state.speed), cint(state.loops)}});
       input_list.append(struct{ "title" := "Qual a direção? (Moving, ignore for Cone)", "marked" := (state.direction == "Player->Mob")+1, "radio" := array{"Mob->Player", "Player->Mob"}});
       // input_list.append(struct{ "title" := "Digite o x y z onde o efeito vai aparecer: (stationary, ignore for Moving/cone)", "marked" := "{} {} {}".format(cint(state.startx), cint(state.starty), cint(state.startz))});
       // input_list.append(struct{ "title" := "Digite o x y z da posição final do efeito: (stationary, ignore for Moving/cone)", "marked" := "{} {} {}".format(cint(state.endx), cint(state.endy), cint(state.endz))});
