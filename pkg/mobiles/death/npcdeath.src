@@ -147,7 +147,7 @@ program core_npcDeath(params)
 
    var my_spawnpoint := _ifElse(GetObjProperty(corpse, "spawnpoint"), GetObjProperty(corpse, "spawnpoint"), 0);
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
-      if (!mob.isA(POLCLASS_NPC))
+      if (mob.connected)
          var process := GetProcess(GetObjProperty(mob, "#roleplay"));
          if (process)
             var search := struct{};
@@ -159,6 +159,8 @@ program core_npcDeath(params)
             search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
             process.SendEvent(struct{ type := 0x4785, search := search });
          endif
+         ExpGain(mob, 3);
+      elseif (mob.master)
          ExpGain(mob, 3);
       else
          ghaiaCheckNumber(mob);

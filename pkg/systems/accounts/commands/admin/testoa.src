@@ -36,11 +36,16 @@ function TamingEffect(targ, reverse := 0)
 endfunction
 
 program oafeatures_sendpacket(who, text)
-   var targ := Target(who);
+   var targ     := Target(who);
    var roleplay := GetObjProperty(targ, "#roleplay");
-   var process := GetProcess(roleplay);
-
-      process.SendEvent(struct{ "type" := 0x456, origin := 7877, text := "Se vc é feliz, bata os pés! E fala pro vitim se chego essa messagi", id := 7877 });
+   var process  := GetProcess(roleplay);
+   var search := struct{};
+   search.template := ":ghaia:carangueijo_praia";
+   search.color := 45;
+   search.onlyboss := 0;
+   search.type := "Matar Monstro";
+   search.party := 0;
+   process.SendEvent(struct{ type := 0x4785, search := search });
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area
    //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)
