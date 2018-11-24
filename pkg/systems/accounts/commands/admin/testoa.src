@@ -39,8 +39,7 @@ program oafeatures_sendpacket(who, text)
       var targ := Target(who);
       var itemsinbag := EnumerateItemsInContainer( targ.backpack );
       foreach iteminbag in itemsinbag
-         print(iteminbag.name);
-         SetName( iteminbag, iteminbag.name);
+         if (iteminbag.name["flechasss"]) SetName( iteminbag, "flecha"); print("found"); endif
          sleepms(2);
       endforeach 
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
