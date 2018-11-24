@@ -165,7 +165,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0)
       var i := 1;
       foreach state in (event.steps)
          y := y+ 15;
-         GFTextLine(gumpcombat, 35, y, 1051, ""+state.type);
+         GFTextLine(gumpcombat, 35, y, 1051, "{}. {}".format(_state_iter, state.type));
          GFAddButton(gumpcombat, 20, y+2, 2117, 2118, 1, 400+i);
          i := i + 1;
       endforeach
