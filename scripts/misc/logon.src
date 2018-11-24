@@ -28,8 +28,6 @@ program Logon(who)
 		SetObjProperty(who, "createdate", polcore().systime);
 	endif
 
-	ApplyElfLightLevel(who);
-
    if (who.getPoints() < 0)
       who.setpoints(0);
    endif
