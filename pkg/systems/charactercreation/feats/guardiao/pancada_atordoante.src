@@ -32,6 +32,8 @@ program defensor(params)
 
    PlaySoundEffect(who, cint(0x145));
    PrintText(who, "*golpe de {}*".format(_ifElse(who.shield, "escudo", "com arma gigante")));
-   TS_StartTimer(who.opponent, "tombar", 10);
+   TS_StartTimer(targ, "tombar", 10);
+   DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+   HealFLS(who, spellinfo.PowerMod[2]);
 	return 1;
 endprogram
