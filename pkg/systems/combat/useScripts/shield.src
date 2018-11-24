@@ -40,9 +40,7 @@ program block(who, shield)
       shield_cd := shield_cd + ( shield_cd * (AP_GetSkillMod(who, "Block") / 100));
    endif
 
-   if (HaveFeatPrimary(who, 1))
-      TS_StartCooldown(who, "blockheal", 4);
-   elseif (HaveFeatPrimary(who, 81) && !who.shield)
+   if (HaveFeatPrimary(who, 81) && !who.shield)
       var feat := getFeatById(81);
       var power := CalculateRawDamage(who, 0);
 
@@ -50,6 +48,7 @@ program block(who, shield)
 
       TS_StartCooldown(who, "blockperfect", 3);
       SetObjProperty(who, "#blockperfect_dmg", feat.PowerMod[1]);
+      SendSysMessageEX(who, "Bloqueio perfeito ativado;", SSM_INFO);
    endif
 
    TS_StartCooldown(who, "block", 2);

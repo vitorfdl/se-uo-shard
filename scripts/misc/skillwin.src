@@ -40,7 +40,7 @@ CONST GF_BKG_ADD_BTN := 100;
 var ficharp_data_file := DFOpenDataFile("ficharp", DF_CREATE);
 var ficharp_elem;
 
-function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y)
+function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y, power)
    if (!subclass)
       GFHtmlShadowed(gump, 307, y+15, 150, 20, "#FFFFFF", "Sem subclasse", 4);
       return;
@@ -57,7 +57,6 @@ function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y)
    
    var cur_group := 1;
    var x_pos := x+114;
-   var power := CalculateRawDamage(targ, 0, targ.weapon);
    foreach hab in feats
       if (hab.Group != cur_group)
          GFGumpPicTiled(gump, x_pos+5, y+9, 1, 20, 2114);  // divisor
@@ -84,7 +83,7 @@ function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y)
    endforeach
 endfunction
 
-function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array{})
+function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array{}, power)
    var classCfg := ReadConfigFile(":charactercreation:config/classes");
    var elem := FindConfigElem(classCfg, classe.id);
    if (!elem) return; endif
@@ -105,7 +104,6 @@ function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array
    var x := 174;
    var y := 178;
 
-   var power := CalculateRawDamage(targ, 0, targ.weapon);
    for (cur_group := 1; cur_group <= 4; cur_group += 1)
       var i;
       var feat_list := FindAllElemInArray(feats, struct{ Group := cur_group }) + FindAllElemInArray(extrahabs, struct{ Group := cur_group });
@@ -153,7 +151,7 @@ function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array
    GFTooltipText(gump, "Habilidade Indisponível");
 endfunction
 
-function buildGodGump(byref gump, god, level)
+function buildGodGump(byref gump, god, level, power)
    GFResizePic(gump, 684, 148, 5170, 138, 352); //background
    GFHtmlShadowed(gump, 737, 181, 50, 20, "#FFFFFF", "Deus", 5);
    GFHtmlShadowed(gump, 728-2, 200, 55, 20, "#FFFFFF", "<center>{}".format(god), 4);
@@ -167,7 +165,7 @@ function buildGodGump(byref gump, god, level)
       if (level < hab.Level) color := 1000; endif
       
       GFGumpPic(gump, 736-7, 221+((_hab_iter-1) * 49), cint(hab.Icon), color);
-      GFTooltipText(gump, BuildFeatToolTip(hab));
+      GFTooltipText(gump, BuildFeatToolTip(hab, 0, power));
       GFTextLine(gump, 743-7, 245+((_hab_iter-1) * 49), 1000, "Lv{}".format(hab.Level));
 
       sleepms(2);
@@ -190,7 +188,7 @@ function buildExpBar(byref gump, x, y, width, value, maxexp)
    GFGumpPicTiled(gump, x, y, exp_width, 8, 9751);
 endfunction
 
-function SendSkillGump(who, chardata, targ)
+function SendSkillGump(who, chardata, targ, power)
    var gump := GFCreateGump();
 
    GFSetID(gump, GUMPID_SKILLLIST);
@@ -219,7 +217,7 @@ function SendSkillGump(who, chardata, targ)
       var race_habs := GetRaceFeats(chardata.raca);
       foreach hab in race_habs
          GFGumpPic(gump, 580 + ((_hab_iter-1) * 49), 81, hab.Icon, 0 ); //hab
-         GFTooltipText(gump, BuildFeatToolTip(hab));
+         GFTooltipText(gump, BuildFeatToolTip(hab, 0, power));
       endforeach
    else
       GFHtmlShadowed(gump, 582, 61, 90, 20, "#FFFFFF", "<center>Raça Indefinida", 4);
@@ -237,7 +235,7 @@ function SendSkillGump(who, chardata, targ)
    GFHtmlShadowed(gump, 604, 156, 80, 20, "#FFFFFF", "Habilidade 5", 4);
 
    if (chardata.classes)
-      buildClass(who, targ, chardata.level, gump, chardata.classes[1], array{});
+      buildClass(who, targ, chardata.level, gump, chardata.classes[1], array{}, power);
    endif
 
 	GFGumpPic(gump, 37, 274, 57, 0); // bar
@@ -245,9 +243,9 @@ function SendSkillGump(who, chardata, targ)
 	GFGumpPic(gump, 667, 274, 59, 0); //bar
 
    if (chardata.subclasses)
-      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 141, 297);
-      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[2], 141, 368);
-      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[3], 141, 439);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 141, 297, power);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[2], 141, 368, power);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[3], 141, 439, power);
    endif
 
 	GFGumpPic(gump, 94, 350, 57, 0); // bar
@@ -273,7 +271,7 @@ function SendSkillGump(who, chardata, targ)
    GFTooltipText(gump, "Este é seu valor máximo de vigor, sem nenhum modificador. Vigor é usado para tarefas físicas e algumas habilidades.");
 	GFTextLine(gump, 482, 93, 0, "{}".format(chardata.stam));
 
-   buildGodGump(gump, chardata.god, chardata.level);
+   buildGodGump(gump, chardata.god, chardata.level, power);
    
 	GFTextLine(gump, 196, 501, 0, "Coloque seu mouse sobre os icones para ver descrições detalhadas");
 
@@ -424,7 +422,8 @@ program skillwin(who, targ, page)
    var res := 1;
    while (who.connected && res)
       if (cur_page == 0)
-         res := SendSkillGump(who, chardata, targ)[0];
+         var power := CalculateRawDamage(targ, 0, targ.weapon);
+         res := SendSkillGump(who, chardata, targ, power)[0];
       elseif (cur_page == 1)
          res := SendBackgroundGump(who, _ifElse(who.cmdlevel >= 3, 3, 1), targ)[0];
       elseif (cur_page == 2)

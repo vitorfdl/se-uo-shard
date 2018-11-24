@@ -294,6 +294,8 @@ function MobSetConfigs(byref who, byref input)
     mob_entry.+type       := mob_type;
     mob_entry.+mobgroup       := mob_group;
 
+    if (!NPC_Checktemplate(mob_entry.name)) SendSysMessageEx(who, "Template {} não existe!!!".format(mob_entry.name), SSM_FAIL); endif
+
     UpdateGroupMobData(selected_elem, mob_entry, selected_mob);
 
     SendSysMessageEx(who, "Mob atualizado no spawnGroup!");

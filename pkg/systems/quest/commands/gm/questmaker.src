@@ -317,8 +317,12 @@ program gump_gump(who)
                SendSysMessageEx(who, "Dar essa quest para quem ?", SSM_REQUEST);
                var targ := Target(who);
                if (!targ) break; endif
-
-               GiveQuest(targ, quest, 0, 1);
+               var new_quest := quest;
+               if (quest.category.size() > 1)
+                  new_quest.category := RadioGump(who, 300, 0, "Qual a classe?", quest.category, 1);
+               endif
+               
+               GiveQuest(targ, new_quest, 0, 1);
                SendSysMessageEx(who, "Quest adicionada.", SSM_REQUEST);
          endcase
          
@@ -363,6 +367,7 @@ function QuestConditions(who, new_condition := struct{})
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
 
+         if (!NPC_Checktemplate(output[2])) SendSysMessageEx(who, "Template {} não existe!".format(output[2]), SSM_FAIL); return 0; endif
          new_condition["template"]   := output[2];
          new_condition["qty"]        := cint(output[3]);
          new_condition["party"]      := output[4] == "Sim";

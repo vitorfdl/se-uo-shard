@@ -29,6 +29,7 @@ program dblclick(who, item)
       var output := QuestionsGump(who, input_list);
       if (!output) return; endif
       
+    if (!NPC_Checktemplate(output[1])) SendSysMessageEx(who, "Template {} não existe!!!".format(output[1]), SSM_FAIL); endif
       SetObjProperty(item, "npctemplate", output[1]);
       SetObjProperty(item, "brokengraph", output[2]);
       SetObjProperty(item, "nmonsters", output[3]);

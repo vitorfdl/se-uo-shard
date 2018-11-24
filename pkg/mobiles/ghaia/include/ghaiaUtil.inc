@@ -156,6 +156,11 @@ function NPC_GetNPCConfig(template, ignore_metamorfose := 0)
 	return cfg_elem;
 endfunction
 
+function NPC_Checktemplate(template)
+   if (!template["ghaia"]) template := ":ghaia:{}".format(template); endif
+   if (!NPC_GetNPCConfig(template)) return 0; endif
+   return 1;
+endfunction
 /*
  * NPC_GetAllTemplateNames()
  *

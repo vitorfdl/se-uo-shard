@@ -6,7 +6,7 @@ include ":yggdrasil:spawnGroup";
 include ":yggdrasil:dynamicevents";
 include ":yggdrasil:spawnSpot";
 include ":yggdrasil:treasures";
-// include ":ghaia:ghaiaUtil";
+include ":ghaia:ghaiaUtil";
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";

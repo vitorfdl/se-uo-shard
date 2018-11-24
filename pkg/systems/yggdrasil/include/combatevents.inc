@@ -669,6 +669,7 @@ function CombatEventsOptions(who, state)
       input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
       
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+      if (!NPC_Checktemplate(output[2])) SendSysMessageEx(who, "Template {} não existe!!!".format(output[2]), SSM_FAIL); endif
       state.target := output[1];
       state.npctemplate := output[2];
       state.amount := output[3];
