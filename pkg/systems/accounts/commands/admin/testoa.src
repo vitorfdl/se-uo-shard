@@ -44,7 +44,7 @@ program oafeatures_sendpacket(who, text)
    search.color := 45;
    search.onlyboss := 0;
    search.type := "Matar Monstro";
-   search.party := 0;
+   search.party := 1;
    process.SendEvent(struct{ type := 0x4785, search := search });
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area
