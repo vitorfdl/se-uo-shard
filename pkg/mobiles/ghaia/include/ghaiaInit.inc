@@ -102,7 +102,7 @@ function SetupName(mobile)
 
 	var my_name := mobile.name;
 	//while ( my_name == "<random>")
-	my_name["<random>"] := name_list[RandomInt(Len(name_list))+1];
+	my_name["<random>"] := name_list[name_list.randomentry()];
 	SetName(mobile, my_name);
 	//my_name := mobile.name;
 	sleepms(2);

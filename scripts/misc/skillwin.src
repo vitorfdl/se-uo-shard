@@ -225,15 +225,16 @@ function SendSkillGump(who, chardata, targ)
       GFHtmlShadowed(gump, 582, 61, 90, 20, "#FFFFFF", "<center>Raça Indefinida", 4);
    endif
 
+   GFHtmlShadowed(gump, 240, 265, 300, 20, "#FFFF00", "Use suas habilidades através da barra de atalhos", 2);
 	GFGumpPic(gump, 37, 136, 57, 0); // bar
 	GFGumpPicTiled(gump, 65, 136, 607, 21, 58); //bar
 	GFGumpPic(gump, 667, 136, 59, 0); // bar
 
-	GFTextLine(gump, 186, 156, 0, "Habilidade 1");
-	GFTextLine(gump, 292, 157, 0, "Habilidade 2");
-	GFTextLine(gump, 396, 156, 0, "Habilidade 3");
-	GFTextLine(gump, 503, 155, 0, "Habilidade 4");
-	GFTextLine(gump, 604, 155, 0, "Ultimate");
+   GFHtmlShadowed(gump, 186, 156, 80, 20, "#FFFFFF", "Habilidade 1", 4);
+   GFHtmlShadowed(gump, 292, 156, 80, 20, "#FFFFFF", "Habilidade 2", 4);
+   GFHtmlShadowed(gump, 396, 156, 80, 20, "#FFFFFF", "Habilidade 3", 4);
+   GFHtmlShadowed(gump, 503, 156, 80, 20, "#FFFFFF", "Habilidade 4", 4);
+   GFHtmlShadowed(gump, 604, 156, 80, 20, "#FFFFFF", "Habilidade 5", 4);
 
    if (chardata.classes)
       buildClass(who, targ, chardata.level, gump, chardata.classes[1], array{});
