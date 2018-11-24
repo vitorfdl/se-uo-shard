@@ -6,11 +6,11 @@ include "include/say";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
-program gmtools(who)
+program gmtools(who, text)
    var targ := Target(who);
 
    if (targ && targ.isA(POLCLASS_MOBILE) && !targ.isA(POLCLASS_NPC))
-      start_script( "::misc/skillwin", array{ who, targ });
+      start_script( "::misc/skillwin", array{ who, targ, _ifElse(text, 1, 0)});
    else
       SendSysMessageEx(who, "Cancelado");
    endif

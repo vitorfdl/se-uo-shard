@@ -398,8 +398,10 @@ function PegarResposta(who)
 	endif
 endfunction
 
-program skillwin(who, targ)
-   _resolveParams(who, targ);
+program skillwin(who, targ, page)
+   _resolveParams(who, targ, page);
+   var cur_page := 0;
+   if (page) cur_page := 1; endif
    if (!targ) targ := who; endif
 
    if (CloseGump( who, GUMPID_SKILLLIST) || GetObjProperty(who, "criandochar"))
@@ -419,7 +421,6 @@ program skillwin(who, targ)
       fichaSetProp(targ, "Ficha", ficha);
    endif
 
-   var cur_page := 0;
    var res := 1;
    while (who.connected && res)
       if (cur_page == 0)
