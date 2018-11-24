@@ -46,7 +46,7 @@ program command_Message(who)
 		
 		var chardata := GetObjProperty(targ, "chardata");
 		if (!chardata)
-			var chardata := struct{
+			chardata := struct{
          current_class := "",
          caminhos := array{"Obstinado"},
          subclasses:= array{},
