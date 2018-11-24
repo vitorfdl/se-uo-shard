@@ -87,7 +87,7 @@ function cookit(who,item);
   endif
   var elem      := FindConfigElem(cfg, item.objtype);  
   var products  := GetConfigStringArray(elem,"product");
-  var product   := Cint(products[RandomInt(len(products))+1]);
+  var product   := Cint(products.randomentry());
   var ingredients := GetConfigStringArray(elem, "ingredient");
   var theIngredients := {};
   var newitem;
@@ -100,8 +100,8 @@ function cookit(who,item);
   endif
 
   if(skill_needed)
-	var cookcheck := rollAttrDice(who, WISDOM) + GetSkillBonus(who, COZINHA);
-    if(cookcheck > skill_needed);
+	var cookcheck := randomint(100);
+    if(cookcheck >= skill_needed);
 		var consume := SubtractAmount(item, 1);
       if(consume)
         newitem := CreateItemInBackpack(who, product, 1);

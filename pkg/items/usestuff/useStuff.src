@@ -56,7 +56,7 @@ program UseStuff(character, stuff)
 
     skill := CInt(GetConfigString(elem, "skill"));
     targetitem := CInt(GetConfigString(elem, "product"));
-    skill_needed := CInt(GetConfigString(elem, "skill_needed"));
+    skill_needed := _ifOr(CInt(GetConfigString(elem, "skill_needed")), 50);
     attribute := CInt(GetConfigString(elem, "attribute"));
     points := CInt(GetConfigString(elem, "points"));
     target_quantity := CInt(GetConfigString(elem, "target_quantity"));
