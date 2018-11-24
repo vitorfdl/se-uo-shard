@@ -36,38 +36,40 @@ program AC_start(who)
 
       var mobiles_around := ListMobilesInLineOfSight( who, 5 );
       foreach mob in mobiles_around
-         if( mob.acctname && !(mob.serial in already_saw))
-            // var cp_datafile := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
-            // var cp_elem     := DFFindElement(cp_datafile, mob.serial, DF_CREATE);
-            // var cp_profile  := DFGetProp(cp_elem, "Profile");
-            // cp_profile := CChrz(cp_profile);
-            var cp_profile;
-            var chardata := GetObjProperty(mob, "chardata");
-            if (chardata)
-               var altura := GetCharHeight(chardata.height);
-               var peso := GetCharWeight(chardata.weight);
-               if (mob.name["Desconhecido"])
-                  cp_profile := "Altura {}, {}".format(altura, peso);
-               else
-                  cp_profile := "{}, {}, {}".format(altura, peso, chardata.profile);
+         if (!(mob.serial in already_saw))
+            if( mob.acctname)
+               // var cp_datafile := DFOpenDataFile(":charprofile:CPFile", DF_CREATE);
+               // var cp_elem     := DFFindElement(cp_datafile, mob.serial, DF_CREATE);
+               // var cp_profile  := DFGetProp(cp_elem, "Profile");
+               // cp_profile := CChrz(cp_profile);
+               var cp_profile;
+               var chardata := GetObjProperty(mob, "chardata");
+               if (chardata)
+                  var altura := GetCharHeight(chardata.height);
+                  var peso := GetCharWeight(chardata.weight);
+                  if (mob.name["Desconhecido"])
+                     cp_profile := "Altura {}, {}".format(altura, peso);
+                  else
+                     cp_profile := "{}, {}, {}".format(altura, peso, chardata.profile);
+                  endif
                endif
-            endif
 
-            if (cp_profile)
-               var charname := SplitWords(mob.name)[1];
-               cp_profile := "<BASEFONT color=#AAAAAA>Você vê: <BASEFONT color=#FFA500>{} <BASEFONT color=#FAFAFA>{}".format(charname, cp_profile);
-               last_see.Insert(1, cp_profile);
+               if (cp_profile)
+                  var charname := SplitWords(mob.name)[1];
+                  cp_profile := "<BASEFONT color=#AAAAAA>Você vê: <BASEFONT color=#FFA500>{} <BASEFONT color=#FAFAFA>{}".format(charname, cp_profile);
+                  last_see.Insert(1, cp_profile);
+                  already_saw.append(mob.serial);
+                  SendSysMessage(who, "-> Personagem Avistado.");
+                  trig := 1;
+               endif
+            elseif (GetObjProperty(mob, "roleplay_desc"))
+               var description := GetObjProperty(mob, "roleplay_desc");
+               description := "<BASEFONT color=#AAAAAA>Você vê: <BASEFONT color=#FFA500>{} <BASEFONT color=#FAFAFA>{}".format(mob.name, description);
+               last_see.Insert(1, description);
                already_saw.append(mob.serial);
-               SendSysMessage(who, "-> Personagem Avistado.");
+               SendSysMessage(who, "-> Criatura Avistada.");
                trig := 1;
             endif
-         elseif (GetObjProperty(mob, "roleplay_desc"))
-            var description := GetObjProperty(mob, "roleplay_desc");
-            description := "<BASEFONT color=#AAAAAA>Você vê: <BASEFONT color=#FFA500>{} <BASEFONT color=#FAFAFA>{}".format(mob.name, description);
-            last_see.Insert(1, description);
-            already_saw.append(mob.serial);
-            SendSysMessage(who, "-> Criatura Avistada.");
-            trig := 1;
          endif
          sleepms(2);
       endforeach
