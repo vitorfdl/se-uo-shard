@@ -393,8 +393,8 @@ function CombatEventsOptions(who, state)
       
       state.target        := output[1];
       state.resist_test := output[2];
-      state.successonly := output[4] == "Se Def Ativa";
-      state.conedist    := cint(output[5]);
+      state.successonly := output[3] == "Se Def Ativa";
+      state.conedist    := cint(output[4]);
    elseif ( opt == "Dash")
       var input_list := array{};
       input_list.append(struct{ "title" := "Qual alvo do dash?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});

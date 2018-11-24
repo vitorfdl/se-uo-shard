@@ -401,7 +401,7 @@ function DoSpotList(who, input)
          GF_SPOT_DYNAMICEVENT_BTN:
             var opts := DFGetElemNames(LoadDynamicGroupData());
             opts.append("Remover");
-            var output := QuestionsGump(who, array{struct{ "title" := "Qual a base de PODER e DEFESA?", "marked" := data.evententry in opts, radio := opts  } });
+            var output := QuestionsGump(who, array{struct{ "title" := "Qual o dynamic event ?", "marked" := data.evententry in opts, radio := opts  } });
             if (!output) break; endif
             if (output[1] == "Remover") output[1] := ""; endif
             var update := struct{
@@ -869,7 +869,7 @@ function ConstructTreasureConfig(byref gump)
     var treasure_cont := SystemFindObjectBySerial(treasure.serial);
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 210+(treasure.loots.Size()*18));
+    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 320, 210+(treasure.loots.Size()*18));
     GFTextMid(gump, basex-10, 28, 260, 555, "Treasure Configuration");
 
     var sx := basex+30;
@@ -914,9 +914,8 @@ function ConstructTreasureConfig(byref gump)
         if (loot)
             GFAddButton( gump, sx-8, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
             if (loot.by_group)
-               var forceitem := "N";
-               if (loot.forceitem) forceitem := "F"; endif
-                GFTextLine(gump, sx, sy, 2103, "{} [{}][{}] R: {}".format(Upper(loot.by_group), loot.chance, forceitem,loot.rate));
+               GFTextLine(gump, sx, sy, 2103, "{}  [{}] [Poder/Defesa: {}/{}]".format(Upper(loot.by_group), loot.chance, loot.power, loot.defense));
+               GFTooltip(gump, "<center>Rate de Drop: {}<br>Forçar Recipes: {}<br>Qualidades: {}".format(loot.rate, _ifElse(forceitem, "Sim", "Não"), ", ".join(loot.qualities)));
             else
                 GFTextLine(gump, sx, sy, 2103, "{} [{}]".format(Upper(loot.item.desc), loot.chance));
             endif

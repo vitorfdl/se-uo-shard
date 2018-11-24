@@ -13,6 +13,20 @@ function Loot_Generate(container, loot_index, is_group := 0)
 		return error{"errortext" := "`ect passed was not a container."};
 	endif
 
+   var loot_params := struct{
+      power := 0,
+      defense := 0,
+      qualities := array{}
+   };
+
+   if (is_group)
+      loot_params := struct{
+         power := cint(is_group.power),
+         defense := cint(is_group.defense),
+         qualities := _ifOr(is_group.qualities, arraY{})
+      };
+   endif
+
    if (is_group && is_group.by_group)
 	   var index_cfg := ReadConfigFile(":loot:config/loot-groups");
       if ( index_cfg.errortext )
@@ -27,11 +41,10 @@ function Loot_Generate(container, loot_index, is_group := 0)
 
       var type := GetConfigStringArray(index_elem, "Type");
       var line := "{} {} {}".format(is_group.by_group, is_group.rate, is_group.chance);
-      Loot_CreateRandom(container, line, is_group.forceitem, is_group.power, is_group.defense);
+      Loot_CreateRandom(container, line, is_group.forceitem, loot_params);
 
       return 1;
    endif
-
 
 	var index_cfg := ReadConfigFile(":loot:config/loot-index");
 	if ( index_cfg.errortext )
@@ -45,7 +58,7 @@ function Loot_Generate(container, loot_index, is_group := 0)
 	endif
 
 	foreach line in GetConfigStringArray(index_elem, "Item")
-		Loot_CreateItem(container, line, cint(is_group.power), cint(is_group.defense));
+		Loot_CreateItem(container, line, loot_params);
 		sleepms(2);
 	endforeach
 
@@ -55,17 +68,17 @@ function Loot_Generate(container, loot_index, is_group := 0)
 	endforeach
 
 	foreach line in GetConfigStringArray(index_elem, "Random")
-		Loot_CreateRandom(container, line, 0, cint(is_group.power), cint(is_group.defense));
+		Loot_CreateRandom(container, line, 0, loot_params);
 		sleepms(2);
 	endforeach
 
 	foreach line in GetConfigStringArray(index_elem, "Recipe")
-		Loot_CreateItem(container, line, 0, 0, "recipe");
+		Loot_CreateItem(container, line, loot_params, "recipe");
 		sleepms(2);
 	endforeach
 
 	foreach line in GetConfigStringArray(index_elem, "TalentBook")
-		Loot_CreateItem(container, line, 0, 0, "talentbook");
+		Loot_CreateItem(container, line, loot_params, "talentbook");
 		sleepms(2);
 	endforeach
 
@@ -89,7 +102,7 @@ endfunction
 
 
 
-function Loot_CreateItem(container, line, power := 0, defense := 0, type := 0)
+function Loot_CreateItem(container, line, loot_params, type := 0)
 	var parsed := Loot_ParseString(line);
 	if ( Loot_ChanceCheck(parsed.chance) )
 		var i;
@@ -102,8 +115,9 @@ function Loot_CreateItem(container, line, power := 0, defense := 0, type := 0)
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
             elseif (item.isA(POLCLASS_ARMOR) || item.isA(POLCLASS_WEAPON))
-               if (power) item.dmg_mod := power - RandomInt(20) + RandomInt(20); endif
-               if (defense) item.resist_physical_mod := defense - RandomInt(20) + RandomInt(20); endif
+               if (loot_params.power) item.dmg_mod := loot_params.power - RandomInt(20) + RandomInt(20); endif
+               if (loot_params.defense) item.resist_physical_mod := loot_params.defense - RandomInt(20) + RandomInt(20); endif
+               RandomQuality(item, loot_params);
 				endif
          elseif (type == "talentbook")
             var item := CreateItemInContainer(container, FEATBOOK_OBJ);
@@ -162,7 +176,7 @@ function Loot_CreateStack(container, line)
 	return 1;
 endfunction
 
-function Loot_CreateRandom(container, line, forcetype := 0, power := 0, defense := 0)
+function Loot_CreateRandom(container, line, forcetype := 0, loot_params)
 	var parsed := Loot_ParseString(line);
 	var groups_cfg := ReadConfigFile(":loot:config/loot-groups");
 	if ( groups_cfg.errortext )
@@ -185,16 +199,16 @@ function Loot_CreateRandom(container, line, forcetype := 0, power := 0, defense 
          var random := RandomInt(num_items)+1;
          if (random > items.size()+recipes.size())
             random := random - items.size()+recipes.size();
-            Loot_CreateItem(container, talentbooks[random], 0, 0, "talentbook");
+            Loot_CreateItem(container, talentbooks[random], loot_params, "talentbook");
          elseif (random > items.size())
             random := random - items.size();
             if (!forcetype)
-               Loot_CreateItem(container, recipes[random], 0, 0, "recipe");
+               Loot_CreateItem(container, recipes[random], loot_params, "recipe");
             else
-               Loot_CreateItem(container, recipes[random], power, defense);
+               Loot_CreateItem(container, recipes[random], loot_params);
             endif
          else
-            Loot_CreateItem(container, items[random], power, defense);
+            Loot_CreateItem(container, items[random], loot_params);
          endif
          sleepms(2);
       endfor
@@ -237,6 +251,17 @@ function Loot_ParseString(line)
 	result.+type := type;
 
 	return result;
+endfunction
+
+function RandomQuality(item, qualities)
+   var rnd := RandomInt(100);
+   if ("Exótico" in qualities && rnd <= 1)
+      item.quality := 4;
+   elseif ("Raro" in qualities && rnd <= 8)
+      item.quality := 3;
+   elseif ("Bom" in qualities && rnd <= 25)
+      item.quality := 2;
+   endif
 endfunction
 
 function LootGroupGump(who)
