@@ -38,9 +38,9 @@ endfunction
 program oafeatures_sendpacket(who, text)
    var targ := Target(who);
    var roleplay := GetObjProperty(targ, "#roleplay");
-   print(roleplay);
    var process := GetProcess(roleplay);
-   print(process);
+
+      process.SendEvent(struct{ "type" := 0x456, origin := 7877, text := "Se vc é feliz, bata os pés! E fala pro vitim se chego essa messagi", id := 7877 });
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area
    //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)
