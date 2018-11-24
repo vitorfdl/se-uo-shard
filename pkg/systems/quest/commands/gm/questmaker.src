@@ -367,7 +367,7 @@ function QuestConditions(who, new_condition := struct{})
          new_condition["qty"]        := cint(output[3]);
          new_condition["party"]      := output[4] == "Sim";
          new_condition["onlyboss"]   := output[5] == "Sim";
-         new_condition["color"] := output[6];
+         new_condition["color"] := cint(output[6]);
          new_condition["customname"] := output[7];
 
          if (output[1] == "Sim")
