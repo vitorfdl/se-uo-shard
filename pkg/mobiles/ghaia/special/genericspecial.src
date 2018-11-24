@@ -287,10 +287,12 @@ program loko(params)
                   endif
                   sleepms(2);
                endforeach
-            elseif (state.graphictype == "Circle In")
-               CircleEffect(t, state, 1);
-            elseif (state.graphictype == "Circle Out")
-               CircleEffect(t, state);
+            elseif (state.graphictype["Circle"])
+               var type := _ifElse(state.graphictype[" Out"], 0, 1);
+				   foreach t in targ
+                  CircleEffect(t, state, type);
+                  sleepms(2);
+               endforeach
             endif
                // var startx := Cint(state.startx) + RandomInt(2 * state.startradius) - state.startradius;
                // var starty :=  Cint(state.starty) + RandomInt(2 * state.startradius) - state.startradius;
