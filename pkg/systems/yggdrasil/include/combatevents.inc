@@ -28,7 +28,7 @@ function GetAllVents(filter := 0)
             monsters := monsters
          });
       endif
-      sleepms(2);
+      sleepms(10);
    endforeach
 
    return events;

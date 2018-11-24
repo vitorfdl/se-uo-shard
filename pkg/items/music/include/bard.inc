@@ -8,7 +8,7 @@ include ":yggdrasil:boss";
 
 
 function BardNotes(who,item,notas,notas2,tempo,letra,what,emocao)
-   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
+   sleepms(20);
    if (randomint(5) == 1)
       PrintText(who, "*Compondo uma musica*");
    endif

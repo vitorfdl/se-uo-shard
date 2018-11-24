@@ -20,7 +20,6 @@ include ":charactercreation:chargumps";
 
 //cores: 1153 -> 2103 -> 2105
 program createchar(who)
-   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
 	sleepms(850);
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
@@ -118,7 +117,7 @@ endprogram
 
 function StartCharacterCreation(who, byref chardata)
 	while (who.connected)
-      sleepms(2);
+      sleepms(15);
       
       chardata := struct{
          current_class := "",

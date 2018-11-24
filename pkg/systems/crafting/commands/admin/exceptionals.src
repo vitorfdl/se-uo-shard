@@ -7,8 +7,6 @@ use os;
 include ":gumps:gumps";
 include ":crafting:excep_gump";
 
-Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
-
 program gump_gump(who)
    var index := 0;
    while (who.connected)

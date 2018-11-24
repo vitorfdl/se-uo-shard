@@ -17,7 +17,6 @@ include ":attributes:attributes";
 
 program TimerControl(mobile)
    set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
-   set_script_option(SCRIPTOPT_NO_RUNAWAY, 1);
 	if ( !mobile.IsA(POLCLASS_MOBILE) && !mobile.isA(POLCLASS_NPC) )
 		mobile := mobile[1];
 	endif
@@ -32,6 +31,7 @@ program TimerControl(mobile)
 	StartUp(mobile, timer_list, cooldowns, num_poisons, num_paralyzed);
 
 	while ( 1 )
+      sleepms(10);
       if(!mobile.connected)
          mobile := SystemFindObjectBySerial(mobile.serial, SYSFIND_SEARCH_OFFLINE_MOBILES);
       endif
@@ -85,6 +85,7 @@ function SaveState(mobile, byref timer_list, byref cooldowns)
 		save_timer.+endtime := timer.endtime;
 
 		save_dict[_timer_iter] := save_timer;
+      sleepms(10);
 	endforeach
 
 	TS_SaveTimerList(mobile, save_dict);
@@ -100,6 +101,7 @@ function SaveState(mobile, byref timer_list, byref cooldowns)
          save_timer.+endMessage := timer.endMessage;
 	
 			cooldowns_dict[_timer_iter] := save_timer;
+         sleepms(5);
 		endforeach
 		//sendsysmessage(mobile, "s cd");
 		TS_SaveCooldownList(mobile, cooldowns_dict);

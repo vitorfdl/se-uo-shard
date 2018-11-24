@@ -8,7 +8,6 @@ include ":tn:tngumps";
 include ":gumps:gumps_ex";
 
 program AC_start(who)
-   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    var setup := GetObjProperty(who, "roleplay_setup");
    if (!setup)
       setup := struct{ "width" := 164, "height" := 163, y := 625, x := 273};

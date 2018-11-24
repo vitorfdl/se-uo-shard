@@ -122,7 +122,6 @@ endfunction
 
 program startHotBar(who, spos)
    CloseGump( who, 0x945, 978455 );
-   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    if (!GetObjProperty(who, "chardata")) return; endif 
    
    var hotbar := GetObjProperty(who, "hotbar");
