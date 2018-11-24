@@ -1,0 +1,11 @@
+use os;
+use uo;
+include "include/say";
+program textcmd_sayabove( who, text, uc_text)
+    SendSysMessage( who, "Say above what or whom?" );
+
+    var what := Target(who, TGTOPT_NOCHECK_LOS);
+    if (what)
+        PrintText( what, CChrZ(uc_text), SSM_INFO );
+    endif
+endprogram
