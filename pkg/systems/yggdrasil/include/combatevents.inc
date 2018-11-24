@@ -546,9 +546,9 @@ function CombatEventsOptions(who, state)
          state.speed := 5;
          state.loops := 0;
       elseif (output[4] == "Outro")
-         state.fxid := output[5][1];
-         state.loops := output[5][2];
-         state.speed := output[5][3];
+         state.fxid := cint(output[5][1]);
+         state.speed := cint(output[5][2]);
+         state.loops := cint(output[5][3]);
       endif
 
       state.direction := output[6];
