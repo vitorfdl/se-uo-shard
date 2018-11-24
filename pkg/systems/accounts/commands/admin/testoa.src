@@ -44,7 +44,7 @@ program oafeatures_sendpacket(who, text)
 
    var y := 120;
    foreach item in quest_progress
-      GFTextLine(gump, 170, y, 2100, "{]".format(item));
+      GFTextLine(gump, 170, y, 2100, "{}".format(item));
       y += 20;
    endforeach
 
