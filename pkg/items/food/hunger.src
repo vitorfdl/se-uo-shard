@@ -32,5 +32,7 @@ program Hunger(chr)
 				endif
 			endif	
 		endif
+
+      SetName(chr, chr.name); // just to update DP
 	endwhile
 endprogram

@@ -1,0 +1,16 @@
+use uo;
+use basic;
+use os;
+
+include ":ghaia:npcmethods";
+
+program hook_startup()
+	print("INSTALLING: NPC hook...");
+	return 1;
+endprogram
+
+
+exported function pushthrough(who, targ)
+   if (!targ || !targ.size()) return 0; endif
+   if (targ[1].my_template() == "orb") return 1; endif
+endfunction
