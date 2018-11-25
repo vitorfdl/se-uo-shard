@@ -11,21 +11,21 @@ include ":timedscripts:timedScripts";
 include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   var dmgreduction := cint(GetObjProperty(mobile, "dmgreduction"));
-   dmgreduction -= level;
-   SetObjProperty(mobile, "dmgreduction", dmgreduction);
+   var dmgpenalty := cint(GetObjProperty(mobile, "dmgpenalty"));
+   dmgpenalty -= level;
+   SetObjProperty(mobile, "dmgpenalty", dmgpenalty);
    PrintText(mobile, "Redução de Poder", SSM_FAIL);
    return 1;
 endfunction
 
 function EndScript(mobile, level)
-   var dmgreduction := cint(GetObjProperty(mobile, "dmgreduction"));
-   dmgreduction += level;
+   var dmgpenalty := cint(GetObjProperty(mobile, "dmgpenalty"));
+   dmgpenalty += level;
 
-   if (dmgreduction <= 0)
-      EraseObjProperty(mobile, "dmgreduction");
+   if (dmgpenalty <= 0)
+      EraseObjProperty(mobile, "dmgpenalty");
    else
-      SetObjProperty(mobile, "dmgreduction", dmgreduction);
+      SetObjProperty(mobile, "dmgpenalty", dmgpenalty);
    endif
    return 1;
 endfunction
