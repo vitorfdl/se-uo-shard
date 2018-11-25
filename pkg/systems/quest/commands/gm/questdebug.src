@@ -35,13 +35,12 @@ function TamingEffect(targ, reverse := 0)
    endforeach
 endfunction
 
-function DebugGump(who, targ)
-   var quest_progress := GetObjProperty(targ, "quest_progress");
+function DebugGump(who, showup)
    var gump := GFCreateGump();
    GFResizePic(gump, 84, 90, 9260, 600, 260+25);
 
    var y := 120;
-   foreach item in quest_progress
+   foreach item in showup
       GFTextLine(gump, 90, y, 2100, "{}".format(item));
       y += 20;
    endforeach
@@ -79,8 +78,6 @@ program oafeatures_sendpacket(who, text)
          search[key[1]] := key[2];
       endforeach
 
-      print(search);
-
       process.SendEvent(struct{ type := 0x4785, search := search });
       return;
    elseif (cint(text) == 2) 
@@ -91,7 +88,9 @@ program oafeatures_sendpacket(who, text)
       return SendSysMessageEx(who, "roleplay resetado");
    endif
 
-   DebugGump(who, targ);
+   if (!text) text := "quest_progress"; endif
+   var quest_progress := GetObjProperty(targ, text);
+   DebugGump(who, quest_progress);
 
 
 endprogram
