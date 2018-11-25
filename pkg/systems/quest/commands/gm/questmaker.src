@@ -110,7 +110,7 @@ function GumpQuestInfo(byref gump, who)
       if (item.party) desc += " [Party: {}]".format(_ifElse(item.party, "S", "N")); endif
       // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
       if (item.item_specify) desc += " [{}]".format(item.item_specify.name); endif
-      if (item.level) desc += " [L.{}]".format(item.level); endif
+      if (item.level) desc += " [Lv. {}]".format(item.level); endif
 	   GFTextLine(gump, 295, 142+pos_y, 1152, "{}".format(desc));
       var tooltip := "<center>";
       if (item.spawngroup) tooltip += "Spawngroup: {}<br>".format(item.spawngroup); endif
