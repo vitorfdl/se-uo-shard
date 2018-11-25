@@ -46,7 +46,7 @@ program HandleMerchant(params)
 			endif
 		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
       "SeeEvent": HandleSeeEvent(params.me, params.source);
-      "DblClickEvent": DoWithdraw(params.me, params.source); DoPurchaseCmd(params.me, params.source, 1);
+      "DblClickEvent": DoWithdraw(params.me, params.source); DoPurchaseCmd(params.me, params.source);
 		// "Default": return;
 	endcase
 
@@ -67,7 +67,7 @@ function HandleSeeEvent(npc, player)
    endif
 
    PlayCustomSound(npc, 14);
-   PrintText(npc, "{}, vendi alguns artigos seu!".format(player.name));
+   PrintText(npc, "{}, vendi alguns artigos seu!".format(player.name), SSM_INFO);
    SetCooldown(npc, "{}_see".format(player.serial), 600);
 endfunction
 
@@ -101,12 +101,12 @@ function HandleItemGiven(npc, player, item)
 	return result;
 endfunction
 
-function DoPurchaseCmd(npc, player, text_type := 0)
+function DoPurchaseCmd(npc, player)
    var canceled := 0;
    while(!canceled)
       if (!player.concealed)
-         if (!text_type) PrintText(npc, "O que deseja comprar?", SSM_INFO);
-         else PrintText(player, "O que tem a venda?", SSM_INFO); endif
+         PrintText(player, "O que tem a venda?", SSM_FAIL);
+         PrintText(player, array{"Olhe só este produto...", "Bem-vindo, vamos ver...", "Está procurando algo específico?"}.randomentry(), SSM_INFO);
       endif
       var input := SendItemView(npc, player);
       if (!input[0])
@@ -371,7 +371,7 @@ function removeItemMerchant(npc, player, input)
 		if ( !YesNo(player, "Você deseja mesmo pegar este item de volta?") )
 			return;
 		endif
-		Printtext(npc, "Certo. Aqui esta seu produto.");
+		PrintText(npc, "Certo. Aqui esta seu produto.", SSM_INFO);
 	endif
 
 	RemoveItemForSale(npc, input, 0, confiscar);

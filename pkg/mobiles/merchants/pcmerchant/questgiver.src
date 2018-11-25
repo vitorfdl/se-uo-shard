@@ -30,7 +30,9 @@ program HandleMerchant(params)
 		// 		MoveItemToContainer(params.item, params.source.backpack);
 		// 	endif
 		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
-      "DblClickEvent": PrintText(params.source, "Olá {}".format(params.me.name)); SendQuestGump(params.me, params.source);
+      "DblClickEvent": 
+         PrintText(params.source, array{"Olá {}".format(params.me.name), "Quer aprender algo?", "Em que posso ajuda-lo?"}.randomentry, SSM_INFO); 
+         SendQuestGump(params.me, params.source);
       // "SeeEvent": HandleSeeEvent(params.me, params.source);
 		// "Default": return;
 	endcase
@@ -43,11 +45,10 @@ function HandleSpeech(npc, player, text)
    var canceled := 0;
 	text := lower(text);
 
-   if ((text["ol"] && (text["á"] || text["a"])) || (text["miss"] && text["es"]))
+   if ((text["bom"] && text["dia"]) || text["ajuda"])
       if (!player.concealed)
-         PrintText(npc, "Tudo bem com você?");
+         return SendSysMessageEx(player, "Dê duplo clique no vendedor para ver seus produtos a venda.", SSM_REQUEST);
       endif
-
       SendQuestGump(npc, player);
    elseif (player.cmdlevel >= 3 && text["alterar"] && text["op"])
       SendConfigGump(npc, player);
@@ -66,7 +67,7 @@ function SendQuestGump(npc, player)
 
    var classCfg := ReadConfigFile(":charactercreation:config/classes");
    var chardata := GetObjProperty(player, "chardata");
-   if (!chardata) PrintText(npc, "Não posso te ajudar, desculpe"); endif
+   if (!chardata) PrintText(npc, "Não posso te ajudar, desculpe", SSM_INFO); endif
 
    var questions := array{};
    foreach classe in (myconfigs.classes)
@@ -177,7 +178,7 @@ function SendQuestGump(npc, player)
 
       CreateItemsFromClass(player, answer.classe);
       SetObjProperty(player, "chardata", chardata);
-      PrintText(npc, "Que você seja próspero na sua jornada de {}. Volte aqui para que eu lhe ensine alguns truques dessa arte.".format(answer.classe));
+      PrintText(npc, "Certo, irei te ensinar sobre {}. Volte semanalmente aqui que eu lhe de instruções.".format(answer.classe), SSM_INFO);
    elseif (res >= 50)
       res -= 50;
       var answer := questions[res];
@@ -187,7 +188,7 @@ function SendQuestGump(npc, player)
       endif
       
       if (CompleteQuest(player, answer.pos))
-         PrintText(npc, "Ah, aqui estão suas recompensas.");
+         PrintText(npc, "Terminou, hum? Espero que tenha aprendido algo.", SSM_INFO);
       else
          return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
       endif
@@ -195,7 +196,7 @@ function SendQuestGump(npc, player)
        res -= 10;
        var answer := questions[res];
 -      GiveQuest(player, FindElemInArray(quest_list, struct{ id := answer.quest_id }), answer.classe);
--      PrintText(npc, "Estarei aguardando aqui para quando tiver terminado.");
+-      PrintText(npc, "Estarei aguardando aqui para quando tiver terminado.", SSM_INFO);
    endif
 endfunction
 

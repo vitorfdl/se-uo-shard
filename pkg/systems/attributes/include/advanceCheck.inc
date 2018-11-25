@@ -137,13 +137,14 @@ function ClassExpGain(who, classe, major := 0)
    var chardata := GetObjProperty(who, "chardata");
    if (!chardata) return; endif
 
-   var exp_amount := _ifElse(major == 1, 1400, 1000);
    if (elem.Type == "Main")
+      var exp_amount := _ifElse(major == 2, 1400, 1000);
       var i := FindInArray(chardata.classes, struct{ id := classe });
       if (!i) return; endif
       chardata.classes[i].exp += exp_amount;
       UpClass(chardata.classes[i]);
    else
+      var exp_amount := _ifElse(major == 2, 1200, 800);
       var i := FindInArray(chardata.subclasses, struct{ id := classe });
       if (!i) return; endif
       chardata.subclasses[i].exp += exp_amount;
