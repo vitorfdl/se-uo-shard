@@ -319,7 +319,8 @@ program gump_gump(who)
                if (!targ) break; endif
                var new_quest := quest;
                if (quest.category.size() > 1)
-                  new_quest.category := RadioGump(who, 300, 0, "Qual a classe?", quest.category, 1);
+                  var q := RadioGump(who, 300, 0, "Qual a classe?", quest.category, 0);
+                  new_quest.category := q in quest.category;
                endif
                
                GiveQuest(targ, new_quest, 0, 1);
