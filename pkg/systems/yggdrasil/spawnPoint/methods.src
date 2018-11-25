@@ -421,10 +421,10 @@ exported function KillSpawn(spawnpoint, index)
    endif
 
    var monster := SystemFindObjectBySerial(monster_obj.serial);
-   if (!monster || !monster.master)
+   if (monster && !monster.master)
       SetObjProperty(monster, "summoned", 1);
       SetObjProperty(monster, "spawnkill", 1);
-      for i := 1 to 5 
+      for i := 1 to 5
          RevokePrivilege(monster, "invul" );
          ApplyRawDamage(monster, 255);
          if (!monster || monster.dead) break; endif
