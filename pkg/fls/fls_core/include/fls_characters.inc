@@ -67,7 +67,7 @@ function maolivre(mobile, qtd, checkmount := 1)
 	// 	endif
 	// endif
 
-   SendSysMessageEx(who, "Você libera uma de suas mãos momentaneamente para usar o objeto.", SSM_INFO);
+   SendSysMessageEx(mobile, "Você libera uma de suas mãos momentaneamente para usar o objeto.", SSM_INFO);
 
 	return 1;
 endfunction
