@@ -406,6 +406,8 @@ program skillwin(who, targ, page)
       return;
    endif
 
+   if (GetScriptCooldown(who, "skillwin")) return 0; endif
+
    var chardata := GetObjProperty(targ, "chardata");
 
    ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_NO_CREATE);
@@ -444,7 +446,7 @@ program skillwin(who, targ, page)
          endif
       endif
 
-      sleepms(2);
+      sleepms(20);
    endwhile
 endprogram
 

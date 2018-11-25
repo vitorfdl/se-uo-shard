@@ -1,5 +1,16 @@
 
 include ":timeUtils:time";
+
+
+function GetScriptCooldown(who, script_name)
+   if (!getCooldown(who, script_name))
+      setCooldown(who, script_name, 3);
+      return 0;
+   endif
+
+   return 1;
+endfunction
+
 //se tiver passado o tempo retorna 0, se não retorna o tempo que falta
 function getCooldown(who, hability)
    if (!hability["#"])

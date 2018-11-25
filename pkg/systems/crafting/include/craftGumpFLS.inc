@@ -84,9 +84,9 @@ function sendCraftGump(who, params)
         elseif (input[0] != BTN_SEARCH)
             var recipe := player_recipes[input[0]-BTN_CRAFTIT];
             CraftItem(who, params.type, params.tool, recipe, params.qty, 1);
-            sleepms(10);
             params.bag := GetBagList(who);
         endif
+      sleepms(300);
     endwhile
 endfunction
 

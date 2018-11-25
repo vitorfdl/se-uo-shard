@@ -424,12 +424,13 @@ exported function KillSpawn(spawnpoint, index)
    if (!monster || !monster.master)
       SetObjProperty(monster, "summoned", 1);
       SetObjProperty(monster, "spawnkill", 1);
-      RevokePrivilege(monster, "invul" );
-      while (monster && !monster.dead)
-         ApplyRawDamage(monster, GetVitalMaximumValue(monster, HITS));
+      for i := 1 to 5 
+         RevokePrivilege(monster, "invul" );
          ApplyRawDamage(monster, 255);
-         sleepms(2);
-      endwhile
+         if (!monster || monster.dead) break; endif
+         sleepms(10);
+      endfor
+      sleepms(2);
    endif
 
    monsters.Erase(index);
@@ -441,6 +442,7 @@ exported function SpawnAll(spawnpoint)
 
    foreach m in monsters
       KillSpawn(spawnpoint, (monsters.size()+1) - _m_iter);
+      sleepms(10);
    endforeach
    SetObjProperty(spawnpoint, "monsters", array{});
    SetObjProperty(spawnpoint, "diedmonsters", array{});
