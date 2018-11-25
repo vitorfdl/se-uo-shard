@@ -151,8 +151,8 @@ program core_npcDeath(params)
          var process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
          while (!process)
             start_script(":roleplay_window:controller", mob);
+            sleepms(500);
             process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
-            sleepms(100);
          endwhile
 
          var search := struct{};
