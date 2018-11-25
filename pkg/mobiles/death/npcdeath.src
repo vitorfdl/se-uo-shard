@@ -149,16 +149,20 @@ program core_npcDeath(params)
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
       if (mob.connected)
          var process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
-         if (process)
-            var search := struct{};
-            search.spawnpoint := my_spawnpoint;
-            search.template := template;
-            search.color := corpse.color;
-            search.onlyboss := is_boss;
-            search.type := "Matar Monstro";
-            search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
-            process.SendEvent(struct{ type := 0x4785, search := search });
-         endif
+         while (!process)
+            start_script(":roleplay_window:controller", mob);
+            process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
+            sleepms(100);
+         endwhile
+
+         var search := struct{};
+         search.spawnpoint := my_spawnpoint;
+         search.template := template;
+         search.color := corpse.color;
+         search.onlyboss := is_boss;
+         search.type := "Matar Monstro";
+         search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
+         process.SendEvent(struct{ type := 0x4785, search := search });
          ExpGain(mob, 3);
       elseif (mob.master)
          ExpGain(mob, 3);

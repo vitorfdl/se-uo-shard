@@ -154,7 +154,7 @@ function ProgressQuest(who, search, plus_progress := 1)
 
       var no_progress := 0;
       foreach key in (search.Keys())
-         sleepms(2);
+         sleepms(10);
          if (key == "color")
             if (cint(item[key]) != cint(search[key]))
                no_progress := 1;

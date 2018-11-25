@@ -582,7 +582,7 @@ function DoTreasureList(who, input)
 endfunction
 
 function ConstructGroupList(byref gump)
-    GFResizePic(gump, 15, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 180, 600);
+    GFResizePic(gump, 0, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 195, 600);
     GFTextLine(gump, 50, 28, 555, "Grupos de Spots");
 
     var page     := 1;

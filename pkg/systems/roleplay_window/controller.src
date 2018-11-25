@@ -14,13 +14,12 @@ program AC_start(who)
    endif
 
    SetObjProperty(who, "roleplay_pid", GetPid());
-   RegisterForSpeechEvents( who, 3 );
    var last_see := array{};
    var already_saw := array{};
    SetObjProperty(who, "last_see", last_see);
 
    while (who.connected)	
-      sleepms(15);
+      sleepms(20);
       var event := wait_for_event(5);
       var trig := 0;
       if (event.type == 0x456 && !(event.id in already_saw))
