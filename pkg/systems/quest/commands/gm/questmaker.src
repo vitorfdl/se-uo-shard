@@ -448,7 +448,7 @@ function QuestConditions(who, new_condition := struct{})
          var quest_gump := array{
             struct{ title := "Quantidade que deve ser craftado?", marked := _ifOr(new_condition.qty, "10") },
             struct{ title := "Qualidade minima a ser craftado?", marked := _ifOr(new_condition.quality, 1), radio:= qualities },
-            struct{ title := "Level do item?", marked := new_condition.level, radio := array{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"} }
+            struct{ title := "Level do item?", marked := _ifOr(new_condition.level, 1), radio := array{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"} }
          };
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
