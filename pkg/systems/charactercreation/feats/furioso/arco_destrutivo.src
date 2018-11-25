@@ -21,7 +21,6 @@ function ataquegiratorio(who, hab)
    // endif
 
 	who.SetWarMode(1);
-   PrintText(who, "Girando a Arma");
 	PlaySoundEffect(who, 0x520);
 
 	var alreadydamaged := array{};
