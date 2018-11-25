@@ -149,10 +149,12 @@ program core_npcDeath(params)
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
       if (mob.connected)
          var process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
-         while (!process)
+         var tries := 1;
+         while (!process && mob.connected && tries <= 3)
             start_script(":roleplay_window:controller", mob);
             sleepms(500);
             process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
+            tries += 1;
          endwhile
 
          var search := struct{};

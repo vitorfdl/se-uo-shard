@@ -14,6 +14,7 @@ program AC_start(who)
    endif
 
    while (who.connected)
+      sleepms(5);
       var last_see := GetObjProperty(who, "last_see");
 
       if (!last_see) last_see := array{}; endif
