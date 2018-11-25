@@ -1,0 +1,10 @@
+use uo;
+
+program textcmd_goserial(who, text)
+  var a := SystemFindObjectBySerial(CInt(text), SYSFIND_SEARCH_OFFLINE_MOBILES);
+  if(!a)
+    SendSysMessage(who,"No such thing.");
+    return;
+  endif
+  MoveObjectToLocation(a, who.x, who.y, who.z, who.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
+endprogram
