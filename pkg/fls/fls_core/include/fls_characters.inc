@@ -43,20 +43,20 @@ function checkGender(object)
 endfunction
 
 function maolivre(mobile, qtd, checkmount := 1)
-	// var rightHand := GetEquipmentByLayer(mobile, 0x01);
-	// var leftHand  := GetEquipmentByLayer(mobile, 0x02);
+	var rightHand := GetEquipmentByLayer(mobile, 0x01);
+	var leftHand  := GetEquipmentByLayer(mobile, 0x02);
 
-	// if (qtd == 1)
-	// 	if (rightHand && leftHand)
-	// 		SendSysMessageEx(mobile, "Você precisa de uma mão livre.", SSM_INFO);
-	//     		return 0;
-	// 	endif
-	// elseif (qtd == 2)
-	// 	if (rightHand || leftHand)
-	// 		SendSysMessageEx(mobile, "Você precisa das duas mãos livres.", SSM_INFO);
-	//     		return 0;
-	// 	endif
-	// endif
+	if (qtd == 1)
+		if (rightHand && leftHand)
+         SendSysMessageEx(mobile, "Você libera uma de suas mãos momentaneamente para usar o objeto.", SSM_INFO);
+	    	return 1;
+		endif
+	elseif (qtd == 2)
+		if (rightHand || leftHand)
+			SendSysMessageEx(mobile, "Você libera uma de suas mãos momentaneamente para usar o objeto.", SSM_INFO);
+	    	return 1;
+		endif
+	endif
 
 	// if (checkmount)
 	// 	var mounted := GetEquipmentByLayer(mobile, 0x19);
@@ -67,7 +67,7 @@ function maolivre(mobile, qtd, checkmount := 1)
 	// 	endif
 	// endif
 
-   SendSysMessageEx(mobile, "Você libera uma de suas mãos momentaneamente para usar o objeto.", SSM_INFO);
+   // SendSysMessageEx(mobile, "Você libera uma de suas mãos momentaneamente para usar o objeto.", SSM_INFO);
 
 	return 1;
 endfunction
