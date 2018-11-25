@@ -474,7 +474,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, "level", level_select);
             endif
             SetName(theitem, _ifOr(theitem.name, theitem.desc));
-            SendQuestEvent(who, "Craftar Item", struct{ quality := theitem.quality, item_objtype := theitem.objtype });
+            SendQuestEvent(who, "Craftar Item", struct{ quality := theitem.quality, item_objtype := theitem.objtype, level := _ifOr(level_select, 1) });
             theitems.append(theitem);
             sleepms(2);
          endforeach

@@ -57,6 +57,9 @@ function BuildQuestInfo(who, player, byref gump, quest := struct{})
          title += " {}".format(npc_template.Name);
       elseif (condition.item_objtype)
          title += " {}".format(TruncatePlural(condition.item_objtype));
+      elseif (condition.item_serial)
+         var item := SystemFindObjectBySerial(condition.item_serial);
+         title += " {}".format(item.desc);
       endif
 
       var color := 1000;
@@ -71,16 +74,22 @@ function BuildQuestInfo(who, player, byref gump, quest := struct{})
 	
 	var description := quest.description;
    if (quest.rewards);
-      var reward_text := "";
+      var rewards := "";
       foreach reward in (quest.rewards)
-         reward_text += "{}<br>".format(reward.type);
+         var reward_text := reward.type;
+         if (reward.classe == "Classe Da Quest") reward_text += " de {}".format(quest.category);
+         elseif (reward.classe) reward_text += " de {}".format(quest.classe); endif
+
+         if (reward.type == "Item") reward_text += " {}".format(reward.item); endif
+         rewards += "{}<br>".format(reward_text);
          sleepms(2);
       endforeach
-      description += "<br><br>Recompensas:<br>{}".format(reward_text);
+
+      description += "<br><br>Recompensas:<br>- {}".format(rewards);
    endif
 
 
-	GFHTMLArea(gump, 336,  137+(quest.conditions.size() * 20), 245, 172, "{}".format(description), 1, 1);
+	GFHTMLArea(gump, 336,  137+(quest.conditions.size() * 20), 245, 130, "{}".format(description), 1, 1);
 
    if (who.cmdlevel > 3)
       var x := 70;

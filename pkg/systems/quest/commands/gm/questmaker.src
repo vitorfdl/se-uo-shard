@@ -102,13 +102,18 @@ function GumpQuestInfo(byref gump, who)
    foreach item in (quest.conditions)
 	   GFAddButton(gump, 279, 146+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_CONDITION_EDIT+_item_iter);
       var desc := item.type;
-      if (item.template) desc += " [{}]".format(item.template); endif
+      if (item.qty) desc += " {}".format(item.qty); endif
+      if (item.template) 
+         var templatename := StrReplace(item.template, ":ghaia:", "");
+         desc += " [{}]".format(templatename); 
+      endif
+      if (item.party) desc += " [Party: {}]".format(_ifElse(item.party, "S", "N")); endif
       // if (item.spawngroup) desc += " [{}]".format(item.spawngroup); endif
-      if (item.qty) desc += " [{}]".format(item.qty); endif
+      if (item.item_specify) desc += " [{}]".format(item.item_specify.name); endif
+      if (item.level) desc += " [L.{}]".format(item.level); endif
 	   GFTextLine(gump, 295, 142+pos_y, 1152, "{}".format(desc));
       var tooltip := "<center>";
       if (item.spawngroup) tooltip += "Spawngroup: {}<br>".format(item.spawngroup); endif
-      if (item.party) tooltip += "Party Contabliza<br>"; endif
       if (item.boss) tooltip += "Apenas Boss<br>"; endif
       if (item.customname) tooltip += "Custom Name: {}<br>".format(item.customname); endif
       if (item.item_serial) tooltip += "Serial do item: {}<br>Use .goserial {} para ir até ele.".format(item.item_serial, item.item_serial); endif
@@ -118,7 +123,6 @@ function GumpQuestInfo(byref gump, who)
          tooltip += "Spawnpoint: {}<br>".format(spawnpoint.desc);
          tooltip += "Spawnpoint Loc: {} {} {}<br>".format(spawnpoint.x, spawnpoint.y, spawnpoint.z);
       endif
-      if (item.item_specify) tooltip += "Item: {}<br>".format(item.item_specify.desc); endif
       if (item.item_objtype) tooltip += "Objtype: {}<br>".format(item.item_objtype); endif
       if (item.color) tooltip += "Color: {}<br>".format(item.color); endif
       GFTooltipText(gump, tooltip);
@@ -330,13 +334,12 @@ program gump_gump(who)
                SendSysMessageEx(who, "Dar essa quest para quem ?", SSM_REQUEST);
                var targ := Target(who);
                if (!targ) break; endif
-               var new_quest := quest;
+               var classe := quest.category[1];
                if (quest.category.size() > 1)
-                  var q := RadioGump(who, 300, 0, "Qual a classe?", quest.category, 0);
-                  new_quest.category := q in quest.category;
+                  classe := RadioGump(who, 300, 0, "Qual a classe?", quest.category, 1);
                endif
                
-               GiveQuest(targ, new_quest, 0, 1);
+               GiveQuest(targ, quest, 0, classe);
                SendSysMessageEx(who, "Quest adicionada.", SSM_REQUEST);
          endcase
          
@@ -445,13 +448,15 @@ function QuestConditions(who, new_condition := struct{})
 
          var quest_gump := array{
             struct{ title := "Quantidade que deve ser craftado?", marked := _ifOr(new_condition.qty, "10") },
-            struct{ title := "Qualidade minima a ser craftado?", marked := _ifOr(new_condition.quality, 1), radio:= qualities }
+            struct{ title := "Qualidade minima a ser craftado?", marked := _ifOr(new_condition.quality, 1), radio:= qualities },
+            struct{ title := "Level do item?", marked := new_condition.level, radio := array{"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"} }
          };
          var output := QuestionsGump(who, quest_gump);
          if (!output) return 0; endif
 
          new_condition.qty := cint(output[1]);
          new_condition.quality := cint(output[2] in qualities);
+         new_condition.level := cint(output[3]);
       "Domesticar Animal":
          if (!new_condition.template)
             var targ := ChooseItem(who, "Escolha o animal a ser domesticado.", POLCLASS_MOBILE);
