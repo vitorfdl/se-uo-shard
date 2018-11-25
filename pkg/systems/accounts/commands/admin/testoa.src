@@ -54,14 +54,14 @@ program oafeatures_sendpacket(who, text)
    if (cint(text) == 1) 
       return DebugGump(who, targ);
    elseif (cint(text) == 2) 
-      var roleplay := GetObjProperty(targ, "#roleplay");
+      var roleplay := GetObjProperty(targ, "roleplay_pid");
       var process  := GetProcess(roleplay);
       process.kill();
        start_script(":roleplay_window:controller", targ);
       return SendSysMessageEx(who, "roleplay resetado");
    endif
 
-   var roleplay := GetObjProperty(targ, "#roleplay");
+   var roleplay := GetObjProperty(targ, "roleplay_pid");
    var process  := GetProcess(roleplay);
    var search := struct{};
    search.template := ":ghaia:carangueijo_praia";

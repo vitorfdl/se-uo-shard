@@ -52,7 +52,7 @@ endfunction
 program oafeatures_sendpacket(who, text)
    var targ     := Target(who);
    if (cint(text) == 1) 
-      var roleplay := GetObjProperty(targ, "#roleplay");
+      var roleplay := GetObjProperty(targ, "roleplay_pid");
       var process  := GetProcess(roleplay);
       if (!process) return SendSysMessageEx(who, "couldnt find process"); endif
 
@@ -62,18 +62,22 @@ program oafeatures_sendpacket(who, text)
       input_list.append(struct{ "title" := "Parametro 3", multipleanswer := 2, "marked" := array{"color", "0" } });
       input_list.append(struct{ "title" := "Parametro 4", multipleanswer := 2, "marked" := array{"onlyboss", "0" } });
       input_list.append(struct{ "title" := "Parametro 5", multipleanswer := 2, "marked" := array{"party", "1" } });
+      input_list.append(struct{ "title" := "Parametro 6", multipleanswer := 2, "marked" := array{"", "" } });
+      input_list.append(struct{ "title" := "Parametro 7", multipleanswer := 2, "marked" := array{"", "" } });
       var output := QuestionsGump(who, input_list);
       if (!output)
          return;
       endif
       var search := struct{};
       foreach key in output
+         sleepms(2);
+         if (!key[1]) continue; endif
          if (key[1] in array{ "color", "onlyboss", "party", "serial",  "item_objtype" }) key[2] := cint(key[2]); endif
          search[key[1]] := key[2];
       endforeach
       process.SendEvent(struct{ type := 0x4785, search := search });
    elseif (cint(text) == 2) 
-      var roleplay := GetObjProperty(targ, "#roleplay");
+      var roleplay := GetObjProperty(targ, "roleplay_pid");
       var process  := GetProcess(roleplay);
       process.kill();
        start_script(":roleplay_window:controller", targ);

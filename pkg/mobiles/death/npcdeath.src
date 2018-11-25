@@ -148,7 +148,7 @@ program core_npcDeath(params)
    var my_spawnpoint := _ifElse(GetObjProperty(corpse, "spawnpoint"), GetObjProperty(corpse, "spawnpoint"), 0);
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
       if (mob.connected)
-         var process := GetProcess(GetObjProperty(mob, "#roleplay"));
+         var process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
          if (process)
             var search := struct{};
             search.spawnpoint := my_spawnpoint;

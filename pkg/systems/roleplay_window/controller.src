@@ -7,15 +7,14 @@ include ":datafile:datafile";
 include ":quest:quest";
 
 program AC_start(who)
-   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    detach();
-   var oldpid := GetObjProperty(who, "#roleplay");
+   var oldpid := GetObjProperty(who, "roleplay_pid");
    if (oldpid)
       var process := GetProcess(oldpid);
       process.kill();
    endif
 
-   SetObjProperty(who, "#roleplay", GetPid());
+   SetObjProperty(who, "roleplay_pid", GetPid());
    RegisterForSpeechEvents( who, 3 );
    var last_see := array{};
    var already_saw := array{};
