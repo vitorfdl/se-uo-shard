@@ -5,9 +5,9 @@ use util;
 include ":itemutils:canAccess";
 include ":attributes:attributes";
 include ":traps:traps";
+include ":quest:quest";
 include "include/say";
 include "include/utils";
-
 
 program skillremoveTrap(who, item)
    _resolveParams(who, item);
@@ -69,7 +69,7 @@ program skillremoveTrap(who, item)
 		SetName(item, item.name);
 		ExpGain(who, "minor");
       who.SetAchievement("trap", 1);
-
+      SendQuestEvent(who, "Desarmar Armadilha", struct{ item_serial := item.serial });
 	elseif ( item.isTrap() )
 		if (GetObjProperty(item, "trap_inativa"))
 			SendSysMessageEx(who, "A armadilha ja esta desativada", SSM_INFO);
@@ -87,6 +87,7 @@ program skillremoveTrap(who, item)
       PlaySoundEffect(item, cint(0x140));
       SetObjProperty(item, "trap_inativa", 1);
       who.SetAchievement("trap", 1);
+      SendQuestEvent(who, "Desarmar Armadilha", struct{ item_serial := item.serial });
 	else
 		SendSysMessageEx(who, "Não tem armadilhas aqui.", SSM_INFO);
 	endif

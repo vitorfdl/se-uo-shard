@@ -356,6 +356,8 @@ function QuestConditions(who, new_condition := struct{})
       "Coletar Item",
       "Ir até Local",
       "Domesticar Animal",
+      "Desarmar Armadilha",
+      "Arrombar Bau/Porta",
       "Cancelar"
    };
 
@@ -432,9 +434,8 @@ function QuestConditions(who, new_condition := struct{})
       "Craftar Item":
          if (!new_condition.item_objtype)
             var recipe_list := ReadConfigFile(":*:recipes");
-            SendSysMessage(who, "Escolha o item que deve ser craftado.");
-            var targ := Target(who);
-            if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+            var targ := ChooseItem(who, "Escolha o item que deve ser craftado.");
+            if (!targ) return 0; endif
             if (!FindConfigElem(recipe_list, cint(targ.objtype)) && !FindConfigElem(recipe_list, hex(targ.objtype)))
                SendSysMessageEx(who, "Não existe receita para este item", SSM_FAIL);
                return 0; 
@@ -453,11 +454,9 @@ function QuestConditions(who, new_condition := struct{})
          new_condition.quality := cint(output[2] in qualities);
       "Domesticar Animal":
          if (!new_condition.template)
-            SendSysMessage(who, "Escolha o animal a ser domesticado.");
-            var targ := Target(who);
-            if (targ && targ.isA(POLCLASS_MOBILE))
-               new_condition["template"]   := targ.npctemplate;
-            endif
+            var targ := ChooseItem(who, "Escolha o animal a ser domesticado.", POLCLASS_MOBILE);
+            if (!targ) return 0; endif
+            new_condition["template"]   := targ.npctemplate;
          endif
          var quest_gump := array{
             struct{ title := "Quantidade que deve ser domesticado?", marked := _ifOr(new_condition.qty, "1") }
@@ -467,15 +466,32 @@ function QuestConditions(who, new_condition := struct{})
 
          new_condition.qty := cint(output[1]);
       "Usar Item":
-         SendSysMessage(who, "Escolha o item que deve ser usado. Apenas este item especifico irá triggar o evento.");
-         var targ := Target(who);
-         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+         var item := ChooseItem(who);
+         if (!item) return 0; endif
 
-         SetObjproperty(targ, "quest_item", 1);
-         new_condition.item_serial := targ.serial;
+         SetObjproperty(item, "quest_item", 1);
+         new_condition.item_serial := item.serial;
+      "Desarmar Armadilha":
+         var item := ChooseItem(who);
+         if (!item || (!item.IsTrap() && GetObjProperty(item, "TrapList"))) return 0; endif
+
+         new_condition.item_serial := item.serial;
+      "Arrombar Bau/Porta":
+         var item := ChooseItem(who);
+         if (!item || (!item.isA(POLCLASS_DOOR) && !item.isA(POLCLASS_CONTAINER))) return 0; endif
+
+         new_condition.item_serial := item.serial;
    endcase
 
    return new_condition;
+endfunction
+
+function ChooseItem(who, text := "Escolha o item que deve ser usado.", pol_type := POLCLASS_ITEM)
+   SendSysMessage(who, text);
+   var targ := Target(who);
+   if (!targ || !targ.isA(pol_type)) return 0; endif
+
+   return targ;
 endfunction
 
 function QuestRewards(who, new_reward := struct{})
