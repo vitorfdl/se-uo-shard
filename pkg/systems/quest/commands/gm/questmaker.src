@@ -132,11 +132,11 @@ function GumpQuestInfo(byref gump, who)
    endforeach
 
    if (quest.conditions.size() < 10)
-      GFAddButton(gump, 546, 155+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_CONDITION_ADD);
-      GFTextLine(gump, 480, 150+pos_y, 1152, "Adicionar");
+      GFAddButton(gump, 279, 155+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_CONDITION_ADD);
+      GFTextLine(gump, 295, 150+pos_y, 1152, "Adicionar");
    endif
 
-	GFGumpPicTiled(gump, 578, 154, 1, 258, 2701);
+	GFGumpPicTiled(gump, 600, 154, 1, 290, 2701);
 	GFGumpPic(gump, 766, 277, 59, 0);
 	GFGumpPicTiled(gump, 611, 277, 156, 21, 58);
 
@@ -146,7 +146,6 @@ function GumpQuestInfo(byref gump, who)
       GFTextLine(gump, 716, 301, 1152, "Adicionar");
    endif
 
-	GFGumpPicTiled(gump, 578, 154+100, 1, 258, 2701);
 	GFGumpPic(gump, 766, 277+100, 59, 0);
 	GFGumpPicTiled(gump, 611, 277+100, 156, 21, 58);
 
