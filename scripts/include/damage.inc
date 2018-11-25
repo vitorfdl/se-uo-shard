@@ -161,7 +161,8 @@ function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor :=
    
    if (defender.isA(POLCLASS_NPC))
       var npctemplate := NPC_GetNPCConfig(defender);
-      return cdbl(cint(npctemplate["{}Resist"]) + defender.get_member("resist_{}_mod".format(dmg_type)))  / 100.0;
+      var npc_resist := GetConfigReal(npctemplate, "{}Resist".format(dmg_type)) + cdbl(defender.get_member("resist_{}_mod".format(dmg_type)));
+      return npc_resist / 100.0;
    endif
 
    if (!is_massive && !armor)

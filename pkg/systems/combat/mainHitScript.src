@@ -57,7 +57,7 @@ program MainHitScript( params )
       base_damage += cint(cdbl(base_damage) * (cdbl(bonus_dmg) / 100));
    endif
    // print(CalculateDefenseReduction(defender, damage_type, 0, armor));
-   base_damage := base_damage - (base_damage * CalculateDefenseReduction(defender, damage_type, 0, armor) );
+   base_damage := base_damage - cint(cdbl(base_damage) * CalculateDefenseReduction(defender, damage_type, 0, armor) );
 	// Chain Of Pain
 	// TODO: reaproveitar depois
 
