@@ -35,41 +35,9 @@ function TamingEffect(targ, reverse := 0)
    endforeach
 endfunction
 
-function DebugGump(who, targ)
-   var quest_progress := GetObjProperty(targ, "quest_progress");
-   var gump := GFCreateGump();
-   GFResizePic(gump, 84, 90, 9260, 280, 260+25);
-
-   var y := 120;
-   foreach item in quest_progress
-      GFTextLine(gump, 170, y, 2100, "{}".format(item));
-      y += 20;
-   endforeach
-
-   GFSendGump(who, gump);
-endfunction
-
 program oafeatures_sendpacket(who, text)
    var targ     := Target(who);
-   if (cint(text) == 1) 
-      return DebugGump(who, targ);
-   elseif (cint(text) == 2) 
-      var roleplay := GetObjProperty(targ, "roleplay_pid");
-      var process  := GetProcess(roleplay);
-      process.kill();
-       start_script(":roleplay_window:controller", targ);
-      return SendSysMessageEx(who, "roleplay resetado");
-   endif
-
-   var roleplay := GetObjProperty(targ, "roleplay_pid");
-   var process  := GetProcess(roleplay);
-   var search := struct{};
-   search.template := ":ghaia:carangueijo_praia";
-   search.color := 45;
-   search.onlyboss := 0;
-   search.type := "Matar Monstro";
-   search.party := 1;
-   process.SendEvent(struct{ type := 0x4785, search := search });
+   DamageFLS(targ, 10, DMG_PHYSICAL);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area
    //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)

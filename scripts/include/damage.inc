@@ -166,7 +166,7 @@ function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor :=
 
    if (!is_massive && !armor)
       armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
-      armor := CS_SelectArmored(armor, 1);
+      armor := CS_SelectArmored(armor, dmg_type);
    endif
 
    var reduction := 0;
@@ -183,7 +183,7 @@ function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor :=
    endif
 
    if (reduction > 60) reduction := 60; endif
-   return (reduction / 100);
+   return (cdbl(reduction) / 100.0);
 endfunction
 /* 
  * GetLastDamageInfo(mobile)
@@ -250,7 +250,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0, no_display :=
    endif
    
    if (type != DMG_FORCED)
-      dmg := dmg - (dmg * CalculateDefenseReduction(defender, type));
+      dmg := dmg - cint(cdbl(dmg) * CalculateDefenseReduction(defender, type));
       if (source)
          if (defender.my_template() == "orb" && defender.master != source)
             return 0;

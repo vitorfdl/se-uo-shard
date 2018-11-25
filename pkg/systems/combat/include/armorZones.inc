@@ -122,13 +122,13 @@ function CS_GetArmorZone(equip)
 	return zones;
 endfunction
 
-function CS_SelectArmored(item_array, type)
+function CS_SelectArmored(item_array, dmg_type)
    var param := "resist_physical";
-   if (type) param := "resist_{}".format(type); endif
+   if (dmg_type) param := "resist_{}".format(dmg_type); endif
 
    var found_item;
 	foreach item in ( item_array )
-		if (cint(item[param]) > 0)
+		if (cint(item.get_member(param)) > 0)
 			found_item := item;
 		endif
 		sleepms(2);
