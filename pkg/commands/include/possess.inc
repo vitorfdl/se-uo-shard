@@ -197,7 +197,30 @@ function clonar(newlook, oldlook)
 
 	var chardata := GetObjProperty(oldlook, "chardata");
    if (!chardata)
-      chardata := struct{ hits := AP_GetVitalMaximumValue(oldlook, HITS), mana := AP_GetVitalMaximumValue(oldlook, MANA), stam := AP_GetVitalMaximumValue(oldlook, STAMINA) };
+      chardata := struct{
+      current_class := "",
+      caminhos := array{"Obstinado"},
+      subclasses:= array{},
+      classes := array{struct{
+         id := "Furioso",
+         exp := 0,
+         level := 1,
+         habs := array{},
+         selected_habs := array{}
+      }},
+      exppoints := 0,
+      level := 1,
+      points := 1,
+      vitalpoints := 0,
+      hits := AP_GetVitalMaximumValue(oldlook, HITS),
+      mana := AP_GetVitalMaximumValue(oldlook, MANA),
+      stam := AP_GetVitalMaximumValue(oldlook, STAMINA),
+      god := "Anar",
+      raca := "Humano",
+      height := 2,
+      weight := 2,
+      nome := ""
+      };
    endif
 
    SetObjProperty(newlook, "chardata", chardata);
