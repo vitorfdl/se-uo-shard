@@ -236,7 +236,15 @@ endfunction
 
 
 exported function getMaxExp(who)
-   return getLevel(who) * 350;
+   var lvl := getlevel(who);
+
+   if (lvl < 5 )
+      return lvl * 400;
+   elseif (lvl < 10)
+      return lvl * 750;
+   endif
+
+   return lvl * 1100;
 endfunction
 
 exported function Caracteristica(who, carac)
