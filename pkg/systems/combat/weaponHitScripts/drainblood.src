@@ -14,18 +14,10 @@ program HitScript(params)
 	//var weapon	:= params[3];
 	//var armor	:= params[4];
 	var basedamage	:= params[5];
-	var hitopt	:= cint(params[6]);
 	params := 0; // Not needed anymore.
    
-   var diff := hitopt;
-   if (!diff)
-      diff := 10;
-   endif
-
-   if (rollResistDice(defender, CONSTITUTION) <= diff)
-      HealDamage(attacker, basedamage/2);
-      PlayObjectCenteredEffect(attacker, GFX_BLUE_SPARKLE_SWIRL, 7, 16);
-   endif
+   HealDamage(attacker, basedamage/2);
+   PlayObjectCenteredEffect(attacker, GFX_BLUE_SPARKLE_SWIRL, 7, 16);
    
 	return 1;
 endprogram
