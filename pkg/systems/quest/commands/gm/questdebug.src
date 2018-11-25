@@ -38,11 +38,11 @@ endfunction
 function DebugGump(who, targ)
    var quest_progress := GetObjProperty(targ, "quest_progress");
    var gump := GFCreateGump();
-   GFResizePic(gump, 84, 90, 9260, 280, 260+25);
+   GFResizePic(gump, 84, 90, 9260, 600, 260+25);
 
    var y := 120;
    foreach item in quest_progress
-      GFTextLine(gump, 170, y, 2100, "{}".format(item));
+      GFTextLine(gump, 90, y, 2100, "{}".format(item));
       y += 20;
    endforeach
 
@@ -78,7 +78,11 @@ program oafeatures_sendpacket(who, text)
          endif
          search[key[1]] := key[2];
       endforeach
+
+      print(search);
+
       process.SendEvent(struct{ type := 0x4785, search := search });
+      return;
    elseif (cint(text) == 2) 
       var roleplay := GetObjProperty(targ, "roleplay_pid");
       var process  := GetProcess(roleplay);
