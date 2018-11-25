@@ -351,10 +351,7 @@ function QuestConditions(who, new_condition := struct{})
    case (new_condition.type)
       "Cancelar": return 0;
       "Matar Monstro":
-         var spawngroups := DFGetElemNames(LoadSpotGroupData());
-         spawngroups.append("Qualquer Um");
          var spawnpoint := SystemFindObjectBySerial(new_condition["spawnpoint"]);
-         new_condition.spawngroup := _ifElse(!new_condition.spawngroup, spawngroups.size(), new_condition.spawngroup in spawngroups);
          var quest_gump := array{
             struct{ title := "Deseja selecionar um spawnpoint? (Atual é: {})".format(_ifElse(spawnpoint, spawnpoint.desc, "Nenhum")), radio := array{"Não", "Sim", "Remover spawnpoint existente" }, marked := 1 },
             struct{ title := "Entre com template do monstro", marked := _IfOr(new_condition.template, ":ghaia:") },

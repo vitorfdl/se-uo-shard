@@ -65,7 +65,7 @@ program oafeatures_sendpacket(who, text)
    var process  := GetProcess(roleplay);
    var search := struct{};
    search.template := ":ghaia:carangueijo_praia";
-   search.color := 2219;
+   search.color := 45;
    search.onlyboss := 0;
    search.type := "Matar Monstro";
    search.party := 1;
