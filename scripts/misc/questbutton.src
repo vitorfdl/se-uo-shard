@@ -33,6 +33,7 @@ function BuildQuestInfo(who, player, byref gump, quest := struct{})
 
       title[" Monstro"] := "";
       title[" Item"] := "";
+      title[" Animal"] := "";
 
       if (condition.type["Coletar"])
          if (condition.qty - CheckItemAmount(player, condition.item_objtype) <= 0)

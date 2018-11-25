@@ -7,7 +7,6 @@ include ":datafile:datafile";
 include ":quest:quest";
 
 program AC_start(who)
-   detach();
    var oldpid := GetObjProperty(who, "roleplay_pid");
    if (oldpid)
       var process := GetProcess(oldpid);

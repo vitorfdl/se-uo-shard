@@ -53,8 +53,11 @@ function sendCraftGump(who, params)
         endif
 
         params.qty := cint(GFExtractData(input, qty_entry));
-        if (!params.qty || params.qty == 0 || params.qty > 10)
+        if (!params.qty || params.qty == 0)
             params.qty := 1;
+         elseif (params.qty > 10)
+            params.qty := 10;
+            SendSysMessageEx(who, "O limite de quantidade é 10. Ajustado para 10.", SSM_INFO);
         endif
 
         if (!input[0] || input[0] == 0 || input[0] == 1)

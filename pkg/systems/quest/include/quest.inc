@@ -269,3 +269,12 @@ function checkItemAmount(who, objtype)
 
    return amount;
 endfunction
+
+function SendQuestEvent(who, type, params := struct)
+   if (who.isA(POLCLASS_NPC)) return; endif
+   var process := GetProcess(GetObjProperty(who, "roleplay_pid"));
+   if (!process) return; endif
+
+   params.type := type;
+   process.SendEvent(struct{ type := 0x4785, search := params });
+endfunction

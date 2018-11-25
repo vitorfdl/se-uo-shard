@@ -12,6 +12,7 @@ include ":charactercreation:characters";
 include ":yggdrasil:boss";
 include ":yggdrasil:spawnSpot";
 include ":ghaia:ghaiaUtil";
+include ":quest:quest";
 
 const START_Y      := 91;
 const END_Y        := 311;
@@ -107,6 +108,7 @@ program taming(params)
       if (npc_cfg.TamingCombat)
          SetObjProperty(who, "combat_pet", targ.serial);
       endif
+      SendQuestEvent(who, "Domesticar Animal", params := struct{ template := targ.npctemplate });
       sleepms(500);
       PerformAction(targ, ANIM_FIDGET_1);
    else

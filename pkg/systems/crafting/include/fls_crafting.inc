@@ -20,6 +20,7 @@ include ":tn:tngumps";
 include ":crafting:craft_props";
 include ":crafting:excep_gump";
 include ":crafting:recipes";
+include ":quest:quest";
 
 const OUT_OF_MATERIALS := 1;
 
@@ -473,6 +474,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, "level", level_select);
             endif
             SetName(theitem, _ifOr(theitem.name, theitem.desc));
+            SendQuestEvent(who, "Craftar Item", struct{ quality := theitem.quality, item_objtype := theitem.objtype });
             theitems.append(theitem);
             sleepms(2);
          endforeach

@@ -20,6 +20,7 @@ var selected_quest := 0;
 var quest_list;
 var quest;
 var quest_names := array{};
+var qualities := array{"Comum", "Bom", "Raro", "Exótico"};
 
 var quest_title;
 var quest_desc := array{};
@@ -110,6 +111,8 @@ function GumpQuestInfo(byref gump, who)
       if (item.party) tooltip += "Party Contabliza<br>"; endif
       if (item.boss) tooltip += "Apenas Boss<br>"; endif
       if (item.customname) tooltip += "Custom Name: {}<br>".format(item.customname); endif
+      if (item.item_serial) tooltip += "Serial do item: {}<br>Use .goserial {} para ir até ele.".format(item.item_serial, item.item_serial); endif
+      if (item.quality) tooltip += "Qualidade: {}<br>".format(qualities[item.quality]); endif
       if (item.spawnpoint) 
          var spawnpoint := SystemFindObjectBySerial(item.spawnpoint);
          tooltip += "Spawnpoint: {}<br>".format(spawnpoint.desc);
@@ -216,18 +219,28 @@ program gump_gump(who)
       if (res[0] <= 5 || !res[0])
          break;
       elseif (res[0] >= GF_CONDITION_EDIT && res[0] <= GF_CONDITION_EDIT+10)
-         var answer := RadioGump(who, 180, 0, "O que deseja fazer?:", array{"Editar", "Remover", "Cancelar"}, 3);
          var pos := res[0] - GF_CONDITION_EDIT;
-         if (answer == 1)
+         var opts := array{"Editar", "Remover"};
+         if (quest.conditions[pos].item_objtype) opts.append("Criar Item"); endif
+         if (quest.conditions[pos].item_serial) opts.append("Ir até Item"); endif
+         if (quest.conditions[pos].spawnpoint) opts.append("Ir até spawnpoint"); endif
+         var answer := QuestionsGump(who, array{ struct{ title := "O que deseja fazer?", radio := opts, marked := 1 }});
+         if (!answer) continue; endif
+         if (answer[1] == "Editar")
             var res := QuestConditions(who, quest.conditions[pos]);
             if (res) 
                quest.conditions[pos] := res; 
                update_quest.conditions  := quest.conditions;
             endif
-         elseif (answer == 2)
+         elseif (answer[1] == "Remover")
             quest.conditions.Erase(pos);
             update_quest.conditions  := quest.conditions;
-         else
+         elseif (answer[1] == "Ir até Item" || answer[1] == "Ir até spawnpoint")
+            var obj := SystemFindObjectBySerial(_ifOr(quest.conditions[pos].item_serial, quest.conditions[pos].spawnpoint));
+            MoveObjectToLocation(who, obj.x, obj.y, obj.z, obj.realm, MOVEOBJECT_FORCELOCATION);
+         elseif (answer[1] == "Criar Item")
+            _CreateItemInBackpack(who, quest.conditions[pos].item_objtype, 1);
+         elseif (answer[1] == opts.size())
             continue;
          endif
 
@@ -338,10 +351,11 @@ endprogram
 function QuestConditions(who, new_condition := struct{})
    var opts := array{
       "Matar Monstro",
-      // "Usar Item",
-      // "Craftar Item",
+      "Usar Item",
+      "Craftar Item",
       "Coletar Item",
       "Ir até Local",
+      "Domesticar Animal",
       "Cancelar"
    };
 
@@ -352,6 +366,20 @@ function QuestConditions(who, new_condition := struct{})
    case (new_condition.type)
       "Cancelar": return 0;
       "Matar Monstro":
+         if (!new_condition.template)
+            if (YesNo(who, "Deseja selecionar o monstro ou iniciar manualmente?", "Preencher", "Manualmente"))
+               SendSysMessage(who, "Escolha o monstro a ser morto.");
+               var targ := Target(who);
+               if (targ && targ.isA(POLCLASS_MOBILE))
+                  new_condition["template"]   := targ.npctemplate;
+                  new_condition["qty"]        := 10;
+                  new_condition["party"]      := 1;
+                  new_condition["onlyboss"]   := isBoss(targ);
+                  new_condition["color"] := targ.color;
+                  new_condition["customname"] := targ.name;
+               endif
+            endif
+         endif
          var spawnpoint := SystemFindObjectBySerial(new_condition["spawnpoint"]);
          var quest_gump := array{
             struct{ title := "Deseja selecionar um spawnpoint? (Atual é: {})".format(_ifElse(spawnpoint, spawnpoint.desc, "Nenhum")), radio := array{"Não", "Sim", "Remover spawnpoint existente" }, marked := 1 },
@@ -388,20 +416,11 @@ function QuestConditions(who, new_condition := struct{})
          var targ := Target(who);
          if (!targ || !targ.isA(POLCLASS_ITEM) || Hex(targ.objtype) != 0x318E) return 0; endif
          new_condition.local := targ.serial;
-      "Usar Item":
-         SendSysMessage(who, "Escolha o item que ele deve usar.");
-         var targ := Target(who);
-         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
-         if (YesNo(who, "Escolha uma das seguintes opções", "Qualquer item semelhante.", "Este item específico."))
-            new_condition.item_objtype := targ.objtype;
-         else
-            new_condition.item_serial := targ.serial;
-         endif
       "Coletar Item":
          SendSysMessage(who, "Escolha o item que deve ser coletado.");
          var targ := Target(who);
          if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
-            var quest_gump := array{
+         var quest_gump := array{
             struct{ title := "Quantidade que deve ser coletado?", marked := _ifOr(new_condition.qty, "10") }
          };
          var output := QuestionsGump(who, quest_gump);
@@ -411,8 +430,49 @@ function QuestConditions(who, new_condition := struct{})
          new_condition.qty := cint(output[1]);
          new_condition.color := cint(targ.color);
       "Craftar Item":
-         SendSysMessageEx(who, "Condição não scriptada, srry!", SSM_FAIL);
-         return 0;
+         if (!new_condition.item_objtype)
+            var recipe_list := ReadConfigFile(":*:recipes");
+            SendSysMessage(who, "Escolha o item que deve ser craftado.");
+            var targ := Target(who);
+            if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+            if (!FindConfigElem(recipe_list, cint(targ.objtype)) && !FindConfigElem(recipe_list, hex(targ.objtype)))
+               SendSysMessageEx(who, "Não existe receita para este item", SSM_FAIL);
+               return 0; 
+            endif
+            new_condition.item_objtype := targ.objtype;
+         endif
+
+         var quest_gump := array{
+            struct{ title := "Quantidade que deve ser craftado?", marked := _ifOr(new_condition.qty, "10") },
+            struct{ title := "Qualidade minima a ser craftado?", marked := _ifOr(new_condition.quality, 1), radio:= qualities }
+         };
+         var output := QuestionsGump(who, quest_gump);
+         if (!output) return 0; endif
+
+         new_condition.qty := cint(output[1]);
+         new_condition.quality := cint(output[2] in qualities);
+      "Domesticar Animal":
+         if (!new_condition.template)
+            SendSysMessage(who, "Escolha o animal a ser domesticado.");
+            var targ := Target(who);
+            if (targ && targ.isA(POLCLASS_MOBILE))
+               new_condition["template"]   := targ.npctemplate;
+            endif
+         endif
+         var quest_gump := array{
+            struct{ title := "Quantidade que deve ser domesticado?", marked := _ifOr(new_condition.qty, "1") }
+         };
+         var output := QuestionsGump(who, quest_gump);
+         if (!output) return 0; endif
+
+         new_condition.qty := cint(output[1]);
+      "Usar Item":
+         SendSysMessage(who, "Escolha o item que deve ser usado. Apenas este item especifico irá triggar o evento.");
+         var targ := Target(who);
+         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+
+         SetObjproperty(targ, "quest_item", 1);
+         new_condition.item_serial := targ.serial;
    endcase
 
    return new_condition;
@@ -453,7 +513,7 @@ function QuestExtras(who)
    var new_extra := struct{};
    var opts := array{
       // "Experiência",
-      // "Item",
+      "Requerer Habilidade",
       "Cancelar"
    };
 
