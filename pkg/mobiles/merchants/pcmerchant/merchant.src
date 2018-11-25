@@ -536,6 +536,8 @@ function AddItemToSell(npc, player, item)
          endif
       elseif (itemcategory["Armas"] && item.isMagicWeapon())
          itemcategory := "Varinhas";
+      elseif (item.objtype == 0xf3f || item.objtype == 0x1bfb)
+         itemcategory := "Armas";
       elseif (itemcategory["Armadura"])
          var womens := ReadConfigFile(":womenswork:itemdesc");
          if (womens[item.objtype])
