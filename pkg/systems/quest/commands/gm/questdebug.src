@@ -58,7 +58,7 @@ program oafeatures_sendpacket(who, text)
 
       var input_list := array{};
       input_list.append(struct{ "title" := "Parametro 1", multipleanswer := 2, "marked" := array{"type", "Matar Monstro" } });
-      input_list.append(struct{ "title" := "Parametro 2", multipleanswer := 2, "marked" := array{"template", ":ghaia:" } });
+      input_list.append(struct{ "title" := "Parametro 2", multipleanswer := 2, "marked" := array{"template", "" } });
       input_list.append(struct{ "title" := "Parametro 3", multipleanswer := 2, "marked" := array{"color", "0" } });
       input_list.append(struct{ "title" := "Parametro 4", multipleanswer := 2, "marked" := array{"onlyboss", "0" } });
       input_list.append(struct{ "title" := "Parametro 5", multipleanswer := 2, "marked" := array{"party", "1" } });
@@ -72,7 +72,10 @@ program oafeatures_sendpacket(who, text)
       foreach key in output
          sleepms(2);
          if (!key[1]) continue; endif
-         if (key[1] in array{ "color", "onlyboss", "party", "serial",  "item_objtype" }) key[2] := cint(key[2]); endif
+         if (key[1] in array{ "color", "onlyboss", "party", "serial", "spawnpoint", "item_objtype" }) key[2] := cint(key[2]); endif
+         if (key[1] == "template" && !key[2][":ghaia:"])
+            key[2] := ":ghaia:{}".format(key[2]);
+         endif
          search[key[1]] := key[2];
       endforeach
       process.SendEvent(struct{ type := 0x4785, search := search });
