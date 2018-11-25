@@ -589,7 +589,7 @@ function ConstructGroupList(byref gump)
     var max_page := 20;
     for i:=1 to spotgroups.Size()+1
         GFPage(gump, page);
-        var x := 50;
+        var x := 35;
         var y := (30+(18*i)) / (((page-1) * max_page)+1); //(BaseX(Espaçamento*i)) / (Calculo de Pagina)
         var color := 1153;
         if (selected_group == spotgroups[i])
