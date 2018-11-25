@@ -43,29 +43,31 @@ function checkGender(object)
 endfunction
 
 function maolivre(mobile, qtd, checkmount := 1)
-	var rightHand := GetEquipmentByLayer(mobile, 0x01);
-	var leftHand  := GetEquipmentByLayer(mobile, 0x02);
+	// var rightHand := GetEquipmentByLayer(mobile, 0x01);
+	// var leftHand  := GetEquipmentByLayer(mobile, 0x02);
 
-	if (qtd == 1)
-		if (rightHand && leftHand)
-			SendSysMessageEx(mobile, "Você precisa de uma mão livre.", SSM_INFO);
-	    		return 0;
-		endif
-	elseif (qtd == 2)
-		if (rightHand || leftHand)
-			SendSysMessageEx(mobile, "Você precisa das duas mãos livres.", SSM_INFO);
-	    		return 0;
-		endif
-	endif
+	// if (qtd == 1)
+	// 	if (rightHand && leftHand)
+	// 		SendSysMessageEx(mobile, "Você precisa de uma mão livre.", SSM_INFO);
+	//     		return 0;
+	// 	endif
+	// elseif (qtd == 2)
+	// 	if (rightHand || leftHand)
+	// 		SendSysMessageEx(mobile, "Você precisa das duas mãos livres.", SSM_INFO);
+	//     		return 0;
+	// 	endif
+	// endif
 
-	if (checkmount)
-		var mounted := GetEquipmentByLayer(mobile, 0x19);
+	// if (checkmount)
+	// 	var mounted := GetEquipmentByLayer(mobile, 0x19);
 
-		if (mounted)
-			SendSysMessageEx(mobile, "Você não pode fazer isto montado.", SSM_INFO);
-			return 0;
-		endif
-	endif
+	// 	if (mounted)
+	// 		SendSysMessageEx(mobile, "Você não pode fazer isto montado.", SSM_INFO);
+	// 		return 0;
+	// 	endif
+	// endif
+
+   SendSysMessageEx(who, "Você libera uma de suas mãos momentaneamente para usar o objeto.", SSM_INFO);
 
 	return 1;
 endfunction

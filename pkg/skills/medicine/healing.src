@@ -23,14 +23,14 @@ program UseBandage(mobile, bandage)
 		return 0;
 	endif
 
-  	var cfg         := ReadConfigFile(":combat:itemdesc");
-	var equippedright := GetEquipmentByLayer(mobile, 0x01);
-	var equippedleft  := GetEquipmentByLayer(mobile, 0x02);
-	var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
-	if (equippedright || equippedleft || twohanded)
-	  SendSysMessageEx(mobile, "Você precisa das duas maos livres para usar as ataduras!", SSM_FAIL);
-	  return 0;
-	endif
+  	// var cfg         := ReadConfigFile(":combat:itemdesc");
+	// var equippedright := GetEquipmentByLayer(mobile, 0x01);
+	// var equippedleft  := GetEquipmentByLayer(mobile, 0x02);
+	// var twohanded     := Cint(cfg[equippedleft.objtype].TwoHanded);
+	// if (equippedright || equippedleft || twohanded)
+	//   SendSysMessageEx(mobile, "Você precisa das duas maos livres para usar as ataduras!", SSM_FAIL);
+	//   return 0;
+	// endif
 
 	SendSysMessageEx(mobile, "Onde você deseja usar as ataduras?", SSM_REQUEST);
 	var targ := Target(mobile, TGTOPT_CHECK_LOS+TGTOPT_HELPFUL);

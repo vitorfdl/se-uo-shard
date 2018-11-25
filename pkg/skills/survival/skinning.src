@@ -22,16 +22,16 @@ program skinning(parms)
 	var cadaver := parms[2];
 	var blade   := parms[3];
 	
-	if (who.weapon != blade)
-		var cfg := ReadConfigFile(":combat:itemdesc");
-		var equippedright := GetEquipmentByLayer(who, 0x01);
-		var equippedleft := GetEquipmentByLayer(who, 0x02);
-		var twohanded := Cint(cfg[equippedleft.objtype].TwoHanded);
-		if (equippedright || equippedleft || twohanded)
-			SendSysMessageEx(who, "Você precisa das duas mãos livres!", SSM_FAIL);
-			return 0;
-		endif
-	endif
+	// if (who.weapon != blade)
+	// 	var cfg := ReadConfigFile(":combat:itemdesc");
+	// 	var equippedright := GetEquipmentByLayer(who, 0x01);
+	// 	var equippedleft := GetEquipmentByLayer(who, 0x02);
+	// 	var twohanded := Cint(cfg[equippedleft.objtype].TwoHanded);
+	// 	if (equippedright || equippedleft || twohanded)
+	// 		SendSysMessageEx(who, "Você precisa das duas mãos livres!", SSM_FAIL);
+	// 		return 0;
+	// 	endif
+	// endif
 
 	if ( GetEquipmentByLayer(who, LAYER_MOUNT) )
 		SendSysMessageEx(who, "Você não pode fazer cortar o corpo montado.");
