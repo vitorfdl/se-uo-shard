@@ -67,13 +67,13 @@ endfunction
 
 function PlayerListGump(who, byref online_list)
 	var gump := GFCreateGump();
-	GFResizePic(gump, 0, 0, GFCfgConst("Defaults", "BackGround"), 420, 470);
-	GFResizePic(gump, 15, 15, GFCfgConst("Defaults", "ForeGround"), 240, 440);
-	GFResizePic(gump, 260, 15, GFCfgConst("Defaults", "ForeGround"), 145, 440);
+	GFResizePic(gump, 0, 0, GFCfgConst("Defaults", "BackGround"), 420+40, 470);
+	GFResizePic(gump, 15, 15, GFCfgConst("Defaults", "ForeGround"), 240+40, 440);
+	GFResizePic(gump, 260, 15, GFCfgConst("Defaults", "ForeGround"), 145+40, 440);
 
-	GFTextMid(gump, 25, 25, 230, 2100, "Player Name");
-	GFTextLine(gump, 270, 25, 2100, "Summon");
-	GFTextLine(gump, 350, 25, 2100, "Goto");
+	GFTextMid(gump, 25+40, 25, 230, 2100, "Player Name");
+	GFTextLine(gump, 270+40, 25, 2100, "Summon");
+	GFTextLine(gump, 35+400, 25, 2100, "Goto");
 	
 	var counter := 0;
 	var y_pos := 50;
@@ -86,8 +86,8 @@ function PlayerListGump(who, byref online_list)
 		else
 			GFTextLine(gump, 25, y_pos, 2100, player.name);
 		endif
-		GFAddButton(gump, 290, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _player_iter+SUMMON_START);
-		GFAddButton(gump, 360, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _player_iter+GOTO_START);
+		GFAddButton(gump, 290+40, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _player_iter+SUMMON_START);
+		GFAddButton(gump, 360+40, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _player_iter+GOTO_START);
 	
 		counter := counter + 1;
 		y_pos := y_pos + 20;

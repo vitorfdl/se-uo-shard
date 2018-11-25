@@ -19,15 +19,15 @@ function PlayersGump(who)
 	var gump := GFCreateGump();
 	
    GFsetID(gump, 0x9874);
-	GFResizePic(gump, 0, 0, 0x13BE, 570, 420);
-	GFResizePic(gump, 10, 10, /*0xBB8*/0x2486, 550, 400);
-	GFAddAlphaRegion(gump, 10, 10, 550, 400);
+	GFResizePic(gump, 0, 0, 0x13BE, 570+40, 420);
+	GFResizePic(gump, 10, 10, /*0xBB8*/0x2486, 550+40, 400);
+	GFAddAlphaRegion(gump, 10, 10, 550+40, 400);
 	GFTextLine(gump, 25, 20, 2100, "Player Name");
-	GFTextLine(gump, 255+15, 20, 2100, "Msg");
-	GFTextLine(gump, 305+15, 20, 2100, "Go");
-	GFTextLine(gump, 345+15, 20, 2100, "Freeze");
-	GFTextLine(gump, 405+15, 20, 2100, "Info");
-	GFTextLine(gump, 465+15, 20, 2100, "Summon");
+	GFTextLine(gump, 255+15+40, 20, 2100, "Msg");
+	GFTextLine(gump, 305+15+40, 20, 2100, "Go");
+	GFTextLine(gump, 345+15+40, 20, 2100, "Freeze");
+	GFTextLine(gump, 405+15+40, 20, 2100, "Info");
+	GFTextLine(gump, 465+15+40, 20, 2100, "Summon");
 	
 	var acc_list := GetAccList(who);
 	var num_players := acc_list.size();
@@ -49,11 +49,11 @@ function PlayersGump(who)
       
       var chardata := char.getprop("chardata");
 		GFTextLine(gump, 25, y_pos, name_color, "{} - [{}] - {} Lv.{}".format(acc, charname, chardata.raca, char.getLevel()) );
-		GFAddButton(gump, 260+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter);
-		GFAddButton(gump, 308+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+200);
-		GFAddButton(gump, 360+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+800);
-		GFAddButton(gump, 410+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+600);
-		GFAddButton(gump, 470+15, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+400);
+		GFAddButton(gump, 260+15+40, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter);
+		GFAddButton(gump, 308+15+40, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+200);
+		GFAddButton(gump, 360+15+40, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+800);
+		GFAddButton(gump, 410+15+40, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+600);
+		GFAddButton(gump, 470+15+40, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _acc_iter+400);
 
 		y_pos := y_pos+20;
 		counter := counter+1;
