@@ -16,9 +16,9 @@ endprogram
 
 function ataquegiratorio(who, hab)
    var weapon_cfg := GetItemCFGInfo(who, who.weapon);
-   if (!who.weapon || !(weapon_cfg.WeaponType in array{"greatsword", "axe", "spear", "dualsword"}))
-      return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
-   endif
+   // if (!who.weapon || !(weapon_cfg.WeaponType in array{"greatsword", "axe", "spear", "dualsword"}))
+   //    return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
+   // endif
 
 	who.SetWarMode(1);
    PrintText(who, "Girando a Arma");
