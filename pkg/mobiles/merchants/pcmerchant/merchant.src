@@ -531,6 +531,8 @@ function AddItemToSell(npc, player, item)
             itemcategory := "Alimentos";
          elseif (ores[objtype] || survival[objtype])
             itemcategory := "Materia-Prima";
+         elseif (item.objtype == 0xf3f || item.objtype == 0x1bfb)
+            itemcategory := "Armas";
          else
             itemcategory := "Artigos";
          endif
