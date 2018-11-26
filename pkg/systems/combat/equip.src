@@ -27,6 +27,14 @@ program equipweapon(who, item, startup)
 		SetName(who, who.name);	
 	endif
 
+   if (item.isA(POLCLASS_WEAPON))
+      item.resist_physical_mod := 0;
+      item.resist_fire_mod := 0;
+      item.resist_energy_mod := 0;
+      item.resist_cold_mod := 0;
+      item.resist_poison_mod := 0;
+   endif
+
 	if (who.npctemplate)
 		return 1;
 	endif
