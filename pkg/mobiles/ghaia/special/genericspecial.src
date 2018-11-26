@@ -316,7 +316,7 @@ program loko(params)
                      PlayMovingEffectEx(t, who, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color)); 
                   endif
                elseif (state.graphictype["Circle"])
-                  var type := _ifElse(state.graphictype[" Out"], 0, 1);
+                  var type := _ifElse(state.graphictype["Out"], 0, 1);
                   foreach t in targ
                      CircleEffect(t, state, type);
                      sleepms(2);
@@ -386,7 +386,7 @@ program loko(params)
 
          var dmg := CalculateRawDamage(who, 0);
          var mineinfo := struct{
-            PowerMod := array{CalculatePowerPercent(dmg, state.dmg)},
+            PowerMod := array{CalculatePowerPercent(dmg, cint(state.dmg))},
             Name := state.mine_type,
             duration := state.duration
          };

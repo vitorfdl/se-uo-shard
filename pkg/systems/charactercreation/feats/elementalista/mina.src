@@ -27,7 +27,6 @@ program animateSword(params)
 	var who := params[1];
 	var hab := params[2];
 	var targ := params[3];
-	var power := params[4];
 	params := 0; // No longer needed
 
    var duration := 60;
@@ -47,14 +46,16 @@ program animateSword(params)
          if (who.npctemplate)
             return;
          endif
+
          targ := TargetCoordinates(who);
          if (!targ) break; endif
-      endif
 
-      if (!who.npctemplate && !CheckLOSAt(who, targ.x, targ.y, targ.z+5));
-         SendSysMessageEx(who, "Não tem visão do local", SSM_FAIL);
-         amount +=1;
-         continue; 
+         if (!CheckLOSAt(who, targ.x, targ.y, targ.z+5));
+            SendSysMessageEx(who, "Não tem visão do local", SSM_FAIL);
+            amount +=1;
+            targ := 0;
+            continue; 
+         endif
       endif
 
       PlaySoundEffect(who, 0x1F0);
