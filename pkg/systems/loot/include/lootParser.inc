@@ -115,7 +115,7 @@ function Loot_CreateItem(container, line, loot_params, type := 0)
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
             elseif (item.isA(POLCLASS_ARMOR) || item.isA(POLCLASS_WEAPON))
-               if (loot_params.power) item.dmg_mod := loot_params.power - RandomInt(20) + RandomInt(20); endif
+               if (loot_params.power) item.dmg_mod := RandomIntMinMax(loot_params.power - 10, loot_params.power+2); endif
                if (loot_params.defense) item.resist_physical_mod := loot_params.defense - RandomInt(20) + RandomInt(20); endif
                RandomQuality(item, loot_params);
 				endif
