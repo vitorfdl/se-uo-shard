@@ -914,7 +914,7 @@ function ConstructTreasureConfig(byref gump)
         if (loot)
             GFAddButton( gump, sx-8, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
             if (loot.by_group)
-               GFTextLine(gump, sx, sy, 2103, "{}  [{}] [Poder/Defesa: {}/{}]".format(Upper(loot.by_group), loot.chance, loot.power, loot.defense));
+               GFTextLine(gump, sx, sy, 2103, "{}  [{}] [P/Def: {}/{}]".format(Upper(loot.by_group), loot.chance, loot.power, loot.defense));
                GFTooltipText(gump, "<center>Rate de Drop: {}<br>Forçar Recipes: {}<br>Qualidades: {}".format(loot.rate, _ifElse(loot.forceitem, "Sim", "Não"), ", ".join(loot.qualities)));
             else
                 GFTextLine(gump, sx, sy, 2103, "{} [{}]".format(Upper(loot.item.desc), loot.chance));
