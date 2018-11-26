@@ -117,7 +117,7 @@ endprogram
 
 function StartCharacterCreation(who, byref chardata)
 	while (who.connected)
-      sleepms(15);
+      sleepms(20);
       
       chardata := struct{
          current_class := "",

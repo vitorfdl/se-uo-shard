@@ -10,6 +10,8 @@ include "include/facings";
 
 
 program useHotBar(who, text)
+   if (GetScriptCooldown(who, "atalho")) return 0; endif
+
    var hab_id;
    if (typeof(who) == "Array")
       hab_id := who[3];

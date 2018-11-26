@@ -4,8 +4,8 @@ include ":timeUtils:time";
 
 function GetScriptCooldown(who, script_name)
    if (!getCooldown(who, script_name))
-      setCooldown(who, script_name, 2);
-      SendSysMessageEx(who, "Prevenção de Flood. Aguarde +1 segundo para abrir a janela novamente", SSM_FAIL);
+      setCooldown(who, script_name, 1);
+      SendSysMessageEx(who, "Prevenção de Flood. Aguarde +1 segundo.", SSM_FAIL);
       return 0;
    endif
 

@@ -189,7 +189,7 @@ program startHotBar(who, spos)
          SetobjProperty(who, "hotbar", hotbar);
       endif
 
-      sleepms(18);
+      sleepms(25);
       hotbar := GetObjProperty(who, "hotbar");
    endwhile
 
