@@ -12,7 +12,7 @@ include "include/say";
 
 function StartScript(mobile, attacker := 0, level := 0)
    var dmgpenalty := cint(GetObjProperty(mobile, "dmgpenalty"));
-   dmgpenalty -= level;
+   dmgpenalty += level;
    SetObjProperty(mobile, "dmgpenalty", dmgpenalty);
    PrintText(mobile, "Redução de Poder", SSM_FAIL);
    return 1;
@@ -20,7 +20,7 @@ endfunction
 
 function EndScript(mobile, level)
    var dmgpenalty := cint(GetObjProperty(mobile, "dmgpenalty"));
-   dmgpenalty += level;
+   dmgpenalty -= level;
 
    if (dmgpenalty <= 0)
       EraseObjProperty(mobile, "dmgpenalty");
