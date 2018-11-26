@@ -19,6 +19,12 @@ program death(params)
 	
 	corpse.decayat := 0;
 
+   if (GetProcess(GetObjProperty(who, "death_process")))
+      return 1;
+   endif
+
+   SetObjProperty(who, "death_process", GetPid());
+
 	if (GetObjProperty(ghost, "forjoumorte") == 1)
 		return 1;
 	endif
@@ -88,7 +94,10 @@ program death(params)
          SendSystemReport(ghost, "Você sofreu uma fratura!");
 
 			if (AP_GetVital(ghost, "DP") <= 10)
-            if (!letargico) SetObjProperty(ghost, "letargico", polcore().systime); endif
+            if (!letargico)
+               PrintText(corpse, "*letargico*", SSM_FAIL);
+               SetObjProperty(ghost, "letargico", polcore().systime);
+            endif
             SendSystemReport(ghost, "Você está em estado letárgico! Somente acordará caso alguém leve seu corpo até uma Igreja ou te entregue uma Semente de Anar");
          endif
 		endif
@@ -113,7 +122,7 @@ program death(params)
 	endif	
 
 	var i;
-	while (tempo > 1 && ghost.connected)
+	while (tempo > 1)
       letargico := GetObjProperty(ghost, "letargico");
 		var deathprop := DeathProperties(ghost, corpse, letargico, tempo, i);
 		if (deathprop == 1)
@@ -148,8 +157,9 @@ program death(params)
 		sleep(2);
 	endwhile
 	
-   if (ghost.connected)
+   if (ghost)
       EraseObjProperty(corpse, "japrolongou");
+      EraseObjProperty(corpse, "death_process");
       KataWakeUp(ghost, corpse);
    else
       EraseObjProperty(corpse, "curado");

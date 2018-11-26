@@ -381,6 +381,7 @@ function CharacterCreationGump(who, byref chardata)
 endfunction
 
 function LookGump(who, chardata, aparencia := 0)
+   sleepms(20);
 	var params := struct{
 		"race"  := chardata.raca,
 		"barba" := (chardata.raca != "Elfo")

@@ -15,7 +15,8 @@ program usewand(who, weapon)
 		SendSysMessageEx(who, "Você deve estar com a arma em mãos.");
 		return 0;
    elseif (weapon.quality < 2)
-		return SendSysMessageEx(who, "Apenas armas com qualidade Bom ou superior tem habilidades ativas");
+      SendSysMessageEx(who, "Apenas armas com qualidade Bom ou superior tem habilidades ativas");
+		return 0;
 	endif
 
    var weapon_cfg := GetItemCFGInfo(who, weapon);

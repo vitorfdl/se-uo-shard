@@ -10,6 +10,7 @@ program onRemove(character, container, item, item_amount, movetype)
 	var aux := container;
 	while (aux.container)
 		aux := aux.container;
+      sleepms(2);
 	endwhile
 	
 	if (aux == character)

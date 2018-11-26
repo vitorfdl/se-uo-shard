@@ -172,7 +172,7 @@ program spotGroups(params)
             closed := 1;
         endif
 
-        sleepms(10);
+        sleepms(20);
     endwhile
 endprogram
 
