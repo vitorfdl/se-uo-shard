@@ -907,17 +907,17 @@ function ConstructTreasureConfig(byref gump)
     GFTextLine(gump, sx+65, sy+72+18, 2103, "{}, {}, {}".format(treasure_cont.x, treasure_cont.y, treasure_cont.z));
     GFAddButton(gump, sx+52, sy+72+6+18, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_TELEPORT_BTN);
 
-    GFTextLine(gump, sx, sy+96+18, 1153, "Loots:");
+    GFTextLine(gump, sx, sy+96+18, 2212, "Loots:");
     sy := 159+18;
     for i:=0 to treasure.loots.Size();
         var loot := treasure.loots[i];
         if (loot)
-            GFAddButton( gump, sx-8, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
+            GFAddButton( gump, sx-12, sy+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_ITEM_BTN+i);
             if (loot.by_group)
-               GFTextLine(gump, sx, sy, 2103, "{}  [{}] [P/Def: {}/{}]".format(Upper(loot.by_group), loot.chance, loot.power, loot.defense));
+               GFTextLine(gump, sx, sy, 1153, "{}  [{}] [P/Def: {}/{}]".format(Upper(loot.by_group), loot.chance, loot.power, loot.defense));
                GFTooltipText(gump, "<center>Rate de Drop: {}<br>Forçar Recipes: {}<br>Qualidades: {}".format(loot.rate, _ifElse(loot.forceitem, "Sim", "Não"), ", ".join(loot.qualities)));
             else
-                GFTextLine(gump, sx, sy, 2103, "{} [{}]".format(Upper(loot.item.desc), loot.chance));
+                GFTextLine(gump, sx, sy, 1153, "{} [{}]".format(Upper(loot.item.desc), loot.chance));
             endif
             sy += 18;
         endif
