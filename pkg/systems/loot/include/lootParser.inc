@@ -118,7 +118,7 @@ function Loot_CreateItem(container, line, loot_params, type := 0)
                if (loot_params.power) item.dmg_mod := RandomIntMinMax(loot_params.power - 10, loot_params.power+2); endif
                RandomQuality(item, loot_params);
             elseif(item.isA(POLCLASS_WEAPON))
-               if (loot_params.defense) item.resist_physical_mod := loot_params.defense - RandomInt(20) + RandomInt(20); endif
+               if (loot_params.defense) item.resist_physical_mod := RandomIntMinMax(loot_params.defense-2, loot_params.defense); endif
                RandomQuality(item, loot_params);
 				endif
          elseif (type == "talentbook")
