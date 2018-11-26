@@ -19,11 +19,11 @@ program death(params)
 	
 	corpse.decayat := 0;
 
-   if (GetProcess(GetObjProperty(who, "death_process")))
+   if (GetProcess(GetObjProperty(ghost, "death_process")))
       return 1;
    endif
 
-   SetObjProperty(who, "death_process", GetPid());
+   SetObjProperty(ghost, "death_process", GetPid());
 
 	if (GetObjProperty(ghost, "forjoumorte") == 1)
 		return 1;
