@@ -226,14 +226,18 @@ function StartDynamicEvent(spot, config, evententry)
       var this_step := StepToStruct(trigged.steps);
       this_step.name := trigged.name;
       if (this_step.name == "Summon Mobs")
-         var loc := this_step.location.randomentry();
+         if (this_step.spawn_player_loc && player_found)
+            loc := array{player_found.x, player_found.y, player_found.z};
+         else
+            loc := this_step.location.randomentry();
+         endif
+         
          var coord := struct{ "x" := this_step.go_to[1], "y" := this_step.go_to[2], "z" := this_step.go_to[3]};
+
          if (this_step.player_location && player_found)
             coord := player_found;
          endif
-         if (this_step.spawn_player_loc && player_found)
-            loc := array{player_found.x, player_found.y, player_found.z};
-         endif
+
          for i := 1 to (this_step.number)
             var summon := CreateNpcFromTemplate(this_step.template, loc[1], loc[2], loc[3]);
             if (this_step.boss) SetBoss(summon, this_step.boss); endif

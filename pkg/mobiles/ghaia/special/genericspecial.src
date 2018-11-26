@@ -532,7 +532,7 @@ program loko(params)
                targ := struct{ x := state.x, y := state.y, z := state.z };
             endif
 
-            var hostile_list := ListHostiles(who, 8);
+            var hostile_list := ListHostiles(me, 8);
             if (!targ) break; endif
             var npc := CreateNpcFromTemplate( cstr(state.npctemplate), Cint(targ.x) + RandomInt(2 * state.range) - state.range,
                Cint(targ.y) + RandomInt(2 * state.range) - state.range, Cint(targ.z));
@@ -554,6 +554,9 @@ program loko(params)
                      coord := struct{ "x" := state.walk_to[1], "y" := state.walk_to[2], "z" := state.walk_to[3]};
                   endif
                   ghaiaObjective(npc, coord, 2, 1);
+               endif
+               
+               if (hostile_list.size())
                   ghaiaAttack(hostile_list.randomentry(), npc);
                endif
             endif
