@@ -82,13 +82,7 @@ function SetupName(mobile)
 	endif
 	var name_elem := npc_names[nametemplate];
 	
-	
 	if ( !name_elem )
-		//printtextabove(mobile, "npcdesc: " + npccfgfile);
-		//printtextabove(mobile, "npc template " + mobile.my_template);
-		//printtextabove(mobile, "npc_name: " + npc_names);
-		//printtextabove(mobile, "nametemplate: " + nametemplate);
-		//printtextabove(mobile, "name_elem: " + name_elem);
 		return 0;
 	endif
 
@@ -102,7 +96,7 @@ function SetupName(mobile)
 
 	var my_name := mobile.name;
 	//while ( my_name == "<random>")
-	my_name["<random>"] := name_list[name_list.randomentry()];
+	my_name["<random>"] := name_list.randomentry();
 	SetName(mobile, my_name);
 	//my_name := mobile.name;
 	sleepms(2);

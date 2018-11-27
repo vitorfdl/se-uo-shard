@@ -361,24 +361,24 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
 
    var i, x, y, z, spawned, success := 0;
    var loscheck := (config.loscheck == 1);
-	while(success == 0)
-		sleepms(8);
-		if(config.range == 0 || i >= 5)
+	while(success == 0 && i <= 5)
+      i += 1;
+		sleepms(2);
+		if(config.range == 0 || i >= 3)
 			x := spawnpoint.x;
 			y := spawnpoint.y;
 			z := spawnpoint.z;
 		elseif(spawnpoint.z > spot.z)
-			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
-			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
+			x := spawnpoint.x + RandomIntMinMax(config.range * -1, config.range+1);
+			y := spawnpoint.y + RandomIntMinMax(config.range * -1, config.range+1);
 			z := GetStandingHeight(x, y, spawnpoint.z-5, spawnpoint.realm);
 		elseif(spawnpoint.z <= spot.z)
-			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
-			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
+			x := spawnpoint.x + RandomIntMinMax(config.range * -1, config.range+1);
+			y := spawnpoint.y + RandomIntMinMax(config.range * -1, config.range+1);
 			z := spawnpoint.z+5;
 		endif
 
 		if(loscheck && !CheckLosAt(spawnpoint, x, y, z))
-         i += 1;
          continue;
       endif
 

@@ -165,7 +165,11 @@ program core_npcDeath(params)
          search.type := "Matar Monstro";
          search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
          process.SendEvent(struct{ type := 0x4785, search := search });
-         ExpGain(mob, 3);
+         if (mob.getLevel() >= npc_cfg.level)
+            ExpGain(mob, _ifElse(search.onlyboss, cint(npc_cfg.level) * 4, cint(npc_cfg.level) * 2));
+         else
+            ExpGain(mob, cint(npc_cfg.level));
+         endif
       elseif (mob.master)
          ExpGain(mob, 3);
       else

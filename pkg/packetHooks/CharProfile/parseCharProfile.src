@@ -10,6 +10,7 @@ use math;
 
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
+include "include/utils";
 include ":tn:tngumps";
 
 CONST PROFILE_MSGTYPE := 0xB8;
