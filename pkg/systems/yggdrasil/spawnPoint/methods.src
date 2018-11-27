@@ -344,7 +344,7 @@ exported function FillQueue(spawnpoint)
       SetProps(spawnpoint, struct{ "spawnqueue" := spawn_queue });
       types[mob.type]   := cint(types[mob.type]) + 1;
       levels[mob.power] := cint(levels[mob.power]) + 1;
-      sleepms(2);
+      sleepms(5);
    endfor
 endfunction
 
@@ -362,16 +362,15 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
    var i, x, y, z, spawned, success := 0;
    var loscheck := (config.loscheck == 1);
 	while(success == 0)
-		sleepms(5);
-		if(config.range == 0 || i >= 10)
+		sleepms(8);
+		if(config.range == 0 || i >= 5)
 			x := spawnpoint.x;
 			y := spawnpoint.y;
 			z := spawnpoint.z;
 		elseif(spawnpoint.z > spot.z)
 			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
 			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
-			z := GetWorldHeight(x, y);
-         if (z < spawnpoint.z) z := spawnpoint.z+5; endif
+			z := GetStandingHeight(x, y, spawnpoint.z-5, spawnpoint.realm);
 		elseif(spawnpoint.z <= spot.z)
 			x := spawnpoint.x + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
 			y := spawnpoint.y + (((RandomInt(3)-1)*-1) * RandomInt(1 + config.range));
@@ -384,16 +383,18 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
       endif
 
       spawned := CreateNpcFromTemplate(monster.template, x, y, z, 0, spawnpoint.realm);
-      SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
-      SetObjProperty(spawned, "spawnspot", config.spot_serial);
-      SetObjProperty(spawned, "spawngroup", GetObjProperty(spot, "activegroup"));
-      SetObjProperty(spawned, "range", config.range);
-      
-      if (monster.bossParams && monster.bossParams.size() >= 1)
-         SetBoss(spawned, monster.bossParams);
-      endif
+      if (spawned)
+         SetObjProperty(spawned, "spawnpoint", spawnpoint.serial);
+         SetObjProperty(spawned, "spawnspot", config.spot_serial);
+         SetObjProperty(spawned, "spawngroup", GetObjProperty(spot, "activegroup"));
+         SetObjProperty(spawned, "range", config.range);
+         
+         if (monster.bossParams && monster.bossParams.size() >= 1)
+            SetBoss(spawned, monster.bossParams);
+         endif
 
-      success := 1;
+         success := 1;
+      endif
 	endwhile
 
    if (spawned == error || !spawned.serial)
@@ -430,7 +431,6 @@ exported function KillSpawn(spawnpoint, index)
          if (!monster || monster.dead) break; endif
          sleepms(10);
       endfor
-      sleepms(2);
    endif
 
    monsters.Erase(index);
@@ -451,7 +451,7 @@ exported function SpawnAll(spawnpoint)
    var queue := GetObjProperty(spawnpoint, "spawnqueue");
    foreach q in queue
       DoSpawnQueue(spawnpoint, 1);
-      sleepms(5);
+      sleepms(10);
    endforeach
 endfunction
 
@@ -461,7 +461,7 @@ exported function KillAll(spawnpoint)
    
    foreach m in monsters
       KillSpawn(spawnpoint, (monsters.size()+1) - _m_iter);
-      sleepms(2);
+      sleepms(10);
    endforeach
 
    SetObjProperty(spawnpoint, "monsters", array{});

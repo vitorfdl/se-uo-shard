@@ -14,7 +14,6 @@ program AC_start(who)
    endif
 
    while (who.connected)
-      sleepms(5);
       var last_see := GetObjProperty(who, "last_see");
 
       if (!last_see) last_see := array{}; endif
@@ -53,9 +52,9 @@ program AC_start(who)
          setup.y := new_pos[2];
          SetObjProperty(who, "roleplay_setup", setup);
       elseif (input == 1)
-         continue;
       else
          break;
       endif
+      sleepms(20);
    endwhile
 endprogram
