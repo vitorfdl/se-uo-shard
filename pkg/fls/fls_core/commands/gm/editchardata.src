@@ -176,6 +176,7 @@ function handleInput(who, input, byref chardata)
       BTN_CHANGE_CLASS_LEVELUP:
          if (chardata.classes[1].level >= 4) return SendSysMessageEx(who, "Level máximo atingido", SSM_FAIL); endif
          chardata.classes[1].level := cint(chardata.classes[1].level) + 1;
+         chardata.classes[1].exp := 0;
          SendSysMessageEx(who, "Level de {} aumentado".format(chardata.classes[1].id), SSM_INFO);
          return;
       BTN_CHANGE_SUBCLASS:
