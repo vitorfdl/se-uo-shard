@@ -89,13 +89,16 @@ function SendQuestGump(npc, player)
    var quest_list := ListQuests();
    foreach classe in (myconfigs.type)
       sleepms(2);
+      // Delivery Quests
       var player_quests := FindAllElemInArray(quests, struct{ category := classe } );
       foreach quest in player_quests
          if (CheckQuest(player, quest))
-            questions.append(struct{ type := "delivery", classe := classe, pos := _quest_iter });
+            questions.append(struct{ type := "delivery", classe := classe, id := quest.id });
          endif
       endforeach
+      // End Delivery
 
+      // New Quests
       var f  := _ifElse(player_quests, player_quests.size(), 0);
       if (f >= 1) continue; endif
 
@@ -182,12 +185,13 @@ function SendQuestGump(npc, player)
    elseif (res >= 50)
       res -= 50;
       var answer := questions[res];
-      var quest := quests[answer.pos];
+      var pos := FindInArray(quests, struct{ category := answer.classe, id := answer.id });
+      var quest := quests[pos];
       if (!CheckQuest(player, quest))
          return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);
       endif
       
-      if (CompleteQuest(player, answer.pos))
+      if (CompleteQuest(player, pos))
          PrintText(npc, "Terminou, hum? Espero que tenha aprendido algo.", SSM_INFO);
       else
          return SendSysMessageEx(player, "Não foi possível concluir a missão. Algo ainda está faltando ser completado.", SSM_FAIL);

@@ -91,7 +91,7 @@ program runScript_CharProfileRequest( params )
          endif
       elseif (res[0] == 4)
          var alturas := array{"Alto", "Mediano", "Baixo"};
-         var aws := QuestionsGump(who, array{ struct{ title := "Entre com as características físicas do personagem:", lines := 1, marked := chardata.profile }});
+         var aws := QuestionsGump(who, array{ struct{ title := "Entre com as características físicas do personagem:", marked := _ifOr(chardata.profile, "") }});
          if (aws)
             chardata := GetObjProperty(chr, "chardata");
             chardata.profile := aws[1];

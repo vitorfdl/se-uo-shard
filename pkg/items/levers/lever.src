@@ -30,11 +30,10 @@ function ConstructGump(item)
 	GFSetID(gump, 0x597);
 	GFPage(gump, 0);
 	GFResizePic(gump, 0, 0, 9200, 480, 395);
-   GFTextLine(gump, 165, 20, 900, "Lever Control Interface");
+   GFTextLine(gump, 165, 20, 900, "Controle de Alavancas");
    GFPage(gump, 1);
 
    var y := 48;
-   var colored := 500;
    GFTextLine(gump, 45, y, 560, "Testar");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 99);
    // y += 20;
@@ -46,18 +45,10 @@ function ConstructGump(item)
    // GFAddButton(gump, 25, y+2, 2117, 2118, GF_PAGE_BTN, 3);
    if (!opts.is_linked)
       y += 20;
-      colored := 500;
-      if (opts.doorstatus)
-         colored := 520;
-      endif
-      GFTextLine(gump, 45, y, colored, "Trancar/destrancar porta");
+      GFTextLine(gump, 45, y, _ifElse(opts.doorstatus, 520, 500), "Trancar/destrancar porta");
       GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 2);
       y += 20;
-      colored := 500;
-      if (opts.opendoors)
-         colored := 520;
-      endif
-      GFTextLine(gump, 45, y, colored, "Abrir/Fechar porta");
+      GFTextLine(gump, 45, y, _ifElse(opts.opendoors, 520, 500), "Abrir/Fechar porta");
       GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 102);
    // y += 20;
    // colored := 500;
@@ -74,84 +65,42 @@ function ConstructGump(item)
    // GFTextLine(gump, 45, y, colored, "Alterar gráfico de algo");
    // GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 98);
       y += 20;
-      colored := 500;
-      if (opts.moveitems)
-         colored := 520;
-      endif
-      GFTextLine(gump, 45, y, colored, "Mover objetos");
+      GFTextLine(gump, 45, y, _ifElse(opts.moveitems, 520, 500), "Mover objetos");
       GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 101);
       y += 20;
-      colored := 500;
-      if (opts.teleport_to)
-         colored := 520;
-      endif
-      GFTextLine(gump, 45, y, colored, "Teleportar usuário");
+      GFTextLine(gump, 45, y, _ifElse(opts.teleport_to, 520, 500), "Teleportar usuário");
       GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 5);
-      y += 20;
-      colored := 500;
-      if (opts.graphicarrays)
-         colored := 520;
-      endif
-      GFTextLine(gump, 45, y, colored, "Mudar gráfico da alavanca");
-      GFAddButton(gump, 25, y+2, 2117, 2118, GF_PAGE_BTN, 2);
    endif
+   
    y += 20;
-   colored := 500;
-   if (GetObjProperty(item, "HaveTrap"))
-      colored := 520;
-   endif
-   GFTextLine(gump, 45, y, colored, "Adicionar armadilhas");
+   GFTextLine(gump, 45, y, _ifElse(opts.graphicarrays, 520, 500), "Mudar gráfico da alavanca");
+   GFAddButton(gump, 25, y+2, 2117, 2118, GF_PAGE_BTN, 2);
+   y += 20;
+   GFTextLine(gump, 45, y, _ifElse(GetObjProperty(item, "HaveTrap"), 520, 500), "Adicionar armadilhas");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_PAGE_BTN, 4);
    y += 20;
-   colored := 500;
-   if (GetObjProperty(item, "level"))
-      colored := 520;
-   endif
-   GFTextLine(gump, 45, y, colored, "Esconder Alavanca");
+   GFTextLine(gump, 45, y, _ifElse(GetObjProperty(item, "level"), 520, 500), "Esconder Alavanca");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 100);
    y += 20;
-   colored := 500;
-   if (GetObjProperty(item, "powerword"))
-      colored := 520;
-   endif
-   GFTextLine(gump, 45, y, colored, "Esconder Alavanca e revelar por fala");
+   GFTextLine(gump, 45, y, _ifElse(GetObjProperty(item, "powerword"), 520, 500), "Esconder Alavanca e revelar por fala");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 9);
    y += 20;
-   colored := 500;
-   if (opts.ontext)
-      colored := 520;
-   endif
-   GFTextLine(gump, 45, y, colored, "Mudar on/off texto");
+   GFTextLine(gump, 45, y, _ifELse(opts.ontext, 520, 500), "Mudar on/off texto");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 97);
    if (!opts.is_linked)
       y += 20;
       colored := 500;
-      if (opts.linked_to)
-         colored := 520;
-      endif
-      GFTextLine(gump, 45, y, colored, "Linkar outras alavancas");
+      GFTextLine(gump, 45, y, _ifElse(opts.linked_to, 520, 500), "Linkar outras alavancas");
       GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 3);
    endif
    y += 20;
-   colored := 500;
-   if (opts.linked_to || opts.is_linked)
-      colored := 520;
-   endif
-   GFTextLine(gump, 45, y, colored, "Unlink alavancas");
+   GFTextLine(gump, 45, y, _ifElse(opts.linked_to || opts.is_linked, 520, 500), "Unlink alavancas");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 6);
    y += 20;
-   colored := 500;
-   if (opts.walkon)
-      colored := 520;
-   endif
-   GFTextLine(gump, 45, y, colored, "Ativar ao andar por cima");
+   GFTextLine(gump, 45, y, _ifElse(opts.walkon, 520, 500), "Ativar ao andar por cima");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 7);
    y += 20;
-   colored := 500;
-   if (GetObjProperty(item, "status") == "on")
-      colored := 520;
-   endif
-   GFTextLine(gump, 45, y, colored, "Resetar agora");
+   GFTextLine(gump, 45, y, _ifElse(GetObjProperty(item, "status") == "on", 520, 500), "Resetar agora");
    GFAddButton(gump, 25, y+2, 2117, 2118, GF_CLOSE_BTN, 8);
 
    GFPage(gump, 2);

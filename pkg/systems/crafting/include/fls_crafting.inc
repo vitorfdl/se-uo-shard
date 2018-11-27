@@ -474,7 +474,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, "level", level_select);
             endif
             SetName(theitem, _ifOr(theitem.name, theitem.desc));
-            SendQuestEvent(who, "Craftar Item", struct{ quality := cint(theitem.quality), item_objtype := theitem.objtype, level := _ifOr(level_select, 1) });
+            SendQuestEvent(who, "Produzir Item", struct{ quality := cint(theitem.quality), item_objtype := theitem.objtype, level := _ifOr(level_select, 1) });
             theitems.append(theitem);
             sleepms(2);
          endforeach
@@ -494,47 +494,40 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 endfunction
 
 function SubtractMaterial(who, targ_materials, amountMod := 1)
-	foreach thing in (targ_materials.keys() )
-      sleepms(2);
-      if (amountMod < 1)
-         if (cint(thing) == 3968 || (cint(thing) >= 39066 && cint(thing) <= 39069))
-            targ_materials[thing] := 0;
-            targ_materials.Erase(thing);
-            continue;
-         endif
-      endif
-		//sendsysmessageEx(who, " materiais antes " + thing + " " +  targ_materials[thing] );
-		targ_materials[thing] := Cint( cint(targ_materials[thing])*amountMod);
-		if (targ_materials[thing] == 0 )
-			targ_materials[thing] := 1;
-		endif
-		//sendsysmessageEx(who, " materiais depois " + thing + " " +  targ_materials[thing] );
-	endforeach
-
-	//sendsysmessageEx(who, " targmaterial " + targ_materials.keys() );
-
+   var container_items := EnumerateItemsInContainer(who.backpack);
 	//no loop anterior procurou os materiais, agora consome.
 	foreach thing in (targ_materials.keys())
       sleepms(2);
+      
+      if (amountMod < 1)
+         if (cint(thing) == 3968 || (cint(thing) >= 39066 && cint(thing) <= 39069))
+            targ_materials.-thing;
+            continue;
+         endif
+      endif
+
+		targ_materials[thing] := cint(cdbl(targ_materials[thing])*amountMod);
       if (targ_materials[thing] == 0)
          continue;
       endif
-      foreach item in (EnumerateItemsInContainer(who.backpack))
-         if (cint(item.objtype) == thing)
-            if (item.amount >= targ_materials[thing] )
-               //sendsysmessageEx(who, " " + item + " " + cint(targ_materials[thing]) + " " + thing);
-               var chk := SubtractAmount(item, cint(targ_materials[thing]));
-               if (!chk )
-                  return 0;
-               endif
-               targ_materials[thing] := 0;
-               break;
-            else
-               targ_materials[thing] := targ_materials[thing] - item.amount;
-               if (!SubtractAmount(item, item.amount))
-                  return 0;
-               endif
-            endif
+
+      foreach item in container_items
+         sleepms(5);
+         if (cint(item.objtype) != thing)
+            continue;
+         endif
+
+         if (item.amount >= targ_materials[thing] )
+            //sendsysmessageEx(who, " " + item + " " + cint(targ_materials[thing]) + " " + thing);
+            var chk := SubtractAmount(item, cint(targ_materials[thing]));
+            if (!chk ) return 0; endif
+            targ_materials[thing] := 0;
+            break;
+         endif
+
+         targ_materials[thing] := targ_materials[thing] - item.amount;
+         if (!SubtractAmount(item, item.amount))
+            break;
          endif
       endforeach
 

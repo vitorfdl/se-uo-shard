@@ -354,7 +354,7 @@ function QuestConditions(who, new_condition := struct{})
    var opts := array{
       "Matar Monstro",
       "Usar Item",
-      "Craftar Item",
+      "Produzir Item",
       "Coletar Item",
       "Ir até Local",
       "Domesticar Animal",

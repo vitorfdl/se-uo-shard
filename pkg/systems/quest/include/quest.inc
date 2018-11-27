@@ -148,6 +148,8 @@ function ProgressQuest(who, search, plus_progress := 1)
       if (item.qty && cint(item.qty) <= cint(item.progress)) continue;
       elseif (item.done) continue; endif
       
+      if (item.type["Craftar"]) item.type["Craftar"] := "Produzir"; endif
+
       if (item.party) search.-party; endif
       if (!item.spawnpoint) search.-spawnpoint; endif
       if (!item.onlyboss && search.onlyboss) search.-onlyboss; endif
