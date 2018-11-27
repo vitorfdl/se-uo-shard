@@ -2,8 +2,6 @@ use uo;
 use basic;
 use os;
 
-include ":ghaia:npcmethods";
-
 program hook_startup()
 	print("INSTALLING: NPC hook...");
 	return 1;
@@ -22,33 +20,59 @@ endfunction
 
 
 exported function listAggro(creature)
-   return core_listAggro(creature);
+   return aggroProp(creature);
 endfunction
 
 exported function getAggro(creature, serial)
-   return core_getAggro(creature, serial);
+   CheckSerial(serial);
+   var aggros := aggroProp(creature);
+   
+   return cint(aggros[serial]);
 endfunction
 
 exported function remAggro(creature, serial)
-   return core_remAggro(creature, serial);
+   CheckSerial(serial);
+   var aggros := aggroProp(creature);
+   aggros[serial] := 0;
+   setAggroProp(creature, aggros);
 endfunction
 
 exported function setAggro(creature, serial, number := 1)
-   return core_setAggro(creature, serial, number);
+   CheckSerial(serial);
+   var aggros := aggroProp(creature);
+   aggros[serial] := cint(aggros[serial]) + number;
+
+   setAggroProp(creature, aggros);
 endfunction
 
-// exported function getHighestAggro(creature)
-//    core_getHighestAggro(creature);
-// endfunction
-
 exported function getLowestAggro(creature)
-   return core_getLowestAggro(creature);
+   var aggros := aggroProp(creature);
+   var lowest := array{0, 9999999999};
+   foreach serial in (aggros.keys())
+      if (aggros[serial] < lowest[2])
+         lowest := array{serial, aggros[serial]};
+      endif
+      sleepms(2);
+   endforeach
+
+   return lowest[1];
+endfunction
+
+function CheckSerial(byref serial)
+   if (serial.isA(POLCLASS_MOBILE))
+      serial := serial.serial;
+   endif
 endfunction
 
 exported function aggroProp(creature)
-   return core_aggroProp(creature);
+   var aggro_list := GetObjProperty(creature, "aggros");
+   if (!aggro_list || typeof(aggro_list) != "Dictionary")
+      aggro_list := dictionary{};
+   endif
+
+   return aggro_list;
 endfunction
 
 exported function setAggroProp(creature, aggro_prop)
-   return core_setAggroProp(creature, aggro_prop);
+   SetObjProperty(creature, "aggros", aggro_prop);
 endfunction

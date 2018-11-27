@@ -37,7 +37,9 @@ endfunction
 
 program oafeatures_sendpacket(who, text)
    print(RandomIntMinMax(-1, 2));
-   // var targ     := Target(who);
+   var targ     := Target(who);
+   print(targ.my_template());
+   print(targ.isTamable());
    // DamageFLS(targ, 10, DMG_PHYSICAL);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area

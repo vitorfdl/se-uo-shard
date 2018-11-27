@@ -2,7 +2,6 @@ use os;
 use uo;
 
 include ":yggdrasil:boss";
-include ":ghaia:npcmethods";
 
 var personalities := array{"Agressivo", "Medroso", "Calmo"};
 
@@ -62,7 +61,7 @@ exported function InitPetProperties(pet, reset := 0)
    var old_props := GetObjProperty(pet, "info");
    if (old_props && old_props != error && !reset) return; endif;
 
-	var npctemplate := my_template(pet);
+	var npctemplate := pet.my_template();
 	var cfg := ReadConfigFile(":taming:pets");
 	var pet_elem := cfg[npctemplate];
    if (!pet_elem)
@@ -197,46 +196,4 @@ exported function SetHist(pet, attr, p)
 
    hist[attr] := cint(hist[attr]) + p;
    SetObjProperty(pet, "pet_hist", hist);
-endfunction
-
-exported function my_template(pet)
-	var npctemplate := SplitWords(pet.npctemplate, ":");
-   return npctemplate[3];
-endfunction
-
-exported function package(pet)
-	var npctemplate := SplitWords(pet.npctemplate, ":");
-   return npctemplate[2];
-endfunction
-
-exported function listAggro(creature)
-   return core_listAggro(creature);
-endfunction
-
-exported function getAggro(creature, serial)
-   return core_getAggro(creature, serial);
-endfunction
-
-exported function remAggro(creature, serial)
-   return core_remAggro(creature, serial);
-endfunction
-
-exported function setAggro(creature, serial, number := 1)
-   return core_setAggro(creature, serial, number);
-endfunction
-
-// exported function getHighestAggro(creature)
-//    return core_getHighestAggro(creature);
-// endfunction
-
-exported function getLowestAggro(creature)
-   return core_getLowestAggro(creature);
-endfunction
-
-exported function aggroProp(creature)
-   return core_aggroProp(creature);
-endfunction
-
-exported function setAggroProp(creature, aggro_prop)
-   return core_setAggroProp(creature, aggro_prop);
 endfunction
