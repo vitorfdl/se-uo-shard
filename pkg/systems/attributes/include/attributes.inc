@@ -55,7 +55,7 @@ function checkImmunity(a := 1, b:= 1)
    return 0;
 endfunction
 
-function CalculatePowerPercent(power, percent)
+function CalculatePowerPercent(power, percent := 100)
    percent := cdbl(percent);
    return cint(cdbl(power) * (percent / 100));
 endfunction

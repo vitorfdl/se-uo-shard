@@ -348,16 +348,16 @@ program loko(params)
          var targ := selectOpponent(who, state.target, state.conedist);
          var power := CalculateRawDamage(who, 0);
 
-         var dmg := CalculatePowerPercent(power, state.dmg);
+         var dmg := CalculatePowerPercent(power, cint(state.dmg));
 			foreach vital in (state.vitals)
 				foreach t in targ
                sleepms(2);
 					if (vital == "Hits")
-						DamageFLS(t, dmg, state.dmgtype, who);
+						DamageFLS(t, cint(dmg), state, who);
 					elseif (vital == "Stam")
-						AP_ConsumeVital(t, STAMINA, dmg);
+						AP_ConsumeVital(t, STAMINA, cint(dmg));
 					elseif (vital == "Mana")
-						AP_ConsumeVital(t, MANA, dmg);
+						AP_ConsumeVital(t, MANA, cint(dmg));
 					endif
 				endforeach
 			endforeach
@@ -616,7 +616,7 @@ function selectOpponent(who, type, dist := 3)
       foreach p in points
          var mobs := ListMobilesNearLocation(cint(p[1]), cint(p[2]), who.z, 0);
          targ := targ + mobs;
-         sleepms(2);
+         sleepms(5);
       endforeach
    elseif (type == "Random Opponent")
       targ := GetEnemiesNear(who, dist);
@@ -626,14 +626,14 @@ function selectOpponent(who, type, dist := 3)
       foreach p in points
          var mobs := ListMobilesNearLocation(cint(p[1]), cint(p[2]), who.opponent.z, 0);
          targ := targ + mobs;
-         sleepms(2);
+         sleepms(5);
       endforeach
    elseif (type == "In Line")
       var points := GetLineCoordsInFront(who.x, who.y, who.facing, dist);
       foreach p in points
          var mobs := ListMobilesNearLocation(cint(p[1]), cint(p[2]), who.z, 0);
          targ := targ + mobs;
-         sleepms(2);
+         sleepms(5);
       endforeach
    elseif (type == "All Allies")
       targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, dist));
@@ -679,7 +679,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
       targ := GetLineCoordsInFront(who.x, who.y, who.facing, conedist);
       foreach p in targ
          p := struct{x := p[1], y := p[2], z := who.z+1};
-         sleepms(2);
+         sleepms(5);
       endforeach
    elseif (type == "Opponent")
       if (!who.isA(POLCLASS_NPC))
@@ -708,7 +708,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
       targ := GetConeCoordsInFront(who.x, who.y, f, conedist);
       foreach p in targ
          p := struct{x := p[1], y := p[2], z := who.z+1};
-         sleepms(2);
+         sleepms(5);
       endforeach
    elseif (type == "Random Opponent")
       targ := GetEnemiesNear(who, conedist);
@@ -719,7 +719,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
       targ := GetCoordsInLine(who.x, who.y, who.opponent.x, who.opponent.y);
       foreach p in targ
          p.z := who.opponent.z;
-         sleepms(2);
+         sleepms(5);
       endforeach
    elseif (type == "All Allies")
       targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, conedist));
