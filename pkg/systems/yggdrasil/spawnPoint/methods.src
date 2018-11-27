@@ -362,7 +362,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
    var x, y, z, spawned, success := 0;
    var loscheck := (config.loscheck == 1);
 	for i := 1 to 3
-		sleepms(2);
+		sleepms(5);
 		if(config.range == 0)
 			x := spawnpoint.x;
 			y := spawnpoint.y;
