@@ -282,15 +282,16 @@ endfunction
 function GetHP(mobile)
 	var chardata := GetObjProperty(mobile, "chardata");
 	var hp := 0;
-	if (chardata != error && chardata.hits)
-		hp := chardata.hits;
+
+	if (chardata != error)
+		hp := cint(chardata.hits);
 	endif
    
 	if (hp < 1) 
 		hp := 1;
 	endif
 
-	hp := (15 + hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
+	hp := (hp + Cint(GetObjProperty(mobile, "hitsmod")) + Cint(GetObjProperty(mobile, "#hitsmod"))) * 100;
 
 	return cint(hp);
 endfunction

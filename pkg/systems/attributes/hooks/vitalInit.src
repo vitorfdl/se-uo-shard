@@ -35,7 +35,7 @@ exported function GetHitsMaximumValue(mobile)
 		vital_points := GetHP(mobile);
 	endif
    
-   if (cint(vital_points) < 100) vital_points := 110; endif
+   if (vital_points < 100) vital_points := 110; endif
 
 	return cint(vital_points);
 endfunction
@@ -93,16 +93,8 @@ exported function GetStaminaMaximumValue(mobile)
 
 	vital_points := vital_points + (( Cint( GetObjProperty(mobile, "stammod") ) + Cint( GetObjProperty(mobile, "#stammod") ) )*100);
 
-	if (!mobile.npctemplate)
-		var hunger := CInt(AP_GetVital(mobile, "Hunger") / 60);
-		if (hunger == 5)
-			vital_points := vital_points - 2000;
-		elseif (hunger == 4)
-			vital_points := vital_points - 1000;
-		endif
-	endif
-
    if (vital_points < 100) vital_points := 100; endif
+
 	return vital_points;
 endfunction
 
