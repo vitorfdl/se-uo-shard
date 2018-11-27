@@ -424,9 +424,9 @@ exported function KillSpawn(spawnpoint, index)
    if (monster && !monster.master)
       SetObjProperty(monster, "summoned", 1);
       SetObjProperty(monster, "spawnkill", 1);
-      for i := 1 to 5
+      for i := 1 to 2
          RevokePrivilege(monster, "invul" );
-         ApplyRawDamage(monster, 255);
+         ApplyRawDamage(monster, CInt(AP_GetVitalMaximumValue(monster, "Hits")));
          if (!monster || monster.dead) break; endif
          sleepms(10);
       endfor

@@ -145,8 +145,8 @@ function Fight(opponent, alerted := 0)
       sleepms(15);
       if (npccfgfile.Category == "moriquendi")
          if (GetGlobalProperty("dia") == "dia" && !InDungeon(me))
-            ApplyRawDamage(me, 200);
-            ApplyRawDamage(me, 200);
+            ApplyRawDamage(me, 500);
+            ApplyRawDamage(me, 500);
          endif
       endif
 
