@@ -358,12 +358,16 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
    endif
 
    var spot := SystemFindObjectBySerial(config.spot_serial);
+   if (!spot) return; endif
 
-   var x, y, z, spawned, success := 0;
+   var x, y, z, spawned;
    var loscheck := (config.loscheck == 1);
+   config.range := cint(config.range);
+   if (config.range < 0) config.range := 0; endif
+
 	for i := 1 to 3
 		sleepms(5);
-		if(config.range == 0)
+		if( config.range == 0)
 			x := spawnpoint.x;
 			y := spawnpoint.y;
 			z := spawnpoint.z;
@@ -391,6 +395,7 @@ exported function DoSpawnQueue(spawnpoint, pass := 0)
          if (monster.bossParams && monster.bossParams.size() >= 1)
             SetBoss(spawned, monster.bossParams);
          endif
+
          break;
       endif
 	endfor
@@ -427,7 +432,7 @@ exported function KillSpawn(spawnpoint, index)
          RevokePrivilege(monster, "invul" );
          ApplyRawDamage(monster, CInt(AP_GetVitalMaximumValue(monster, "Hits")));
          if (!monster || monster.dead) break; endif
-         sleepms(10);
+         sleepms(2);
       endfor
    endif
 
@@ -449,7 +454,7 @@ exported function SpawnAll(spawnpoint)
    var queue := GetObjProperty(spawnpoint, "spawnqueue");
    foreach q in queue
       DoSpawnQueue(spawnpoint, 1);
-      sleepms(10);
+      sleepms(2);
    endforeach
 endfunction
 
