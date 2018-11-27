@@ -128,7 +128,9 @@ function Fight(opponent, alerted := 0)
       AlertAllies(me, opponent); 
    endif
 
-   OutNumbered(me);
+   if (OutNumbered(me))
+      Flee(opponent);
+   endif
 /*   var speech := GetConfigStringArray( npccfgfile, "InitCombatSpeech" );
    if (speech.size() > 0)
    if (RandomInt(100)  < 30) //sempre 30% de chance de falar
@@ -261,9 +263,6 @@ function Fight(opponent, alerted := 0)
             endif
          endif
 
-         // if ("RunWhenOutnumbered" in custombehaviors)
-
-         // endif
          loops := 0;
          waittime := 1;
       endif
@@ -322,7 +321,9 @@ function Fight(opponent, alerted := 0)
             endif
             continue;
          EVID_CHECK_NUMBER:
-            OutNumbered(me);
+            if (OutNumbered(me))
+               Flee(ev.source);
+            endif
             continue;
          EVID_PEACEMADE:
          //	sendsysmessage(ev.source, "peacemade");
@@ -349,7 +350,7 @@ function OutNumbered(mobile)
       var enemies := GetEnemiesNear(me, 7).size();
       var allies := GetAlliesNear(me, 7).size();
       if (enemies > allies)
-         return 0;
+         return 1;
       endif
    endif
 endfunction

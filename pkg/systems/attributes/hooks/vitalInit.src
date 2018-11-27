@@ -34,7 +34,9 @@ exported function GetHitsMaximumValue(mobile)
 	else // no getHP ja pega o hitsmod dos players
 		vital_points := GetHP(mobile);
 	endif
-	
+   
+   if (cint(vital_points) < 100) vital_points := 110; endif
+
 	return cint(vital_points);
 endfunction
 
@@ -61,6 +63,9 @@ exported function GetManaMaximumValue(mobile)
 	endif
 
 	mana_points += (Cint(GetObjProperty(mobile, "manamod") ) + Cint( GetObjProperty(mobile, "#manamod")))*100;
+
+   if (mana_points < 100) mana_points := 100; endif
+
 	return cint(mana_points);
 endfunction
 
@@ -97,6 +102,7 @@ exported function GetStaminaMaximumValue(mobile)
 		endif
 	endif
 
+   if (vital_points < 100) vital_points := 100; endif
 	return vital_points;
 endfunction
 
