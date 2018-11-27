@@ -1,0 +1,40 @@
+use uo;
+use cfgfile;
+
+include ":gumps:gumps";
+include "include/say";
+
+include ":charactercreation:characters";
+
+program reset(who)
+	var item;
+	if (who.cmdlevel >= 4)
+		SendSysMessageEx(who, "Escolha o alvo.", SSM_REQUEST);
+		item := target(who);
+	else
+		item := who;
+	endif
+	
+	// params := splitwords(params);
+	// params := params[1];
+
+	if (!item)
+		return;
+	endif
+	
+	// if (!params)
+	// 	params := 1;
+	// endif
+   var chardata := GetObjProperty(item, "chardata");
+   if (chardata.classes[1].level >= 4) return SendSysMessageEx(who, "Level máximo atingido", SSM_FAIL); endif
+   chardata.classes[1].level := cint(chardata.classes[1].level) + 1;
+   chardata.classes[1].exp := 0;
+   SendSysMessageEx(who, "Level de {} aumentado".format(chardata.classes[1].id), SSM_INFO);
+   SetObjProperty(item, "chardata", chardata);
+	// SetSkillPoints(item, GetSkillPoints(item)+1);
+	// SetAttribPoints(item, GetAttribPoints(item)+3);
+	// // SetCharLevel(item, who.getLevel()(item)+1);
+	
+	// PrintTextPrivate(item, "Você ganhou um level", item);
+
+endprogram

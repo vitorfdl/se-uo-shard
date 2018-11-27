@@ -138,7 +138,7 @@ function ClassExpGain(who, classe, major := 0)
    if (!chardata) return; endif
 
    if (elem.Type == "Main")
-      var exp_amount := _ifElse(major == 2, 1400, 1000);
+      var exp_amount := _ifElse(major == 2, 1500, 1000);
       var i := FindInArray(chardata.classes, struct{ id := classe });
       if (!i) return; endif
       chardata.classes[i].exp += exp_amount;
