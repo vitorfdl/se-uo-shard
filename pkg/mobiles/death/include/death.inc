@@ -69,7 +69,7 @@ function KataWakeUp(ghost, corpse)
 	if (!corpse)
 		corpse := SystemFindObjectBySerial(GetObjProperty(ghost, "corpo"));
 	endif
-	
+   EraseObjProperty(ghost, "letargico");
 	SetCooldown(ghost, "deathtime", 15);
 	if ( !MoveObjectToLocation(ghost, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE) )
 		SendSysMessage(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Se algo estiver errado, chame um GM.");
