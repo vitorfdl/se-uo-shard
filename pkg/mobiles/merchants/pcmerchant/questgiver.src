@@ -16,6 +16,7 @@ include ":crafting:fls_crafting";
 include ":quest:quest";
 include ":gumps:htmlgump";
 include ":tn:cooldown";
+include "include/utils";
 
 const GF_STDCOLOR := 1890;
 const MOEDAS      := 0xeed;
