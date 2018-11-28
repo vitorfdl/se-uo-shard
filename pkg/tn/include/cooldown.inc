@@ -5,10 +5,10 @@ include ":timeUtils:time";
 function GetScriptCooldown(who, script_name)
    if (!getCooldown(who, script_name))
       setCooldown(who, script_name, 1);
-      SendSysMessageEx(who, "Prevenção de Flood. Aguarde +1 segundo.", SSM_FAIL);
       return 0;
    endif
 
+   SendSysMessageEx(who, "Prevenção de Flood. Aguarde +1 segundo.", SSM_FAIL);
    return 1;
 endfunction
 

@@ -110,7 +110,7 @@ function SendQuestGump(npc, player)
          continue;
       endif
       
-      var diff := _ifElse(f+wf <= 0, 1, 2);
+      var diff := _ifElse(cint(f+wf) <= 0, 1, 2);
 
       var quest_giver := FilterQuestByClassAndDiff(player, quest_list, classe, diff);
       if (quest_giver.size())
