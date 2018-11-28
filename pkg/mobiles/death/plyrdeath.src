@@ -33,7 +33,7 @@ program core_chrDeath(params)
 		if (oldnpc)
 			ghost.concealed := 1;
 			WakeUp(ghost, corpse);
-			unpossess (ghost);
+			unpossess(ghost);
 			ApplyRawDamage(oldnpc, 9999);
 			return 1;
 		endif
@@ -60,7 +60,7 @@ program core_chrDeath(params)
 	
 	// SetObjProperty(ghost, "realname", ghost.name);
 	// SetName(ghost, "Fantasminha");	
-	SetName(ghost, ghost.name);
+	// SetName(ghost, ghost.name);
 
 	TS_Death(ghost);
 	
@@ -69,10 +69,10 @@ program core_chrDeath(params)
 	DP_PlayDeathSound(ghost);
 	//MP_DeathUnmount(corpse);
 	
-	CheckForAutoRes(ghost, corpse);
+	// CheckForAutoRes(ghost, corpse);
 
 	// MoveObjectToLocation( ghost, 4855, 3592, 2, flags := MOVEITEM_IGNOREMOVABLE+MOVEOBJECT_FORCELOCATION);
-	SetName(ghost, ghost.name);
+	// SetName(ghost, ghost.name);
 	SetObjProperty(ghost, "corpo", corpse.serial);
    // ghost.squelch(-1);
    ghost.frozen := 1;

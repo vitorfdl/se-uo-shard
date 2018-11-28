@@ -90,9 +90,6 @@ program death(params)
 		if (!killer.npctemplate || !killer.script["follower"])  //se for tamed n¿o tira dp
 			// ghost.ReduceLifeTime(2, "day");
 
-         AP_ConsumeVital(ghost, "DP", 10);
-         SendSystemReport(ghost, "Você sofreu uma fratura!");
-
 			if (AP_GetVital(ghost, "DP") <= 10)
             if (!letargico)
                PrintText(corpse, "*letargico*", SSM_FAIL);
@@ -211,7 +208,7 @@ function DeathProperties(ghost, corpse, letargico, byref tempo, i)
 endfunction
 
 function checkIfDead(corpse, letargico, ghost)
-   if (letargico)
+   if (letargico && corpse)
       var resslocs := _ifOr(GetGlobalProperty("ressloc"), array{});
       foreach pos in resslocs
          if (InRect(corpse.x, corpse.y, " ".join(pos.location)))
@@ -231,7 +228,7 @@ function checkIfDead(corpse, letargico, ghost)
 		SetObjProperty(corpse, "morto", 1);
 		SetObjProperty(ghost, "morto", 1);
 		SetObjProperty(corpse, "deathtimer", polcore().systime);
-		SetObjProperty(corpse, "charname", GetObjProperty(ghost, "realname"));
+		SetObjProperty(corpse, "charname", ghost.getName());
       start_script(":death:deathgump", array{corpse, ghost});
       return 1;
    endif

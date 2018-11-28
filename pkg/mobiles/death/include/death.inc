@@ -71,20 +71,19 @@ function KataWakeUp(ghost, corpse)
 	endif
 	
 	SetCooldown(ghost, "deathtime", 15);
-	if ( !MoveObjectToLocation(ghost, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE) )
+	if ( !MoveObjectToLocation(ghost, corpse.x, corpse.y, corpse.z, corpse.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE) )
 		SendSysMessage(ghost, "Ocorreu algum problema ao retornar seu personagem para o corpo. Se algo estiver errado, chame um GM.");
       var last_loc := GetObjProperty(ghost, "death_loc");
       if (last_loc)
-         MoveObjectToLocation(ghost, last_loc[1], last_loc[2], last_loc[3], ghost.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+         MoveObjectToLocation(ghost, last_loc[1], last_loc[2], last_loc[3], ghost.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
       else
-         MoveObjectToLocation(ghost, 4032, 2581, 10, ghost.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+         MoveObjectToLocation(ghost, 4032, 2581, 10, ghost.realm, MOVEOBJECT_FORCELOCATION|MOVEITEM_IGNOREMOVABLE);
       endif
 	endif
 
    // ghost.squelch(0);
    // ghost.deaf(0);
 	// var realname := GetObjProperty(ghost, "realname");
-	SetName(ghost, ghost.name);
 	EraseObjProperty(ghost, "realname");
 	EraseObjProperty(ghost, "corpo");
 	EraseObjProperty(ghost, "curado");
@@ -93,8 +92,10 @@ function KataWakeUp(ghost, corpse)
    
 	Resurrect(ghost, RESURRECT_FORCELOCATION);
 	DestroyItem(GetEquipmentByLayer(ghost, 0x16));
+	SetName(ghost, ghost.name);
 
 	foreach item in EnumerateItemsInContainer(corpse)
+      sleepms(2);
 		if (item.container == corpse)
 			MoveObjectToLocation(item, ghost.x, ghost.y, ghost.z, ghost.realm);
 			MoveItemToContainer(item, ghost.backpack);
@@ -110,13 +111,13 @@ function KataWakeUp(ghost, corpse)
 	// 	SetVital(ghost, "hits", CInt(GetVitalMaximumValue(ghost, "hits")*0.9));
 	// else
 //		printtextabove(ghost, " " + GetHP(ghost));
-	AP_SetVital(ghost, HITS, 1);
-	HealFLS(ghost, Floor(cdbl(AP_GetVitalMaximumValue(ghost, HITS))*0.4), 0);
+	AP_SetVital(ghost, HITS, 100);
+	HealFLS(ghost, Floor(AP_GetVitalMaximumValue(ghost, HITS)*0.4), 0);
    
-   if (GetObjProperty(corpse, "#healdeath") || GetObjProperty(ghost, "#healdeath"))
-	   HealFLS(ghost, Floor(cdbl(AP_GetVitalMaximumValue(ghost, HITS))*0.4), 1);
-      EraseObjProperty(ghost, "#healdeath");
-   endif
+   // if (GetObjProperty(corpse, "#healdeath") || GetObjProperty(ghost, "#healdeath"))
+	//    HealFLS(ghost, Floor(cdbl(AP_GetVitalMaximumValue(ghost, HITS))*0.4), 1);
+   //    EraseObjProperty(ghost, "#healdeath");
+   // endif
 	// endif
 	AP_SetVital(ghost, "stamina", CInt(GetVitalMaximumValue(ghost, "stamina")*0.5));
 	AP_SetVital(ghost, "mana", CInt(GetVitalMaximumValue(ghost, "mana")*0.5));
@@ -140,14 +141,14 @@ function KataWakeUp(ghost, corpse)
 		ghost.frozen := 1;
 	endif
 
-	var save := GetObjPRoperty(ghost, "savegame");
-	if (save != error)
-		MoveObjectToLocation(ghost, save.x, save.y, save.z, save.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
-		AP_SetVital(ghost, STAMINA, cint(save.stamina));
-		AP_SetVital(ghost, MANA, cint(save.mana));
-		AP_SetVital(ghost, HITS, cint(save.hits));
-		eraseobjproperty(ghost, "savegame");
-	endif
+	// var save := GetObjPRoperty(ghost, "savegame");
+	// if (save != error)
+	// 	MoveObjectToLocation(ghost, save.x, save.y, save.z, save.realm, MOVEOBJECT_FORCELOCATION+MOVEITEM_IGNOREMOVABLE);
+	// 	AP_SetVital(ghost, STAMINA, cint(save.stamina));
+	// 	AP_SetVital(ghost, MANA, cint(save.mana));
+	// 	AP_SetVital(ghost, HITS, cint(save.hits));
+	// 	eraseobjproperty(ghost, "savegame");
+	// endif
 
    CloseGump(ghost, 0x8777);
 	

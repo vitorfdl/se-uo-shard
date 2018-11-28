@@ -537,6 +537,7 @@ program loko(params)
 
             if (npc != error)
                SetObjProperty(npc, "spawnspot", GetObjProperty(who, "spawnspot"));
+               SetObjProperty(npc, "spawnpoint", GetObjProperty(who, "spawnpoint"));
                var duracaonpc := state.duracao;
                if (!duracaonpc)
                   duracaonpc := 120;
@@ -552,10 +553,6 @@ program loko(params)
                      coord := struct{ "x" := state.walk_to[1], "y" := state.walk_to[2], "z" := state.walk_to[3]};
                   endif
                   ghaiaObjective(npc, coord, 2, 1);
-               endif
-               
-               if (hostile_list.size())
-                  ghaiaAttack(hostile_list.randomentry(), npc);
                endif
             endif
             tries += 1;

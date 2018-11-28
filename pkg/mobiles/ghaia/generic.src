@@ -161,7 +161,7 @@ function Fight(opponent, alerted := 0)
                achou := 1;
                break;
             endif
-            sleepms(2);
+            sleepms(5);
          endforeach
 
          if (achou)

@@ -188,10 +188,6 @@ function PlayIdleSound()
 endfunction
 
 function InitializeNpc(mobile)
-   GrantPrivilege(me, "hiddenattack");
-   GrantPrivilege(me, "runwhilestealth");
-   mobile.enable("runwhilestealth");
-   mobile.enable("hiddenattack");
    //inicializa algumas variaveis que todos os npcs tem
    idlesnd   := GetConfigStringArray(npccfgfile, "IdleSound");
    flee_point   := CInt(npccfgfile.FleeLevel)/100.0;

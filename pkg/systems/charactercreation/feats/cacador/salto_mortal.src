@@ -19,7 +19,7 @@ program animateSword(params)
 
    if (who.warmode && who.opponent)
       if (!who.weapon.IsBow() && !who.weapon.IsMagicWeapon())
-         who.setswingtimer(50);
+         // who.setswingtimer(50);
          run_script(":combat:hooks/temporaryHook", array{who, who.opponent });
       endif
    endif
@@ -41,7 +41,7 @@ program animateSword(params)
 
    if (who.warmode && who.opponent)
       if (who.weapon.IsBow() || who.weapon.IsMagicWeapon())
-         who.setswingtimer(80);
+         // who.setswingtimer(80);
          run_script(":combat:hooks/temporaryHook", array{who, who.opponent});
       endif
    endif
@@ -75,11 +75,11 @@ function PushBackEX(who, dist, delay, invert := 0)
       endif
 
 		var err := MoveObjectToLocation( who, finalx, finaly, who.z, who.realm, force );
-		sleepms(delay);
 		if (err == error)
 		//	PrintText(who, "*bate no obstaculo*");
 			return 0;
 		endif
+		sleepms(delay);
 	endfor
 
    return 1;
