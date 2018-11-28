@@ -112,7 +112,7 @@ function SendQuestGump(npc, player)
       
       var diff := _ifElse(f+wf <= 0, 1, 2);
 
-      var quest_giver := FilterQuestByClassAndDiff(quest_list, classe, diff);
+      var quest_giver := FilterQuestByClassAndDiff(player, quest_list, classe, diff);
       if (quest_giver.size())
          var randomquest := quest_giver.randomentry();
          questions.append(struct{ type := "quest", classe := classe, quest_id := randomquest.id });
@@ -283,7 +283,7 @@ function CreateItemsFromClass(who, classe)
    endif
 endfunction
 
-function FilterQuestByClassAndDiff(quest_data, classe, difficulty := 0)
+function FilterQuestByClassAndDiff(player, quest_data, classe, difficulty := 0)
    var return_list := array{};
    foreach quest in quest_data
       sleepms(2);
@@ -292,6 +292,20 @@ function FilterQuestByClassAndDiff(quest_data, classe, difficulty := 0)
       elseif (difficulty && quest.difficulty != difficulty)
          continue;
       endif
+
+      var has_feat := 1;
+      foreach item in (quest.extras)
+         if (item.type["Habilidade"])
+            if (item.class_type == "Main")
+               if (!HaveFeatPrimary(player, item.req_feat)) has_feat := 0; break; endif
+            else
+               if (!HaveFeatSecondary(player, item.req_feat)) has_feat := 0; break; endif
+            endif
+         endif
+         sleepms(5);
+      endforeach
+
+      if (!has_feat) continue; endif
 
       quest.category := classe;
       return_list.append(quest);

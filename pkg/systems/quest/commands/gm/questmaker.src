@@ -141,9 +141,23 @@ function GumpQuestInfo(byref gump, who)
 	GFGumpPicTiled(gump, 611, 277, 156, 21, 58);
 
 	GFTextLine(gump, 614, 266, 1152, "Configurações Extras");
+   pos_y := 0;
+   foreach item in (quest.extras)
+	   GFAddButton(gump, 610, 296+pos_y, 2103, 2103, GF_CLOSE_BTN, GF_EXTRA_EDIT+_item_iter);
+      var desc := item.type;
+      if (item.req_feat)
+         var feat := GetFeatById(item.req_feat);
+         desc += " [{}]".format(feat.Name); 
+      endif
+
+	   GFTextLine(gump, 625, 292+pos_y, 1152, "{}".format(desc));
+      pos_y += 18;
+      sleepms(2);
+   endforeach
+
    if (quest.extras.size() < 10)
-      GFAddButton(gump, 782, 306, 2361, 2361, GF_CLOSE_BTN, GF_EXTRA_ADD);
-      GFTextLine(gump, 716, 301, 1152, "Adicionar");
+      GFAddButton(gump, 782, 306+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_EXTRA_ADD);
+      GFTextLine(gump, 716, 301+pos_y, 1152, "Adicionar");
    endif
 
 	GFGumpPic(gump, 766, 277+100, 59, 0);
@@ -247,6 +261,22 @@ program gump_gump(who)
             continue;
          endif
 
+         SetQuestData(selected_quest, update_quest);
+      elseif (res[0] >= GF_EXTRA_EDIT && res[0] <= GF_EXTRA_EDIT+10)
+         var answer := RadioGump(who, 180, 0, "O que deseja fazer?:", array{"Editar", "Remover", "Cancelar"}, 3);
+         var pos := res[0] - GF_EXTRA_EDIT;
+         if (answer == 1)
+            var res := QuestExtras(who, quest.extras[pos]);
+            if (res) 
+               quest.extras[pos] := res; 
+               update_quest.extras  := quest.extras;
+            endif
+         elseif (answer == 2)
+            quest.extras.Erase(pos);
+            update_quest.extras  := quest.extras;
+         else
+            continue;
+         endif
          SetQuestData(selected_quest, update_quest);
       elseif (res[0] >= GF_REWARD_EDIT && res[0] <= GF_REWARD_EDIT+10)
          var answer := RadioGump(who, 180, 0, "O que deseja fazer?:", array{"Editar", "Remover", "Cancelar"}, 3);
@@ -529,20 +559,39 @@ function QuestRewards(who, new_reward := struct{})
    return new_reward;
 endfunction
 
-function QuestExtras(who)
-   var new_extra := struct{};
+function QuestExtras(who, new_extra:= struct{})
    var opts := array{
       // "Experiência",
       "Requerer Habilidade",
       "Cancelar"
    };
 
-   var type := RadioGump(who, 200, 0, "Qual tipo de extra deseja configurar?", opts, 0);
-   new_extra["type"] := type;
+   if (!new_extra.type)
+      new_extra.type := RadioGump(who, 350, 0, "Qual tipo de extra deseja configurar?", opts, 0);
+   endif
 
-   case (type)
+   case (new_extra.type)
       "Cancelar": return 0;
-      "Experiência":
+      "Requerer Habilidade":
+         var classCfg := ReadConfigFile(":charactercreation:config/classes");
+         var opts := GetConfigStringKeys(classCfg);
+         opts.append("Cancelar");
+         var classe := RadioGump(who, 200, 0, "Escolha qual Classe:", opts, 0, 1);
+         if (classe == opts[opts.size()]) return 0; endif
+         var feat_opts := array{};
+         var feats := GetClassFeats(classe);
+         foreach feat in feats
+            feat_opts.append(feat.Name);
+            sleepms(5);
+         endforeach
+
+         var quest_gump := array{
+            struct{ title := "Escolha a habilidade necessária:", return_number := 1, radio := feat_opts }
+         };
+         var output := QuestionsGump(who, quest_gump);
+         if (!output) return 0; endif
+         new_extra.req_feat := feats[output[1]].FeatID;
+         new_extra.class_type := classCfg[classe].Type;
       "Item":
          SendSysMessageEx(who, "Extra não scriptado, srry!", SSM_FAIL);
          return 0;

@@ -435,7 +435,7 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 			var result;
 			foreach item in (quest.radio)
 				if (_item_iter + (_quest_iter * 100) in input.keys)
-					result := item;
+					result := _ifElse(quest.return_number, _item_iter, item);
 					break;
 				endif
 			endforeach
