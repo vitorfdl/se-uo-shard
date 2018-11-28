@@ -24,7 +24,7 @@ var item_cfg      := ReadConfigFile(":*:itemdesc");
 var npc;
 var guild, above_merchant, is_guild_member;
 var imposto := 0.1;
-var item_types := array{"Armaduras", "Roupas", "Armas", "Arcos", "Materia-Prima", "Joias", "Varinhas", "Alimentos", "Artigos", "Livros/Receitas"};
+var item_types := array{"Armaduras", "Roupas", "Armas", "Arcos", "Materia-Prima", "Joias", "Varinhas", "Alimentos", "Artigos", "Livros/Receitas", "Elmos/Mascaras"};
 
 program HandleMerchant(params)
    if( GetObjProperty(params.me, "guild"))
