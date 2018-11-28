@@ -4,6 +4,7 @@ use uo;
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include "include/client";
+include "include/utils";
 
 const HIDDEN_CANCEL := 1;
 
