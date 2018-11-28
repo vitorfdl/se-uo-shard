@@ -4,7 +4,7 @@ program Install(spawnpoint)
     SetObjProperty(spawnpoint, "SpawnQueue", array{});
     SetObjProperty(spawnpoint, "Monsters", array{});
     spawnpoint.SetProps(struct{ "range" := 5, "mob_number" := 2});
-    spawnpoint.setYggdrasil(struct{});
+   //  spawnpoint.setYggdrasil(struct{});
     spawnpoint.z += 5;
     return 1;
 endprogram

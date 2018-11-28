@@ -1,6 +1,7 @@
 use uo;
 use os;
 include ":attributes:attributes";
+include ":yggdrasil:spawnsInternal";
 
 program DestroyMe(spawnpoint)
     var gm_flag := GetObjProperty(spawnpoint,"GM_FLAG");
@@ -8,10 +9,10 @@ program DestroyMe(spawnpoint)
         return 0;
     endif
     
-    spawnpoint.KillAll();
+    KillAll(spawnpoint);
 
     var mydata := spawnpoint.GetProps();
     var spot   := SystemFindObjectBySerial(mydata.spot_serial);
-    spot.RemoveSpawnPoint(spawnpoint.serial);
+    if (spot) spot.RemoveSpawnPoint(spawnpoint.serial); endif
     return 1;
 endprogram

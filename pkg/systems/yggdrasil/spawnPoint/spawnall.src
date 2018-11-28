@@ -4,8 +4,5 @@ use os;
 include ":yggdrasil:spawnsInternal";
 
 program Install(spawnpoint)
-   while(spawnpoint)
-      DoSpawnQueue(spawnpoint, 0);
-      sleep(60);
-   endwhile
+   SpawnAll(spawnpoint);
 endprogram

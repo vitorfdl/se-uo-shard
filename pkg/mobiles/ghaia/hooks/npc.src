@@ -52,7 +52,6 @@ exported function getLowestAggro(creature)
       if (aggros[serial] < lowest[2])
          lowest := array{serial, aggros[serial]};
       endif
-      sleepms(2);
    endforeach
 
    return lowest[1];

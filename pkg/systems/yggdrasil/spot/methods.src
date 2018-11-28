@@ -3,6 +3,7 @@ use uo;
 
 include "include/arrays";
 include ":yggdrasil:treasures";
+include ":yggdrasil:spawnsInternal";
 
 program Install()
     return 1;
@@ -142,8 +143,7 @@ exported function ForceSpawn( spot )
     var data  := GetProps( spot );
     foreach serial in (data.spawnpoints)
         var spawnpoint := SystemFindObjectBySerial(serial);
-        spawnpoint.SpawnAll();
-        sleepms(10);
+        start_script(":yggdrasil:spawnPoint/spawnall", spawnpoint);
     endforeach
 endfunction
 
@@ -151,8 +151,7 @@ exported function ForceKill( spot )
     var data  := GetProps( spot );
     foreach serial in (data.spawnpoints)
         var spawnpoint := SystemFindObjectBySerial(serial);
-        spawnpoint.KillAll();
-        sleepms(10);
+        start_script(":yggdrasil:spawnPoint/forcekill", spawnpoint);
     endforeach
 endfunction
 

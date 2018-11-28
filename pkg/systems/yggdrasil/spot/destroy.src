@@ -12,7 +12,6 @@ program DestroyMe(spot)
         var spawnpoint := SystemFindObjectBySerial(serial);
         SetObjProperty(spawnpoint, "GM_FLAG", 1);
         DestroyItem(spawnpoint);
-        sleepms(2);
     endforeach
 
     foreach treasure_data in (data.treasures)
@@ -24,9 +23,8 @@ program DestroyMe(spot)
         var items := EnumerateItemsInContainer(treasure);
         foreach item in items
             DestroyItem(item);
-            sleepms(2);
         endforeach
-        sleepms(2);
     endforeach
+    
     return 1;
 endprogram
