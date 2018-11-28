@@ -35,7 +35,7 @@ program SpellScript(params)
 			break;
 		endif
 
-		if (Distance(who, targ) > 5)
+		if (Distance(who, targ) > 6)
 			SendSysMessageEx(who, "O alvo se distanciou muito.", SSM_FAIL);
          apply_dmg := 0;
 			break;
@@ -48,7 +48,7 @@ program SpellScript(params)
 
 		//ApplyRawDamage( targ, 10, 0, DAMAGE_SHOW );
       var amt := spellinfo.PowerMod[1];
-      if (!AP_ConsumeVital(targ, MANA, amt))
+      if (!AP_ConsumeVital(targ, MANA, amt) && !AP_ConsumeVital(targ, STAMINA, amt))
          amt := AP_GetVitalMaximumValue(targ, MANA);
          AP_ConsumeVital(targ, MANA, amt);
 			SendSysMessageEx(who, "A mana do alvo acabou.", SSM_FAIL);
