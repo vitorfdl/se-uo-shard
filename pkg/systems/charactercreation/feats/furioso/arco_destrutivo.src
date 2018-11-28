@@ -16,16 +16,16 @@ endprogram
 
 function ataquegiratorio(who, hab)
    var weapon_cfg := GetItemCFGInfo(who, who.weapon);
-   // if (!who.weapon || !(weapon_cfg.WeaponType in array{"greatsword", "axe", "spear", "dualsword"}))
-   //    return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
-   // endif
+   if (!who.weapon)
+      return SendSysMessageEx(who, "Você deve estar equipando uma arma.", SSM_FAIL);
+   endif
 
 	who.SetWarMode(1);
 	PlaySoundEffect(who, 0x520);
 
 	var alreadydamaged := array{};
 	who.SetWarMode(1);
-   PrintText(who, "*girando {}".format(who.weapon.desc));
+   PrintText(who, "*Desfere golpes em arco");
 
 
    var positions := GetConeCoordsInFront(who.x, who.y, who.facing, 3);
