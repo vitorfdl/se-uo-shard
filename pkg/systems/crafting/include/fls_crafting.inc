@@ -294,7 +294,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             else
                targ_materials[ret[1].objtype] := materials[thing] * material_amt;
             endif
-
             if (thing == main_material)
                material_color   := ret[1].color;
                choosed_material := ret[1].objtype;
@@ -430,7 +429,6 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             SetObjProperty(who, "#craft_last", item_objtype);
             // who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
             SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
-
             if (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON))
                var quality := 1;
                var chance := RandomInt(100);
