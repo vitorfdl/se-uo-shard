@@ -5,7 +5,7 @@ include ":yggdrasil:spawnsInternal";
 
 program Install(spawnpoint)
    while(spawnpoint)
-      DoSpawnQueue(spawnpoint, 0);
+      start_script(":yggdrasil:spawnpoint/dospawnqueue", spawnpoint);
       sleep(60);
    endwhile
 endprogram

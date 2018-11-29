@@ -1,0 +1,8 @@
+use uo;
+use os;
+
+include ":yggdrasil:spawnsInternal";
+
+program Install(spawnpoint)
+   DoSpawnQueue(spawnpoint, 0);
+endprogram

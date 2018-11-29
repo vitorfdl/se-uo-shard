@@ -510,7 +510,6 @@ function SetBoss(npc, boss)
 
   if (boss.customai)
     npc.script := boss.customai;
-    restartscript(npc);
   endif
 
 	if (boss.special)
@@ -538,6 +537,7 @@ function SetBoss(npc, boss)
 		endforeach
 	endif	
 
+   RestartScript(npc);
 	return npc;
   
 endfunction
