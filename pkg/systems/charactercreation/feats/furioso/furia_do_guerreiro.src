@@ -18,6 +18,6 @@ program defensor(params)
 	PlayCustomSound( who, 33 );
 
    PrintText(who, "*está em fúria*", SSM_FAIL);
-   TS_StartCooldown(who, "aumentar_poder", 10, spellinfo.PowerMod[1]);
+   TS_StartTimer(who, "aumentar_poder", 10, spellinfo.PowerMod[1]);
 	return 1;
 endprogram
