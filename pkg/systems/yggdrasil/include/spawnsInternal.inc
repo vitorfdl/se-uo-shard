@@ -245,7 +245,7 @@ function DoSpawnQueue(spawnpoint, pass := 0)
          SetObjProperty(spawned, "spawngroup", GetObjProperty(spot, "activegroup"));
          SetObjProperty(spawned, "range", config.range);
          
-         if (monster.bossParams && monster.bossParams.size() >= 1)
+         if (monster.bossParams && monster.bossParams.Keys().size() >= 1)
             SetBoss(spawned, monster.bossParams);
          endif
 
