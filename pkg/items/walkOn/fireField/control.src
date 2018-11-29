@@ -8,6 +8,7 @@ use os;
 use util;
 
 include "include/damage";
+include ":tn:cooldown";
 
 program controlScript(field)
 	SetObjProperty(field, "#PID", GetPid());
@@ -52,6 +53,9 @@ function BurnNearbyMobiles(field)
 endfunction
 
 function BurnMobile(mobile, dmg_dice, creator := 0)
-	DamageFLS(mobile, dmg_dice, DMG_FIRE, creator);
+   if (!GetCooldown(mobile, "walkDamage"))
+      SetCooldown(mobile, "walkDamage", 2);
+	   DamageFLS(mobile, dmg_dice, DMG_FIRE, creator);
+   endif
 	return 1;
 endfunction

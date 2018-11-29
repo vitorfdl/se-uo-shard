@@ -57,6 +57,7 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
    endif
 
 	base_dmg += cint(GetObjProperty(wpn, "dmgbonus")) + cint(GetObjProperty(wpn, "#dmgbonus"));
+	base_dmg += cint(GetObjProperty(attacker, "dmgbonus")) + cint(GetObjProperty(attacker, "#dmgbonus"));
 	base_dmg -= cint(GetObjProperty(attacker, "dmgpenalty")) - cint(GetObjProperty(attacker, "#dmgpenalty")) ;
 
    // Só pra tornar o dano não fixo

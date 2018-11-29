@@ -142,30 +142,31 @@ function SmeltOre(who, item, ore)
   var dif := DetermineMiningDifficulty(ore.objtype);
   var ingot := "";
   case (ore.objtype) //de acordo com ore no pot indica o ingot certo
-    0x6300:  ingot := 0x6309; //iron ore*
-    0x6451:  ingot := 0x6452; //
-    0x6453:  ingot := 0x6454; //
-    0x6455:  ingot := 0x6456; //
-    0x6457:  ingot := 0x6458; //
-    0x645A:  ingot := 0x645B; //
-    0x645C:  ingot := 0x645D; //
-    0x645E:  ingot := 0x645F; //
-    0x6460:  ingot := 0x6461; //
-    0x6990:  ingot := 0x6991; //estanho*
-    0x6992:  ingot := 0x6993; //prata
-	
-	// //novos ores
-	// 0x6992:	ingot := 0x6993; //cristal
-	// 0x6301: ingot := 0x630a; //diamante
-	
-    
-   //  //esses dois não sao mais usados
-   //  0x6303:  ingot := 0x630c; //sinque
-   //  0x6304:  ingot := 0x630d; //figin
-     
-    0x6075:  dif := 16; ingot := 0x1be3; //areia*
-    default: SendSysMessageEx(who,"Você não pode derreter isto.", FONT_NORMAL, 40); return 1;
-  endcase
+      0x6300:  ingot := 0x6309; //iron ore*
+      0x6451:  ingot := 0x6452; //
+      0x6453:  ingot := 0x6454; //
+      0x6455:  ingot := 0x6456; //
+      0x6457:  ingot := 0x6458; //
+      0x645A:  ingot := 0x645B; //
+      0x645C:  ingot := 0x645D; //
+      0x645E:  ingot := 0x645F; //
+      0x6460:  ingot := 0x6461; //
+      0x6990:  ingot := 0x6991; //estanho*
+      0x6992:  ingot := 0x6993; //prata
+      
+      // //novos ores
+      // 0x6992:	ingot := 0x6993; //cristal
+      // 0x6301: ingot := 0x630a; //diamante
+      
+      
+      //  //esses dois não sao mais usados
+      //  0x6303:  ingot := 0x630c; //sinque
+      //  0x6304:  ingot := 0x630d; //figin
+      
+      0x6075:  dif := 16; ingot := 0x1be3; //areia*
+      default: SendSysMessageEx(who,"Você não pode derreter isto.", FONT_NORMAL, 40); return 1;
+   endcase
+   
    if (GetObjProperty(item, "numMetal"))
       var num := CINT(GetObjProperty(item, "amt1"));
       var nummetal := Cint(GetObjProperty(item, "numMetal"));

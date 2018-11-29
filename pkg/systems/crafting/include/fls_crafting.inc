@@ -232,10 +232,7 @@ function MaterialSelection(who, type, chk, recipe, craft_skill)
 		material := cloth;
 	endif
 
-	var retarray := array;
-	retarray.append(material);
-	retarray.append(materialobjtype);
-	retarray.append(levelselect);
+	var retarray := array{material, materialobjtype, levelselect};
 	return retarray;
 endfunction
 
@@ -470,9 +467,10 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, "canfix", 1);
             endif
 
-            if (craft_skill == "Alquimia")
+            if (craft_skill == "Alquimia" || level_select > 1)
                SetObjProperty(theitem, "level", level_select);
             endif
+            
             SetName(theitem, _ifOr(theitem.name, theitem.desc));
             SendQuestEvent(who, "Produzir Item", struct{ quality := cint(theitem.quality), item_objtype := theitem.objtype, level := _ifOr(level_select, 1) });
             theitems.append(theitem);
@@ -556,11 +554,11 @@ function AddMaterialMod(recipe, theitem, principalMaterial, materialColor)
 	
 	SetObjProperty(theitem, "material", principalMaterial);
 
-	if (theitem.isA(POLCLASS_WEAPON) || theitem.isA(POLCLASS_ARMOR))
-		var hpmod := GetConfigInt(elem, "hpmod");
-		theitem.maxhp_mod += hpmod;
-      theitem.hp := theitem.maxhp + theitem.maxhp_mod;
-	endif
+	// if (theitem.isA(POLCLASS_WEAPON) || theitem.isA(POLCLASS_ARMOR))
+	// 	var hpmod := GetConfigInt(elem, "hpmod");
+	// 	theitem.maxhp_mod += hpmod;
+   //    theitem.hp := theitem.maxhp + theitem.maxhp_mod;
+	// endif
 endfunction
 
  function AddItemDescription(who, item)
