@@ -43,9 +43,6 @@ program equipweapon(who, item, startup)
 	var hostiles := ListHostiles( who );
 	if (hostiles.size() > 0 || who.warmode)
       var c_amt := 1;
-      if (!who.weapon.IsMagicWeapon())
-         c_amt += 3;
-      endif
 
       if (!AP_ConsumeVital(who, STAMINA, c_amt))
          PrintTextPrivate(who, "Vigor Insuficiente!", SSM_FAIL);
