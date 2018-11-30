@@ -537,6 +537,7 @@ function SetBoss(npc, boss)
 		endforeach
 	endif	
 
+   RestartScript(npc);
 	return npc;
   
 endfunction

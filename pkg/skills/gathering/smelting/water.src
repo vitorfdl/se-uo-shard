@@ -55,7 +55,6 @@ function EsfriarLiga(user, item)
       var amt := CINT(GetObjProperty(item, "amt1"));
       var ingot := DeterminaLiga(metals, user);
 
-
       if (ingot == "noIngot")
          deleteProp(item);
          item.color := 951;
@@ -65,6 +64,7 @@ function EsfriarLiga(user, item)
 
       SendSysMessageEx(user, "Você esfriou a liga metalica derretida e fez as barras.", SSM_INFO);
       item.color := 951;
+      CreateItemInBackpack(user, ingot, amt);
       deleteProp(item);
       return;
    endif
@@ -115,22 +115,23 @@ function DeterminaLiga(metals, who)
       sleepms(2);
    endforeach
 
-
-	if ( (metais.size() == 2) && ("ferro"  in metais ) && ("estanho" in metais)  ) //aço
-		return 0x6995;
-	// elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("helce" in metais)  )
-	// 	return 0x6998;
-	// elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("sinque" in metais) )
-	// 	return 0x6999;
-	// elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("figin" in metais) )
-	// 	return 0x6997;
-	// elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("argonil" in metais) )
-	// 	return 0x699A;
-	// elseif ( (metais.size() == 5) && ("mithril" in metais) && ("helce" in metais) && ("sinque" in metais) && ("figin" in metais) && ("argonil" in metais) ) 
-	// 	return 0x699B;    
-   else
-      return "noIngot";
+   if ((metais.size() >= 2))
+      if ( "ferro"  in metais  && "estanho" in metais ) //aço
+         return 0x6995;
+      // elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("helce" in metais)  )
+      // 	return 0x6998;
+      // elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("sinque" in metais) )
+      // 	return 0x6999;
+      // elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("figin" in metais) )
+      // 	return 0x6997;
+      // elseif ( (metais.size() == 2) && ("galvorn" in metais) && ("argonil" in metais) )
+      // 	return 0x699A;
+      // elseif ( (metais.size() == 5) && ("mithril" in metais) && ("helce" in metais) && ("sinque" in metais) && ("figin" in metais) && ("argonil" in metais) ) 
+      // 	return 0x699B;    
+      endif
    endif
+   
+   return "noIngot";
 endfunction 
 
 
