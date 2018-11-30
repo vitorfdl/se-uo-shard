@@ -161,7 +161,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	SetObjProperty(targ, "curando", ReadGameClock()+10);
 
 	var heal_amt := cint(cdbl(max_healing) / 10);
-	for ( i := 1 to 10
+	for i := 1 to 10
 		Sleep(1);
 		if (x != targ.x || y != targ.y)
 			SendSysMessageEx(targ, "Você interrompeu a cura.");
