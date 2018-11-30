@@ -24,7 +24,7 @@ endfunction
 
 function FindAvaliableID()
    var quest_list := DFGetElemNames(LoadQuestData());
-   var n = cint(quest_list[quest_list.size()]) +1;
+   var n := cint(quest_list[quest_list.size()]) +1;
    while (cstr(n) in quest_list)
       n += 1;
       sleepms(20);
