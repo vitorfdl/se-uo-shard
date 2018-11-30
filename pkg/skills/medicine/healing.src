@@ -129,9 +129,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
    endif
 
 	var x := targ.x, y := targ.y;
-	var heal_amt := cint(cdbl(AP_GetVitalMaximumValue(targ, "hits")) * 0.05);
 	if (mobile == targ)
-		// heal_amt := heal_amt / 2;
 		PrintText(mobile, "*usando ataduras em si mesmo*");
 	elseif ( Distance(mobile, targ) > 2 )
 		SendSysMessageEx(mobile, "Seu paciente está muito distante.");
@@ -160,14 +158,10 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	SendSysMessageEx(targ, "Aguarde enquanto a cura faz efeito.");
 	mobile.SetAchievement("bandages", 1);
 	
-	var i;
-	var q := 10;
-	var resto := heal_amt/q - CInt(heal_amt/q);
-	var r := 0;
 	SetObjProperty(targ, "curando", ReadGameClock()+q);
 
-  //PrintText(targ, "Loops: "+q+" | Cura: "+heal_amt/q+" | Total: "+heal_amt);
-	for ( i := 0 ; i < q ; i := i + 1 )
+	var heal_amt := cint(cdbl(max_healing) / 10);
+	for ( i := 1 to 10
 		Sleep(1);
 		if (x != targ.x || y != targ.y)
 			SendSysMessageEx(targ, "Você interrompeu a cura.");
@@ -178,32 +172,28 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 		elseif (cint(AP_GetVital(targ, "hits")) >= max_healing)
 			SendSysMessageEx(targ, "As ataduras não irão recuperar mais vida que isso de você.");
 			return 1;
+      elseif (ListHostiles(targ, 4).size())
+			SendSysMessageEx(targ, "A cura foi interrompida.");
+			return 1;
 		endif
 
-		HealFLS(targ, CInt(heal_amt/q), 0);
-		r := r + resto;
-		if (r > 1)
-			HealFLS(targ, 1, 0);
-			r := r - 1;
-		endif
-
-		RecalcVitals(targ);
+		HealFLS(targ, heal_amt, 0);
 	endfor
 
 	SendSysMessageEx(targ, "Acabou o efeito das ataduras.");
 	//PrintText(targ, "*acabou bandagem*");
 
 	//bandagens com garlic
-	if ( (poison == 1) )
-		if  ( 15 > 0)  //SkillCheck(mobile, PRIMEIROS_SOCORROS, 70))
-			// Should be enough to cure all poison.
-			TS_CurePoison(targ, 10000, "P", 10);
-		endif
-	elseif(   (poison == 2))
-		if (10 > 0)  //(SkillCheck(mobile, PRIMEIROS_SOCORROS,70)
-			TS_LowerDuration(targ, "bleed", -1);
-		endif
-	endif
+	// if ( (poison == 1) )
+	// 	if  ( 15 > 0)  //SkillCheck(mobile, PRIMEIROS_SOCORROS, 70))
+	// 		// Should be enough to cure all poison.
+	// 		TS_CurePoison(targ, 10000, "P", 10);
+	// 	endif
+	// elseif(   (poison == 2))
+	// 	if (10 > 0)  //(SkillCheck(mobile, PRIMEIROS_SOCORROS,70)
+	// 		TS_LowerDuration(targ, "bleed", -1);
+	// 	endif
+	// endif
 
 	return 1;
 endfunction
