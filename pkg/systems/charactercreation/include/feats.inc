@@ -21,7 +21,7 @@ function getFeatById(feat_id, get_class := 0)
    return struct{
       FeatID := GetConfigInt(elem, "FeatID"),
       Name := GetConfigString(elem, "Name"),
-      Class := GetConfigString(elem, "Class"),
+      Class := _ifOr(GetConfigString(elem, "Class"), GetConfigString(elem, "God")),
       Description := GetConfigString(elem, "Description"),
       Mana := GetConfigInt(elem, "Mana"),
       Vigor := GetConfigInt(elem, "Vigor"),
@@ -244,7 +244,7 @@ function HaveGodFeat(who, feat)
       return 0;
    endif
 
-   var feat := GetFeatByid(feat);
+   feat := GetFeatByid(feat);
 	if (feat.God == chardata.god && (chardata.level < feat.Level && !who.cmdlevel))
 		return 1;
 	endif
