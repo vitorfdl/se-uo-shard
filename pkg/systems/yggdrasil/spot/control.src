@@ -41,7 +41,7 @@ function FillSpawnQueue(spawnpoints)
     foreach serial in spawnpoints
         var spawnpoint := SystemFindObjectBySerial(serial);
         FillQueue(spawnpoint);
-        sleepms(2);
+        sleepms(10);
     endforeach
 endfunction
 

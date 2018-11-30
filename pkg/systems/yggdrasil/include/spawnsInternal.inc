@@ -194,7 +194,7 @@ function FillQueue(spawnpoint)
       
       spawn_queue += to_spawn;
       SetObjProperty(spawnpoint, "spawnqueue", spawn_queue);
-      spawnpoint.SetProps(struct{ "spawnqueue" := spawn_queue });
+      // spawnpoint.SetProps(struct{ "spawnqueue" := spawn_queue });
       types[mob.type]   := cint(types[mob.type]) + 1;
       levels[mob.power] := cint(levels[mob.power]) + 1;
       sleepms(5);
