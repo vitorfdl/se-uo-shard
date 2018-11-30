@@ -300,7 +300,7 @@ program gump_gump(who)
       else
          case (res[0])
             GF_ADD_BTN:
-               var id := cint(quest_list[quest_list.size()]) +1 ;
+               var id := FindAvaliableID();
                if (!YesNo(who, "Escolha uma opção:", "Copiar Quest", "Nova Quest"))
                   var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
                   SetQuestData(id, struct{ title := quest_name});

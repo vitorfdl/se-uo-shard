@@ -22,6 +22,17 @@ function LoadQuestData()
     return df;
 endfunction
 
+function FindAvaliableID()
+   var quest_list := DFGetElemNames(LoadQuestData());
+   var n = cint(quest_list[quest_list.size()]) +1;
+   while (cstr(n) in quest_list)
+      n += 1;
+      sleepms(20);
+   endwhile
+
+   return n;
+endfunction
+
 function ListQuests(classe := 0)
    var quest_list := DFGetElemNames(LoadQuestData());
    var return_list := array{};
