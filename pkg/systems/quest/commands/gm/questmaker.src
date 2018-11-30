@@ -421,7 +421,7 @@ function QuestConditions(who, new_condition := struct{})
             struct{ title := "Quantidade de monstros que deve matar", marked := _IfOr(new_condition.qty, "10") },
             struct{ title := "Validar monstros mortos pela party?", radio := array{"Não", "Sim"}, marked := cint(new_condition.party)+1 },
             struct{ title := "Apenas monstros BOSS?", radio := array{"Não", "Sim"}, marked := cint(new_condition.onlyboss)+1 },
-            struct{ title := "Cor do monstro, para mobs diferentes.", marked := _IfOr(new_condition.color, "0") },
+            struct{ title := "Cor do monstro, para mobs diferentes. (666 para qualquer cor)", marked := _IfOr(new_condition.color, "0") },
             struct{ title := "Customizar nome do monstro? (deixe em branco se não quiser)", marked := _IfOr(new_condition.customname, "") }
          };
          var output := QuestionsGump(who, quest_gump);

@@ -227,7 +227,8 @@ function DoSpawnQueue(spawnpoint, pass := 0)
 		elseif(spawnpoint.z > spot.z)
 			x := spawnpoint.x + RandomIntMinMax(config.range * -1, config.range+1);
 			y := spawnpoint.y + RandomIntMinMax(config.range * -1, config.range+1);
-			z := GetStandingHeight(x, y, spawnpoint.z-5, spawnpoint.realm);
+         var height := GetStandingHeight(x, y, spawnpoint.z-5, spawnpoint.realm);
+			z := height.z;
 		elseif(spawnpoint.z <= spot.z)
 			x := spawnpoint.x + RandomIntMinMax(config.range * -1, config.range+1);
 			y := spawnpoint.y + RandomIntMinMax(config.range * -1, config.range+1);

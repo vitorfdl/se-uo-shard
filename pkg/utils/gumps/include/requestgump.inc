@@ -42,7 +42,7 @@ function RequestGump(mobile, question, option := "", pre_val := "", cancel_btn:=
 		pre_val := "";
 	endif
 	
-	var r_gump := GFCreateGump(140, 100);
+	var r_gump := GFCreateGump(400, 300);
 	GFClosable(r_gump, 0);
 	GFResizePic(r_gump, 0, 0, GFCfgConst("Defaults", "BackGround"), 400, 205);
 	GFResizePic(r_gump, 15, 15, GFCfgConst("Defaults", "ForeGround"), 370, 175);

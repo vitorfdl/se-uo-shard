@@ -162,6 +162,7 @@ function ProgressQuest(who, search, plus_progress := 1)
       if (item.type["Craftar"]) item.type["Craftar"] := "Produzir"; endif
 
       if (item.party) search.-party; endif
+      if (item.color == 666) search.-color; endif
       if (!item.spawnpoint) search.-spawnpoint; endif
       if (!item.onlyboss && search.onlyboss) search.-onlyboss; endif
 

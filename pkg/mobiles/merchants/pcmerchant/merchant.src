@@ -215,7 +215,6 @@ endfunction
 
 function SetAboveLayer(npc, player, gump)
    var items_sold := GetItemsSoldList(npc);	
-	var i := 1;
 	var x := 48;
 
 
@@ -223,13 +222,15 @@ function SetAboveLayer(npc, player, gump)
       GFHtmlShadowed(gump, 500, 34, 150, 20, "#FFFFFF", "Regras de Negócio", 4);
       GFAddButton(gump, 500-20, 34+4, 2103, 2103, GF_CLOSE_BTN, 3);
    endif
-
+   
+   GFPage(gump, 1);
+   var i := 1;
 	foreach serial in items_sold
 		var cost_info := GetItemSoldInfo(npc, serial);
 		var item      := cost_info[2];
 		cost_info     := cost_info[1];
 
-		var pos := Floor(_serial_iter / 5.1);
+		var pos := Floor(i / 5.1);
 		if (_serial_iter % 5 == 1)
 			x := 48;
 		endif
@@ -243,6 +244,12 @@ function SetAboveLayer(npc, player, gump)
       if ((cost_info.seller == player.serial || above_merchant))
          GFAddButton(gump, x+96, y+116, 0x9C4F, 0x9C4F, GF_CLOSE_BTN, 90000+cint(serial));
       endif
+
+      i+=1;
+      if (i % 16 == 0)
+         i := 1;
+         GFPage(gump, gump.cur_page+1);
+      endif 
 		x += 140;
       sleepms(2);
    endforeach
@@ -258,7 +265,7 @@ function StoreGumpView(npc, player)
 
 	var items_sold := GetItemsSoldList(npc);	
 	var gump := GFCreateGump();
-	
+
 	GFPage(gump, 0);
 	GFGumpPic(gump, 11, 29, 40009, 0); //borders
 	GFGumpPicTiled(gump, 42, 59, 700, 513, 30540); //background
@@ -266,6 +273,8 @@ function StoreGumpView(npc, player)
 	var i := 1;
 	var x := 48;
 
+	GFPage(gump, 1);
+   GFTextLine(gump, 300+50, 576, 1153, "Página {}".format(gump.cur_page));
 	foreach serial in items_sold
 		var cost_info := GetItemSoldInfo(npc, serial);
 		var item      := cost_info[2];
@@ -332,14 +341,22 @@ function StoreGumpView(npc, player)
 
 		x += 140;
 		i +=1;
+      if (i % 16 == 0)
+         i := 1;
+
+         GFAddButton(gump, 410, 579, 2224, 2224, GF_PAGE_BTN, gump.cur_page+1);
+         GFPage(gump, gump.cur_page+1);
+         GFTextLine(gump, 300+50, 576, 1153, "Página {}".format(gump.cur_page));
+         GFAddButton(gump, 320, 579, 2223, 2223, GF_PAGE_BTN, gump.cur_page-1);
+      endif
 		// GFTextLine(gump, 195, y_pos, color, item.desc + " -> " + cost_info.cost_amt + " " + cost_name );
 		sleepms(2);
    endforeach
-
 	if (items_sold.size() < 1)
 		GFTextLine(gump, 305, 300, 1051, "Nenhum item a venda!"); //desc
 	endif
 
+   GFPage(gump, 0);
    SetMerchantGump(npc, gump);
 
    return gump;
@@ -506,7 +523,7 @@ endfunction
 
 function AddItemToSell(npc, player, item)
    var items_sold := GetItemsSoldList(npc);
-   if (items_sold.size() >= 15)
+   if (items_sold.size() >= 45)
       PrintText(npc, "Desculpe, não posso vender mais coisas no momento. Venha outra hora.");
       return 0;
    endif
