@@ -236,6 +236,22 @@ function HaveFeat(who, feat)
 	return 0;
 endfunction
 
+function HaveGodFeat(who, feat)
+	var chardata := GetObjProperty(who, "chardata");
+   if (!chardata) return 0; endif
+
+   if (typeOf(feat) != "Integer")
+      return 0;
+   endif
+
+	if (feat in HaveGodFeat(chardata.god, 1))
+		return 1;
+	endif
+
+	return 0;
+endfunction
+
+
 function HaveFeatPrimary(who, feat)
 	var chardata := GetObjProperty(who, "chardata");
    if (!chardata) return 0; endif
@@ -390,9 +406,11 @@ function TriggerHabilitie(who, hab)
 
    if (hab.CastTime)
       var cycles := hab.CastTime;
-      if (83 in GetGodFeats(who, 1))
-         cycles -= 1;
+      if (HaveGodFeat(who, 83))
+         cycles := 0;
+         SendSystemReport(who, "Conuração Rápida", SSM_INFO);
       endif
+      
       var moveCheck := Start_Script(":magery:moveCheck", array{who, Getpid()});
 
       while (cycles)

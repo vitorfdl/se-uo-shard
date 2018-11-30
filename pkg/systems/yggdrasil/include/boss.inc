@@ -235,9 +235,9 @@ function CreateBossStructGump(who, byref boss)
 	boss.energy_res  := Cint(GFExtractData(input, energy_res));
 	boss.hits        := Cint(GFExtractData(input, hits));
 	boss.power       := Cint(GFExtractData(input, power));
-	boss.cd_block       := Cint(GFExtractData(input, cd_block));
-	boss.cd_dodge       := Cint(GFExtractData(input, cd_dodge));
-	boss.critical       := Cint(GFExtractData(input, critical));
+	boss.cd_block    := Cint(GFExtractData(input, cd_block));
+	boss.cd_dodge    := Cint(GFExtractData(input, cd_dodge));
+	boss.critical    := Cint(GFExtractData(input, critical));
    boss.roleplay_desc := array{};
    
    foreach text_id in desc_gump
@@ -455,7 +455,7 @@ function SetBoss(npc, boss)
    if (boss.critical) AP_SetTrueSkill(npc, "Critical", boss.critical); no_tame := 1; endif
    if (boss.roleplay_desc) SetObjProperty(npc, "roleplay_desc", boss.roleplay_desc); endif
 
-	if (boss.customAttacks && boss.customAttacks[0])
+	if (boss.customAttacks && boss.customAttacks[1])
 		var customAttacks := array{};
 		foreach attack in (boss.customAttacks)
 			attack := FormatAttack(boss.npctemplate, attack, cint(cfg.AttackDamage) + cint(boss.power));
@@ -510,7 +510,6 @@ function SetBoss(npc, boss)
 
   if (boss.customai)
     npc.script := boss.customai;
-    restartscript(npc);
   endif
 
 	if (boss.special)

@@ -102,9 +102,9 @@ function resolveEvent(ev, byref wanders)
             me.concealed := 0;
             me.paralyzed := 0;
          endif
-
+ 
          // if (!me.listAggro().size())
-         me.setAggro(ev.source.serial, ev.source.getToughness()+12);
+         me.setAggro(ev.source.serial, ev.source.getToughness()+60);
          // endif
          // var mobs := ListMobilesNearLocation(ev.source.x, ev.source.y, ev.source.z, 5);
          // foreach mob in mobs
@@ -134,7 +134,7 @@ function resolveEvent(ev, byref wanders)
          if ("changeskin" in custombehaviors && me.concealed)
             break;
          endif      
-         me.setAggro(ev.opponent, 5);
+         me.setAggro(ev.opponent, 40);
 			wanders := 0; Fight(ev.opponent, 1);
          break;
 		EVID_HERDING:
@@ -142,7 +142,7 @@ function resolveEvent(ev, byref wanders)
          break;
 		EVID_TAUNT:
 			if(ev.source)
-            me.setAggro(ev.source, 15);
+            me.setAggro(ev.source, 80);
 				wanders := 0; 
             Fight(ev.source, 1);
 			endif

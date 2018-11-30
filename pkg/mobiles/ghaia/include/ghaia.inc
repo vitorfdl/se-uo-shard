@@ -96,7 +96,6 @@ function CanFight(me, mobile)
 endfunction
 
 function AlertAllies(me, opponent)
-   var player_allies  := array;
    var my_spot        := GetObjProperty(me, "spawnpoint");
    var allies_near := GetAlliesNear(me, 10);
    var myallies := array{};
@@ -107,15 +106,17 @@ function AlertAllies(me, opponent)
       sleepms(2);
    endforeach
 
-
-   foreach mob in myallies
-      var ev := struct;
-      ev.type := EVID_ALERT_ALLIES;
-      ev.source := me;
-      ev.opponent := player_allies.randomentry();
-      SendEvent(mob, ev);
-      sleepms(2);
-   endforeach
+   if (myallies.size())
+      var enmies := GetEnemiesNear(me, 10);
+      foreach mob in myallies
+         var ev := struct;
+         ev.type := EVID_ALERT_ALLIES;
+         ev.source := me;
+         ev.opponent := enmies.randomentry();
+         SendEvent(mob, ev);
+         sleepms(2);
+      endforeach
+   endif
 endfunction
 
    //  var spawnpointserial := GetObjProperty(me, "spawnpoint");

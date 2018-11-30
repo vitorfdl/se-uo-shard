@@ -20,7 +20,6 @@ program NPCMonitor()
    set_critical(1);
    SetWarMode( 0 );
    var is_golem := me.my_template()["golem"];
-   var is_eagle := me.my_template()["aguia"];
    me.enable( "invul" );
    var damage_transfer;
 
@@ -44,7 +43,6 @@ program NPCMonitor()
             endif
          endif
          wait_time := 0;
-      elseif(is_eagle)
       elseif (me.master && !GetObjProperty(me, "no_follow"))
          Follow(me.master);
       endif
@@ -56,6 +54,12 @@ program NPCMonitor()
             EraseObjProperty(me, "LastDamage");
          endif
          ApplyRawDamage(me, AP_GetVitalMaximumValue(me, "Hits"));
+      endif
+
+      if (me.master)
+         if (Distance(mob, me.master) > 8)
+            ApplyRawDamage(me, AP_GetVitalMaximumValue(me, "Hits"));
+         endif
       endif
 
       if (damage_transfer)

@@ -225,7 +225,7 @@ exported function IncreaseLifeTime(who, time, type)
 endfunction
 
 exported function getToughness(who)
-	return AP_GetTrueSkill(who, "Toughness");
+	return AP_GetTrueSkill(who, "Toughness") * 4;
 endfunction
 
 exported function setToughness(who, plus := 1)
