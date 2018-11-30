@@ -173,8 +173,17 @@ function createGump(who, recipes, params)
       GFResizePic(gump, r_x-49, r_y, 30546, 45, 45);
       var fix_p := GetItemFix(fix_cfg, recipe.graphic);
       GFTilePic(gump, r_x-55+fix_p.x, r_y+4+fix_p.y, recipe.graphic, cint(recipe.color));
-      if (recipe.desc)
-         GFTooltipText(gump, recipe.desc);
+      if (recipe.desc || recipe.level)
+         var description := array{};
+         if (recipe.level)
+            var experience := (cint(recipe.exp) * 100) / (recipe.level * 100);
+            description.append("<center>Experiência: {}{}%".format(BLUE, experience));
+         endif
+
+         if (recipe.desc)
+            description.append("{}{}".format(WHITE, recipe.desc));
+         endif
+         GFTooltipText(gump, "<br>".join(description));
       endif
       var recipe_name := recipe.name;
       if (recipe.level)
