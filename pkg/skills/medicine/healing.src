@@ -158,7 +158,7 @@ function HealPatient(mobile, targ, heal_skill, bonus, poison)
 	SendSysMessageEx(targ, "Aguarde enquanto a cura faz efeito.");
 	mobile.SetAchievement("bandages", 1);
 	
-	SetObjProperty(targ, "curando", ReadGameClock()+q);
+	SetObjProperty(targ, "curando", ReadGameClock()+10);
 
 	var heal_amt := cint(cdbl(max_healing) / 10);
 	for ( i := 1 to 10
