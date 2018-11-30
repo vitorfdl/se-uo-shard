@@ -246,7 +246,6 @@ function DoSpawnQueue(spawnpoint, pass := 0)
          SetObjProperty(spawned, "range", config.range);
          
          if (monster.bossParams && monster.bossParams.Keys().size() >= 1)
-            print("Boss Set");
             SetBoss(spawned, monster.bossParams);
          endif
 
