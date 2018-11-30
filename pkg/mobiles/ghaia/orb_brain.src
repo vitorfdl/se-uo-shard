@@ -57,7 +57,7 @@ program NPCMonitor()
       endif
 
       if (me.master)
-         if (Distance(mob, me.master) > 8)
+         if (Distance(me, me.master) > 8)
             ApplyRawDamage(me, AP_GetVitalMaximumValue(me, "Hits"));
          endif
       endif
