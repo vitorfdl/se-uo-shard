@@ -244,7 +244,8 @@ function HaveGodFeat(who, feat)
       return 0;
    endif
 
-	if (feat in HaveGodFeat(chardata.god, 1))
+   var feat := GetFeatByid(feat);
+	if (feat.God == chardata.god && (chardata.level < feat.Level && !who.cmdlevel))
 		return 1;
 	endif
 
@@ -406,7 +407,7 @@ function TriggerHabilitie(who, hab)
 
    if (hab.CastTime)
       var cycles := hab.CastTime;
-      if (HaveGodFeat(who, 83))
+      if (HaveGodFeat(who, 83) && Randomint(100) <= 20)
          cycles := 0;
          SendSystemReport(who, "Conuração Rápida", SSM_INFO);
       endif
