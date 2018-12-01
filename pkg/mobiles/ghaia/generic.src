@@ -124,7 +124,7 @@ function Fight(opponent, alerted := 0)
    var waittime := 0;
    var ev;
 
-   if (!alerted) 
+   if (!alerted && !npccfgfile.NoAllies) 
       AlertAllies(me, opponent); 
    endif
 
