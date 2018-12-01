@@ -15,12 +15,12 @@ program Arrastar(who)
 	if (!maolivre(who, 2))
 		return 0;
 	elseif (AP_GetVital(who, "Stamina") < 2)
-		SendSysMessage(who, "Você esta cansado demais para arrastar algo...");
+		SendSysMessageEx(who, "Você esta cansado demais para arrastar algo...", SSM_FAIL);
 		return;
 	endif
 	
 	if (!targ)
-		SendSysMessage( who, "Mover qual corpo?" );
+		SendSysMessageEx( who, "Mover qual corpo?", SSM_REQUEST);
 		targ := Target( who );
 	endif
 
@@ -32,49 +32,35 @@ program Arrastar(who)
 elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"))
 		type := "corpo";
 	else
-		SendSysMessage(who, "Você não pode arrastar isto.");
+		SendSysMessageEx(who, "Você não pode arrastar isto.", SSM_FAIL);
 		return;
 	endif
-
 
 	if( CoordinateDistance(targ.x, targ.y, who.x, who.y) > 2 )
-		SendSysMessage( who, "O "+type+" esta muito longe." );
-		return;
+		return SendSysMessageEx( who, "O "+type+" esta muito longe.", SSM_FAIL );
 	endif
 
+   if (!ReserveItem( targ ))
+		return SendSysMessageEx( who, "Alguém já está arrastando este {}".format(type), SSM_FAIL );
+   endif
+   SendSysMessageEx(who, "Você está arrastando {}. Entre em modo Combate para parar de carregar.".format(targ.name), SSM_INFO);
+   PrintText(who, "*arrastando {}*".format(type));
+   while (!who.warmode && targ)
+      if (Distance(who, targ) > 1)
+         if (!(who.hidden || who.concealed) && RandomInt(10) <= 1)
+            PrintText(who, "*arrastando {}*".format(type));
+         endif
 
-	targ.movable := 1;
-
-	if (!(who.hidden || who.concealed))
-		if (type == "corpo")
-			PrintText(who, "*arrastando "+targ.desc+"*");
-		else
-			PrintText(who, "*arrastando "+targ.name+"*");
-		endif
-	endif	
-
-
-	if (!maolivre(who, 2))
-		return 0;
-	elseif (AP_GetVital(who, "Stamina") < 2)
-		SendSysMessage(who, "Você esta cansado demais para arrastar algo...");
-		return;
-	endif
-
-
-	if( !MoveObjectToLocation(targ, who.x, who.y, who.z ));
-		SendSysMessage( who, "Não eh possivel arrastar o "+type); 
-		return;
-	else	
-		var mob := SystemFindObjectBySerial(targ.ownerserial);
-		if (mob)
-			if (mob.concealed)
-				MoveObjectToLocation(mob, who.x, who.y, who.z);
-			endif
-		endif
-	endif
-	targ.movable := 0;
-	
-	AP_consumeVital(who, "Stamina", 2);
-return;
+         if (!AP_ConsumeVital(who, "Stamina", 2))
+            SendSysMessageEx(who, "Você esta cansado demais para arrastar algo...", SSM_FAIL);
+            return;
+         elseif( !MoveObjectToLocation(targ, who.x, who.y, who.z, who.realm, MOVEITEM_IGNOREMOVABLE));
+            SendSysMessageEx( who, "Não eh possivel arrastar o "+type, SSM_FAIL); 
+            return;
+         endif
+      endif
+      sleepms(100);
+   endwhile
+   if (targ) ReleaseItem( targ ); endif
+   SendSysMessageEx(who, "Você parou de carregar o corpo.", SSM_INFO);
 endprogram

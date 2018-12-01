@@ -830,7 +830,7 @@ function ConstructSpawnPointConfig(byref gump)
     var data          := spawnpoint.GetProps();
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 155);
+    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 250, 180);
     GFTextMid(gump, basex, 28, 260, 555, "SpawnPoint Configuration");
 
     var sx := basex+30;
@@ -847,7 +847,7 @@ function ConstructSpawnPointConfig(byref gump)
     spawnpoint_mobnumber := GFTextEntry(gump, sx+145+15, sy+18, 30, 18, 2103, data.mob_number);
 
     GFTextLine(gump, sx, sy+18+18, 1153, "Grupos:");
-    GFTextLine(gump, sx+40, sy+18+18, 2103, ", ".join(data.groups));
+    GFTextLine(gump, sx+45, sy+18+18, 2103, ", ".join(data.groups));
     GFAddButton(gump, sx-15, sy+21+18, 2103, 2104, GF_CLOSE_BTN, GF_SPAWN_MGROUP_BTN);
 
     GFTextLine(gump, sx, sy+18+18+18, 1153, "Range Spawn:");
