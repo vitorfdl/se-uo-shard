@@ -12,6 +12,7 @@ include ":gumps:include/requestgump";
 include ":gumps:htmlgump";
 include "include/client";
 include "include/tileEffects";
+include ":tn:tngumps";
 
 const GF_STDCOLOR := 1890;
 const MOEDAS      := 0xeed;
@@ -30,40 +31,50 @@ program HandleMerchant(params)
 
 	SetObjProperty(params.me, "#occupied", GetPid());
 	case (params.type)
-		"SpeechEvent": HandleSpeech(params.me, params.source, params.text);
+		// "SpeechEvent": HandleSpeech(params.me, params.source, params.text);
       "SeeEvent": HandleSeeEvent(params.me, params.source);
+      "DblClickEvent": HandleDblClick(params.me, params.source);
 		"Default": return;
 	endcase
 
 	EraseObjProperty(params.me, "#occupied");
 endprogram
 
-function HandleSpeech(npc, player, text)
-	text := lower(text);
+function HandleDblClick(npc, player)
    if (guild)
       if (!InGuildRect(guild, npc))
          return;
       endif
    endif
+   
+   PrintText(player, "Pode me ajudar com seus serviços de curandeira?", SSM_FAIL);
+   PrintText(npc, "O que se passa com você?", SSM_INFO);
 
-   if (text["ferimento"] && text["grave"])
-      if (TS_GetCooldown(player, "alreadyhealed"))
-			PrintText(npc, "Parece que você já foi recentemente curado");
-			PrintText(npc, "Desculpe, não posso usar mais milagres em você agora");
-			PrintText(npc, "Retorne mais tarde");
-         return;
-      elseif (AP_GetVitalMaximumValue(player, "DP") <= AP_GetVital(player, "DP"))
-			PrintText(npc, "Você parece em perfeito estado");
+   var opts := array{};
+   var opt_values := array{"Semente"}; 
+
+   opts.append(struct{ text := "Adquirir Semente de Anar. 15.000 m.o.", item := 0x9F13 });
+   if (!TS_GetCooldown(player, "alreadyhealed") && (AP_GetVitalMaximumValue(player, "DP") / 10) > (AP_GetVital(player, "DP") / 10))
+      opts.append(struct{ text := "Curar 1x Ferimento Grave. 25 m.o", icon := 0x8FA });
+      opt_values.append("DP");
+   endif
+
+   var res := ChoiceSelectorGump(player, "Como posso te ajudar?", opts);
+
+   if (opt_values[res] == "Semente")
+
+   elseif (opt_values[res] == "DP")
+      PrintText(player, "Pode me ajudar com meus ferimentos?", SSM_FAIL);
+      PrintText(npc, "Serão 25 moedas de ouro.", SSM_FAIL);
+      if (AP_GetVitalMaximumValue(player, "DP") <= AP_GetVital(player, "DP"))
+         PrintText(npc, "Você parece em perfeito estado", SSM_INFO);
          return;
       endif
 
-      PrintText(npc, "Poderia doar algumas moedas em troca dos meus serviços?");
-      PrintText(npc, "Acredito que 20 moedas bastariam");
-
-      if (cobrarDinheiro(player, 15))
-         PrintText(npc, "*colaca as mãos sobre a cabeça de {}*".format(player.name));
-         PrintText(npc, "Que Anar o abençoe e guie teu caminho");
-         changeGuildMoney(guild, 5);
+      if (cobrarDinheiro(player, 25))
+         PrintText(npc, "*Desenha runas com as mãos no ar, que em seguida surgem ao redor*");
+         PrintText(npc, "Que fogo queime em teu sangue.", SSM_INFO);
+         changeGuildMoney(guild, 25);
          PlayStationaryEffect(player.x, player.y, player.z, FX_SPARK_EFFECT, 0, 5);
          PlaySoundEffect(player, SFX_SPELL_HEAL);
          TS_StartCooldown(player, "alreadyhealed", 400);
@@ -72,20 +83,35 @@ function HandleSpeech(npc, player, text)
       else
          PrintText(npc, "Ora, isso é uma pena...");
       endif
-   elseif ((text["cura"] || text["cuida"]) && text["feri"])
-      PrintText(npc, "Poderia doar algumas moedas em troca dos meus serviços?");
-      PrintText(npc, "Acredito que 5 moedas bastariam");
-      if (cobrarDinheiro(player, 5))
-         PrintText(npc, "*colaca as mãos sobre a cabeça de {}*".format(player.name));
-         PrintText(npc, "Que Anar o abençoe e guie teu caminho");
-         changeGuildMoney(guild, 2);
-         PlayStationaryEffect(player.x, player.y, player.z, FX_SPARK_EFFECT, 0, 5);
-         PlaySoundEffect(player, SFX_SPELL_HEAL);
-         HealFLS(player, AP_GetVitalMaximumValue(player, HITS));
-      else
-         PrintText(npc, "Ora, isso é uma pena...");
-      endif
    endif
+
+   // if (text["ferimento"] && text["grave"])
+   //    if (TS_GetCooldown(player, "alreadyhealed"))
+	// 		PrintText(npc, "Parece que você já foi recentemente curado");
+	// 		PrintText(npc, "Desculpe, não posso usar mais milagres em você agora");
+	// 		PrintText(npc, "Retorne mais tarde");
+   //       return;
+   //    elseif (AP_GetVitalMaximumValue(player, "DP") <= AP_GetVital(player, "DP"))
+	// 		PrintText(npc, "Você parece em perfeito estado");
+   //       return;
+   //    endif
+
+   //    PrintText(npc, "Poderia doar algumas moedas em troca dos meus serviços?");
+   //    PrintText(npc, "Acredito que 20 moedas bastariam");
+   // elseif ((text["cura"] || text["cuida"]) && text["feri"])
+   //    PrintText(npc, "Poderia doar algumas moedas em troca dos meus serviços?");
+   //    PrintText(npc, "Acredito que 5 moedas bastariam");
+   //    if (cobrarDinheiro(player, 5))
+   //       PrintText(npc, "*colaca as mãos sobre a cabeça de {}*".format(player.name));
+   //       PrintText(npc, "Que Anar o abençoe e guie teu caminho");
+   //       changeGuildMoney(guild, 2);
+   //       PlayStationaryEffect(player.x, player.y, player.z, FX_SPARK_EFFECT, 0, 5);
+   //       PlaySoundEffect(player, SFX_SPELL_HEAL);
+   //       HealFLS(player, AP_GetVitalMaximumValue(player, HITS));
+   //    else
+   //       PrintText(npc, "Ora, isso é uma pena...");
+   //    endif
+   // endif
 endfunction
 
 function HandleSeeEvent(npc, player)
