@@ -45,7 +45,7 @@ elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"
    endif
    SendSysMessageEx(who, "Você está arrastando {}. Entre em modo Combate para parar de carregar.".format(targ.name), SSM_INFO);
    PrintText(who, "*arrastando {}*".format(type));
-   while (!who.warmode && targ)
+   while (!who.warmode && targ && !who.dead)
       if (Distance(who, targ) > 1)
          if (!(who.hidden || who.concealed) && RandomInt(10) <= 1)
             PrintText(who, "*arrastando {}*".format(type));
