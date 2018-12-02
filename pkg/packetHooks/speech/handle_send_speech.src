@@ -68,7 +68,7 @@ exported function handleUCOutgoing( character, byref packet )
 		endif
 	endif
 	
-	SendToSpy(source, message_txt);
+	// SendToSpy(source, message_txt);
 
 	return 0;
 endfunction 
