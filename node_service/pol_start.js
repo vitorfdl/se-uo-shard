@@ -7,7 +7,7 @@ const subprocess = spawn('./pol', [], {
 
 async function ServiceExited(code, signal) {
    console.log(`child process terminated due to receipt of signal ${signal} ${code}`);
-
+   process.exit();
    // subprocess = spawn('./pol', [], {
    //    stdio: 'inherit',
    //    shell: true
