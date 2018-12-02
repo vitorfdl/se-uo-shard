@@ -1,0 +1,19 @@
+{
+  "name": "new-shard",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://vitorfdl@bitbucket.org/vitorfdl/se-shard.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/vitorfdl/se-shard#readme",
+  "dependencies": {
+    "pm2": "^3.2.2"
+  }
+}
