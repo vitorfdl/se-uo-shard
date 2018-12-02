@@ -1,0 +1,9 @@
+use uo;
+use os;
+
+program sendSaveGump(param)
+   while (1)
+      PolCore().internal(2);
+      sleep(1);
+   endwhile
+endprogram

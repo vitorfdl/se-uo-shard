@@ -139,7 +139,6 @@ function SmeltOre(who, item, ore)
     return;
   endif
 
-  var dif := DetermineMiningDifficulty(ore.objtype);
   var ingot := "";
   case (ore.objtype) //de acordo com ore no pot indica o ingot certo
       0x6300:  ingot := 0x6309; //iron ore*
@@ -163,7 +162,7 @@ function SmeltOre(who, item, ore)
       //  0x6303:  ingot := 0x630c; //sinque
       //  0x6304:  ingot := 0x630d; //figin
       
-      0x6075:  dif := 16; ingot := 0x1be3; //areia*
+      0x6075: ingot := 0x1be3; //areia*
       default: SendSysMessageEx(who,"Você não pode derreter isto.", FONT_NORMAL, 40); return 1;
    endcase
    

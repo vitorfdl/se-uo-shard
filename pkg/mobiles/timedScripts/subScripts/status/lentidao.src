@@ -18,7 +18,6 @@ function StartScript(mobile, attacker := 0, level := 0)
       PlayerSpeedSlower(mobile, 1);
    else
       mobile.run_speed -= 100;
-      mobile.run_speed;
    endif
 
    PrintText(mobile, "'Lentidão'", SSM_FAIL);

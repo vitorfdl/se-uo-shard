@@ -34,7 +34,6 @@ program WorldSaver()
 		endif
 		
 		if ( ShouldSave(savetimes ) )
-         PolCore().internal(2);
 			DoTheSave();
 			UpdateTimes(savetimes);
 		endif

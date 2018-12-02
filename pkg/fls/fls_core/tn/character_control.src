@@ -44,5 +44,26 @@ program character_control(who)
          removeIndexes(last_rates, rem_index);
          SetObjProperty(who, "ficharp_rates", last_rates);
       endif
+
+      CheckQuests(who);
    endwhile
 endprogram
+
+function checkQuests(who)
+   var weekly_quests := GetObjProperty(who, "weekly_quests");
+   if (!weekly_quests) return; endif
+
+   var array_size := weekly_quests.size();
+   var pol_now := polcore().systime();
+   for n := 0 to (array_size-1)
+      var quest := weekly_quests[array_size-n];
+      if (GetTimeBetween(quest.when, pol_now, type := "week") >= 1)
+         weekly_quests.erase(array_size-n);
+      endif
+      sleepms(5);
+   endfor
+   
+   if (weekly_quests.size() != array_size)
+      SetObjProperty(who, "weekly_quests", weekly_quests);
+   endif
+endfunction

@@ -107,11 +107,14 @@ exported function SetProps( spawnpoint, data := struct{});
    endif
 
    if (data.mob_number)
+      if (data.mob_number > 10) data.mob_number := 10; endif
+
       var group_data := GetSpotGroupData(old_data.spotgroup, 0);
       if (group_data)
         var group_mobs := cint(group_data.mob_number) - old_data.mob_number + cint(data.mob_number);
         SetSpotGroupData(old_data.spotgroup, struct{ "mob_number" := group_mobs});
       endif
+      
       old_data.mob_number := cint(data.mob_number);
    endif
 

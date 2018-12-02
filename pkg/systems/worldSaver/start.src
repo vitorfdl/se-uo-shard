@@ -4,6 +4,7 @@
 
 use os;
 
+start_script("memoryusage");
 var script := start_script("worldSaver");
 if ( script.errortext )
 	SysLog("Error starting world saver ->"+script.errortext);
