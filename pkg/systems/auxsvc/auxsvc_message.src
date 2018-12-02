@@ -8,6 +8,6 @@ program auxsMessage(ev)
 
    var connection := GetGlobalProperty("aux_service");
    if (connection)
-      connection.transmit(json_format);
+      connection.transmit(PackJson(ev));
    endif
 endprogram
