@@ -145,26 +145,27 @@ program core_npcDeath(params)
 		endif
 	endif
 
-   var my_spawnpoint := _ifElse(GetObjProperty(corpse, "spawnpoint"), GetObjProperty(corpse, "spawnpoint"), 0);
+   var search := struct{};
+   search.spawnpoint := _ifElse(GetObjProperty(corpse, "spawnpoint"), GetObjProperty(corpse, "spawnpoint"), 0);
+   search.template := template;
+   search.color := corpse.color;
+   search.onlyboss := is_boss;
+   search.type := "Matar Monstro";
+
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
       if (mob.connected)
          var process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
          var tries := 1;
-         while (!process && mob.connected && tries <= 3)
+         if (!process)
             start_script(":roleplay_window:controller", mob);
-            sleepms(500);
+            sleepms(800);
             process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
-            tries += 1;
-         endwhile
+         endif
 
-         var search := struct{};
-         search.spawnpoint := my_spawnpoint;
-         search.template := template;
-         search.color := corpse.color;
-         search.onlyboss := is_boss;
-         search.type := "Matar Monstro";
+         if (!process) continue; endif
          search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
          process.SendEvent(struct{ type := 0x4785, search := search });
+
          if (mob.getLevel() >= npc_cfg.level)
             ExpGain(mob, _ifElse(search.onlyboss, cint(npc_cfg.level) * 4, cint(npc_cfg.level) * 2));
          else
@@ -176,7 +177,7 @@ program core_npcDeath(params)
          ghaiaCheckNumber(mob);
       endif
 
-      sleepms(2);
+      sleepms(5);
    endforeach
 
    if (npc_cfg.MethodScript["taming"])
