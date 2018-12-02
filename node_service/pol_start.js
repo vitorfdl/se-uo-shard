@@ -7,17 +7,18 @@ let subprocess = spawn('./pol', [], {
  });
 
 async function ServiceExited(code, signal) {
-   console.log('exiting');
    console.log(`>>>>>>>>>>>>>>>>>>>>>>>>> child process terminated due to receipt of signal ${signal} ${code}`);
-   // subprocess = spawn('./pol', [], {
-   //    stdio: 'inherit',
-   //    shell: true
-   //  });
+   if (signal) return process.exit();
+
+   subprocess = spawn('./pol', [], {
+      stdio: 'inherit',
+      shell: true
+   });
 }
 
 subprocess.on('close', ServiceExited);
 subprocess.on('exit', ServiceExited);
-subprocess.on('SIGINT', (code, signal) => {
+subprocess.on('SIGINT', () => {
    process.exit();
 });
 
