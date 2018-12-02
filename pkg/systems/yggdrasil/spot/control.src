@@ -33,7 +33,7 @@ program Install(spot)
             StartDynamicEvent(spot, config, config.evententry);
          endif
       endif
-      sleep(10);
+      sleep(15);
    endwhile
 endprogram
 

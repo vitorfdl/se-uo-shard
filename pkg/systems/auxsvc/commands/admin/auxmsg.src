@@ -1,0 +1,8 @@
+use uo;
+use os;
+
+include "include/say";
+
+program pswd(who, text)
+   start_script(":auxsvc:auxsvc_message", struct{ message := text });
+endprogram

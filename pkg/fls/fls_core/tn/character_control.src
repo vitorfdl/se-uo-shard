@@ -57,7 +57,7 @@ function checkQuests(who)
    var pol_now := polcore().systime();
    for n := 0 to (array_size-1)
       var quest := weekly_quests[array_size-n];
-      if (GetTimeBetween(quest.when, pol_now, type := "week") >= 1)
+      if (GetTimeBetween(quest.when, pol_now, type := "weeks") >= 1)
          weekly_quests.erase(array_size-n);
       endif
       sleepms(5);

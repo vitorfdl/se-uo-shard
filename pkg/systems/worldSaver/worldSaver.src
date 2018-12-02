@@ -112,7 +112,9 @@ function DoShutDown(countdown:=0)
 	for( countdown; countdown > 0; countdown:=countdown-1 )
 		var i := 2;
 		for (i:=2; i > 0; i:=i-1)
-			SVR_ReportText("Mensagem de Sistema: POL reiniciara em "+countdown+" minutos, para updates.", SAVER_REPORT_ALL);
+         var msg := "Mensagem de Sistema: POL reiniciara em "+countdown+" minutos, para updates.";
+			SVR_ReportText(msg, SAVER_REPORT_ALL);
+         start_script(":auxsvc:auxsvc_message", struct{ message := msg });
 			sleep(30);
 		endfor
 	endfor

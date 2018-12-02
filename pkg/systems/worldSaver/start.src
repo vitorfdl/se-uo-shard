@@ -4,7 +4,7 @@
 
 use os;
 
-start_script("memoryusage");
+start_script(":auxsvc:auxsvc_message", struct{ message := "Servidor Online!" });
 var script := start_script("worldSaver");
 if ( script.errortext )
 	SysLog("Error starting world saver ->"+script.errortext);

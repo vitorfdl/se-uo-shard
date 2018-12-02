@@ -7,7 +7,6 @@ program auxtest( connection )
    print("Starting AUX Service");
    Set_Script_Option(SCRIPTOPT_AUXSVC_ASSUME_STRING, 1);
    // connection.transmit("Connected to shard.");
-	SetGlobalProperty("aux_service", connection);
 	SetGlobalProperty("aux_service_pid", GetPid());
 
 	var ev;
@@ -18,8 +17,10 @@ program auxtest( connection )
 
 		ev := wait_for_event( 20 );
 		// print(ev);
-		if (ev)
-         HandleDiscordRequests(connection, ev);
+		if (ev) 
+         print(ev);
+         if (ev.type == 0x5) print(connection.transmit(packJSON(ev)));
+         else HandleDiscordRequests(connection, ev); endif
 		endif
       sleepms(10);
 	endwhile
