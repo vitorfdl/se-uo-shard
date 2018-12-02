@@ -1,15 +1,11 @@
 use uo;
 use os;
 
-include "include/json";
-
 program auxsMessage(ev)
    if (typeof(ev) != "Struct")
       return;
    endif
 
-   var json_format := toJSON(ev);
-   
    var connection := GetGlobalProperty("aux_service");
    if (connection)
       connection.transmit(json_format);

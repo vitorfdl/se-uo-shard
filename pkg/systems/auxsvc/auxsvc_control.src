@@ -19,22 +19,21 @@ program auxtest( connection )
 		ev := wait_for_event( 20 );
 		// print(ev);
 		if (ev)
-         var unpacked_js := UnpackJSON(ev.value);
-         if (unpacked_js.request == "PlayersOnline")
-            var prepare_to_transmit := toJson(struct{ key := "PlayersOnline", value := GetPlayersOnline(), id := unpacked_js.id });
-            connection.transmit(prepare_to_transmit);
-         elseif (unpacked_js.request == "RegisterAccount")
-
-         endif
+         HandleDiscordRequests(connection, ev);
 		endif
       sleepms(10);
 	endwhile
 	
-	EraseGlobalProperty("aux_service");
-	EraseGlobalProperty("aux_service_pid");
 	print( "aux connection closed" );
 endprogram
 
-function GetPlayersOnline()
-   return  EnumerateOnlineCharacters().size();
+function HandleDiscordRequests(connection, ev)
+   var unpacked_js := UnpackJSON(ev.value);
+   if (unpacked_js.request == "PlayersOnline")
+      var prepare_to_transmit := toJson(struct{ key := "PlayersOnline", value := EnumerateOnlineCharacters().size(), id := unpacked_js.id });
+      connection.transmit(prepare_to_transmit);
+      
+   elseif (unpacked_js.request == "RegisterAccount")
+
+   endif
 endfunction
