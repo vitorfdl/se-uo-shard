@@ -24,7 +24,7 @@ subprocess.on('SIGINT', (code, signal) => {
 process.on('SIGINT', function() {
    console.log("Caught interrupt signal");
 
-   if (i_should_exit) subprocess.kill('SIGINT');
+   subprocess.kill('SIGINT');
 });
 
 // subprocess.stdout.on('data', (data) => {
