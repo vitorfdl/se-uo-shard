@@ -1,5 +1,6 @@
 const { spawn } = require('child_process');
 
+console.log('starting process');
 const subprocess = spawn('./pol', []);
 
 async function ServiceExited(code, signal) {
@@ -13,7 +14,7 @@ async function ServiceExited(code, signal) {
 
 subprocess.on('close', ServiceExited);
 subprocess.on('exit', ServiceExited);
-// subprocess.on('SIGINT', ServiceExited);
+subprocess.on('SIGINT', ServiceExited);
 
 // subprocess.stdout.on('data', (data) => {
 //    console.log(`${data}`);
