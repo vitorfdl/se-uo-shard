@@ -1,11 +1,14 @@
 const { spawn } = require('child_process');
 
 console.log('starting process');
-let subprocess = spawn('./pol', []);
+let subprocess = spawn('./pol', [], {
+   stdio: 'inherit',
+   shell: true
+ });
 
 async function ServiceExited(code, signal) {
    console.log('exiting');
-   console.log(`child process terminated due to receipt of signal ${signal} ${code}`);
+   console.log(`>>>>>>>>>>>>>>>>>>>>>>>>> child process terminated due to receipt of signal ${signal} ${code}`);
    // subprocess = spawn('./pol', [], {
    //    stdio: 'inherit',
    //    shell: true
