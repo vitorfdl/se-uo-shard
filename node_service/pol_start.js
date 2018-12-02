@@ -8,8 +8,9 @@ let subprocess = spawn('./pol', [], {
 
 async function ServiceExited(code, signal) {
    console.log(`>>>>>>>>>>>>>>>>>>>>>>>>> child process terminated due to receipt of signal ${signal} ${code}`);
-   if (signal) return process.exit();
+   if (signal == "SIGINT") return process.exit();
 
+   await new Promise((resolve) => { setTimeout(resolve, 5000); });
    subprocess = spawn('./pol', [], {
       stdio: 'inherit',
       shell: true
