@@ -1,8 +1,19 @@
 const { spawn } = require('child_process');
 
 const subprocess = spawn('./pol', []);
-subprocess.on('close', (code, signal) => {
-   console.log(`child process terminated due to receipt of signal ${signal}`);
 
+function ServiceExited(code, signal) {
+   console.log(`child process terminated due to receipt of signal ${signal}`);
    process.exit();
+}
+
+subprocess.on('close', ServiceExited);
+subprocess.on('exit', ServiceExited);
+
+subprocess.stdout.on('data', (data) => {
+   console.log(`${data}`);
+ });
+ 
+ subprocess.stderr.on('data', (data) => {
+   console.error(`${data}`);
  });
