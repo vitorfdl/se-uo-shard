@@ -11,8 +11,9 @@ endprogram
 
 
 exported function pushthrough(who, targ)
-   if (!targ || !targ.size()) return 0; endif
-   elseif (who.cmdlevel) return 1; endif
-   elseif (targ[1].my_template() == "orb") return 1; endif
+   if (!targ || !targ.size()) return 0;
+   elseif (who.cmdlevel) return 1;
+   elseif (targ[1].my_template() == "orb") return 1; 
+   endif
    return 0;
 endfunction

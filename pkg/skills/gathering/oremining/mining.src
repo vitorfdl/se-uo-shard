@@ -47,7 +47,8 @@ program OreMining(who, tool)
 		return;
 	endif
 
-	while(MiningLoop(who, tool, my_x, my_y, targ, my_facing))
+   var have_feat := HaveFeatSecondary(who, 67);
+	while(MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat))
 		CheckToolWear(who, tool, EXTRACAO);
 		if (!CheckLoop(who, tool, my_x, my_y, my_facing))
 			break;
@@ -62,7 +63,7 @@ program OreMining(who, tool)
 	SendSysMessageEx(who, "Você parou de minerar.");
 endprogram
 
-function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
+function MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat)
 	var i;
 	for ( i:=0; i<3; i:=i+1 )
 		if ( !CheckLoop(who, tool, my_x, my_y, my_facing) )
@@ -86,14 +87,14 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
 
    var consume := 2;
    if (!has_light) consume += 1; endif
-   if (HaveFeat(who, 67)) consume -= 1; endif //escavação
+   if (have_feat) consume -= 1; endif //escavação
 
    veil -= consume;
    if (veil < 0)
       return SendSysMessageEx(who, "Parece não ter mais minerios aqui.", SSM_FAIL);
    endif
 
-   var crat_amt := _ifElse(HaveFeat(who, 67), RandomIntMinmax(2, 4), RandomIntMinmax(1, 3))))
+   var crat_amt := _ifElse(have_feat, RandomIntMinmax(2, 4), RandomIntMinmax(1, 3));
 
    SetObjProperty(targ, "veil", veil);
    var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), crat_amt);

@@ -7,5 +7,6 @@ program pswd(who, text)
    var pid := GetGlobalProperty("aux_service_pid");
    if (pid) GetProcess(pid).kill(); endif
 
+   sleep(2);
    start_script(":auxsvc:auxsvc_control");
 endprogram

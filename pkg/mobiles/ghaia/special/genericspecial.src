@@ -172,7 +172,7 @@ program loko(params)
                   cria := 1;
                   break;
                endif
-               sleepms(2);
+               sleepms(10);
             endforeach
          endif
 
@@ -202,7 +202,7 @@ program loko(params)
                MoveObjectToLocation(t, point.x, point.y, who.z, who.opponent.realm, MOVEOBJECT_FORCELOCATION);
                t.facing := GetFacing(t.x, t.y, who.x, who.y);
             endif
-            sleepms(2);
+            sleepms(5);
 			endforeach
 
 			// if (state.target == "Self")
@@ -219,7 +219,7 @@ program loko(params)
 		elseif (state.type == "TimedScript")
 			var targ := selectOpponent(who, state.target, state.conedist);
 			foreach t in targ
-            sleepms(2);
+            sleepms(5);
 				TS_StartTimer(t, state.timername, cint(state.timerduration), state.level);
 			endforeach
       elseif (state.type == "If Block/Dodge")
@@ -231,7 +231,7 @@ program loko(params)
             else
                if (!state.successonly) resist_list.append(t); endif
             endif
-            sleepms(2);
+            sleepms(5);
 			endforeach
          
          if (!resist_list.size()) break; endif
@@ -241,6 +241,7 @@ program loko(params)
 
 			foreach t in targ
             PlayAction(t, cint(state.id));
+            sleepms(5);
 			endforeach
 
 		elseif (state.type == "Text")
@@ -640,22 +641,22 @@ function selectOpponent(who, type, dist := 3)
    return targ;
 endfunction
 
-function GetAllOpponents(who)
-	var a := ListHostiles(who);
-	var mobs := ListMobilesNearLocation(who.x, who.y, LIST_IGNORE_Z, 12, who.realm);
+// function GetAllOpponents(who)
+// 	var a := ListHostiles(who);
+// 	var mobs := ListMobilesNearLocation(who.x, who.y, LIST_IGNORE_Z, 12, who.realm);
 
-	foreach mobile in mobs
-		if (mobile.serial != who.serial)
-			if ( !(mobile in a) )
-				if (mobile.acctname || mobile.script == ":ghaia:follower" )
-					a.append(mobile);
-				endif
-			endif 
-		endif
-	endforeach
+// 	foreach mobile in mobs
+// 		if (mobile.serial != who.serial)
+// 			if ( !(mobile in a) )
+// 				if (mobile.acctname || mobile.script == ":ghaia:follower" )
+// 					a.append(mobile);
+// 				endif
+// 			endif 
+// 		endif
+// 	endforeach
 
-	return a;
-endfunction
+// 	return a;
+// endfunction
 
 function ReturnPointsByTarget(who, type, conedist := 3)
    var targ := array{};
@@ -667,7 +668,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
       targ := GetCoordsInSquare(who.x, who.y, conedist);
       foreach t in targ
          t.z := who.z;
-         sleepms(2);
+         sleepms(5);
       endforeach
    elseif (type== "In Line")
       targ := GetLineCoordsInFront(who.x, who.y, who.facing, conedist);
@@ -750,6 +751,6 @@ function CircleEffect(targ, state, reverse)
             PlayMovingEffectXYZEx( p.x, p.y, targ.z, targ.x, targ.y, targ.z+5, targ.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
          endif
       endif
-      sleepms(2);
+      sleepms(5);
    endforeach
 endfunction

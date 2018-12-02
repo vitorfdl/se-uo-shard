@@ -1,6 +1,10 @@
 use uo;
 use os;
+
+include "include/json";
+
 program auxtest( connection )
+   print("Starting AUX Service");
    Set_Script_Option(SCRIPTOPT_AUXSVC_ASSUME_STRING, 1);
    // connection.transmit("Connected to shard.");
 	SetGlobalProperty("aux_service", connection);
@@ -17,16 +21,17 @@ program auxtest( connection )
 		if (ev)
          var unpacked_js := UnpackJSON(ev.value);
          if (unpacked_js.request == "PlayersOnline")
-            const number = GetPlayersOnline();
-            connection.transmit(struct{ transmit := "PlayersOnline", value := number });
+            var prepare_to_transmit := toJson(struct{ key := "PlayersOnline", value := GetPlayersOnline(), id := unpacked_js.id });
+            connection.transmit(prepare_to_transmit);
          elseif (unpacked_js.request == "RegisterAccount")
 
          endif
-			// print(ev.value);
 		endif
+      sleepms(10);
 	endwhile
 	
 	EraseGlobalProperty("aux_service");
+	EraseGlobalProperty("aux_service_pid");
 	print( "aux connection closed" );
 endprogram
 
