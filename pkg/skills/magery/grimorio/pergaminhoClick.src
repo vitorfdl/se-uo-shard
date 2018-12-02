@@ -1,0 +1,6 @@
+use os;
+use uo;
+
+program startItem(item)
+   DestroyItem(item);
+endprogram
