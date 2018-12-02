@@ -5,12 +5,13 @@ const subprocess = spawn('./pol', [], {
    shell: true
  });
 
-function ServiceExited(code, signal) {
-   console.log(`child process terminated due to receipt of signal ${signal}`);
-   subprocess = spawn('./pol', [], {
-      stdio: 'inherit',
-      shell: true
-    });
+async function ServiceExited(code, signal) {
+   console.log(`child process terminated due to receipt of signal ${signal} ${code}`);
+
+   // subprocess = spawn('./pol', [], {
+   //    stdio: 'inherit',
+   //    shell: true
+   //  });
 }
 
 subprocess.on('close', ServiceExited);
