@@ -430,12 +430,12 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             // who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
             SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
             if (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON))
-               var quality := 1;
+               theitem.quality := 1;
                var chance := RandomInt(100);
                if (chance <= 10)
-                  quality := 3;
+                  theitem.quality := 3;
                elseif(chance <= 25)
-                  quality := 2;
+                  theitem.quality := 2;
                endif
 
                if (theitem.isa(POLCLASS_WEAPON))

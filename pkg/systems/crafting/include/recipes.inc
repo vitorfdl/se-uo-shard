@@ -45,7 +45,7 @@ function checkifHasLevel(objtype)
    return 0;
 endfunction
 
-function AddRecipe(who, objtype, from_smelt := 0)
+function AddRecipe(who, objtype, learn_method := 0)
    objtype := cint(objtype);
    var recipes := GetObjProperty(who, "recipes");
    if (!recipes)
@@ -55,7 +55,9 @@ function AddRecipe(who, objtype, from_smelt := 0)
    var item_has_level := checkifHasLevel(objtype);
 
    if (recipes[objtype])
-      if (recipes[objtype].level >= 10)
+      if (learn_method == 2)
+         return 0;
+      elseif (recipes[objtype].level >= 10)
          return 0;
       endif
       
@@ -64,7 +66,7 @@ function AddRecipe(who, objtype, from_smelt := 0)
       endif
 
       var max_exp := recipes[objtype].level * 100;
-      recipes[objtype].exp += _ifElse(from_smelt, 4, 10);
+      recipes[objtype].exp += _ifElse(learn_method, 4, 10);
       if (recipes[objtype].exp >= max_exp)
          recipes[objtype].level += 1;
          recipes[objtype].exp -= max_exp;
@@ -130,7 +132,7 @@ function LearnRecipe(who, recipe)
       if (type == "group" || type == "kit")
          var recipes := GetConfigStringArray(obj, "Recipe");
          foreach obj_type in recipes
-            AddRecipe(who, obj_type);
+            AddRecipe(who, obj_type, 2);
             sleepms(2);
          endforeach
       else

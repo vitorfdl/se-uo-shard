@@ -85,7 +85,7 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
 	endif
 
    var consume := 2;
-   if (!has_light) consume += 3; endif
+   if (!has_light) consume += 1; endif
    if (HaveFeat(who, 67)) consume -= 1; endif //escavação
 
    veil -= consume;
@@ -93,8 +93,10 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
       return SendSysMessageEx(who, "Parece não ter mais minerios aqui.", SSM_FAIL);
    endif
 
+   var crat_amt := _ifElse(HaveFeat(who, 67), RandomIntMinmax(2, 4), RandomIntMinmax(1, 3))))
+
    SetObjProperty(targ, "veil", veil);
-   var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), RandomIntMinmax(1, 3));
+   var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), crat_amt);
    minerio.movable := 1;
    if (Randomint(100) <= 30)
 	   ExpGain(who, "minor");

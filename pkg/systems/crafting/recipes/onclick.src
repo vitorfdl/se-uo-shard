@@ -98,7 +98,7 @@ function SendGump(who, scroll)
 	endif
 	
 	if (cint(tilepic))
-      if (!is_lang || HaveFeat(who, is_lang))
+      if (!is_lang)
 		   GFTilePic(gump, 127, 91, tilepic);
       endif
    else
@@ -106,7 +106,7 @@ function SendGump(who, scroll)
 	   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>receitas de uma vez".format(lang));
 	endif
 
-   if (!is_lang || HaveFeat(who, is_lang))
+   if (!is_lang)
       var my_recipes := GetObjProperty(who, "recipes");
       if (!my_recipes) my_recipes := dictionary{}; endif
       objtype := cint(objtype);

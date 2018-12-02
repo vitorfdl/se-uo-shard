@@ -38,6 +38,9 @@ program block(who, shield)
       if (!shield_cd) shield_cd := 8; endif
 
       shield_cd := shield_cd + ( shield_cd * (AP_GetSkillMod(who, "Block") / 100));
+      if (HaveGodFeat(who, 76))
+         shield_cd -= cint(cdbl(shield_cd) * 0.1);
+      endif
    endif
 
    if (HaveFeatPrimary(who, 81) && !who.shield)

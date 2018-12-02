@@ -1,10 +1,11 @@
 module.exports = {
   apps : [{
     name: 'pol',
-    script: 'node_service/pol_start.js',
+    script: './pol',
     instances: 1,
     autorestart: true,
-    watch: false
+    watch: false,
+    exec_mode: "cluster",
   }],
 
   deploy : {

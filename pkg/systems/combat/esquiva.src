@@ -20,6 +20,9 @@ program manobra(who)
    if (!dodge_cd)
       dodge_cd := cdbl(5);
       dodge_cd := dodge_cd + ( dodge_cd * ((AP_GetSkillMod(who, "Dodge") * 0.05) / 100));
+      if (HaveGodFeat(who, 76))
+         dodge_cd -= cint(cdbl(dodge_cd) * 0.1);
+      endif
    endif
 
    SendSysMessageEX(who, "Você está esquivando de ataques!", SSM_INFO);
