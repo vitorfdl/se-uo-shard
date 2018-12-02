@@ -17,7 +17,15 @@ async function ServiceExited(code, signal) {
 
 subprocess.on('close', ServiceExited);
 subprocess.on('exit', ServiceExited);
-subprocess.on('SIGINT', ServiceExited);
+subprocess.on('SIGINT', (code, signal) => {
+   process.exit();
+});
+
+process.on('SIGINT', function() {
+   console.log("Caught interrupt signal");
+
+   if (i_should_exit) subprocess.kill('SIGINT');
+});
 
 // subprocess.stdout.on('data', (data) => {
 //    console.log(`${data}`);
