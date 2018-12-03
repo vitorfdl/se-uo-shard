@@ -230,7 +230,7 @@ endfunction
 function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 	var c,cs,d,ds,e,f,fs,g,gs,a,ass,b,c2,cs2,d2,ds2,e2,f2,fs2,g2,gs2,a2,ass2,b2,c3,inst,L,dif,emocaouse;
 
-	if ( emocao && !HaveFeatSecondary(who, 73) && who.cmdlevel < 3) 
+	if ( emocao && !HaveFeatSecondary(who, 73) && who.cmdlevel < 3)
       SendSysMessageEx(who, "Você não entende essa partitura.", SSM_FAIL);
       return 0;
 	endif
@@ -263,7 +263,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
    //    "1.4": max_allowed += 25;
    // endcase
    
-   if (total > 200)
+   if (total > 250)
 		SendSysMessageEx(who, "O máximo de nota que você pode tocar é {}".format(200),SSM_FAIL);
 		return 0;
    endif

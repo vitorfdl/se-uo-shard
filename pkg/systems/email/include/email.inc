@@ -340,7 +340,6 @@ function ReadMail( who, number )
       var setvalue := ficharp_elem.SetProp("Ficha", value);
 
       var mobile := SystemFindObjectBySerial(mail_info.rp_rating[2], SYSFIND_SEARCH_OFFLINE_MOBILES);
-      mobile.IncreaseLifeTime(2, "day");
       start_script(":email:emailMessage/sendSystemMail", array{ mobile, "Você recebeu uma avaliação em sua ficha de interpretação!", "[P]Para visualiaza-la digite .ficharp" } );
       
       mail_elem.EraseProp( Hex( number ));
