@@ -87,6 +87,7 @@ program taming(params)
    var plus := 1;
    while (Distance(targ,who) > 1 && plus <= 100)
       sleepms(200);
+      plus += 1;
    endwhile
 
    targ.frozen := 1;
