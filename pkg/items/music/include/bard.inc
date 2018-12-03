@@ -8,6 +8,7 @@ include ":yggdrasil:boss";
 
 
 function BardNotes(who,item,notas,notas2,tempo,letra,what,emocao)
+   return SendSysMessageEx(who, "Sistema desativado por enquanto");
    sleepms(20);
    if (randomint(5) == 1)
       PrintText(who, "*Compondo uma musica*");

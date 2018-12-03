@@ -429,7 +429,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             SetObjProperty(who, "#craft_last", item_objtype);
             // who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
             SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
-            if (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON))
+            if (level_select && (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON) || theitem.isA(POLCLASS_EQUIPMENT)))
                theitem.quality := 1;
                var chance := RandomInt(100);
                if (chance <= 10)
@@ -446,6 +446,15 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                   var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
                   foreach resist in resists
                      var value := RandomIntMinMax(2 * level_select, 4*level_select);
+                     theitem.set_member("resist_{}_mod".format(resist), value);
+                     sleepms(2);
+                  endforeach
+               endif
+
+               if (theitem.isA(POLCLASS_EQUIPMENT))
+                  var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+                  foreach resist in resists
+                     var value := RandomIntMinMax(level_select, 2*level_select);
                      theitem.set_member("resist_{}_mod".format(resist), value);
                      sleepms(2);
                   endforeach
