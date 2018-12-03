@@ -27,12 +27,12 @@ program Install(spot)
          endif
       endif
 
-      if (config.evententry && config.evententry != "")
-         if (!GetCooldown(spot, "dynamicevent"))
-            printtext(spot, "Dynamic Event initiated");
-            StartDynamicEvent(spot, config, config.evententry);
-         endif
-      endif
+      // if (config.evententry && config.evententry != "")
+      //    if (!GetCooldown(spot, "dynamicevent"))
+      //       printtext(spot, "Dynamic Event initiated");
+      //       StartDynamicEvent(spot, config, config.evententry);
+      //    endif
+      // endif
       sleep(15);
    endwhile
 endprogram
