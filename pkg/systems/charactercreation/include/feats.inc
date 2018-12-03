@@ -329,7 +329,7 @@ function ChooseTarget(mobile, feat)
          targ := 0;
       endif
    elseif (feat.Targ == "Mobile" || feat.Targ == "Item")
-      while (1)
+      while (who.connected)
          SendSysMessageEx(mobile, "Escolha o alvo da habilidade.", SSM_REQUEST);
          var noto := TGTOPT_NEUTRAL;
          if (feat.TargetAlign == "Harmful")
@@ -355,7 +355,7 @@ function ChooseTarget(mobile, feat)
          TurnObjectToward(mobile, targ.x, targ.y);
       endif
    elseif (feat.Targ == "Area")
-      while (1)
+      while (who.connected)
          PrintTextPrivate(mobile, "'Escolha o ponto alvo.'", mobile, SSM_INFO);
          targ := TargetCoordinates(mobile);
          if (targ)

@@ -43,7 +43,7 @@ function sendCraftGump(who, params)
     recipe_cfg := params.recipe_cfg;
 
     var not_closed := 1;
-    while(not_closed)
+    while(not_closed && who.connected)
         var player_recipes := GetRecipeList(who, recipe_cfg, params.search);
         var input          := createGump(who, player_recipes, params);
 
