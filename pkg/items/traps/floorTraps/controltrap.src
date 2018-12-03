@@ -20,7 +20,7 @@ SetObjProperty(item, "walktrap", 1);
 item.movable := 0;
 item.invisible := 1;
 
-while (1)
+while (item)
 
   sleep(3600);
   if (!item.invisible)

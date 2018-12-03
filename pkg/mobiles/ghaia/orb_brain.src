@@ -17,7 +17,10 @@ var me        := self();
 var wait_time := 1;
 
 program NPCMonitor()
-   set_critical(1);
+   if (GetObjProperty(me, "%CooldownList%") || GetObjProperty(me, "%TimerList%"))
+      TS_StartController(me);
+   endif
+   
    SetWarMode( 0 );
    var is_golem := me.my_template()["golem"];
    me.enable( "invul" );

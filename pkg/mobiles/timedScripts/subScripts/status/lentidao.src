@@ -8,16 +8,19 @@ use util;
 
 include ":attributes:attributes";
 include "include/client";
+include "include/utils";
 include ":timedscripts:timedScripts";
 include ":fls_core:packets";
 include "include/say";
 include ":blood:blood";
+include ":ghaia:ghaiaUtil";
 
 function StartScript(mobile, attacker := 0, level := 0)
    if (!mobile.isA(POLCLASS_NPC))
       PlayerSpeedSlower(mobile, 1);
    else
-      mobile.run_speed -= 100;
+      if () 
+      mobile.run_speed := _ifElse(mobile.run_speed >= 100, mobile.run_speed - 100, 0);
    endif
 
    PrintText(mobile, "'Lentidão'", SSM_FAIL);
@@ -29,7 +32,8 @@ function EndScript(mobile)
    if (!mobile.isA(POLCLASS_NPC))
       PlayerSpeedSlower(mobile, 0);
    else
-      mobile.run_speed += 100;
+      var npc_cfg = NPC_GetNPCConfig(mobile);
+      mobile.run_speed := cint(npc_cfg.RunSpeed);
    endif
    return 1;
 endfunction

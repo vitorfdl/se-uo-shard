@@ -119,7 +119,7 @@ program death(params)
 	endif	
 
 	var i;
-	while (tempo > 1)
+	while (tempo > 1 || letargico)
       letargico := GetObjProperty(ghost, "letargico");
 		var deathprop := DeathProperties(ghost, corpse, letargico, tempo, i);
 		if (deathprop == 1)
@@ -207,7 +207,7 @@ function DeathProperties(ghost, corpse, letargico, byref tempo, i)
 	endif
 endfunction
 
-function checkIfDead(corpse, letargico, ghost)
+function checkIfDead(corpse, byref letargico, ghost)
    if (letargico && corpse)
       var resslocs := _ifOr(GetGlobalProperty("ressloc"), array{});
       foreach pos in resslocs
@@ -223,7 +223,7 @@ function checkIfDead(corpse, letargico, ghost)
    endif
 
    // 
-   if ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) || (letargico && GetTimeBetween(letargico, GetTime(), "hours") >= 4) )
+   if ( CInt(GetObjProperty(corpse, "morto")) || CInt(GetObjProperty(ghost, "morto")) || checkLetargico(letargico))
 		SendSysMessageEx(ghost, "Algo aconteceu... Você morreu.", SSM_FAIL);
 		SetObjProperty(corpse, "morto", 1);
 		SetObjProperty(ghost, "morto", 1);
@@ -232,4 +232,9 @@ function checkIfDead(corpse, letargico, ghost)
       start_script(":death:deathgump", array{corpse, ghost});
       return 1;
    endif
+endfunction
+
+function checkLetargico(letargico)
+   if (!letargico) return; endif
+   if (GetTimeBetween(letargico, GetTime(), "hours") >= 4)) return 1; endif
 endfunction

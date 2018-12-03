@@ -266,58 +266,58 @@ function makeCartographyMap(who, map_objtype, amount, tool)
 		return 0;
 	endif
 
-	var itemname := craft_config[map_objtype].name;
-	var material := Cint(craft_config[map_objtype].material);
-	var reqd := Cint(craft_config[map_objtype].skill);
-	var diff := Cint(craft_config[map_objtype].difficulty);
-	var pts  := Cint(craft_config[map_objtype].points);
-	var craft_skill  := Cint(craft_config[map_objtype].craft_skill);
+	// var itemname := craft_config[map_objtype].name;
+	// var material := Cint(craft_config[map_objtype].material);
+	// var reqd := Cint(craft_config[map_objtype].skill);
+	// var diff := Cint(craft_config[map_objtype].difficulty);
+	// var pts  := Cint(craft_config[map_objtype].points);
+	// var craft_skill  := Cint(craft_config[map_objtype].craft_skill);
 
-	var counter := 0, x := who.x, y := who.y;
+	// var counter := 0, x := who.x, y := who.y;
 
-	while(counter < amount)
-		if((who.x != x) || (who.y != y))
-			SendSysMessageEx(who, "Você parou de escrever.", SSM_FAIL);
-			break;
-		endif
-		if(!tool)
-			break;
-		endif
+	// while(counter < amount)
+	// 	if((who.x != x) || (who.y != y))
+	// 		SendSysMessageEx(who, "Você parou de escrever.", SSM_FAIL);
+	// 		break;
+	// 	endif
+	// 	if(!tool)
+	// 		break;
+	// 	endif
 
-		sleep(2);
+	// 	sleep(2);
 
-		if(GetAmount(blank) >= material)
-			//if( CraftCheckSkill(who, craft_skill, diff, pts) )
-				var theitem := CreateCraftedMap(who, craft_skill, blank, map_objtype, material, itemname, reqd);
-				if( TypeOf(theitem) != "ItemRef" )
-					SubtractAmount(blank, material);
-					SendSysMessageEx(who, "Você falhou em escrever o mapa e parte do material foi perdido.", SSM_FAIL);
-					counter := counter + 1;
-					continue;
-				else
-					CheckToolWear(who, tool, craft_skill);
-					var props;
-					case(theitem.objtype)
-						0x6500:	props := array("local", who.x - 155, who.y - 150, who.x + 155, who.y + 150, 180, 180);
-							encodeMap(props, theitem);
-						0x6501:	props := array("regional", who.x - 850, who.y - 800, who.x + 850, who.y + 800, 400, 400);
-							encodeMap(props, theitem);
-						0x6502: props := array("world", 0, 0, 5119, 4095, 500, 400);
-							encodeMap(props, theitem);
-					endcase
-				endif
-			//else
-			//	if( SubtractAmount(blank, material) )
-			//		SendSysMessageEx(who, "Você perdeu parte do material.", SSM_FAIL);
-			//	endif
-			//endif
-		else
-			SendSysMessageEx(who, "Você não possui os recursos necessarios para fazer este item.", SSM_FAIL);
-			counter := 100;
-			break;
-		endif
-		counter := counter + 1;
-	endwhile
+	// 	if(GetAmount(blank) >= material)
+	// 		//if( CraftCheckSkill(who, craft_skill, diff, pts) )
+	// 			var theitem := CreateCraftedMap(who, craft_skill, blank, map_objtype, material, itemname, reqd);
+	// 			if( TypeOf(theitem) != "ItemRef" )
+	// 				SubtractAmount(blank, material);
+	// 				SendSysMessageEx(who, "Você falhou em escrever o mapa e parte do material foi perdido.", SSM_FAIL);
+	// 				counter := counter + 1;
+	// 				continue;
+	// 			else
+	// 				CheckToolWear(who, tool, craft_skill);
+	// 				var props;
+	// 				case(theitem.objtype)
+	// 					0x6500:	props := array("local", who.x - 155, who.y - 150, who.x + 155, who.y + 150, 180, 180);
+	// 						encodeMap(props, theitem);
+	// 					0x6501:	props := array("regional", who.x - 850, who.y - 800, who.x + 850, who.y + 800, 400, 400);
+	// 						encodeMap(props, theitem);
+	// 					0x6502: props := array("world", 0, 0, 5119, 4095, 500, 400);
+	// 						encodeMap(props, theitem);
+	// 				endcase
+	// 			endif
+	// 		//else
+	// 		//	if( SubtractAmount(blank, material) )
+	// 		//		SendSysMessageEx(who, "Você perdeu parte do material.", SSM_FAIL);
+	// 		//	endif
+	// 		//endif
+	// 	else
+	// 		SendSysMessageEx(who, "Você não possui os recursos necessarios para fazer este item.", SSM_FAIL);
+	// 		counter := 100;
+	// 		break;
+	// 	endif
+	// 	counter := counter + 1;
+	// endwhile
 
 	return 0;
 

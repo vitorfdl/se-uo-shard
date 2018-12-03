@@ -125,11 +125,7 @@ program UseStuff(character, stuff)
             if (leftover)
                var leftitem :=  CreateItemInBackpack(character, leftover, leftover_amount);
 	    	if (!leftitem)
-			var i := 0;
-			while ( i < leftover_amount)
-				CreateItemInBackpack(character, leftover, 1);
-				i := i + 1;
-			endwhile
+				_CreateItemInBackpack(character, leftover, leftover_amount);
 	   	 endif
             endif
         else
@@ -172,13 +168,9 @@ program UseStuff(character, stuff)
         if (leftover)
             var leftitem := CreateItemInBackpack(character, leftover, leftover_amount);
 	    if (!leftitem)
-		var i := 0;
-		while ( i < leftover_amount)
-			CreateItemInBackpack(character, leftover, 1);
-			i := i + 1;
-		endwhile
+			_CreateItemInBackpack(character, leftover, cint(leftover_amount));
 	    endif
-        endif
+      endif
 
    endif
 

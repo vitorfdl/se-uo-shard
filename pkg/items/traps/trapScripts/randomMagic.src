@@ -18,31 +18,31 @@ program trapScript(params)
 
 	var origcolor := object.color;
 
-	var i := 2433;
-	while ( i < 2453 )
-		object.color := i;
-		i := i + 1;
-		sleepms(200);
-	endwhile
-	object.color := origcolor;
+	// var i := 2433;
+	// while ( i < 2453 )
+	// 	object.color := i;
+	// 	i := i + 1;
+	// 	sleepms(200);
+	// endwhile
+	// object.color := origcolor;
 
-	SendSysMessage(mobile, "Você ativou uma armadilha magica!");
-	PlaySoundEffect(mobile, 0x214);
-	//PlayStationaryEffect(object.x, object.y, object.z, GFX_POISON_GAS, 10,10, 0, object.realm);
+	// SendSysMessage(mobile, "Você ativou uma armadilha magica!");
+	// PlaySoundEffect(mobile, 0x214);
+	// //PlayStationaryEffect(object.x, object.y, object.z, GFX_POISON_GAS, 10,10, 0, object.realm);
 
-	var rand := RandomInt(4) + 1;
-	PlayStationaryEffect(mobile.x, mobile.y, mobile.z, 14154, 10,10, 0, object.realm);
-	if ( rand == 1 )
-		TS_StartTimer(mobile, "weaken", 300, 50);
-	elseif (rand == 2 )
-		TS_StartTimer(mobile, "hallucination", 300, 50, 3);
-	elseif ( rand == 3 )
-		TS_StartTimer(mobile, "paralysis", 120, 50, 3);
-	elseif ( rand == 4 )
-      PlayLightningBoltEffect( mobile );
-      PlaySoundEffect( mobile, 0x2a );
-      ApplyDamageEX(mobile, 8, DMG_ENERGY);
-	endif
+	// var rand := RandomInt(4) + 1;
+	// PlayStationaryEffect(mobile.x, mobile.y, mobile.z, 14154, 10,10, 0, object.realm);
+	// if ( rand == 1 )
+	// 	TS_StartTimer(mobile, "weaken", 300, 50);
+	// elseif (rand == 2 )
+	// 	TS_StartTimer(mobile, "hallucination", 300, 50, 3);
+	// elseif ( rand == 3 )
+	// 	TS_StartTimer(mobile, "paralysis", 120, 50, 3);
+	// elseif ( rand == 4 )
+   //    PlayLightningBoltEffect( mobile );
+   //    PlaySoundEffect( mobile, 0x2a );
+   //    ApplyDamageEX(mobile, 8, DMG_ENERGY);
+	// endif
 
 	
 	return 1;
