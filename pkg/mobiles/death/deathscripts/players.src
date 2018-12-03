@@ -236,5 +236,5 @@ endfunction
 
 function checkLetargico(letargico)
    if (!letargico) return; endif
-   if (GetTimeBetween(letargico, GetTime(), "hours") >= 4)) return 1; endif
+   if (GetTimeBetween(letargico, GetTime(), "hours") >= 4) return 1; endif
 endfunction
