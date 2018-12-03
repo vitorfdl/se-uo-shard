@@ -19,7 +19,6 @@ function StartScript(mobile, attacker := 0, level := 0)
    if (!mobile.isA(POLCLASS_NPC))
       PlayerSpeedSlower(mobile, 1);
    else
-      if () 
       mobile.run_speed := _ifElse(mobile.run_speed >= 100, mobile.run_speed - 100, 0);
    endif
 
