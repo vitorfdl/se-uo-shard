@@ -32,7 +32,7 @@ function EndScript(mobile)
    if (!mobile.isA(POLCLASS_NPC))
       PlayerSpeedSlower(mobile, 0);
    else
-      var npc_cfg = NPC_GetNPCConfig(mobile);
+      var npc_cfg := NPC_GetNPCConfig(mobile);
       mobile.run_speed := cint(npc_cfg.RunSpeed);
    endif
    return 1;
