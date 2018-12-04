@@ -182,7 +182,7 @@ function CharacterCreationGump(who, byref chardata)
       sleepms(2);
    endforeach
 
-   var desc := array{"", ""};
+   var desc := array{"Escreva aqui.", ""};
    var available_gods;
 
    while (who.connected)
@@ -368,11 +368,15 @@ function CharacterCreationGump(who, byref chardata)
       endif
 
       if (input[0] == 2)
+         chardata.profile := "{} {}".format(desc[1], desc[2]);
          if (!chardata.nome || len(chardata.nome) < 3) 
+            SendSysMessageEx(who, "Preencha o nome do personagem! (Min: 3 palavras)", SSM_FAIL);
+            continue;
+         elseif (!chardata.profile || len(chardata.profile) < 20) 
+            SendSysMessageEx(who, "Preencha as características físicas do personagem! (Min: 20 palavras)", SSM_FAIL);
             continue;
          endif
 
-         chardata.profile := "{} {}".format(desc[1], desc[2]);
          chardata.current_class := chardata.classes[1].id;
          break;
       endif
