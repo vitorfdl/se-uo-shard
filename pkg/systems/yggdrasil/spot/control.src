@@ -11,7 +11,6 @@ include ":yggdrasil:spawnsInternal";
 include ":yggdrasil:spawnGroup";
 
 program Install(spot)
-   Set_Script_Option(SCRIPTOPT_NO_RUNAWAY, 1);
    while(spot)
       var config := spot.GetProps();
       if (!GetCooldown(spot, "spotrespawn"))
@@ -21,18 +20,19 @@ program Install(spot)
                spot.SetProps(struct{ "activegroup" := group_data.activegroup });
                spot.ForceKill();
             endif
+
             FillSpawnQueue(config.spawnpoints);
             ResetTreasures(spot.serial, config.treasures);
             SetCooldown(spot, "spotrespawn", 300);
          endif
       endif
 
-      if (config.evententry && config.evententry != "")
-         if (!GetCooldown(spot, "dynamicevent"))
-            printtext(spot, "Dynamic Event initiated");
-            StartDynamicEvent(spot, config, config.evententry);
-         endif
-      endif
+      // if (config.evententry && config.evententry != "")
+      //    if (!GetCooldown(spot, "dynamicevent"))
+      //       printtext(spot, "Dynamic Event initiated");
+      //       StartDynamicEvent(spot, config, config.evententry);
+      //    endif
+      // endif
       sleep(15);
    endwhile
 endprogram
@@ -51,7 +51,7 @@ function ResetTreasures(spot_serial, treasures)
       if (cint(GetObjProperty(treasure, "spawned_time")) <= ReadGameClock())
          SpawnTreasure(treasure, item, spot_serial);
       endif
-      sleepms(2);
+      sleepms(5);
    endforeach
 endfunction
 

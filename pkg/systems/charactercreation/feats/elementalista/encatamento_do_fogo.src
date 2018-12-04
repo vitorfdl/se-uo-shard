@@ -28,7 +28,7 @@ program animateSword(params)
 
 	
    if (!item)
-      var items_near := ListItemsNearLocationWithFlag( who.x, who.y, who.z, 4, TILEDATA_FLAG_LIGHTSOURCE);
+      var items_near := ListItemsNearLocation( who.x, who.y, who.z, 4);
       foreach item_n in items_near
          if (item_n.graphic in fire_items)
             item := item_n;
@@ -55,15 +55,15 @@ program animateSword(params)
    endif
 
    PrintText(item, "*Fogo se move de forma não natural*");
-   var shards := 5;
 
    var i;
-   for (i := 1; i <= shards; i+=1)
+   for (i := 1; i <= 5; i+=1)
 	   PlayMovingEffect(item, targ, 0x36E4, 10, 3, 1);
       PlaySoundEffect(item, 0x209);
       var dmg := spellinfo.PowerMod[1];
       
       if (CheckBlockDodge(targ, 1, 0))
+         sleepms(750);
          continue;
       endif
 

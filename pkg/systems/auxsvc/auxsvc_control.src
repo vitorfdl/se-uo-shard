@@ -18,7 +18,6 @@ program auxtest( connection )
 		ev := wait_for_event( 20 );
 		// print(ev);
 		if (ev) 
-         print(ev);
          if (ev.type == 0x5) print(connection.transmit(packJSON(ev)));
          else HandleDiscordRequests(connection, ev); endif
 		endif
@@ -31,10 +30,28 @@ endprogram
 function HandleDiscordRequests(connection, ev)
    var unpacked_js := UnpackJSON(ev.value);
    if (unpacked_js.request == "PlayersOnline")
-      var prepare_to_transmit := toJson(struct{ key := "PlayersOnline", value := EnumerateOnlineCharacters().size(), id := unpacked_js.id });
+      var prepare_to_transmit := toJson(struct{ key := "PlayersOnline", value := "Número de jogadores online: {}".format(EnumerateOnlineCharacters().size()), id := unpacked_js.id });
+      connection.transmit(prepare_to_transmit);
+   if (unpacked_js.request == "WhosOnline")
+      var users = EnumerateOnlineCharacters();
+      var users_name = array{};
+      foreach user in users
+         users_name.append(user.getName());
+         sleepms(10);
+      endforeach
+      var prepare_to_transmit := toJson(struct{ key := "Response", value := "Lista de Players Online: {} / {}".format(users.size(), ", ".join(users_name)), id := unpacked_js.id });
       connection.transmit(prepare_to_transmit);
       
    elseif (unpacked_js.request == "RegisterAccount")
+      var result := CreateNewAccount(unpacked_js.username, unpacked_js.password, 0, "ML", _ifOr(unpacked_js.email, ""));
+      var report;
+      if ( result.errortext )
+         report := "Error: {}".format(result.errortext);
+      else
+         report := "Success. The acount was created successfully.";
+      endif
 
+      var prepare_to_transmit := toJson(struct{ key := "Response", value := report, id := unpacked_js.id });
+      connection.transmit(prepare_to_transmit);
    endif
 endfunction

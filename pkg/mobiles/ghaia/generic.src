@@ -262,7 +262,7 @@ function Fight(opponent, alerted := 0)
                endif
             endif
          endif
-
+         
          loops := 0;
          waittime := 1;
       endif

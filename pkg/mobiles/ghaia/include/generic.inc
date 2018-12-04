@@ -282,7 +282,8 @@ function CalcPathAndMove(me, opponent, sleepdelay)
    var face_str := getFacingString(GetFacing(me.x, me.y, opponent.x, opponent.y));
    var stam := AP_GetVital(me, STAMINA);
    var move_type := 1;
-   if (stam < 3)
+
+   if (stam < 5)
       move_type := 0;
    endif
 

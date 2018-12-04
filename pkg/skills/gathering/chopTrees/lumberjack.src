@@ -80,29 +80,21 @@ function ChopTree(who, tool, targ, orig_x, orig_y)
 	var max_wood := CInt(LJ_GetSettingsCfgElem("Settings").MaxWood);
 	// The less wood there is, the more difficult it becomes.
 	
-	//var difficulty := CInt(105 - (100 * wood_amount / max_wood));
-
-	var more_dif := CInt(0 + (max_wood - wood_amount));
-
-	var difficulty := cint(GetWoodDif(targ) + more_dif);
-	
-	if (difficulty > 22)
-		difficulty := 22;
-	endif
-	
 	if ( who.cmdlevel )
 		SendSysMessageEx(who, "MaxWood="+max_wood+"    CurWood="+wood_amount);
 	endif
 
-		var amt := RandomintMinMax(2,3);
+		var amt := _ifElse(HaveFeatSecondary(who, 67), RandomIntMinmax(2, 4), RandomIntMinmax(1, 3));
 
 		if (amt > wood_amount)
 			amt := wood_amount;
 		endif
+
 		wood_amount := cint(wood_amount - amt);
       if (wood_amount < 0)
-			wood_amount := cint(0);
+			wood_amount := 0;
 		endif
+
 		LJ_SetWoodAmount(who.realm, targ.x, targ.y, wood_amount);
 
 		var item := CreateItemInBackPack(who, cint(wood_type), cint(amt));
