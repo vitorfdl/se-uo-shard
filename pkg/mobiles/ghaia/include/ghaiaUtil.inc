@@ -85,10 +85,7 @@ function ghaiaFlee(who, npc)
 endfunction
 
 function ghaiaCheckNumber(npc)
-	var ev 		:= struct;
-	ev.type 	:= EVID_CHECK_NUMBER;
-	
-	sendEvent( npc, ev);
+	sendEvent( npc, struct{ type := EVID_CHECK_NUMBER });
 endfunction
 
 function CopyProps(origin, destiny)

@@ -20,15 +20,18 @@ program loko(params)
 	var who := params[1];
 	var event := params[2];
    me := who;
+
+   var event_name := StrReplace(event.name, " ", "_");
+
 	if (!who.opponent)
 		return;
-   elseif (GetCooldown(who, StrReplace(event.name, " ", "_")))
+   elseif (GetCooldown(who, event_name))
       return;
    endif
 
    if (event.chance != 100 )
       if (Randomint(100)+1 > event.chance)
-         SetCooldown(who, StrReplace(event.name, " ", "_"), 2); 
+         SetCooldown(who, event_name, 2); 
          return;
       endif
    endif
@@ -36,7 +39,7 @@ program loko(params)
    if ( event.hp_percent != 100)
       var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * (cdbl(event.hp_percent)/100);
       if (cdbl(AP_GetVital(who, HITS)) > maxhit)
-         SetCooldown(who, StrReplace(event.name, " ", "_"), 2); 
+         SetCooldown(who, , 2); 
          return;
       endif
 	endif
@@ -59,7 +62,7 @@ program loko(params)
 
 	//check distancia
    var is_frozed := 0;
-	SetCooldown(who, StrReplace(event.name, " ", "_"), event.cd); 
+	SetCooldown(who, event_name, cint(event.cd)); 
    var power := CalculateRawDamage(who, 0);
 
 	//executa os states

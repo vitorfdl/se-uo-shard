@@ -118,12 +118,11 @@ program core_npcDeath(params)
       DestroyItem(item);
    endif
 
-	var death_script := npc_cfg.DeathScript;
    var is_boss := 0;
 	if (GetObjProperty(corpse, "spawnkill") == error)
-      removeFromSpawn(getobjProperty(corpse, "spawnpoint"), corpse);
 	   var boss := GetBossStruct(corpse, GetObjProperty(corpse, "serial") );
       is_boss := _ifElse(boss, 1, 0);
+      removeFromSpawn(getobjProperty(corpse, "spawnpoint"), corpse);
 		if (boss && boss.deathevent)
          foreach nevent in (boss.deathevent)
             if ( (nevent.type == "Criar Npcs") && (cint(nevent.x) == 6) && (cint(nevent.y) == 6) && (cint(nevent.z) == 6)  )
@@ -135,9 +134,9 @@ program core_npcDeath(params)
          endforeach
 		endif
 
-		if ( death_script )
+		if ( npc_cfg.DeathScript )
 			params.Append(npc_cfg);
-			var result := Start_Script("deathscripts/"+death_script, params);
+			var result := Start_Script("deathscripts/"+npc_cfg.DeathScript, params);
 			if ( result.errortext )
 				PrintTextAbove(corpse, "Error::Death Script -"+result.errortext);
 				SysLog("Error::Death Script Tmplt:["+template+"] Desc:["+corpse.desc+"] Ser:["+Hex(corpse.serial)+"] - "+result.errortext);
@@ -152,17 +151,15 @@ program core_npcDeath(params)
    search.onlyboss := is_boss;
    search.type := "Matar Monstro";
 
-	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
+	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL, corpse.realm))
+      sleepms(5);
       if (mob.connected)
          var process := _getPid(mob, "roleplay_controller");
-         var tries := 1;
          if (!process)
             start_script(":roleplay_window:controller", mob);
-            sleepms(800);
-            process := _getPid(mob, "roleplay_controller");
+            continue;
          endif
 
-         if (!process) continue; endif
          search.party := _ifElse(lastHit.serial == mob.serial, 0, 1);
          process.SendEvent(struct{ type := 0x4785, search := search });
 
@@ -177,7 +174,6 @@ program core_npcDeath(params)
          ghaiaCheckNumber(mob);
       endif
 
-      sleepms(5);
    endforeach
 
    if (npc_cfg.MethodScript["taming"])
