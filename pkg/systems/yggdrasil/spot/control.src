@@ -11,7 +11,11 @@ include ":yggdrasil:spawnsInternal";
 include ":yggdrasil:spawnGroup";
 
 program Install(spot)
+   EnableEvents( SYSEVENT_ENTEREDAREA , 25);
+   var loops := 1;
    while(spot)
+      event := Wait_For_Event(10);
+
       var config := spot.GetProps();
       if (!GetCooldown(spot, "spotrespawn"))
          if (!HasPlayerNear(spot.x, spot.y, spot.realm) && config.active)
@@ -33,7 +37,7 @@ program Install(spot)
       //       StartDynamicEvent(spot, config, config.evententry);
       //    endif
       // endif
-      sleep(15);
+      sleep(10);
    endwhile
 endprogram
 
