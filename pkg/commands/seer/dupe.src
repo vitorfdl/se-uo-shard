@@ -11,6 +11,7 @@ program textcmd_dupe( who )
     var what := Target( who, TGTOPT_NOCHECK_LOS );
     
     if (what.isA(POLCLASS_ITEM))
+      if (what.objtype == "0x0E2A" && who.cmdlevel < 5) return SendSysMessage( who, "cant dupe this item" ); endif
       copyitem := CreateItemCopyAtLocation(who.x, who.y, who.z, what);
 	  SetObjProperty(copyitem, "createdby", who.acctname + " " + who.name);
 	        
