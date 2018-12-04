@@ -1,0 +1,27 @@
+use cfgfile;
+use uo;
+include ":attributes:attributes";
+include "include/say";
+include ":timedscripts:timedScripts";
+//include "include/damage";
+
+var item_config     := ReadConfigFile(":*:itemdesc");
+
+program alchemy(who)
+	var increaseitem := GFCreateGump();
+	
+	GFPage(increaseitem, 0);
+	GFResizePic(increaseitem, 4, 13, 40000, 198, 228);
+	GFResizePic(increaseitem, 17, 39, 5120, 94, 156);
+	GFResizePic(increaseitem, 42, 126, 30546, 49, 49);
+	GFResizePic(increaseitem, 41, 55, 30546, 49, 49);
+	GFAddButton(increaseitem, 48, 203, 2074, 248, GF_CLOSE_BTN, 0);
+	GFAddButton(increaseitem, 105, 204, 2071, 248, GF_CLOSE_BTN, 0);
+	GFGumpPic(increaseitem, 57, 108, 40032, 0);
+	GFTextLine(increaseitem, 117, 139, 1503, "Item a ser");
+	GFTextLine(increaseitem, 116, 154, 1503, "Melhorado");
+	GFTextLine(increaseitem, 117, 55, 1503, "Item a ser");
+	GFTextLine(increaseitem, 116, 70, 1503, "Destruído");
+
+	GFSendGump(who, increaseitem);
+endprogram
