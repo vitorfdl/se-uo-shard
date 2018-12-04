@@ -41,6 +41,11 @@ program SetProperties(who, text, uc_text)
       if ( value == "NULL" )
          value := "";
       endif
+
+      if (property == "readonly" && targ.IsBook())
+         return targ.ReadOnly(cint(value));
+      endif
+      
       var old_val := targ.get_member(property);
       var old_type := Lower(TypeOf(old_val));
       case ( old_type )
