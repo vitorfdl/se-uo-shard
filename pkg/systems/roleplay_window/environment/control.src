@@ -8,6 +8,7 @@ include "include/colormap";
 include ":datafile:datafile";
 
 program AC_start(item)
+   return;
    var event;
    while (item)
       sleepms(2);
