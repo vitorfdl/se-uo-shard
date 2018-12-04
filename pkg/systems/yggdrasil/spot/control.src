@@ -11,10 +11,12 @@ include ":yggdrasil:spawnsInternal";
 include ":yggdrasil:spawnGroup";
 
 program Install(spot)
-   EnableEvents( SYSEVENT_ENTEREDAREA , 25);
+   EnableEvents( SYSEVENT_ENTEREDAREA , 40);
+
    var loops := 1;
    while(spot)
-      event := Wait_For_Event(10);
+      var event := Wait_For_Event(_ifElse(loops >= 100,60,10));
+      if (event) loops := 1; endif
 
       var config := spot.GetProps();
       if (!GetCooldown(spot, "spotrespawn"))
@@ -31,13 +33,15 @@ program Install(spot)
          endif
       endif
 
-      // if (config.evententry && config.evententry != "")
-      //    if (!GetCooldown(spot, "dynamicevent"))
-      //       printtext(spot, "Dynamic Event initiated");
-      //       StartDynamicEvent(spot, config, config.evententry);
-      //    endif
-      // endif
-      sleep(10);
+      if (config.evententry && config.evententry != "")
+         if (!GetCooldown(spot, "dynamicevent"))
+            printtext(spot, "Dynamic Event initiated");
+            StartDynamicEvent(spot, config, config.evententry);
+         endif
+      endif
+
+      if (loops <= 105) loops += 1; endif
+      sleep(5);
    endwhile
 endprogram
 
