@@ -19,10 +19,7 @@ program death(params)
 	
 	corpse.decayat := 0;
 
-   var old_process := GetProcess(GetObjProperty(ghost, "death_process"));
-   if (old_process) old_process.kill(); endif
-
-   SetObjProperty(ghost, "death_process", GetPid());
+   var old_process := _checkPid(ghost, "death_controller");
 	if (GetObjProperty(ghost, "forjoumorte") == 1)
 		return 1;
 	endif
