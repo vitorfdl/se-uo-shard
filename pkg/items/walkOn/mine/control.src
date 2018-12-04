@@ -46,6 +46,7 @@ program controlScript(field)
 			DestroyItem(field);
 			return 1;
 		endif
+      sleepms(20);
 	endwhile
 endprogram
 
@@ -58,30 +59,20 @@ function MineTrigger(field, mobile, dmg)
    endif
 
    var diff := cint(field.GetDifficulty());
-   var resist_dice := cint(rollResistDice(mobile, CONSTITUTION));
    if (field.GetEffect() == DMG_FIRE)
       DamageFLS(mobile, dmg, DMG_FIRE, owner);
       var explosion := SelectRandomExplosion();
       PlaySoundEffect(mobile, SFX_EXPLOSION_11);
       PlayObjectCenteredEffect(mobile, explosion, 0, 5);
-      if (resist_dice <= diff)
-         TS_StartTimer(mobile, "tombar", 1);
-      else
-         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);
-         SendSystemReport(mobile, "*resistiu*", SSM_INFO);
-      endif
+      TS_StartTimer(mobile, "tombar", 1);
    else
       DamageFLS(mobile, dmg, DMG_COLD, owner);
-      if (resist_dice <= diff)
-         TS_StartTimer(mobile, "frozen", 4);
-      else
-         SendSystemReport(mobile, "*resistiu*", SSM_FAIL, owner);
-         SendSystemReport(mobile, "*resistiu*", SSM_INFO);
-      endif
+      TS_StartTimer(mobile, "frozen", 4);
    endif
 
    var links := field.GetAllLinks();
    foreach item in links
       DestroyItem(item);
+      sleepms(5);
    endforeach
 endfunction

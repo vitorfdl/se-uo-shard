@@ -95,7 +95,6 @@ exported function GetAllLinks(field)
    foreach serie in link
       var mine := SystemFindObjectBySerial(serie);
       all_links.append(mine);
-      sleepms(2);
    endforeach
    
    return all_links;
