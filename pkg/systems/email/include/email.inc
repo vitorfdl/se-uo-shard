@@ -289,13 +289,16 @@ function ReadMail( who, number )
 	    i;
 
 	GFResizePic( gump, 15, 95, 2620, 610, 310 );
-	for( i:=1; i<=MAX_MESSAGES; i+=1 )
-                if( mail_info.message[i] )
-                        GFTextLine( gump, 20, y_pos, 2100, mail_info.message[i] );
-                endif
-		y_pos := y_pos+20;
-                SleepMS(5);
-	endfor
+   if (typeof(mail_info.message) == "Array") mail_info.message := " ".join(mail_info.message); endif
+   mail_info.message := StrReplace(mail_info.message, "[P]","<br>");
+   GFHTMLArea(gump, 23, 100, 605, 280, "<basefont color=#FFFFFF>{}".format(mail_info.message));
+	// for( i:=1; i<=MAX_MESSAGES; i+=1 )
+   //    if( mail_info.message[i] )
+   //       GFTextLine( gump, 20, y_pos, 2100, mail_info.message[i] );
+   //    endif
+   //    y_pos := y_pos+20;
+   //    SleepMS(5);
+	// endfor
 
 	GFAddButton( gump, 30, 425, 0xFB0, 0xFAF, GF_CLOSE_BTN, CLOSE_EMAIL );
 	GFTextLine( gump, 65, 425, 1720, "Voltar" );

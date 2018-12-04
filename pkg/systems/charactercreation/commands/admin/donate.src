@@ -37,7 +37,7 @@ program command_Message(who, acctname)
    if (!MoveItemToContainer( item, container, 0 , 80 ))
       MoveItemToContainer( item, character.backpack );
    endif
-	start_script( ":email:emailMessage/sendSystemMail", array{ character, "Lágrima da Lua!", "Obrigado por nos ajudar! [P]Uma Lágrima da Lua foi entregue ao seu banco ou ao seu inventário.[P]Com esta Lágriama você é capaz de recuperar pontos de habilidade e de vitalidade do seu personagem. Também será possível escolher até uma subclasse para ser removida. [P]Esperamos que esteja contente com este presente. [P][P]Bom Jogo!"} );
+	start_script( ":email:emailMessage/sendSystemMail", array{ character, "Lágrima da Lua!", "Obrigado por nos ajudar! Uma Lágrima da Lua foi entregue ao seu banco ou ao seu inventário.[P]Com esta Lágriama você é capaz de recuperar pontos de habilidade e de vitalidade do seu personagem. Também será possível escolher até uma subclasse para ser removida. [P]Esperamos que esteja contente com este presente. [P][P]Bom Jogo!"} );
 
    SendSysMessageEx(who, "Item entregue ao destinatário", SSM_INFO);
 endprogram
