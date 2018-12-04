@@ -30,9 +30,8 @@ program skill_Stealing(mobile, spellinfo)
 	
 	SendSysMessageEx(mobile, "Selecione que pessoa ou container você deseja roubar.", SSM_REQUEST);
 	var targ := Target(mobile);
-   print(IsBehind(targ, mobile.x, mobile.y));
 	var npc_category := lower(getnpccategory( targ.my_template() ));
-	if (targ == mobile)
+	if (targ == mobile || targ.Enabled("invul"))
 		SendSysMessageEx(mobile, "Espertao você hein..?", SSM_FAIL);
 		return 0;
 	elseif ( targ.connected == 0 )
