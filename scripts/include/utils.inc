@@ -41,7 +41,7 @@ function _checkPid(who, pid, temp := 0)
    set_critical(1);
    pid := "{}pid_{}".format(_ifElse(temp, "#", ""), pid);
    var process := GetProcess( GetobjProperty(who, pid) );
-   if (process) pid.kill(); endif
+   if (process) process.kill(); endif
    SetObjProperty(who, pid, GetPid());
    set_critical(0);
 endfunction

@@ -7,7 +7,7 @@ include "include/sysEvent";
 include ":attributes:attributes";
 
 program Arrastar(who)
-   _checkPid(who, "arrastando");
+   _checkPid(who, "arrastando", 1);
 	var targ;
 
 	if (TypeOf(who) == "Array")
@@ -47,6 +47,7 @@ program Arrastar(who)
 		return SendSysMessageEx( who, "Alguém já está arrastando este {}".format(type), SSM_FAIL );
    endif
 
+   _checkPid(targ, "arrastar", 1);
    SendSysMessageEx(who, "Você está arrastando {}. Entre em modo Combate para parar de carregar.".format(targ.name), SSM_INFO);
    PrintText(who, "*arrastando {}*".format(type));
    while (!who.warmode && targ && !who.dead)
@@ -71,5 +72,5 @@ program Arrastar(who)
    endif
 
    SendSysMessageEx(who, "Você parou de carregar o corpo.", SSM_INFO);
-   EraseObjProperty(who, "#pid_arrastar");
+   EraseObjProperty(who, "#pid_arrastando");
 endprogram

@@ -8,20 +8,27 @@ include ":timedscripts:timedScripts";
 var item_config     := ReadConfigFile(":*:itemdesc");
 
 program alchemy(who)
-	var increaseitem := GFCreateGump();
-	
-	GFPage(increaseitem, 0);
-	GFResizePic(increaseitem, 4, 13, 40000, 198, 228);
-	GFResizePic(increaseitem, 17, 39, 5120, 94, 156);
-	GFResizePic(increaseitem, 42, 126, 30546, 49, 49);
-	GFResizePic(increaseitem, 41, 55, 30546, 49, 49);
-	GFAddButton(increaseitem, 48, 203, 2074, 248, GF_CLOSE_BTN, 0);
-	GFAddButton(increaseitem, 105, 204, 2071, 248, GF_CLOSE_BTN, 0);
-	GFGumpPic(increaseitem, 57, 108, 40032, 0);
-	GFTextLine(increaseitem, 117, 139, 1503, "Item a ser");
-	GFTextLine(increaseitem, 116, 154, 1503, "Melhorado");
-	GFTextLine(increaseitem, 117, 55, 1503, "Item a ser");
-	GFTextLine(increaseitem, 116, 70, 1503, "DestruÃ­do");
+   var item1, item2;
+   
+   while (who.connected)
+      var gump := GFCreateGump();
+      GFResizePic(gump, 4, 13, 40000, 198, 228);
+      GFResizePic(gump, 17, 39, 5120, 94, 156);
+      GFResizePic(gump, 42, 126, 30546, 49, 49);
+      GFResizePic(gump, 41, 55, 30546, 49, 49);
+      // GFGumpPic(gump, 57, 108, 40032, 0);
+      
+      GFTextLine(gump, 117, 55, 1503, "Item a ser");
+      GFTextLine(gump, 116, 70, 1503, "Destruído");
+      
+      GFTextLine(gump, 117, 139, 1503, "Item a ser");
+      GFTextLine(gump, 116, 154, 1503, "Melhorado");
+      GFAddButton(gump, 48, 203, 2074, 248, GF_CLOSE_BTN, 1);
 
-	GFSendGump(who, increaseitem);
+      GFAddButton(gump, 105, 204, 2071, 248, GF_CLOSE_BTN, 0);
+
+      var input := GFSendGump(who, gump);
+      sleepms(20);
+   endwhile
+
 endprogram

@@ -60,7 +60,7 @@ function KataWakeUp(ghost, corpse)
 		return 1;
 	endif
    
-   ReleaseItem(corpse);
+   _getPid(corpse, "arrastar", 1).kill();
    
    ghost.frozen := 0;
    if (!ghost.concealed <= 1) ghost.concealed := 0; endif
