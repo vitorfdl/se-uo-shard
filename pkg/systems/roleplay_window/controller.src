@@ -3,6 +3,7 @@ use os;
 
 include "include/sysEvent";
 include "include/say";
+include "include/utils";
 include ":datafile:datafile";
 include ":quest:quest";
 

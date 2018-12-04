@@ -29,7 +29,7 @@ program AC_start(item)
          endif
          
          if (config.rptext || config.emote)
-            var process := _getPid(who, "roleplay_controller");
+            var process := _getPid(event.source, "roleplay_controller");
             if (!process)
                continue;
             endif

@@ -2,6 +2,8 @@ use uo;
 use os;
 
 include "include/json";
+include "include/utils";
+include ":accounts:accounts";
 
 program auxtest( connection )
    print("Starting AUX Service");
@@ -30,11 +32,11 @@ endprogram
 function HandleDiscordRequests(connection, ev)
    var unpacked_js := UnpackJSON(ev.value);
    if (unpacked_js.request == "PlayersOnline")
-      var prepare_to_transmit := toJson(struct{ key := "PlayersOnline", value := "Número de jogadores online: {}".format(EnumerateOnlineCharacters().size()), id := unpacked_js.id });
+      var prepare_to_transmit := toJson(struct{ key := "Response", value := "Numero de jogadores online: {}".format(EnumerateOnlineCharacters().size()), id := unpacked_js.id });
       connection.transmit(prepare_to_transmit);
-   if (unpacked_js.request == "WhosOnline")
-      var users = EnumerateOnlineCharacters();
-      var users_name = array{};
+   elseif (unpacked_js.request == "WhosOnline")
+      var users := EnumerateOnlineCharacters();
+      var users_name := array{};
       foreach user in users
          users_name.append(user.getName());
          sleepms(10);
