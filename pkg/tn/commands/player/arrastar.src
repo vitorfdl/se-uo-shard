@@ -2,11 +2,14 @@ use uo;
 use os;
 
 include "include/say";
+include "include/utils";
 include "include/sysEvent";
 include ":attributes:attributes";
 
 program Arrastar(who)
+   _checkPid(who, "arrastando");
 	var targ;
+
 	if (TypeOf(who) == "Array")
 		targ := who[2];
 		who := who[1];
@@ -35,12 +38,12 @@ program Arrastar(who)
 		SendSysMessageEx(who, "Você não pode arrastar isto.", SSM_FAIL);
 		return;
 	endif
-
+   
 	if( CoordinateDistance(targ.x, targ.y, who.x, who.y) > 2 )
 		return SendSysMessageEx( who, "O "+type+" esta muito longe.", SSM_FAIL );
 	endif
 
-   if (!ReserveItem( targ ))
+   if (_getPid(targ, "arrastar", 1))
 		return SendSysMessageEx( who, "Alguém já está arrastando este {}".format(type), SSM_FAIL );
    endif
 
@@ -63,6 +66,10 @@ program Arrastar(who)
       sleepms(100);
    endwhile
 
-   if (targ) ReleaseItem( targ ); endif
+   if (targ) 
+      EraseObjProperty(targ, "#pid_arrastar");
+   endif
+
    SendSysMessageEx(who, "Você parou de carregar o corpo.", SSM_INFO);
+   EraseObjProperty(who, "#pid_arrastar");
 endprogram

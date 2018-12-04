@@ -5,7 +5,6 @@ include "include/say";
 
 
 program speak(mobile)
-
 		mobile.frozen := 1;
 		SetObjPRoperty(mobile, "morrendo", 1);
 		var falas :=  GetObjPRoperty(mobile, "Ultimas Palavras");
@@ -18,5 +17,5 @@ program speak(mobile)
 		endforeach
 		sleep(3);
 		EraseObjProperty(mobile, "morrendo");
-		mobile.kill();		
+		mobile.kill();
 endprogram
