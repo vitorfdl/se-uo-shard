@@ -64,8 +64,8 @@ program loko(params)
 
 	//check distancia
    var is_frozed := 0;
-   event.cd = cint(event.cd);
-   event.cd = _ifElse(event.cd <= 2, 2, event.cd);
+   event.cd := cint(event.cd);
+   event.cd := _ifElse(event.cd <= 2, 2, event.cd);
 	SetCooldown(who, event_name, _int(event.cd)); 
    var power := CalculateRawDamage(who, 0);
 
