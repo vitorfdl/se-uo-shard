@@ -7,20 +7,13 @@ include ":email:email";
 
 
 program hotbarController(who)
+   _checkPid(who, "hotbar_controller");
    var stored_cooldowns := dictionary;
    while (who.connected)
       var new_cooldowns := TS_GetCooldownList(who);
       if (stored_cooldowns.keys().size() != new_cooldowns.keys().size())
          stored_cooldowns := new_cooldowns;
          CloseGump( who, 0x945, 1 );
-      endif
-
-      if (!GetObjProperty(who, "criandochar"))
-         var pid := GetobjProperty(who, "#hotbar_pid");
-         if (!GetProcess(pid))
-            CloseGump( who, 0x945, 978455 );
-            start_script(":charactercreation:hotbar/hotbar", who);
-         endif
       endif
       
       sleep(1);

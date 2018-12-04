@@ -154,12 +154,12 @@ program core_npcDeath(params)
 
 	foreach mob in (ListMobilesNearLocationEx(corpse.x, corpse.y, corpse.z, 10, LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NORMAL ,corpse.realm))
       if (mob.connected)
-         var process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
+         var process := _getPid(who, "roleplay_controller");
          var tries := 1;
          if (!process)
             start_script(":roleplay_window:controller", mob);
             sleepms(800);
-            process := GetProcess(GetObjProperty(mob, "roleplay_pid"));
+            process := _getPid(who, "roleplay_controller");
          endif
 
          if (!process) continue; endif

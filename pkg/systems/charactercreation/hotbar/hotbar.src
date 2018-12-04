@@ -122,6 +122,7 @@ endfunction
 
 program startHotBar(who, spos)
    CloseGump( who, 0x945, 978455 );
+   _checkPid(who, "hotbar");
    if (!GetObjProperty(who, "chardata")) return; endif 
    
    var hotbar := GetObjProperty(who, "hotbar");
@@ -129,8 +130,7 @@ program startHotBar(who, spos)
       hotbar := struct{ shortcuts := array{}, pos_x := 105, pos_y := 543 }; 
       SetobjProperty(who, "hotbar", hotbar);
    endif
-   var pid := GetPid();
-   SetobjProperty(who, "#hotbar_pid", pid);
+
    while (who.connected)
       var res := BuildHotBar(who, hotbar);
 

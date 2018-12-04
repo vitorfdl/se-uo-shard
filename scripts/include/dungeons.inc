@@ -53,7 +53,7 @@ function HaveLightNear(coord)
 		if (FindConfigElem(light_cfg, equipright.objtype) || FindConfigElem(light_cfg, equipleft.objtype))
 			return 1;
 		endif
-		sleepms(2);
+		sleepms(5);
 	endforeach
 
 	var items := ListItemsNearLocationWithFlag(coord.x, coord.y, coord.z, 5, TILEDATA_FLAG_LIGHTSOURCE );

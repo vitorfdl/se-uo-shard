@@ -18,7 +18,7 @@ program mestreLaminas(param)
    var nearby := ListMobilesNearLocationEx( who.x ,who.y, who.z, 6, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_NPC_ONLY);
    var plus := 0;
    foreach mob in nearby
-      mob.setaggro(who.serial, 100);
+      mob.setaggro(who.serial, 150);
       ghaiaAttack(who, mob);
       if (cint(getHighestAggro(mob)) == cint(who.serial))
          PrintText(mob, "*!*", SSM_FAIL);

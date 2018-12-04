@@ -88,8 +88,8 @@ function CreateBossStructGump(who, byref boss)
 	cd_block := GFTextEntry( chargump, x_pos+135, y_pos+(18*5), 100, 20, 1935, cint(boss.BlockCooldown) + "");
 	GFTextLine(chargump, x_pos, y_pos+(18*6), 1051, "Cd. de Esquiva [{}]:".format(cint(cfg.DodgeCooldown)));
 	cd_dodge := GFTextEntry( chargump, x_pos+135, y_pos+(18*6), 100, 20, 1935, cint(boss.DodgeCooldown) + "");
-	GFTextLine(chargump, x_pos, y_pos+(18*7), 1051, "Chance de Crítico [{}]:".format(cint(cfg.Critical)));
-	critical := GFTextEntry( chargump, x_pos+155, y_pos+(18*7), 100, 20, 1935, (cint(boss.Critical) + 2) + "");
+	GFTextLine(chargump, x_pos, y_pos+(18*7), 1051, "Chance de Crítico [{}]:".format(cint(cfg.Critical) + 2));
+	critical := GFTextEntry( chargump, x_pos+155, y_pos+(18*7), 100, 20, 1935, cint(boss.Critical) + "");
 
 	var attacks      := GetNpcAttacks(npctemplate);
 	var boss_attacks := boss.customAttacks;

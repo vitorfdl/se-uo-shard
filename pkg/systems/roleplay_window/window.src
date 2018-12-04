@@ -8,6 +8,7 @@ include ":tn:tngumps";
 include ":gumps:gumps_ex";
 
 program AC_start(who)
+   _checkpid(who, "roleplay_window");
    var setup := GetObjProperty(who, "roleplay_setup");
    if (!setup)
       setup := struct{ "width" := 164, "height" := 163, y := 625, x := 273};
@@ -15,8 +16,8 @@ program AC_start(who)
 
    while (who.connected)
       var last_see := GetObjProperty(who, "last_see");
-
       if (!last_see) last_see := array{}; endif
+      
       last_see := "<br>-----<br>".join(last_see);
 	   var gump := GFCreateGump();
       GFPage(gump, 0);

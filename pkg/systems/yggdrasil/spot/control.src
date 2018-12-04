@@ -155,12 +155,12 @@ function StartDynamicEvent(spot, config, evententry)
          var locs := this_step.location;
          var passed_event := 0;
          foreach loc in locs
-            var coord := struct{"x" := loc[1], "y" := loc[2], "z" := loc[3]};
+            var coord := struct{ x := loc[1], "y" := loc[2], "z" := loc[3]};
             if (HaveLightNear(coord))
                passed_event := 1;
                break;
             endif
-            sleepms(2);
+            sleepms(10);
          endforeach
 
          if (!passed_event)
@@ -242,6 +242,7 @@ function StartDynamicEvent(spot, config, evententry)
          endif
 
          for i := 1 to (this_step.number)
+            sleepms(10);
             var summon := CreateNpcFromTemplate(this_step.template, loc[1], loc[2], loc[3]);
             if (this_step.boss) SetBoss(summon, this_step.boss); endif
             if (summon.errortext) continue; endif
@@ -253,6 +254,7 @@ function StartDynamicEvent(spot, config, evententry)
       elseif (this_step.name == "Apply TimedScript")
          var loc := this_step.location[1];
          foreach mobile in GetPlayerNear(loc);
+            sleepms(10);
             if (rollResistDice(mobile, this_step.resist_test) > this_step.chance)
                SendsystemReport(mobile, "*resistido*", SSM_INFO);
             else

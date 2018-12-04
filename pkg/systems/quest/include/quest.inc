@@ -286,7 +286,7 @@ endfunction
 
 function SendQuestEvent(who, type, params := struct)
    if (who.isA(POLCLASS_NPC)) return; endif
-   var process := GetProcess(GetObjProperty(who, "roleplay_pid"));
+   var process := _getPid(who, "roleplay_controller");
    if (!process) return; endif
 
    params.type := type;

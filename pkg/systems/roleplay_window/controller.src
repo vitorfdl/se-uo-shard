@@ -7,18 +7,12 @@ include ":datafile:datafile";
 include ":quest:quest";
 
 program AC_start(who)
-   var oldpid := GetObjProperty(who, "roleplay_pid");
-   if (oldpid)
-      var process := GetProcess(oldpid);
-      process.kill();
-   endif
-
-   SetObjProperty(who, "roleplay_pid", GetPid());
+   _checkPid(who, "roleplay_controller");
    var last_see := array{};
    var already_saw := array{};
    SetObjProperty(who, "last_see", last_see);
 
-   while (who.connected)	
+   while (who.connected)
       sleepms(20);
       var event := wait_for_event(5);
       var trig := 0;

@@ -51,8 +51,7 @@ endfunction
 program oafeatures_sendpacket(who, text)
    var targ     := Target(who);
    if (cint(text) == 1) 
-      var roleplay := GetObjProperty(targ, "roleplay_pid");
-      var process  := GetProcess(roleplay);
+      var process := _getPid(who, "roleplay_controller");
       if (!process) return SendSysMessageEx(who, "couldnt find process"); endif
 
       var input_list := array{};
@@ -81,10 +80,7 @@ program oafeatures_sendpacket(who, text)
       process.SendEvent(struct{ type := 0x4785, search := search });
       return;
    elseif (cint(text) == 2) 
-      var roleplay := GetObjProperty(targ, "roleplay_pid");
-      var process  := GetProcess(roleplay);
-      process.kill();
-       start_script(":roleplay_window:controller", targ);
+      start_script(":roleplay_window:controller", targ);
       return SendSysMessageEx(who, "roleplay resetado");
    endif
 

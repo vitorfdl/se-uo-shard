@@ -37,6 +37,20 @@ function _CreateItemInBackpack(who, objtype, amount := 1)
    return item;
 endfunction
 
+function _checkPid(who, pid)
+   set_critical(1);
+   pid := "pid_{}".format(pid);
+   var process := GetProcess( GetobjProperty(who, pid) );
+   if (process) pid.kill(); endif
+   SetObjProperty(who, pid, GetPid());
+   set_critical(0);
+endfunction
+
+function _getPid(who, pid)
+   pid := "pid_{}".format(pid);
+   return GetProcess( GetobjProperty(who, pid) );
+endfunction
+
 function randomPlace(loc, radius := 1)
 	var y, x;
    case (RandomInt(3)+1)

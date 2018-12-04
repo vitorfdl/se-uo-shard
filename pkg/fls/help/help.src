@@ -78,11 +78,6 @@ program help_menu(who)
 			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998, targ, "Reportar Jogador"} );
 		endif
    elseif (input == BUTTON_HELP_HOTBAR)
-      var pid := GetobjProperty(who, "#hotbar_pid");
-      if (pid)
-         var process := GetProcess(pid).kill();
-      endif
-
       start_script(":charactercreation:hotbar/hotbar", who);
 	endif
 endprogram
