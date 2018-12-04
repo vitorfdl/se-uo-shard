@@ -62,7 +62,10 @@ program animateSword(params)
       var first;
       var all_links := array{};
       foreach mine in item_place
+         sleepms(2);
          var item := CreateItemAtLocation(targ.x+mine[2], targ.y+mine[3], targ.z, 0xA094);
+         if (!item) continue; endif
+
          if (!first) 
             first := item;
          else
@@ -83,7 +86,6 @@ program animateSword(params)
          else
             item.color := 2051;
          endif
-         sleepms(2);
       endforeach
       
       first.linkTo(all_links);
