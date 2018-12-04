@@ -31,6 +31,8 @@ program textcmd_SetObjProperty(who, no_use, uc_text)
 		value := CInt(value);
 	endif
 
+   if (prop == "insured" && who.cmdlevel != 5) return; endif
+
 	var ret_val := SetObjProperty(targ, prop, value);
 	if ( !ret_val )
 		SendSysMessage(who, "Error setting CProp ->"+ret_val);

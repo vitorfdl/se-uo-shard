@@ -23,7 +23,8 @@ program canInsert(mobile, container, movetype, inserttype, item, existing_stack,
 			 0xfbf, // caneta tinteiro
 			 0x6100, 0x2253, // grimório
 			 0x702D, 0x702C, 0x702E, //cookwork
-			 0x790c, 0x4079// terço
+			 0x790c, 0x4079,// terço
+          0x0E2A
 			};
 	if (item.objtype IN valid)
 		return 1;

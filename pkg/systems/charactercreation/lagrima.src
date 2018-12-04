@@ -1,0 +1,72 @@
+use uo;
+use vitals;
+use os;
+use util;
+
+include ":gumps:include/gumps";
+include ":gumps:include/gumps_ex";
+include ":datafile:datafile";
+include ":attributes:attributes";
+include ":tn:tngumps";
+
+program command_Message(who, item)
+   var insured := GetObjProperty(item, "insured");
+   if (who.cmdlevel < 4)
+      if (!insured) return SendSysMessageEx(who, "Não parece util para você."); 
+      elseif (insured != who.serial) return SendSysMessageEx(who, "Este item só poder ser usado pela conta que o recebeu."); 
+      endif
+   endif
+
+   ReserveItem(item);
+   case(RandomInt(3) + 1)
+      1: PlaySoundEffect(who, 0x3b);
+      2: PlaySoundEffect(who, 0x3c);
+      3: PlaySoundEffect(who, 0x3d);
+   endcase
+   PerformAction(who, 0x22);
+   
+	var chardata := GetObjProperty(who, "chardata");
+   var opts := array{};
+   var selected_habs := array{};
+   for i := 1 to (chardata.subclasses.size())
+      var item := chardata.subclasses[i];
+      opts.append(struct{ text := "Remover subclasse {}".format(item.id), icon := 0x5DC2 });
+      selected_habs += chardata.subclasses[i].habs;
+      chardata.subclasses[i].habs := array{};
+      sleepms(2);
+   endfor
+
+   for i := 1 to (chardata.classes.size())
+      chardata.classes[i].habs := array{};
+      selected_habs += chardata.classes[i].selected_habs;
+      chardata.classes[i].selected_habs := array{};
+   endfor
+   opts.append(struct{ text := "Não quero remover nenhuma subclasse", icon := 0x9BB3 });
+   var res := ChoiceSelectorGump(who, "Tome uma decisão!", opts, 1);
+
+   if (res >= 1 && res < opts.size())
+      chardata.subclasses.Erase(res);
+      sleepms(2);
+   endif
+   
+   chardata.points := chardata.level;
+   chardata.vitalpoints := chardata.level;
+	chardata.hits  := 300;
+	chardata.mana := 90;
+	chardata.stam := 60;
+   SetObjProperty(who, "chardata", chardata);
+   RecalcVitals(who);
+
+   var hotbar := GetObjProperty(who, "hotbar");
+   foreach shortcut in (hotbar.shortcuts)
+      if (shortcut.id in selected_habs)
+         shortcut := 0;
+      endif
+      sleepms(2);
+   endforeach
+   SetObjProperty(who, "hotbar", hotbar);
+   start_script(":charactercreation:hotbar/hotbar", who);
+   SendSysMessageEx(who, "Seus pontos foram resetados!", SSM_INFO);
+   ReleaseItem(item);
+   DestroyItem(item);
+endprogram

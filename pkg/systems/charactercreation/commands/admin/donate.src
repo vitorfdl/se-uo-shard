@@ -1,0 +1,43 @@
+use uo;
+use vitals;
+use os;
+use util;
+
+include ":datafile:datafile";
+include ":attributes:attributes";
+include ":tn:tngumps";
+include ":containers:storageAreas";
+
+set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
+
+program command_Message(who, acctname)
+	if ( !acctname )
+		SendSysMessage(who, "Select a player.");
+		var targ := Target(who);
+		if ( !targ.acctname )
+			SendSysMessage(who, "Cancelled.");
+			return 0;
+		else
+			acctname := targ.acctname;
+		endif
+	endif
+
+	var account := FindAccount(acctname);
+	if ( account.errortext )
+      SendSysMessageEx(who, "Conta não encontrada {} + {}".format(acctname, account.errortext), SSM_FAIL);
+		return 0;
+	endif
+
+   var character := account.getcharacter(1);
+   if (!character) return SendSysMessageEx(who, "Personagem não encontrado + {}".format(character.errortext), SSM_FAIL); endif
+   
+   var item := CreateItemAtLocation(who.x, who.y, who.z, 0x0E2A, 1, who.realm);
+   SetObjProperty(item, "insured", character.serial);
+   var container := CP_GetStorageContainerForMobile(character, CP_DEFAULT_AREA, CP_NOCREATE);
+   if (!MoveItemToContainer( item, container, 0 , 80 ))
+      MoveItemToContainer( item, character.backpack );
+   endif
+	start_script( ":email:emailMessage/sendSystemMail", array{ who, "Lágrima da Lua!", "Obrigado por nos ajudar! [P]Uma Lágrima da Lua foi entregue ao seu banco ou ao seu inventário.[P]Com esta Lágriama você é capaz de recuperar pontos de habilidade e de vitalidade do seu personagem. Também será possível escolher até uma subclasse para ser removida. [P]Esperamos que esteja contente com este presente. [P][P]Bom Jogo!"} );
+
+   SendSysMessageEx(who, "Item entregue ao destinatário", SSM_INFO);
+endprogram

@@ -262,7 +262,7 @@ function SendCpropGump(who,thing)
   elseif (retval[997])      // Delete Cprop
     for (i:=1;i<=Len(propnames);i:=i+1)
       if (retval[700+i])
-	if (!(propnames[i] in array{"createdby", "chardata", "recipes"}) || who.cmdlevel > 4)
+	if (!(propnames[i] in array{"createdby", "chardata", "recipes", "insured"}) || who.cmdlevel > 4)
 	  EraseObjProperty(thing,propnames[i]);
 	endif
       endif
@@ -272,7 +272,7 @@ function SendCpropGump(who,thing)
     for (i:=1;i<=Len(propnames);i:=i+1)
       var this_prop:=GetObjProperty(thing,propnames[i]);
       var this_text:=retval[i+500];
-      if (!this_text.errortext)
+      if (!this_text.errortext && (!(propnames[i] in array{"createdby", "chardata", "recipes", "insured"}) || who.cmdlevel > 4))
         SetObjProperty(thing,propnames[i],SetPropType(GetGumpText(this_text),TypeOf(this_prop)));
       endif
     endfor

@@ -616,7 +616,9 @@
 0xe1f yarn womenswork
 0xe20 bloody bandages medicine
 0xe21 bandages medicine
-# 0xe22 - 0xe2c unused
+# 0xe22 - 0xe29 unused
+0xe2a lagrimalua charactercreation
+# 0xe2b - 0xe2c unused
 0xe2d Crystalball1 lighting
 0xe2e Crystalball2 lighting
 # 0xe2f - 0xe30 unused
