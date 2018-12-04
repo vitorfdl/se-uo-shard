@@ -29,7 +29,7 @@ program Arrastar(who)
 		type := "corpo"; // corpse
 	elseif (GetObjProperty(targ, "corda") && !GetObjProperty(targ, "algemado"))
 		type := "alvo"; // player
-elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"))
+   elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"))
 		type := "corpo";
 	else
 		SendSysMessageEx(who, "Você não pode arrastar isto.", SSM_FAIL);
@@ -43,6 +43,7 @@ elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"
    if (!ReserveItem( targ ))
 		return SendSysMessageEx( who, "Alguém já está arrastando este {}".format(type), SSM_FAIL );
    endif
+
    SendSysMessageEx(who, "Você está arrastando {}. Entre em modo Combate para parar de carregar.".format(targ.name), SSM_INFO);
    PrintText(who, "*arrastando {}*".format(type));
    while (!who.warmode && targ && !who.dead)
@@ -61,6 +62,7 @@ elseif (GetObjProperty(targ, "deathdetails") || GetObjProperty(targ, "deathtime"
       endif
       sleepms(100);
    endwhile
+
    if (targ) ReleaseItem( targ ); endif
    SendSysMessageEx(who, "Você parou de carregar o corpo.", SSM_INFO);
 endprogram

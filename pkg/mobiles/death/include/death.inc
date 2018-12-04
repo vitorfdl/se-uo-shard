@@ -60,6 +60,8 @@ function KataWakeUp(ghost, corpse)
 		return 1;
 	endif
    
+   ReleaseItem(corpse);
+   
    ghost.frozen := 0;
    if (!ghost.concealed <= 1) ghost.concealed := 0; endif
 
