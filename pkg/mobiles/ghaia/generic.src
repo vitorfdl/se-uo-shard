@@ -198,6 +198,7 @@ function Fight(opponent, alerted := 0)
          foreach ce in combatevents
             if (!GetCooldown(me, StrReplace(ce.name, " ", "_")))
                start_script(":ghaia:special/genericspecial" , array{me, ce});
+               break;
             endif
             sleepms(5);
          endforeach
