@@ -70,8 +70,9 @@ program runScript_CharProfileRequest( params )
          GFTextLine(gump, 241, 59, 1152, "GM");
          GFAddButton(gump, 245, 83, 2103, 2103, GF_CLOSE_BTN, 2);
          GFAddButton(gump, 245, 99, 2103, 2103, GF_CLOSE_BTN, 3);
-         GFAddButton(gump, 145, 202, 2103, 2103, GF_CLOSE_BTN, 4);
       endif
+      
+      GFAddButton(gump, 145, 202, 2103, 2103, GF_CLOSE_BTN, 4);
 
       var res := GFSendGump(who, gump);
       if (res[0] == 2)
@@ -91,7 +92,6 @@ program runScript_CharProfileRequest( params )
             SetObjProperty(chr, "chardata", chardata);
          endif
       elseif (res[0] == 4)
-         var alturas := array{"Alto", "Mediano", "Baixo"};
          var aws := QuestionsGump(who, array{ struct{ title := "Entre com as características físicas do personagem:", marked := _ifOr(chardata.profile, "") }});
          if (aws)
             chardata := GetObjProperty(chr, "chardata");
