@@ -189,43 +189,44 @@ function Fight(opponent, alerted := 0)
       endif
       
       dist := CoordinateDistance(me.x, me.y, opponent.x, opponent.y);
-      if ( (areasize >= 20 && dist > areasize) || (dist > 20 && areasize < 20) )
+      if ( (areasize >= 22 && dist > areasize) || (dist > 22 && areasize < 22) )
          break;
       endif
 
-      // if (!me.frozen && !me.paralyzed && !me.squelched)
-      //    SetObjProperty(me, "#Casting", 1);
-      //    foreach ce in combatevents
-      //       if (!GetCooldown(me, StrReplace(ce.name, " ", "_")))
-      //          start_script(":ghaia:special/genericspecial" , array{me, ce});
-      //          break;
-      //       endif
-      //       sleepms(5);
-      //    endforeach
-      //    EraseObjProperty(me, "#Casting");
-      // endif
-
-      if ("openLevers" in custombehaviors)
-         var levers := ListItemsNearLocationOfType(me.x, me.y, me.z, 8, 0x108c);
-         foreach lever in levers
-            if (GetObjProperty(lever, "mobs_open") && GetObjProperty(lever, "status") == "off")
-               for i := 1 to 8
-                  RunToward(lever);
-                  if (GetObjProperty(lever, "status") == "off")
-                     if (Distance(lever, me) <= 1)
-                        UseItem(lever, me);
-                        break;
-                     endif
-                  else
-                     break;
-                  endif
-                  sleepms(80);
-               endfor
+      if (!me.frozen && !me.paralyzed && !me.squelched)
+         SetObjProperty(me, "#Casting", 1);
+         foreach ce in combatevents
+            ce.id := "hab{}".format(_ce_iter);
+            if (!GetCooldown(me, ce.id))
+               start_script(":ghaia:special/genericspecial" , array{me, ce});
+               break;
             endif
-
-            sleepms(2);
-         endforeach 
+            sleepms(20);
+         endforeach
+         EraseObjProperty(me, "#Casting");
       endif
+
+      // if ("openLevers" in custombehaviors)
+      //    var levers := ListItemsNearLocationOfType(me.x, me.y, me.z, 8, 0x108c);
+      //    foreach lever in levers
+      //       if (GetObjProperty(lever, "mobs_open") && GetObjProperty(lever, "status") == "off")
+      //          for i := 1 to 8
+      //             RunToward(lever);
+      //             if (GetObjProperty(lever, "status") == "off")
+      //                if (Distance(lever, me) <= 1)
+      //                   UseItem(lever, me);
+      //                   break;
+      //                endif
+      //             else
+      //                break;
+      //             endif
+      //             sleepms(80);
+      //          endfor
+      //       endif
+
+      //       sleepms(2);
+      //    endforeach 
+      // endif
 
       if(!CloseDistance(opponent))
          loops := loops + 1;
@@ -241,13 +242,15 @@ function Fight(opponent, alerted := 0)
             endif
          endif
       else
-         if (!TS_GetCooldown(me, "block_dodge") && RandomInt(100) <= 35)
-            if (npccfgfile.DodgeCooldown)
-               TS_StartCooldown(me, "dodge", 2);
-               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.DodgeCooldown) + AP_GetSkill(me, "Block"));
-            elseif (npccfgfile.BlockCooldown)
-               TS_StartCooldown(me, "block", 2);
-               TS_StartCooldown(me, "block_dodge", cint(npccfgfile.BlockCooldown) + AP_GetSkill(me, "Dodge"));
+         if (RandomInt(100) <= 35)
+            if (!TS_GetCooldown(me, "block_dodge"))
+               if (npccfgfile.DodgeCooldown)
+                  TS_StartCooldown(me, "dodge", 2);
+                  TS_StartCooldown(me, "block_dodge", cint(npccfgfile.DodgeCooldown) + AP_GetSkill(me, "Block"));
+               elseif (npccfgfile.BlockCooldown)
+                  TS_StartCooldown(me, "block", 2);
+                  TS_StartCooldown(me, "block_dodge", cint(npccfgfile.BlockCooldown) + AP_GetSkill(me, "Dodge"));
+               endif
             endif
          endif
 

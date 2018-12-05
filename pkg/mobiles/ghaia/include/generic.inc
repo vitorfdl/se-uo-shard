@@ -234,17 +234,7 @@ function Opendoors(me)
 endfunction
 
 function ChooseAnotherOpponent(me)
-	var otherTarget := ListMobilesNearLocationEx( me.x, me.y, me.z, 8, LISTEX_FLAG_NORMAL, me.realm );
-	if  (otherTarget.size() < 0)
-      return;
-	endif
    
-  foreach mob in otherTarget
-    if(CanFight(me, mob)) //verifica se eh inimigo
-        Fight(mob);
-    endif
-    sleepms(5);
-  endforeach
 endfunction
 
 function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
@@ -285,7 +275,7 @@ function getFacingString(me_face)
    endcase
 endfunction
 
-function CalcPathAndMove(me, opponent, sleepdelay)
+function CalcPathAndMove(me, byref opponent, sleepdelay)
    var face_str := getFacingString(GetFacing(me.x, me.y, opponent.x, opponent.y));
    var stam := AP_GetVital(me, STAMINA);
    var move_type := 1;
@@ -315,7 +305,8 @@ function CalcPathAndMove(me, opponent, sleepdelay)
          if (!path[1] || !path || path == error)
             Flee(opponent, sleepdelay);
             sleepms(sleepdelay);
-            ChooseAnotherOpponent(me);
+            // ChooseAnotherOpponent(me);
+            ChooseHighestOpponent(me, opponent);
             if (CoordinateDistance(me.x, me.y, opponent.x, opponent.y) > 14)
                me.remAggro(opponent);
                ChooseHighestOpponent(me, opponent);
@@ -352,7 +343,8 @@ function CalcPathAndMove(me, opponent, sleepdelay)
          else // se não consegue chegar na coord 
             if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
                EraseObjProperty(me, "path"); //deleta o path atual
-               ChooseAnotherOpponent(me);
+               me.remAggro(opponent);
+               ChooseHighestOpponent(me, opponent);
             endif
          endif
       else

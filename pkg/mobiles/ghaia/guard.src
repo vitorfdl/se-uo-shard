@@ -834,7 +834,8 @@ function Fight(opponent := 0)
       
       SetObjProperty(me, "#Casting", 1);
       foreach ce in combatevents
-         if (!TS_GetCooldown(me, ce.name))
+         ce.id := "hab{}".format(_ce_iter);
+         if (!GetCooldown(me, ce.id))
             start_script(":ghaia:special/genericspecial" , array{me, ce});
          endif
          sleepms(2);

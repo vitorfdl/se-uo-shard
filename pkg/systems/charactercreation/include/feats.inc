@@ -459,7 +459,7 @@ function TriggerHabilitie(who, hab)
    endif
 
    if (targ.isA(POLCLASS_NPC) && hab.TargetAlign == "Harmful")
-      targ.setAggro(who.serial, 12);
+      targ.setAggro(who.serial, 25);
    endif
 
    var weapon := who.weapon;
