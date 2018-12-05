@@ -193,17 +193,17 @@ function Fight(opponent, alerted := 0)
          break;
       endif
 
-      if (!me.frozen && !me.paralyzed && !me.squelched)
-         SetObjProperty(me, "#Casting", 1);
-         foreach ce in combatevents
-            if (!GetCooldown(me, StrReplace(ce.name, " ", "_")))
-               start_script(":ghaia:special/genericspecial" , array{me, ce});
-               break;
-            endif
-            sleepms(5);
-         endforeach
-         EraseObjProperty(me, "#Casting");
-      endif
+      // if (!me.frozen && !me.paralyzed && !me.squelched)
+      //    SetObjProperty(me, "#Casting", 1);
+      //    foreach ce in combatevents
+      //       if (!GetCooldown(me, StrReplace(ce.name, " ", "_")))
+      //          start_script(":ghaia:special/genericspecial" , array{me, ce});
+      //          break;
+      //       endif
+      //       sleepms(5);
+      //    endforeach
+      //    EraseObjProperty(me, "#Casting");
+      // endif
 
       if ("openLevers" in custombehaviors)
          var levers := ListItemsNearLocationOfType(me.x, me.y, me.z, 8, 0x108c);
