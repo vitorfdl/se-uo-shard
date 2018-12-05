@@ -90,7 +90,7 @@ function NpcGoTo(destiny, move_type, stop_if_attacker := 0)
    endforeach
 endfunction
 
-function Flee(opponent, sleepdelay := 0)
+function Flee(byref opponent, sleepdelay := 0)
    if ("FleeStealth" in custombehaviors)
       if (!GetCooldown(me, "fleestealth"))
          PrintText(me, "*esconde*");
@@ -129,8 +129,7 @@ function Flee(opponent, sleepdelay := 0)
 
       if (runs % 10 == 0)
          me.remAggro(opponent);
-         SetOpponent(getHighestAggro(me));
-         opponent := me.opponent;
+         ChooseHighestOpponent(me, opponent);
       endif
 
       if (ev.type == SYSEVENT_DAMAGED)
@@ -139,13 +138,9 @@ function Flee(opponent, sleepdelay := 0)
                || (!CheckLineOfSight(me, opponent)) || (!opponent) || (RandomInt(3)==1))
             opponent := ev.source;
             SetOpponent(opponent);
+            me.setAggro(opponent, 300);
          endif
       endif 
-
-      // if(chk)
-      //    break;
-      // endif
-
    endwhile
 endfunction
     
@@ -231,10 +226,6 @@ function Opendoors(me)
         endif
     endif
   endforeach
-endfunction
-
-function ChooseAnotherOpponent(me)
-   
 endfunction
 
 function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
@@ -344,7 +335,9 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
             if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
                EraseObjProperty(me, "path"); //deleta o path atual
                me.remAggro(opponent);
+               var old_opponent := opponent;
                ChooseHighestOpponent(me, opponent);
+               if (old_opponent == opponent) Flee(opponent, sleepdelay); endif
             endif
          endif
       else
