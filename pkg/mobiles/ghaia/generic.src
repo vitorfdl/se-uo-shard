@@ -307,12 +307,12 @@ function Fight(opponent, alerted := 0)
             continue;
 
          SYSEVENT_ENGAGED:
-            me.setAggro(ev.source.serial, 20);
+            me.setAggro(ev.source.serial, 50);
             ChooseHighestOpponent(me, opponent, ev.source);
             continue;
 
          EVID_TAUNT:
-            me.setAggro(ev.source.serial, 100);
+            me.setAggro(ev.source.serial, 200);
             ChooseHighestOpponent(me, opponent, ev.source);
             continue;
 

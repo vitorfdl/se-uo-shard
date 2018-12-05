@@ -120,12 +120,19 @@ function Flee(opponent, sleepdelay := 0)
       sleepdelay := 275 - me.run_speed;
    endif
    // var chk := 0;
-   while(Distance(me, opponent) < 20 && runs < 50 && CheckLineOfSight(me, opponent))
+   while(Distance(me, opponent) < 22 && runs < 50 && CheckLineOfSight(me, opponent))
       sleepms(sleepdelay);
       var ev := wait_for_event(0);
       //chk := process_flee_event(opponent);
       RunAwayFrom(opponent);
       runs := runs +1;
+
+      if (runs % 10 == 0)
+         me.remAggro(opponent);
+         SetOpponent(getHighestAggro(me));
+         opponent := me.opponent;
+      endif
+
       if (ev.type == SYSEVENT_DAMAGED)
          if (((ev.source.npctemplate) and (CheckLineOfSight(me, ev.source))) 
                || (CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y ,opponent.x, opponent.y)) 
