@@ -48,6 +48,7 @@ program useArtefact(who, item)
    SetObjProperty(item, "charges", charges-required_charges);
    SetCooldown(who, "use_excep", 5);
    SetCooldown(who, "excep_".format(craftproperty), 30);
+   effect.id := "hab{}".format(item.serial);
    start_script(":ghaia:special/genericspecial" , array{who, effect});
 endprogram		
 
