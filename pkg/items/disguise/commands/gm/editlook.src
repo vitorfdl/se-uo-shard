@@ -30,6 +30,7 @@ endprogram
 
 
 function LookGump(who, targ, chardata, aparencia := 0)
+   sleepms(20);
 	var params := struct{
 		"race"  := chardata.raca,
 		"barba" := (chardata.raca != "Elfo")
