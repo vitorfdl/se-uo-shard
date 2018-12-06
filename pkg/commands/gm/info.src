@@ -662,14 +662,40 @@ function HabEdit(who, targ, input_info)
 		return 0;
 	endif
 	
-	if (!YesNo(who, "Deseja mesmo remover a hablidade "+ input_info.name+"?", "Sim", "Não"))
+	if (!YesNo(who, "Deseja mesmo remover a hablidade ?", "Sim", "Não"))
 		return 0;
 	endif
+
+   var feat_id = cint(input_info);
    
    var chardata := GetObjProperty(targ, "chardata");
-   foreach classe in (chardata.classes)
-      if ()
+   for i := 1 to (chardata.classes.size())
+      var feat_i := FindInArray(chardata.classes[i].habs, feat_id);
+      if (feat_i) chardata.classes[i].habs.Erase(i);
+
+      feat_i := FindInArray(chardata.classes[i].selected_habs, feat_id);
+      if (feat_i) chardata.classes[i].selected_habs.Erase(i);
+      sleepms(2);
+   endfor
+
+
+   for i := 1 to (chardata.subclasses.size())
+      var feat_i := FindInArray(chardata.subclasses[i].habs, feat_id);
+      if (feat_i) chardata.subclasses[i].habs.Erase(i);
+      sleepms(2);
+   endfor
+
+   SetObjProperty(targ, "chardata", chardata);
+   var hotbar := GetObjProperty(who, "hotbar");
+   foreach shortcut in (hotbar.shortcuts)
+      if (shortcut.id == feat_id)
+         shortcut := 0;
+      endif
+      sleepms(2);
    endforeach
+   SetObjProperty(who, "hotbar", hotbar);
+
+   chardata.points += 1;
    // if (!removeFeat(targ, input_info.name))
    //    SendSysMessage(who, "Feat invalido");
    //    return 0;
