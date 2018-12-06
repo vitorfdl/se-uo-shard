@@ -27,7 +27,7 @@ program defensor(params)
    PrintText(who, "*levanta a arma e dá um golpe destruidor*", SSM_FAIL);
 	PlayCustomSound( who, 33 );
 
-	PerformAction(who, ANIM_ATTACK_1HAND_JAB );
+   PlayAttackAnimation(who, weapon_cfg);
    DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
 
    sleep(1);

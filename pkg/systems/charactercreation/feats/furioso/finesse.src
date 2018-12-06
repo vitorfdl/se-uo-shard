@@ -64,8 +64,8 @@ function FinesseEffect(who, face, dmg)
          sleepms(5);
       endforeach
 
-	   PlayAttackAnimation(who, weapon_cfg);
-      sleepms(300);
+	   PerformAction(who, ANIM_ATTACK_1HAND_JAB );
+      sleepms(200);
    endfor
 
 endfunction
