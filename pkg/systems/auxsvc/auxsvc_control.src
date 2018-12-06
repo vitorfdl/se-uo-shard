@@ -46,14 +46,13 @@ function HandleDiscordRequests(connection, ev)
       
    elseif (unpacked_js.request == "RegisterAccount")
       var result := CreateNewAccount(unpacked_js.username, unpacked_js.password, 0, "ML", _ifOr(unpacked_js.email, ""));
-      var report;
+      var prepare_to_transmit := toJson(struct{ key := "Response", value := unpacked_js.username, id := unpacked_js.id });
       if ( result.errortext )
-         report := "Error: {}".format(result.errortext);
+         prepare_to_transmit := toJson(struct{ key := "Response", value := "Error: {}".format(result.errortext), id := unpacked_js.id });
       else
-         report := "Success. The acount was created successfully.";
+         prepare_to_transmit := toJson(struct{ key := "RegisterAccount", account := unpacked_js.username, password := unpacked_js.password, email := _ifOr(unpacked_js.email, ""), id := unpacked_js.id });
       endif
 
-      var prepare_to_transmit := toJson(struct{ key := "Response", value := report, id := unpacked_js.id });
       connection.transmit(prepare_to_transmit);
    endif
 endfunction
