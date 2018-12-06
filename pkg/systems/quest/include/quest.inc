@@ -166,6 +166,7 @@ function ProgressQuest(who, search, plus_progress := 1)
       if (item.color == 666) search.-color; endif
       if (!item.spawnpoint) search.-spawnpoint; endif
       if (!item.onlyboss && search.onlyboss) search.-onlyboss; endif
+      if (!item.item_objtype) search.-item_objtype; endif
 
       var no_progress := 0;
       foreach key in (search.Keys())

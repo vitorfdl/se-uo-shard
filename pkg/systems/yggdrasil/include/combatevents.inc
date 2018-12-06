@@ -251,6 +251,7 @@ function CombatEventsOptions(who, state)
             "Teleport", 
             "TimedScript", 
             "Throw Bomb",
+            "Broken Equips",
             "Text"
             }
          }
@@ -304,6 +305,17 @@ function CombatEventsOptions(who, state)
 
       state.target := output[1];
       state.onlybehind := output[2] == "Não";
+      state.conedist := cint(output[3]);
+   elseif ( opt == "Broken Equips")
+      var input_list := array{};
+      input_list.append(struct{ "title" := "Quais alvos?", "marked" := _ifElse(state.target, state.target in targ_opts, 1), "radio" := targ_opts});
+      input_list.append(struct{ "title" := "Quantos equipamentos serão danificados?", "marked" := _ifOr(state.amount, 1)});
+      if (!state.conedist) state.conedist := 3; endif
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+
+      state.target := output[1];
+      state.amount := cint(output[2]);
       state.conedist := cint(output[3]);
    elseif ( opt == "Simple Target")
       var input_list := array{};

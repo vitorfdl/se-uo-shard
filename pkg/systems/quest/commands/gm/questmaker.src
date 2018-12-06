@@ -463,16 +463,17 @@ function QuestConditions(who, new_condition := struct{})
          new_condition.item_specify := CreateItemTemplate(targ);
          new_condition.qty := cint(output[1]);
          new_condition.color := cint(targ.color);
-      "Craftar Item":
+      "Produzir Item":"Craftar Item":
          if (!new_condition.item_objtype)
             var recipe_list := ReadConfigFile(":*:recipes");
             var targ := ChooseItem(who, "Escolha o item que deve ser craftado.");
-            if (!targ) return 0; endif
-            if (!FindConfigElem(recipe_list, cint(targ.objtype)) && !FindConfigElem(recipe_list, hex(targ.objtype)))
-               SendSysMessageEx(who, "Não existe receita para este item", SSM_FAIL);
-               return 0; 
+            if (targ) 
+               if (!FindConfigElem(recipe_list, cint(targ.objtype)) && !FindConfigElem(recipe_list, hex(targ.objtype)))
+                  SendSysMessageEx(who, "Não existe receita para este item", SSM_FAIL);
+                  return 0;
+               endif
             endif
-            new_condition.item_objtype := targ.objtype;
+            new_condition.item_objtype := _ifOr(targ.objtype, 0);
          endif
 
          var quest_gump := array{
@@ -551,9 +552,8 @@ function QuestRewards(who, new_reward := struct{})
       "Item":
          SendSysMessage(who, "Escolha o item de recompensa.");
          var targ := Target(who);
-         if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
+         if (!targ || targ.isA(POLCLASS_MOBILE)) return 0; endif
          new_reward.item := CreateItemTemplate(targ);			
-         return 0;
    endcase
 
    return new_reward;

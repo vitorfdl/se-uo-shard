@@ -513,6 +513,8 @@ program loko(params)
             start_script(":charactercreation:feats/elementalista/trilha_de_fogo", array{who, trilhainfo, t});
             sleepms(2);
          endforeach
+      elseif (state.type == "Broken Equips")
+      
 		elseif (state.type == "Summon Npcs") // Summonar NPC
 	      var amt := 0;
          var tries := 0;

@@ -357,9 +357,9 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 			endif 				
 		endforeach
 
-      if (!GetCooldown(who, "musician_exp"))
+      if (!GetCooldown(who, "musician_exp") && randomInt(100) < 10)
          ExpGain(who, 2);
-         SetCooldown(who, "musician_exp", RandomInt(20)+15);
+         SetCooldown(who, "musician_exp", 200);
       endif
 
 		// if( Cint(GetObjProperty(who, "#emocaoMusic")) > ReadGameClock() )

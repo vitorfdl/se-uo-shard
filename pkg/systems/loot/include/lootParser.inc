@@ -273,7 +273,7 @@ function LootGroupGump(who)
    input_list.append(struct{ "title" := "Qual o grupo de loot?", "marked" := 1, "checkbox" := loot_list});
    input_list.append(struct{ "title" := "Quantos itens podem dropar?", "marked" := "1d4" });
    input_list.append(struct{ "title" := "Qual a chance de drop?", "marked" := "60" });
-   input_list.append(struct{ "title" := "Qual a base de PODER e DEFESA?", "marked" := array{20, 5}, "multipleanswer" := 2 });
+   input_list.append(struct{ "title" := "Qual o level de equipamentos?", "marked" := 1, radio := array{"1", "2", "3", "4", "5", "6", "7", "8", "9","10"} });
    input_list.append(struct{ "title" := "Itens incomuns podem vir neste tesouro?", "marked" := array{1}, checkbox := array{"Bom", "Raro", "Exóticos"} });
    input_list.append(struct{ "title" := "Retornar itens ao invés de recipes?", "marked" := 2, "radio" := array{"Sim", "Não"} });
    var output := QuestionsGump(who, input_list);
@@ -287,8 +287,7 @@ function LootGroupGump(who)
          "by_group":= glist,
          "rate":= output[2],
          "chance":= cint(output[3]),
-         "power" := cint(output[4][1]),
-         "defense" := cint(output[4][2]),
+         "level" := cint(output[4]),
          "qualities" := output[5],
          "forceitem" := output[6] == "Sim"
       };
