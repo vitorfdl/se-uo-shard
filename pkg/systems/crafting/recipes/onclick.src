@@ -112,7 +112,6 @@ function SendGump(who, scroll)
       objtype := cint(objtype);
       var can_learn := 1;
       if (my_recipes[objtype])
-         print(checkifHasLevel(objtype));
          if (my_recipes[objtype].level >= 10 || !checkifHasLevel(objtype))
             can_learn := 0;
          endif
