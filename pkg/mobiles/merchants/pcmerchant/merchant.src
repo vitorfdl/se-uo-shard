@@ -624,7 +624,7 @@ function AddItemToSell(npc, player, item)
    if (!cost_lote) cost_lote := 1; endif
 	var cost_type := MOEDAS;
 
-   var total_imposto = CInt(cdbl(cost_amt * (item.amount / cost_lote)) * cdbl(imposto));
+   var total_imposto := CInt(cdbl(cost_amt * (item.amount / cost_lote)) * cdbl(imposto));
 	// var specialProp := struct;
 
 	if ( !cost_amt || cost_amt == 0 )
