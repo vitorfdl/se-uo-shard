@@ -38,7 +38,7 @@ program startTalent(param)
       sleepms(300);
    endfor
    return 1;
-endfunction
+endprogram
 
 function FinesseEffect(who, face, dmg)
    who.SetFacing(face);
