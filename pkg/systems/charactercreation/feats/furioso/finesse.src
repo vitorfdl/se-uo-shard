@@ -31,12 +31,9 @@ program startTalent(param)
       var direction := GetFacing(who.x, who.y, targ.x, targ.y);
 
       FinesseEffect(who, direction, hab.PowerMod[1]);
-      sleepms(750);
-   endfor
-
-   for b := 1 to 3
       sleepms(300);
    endfor
+
    return 1;
 endprogram
 
