@@ -7,7 +7,7 @@ function sendToSpy(source, message_txt, color := 0);
 		player := SystemFindObjectBySerial(Cint(player));
       var sayspy := GetObjProperty(player, "SaySpyOn");
 
-		if ( sayspy && player.cmdlevel >= 3 && player != source && !CheckLineOfSight(player, source))
+		if ( sayspy && player.cmdlevel >= 3 && player != source && (!CheckLineOfSight(player, source) || player.enabled("losany")))
 			if (sayspy == "on")
 				SendSysMessageEx(player, "["+sender+"]: "+message_txt, color);
 			elseif(sender in sayspy)
