@@ -47,6 +47,8 @@ function FinesseEffect(who, face, dmg)
 	var y := mod[2];
 
    for i := 1 to 3
+		var finalx := (who.x + x);
+		var finaly := (who.y + y);
 		if (!CheckLosAt(who, finalx, finaly, who.z))
 			return 0;
 		endif
