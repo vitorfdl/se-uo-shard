@@ -357,7 +357,7 @@ function tocarsound(who,item,notas,notas2,tempo,letra,emocao)
 			endif 				
 		endforeach
 
-      if (!GetCooldown(who, "musician_exp") && randomInt(100) < 10)
+      if (!GetCooldown(who, "musician_exp") && randomInt(100) < 40)
          ExpGain(who, 2);
          SetCooldown(who, "musician_exp", 200);
       endif

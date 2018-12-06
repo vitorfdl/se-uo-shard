@@ -83,7 +83,7 @@ var selected_spawnpoint := 0x0; //Serial Number
 var selected_treasure   := 0x0; //Serial Number
 var spotgroups;
 var gumpid := 0x1F5;
-var item_levels = array{"1", "2", "3", "4", "5", "6", "7", "8", "9","10"};
+var item_levels := array{"1", "2", "3", "4", "5", "6", "7", "8", "9","10"};
 
 program spotGroups(params)
     var who;
