@@ -266,9 +266,10 @@ function MoveAround(byref wanders)
       range := 6;
    endif
    
+   var noback := cint(GetObjProperty(me, "#noback"));
    if (anchor == error && !me.hidden)
       wander();
-   elseif (CoordinateDistance(me.x, me.y, anchor[1], anchor[2]) > range)
+   elseif (CoordinateDistance(me.x, me.y, anchor[1], anchor[2]) > range && (noback < polcore().systime))
       TurnTowardLocation( anchor[1], anchor[2] );
       WalkTowardLocation( anchor[1], anchor[2] );
       if (wanders == 29)

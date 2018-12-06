@@ -150,9 +150,14 @@ function Fight(opponent, alerted := 0)
          endif
       endif
 
-      if (me.dead || !opponent || opponent.concealed || opponent.hidden)
-         // me.remAggro(opponent.serial);
+      if (me.dead || !opponent || opponent.dead || opponent.concealed)
+         me.remAggro(opponent.serial);
          break;
+      elseif (opponent.hidden)
+         me.setAggro(opponent.serial, -20);
+         if (!ChooseHighestOpponent(me, opponent))
+            Wander();
+         endif
       elseif (opponent.dead)
          //Somente checa se tem mais inimigo, se n se afsata do corpo.
          var achou := 0;
@@ -241,7 +246,7 @@ function Fight(opponent, alerted := 0)
                TS_LowerDuration(me, "npcrun", -1);
             endif
          endif
-      else
+      else // if is close
          if (RandomInt(100) <= 35)
             if (!TS_GetCooldown(me, "block_dodge"))
                if (npccfgfile.DodgeCooldown)
@@ -333,7 +338,6 @@ function Fight(opponent, alerted := 0)
          //	sendsysmessage(ev.source, "peacemade");
             SetPeaceMade();
             return;
-            continue;
          EVID_COMBAT_MOVE:
             RunTowardLocation( ev.x, ev.y );
             if (CoordinateDistance(me.x, me.y, ev.x, ev.y) <= 1)
@@ -353,7 +357,7 @@ function OutNumbered(mobile)
    if ("RunWhenOutnumbered" in custombehaviors)
       var enemies := GetEnemiesNear(me, 7).size();
       var allies := GetAlliesNear(me, 7).size();
-      if (enemies > allies)
+      if (enemies > allies+1)
          return 1;
       endif
    endif

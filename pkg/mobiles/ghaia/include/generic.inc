@@ -90,7 +90,7 @@ function NpcGoTo(destiny, move_type, stop_if_attacker := 0)
    endforeach
 endfunction
 
-function Flee(byref opponent, sleepdelay := 0)
+function Flee(byref opponent, sleepdelay := 0, change_opponent := 0)
    if ("FleeStealth" in custombehaviors)
       if (!GetCooldown(me, "fleestealth"))
          PrintText(me, "*esconde*");
@@ -120,16 +120,19 @@ function Flee(byref opponent, sleepdelay := 0)
       sleepdelay := 275 - me.run_speed;
    endif
    // var chk := 0;
-   while(Distance(me, opponent) < 22 && runs < 50 && CheckLineOfSight(me, opponent))
+   var last_loc := array{opponent.x, opponent.y, opponent.z};
+   while(Distance(me, opponent) < 30 && runs < 50 && CoordinateDistance(opponent.x, opponent.y, last_loc[1], last_loc[2]) <= 3)
       sleepms(sleepdelay);
       var ev := wait_for_event(0);
       //chk := process_flee_event(opponent);
       RunAwayFrom(opponent);
       runs := runs +1;
 
-      if (runs % 10 == 0)
-         me.remAggro(opponent);
-         ChooseHighestOpponent(me, opponent);
+      if (change_opponent && randomint(6) <= 2)
+         me.setAggro(opponent.serial, -100);
+         if (ChooseHighestOpponent(me, opponent))
+            break;
+         endif
       endif
 
       if (ev.type == SYSEVENT_DAMAGED)
@@ -142,6 +145,8 @@ function Flee(byref opponent, sleepdelay := 0)
          endif
       endif 
    endwhile
+
+   SetObjProperty(me, "#noback", polcore().systime+15);
 endfunction
     
 //no sleep mode ele o waitfor event fica 30 secs e ele não fica mais fazendo lookarounds o tempo todo
@@ -228,18 +233,18 @@ function Opendoors(me)
   endforeach
 endfunction
 
-function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
+function ChooseHighestOpponent(me, byref opponent, new_opponent := 0, force_change := 0)
    if (!opponent && new_opponent)
       opponent := new_opponent;
       SetOpponent(new_opponent);
       TurnToward(new_opponent);
-      return;
+      return 1;
    elseif (opponent && !CheckLineOfSight(me, opponent))
       me.setAggro(opponent.serial, -50);
    endif
 
-   if (GetCooldown(me, "#lockaggro"))
-      return opponent;
+   if (GetCooldown(me, "#blockaggro"))
+      return 0;
    endif
 
    var highest_aggro := getHighestAggro(me);
@@ -248,9 +253,8 @@ function ChooseHighestOpponent(me, byref opponent, new_opponent := 0)
       opponent := highest_aggro;
       SetOpponent(highest_aggro);
       TurnToward(highest_aggro);
+      return 1;
    endif
-
-   return opponent;
 endfunction
 
 function getFacingString(me_face)
@@ -275,6 +279,19 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
       move_type := 0;
    endif
 
+	var path := GetObjProperty(me, "path"); //procura se ja calculou o path
+	var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
+   if (last_loc && path) 
+      if (CoordinateDistance(opponent.x, opponent.y, last_loc[1], last_loc[2]) > 3)
+         path := 0;
+         EraseObjProperty(me, "path");
+         EraseObjProperty(me, "#enemy_last_loc");
+         last_loc := 0;
+      else
+         last_loc := 1;
+      endif
+   endif
+
    if (stam <= 1)
       var last_msg := GetObjProperty(me, "#fatigue");
       if (!last_msg || last_msg < ReadGameClock())
@@ -282,11 +299,14 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
          PrintText(me, "*fatigado*");
       endif
       sleep(1);
-	elseif (!CheckLosAt(me, opponent.x, opponent.y, opponent.z) || !CanMove(face_str)) //se não consegue correr direto
-		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
-		var last_loc := GetObjProperty(me, "#enemy_last_loc"); //procura se ja calculou o path
-		
-      if (path == error || ( last_loc && !(opponent in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se não calculou
+   elseif (CheckLosAt(me, opponent.x, opponent.y, opponent.z) && !path && CanMove(face_str))
+      EraseObjProperty(me, "path");
+      EraseObjProperty(me, "#enemy_last_loc");
+      if (move_type) RunToward( opponent );
+      else WalkToward( opponent ); endif
+      sleepms(sleepdelay);
+	else
+      if (path == error || last_loc ) //se não calculou
          var flags := FP_IGNORE_MOBILES;
          if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
             flags := flags| FP_IGNORE_DOORS;
@@ -294,23 +314,15 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
          path := FindPath(  me.x, me.y, me.z, opponent.x, opponent.y, opponent.z, me.realm, flags, 15); //calcula o path
          
          if (!path[1] || !path || path == error)
-            Flee(opponent, sleepdelay);
+            Flee(opponent, sleepdelay, 1);
             sleepms(sleepdelay);
-            // ChooseAnotherOpponent(me);
-            ChooseHighestOpponent(me, opponent);
-            if (CoordinateDistance(me.x, me.y, opponent.x, opponent.y) > 14)
-               me.remAggro(opponent);
-               ChooseHighestOpponent(me, opponent);
-            endif
          else
             if (move_type) RunTowardLocation( path[1].x, path[1].y );
             else WalkTowardLocation(path[1].x, path[1].y); endif
 
 				path.erase(1); //deleta a coordenada e vai pra proxima
-            set_critical(1);
             SetObjProperty(me, "path", path);
             SetObjProperty(me, "#enemy_last_loc", array{opponent.x, opponent.y, opponent.z});
-            set_critical(0);
          endif
 		endif
 
@@ -337,7 +349,7 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
                me.remAggro(opponent);
                var old_opponent := opponent;
                ChooseHighestOpponent(me, opponent);
-               if (old_opponent == opponent) Flee(opponent, sleepdelay); endif
+               if (old_opponent == opponent) Flee(opponent, sleepdelay, 1); endif
             endif
          endif
       else
@@ -345,12 +357,6 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
          else WalkToward( opponent ); endif
          sleepms(sleepdelay);
       endif
-   else
-      EraseObjProperty(me, "path");
-      EraseObjProperty(me, "#enemy_last_loc");
-      if (move_type) RunToward( opponent );
-      else WalkToward( opponent ); endif
-      sleepms(sleepdelay);
 	endif
 endfunction
 
