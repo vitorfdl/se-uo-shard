@@ -671,17 +671,17 @@ function HabEdit(who, targ, input_info)
    var chardata := GetObjProperty(targ, "chardata");
    for i := 1 to (chardata.classes.size())
       var feat_i := FindInArray(chardata.classes[i].habs, feat_id);
-      if (feat_i) chardata.classes[i].habs.Erase(i);
+      if (feat_i) chardata.classes[i].habs.Erase(i); endif
 
       feat_i := FindInArray(chardata.classes[i].selected_habs, feat_id);
-      if (feat_i) chardata.classes[i].selected_habs.Erase(i);
+      if (feat_i) chardata.classes[i].selected_habs.Erase(i); endif
       sleepms(2);
    endfor
 
 
    for i := 1 to (chardata.subclasses.size())
       var feat_i := FindInArray(chardata.subclasses[i].habs, feat_id);
-      if (feat_i) chardata.subclasses[i].habs.Erase(i);
+      if (feat_i) chardata.subclasses[i].habs.Erase(i); endif
       sleepms(2);
    endfor
 
