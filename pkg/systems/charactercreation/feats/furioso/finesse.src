@@ -58,7 +58,7 @@ function FinesseEffect(who, face, dmg)
 			return 0;
 		endif
 
-      var mobs := CheckIfIsAlly(who, LListMobilesNearLocationEx(who.x, who.y, who.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+      var mobs := CheckIfIsAlly(who, ListMobilesNearLocationEx(who.x, who.y, who.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
       foreach mob in mobs
          DamageFLS(mob, dmg, DMG_PHYSICAL, who);
          sleepms(5);
