@@ -347,6 +347,8 @@ function ChooseTarget(mobile, feat)
             SendSysMessageEx(mobile, "Você deve escolher uma criatura como alvo.", SSM_FAIL);
          elseif (feat.Targ == "Item" && !targ.isA(POLCLASS_ITEM) && !targ.isA(POLCLASS_CONTAINER))
             SendSysMessageEx(mobile, "Você deve escolher um objeto como alvo", SSM_FAIL);
+         elseif (!feat.NoLos && !CheckLineOfSight(mobile, targ));
+            SendSysMessageEx(mobile, "Você não tem visão do alvo.", SSM_FAIL);
          else
             break;
          endif
@@ -361,10 +363,13 @@ function ChooseTarget(mobile, feat)
          if (targ)
             TurnObjectToward(mobile, targ.x, targ.y);
          endif
+
          if(!feat.Range)
             break;
          elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < feat.Range)
             break;
+         elseif (!feat.NoLos && !CheckLosAt( mobile, targ.x, targ.y, targ.z ));
+            SendSysMessageEx(mobile, "Você não tem visão da area escolhida.", SSM_FAIL);
          else
             SendSysMessageEx(mobile, "Muito distante!", SSM_FAIL);
          endif
