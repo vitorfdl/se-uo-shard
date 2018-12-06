@@ -3,7 +3,7 @@ include "include/say";
 function sendToSpy(source, message_txt, color := 0);
    var sender := source.getName();
 	foreach player in GetGlobalProperty("GmsOnlines")
-		Sleepms(4); 
+		Sleepms(5); 
 		player := SystemFindObjectBySerial(Cint(player));
       var sayspy := GetObjProperty(player, "SaySpyOn");
 
