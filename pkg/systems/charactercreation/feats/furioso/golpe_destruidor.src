@@ -9,6 +9,7 @@ include ":ghaia:ghaiaUtil";
 include ":fls_core:fls_characters";
 include "include/client";
 include "include/shapes";
+include ":charactercreation:feats";
 
 program defensor(params)
 	var who := params[1];
