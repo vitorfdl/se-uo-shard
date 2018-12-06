@@ -26,11 +26,13 @@ program estandarte(item)
       foreach mob in mobiles
          if (!CheckIfIsAlly(owner, mob) && mob != owner)
             TS_StartTimer(mob, "nohealing", 2);
+         else
+            TS_LowerDuration(mob, "dodge_block", 1, 1);
          endif
          sleepms(2);
       endforeach
       time -= 1;
-      sleep(3);
+      sleep(2);
    endwhile
 
    DestroyItem(item);

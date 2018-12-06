@@ -623,6 +623,8 @@ function AddItemToSell(npc, player, item)
 	var cost_lote := cint(GFExtractData(input, qty_by));
    if (!cost_lote) cost_lote := 1; endif
 	var cost_type := MOEDAS;
+
+   var total_imposto = CInt(cdbl(cost_amt * (item.amount / cost_lote)) * cdbl(imposto));
 	// var specialProp := struct;
 
 	if ( !cost_amt || cost_amt == 0 )
@@ -631,17 +633,17 @@ function AddItemToSell(npc, player, item)
 	elseif (cost_amt > 10000)
 		SendSysMessageEx(player, "Você ultrapassou o limite maximo de {} moedas.".format("10000"), SSM_FAIL);
 		return;
-	elseif ( player.cmdlevel < 3 && AmountInPack(player, MOEDAS) < CInt(cost_amt * imposto) )
+	elseif ( player.cmdlevel < 3 && AmountInPack(player, MOEDAS) < total_imposto )
 		SendSysMessageEx(player, "Você não tem moedas suficiente para pagar o vendedor pelo seu servico.", SSM_FAIL);
 		return 0;
 	endif
 
 	infinite := GFExtractData(input, infinite);
-	var dezperc := CInt(cdbl(cost_amt * (item.amount / cost_lote)) * cdbl(imposto));
 
-   if (dezperc <= 1)
-      dezperc := 1;
+   if (total_imposto < 1)
+      total_imposto := 1;
    endif
+
 	var desc := RequestGump(player, "Entre com uma pequena descrição do produto.", "Isso é opcional", "", 1);
 	if ( !desc )
 		desc := "";
@@ -649,10 +651,10 @@ function AddItemToSell(npc, player, item)
 		desc := desc[0,300]+"...";
 	endif
 
-	if (player.cmdlevel < 3 && dezperc != 0)
+	if (player.cmdlevel < 3 && total_imposto != 0)
 		var pay := 0;
 		do
-			SendSysMessageEx(player, "O imposto total é de: {} moedas".format(dezperc), SSM_INFO);
+			SendSysMessageEx(player, "O imposto total é de: {} moedas".format(total_imposto), SSM_INFO);
 			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda. (Pressione ESC para cancelar).", SSM_REQUEST);
 			var targ := Target(player);
 			if ( !targ )
@@ -666,7 +668,7 @@ function AddItemToSell(npc, player, item)
 				if ( !ReserveItem(targ) )
 					SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
 				else
-					if (dezperc > 0 && !SubtractAmount(targ, dezperc))
+					if (total_imposto > 0 && !SubtractAmount(targ, total_imposto))
 						SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
 					else
 						pay := 1;

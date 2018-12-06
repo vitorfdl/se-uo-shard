@@ -665,15 +665,15 @@ function HabEdit(who, targ, input_info)
 	if (!YesNo(who, "Deseja mesmo remover a hablidade "+ input_info.name+"?", "Sim", "Não"))
 		return 0;
 	endif
-	
+   
+   var chardata := GetObjProperty(targ, "chardata");
+   foreach classe in (chardata.classes)
+      if ()
+   endforeach
    // if (!removeFeat(targ, input_info.name))
    //    SendSysMessage(who, "Feat invalido");
    //    return 0;
    // endif
-
-	if (YesNo(who, "Deseja retornar um ponto de talento para o personagem?", "Sim", "Não"))
-		targ.SetTalentPoints(1);
-	endif
 	
 	LogToFile(":fls_core:vital.log", who.name+" ("+who.acctname+") editou "+targ.name+" ("+targ.acctname+") :: removeu habilidade "+input_info.name, LOG_DATETIME);
 

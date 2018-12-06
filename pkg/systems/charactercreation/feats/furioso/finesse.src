@@ -1,0 +1,69 @@
+use os;
+
+include "include/say";
+include ":timedscripts:timedScripts";
+include ":ghaia:ghaiaUtil";
+include ":fls_core:fls_characters";
+include "include/client";
+include "include/shapes";
+
+var weapon_cfg;
+
+program startTalent(param)
+   var who := param[1];
+   var hab := param[2];
+
+   weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   if (!who.weapon || weapon_cfg.TwoHanded || who.weapon.isBow() || who.weapon.isMagicWeapon())
+      FailFeat(who, hab);
+      return SendSysMessageEx(who, "Você deve estar equipando uma arma de uma mão.", SSM_FAIL);
+   endif
+
+	who.SetWarMode(1);
+   for i := 1 to 3
+      SendSysMessageEx(who, "Clique na direção que vai se mover (esc para parar a habilidade)", SSM_FAIL);
+      var targ := TargetCoordinates(who);
+      if (!targ) break; endif
+
+      if (who.frozen || who.squelched || who.paralyzed) return; endif
+
+	   PlaySoundEffect(who, 0x520);
+      var direction := GetFacing(who.x, who.y, targ.x, targ.y);
+
+      FinesseEffect(who, direction, hab.PowerMod[1]);
+      sleepms(750);
+   endfor
+
+   for b := 1 to 3
+      sleepms(300);
+   endfor
+   return 1;
+endfunction
+
+function FinesseEffect(who, face, dmg)
+   who.SetFacing(face);
+   var mod := GetModByFacing(face);
+	var x := mod[1];
+	var y := mod[2];
+
+   for i := 1 to 3
+		if (!CheckLosAt(who, finalx, finaly, who.z))
+			return 0;
+		endif
+		var err := MoveObjectToLocation( who, finalx, finaly, who.z, who.realm, MOVEITEM_IGNOREMOVABLE );
+		if (err == error)
+		//	PrintText(who, "*bate no obstaculo*");
+			return 0;
+		endif
+
+      var mobs := CheckIfIsAlly(who, LListMobilesNearLocationEx(who.x, who.y, who.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+      foreach mob in mobs
+         DamageFLS(mob, dmg, DMG_PHYSICAL, who);
+         sleepms(5);
+      endforeach
+
+	   PlayAttackAnimation(who, weapon_cfg);
+      sleepms(300);
+   endfor
+
+endfunction
