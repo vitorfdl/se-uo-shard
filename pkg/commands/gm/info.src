@@ -666,7 +666,7 @@ function HabEdit(who, targ, input_info)
 		return 0;
 	endif
 
-   var feat_id = cint(input_info);
+   var feat_id := cint(input_info);
    
    var chardata := GetObjProperty(targ, "chardata");
    for i := 1 to (chardata.classes.size())
@@ -686,14 +686,14 @@ function HabEdit(who, targ, input_info)
    endfor
 
    SetObjProperty(targ, "chardata", chardata);
-   var hotbar := GetObjProperty(who, "hotbar");
+   var hotbar := GetObjProperty(targ, "hotbar");
    foreach shortcut in (hotbar.shortcuts)
       if (shortcut.id == feat_id)
          shortcut := 0;
       endif
       sleepms(2);
    endforeach
-   SetObjProperty(who, "hotbar", hotbar);
+   SetObjProperty(targ, "hotbar", hotbar);
 
    chardata.points += 1;
    // if (!removeFeat(targ, input_info.name))
