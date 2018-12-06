@@ -111,7 +111,7 @@ function SendGump(who, scroll)
       if (!my_recipes) my_recipes := dictionary{}; endif
       objtype := cint(objtype);
       var can_learn := 1;
-      if (my_recipes[objtype])
+      if (my_recipes[objtype] && recipe.Type != "group")
          if (my_recipes[objtype].level >= 10 || !checkifHasLevel(objtype))
             can_learn := 0;
          endif
