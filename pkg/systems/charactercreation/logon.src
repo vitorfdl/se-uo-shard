@@ -1,7 +1,9 @@
 use uo;
 use os;
+include "include/staff";
 
 program fixTalent(who)
    start_script(":charactercreation:hotbar/controller", who);
    start_script(":charactercreation:hotbar/hotbar", who);
+   sendToSpy(who, "Personagem logado!", SSM_INFO);
 endprogram

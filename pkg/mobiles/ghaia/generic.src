@@ -157,7 +157,9 @@ function Fight(opponent, alerted := 0)
          me.setAggro(opponent.serial, -20);
          if (!ChooseHighestOpponent(me, opponent))
             Wander();
+            sleepms(100);
          endif
+         continue;
       elseif (opponent.dead)
          //Somente checa se tem mais inimigo, se n se afsata do corpo.
          var achou := 0;

@@ -8,6 +8,7 @@ program auxsMessage(ev)
    
    if (!ev.key) ev.key := "GeneralMessage"; endif
    if (!ev.type) ev.type := 0x5; endif
+   
    var connection := GetProcess(GetGlobalProperty("aux_service_pid"));
    if (connection)
       connection.sendEvent(ev);

@@ -1,17 +1,41 @@
 use uo;
+use os;
 
 program speechHook()
   Print("SystemHook: Hooking Shownames.");
   return 1;
 endprogram
 
-exported function handeSendSpeech(who, byref pkt)
+exported function handleNameView(who, byref pkt)
 	if(pkt.GetInt8(9) == 0x6)
 		var obj := SystemFindObjectBySerial(pkt.GetInt32(3));
       if (obj.IsA(POLCLASS_MOBILE)) // Se for um mobile, não exibe o nome
 			return 1;
 		endif
 	endif
+
+	return 0;
+endfunction
+
+exported function handleSendSpeech(who, byref packet)
+   start_script("sayspy", array{who, packet});
+   // print("here?");
+   // print(length);
+   // print(type);
+
+// BYTE[1] cmd 1
+// BYTE[2] length 3
+// BYTE[1] Type  4
+// BYTE[2] Color  6
+// BYTE[2] Font  8
+// BYTE[4] Language (Null Terminated) 12
+   // print(test3);
+	// if(pkt.GetInt8(9) == 0x6)
+	// 	var obj := SystemFindObjectBySerial(pkt.GetInt32(3));
+   //    if (obj.IsA(POLCLASS_MOBILE)) // Se for um mobile, não exibe o nome
+	// 		return 1;
+	// 	endif
+	// endif
 
 	return 0;
 endfunction
