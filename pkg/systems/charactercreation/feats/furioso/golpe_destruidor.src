@@ -19,7 +19,7 @@ program defensor(params)
 
    var weapon_cfg := GetItemCFGInfo(who, who.weapon);
    if (!who.weapon || !weapon_cfg.TwoHanded)
-      FailFeat(who, hab);
+      FailFeat(who, spellinfo);
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
    endif
 
