@@ -120,6 +120,7 @@ function DoShutDown(countdown:=0)
 	endfor
 	
 	SVR_ReportText("Reiniciando agora!", SAVER_REPORT_ALL);
+   start_script(":auxsvc:auxsvc_message", struct{ message := "Reiniciando agora!" });
 	sleep(3);
 	
 	ShutDown();

@@ -1,0 +1,20 @@
+ use os;
+ use uo;
+
+include "include/utils";
+include "include/say";
+include "include/staff";
+
+program sayspy(who, packet)
+   _resolveParams(who, packet);
+   var type := packet.GetInt8(3);
+   // var type := packet.GetInt8(TEXT_TYPE);
+   // var test5 := packet.GetInt8(TEXT_TYPE);
+	var length_of_text := ( packet.GetInt16(1) - 13 ) / 2;
+	var message_txt := packet.GetUnicodeString(12, length_of_text);
+   message_txt := CChrZ(message_txt);
+
+   if (message_txt[1] == ".") return; endif
+
+   sendToSpy(who, message_txt);
+endprogram

@@ -20,7 +20,7 @@ program auxtest( connection )
 		ev := wait_for_event( 20 );
 		// print(ev);
 		if (ev) 
-         if (ev.type == 0x5) print(connection.transmit(packJSON(ev)));
+         if (ev.type == 0x5) connection.transmit(packJSON(ev));
          else HandleDiscordRequests(connection, ev); endif
 		endif
       sleepms(10);

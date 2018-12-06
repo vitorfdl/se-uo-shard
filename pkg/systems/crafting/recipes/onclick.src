@@ -75,6 +75,7 @@ function SendGump(who, scroll)
          return 0;
       endif
    endif
+   
 	var gump := GFCreateGump();
 	GFSetID(gump, GUMPID_RECIPES);
 	GFDisposable(gump, 0);
@@ -84,7 +85,6 @@ function SendGump(who, scroll)
 	GFGumpPic(gump, 25, 174, 2083);
 	GFGumpPicTiled(gump, 37, 43, 234, 11, 2091);
 	GFGumpPicTiled(gump, 38, 159, 234, 11, 2091);
-	GFGumpPic(gump, 47, 184, 1209);
 	GFHTMLArea(gump, 35, 16, 240, 20, "<BASEFONT SIZE=5 {}><CENTER>Receita de {}".format(lang, skill_name));
 
 	var item_name := recipe.name;
@@ -111,14 +111,14 @@ function SendGump(who, scroll)
       if (!my_recipes) my_recipes := dictionary{}; endif
       objtype := cint(objtype);
       var can_learn := 1;
-      if (my_recipes[objtype])
+      if (my_recipes[objtype] && recipe.Type != "group")
          if (my_recipes[objtype].level >= 10 || !checkifHasLevel(objtype))
             can_learn := 0;
          endif
       endif
 
       if (recipe.requireFeat)
-         if (!HaveFeatSecondary(who, recipe.requireFeat))
+         if (!HaveFeatSecondary(who, cint(recipe.requireFeat)))
             can_learn := 2;
          endif
       endif

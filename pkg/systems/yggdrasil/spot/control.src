@@ -20,8 +20,8 @@ program Install(spot)
 
       var config := spot.GetProps();
       if (!GetCooldown(spot, "spotrespawn"))
-         if (!HasPlayerNear(spot.x, spot.y, spot.realm) && config.active)
-            var group_data := GetSpotGroupData(config.spotgroup);
+         var group_data := GetSpotGroupData(config.spotgroup);
+         if (!HasPlayerNear(spot.x, spot.y, spot.realm) && config.active && group_data.active)
             if (group_data.activegroup != config.activegroup)
                spot.SetProps(struct{ "activegroup" := group_data.activegroup });
                spot.ForceKill();
@@ -47,9 +47,9 @@ endprogram
 
 function FillSpawnQueue(spawnpoints)
     foreach serial in spawnpoints
-        var spawnpoint := SystemFindObjectBySerial(serial);
-        FillQueue(spawnpoint);
-        sleepms(10);
+      var spawnpoint := SystemFindObjectBySerial(serial);
+      FillQueue(spawnpoint);
+      sleepms(10);
     endforeach
 endfunction
 

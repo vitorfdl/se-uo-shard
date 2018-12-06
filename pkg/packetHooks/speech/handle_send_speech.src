@@ -68,8 +68,6 @@ exported function handleUCOutgoing( character, byref packet )
 		endif
 	endif
 	
-	// SendToSpy(source, message_txt);
-
 	return 0;
 endfunction 
 
@@ -86,38 +84,3 @@ exported function handleUCOrequest( character, byref packet )
 
 	return 0;
 endfunction 
-
-function sendToSpy(source, message_txt)
-	if (!source.acctname || GetObjProperty(source, "LastMSG") == message_txt )
-		return;
-	endif
-
-	var unvalid := { message_txt[1, 6], message_txt[1, 9], message_txt[1, 9], message_txt[1, 14], message_txt[1,13]};
-	var ignore_messages := array{"*usando ataduras em si mesmo*", "*parou de aplicar bandagens*", "*arrombando a fechadura*", "*desarmando armadilha*", "*preparando um extrato*", "*Errando todas as notas*", "*defende o golpe*"};
-	var common_messages := array{"*Tirou", "*Você ", "Você a", "*Pegou"};
-   if (unvalid[1] in common_messages || unvalid[2] == "*Guardou " || unvalid[3] == "*Colocou " || unvalid[4] == "*escalpelando " || unvalid[5] == "*Acrescentou " || unvalid[5] == "*Tocando uma " || message_txt in ignore_messages)
-		return;
-	endif
-
-	foreach player in GetGlobalProperty("GmsOnlines")
-		Sleepms(2); 
-		player := SystemFindObjectBySerial(Cint(player));
-      var sayspy := GetObjProperty(player, "SaySpyOn");
-		if ( sayspy && player.cmdlevel >= 3 && player != source)
-         if (getObjProperty(player, "lastsayspy") == message_txt)
-            continue;
-         endif
-			var sender := source.name;
-			if (sender == "Desconhecido")
-				sender := GetObjProperty(source, "realname");
-			endif
-
-			if (sayspy == "on")
-				SendSysMessageEx(player, "["+sender+"]: "+message_txt);
-			elseif(sender in sayspy)
-				SendSysMessageEx(player, "["+sender+"]: "+message_txt);
-			endif
-         SetObjProperty(player, "lastsayspy", message_txt);
-		endif
-	endforeach
-endfunction

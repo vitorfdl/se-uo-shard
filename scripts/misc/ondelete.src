@@ -24,6 +24,8 @@ program core_onDelete(who)
 			ApplyDamage(pet, 9999);
 		endforeach
 
+      clearFichaRP(who);
+
 		return 1;
 	elseif ( age >= SECONDS_IN_WEEK || Getobjproperty(who, "morto") || who.acctname == "test" )
 		SysLog("Account ["+who.acctname+"] deleting character "+who.name+" ("+who.serial+")");
@@ -34,20 +36,27 @@ program core_onDelete(who)
 			ApplyRawDamage(pet, 9999);
 		endforeach
 
-      if (who.GetLevel() >= 8)
-         acc.SetProp("expboost", 4);
-      elseif (who.GetLevel() >= 5)
-         acc.SetProp("expboost", 3);
-      elseif (who.GetLevel() >= 3)
-         acc.SetProp("expboost", 2);
-      endif
+      // if (who.GetLevel() >= 8)
+      //    acc.SetProp("expboost", 4);
+      // elseif (who.GetLevel() >= 5)
+      //    acc.SetProp("expboost", 3);
+      // elseif (who.GetLevel() >= 3)
+      //    acc.SetProp("expboost", 2);
+      // endif
 
       if (who.guild)
          RemMember(who.guild, who);
       endif
+
+      clearFichaRP(who);
 
 		return 1;
 	else
 		return 0;
 	endif
 endprogram
+
+function clearFichaRP(who)
+   var ficharp_data_file := DFOpenDataFile("::ficharp", DF_CREATE);
+   ficharp_data_file.DeleteElement( Hex( who.serial ));
+endfunction
