@@ -16,7 +16,7 @@ program defensor(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   var weapon_cfg := GetItemCFGInfo(who, who.weapon);
    if (!who.weapon || !weapon_cfg.TwoHanded)
       FailFeat(who, hab);
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
