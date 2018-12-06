@@ -694,7 +694,7 @@ function AddItemToSell(npc, player, item)
    if (!player.concealed)
 	   PrintText(npc, "Me desculpe mas não poderei vender isto para Você, tome seu dinheiro de volta.", SSM_FAIL);
    endif
-	CreateItemInBackpack(player, MOEDAS, dezperc);
+	CreateItemInBackpack(player, MOEDAS, total_imposto);
 	SendSysMessageEx(player, "Error =>"+result.errortext);
 endfunction
 
