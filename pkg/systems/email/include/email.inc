@@ -333,13 +333,17 @@ function ReadMail( who, number )
       var player := SystemFindObjectBySerial( CInt( mail_info.from_box ) );
       MoveObjectToLocation(who, player.x, player.y, player.z, player.realm, MOVEOBJECT_FORCELOCATION);
    elseif ( input[ACCEPT_RATING] )
-      var ficharp_data_file := DFOpenDataFile(":fls_core:ficharp", DF_CREATE);
+      var ficharp_data_file := DFOpenDataFile("::ficharp", DF_CREATE);
       var ficharp_elem := DFFindElement(ficharp_data_file, Hex(mail_info.rp_rating[2]), DF_NO_CREATE);
       if (!ficharp_elem)
+         SendSysMessageEx(who, "Erro ao aceitar avaliação", SSM_FAIL);
          return;
       endif
+
       var value := ficharp_elem.GetProp("Ficha");
-      value["Avaliacoes"].append(" ".join(mail_info.message));
+      var text := mail_info.message;
+      if (typeof(text) == "Array") text := " ".join(text); endif
+      value["Avaliacoes"].append(text);
       var setvalue := ficharp_elem.SetProp("Ficha", value);
 
       var mobile := SystemFindObjectBySerial(mail_info.rp_rating[2], SYSFIND_SEARCH_OFFLINE_MOBILES);
