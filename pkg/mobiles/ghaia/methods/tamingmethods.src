@@ -183,7 +183,7 @@ exported function HaveTalent(pet, talent)
 endfunction
 
 exported function isTamable(pet)
-   if (isBoss(pet) || GetObjProperty(pet, "cant_tame"))
+   if (GetObjProperty(pet, "is_boss") || GetObjProperty(pet, "cant_tame"))
       return 0;
    endif
    

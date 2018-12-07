@@ -53,7 +53,7 @@ exported function MegaCliloc( who, byref packet )
 				Object_Name := "{} [{}]".format(Object_Name, raca);
 			endif
 			
-			if (item.npctemplate && IsBoss(item))
+			if (item.npctemplate && GetObjProperty(item, "is_boss"))
             Object_Name :=  "<BASEFONT COLOR=#CBA300>{}".format(Object_Name);
 			endif
 			
