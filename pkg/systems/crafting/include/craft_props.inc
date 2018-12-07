@@ -1,6 +1,8 @@
 include "include/utils";
 include "include/colormap";
 
+var resdmg_list := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+
 function TranslateAtt(attribute)
 	case (attribute.lower())
 		"strength": return "Força";
@@ -126,4 +128,59 @@ function GetItemType(item)
 	endif
 
    return item_type;
+endfunction
+
+function ApplyCraftChanges(theitem, level_select)
+   if (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON) || theitem.isA(POLCLASS_EQUIPMENT))
+      theitem.quality := 1;
+      var chance := RandomInt(100);
+      if (chance <= 10)
+         theitem.quality := 3;
+      elseif(chance <= 25)
+         theitem.quality := 2;
+      endif
+
+      if (theitem.isa(POLCLASS_WEAPON))
+         theitem.dmg_mod := RandomIntMinMax(12 * level_select, 17 * level_select);
+      endif
+
+      if (theitem.isA(POLCLASS_ARMOR))
+         foreach resist in resdmg_list
+            var value := RandomIntMinMax(2 * level_select, 4*level_select);
+            theitem.set_member("resist_{}_mod".format(resist), value);
+            sleepms(2);
+         endforeach
+      endif
+
+      if (theitem.isA(POLCLASS_EQUIPMENT))
+         foreach resist in resdmg_list
+            var value := RandomIntMinMax(level_select, 2*level_select);
+            theitem.set_member("resist_{}_mod".format(resist), value);
+            sleepms(2);
+         endforeach
+      endif
+      SetObjProperty(theitem, "level", level_select);
+      return 1;
+   endif
+endfunction
+
+function ApplyCraftColor(theitem, level_select)
+   var recipe_cfg := ReadConfigFile(":*:recipes");
+   var recipe := FindConfigElem(recipe_cfg, hex(theitem.objtype));
+   if (!recipe)
+      recipe := FindConfigElem(recipe_cfg, cint(theitem.objtype));
+   endif
+
+   if (!recipe) return; 
+   elseif (!recipe.main_material) return; endif
+
+   var resource_cfg := ReadConfigFile(":crafting:resourceLevels");
+   var the_resource := FindConfigElem(resource_cfg, recipe.main_material);
+   if (!the_resource) return; endif
+   var resource_levels := GetConfigStringDictionary(the_resource, "Level");
+   resource_cfg := ReadConfigFile(":crafting:resourceList");
+   the_resource := FindConfigElem(resource_cfg, resource_levels[cstr(level_select)]);
+   if (the_resource)
+      theitem.color := the_resource.Color;
+   endif
 endfunction

@@ -666,7 +666,8 @@ function HabEdit(who, targ, input_info)
 		return 0;
 	endif
 
-   var feat_id := cint(input_info);
+   var feat_id := cint(input_info.name);
+   if (!feat_id) return; endif
    
    var chardata := GetObjProperty(targ, "chardata");
    for i := 1 to (chardata.classes.size())
@@ -678,12 +679,13 @@ function HabEdit(who, targ, input_info)
       sleepms(2);
    endfor
 
-
    for i := 1 to (chardata.subclasses.size())
       var feat_i := FindInArray(chardata.subclasses[i].habs, feat_id);
       if (feat_i) chardata.subclasses[i].habs.Erase(i); endif
       sleepms(2);
    endfor
+
+   chardata.points += 1;
 
    SetObjProperty(targ, "chardata", chardata);
    var hotbar := GetObjProperty(targ, "hotbar");
@@ -695,7 +697,6 @@ function HabEdit(who, targ, input_info)
    endforeach
    SetObjProperty(targ, "hotbar", hotbar);
 
-   chardata.points += 1;
    // if (!removeFeat(targ, input_info.name))
    //    SendSysMessage(who, "Feat invalido");
    //    return 0;

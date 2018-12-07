@@ -68,7 +68,7 @@ function sendCraftGump(who, params)
             SendSysMessageEx(who, "Selecione o item que vai descontruir", SSM_REQUEST);
             var item := Target(who, TGTOPT_NOCHECK_LOS);
             if (item)
-               SmeltItem(who, item, recipe_cfg);
+               SmeltItem(who, item, recipe_cfg, params.type);
             endif
         elseif (input[0] == BTN_MAKELAST)
             var craft_last := GetObjProperty(who, "#craft_last");

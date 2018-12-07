@@ -38,8 +38,7 @@ endfunction
 
 program oafeatures_sendpacket(who, text)
    var targ     := Target(who);
-   FillQueue(targ);
-   DoSpawnQueue(targ);
+   ApplyCraftColor(targ, 2);
    // DamageFLS(targ, 10, DMG_PHYSICAL);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area

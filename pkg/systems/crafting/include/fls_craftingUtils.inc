@@ -32,9 +32,7 @@ endfunction
 
 function CreateItem(who, objtype, more:=0)
 	var theitem := 0;
-	var cfg           := ReadConfigFile(":crafting:stackingitens");
-	var elem          := FindConfigElem(cfg, "stacks");
-	var stackingitens := ListConfigElemProps( elem );
+
 
    if (typeof(objtype) == "Struct")
       theitem := CreateIteminBackpackFromTemplate(who, objtype);
@@ -190,7 +188,7 @@ function doRepair(who, craft_skill, recipe_cfg)
    var reparos := GetObjProperty(what,"reparos");
 
    if (reparos == error)
-      reparos:= 2 + AP_GetStat(who, WISDOM, RETURN_BONUS) + GetSkillBonus(who, craft_skill);
+      reparos := 2;
       SetObjProperty(what,"reparos",reparos);
    endif
 
@@ -199,105 +197,53 @@ function doRepair(who, craft_skill, recipe_cfg)
       return;
    endif
   
-   if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-      SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
-      ReleaseItem(what);
-      DestroyItem(what);
-      return;
-   endif
+   // if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
+   //    SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
+   //    ReleaseItem(what);
+   //    DestroyItem(what);
+   //    return;
+   // endif
   
-   var skill        := GetBonusAttr(AP_GetStat(who, WISDOM)) + GetSkillBonus(who, craft_skill);
-   var damageamount := (2 * (15 - skill)/300.0);
-   what.quality -= damageamount;
+   // var skill        := GetBonusAttr(AP_GetStat(who, WISDOM)) + GetSkillBonus(who, craft_skill);
+   // var damageamount := (2 * (15 - skill)/300.0);
+   // what.quality -= damageamount;
 
-   if(what.quality <= damageamount)
-      SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
-      DestroyItem(what);
-      return;
-   endif
+   // if(what.quality <= damageamount)
+   //    SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
+   //    DestroyItem(what);
+   //    return;
+   // endif
   
-   if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-      SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
-      DestroyItem(what);
-      return;
-   endif
+   // if((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
+   //    SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
+   //    DestroyItem(what);
+   //    return;
+   // endif
  
-   var maxhp     := cint(what.maxhp * what.quality);
-   var damaged   := maxhp - what.hp;
-   var advantage := 0;
-   if (recipe.objtype in GetObjProperty(who, "recipes"))
-      advantage += 1;
-   endif
+   // var maxhp     := cint(what.maxhp * what.quality);
+   // var damaged   := maxhp - what.hp;
+   // var advantage := 0;
+   // if (recipe.objtype in GetObjProperty(who, "recipes"))
+   //    advantage += 1;
+   // endif
 
-   var thehp := what.hp;
-   var dice_result := rollAttrDice(who, WISDOM, advantage) + GetSkillBonus(who, craft_skill);
-   if (dice_result > recipe.difficulty - 1)
-      var repaired_amount := cint((skill+2)*2);
-      //SendSysMessageEx(who, "rep"+repaired_amount);
-      //SendSysMessageEx(who, "hisskill: "+((randomint(hisskill) + 1))/2);
+   // var thehp := what.hp;
+   // var dice_result := rollAttrDice(who, WISDOM, advantage) + GetSkillBonus(who, craft_skill);
+   // if (dice_result > recipe.difficulty - 1)
+   //    var repaired_amount := cint((skill+2)*2);
+   //    //SendSysMessageEx(who, "rep"+repaired_amount);
+   //    //SendSysMessageEx(who, "hisskill: "+((randomint(hisskill) + 1))/2);
       
-      if (damaged == 1)
-         repaired_amount := 1;
-      endif
+   //    if (damaged == 1)
+   //       repaired_amount := 1;
+   //    endif
 
 
-      if (thehp + repaired_amount > what.maxhp)
          what.hp := what.maxhp;
-         EraseObjProperty(what, "swings");
-         SendSysMessageEx(who, "Você consertou o item completamente.");
-      else
-         what.hp := thehp + repaired_amount;
-         SetName(what, what.desc);
+         SetName(what, what.name);
 
          SendSysMessageEx(who, "Você consertou o item.");
-         if (what.isMagicWeapon() && dice_result > 16)
-            var mage := GetObjProperty(what, "spell_list");
-            if (0 in mage)
-               mage := RemoveFromArray(mage, 0);
-               SetObjProperty(what, "spell_list", mage);
-               SendSysMessageEx(who, "Você recuperou um slot do item mágico.");
-            endif
-         endif
-      endif
-      who.SetAchievement("repair", 1);
-      SetName( what, what.desc ); //Update the Item
       
-      if ((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-         SendSysMessageEx(who, "O frágil material quebrou quando você manipulou ele.");
-         DestroyItem(what);
-         return;
-      endif
-   
-   else
-      var damage_amount := randomint(10);
-      
-      if (thehp <= damage_amount)
-         DestroyItem(what);
-         SendSysMessageEx(who, "Você falhou e destruiu o item.");
-      endif
-      
-      thehp := thehp - damage_amount;
-      what.hp := thehp;
-      
-      if(randomint(2) == 1)
-         what.quality := what.quality - (damaged/100);
-      endif
-      
-      if(thehp <= 0)
-         DestroyItem(what);
-         SendSysMessageEx(who, "Você falhou e destruiu o item.");
-      else
-         SendSysMessageEx(who, "Você falhou e danificou o item.");
-      endif
-      
-      SetName( what, what.desc ); //Update the Item
-      
-      if ((what.hp <= 0) || (what.quality <= 0.1) || (!what.quality))
-         SendSysMessageEx(who, "O fragil material quebrou quando você manipulou ele.");
-         DestroyItem(what);
-         return;
-      endif
-   endif
 
    // if (GetObjProperty(what, "reparos") == error)
    //    reparos:=hisskill/2;

@@ -26,6 +26,7 @@ const OUT_OF_MATERIALS := 1;
 
 var itemdesc_cfg    := ReadConfigFile(":*:itemdesc");
 var resource_config := ReadConfigFile(":crafting:config/resourceList");
+var resource_level := ReadConfigFile(":crafting:config/resourceLevels");
 var menu_config     := ReadConfigFile(":crafting:config/craftConfig");
 var requires_config := ReadConfigFile(":crafting:config/requires");
 // This function is used to display a craft skill's action,
@@ -144,7 +145,8 @@ function MaterialSelection(who, type, chk, recipe, craft_skill)
     	SendSysMessageEx(who, "Escolha o "+lower(type)+" que você deseja trabalhar.");
 	   material := Target(who);
    else
-      var resources := GetConfigStringDictionary(FindConfigElem(menu_config, craft_skill), "Level_{}".format(lower(type)));
+      var resources := GetConfigStringDictionary(FindConfigElem(resource_level, type), "Level");
+      print(resources);
       var opts := array{};
       for i := 1 to (recipe.level)
          opts.append("Level {} - {}".format(i, itemdesc_cfg[resources[cstr(i)]].desc));
@@ -429,37 +431,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
             SetObjProperty(who, "#craft_last", item_objtype);
             // who.SetAchievement("craft_{}".format(lower(craft_skill)), 1);
             SendSysMessageEx(who, "Você criou o item o colocou na mochila.", SSM_INFO);
-            if (level_select && (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON) || theitem.isA(POLCLASS_EQUIPMENT)))
-               theitem.quality := 1;
-               var chance := RandomInt(100);
-               if (chance <= 10)
-                  theitem.quality := 3;
-               elseif(chance <= 25)
-                  theitem.quality := 2;
-               endif
-
-               if (theitem.isa(POLCLASS_WEAPON))
-                  theitem.dmg_mod := RandomIntMinMax(12 * level_select, 17 * level_select);
-               endif
-
-               if (theitem.isA(POLCLASS_ARMOR))
-                  var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
-                  foreach resist in resists
-                     var value := RandomIntMinMax(2 * level_select, 4*level_select);
-                     theitem.set_member("resist_{}_mod".format(resist), value);
-                     sleepms(2);
-                  endforeach
-               endif
-
-               if (theitem.isA(POLCLASS_EQUIPMENT))
-                  var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
-                  foreach resist in resists
-                     var value := RandomIntMinMax(level_select, 2*level_select);
-                     theitem.set_member("resist_{}_mod".format(resist), value);
-                     sleepms(2);
-                  endforeach
-               endif
-            endif
+            ApplyCraftChanges(theitem, level_select);
 
             if(theitem.isA(POLCLASS_CONTAINER))
                SetObjProperty(theitem, "trappable", 1);
@@ -474,7 +446,7 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
                SetObjProperty(theitem, "canfix", 1);
             endif
 
-            if (craft_skill == "Alquimia" || level_select > 1)
+            if (craft_skill == "Alquimia")
                SetObjProperty(theitem, "level", level_select);
             endif
             
@@ -660,16 +632,69 @@ function fixItemName(name)
    return name;
 endfunction
 
-function SmeltItem(who, item, specific_cfg)
+function SmeltItem(who, item, specific_cfg, craft_skill)
+   if(item.movable == 0)
+      SendSysMessageEx(who, "Você não pode consertar isto.");
+      return;
+   elseif(!maolivre(who, 1))
+      SendSysMessageEx(who, "Você deve estar com as mãos livres");
+      return;
+   elseif((!Accessible(who, item)) or (distance(who, item) > 2))
+      SendSysMessageEx(who, "Você não alcança o item.");
+      return;
+   endif
+
    var elem := FindConfigElem(specific_cfg, Hex(item.objtype));
    if (!elem) elem := FindConfigElem(specific_cfg, cint(item.objtype)); endif
    if (!elem) return SendSysMessageEx(who, "Este item não pode ser descontruído usando esta ferramenta.", SSM_FAIL); endif
 
+   var level := _ifOr(GetObjProperty(item, "level"), 1);
 	var recipe := GetRecipe(item.objtype, elem);
+
+   var found := dictionary{};
+   foreach group in (recipe.requires)
+      var req_elem := FindConfigElem(requires_config, group);
+      if (!req_elem)
+         continue;
+      endif
+
+      var req_items := GetConfigIntArray(req_elem, "item");
+      var req_found := CheckObjectNear(who, req_items);
+      if (req_found)
+         found[group] := req_found;
+      else 
+         SendSysMessageEx(who, "Você precisa estar perto de um {} para fazer isso.".format(group), SSM_FAIL);
+         return 1;
+      endif
+      sleepms(2);
+   endforeach
+
+	var craft_sound  := menu_config[craft_skill].CraftSound;
+	var craft_delay  := menu_config[craft_skill].CraftDelay;
+	var craft_action := menu_config[craft_skill].CraftAnim;
+
+   // var work_items := array{"Maquina de Costura", "Maquina de Tensão", "Maquina de Marcenaria"};
+
+	var craft_loops  := GetConfigInt(elem, "delay")/ 2;
+	if (craft_loops == error || craft_loops < 1)
+      craft_loops := 1;
+	endif
+ 	craft_loops := cint(craft_loops);
+
+   playCraftWork(who, craft_sound, craft_loops, craft_delay, craft_action, 0);
+
+   var resource_cfg := ReadConfigFile(":crafting:resourceLevels");
+   var resource_list := GetConfigStringKeys(resource_cfg);
+
    var material_recover := dictionary{};
    foreach material in (recipe.materials.Keys())
-      if (material in array{})
-         return;
+      if (material in resource_list)
+         var elem := FindConfigElem(resource_cfg, material);
+         var level_items := GetConfigStringDictionary(elem, "Level");
+         var value := cint(cdbl(recipe.materials[material]) / 2);
+         if (value >= 1)
+            material_recover[level_items[cstr(level)]] := value;
+         endif
       elseif (material in array{0x0F0E, 0x1F91})
          material_recover[material] := recipe.materials[material];
       else

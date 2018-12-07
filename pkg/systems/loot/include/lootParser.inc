@@ -4,6 +4,7 @@ use cfgfile;
 use os;
 
 include ":loot:magicLoot";
+include ":crafting:craft_props";
 
 const RECIPE_OBJ := 0xef1f;
 const FEATBOOK_OBJ := 0xee90;
@@ -14,15 +15,13 @@ function Loot_Generate(container, loot_index, is_group := 0)
 	endif
 
    var loot_params := struct{
-      power := 0,
-      defense := 0,
+      level := 1,
       qualities := array{}
    };
 
    if (is_group)
       loot_params := struct{
-         power := cint(is_group.power),
-         defense := cint(is_group.defense),
+         level := cint(is_group.level),
          qualities := _ifOr(is_group.qualities, arraY{})
       };
    endif
@@ -115,10 +114,14 @@ function Loot_CreateItem(container, line, loot_params, type := 0)
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
             elseif (item.isA(POLCLASS_WEAPON))
-               if (loot_params.power) item.dmg_mod := RandomIntMinMax(loot_params.power - 10, loot_params.power+2); endif
+               if (ApplyCraftChanges(item, loot_params.level))
+                   ApplyCraftColor(item, loot_params.level);
+               endif
                RandomQuality(item, loot_params);
             elseif(item.isA(POLCLASS_ARMOR))
-               if (loot_params.defense) item.resist_physical_mod := RandomIntMinMax(loot_params.defense-2, loot_params.defense); endif
+               if (ApplyCraftChanges(item, loot_params.level))
+                   ApplyCraftColor(item, loot_params.level);
+               endif
                RandomQuality(item, loot_params);
 				endif
          elseif (type == "talentbook")
