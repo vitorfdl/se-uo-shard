@@ -250,6 +250,7 @@ function DoSpawnQueue(spawnpoint, pass := 0)
             SetBoss(spawned, monster.bossParams);
          endif
 
+         if (monster.isBoss) SetObjProperty(spawned, "is_boss", 1); endif
          break;
       endif
 	endfor
