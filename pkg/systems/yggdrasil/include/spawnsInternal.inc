@@ -138,7 +138,6 @@ function FillQueue(spawnpoint, day := 0)
    endif
 
    var daytime  := lower(GetGlobalProperty("dia"));
-   var moonfase := lower(GetGlobalProperty("moonfase"));
    var n := 0;
    var spawn_number := cint(config.mob_number) - cint(spawn_size);
    for (n := 0; n < spawn_number; n := n + 1)

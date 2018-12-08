@@ -46,7 +46,7 @@ program Install(spot)
    endwhile
 endprogram
 
-function FillSpawnQueue(spawnpoints)
+function FillSpawnQueue(spawnpoints, day)
     foreach serial in spawnpoints
       var spawnpoint := SystemFindObjectBySerial(serial);
       FillQueue(spawnpoint, day);

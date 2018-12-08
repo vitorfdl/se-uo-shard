@@ -8,6 +8,7 @@ include ":attributes:attributes";
 include ":tn:tngumps";
 include ":tn:questevent";
 include ":gumps:yesno";
+include "include/utils";
 include "include/client";
 include "include/damage";
 include "include/arrays";
@@ -342,7 +343,7 @@ function CreateBossStructGump(who, byref boss)
 	elseif ( input[0] >= 20 && input[0] <= 25)
 		var index := input[0] - 19;
 		if (boss.deathevent[index] != error )
-			var yes := YesNo(who, "O que deseja fazer?", _ifOr(boss.deathevent.type == "Combat Event", "Editar", "Manter Evento"), "Deletar");
+			var yes := YesNo(who, "O que deseja fazer?", _ifElse(boss.deathevent.type == "Combat Event", "Editar", "Manter Evento"), "Deletar");
 			if (yes)
 				boss.deathevent.erase(index);
 				SendSysMessageEx(who, "Evento deletado.", SSM_INFO);
