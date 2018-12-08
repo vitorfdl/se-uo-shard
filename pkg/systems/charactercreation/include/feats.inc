@@ -352,7 +352,7 @@ function ChooseTarget(mobile, feat)
             SendSysMessageEx(mobile, "Você não tem visão do alvo.", SSM_FAIL);
          elseif (!feat.Range)
             break;
-         elseif (feat.Range && CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < feat.Range)
+         elseif (feat.Range && CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) > feat.Range)
             SendSysMessageEx(mobile, "Muito distante!", SSM_FAIL);
          else
             break;
