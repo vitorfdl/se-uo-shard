@@ -16,7 +16,7 @@ program hiddepresence(params)
 	var targ := params[3];
 	params := 0; // No longer needed
    var timer := 4;
-   if (targ.connected) timer := 2; endif
+   if (!targ.isA(POLCLASS_NPC)) timer := 2; endif
    
    TS_StartTimer(targ, "levitacao", timer, spellinfo.PowerMod[1]);
 

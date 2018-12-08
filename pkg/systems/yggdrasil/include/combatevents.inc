@@ -177,7 +177,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0, no_mobile := 0
 
       if (input[0] == 100)
          // if (choice["Novo"])
-         var state := CombatEventsOptions(who, struct{});
+         var state := CombatEventsOptions(who, struct{}, no_mobile);
          if (state && state.keys().size()) event.steps.append(state); endif
          // elseif (choice["Boss"])
          // elseif (choice["lista"])
@@ -189,7 +189,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0, no_mobile := 0
          var oldstate := event.steps[input];
          var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Alterar", "Mudar Posição", "Remover", "Cancelar"}, 0, 1);
          if (choice == "Alterar")
-            var state := CombatEventsOptions(who, oldstate);
+            var state := CombatEventsOptions(who, oldstate, no_mobile);
             if (state) 
                event.steps.Erase(input);
                event.steps.Insert(input, state);
@@ -214,7 +214,7 @@ function ConfigureCombatEvent(who, event := 0, change_event := 0, no_mobile := 0
 	return event;
 endfunction
 
-function CombatEventsOptions(who, state)
+function CombatEventsOptions(who, state, no_mobile := 0)
    var opt;
    if (!state.type)
       var input_list := array{struct{
