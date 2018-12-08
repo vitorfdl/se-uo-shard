@@ -334,6 +334,7 @@ program gump_gump(who)
                   var all_quests := DFGetElemNames(LoadQuestData());
                   foreach q in all_quests
                      var quest :=  GetQuestData(q);
+                     quest_opt.append(quest.id);
                      quest_names.append(quest.title);
                      sleepms(2);
                   endforeach
