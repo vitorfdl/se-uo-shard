@@ -39,7 +39,7 @@ program useContainer(mobile, container)
 
    if (GetObjProperty(container, "treasure") && !GetObjProperty(container, "spawned_time"))
       var time_respawn := AddTimeTo(ReadGameClock(), 30+RandomDiceRoll("3d20"), "minutes");
-      SetObjProperty(treasure, "spawned_time", )
+      SetObjProperty(container, "spawned_time", )
    endif
 	
 	SendViewContainer(mobile, container);
