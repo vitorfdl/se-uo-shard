@@ -325,7 +325,7 @@ function ChooseTarget(mobile, feat)
 
       if (!targ)
          targ := 0;
-      elseif (feat.Range && CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) > feat.Range)
+      elseif (rang && CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) > rang)
          targ := 0;
       endif
    elseif (feat.Targ == "Mobile" || feat.Targ == "Item")
@@ -349,6 +349,10 @@ function ChooseTarget(mobile, feat)
             SendSysMessageEx(mobile, "Você deve escolher um objeto como alvo", SSM_FAIL);
          elseif (!feat.NoLos && !CheckLineOfSight(mobile, targ));
             SendSysMessageEx(mobile, "Você não tem visão do alvo.", SSM_FAIL);
+         elseif (!feat.Range)
+            break;
+         elseif (feat.Range && CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < feat.Range)
+            SendSysMessageEx(mobile, "Muito distante!", SSM_FAIL);
          else
             break;
          endif
@@ -364,14 +368,14 @@ function ChooseTarget(mobile, feat)
             TurnObjectToward(mobile, targ.x, targ.y);
          endif
 
-         if(!feat.Range)
-            break;
-         elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) < feat.Range)
-            break;
-         elseif (!feat.NoLos && !CheckLosAt( mobile, targ.x, targ.y, targ.z ));
+         if (!feat.NoLos && !CheckLosAt( mobile, targ.x, targ.y, targ.z ));
             SendSysMessageEx(mobile, "Você não tem visão da area escolhida.", SSM_FAIL);
-         else
+         elseif(!feat.Range)
+            break;
+         elseif (CoordinateDistance(mobile.x, mobile.y, targ.x, targ.y) > feat.Range)
             SendSysMessageEx(mobile, "Muito distante!", SSM_FAIL);
+         else
+            break;
          endif
       endwhile
    endif

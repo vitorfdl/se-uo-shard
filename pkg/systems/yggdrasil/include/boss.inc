@@ -343,12 +343,12 @@ function CreateBossStructGump(who, byref boss)
 	elseif ( input[0] >= 20 && input[0] <= 25)
 		var index := input[0] - 19;
 		if (boss.deathevent[index] != error )
-			var yes := YesNo(who, "O que deseja fazer?", _ifElse(boss.deathevent.type == "Combat Event", "Editar", "Manter Evento"), "Deletar");
-			if (yes)
+			var yes := YesNo(who, "O que deseja fazer?", _ifElse(boss.deathevent[index].type == "Combat Event", "Editar", "Manter Evento"), "Deletar");
+			if (!yes)
 				boss.deathevent.erase(index);
 				SendSysMessageEx(who, "Evento deletado.", SSM_INFO);
 			else
-            if (boss.deathevent.type == "Combat Event")
+            if (boss.deathevent[index].type == "Combat Event")
                var nevent := ConfigureCombatEvent(who, boss.deathevent[index].opt, 1, 1);
                if (nevent) boss.deathevent[index].opt := nevent; endif
             else

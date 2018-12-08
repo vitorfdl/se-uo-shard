@@ -70,7 +70,7 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
 		return (base_dmg + RandomDiceRoll(dmg) );
 	endif
 
-   var dmg   := base_dmg + RandomDiceRoll(wpn_elem.Damage);
+   var dmg   := base_dmg + _ifElse(wpn_elem.Damage, RandomDiceRoll(wpn_elem.Damage), 0);
    // fim
 
    return dmg;

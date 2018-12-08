@@ -22,7 +22,7 @@ program AC_start(who)
          already_saw.append(event.id);
          if (event.emote) PrintTextPrivate(who, "*{}*".format(event.emote), who); endif
          trig := 1;
-         ProgressQuest(who, struct{ type := "Ir até Local", local := event.origin });
+         ProgressQuest(who, struct{ type := "Ir até Local", item_serial := event.origin });
       elseif (event.type == 0x4785)
          ProgressQuest(who, event.search);
       endif

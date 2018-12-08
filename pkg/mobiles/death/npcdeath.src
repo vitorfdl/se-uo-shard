@@ -124,15 +124,17 @@ program core_npcDeath(params)
       is_boss := _ifElse(boss, 1, 0);
       removeFromSpawn(getobjProperty(corpse, "spawnpoint"), corpse);
 		if (boss && boss.deathevent)
+         SetObjProperty(corpse, "dmgmod", cint(npc_cfg.AttackDamage));
          foreach nevent in (boss.deathevent)
             if ( (nevent.type == "Criar Npcs") && (cint(nevent.x) == 6) && (cint(nevent.y) == 6) && (cint(nevent.z) == 6)  )
                nevent.x := corpse.x;
                nevent.y := corpse.y;
                nevent.z := corpse.z;
-            endif
-            
-            if (nevent.type == "Combat Event")
-               start_script(":ghaia:special/genericspecial" , array{corpse, nevent.opts, 1});
+            elseif (nevent.type == "Combat Event")
+               start_script(":ghaia:special/genericspecial" , array{corpse, nevent.opt, 1});
+            elseif(nevent.type == "Triggar Alavanca")
+               var alavanca := SystemFindObjectBySerial(nevent.item_serial);
+               if (alavanca) start_script(":levers:lever", array{corpse, alavanca}); endif
             endif
             ExecuteEvent(nevent);				
          endforeach

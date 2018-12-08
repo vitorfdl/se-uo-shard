@@ -135,6 +135,7 @@ function ConstructGump(item)
 endfunction
 
 program lever(who, item)
+   _resolveParams(who, item);
    if ( !ReserveItem(item) || GetObjProperty(item, "#inuse") == 1 )
       SendSysMessage(who, "O item esta em uso.");
       return;

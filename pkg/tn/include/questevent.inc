@@ -7,19 +7,8 @@ include ":yggdrasil:boss";
 
 function ConfigureEvent(who)
 	var evento := struct;
-	evento.+type := RadioGump(who, 400, 220, "Escolha o tipo de evento.", array{ "Criar Itens", "Abrir Porta", "Criar Npcs", "Abrir Passagem", "Ultimas Palavras", "Combat Event"});
-	if ( (evento.type == "Abrir Porta") || (evento.type == "Abrir Passagem") )
-		var items := array;
-      SendSysMessage(who, "Escolha os itens. ESC para cancelar.");
-      var targ := Target(who);
-      if (targ)
-      evento.+items := array;
-      endif
-      while(targ)
-         evento.items.append(targ.serial);
-         targ := Target(who);
-      endwhile
-	elseif  (evento.type == "Combat Event" ) 
+	evento.+type := RadioGump(who, 400, 220, "Escolha o tipo de evento.", array{ "Criar Itens", "Triggar Alavanca", "Combat Event"});
+   if  (evento.type == "Combat Event" ) 
       var nevent := ConfigureCombatEvent(who);
       if (nevent)
          evento.opt := nevent;
@@ -65,8 +54,11 @@ function ConfigureEvent(who)
                     evento.items.append(iteminfo);
                     targ := Target(who);
                 endwhile
-	elseif ( evento.type == "Ultimas Palavras")
-		evento.+text := RequestGump(who, "Digite as ultimas palavras do NPC (caso seja um npc quem executa esse evento)", "", "", 1);
+	elseif ( evento.type == "Triggar Alavanca")
+      SendSysMessageEx(who, "Escolha a alavanca", SSM_REQUEST);
+      var targ := Target(who);
+      if (!targ || targ.objtype != 0x108c) SendSysMessageEx(who, "Item Inválido", SSM_FAIL); return 0; endif
+      evento.item_serial := targ.serial;
 	endif
 	return evento;
 endfunction

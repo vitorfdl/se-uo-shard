@@ -150,9 +150,10 @@ endfunction
 //pega a lista de inimigos proximo, se tiver player perto e a tendencia for evil ele vira inimigo
 function GetEnemiesNear(loc, range := 5, get_hidden := 0)
    // var enemies := GetConfigStringArray( npccfgfile, "enemy" );
-   var hostiles := ListHostiles(me, 10);
+   var hostiles := _ifOr(ListHostiles(me, 10), array{});
    var myenemies := array{};
    var myguild := GetObjProperty(me, "guild");
+   var myalign := GetObjPRoperty(me, "align");
    
    foreach mobile in ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN)
       if ((mobile.hidden && !get_hidden || mobile == me))
@@ -172,7 +173,7 @@ function GetEnemiesNear(loc, range := 5, get_hidden := 0)
          // if ( mobile.my_template() in enemies)
          //       myenemies.append(mobile);
          // endif
-      elseif (me.alignment == ALIGN_EVIL)
+      elseif (me.alignment == ALIGN_EVIL || myalign == ALIGN_EVIL)
          myenemies.append(mobile);
       endif
       sleepms(2);

@@ -222,12 +222,12 @@ endfunction
 function Opendoors(me)
   foreach door in (ListItemsNearLocation(me.x, me.y, me.z, 1))
     if  ((door.isa(POLCLASS_DOOR)) and (!door.locked)) //se não ta trancada
-        if ( cint(GetObjProperty(me, "ignoredoor")) == 1)
+        if ( cint(GetObjProperty(me, "ignoredoor")) == 1 && !door.IsOpen())
           PrintText(me, "*atravessa a porta*");
           MoveObjectToLocation(me, door.x, door.y, door.z, door.realm, MOVEOBJECT_FORCELOCATION);
-        elseif (cint(GetObjProperty(me, "opendoor")) == 1)
+        elseif (cint(GetObjProperty(me, "opendoor")) == 1 && !door.IsOpen())
           PrintText(me, "*abre a porta*");
-          door.Open();
+          UseItem(door, me);
         endif
     endif
   endforeach

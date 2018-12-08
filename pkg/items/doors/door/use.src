@@ -11,16 +11,19 @@ use os;
 include ":keys:key";
 include ":traps:traps";
 include "include/say";
+include "include/utils";
 
 program useScript(mobile, door)
-
+   _resolveParams(mobile, door);
 	if ( GetObjProperty(door, "TrapList") != error)
 		RunTraps(door, mobile);
 		return 0;
 	endif
 
 	if ( DoorIsLocked(mobile, door) )
-		RunTraps(door, mobile);
+      if (!mobile.isA(POLCLASS_NPC))
+		   RunTraps(door, mobile);
+      endif
 		return 0;
 	elseif ( door.IsOpen() )
 		var pid := CInt(GetObjProperty(door, "#ClosePid"));

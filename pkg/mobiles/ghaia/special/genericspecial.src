@@ -19,12 +19,15 @@ var lock_targ := 0;
 program loko(params)
 	var who := params[1];
 	var event := params[2];
+   var deathevent := params[3];
    me := who;
 
-	if (!who.opponent || !event.id)
-		return;
-   elseif (GetCooldown(who, event.id))
-      return;
+   if (!deathevent)
+      if (!who.opponent || !event.id)
+         return;
+      elseif (GetCooldown(who, event.id))
+         return;
+      endif
    endif
 
    if (event.chance != 100 )
@@ -34,13 +37,15 @@ program loko(params)
       endif
    endif
 
-   if ( event.hp_percent != 100)
-      var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * (cdbl(event.hp_percent)/100);
-      if (cdbl(AP_GetVital(who, HITS)) > maxhit)
-         SetCooldown(who, event.id, 4); 
-         return;
+   if (!deathevent)
+      if ( event.hp_percent != 100)
+         var maxhit := cdbl(AP_GetVitalMaximumValue(who, HITS)) * (cdbl(event.hp_percent)/100);
+         if (cdbl(AP_GetVital(who, HITS)) > maxhit)
+            SetCooldown(who, event.id, 4); 
+            return;
+         endif
       endif
-	endif
+   endif
 
 	if (cint(event.dist) > 0 || cint(event.distm) > 0)
       var dist := CoordinateDistance(who.x, who.y, who.opponent.x, who.opponent.y);
@@ -354,12 +359,14 @@ program loko(params)
          endforeach
 		elseif (state.type == "Dmg")
          var targ := selectOpponent(who, state.target, state.conedist);
+         print(targ);
          var dmg := CalculatePowerPercent(power, cint(state.dmg));
+         print(dmg);
 			foreach vital in (state.vitals)
 				foreach t in targ
                sleepms(2);
 					if (vital == "Hits")
-						DamageFLS(t, cint(dmg), state, who);
+						DamageFLS(t, cint(dmg), state, _ifElse(who.isA(POLCLASS_MOBILE), who, 0));
 					elseif (vital == "Stam")
 						AP_ConsumeVital(t, STAMINA, cint(dmg));
 					elseif (vital == "Mana")

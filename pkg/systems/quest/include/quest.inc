@@ -34,18 +34,18 @@ function FindAvaliableID()
    return n;
 endfunction
 
-function ListQuests(classe := 0)
+function ListQuests(classe := 0, bypass := 0)
    var quest_list := DFGetElemNames(LoadQuestData());
    var return_list := array{};
 
    foreach quest_id in quest_list
       sleepms(2);
       var quest := GetQuestData(quest_id, 0);
-      if (!quest.active)
+      if (!quest.active && !bypass)
          continue;
       elseif (classe && !(classe in quest.category))
          continue;
-      elseif (classe)
+      elseif (classe && !bypass)
          quest.category := classe;
       endif
       return_list.append(quest);

@@ -16,16 +16,16 @@ program alchemy(who)
       GFResizePic(gump, 17, 39, 5120, 94, 156);
       GFResizePic(gump, 42, 126, 30546, 49, 49);
       GFResizePic(gump, 41, 55, 30546, 49, 49);
-      // GFGumpPic(gump, 57, 108, 40032, 0);
+      GFGumpPic(gump, 57, 108, 40032, 0);
       
       GFTextLine(gump, 117, 55, 1503, "Item a ser");
       GFTextLine(gump, 116, 70, 1503, "Destruído");
       
       GFTextLine(gump, 117, 139, 1503, "Item a ser");
       GFTextLine(gump, 116, 154, 1503, "Melhorado");
-      GFAddButton(gump, 48, 203, 2074, 248, GF_CLOSE_BTN, 1);
+      GFAddButton(gump, 48, 203, 2074, 2074, GF_CLOSE_BTN, 1);
 
-      GFAddButton(gump, 105, 204, 2071, 248, GF_CLOSE_BTN, 0);
+      GFAddButton(gump, 105, 204, 2071, 2071, GF_CLOSE_BTN, 0);
 
       var input := GFSendGump(who, gump);
       sleepms(20);

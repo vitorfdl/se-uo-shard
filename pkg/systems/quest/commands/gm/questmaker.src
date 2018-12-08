@@ -17,17 +17,19 @@ include "include/utils";
 include ":unicos:item_template";
 
 var selected_quest := 0;
-var quest_list;
 var quest;
-var quest_names := array{};
 var qualities := array{"Comum", "Bom", "Raro", "Exótico"};
+var selected_category := 0;
+var category_opts := 0;
 
 var quest_title;
 var quest_desc := array{};
 //Main Menu
 const GF_ADD_BTN        := 900;
 const GF_DEL_BTN        := 901;
-const GF_SELECTELEM_BTN := 100;
+const GF_BACK_BTN        := 902;
+const GF_SELECT_CATEGORY := 100;
+const GF_SELECTELEM_BTN := 1000;
 
 const GF_QUEST_ACTIVE   := 800;
 const GF_QUEST_CATEGORY := 801;
@@ -90,6 +92,7 @@ function GumpQuestInfo(byref gump, who)
       pos_y += 18;
       sleepms(2);
    endforeach
+
    if (quest.rewards.size() < 10)
       GFAddButton(gump, 777, 156+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_REWARD_ADD);
       GFTextLine(gump, 711, 151+pos_y, 1152, "Adicionar");
@@ -118,7 +121,7 @@ function GumpQuestInfo(byref gump, who)
       if (item.customname) tooltip += "Custom Name: {}<br>".format(item.customname); endif
       if (item.item_serial) tooltip += "Serial do item: {}<br>Use .goserial {} para ir até ele.".format(item.item_serial, item.item_serial); endif
       if (item.quality) tooltip += "Qualidade: {}<br>".format(qualities[item.quality]); endif
-      if (item.spawnpoint) 
+      if (item.spawnpoint)
          var spawnpoint := SystemFindObjectBySerial(item.spawnpoint);
          tooltip += "Spawnpoint: {}<br>".format(spawnpoint.desc);
          tooltip += "Spawnpoint Loc: {} {} {}<br>".format(spawnpoint.x, spawnpoint.y, spawnpoint.z);
@@ -187,29 +190,45 @@ function GumpQuestList(who)
 	GFGumpPic(gump, 203, 33, 59, 0);
 	GFGumpPic(gump, 36, 32, 57, 0);
 
-   quest_list := DFGetElemNames(LoadQuestData());
-   quest_names := array{};
-   var pos_y := 0;
-   foreach q in quest_list
-      var quest :=  GetQuestData(q);
-      quest_names.append(quest.title);
-      if (quest.id == cstr(selected_quest))
-	      GFGumpPic(gump, 24, 54+pos_y, 4006, 0);
-      else
-         GFAddButton(gump, 24, 54+pos_y, 4005, 4007, GF_CLOSE_BTN, GF_SELECTELEM_BTN+cint(q));
+   if (selected_category)
+      var quest_list := ListQuests(selected_category, 1);
+      var pos_y := 0;
+      foreach quest in quest_list
+         if (quest.id == cstr(selected_quest))
+            GFGumpPic(gump, 24, 54+pos_y, 4006, 0);
+         else
+            GFAddButton(gump, 24, 54+pos_y, 4005, 4007, GF_CLOSE_BTN, GF_SELECTELEM_BTN+cint(quest.id));
+         endif
+         GFTextLine(gump, 57, 55+pos_y, 1152, quest.title);
+         pos_y += 24;
+         sleepms(2);
+      endforeach
+
+      GFAddButton(gump, 24, 80-20+pos_y, 0x15A1, 0x15A1, GF_CLOSE_BTN, GF_BACK_BTN);
+      
+      GFAddButton(gump, 213, 80-20+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_ADD_BTN);
+      GFTextLine(gump, 150, 74-20+pos_y, 1152, "Adicionar");
+      if (selected_quest)
+         GFAddButton(gump, 119, 80-20+pos_y, 2360, 2360, GF_CLOSE_BTN, GF_DEL_BTN);
+         GFTextLine(gump, 59, 74-20+pos_y, 1152, "Remover");
+
+         GumpQuestInfo(gump, who);
       endif
-      GFTextLine(gump, 57, 55+pos_y, 1152, quest.title);
-      pos_y += 24;
-      sleepms(2);
-   endforeach
+   else
+      if (!category_opts)
+         var classCfg := ReadConfigFile(":charactercreation:config/classes");
+         category_opts := GetConfigStringKeys(classCfg);
+         category_opts.append("NPC Quest");
+         category_opts.append("GM Quest");
+      endif
 
-	GFAddButton(gump, 213, 80-20+pos_y, 2361, 2361, GF_CLOSE_BTN, GF_ADD_BTN);
-	GFTextLine(gump, 150, 74-20+pos_y, 1152, "Adicionar");
-   if (selected_quest)
-      GFAddButton(gump, 119, 80-20+pos_y, 2360, 2360, GF_CLOSE_BTN, GF_DEL_BTN);
-      GFTextLine(gump, 59, 74-20+pos_y, 1152, "Remover");
-
-      GumpQuestInfo(gump, who);
+      var pos_y := 0;
+      foreach item in category_opts
+         GFAddButton(gump, 24, 54+pos_y, 4005, 4007, GF_CLOSE_BTN, GF_SELECT_CATEGORY+_item_iter);
+         GFTextLine(gump, 57, 55+pos_y, 1152, item);
+         pos_y += 24;
+         sleepms(2);
+      endforeach
    endif
 
    return GFSendGump(who, gump);
@@ -295,6 +314,11 @@ program gump_gump(who)
          endif
 
          SetQuestData(selected_quest, update_quest);
+      elseif (res[0] == GF_BACK_BTN)
+         selected_category := 0;
+         selected_quest := 0;
+      elseif (res[0] >= GF_SELECT_CATEGORY && res[0] <= GF_SELECT_CATEGORY+30)
+         selected_category := category_opts[res[0]-GF_SELECT_CATEGORY];
       elseif (res[0] >= GF_SELECTELEM_BTN && res[0] <= GF_SELECTELEM_BTN+150)
          selected_quest := res[0]-GF_SELECTELEM_BTN;
       else
@@ -303,12 +327,20 @@ program gump_gump(who)
                var id := FindAvaliableID();
                if (!YesNo(who, "Escolha uma opção:", "Copiar Quest", "Nova Quest"))
                   var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
-                  SetQuestData(id, struct{ title := quest_name});
+                  SetQuestData(id, struct{ title := quest_name, category := array{ selected_category }});
                else
-                  var res := QuestionsGump(who, array{ struct{ text := "Escolha quest que irá copiar", radio := quest_names }});
+                  var quest_names := array{};
+                  var quest_opt := array{};
+                  var all_quests := DFGetElemNames(LoadQuestData());
+                  foreach q in all_quests
+                     var quest :=  GetQuestData(q);
+                     quest_names.append(quest.title);
+                     sleepms(2);
+                  endforeach
+                  var res := QuestionsGump(who, array{ struct{ text := "Escolha quest que irá copiar", radio := quest_names, return_number := 1 }});
                   if (!res) break; endif
                   if (!res[1]) break; endif
-                  var quest := GetQuestData(quest_list[res[1] in quest_names]);
+                  var quest := GetQuestData(quest_opt[res[1]]);
                   var quest_name := RequestGump(who, "Título da Quest", "", "", CANCEL_BTN_ON);
                   quest.title := quest_name;
                   SetQuestData(id, quest);
@@ -402,7 +434,7 @@ function QuestConditions(who, new_condition := struct{})
       "Matar Monstro":
          if (!new_condition.template)
             if (YesNo(who, "Deseja selecionar o monstro ou iniciar manualmente?", "Preencher", "Manualmente"))
-               SendSysMessage(who, "Escolha o monstro a ser morto.");
+               SendSysMessageEx(who, "Escolha o monstro a ser morto.");
                var targ := Target(who);
                if (targ && targ.isA(POLCLASS_MOBILE))
                   new_condition["template"]   := targ.npctemplate;
@@ -438,7 +470,7 @@ function QuestConditions(who, new_condition := struct{})
          if (output[1] == "Sim")
             var targ := Target(who);
             if (!targ || targ.objtype != 41985) 
-               SendSysMessageEx(who, "Isso não é um spawnpoint");
+               SendSysMessageEx(who, "Isso não é um spawnpoint", SSM_REQUEST);
             else
                new_condition["spawnpoint"] := targ.serial;
             endif
@@ -446,12 +478,12 @@ function QuestConditions(who, new_condition := struct{})
             new_condition["spawnpoint"] := 0;
          endif
       "Ir até Local":
-         SendSysMessage(who, "Escolha o RoleplayItem que irá disparar.");
+         SendSysMessageEx(who, "Escolha o RoleplayItem que irá disparar.", SSM_REQUEST);
          var targ := Target(who);
-         if (!targ || !targ.isA(POLCLASS_ITEM) || Hex(targ.objtype) != 0x318E) return 0; endif
-         new_condition.local := targ.serial;
+         if (!targ || targ.objtype != 0x318E) SendSysMessageEx(who, "item inválido"); return 0; endif
+         new_condition.item_serial := targ.serial;
       "Coletar Item":
-         SendSysMessage(who, "Escolha o item que deve ser coletado.");
+         SendSysMessageEx(who, "Escolha o item que deve ser coletado.", SSM_REQUEST);
          var targ := Target(who);
          if (!targ || !targ.isA(POLCLASS_ITEM)) return 0; endif
          var quest_gump := array{
@@ -522,7 +554,7 @@ function QuestConditions(who, new_condition := struct{})
 endfunction
 
 function ChooseItem(who, text := "Escolha o item que deve ser usado.", pol_type := POLCLASS_ITEM)
-   SendSysMessage(who, text);
+   SendSysMessageEx(who, text, SSM_REQUEST);
    var targ := Target(who);
    if (!targ || !targ.isA(pol_type)) return 0; endif
 
@@ -550,7 +582,7 @@ function QuestRewards(who, new_reward := struct{})
          new_reward.classe := _ifOr(new_reward.classe, "Classe da Quest");
          new_reward.classe := RadioGump(who, 200, 0, "Escolha qual Classe:", opts, 0, new_reward.classe in opts);
       "Item":
-         SendSysMessage(who, "Escolha o item de recompensa.");
+         SendSysMessageEx(who, "Escolha o item de recompensa.");
          var targ := Target(who);
          if (!targ || targ.isA(POLCLASS_MOBILE)) return 0; endif
          new_reward.item := CreateItemTemplate(targ);			

@@ -13,6 +13,7 @@ exported function CanDie(mobile)
    if (mobile.npctemplate)
       SetObjProperty(mobile, "serial", mobile.serial);
       SetObjProperty(mobile, "graphic", mobile.graphic);
+      SetObjProperty(mobile, "align", mobile.alignment);
    endif
 
 	// if (GetObjProperty(mobile, "morrendo") == 1)
@@ -22,6 +23,7 @@ exported function CanDie(mobile)
    if (GetObjProperty(mobile, "metamorfose"))
       mobile.graphic := GetObjProperty(mobile, "oldgraphic");
 	endif
+   
 
 	// if (GetObjPRoperty(mobile, "Ultimas Palavras") && !GetObjProperty(mobile, "spawnkill"))
 	// 	start_script(":death:hooks/speaklastwords", mobile);

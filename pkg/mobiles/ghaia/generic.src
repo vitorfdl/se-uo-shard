@@ -213,27 +213,27 @@ function Fight(opponent, alerted := 0)
          EraseObjProperty(me, "#Casting");
       endif
 
-      // if ("openLevers" in custombehaviors)
-      //    var levers := ListItemsNearLocationOfType(me.x, me.y, me.z, 8, 0x108c);
-      //    foreach lever in levers
-      //       if (GetObjProperty(lever, "mobs_open") && GetObjProperty(lever, "status") == "off")
-      //          for i := 1 to 8
-      //             RunToward(lever);
-      //             if (GetObjProperty(lever, "status") == "off")
-      //                if (Distance(lever, me) <= 1)
-      //                   UseItem(lever, me);
-      //                   break;
-      //                endif
-      //             else
-      //                break;
-      //             endif
-      //             sleepms(80);
-      //          endfor
-      //       endif
+      if ("openLevers" in custombehaviors)
+         var levers := ListItemsNearLocationOfType(me.x, me.y, me.z, 8, 0x108c);
+         foreach lever in levers
+            if (GetObjProperty(lever, "mobs_open") && GetObjProperty(lever, "status") == "off")
+               for i := 1 to 8
+                  RunToward(lever);
+                  if (GetObjProperty(lever, "status") == "off")
+                     if (Distance(lever, me) <= 1)
+                        UseItem(lever, me);
+                        break;
+                     endif
+                  else
+                     break;
+                  endif
+                  sleepms(80);
+               endfor
+            endif
 
-      //       sleepms(2);
-      //    endforeach 
-      // endif
+            sleepms(2);
+         endforeach 
+      endif
 
       if(!CloseDistance(opponent))
          loops := loops + 1;
