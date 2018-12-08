@@ -24,6 +24,7 @@ function getFeatById(feat_id, get_class := 0)
       Class := _ifOr(GetConfigString(elem, "Class"), GetConfigString(elem, "God")),
       Description := GetConfigString(elem, "Description"),
       Mana := GetConfigInt(elem, "Mana"),
+      God := GetConfigString(elem, "God"),
       Vigor := GetConfigInt(elem, "Vigor"),
       Cooldown := GetConfigInt(elem, "Cooldown"),
       Icon := GetConfigInt(elem, "Icon"),
@@ -418,7 +419,7 @@ function TriggerHabilitie(who, hab)
       var cycles := hab.CastTime;
       if (HaveGodFeat(who, 83) && Randomint(100) <= 20)
          cycles := 0;
-         SendSystemReport(who, "Conuração Rápida", SSM_INFO);
+         SendSystemReport(who, "Conjuração Rápida", SSM_INFO);
       endif
       
       var moveCheck := Start_Script(":magery:moveCheck", array{who, Getpid()});

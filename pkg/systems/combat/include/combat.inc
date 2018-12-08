@@ -14,6 +14,7 @@ function DistanceChecks(attacker, defender)
 	if ( wpn_a_elem2.MaxRange == error )
 		return 1;
 	endif
+   
 	if ( cur_range > wpn_a_elem2.MaxRange )
 		// CombatDbgMsg(attacker, "Oponente esta muito longe.");
 		return 0;
