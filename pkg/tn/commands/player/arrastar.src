@@ -60,7 +60,7 @@ program Arrastar(who)
             SendSysMessageEx(who, "Você esta cansado demais para arrastar algo...", SSM_FAIL);
             return;
          elseif( !MoveObjectToLocation(targ, who.x, who.y, who.z, who.realm, MOVEITEM_IGNOREMOVABLE));
-            SendSysMessageEx( who, "Não eh possivel arrastar o "+type, SSM_FAIL); 
+            SendSysMessageEx( who, "Não é possivel arrastar o "+type, SSM_FAIL); 
             return;
          endif
       endif

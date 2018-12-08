@@ -125,7 +125,7 @@ function SendQuestGump(npc, player)
    var mod_y := (questions.size() * 26);
 	GFResizePic(gump, 9, 11, 5170, 432, 202+mod_y);
 	GFGumpPicTiled(gump, 32, 38, 384, 12, 50);
-   GFHtmlShadowed(gump, 51, 60, 344, 20, "#FFFFFF", "<center>{}".format(myconfigs.text), 5);
+   GFHtmlShadowed(gump, 51, 60, 344, 20, "#FFFFFF", "<center>{}".format(myconfigs.text), 4);
 	GFGumpPic(gump, 44, 91, 57, 0);
 	GFGumpPic(gump, 372, 91, 59, 0);
 	GFGumpPicTiled(gump, 74, 91, 299, 21, 58);
@@ -149,6 +149,10 @@ function SendQuestGump(npc, player)
       pos_y += 26;
       sleepms(2);
    endforeach
+
+   if (!questions.size())
+      GFTextLine(gump, 97, 116+pos_y, 1152, "Não há tarefas disponíveis");
+   endif
 
 	GFGumpPicTiled(gump, 34, 169+mod_y, 383, 12, 50);
 	GFAddButton(gump, 196, 131+mod_y, 2072, 2073, GF_CLOSE_BTN, 1); // cancel

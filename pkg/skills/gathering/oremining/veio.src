@@ -39,7 +39,7 @@ program configmining(who, item)
    SetObjProperty(item, "config", item_config);
 
    item.color := itemdesc[item_config.minerio].color;
-   SetName(item, "Veia de {}".format(res[1]));
+   SetName(item, "Veio de {}".format(res[1]));
 
    SetObjProperty(item, "veil", 14);
    EraseObjProperty(item, "spawntime");

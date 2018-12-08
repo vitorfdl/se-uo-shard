@@ -60,6 +60,7 @@ function CleanTreasure(treasure)
     EraseObjProperty(treasure, "TrapList");
     EraseObjProperty(treasure, "level");
     EraseObjProperty(treasure, "protected");
+    EraseObjProperty(treasure, "spawned_time");
     EraseObjProperty(treasure, "breakable");
     EraseObjProperty(treasure, "hidden");
     EraseObjProperty(treasure, "#awareness_fail");
