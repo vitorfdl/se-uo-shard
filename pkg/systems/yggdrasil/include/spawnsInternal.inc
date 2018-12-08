@@ -80,9 +80,15 @@ function FillQueue(spawnpoint, day := 0)
          var mydaytime := GetObjProperty(monster, "daytime");
          if (!(mydaytime in array{ "always", "lua nova"}) && day != mydaytime)
             index_rem += _monster_obj_iter;
+            SetObjProperty(monster, "summoned", 1);
+            SetObjProperty(monster, "spawnkill", 1);
+            RevokePrivilege(monster, "invul" );
             ApplyRawDamage(monster, CInt(AP_GetVitalMaximumValue(monster, "Hits")));
             continue;
          elseif (mydaytime == "lua nova" && (moonfase != "nova" || day != "noite"))
+            SetObjProperty(monster, "summoned", 1);
+            SetObjProperty(monster, "spawnkill", 1);
+            RevokePrivilege(monster, "invul" );
             ApplyRawDamage(monster, CInt(AP_GetVitalMaximumValue(monster, "Hits")));
             index_rem += _monster_obj_iter;
             continue;
