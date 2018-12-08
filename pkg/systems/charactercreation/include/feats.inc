@@ -365,9 +365,11 @@ function ChooseTarget(mobile, feat)
       while (mobile.connected)
          PrintTextPrivate(mobile, "'Escolha o ponto alvo.'", mobile, SSM_INFO);
          targ := TargetCoordinates(mobile);
-         if (targ)
-            TurnObjectToward(mobile, targ.x, targ.y);
+         if (!targ)
+            break;
          endif
+
+         TurnObjectToward(mobile, targ.x, targ.y);
 
          if (!feat.NoLos && !CheckLosAt( mobile, targ.x, targ.y, targ.z ));
             SendSysMessageEx(mobile, "Você não tem visão da area escolhida.", SSM_FAIL);
