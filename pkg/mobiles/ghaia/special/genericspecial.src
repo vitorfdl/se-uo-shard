@@ -359,9 +359,7 @@ program loko(params)
          endforeach
 		elseif (state.type == "Dmg")
          var targ := selectOpponent(who, state.target, state.conedist);
-         print(targ);
          var dmg := CalculatePowerPercent(power, cint(state.dmg));
-         print(dmg);
 			foreach vital in (state.vitals)
 				foreach t in targ
                sleepms(2);
