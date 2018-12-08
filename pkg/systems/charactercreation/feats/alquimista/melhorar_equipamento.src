@@ -8,27 +8,105 @@ include ":timedscripts:timedScripts";
 var item_config     := ReadConfigFile(":*:itemdesc");
 
 program alchemy(who)
-   var item1, item2;
-   
+   var item1, smelt_item;
+   var myrecipes := GetObjProperty(who, "recipes");
    while (who.connected)
+      sleepms(20);
       var gump := GFCreateGump();
       GFResizePic(gump, 4, 13, 40000, 198, 228);
       GFResizePic(gump, 17, 39, 5120, 94, 156);
-      GFResizePic(gump, 42, 126, 30546, 49, 49);
-      GFResizePic(gump, 41, 55, 30546, 49, 49);
-      GFGumpPic(gump, 57, 108, 40032, 0);
+
+      GFAddButton(gump, 40, 58, 306, 306, GF_CLOSE_BTN, 2);
+      GFResizePic(gump, 42, 55, 30546, 49, 49);
+      if (smelt_item)
+         GFTilePic(gump, 40, 67, cint(smelt_item.graphic), smelt_item.color);
+      endif
       
       GFTextLine(gump, 117, 55, 1503, "Item a ser");
       GFTextLine(gump, 116, 70, 1503, "Destruído");
       
-      GFTextLine(gump, 117, 139, 1503, "Item a ser");
-      GFTextLine(gump, 116, 154, 1503, "Melhorado");
-      GFAddButton(gump, 48, 203, 2074, 2074, GF_CLOSE_BTN, 1);
+      if (item1)
+         GFGumpPic(gump, 57, 108, 40032, 0);
+         GFAddButton(gump, 40, 128, 306, 306, GF_CLOSE_BTN, 3);
+         GFResizePic(gump, 42, 126, 30546, 49, 49);
+         GFTilePic(gump, 40, 128, cint(item1.graphic), item1.color);
+         GFTextLine(gump, 117, 139, 1503, "Item a ser");
+         GFTextLine(gump, 116, 154, 1503, "Melhorado");
+         GFAddButton(gump, 48, 203, 2074, 2074, GF_CLOSE_BTN, 1);
+      endif
 
-      GFAddButton(gump, 105, 204, 2071, 2071, GF_CLOSE_BTN, 0);
+      GFAddButton(gump, 105, 204, 2071, 2071, GF_CLOSE_BTN, 4);
 
       var input := GFSendGump(who, gump);
-      sleepms(20);
+
+      if (input[0] == 2)
+         ReleaseItem(item1);
+         ReleaseItem(smelt_item);
+         smelt_item := 0;
+         item1 := 0;
+         SendSysMessageEx(who, "Escolha o item que será desconstruído.", SSM_REQUEST);
+         var targ := Target(who, TGTOPT_CHECK_LOS);
+         if (!targ.isA(POLCLASS_ARMOR) && theitem.isA(POLCLASS_ARMOR)) continue; endif
+         if (!(targ.objtype in myrecipes.keys())) 
+            SendSysMessageEx(who, "Você precisa ter aprendido a receita deste item antes.", SSM_FAIL); 
+            continue;
+         elseif (myrecipes[targ.objtype].level < 1)
+            SendSysMessageEx(who, "Este item não pode ser melhorado.", SSM_FAIL); 
+            continue;
+         endif
+
+         smelt_item := targ;
+         ReserveItem(targ);
+      elseif (input[0] == 3)
+         ReleaseItem(item1);
+         item1 := 0;
+         SendSysMessageEx(who, "Escolha o item que será melhorado.", SSM_REQUEST);
+         var targ := Target(who, TGTOPT_CHECK_LOS);
+         if (!targ.isA(POLCLASS_ARMOR) && theitem.isA(POLCLASS_ARMOR)) continue; endif
+         if (targ.objtype != smelt_item.objtype) 
+            SendSysMessageEx(who, "Você não só pode melhorar o item com um equipamento igual ao que será descontruído.", SSM_FAIL); 
+            continue;
+         endif
+
+         item1 := targ;
+         ReserveItem(targ);
+      elseif (input[0] == 1)
+         PrintText(who, "*Melhorando equipamento*");
+         IncreaseEquipment(item1, smelt_item);
+         ReleaseItem(smelt_item);
+         ReleaseItem(item1);
+         DestroyItem(smelt_item);
+         smelt_item := 0;
+         item1 := 0;
+      else
+         break;
+      endif
    endwhile
 
 endprogram
+
+function IncreaseEquipment(item, smelt_item)
+   if (theitem.isa(POLCLASS_WEAPON))
+      var final_power = cint(smelt_item.dmg_mod - item.dmg_mod) / 2;
+      if (final_power < 1) final_power := 1; endif
+      item.dmg_mod += final_power;
+   if (theitem.isA(POLCLASS_ARMOR) || theitem.isA(POLCLASS_EQUIPMENT))
+      var resist_list := array{};
+      foreach resist in resdmg_list
+         sleepms(2);
+         var value := smelt_item.get_member("resist_{}_mod".format(resist)) - item.get_member("resist_{}_mod".format(resist));
+         if (value < 1) continue; endif
+         for i := 1 to 3
+            if (value > resist_list[i].v) resist_list.insert(1, struct{ v := value, res := resist}); break; endif
+            sleepms(2);
+         endfor
+      endforeach
+
+      for i := 1 to 3
+         if (!resist_list[i]) break; endif
+         var res_value := item.get_member("resist_{}_mod".format(resist);
+         smelt_item.set_member("resist_{}_mod".format(resist_list[i].res), res_value + resist_list[v])
+         sleepms(2);
+      endfor
+   endif
+endfunction

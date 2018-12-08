@@ -78,6 +78,12 @@ program help_menu(who)
 			start_script( ":email:emailMessage/helpLetter", array{ who, 999999998, targ, "Reportar Jogador"} );
 		endif
    elseif (input == BUTTON_HELP_HOTBAR)
+      if (YesNo(who, "Deseja reposicionar o hotbar?", "Sim, reposicionar", "Manter na posição anterior"))
+         var hotbar := GetObjProperty(who, "hotbar");
+         hotbar.pos_x := 105;
+         hotbar.pos_y := 543;
+         SetObjProperty(who, "hotbar", hotbar);
+      endif
       start_script(":charactercreation:hotbar/hotbar", who);
 	endif
 endprogram
