@@ -12,7 +12,7 @@ include ":yggdrasil:spawnGroup";
 
 program Install(spot)
    EnableEvents( SYSEVENT_ENTEREDAREA , 40);
-
+   var day;
    var loops := 1;
    while(spot)
       var event := Wait_For_Event(_ifElse(loops >= 100,60,10));
@@ -26,8 +26,9 @@ program Install(spot)
                spot.SetProps(struct{ "activegroup" := group_data.activegroup });
                spot.ForceKill();
             endif
-
-            FillSpawnQueue(config.spawnpoints);
+            var new_day := GetGlobalProperty("dia");
+            day := _IfElse(new_day == day, 0, new_day);
+            FillSpawnQueue(config.spawnpoints, day);
             ResetTreasures(spot.serial, config.treasures);
             SetCooldown(spot, "spotrespawn", 300);
          endif
@@ -40,7 +41,7 @@ program Install(spot)
          endif
       endif
 
-      if (loops <= 105) loops += 1; endif
+      if (loops <= 80) loops += 1; endif
       sleep(5);
    endwhile
 endprogram
@@ -48,7 +49,7 @@ endprogram
 function FillSpawnQueue(spawnpoints)
     foreach serial in spawnpoints
       var spawnpoint := SystemFindObjectBySerial(serial);
-      FillQueue(spawnpoint);
+      FillQueue(spawnpoint, day);
       sleepms(10);
     endforeach
 endfunction

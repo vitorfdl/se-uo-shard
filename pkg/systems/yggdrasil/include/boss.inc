@@ -342,21 +342,26 @@ function CreateBossStructGump(who, byref boss)
 	elseif ( input[0] >= 20 && input[0] <= 25)
 		var index := input[0] - 19;
 		if (boss.deathevent[index] != error )
-			var yes := YesNo(who, "Deletar o evento?");
-			if (yes == 1)
-				boss.deathevent.erase(index);				
+			var yes := YesNo(who, "O que deseja fazer?", _ifOr(boss.deathevent.type == "Combat Event", "Editar", "Manter Evento"), "Deletar");
+			if (yes)
+				boss.deathevent.erase(index);
 				SendSysMessageEx(who, "Evento deletado.", SSM_INFO);
 			else
-				SendSysMessageEx(who, "Cancelado.", SSM_INFO);
+            if (boss.deathevent.type == "Combat Event")
+               var nevent := ConfigureCombatEvent(who, boss.deathevent[index].opt, 1);
+               if (nevent) boss.deathevent[index].opt := nevent; endif
+            else
+				   SendSysMessageEx(who, "Cancelado.", SSM_INFO);
+            endif
 			endif
 		else
-				var nevent := ConfigureEvent(who);
-				if (nevent)
-					if (!boss.deathevent)
-						boss.+deathevent := array;
-					endif
-					(boss.deathevent).append(nevent);
-				endif
+         var nevent := ConfigureEvent(who);
+         if (nevent)
+            if (!boss.deathevent)
+               boss.+deathevent := array{};
+            endif
+            (boss.deathevent).append(nevent);
+         endif
 		endif
 	elseif ( input[0] >= 40 && input[0] <= 45)
 		var index := input[0] - 39;
@@ -373,13 +378,13 @@ function CreateBossStructGump(who, byref boss)
 				SendSysMessageEx(who, "Evento deletado.", SSM_INFO);
 			endif
 		else
-				var nevent := ConfigureCombatEvent(who);
-				if (nevent)
-					if (!boss.combatevent)
-						boss.+combatevent := array;
-					endif
-					(boss.combatevent).append(nevent);
-				endif
+         var nevent := ConfigureCombatEvent(who);
+         if (nevent)
+            if (!boss.combatevent)
+               boss.+combatevent := array;
+            endif
+            (boss.combatevent).append(nevent);
+         endif
 		endif
 	elseif ( input[0] >= 30 && input[0] <= 35)
       if (!boss.special) boss.special := array{}; endif
@@ -493,19 +498,8 @@ function SetBoss(npc, boss)
       SetObjProperty(npc, "skinninginfo", skinning_info);
    endif
 
-//printtextabove(npc, " " + boss.special);
 	if (boss.deathevent)
-		var lwprop := array;
-		foreach nevent in (boss.deathevent)
-			if (nevent.type == "Ultimas Palavras")
-				lwprop.append(nevent.text);
-			else
-				PrepareEvent(nevent);
-			endif
-		endforeach
-		if (lwprop.size() > 0)
-			SetObjProperty(npc, "Ultimas Palavras", lwprop);
-		endif
+		SetObjProperty(npc, "deathevent", boss.deathevent);
 	endif
 
   if (boss.customai)

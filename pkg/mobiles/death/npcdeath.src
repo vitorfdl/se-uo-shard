@@ -130,6 +130,10 @@ program core_npcDeath(params)
                nevent.y := corpse.y;
                nevent.z := corpse.z;
             endif
+            
+            if (nevent.type == "Combat Event")
+               start_script(":ghaia:special/genericspecial" , array{me, nevent.opts});
+            endif
             ExecuteEvent(nevent);				
          endforeach
 		endif

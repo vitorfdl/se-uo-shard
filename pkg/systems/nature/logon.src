@@ -3,6 +3,6 @@ use os;
 
 program logon(who)
 
-	start_script("seasonaleffects", {who});
+	start_script("seasonaleffects", array{who});
 	sleep(1);
 endprogram

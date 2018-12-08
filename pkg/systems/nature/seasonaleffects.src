@@ -6,7 +6,7 @@ include ":fls_core:fls_characters";
 
 program seasonaleffects(params)
 	//sem efeitos das estacoes
-   sleep(1);
+   sleep(3);
 	var who := params[1];
 	
 	var season := cint(getglobalproperty("season"));
@@ -25,4 +25,6 @@ program seasonaleffects(params)
 			SendPacket(player, "BC0"+season+"01");
 		endforeach
 	endif
+
+   who.SetLightLevel(1, 0);
 endprogram

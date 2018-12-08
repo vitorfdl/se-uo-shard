@@ -10,8 +10,6 @@
  * RemoveTreasure(treasure)
  *
  * Spawns
- * FillQueue() - Fill the queue
- * DoSpawnQueue() - Spawn Next in queue
  * KillSpawn(index) - Kill monster by index
  * SpawnAll() - Spawn all monsters
  * KillAll() - Kill all monters

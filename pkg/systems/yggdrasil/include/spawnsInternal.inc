@@ -58,7 +58,7 @@ function KillSpawn(spawnpoint, index)
    SetObjProperty(spawnpoint, "monsters", monsters);
 endfunction
 
-function FillQueue(spawnpoint)
+function FillQueue(spawnpoint, day := 0)
    var config      := spawnpoint.GetProps();
    var monsters    := config.monsters;
 
@@ -67,15 +67,28 @@ function FillQueue(spawnpoint)
    var types     := dictionary{};
    var levels    := dictionary{};
    var index_rem := array{};
+   var moonfase := lower(GetGlobalProperty("moonfase"));
    foreach monster_obj in monsters
+      sleepms(5);
       var monster := SystemFindObjectBySerial(monster_obj.serial);
       if (!monster || monster.master)
          index_rem += _monster_obj_iter;
+         continue;
+      endif
+
+      if (day)
+         var mydaytime := GetObjProperty(monster, "daytime");
+         if (!(mydaytime in array{ "always", "lua nova"}) && day != mydaytime)
+            index_rem += _monster_obj_iter;
+            continue;
+         elseif (mydaytime == "lua nova" && (moonfase != "nova" || day != "noite"))
+            index_rem += _monster_obj_iter;
+            continue;
+         endif
       endif
 
       types[monster_obj.type]   := cint(types[monster_obj.type]) + 1;
       levels[monster_obj.level] := cint(levels[monster_obj.level]) + 1;
-      sleepms(2);
    endforeach
 
    var spawn_queue := config.spawnqueue;
@@ -251,6 +264,7 @@ function DoSpawnQueue(spawnpoint, pass := 0)
          endif
 
          if (monster.isBoss) SetObjProperty(spawned, "is_boss", 1); endif
+         if (monster.daytime) SetObjProperty(spawned, "daytime", monster.daytime); endif
          break;
       endif
 	endfor

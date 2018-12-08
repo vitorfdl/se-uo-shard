@@ -7,18 +7,23 @@ include ":yggdrasil:boss";
 
 function ConfigureEvent(who)
 	var evento := struct;
-	evento.+type := RadioGump(who, 400, 220, "Escolha o tipo de evento.", array{ "Criar Itens", "Abrir Porta", "Criar Npcs", "Abrir Passagem", "Ultimas Palavras"});
+	evento.+type := RadioGump(who, 400, 220, "Escolha o tipo de evento.", array{ "Criar Itens", "Abrir Porta", "Criar Npcs", "Abrir Passagem", "Ultimas Palavras", "Combat Event"});
 	if ( (evento.type == "Abrir Porta") || (evento.type == "Abrir Passagem") )
 		var items := array;
-                SendSysMessage(who, "Escolha os itens. ESC para cancelar.");
-                var targ := Target(who);
-                if (targ)
-                  evento.+items := array;
-                endif
-                while(targ)
-                    evento.items.append(targ.serial);
-                    targ := Target(who);
-                endwhile
+      SendSysMessage(who, "Escolha os itens. ESC para cancelar.");
+      var targ := Target(who);
+      if (targ)
+      evento.+items := array;
+      endif
+      while(targ)
+         evento.items.append(targ.serial);
+         targ := Target(who);
+      endwhile
+	elseif  (evento.type == "Combat Event" ) 
+      var nevent := ConfigureCombatEvent(who);
+      if (nevent)
+         evento.opt := nevent;
+      endif
 	elseif  (evento.type == "Criar Npcs" ) 
          var input_list := array{};
       input_list.append(struct{ "title" := "Qual o npctemplate?", "marked" := ":ghaia:"});
