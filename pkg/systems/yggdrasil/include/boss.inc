@@ -349,7 +349,7 @@ function CreateBossStructGump(who, byref boss)
 				SendSysMessageEx(who, "Evento deletado.", SSM_INFO);
 			else
             if (boss.deathevent.type == "Combat Event")
-               var nevent := ConfigureCombatEvent(who, boss.deathevent[index].opt, 1);
+               var nevent := ConfigureCombatEvent(who, boss.deathevent[index].opt, 1, 1);
                if (nevent) boss.deathevent[index].opt := nevent; endif
             else
 				   SendSysMessageEx(who, "Cancelado.", SSM_INFO);

@@ -68,7 +68,7 @@ function CopyCombatEvent(who, what)
    endif
 endfunction
 
-function ConfigureCombatEvent(who, event := 0, change_event := 0)
+function ConfigureCombatEvent(who, event := 0, change_event := 0, no_mobile := 0)
 	if (!event || change_event == 1)
       if (!change_event)
          var choice := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Nova Habilidade", "Copiar de um Boss","Copiar da lista"}, 0, 1);
@@ -224,7 +224,6 @@ function CombatEventsOptions(who, state)
             "Create Mine",
             "Create Item",
             "Consume Creature",
-            "Dash",
             "Dmg", 
             "Frozen Until End",
             "Graphic Effect", 
@@ -233,20 +232,17 @@ function CombatEventsOptions(who, state)
             "If Block/Dodge",
             "Delay",
             "Hidden",
-            "Move", 
+            "Move",
             "Metamorfose",
             "Magicball",
-            "Play Cast Anim", 
             "Pushback", 
-            "Perform Action", 
             "Pull Target",
             "Play Sound", 
             // "Resist Test", 
             "Summon Npcs", 
             "Simple Target",
             "Set Cooldown", 
-            "Stop Monster",
-            "Steal Player",
+            // "Stop Monster",
             "Spell Trilha",
             "Teleport", 
             "TimedScript", 
@@ -256,6 +252,11 @@ function CombatEventsOptions(who, state)
             }
          }
       };
+
+      if (!no_mobile)
+         input_list[1].radio += array{ "Steal Player", "Perform Action", "Play Cast Anim", "Dash" };
+      endif
+
       opt := QuestionsGump(who, input_list);
       if (!opt) return; endif
       opt := opt[1];

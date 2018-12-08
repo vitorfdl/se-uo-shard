@@ -131,6 +131,7 @@ function GetItemType(item)
 endfunction
 
 function ApplyCraftChanges(theitem, level_select)
+   if (!level_select) level_select := 1; endif
    if (theitem.isA(POLCLASS_ARMOR) || theitem.isa(POLCLASS_WEAPON) || theitem.isA(POLCLASS_EQUIPMENT))
       theitem.quality := 1;
       var chance := RandomInt(100);
