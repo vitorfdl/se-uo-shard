@@ -548,6 +548,7 @@ program loko(params)
                Cint(targ.y) + RandomInt(2 * state.range) - state.range, Cint(targ.z));
 
             if (npc != error)
+               SetObjProperty(npc, "summoned_by", who.serial);
                SetObjProperty(npc, "spawnspot", GetObjProperty(who, "spawnspot"));
                SetObjProperty(npc, "spawnpoint", GetObjProperty(who, "spawnpoint"));
                var duracaonpc := state.duracao;

@@ -14,6 +14,13 @@ function genericControl()
 	EnableMainEvents();
 	Set_Event_Queue_Size(50);
    var loops := 0;
+
+   if (GetObjProperty(me, "summoned_by"))
+      var summoner := SystemFindObjectBySerial(GetGlobalProperty(me, "summoned_by"));
+      if (summoner && summoner.opponent)
+         SendEvent(me, struct{ type := EVID_TAUNT, event.source := summoner.opponent });
+      endif
+   endif
 	while(me)
 		sleepms(15);
       if (npccfgfile.Category == "moriquendi")
