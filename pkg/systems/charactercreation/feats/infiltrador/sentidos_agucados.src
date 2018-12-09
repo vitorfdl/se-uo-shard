@@ -16,11 +16,9 @@ program animateSword(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var area := GetCoordsInSquare(who.x, who.y, 3);
+   var area := GetMidpointCircleCoords(who.x, who.y, 3);
    foreach p in area
-      if (CoordinateDistance(who.x, who.y, p.x, p.y) >= 3)
-         PlayMovingEffectXYZ( who.x, who.y, who.z+5, p.x, p.y, who.z+5, 0xf3f, 0 );
-      endif
+      PlayMovingEffectXYZ( who.x, who.y, who.z+5, p.x, p.y, who.z+5, 0xf3f, 0 );
       sleepms(2);
    endforeach
    

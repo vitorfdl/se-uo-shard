@@ -18,23 +18,6 @@ include ":magery:basicMagery";
 include ":crafting:craft_props";
 // include ":quest:quest";
 
-function TamingEffect(targ, reverse := 0)
-   PlaySoundEffect(targ, cint(0x1E1));
-   var d := 4;
-   if (!reverse) d -= 3; endif
-   var area := GetCoordsInSquare(targ.x, targ.y, d);
-   foreach p in area
-      if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
-         if (!reverse)
-            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z+5, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
-         else
-            PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
-         endif
-      endif
-      sleepms(2);
-   endforeach
-endfunction
-
 function DebugGump(who, showup)
    var gump := GFCreateGump();
    GFResizePic(gump, 84, 90, 9260, 600, 260+25);

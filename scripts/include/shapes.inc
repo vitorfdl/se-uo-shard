@@ -108,11 +108,24 @@ endfunction
  * Array of structs (.x, .y)
  * 
  */
-function GetCoordsInCircle(mid_x, mid_y, radius)
-	mid_x := CInt(mid_x);
-	mid_y := CInt(mid_y);
-	radius := CInt(radius);
-	return error{"errortext":="Hasn't been coded yet!"};
+function GetCoordsInCircle(x, y, radius)
+   var circle_points := array{};
+
+   var i ;
+   var radius2 := radius * radius;
+   for (i := 0; i < radius; i+=1)
+      var j := 0;
+      while (i*i + j*j < radius2)
+         circle_points.append(struct{ x := x+i, y := y+j});
+         circle_points.append(struct{ x := x-i, y := y-j});
+         circle_points.append(struct{ x := x+i, y := y-j});
+         circle_points.append(struct{ x := x-i, y := y+j});
+         j += 1;
+         sleepms(2);
+      endwhile
+   endfor
+
+   return circle_points;
 endfunction
 
 /*

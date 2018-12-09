@@ -79,7 +79,7 @@ function showgump(who, filter)
       GFTextLine(gump, pos_x+480, pos_y, 2100, "Eventos:");
       foreach steep in (theevent.steps)
          GFTextLine(gump, pos_x+500, pos_y+(_steep_iter * 18), 2000, ""+steep.type);
-         sleepms(5);
+         sleepms(2);
       endforeach
 
       GFTextLine(gump, pos_x+30+15, pos_y+234, 2103, "Editar");
@@ -107,7 +107,7 @@ function showgump(who, filter)
          x := 210; 
          y += 30;
       endif
-      sleepms(5);
+      sleepms(2);
    endforeach
 
    var input := GFSendGump(who, gump);
