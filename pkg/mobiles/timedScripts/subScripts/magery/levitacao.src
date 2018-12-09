@@ -19,7 +19,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 
    MoveObjectToLocation(mobile, mobile.x, mobile.y, mobile.z+15, mobile.realm, MOVEOBJECT_FORCELOCATION);
    mobile.frozen := 1;
-   while (!mobile.dead)
+   while (mobile && !mobile.dead)
       sleepms(200);
       mobile.SetFacing(mobile.facing+1, 0x1);
       PlaySoundEffect(mobile, 0x212);

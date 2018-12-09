@@ -392,7 +392,7 @@ function BackToSpawnpoint(spawnpoint)
    endif
 
    HealDamage(me, cint(cdbl(AP_GetVitalMaximumValue(me, HITS)) * 0.15 ));
-
+   var now := ReadGameClock()+15;
 
    var path;
    while (Distance(me, spawnpoint) > 3)
@@ -407,6 +407,11 @@ function BackToSpawnpoint(spawnpoint)
          path.erase(1);
       else
          RunToward( spawnpoint );
+      endif
+
+      if (ReadGameClock() > now)
+         MoveObjectToLocation(me, spawnpoint.x, spawnpoint.y, spawnpoint.z, spawnpoint.realm, MOVEOBJECT_FORCELOCATION);
+         break;
       endif
    endwhile
    

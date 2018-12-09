@@ -28,6 +28,7 @@ program use_curing(who, item)
       0xee52:  TransformItemCuring(who, useon, 0xee58); break;
       0xee53:  TransformItemCuring(who, useon, 0xee56); break;
       0xef11:  TransformItemCuring(who, useon, 0xef20); break;
+      0xef15: TransformItemCuring(who, useon, 0xef24); break;
       default: SendSysMessageEx(who, "Este item não pode ser curado", SSM_FAIL);
    endcase
 endprogram

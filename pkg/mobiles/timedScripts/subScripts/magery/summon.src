@@ -24,11 +24,10 @@ function EndScript(mobile)
       if (GetObjProperty(mobile, "damage_transfer"))
          EraseObjProperty(mobile, "LastDamage");
       endif
-
-      ApplyRawDamage(mobile, AP_GetVitalMaximumValue(mobile, "Hits"));	
-      ApplyRawDamage(mobile, 200);
    endif
 	
+   ApplyRawDamage(mobile, AP_GetVitalMaximumValue(mobile, HITS));	
+   ApplyRawDamage(mobile, 200);
    return 1;
 endfunction
 

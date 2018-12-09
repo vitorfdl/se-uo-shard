@@ -15,6 +15,7 @@ program hiddepresence(params)
 	var spellinfo := params[2];
 	var targ := params[3];
 	params := 0; // No longer needed
+
    var timer := 4;
    if (!targ.isA(POLCLASS_NPC)) timer := 2; endif
    

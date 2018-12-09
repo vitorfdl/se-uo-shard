@@ -85,5 +85,6 @@ program help_menu(who)
          SetObjProperty(who, "hotbar", hotbar);
       endif
       start_script(":charactercreation:hotbar/hotbar", who);
+      start_script(":charactercreation:hotbar/controller", who);
 	endif
 endprogram
