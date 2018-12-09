@@ -524,7 +524,6 @@ program loko(params)
       
 		elseif (state.type == "Summon Npcs") // Summonar NPC
 	      var amt := 0;
-         var tries := 0;
          var amount := state.amount;
          if (amount["d"]) 
             amount := RandomDiceRoll(amount);
