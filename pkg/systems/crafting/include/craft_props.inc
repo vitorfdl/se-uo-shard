@@ -143,24 +143,21 @@ function ApplyCraftChanges(theitem, level_select)
 
       if (theitem.isa(POLCLASS_WEAPON))
          theitem.dmg_mod := RandomIntMinMax(12 * level_select, 17 * level_select);
-      endif
-
-      if (theitem.isA(POLCLASS_ARMOR))
+      elseif (theitem.isA(POLCLASS_ARMOR) && theitem.tile_layer == 0x2)
+         foreach resist in resdmg_list
+            var value := RandomIntMinMax(level_select, 2*level_select);
+            theitem.set_member("resist_{}_mod".format(resist), value);
+            sleepms(2);
+         endforeach
+     elseif (theitem.isA(POLCLASS_ARMOR))
          foreach resist in resdmg_list
             var value := RandomIntMinMax(2 * level_select, 4*level_select);
             theitem.set_member("resist_{}_mod".format(resist), value);
             sleepms(2);
          endforeach
       endif
-
-      if (theitem.isA(POLCLASS_EQUIPMENT))
-         foreach resist in resdmg_list
-            var value := RandomIntMinMax(level_select, 2*level_select);
-            theitem.set_member("resist_{}_mod".format(resist), value);
-            sleepms(2);
-         endforeach
-      endif
       SetObjProperty(theitem, "level", level_select);
+      SetName(theitem, theitem.name);
       return 1;
    endif
 endfunction

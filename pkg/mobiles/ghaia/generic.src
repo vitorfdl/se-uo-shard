@@ -18,6 +18,7 @@ var combatevents := array{};
 var flee_point   := 0.1;
 var mystate      := INITIALIZING;
 var healing_amount;
+var npc_is_boss := 0;
 
 program NPCMonitor()
    if (GetObjProperty(me, "%CooldownList%") || GetObjProperty(me, "%TimerList%"))
@@ -26,6 +27,8 @@ program NPCMonitor()
 
    if (GetObjProperty(me, "script_frozed")) me.frozen := 0; endif
    if (GetObjProperty(me, "hitched")) me.frozen := 1; endif
+   if (GetObjProperty(me, "is_boss")) npc_is_boss := 1; endif
+   if (GetObjProperty(me, "back_to_spawn")) me.Disable("invul"); EraseObjProperty(me, "back_to_spawn"); endif
 	genericControl();
 endprogram
 
@@ -47,7 +50,7 @@ function CloseDistanceMeele( opponent )
 	var sleepdelay := 270 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
 
 	if (sleepdelay < 0)
-		sleepdelay := 0;
+		sleepdelay := 50;
 	endif
 
    if (CoordinateDistance( me.x, me.y, opponent.x, opponent.y ) > 1)
@@ -138,8 +141,7 @@ function Fight(opponent, alerted := 0)
    endif
    endif
 */
-
-
+   var my_spawnpoint := SystemFindObjectBySerial(GetObjProperty(me, "spawnpoint"));
    var dist;
    while( me && loops <= 140)
       sleepms(15);
@@ -150,7 +152,14 @@ function Fight(opponent, alerted := 0)
          endif
       endif
 
-      if (me.dead || !opponent || opponent.dead || opponent.concealed)
+      if (my_spawnpoint && npc_is_boss)
+         if (Distance(me, spawnpoint) > 20)
+            BackToSpawnpoint();
+            break;
+         endif
+      endif
+
+      if (me.dead || !opponent || opponent.concealed)
          me.remAggro(opponent.serial);
          break;
       elseif (opponent.hidden)
@@ -161,28 +170,17 @@ function Fight(opponent, alerted := 0)
          endif
          continue;
       elseif (opponent.dead)
-         //Somente checa se tem mais inimigo, se n se afsata do corpo.
-         var achou := 0;
-         foreach mob in ListMobilesInLineOfSight(me, cint(areasize) + 2)
-            if( CanFight(me, mob) )
-               achou := 1;
-               break;
-            endif
-            sleepms(5);
-         endforeach
-
-         if (achou)
+         me.remAggro(opponent.serial);
+         if (!ChooseHighestOpponent(me, opponent))
+            // Pra se afastar do corpo e o cara poder correr
+            var corpo := opponent.GetCorpse();
+            var end   := ReadGameClock() + 10;
+            while (CoordinateDistance(me.x, me.y, corpo.x, corpo.y) < areasize + 5 && end > ReadGameClock())
+               RunAwayFromLocation(corpo.x, corpo.y);
+               sleepms(100);
+            endwhile
             break;
          endif
-         
-         // Pra se afastar do corpo e o cara poder correr
-         var corpo := opponent.GetCorpse();
-         var end   := ReadGameClock() + 10;
-         while (CoordinateDistance(me.x, me.y, corpo.x, corpo.y) < areasize + 5 && end > ReadGameClock())
-            RunAwayFromLocation(corpo.x, corpo.y);
-            sleepms(100);
-         endwhile
-         break;
       endif
 
       if (JustTeleported(opponent))
@@ -374,4 +372,43 @@ function JustTeleported(mobile)
 		// Safe to teleport the mobile
 		return 0;
 	endif
+endfunction
+
+function BackToSpawnpoint()
+	var sleepdelay := 270 - me.run_speed;
+
+	if (sleepdelay < 0)
+		sleepdelay := 50;
+	endif
+
+   GrantPrivilege(who, "invul");
+   me.enable("invul");
+   SetObjProperty(me, "back_to_spawn", 1)
+   HealStamina(me, AP_GetVitalMaximumValue(me, STAMINA));
+
+   var flags := FP_IGNORE_MOBILES;
+   if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
+      flags := flags| FP_IGNORE_DOORS;
+   endif
+
+   var path;
+   while (Distance(me, spawnpoint) > 3)
+      sleepms(sleepdelay);
+      if (!path) 
+         RunToward( spawnpoint );
+         if (Distance(me, spawnpoint) < 20)
+            path := FindPath(  me.x, me.y, me.z, spawnpoint.x, spawnpoint.y, spawnpoint.z, me.realm, flags, 15);
+         endif
+      elseif (path[1])
+         RunTowardLocation( path[1].x, path[1].y );
+         path.erase(1);
+      else
+         RunToward( spawnpoint );
+      endif
+   endwhile
+   
+   HealStamina(me, AP_GetVitalMaximumValue(me, STAMINA));
+   me.Disable("invul");
+   EraseObjProperty(me, "back_to_spawn");
+   me.setAggroProp(dictionary());
 endfunction

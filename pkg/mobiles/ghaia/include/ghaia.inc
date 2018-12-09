@@ -96,7 +96,7 @@ function CanFight(me, mobile)
 endfunction
 
 function AlertAllies(me, opponent)
-   var my_spot        := GetObjProperty(me, "spawnpoint");
+   var my_spot := GetObjProperty(me, "spawnpoint");
    var allies_near := GetAlliesNear(me, 10);
    var myallies := array{};
    foreach mob in allies_near
