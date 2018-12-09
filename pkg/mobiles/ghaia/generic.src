@@ -153,7 +153,7 @@ function Fight(opponent, alerted := 0)
       endif
 
       if (my_spawnpoint && npc_is_boss)
-         if (Distance(me, my_spawnpoint) > 20)
+         if (Distance(me, my_spawnpoint) > 35)
             BackToSpawnpoint(my_spawnpoint);
             break;
          endif
@@ -397,7 +397,7 @@ function BackToSpawnpoint(spawnpoint)
       if (!path) 
          RunToward( spawnpoint );
          if (Distance(me, spawnpoint) < 20)
-            path := FindPath(  me.x, me.y, me.z, spawnpoint.x, spawnpoint.y, spawnpoint.z, me.realm, flags, 15);
+            path := FindPath(  me.x, me.y, me.z, spawnpoint.x, spawnpoint.y, spawnpoint.z, me.realm, flags, 30);
          endif
       elseif (path[1])
          RunTowardLocation( path[1].x, path[1].y );
