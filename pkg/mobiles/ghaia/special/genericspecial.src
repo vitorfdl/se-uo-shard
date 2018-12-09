@@ -582,7 +582,7 @@ program loko(params)
 endprogram
 
 function selectOpponent(who, type, dist := 3)
-   if (conedist > 20) conedist := 20; endif
+   if (dist > 20) dist := 20; endif
    var targ := array{};
 
    if (type == "Previous Targets")
@@ -756,6 +756,8 @@ endfunction
 
 function CircleEffect(targ, state, reverse)
    var d := _ifOr(state.circledist, 2);
+   if (!state.circledist > 20) state.circledist := 20; endif
+
    var area := GetMidpointCircleCoords(targ.x, targ.y, d);
    foreach p in area
       if (!reverse)
