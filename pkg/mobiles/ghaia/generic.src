@@ -383,7 +383,7 @@ function BackToSpawnpoint(spawnpoint)
 
    GrantPrivilege(me, "invul");
    me.enable("invul");
-   SetObjProperty(me, "back_to_spawn", 1)
+   SetObjProperty(me, "back_to_spawn", 1);
    HealStamina(me, AP_GetVitalMaximumValue(me, STAMINA));
 
    var flags := FP_IGNORE_MOBILES;
