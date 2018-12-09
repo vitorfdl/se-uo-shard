@@ -582,7 +582,7 @@ program loko(params)
 endprogram
 
 function selectOpponent(who, type, dist := 3)
-   if (!dist) dist := 3; endif
+   if (conedist > 20) conedist := 20; endif
    var targ := array{};
 
    if (type == "Previous Targets")
@@ -671,6 +671,8 @@ endfunction
 // endfunction
 
 function ReturnPointsByTarget(who, type, conedist := 3)
+   if (conedist > 20) conedist := 20; endif
+
    var targ := array{};
    if (type == "Previous Targets")
       targ := previoustarg;
