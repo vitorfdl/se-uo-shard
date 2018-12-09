@@ -114,15 +114,15 @@ function Loot_CreateItem(container, line, loot_params, type := 0)
 				//print("Error - Could not create ["+parsed.name+"] ->"+item.errortext + " " + parsed); 
 					return error{"errortext" := "Error - Could not create ["+parsed.name+"] ->"+item.errortext};
             elseif (item.isA(POLCLASS_WEAPON))
+               RandomQuality(item, loot_params);
                if (ApplyCraftChanges(item, loot_params.level))
                    ApplyCraftColor(item, loot_params.level);
                endif
-               RandomQuality(item, loot_params);
             elseif(item.isA(POLCLASS_ARMOR))
+               RandomQuality(item, loot_params);
                if (ApplyCraftChanges(item, loot_params.level))
                    ApplyCraftColor(item, loot_params.level);
                endif
-               RandomQuality(item, loot_params);
 				endif
          elseif (type == "talentbook")
             var item := CreateItemInContainer(container, FEATBOOK_OBJ);

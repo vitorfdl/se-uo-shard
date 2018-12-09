@@ -163,11 +163,19 @@ function Fight(opponent, alerted := 0)
          me.remAggro(opponent.serial);
          break;
       elseif (opponent.hidden)
-         me.setAggro(opponent.serial, -20);
+         me.setAggro(opponent.serial, -10);
+
          if (!ChooseHighestOpponent(me, opponent))
             Wander();
-            sleepms(100);
+
+            if (Distance(me, opponent) > 10)
+               me.remAggro(opponent);
+               opponent := 0;
+               SetOpponent(0);
+               break;
+            endif
          endif
+         sleepms(275 - me.run_speed);
          continue;
       elseif (opponent.dead)
          me.remAggro(opponent.serial);
