@@ -381,7 +381,7 @@ function BackToSpawnpoint(spawnpoint)
 		sleepdelay := 50;
 	endif
 
-   GrantPrivilege(who, "invul");
+   GrantPrivilege(me, "invul");
    me.enable("invul");
    SetObjProperty(me, "back_to_spawn", 1)
    HealStamina(me, AP_GetVitalMaximumValue(me, STAMINA));
