@@ -16,7 +16,7 @@ function genericControl()
    var loops := 0;
 
    if (GetObjProperty(me, "summoned_by"))
-      var summoner := SystemFindObjectBySerial(GetGlobalProperty(me, "summoned_by"));
+      var summoner := SystemFindObjectBySerial(GetObjProperty(me, "summoned_by"));
       if (summoner && summoner.opponent)
          SendEvent(me, struct{ type := EVID_TAUNT, event.source := summoner.opponent });
       endif
@@ -29,7 +29,7 @@ function genericControl()
             ApplyRawDamage(me, 200);
          endif
       endif
-      
+
       var heal_percent := cint(AP_GetVitalMaximumValue(me, HITS) * 0.5);
       if (heal_percent < 5) heal_percent := 5; endif
       HealDamage(targ, heal_percent);
