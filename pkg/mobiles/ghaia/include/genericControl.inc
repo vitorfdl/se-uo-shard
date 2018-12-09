@@ -18,7 +18,7 @@ function genericControl()
    if (GetObjProperty(me, "summoned_by"))
       var summoner := SystemFindObjectBySerial(GetObjProperty(me, "summoned_by"));
       if (summoner && summoner.opponent)
-         SendEvent(me, struct{ type := EVID_TAUNT, event.source := summoner.opponent });
+         SendEvent(me, struct{ type := EVID_TAUNT, source := summoner.opponent });
       endif
    endif
 	while(me)
