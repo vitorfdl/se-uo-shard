@@ -410,5 +410,5 @@ function BackToSpawnpoint(spawnpoint)
    HealStamina(me, AP_GetVitalMaximumValue(me, STAMINA));
    me.Disable("invul");
    EraseObjProperty(me, "back_to_spawn");
-   me.setAggroProp(dictionary());
+   me.setAggroProp(dictionary{});
 endfunction
