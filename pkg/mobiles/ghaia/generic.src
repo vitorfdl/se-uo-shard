@@ -391,6 +391,9 @@ function BackToSpawnpoint(spawnpoint)
       flags := flags| FP_IGNORE_DOORS;
    endif
 
+   HealDamage(me, cint(cdbl(AP_GetVitalMaximumValue(me, HITS)) * 0.15 ));
+
+
    var path;
    while (Distance(me, spawnpoint) > 3)
       sleepms(sleepdelay);

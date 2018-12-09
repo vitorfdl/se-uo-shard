@@ -30,7 +30,7 @@ function genericControl()
          endif
       endif
 
-      var heal_percent := cint(AP_GetVitalMaximumValue(me, HITS) * 0.5);
+      var heal_percent := cint(cdbl(AP_GetVitalMaximumValue(me, HITS)) * 0.5);
       if (heal_percent < 5) heal_percent := 5; endif
       HealDamage(me, heal_percent);
 
