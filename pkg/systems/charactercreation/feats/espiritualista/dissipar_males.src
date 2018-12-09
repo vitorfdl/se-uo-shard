@@ -22,9 +22,9 @@ program hiddepresence(params)
    endforeach
 
    sleepms(100);
-   area := GetMidpointCircleCoords(targ.x, targ.y, 3);
-   foreach p in area
-         PlayMovingEffectXYZ( targ.x+1, targ.y+1, targ.z+5, p.x+1, p.y+1, targ.z+5, 0x377A, 0 );
+   var area2 := GetMidpointCircleCoords(targ.x, targ.y, 3);
+   foreach p in area2
+      PlayMovingEffectXYZ( targ.x+1, targ.y+1, targ.z+5, p.x+1, p.y+1, targ.z+5, 0x377A, 0 );
       sleepms(2);
    endforeach
 

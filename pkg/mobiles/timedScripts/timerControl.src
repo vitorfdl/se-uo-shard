@@ -43,11 +43,12 @@ program TimerControl(mobile)
 
 		var event;
 		if ( (timer_list.Size() > 0) || (cooldowns.Size() > 0) )
+         kill_npc := 0;
 			event := Wait_For_Event(1);
 		else // sleep-mode
          if (mobile.isA(POLCLASS_NPC)) 
             kill_npc += 1;
-            if (kill_npc >= 2) return 1; endif
+            if (kill_npc > 2) return 1; endif
             
             return 1;
          endif
