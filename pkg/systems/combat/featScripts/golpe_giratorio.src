@@ -30,7 +30,7 @@ program startTalent(param)
    endforeach
 
    var weapon_cfg := GetItemCfgInfo(who, who.weapon);
-   var area := GetCoordsInSquare(who.x, who.y, 2);
+   var area := GetCoordsInCircle(who.x, who.y, 2);
    for i := 1 to 3
       foreach p in area
          if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2-1)

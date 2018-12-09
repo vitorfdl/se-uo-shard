@@ -36,9 +36,94 @@ function TamingEffect(targ, reverse := 0)
    endforeach
 endfunction
 
+function PointsBycircle(point, radius)
+   var circle_points := array{};
+
+   // var radius2 := radius * radius;
+   // var i;
+   // for (i := 0; i < radius; i+=1)
+   //    var j := ;
+   //    while (i*i + j*j < radius2)
+   //       circle_points.append(struct{ x := point.x+i, y := point.y+j});
+   //       circle_points.append(struct{ x := point.x-i, y := point.y-j});
+   //       circle_points.append(struct{ x := point.x+i, y := point.y-j});
+   //       circle_points.append(struct{ x := point.x-i, y := point.y+j});
+   //       j += 1;
+   //    endwhile
+   // endfor
+
+   for i := 1 to 1
+      var x := (radius * i);
+      var y := (radius * -i);
+      print(x);
+      circle_points.append(struct{ x := point.x+x, y := point.y+y});
+      circle_points.append(struct{ x := point.x-x, y := point.y-y});
+      circle_points.append(struct{ x := point.x+x, y := point.y-y});
+      circle_points.append(struct{ x := point.x-x, y := point.y+y});
+   endfor
+
+   return circle_points;
+endfunction
+
 program oafeatures_sendpacket(who, text)
    var targ     := Target(who);
-   ApplyCraftColor(targ, 2);
+   print(targ.isA(POLCLASS_ARMOR));
+   print(targ.isA(POLCLASS_EQUIPMENT));
+   print(targ.isA(POLCLASS_WEAPON));
+   // ApplyCraftColor(targ, 2);
+   // ApplyCraftChanges(targ, 3);
+
+   // var circle_points := GetCoordsInCircle(who.x, who.y, 5);
+   // var new_array := array{};
+   // foreach p in circle_points
+   //    new_array += GetCoordsInLine(p.x, p.y, who.x, who.y);
+   // endforeach
+   // circle_points += new_array;
+   // print();
+   // for each dy = 0 ... r
+   //  dx = 0
+   //  while (dx*dx + dy*dy <= r2)
+   //      within(cx+dx, cy+dy)
+   //      within(cx-dx, cy+dy)
+   //      within(cx+dx, cy-dy)
+   //      within(cx-dx, cy-dy)
+   //      dx++
+
+   // circle_points := array{who.x, who.y};
+
+   // for (i := 1; i < radius; i+=1)
+   //    for (j := 1; j < radius; j+=1)
+   //       circle_points.append(struct{ x := who.x+i, y := who.y+j});
+   //       circle_points.append(struct{ x := who.x-i, y := who.y-j});
+   //       circle_points.append(struct{ x := who.x+i, y := who.y-j});
+   //       circle_points.append(struct{ x := who.x-i, y := who.y+j});
+   //       sleepms(2);
+   //    endfor
+   //    sleepms(2);
+   // endfor
+
+   // print(circle_points);
+   // foreach p in circle_points
+   //    PlayStationaryEffectEx( p.x, p.y, who.z+3, who.realm, 0x1ECD, 1, 60, 2168 );
+   //    sleepms(2);
+   // endforeach
+
+//     offsets.Add(new Vector3i(0,0));
+//  for (int i = 1; i < radius; i++)
+//  {
+//      for (int j = 1; j < radius; j++)
+//      {
+//          if (i*i + j*j <threshold)
+//          {
+//              offsets.Add(new Vector2i(i,j));
+//              offsets.Add(new Vector2i(-i,j));
+//              offsets.Add(new Vector2i(i,-j));
+//              offsets.Add(new Vector2i(-i,-j));
+//          }
+//      }
+//  }
+
+
    // DamageFLS(targ, 10, DMG_PHYSICAL);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
    // foreach p in area

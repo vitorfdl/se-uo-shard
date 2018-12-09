@@ -8,7 +8,6 @@ include ":yggdrasil:boss";
 
 
 function BardNotes(who,item,notas,notas2,tempo,letra,what,emocao)
-   return SendSysMessageEx(who, "Sistema desabilitado", SSM_FAIL);
    while (who.connected)
       sleepms(20);
       if (randomint(5) == 1)

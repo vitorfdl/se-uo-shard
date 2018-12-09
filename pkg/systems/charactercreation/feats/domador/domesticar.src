@@ -120,12 +120,10 @@ endprogram
 
 function FailTaming(who, targ)
    var d := 3;
-   var area := GetCoordsInSquare(targ.x, targ.y, d);
+   var area := GetMidpointCircleCoords(targ.x, targ.y, d);
    sleepms(150);
    foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x+1, p.y+1) >= d-1)
-         PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 1163);
-      endif
+      PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 1163);
 
       sleepms(2);
    endforeach
@@ -136,14 +134,12 @@ function TamingEffect(targ, reverse := 0)
    PlaySoundEffect(targ, cint(0x1E1));
    var d := 4;
    if (!reverse) d -= 3; endif
-   var area := GetCoordsInSquare(targ.x, targ.y, d);
+   var area := GetMidpointCircleCoords(targ.x, targ.y, d);
    foreach p in area
-      if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
-         if (!reverse)
-            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z+5, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
-         else
-            PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
-         endif
+      if (!reverse)
+         PlayMovingEffectXYZEx( targ.x, targ.y, targ.z+5, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
+      else
+         PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
       endif
       sleepms(2);
    endforeach

@@ -13,11 +13,9 @@ program startTalent(param)
    PlaySoundEffect(who, cint(0x64E));
    sleepms(600);
    var d := 10;
-   var area := GetCoordsInSquare(who.x, who.y, d);
+   var area := GetMidpointCircleCoords(who.x, who.y, d);
    foreach p in area
-      if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= d-1)
-         PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
-      endif
+      PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
 
       sleepms(2);
    endforeach

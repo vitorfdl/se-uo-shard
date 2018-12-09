@@ -259,6 +259,7 @@ program loko(params)
 
 			foreach t in targ
 				PrintText(t, state.text, state.color);
+            sleepms(2);
 			endforeach
 		elseif (state.type == "Play Sound")
 			PlaySoundEffect(who, state.id);
@@ -290,6 +291,7 @@ program loko(params)
                   else
                      PlayStationaryEffectEx( t.x, t.y, t.z+2, who.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
                   endif
+                  sleepms(2);
                endforeach
 				elseif (state.graphictype == "Moving")
 				   foreach t in targ
@@ -402,6 +404,7 @@ program loko(params)
          };
 
          for i := 1 to (state.amount)
+            sleepms(2);
             var targ := ReturnPointsByTarget(who, state.target, state.conedist);
             targ := targ.randomentry();
             if (!targ.z) targ.z := who.z; endif
@@ -494,18 +497,17 @@ program loko(params)
                   continue;
                endif
             endif
+
             var roll := RandomInt(25);
-            foreach item in EnumerateItemsInContainer(targ.backpack, ENUMERATE_ROOT_ONLY)
-               var diff := 10 + CInt(item.amount * 0.3) + cint(item.weight/2);
-               if (roll > diff)
-                  MoveItemToContainer(item, who.backpack);
-                  var user_percep := RandomInt(15);
-                  if (user_percep > roll)
-                     SendSystemReport(who, "*pegou item da sua mochila*", SSM_FAIL, targ);
-                  endif
-                  break;
+            var item := EnumerateItemsInContainer(targ.backpack, ENUMERATE_ROOT_ONLY).randomentry();
+            var diff := 10 + CInt(item.amount * 0.3) + cint(item.weight/2);
+            if (roll > diff)
+               MoveItemToContainer(item, who.backpack);
+               var user_percep := RandomInt(15);
+               if (user_percep > roll)
+                  SendSystemReport(who, "*pegou item da sua mochila*", SSM_FAIL, targ);
                endif
-            endforeach
+            endif
          endforeach
       elseif (state.type == "Spell Trilha")
          var targ := selectOpponent(who, state.target, state.conedist);
@@ -522,7 +524,6 @@ program loko(params)
       
 		elseif (state.type == "Summon Npcs") // Summonar NPC
 	      var amt := 0;
-         var tries := 0;
          var amount := state.amount;
          if (amount["d"]) 
             amount := RandomDiceRoll(amount);
@@ -530,10 +531,11 @@ program loko(params)
             amount := cint(amount);
          endif
 
+         if (amount > 10)
+            amount := 10;
+         endif
+
          while (amt < amount)
-            if (tries >= 20)
-               break;
-            endif
             var targ;
             if (state.x == 6 && state.y == 6 && state.z == 6)
                targ := ReturnPointsByTarget(who, state.target, state.conedist);
@@ -568,7 +570,6 @@ program loko(params)
                   ghaiaObjective(npc, coord, 2, 1);
                endif
             endif
-            tries += 1;
             sleepms(2);
          endwhile
 		endif
@@ -676,7 +677,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
    elseif (type == "Self")
       targ.append( struct{x := who.x, y := who.y, z := who.z} );
    elseif (type == "Around Self")
-      targ := GetCoordsInSquare(who.x, who.y, conedist);
+      targ := GetCoordsInCircle(who.x, who.y, conedist);
       foreach t in targ
          t.z := who.z;
          sleepms(5);
@@ -700,7 +701,7 @@ function ReturnPointsByTarget(who, type, conedist := 3)
          targ.append( struct{x := who.opponent.x, y := who.opponent.y, z := who.opponent.z} );
       endif
    elseif (type == "Around Opponent")
-      targ := GetCoordsInSquare(who.opponent.x, who.opponent.y, conedist);
+      targ := GetCoordsInCircle(who.opponent.x, who.opponent.y, conedist);
    elseif (type["Cone"])
       var f := who.facing;
       if (type["back"])
@@ -753,14 +754,12 @@ endfunction
 
 function CircleEffect(targ, state, reverse)
    var d := _ifOr(state.circledist, 2);
-   var area := GetCoordsInSquare(targ.x, targ.y, d);
+   var area := GetMidpointCircleCoords(targ.x, targ.y, d);
    foreach p in area
-      if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
-         if (!reverse)
-            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
-         else
-            PlayMovingEffectXYZEx( p.x, p.y, targ.z, targ.x, targ.y, targ.z+5, targ.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
-         endif
+      if (!reverse)
+         PlayMovingEffectXYZEx( targ.x, targ.y, targ.z, p.x, p.y, targ.z+5, targ.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
+      else
+         PlayMovingEffectXYZEx( p.x, p.y, targ.z, targ.x, targ.y, targ.z+5, targ.realm, cint(state.fxid), cint(state.speed), cint(state.loops), cint(state.color));
       endif
       sleepms(5);
    endforeach

@@ -22,11 +22,9 @@ program animateSword(params)
    endif
 
    TS_LowerDuration(targ, "barrier", -1);
-   var area := GetCoordsInSquare(targ.x, targ.y, 1);
+   var area := GetMidpointCircleCoords(targ.x, targ.y, 1);
    foreach p in area
-      if (CoordinateDistance(targ.x+1, targ.y+1, p.x, p.y+1) >= 1)
-         PlayMovingEffectXYZ( targ.x+1, targ.y+1, targ.z+5, p.x+1, p.y+1, targ.z+5, 0x376A, 0 );
-      endif
+      PlayMovingEffectXYZ( targ.x+1, targ.y+1, targ.z+5, p.x+1, p.y+1, targ.z+5, 0x376A, 0 );
       sleepms(2);
    endforeach
 
