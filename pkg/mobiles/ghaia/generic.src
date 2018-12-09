@@ -153,8 +153,8 @@ function Fight(opponent, alerted := 0)
       endif
 
       if (my_spawnpoint && npc_is_boss)
-         if (Distance(me, spawnpoint) > 20)
-            BackToSpawnpoint();
+         if (Distance(me, my_spawnpoint) > 20)
+            BackToSpawnpoint(my_spawnpoint);
             break;
          endif
       endif
@@ -374,7 +374,7 @@ function JustTeleported(mobile)
 	endif
 endfunction
 
-function BackToSpawnpoint()
+function BackToSpawnpoint(spawnpoint)
 	var sleepdelay := 270 - me.run_speed;
 
 	if (sleepdelay < 0)
