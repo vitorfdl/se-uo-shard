@@ -6,7 +6,7 @@ include ":gathering:mining";
 include ":gathering:settings";
 include ":gathering:lumberJack";
 
-const REGEN_WAIT := 60 * 10;
+const REGEN_WAIT := 60 * 30;
 
 //Regenera areia, clay e madeira e ore.
 // o ore regenera 3x em 30 minutos, os outros 1x em 30 min
@@ -16,49 +16,13 @@ program ResourceRegen()
 	var settings := LJ_GetSettingsCfgElem("Settings");
 
 	while(1)
-			UpOreAmounts();
-		sleep(REGEN_WAIT);
-			UpOreAmounts();
-		sleep(REGEN_WAIT);
-			UpOreAmounts();
-			UpMiscAmounts();
-			RegenWood(settings);
+      UpMiscAmounts();
+      RegenWood(settings);
 		sleep(REGEN_WAIT);
 	endwhile
 
 endprogram
 
-function UpOreAmounts()
-
-	var data_file := DFOpenDataFile(":gathering:OreSettings", DF_CREATE);
-	var elems := DFGetElemNames(data_file);		
-	
-	SysLog("Running ore regeneration cycle. ("+elems.size()+" veins)");
-
-	foreach vein_serial in (elems)
-		var vein := DFFindElement(data_file, vein_serial);
-
-		var remaining_ore := CInt(vein.GetProp("RemainingOre"));
-		var amount := CInt(vein.GetProp("Amount"));
-	
-		if ( remaining_ore < MAX_RESOURCE_AMOUNT )
-			remaining_ore := remaining_ore + 1;
-			vein.SetProp("RemainingOre", CInt(remaining_ore));
-		endif
-		if ( amount < MAX_RESOURCE_AMOUNT )
-			amount := amount + 1;
-			vein.SetProp("Amount", CInt(amount));
-		endif
-
-		if (amount == MAX_RESOURCE_AMOUNT)
-			data_file.DeleteElement(vein_serial);
-		endif
-	
-		sleep(2);
-	endforeach
-	
-	//SysLog("Finished ore regeneration cycle.");
-endfunction
 
 function RegenWood(settings)
 	Print("Running wood regeneration cycle...");
