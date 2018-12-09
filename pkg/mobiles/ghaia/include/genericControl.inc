@@ -32,7 +32,7 @@ function genericControl()
 
       var heal_percent := cint(AP_GetVitalMaximumValue(me, HITS) * 0.5);
       if (heal_percent < 5) heal_percent := 5; endif
-      HealDamage(ne, heal_percent);
+      HealDamage(me, heal_percent);
 
 		//se tem objetivo, anda na direcao dele, se não tem so wander
 		if (GetObjProperty(me, "objloc") != error)
