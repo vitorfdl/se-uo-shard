@@ -16,7 +16,6 @@ include ":charactercreation:feats";
 var config;
 
 program skill_Musicianship(params)
-   return SendSysMessageEx(params.who, "Sistema desabilitado", SSM_FAIL);
    ReserveItem(params.what);
 	BardNotes(params.who,params.item,params.notas,params.notas2,params.tempo,params.letra,params.what,params.magica);
 endprogram
