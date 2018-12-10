@@ -109,7 +109,7 @@ endfunction
  * 
  */
 function GetCoordsInCircle(x, y, radius)
-   var circle_points := array{ };
+   var circle_points := array{ struct{ x := x, y := y } };
 
    var radius2 := radius * radius;
 

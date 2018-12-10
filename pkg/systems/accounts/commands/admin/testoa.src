@@ -20,7 +20,7 @@ include ":crafting:craft_props";
 include ":yggdrasil:spawnsInternal";
 
 function PCircle(x, y, radius)
-   var circle_points := array{ };
+   var circle_points := array{ struct{ x := x, y := y } };
 
    var radius2 := radius * radius;
 
@@ -83,12 +83,11 @@ program oafeatures_sendpacket(who, text)
 
    // DamageFLS(targ, 10, DMG_PHYSICAL);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
-   // foreach p in area
-   //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)
-   //       PlayMovingEffectXYZEx( who.x, who.y, who.z+2, p.x, p.y, who.z+10, who.realm, 0x37C4, 0 ,0, 0, 0, 1);
-   //    endif
-   //    sleepms(2);
-   // endforeach
+   foreach p in circle_points
+      if (p.x == who.x && p.y == who.y) print(12344); endif
+      PlayStationaryEffectEx( p.x, p.y, who.z, who.realm, 0x375A, 1, 50, 2168 );
+      sleepms(2);
+   endforeach
 
    // var targ := TargetCoordinates(who);
    // var d := 4;

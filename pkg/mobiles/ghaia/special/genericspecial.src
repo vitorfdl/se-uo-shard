@@ -68,12 +68,13 @@ program loko(params)
 	//check distancia
    var is_frozed := 0;
    event.cd := cint(event.cd);
-   event.cd := _ifElse(event.cd <= 2, 2, event.cd);
+   event.cd := _ifElse(event.cd <= 4, 4, event.cd);
 	SetCooldown(who, event.id, event.cd); 
    var power := CalculateRawDamage(who, 0);
 	//executa os states
 	foreach state in (event.steps)
-      sleepms(20);
+      if (!who || who.dead) return; endif
+      sleepms(15);
 		EraseObjProperty(who, "noclosecombat");
 
       if (state.type == "Frozen Until End")
@@ -119,6 +120,7 @@ program loko(params)
 
          if (!state.nosetprevious) previoustarg := mobs; endif
 		elseif (state.type == "Pushback")
+         state.dist := _ifElse(cint(state.dist) > 10, 10, state.dist);
 			var targ := selectOpponent(who, state.target, state.conedist);
 			foreach t in targ
             sleepms(2);
@@ -264,6 +266,7 @@ program loko(params)
 		elseif (state.type == "Play Sound")
 			PlaySoundEffect(who, state.id);
 		elseif (state.type == "Delay")
+         state.delay := _ifElse(cint(state.delay) > 6, 6, state.delay);
          if (state.delaytype == "milissegundos")
 			   sleepms(state.delay);
          else
@@ -344,21 +347,21 @@ program loko(params)
          if (!playCastAnimation(who, state.times))
             break;
          endif
-      elseif(state.type == "Throw Bomb")
-         var targ := selectOpponent(who, state.target, state.conedist);
+      // elseif(state.type == "Throw Bomb")
+      //    var targ := selectOpponent(who, state.target, state.conedist);
 
-         foreach t in targ
-            if (CheckLineOfSight(who, t))
-               var item := CreateItemAtLocation(who.x, who.y, who.z, state.bombs.randomentry());
-               start_script(":alchemy:potions/explosionTimer", array{item, who});
-               SetObjProperty(item, "#bomb", 1);
+      //    foreach t in targ
+      //       if (CheckLineOfSight(who, t))
+      //          var item := CreateItemAtLocation(who.x, who.y, who.z, state.bombs.randomentry());
+      //          start_script(":alchemy:potions/explosionTimer", array{item, who});
+      //          SetObjProperty(item, "#bomb", 1);
 
-               PlayMovingEffectXYZ( who.x, who.y, who.z+15, t.x, t.y, t.z, 0x0f09, 8, 0, 0 );
-               MoveObjectToLocation(item, t.x, t.y, t.z, t.realm, MOVEOBJECT_FORCELOCATION );
-               EraseObjProperty(item, "#bomb");
-            endif
-            sleepms(2);
-         endforeach
+      //          PlayMovingEffectXYZ( who.x, who.y, who.z+15, t.x, t.y, t.z, 0x0f09, 8, 0, 0 );
+      //          MoveObjectToLocation(item, t.x, t.y, t.z, t.realm, MOVEOBJECT_FORCELOCATION );
+      //          EraseObjProperty(item, "#bomb");
+      //       endif
+      //       sleepms(2);
+      //    endforeach
 		elseif (state.type == "Dmg")
          var targ := selectOpponent(who, state.target, state.conedist);
          var dmg := CalculatePowerPercent(power, cint(state.dmg));
@@ -523,7 +526,6 @@ program loko(params)
       elseif (state.type == "Broken Equips")
       
 		elseif (state.type == "Summon Npcs") // Summonar NPC
-	      var amt := 0;
          var amount := state.amount;
          if (amount["d"]) 
             amount := RandomDiceRoll(amount);
@@ -535,11 +537,11 @@ program loko(params)
             amount := 10;
          endif
 
-         while (amt < amount)
+         var area := ReturnPointsByTarget(who, state.target, state.conedist);
+         for amt := 1 to amount
             var targ;
             if (state.x == 6 && state.y == 6 && state.z == 6)
-               targ := ReturnPointsByTarget(who, state.target, state.conedist);
-               targ := targ.randomentry();
+               targ := area.randomentry();
             else
                targ := struct{ x := state.x, y := state.y, z := state.z };
             endif
@@ -558,7 +560,6 @@ program loko(params)
                   duracaonpc := 120;
                endif
                TS_StartTimer(npc, "summon", duracaonpc);
-               amt := amt + 1;
 
                if (state.walk_to && state.walk_to.size())
                   var coord;
@@ -571,7 +572,7 @@ program loko(params)
                endif
             endif
             sleepms(2);
-         endwhile
+         endfor
 		endif
 	endforeach
 
@@ -755,8 +756,8 @@ function playCastAnimation(who, times := 0)
 endfunction
 
 function CircleEffect(targ, state, reverse)
+   if (state.circledist > 20) state.circledist := 20; endif
    var d := _ifOr(state.circledist, 2);
-   if (!state.circledist > 20) state.circledist := 20; endif
 
    var area := GetMidpointCircleCoords(targ.x, targ.y, d);
    foreach p in area

@@ -3,7 +3,6 @@ use os;
 
 program sendSaveGump(param)
    while (1)
-      PolCore().internal(2);
       PolCore().internal(5);
       sleep(30);
    endwhile
