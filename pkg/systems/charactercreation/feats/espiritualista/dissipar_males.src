@@ -32,14 +32,16 @@ program hiddepresence(params)
    PlaySoundEffectXYZ( targ.x, targ.y, targ.z, cint(0x20A), who.realm );
 
    foreach p in area
-      var mobiles := ListMobilesNearLocationEx(p.x, p.y, targ.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN, who.realm);
+      var mobiles := ListMobilesNearLocationEx(p.x, p.y, LIST_IGNORE_Z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN, who.realm);
       foreach mob in mobiles
-         if (CheckifIsAlly(who, mob))
-            TS_CurePoison(who, 1000, "C", 10);
-            TS_CurePoison(who, 1000, "DP", 10);
-            SendSysMessageEx(mob, "Qualquer mal sobre você foi removido.", SSM_INFO);
-         else
-            DamageFLS(mob, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+         if (abs(targ.z - mob.z) < 10)
+            if (CheckifIsAlly(who, mob))
+               TS_CurePoison(who, 1000, "C", 10);
+               TS_CurePoison(who, 1000, "DP", 10);
+               SendSysMessageEx(mob, "Qualquer mal sobre você foi removido.", SSM_INFO);
+            else
+               DamageFLS(mob, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+            endif
          endif
          sleepms(2);
       endforeach

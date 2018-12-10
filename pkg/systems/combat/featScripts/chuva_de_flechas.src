@@ -45,8 +45,8 @@ program explosao(params)
       sleepms(2);
    endforeach
 
-   foreach mobile in CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
-      if (!CheckBlockDodge(mobile, 1, 0))
+   foreach mobile in CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, LIST_IGNORE_Z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
+      if (!CheckBlockDodge(mobile, 1, 0) && abs(targ.z - mobile.z) < 10)
          DamageFLS(mobile, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
       endif
       sleepms(2);

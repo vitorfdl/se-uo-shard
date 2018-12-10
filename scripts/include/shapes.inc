@@ -109,19 +109,22 @@ endfunction
  * 
  */
 function GetCoordsInCircle(x, y, radius)
-   var circle_points := array{};
+   var circle_points := array{ };
 
-   var i ;
    var radius2 := radius * radius;
+
+   var i;
    for (i := 0; i < radius; i+=1)
       var j := 0;
-      while (i*i + j*j < radius2)
-         circle_points.append(struct{ x := x+i, y := y+j});
-         circle_points.append(struct{ x := x-i, y := y-j});
-         circle_points.append(struct{ x := x+i, y := y-j});
-         circle_points.append(struct{ x := x-i, y := y+j});
+      while (i*i + j*j < radius2 )
+      sleepms(2);
+         if (i != 0 || j != 0)
+            if (j != 0) circle_points.append(struct{ x := x+i, y := y+j }); endif
+            if (j != 0 && i != 0) circle_points.append(struct{ x := x-i, y := y-j }); endif
+            if (j != 0 || i != 0) circle_points.append(struct{ x := x+i, y := y-j }); endif
+            if (i != 0) circle_points.append(struct{ x := x-i, y := y+j }); endif
+         endif
          j += 1;
-         sleepms(2);
       endwhile
    endfor
 
