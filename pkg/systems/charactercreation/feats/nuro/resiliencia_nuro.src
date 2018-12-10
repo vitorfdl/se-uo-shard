@@ -22,7 +22,11 @@ program SpellScript(params)
       PlayMovingEffectXYZ( who.x, who.y, who.z+5, p.x, p.y, who.z+5, 0x3779, 0 );
       sleepms(2);
    endforeach
-   TS_CurePoison(who, 1000, "DP", 10);
+
+   for i := 1 to 6
+      TS_CurePoison(who, 1000, "DP", 10);
+      sleep(1);
+   endfor
 	
 	return 1;
 endprogram 
