@@ -56,11 +56,13 @@ program NPCMonitor()
          if (GetObjProperty(me, "damage_transfer"))
             EraseObjProperty(me, "LastDamage");
          endif
+         me.disable("invul");
          ApplyRawDamage(me, AP_GetVitalMaximumValue(me, "Hits"));
       endif
 
       if (me.master)
          if (Distance(me, me.master) > 8)
+            me.disable("invul");
             ApplyRawDamage(me, AP_GetVitalMaximumValue(me, "Hits"));
          endif
       endif
@@ -68,6 +70,7 @@ program NPCMonitor()
       if (damage_transfer)
          var mob := SystemFindObjectBySerial(damage_transfer);
          if (Distance(me, mob) > 14)
+            me.disable("invul");
             ApplyRawDamage(me, CInt(AP_GetVitalMaximumValue(me, "Hits")));
          endif
       endif
