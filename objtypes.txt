@@ -1209,7 +1209,7 @@
 0x172c peach food
 0x172d pear food
 # 0x172e - 0x1765 unused
-0x1766 clothpiece gathering
+0x1766 clothpieceaglodao gathering
 # 0x1767 unused
 0x1768 panocortado womenswork
 # 0x1769 - 0x182f unused
@@ -2275,11 +2275,11 @@
 # 0xd4ea - 0xdc00 unused
 0xdc01 pocaocura alchemy
 # 0xdc02 - 0xdc0b unused
-0xdc0c clothpiece gathering
-0xdc0d clothpiece gathering
+0xdc0c clothpiecela gathering
+0xdc0d clothpieceveu gathering
 0xdc0e pocaovigor alchemy
 # 0xdc0f - 0xdc10 unused
-0xdc11 clothpiece gathering
+0xdc11 clothpiecelinho gathering
 # 0xdc12 - 0xdc13 unused
 0xdc14 antidoto alchemy
 # 0xdc15 - 0xdce5 unused

@@ -55,7 +55,6 @@ function PointsBycircle(point, radius)
    for i := 1 to 1
       var x := (radius * i);
       var y := (radius * -i);
-      print(x);
       circle_points.append(struct{ x := point.x+x, y := point.y+y});
       circle_points.append(struct{ x := point.x-x, y := point.y-y});
       circle_points.append(struct{ x := point.x+x, y := point.y-y});

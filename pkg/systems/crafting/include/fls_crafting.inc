@@ -606,7 +606,7 @@ function CraftExceptional(who, theitem, craft_skill)
    
    applyEffect(theitem, special_props.effects);
 
-   theitem.quality := 1.1;
+   theitem.quality += 1;
    who.SetAchievement("exceptional", 1);
    SetObjProperty(theitem, "madeof", fixItemName(special_obj.desc));
 

@@ -33,7 +33,7 @@ endfunction
 exported function remAggro(creature, serial)
    CheckSerial(serial);
    var aggros := aggroProp(creature);
-   aggros[serial] := 0;
+   aggros.Erase(serial);
    setAggroProp(creature, aggros);
 endfunction
 
