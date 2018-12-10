@@ -127,6 +127,7 @@ function NPC_Agarrar(dice, targ, difficulty)
 
    PrintText(me, "*Se desfaz*");
    sleep(1);
+   me.disable("invul");
    ApplyRawDamage(me, 10000);
    
    return 1;
