@@ -20,7 +20,7 @@ function EndScript(mobile)
 	sleep(5);
    mobile.Disable("Invul");
 
-   if (!mobile.dead)
+   if (!mobile.dead || mobile)
       if (GetObjProperty(mobile, "damage_transfer"))
          EraseObjProperty(mobile, "LastDamage");
       endif
