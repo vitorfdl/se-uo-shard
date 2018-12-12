@@ -58,7 +58,7 @@ function ResetTreasures(spot_serial, treasures, spawntime := 0)
    foreach item in treasures
       var treasure := SystemFindObjectBySerial(item.serial);
       var spawncd := GetObjProperty(treasure, "spawned_time");
-      if (spawncd && polcore().systime > spawntime+cint(spawncd))
+      if (polcore().systime > spawntime+cint(spawncd))
          SpawnTreasure(treasure, item, spot_serial);
       endif
       sleepms(5);
