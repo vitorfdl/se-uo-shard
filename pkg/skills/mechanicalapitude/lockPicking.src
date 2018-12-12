@@ -99,7 +99,7 @@ function PickTreasureChest(me, lockpick, chest)
       ExpGain(me, "major");
       me.SetAchievement("trap", 1);
       
-      var time_respawn := AddTimeTo(ReadGameClock(), 25+RandomDiceRoll("3d20"), "minutes");
+      var time_respawn := AddTimeTo(polcore().systime, 50+RandomDiceRoll("3d20"), "minutes");
       SetObjProperty(chest, "spawned_time", time_respawn);
       SendQuestEvent(me, "Arrombar Bau/Porta", struct{ chest := chest.serial });
 	else

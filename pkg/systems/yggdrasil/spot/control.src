@@ -57,7 +57,7 @@ endfunction
 function ResetTreasures(spot_serial, treasures)
    foreach item in treasures
       var treasure := SystemFindObjectBySerial(item.serial);
-      if (cint(GetObjProperty(treasure, "spawned_time")) > ReadGameClock())
+      if (cint(GetObjProperty(treasure, "spawned_time")) > polcore().systime)
          SpawnTreasure(treasure, item, spot_serial);
       endif
       sleepms(5);
