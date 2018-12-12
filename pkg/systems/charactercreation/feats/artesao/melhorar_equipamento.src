@@ -71,10 +71,28 @@ program alchemy(params)
          item1 := 0;
          SendSysMessageEx(who, "Escolha o item que será melhorado.", SSM_REQUEST);
          var targ := Target(who, TGTOPT_CHECK_LOS);
-         if (!targ.isA(POLCLASS_ARMOR) && targ.isA(POLCLASS_ARMOR)) continue; endif
+         if (!targ.isA(POLCLASS_WEAPON) && !targ.isA(POLCLASS_ARMOR)) continue; endif
          if (targ.objtype != smelt_item.objtype) 
             SendSysMessageEx(who, "Você não só pode melhorar o item com um equipamento igual ao que será descontruído.", SSM_FAIL); 
             continue;
+         endif
+
+         if (targ.isA(POLCLASS_WEAPON))
+            if (targ.dmg_mod <= smelt_item.dmg_mod) SendSysMessageEx(who, "Você deve melhorar um item de poder inferior ao que será destruido.", SSM_FAIL); endif
+         elseif (targ.isA(POLCLASS_WEAPON))
+            var pass := 0;
+            foreach resist in resdmg_list
+               var value := smelt_item.get_member("resist_{}".format(resist)) - targ.get_member("resist_{}".format(resist));
+               if (value > 0)
+                  pass := 1;
+               endif
+               break;
+            endforeach
+
+            if (!pass)
+               SendSysMessageEx(who, "Você deve melhorar um item com pelo menos uma resistência inferior ao que será destruido.", SSM_FAIL);
+               continue;
+            endif
          endif
 
          if (!ReserveItem(targ) || targ == smelt_item)
@@ -104,13 +122,13 @@ endprogram
 function IncreaseEquipment(item, smelt_item)
    if (item.isa(POLCLASS_WEAPON))
       var final_power := cint(smelt_item.dmg_mod - item.dmg_mod) / 2;
-      if (final_power <= 1) final_power := 0; endif
+      if (final_power < 1) final_power := 1; endif
       item.dmg_mod += final_power;
    elseif (item.isA(POLCLASS_ARMOR) || item.isA(POLCLASS_EQUIPMENT))
       var resist_list := array{};
       foreach resist in resdmg_list
          sleepms(2);
-         var value := smelt_item.get_member("resist_{}".format(resist)) - item.get_member("resist_{}".format(resist));
+         var value := cint(cdbl(smelt_item.get_member("resist_{}".format(resist)) - item.get_member("resist_{}".format(resist))) / 2);
          if (value < 1) continue; 
          elseif (value+item.get_member("resist_{}".format(resist)) > 60) continue; endif
 
