@@ -48,7 +48,7 @@ program Merchant()
 
    if (GetObjProperty(me, "guild"))
       guild := FindGuild(GetObjProperty(me, "guild"));
-      guild_leader := guild.GetProp("leader");
+      guild_leader := _ifOr(guild.GetProp("leader"), "null");
    endif
 
    if (!following) 
