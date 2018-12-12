@@ -78,7 +78,7 @@ program alchemy(params)
          endif
 
          if (targ.isA(POLCLASS_WEAPON))
-            if (targ.dmg_mod <= smelt_item.dmg_mod) 
+            if (targ.dmg_mod >= smelt_item.dmg_mod) 
                SendSysMessageEx(who, "Você deve melhorar um item de poder inferior ao que será destruido.", SSM_FAIL);
                continue;
             endif
