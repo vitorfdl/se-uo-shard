@@ -52,8 +52,6 @@ program alchemy(params)
          item1 := 0;
          SendSysMessageEx(who, "Escolha o item que será desconstruído.", SSM_REQUEST);
          var targ := Target(who, TGTOPT_CHECK_LOS);
-         print(myrecipes[hex(targ.objtype)]);
-         print(myrecipes[targ.objtype]);
          if (!targ.isA(POLCLASS_ARMOR) && targ.isA(POLCLASS_ARMOR)) continue; endif
          if (!myrecipes[targ.objtype]) 
             SendSysMessageEx(who, "Você precisa ter aprendido a receita deste item antes.", SSM_FAIL); 
@@ -106,7 +104,7 @@ endprogram
 function IncreaseEquipment(item, smelt_item)
    if (item.isa(POLCLASS_WEAPON))
       var final_power := cint(smelt_item.dmg_mod - item.dmg_mod) / 2;
-      if (final_power < 1) final_power := 1; endif
+      if (final_power <= 1) final_power := 0; endif
       item.dmg_mod += final_power;
    elseif (item.isA(POLCLASS_ARMOR) || item.isA(POLCLASS_EQUIPMENT))
       var resist_list := array{};
