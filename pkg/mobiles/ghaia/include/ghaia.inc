@@ -107,7 +107,7 @@ function AlertAllies(me, opponent)
    endforeach
 
    if (myallies.size())
-      var enmies := GetEnemiesNear(me, 10);
+      var enmies := GetEnemiesNear(me, 15);
       foreach mob in myallies
          var ev := struct;
          ev.type := EVID_ALERT_ALLIES;

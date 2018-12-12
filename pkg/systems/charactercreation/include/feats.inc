@@ -398,7 +398,7 @@ function TriggerHabilitie(who, hab)
    SetObjProperty(who, "#Casting", 1);
    
    if (hab.Mana)
-      var mana := hab.Mana + (hab.Mana * (AP_GetTrueSkill(who, "FeatConsume") / 100));
+      var mana := hab.Mana + cint(cdbl(hab.Mana) * (AP_GetTrueSkill(who, "FeatConsume") / 100));
       if (!AP_ConsumeVital(who, MANA, mana))
          SendSystemReport(who, "'Mana Insuficiente!'", SSM_FAIL);
          EraseObjProperty(who, "#Casting");
@@ -407,7 +407,7 @@ function TriggerHabilitie(who, hab)
    endif
 
    if (hab.Vigor)
-      var vigor := hab.Vigor + (hab.Vigor * (AP_GetTrueSkill(who, "FeatConsume") / 100));
+      var vigor := hab.Vigor + cint(cdbl(hab.Vigor) * (AP_GetTrueSkill(who, "FeatConsume") / 100));
       if (!AP_ConsumeVital(who, STAMINA, vigor))
          SendSystemReport(who, "'Vigor Insuficiente!'", SSM_FAIL);
          EraseObjProperty(who, "#Casting");

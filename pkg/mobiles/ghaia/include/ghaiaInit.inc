@@ -226,8 +226,8 @@ function EquipItemString(who, str, lastcolor)
 				endforeach
 				objname := CInt(newarray[RandomInt(len(newarray))+1]);
 				item := CreateItemAtLocation(5852, 1163, 0, objname, 1);
-		item.quality := 0.6;
-      item.hp := 0.5;
+		item.quality := 1;
+      item.hp := 0;
 			endif
 		endif
 		item.color := color;

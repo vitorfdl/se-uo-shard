@@ -125,9 +125,9 @@ function GetDamageType(weapon)
 endfunction
 
 function FacingChecks(attacker, defender)
-	if ( !CS_GetSettingsCfgElem("General").ForceFacing )
-		return 0;
-	endif
+	// if ( !CS_GetSettingsCfgElem("General").ForceFacing )
+	// 	return 0;
+	// endif
 	
 	// if ( IsBehind(defender, attacker.x, attacker.y)  )
 	// 	SetObjProperty(attacker, "#backstab", 2);

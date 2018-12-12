@@ -65,10 +65,11 @@ function PointsBycircle(point, radius)
 endfunction
 
 program oafeatures_sendpacket(who, text)
-   var targ     := Target(who);
-   print(targ.isA(POLCLASS_ARMOR));
-   print(targ.isA(POLCLASS_EQUIPMENT));
-   print(targ.isA(POLCLASS_WEAPON));
+   // var targ     := Target(who);
+   // print(targ.isA(POLCLASS_ARMOR));
+   // print(targ.isA(POLCLASS_EQUIPMENT));
+   // print(targ.isA(POLCLASS_WEAPON));
+   print(StrFormatTime("%g and %G");)
    // ApplyCraftColor(targ, 2);
    // ApplyCraftChanges(targ, 3);
 

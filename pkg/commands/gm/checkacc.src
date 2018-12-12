@@ -8,82 +8,39 @@ use os;
 include ":accounts:settings";
 
 program textcmd_checkacc(who, contas)
-	contas := SplitWords(contas);
-	var conta1 := contas[1];
-	var conta2 := contas[2];
-	if ( !conta1 )
-		SendSysMessage(who, "Digite a conta do primeiro jogador: .checkacc <conta1> <conta2>");
-		return 0;
-	endif
-	if ( !conta2 )
-		SendSysMessage(who, "Digite a conta do segundo jogador: .checkacc <conta1> <conta2>");
-		return 0;
-	endif
+   SendSysMessageEx(who, "Checando contas...", SSM_REQUEST;
+   var accounts := ListAccounts();
 
-	if ((conta1 == "Duttones"))
-		sendsysmessage(who, "Este usuário tem muitas accs para eu conseguir checar. Procedimento abortado.");
-		return 1;
-	endif
-	
-	conta1 := FindAccount(conta1);
-	if ( conta1.errortext )
-		SendSysMessage(who, "Error with account name "+conta1+" [P] "+conta1.errortext);
-		return 0;
-	endif
-	
-	var contachecada := 0;
-	var iptest := conta1.GetProp("IP");
-	if (conta2 == "all")
-		SendSysMessage(who, "Aguarde enquanto o sistema checa o ip com outras contas, isso pode levar alguns minutos...");
-		var accounts := ListAccounts();
-		foreach acct in accounts
-			conta2 := FindAccount(acct);
-			if (lower(conta1.name) == lower(conta2.name) || conta1.name == "Duttones" || conta2.name == "Duttones")
-				continue;
-			endif
-			var iptest2 := conta2.GetProp("IP");
-			foreach ip in iptest
-				if (ip in iptest2)
-					SendSysMessage(who, "" + conta1.name + " e " + acct + " ja logaram no IP: " + ip);
-					contachecada := contachecada + 1;
-				endif
-				sleepms(5);
-			endforeach
-			sleepms(5);
-		endforeach
-		SendSysMessage(who, "Foram encontrado o total de: " + contachecada + " Ips iguais");
-		return;
-	else
-		conta2 := FindAccount(conta2);
-		if( conta2.errortext )
-			SendSysMessage(who, "Error with account name "+conta2+" [P] "+conta2.errortext);
-			return 0;
-		endif
-		var iptest2 := conta2.GetProp("IP");
-		var ips;
-		var ip2;
-		if (iptest.size() <= iptest2.size())
-			ips := iptest;
-			ip2 := iptest2;
-		else
-			ip2 := iptest;
-			ips := iptest2;
-		endif
-		
-		SendSysMessage(who, "Aguarde enquanto o sistema checa o ip entre as duas contas. Isso pode levar alguns minutos...");
-		foreach ip in ips
-			if (ip in ip2)
-				SendSysMessage(who, "" + conta1.name + " e " + conta2.name + " ja logaram no IP: " + ip);
-				contachecada := contachecada + 1;
-			endif
-			sleepms(5);
-		endforeach
-	endif
+   var acc_ips := array{};
+   foreach account in accounts
+      var acc    := FindAccount(login);
+      acc_ips.append(struct{ login := login, ips := acc.GetProp("IP"), share :=  });
+      sleepms(2);
+   endforeach
 
-	if (!contachecada)
-		SendSysMessage(who, "Nenhum IP igual foi encontrado entre " + conta1.name + " e " + conta2.name + ".");
-	else
-		SendSysMessage(who, "Foram encontrado o total de: " + contachecada + " Ips iguais entre " + conta1.name + " e " + conta2.name + ".");
-	endif
+
+   var duplicity := struct{};
+   foreach acc in acc_ips
+      foreach acc2 in acc_ips
+         sleepms(2);
+         if (acc.login == acc2.login) continue; endif
+
+         foreach ip in (acc.ips)
+            var f := 0;
+            sleepms(2);
+            if (ip in acc2.ips)
+               if (duplicity[acc2]) if (acc in duplicity[acc2]) continue; endif  endif
+               if (!duplicity[acc.login]) duplicity[acc.login] := array{}; endif
+               duplicity[acc.login].append(acc2);
+               SendSysMessageEx(who, "Duplicidade encontrada: {} -> {}".format(acc.login, acc2.login));
+               f := 1;
+               break;
+            endif
+            if (f) break; endif
+         endforeach
+      endforeach
+      sleepms(2);
+   endforeach
+
 	return 1;
 endprogram
