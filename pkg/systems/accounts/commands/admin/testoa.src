@@ -19,46 +19,24 @@ include ":crafting:craft_props";
 // include ":quest:quest";
 include ":yggdrasil:spawnsInternal";
 
-function TamingEffect(targ, reverse := 0)
-   PlaySoundEffect(targ, cint(0x1E1));
-   var d := 4;
-   if (!reverse) d -= 3; endif
-   var area := GetCoordsInSquare(targ.x, targ.y, d);
-   foreach p in area
-      if (CoordinateDistance(targ.x, targ.y, p.x, p.y) >= d-1)
-         if (!reverse)
-            PlayMovingEffectXYZEx( targ.x, targ.y, targ.z+5, p.x, p.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
-         else
-            PlayMovingEffectXYZEx( p.x, p.y, targ.z+5, targ.x, targ.y, targ.z+5, targ.realm, 0x1153, 0 ,0, 0, 1152);
-         endif
-      endif
+function PCircle(x, y, radius)
+   var circle_points := array{ struct{ x := x, y := y } };
+
+   var radius2 := radius * radius;
+
+   var i;
+   for (i := 0; i < radius; i+=1)
+      var j := 0;
+      while (i*i + j*j < radius2 )
       sleepms(2);
-   endforeach
-endfunction
-
-function PointsBycircle(point, radius)
-   var circle_points := array{};
-
-   // var radius2 := radius * radius;
-   // var i;
-   // for (i := 0; i < radius; i+=1)
-   //    var j := ;
-   //    while (i*i + j*j < radius2)
-   //       circle_points.append(struct{ x := point.x+i, y := point.y+j});
-   //       circle_points.append(struct{ x := point.x-i, y := point.y-j});
-   //       circle_points.append(struct{ x := point.x+i, y := point.y-j});
-   //       circle_points.append(struct{ x := point.x-i, y := point.y+j});
-   //       j += 1;
-   //    endwhile
-   // endfor
-
-   for i := 1 to 1
-      var x := (radius * i);
-      var y := (radius * -i);
-      circle_points.append(struct{ x := point.x+x, y := point.y+y});
-      circle_points.append(struct{ x := point.x-x, y := point.y-y});
-      circle_points.append(struct{ x := point.x+x, y := point.y-y});
-      circle_points.append(struct{ x := point.x-x, y := point.y+y});
+         if (i != 0 || j != 0)
+            if (j != 0) circle_points.append(struct{ x := x+i, y := y+j }); endif
+            if (j != 0 && i != 0) circle_points.append(struct{ x := x-i, y := y-j }); endif
+            if (j != 0 || i != 0) circle_points.append(struct{ x := x+i, y := y-j }); endif
+            if (i != 0) circle_points.append(struct{ x := x-i, y := y+j }); endif
+         endif
+         j += 1;
+      endwhile
    endfor
 
    return circle_points;
@@ -73,7 +51,8 @@ program oafeatures_sendpacket(who, text)
    // ApplyCraftColor(targ, 2);
    // ApplyCraftChanges(targ, 3);
 
-   // var circle_points := GetCoordsInCircle(who.x, who.y, 5);
+   // print("- 2");
+   // var circle_points := PCircle(who.x, who.y, 5);
    // var new_array := array{};
    // foreach p in circle_points
    //    new_array += GetCoordsInLine(p.x, p.y, who.x, who.y);
@@ -90,24 +69,6 @@ program oafeatures_sendpacket(who, text)
    //      dx++
 
    // circle_points := array{who.x, who.y};
-
-   // for (i := 1; i < radius; i+=1)
-   //    for (j := 1; j < radius; j+=1)
-   //       circle_points.append(struct{ x := who.x+i, y := who.y+j});
-   //       circle_points.append(struct{ x := who.x-i, y := who.y-j});
-   //       circle_points.append(struct{ x := who.x+i, y := who.y-j});
-   //       circle_points.append(struct{ x := who.x-i, y := who.y+j});
-   //       sleepms(2);
-   //    endfor
-   //    sleepms(2);
-   // endfor
-
-   // print(circle_points);
-   // foreach p in circle_points
-   //    PlayStationaryEffectEx( p.x, p.y, who.z+3, who.realm, 0x1ECD, 1, 60, 2168 );
-   //    sleepms(2);
-   // endforeach
-
 //     offsets.Add(new Vector3i(0,0));
 //  for (int i = 1; i < radius; i++)
 //  {
@@ -126,10 +87,9 @@ program oafeatures_sendpacket(who, text)
 
    // DamageFLS(targ, 10, DMG_PHYSICAL);
    // var area := GetCoordsInSquare(who.x+1, who.y+1, 2);
-   // foreach p in area
-   //    if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2)
-   //       PlayMovingEffectXYZEx( who.x, who.y, who.z+2, p.x, p.y, who.z+10, who.realm, 0x37C4, 0 ,0, 0, 0, 1);
-   //    endif
+   // foreach p in circle_points
+   //    if (p.x == who.x && p.y == who.y) print(12344); endif
+   //    PlayStationaryEffectEx( p.x, p.y, who.z, who.realm, 0x375A, 1, 50, 2168 );
    //    sleepms(2);
    // endforeach
 

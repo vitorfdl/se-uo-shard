@@ -20,22 +20,22 @@ program startTalent(param)
    PrintText(who, "*girando {}".format(who.weapon.desc));
 
 
-   var mobiles := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, who.z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+   var mobiles := CheckifIsAlly(who, ListMobilesNearLocationEx( who.x, who.y, LIST_IGNORE_Z, 2, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
    foreach mobile in mobiles
-      if (!CheckBlockDodge(mobile, 1, 1))
-         PlayMovingEffect( who, mobile, 0x22C6, 10);
-         DamageFLS(mobile, hab.PowerMod[1], DMG_PHYSICAL, who);
+      if (abs(who.z - mobile.z) < 10)
+         if (!CheckBlockDodge(mobile, 1, 1))
+            PlayMovingEffect( who, mobile, 0x22C6, 10);
+            DamageFLS(mobile, hab.PowerMod[1], DMG_PHYSICAL, who);
+         endif
       endif
       sleepms(2);
    endforeach
 
    var weapon_cfg := GetItemCfgInfo(who, who.weapon);
-   var area := GetCoordsInCircle(who.x, who.y, 2);
+   var area := GetMidpointCircleCoords(who.x, who.y, 2);
    for i := 1 to 3
       foreach p in area
-         if (CoordinateDistance(who.x+1, who.y+1, p.x+1, p.y+1) >= 2-1)
-            PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
-         endif
+         PlayMovingEffectXYZEx( who.x, who.y, who.z, p.x, p.y, who.z+5, who.realm, 0x0F51, 0 ,0, 0, 1156);
 
          sleepms(2);
       endforeach
