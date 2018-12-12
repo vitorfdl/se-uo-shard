@@ -1,0 +1,12 @@
+/*
+ * $Id: logon.src 937 2005-11-07 01:20:20Z austin $
+ *
+ */
+
+use uo;
+use os;
+
+program Logon(who)
+	var script := start_script( ":quest:questcontrol", who );
+   if (script == error) print(script.errortext); endif
+endprogram

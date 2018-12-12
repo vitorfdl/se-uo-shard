@@ -507,12 +507,12 @@ endfunction
 
 function FailFeat(who, hab)
    if (hab.Mana)
-      var mana := hab.Mana + (hab.Mana * (AP_GetTrueSkill(who, "FeatConsume") / 100));
+      var mana := hab.Mana + cint(cdbl(hab.Mana) * (AP_GetTrueSkill(who, "FeatConsume") / 100));
       HealMana(who, mana);
    endif
    
    if (hab.Vigor)
-      var vigor := hab.Vigor + (hab.Vigor * (AP_GetTrueSkill(who, "FeatConsume") / 100));
+      var vigor := hab.Vigor + cint(cdbl(hab.Vigor) * (AP_GetTrueSkill(who, "FeatConsume") / 100));
       HealStamina(who, vigor);
    endif
 

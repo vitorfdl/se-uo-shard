@@ -47,7 +47,9 @@ program oafeatures_sendpacket(who, text)
    // print(targ.isA(POLCLASS_ARMOR));
    // print(targ.isA(POLCLASS_EQUIPMENT));
    // print(targ.isA(POLCLASS_WEAPON));
-   print(StrFormatTime("%g and %G");)
+   var res := AddTimeTo(polcore().systime, 2, "weeks");
+   print(res);
+   print(StrFormatTime("%U"));
    // ApplyCraftColor(targ, 2);
    // ApplyCraftChanges(targ, 3);
 

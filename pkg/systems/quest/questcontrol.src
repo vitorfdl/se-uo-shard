@@ -1,0 +1,22 @@
+use uo;
+use os;
+use util;
+
+program checkQuests(who)
+   var weekly_quests := GetObjProperty(who, "weekly_quests");
+   if (!weekly_quests) return; endif
+
+   var array_size := weekly_quests.size();
+   var current_week := cint(StrFormatTime("%U"));
+   for n := 0 to (array_size-1)
+      var quest := weekly_quests[array_size-n];
+      if (cint(StrFormatTime("%U", quest.when) != current_week))
+         weekly_quests.erase(array_size-n);
+      endif
+      sleepms(5);
+   endfor
+   
+   if (weekly_quests.size() != array_size)
+      SetObjProperty(who, "weekly_quests", weekly_quests);
+   endif
+endprogram

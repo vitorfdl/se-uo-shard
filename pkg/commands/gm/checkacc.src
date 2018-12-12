@@ -6,15 +6,16 @@ use uo;
 use os;
 
 include ":accounts:settings";
+include "include/say";
 
 program textcmd_checkacc(who, contas)
-   SendSysMessageEx(who, "Checando contas...", SSM_REQUEST;
+   SendSysMessageEx(who, "Checando contas...", SSM_REQUEST);
    var accounts := ListAccounts();
 
    var acc_ips := array{};
-   foreach account in accounts
+   foreach login in accounts
       var acc    := FindAccount(login);
-      acc_ips.append(struct{ login := login, ips := acc.GetProp("IP"), share :=  });
+      acc_ips.append(struct{ login := login, ips := acc.GetProp("IP") });
       sleepms(2);
    endforeach
 
