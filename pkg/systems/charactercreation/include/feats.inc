@@ -246,7 +246,7 @@ function HaveGodFeat(who, feat)
    endif
 
    feat := GetFeatByid(feat);
-	if (feat.God == chardata.god && (chardata.level < feat.Level && !who.cmdlevel))
+	if (feat.God == chardata.god && (chardata.level >= feat.Level && !who.cmdlevel))
 		return 1;
 	endif
 

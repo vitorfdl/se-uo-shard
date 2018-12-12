@@ -346,7 +346,7 @@ program NPCMonitor()
             Fight(ev.targ);
             break;
          RESET_SETUP_EVENT:
-            guild_leader  := guild.getProp("leader");
+            guild_leader  := _ifOr(guild.getProp("leader"), "null");
             guild_laws    := guild.getProp("laws");
             guild_prison  := guild.getProp("prisions");
             guild_prisonl := guild.getProp("prision_leave");
