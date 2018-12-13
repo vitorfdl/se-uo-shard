@@ -8,6 +8,7 @@ include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include "include/say";
 include "include/client";
+include "include/utils";
 include "include/arrays";
 include ":crafting:recipes";
 include ":gumps:requestgump";
@@ -17,7 +18,11 @@ program usaPergaminho(who, scroll)
 	var input := SendGump(who, scroll);
 	if (input[0] == 99)
 		var recipes := ReadConfigFile(":*:recipes");
-		var objtype := RequestGump(who, "Item objtype:");
+      SendSysMessageEx(who, "Escolha o item para fazer uma receita");
+		var targ := Target(who);
+      var objtype := targ.objtype;
+      if (!objtype) objtype := RequestGump(who, "Item objtype:"); endif
+      
 		if (!FindConfigElem(recipes, objtype) && !FindConfigElem(recipes, cint(objtype)) && !FindConfigElem(recipes, hex(objtype)))
 			SendSysMessageEx(who, "Receita para o objtype {} não encontrado.".format(objtype), SSM_FAIL);
 			return;
