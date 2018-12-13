@@ -17,8 +17,8 @@ program stamPotion(who, potion)
 
 	var healed := RandomIntMinMax(5 * level, 15 * level);
 
-	EmptyBottle(who, potion);
 	Detach();
+	EmptyBottle(who, potion, 1);
 	
 	for i := 0 to healed
 		HealStamina(who, 1);

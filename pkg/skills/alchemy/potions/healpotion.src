@@ -19,8 +19,8 @@ program healpotion(who, potion)
 
 	var healed := RandomIntMinMax(80 * level, 140 * level);
 
-  	EmptyBottle(who, potion, 1);
 	Detach();
+  	EmptyBottle(who, potion, 1);
 
 	SendSysMessageEx(who, "Seus ferimentos estao cicatrizando...", SSM_INFO);
 	for i := 0 to cint(healed / 2)
