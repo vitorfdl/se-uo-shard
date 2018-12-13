@@ -21,7 +21,7 @@ program defensor(params)
    TS_StartTimer(who, "attackspeed", 10, 30);
 
    for i := 1 to 5
-      TS_LowerDuration(mob, "dodge_block", 1, 1);
+      TS_LowerDuration(who, "dodge_block", 1, 1);
       sleep(2);
    endfor
 endprogram
