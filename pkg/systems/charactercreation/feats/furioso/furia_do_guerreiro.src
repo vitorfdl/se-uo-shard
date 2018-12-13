@@ -19,5 +19,9 @@ program defensor(params)
 
    PrintText(who, "*está em fúria*", SSM_FAIL);
    TS_StartTimer(who, "attackspeed", 10, 30);
-	return 1;
+
+   for i := 1 to 5
+      TS_LowerDuration(mob, "dodge_block", 1, 1);
+      sleep(2);
+   endfor
 endprogram
