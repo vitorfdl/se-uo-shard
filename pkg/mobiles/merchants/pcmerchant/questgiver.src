@@ -157,8 +157,8 @@ function SendQuestGump(npc, player)
          quest_text := "Quests para este level de {} não estão disponíveis.".format(quest.classe);
       endif
 
-      if (!quest.no_choice) GFTextLine(gump, 97, 116+pos_y, 1152, "{}".format(quest_text)); endif
-      GFAddButton(gump, 72, 115+pos_y, 5540, 5540, GF_CLOSE_BTN, quest_marker+_quest_iter);
+      GFTextLine(gump, 97, 116+pos_y, 1152, "{}".format(quest_text)); 
+      if (!quest.no_choice) GFAddButton(gump, 72, 115+pos_y, 5540, 5540, GF_CLOSE_BTN, quest_marker+_quest_iter); endif
       pos_y += 26;
       sleepms(2);
    endforeach
