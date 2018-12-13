@@ -163,8 +163,8 @@ function SendQuestGump(npc, player)
       sleepms(2);
    endforeach
 
-	GFGumpPicTiled(gump, 34, 169+18+mod_y, 383, 12, 50);
-	GFAddButton(gump, 196, 131+mod_y, 2072, 2073, GF_CLOSE_BTN, 1); // cancel
+	GFAddButton(gump, 196, 131+18+mod_y, 2072, 2073, GF_CLOSE_BTN, 1); // cancel
+	GFGumpPicTiled(gump, 34, 169+mod_y, 383, 12, 50);
 
 	var res := GFSendGump(player, gump)[0];
    
