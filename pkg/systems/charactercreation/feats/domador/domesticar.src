@@ -71,7 +71,6 @@ program taming(params)
 		return FailTaming(who, targ);
    endif
 
-   
    PrintText(who, "Venha, não vou te fazer mal", SSM_INFO);
    PerformAction(who, 0x20, 5);
    sleepms(90);
