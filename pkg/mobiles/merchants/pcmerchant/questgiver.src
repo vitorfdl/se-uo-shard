@@ -105,6 +105,7 @@ function SendQuestGump(npc, player)
       var weekly_quests_total := FindAllElemInArray(weekly_quests, struct{ classe := classe });
       var wf := _ifElse(weekly_quests_total, weekly_quests_total.size(), 0);
       if (f+wf >= 2)
+         questions.append(struct{ no_choice := 1, type := "limitreach", classe := classe });
          continue;
       elseif (classe != chardata.current_class && !FindInArray(chardata.subclasses, struct{ id := classe }))
          continue;
@@ -116,6 +117,8 @@ function SendQuestGump(npc, player)
       if (quest_giver.size())
          var randomquest := quest_giver.randomentry();
          questions.append(struct{ type := "quest", classe := classe, quest_id := randomquest.id });
+      else
+         questions.append(struct{ no_choice := 1, type := "noquest", classe := classe });
       endif
    endforeach
 
@@ -130,6 +133,10 @@ function SendQuestGump(npc, player)
 	GFGumpPic(gump, 372, 91, 59, 0);
 	GFGumpPicTiled(gump, 74, 91, 299, 21, 58);
 
+   if (!questions.size())
+     questions.append(struct{ no_choice := 1, type := "none" });
+   endif
+
    var pos_y := 0;
    foreach quest in questions
       var quest_text := "";
@@ -142,17 +149,19 @@ function SendQuestGump(npc, player)
       elseif (quest.type == "delivery")
          quest_marker := 50;
          quest_text := "Terminei o que me pediu [{}]".format(quest.classe);
+      elseif (quest.type == "none")
+         quest_text := "Não há tarefas disponíveis";
+      elseif (quest.type == "limitreach")
+         quest_text := "Você deve esperar a próxima semana para mais quests de {}".format(quest.classe);
+      elseif (quest.type == "noquest")
+         quest_text := "Quests para este level de {} não estão disponíveis.".format(quest.classe);
       endif
 
-      GFTextLine(gump, 97, 116+pos_y, 1152, "{}".format(quest_text));
+      if (!quest.no_choice) GFTextLine(gump, 97, 116+pos_y, 1152, "{}".format(quest_text)); endif
       GFAddButton(gump, 72, 115+pos_y, 5540, 5540, GF_CLOSE_BTN, quest_marker+_quest_iter);
       pos_y += 26;
       sleepms(2);
    endforeach
-
-   if (!questions.size())
-      GFTextLine(gump, 97, 116+pos_y, 1152, "Não há tarefas disponíveis");
-   endif
 
 	GFGumpPicTiled(gump, 34, 169+mod_y, 383, 12, 50);
 	GFAddButton(gump, 196, 131+mod_y, 2072, 2073, GF_CLOSE_BTN, 1); // cancel

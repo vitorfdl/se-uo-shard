@@ -275,6 +275,7 @@ function BuildFeatToolTip(feat, return_points := 0, power := 0)
    else desc += "{}Habilidade Passiva<br>".format(ORANGE, feat.PointCost); endif
    if (return_points && feat.PointCost) desc += "{}Custo: {} ponto(s)<br>".format(LIGHTGRAY, feat.PointCost); endif
    if (return_points && feat.Level) desc += "{}Level do Personagem: {}<br>".format(LIGHTGRAY, feat.Level); endif
+   if (return_points && feat.Group) desc += "{}Level de Classe: {}<br>".format(LIGHTGRAY, feat.Group); endif
    if (feat.Mana) desc += "{}Mana: {}<br>".format(BLUE, feat.Mana); endif
    if (feat.Vigor) desc += "{}Vigor: {}<br>".format(YELLOW, feat.Vigor); endif
    if (feat.Cooldown) desc += "{}Cooldown: {}<br>".format(LIGHTGRAY, feat.Cooldown); endif
