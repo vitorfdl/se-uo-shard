@@ -21,11 +21,9 @@ program stamPotion(who, potion)
 	Detach();
 	
 	for i := 0 to healed
-		if (AP_GetVital(who, STAMINA) > AP_GetVitalMaximumValue(who, STAMINA))
-			break;
-		endif
-		AP_SetVital(who, STAMINA, AP_GetVital(who, STAMINA)+1 );
+		HealStamina(who, 1);
 		sleepms(500);
 	endfor
-	SendSysMessageEx(who, "Terminou o efeito da pocao.", SSM_INFO);	
+
+	SendSysMessageEx(who, "Terminou o efeito da poção de vigor.", SSM_INFO);	
 endprogram
