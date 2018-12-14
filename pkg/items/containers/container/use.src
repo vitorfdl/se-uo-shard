@@ -27,6 +27,7 @@ program useContainer(mobile, container)
          start_script(":traps:disarmTrap", array{mobile, container});
          return 0;
       endif
+
 		if (RunTraps(container, mobile))
          SetObjProperty(container, "trapSpoted", 1);
          PrintText(mobile, "*dispara armadilha*");

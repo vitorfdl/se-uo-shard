@@ -95,14 +95,14 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat)
    if (have_feat) consume -= 1; endif //escavação
    
    veil -= consume;
-   if (veil <= 0) veil := 0; endif
-
-   SetObjProperty(targ, "veil", veil);
    var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), craft_amt);
    minerio.movable := 1;
    if (Randomint(100) <= 30)
 	   ExpGain(who, "minor");
    endif
+
+  if (veil <= 0) veil := 0; endif
+   SetObjProperty(targ, "veil", veil);
 
    if (veil <= 2)
       targ.graphic := 0x9CB6;
