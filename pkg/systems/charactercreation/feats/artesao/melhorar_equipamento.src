@@ -143,7 +143,7 @@ function IncreaseEquipment(item, smelt_item)
 
       for i := 1 to 3
          if (!resist_list[i]) break; endif
-         var res_value := item.get_member("resist_{}".format(resist_list[i].res));
+         var res_value := item.get_member("resist_{}_mod".format(resist_list[i].res));
          item.set_member("resist_{}_mod".format(resist_list[i].res), res_value + resist_list[i].v);
          sleepms(2);
       endfor
