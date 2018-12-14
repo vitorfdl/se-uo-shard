@@ -160,7 +160,7 @@ function Fight(opponent := 0)
    endif
 
 
-    if(!npccfgfile.TamingCombat)
+   if (GetObjProperty(me.master, "combat_pet") != me.serial)
       RunAwayFrom(fighting);
       wait_time := 0;
       return;

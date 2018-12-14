@@ -20,6 +20,7 @@ program onInsert(character, container, movetype, insert_type, adding_item, exist
 	while (aux.container)
 		aux := aux.container;
 	endwhile
+   
 	if (aux == character)
 		return 1;
 	endif

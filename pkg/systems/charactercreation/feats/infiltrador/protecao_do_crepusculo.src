@@ -13,13 +13,11 @@ include ":timedscripts:timedScripts";
 program animateSword(params)
 	var who := params[1];
 	var spellinfo := params[2];
-	// var targ := params[3];
+	var targ := params[3];
 	params := 0; // No longer needed
 
-   if (!who.opponent)
-      SendSysMessageEx(who, "Você precisa estar próximo de um oponente.", SSM_FAIL);
-      return TS_LowerDuration(who, "hab_{}".format(spellinfo.FeatID), -1, 1);
-   elseif (Distance(who, who.opponent) > 2)
+
+   if (Distance(who, targ) > 2)
       SendSysMessageEx(who, "Você precisa estar próximo de um oponente.", SSM_FAIL);
       return TS_LowerDuration(who, "hab_{}".format(spellinfo.FeatID), -1, 1);
    endif
@@ -27,7 +25,6 @@ program animateSword(params)
    PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
    PlaySoundEffect(who, cint(0x512));
 
-   var targ := who.opponent;
    var behind := InverseFacing(targ.facing);
 
    behind := GetModByFacing(behind);

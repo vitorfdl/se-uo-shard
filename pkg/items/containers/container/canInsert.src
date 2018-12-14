@@ -19,9 +19,14 @@ program canInsert(mobile, container, item, move_type, insert_type, adding_item, 
 	if (mobile)
 		if (!mobile.npctemplate)
 			var aux := container;
+         var cnum := 0;
 			while (aux.container)
 				aux := aux.container;
+            cnum += 1;
 			endwhile
+
+         
+
 			if (aux == mobile && maoLivre(mobile, 1, 0))
 				return 1;
 			endif
