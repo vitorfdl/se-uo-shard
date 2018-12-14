@@ -87,7 +87,7 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat)
 	endif
 
 
-   var crat_amt := _ifElse(have_feat, RandomIntMinmax(2, 4), RandomIntMinmax(1, 3));
+   var craft_amt := _ifElse(have_feat, RandomIntMinmax(2, 4), RandomIntMinmax(1, 3));
    if (veil < craft_amt) craft_amt := veil; endif
 
    var consume := craft_amt;
@@ -98,7 +98,7 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat)
    if (veil <= 0) veil := 0; endif
 
    SetObjProperty(targ, "veil", veil);
-   var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), crat_amt);
+   var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), craft_amt);
    minerio.movable := 1;
    if (Randomint(100) <= 30)
 	   ExpGain(who, "minor");
