@@ -35,7 +35,7 @@ program defensor(params)
    TS_StartTimer(targ, "tombar", 10);
    DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
 
-   if (!targ.isA(POLCLASS_NPC))  HealFLS(who, spellinfo.PowerMod[2]); else  HealFLS(who, spellinfo.PowerMod[3]); endif
+   if (targ.isA(POLCLASS_NPC)) HealFLS(who, spellinfo.PowerMod[2]); else  HealFLS(who, spellinfo.PowerMod[3]); endif
   
 	return 1;
 endprogram
