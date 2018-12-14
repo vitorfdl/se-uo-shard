@@ -255,7 +255,7 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0, no_display :=
       var reduction := cint(cdbl(dmg) * CalculateDefenseReduction(defender, type));
       dmg := dmg - reduction;
       if (defender.cmdlevel >= 5)  SendSysMessageEx(defender, "FDMG: {} - Red: {}".format(attacker, reduction)); endif
-      if (attacker.cmdlevel >= 5) SendSysMessageEx(attacker, "FDMG: {} - Red: {}".format(attacker, reduction)); endif
+      if (source.cmdlevel >= 5) SendSysMessageEx(source, "FDMG: {} - Red: {}".format(source, reduction)); endif
       if (source)
          if (defender.my_template() == "orb" && defender.master != source)
             return 0;
