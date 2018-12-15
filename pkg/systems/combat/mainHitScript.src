@@ -90,7 +90,7 @@ program MainHitScript( params )
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage);
 	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
-   PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wepn_a_elem);
+   PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 
    // ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
 
