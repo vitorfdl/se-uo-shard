@@ -8,6 +8,20 @@ include ":attributes:attributes";
 
 const IS_REMOVE := 1;
 
+function GetDamageType(weapon)
+	var attack_type := DMG_PHYSICAL;
+	if (weapon.objtype)
+		var weapon_type := GetConfigString(item_cfg[weapon.objtype], "DamageType");
+		if (weapon_type)
+			attack_type := weapon_type;
+		endif
+	elseif (weapon.DamageType)
+		attack_type := weapon.DamageType;
+	endif
+
+	return attack_type;
+endfunction
+
 function DistanceChecks(attacker, defender)
 	var cur_range := Distance(attacker, defender);
 	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
