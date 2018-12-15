@@ -176,7 +176,6 @@ exported function MegaCliloc( who, byref packet )
             xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((res / 9)+1 <= 20, (res / 9)+1, 20), WHITE);
             xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((res / 15)+1 <= 4, (res / 15)+1, 4), WHITE);
          endif
-
       elseif (item.isA(POLCLASS_ITEM))
 			var cfg  := ReadConfigFile(":farming:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);
@@ -195,6 +194,8 @@ exported function MegaCliloc( who, byref packet )
                xDesc += "{}Item de craft<br>".format(ORANGE);
             endif
          endif
+
+         if (elem.MaxWeight) xDesc += "{}Peso: {}<br>".format(ORANGE, elem.MaxWeight); endif
 		endif
 
       var madeof := GetObjProperty(item, "madeof");
