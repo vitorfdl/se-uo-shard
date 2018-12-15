@@ -28,8 +28,9 @@ include ":timedscripts:timedScripts";
 include ":combat:settings";
 include ":mounts:mounts";
 include ":fls_core:fls_characters";
+include ":combat:combat";
 
-var item_cff  := ReadConfigFile(":*:itemdesc");
+var item_cfg  := ReadConfigFile(":*:itemdesc");
 
 //Global because they're important, and it keeps the function
 //prototypes shorter and easier to read.
@@ -113,8 +114,9 @@ program Attack(params)
       return;
 	endif
 
+	var damage_type := GetDamageType(wpn_a_elem);
 	var armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
-	armor     := CS_SelectArmored(armor, 1);
+	armor     := CS_SelectArmored(armor, damage_type);
 
 	PlayAttackAnimation(attacker, wpn_a_elem);
 
@@ -158,66 +160,66 @@ function MissHit(attacker, defender)
    PlayMissSound(attacker, wpn_a_elem);
 endfunction
 
-function WearDownArmor(defender, armor)
-	if ( armor )
-		var armr_elem := CS_GetSettingsCfgElem("Armor");
-		var wearchance := armr_elem.WearChance;
-		// if ( HaveFeat(defender, "Conservar Equipamento"))
-		// 	wearchance := wearchance/2;
-		// 	if (wearchance < 1)
-		// 		wearchance := 1;
-		// 	endif
-		// endif
+// function WearDownArmor(defender, armor)
+// 	if ( armor )
+// 		var armr_elem := CS_GetSettingsCfgElem("Armor");
+// 		var wearchance := armr_elem.WearChance;
+// 		// if ( HaveFeat(defender, "Conservar Equipamento"))
+// 		// 	wearchance := wearchance/2;
+// 		// 	if (wearchance < 1)
+// 		// 		wearchance := 1;
+// 		// 	endif
+// 		// endif
 
-		if ( RandomDiceRoll("1d100") <= wearchance )
-			SendSysMessageEx(defender, "Seu equipamento foi danificado.");
-			var armorhp := armor.hp;
-			armorhp := armorhp - Cint(armr_elem.WearRate);
-			if ( armorhp <= 0 )
-				armor.hp := 0;
-				SendSysMessageEx(defender, armor.desc+" foi destruida.");
-				SetName(armor, armor.desc);
-				MoveItemToContainer(armor, defender.backpack);
-			elseif ( armor.hp > armor.maxhp )
-				armor.hp := armor.maxhp;
-			else
-				armor.hp := armorhp;
-            SetName(armor, armor.desc);
-			endif
-		endif
-	endif
+// 		if ( RandomDiceRoll("1d100") <= wearchance )
+// 			SendSysMessageEx(defender, "Seu equipamento foi danificado.");
+// 			var armorhp := armor.hp;
+// 			armorhp := armorhp - Cint(armr_elem.WearRate);
+// 			if ( armorhp <= 0 )
+// 				armor.hp := 0;
+// 				SendSysMessageEx(defender, armor.desc+" foi destruida.");
+// 				SetName(armor, armor.desc);
+// 				MoveItemToContainer(armor, defender.backpack);
+// 			elseif ( armor.hp > armor.maxhp )
+// 				armor.hp := armor.maxhp;
+// 			else
+// 				armor.hp := armorhp;
+//             SetName(armor, armor.desc);
+// 			endif
+// 		endif
+// 	endif
 	
-	return 1;
-endfunction
+// 	return 1;
+// endfunction
 
-function WearDownWeapon(attacker)
-	if ( weapon.IsA(POLCLASS_WEAPON) && !attacker.npctemplate)
-		if ( weapon.objtype == 0x1F020)
-			return 1;
-		endif
-		var wpn_elem := CS_GetSettingsCfgElem("Weapons");
-		var wearchance := CInt(wpn_elem.WearChance);
-		var roll := RandomDiceRoll("1d100");
-		if ( roll <= wearchance )
-			var weaponhp := weapon.hp - 1;				
-			if ( weaponhp <= 0 )
-				weapon.hp := 0;
-				SendSysMessageEx(attacker, weapon.desc+" quebrou.");
-				MoveObjectToLocation(weapon, 1, 1, 1, attacker.realm, MOVEOBJECT_FORCELOCATION);
-				SetName(weapon, weapon.desc);
-				MoveItemToContainer(weapon, attacker.backpack);
-			elseif ( weapon.hp > weapon.maxhp )
-				weapon.hp := weapon.maxhp;
-			else
-				weapon.hp := weaponhp;
-            SetName(weapon, weapon.desc);
-			endif
-		endif
-		return 1;
-	endif
+// function WearDownWeapon(attacker)
+// 	if ( weapon.IsA(POLCLASS_WEAPON) && !attacker.npctemplate)
+// 		if ( weapon.objtype == 0x1F020)
+// 			return 1;
+// 		endif
+// 		var wpn_elem := CS_GetSettingsCfgElem("Weapons");
+// 		var wearchance := CInt(wpn_elem.WearChance);
+// 		var roll := RandomDiceRoll("1d100");
+// 		if ( roll <= wearchance )
+// 			var weaponhp := weapon.hp - 1;				
+// 			if ( weaponhp <= 0 )
+// 				weapon.hp := 0;
+// 				SendSysMessageEx(attacker, weapon.desc+" quebrou.");
+// 				MoveObjectToLocation(weapon, 1, 1, 1, attacker.realm, MOVEOBJECT_FORCELOCATION);
+// 				SetName(weapon, weapon.desc);
+// 				MoveItemToContainer(weapon, attacker.backpack);
+// 			elseif ( weapon.hp > weapon.maxhp )
+// 				weapon.hp := weapon.maxhp;
+// 			else
+// 				weapon.hp := weaponhp;
+//             SetName(weapon, weapon.desc);
+// 			endif
+// 		endif
+// 		return 1;
+// 	endif
 
-	return 0;
-endfunction
+// 	return 0;
+// endfunction
 
 // Checa por munição ou faz efeito do npc arqueiro
 function AmmoCheck(attacker, defender)

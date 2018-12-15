@@ -57,7 +57,6 @@ program MainHitScript( params )
       base_damage += cint(cdbl(base_damage) * (cdbl(bonus_dmg) / 100));
    endif
    // print(CalculateDefenseReduction(defender, damage_type, 0, armor));
-   base_damage := base_damage - cint(cdbl(base_damage) * CalculateDefenseReduction(defender, damage_type, 0, armor) );
 	// Chain Of Pain
 	// TODO: reaproveitar depois
 
@@ -77,6 +76,9 @@ program MainHitScript( params )
          no_damage_show := 1;
       endif
    endif
+
+   var reduction := cint(cdbl(base_damage) * CalculateDefenseReduction(defender, damage_type, 0, armor));
+   base_damage -= reduction;
 
 	PlayHurtSound(defender);
 	DamageFLS(defender, base_damage, DMG_FORCED, attacker, no_damage_show);
@@ -108,21 +110,6 @@ program MainHitScript( params )
 
 	return 1;
 endprogram
-
-
-function GetDamageType(weapon)
-	var attack_type := DMG_PHYSICAL;
-	if (weapon.objtype)
-		var weapon_type := GetConfigString(item_cfg[weapon.objtype], "DamageType");
-		if (weapon_type)
-			attack_type := weapon_type;
-		endif
-	elseif (weapon.DamageType)
-		attack_type := weapon.DamageType;
-	endif
-
-	return attack_type;
-endfunction
 
 function FacingChecks(attacker, defender)
 	// if ( !CS_GetSettingsCfgElem("General").ForceFacing )

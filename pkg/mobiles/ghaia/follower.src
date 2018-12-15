@@ -456,20 +456,19 @@ function ResolveSpeech(ev)
 
    /// Attack command
    if (text["mate"] || text["ataque"])
-      if (!npccfgfile.TamingCombat) return; endif
-      targ := target(ev.source, TGTOPT_HARMFUL + TGTOPT_CHECK_LOS);
-      Fight(targ);
+      if (!targ) targ := target(ev.source, TGTOPT_HARMFUL + TGTOPT_CHECK_LOS); endif
+      if (npccfgfile.TamingCombat) 
+         Fight(targ);
+      endif
       allevent := struct{ targ := targ, type := ATTACK_CMD };
 
    /// Guard Command
    elseif(text["guarde"] || text["proteja"])
-      if (!npccfgfile.TamingCombat) return; endif
-      if (!targ)
-         targ := target(ev.source);
+      if (!targ) targ := target(ev.source); endif
+      if (npccfgfile.TamingCombat)
+         PetGuard(targ);
       endif
-      PetGuard(targ);
       allevent := struct{ targ := targ, type := GUARD_CMD };
-
    /// Stop Command
    elseif (text["pare"])
       following  := 0;

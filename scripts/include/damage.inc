@@ -171,8 +171,8 @@ function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor :=
       armor := CS_SelectArmored(armor, dmg_type);
    endif
 
-   var reduction := 0;
    if (!armor) return 0; endif
+   var reduction := 0;
    
    if (is_massive)
       reduction := cint(defender.get_member("resist_{}".format(dmg_type)) / 6);
@@ -250,12 +250,9 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0, no_display :=
          TS_LowerDuration(defender, "dodge_block", 1, 1);
       endif
    endif
-   
    if (type != DMG_FORCED)
       var reduction := cint(cdbl(dmg) * CalculateDefenseReduction(defender, type));
       dmg := dmg - reduction;
-      if (defender.cmdlevel >= 5)  SendSysMessageEx(defender, "FDMG: {} - Red: {}".format(dmg, reduction)); endif
-      if (source.cmdlevel >= 5) SendSysMessageEx(source, "FDMG: {} - Red: {}".format(dmg, reduction)); endif
       if (source)
          if (defender.my_template() == "orb" && defender.master != source)
             return 0;
