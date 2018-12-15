@@ -7,7 +7,7 @@ include "include/say";
 include "include/utils";
 
 program manobra(who, item)
-   _checkParams(who, item);
+   _resolveParams(who, item);
    sleepms(800);
    var count := 1;
    while (item && !item.container && count <= 200)
