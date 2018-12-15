@@ -15,7 +15,7 @@ function BuildSelectorGump(who, byref gump, raw_x, raw_y)
    var feat_list := GetFeatList(who, RETURN_ACTIVE_ONLY);
    if (!feat_list) return; endif
    
-   var width := 15+(48*(feat_list.size()+4));
+   var width := 15+(48*(feat_list.size()+5));
    if (selector_open > 1)
       raw_x += (50 * (selector_open-1));
    endif
@@ -35,13 +35,18 @@ function BuildSelectorGump(who, byref gump, raw_x, raw_y)
 	GFAddButton(gump, pos_x+48, raw_y+13, 0x9BA5, 0x9BA5, GF_CLOSE_BTN, 896);
    GFTooltipText(gump, "<center><basefont color=#7FFFD4>Bloqueio</basefont></center>Ativa sua ação de bloqueio, permitindo bloquear de golpes e habilidades por 2 segundos.");
 
-	GFAddButton(gump, pos_x+48+48, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 898);
-	GFGumpPic(gump, pos_x+48+48+2, raw_y+19, 27, 1485);
-   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Atalho de Item</basefont></center>Selecione um item ou consumível para adicionar a barra de atalho");
-	GFTextLine(gump, pos_x+48+48+8, raw_y+24, 1152, "Item");
+	GFAddButton(gump, pos_x+96, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 895);
+	GFGumpPic(gump, pos_x+96+2, raw_y+19, 27, 1485);
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Atalho de Item</basefont></center>Selecione um ou mais itens para auto-equipar");
+	GFTextLine(gump, pos_x+96+8, raw_y+24, 1152, "Equip");
 
-	GFAddButton(gump, pos_x+48+48+48, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
-	GFGumpPic(gump, pos_x+48+48+48, raw_y+13, 21012, 1485);
+	GFAddButton(gump, pos_x+96+48, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 898);
+	GFGumpPic(gump, pos_x+96+2+48, raw_y+19, 27, 1485);
+   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Atalho de Item</basefont></center>Selecione um item ou consumível para adicionar a barra de atalho");
+	GFTextLine(gump, pos_x+96+48, raw_y+24, 1152, "Item");
+
+	GFAddButton(gump, pos_x+96+96, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
+	GFGumpPic(gump, pos_x+96+96, raw_y+13, 21012, 1485);
    GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esvaziar Atalho</basefont></center>");
 endfunction
 
@@ -80,6 +85,11 @@ function BuildHotBar(who, byref hotbar)
          else
             GFAddButton(gump, 19 + pos_plus, pos_y+81, shortcut.Icon, shortcut.Icon, GF_CLOSE_BTN, 450+i);
          endif
+      elseif (shortcut.equips)
+         GFAddButton(gump, 19 + pos_plus, pos_y+81, 39833, 39833, GF_CLOSE_BTN, 450+i);
+         GFGumpPic(gump, 19 + pos_plus+2, pos_y+85, 27, 1485);
+	      GFTextLine(gump, pos_plus, pos_y+24, 1152, shortcut.name);
+         GFTooltipText(gump, "<basefont color=#7FFFD4>Macro de Equipar Itens</basefont>");
       elseif (shortcut.item)
          var cd := 0;
          var color := shortcut.color;
@@ -140,10 +150,35 @@ program startHotBar(who, spos)
          hotbar.shortcuts[selector_open] := struct{ id := res[0] - 900};
          selector_open := 0;
          SetobjProperty(who, "hotbar", hotbar);
-      elseif (res[0] >= 896)
+
+      elseif (res[0] >= 895)
          if (res[0] == 897)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:esquiva", Icon := 2248, cooldown := "dodge_block" };
                   SetobjProperty(who, "hotbar", hotbar);
+         elseif (res[0] >= 895)
+            var shortcut_obj := struct{ equips := array{}, name := "Equip" };
+            SendSysMessageEx(who, "Qual itens deseja equipar com este atalho? (esc para parar)", SSM_REQUEST);
+            while (who.connected)
+               sleepms(5);
+               var item := Target(who);
+               if (!item.tile_layer || !item.movable)
+                  SendSysMessageEx(who, "Você não pode selecionar este item ou ele não é equipável.", SSM_REQUEST);
+                  continue;
+               endif 
+               shortcut_obj.equips.append(item.serial);
+               if (shortcut_obj.equips.size() >= 5) break; endif
+            endwhile
+            
+            while (who.connected)
+               var text := GetInput(who, who.backpack, "Escreva um nome de até 3 caracteres para o atalho. (esc para usar nome padrão)");
+               if (len(text) > 3)
+                  continue;
+               endif
+               shortcut_obj.name := text;
+               break;
+            endwhile
+
+            hotbar.shortcuts[selector_open] := shortcut_obj;
          elseif(res[0] == 896)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:useScripts/shield", Icon := 0x9BA5, cooldown := "dodge_block" };
                   SetobjProperty(who, "hotbar", hotbar);

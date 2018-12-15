@@ -22,9 +22,7 @@ program HitScript(params)
 
    var n_hits;
    if (attacker.connected)
-      if (AP_GetTrueSkill(attacker, MACHADOS) >= 4 || AP_GetTrueSkill(attacker, ESPADAS) >= 4)
-         n_hits := 1;
-      endif
+      n_hits := 1
    else
       n_hits := cint(GetObjproperty(attacker, "morehits"));
    endif

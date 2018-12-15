@@ -25,7 +25,9 @@ program explosao(params)
 	PrintText(who, "*joga {}".format(weapon.desc));
 
    sleepms(150);
-	// MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+   MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+   start_script(":combat:reequip_weapon", array{ who, weapon });
+
    if (!CheckBlockDodge(targ, 1, 1))
       DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
       var t := _ifElse(targ.isA(POLCLASS_NPC), 5, 3);

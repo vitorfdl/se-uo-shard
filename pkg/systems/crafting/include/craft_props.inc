@@ -196,3 +196,11 @@ function ApplyCraftColor(theitem, level_select)
       theitem.color := the_resource.Color;
    endif
 endfunction
+
+function TranslatePassive(passive)
+   var cfg  := ReadConfigFile(":combat:passive_scripts");
+   var elem := FindConfigElem(cfg, passive);
+   if (elem) return elem.Name; endif
+   
+   return passive;
+endfunction

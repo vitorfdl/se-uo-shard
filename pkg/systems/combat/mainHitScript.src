@@ -90,6 +90,7 @@ program MainHitScript( params )
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage);
 	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
+   PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wepn_a_elem);
 
    // ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
 
@@ -215,27 +216,7 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
 		weapon_scripts :=  GetConfigStringArray( npcelem, "CriticalHitScripts" );
 	endif
 
-   // if (wpn_a_elem.Pericia == ESPADAS && AP_GetTrueSkill(attacker, ESPADAS) >= 2)
-   //    weapon_scripts.append("double_dmg");
-   // elseif (weapon.isMagicWeapon())
-   //    if (wpn_a_elem.DamageType == "Fogo" && AP_GetTrueSkill(attacker, "Magia_de_Fogo") >= 2)
-   //       weapon_scripts.append("immolation");
-   //    elseif (wpn_a_elem.DamageType == "Eletrecidade" && AP_GetTrueSkill(attacker, "Magia_de_Eletrecidade") >= 2)
-   //       weapon_scripts.append("double_dmg");
-   //    elseif (wpn_a_elem.DamageType == "Gelo" && AP_GetTrueSkill(attacker, "Magia_de_Gelo") >= 2)
-   //       weapon_scripts.append("attackbreak");
-   //    elseif (wpn_a_elem.DamageType == "Veneno" && AP_GetTrueSkill(attacker, "Magia_de_Veneno") >= 2)
-   //       weapon_scripts.append("constrict");
-   //    endif
-   // elseif(wpn_a_elem.Pericia == ARCO && AP_GetTrueSkill(attacker, ARCO) >= 2)
-   //    weapon_scripts.append("hit_again");
-   // elseif(wpn_a_elem.Pericia == ARMAS_DUPLAS && AP_GetTrueSkill(attacker, ARMAS_DUPLAS) >= 2)
-   //    weapon_scripts.append("hit_again");
-   // elseif (wpn_a_elem.Pericia == BESTA && AP_GetTrueSkill(attacker, BESTA) >= 2)
-   //    weapon_scripts.append("double_dmg");
-   // elseif (wpn_a_elem.Pericia == MACHADOS && AP_GetTrueSkill(attacker, MACHADOS) >= 2)
-   //    weapon_scripts.append("double_dmg");
-   // endif
+   if (!weapon_scripts.size()) weapon_scripts := array{"double_dmg"}; endif
 
 	foreach hitscript in weapon_scripts
 		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage});
@@ -246,6 +227,29 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
 	endforeach
 	
 	return 1;
+endfunction
+
+function PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem)
+   var cfg  := ReadConfigFile(":combat:passive_scripts");
+   var elem := FindConfigElem(cfg, wpn_a_elem.Passive);
+   if (!elem) return; endif
+
+   var chance := cint(elem.Chance);
+   var cooldown := cint(elem.Cooldown);
+
+   if (chance)
+      if (RandomInt(101) > chance) return; endif
+   endif
+
+   if (cooldown)
+      if (GetCooldown(attacker, "P_{}".format(wpn_a_elem.Passive))) return; endif
+      SetCooldown(attacker, "P_{}".format(wpn_a_elem.Passive)), cooldown);
+   endif
+
+   var script := start_script("weaponHitScripts/{}".format(wpn_a_elem.Passive), array{attacker, defender, weapon, armor, base_damage});
+   if ( !script || script.errortext )
+      Print("*Attacker* Weapon {} passive script error starting [{}] : {}".format(weapon.name, hitscript, script.errortext));
+   endif
 endfunction
 
 // function ApplyFeatChanges(attacker, defender, byref dice_roll, byref dmg)

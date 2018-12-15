@@ -1,0 +1,25 @@
+
+use uo;
+use vitals;
+
+include ":attributes:attributes";
+include "include/say";
+include "include/utils";
+
+program manobra(who, item)
+   _checkParams(who, item);
+   sleepms(800);
+   var count := 1;
+   while (item && !item.container && count <= 200)
+      if (Distance(item, who) < 2)
+         PrintText(who, "*pega {}".format(item.name));
+         if (!EquipItem(who, item))
+            MoveItemToContainer( item, who.backpack );
+         endif
+         break;
+      endif
+
+      sleepms(600);
+      count += 1;
+   endwhile
+endprogram

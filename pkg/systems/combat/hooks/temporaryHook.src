@@ -102,6 +102,10 @@ program Attack(params)
 
    if ( CheckBlockDodge(defender, 0, 1) )
 		MissHit(attacker, defender);
+      var defender_wpn := GetItemCFGInfo(defender.weapon);
+      if (defender_wpn.Passive == "Riposte" && RandomInt(100) <= 40)
+         defender.attack_once(attacker);
+      endif
       return;
    elseif (CheckBlockDodge(defender, 1, 0))
       if (TS_GetCooldown(defender, "blockperfect"))

@@ -209,31 +209,17 @@ function TrapFound(object, founder)
 endfunction
 
 function getTrapDamage(strength, danger)
+   if (!strength) strength := 2; endif
+
+   var power := 80;
    case (danger)
       3:
-         case (strength)
-            4: RandomDiceRoll("24d10+80");
-            3: RandomDiceRoll("18d10+60");
-            2: RandomDiceRoll("10d10+30");
-            default: RandomDiceRoll("4d10+20");
-         endcase
+         power := 250;
       2: 
-         case (strength)
-            4: RandomDiceRoll("18d10+120");
-            3: RandomDiceRoll("10d10+60");
-            2: RandomDiceRoll("4d10+30");
-            default: RandomDiceRoll("2d10+20");
-         endcase
-      default: 
-         case (strength)
-            4: RandomDiceRoll("10d10+120");
-            3: RandomDiceRoll("4d10+60");
-            2: RandomDiceRoll("2d10+30");
-            default: RandomDiceRoll("1d10+20");
-         endcase
+         power := 140;
    endcase
 
-   return RandomDiceRoll("1d10+25");
+   return power + RandomDiceRoll("5d10");
 endfunction
 
 function getTrapAC(danger)

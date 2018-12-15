@@ -15,7 +15,7 @@ program HitScript(params)
 	var rawdamage	:= params[6];
 	params := 0; // Not needed anymore.
 	
-	TS_StartTimer(defender, "bleed", 10);
+	TS_StartTimer(defender, "bleed", 5);
 	
 	return 1;
 endprogram

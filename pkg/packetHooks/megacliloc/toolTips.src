@@ -155,9 +155,9 @@ exported function MegaCliloc( who, byref packet )
             endif
 
             if (item.quality >= 3)
-               var hits := GetHitsInfo(elem);
-               if (hits)
-                  xDesc += "Passiva {}{}<br>".format(LIGHTGRAY, hits);
+               // var hits := GetHitsInfo(elem);
+               if (elem.Passive)
+                  xDesc += "Passivo: {}{}<br>".format(LIGHTGRAY, TranslatePassive(elem.Passive));
                endif
             endif
          elseif (item.isA(POLCLASS_ARMOR) && (item.resist_physical || item.resist_fire || item.resist_poison || item.resist_energy || item.resist_cold))

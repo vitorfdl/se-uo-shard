@@ -27,6 +27,7 @@ program SpellScript(params)
 	var oldx := who.x;
 	var oldy := who.y;
 	
+   SetObjProperty(who, "#Casting", 1);
    var apply_dmg := 1;
 	while  (time < 5)
 		if ( (who.x != oldx) || (who.y != oldy))
@@ -62,6 +63,7 @@ program SpellScript(params)
 		time := time + 1;
 		sleep(1);
 	endwhile
+   EraseObjProperty(who, "#Casting");
 
    if (apply_dmg)
       DamageFLS(targ, spellinfo.PowerMod[2], DMG_FORCED, who);

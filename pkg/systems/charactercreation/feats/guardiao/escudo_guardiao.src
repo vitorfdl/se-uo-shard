@@ -1,0 +1,41 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/client";
+include "include/sounds";
+include "include/say";
+include "include/damage";
+include ":attributes:attributes";
+include ":timedscripts:timedScripts";
+
+program defensor(params)
+	var who := params[1];
+	var spellinfo := params[2];
+	var targ := params[3];
+	params := 0; // No longer needed
+
+   // var item := who.shield;
+   // if (!item) 
+   //    item := who.weapon;
+   //    if (!item)
+   //       FailFeat(who, spellinfo);
+   //       return SendSysMessageEx(who, "Você deve estar equipando uma arma gigante ou um escudo.", SSM_FAIL);
+   //    endif
+   // endif
+
+   // var weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   // if (!who.shield && weapon_cfg.WeaponType != "greatsword")
+   //    FailFeat(who, spellinfo);
+   //    return SendSysMessageEx(who, "Você deve estar equipando uma arma gigante ou um escudo.", SSM_FAIL);
+   // endif
+
+   // PlaySoundEffect(who, cint(0x145));
+   // PrintText(who, "*golpe de {}*".format(_ifElse(who.shield, "escudo", "com arma gigante")));
+   // TS_StartTimer(targ, "tombar", 10);
+   // DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+
+   // if (targ.isA(POLCLASS_NPC)) HealFLS(who, spellinfo.PowerMod[2]); else  HealFLS(who, spellinfo.PowerMod[3]); endif
+  
+	return 1;
+endprogram

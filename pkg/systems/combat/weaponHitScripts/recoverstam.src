@@ -1,0 +1,21 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include ":timedscripts:timedScripts";
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+   
+   sleep(2);
+   if (!defender || defender.dead)
+      SendSysMessageEx(who, "Você recuperou vigor através da habilidade Êxtase");
+      var regen := cint(cdbl(AP_GetVitalMaximumValue(who, STAMINA)) * 0.3);
+      HealStamina(who, regen);
+   endif
+	
+	return 1;
+endprogram

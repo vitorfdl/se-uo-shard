@@ -26,7 +26,8 @@ program arremessar_arma(params)
 	PrintText(who, "*lança {}".format(weapon.desc));
 
    sleepms(100);
-	// MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+	MoveObjectToLocation( weapon, targ.x, targ.y, targ.z+1 );
+   start_script(":combat:reequip_weapon", array{ who, weapon });
 
    var dmg := CalculateRawDamage(who, 0, weapon);
 	var altura := cint(who.z - targ.z);
