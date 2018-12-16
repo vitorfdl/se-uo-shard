@@ -10,7 +10,7 @@ program checkQuests(who)
    var current_week := cint(StrFormatTime("%U"));
    for n := 0 to (array_size-1)
       var quest := weekly_quests[array_size-n];
-      if (cint(StrFormatTime("%U", quest.when) != current_week))
+      if (cint(StrFormatTime("%U", quest.when)) != current_week)
          weekly_quests.erase(array_size-n);
       endif
       sleepms(5);
