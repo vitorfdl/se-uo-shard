@@ -202,7 +202,7 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
 	if (!auto_critical)
 		if (GetCooldown(attacker, "critical") > 0)
 			return 1;
-      elseif (RandomInt(100) <= cint(2 + cint(AP_GetSkill(attacker, "Critical"))))
+      elseif (RandomInt(100) >= 100 - cint(1 + cint(AP_GetSkill(attacker, "Critical"))))
          return 1;
 		endif
 
