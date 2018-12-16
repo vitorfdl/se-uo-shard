@@ -231,6 +231,8 @@ function CriticalHitScripts(attacker, defender, weapon, armor, byref base_damage
 endfunction
 
 function PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem)
+   if (weapon.quality < 3) return; endif
+   
    var cfg  := ReadConfigFile(":combat:passive_scripts");
    var elem := FindConfigElem(cfg, wpn_a_elem.Passive);
    if (!elem) return; endif
