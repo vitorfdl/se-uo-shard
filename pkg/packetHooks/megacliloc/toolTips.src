@@ -139,7 +139,11 @@ exported function MegaCliloc( who, byref packet )
          var elem := FindConfigElem(cfg, item.objtype);
 
          if (item.isA(POLCLASS_WEAPON))
-            xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
+            if (!elem.DamagePercent)
+               xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
+            else
+               xDesc += "{}Poder: {} [{}%]<br>{}".format(YELLOW, cint(item.dmg_mod), elem.DamagePercent,  WHITE);
+            endif
 
             if (elem.DamageType)
                xDesc += "Tipo de Dano: {}<br>".format(TranslateDamage(elem.DamageType));
