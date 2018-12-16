@@ -156,7 +156,7 @@ program startHotBar(who, spos)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:esquiva", Icon := 2248, cooldown := "dodge_block" };
             SetobjProperty(who, "hotbar", hotbar);
             selector_open := 0;
-         elseif (res[0] >= 895)
+         elseif (res[0] == 895)
             var shortcut_obj := struct{ equips := array{}, name := "Equip" };
             SendSysMessageEx(who, "Qual itens deseja equipar com este atalho? (esc para parar)", SSM_REQUEST);
             while (who.connected)
