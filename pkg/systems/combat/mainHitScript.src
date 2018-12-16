@@ -219,8 +219,6 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
 		weapon_scripts :=  GetConfigStringArray( npcelem, "CriticalHitScripts" );
 	endif
 
-   if (!weapon_scripts.size()) weapon_scripts := array{"double_dmg"}; endif
-
 	foreach hitscript in weapon_scripts
 		var script := start_script("weaponHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage});
 		if ( !script || script.errortext )
@@ -228,6 +226,8 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
 		endif
 		sleepms(2);
 	endforeach
+
+   base_damage += cint(cdbl(base_damage) * 0.5);
 	
 	return 1;
 endfunction
