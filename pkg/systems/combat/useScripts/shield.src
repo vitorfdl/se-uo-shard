@@ -43,16 +43,16 @@ program block(who, shield)
       endif
    endif
 
-   if (HaveFeatPrimary(who, 81) && !who.shield)
-      var feat := getFeatById(81);
-      var power := CalculateRawDamage(who, 0);
+   // if (HaveFeatPrimary(who, 81) && !who.shield)
+   //    var feat := getFeatById(81);
+   //    var power := CalculateRawDamage(who, 0);
 
-      calcPowerMod(feat, power);
+   //    calcPowerMod(feat, power);
 
-      TS_StartCooldown(who, "blockperfect", 3);
-      SetObjProperty(who, "#blockperfect_dmg", feat.PowerMod[1]);
-      SendSysMessageEX(who, "Bloqueio perfeito ativado;", SSM_INFO);
-   endif
+   //    TS_StartCooldown(who, "blockperfect", 3);
+   //    SetObjProperty(who, "#blockperfect_dmg", feat.PowerMod[1]);
+   //    SendSysMessageEX(who, "Bloqueio perfeito ativado;", SSM_INFO);
+   // endif
 
    TS_StartCooldown(who, "block", 2);
    SendSysMessageEX(who, "Você está bloqueando ataques!", SSM_INFO);

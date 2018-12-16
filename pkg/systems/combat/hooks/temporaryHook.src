@@ -108,9 +108,9 @@ program Attack(params)
       endif
       return;
    elseif (CheckBlockDodge(defender, 1, 0))
-      if (TS_GetCooldown(defender, "blockperfect"))
-         Start_Script(":charactercreation:feats/furioso/bloqueio_perfeito_effect", array{defender, attacker});
-      endif
+      // if (TS_GetCooldown(defender, "blockperfect"))
+      //    Start_Script(":charactercreation:feats/furioso/bloqueio_perfeito_effect", array{defender, attacker});
+      // endif
 		PlayHitSounds(attacker, defender);
       return;
    elseif (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow())
