@@ -437,58 +437,66 @@ function DoPurchase(npc, player, input)
 	var owed := cost_amnt;
 	var cost_desc := AddArticle(GetName(cost.cost_type));
 	var pay_list := array{};
-	repeat
-		SendSysMessageEx(player, "Escolha "+cost_desc+" que Você quer usar para pagar. Você deve mais ["+owed+"].");
-		var targ := Target(player);
-		if ( !targ )
-			SendSysMessageEx(player, "Cancelado", SSM_INFO);
-			return;
-		elseif ( targ in pay_list )
-			SendSysMessageEx(player, "Você ja esta pagando com isto.", SSM_FAIL);
-		elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-			SendSysMessageEx(player, "Essa não eh sua bolsa.");
-		elseif ( targ.objtype == cost.cost_type )
-			if ( !ReserveItem(targ) )
-				SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
-			else
-				if ( cost.specialProp != error)
-					if (cost.specialProp.value != GetObjProperty(targ, cost.specialProp.name))
-						SendSysMessageEx(player, "item invalido", SSM_FAIL);
-					else
-						owed := owed - targ.amount;
-						pay_list.Append(targ);
-					endif
-				else
-					owed := owed - targ.amount;
-					pay_list.Append(targ);
-				endif
-			endif
-		else
-			SendSysMessageEx(player, "Item escolhido não eh "+cost_desc+".", SSM_FAIL);
-		endif
-	until ( owed <= 0 );
 
-	owed := cost_amnt;
-	foreach item in pay_list
-	   var pay_amt := item.amount;
-		ReleaseItem(item);
+   if (!player.spendgold(owed))
+      SendSysMessageEx(player, "Você não tem as {} m.o necessárias.".format(owed), SSM_INFO);
+      return 0;
+   else
+      SendSysMessageEx(player, "Você pagou {} m.o".format(owed), SSM_INFO);
+   endif
+   
+	// repeat
+	// 	SendSysMessageEx(player, "Escolha "+cost_desc+" que Você quer usar para pagar. Você deve mais ["+owed+"].");
+	// 	var targ := Target(player);
+	// 	if ( !targ )
+	// 		SendSysMessageEx(player, "Cancelado", SSM_INFO);
+	// 		return;
+	// 	elseif ( targ in pay_list )
+	// 		SendSysMessageEx(player, "Você ja esta pagando com isto.", SSM_FAIL);
+	// 	elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+	// 		SendSysMessageEx(player, "Essa não eh sua bolsa.");
+	// 	elseif ( targ.objtype == cost.cost_type )
+	// 		if ( !ReserveItem(targ) )
+	// 			SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
+	// 		else
+	// 			if ( cost.specialProp != error)
+	// 				if (cost.specialProp.value != GetObjProperty(targ, cost.specialProp.name))
+	// 					SendSysMessageEx(player, "item invalido", SSM_FAIL);
+	// 				else
+	// 					owed := owed - targ.amount;
+	// 					pay_list.Append(targ);
+	// 				endif
+	// 			else
+	// 				owed := owed - targ.amount;
+	// 				pay_list.Append(targ);
+	// 			endif
+	// 		endif
+	// 	else
+	// 		SendSysMessageEx(player, "Item escolhido não eh "+cost_desc+".", SSM_FAIL);
+	// 	endif
+	// until ( owed <= 0 );
+
+	// owed := cost_amnt;
+	// foreach item in pay_list
+	//    var pay_amt := item.amount;
+	// 	ReleaseItem(item);
 		
-		var template := CreateItemTemplate(item);
-		// template.desc := GetName(item.objtype, CInt( (owed-1)/(owed-1) ));
+	// 	var template := CreateItemTemplate(item);
+	// 	// template.desc := GetName(item.objtype, CInt( (owed-1)/(owed-1) ));
 		
-		if ( owed > pay_amt )
-			AddPaymentForSeller(npc, cost.seller, template, array{ guild, imposto});
-			DestroyItem(item);
-		else
-			//template.pay_amt := owed;
-			template.amount := owed;
-			AddPaymentForSeller(npc, cost.seller, template, array{ guild, imposto});
-			SubtractAmount(item, owed);
-			break;
-		endif
-		owed := owed-pay_amt;
-		sleepms(2);
-	endforeach
+	// 	if ( owed > pay_amt )
+	// 		AddPaymentForSeller(npc, cost.seller, template, array{ guild, imposto});
+	// 		DestroyItem(item);
+	// 	else
+	// 		//template.pay_amt := owed;
+	// 		template.amount := owed;
+	// 		AddPaymentForSeller(npc, cost.seller, template, array{ guild, imposto});
+	// 		SubtractAmount(item, owed);
+	// 		break;
+	// 	endif
+	// 	owed := owed-pay_amt;
+	// 	sleepms(2);
+	// endforeach
    
    selling.amount := amount * cost.lote;
 	RemoveItemForSale(npc, input, selling.amount);
@@ -651,34 +659,45 @@ function AddItemToSell(npc, player, item)
 		desc := desc[0,300]+"...";
 	endif
 
+
 	if (player.cmdlevel < 3 && total_imposto != 0)
-		var pay := 0;
-		do
-			SendSysMessageEx(player, "O imposto total é de: {} moedas".format(total_imposto), SSM_INFO);
-			SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda. (Pressione ESC para cancelar).", SSM_REQUEST);
-			var targ := Target(player);
-			if ( !targ )
-				SendSysMessageEx(player, "Cancelado.");
-				return;
-			elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-				SendSysMessageEx(player, "não esta na sua bolsa.", SSM_FAIL);
-			elseif ( GetObjProperty(targ, "stealed") )
-				SendSysMessageEx(player, "Objeto foi roubado!", SSM_FAIL);
-			elseif ( targ.objtype == MOEDAS )
-				if ( !ReserveItem(targ) )
-					SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
-				else
-					if (total_imposto > 0 && !SubtractAmount(targ, total_imposto))
-						SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
-					else
-						pay := 1;
-						SendSysMessageEx(player, "Pagamento efetuado com sucesso!", SSM_FAIL);
-					endif
-				endif
-			else
-				SendSysMessageEx(player, "Você deve indicar moedas de cobre.", SSM_FAIL);
-			endif
-		dowhile ( !pay );
+      if (!YesNo(player, "O imposto total é de: {} moedas.".format(total_imposto), "Pagar {} moedas.".format(total_imposto), "Cancelar Venda."))
+         return;
+      endif
+
+      if (!player.spendgold(total_imposto))
+         SendSysMessageEx(player, "Você precisa de {} m.o para colocar o item a venda".format(total_imposto), SSM_INFO);
+         return 0;
+      else
+         SendSysMessageEx(player, "Você pagou {} m.o de imposto.".format(total_imposto), SSM_INFO);
+      endif
+		// var pay := 0;
+		// do
+		// 	SendSysMessageEx(player, "O imposto total é de: {} moedas".format(total_imposto), SSM_INFO);
+		// 	SendSysMessageEx(player, "Escolha o montante de moedas para que seu item seja colocado a venda. (Pressione ESC para cancelar).", SSM_REQUEST);
+		// 	var targ := Target(player);
+		// 	if ( !targ )
+		// 		SendSysMessageEx(player, "Cancelado.");
+		// 		return;
+		// 	elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+		// 		SendSysMessageEx(player, "não esta na sua bolsa.", SSM_FAIL);
+		// 	elseif ( GetObjProperty(targ, "stealed") )
+		// 		SendSysMessageEx(player, "Objeto foi roubado!", SSM_FAIL);
+		// 	elseif ( targ.objtype == MOEDAS )
+		// 		if ( !ReserveItem(targ) )
+		// 			SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
+		// 		else
+		// 			if (total_imposto > 0 && !SubtractAmount(targ, total_imposto))
+		// 				SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
+		// 			else
+		// 				pay := 1;
+		// 				SendSysMessageEx(player, "Pagamento efetuado com sucesso!", SSM_FAIL);
+		// 			endif
+		// 		endif
+		// 	else
+		// 		SendSysMessageEx(player, "Você deve indicar moedas de cobre.", SSM_FAIL);
+		// 	endif
+		// dowhile ( !pay );
 	endif
 	
 	var result := AddItemForSale(npc, player, item, cost_type, item.desc, cost_amt, desc, cost_lote, infinite);
