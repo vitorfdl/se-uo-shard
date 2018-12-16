@@ -264,14 +264,14 @@ function DoBasicPVPBattle (character, arena_stone)
 	MoveObjectToLocation( opponent, cint(start2[1]), cint(start2[2]), cint(start2[3]), _DEFAULT_REALM, flags := MOVEOBJECT_FORCELOCATION );
 	
 	while (1)
-		if (!character or !character.ip or character.dead or LeftTheArena (character))
+		if (!character or !character.ip or character.dead or LeftTheArena(character))
 			PrintText (opponent, "Parabéns! Você venceu!");
 			SendSysMessageEx(character, "Boa sorte na proxima vez.");
 	      if (character.dead) KataWakeUp(character, character.GetCorpse()); endif
 			return;
 		endif
 		if (!opponent or !opponent.ip or opponent.dead or LeftTheArena(opponent))
-			PrintText (character, "Parabéns! Você venceu!");
+			PrintText(character, "Parabéns! Você venceu!");
 			SendSysMessageEx(opponent, "Boa sorte na proxima vez.");
 	      if (opponent.dead) KataWakeUp(opponent, opponent.GetCorpse()); endif
 			return;

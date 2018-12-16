@@ -201,9 +201,11 @@ function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_
 	if (!auto_critical)
 		if (GetCooldown(attacker, "critical") > 0)
 			return 1;
-      elseif (RandomInt(100) <= 2 + AP_GetSkill(attacker, "Critical"))
+      elseif (RandomInt(100) <= cint(2 + cint(AP_GetSkill(attacker, "Critical"))))
          return 1;
 		endif
+
+      print(cint(2 + cint(AP_GetSkill(attacker, "Critical"))));
 
 		SetCooldown(attacker, "critical", 10);
 	endif
