@@ -20,6 +20,7 @@ include ":fls_core:packets";
 include "include/say";
 include "include/client";
 include "include/sounds";
+include ":tn:cooldown";
 
 var item_cfg := ReadConfigFile(":*:itemdesc");
 
@@ -243,12 +244,12 @@ function PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a
 
    if (cooldown)
       if (GetCooldown(attacker, "P_{}".format(wpn_a_elem.Passive))) return; endif
-      SetCooldown(attacker, "P_{}".format(wpn_a_elem.Passive)), cooldown);
+      SetCooldown(attacker, "P_{}".format(wpn_a_elem.Passive), cooldown);
    endif
 
    var script := start_script("weaponHitScripts/{}".format(wpn_a_elem.Passive), array{attacker, defender, weapon, armor, base_damage});
    if ( !script || script.errortext )
-      Print("*Attacker* Weapon {} passive script error starting [{}] : {}".format(weapon.name, hitscript, script.errortext));
+      Print("*Attacker* Weapon {} passive script error starting [{}] : {}".format(weapon.name, wpn_a_elem.Passive, script.errortext));
    endif
 endfunction
 

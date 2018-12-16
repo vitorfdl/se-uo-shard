@@ -88,7 +88,7 @@ function BuildHotBar(who, byref hotbar)
       elseif (shortcut.equips)
          GFAddButton(gump, 19 + pos_plus, pos_y+81, 39833, 39833, GF_CLOSE_BTN, 450+i);
          GFGumpPic(gump, 19 + pos_plus+2, pos_y+85, 27, 1485);
-	      GFTextLine(gump, pos_plus, pos_y+24, 1152, shortcut.name);
+	      GFTextLine(gump, 19+pos_plus+4, pos_y+85+5, 1152, ""+shortcut.name);
          GFTooltipText(gump, "<basefont color=#7FFFD4>Macro de Equipar Itens</basefont>");
       elseif (shortcut.item)
          var cd := 0;
@@ -154,24 +154,30 @@ program startHotBar(who, spos)
       elseif (res[0] >= 895)
          if (res[0] == 897)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:esquiva", Icon := 2248, cooldown := "dodge_block" };
-                  SetobjProperty(who, "hotbar", hotbar);
+            SetobjProperty(who, "hotbar", hotbar);
+            selector_open := 0;
          elseif (res[0] >= 895)
             var shortcut_obj := struct{ equips := array{}, name := "Equip" };
             SendSysMessageEx(who, "Qual itens deseja equipar com este atalho? (esc para parar)", SSM_REQUEST);
             while (who.connected)
                sleepms(5);
                var item := Target(who);
-               if (!item.tile_layer || !item.movable)
+               if (!item) break; endif
+
+               if (!item.tile_layer || !item.movable || item in shortcut_obj.equips)
                   SendSysMessageEx(who, "Você não pode selecionar este item ou ele não é equipável.", SSM_REQUEST);
                   continue;
                endif 
+               SendSysMessageEx(who, "Item selecionado: {}".format(item.name), SSM_INFO);
                shortcut_obj.equips.append(item.serial);
                if (shortcut_obj.equips.size() >= 5) break; endif
             endwhile
             
             while (who.connected)
-               var text := GetInput(who, who.backpack, "Escreva um nome de até 3 caracteres para o atalho. (esc para usar nome padrão)");
-               if (len(text) > 3)
+               var text := GetInput(who, who.backpack, "Escreva um nome de até 4 caracteres para o atalho. (esc para usar nome padrão)");
+               if (!text) break; endif
+               
+               if (len(text) > 5)
                   continue;
                endif
                shortcut_obj.name := text;
@@ -179,6 +185,8 @@ program startHotBar(who, spos)
             endwhile
 
             hotbar.shortcuts[selector_open] := shortcut_obj;
+            selector_open := 0;
+            SetobjProperty(who, "hotbar", hotbar);
          elseif(res[0] == 896)
             hotbar.shortcuts[selector_open] := struct{ script := ":combat:useScripts/shield", Icon := 0x9BA5, cooldown := "dodge_block" };
                   SetobjProperty(who, "hotbar", hotbar);

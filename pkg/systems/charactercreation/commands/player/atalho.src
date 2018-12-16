@@ -54,7 +54,7 @@ program useHotBar(who, text)
    elseif (shortcut.script)
       return start_script(shortcut.script, who);
    elseif (shortcut.equips)
-      return start_script(":combat:equipmacro" shortcut);
+      return start_script(":combat:equipmacro", array{who, shortcut.equips});
    endif
 
    var hab := getFeatById(shortcut.id);

@@ -22,7 +22,7 @@ program HitScript(params)
 
    var n_hits;
    if (attacker.connected)
-      n_hits := 1
+      n_hits := 1;
    else
       n_hits := cint(GetObjproperty(attacker, "morehits"));
    endif
