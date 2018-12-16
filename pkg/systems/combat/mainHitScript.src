@@ -90,8 +90,8 @@ program MainHitScript( params )
    
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage);
-	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
    PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
+	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 
    // ApplyInscriptedRunes(attacker, defender, weapon, armor, base_damage);
 
@@ -188,7 +188,7 @@ function WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_
 	return 1;
 endfunction
 
-function CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem)
+function CriticalHitScripts(attacker, defender, weapon, armor, byref base_damage, wpn_a_elem)
 	var auto_critical := 0;
 	if (GetObjProperty(attacker, "#nextcritical"))
 		EraseObjProperty(attacker, "#nextcritical");
