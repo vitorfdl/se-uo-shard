@@ -19,7 +19,7 @@ program manobra(who, item)
          break;
       endif
 
-      sleepms(600);
+      sleepms(700);
       count += 1;
    endwhile
 endprogram

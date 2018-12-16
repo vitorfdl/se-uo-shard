@@ -102,7 +102,7 @@ program Attack(params)
 
    if ( CheckBlockDodge(defender, 0, 1) )
 		MissHit(attacker, defender);
-      var defender_wpn := GetItemCFGInfo(defender.weapon);
+      var defender_wpn := GetItemCFGInfo(defender, defender.weapon);
       if (defender_wpn.Passive == "Riposte" && RandomInt(100) <= 40)
          defender.attack_once(attacker);
       endif
