@@ -240,7 +240,7 @@ function SendRoomGump(npc, player)
 	
       return 1;
 	elseif (input[0] == 500) //linkar mural
-		SendSysMessage(player, "Escolha o montante de moedas para pagar o aluguel.");
+		// SendSysMessage(player, ".");
 		if (!getgoldpayment(player,quartos[meuquarto].custo))
 			return;
 		endif
@@ -394,33 +394,41 @@ function SendRoomGump(npc, player)
 endfunction
 
 function getgoldpayment(player, amount)
-	var pay := 0;
-	do
-		var targ := Target(player);
-		if ( !targ )
-			SendSysMessage(player, "Cancelado.");
-			return 0;
-		elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-			SendSysMessage(player, "Não esta na sua bolsa.");
-		elseif ( GetObjProperty(targ, "stealed") )
-			SendSysMessage(player, "Objeto foi roubado!");
-		elseif ( targ.objtype == MOEDAS )
-			if ( !ReserveItem(targ) )
-				SendSysMessage(player, "Você não pode pagar com isto.");
-			else
-				if (targ.amount < amount)
-					SendSysMessage(player, "Você não pode pagar com isto.");
-				else
-					SubtractAmount(targ, amount);
-					pay := 1;
-					SendSysMessage(player, "Pagamento efetuado com sucesso!");
-				endif
-			endif
-		else
-			SendSysMessage(player, "Você deve indicar moedas de cobre.");
-		endif
-	dowhile ( !pay );
-	return pay;
+   if (!player.spendgold(amount))
+      SendSysMessageEx(player, "Você precisa de {} m.o para fazer isto.".format(amount), SSM_INFO);
+      return 1;
+   else
+      SendSysMessageEx(player, "Você pagou {} m.o.".format(amount), SSM_INFO);
+   endif
+   
+   return 0;
+	// var pay := 0;
+	// do
+	// 	var targ := Target(player);
+	// 	if ( !targ )
+	// 		SendSysMessage(player, "Cancelado.");
+	// 		return 0;
+	// 	elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
+	// 		SendSysMessage(player, "Não esta na sua bolsa.");
+	// 	elseif ( GetObjProperty(targ, "stealed") )
+	// 		SendSysMessage(player, "Objeto foi roubado!");
+	// 	elseif ( targ.objtype == MOEDAS )
+	// 		if ( !ReserveItem(targ) )
+	// 			SendSysMessage(player, "Você não pode pagar com isto.");
+	// 		else
+	// 			if (targ.amount < amount)
+	// 				SendSysMessage(player, "Você não pode pagar com isto.");
+	// 			else
+	// 				SubtractAmount(targ, amount);
+	// 				pay := 1;
+	// 				SendSysMessage(player, "Pagamento efetuado com sucesso!");
+	// 			endif
+	// 		endif
+	// 	else
+	// 		SendSysMessage(player, "Você deve indicar moedas de cobre.");
+	// 	endif
+	// dowhile ( !pay );
+	// return pay;
 	
 endfunction
 

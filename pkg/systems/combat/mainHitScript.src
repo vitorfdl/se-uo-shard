@@ -241,7 +241,7 @@ function PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a
    var cooldown := cint(elem.Cooldown);
 
    if (chance)
-      if (RandomInt(150) < chance) return; endif
+      if (RandomInt(150) > chance) return; endif
    endif
 
    if (cooldown)
