@@ -24,6 +24,10 @@ program defensor(params)
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
    endif
 
+	if (CheckBlockDodge(targ, 0, 1))
+      return 0;
+   endif
+
    PrintText(who, "*levanta a arma e dá um golpe destruidor*", SSM_FAIL);
 	PlayCustomSound( who, 33 );
 

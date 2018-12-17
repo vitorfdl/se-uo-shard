@@ -396,6 +396,9 @@ function TriggerHabilitie(who, hab)
 		return SendSystemReport(who, "'Você precisa estar equipado com uma arma mágica para esta habilidade.'", SSM_FAIL);
 	endif
    
+   if (TS_GetCooldown(who, "dodge_block"))
+		return SendSysMessageEx(who, "'Você não pode usar habilidades quando estiver esquivando ou bloqueado.'", SSM_FAIL);
+   endif
    SetObjProperty(who, "#Casting", 1);
    
    if (hab.Mana)
