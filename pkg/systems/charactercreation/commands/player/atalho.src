@@ -10,7 +10,6 @@ include "include/facings";
 
 
 program useHotBar(who, text)
-   if (GetScriptCooldown(who, "atalho")) return 0; endif
 
    var hab_id;
    if (typeof(who) == "Array")
@@ -18,6 +17,9 @@ program useHotBar(who, text)
       text := who[2];
       who := who[1];
    endif
+
+   text := SplitWords(text, " ")[1];
+   if (GetScriptCooldown(who, "atalho_{}".format(text))) return 0; endif
 
    if (hab_id)
       var hab := getFeatById(hab_id);
