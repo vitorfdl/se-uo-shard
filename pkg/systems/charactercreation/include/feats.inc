@@ -418,6 +418,9 @@ function TriggerHabilitie(who, hab)
    TS_StartCooldown(who, "HabUsed", 600);
    who.hidden := 0;
 
+   var weapon := who.weapon;
+   var power := CalculateRawDamage(who, 0, weapon);
+   
    if (hab.CastTime)
       var cycles := hab.CastTime;
       if (HaveGodFeat(who, 83) && Randomint(100) <= 20)
@@ -474,9 +477,6 @@ function TriggerHabilitie(who, hab)
    if (targ.isA(POLCLASS_NPC) && hab.TargetAlign == "Harmful")
       targ.setAggro(who.serial, 25);
    endif
-
-   var weapon := who.weapon;
-   var power := CalculateRawDamage(who, 0, weapon);
 
    calcPowerMod(hab, power);
 
