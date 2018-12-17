@@ -19,9 +19,13 @@ program usewand(who, weapon)
 		return 0;
 	endif
 
+
    var weapon_cfg := GetItemCFGInfo(who, weapon);
    if (!weapon_cfg.FeatID) return; endif
 
    var feat := getFeatById(cint(weapon_cfg.FeatID));
+
+   if (who.getClass() == "Furioso") feat.Cooldown -= 2; endif
+   
    TriggerHabilitie(who, feat);
 endprogram 
