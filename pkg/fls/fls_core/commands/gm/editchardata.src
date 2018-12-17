@@ -201,6 +201,7 @@ function handleInput(who, input, byref chardata)
                habs := array{},
                selected_habs := array{}
             }};
+            chardata.
 
             SendSysMessageEx(who, "Classe agora é {}.".format(classe), SSM_INFO);
       BTN_CHANGE_SUBCLASS:

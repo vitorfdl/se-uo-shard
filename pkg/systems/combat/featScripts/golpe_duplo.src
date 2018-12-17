@@ -17,8 +17,8 @@ program explosao(params)
 	params := 0; // No longer needed
 
    PlaySoundEffect(who, 0x51F);
-   who.attack_once(who.opponent);
+   who.attack_once(targ);
    sleepms(550);
-   who.attack_once(who.opponent);
+   who.attack_once(targ);
    return 1;
 endprogram
