@@ -13,8 +13,8 @@ function GetScriptCooldown(who, script_name)
 endfunction
 
 //se tiver passado o tempo retorna 0, se não retorna o tempo que falta
-function getCooldown(who, hability)
-   if (!hability["#"])
+function getCooldown(who, hability, no_temp := 0)
+   if (!hability["#"] && !no_temp)
 	   hability := "#{}".format(hability);
    endif
 
@@ -29,8 +29,8 @@ function getCooldown(who, hability)
 endfunction
 	
 //verifica se ta em cooldown ainda, se tiber retorna o tempo que falta, se não tiver seta e retorna 0
-function setCooldown(who, hability, time)
-   if (!hability["#"])
+function setCooldown(who, hability, time, no_temp := 0)
+   if (!hability["#"] && !no_temp)
 	   hability := "#{}".format(hability);
    endif
 

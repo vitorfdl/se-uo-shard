@@ -29,7 +29,7 @@ program Install(spot)
             var new_day := GetGlobalProperty("dia");
             day := _IfElse(new_day == day, 0, new_day);
             FillSpawnQueue(config.spawnpoints, day);
-            ResetTreasures(spot.serial, config.treasures, (config.timeinterval / 2) * 60);
+            ResetTreasures(spot.serial, config.treasures, cint(config.timeinterval / 2) * 60);
             SetCooldown(spot, "spotrespawn", 300);
          endif
       endif
@@ -57,10 +57,10 @@ endfunction
 function ResetTreasures(spot_serial, treasures, spawntime := 0)
    foreach item in treasures
       var treasure := SystemFindObjectBySerial(item.serial);
-      var spawncd := GetObjProperty(treasure, "spawned_time");
-      if (polcore().systime > spawntime+cint(spawncd))
+      if (!GetCooldown(treasure, "treasure_respawn", 1))
          SpawnTreasure(treasure, item, spot_serial);
       endif
+
       sleepms(5);
    endforeach
 endfunction

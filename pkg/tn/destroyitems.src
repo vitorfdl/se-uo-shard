@@ -96,8 +96,8 @@ program destroyitems(parms)
       
       PrintText(who, "*Quebra " +item.desc+ "*");
 
-      var time_respawn := AddTimeTo(polcore().systime, 50+RandomDiceRoll("3d20"), "minutes");
-      SetObjProperty(item, "spawned_time", time_respawn);
+      var time_respawn := (50+RandomDiceRoll("3d20")) * 60;
+      SetCooldown(item, "treasure_respawn", time_respawn, 1);
 
       if (item.isA(POLCLASS_CONTAINER))
          var container_items := EnumerateItemsInContainer(item);
