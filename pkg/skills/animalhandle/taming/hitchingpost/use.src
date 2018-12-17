@@ -42,6 +42,7 @@ function AnimalHitched(who, item, serial)
    EraseObjProperty(item, "old_props");
    EraseObjProperty(animal, "hitched");
    PrintText(animal, "*desamarrado*");
+   _CreateItemInBackpack(who, 0x14f8);
 endfunction
 
 function HitchAnimal(who, item)

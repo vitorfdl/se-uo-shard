@@ -24,6 +24,7 @@ const BTN_CHANGE_GOD           := 25;
 const BTN_CHANGE_CLASS_LEVELUP := 19;
 const BTN_ADD_SUBCLASS         := 11;
 const BTN_CH_SUBCLASS          := 20;
+const BTN_CHANGE_CLASS := 21;
 
 program command_Message(who)
 	var targ;
@@ -100,6 +101,9 @@ program command_Message(who)
       y+= 30;
       GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_SUBCLASS);
 		GFHTMLArea(gump,  160, y, 135, 25, "<basefont color=#006400><center>Alterar Subclasses", 1);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CLASS);
+		GFHTMLArea(gump,  160, y, 135, 25, "<basefont color=#006400><center>Alterar Classe", 1);
       y+= 30;
       GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_GOD);
 		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#006400><center>Mudar DEUS", 1);
@@ -179,6 +183,26 @@ function handleInput(who, input, byref chardata)
          chardata.classes[1].exp := 0;
          SendSysMessageEx(who, "Level de {} aumentado".format(chardata.classes[1].id), SSM_INFO);
          return;
+      BTN_CHANGE_CLASS:
+          var classCfg := ReadConfigFile(":charactercreation:config/classes");
+            var opts :=  array{};
+            foreach classe_name in GetConfigStringKeys(classCfg)
+               var classe := FindConfigElem(classCfg, classe_name);
+               if (classe.Type == "Main") 
+                  opts.append(classe_name);
+               endif
+               sleepms(2);
+            endforeach
+            var classe := RadioGump(who, 250, 0, "Escolha classe para mudar:", opts);
+            chardata.classes := array{struct{
+               id := classe,
+               exp := 0,
+               level := 1,
+               habs := array{},
+               selected_habs := array{}
+            }};
+
+            SendSysMessageEx(who, "Classe agora é {}.".format(classe), SSM_INFO);
       BTN_CHANGE_SUBCLASS:
          var res := subclassesgump(who, chardata);
          if (res == BTN_ADD_SUBCLASS)

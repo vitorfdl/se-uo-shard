@@ -540,7 +540,7 @@ function HandleSkillPage(who, byref chardata, res, targ)
       SetObjProperty(who, "chardata", chardata);
       RecalcVitals(who, RECALC_NO_INTRINSIC_MOD);
    elseif (res == GF_CHANGE_CLASS)
-      changeClass(who, chardata);
+      changeClass(who, targ, chardata);
    endif
 endfunction
 
@@ -583,7 +583,7 @@ function HandleBackgroundPage(who, res, targ)
 endfunction
 
 
-function changeClass(who, byref chardata)
+function changeClass(who, targ, byref chardata)
    var classCfg := ReadConfigFile(":charactercreation:config/classes");
    var classes := struct{};
    foreach classe_name in GetConfigStringKeys(classCfg)
