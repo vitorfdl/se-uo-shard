@@ -40,7 +40,7 @@ program hiddepresence(params)
                TS_CurePoison(who, 1000, "DP", 10);
                SendSysMessageEx(mob, "Qualquer mal sobre você foi removido.", SSM_INFO);
             else
-               DamageFLS(mob, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+               DamageFLS(mob, spellinfo.PowerMod[1], DMG_ENERGY, who);
             endif
          endif
          sleepms(2);

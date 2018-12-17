@@ -6,13 +6,14 @@ include "include/say";
 include ":gumps:include/requestgump";
 include ":gumps:yesno";
 include ":charactercreation:feats";
+include ":charactercreation:proficiency";
 
 program useBook(who,book)
 	if ( !ReserveItem(book) )
 		SendSysMessageEx(who, "Outra pessoa esta usando este livro.", SSM_FAIL);
 		return 0;
    elseif (GetObjProperty(book, "lang"))
-      if (!HaveFeat(who, GetObjProperty(book, "lang")))
+      if (!HaveProficiency(who, GetObjProperty(book, "lang")))
 		   SendSysMessageEx(who, "O livro está em uma língua ilegível por você.", SSM_FAIL);
          return 0;
       endif

@@ -13,6 +13,7 @@ include "include/arrays";
 include ":crafting:recipes";
 include ":gumps:requestgump";
 include ":charactercreation:feats";
+include ":charactercreation:proficiencies";
 
 program usaPergaminho(who, scroll)
 	var input := SendGump(who, scroll);
@@ -67,10 +68,9 @@ function SendGump(who, scroll)
       endif
 	endif
 
-   // var is_lang := GetObjProperty(scroll, "lang");
-   var is_lang := 0;
+   var is_lang := GetObjProperty(scroll, "lang");
    var lang := "";
-   if (is_lang && !HaveFeat(who, is_lang))
+   if (is_lang && !HaveProficiency(who, is_lang))
       if (is_lang == "Linguagem Élfica")
          lang := "Face=Gargish";
       elseif (is_lang == "Linguagem Rúnica")

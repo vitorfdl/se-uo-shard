@@ -25,6 +25,7 @@ include "include/client";
 include ":gumps:requestgump";
 include ":gumps:htmlgump";
 include ":crafting:craft_props";
+include ":charactercreation:proficiencies";
 
 CONST GF_CHANGE_PAGE := 2;
 CONST GF_CHANGE_PAGE_TAME := 3;
@@ -580,6 +581,23 @@ function HandleBackgroundPage(who, res, targ)
          endif
       endif
    endif
+endfunction
+
+function LearnProfiency(who, targ, byref chardata, proficiency)
+   if (!YesNo(who, "Deseja mesmo adquirir esta proficiência? Custará 1 ponto caso já tenha três proficiências."))
+      return;
+   endif
+
+   chardata := GetObjProperty(targ, "chardata");
+   if (!chardata.proficiencias) chardata.proficiencias := array{}; endif
+
+   if (chardata.proficiencias.size() < 3)
+      chardata.points -= 1;
+   endif
+
+   chardata.proficiencias.append(proficiency);
+   SendSysMessageEx(who, "Proficiência {} aprendida.".format())
+   SetObjProperty(who, "chardata", chardata);
 endfunction
 
 

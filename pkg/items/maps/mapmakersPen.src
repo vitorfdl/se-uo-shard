@@ -14,6 +14,7 @@ include ":crafting:fls_crafting";
 include ":tn:tngumps";
 include ":gumps:yesno";
 include ":crafting:excep_gump";
+include ":charactercreation:proficiencies";
 
 var item_config     := ReadConfigFile(":cartography:itemdesc");
 var craft_config    := ReadConfigFile(":cartography:cartography");
@@ -55,7 +56,7 @@ program use_MapmakersPen(who, tool)
          return;
       endif
 
-      if (!HaveFeat(who, lang))
+      if (!HaveProficiency(who, lang))
 	      SendSysMessageEx(who, "Você não conhece essa lingua para traduzir o pergaminho", SSM_REQUEST);
          return;
       endif

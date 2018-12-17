@@ -1,0 +1,443 @@
+use uo;
+use os;
+use npc;
+use util;
+
+include ":attributes:attributes";
+include "include/sysEvent";
+include "include/say";
+include "include/dungeons";
+include ":mounts:mounts";
+include ":taming:taming";
+include ":tn:cooldown";
+include ":ghaia:generic";
+include ":ghaia:objective";
+
+set_script_option(SCRIPTOPT_CAN_ACCESS_OFFLINE_MOBILES, 1);
+
+var me             := self();
+var idlesnd, custombehaviors, personality, foodtype, npccfgfile;
+var fighting, patrolling;
+var wait_time := 10;
+var follow_tries := 0;
+
+//Custom events
+// const FOLLOW_CMD     := 0xA001;
+// const ATTACK_CMD     := 0xA002;
+// const NEW_MASTER_CMD := 0xA003;
+// const GUARD_CMD      := 0xA004;
+// const GO_LOC_CMD     := 0xA008;
+
+program NPCMonitor()
+   EnablePetMainEvents();
+   Setup();
+   set_critical(1);
+   SetWarMode( 0 );
+   Set_Event_Queue_Size(20);
+   wait_time := 10;
+   SetAnchor(0, 0, 0, 0);
+   while (me)
+      if (GetObjProperty(me, "objloc") != error)
+         DoObjective();
+      endif
+
+      if ( wait_time < 1 )
+         sleepms(10);
+      endif
+
+      Fight();
+      // PetFollow();
+      // PetGuard();
+
+      if (!fighting)
+         wait_time := RandomIntMinMax(60,120);
+      endif
+
+      var ev := Wait_For_Event(wait_time);
+      case(ev.type)
+         SYSEVENT_ENGAGED:
+         SYSEVENT_DAMAGED:
+            if (!following && !fighting)
+               if (CheckLosAt(me, ev.source.x, ev.source.y, ev.source.z) && Distance(me, ev.source) <= 6)
+                  Fight(ev.source);
+               endif
+            endif
+         // EVID_HERDING:
+         // 	herd(ev);
+         EVID_TAUNT:
+            if(ev.source && (!me.master.party || (me.master.party && !(ev.source in me.master.party.members))) )
+               Fight(ev.opponent);
+            endif
+         EVID_FLEE:
+            Flee(ev.source);
+         EVID_DOOBJECTIVE:
+            if (ev.destiny)
+               PetGoTo(ev.destiny, ev.move_type);
+            endif
+         // SYSEVENT_SPEECH:
+         //    ResolveSpeech(ev);
+         SYSEVENT_DOUBLECLICKED:
+            if ( ev.source == me.master || ev.source.cmdlevel >= 3 )
+            endif
+         SYSEVENT_ITEM_GIVEN:
+            TakeItem(ev);
+         // Custom events
+         // FOLLOW_CMD:
+         //    PetFollow(ev.targ);
+         // ATTACK_CMD:
+         //    Fight(ev.targ);
+         // GUARD_CMD:
+         //    PetGuard(ev.targ);
+         default: 
+            Wander();
+      endcase
+
+      wait_time := 5;
+      
+      var hunger_level := AP_GetVital(me, "Hunger");
+      if (hunger_level <= 250)
+         CreateAnimalitems();
+      endif
+      sleepms(10);
+   endwhile
+endprogram
+
+function Fight(opponent := 0)
+   if (opponent)
+      if ( opponent == me || opponent == fighting || !opponent.IsA(POLCLASS_MOBILE) )
+         return;
+      endif
+
+      fighting := opponent;
+      SetOpponent(opponent);
+      SetWarMode(1);
+      return;
+   endif
+
+   if (!fighting)
+      SetOpponent(0);
+      SetWarMode(0);
+      return;
+   endif
+
+   if (fighting.concealed || fighting.hidden || fighting.dead || Distance(me, fighting) > 14)
+      fighting := 0;
+      SetOpponent(0);
+      SetWarMode(0);
+      return;
+   endif
+
+   RunAwayFrom(fighting);
+   wait_time := 0;
+endfunction
+
+// function PetFollow(character := 0)
+//    if (character)
+//       if ( character == me || character == fighting || !character.IsA(POLCLASS_MOBILE) )
+//          return;
+//       endif
+//       patrolling := 0;
+//       guarding := 0;
+//       following := character;
+//       return;
+//    elseif (fighting)
+//       return;
+//    endif
+//    var dist := Distance(me, following);
+
+//    if( dist <= 2 )
+//       wait_time := 1;
+//    elseif( dist > 25 )
+//       following := 0;
+//       wait_time := 120;
+//    elseif ( dist > 4 )
+//       PetMovement(following, 2);
+//       // RunTowardLocation( following.x, following.y );
+//       wait_time := 0;
+//    else
+//       PetMovement(following, 1);
+//       // WalkTowardLocation( following.x, following.y );
+//       wait_time := 0;
+//    endif
+// endfunction
+
+function PetGoTo(destiny, move_type)
+   var flags := FP_IGNORE_MOBILES;
+   if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
+      flags := flags| FP_IGNORE_DOORS;
+   endif
+   var path := FindPath(  me.x, me.y, me.z, destiny.x, destiny.y, destiny.z, me.realm, flags, 12); //calcula o path
+   var sleepdelay := 275 - me.run_speed;//(CInt(GetDexterity(me)) * 1.5);
+   foreach coord in path
+      if (move_type == 1)
+         WalkTowardLocation( coord.x, coord.y ); //anda na direcao
+      else
+         RunTowardLocation( coord.x, coord.y ); //anda na direcao
+      endif
+      OpenDoors(me);
+      sleepms(sleepdelay);
+   endforeach
+endfunction
+
+function ProcessDoubleClick(ev)
+   var targ := TargetCoordinates(ev.source);
+   var owner := me.master;
+   if (!targ)
+      return;
+   endif
+
+   if (targ.mobile == me && me.graphic in pack_animals)
+      if ((EnumerateItemsInContainer(me.backpack)).size() > 0)
+         SendSysMessageEx(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
+         return;
+      endif
+      PrintText(ev.source, "*remove a mochila de "+me.name+"*");
+      me.graphic := GetObjProperty(me, "beforepack");
+      CreateItemInBackpack(ev.source, "backpack");
+      EraseObjProperty(me, "beforepack");
+   elseif (targ.mobile)
+      var input := PetGump(owner, me, targ.mobile);
+      if (input >= 10)
+         input -= 10;
+         if (pet_commands[input] == "Atacar")
+            Fight(targ.mobile);
+         elseif (pet_commands[input] == "Proteger")
+            PetGuard(targ.mobile);
+         elseif (pet_commands[input] == "Seguir")
+            PetFollow(targ.mobile);
+         elseif (pet_commands[input] == "Abandonar")
+            UnTame();
+         elseif (pet_commands[input] == "Novo Dono")
+            Transfer(targ.mobile);
+         // elseif (pet_commands[input] == "Atacar")
+         endif
+      elseif (input == 99)
+         SendSysMessageEx(owner, "Não é possível ativar sistema de I.A automática durante o beta.", SSM_FAIL);
+      endif
+   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
+      // endif
+      PetGoTo(targ, 2);
+      following := 0;
+   endif
+endfunction
+
+function EnablePetMainEvents()
+   EnableEvents(SYSEVENT_SPEECH, 2);
+   EnableEvents(SYSEVENT_ENGAGED);
+   EnableEvents(SYSEVENT_DAMAGED);
+   EnableEvents(SYSEVENT_DOUBLECLICKED, 5);
+   EnableEvents(SYSEVENT_ITEM_GIVEN, 2);
+   DisableEvents(SYSEVENT_OPPONENT_MOVED);
+   DisableEvents(SYSEVENT_ENTEREDAREA);
+endfunction
+
+function DisablePetMainEvents()
+   DisableEvents(SYSEVENT_SPEECH);
+   DisableEvents(SYSEVENT_ENGAGED);
+   DisableEvents(SYSEVENT_DAMAGED);
+   DisableEvents(SYSEVENT_ITEM_GIVEN);
+   DisableEvents(SYSEVENT_DOUBLECLICKED);
+   DisableEvents(SYSEVENT_OPPONENT_MOVED);
+   DisableEvents(SYSEVENT_ENTEREDAREA);
+endfunction
+
+function Setup()
+   var owner := me.master;
+   var owner_property := GetObjProperty(me, "owner");
+
+   if (GetObjProperty(me, "hitched"))
+      if ( !owner )
+         UnTame();
+      elseif (owner_property != me.master.serial)
+         var last_owner := SystemFindObjectBySerial(owner_property, SYSFIND_SEARCH_OFFLINE_MOBILES);
+         me.InitPetProperties(1);
+         SetObjProperty(me, "last_owner", last_owner.serial);
+         SetObjProperty(me, "owner", (me.master).serial);
+      endif
+   endif
+
+   if ( !me.backpack )
+      var new_pack := CreateItemAtLocation(me.x, me.y, me.z, "backpack", 1);
+      EquipItem(me, new_pack);
+   endif
+
+   personality     := me.GetPetProperties().personality;
+
+   var npccfgfile     := NPC_GetNPCConfig(me, 1);
+   foodtype := npccfgfile.foodtype;
+
+   me.facing := me.facing+1;
+   TurnToward(me.master);
+
+   me.cmdlevel := 4;
+endfunction
+
+function UnTame()
+   PrintTExtPrivate(me, "*"+me.name+" pode viver livre novamente.*", me.master);
+   SetObjProperty(me, "last_owner", (me.master).serial);
+
+   ErasePet(me.master, me.serial);
+   me.SetMaster(0);
+
+   var orig_script := GetObjProperty(me, "script");
+   if ( !orig_script )
+      // PrintTextAbove(me, "*doesnt have an original script to use now that taming is done?!*");
+      SysLog(me.name+" doesnt have an original script to use now that taming is done?!");
+      orig_script := ":ghaia:generic";
+   elseif ( orig_script["follower"] )
+      PrintTextAbove(me, "*my original script was follower.src ?!*");
+      SysLog(me.name+" my original script was follower.src ?!");
+      orig_script := ":ghaia:generic";
+   endif
+
+   me.script := orig_script;
+   SetName(me, GetObjProperty(me, "name"));
+   EraseObjProperty(me, "owner");
+   EraseObjProperty(me, "name");
+   EraseObjproperty(me, "script");
+   // EraseObjProperty(me, "spawnpoint");
+
+
+   RestartScript(me);
+endfunction
+
+function TakeItem(ev)
+   var cfg := ReadConfigFile(":*:itemdesc");
+   var item_props := cfg[(ev.item).objtype];
+   if ( item_props.script["eat"])
+      var hunger_level := AP_GetVital(me, "Hunger");
+      if (hunger_level <= 100)
+         MoveItemToContainer(ev.item, ev.source.backpack);
+         return PrintTextAbove(me, "*recusa comida*");
+      elseif (item_props.foodtype != foodtype)
+         MoveItemToContainer(ev.item, ev.source.backpack);
+         return PrintTextAbove(me, "*parece não gostar da comida*");
+      endif
+
+      PrintTextAbove(me, "*comendo*");
+      PlaySoundEffect(me, CInt(0x3b)+ RandomInt(3));
+      DestroyItem(ev.item);
+      hunger_level -= cint(item_props.foodvalue)*60;
+      if (hunger_level < 0) hunger_level := 0; endif
+      AP_SetVital(me, "Hunger", hunger_level);
+      PrintTextAbovePrivate(me,"*O animal parece feliz*", ev.source);
+      me.SetExp((cint(item_props.foodvalue) + 1) * 5);
+      return;
+   elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
+      if ((EnumerateItemsInContainer(ev.item)).size() > 0)
+         MoveItemToContainer(ev.item, ev.source.backpack);
+         SendSysMessageEx(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
+      elseif ( me.my_template() == "Horse3" )
+         SetObjProperty(me, "beforepack", me.graphic);
+         me.graphic := 291;
+         DestroyItem(ev.item);
+         PrintText(ev.source,"*prende uma mochila no cavalo*");
+      elseif ( me.my_template() == "Llama" )
+         SetObjProperty(me, "beforepack", me.graphic);
+         me.graphic := 292;
+         DestroyItem(ev.item);
+         PrintText(ev.source,"*prende uma mochila na llama*");
+      endif
+
+      return;
+   endif
+      //if(IsMountable(me.graphic))
+      //    mount := 1;
+      //else
+      //    mount := 0;
+      //endif
+   SendSysMessageEx(ev.source, "Não pode dar esse item!", SSM_FAIL);
+   MoveItemToContainer(ev.item, ev.source.backpack);
+endfunction
+
+function CanFight(me, mob)
+   var hostiles := ListHostiles( me.master, 8, LH_FLAG_LOS);
+
+   if (guarding)
+      hostiles += ListHostiles( guarding, 8, LH_FLAG_LOS);
+   endif
+
+   if (mob in hostiles)
+      return 1;
+   endif
+
+   return 0;
+endfunction
+
+function PetMovement(what, move_mode)
+   if (!CheckLosAt(me, what.x, what.y, what.z) || CanWalk("L", me.x, me.y, me.z, me.facing) == error) //se n¿o consegue correr direto
+		var path := GetObjProperty(me, "path"); //procura se ja calculou o path
+		var last_loc := GetObjProperty(me, "#ally_last_loc"); //procura se ja calculou o path
+		
+      if (path == error || ( last_loc && !(what in ListMobilesNearLocation(last_loc.x, last_loc.y, last_loc.z, 3)) )) //se n¿o calculou
+         var flags := FP_IGNORE_MOBILES;
+         if ( cint(GetObjProperty(me, "ignoredoor")) || cint(GetObjProperty(me, "opendoor")) )
+            flags := flags| FP_IGNORE_DOORS;
+         endif
+         path := FindPath(  me.x, me.y, me.z, what.x, what.y, what.z, me.realm, flags, 15); //calcula o path
+         
+         if (!path[1] || !path || path == error)
+            sleepms(2);
+            return 0;
+         else
+            if (move_mode == 2)
+               RunTowardLocation( path[1].x, path[1].y ); //anda na direcao
+            else
+               WalkTowardLocation( path[1].x, path[1].y ); //anda na direcao
+            endif
+				path.erase(1); //deleta a coordenada e vai pra proxima
+            set_critical(1);
+            SetObjProperty(me, "path", path);
+            SetObjProperty(me, "#ally_last_loc", array{what.x, what.y, what.z});
+            set_critical(0);
+         endif
+		endif
+
+      var coord := path[1]; //pega a primeira coordenada
+      if (coord); 
+         var coordtry := GetObjProperty(me, "#coordtry");
+         if (coordtry != error && coordtry[1] != coord)
+            SetObjProperty(me, "#coordtry", array{coord, ReadGameClock()+5 }); 
+         endif
+         if (move_mode == 2)
+            RunTowardLocation( coord.x, coord.y ); //anda na direcao
+         else
+            WalkTowardLocation( coord.x, coord.y ); //anda na direcao
+         endif
+         sleepms(2);
+         Opendoors(me); //tenta abrir possiveis portas
+         if (CoordinateDistance(me.x, me.y, coord.x, coord.y) <= 1) //se chegou onde devia 
+            path.erase(1); //deleta a coordenada e vai pra proxima
+            if (path[1])
+               SetObjProperty(me, "path", path);
+            else
+               EraseObjProperty(me, "path");
+            endif
+         else // se n¿o consegue chegar na coord 
+            if ( coordtry[2] > ReadGameClock()) //se ta tentando chegar la a mais de 5 segundos
+               EraseObjProperty(me, "path"); //deleta o path atual
+               return 0;
+            endif
+         endif
+      else
+         if (move_mode == 2)
+            RunToward( what );
+         else
+            WalkToward( what );
+         endif
+         RunToward( what );
+         sleepms(2);
+      endif
+   else
+      EraseObjProperty(me, "path");
+      EraseObjProperty(me, "#ally_last_loc");
+      if (move_mode == 2)
+         RunToward( what );
+      else
+         WalkToward( what );
+      endif
+      sleepms(2);
+	endif
+
+   return 1;
+endfunction

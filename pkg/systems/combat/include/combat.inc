@@ -278,7 +278,8 @@ endfunction
 
 function CheckifIsAlly(who, mobiles)
    var party := who.party.members;
-   var hostiles := ListHostiles(who);
+   var hostiles := ListHostiles(who, 20, LH_FLAG_INCLUDE_HIDDEN);
+   
    if (typeof(mobiles) != "Array")
       if (mobiles in hostiles)
          return 0;

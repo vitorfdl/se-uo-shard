@@ -28,11 +28,7 @@ program equipweapon(who, item, startup)
 	endif
 
    if (item.isA(POLCLASS_WEAPON))
-      item.resist_physical_mod := 0;
-      item.resist_fire_mod := 0;
-      item.resist_energy_mod := 0;
-      item.resist_cold_mod := 0;
-      item.resist_poison_mod := 0;
+      var item_cfg := ReadConfigFile()
    endif
 
 	if (who.npctemplate)
@@ -87,7 +83,19 @@ function SetEquipmentMods(who, item)
 		return 0;
 	endif
 
-	if (item_e.ArmorType)
+   if (item_e.WeaponType && !who.cmdlevel)
+      if (!HaveProficiency(who, item_e.WeaponType)) 
+		   SendSysMessageEx(who, "Você precisa ter proficiência em {} para equipar isso.".format(item_e.WeaponType), SSM_FAIL);
+         return 0;
+      endif
+   endif
+
+	if (item_e_e.ArmorType)
+      if (!HaveProficiency(who, "Armadura {}".format(item_e.ArmorType)))
+		   SendSysMessageEx(who, "Você precisa ter proficiência em {} para equipar isso.".format(item_e.ArmorType), SSM_FAIL);
+         return 0;
+      endif
+
       if (item_e.ArmorType["Pesada"])
          AP_SetSkillMod(who, "Dodge", AP_GetSkillMod(who, "Dodge") - 1);
          who.setToughness(3);

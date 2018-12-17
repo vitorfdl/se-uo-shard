@@ -7,6 +7,7 @@ include ":gumps:include/gumps_ex";
 include ":datafile:datafile";
 include ":attributes:attributes";
 include ":tn:tngumps";
+include ":charactercreation:proficiencies";
 
 const BTN_CHANGE_CHANGE := 13;
 const BTN_CHANGE_TEST := 14;
@@ -135,7 +136,7 @@ function showSpecialGump(who, item)
 
    var is_lang := gump_params.lang;
    var lang := "";
-   if (is_lang && !HaveFeat(who, is_lang))
+   if (is_lang && !HaveProficiency(who, is_lang))
       if (is_lang == "Linguagem Élfica")
          lang := "Face=Gargish size=4";
       elseif (is_lang == "Linguagem Rúnica")

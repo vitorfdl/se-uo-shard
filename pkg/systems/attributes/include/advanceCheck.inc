@@ -157,6 +157,13 @@ function GetClassMaxExp(classe)
    var level := cint(classe.level);
    if (!level) level := 1; endif
 
+   var amt := 2500;
+   if (i.level > 1)
+      amt := 3000;
+   elseif (i.level > 2)
+      amt := 3800;
+   endif
+   
    return level * 2500;
 endfunction
 

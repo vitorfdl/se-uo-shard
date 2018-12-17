@@ -130,6 +130,7 @@ function StartCharacterCreation(who, byref chardata)
             habs := array{},
             selected_habs := array{}
          }},
+         proficiencias := array{},
          exppoints := 0,
          level := 1,
          points := 1,
