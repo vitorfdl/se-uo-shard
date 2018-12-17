@@ -61,7 +61,7 @@ function ResetTreasures(spot_serial, treasures, spawntime := 0)
          SpawnTreasure(treasure, item, spot_serial);
       endif
 
-      sleepms(5);
+      sleepms(10);
    endforeach
 endfunction
 

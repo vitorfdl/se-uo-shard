@@ -34,7 +34,7 @@ program unequipweapon(who, item)
 	
 	
 	set_critical(1);
-
+   CancelTarget(who);
 	if (who.npctemplate)
 		return 1;
 	endif
