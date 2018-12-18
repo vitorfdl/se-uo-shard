@@ -51,9 +51,9 @@ function FinesseEffect(who, face, dmg)
 		endif
       
       var h := GetStandingHeight( finalx, finaly, who.z, who.realm );
-      if (h - who.z > 5) return 0; endif
+      if (h - who.z > 10) return 0; endif
 
-		var err := MoveObjectToLocation( who, finalx, finaly, h, who.realm, MOVEITEM_IGNOREMOVABLE );
+		var err := MoveObjectToLocation( who, finalx, finaly, h.z, who.realm, MOVEITEM_IGNOREMOVABLE );
 		if (err == error)
 		//	PrintText(who, "*bate no obstaculo*");
 			return 0;
