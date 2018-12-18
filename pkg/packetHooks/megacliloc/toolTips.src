@@ -167,6 +167,7 @@ exported function MegaCliloc( who, byref packet )
          elseif (item.isA(POLCLASS_ARMOR) && (item.resist_physical || item.resist_fire || item.resist_poison || item.resist_energy || item.resist_cold))
 			var cfg  := ReadConfigFile(":*:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);
+         if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
          if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
 
             var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};

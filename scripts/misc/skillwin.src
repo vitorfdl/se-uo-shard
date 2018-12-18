@@ -297,7 +297,7 @@ function SendSkillGump(who, chardata, targ, power)
       endif
    endforeach
 
-   if (chardata.proficiencias.size() < 3 || chardata.points)
+   if (chardata.proficiencias.size() < 4 || chardata.points)
       GFAddButton(gump, 523-2, 432, 0x80E, 0x80E, GF_CLOSE_BTN, GF_NEW_PROFICIENCY);
       GFHTMLArea(gump,  523, 432, 115, 25, "<basefont color=#006400><center>Nova Proficiência", 1);
    endif
@@ -634,7 +634,7 @@ function LearnProfiency(who, targ, byref chardata)
    chardata := GetObjProperty(targ, "chardata");
    if (!chardata.proficiencias) chardata.proficiencias := array{}; endif
 
-   if (chardata.proficiencias.size() >= 3)
+   if (chardata.proficiencias.size() >= 4)
       chardata.points -= 1;
    endif
 
