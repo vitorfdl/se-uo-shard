@@ -43,6 +43,11 @@ program block(who, shield)
       endif
    endif
 
+   if (weapon_cfg.WeaponType)
+      if (!HaveProficiency(who, weapon_cfg.WeaponType))
+         shield_cd += 3;
+      endif
+   endif
    // if (HaveFeatPrimary(who, 81) && !who.shield)
    //    var feat := getFeatById(81);
    //    var power := CalculateRawDamage(who, 0);
