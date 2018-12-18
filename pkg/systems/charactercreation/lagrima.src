@@ -54,6 +54,7 @@ program command_Message(who, item)
 	chardata.hits  := 300;
 	chardata.mana := 90;
 	chardata.stam := 60;
+	chardata.proficiencias := array{};
    SetObjProperty(who, "chardata", chardata);
    RecalcVitals(who);
 
