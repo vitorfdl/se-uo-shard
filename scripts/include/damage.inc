@@ -20,6 +20,7 @@ include "include/say";
 include ":blood:blood";
 include ":faccao:faccao";
 include ":combat:combat";
+include ":charactercreation:proficiencies";
 include ":magery:tnmagery";
 include ":fls_core:packets";
 
