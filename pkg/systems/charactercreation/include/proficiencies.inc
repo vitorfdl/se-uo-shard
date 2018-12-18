@@ -1,7 +1,7 @@
 include ":attributes:attributes";
 include "include/utils";
 
-function HaveProfiency(who, proficiency)
+function HaveProficiency(who, proficiency)
    var chardata := GetObjProperty(who, "chardata");
    if (!chardata) return;
    elseif (!chardata.proficiencias) return; endif

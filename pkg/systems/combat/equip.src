@@ -4,6 +4,7 @@ use cfgfile;
 
 include ":tn:equipment";
 include ":tn:cooldown";
+include ":charactercreation:proficiencies";
 include "include/say";
 
 program equipweapon(who, item, startup)
@@ -26,10 +27,6 @@ program equipweapon(who, item, startup)
 
 		SetName(who, who.name);	
 	endif
-
-   if (item.isA(POLCLASS_WEAPON))
-      var item_cfg := ReadConfigFile()
-   endif
 
 	if (who.npctemplate)
 		return 1;
@@ -90,9 +87,9 @@ function SetEquipmentMods(who, item)
       endif
    endif
 
-	if (item_e_e.ArmorType)
-      if (!HaveProficiency(who, "Armadura {}".format(item_e.ArmorType)))
-		   SendSysMessageEx(who, "Você precisa ter proficiência em {} para equipar isso.".format(item_e.ArmorType), SSM_FAIL);
+	if (item_e.ArmorType)
+      if (!HaveProficiency(who, "Armadura {}".format(item_e.ArmorType)) && !who.cmdlevel)
+		   SendSysMessageEx(who, "Você precisa ter proficiência em Armadura {} para equipar isso.".format(item_e.ArmorType), SSM_FAIL);
          return 0;
       endif
 

@@ -57,7 +57,7 @@ program NPCMonitor()
       case(ev.type)
          SYSEVENT_ENGAGED:
          SYSEVENT_DAMAGED:
-            if (!following && !fighting)
+            if (!fighting)
                if (CheckLosAt(me, ev.source.x, ev.source.y, ev.source.z) && Distance(me, ev.source) <= 6)
                   Fight(ev.source);
                endif
@@ -322,23 +322,6 @@ function TakeItem(ev)
       AP_SetVital(me, "Hunger", hunger_level);
       PrintTextAbovePrivate(me,"*O animal parece feliz*", ev.source);
       me.SetExp((cint(item_props.foodvalue) + 1) * 5);
-      return;
-   elseif ( ev.item.objtype IN {2482, 3701} && !(me.graphic in pack_animals) )
-      if ((EnumerateItemsInContainer(ev.item)).size() > 0)
-         MoveItemToContainer(ev.item, ev.source.backpack);
-         SendSysMessageEx(ev.source, "Você precisa esvaziar a mochila antes de coloca-la na montaria.");
-      elseif ( me.my_template() == "Horse3" )
-         SetObjProperty(me, "beforepack", me.graphic);
-         me.graphic := 291;
-         DestroyItem(ev.item);
-         PrintText(ev.source,"*prende uma mochila no cavalo*");
-      elseif ( me.my_template() == "Llama" )
-         SetObjProperty(me, "beforepack", me.graphic);
-         me.graphic := 292;
-         DestroyItem(ev.item);
-         PrintText(ev.source,"*prende uma mochila na llama*");
-      endif
-
       return;
    endif
       //if(IsMountable(me.graphic))

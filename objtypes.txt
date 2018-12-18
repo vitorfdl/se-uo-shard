@@ -1681,12 +1681,9 @@
 0x3168 ravenhelm combat
 0x3169 vultureHelm combat
 0x316a wingedhelm combat
-0x316b woodTunic combat
-0x316c woodGloves combat
-0x316d woodGorget combat
-0x316e woodSleeves combat
-0x316f woodLeggings combat
-# 0x3170 - 0x3176 unused
+# 0x316b - 0x316c unused
+0x316d Hidemailgorget combat
+# 0x316e - 0x3176 unused
 0x3177 CamisaNobre womenswork
 0x3178 CamisaFina womenswork
 # 0x3179 unused

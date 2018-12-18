@@ -345,6 +345,10 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
    GFSetID(gump, GUMPID_TNGUMPS);
 	GFResizePic(gump, 250, 250, cint(0x9C40), 540, 70+total_height);
 
+   if (hidden_cancel_btn)
+      GFClosable(gump, 0);
+   endif
+
 	var entries := dictionary{};
    var previousiter := 0;
 	var x := 270;

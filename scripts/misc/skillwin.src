@@ -34,6 +34,7 @@ CONST GF_HITS_BTN := 5;
 CONST GF_MANA_BTN := 6;
 CONST GF_STAM_BTN := 7;
 CONST GF_CHANGE_CLASS := 8;
+CONST GF_NEW_PROFICIENCY := 9;
 
 CONST GF_BKG_REM_BTN := 200;
 CONST GF_BKG_ADD_BTN := 100;
@@ -43,24 +44,25 @@ var ficharp_elem;
 
 function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y, power)
    if (!subclass)
-      GFHtmlShadowed(gump, 307, y+15, 150, 20, "#FFFFFF", "Sem subclasse", 4);
+      GFHtmlShadowed(gump, 210, y+10, 150, 20, "#FFFFFF", "Sem subclasse", 4);
       return;
    endif
    
    var feats := GetClassFeats(subclass.id);
-   GFHtmlShadowed(gump, x-16, y, 92, 20, "#FFFFFF", "<center>{}".format(subclass.id), 5);
+   GFHtmlShadowed(gump, x, y, 92, 20, "#FFFFFF", "{}".format(subclass.id), 5);
+
    if (subclass.level >= 3)
-      GFGumpPicTiled(gump, x-19, y+19, 96, 8, 9753);
+      GFGumpPicTiled(gump, x, y+35, 96, 8, 9753);
    else
-      buildExpBar(gump, x-19, y+19, 96, subclass.exp, GetClassMaxExp(subclass));
+      buildExpBar(gump, x, y+35, 96, subclass.exp, GetClassMaxExp(subclass));
    endif
-   GFTextLine(gump, x+14, y+29, 1000, "Lv. {}".format(subclass.level));
+   GFTextLine(gump, x, y+17, 1000, "Lv. {}".format(subclass.level));
    
    var cur_group := 1;
-   var x_pos := x+114;
+   var x_pos := x+102;
    foreach hab in feats
       if (hab.Group != cur_group)
-         GFGumpPicTiled(gump, x_pos+5, y+9, 1, 20, 2114);  // divisor
+         GFGumpPicTiled(gump, x_pos+5, y+9, 1, 25, 2114);  // divisor
          cur_group := hab.Group;
          x_pos += 15;
       endif
@@ -244,19 +246,18 @@ function SendSkillGump(who, chardata, targ, power)
 	GFGumpPic(gump, 667, 274, 59, 0); //bar
 
    if (chardata.subclasses)
-      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 141, 297, power);
-      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[2], 141, 368, power);
-      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[3], 141, 439, power);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 49, 295, power);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[2], 49, 368, power);
+      buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[3], 49, 439, power);
    endif
 
-	GFGumpPic(gump, 94, 350, 57, 0); // bar
-	GFGumpPicTiled(gump, 123, 350, 501, 21, 58); // bar
-	GFGumpPic(gump, 624, 350, 59, 0); // bar
+	GFGumpPic(gump, 91, 351, 57, 0); // bar
+	GFGumpPicTiled(gump, 121, 351, 279, 21, 58); // bar
+	GFGumpPic(gump, 396, 351, 59, 0); // bar
 
-
-	GFGumpPic(gump, 93, 421, 57, 0); // bar
-	GFGumpPicTiled(gump, 122, 421, 501, 21, 58); // bar
-	GFGumpPic(gump, 623, 421, 59, 0); // bar
+	GFGumpPic(gump, 91, 422, 57, 0); // bar
+	GFGumpPicTiled(gump, 121, 422, 279, 21, 58); // bar
+	GFGumpPic(gump, 396, 422, 59, 0); // bar
 
 
 	GFGumpPic(gump, 223, 63, 105, 0);
@@ -276,6 +277,31 @@ function SendSkillGump(who, chardata, targ, power)
    
 	GFTextLine(gump, 196, 501, 0, "Coloque seu mouse sobre os icones para ver descrições detalhadas");
 
+	GFTextLine(gump, 539, 292, 2212, "Proficiências");
+
+   for i := 1 to 4
+  	   GFGumpPicTiled(gump, 454, 324+(i * 20), 239, 1, 2700);
+      sleepms(2);
+   endfor
+
+   if (!chardata.proficiencias) chardata.proficiencias := array{}; endif
+
+   var x_mod := 0;
+   var y_mod := 0;
+   foreach item in (chardata.proficiencias)
+	   GFTextLine(gump, 458+x_mod, 324+y_mod, 1152, item);
+      x_mod += 130;
+      if (x_mod > 130)
+         x_mod := 0;
+         y_mod += 20;
+      endif
+   endforeach
+
+   if (chardata.proficiencias.size() < 3 || chardata.points)
+      GFAddButton(gump, 523-2, 432, 0x80E, 0x80E, GF_CLOSE_BTN, GF_NEW_PROFICIENCY);
+      GFHTMLArea(gump,  523, 432, 115, 25, "<basefont color=#006400><center>Nova Proficiência", 1);
+   endif
+   
 	return GFSendGump(who, gump);
 endfunction
 
@@ -513,6 +539,8 @@ function HandleSkillPage(who, byref chardata, res, targ)
       else
          SendSysMessageEx(who, "Use essa habilidade através da barra de atalhos.", SSM_INFO);
       endif
+   elseif (res == GF_NEW_PROFICIENCY)
+      LearnProfiency(who, targ, chardata);
    elseif (res == GF_HITS_BTN)
       chardata := GetObjProperty(who, "chardata");
       if (chardata.vitalpoints < 1)
@@ -583,21 +611,36 @@ function HandleBackgroundPage(who, res, targ)
    endif
 endfunction
 
-function LearnProfiency(who, targ, byref chardata, proficiency)
-   if (!YesNo(who, "Deseja mesmo adquirir esta proficiência? Custará 1 ponto caso já tenha três proficiências."))
-      return;
-   endif
+function LearnProfiency(who, targ, byref chardata)
+   chardata := GetObjProperty(targ, "chardata");
+   
+   var opts := array{};
+   var profCfg := ReadConfigFile(":charactercreation:config/proficiencias");
+   foreach prof_name in GetConfigStringKeys(profCfg)
+      if (!(prof_name in chardata.proficiencias))
+         opts.append(prof_name);
+      endif
+      sleepms(2);
+   endforeach
+
+   var new_prof := QuestionsGump(who, array{
+      struct{ title := "Qual Proficiência deseja aprender? Irá custar 1 ponto caso já tenha três proficiências", radio := opts }
+   });
+
+   if (!new_prof || !new_prof[1]|| new_prof[1] == "Cancelar") return; endif
+
+   new_prof := new_prof[1];
 
    chardata := GetObjProperty(targ, "chardata");
    if (!chardata.proficiencias) chardata.proficiencias := array{}; endif
 
-   if (chardata.proficiencias.size() < 3)
+   if (chardata.proficiencias.size() >= 3)
       chardata.points -= 1;
    endif
 
-   chardata.proficiencias.append(proficiency);
-   SendSysMessageEx(who, "Proficiência {} aprendida.".format())
-   SetObjProperty(who, "chardata", chardata);
+   chardata.proficiencias.append(new_prof);
+   SendSysMessageEx(who, "Proficiência {} aprendida.".format(new_prof));
+   SetObjProperty(targ, "chardata", chardata);
 endfunction
 
 
