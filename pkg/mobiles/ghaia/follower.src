@@ -111,7 +111,7 @@ program NPCMonitor()
       endcase
 
       wait_time := 5;
-      CreateAnimalitems();
+      // CreateAnimalitems();
       sleepms(10);
    endwhile
 endprogram
@@ -308,8 +308,9 @@ function ProcessDoubleClick(ev)
             Transfer(targ.mobile);
          // elseif (pet_commands[input] == "Atacar")
          endif
-      elseif (input == 99)
-         SendSysMessageEx(owner, "Não é possível ativar sistema de I.A automática durante o beta.", SSM_FAIL);
+      elseif (input == 99 && who.cmdlevel)
+         me.script := ":ghaia:animal_ia";
+         RestartScript(me);
       endif
    elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
       // endif
@@ -413,7 +414,6 @@ function UnTame()
    EraseObjProperty(me, "owner");
    EraseObjProperty(me, "name");
    EraseObjproperty(me, "script");
-   // EraseObjProperty(me, "spawnpoint");
 
 
    RestartScript(me);

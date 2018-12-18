@@ -94,10 +94,10 @@ program NPCMonitor()
 
       wait_time := 5;
       
-      var hunger_level := AP_GetVital(me, "Hunger");
-      if (hunger_level <= 250)
+      // var hunger_level := AP_GetVital(me, "Hunger");
+      // if (hunger_level <= 250)
          CreateAnimalitems();
-      endif
+      // endif
       sleepms(10);
    endwhile
 endprogram
@@ -186,16 +186,7 @@ function ProcessDoubleClick(ev)
       return;
    endif
 
-   if (targ.mobile == me && me.graphic in pack_animals)
-      if ((EnumerateItemsInContainer(me.backpack)).size() > 0)
-         SendSysMessageEx(ev.source, "Você precisa esvaziar a mochila antes de remove-la.");
-         return;
-      endif
-      PrintText(ev.source, "*remove a mochila de "+me.name+"*");
-      me.graphic := GetObjProperty(me, "beforepack");
-      CreateItemInBackpack(ev.source, "backpack");
-      EraseObjProperty(me, "beforepack");
-   elseif (targ.mobile)
+   if (targ.mobile)
       var input := PetGump(owner, me, targ.mobile);
       if (input >= 10)
          input -= 10;
@@ -212,7 +203,8 @@ function ProcessDoubleClick(ev)
          // elseif (pet_commands[input] == "Atacar")
          endif
       elseif (input == 99)
-         SendSysMessageEx(owner, "Não é possível ativar sistema de I.A automática durante o beta.", SSM_FAIL);
+         me.script := ":ghaia:follower";
+         RestartScript(me);
       endif
    elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
       // endif
