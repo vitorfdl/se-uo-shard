@@ -133,6 +133,7 @@ exported function MegaCliloc( who, byref packet )
             xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((40-deathpoint)/10));
          endif
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
+         if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
          xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
 
          var cfg  := ReadConfigFile(":*:itemdesc");
@@ -167,7 +168,6 @@ exported function MegaCliloc( who, byref packet )
          elseif (item.isA(POLCLASS_ARMOR) && (item.resist_physical || item.resist_fire || item.resist_poison || item.resist_energy || item.resist_cold))
 			var cfg  := ReadConfigFile(":*:itemdesc");
 			var elem := FindConfigElem(cfg, item.objtype);
-         if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
          if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
 
             var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
