@@ -294,7 +294,11 @@ function ProcessDoubleClick(ev)
       EraseObjProperty(me, "beforepack");
    elseif (targ.mobile)
       var input := PetGump(owner, me, targ.mobile);
-      if (input >= 10)
+      
+      if (input == 99)
+         me.script := ":ghaia:animal_ia";
+         RestartScript(me);
+      elseif (input >= 10)
          input -= 10;
          if (pet_commands[input] == "Atacar")
             Fight(targ.mobile);
@@ -308,9 +312,6 @@ function ProcessDoubleClick(ev)
             Transfer(targ.mobile);
          // elseif (pet_commands[input] == "Atacar")
          endif
-      elseif (input == 99)
-         me.script := ":ghaia:animal_ia";
-         RestartScript(me);
       endif
    elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
       // endif

@@ -188,21 +188,7 @@ function ProcessDoubleClick(ev)
 
    if (targ.mobile)
       var input := PetGump(owner, me, targ.mobile);
-      if (input >= 10)
-         input -= 10;
-         if (pet_commands[input] == "Atacar")
-            Fight(targ.mobile);
-         elseif (pet_commands[input] == "Proteger")
-            PetGuard(targ.mobile);
-         elseif (pet_commands[input] == "Seguir")
-            PetFollow(targ.mobile);
-         elseif (pet_commands[input] == "Abandonar")
-            UnTame();
-         elseif (pet_commands[input] == "Novo Dono")
-            Transfer(targ.mobile);
-         // elseif (pet_commands[input] == "Atacar")
-         endif
-      elseif (input == 99)
+      if (input == 99)
          me.script := ":ghaia:follower";
          RestartScript(me);
       endif
