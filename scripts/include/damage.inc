@@ -73,7 +73,11 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
    var dmg := base_dmg + _ifElse(wpn_elem.Damage, RandomDiceRoll(wpn_elem.Damage), 0);
 
    if (wpn_elem.DamagePercent)
-      dmg := cint(cdbl(dmg) * (cdbl(wpn_elem.DamagePercent) / 100 ));
+      var dmgp := cdbl(wpn_elem.DamagePercent);
+      if (item_e.WeaponType && !who.cmdlevel && !HaveProficiency(who, item_e.WeaponType))
+         dmgp -= 20;
+      endif
+      dmg := cint(cdbl(dmg) * (dmgp / 100.0 ));
    endif
    // fim
 

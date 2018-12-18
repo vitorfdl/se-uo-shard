@@ -80,13 +80,6 @@ function SetEquipmentMods(who, item)
 		return 0;
 	endif
 
-   if (item_e.WeaponType && !who.cmdlevel)
-      if (!HaveProficiency(who, item_e.WeaponType)) 
-		   SendSysMessageEx(who, "Você precisa ter proficiência em {} para equipar isso.".format(item_e.WeaponType), SSM_FAIL);
-         return 0;
-      endif
-   endif
-
 	if (item_e.ArmorType)
       if (!HaveProficiency(who, "Armadura {}".format(item_e.ArmorType)) && !who.cmdlevel)
 		   SendSysMessageEx(who, "Você precisa ter proficiência em Armadura {} para equipar isso.".format(item_e.ArmorType), SSM_FAIL);
