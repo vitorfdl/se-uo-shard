@@ -133,11 +133,11 @@ exported function MegaCliloc( who, byref packet )
             xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((40-deathpoint)/10));
          endif
 		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
-         if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
-         xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
 
          var cfg  := ReadConfigFile(":*:itemdesc");
          var elem := FindConfigElem(cfg, item.objtype);
+         if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
+         xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
 
          if (item.isA(POLCLASS_WEAPON))
             if (!elem.DamagePercent)
