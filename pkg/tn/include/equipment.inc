@@ -154,7 +154,7 @@ function getEquipCharRequirement(res)
       return 8;
    elseif (res >= 34)
       return 6;
-   elseif (res >= 25)
+   elseif (res >= 26)
       return 4;
    elseif (res >= 18)
       return 2;

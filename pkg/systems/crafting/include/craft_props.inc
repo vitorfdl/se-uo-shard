@@ -165,7 +165,7 @@ function ApplyCraftChanges(theitem, level_select)
          endforeach
      elseif (theitem.isA(POLCLASS_ARMOR))
          foreach resist in resdmg_list
-            var value := RandomIntMinMax(2 * level_select, 4*level_select);
+            var value := RandomIntMinMax(2 * level_select, 3*level_select);
             theitem.set_member("resist_{}_mod".format(resist), value);
             sleepms(2);
          endforeach
