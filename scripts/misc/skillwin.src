@@ -624,7 +624,7 @@ function LearnProfiency(who, targ, byref chardata)
    endforeach
 
    var new_prof := QuestionsGump(who, array{
-      struct{ title := "Qual Proficiência deseja aprender? Irá custar 1 ponto caso já tenha três proficiências", radio := opts }
+      struct{ title := "Qual Proficiência deseja aprender? Irá custar 1 ponto caso já tenha 4 proficiências", radio := opts }
    });
 
    if (!new_prof || !new_prof[1]|| new_prof[1] == "Cancelar") return; endif
