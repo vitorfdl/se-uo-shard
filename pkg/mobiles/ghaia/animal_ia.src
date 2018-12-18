@@ -78,6 +78,7 @@ program NPCMonitor()
          //    ResolveSpeech(ev);
          SYSEVENT_DOUBLECLICKED:
             if ( ev.source == me.master || ev.source.cmdlevel >= 3 )
+               ProcessDoubleClick(ev);
             endif
          SYSEVENT_ITEM_GIVEN:
             TakeItem(ev);
