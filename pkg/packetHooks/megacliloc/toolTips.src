@@ -181,8 +181,8 @@ exported function MegaCliloc( who, byref packet )
                endif
             endforeach
 
-            xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((res / 9)+1 <= 20, (res / 9)+1, 20), WHITE);
-            xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((res / 15)+1 <= 4, (res / 15)+1, 4), WHITE);
+            xDesc += "Lv. Personagem: {}<br>{}".format(getEquipCharRequirement(res) , WHITE);
+            xDesc += "Lv. Classe: {}<br>{}".format(getEquipClassRequirement(res) , WHITE);
          endif
       elseif (item.isA(POLCLASS_CONTAINER))
 			var cfg  := ReadConfigFile(":*:itemdesc");

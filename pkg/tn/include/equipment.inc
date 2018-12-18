@@ -138,8 +138,38 @@ function CheckLevelRequirement(who, item)
          endif
       endforeach
 
-      if ((res / 9)+1 > level) return 0; endif
-      if ((res / 15)+1 > class_level) return 0; endif
+      if (getEquipCharRequirement(res) > level) return 0; endif
+      if (getEquipClassRequirement(res) > class_level) return 0; endif
+   endif
+
+   return 1;
+endfunction
+
+function getEquipCharRequirement(res)
+   if (res >= 58)
+      return 12;
+   elseif (res >= 54)
+      return 10;
+   elseif (res >= 44)
+      return 8;
+   elseif (res >= 34)
+      return 6;
+   elseif (res >= 25)
+      return 4;
+   elseif (res >= 18)
+      return 2;
+   endif
+   return 1;
+endfunction
+
+
+function getEquipClassRequirement(res)
+   if (res >= 52)
+      return 4;
+   elseif (res >= 45)
+      return 3;
+   elseif (res >= 35)
+      return 2;
    endif
 
    return 1;
