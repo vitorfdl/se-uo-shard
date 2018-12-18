@@ -308,7 +308,7 @@ function ProcessDoubleClick(ev)
             Transfer(targ.mobile);
          // elseif (pet_commands[input] == "Atacar")
          endif
-      elseif (input == 99 && owner.cmdlevel)
+      elseif (input == 99)
          me.script := ":ghaia:animal_ia";
          RestartScript(me);
       endif
