@@ -93,6 +93,8 @@ program NPCMonitor()
             Wander();
       endcase
 
+      if (!ev) Wander(); endif
+
       wait_time := 5;
       
       // var hunger_level := AP_GetVital(me, "Hunger");
