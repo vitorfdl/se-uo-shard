@@ -825,6 +825,7 @@ function CombatEventsOptions(who, state, no_mobile := 0)
       input_list.append(struct{ "title" := "Qual o efeito da ball", "marked" := ""+cint(state.effect) });
       input_list.append(struct{ "title" := "Qual gráfico de sub ball? (type 3)", "marked" := ""+cint(state.subgraphic) });
       input_list.append(struct{ "title" := "Qual cor do sub ball? (type 3)", "marked" := ""+cint(state.subcolor) });
+      input_list.append(struct{ "title" := "Distância para efeito target (all, around, cone, inline...) ?", "marked" := ""+cint(state.conedist)});
       var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
 
       state.target     := output[1];
@@ -840,6 +841,7 @@ function CombatEventsOptions(who, state, no_mobile := 0)
       state.effect   := cint(output[11]);
       state.subgraphic := cint(output[12]);
       state.subcolor   := cint(output[13]);
+      state.conedist   := cint(output[14]);
    endif
 
    return state;
