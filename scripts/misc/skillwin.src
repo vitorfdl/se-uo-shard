@@ -612,8 +612,6 @@ function HandleBackgroundPage(who, res, targ)
 endfunction
 
 function LearnProfiency(who, targ, byref chardata)
-   chardata := GetObjProperty(targ, "chardata");
-   
    var opts := array{};
    var profCfg := ReadConfigFile(":charactercreation:config/proficiencias");
    foreach prof_name in GetConfigStringKeys(profCfg)
@@ -623,18 +621,32 @@ function LearnProfiency(who, targ, byref chardata)
       sleepms(2);
    endforeach
 
+   var extra := "";
+   if (chardata.proficiencias.size() >= 4)
+      extra := " (Custará 1 ponto de personagem)";
+   endif
+
    var new_prof := QuestionsGump(who, array{
-      struct{ title := "Qual Proficiência deseja aprender? Irá custar 1 ponto caso já tenha 4 proficiências", radio := opts }
+      struct{ title := "Qual Proficiência deseja aprender?{}".format(extra), radio := opts }
    });
 
    if (!new_prof || !new_prof[1]|| new_prof[1] == "Cancelar") return; endif
 
    new_prof := new_prof[1];
 
+   if (chardata.proficiencias.size() >= 4)
+      if (!YesNo(who, "Aprender a proficiência {} custará 1 Ponto de Personagem. Deseja continuar?"))
+         return;
+      endif
+   endif
+
    chardata := GetObjProperty(targ, "chardata");
    if (!chardata.proficiencias) chardata.proficiencias := array{}; endif
-
+   
    if (chardata.proficiencias.size() >= 4)
+      if (!chardata.points)
+         SendSysMessageEx(who, "Pontos insuficientes para comprar esta proficiencia", SSM_FAIL);
+      endif
       chardata.points -= 1;
    endif
 

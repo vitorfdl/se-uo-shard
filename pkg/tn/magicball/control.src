@@ -78,6 +78,6 @@ program usedardo(ball)
          DestroyItem(ball);
       endif
 
-      sleepms(800);
+      sleepms(500);
    endwhile
 endprogram
