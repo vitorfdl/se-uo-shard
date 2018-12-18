@@ -74,7 +74,7 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
 
    if (wpn_elem.DamagePercent)
       var dmgp := cdbl(wpn_elem.DamagePercent);
-      if (item_e.WeaponType && !who.cmdlevel && !HaveProficiency(who, item_e.WeaponType))
+      if (wpn_elem.WeaponType && !who.cmdlevel && !HaveProficiency(who, wpn_elem.WeaponType))
          dmgp -= 20;
       endif
       dmg := cint(cdbl(dmg) * (dmgp / 100.0 ));
