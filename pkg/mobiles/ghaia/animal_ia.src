@@ -181,23 +181,16 @@ function PetGoTo(destiny, move_type)
 endfunction
 
 function ProcessDoubleClick(ev)
-   var targ := TargetCoordinates(ev.source);
    var owner := me.master;
-   if (!targ)
-      return;
-   endif
 
-   if (targ.mobile)
-      var input := PetGump(owner, me, targ.mobile, 1);
+      var input := PetGump(owner, me, me, 1);
       if (input == 99)
          me.script := ":ghaia:follower";
          RestartScript(me);
       endif
-   elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
-      // endif
-      PetGoTo(targ, 2);
-      following := 0;
-   endif
+   // elseif (!Cint(targ.mobile) && !Cint(targ.item))//se n¿o for nem item nem mobile anda ate la
+   //    // endif
+   //    PetGoTo(targ, 2);
 endfunction
 
 function EnablePetMainEvents()
