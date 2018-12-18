@@ -90,7 +90,7 @@ exported function GetDmgInfo(ball)
 	var dmg_info := GetObjProperty(ball, "DmgInfo");
    if (!dmg_info)
       dmg_info := struct{
-         "dice" := "2d4+2",
+         "dmg" := 105,
          "type" := DMG_ENERGY
       };
    endif

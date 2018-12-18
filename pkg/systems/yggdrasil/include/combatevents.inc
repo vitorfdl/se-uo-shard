@@ -818,7 +818,7 @@ function CombatEventsOptions(who, state, no_mobile := 0)
       input_list.append(struct{ "title" := "Qual type?", "marked" := 1+cint(state.ball_type), radio := array{"0 - Single DMG", "1 - Area DMG", "2 - Token Balls"} });
       input_list.append(struct{ "title" := "Qual duração?", "marked" := duration });
       input_list.append(struct{ "title" := "Qual a porcentagem de poder em dano?", "marked" := dmg_dice });
-      input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := 1, "radio" := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY, "Sem Resistência" }});
+      input_list.append(struct{ "title" := "Qual o tipo de dano?", "marked" := output[7] in dmgs, "radio" := dmgs });
       input_list.append(struct{ "title" := "Qual gráfico de ball?", "marked" := ""+cint(state.graphic) });
       input_list.append(struct{ "title" := "Qual cor do ball?", "marked" := ""+cint(state.color) });
       input_list.append(struct{ "title" := "Qual o som de impacto?", "marked" := ""+cint(state.sound) });
@@ -841,6 +841,7 @@ function CombatEventsOptions(who, state, no_mobile := 0)
       state.subgraphic := cint(output[12]);
       state.subcolor   := cint(output[13]);
    endif
+   
    return state;
 endfunction
 

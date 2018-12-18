@@ -39,7 +39,7 @@ program usedardo(ball)
             var mobile := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 0, BALL_FLAG, ball.realm)).randomentry();
             if (mobile)
                PlayObjectCenteredEffect(mobile, effect, 10, 10);
-               DamageFLS(mobile, RandomDiceRoll(dmg_info.dice), dmg_info.type);
+               DamageFLS(mobile, dmg_info.dmg, dmg_info.type, owner);
                ball.PlayBallSound();
                DestroyItem(ball);
             endif
@@ -50,7 +50,7 @@ program usedardo(ball)
                var mobs := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 3, BALL_FLAG, ball.realm));
                foreach mob in mobs
                   PlayObjectCenteredEffect(mob, effect, 10, 10);
-                  DamageFLS(mob, RandomDiceRoll(dmg_info.dice), dmg_info.type);
+                  DamageFLS(mob, dmg_info.dmg, dmg_info.type, owner);
                   ball.PlayBallSound();
                   sleepms(2);
                endforeach
