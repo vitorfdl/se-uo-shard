@@ -97,7 +97,7 @@ endfunction
 
 function AlertAllies(me, opponent)
    var my_spot := GetObjProperty(me, "spawnpoint");
-   var allies_near := GetAlliesNear(me, 10);
+   var allies_near := GetAlliesNear(me, 6);
    var myallies := array{};
    foreach mob in allies_near
       if (CheckLineOfSight(me, mob))
