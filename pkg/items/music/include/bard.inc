@@ -416,14 +416,14 @@ function playagain(who,item,notas,notas2,tempo,letra,emocao)
       return 0;
    else
       start_script(":musicianship:continueMusic", struct{
-         "who" := who,
-         "item" := item,
-         "notas" := notas,
+         "who"    := who,
+         "item"   := item,
+         "notas"  := notas,
          "notas2" := notas2,
-         "tempo" := tempo,
-         "letra" := letra,
+         "tempo"  := tempo,
+         "letra"  := letra,
          "emocao" := emocao,
-         "what" := 1
+         "what"   := 1
       });
       return 0;
    endif
@@ -478,41 +478,41 @@ function TentarDenovo(who,item,notas,notas2,tempo,letra)
 endfunction
 
 function ActiveMusicEffect(who, emocao, duration)
-      case (emocao)
-         "Enconrajar":
-            var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
-            foreach ally in allies
-               if (ally != who && CheckifisAlly(who, ally))
-                  TS_StartTimer(ally, "aumentar_poder", duration, 15);
-               endif
-               sleepms(2);
-            endforeach
-            break;
-         "Entristecer": 
-            var enemies := CheckifisAlly(who, ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
-            foreach enemy in enemies
-               TS_StartTimer(enemy, "diminuir_poder", duration, 10);
-               sleepms(2);
-            endforeach
-            break;
-         "Alegrar":
-            var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
-            foreach ally in allies
-               if (ally != who && CheckifisAlly(who, ally))
-                  TS_StartTimer(ally, "healovertime", duration, 1);
-               endif
-               sleepms(2);
-            endforeach
-            break;
-         "Enfurecer":
-            var enemies := CheckifisAlly(who, ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
-            foreach enemy in enemies
-               if (enemy.isA(POLCLASS_MOBILE) && !isBoss(enemy) && RandomInt(100) <= 15)
-                  var event := struct{"type":=SYSEVENT_ENGAGED, "source":= enemy.randomentry()};
-                  SendEvent(enemy, event);
-               endif
-               sleepms(2);
-            endforeach
-            break;
-      endcase
+   case (emocao)
+      "Enconrajar":
+         var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+         foreach ally in allies
+            if (ally != who && CheckifisAlly(who, ally))
+               TS_StartTimer(ally, "aumentar_poder", duration, 15);
+            endif
+            sleepms(2);
+         endforeach
+         break;
+      "Entristecer": 
+         var enemies := CheckifisAlly(who, ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+         foreach enemy in enemies
+            TS_StartTimer(enemy, "diminuir_poder", duration, 10);
+            sleepms(2);
+         endforeach
+         break;
+      "Alegrar":
+         var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
+         foreach ally in allies
+            if (ally != who && CheckifisAlly(who, ally))
+               TS_StartTimer(ally, "healovertime", duration, 1);
+            endif
+            sleepms(2);
+         endforeach
+         break;
+      "Enfurecer":
+         var enemies := CheckifisAlly(who, ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+         foreach enemy in enemies
+            if (enemy.isA(POLCLASS_MOBILE) && !isBoss(enemy) && RandomInt(100) <= 15)
+               var event := struct{"type":=SYSEVENT_ENGAGED, "source":= enemy.randomentry()};
+               SendEvent(enemy, event);
+            endif
+            sleepms(2);
+         endforeach
+         break;
+   endcase
 endfunction

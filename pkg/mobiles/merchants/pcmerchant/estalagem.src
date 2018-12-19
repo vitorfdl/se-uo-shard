@@ -396,12 +396,12 @@ endfunction
 function getgoldpayment(player, amount)
    if (!player.spendgold(amount))
       SendSysMessageEx(player, "Você precisa de {} m.o para fazer isto.".format(amount), SSM_INFO);
-      return 1;
+      return 0;
    else
       SendSysMessageEx(player, "Você pagou {} m.o.".format(amount), SSM_INFO);
    endif
    
-   return 0;
+   return 1;
 	// var pay := 0;
 	// do
 	// 	var targ := Target(player);
