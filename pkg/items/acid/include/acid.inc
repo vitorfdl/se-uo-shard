@@ -84,12 +84,13 @@ function DealAcidDamage(npc, mobile, acid_pool, acid_damage:=0)
 	if( RandomInt(10) > 5 )
 		var acid_burned := equipped_items[RandomInt(equipped_items.size())+1];
 		if( acid_burned.isA(POLCLASS_WEAPON) || acid_burned.isA(POLCLASS_ARMOR) )
-			var armor_damage := RandomInt(4) + 1;
-			if( acid_burned.hp > armor_damage )
+			var armor_damage := RandomInt(3);
+			if ( acid_burned.hp > armor_damage )
 				acid_burned.hp := acid_burned.hp - armor_damage;
 				PrintTextAbovePrivate( mobile, "*Acido danificou seu equipamento*", mobile, _DEFAULT_TEXT_FONT, 72);
 			else
-				DestroyItem(acid_burned);
+				acid_burned.hp := 0;
+            MoveItemToContainer( acid_burned, mobile.backpack );
 			endif
 		endif
 	endif
