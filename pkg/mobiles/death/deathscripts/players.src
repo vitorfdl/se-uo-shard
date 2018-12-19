@@ -89,6 +89,7 @@ program death(params)
             if (!letargico)
                PrintText(corpse, "*letargico*", SSM_FAIL);
                SetObjProperty(ghost, "letargico", polcore().systime);
+               SetObjProperty(corpse, "letargico", polcore().systime);
             endif
             SendSystemReport(ghost, "Você está em estado letárgico! Somente acordará caso alguém leve seu corpo até uma Igreja ou te entregue uma Semente de Anar");
          endif
