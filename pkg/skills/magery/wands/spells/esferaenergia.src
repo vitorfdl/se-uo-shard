@@ -25,7 +25,7 @@ program animateSword(params)
    newball.SetEffect(0x372A);
    newball.SetBallSound(0x666, 0);
    newball.SetBallGraphic(13935, 1990);
-   newball.SetDmgInfo(struct{ "dice":= MageDiceTable("C", spellinfo.powered)+5, "type" := DMG_ENERGY });
+   newball.SetDmgInfo(struct{ "dmg":= MageDiceTable("C", spellinfo.powered)+5, "type" := DMG_ENERGY });
 
 	return 1;
 endprogram

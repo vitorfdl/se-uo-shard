@@ -31,8 +31,8 @@ program usedardo(ball)
          endif
       endif
 
-      var type := ball.GetType();
-      var effect := ball.GetEffect();
+      var type     := ball.GetType();
+      var effect   := ball.GetEffect();
       var dmg_info := ball.GetDmgInfo();
       case (type)
          0:default:

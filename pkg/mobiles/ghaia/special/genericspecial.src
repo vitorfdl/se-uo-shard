@@ -462,7 +462,7 @@ program loko(params)
                newball.StoreBallGraphic(state.subgraphic, state.subcolor);
             endif
 
-            newball.SetDmgInfo(struct{ "dmg":= CalculatePowerPercent(power, state.dice_dmg), "type" := state.dmg_type });
+            newball.SetDmgInfo(struct{ "dmg":= CalculatePowerPercent(power, state.dmg_dice), "type" := state.dmg_type });
             sleepms(2);
          endforeach
       elseif (state.type == "Simple Target")
