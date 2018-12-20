@@ -47,11 +47,13 @@ program usedardo(ball)
          1:
             var touch := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 0, BALL_FLAG, ball.realm));
             if (touch.size() >= 1)
-               var mobs := CheckifIsAlly(owner, ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 3, BALL_FLAG, ball.realm));
+               var mobs := ListMobilesNearLocationEx(ball.x, ball.y, ball.z, 3, BALL_FLAG, ball.realm);
+               ball.PlayBallSound();
                foreach mob in mobs
-                  PlayObjectCenteredEffect(mob, effect, 10, 10);
-                  DamageFLS(mob, dmg_info.dmg, dmg_info.type, owner);
-                  ball.PlayBallSound();
+                  if (!CheckifIsAlly(owner, mob))
+                     PlayObjectCenteredEffect(mob, effect, 10, 10);
+                     DamageFLS(mob, dmg_info.dmg, dmg_info.type, owner);
+                  endif
                   sleepms(2);
                endforeach
                DestroyItem(ball);

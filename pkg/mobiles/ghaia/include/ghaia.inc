@@ -146,7 +146,7 @@ function GetAlliesNear(loc, range := 5)
 
    return myallies;
 endfunction
-  
+
 //pega a lista de inimigos proximo, se tiver player perto e a tendencia for evil ele vira inimigo
 function GetEnemiesNear(loc, range := 5, get_hidden := 0)
    // var enemies := GetConfigStringArray( npccfgfile, "enemy" );
