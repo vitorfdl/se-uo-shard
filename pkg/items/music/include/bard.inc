@@ -478,6 +478,8 @@ function TentarDenovo(who,item,notas,notas2,tempo,letra)
 endfunction
 
 function ActiveMusicEffect(who, emocao, duration)
+   if (duration >= 10) duration := 10; endif
+   
    case (emocao)
       "Enconrajar":
          var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
