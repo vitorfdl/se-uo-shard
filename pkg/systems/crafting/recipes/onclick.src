@@ -70,7 +70,9 @@ function SendGump(who, scroll)
 
    var is_lang := GetObjProperty(scroll, "lang");
    var lang := "";
-   if (is_lang && !HaveProficiency(who, is_lang))
+   var has_feat := HaveProficiency(who, is_lang);
+
+   if (is_lang && !has_feat)
       if (is_lang == "Linguagem Élfica")
          lang := "Face=Gargish";
       elseif (is_lang == "Linguagem Rúnica")
@@ -80,7 +82,7 @@ function SendGump(who, scroll)
          return 0;
       endif
    endif
-   
+
 	var gump := GFCreateGump();
 	GFSetID(gump, GUMPID_RECIPES);
 	GFDisposable(gump, 0);
@@ -101,9 +103,9 @@ function SendGump(who, scroll)
 	if (!tilepic)
 		tilepic := objtype;
 	endif
-	
+
 	if (cint(tilepic))
-      if (!is_lang)
+      if (!is_lang || has_feat)
 		   GFTilePic(gump, 127, 91, tilepic);
       endif
    else
@@ -111,7 +113,7 @@ function SendGump(who, scroll)
 	   GFHTMLArea(gump, 38, 110, 240, 20, "<BASEFONT SIZE=1 COLOR=#8c1a1a {}><CENTER>receitas de uma vez".format(lang));
 	endif
 
-   if (!is_lang)
+   if (!is_lang || has_feat)
       var my_recipes := GetObjProperty(who, "recipes");
       if (!my_recipes) my_recipes := dictionary{}; endif
       objtype := cint(objtype);
