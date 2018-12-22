@@ -73,6 +73,12 @@ program UseWood( who, wood )
             break;
          endif
 
+         var persons_above := ListMobilesNearLocationEx( x,  y,  z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN|LISTEX_FLAG_PLAYERS_ONLY);
+         foreach person in persons_above
+            DamageFLS(person, 50, DMG_FIRE);
+            sleepms(2);
+         endforeach
+
 			if (GetObjProperty(campfire, "encantado") == 1 && !enchanted)
 				healpoints := healpoints+2;
 				PrintText(campfire, "*brilha mais forte*");
