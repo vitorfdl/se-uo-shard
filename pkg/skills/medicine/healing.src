@@ -123,7 +123,7 @@ endprogram
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
    var max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.4);
 
-   if ( cint(AP_GetVital(targ, "hits")) >= max_healing )
+   if ( cint(AP_GetVital(targ, "hits")) >= max_healing && !targ.master )
 		SendSysMessageEx(mobile, "Você não acha que suas ataduras farão mais efeito neste paciente.");
 		return 1;
    endif
