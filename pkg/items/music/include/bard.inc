@@ -478,13 +478,13 @@ function TentarDenovo(who,item,notas,notas2,tempo,letra)
 endfunction
 
 function ActiveMusicEffect(who, emocao, duration)
-   if (duration >= 10) duration := 10; endif
+   if (duration >= 10 || !cint(duration)) duration := 10; endif
    
    case (emocao)
       "Enconrajar":
          var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
          foreach ally in allies
-            if (ally != who && CheckifisAlly(who, ally))
+            if (CheckifisAlly(who, ally))
                TS_StartTimer(ally, "aumentar_poder", duration, 15);
             endif
             sleepms(2);
@@ -500,7 +500,7 @@ function ActiveMusicEffect(who, emocao, duration)
       "Alegrar":
          var allies := ListMobilesNearLocationEx(who.x, who.y, LIST_IGNORE_Z, 8, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN);
          foreach ally in allies
-            if (ally != who && CheckifisAlly(who, ally))
+            if (CheckifisAlly(who, ally))
                TS_StartTimer(ally, "healovertime", duration, 1);
             endif
             sleepms(2);
