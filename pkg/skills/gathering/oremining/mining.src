@@ -47,16 +47,16 @@ program OreMining(who, tool)
 		return;
 	endif
 
-   var have_feat := HaveFeatSecondary(who, 67);
+   var stam_consume := _ifElse(HaveFeatSecondary(who, 67), 2, 5);
 	while(MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat))
 		CheckToolWear(who, tool, EXTRACAO);
 		if (!CheckLoop(who, tool, my_x, my_y, my_facing))
 			break;
-		elseif (AP_GetVital(who, "Stamina") < 5)
+		elseif (AP_GetVital(who, "Stamina") < stam_consume)
 			SendSysMessageEx(who, "Você esta muito cansado para minerar.");
 			break;
 		endif
-		AP_ConsumeVital(who, "Stamina", 5);
+		AP_ConsumeVital(who, "Stamina", stam_consume);
 		sleep(3);
 	endwhile
 	
@@ -87,7 +87,7 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat)
 	endif
 
 
-   var craft_amt := _ifElse(have_feat, RandomIntMinmax(2, 4), RandomIntMinmax(1, 3));
+   var craft_amt := RandomIntMinmax(1, 3);
    if (veil < craft_amt) craft_amt := veil; endif
 
    var consume := craft_amt;
