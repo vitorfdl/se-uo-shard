@@ -14,7 +14,7 @@ function StartScript(mobile, attacker := 0, level := 0)
    mobile.SetToughness(level);
 
    while (mobile.connected)
-      var area := GetMidpointCircleCoords(mobile.x, mobile.y, d);
+      var area := GetMidpointCircleCoords(mobile.x, mobile.y, 3);
       foreach p in area
          PlayMovingEffectXYZEx( p.x, p.y, mobile.z+5, mobile.x, mobile.y, mobile.z, mobile.realm, 0x0F51, 0 ,0, 0, 2117);
 
