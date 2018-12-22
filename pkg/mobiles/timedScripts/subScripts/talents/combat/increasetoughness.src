@@ -13,10 +13,10 @@ include "include/say";
 function StartScript(mobile, attacker := 0, level := 0)
    mobile.SetToughness(level);
 
-   while (who.connected)
-      var area := GetMidpointCircleCoords(who.x, who.y, d);
+   while (mobile.connected)
+      var area := GetMidpointCircleCoords(mobile.x, mobile.y, d);
       foreach p in area
-         PlayMovingEffectXYZEx( p.x, p.y, who.z+5, who.x, who.y, who.z, who.realm, 0x0F51, 0 ,0, 0, 2117);
+         PlayMovingEffectXYZEx( p.x, p.y, mobile.z+5, mobile.x, mobile.y, mobile.z, mobile.realm, 0x0F51, 0 ,0, 0, 2117);
 
          sleepms(2);
       endforeach
