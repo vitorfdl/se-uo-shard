@@ -71,7 +71,7 @@ function HandleDblClick(npc, player)
          return;
       endif
 
-      if (cobrarDinheiro(player, 25))
+      if (player.spendgold(25))
          PrintText(npc, "*Desenha runas com as mãos no ar, que em seguida surgem ao redor*");
          PrintText(npc, "Que fogo queime em teu sangue.", SSM_INFO);
          changeGuildMoney(guild, 25);
@@ -81,7 +81,8 @@ function HandleDblClick(npc, player)
          AP_SetVital(player, "DP", AP_GetVital(player, "DP") +10);
          SetName(player, player.name);
       else
-         PrintText(npc, "Ora, isso é uma pena...");
+         SendSysMessageEx(player, "Você não tem moedas suficientes", SSM_FAIL);
+         PrintText(npc, "Infelizmente não posso te oferecer meus serviços...");
       endif
    endif
 
@@ -132,36 +133,4 @@ function HandleSeeEvent(npc, player)
       PrintText(npc, "Você parece muito ferido, gostaria de uma benção?");
       SendSystemReport(player, "{} parece falar com você".format(npc.name), SSM_INFO);
    endif
-endfunction
-
-function cobrarDinheiro(player, qty)
-	if (player.cmdlevel < 3)
-      return 1;
-   endif
-
-   while(player.connected)
-      SendSysMessageEx(player, "Escolha o montante de moedas para doar. (Pressione ESC para cancelar).", SSM_REQUEST);
-      var targ := Target(player);
-      if ( !targ )
-         SendSysMessageEx(player, "Cancelado.");
-         return 0;
-      elseif ( !(targ in EnumerateItemsInContainer(player.backpack)) )
-         SendSysMessageEx(player, "Não esta na sua bolsa.", SSM_FAIL);
-      elseif ( GetObjProperty(targ, "stealed") )
-         SendSysMessageEx(player, "Objeto foi roubado!", SSM_FAIL);
-      elseif ( targ.objtype == MOEDAS )
-         if ( !ReserveItem(targ) )
-            SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
-         else
-            if (!SubtractAmount(targ, qty))
-               SendSysMessageEx(player, "Você não pode pagar com isto.", SSM_FAIL);
-            else
-               SendSysMessageEx(player, "Pagamento efetuado com sucesso!", SSM_FAIL);
-               return 1;
-            endif
-         endif
-      else
-         SendSysMessageEx(player, "Você deve indicar moedas de cobre.", SSM_FAIL);
-      endif
-   endwhile
 endfunction
