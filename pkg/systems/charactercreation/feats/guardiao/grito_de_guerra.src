@@ -28,6 +28,8 @@ program mestreLaminas(param)
       endif
       sleepms(2);
    endforeach
+
+   TS_StartTimer(who, "increasetoughness", 10, 10);
    
    if (plus)
       TS_StartTimer(who, "defesa_magica", 6, _ifElse((plus > 8), 8, plus));
