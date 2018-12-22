@@ -48,7 +48,7 @@ program OreMining(who, tool)
 	endif
 
    var stam_consume := _ifElse(HaveFeatSecondary(who, 67), 2, 5);
-	while(MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat))
+	while(MiningLoop(who, tool, my_x, my_y, targ, my_facing))
 		CheckToolWear(who, tool, EXTRACAO);
 		if (!CheckLoop(who, tool, my_x, my_y, my_facing))
 			break;
@@ -63,7 +63,7 @@ program OreMining(who, tool)
 	SendSysMessageEx(who, "Você parou de minerar.");
 endprogram
 
-function MiningLoop(who, tool, my_x, my_y, targ, my_facing, have_feat)
+function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
 	var i;
 	for ( i:=0; i<3; i:=i+1 )
 		if ( !CheckLoop(who, tool, my_x, my_y, my_facing) )
