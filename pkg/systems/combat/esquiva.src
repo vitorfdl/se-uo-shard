@@ -31,6 +31,6 @@ program manobra(who)
    sleep(1);
    if (HaveFeatPrimary(who, 43))
       PlayStationaryEffect( who.x, who.y, who.z+2, 0x9DAC, 1, 7);
-      TS_StartTimer(who, "furtividade", 3);
+      TS_StartTimer(who, "furtividade", 2);
    endif
 endprogram
