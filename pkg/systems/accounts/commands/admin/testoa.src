@@ -19,37 +19,25 @@ include ":crafting:craft_props";
 // include ":quest:quest";
 include ":yggdrasil:spawnsInternal";
 
-function PCircle(x, y, radius)
-   var circle_points := array{ struct{ x := x, y := y } };
+function testing(params)
+	var who := params[1];
+	var targ := params[3];
+	params := 0; // No longer needed
 
-   var radius2 := radius * radius;
-
-   var i;
-   for (i := 0; i < radius; i+=1)
-      var j := 0;
-      while (i*i + j*j < radius2 )
-      sleepms(2);
-         if (i != 0 || j != 0)
-            if (j != 0) circle_points.append(struct{ x := x+i, y := y+j }); endif
-            if (j != 0 && i != 0) circle_points.append(struct{ x := x-i, y := y-j }); endif
-            if (j != 0 || i != 0) circle_points.append(struct{ x := x+i, y := y-j }); endif
-            if (i != 0) circle_points.append(struct{ x := x-i, y := y+j }); endif
-         endif
-         j += 1;
-      endwhile
-   endfor
-
-   return circle_points;
+   var newball := CreateItemAtLocation(targ.x, targ.y, targ.z+2, 0xFFBE);
+   newball.SetDirection(who.serial);
+   newball.SetOwner(targ);
+   newball.SetDuration(8);
+   newball.SetType(1);
+   newball.SetEffect(0x372A);
+   newball.SetBallSound(0x666, 0);
+   newball.SetBallGraphic(13935, 1990);
+   newball.SetDmgInfo(struct{ "dmg":= 5, "type" := DMG_ENERGY });
 endfunction
 
 program oafeatures_sendpacket(who, text)
-   // var targ     := Target(who);
-   // print(targ.isA(POLCLASS_ARMOR));
-   // print(targ.isA(POLCLASS_EQUIPMENT));
-   // print(targ.isA(POLCLASS_WEAPON));
-   var res := AddTimeTo(polcore().systime, 2, "weeks");
-   print(res);
-   print(StrFormatTime("%U"));
+   var targ := Target(who);
+   testing(array{ who, 0, targ });
    // ApplyCraftColor(targ, 2);
    // ApplyCraftChanges(targ, 3);
 
@@ -115,8 +103,6 @@ program oafeatures_sendpacket(who, text)
 
    //    sleepms(2);
    // endforeach
-
-   sleepms(600);
 
    // var new_struct := dictionary{};
    // foreach recipe in (recipes.Keys())
