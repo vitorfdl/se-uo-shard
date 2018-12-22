@@ -92,7 +92,6 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
 
    var consume := craft_amt;
    if (!has_light) consume += 1; endif
-   if (have_feat) consume -= 1; endif //escavação
    
    veil -= consume;
    var minerio := CreateItemInBackPack(who, cint(ore_config.minerio), craft_amt);
