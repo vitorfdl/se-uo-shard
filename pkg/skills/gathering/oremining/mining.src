@@ -110,6 +110,7 @@ function MiningLoop(who, tool, my_x, my_y, targ, my_facing)
    endif
 
    if (veil <= 0)
+      if (RandomInt(101) <= 2 && HaveFeatSecondary(who, 68)) Garimpeiro(who); endif
       return 0;
    endif
    

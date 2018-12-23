@@ -92,6 +92,7 @@ program UseBandage(mobile, bandage)
 			SendSysMessageEx(mobile, "O alvo esta morto.", SSM_FAIL);
 			return 0;
 		endif
+
 		return HealNpcCorpse(mobile, targ);
 	endif
 
@@ -122,8 +123,9 @@ endprogram
 
 function HealPatient(mobile, targ, heal_skill, bonus, poison)
    var max_healing := cint(AP_GetVitalMaximumValue(targ, "hits") * 0.4);
+   if (targ.master) max_healing := cint(AP_GetVitalMaximumValue(targ, "hits")); endif
 
-   if ( cint(AP_GetVital(targ, "hits")) >= max_healing && !targ.master )
+   if ( cint(AP_GetVital(targ, "hits")) >= max_healing)
 		SendSysMessageEx(mobile, "Você não acha que suas ataduras farão mais efeito neste paciente.");
 		return 1;
    endif

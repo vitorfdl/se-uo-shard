@@ -45,10 +45,12 @@ function GetItemCFGInfo(mobile, wpn)
 		var to_return := GetNpcRandomAttack(mobile);
       if (wpn.objtype != 0x1F020)
          var wpn_elem := GetItemDescriptor(cint(wpn.objtype));
-         wpn_elem.hitbonus := to_return.hitbonus;
-         wpn_elem.dicedmg := to_return.dicedmg;
+         wpn_elem.hitbonus     := to_return.hitbonus;
+         wpn_elem.dicedmg      := to_return.dicedmg;
+         wpn_elem.AttackDamage := to_return.dicedmg;
          return wpn_elem;
       endif
+      
       return to_return;
 	endif
    

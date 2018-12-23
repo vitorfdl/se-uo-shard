@@ -16,7 +16,7 @@ program SpellScript(params)
 	params := 0; // No longer needed
    
    var maxstam := cdbl(AP_GetVitalMaximumValue(who, STAMINA));
-	AP_SetVital(who, STAMINA, AP_GetVital(who, STAMINA) + cint(maxstam * 0.5) );
+	AP_SetVital(who, STAMINA, AP_GetVital(who, STAMINA) + cint(maxstam * 0.4) );
    PlayCustomSound(who, 10);
 
 	return 1;

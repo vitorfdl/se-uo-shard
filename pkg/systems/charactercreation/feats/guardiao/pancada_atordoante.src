@@ -30,8 +30,10 @@ program defensor(params)
       return SendSysMessageEx(who, "Você deve estar equipando uma arma gigante ou um escudo.", SSM_FAIL);
    endif
 
-	if (CheckBlockDodge(targ, 1, 1))
-      return 0;
+   if (!targ.isA(POLCLASS_NPC))
+      if (CheckBlockDodge(targ, 1, 1))
+         return 0;
+      endif
    endif
 
    PlaySoundEffect(who, cint(0x145));

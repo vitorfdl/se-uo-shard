@@ -23,10 +23,13 @@ program SpellScript(params)
       sleepms(2);
    endforeach
 
+   var recover_amt := cdbl(AP_GetVitalMaximumValue(who, HITS)) * 0.2;
+   HealFLS(who, cint(recover_amt));
+
    for i := 1 to 6
       TS_CurePoison(who, 1000, "DP", 10);
       sleep(1);
    endfor
-	
+
 	return 1;
 endprogram 
