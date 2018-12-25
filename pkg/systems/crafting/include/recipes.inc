@@ -64,8 +64,12 @@ function AddRecipe(who, objtype, learn_method := 0)
       if (!item_has_level)
          return 0;
       endif
-
       var max_exp := recipes[objtype].level * 100;
+      var combatcfg := ReadConfigFile(":combat:itemdesc");
+      if (combatcfg[objtype].ArmorType)
+         max_exp *= 0.5;
+      endif
+
       recipes[objtype].exp += _ifElse(learn_method, 4, 10);
       if (recipes[objtype].exp >= max_exp)
          recipes[objtype].level += 1;

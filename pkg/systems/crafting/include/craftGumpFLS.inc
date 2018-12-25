@@ -176,7 +176,10 @@ function createGump(who, recipes, params)
       if (recipe.desc || recipe.level)
          var description := array{};
          if (recipe.level)
-            var experience := (cint(recipe.exp) * 100) / (recipe.level * 100);
+            var div_amt := 100;
+            if (itemdesc_cfg[recipe.objtype].ArmorType) div_amt := 50; endif
+            
+            var experience := (cint(recipe.exp) / (recipe.level * div_amt);
             description.append("<center>Experiência: {}{}%".format(BLUE, experience));
          endif
 
