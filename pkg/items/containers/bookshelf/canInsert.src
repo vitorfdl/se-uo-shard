@@ -14,7 +14,7 @@ program CanInsert(mobile, container, movetype, insert_type, adding_item, existin
 	if ( adding_item.IsBook() )
 		return 1;
 	else
-		SendSysMessage(mobile, "That is not a book.");
+		SendSysMessage(mobile, "Isso não é um livro.");
 		return 0;
 	endif
 
