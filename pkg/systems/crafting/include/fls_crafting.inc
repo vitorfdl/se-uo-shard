@@ -146,7 +146,6 @@ function MaterialSelection(who, type, chk, recipe, craft_skill)
 	   material := Target(who);
    else
       var resources := GetConfigStringDictionary(FindConfigElem(resource_level, type), "Level");
-      print(resources);
       var opts := array{};
       for i := 1 to (recipe.level)
          opts.append("Level {} - {}".format(i, itemdesc_cfg[resources[cstr(i)]].desc));
@@ -533,6 +532,19 @@ function AddMaterialMod(recipe, theitem, principalMaterial, materialColor)
 	
 	SetObjProperty(theitem, "material", principalMaterial);
 
+   if (theitem.isA(POLCLASS_ARMOR) && theitem.tile_layer != 0x2)
+      var resists := GetConfigStringDictionary(elem, "Resist");
+      var item_resists := _ifOr(GetObjProperty(theitem, "ArmorResists"), struct{});
+      foreach key in (resists.keys())
+         var key_fix := "{}Resist".format(key);
+         item_resists[key_fix] := cint(item_resists[key_fix]) + cint(resists[key]);
+      endforeach
+
+      SetObjProperty(theitem, "ArmorResists", item_resists);
+      // var resist_list := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
+
+   endif
+
 	// if (theitem.isA(POLCLASS_WEAPON) || theitem.isA(POLCLASS_ARMOR))
 	// 	var hpmod := GetConfigInt(elem, "hpmod");
 	// 	theitem.maxhp_mod += hpmod;
@@ -541,7 +553,6 @@ function AddMaterialMod(recipe, theitem, principalMaterial, materialColor)
 endfunction
 
  function AddItemDescription(who, item)
-	var repeating := 1;
    var desc := QuestionsGump(who, array{ struct{ title := "Entre com a descrição do item", lines := 1 }});
    if (desc)
 	   SetObjProperty(item, "description", desc[1]);

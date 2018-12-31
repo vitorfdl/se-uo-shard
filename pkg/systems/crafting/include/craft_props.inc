@@ -47,6 +47,9 @@ function TranslateDamage(dmg)
 		"cold": return "Frio";
 		"energy": return "Energia";
 		"poison": return "Veneno";
+		"slash": return "Corte";
+		"bludge": return "Concussão";
+		"piercing": return "Perfuração";
 		default: return dmg;
 	endcase
 endfunction
@@ -157,23 +160,21 @@ function ApplyCraftChanges(theitem, level_select)
       
       if (theitem.isa(POLCLASS_WEAPON))
          theitem.dmg_mod := RandomIntMinMax(12 * level_select, 17 * level_select);
-      elseif (theitem.isA(POLCLASS_ARMOR) && theitem.tile_layer == 0x2)
-         foreach resist in resdmg_list
-            var value := RandomIntMinMax(level_select, 2*level_select);
-            theitem.set_member("resist_{}_mod".format(resist), value);
-            sleepms(2);
-         endforeach
-     elseif (theitem.isA(POLCLASS_ARMOR))
-         foreach resist in resdmg_list
-            var value := RandomIntMinMax(2 * level_select, 3*level_select);
-            theitem.set_member("resist_{}_mod".format(resist), value);
-            sleepms(2);
-         endforeach
+      // elseif (theitem.isA(POLCLASS_ARMOR) && theitem.tile_layer == 0x2)
+      //    foreach resist in resdmg_list
+      //       var value := RandomIntMinMax(level_select, 2*level_select);
+      //       theitem.set_member("resist_{}_mod".format(resist), value);
+      //       sleepms(2);
+      //    endforeach
       endif
       SetObjProperty(theitem, "level", level_select);
       SetName(theitem, theitem.name);
       return 1;
    endif
+endfunction
+
+function ApplyMaterialMods(theitem, material)
+
 endfunction
 
 function ApplyCraftColor(theitem, level_select)

@@ -62,7 +62,7 @@ program harvest_honey (character, beehive)
 			if (RandomInt (4) == 1)
 				CreateItemAtLocation(beehive.x, beehive.y, beehive.z, ITEM_SWARM, 1, character.realm);
 				SendSysMessageEx(character, "Uh-oh...", 3, 40);
-            DamageFLS(character, RandomDiceRoll("1d2"), DMG_PHYSICAL);
+            DamageFLS(character, RandomDiceRoll("2d30"), DMG_PIERCE);
 				return;
 			endif
 		endif

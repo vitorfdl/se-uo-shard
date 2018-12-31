@@ -25,6 +25,10 @@ program manobra(who)
       endif
    endif
 
+   if (who.shield)
+      dodge_cd += 2;
+   endif
+
    SendSysMessageEX(who, "Você está esquivando de ataques!", SSM_INFO);
    TS_StartCooldown(who, "dodge_block", dodge_cd, 0, "Esquiva/Bloqueio está disponivel novamente.");
    TS_StartCooldown(who, "dodge", 2);

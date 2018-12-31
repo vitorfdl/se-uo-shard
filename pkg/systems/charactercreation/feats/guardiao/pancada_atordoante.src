@@ -36,10 +36,12 @@ program defensor(params)
       endif
    endif
 
+   var dmg_type := GetDamageType(who, weapon_cfg);
+
    PlaySoundEffect(who, cint(0x145));
    PrintText(who, "*golpe de {}*".format(_ifElse(who.shield, "escudo", "com arma gigante")));
    TS_StartTimer(targ, "tombar", 10);
-   DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+   DamageFLS(targ, spellinfo.PowerMod[1], dmg_type, who);
 
    if (targ.isA(POLCLASS_NPC)) HealFLS(who, spellinfo.PowerMod[2]); else  HealFLS(who, spellinfo.PowerMod[3]); endif
   

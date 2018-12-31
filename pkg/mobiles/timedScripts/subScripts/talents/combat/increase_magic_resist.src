@@ -12,7 +12,7 @@ include "include/say";
 include "include/damage";
 
 function StartScript(mobile, attacker := 0, level := 0)
-   var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+   var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY};
    foreach resist in resists
       var res := mobile.get_member("resist_{}_mod".format(resist));
       mobile.set_member("resist_{}_mod".format(resist), res + level);
@@ -23,7 +23,7 @@ function StartScript(mobile, attacker := 0, level := 0)
 endfunction
 
 function EndScript(mobile, level)
-   var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
+   var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY};
    foreach resist in resists
       var res := mobile.get_member("resist_{}_mod".format(resist));
       mobile.set_member("resist_{}_mod".format(resist), res - level);

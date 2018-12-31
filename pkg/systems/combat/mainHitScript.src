@@ -78,8 +78,7 @@ program MainHitScript( params )
       endif
    endif
 
-   var reduction := cint(cdbl(base_damage) * CalculateDefenseReduction(defender, damage_type, 0, armor));
-   base_damage -= reduction;
+   base_damage := CalculateDefenseReduction(defender, damage_type, base_damage, armor);
 
 	PlayHurtSound(defender);
 	DamageFLS(defender, base_damage, DMG_FORCED, attacker, no_damage_show);

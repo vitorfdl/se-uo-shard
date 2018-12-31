@@ -35,7 +35,7 @@ program startTalent(param)
          if (mobile in already_hit || mobile == who || mobile in who.party.members || (!mobile.npctemplate && !(mobile in hostiles)))
             continue;
          endif
-            DamageFLS(mobile, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+            DamageFLS(mobile, spellinfo.PowerMod[1], DMG_PIERCE, who);
             already_hit.append(mobile);
       endforeach
       sleepms(2);

@@ -27,228 +27,213 @@ endprogram
 
 exported function MegaCliloc( who, byref packet )
 	var item := SystemFindObjectBySerial(packet.GetInt32(OFFSET_OBJECT_SERIAL));
-	if ( item )
+	if ( !item )
+      return 0;
+   endif
 
-		packet.SetSize(15);//primeira parte do packet eh tamanho 15
+   packet.SetSize(15);//primeira parte do packet eh tamanho 15
 
-		var Object_Name;
-		//var Text_Color := "CBA300";
+   var Object_Name;
 
-		if( item.IsA(POLCLASS_MOBILE) )
-			Object_Name := item.name;
+   if( item.IsA(POLCLASS_MOBILE) )
+      Object_Name := item.name;
 
-         if (GetObjProperty(item, "facecovered"))
-            if (!who.cmdlevel)
-               Object_Name := "Desconhecido";
-            else
-               Object_Name := "{} [Desconhec.]".format(Object_Name);
+      if (GetObjProperty(item, "facecovered"))
+         if (!who.cmdlevel)
+            Object_Name := "Desconhecido";
+         else
+            Object_Name := "{} [Desconhec.]".format(Object_Name);
+         endif
+      endif
+
+      var raca := GetObjProperty(item, "chardata").raca;
+      if (item.npctemplate && !raca)
+         raca :=  GetObjProperty(item, "force_race");
+      endif
+      if (!Object_Name["Desconhecido"] && raca)
+         Object_Name := "{} [{}]".format(Object_Name, raca);
+      endif
+      
+      if (item.npctemplate && GetObjProperty(item, "is_boss"))
+         Object_Name :=  "<BASEFONT COLOR=#CBA300>{}".format(Object_Name);
+      endif
+      
+      if (item.dead && !who.cmdlevel)
+         Object_Name := "Fantasminha";
+      endif
+      // Let's get the characters hightlight color.
+      // This is just an example, NPC's and stuff will still have to be added
+      // ofcourse. :)
+      // Setting the text color for the object's name will only show 
+      // if the object's name has changed. So it's been left commented out for now.
+      //if (xObject.murderer)
+      //	Text_Color := "FF0000";
+      //elseif (xObject.criminal)
+      //	Text_Color := "666666";
+      //else
+      //	Text_Color := "00CCFF";
+      //endif
+   elseif ( item.IsA(POLCLASS_ITEM) )
+      Object_Name := item.desc;
+
+      var trap_list := GetObjProperty(item, "TrapList");
+      if (trap_list && GetObjProperty(item, "trapSpoted"))
+         Object_Name := "{} [{} armadilha]".format(Object_Name, trap_list.size());
+      endif
+
+      if ((item.isA(POLCLASS_WEAPON) || item.isA(POLCLASS_ARMOR)) && item.hp == 0)
+         Object_Name := "{} [danificado]".format(Object_Name);
+      endif
+   endif
+
+   // If you try to break a new line in the first cliloc(below) it doesn't
+   // display right for some reason.
+   // If you want to change the color of the Object's name.
+   // Use this. 
+   // Object_Name := CAscZ("<BASEFONT COLOR=#" + Text_Color + ">" + Object_Name);
+
+   Object_Name := CAscZ(Object_Name);
+
+   packet.SetInt32(OFFSET_CLILOC_ID, 1042971);
+   packet.SetUnicodeString(OFFSET_UNICODE_TEXT, Object_Name, 1);
+   // I've noticed that this packet is only sent if this value has changed
+   // from the last time it was checked. And using html to change the size doesn't work
+   // for some reason. Maybe a core/client issue?
+   packet.SetInt16(OFFSET_LENGTH_ID, Object_Name.Size() * 2);
+
+   // Start of Loop.
+
+   // This is where you'll be putting all your properties. <br> to break a new line.
+   // You wont need to add anymore cliloc id's because you can just add all the props
+   // into one string.
+   var xDesc  := "";
+   var desc   := _ifOr(GetObjProperty(item, "description"), "");
+   var descmods := _ifOr(GetObjProperty(item, "descmod"), array{});
+
+   var new_desc := array{};
+   foreach descmod in descmods
+      if (!(descmod in new_desc)) new_desc.append(descmod); endif
+   endforeach
+
+   if (new_desc.size())
+      desc := "{}<br>{}".format(desc, "<br>".join(new_desc));
+   endif
+
+   if (len(desc))
+      if (len(desc) > 85)
+         desc := desc[1, 85];
+      endif
+      xDesc += "{}{}<br>".format(WHITE, desc);
+   endif
+
+   if (item.IsA(POLCLASS_MOBILE) && item.acctname)
+      var deathpoint := AP_GetVital(item, "DP");
+      if (deathpoint < 40)
+         xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((40-deathpoint)/10));
+      endif
+   elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
+
+      var cfg  := ReadConfigFile(":*:itemdesc");
+      var elem := FindConfigElem(cfg, item.objtype);
+      if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
+      xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
+
+      if (item.isA(POLCLASS_WEAPON))
+         if (!elem.DamagePercent)
+            xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
+         else
+            xDesc += "{}Poder: {} [{}%]<br>{}".format(YELLOW, cint(item.dmg_mod), elem.DamagePercent,  WHITE);
+         endif
+
+         if (elem.DamageType)
+            xDesc += "Tipo de Dano: {}<br>".format(TranslateDamage(elem.DamageType));
+         endif
+         xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
+         xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
+         
+         if (item.quality >= 2)
+            var hits := GetWeaponFeat(elem);
+            if (hits)
+               xDesc += "{}{}<br>".format(ORANGE, hits);
             endif
          endif
 
-			var raca := GetObjProperty(item, "chardata").raca;
-         if (item.npctemplate && !raca)
-            raca :=  GetObjProperty(item, "force_race");
+         if (item.quality >= 3)
+            // var hits := GetHitsInfo(elem);
+            if (elem.Passive)
+               xDesc += "{}Passivo: {}<br>".format(LIGHTGRAY, TranslatePassive(elem.Passive));
+            endif
          endif
-			if (!Object_Name["Desconhecido"] && raca)
-				Object_Name := "{} [{}]".format(Object_Name, raca);
-			endif
-			
-			if (item.npctemplate && GetObjProperty(item, "is_boss"))
-            Object_Name :=  "<BASEFONT COLOR=#CBA300>{}".format(Object_Name);
-			endif
-			
-         if (item.dead && !who.cmdlevel)
-            Object_Name := "Fantasminha";
-         endif
-			// Let's get the characters hightlight color.
-			// This is just an example, NPC's and stuff will still have to be added
-			// ofcourse. :)
-			// Setting the text color for the object's name will only show 
-			// if the object's name has changed. So it's been left commented out for now.
-			//if (xObject.murderer)
-			//	Text_Color := "FF0000";
-			//elseif (xObject.criminal)
-			//	Text_Color := "666666";
-			//else
-			//	Text_Color := "00CCFF";
-			//endif
-		elseif ( item.IsA(POLCLASS_ITEM) )
-			Object_Name := item.desc;
-
-         var trap_list := GetObjProperty(item, "TrapList");
-         if (trap_list && GetObjProperty(item, "trapSpoted"))
-            Object_Name := "{} [{} armadilha]".format(Object_Name, trap_list.size());
-         endif
-
-         if ((item.isA(POLCLASS_WEAPON) || item.isA(POLCLASS_ARMOR)) && item.hp == 0)
-            Object_Name := "{} [danificado]".format(Object_Name);
-         endif
-		endif
-
-		// If you try to break a new line in the first cliloc(below) it doesn't
-		// display right for some reason.
-		// If you want to change the color of the Object's name.
-		// Use this. 
-		// Object_Name := CAscZ("<BASEFONT COLOR=#" + Text_Color + ">" + Object_Name);
-
-		Object_Name := CAscZ(Object_Name);
-
-		packet.SetInt32(OFFSET_CLILOC_ID, 1042971);
-		packet.SetUnicodeString(OFFSET_UNICODE_TEXT, Object_Name, 1);
-		// I've noticed that this packet is only sent if this value has changed
-		// from the last time it was checked. And using html to change the size doesn't work
-		// for some reason. Maybe a core/client issue?
-		packet.SetInt16(OFFSET_LENGTH_ID, Object_Name.Size() * 2);
-
-		// Start of Loop.
-
-		// This is where you'll be putting all your properties. <br> to break a new line.
-		// You wont need to add anymore cliloc id's because you can just add all the props
-		// into one string.
-		var xDesc  := "";
-		var desc   := GetObjProperty(item, "description");
-		var descmods := GetObjProperty(item, "descmod");
-
-		if((descmods!=error) && (desc == error))
-			 desc:="";
-		endif
-
-      if(descmods != error)
-         foreach descmod in descmods
-            desc += descmod ;
-         endforeach
-      endif
-		 
-		if (len(desc) > 85)
-			desc := desc[1, 85];
-		endif
-
-		if (desc!=error && desc != "")
-			xDesc += "{}{}<br>".format(WHITE, desc);
-		endif
-
-		if (item.IsA(POLCLASS_MOBILE) && item.acctname)
-			var deathpoint := AP_GetVital(item, "DP");
-         if (deathpoint < 40)
-            xDesc += "{}{}x Gravemente Ferido<br>".format(WHITE, Ceil((40-deathpoint)/10));
-         endif
-		elseif (item.isa(POLCLASS_WEAPON) || item.isa(POLCLASS_ARMOR))
-
+      elseif (item.isA(POLCLASS_ARMOR) || GetObjProperty(item, "ArmorResists"))
          var cfg  := ReadConfigFile(":*:itemdesc");
          var elem := FindConfigElem(cfg, item.objtype);
-         if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
-         xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
-
-         if (item.isA(POLCLASS_WEAPON))
-            if (!elem.DamagePercent)
-               xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
-            else
-               xDesc += "{}Poder: {} [{}%]<br>{}".format(YELLOW, cint(item.dmg_mod), elem.DamagePercent,  WHITE);
-            endif
-
-            if (elem.DamageType)
-               xDesc += "Tipo de Dano: {}<br>".format(TranslateDamage(elem.DamageType));
-            endif
-            xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
-            xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
-            
-            if (item.quality >= 2)
-               var hits := GetWeaponFeat(elem);
-               if (hits)
-                  xDesc += "{}{}<br>".format(ORANGE, hits);
-               endif
-            endif
-
-            if (item.quality >= 3)
-               // var hits := GetHitsInfo(elem);
-               if (elem.Passive)
-                  xDesc += "{}Passivo: {}<br>".format(LIGHTGRAY, TranslatePassive(elem.Passive));
-               endif
-            endif
-         elseif (item.isA(POLCLASS_ARMOR) && (item.resist_physical || item.resist_fire || item.resist_poison || item.resist_energy || item.resist_cold))
-			var cfg  := ReadConfigFile(":*:itemdesc");
-			var elem := FindConfigElem(cfg, item.objtype);
          if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
 
-            var resists := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_PHYSICAL};
-            var res := 0;
-            foreach resist in resists
-               var value := item.get_member("resist_{}".format(resist));
-               if (value)
-                  xDesc += "Def. {}: {}%<br>".format(TranslateDamage(resist), value);
-                  if (value > res)
-                     res := value;
-                  endif
+         var resists := _ifOr(GetObjProperty(armor, "ArmorResists"), struct{});
+         var resist_list := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
+         var res := 0;
+         foreach resist in resist_list
+            var value := cint(elem["{}Resist".format(resist)]) + cint(resists[resist]);
+            if (value)
+               xDesc += "Def. {}: {}?<br>".format(TranslateDamage(resist), value);
+               if (value > res)
+                  res := value;
                endif
-            endforeach
-
-            xDesc += "Lv. Personagem: {}<br>{}".format(getEquipCharRequirement(res) , WHITE);
-            xDesc += "Lv. Classe: {}<br>{}".format(getEquipClassRequirement(res) , WHITE);
-         endif
-      elseif (item.isA(POLCLASS_CONTAINER))
-			var cfg  := ReadConfigFile(":*:itemdesc");
-			var elem := FindConfigElem(cfg, item.objtype);
-         if (elem.MaxWeight) xDesc += "{}Peso: {}<br>".format(ORANGE, elem.MaxWeight); endif
-      elseif (item.isA(POLCLASS_ITEM))
-			var cfg  := ReadConfigFile(":farming:itemdesc");
-			var elem := FindConfigElem(cfg, item.objtype);
-         if (elem.PlantDifficulty)
-            if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
-				   xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
-				   xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigIntArray(elem, "DestroyIn")));
             endif
-         endif
+         endforeach
 
-         if (GetObjProperty(item, "craftproperty"))
+         xDesc += "Lv. Personagem: {}<br>{}".format(getEquipCharRequirement(res) , WHITE);
+         xDesc += "Lv. Classe: {}<br>{}".format(getEquipClassRequirement(res) , WHITE);
+      endif
+   elseif (item.isA(POLCLASS_CONTAINER))
+      var cfg  := ReadConfigFile(":*:itemdesc");
+      var elem := FindConfigElem(cfg, item.objtype);
+      if (elem.MaxWeight) xDesc += "{}Peso: {}<br>".format(ORANGE, elem.MaxWeight); endif
+   elseif (item.isA(POLCLASS_ITEM))
+      var cfg  := ReadConfigFile(":farming:itemdesc");
+      var elem := FindConfigElem(cfg, item.objtype);
+      if (elem.PlantDifficulty)
+         if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
+            xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
+            xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigIntArray(elem, "DestroyIn")));
+         endif
+      endif
+
+      if (GetObjProperty(item, "craftproperty"))
+         xDesc += "{}Item de craft<br>".format(ORANGE);
+      else
+         var craftcfg  := ReadConfigFile(":crafting:exceptional_cfg");
+         if (craftcfg[item.objtype])
             xDesc += "{}Item de craft<br>".format(ORANGE);
-         else
-			   var craftcfg  := ReadConfigFile(":crafting:exceptional_cfg");
-            if (craftcfg[item.objtype])
-               xDesc += "{}Item de craft<br>".format(ORANGE);
-            endif
          endif
-		endif
-
-      var madeof := GetObjProperty(item, "madeof");
-      if (madeof)
-         xDesc += "{}Feito com: {}{}<br>".format(WHITE, ORANGE, madeof);
       endif
+   endif
 
-		var pplmage := GetObjProperty(item, "magicwho"); //research
-		if ( pplmage != error && typeof(pplmage) == "Array")
-			if (who.serial in pplmage || who.cmdlevel >= 3)
-            var pocaoname := GetObjProperty(item, "pocaoname");
-            if (pocaoname)
-               xDesc +="{}{}<br>".format(WHITE, pocaoname);
-            endif
-			endif
-		endif
-		
-      if (xDesc.length() > 4)
-         XDesc := SubStrReplace(xDesc, "", XDesc.length()-3);
-      endif
-		xDesc := CAscZ(xDesc);
+   var madeof := GetObjProperty(item, "madeof");
+   if (madeof)
+      xDesc += "{}Feito com: {}{}<br>".format(WHITE, ORANGE, madeof);
+   endif
+   
+   if (xDesc.length() > 4)
+      XDesc := SubStrReplace(xDesc, "", XDesc.length()-3);
+   endif
+   xDesc := CAscZ(xDesc);
 
-		if ( xDesc.Size() > 0 )
-			// Cliloc ID if these two ID's match it'll only show one line.
-			packet.SetInt32(packet.GetSize() - 1, 1070722);
+   if ( xDesc.Size() > 0 )
+      // Cliloc ID if these two ID's match it'll only show one line.
+      packet.SetInt32(packet.GetSize() - 1, 1070722);
 
-			// Get the offset of where the next text size
-			var Length_ID := packet.GetSize();
-			packet.SetUnicodeString(packet.GetSize() + 1, xDesc, 1);
+      // Get the offset of where the next text size
+      var Length_ID := packet.GetSize();
+      packet.SetUnicodeString(packet.GetSize() + 1, xDesc, 1);
 
-			// SetUnicodeString adds 00 BYTE[1] at the start of the Unicode offset, which messes with the length offset.
-			// Setting the length of the unicode text below will fix that issue. Same deal as above.
-			packet.SetInt16(Length_ID, xDesc.Size() * 2);
-		endif
+      // SetUnicodeString adds 00 BYTE[1] at the start of the Unicode offset, which messes with the length offset.
+      // Setting the length of the unicode text below will fix that issue. Same deal as above.
+      packet.SetInt16(Length_ID, xDesc.Size() * 2);
+   endif
 
-		// End of loop.
-
-		packet.SetInt32(packet.GetSize(), 0);
-	endif
-
+   packet.SetInt32(packet.GetSize(), 0);
 	return 0;
-
 endfunction
 
 function getbonusname(mod)
@@ -311,9 +296,4 @@ function GetPlantDates(destroyin_array)
    endif
 
    return returnvalue;
-endfunction
-
-function LoadItemEventData()
-    var df := DFOpenDataFile( ":magery:runes", DF_CREATE, DF_KEYTYPE_INTEGER);
-    return df;
 endfunction

@@ -12,18 +12,13 @@ program equipweapon(who, item, startup)
       return 1;
    endif
    
-	var descmod_item:= GetObjProperty(item,"descmod");
+	var descmod_item:= GetObjProperty(item, "descmod");
 
 	if(descmod_item != error)
-		var descmod := GetObjProperty(who,"descmod");
-		if (!descmod)
-			descmod := array{};
-		endif
+		var descmod := _ifOr(GetObjProperty(who, "descmod"), array{});
 
-		if (!(descmod_item in descmod))
-			descmod.append(descmod_item);
-			SetObjProperty(who,"descmod",descmod);
-		endif
+      descmod.append(descmod_item);
+      SetObjProperty(who, "descmod", descmod);
 
 		SetName(who, who.name);	
 	endif

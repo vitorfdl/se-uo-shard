@@ -265,7 +265,7 @@ function CombatEventsOptions(who, state, no_mobile := 0)
       opt := state.type;
    endif
 
-   var dmgs := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY, "Sem Resistência" };
+   var dmgs := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY, "Sem Resistência" };
    var resists := array{"block", "dodge"};
    var targ_opts := array{"Self", "Cone in front", "Cone back", "Cone left", "Cone right", "Around Self", "Opponent", "Around Opponent", "All Opponents", "Random Opponent", "Points to Opponent", "In Line", "All Allies", "Random Ally", "Previous Targets"};
    if (opt == "Move")

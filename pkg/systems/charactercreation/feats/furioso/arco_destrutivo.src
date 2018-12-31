@@ -34,7 +34,7 @@ function ataquegiratorio(who, hab)
       foreach mobile in mobiles
          if (!CheckBlockDodge(mobile, 1, 1) && !CheckIfIsAlly(who, mobile))
             PlayMovingEffect( who, mobile, 0x22C6, 10);
-            DamageFLS(mobile, hab.PowerMod[1], DMG_PHYSICAL, who);
+            DamageFLS(mobile, hab.PowerMod[1], DMG_SLASH, who);
          endif
          sleepms(2);
       endforeach

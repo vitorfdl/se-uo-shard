@@ -33,9 +33,9 @@ program animateSword(params)
    foreach mob in mobs
       PushMobile(who, 5 - Distance(who, mob), 1, mob);
       if (CheckBlockDodge(mob, 0, 1))
-         DamageFLS(mob, dmg_dice/2, DMG_PHYSICAL, who);
+         DamageFLS(mob, dmg_dice/2, DMG_BLUDGE, who);
       else
-         DamageFLS(mob, dmg_dice, DMG_PHYSICAL, who);
+         DamageFLS(mob, dmg_dice, DMG_BLUDGE, who);
       endif
       sleepms(2);
    endforeach

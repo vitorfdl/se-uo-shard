@@ -24,7 +24,7 @@ program explosao(params)
 
    PrintText(who, "dá um puxão em {}".format(targ.name));
 	PlayHitSounds(who, targ);
-   DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+   DamageFLS(targ, spellinfo.PowerMod[1], DMG_SLASH, who);
 
    var mod := GetModByFacing(who.facing);
    MoveObjectToLocation(targ, who.x+mod[1], who.y+mod[2], who.z, who.realm);

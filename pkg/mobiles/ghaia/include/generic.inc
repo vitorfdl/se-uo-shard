@@ -302,8 +302,30 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
    elseif (CheckLosAt(me, opponent.x, opponent.y, opponent.z) && !path && CanMove(face_str))
       EraseObjProperty(me, "path");
       EraseObjProperty(me, "#enemy_last_loc");
-      if (move_type) RunToward( opponent );
-      else WalkToward( opponent ); endif
+
+      if (move_type) 
+         RunToward( opponent );
+      else 
+         WalkToward( opponent );
+      endif
+
+      var reachtry := GetObjProperty(me, "#reachtry");
+      if (reachtry == error || (reachtry[1].x != opponent.x && reachtry[2].y != opponent.y))
+         reachtry := array{struct{ x := opponent.x, y := opponent.y, z := opponent.z }, ReadGameClock()+5 };
+         SetObjProperty(me, "#reachtry", reachtry);
+      endif
+
+      if (reachtry[2] > ReadGameClock())
+         path := FindPath(  me.x, me.y, me.z, opponent.x, opponent.y, opponent.z, me.realm, 0, 15);
+         if (!path)
+            Flee(opponent, sleepdelay, 1);;
+            sleepms(sleepdelay);
+         else
+            SetObjProperty(me, "path", path);
+            SetObjProperty(me, "#enemy_last_loc", array{opponent.x, opponent.y, opponent.z});
+         endif
+      endif
+
       sleepms(sleepdelay);
 	else
       if (path == error || last_loc ) //se não calculou
@@ -329,8 +351,9 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
       var coord := path[1]; //pega a primeira coordenada
       if (coord); 
          var coordtry := GetObjProperty(me, "#coordtry");
-         if (coordtry != error && coordtry[1] != coord)
-            SetObjProperty(me, "#coordtry", array{coord, ReadGameClock()+5 }); 
+         if (coordtry == error || coordtry[1] != coord)
+            coordtry := array{coord, ReadGameClock()+5 };
+            SetObjProperty(me, "#coordtry", coordtry); 
          endif
          if (move_type) RunTowardLocation( coord.x, coord.y );
          else WalkTowardLocation(coord.x, coord.y); endif

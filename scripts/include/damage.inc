@@ -35,10 +35,13 @@ include ":combat:armorZones";
 enum DAMAGE_TYPES
 	DMG_FORCED   := -1, // Ignores resistance
 	DMG_PHYSICAL := "physical",
-	DMG_FIRE     := "fire",
-	DMG_COLD     := "cold",
-	DMG_POISON   := "poison",
-	DMG_ENERGY   := "energy",
+	DMG_FIRE     := "Fogo",
+	DMG_COLD     := "Gelo",
+	DMG_POISON   := "Veneno",
+	DMG_ENERGY   := "Energia",
+	DMG_BLUDGE   := "Concussão",
+	DMG_SLASH    := "Corte",
+	DMG_PIERCE := "Perfuração",
 endenum
 
 function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
@@ -166,35 +169,54 @@ function SetLastDamageInfo(mobile, amount, type, source)
 	return last_damage;
 endfunction
 
-function CalculateDefenseReduction(defender, dmg_type, is_massive := 0, armor := 0)
+function convertResist(n)
+   var result := n * 15;
+   return _ifElse(result > 80, 80, result);
+endfunction
+
+function CalculateDefenseReduction(defender, dmgs_type, dmg, armor := 0)
    if (dmg_type == DMG_FORCED) return 0; endif
-   
-   if (defender.isA(POLCLASS_NPC))
-      var npctemplate := NPC_GetNPCConfig(defender);
-      var npc_resist := GetConfigReal(npctemplate, "{}Resist".format(dmg_type)) + cdbl(defender.get_member("resist_{}_mod".format(dmg_type)));
-      return npc_resist / 100.0;
+
+   if (typeof(dmgs_type) != "Struct")
+      var percent := struct{};
+      percent[dmgs_type] := 100;
+
+      dmgs_type := percent;
    endif
 
-   if (!is_massive && !armor)
+   var npctemplate;
+   if (defender.isA(POLCLASS_NPC))
+      npctemplate := NPC_GetNPCConfig(defender);
+      armor := defender;
+   elseif (!armor)
       armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
       armor := CS_SelectArmored(armor, dmg_type);
    endif
 
    if (!armor) return 0; endif
-   var reduction := 0;
    
-   if (is_massive)
-      reduction := cint(defender.get_member("resist_{}".format(dmg_type)) / 6);
-   else
-      reduction := armor.get_member("resist_{}".format(dmg_type)) + defender.get_member("resist_{}_mod".format(dmg_type));
-   endif
+   var reduction := 0;
+   var resists := _ifOr(GetObjProperty(armor, "ArmorResists"), struct{});
+   var fdmg := 0;
 
-   if (defender.shield)
-      reduction += defender.shield.get_member("resist_{}".format(dmg_type));
-   endif
+   foreach type in (dmgs_type.keys())
+      dmgs_type[type] := cdbl(dmg) * (cdbl(dmgs_type[type]) / 100);
+      var reduction ;
 
-   if (reduction > 60) reduction := 60; endif
-   return (cdbl(reduction) / 100.0);
+      if (npctemplate)
+         var star := resists[type] + GetConfigInt(npctemplate, "{}Resist".format(type));
+         reduction := convertResist(cint(star)) / 100;
+      else
+         reduction := convertResist(cint(resists[type])) / 100;
+      endif
+
+      if (defender.shield) reduction += 0.05; endif
+
+      fdmg += cint(dmgs_type[type] - (dmgs_type[type] * reduction)); 
+      sleepms(2);
+   endforeach
+
+   return fdmg;
 endfunction
 /* 
  * GetLastDamageInfo(mobile)
@@ -260,13 +282,13 @@ function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0, no_display :=
       endif
    endif
    if (type != DMG_FORCED)
-      var reduction := cint(cdbl(dmg) * CalculateDefenseReduction(defender, type));
-      dmg := dmg - reduction;
       if (source)
          if (defender.my_template() == "orb" && defender.master != source)
             return 0;
          endif
       endif
+
+      dmg := CalculateDefenseReduction(defender, type, dmg);
    endif
    
    if (defender.npctemplate && source.npctemplate)

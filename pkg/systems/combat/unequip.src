@@ -7,38 +7,35 @@ include ":tn:equipment";
 include ":tn:cooldown";
 
 program unequipweapon(who, item)
-	var descmod_item:=GetObjProperty(item,"descmod");
-	var descmod:=array{};
-	var aux:=array{};
+	var descmod_item := GetObjProperty(item,"descmod");
+	var aux:= array{};
 
-	descmod:=GetObjProperty(who,"descmod");
+	var descmod:= GetObjProperty(who, "descmod"));
 
-	if(descmod_item != error)
-		if(descmod != error)
-			foreach desc in descmod 
-				if (descmod_item!=desc)
-					aux.append(desc);
-				endif
-			endforeach 
+	if (descmod_item != error && descmod != error)
+      foreach desc in descmod 
+         if (descmod_item != desc)
+            aux.append(desc);
+         endif
+      endforeach 
 
-			if(aux.size()==0)
-				EraseObjProperty(who,"descmod");
-			else
-				SetObjProperty(who,"descmod",aux);
-			endif
-		endif	
+      if(aux.size() == 0)
+         EraseObjProperty(who,"descmod");
+      else
+         SetObjProperty(who," descmod", aux);
+      endif
 
-		var ori_name:=who.name;
-		SetName(who, ori_name);	
+		SetName(who, who.name);	
 	endif
 	
 	
-	set_critical(1);
    CancelTarget(who);
+
 	if (who.npctemplate)
 		return 1;
 	endif
 
+	set_critical(1);
 	var mods := GetObjProperty(item, "equip");
 
 	if ("cursed" in (mods.keys()))

@@ -77,16 +77,6 @@ function RemoveEquipmentMods(who, item)
 	endif
    
 	foreach mod in (mods.keys())
-		// if (mod == "strmod")
-		// 	AP_ModifyStatMod(who, STRENGTH, (-1)*Cint( mods["strmod"] ));
-		// elseif (mod == "dexmod")
-		// 	AP_ModifyStatMod(who, DEXTERITY, (-1)*Cint( mods["dexmod"] ));
-		// elseif (mod == "intmod")
-		// 	AP_ModifyStatMod(who, INTELLIGENCE, (-1)*Cint( mods["intmod"] ));
-		// elseif (mod == "conmod")
-		// 	AP_ModifyStatMod(who, CONSTITUTION, (-1)*Cint( mods["conmod"] ) );
-		// elseif (mod == "wismod")
-		// 	AP_ModifyStatMod(who, WISDOM, (-1)*Cint( mods["wismod"] ) );
 		if (mod == "manamod")
          SetObjProperty(who, "manamod", Cint(GetObjProperty(who, "manamod") - Cint( mods["manamod"] )));
       elseif (mod == "toughmod")
@@ -146,29 +136,23 @@ function CheckLevelRequirement(who, item)
 endfunction
 
 function getEquipCharRequirement(res)
-   if (res >= 58)
+   if (res >= 4)
       return 12;
-   elseif (res >= 54)
-      return 10;
-   elseif (res >= 44)
+   elseif (res >= 3)
       return 8;
-   elseif (res >= 34)
-      return 6;
-   elseif (res >= 26)
+   elseif (res >= 2)
       return 4;
-   elseif (res >= 18)
-      return 2;
    endif
    return 1;
 endfunction
 
 
 function getEquipClassRequirement(res)
-   if (res >= 52)
+   if (res >= 4)
       return 4;
-   elseif (res >= 45)
+   elseif (res >= 3)
       return 3;
-   elseif (res >= 35)
+   elseif (res >= 2)
       return 2;
    endif
 

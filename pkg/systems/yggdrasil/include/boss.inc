@@ -16,7 +16,7 @@ include ":combat:hitscripts";
 include ":loot:include/lootParser";
 include ":yggdrasil:combatevents";
 
-var resist_types := array{DMG_COLD, DMG_FIRE, DMG_ENERGY, DMG_POISON, DMG_PHYSICAL};
+var resist_types := array{DMG_COLD, DMG_FIRE, DMG_ENERGY, DMG_POISON, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
 
 function GetBossStruct(targ, serial := 0)
    if (!serial) serial := targ.serial; endif
@@ -51,7 +51,7 @@ function CreateBossStructGump(who, byref boss)
 	var npctemplate := boss.npctemplate;
 	var template, nome, cor;
    var power, hits, cd_block, cd_dodge, critical;
-   var phsycal_res, poison_res, fire_res, cold_res, energy_res;
+   var res_mods := struct{};
 
 	//GFClosable(chargump, 0);
 	GFDisposable(chargump, 0);
@@ -129,23 +129,17 @@ function CreateBossStructGump(who, byref boss)
 	endif
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "HP{}:".format(cfg_hp));
 	hits := GFTextEntry( chargump, cx_pos+55, y_pos, 100, 20, 1935, "{}".format(cint(boss.hits)));
+   y_pos += 18;
+
+   foreach res in resist_types
+      var res_fix := "{}Resist".format(res);
+      GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. {} [{}]:".format(res, cint(cfg[res_fix])));
+      res_mods[res_fix] := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.res_mods[res_fix]) + "");
+      y_pos += 18;
+      sleepms(2);
+   endforeach
 
    y_pos += 18;
-	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Fisica[{}]:".format(cint(cfg.PhysicalResist)));
-	phsycal_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.phsycal_res) + "");
-   y_pos += 18;
-	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Calor[{}]:".format(cint(cfg.FireResist)));
-	fire_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.fire_res) + "");
-   y_pos += 18;
-	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Frio[{}]:".format(cint(cfg.ColdResist)));
-	cold_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.cold_res) + "");
-   y_pos += 18;
-	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Energia[{}]:".format(cint(cfg.EnergyResist)));
-	energy_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.energy_res) + "");
-   y_pos += 18;
-	GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. Veneno[{}]:".format(cint(cfg.PoisonResist)));
-	poison_res := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.poison_res) + "");
-   y_pos += 18*2;
 
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "Descrição Roleplay:");
    GFResizePic(chargump, cx_pos, y_pos+18, 0x2486, 140, 125);
@@ -229,17 +223,19 @@ function CreateBossStructGump(who, byref boss)
 	boss.npctemplate := Cstr(GFExtractData(input, template));
 	boss.name        := Cstr(GFExtractData(input, nome));
 	boss.color       := Cint(GFExtractData(input, cor));
-	boss.phsycal_res := Cint(GFExtractData(input, phsycal_res));
-	boss.fire_res    := Cint(GFExtractData(input, fire_res));
-	boss.poison_res  := Cint(GFExtractData(input, poison_res));
-	boss.cold_res    := Cint(GFExtractData(input, cold_res));
-	boss.energy_res  := Cint(GFExtractData(input, energy_res));
 	boss.hits        := Cint(GFExtractData(input, hits));
 	boss.power       := Cint(GFExtractData(input, power));
 	boss.cd_block    := Cint(GFExtractData(input, cd_block));
 	boss.cd_dodge    := Cint(GFExtractData(input, cd_dodge));
 	boss.critical    := Cint(GFExtractData(input, critical));
    boss.roleplay_desc := array{};
+
+   foreach res in (res_mods.keys())
+      res_mods[res] := Cint(GFExtractData(input, res_mods[res]));
+      sleepms(2);
+   endforeach
+
+   boss.res_mods := res_mods;
    
    foreach text_id in desc_gump
       var text := GFExtractData(input, text_id);
@@ -451,15 +447,12 @@ function SetBoss(npc, boss)
    
    var no_tame;
    if (boss.power) npc.damage_physical_mod := boss.power; no_tame := 1; endif
-   if (boss.phsycal_res) npc.resist_physical_mod := boss.phsycal_res; no_tame := 1; endif
-   if (boss.fire_res) npc.resist_physical_mod := boss.fire_res; no_tame := 1; endif
-   if (boss.energy_res) npc.resist_physical_mod := boss.energy_res; no_tame := 1; endif
-   if (boss.poison_res) npc.resist_physical_mod := boss.poison_res; no_tame := 1; endif
-   if (boss.cold_res) npc.resist_physical_mod := boss.cold_res; no_tame := 1; endif
    if (boss.cd_block) AP_SetTrueSkill(npc, "Block", boss.cd_block); no_tame := 1; endif
    if (boss.cd_dodge) AP_SetTrueSkill(npc, "Dodge", boss.cd_dodge); no_tame := 1; endif
    if (boss.critical) AP_SetTrueSkill(npc, "Critical", boss.critical); no_tame := 1; endif
    if (boss.roleplay_desc) SetObjProperty(npc, "roleplay_desc", boss.roleplay_desc); endif
+
+   SetObjProperty(npc, "ArmorResists", boss.res_mods);
 
 	if (boss.customAttacks && boss.customAttacks[1])
 		var customAttacks := array{};

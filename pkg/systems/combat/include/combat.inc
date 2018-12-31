@@ -8,16 +8,37 @@ include ":attributes:attributes";
 
 const IS_REMOVE := 1;
 
-function GetDamageType(weapon)
-	var attack_type := DMG_PHYSICAL;
+function GetDamageType(attacker, weapon)
+	var attack_types := struct{};
+   attack_types[DMG_BLUDGE] := 100%;
+
+   var dmg_mods;
+
 	if (weapon.objtype)
-		var weapon_type := GetConfigString(item_cfg[weapon.objtype], "DamageType");
+	   var item_cfg2	:= ReadConfigFile(":*:itemdesc");
+		var weapon_type := GetConfigStringDictionary(item_cfg2[weapon.objtype], "DamageType");
 		if (weapon_type)
-			attack_type := weapon_type;
+			attack_types := weapon_type;
 		endif
+      dmg_mods := GetObjProperty(weapon, "DamageTypes");
 	elseif (weapon.DamageType)
-		attack_type := weapon.DamageType;
+		attack_types := weapon.DamageType;
+      dmg_mods := GetObjProperty(attacker, "DamageTypes");
 	endif
+
+   if (typeof(attack_types) != "Struct")
+      var tmp := struct{};
+      tmp[attack_types] := 100%;
+      attack_types := tmp;
+   endif
+
+   if (!dmg_mods) dmg_mods := struct{}; endif
+
+   foreach key in (dmg_mods.keys())
+      var mod := dmg_mods[key] * 10;
+      attack_types[key] := _ifElse(attack_types[key], attack_types[key] + mod, mod);
+      sleepms(2);
+   endforeach
 
 	return attack_type;
 endfunction
@@ -276,6 +297,18 @@ function SetCriticalHitscript(who, hitscript, remove := 0);
       return EraseObjProperty(who, "CriticalHitScripts");
    endif
    SetObjProperty(who, "CriticalHitScripts", criticalhitscript);
+endfunction
+
+
+function getWeaponDmgTypes(attacker, wpn, wpn_elem)
+   if (!wpn) wpn := attacker.weapon; endif
+
+   if (!wpn_elem)
+      wpn_elem := GetItemCFGInfo(attacker, wpn);
+   endif
+
+   
+   
 endfunction
 
 function CheckifIsAlly(who, mobiles)

@@ -29,7 +29,7 @@ program explosao(params)
    start_script(":combat:reequip_weapon", array{ who, weapon });
 
    if (!CheckBlockDodge(targ, 1, 1))
-      DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+      DamageFLS(targ, spellinfo.PowerMod[1], DMG_PIERCE, who);
       var t := _ifElse(targ.isA(POLCLASS_NPC), 5, 3);
       TS_StartTimer(targ, "lentidao", t, who);
    endif

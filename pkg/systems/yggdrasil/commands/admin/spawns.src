@@ -81,6 +81,7 @@ var selected_spawngroup := ""; //Name of the spawngroup
 var selected_spot       := 0x0; //Serial Number
 var selected_spawnpoint := 0x0; //Serial Number
 var selected_treasure   := 0x0; //Serial Number
+var selected_route      := 0x0; //Serial Number
 var spotgroups;
 var gumpid := 0x1F5;
 var item_levels := array{"1", "2", "3", "4", "5", "6", "7", "8", "9","10"};
@@ -621,7 +622,8 @@ function ConstructGroupConfig(byref gump)
     // var groupdata_size := group_data.Size();
     var spawnGroups := group_data.spawngroup_list;
     var spots       := group_data.spots;
-    var form_size   := spawnGroups.Size() + spots.Size();
+    var routes       := group_data.routes;
+    var form_size   := spawnGroups.Size() + spots.Size() + routes.size();
 
     GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 180+(form_size*18));
     GFTextLine(gump, 202, 28, 555, "Configurações do Grupo");
@@ -675,7 +677,6 @@ function ConstructGroupConfig(byref gump)
     GFTextLine(gump, 202, base_y, 555, "SpawnGroups Vinculados");
     base_y += 18;
     for i:=0 to spawnGroups.Size();
-        var y := (base_y+(18*i));;
         var n := i+1;
 
         if (spawnGroups[n])
@@ -693,18 +694,53 @@ function ConstructGroupConfig(byref gump)
             endif
             //endbutton
 
-            GFTextLine(gump, x, y, color, spawnGroups[n].name);
-            GFAddButton(gump, x-20, y+2, start_button, 0x2623, GF_CLOSE_BTN, GF_SELECTSPAWNGROUP_BTN+n);
+            GFTextLine(gump, x, base_y, color, spawnGroups[n].name);
+            GFAddButton(gump, x-20, base_y+2, start_button, 0x2623, GF_CLOSE_BTN, GF_SELECTSPAWNGROUP_BTN+n);
         else
-            if (spots.Size() <= 10)
-                GFTextLine(gump, x+30, y, 1153, "Adicionar");
-                GFAddButton(gump, x+30-14, y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_GROUP_ADDSPAWNGROUP_BTN);
+            if (spawnGroups.Size() <= 10)
+                GFTextLine(gump, x+30, base_y, 1153, "Adicionar");
+                GFAddButton(gump, x+30-14, base_y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_GROUP_ADDSPAWNGROUP_BTN);
             endif
+
             if (selected_spawngroup)
-                GFTextLine(gump, x+110, y, 1153, "Remover");
-                GFAddButton(gump, x+110-14, y+5, 0x938, 0x938, GF_CLOSE_BTN, GF_GROUP_REMSPAWNGROUP_BTN);
+                GFTextLine(gump, x+110, base_y, 1153, "Remover");
+                GFAddButton(gump, x+110-14, base_y+5, 0x938, 0x938, GF_CLOSE_BTN, GF_GROUP_REMSPAWNGROUP_BTN);
             endif
         endif
+        base_y += 18;
+    endfor
+
+    GFTextLine(gump, 202, base_y, 555, "Rotas");
+    for i:=0 to routes.Size();
+        var n := i+1;
+
+        if (routes[n])
+            //Start Button Change Color and Icon
+            var start_button := 0x2622;
+            var color := 1153;
+            if (routes[n].name == selected_route)
+                start_button := 0x2623;
+                color := 2103;
+            endif
+
+            if (!spawngroup)
+                color := 337;
+            endif
+            //endbutton
+
+            GFTextLine(gump, x, base_y, color, routes[n].name);
+            GFAddButton(gump, x-20, base_y+2, start_button, 0x2623, GF_CLOSE_BTN, GF_SELECTSPAWNGROUP_BTN+n);
+        else
+            // if (spots.Size() <= 10)
+            //     GFTextLine(gump, x+30, base_y, 1153, "Adicionar");
+            //     GFAddButton(gump, x+30-14, base_y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_GROUP_ADDSPAWNGROUP_BTN);
+            // endif
+            // if (selected_spawngroup)
+            //     GFTextLine(gump, x+110, base_y, 1153, "Remover");
+            //     GFAddButton(gump, x+110-14, base_y+5, 0x938, 0x938, GF_CLOSE_BTN, GF_GROUP_REMSPAWNGROUP_BTN);
+            // endif
+        endif
+        base_y += 18;
     endfor
 endfunction
 

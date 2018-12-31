@@ -216,11 +216,13 @@ endfunction
 
 function TranslateDmg(dmg_type)
    case (dmg_type)
-      DMG_PHYSICAL: return "Físico";
       DMG_FIRE: return "Calor";
       DMG_COLD: return "Frio";
       DMG_POISON: return "Veneno";
       DMG_ENERGY: return "Energia";
+      DMG_BLUDGE: return "Concussão";
+      DMG_SLASH: return "Corte";
+      DMG_PIERCE: return "Perfuração";
       default: return dmg_type;
    endcase
 endfunction

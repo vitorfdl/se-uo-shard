@@ -35,9 +35,11 @@ program arremessar_arma(params)
 		altura := 0;
 	endif
 
+   var dmg_type := GetDamageType(who, weapon_cfg);
+
    foreach mobile in CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
       if (!CheckBlockDodge(mobile, 1, 1))
-         DamageFLS(mobile, spellinfo.PowerMod[1]+cint(altura), DMG_PHYSICAL, who);
+         DamageFLS(mobile, spellinfo.PowerMod[1]+cint(altura), dmg_type, who);
          if (RandomInt(100) <= 20)
             PrintText(targ, "*Paralisado*", SSM_FAIL);
             TS_StartTimer(targ, "paralysis", 2, who);

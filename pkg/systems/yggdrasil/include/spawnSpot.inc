@@ -29,6 +29,7 @@ function GetSpotGroupData(name, create := 1)
     data.+spawngroup_list := DFGetProp(elem, "spawngroup_list", create, array{});
     data.+activegroup     := DFGetProp(elem, "activegroup", create, 0);
     data.+mob_number      := DFGetProp(elem, "mob_number", create, 0);
+    data.+routes      := DFGetProp(elem, "routes", create, array{});
 
     return data;
 endfunction

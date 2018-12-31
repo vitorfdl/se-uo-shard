@@ -17,7 +17,7 @@ program explosao(params)
 	params := 0; // No longer needed
 
    if (!CheckBlockDodge(targ, 1, 1))
-      DamageFLS(targ, spellinfo.PowerMod[1], DMG_PHYSICAL, who);
+      DamageFLS(targ, spellinfo.PowerMod[1], DMG_BLUDGE, who);
       PlayAttackAnimation(who, who.weapon);
 		PlayHitSounds(who, targ);
    endif

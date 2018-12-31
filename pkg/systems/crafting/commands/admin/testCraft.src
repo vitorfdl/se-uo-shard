@@ -14,5 +14,3 @@ program testCraft(who)
     SendCraftGump(who, params);
     return 1;
 endprogram
-
-

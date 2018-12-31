@@ -30,14 +30,14 @@ program startTalent(param)
 	   PlaySoundEffect(who, 0x520);
       var direction := GetFacing(who.x, who.y, targ.x, targ.y);
 
-      FinesseEffect(who, direction, hab.PowerMod[1]);
+      FinesseEffect(who, direction, hab.PowerMod[1], weapon_cfg);
       sleepms(200);
    endfor
 
    return 1;
 endprogram
 
-function FinesseEffect(who, face, dmg)
+function FinesseEffect(who, face, dmg, weapon_cfg)
    who.SetFacing(face);
    var mod := GetModByFacing(face);
 	var x := mod[1];
@@ -62,7 +62,7 @@ function FinesseEffect(who, face, dmg)
 
       var mobs := CheckIfIsAlly(who, ListMobilesNearLocationEx(who.x, who.y, who.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
       foreach mob in mobs
-         DamageFLS(mob, dmg, DMG_PHYSICAL, who);
+         DamageFLS(mob, dmg, weapon_cfg.DamageType, who);
          sleepms(5);
       endforeach
 

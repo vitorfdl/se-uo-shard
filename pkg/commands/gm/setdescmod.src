@@ -17,12 +17,9 @@ endprogram
 
 
 function AddItemDescMod(who, item)
-	var descmod:=GetObjProperty(item,"descmod");
-   if (!descmod)
-      descmod := "";
-   endif
-	var str := SmallRequestGump(who, "Descreva o item", 0);
-   if (str != "")
-      SetObjProperty(item, "descmod", str + "<br>");
+   var desc := QuestionsGump(who, array{ struct{ title := "Entre com a descrição do item", lines := 1 }});
+   if (desc)
+      SetObjProperty(item, "descmod", desc[1]);
+	   SetName(item, _ifOr(item.name, item.desc));
    endif
 endfunction

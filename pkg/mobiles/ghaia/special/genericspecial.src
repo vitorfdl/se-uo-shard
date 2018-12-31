@@ -524,7 +524,20 @@ program loko(params)
             sleepms(2);
          endforeach
       elseif (state.type == "Broken Equips")
-      
+         var targ := selectOpponent(who, state.target, state.conedist);
+
+			foreach t in targ
+            sleepms(2);
+            var items := ListEquippedItems(t);
+            if (!items.size()) continue; endif
+            for i := 1 to state.amount
+               if (!items[i]) break; endif
+               items[i].hp := 0;
+               SendSysMessageEx(t, "Seu equipamento {} quebrou!".format(items[i].name), SSM_FAIL);
+               MoveItemToContainer(items[i], t.backpack);
+               sleepms(2);
+            endfor
+         endforeach
 		elseif (state.type == "Summon Npcs") // Summonar NPC
          var amount := state.amount;
          if (amount["d"]) 

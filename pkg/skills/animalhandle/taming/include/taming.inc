@@ -247,7 +247,7 @@ function PetSkillGump(who, targ)
       GFTextLine(gump, 88, 134, 1152, "{}".format(pet_properties.loyalt));
 
       GFTextLine(gump, 406, 68, 2212, "Resistências");
-      var resists := array{DMG_PHYSICAL, DMG_FIRE, DMG_COLD, DMG_ENERGY, DMG_POISON};
+      var resists := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_COLD, DMG_ENERGY, DMG_POISON};
       var x := 0;
       var y := 0;
       foreach resist in resists
