@@ -5,5 +5,6 @@ program SendTips(who)
    start_script(":fls_core:tn/character_control", who);
    start_script(":roleplay_window:controller", who);
    start_script(":roleplay_window:window", who);
+   start_script(":fls_core:tn/fix_player", who);
 endprogram
 

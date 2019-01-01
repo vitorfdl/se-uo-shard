@@ -1,0 +1,17 @@
+use uo;
+use os;
+use cfgfile;
+
+include "include/say";
+include ":attributes:attributes";
+
+program character_control(who)
+   var items := ListEquippedItems(who);
+   foreach item in items
+      case (item.color)
+         2152: item.color := ;
+         2064: item.color := 2960;
+      endcase
+      sleepms(2);
+   endforeach
+endprogram

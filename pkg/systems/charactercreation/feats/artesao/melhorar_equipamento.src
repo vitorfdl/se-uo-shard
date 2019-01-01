@@ -52,7 +52,7 @@ program alchemy(params)
          item1 := 0;
          SendSysMessageEx(who, "Escolha o item que será desconstruído.", SSM_REQUEST);
          var targ := Target(who, TGTOPT_CHECK_LOS);
-         if (!targ.isA(POLCLASS_ARMOR) && targ.isA(POLCLASS_ARMOR)) continue; endif
+         if (!targ.isA(POLCLASS_WEAPON)) continue; endif
          if (!myrecipes[targ.objtype]) 
             SendSysMessageEx(who, "Você precisa ter aprendido a receita deste item antes.", SSM_FAIL); 
             continue;
@@ -71,7 +71,7 @@ program alchemy(params)
          item1 := 0;
          SendSysMessageEx(who, "Escolha o item que será melhorado.", SSM_REQUEST);
          var targ := Target(who, TGTOPT_CHECK_LOS);
-         if (!targ.isA(POLCLASS_WEAPON) && !targ.isA(POLCLASS_ARMOR)) continue; endif
+         if (!targ.isA(POLCLASS_WEAPON)) continue; endif
          if (targ.objtype != smelt_item.objtype) 
             SendSysMessageEx(who, "Você não só pode melhorar o item com um equipamento igual ao que será descontruído.", SSM_FAIL); 
             continue;
