@@ -256,7 +256,7 @@ function HandleInput(who, input)
             "Propriedade",
             "Tamanho +dmg",
             "Red. de Dano",
-            "Regen Moriquendi"
+            // "Regen Moriquendi"
             }
          }
       };
@@ -450,13 +450,6 @@ function ConfigureEvents(who, event)
    //    event.special := output[1];
    //    event.incr := output[2] == "Reduzir";
    //    event.amount := cint(output[2]);
-   elseif (event.type == "Regen Moriquendi")
-      var input_list := array{};
-      if (!event.amount) event.amount := "20"; endif
-      input_list.append(struct{ "title" := "Reduzir em qual porcentagem? (por segundo)", "marked" := ""+cint(event.amount) });
-      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
-
-      event.amount := cint(output[1]);
    elseif (event.type == "Efeito Ativável")
       if (event.effect)
          event.effect := ConfigureCombatEvent(who, event.effect, 1);
