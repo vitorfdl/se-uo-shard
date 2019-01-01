@@ -255,7 +255,7 @@ function HandleInput(who, input)
             "ObjProperty",
             "Propriedade",
             "Tamanho +dmg",
-            "Red. de Dano",
+            "Red. de Dano"
             // "Regen Moriquendi"
             }
          }
