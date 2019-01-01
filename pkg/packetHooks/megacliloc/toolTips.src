@@ -107,19 +107,20 @@ exported function MegaCliloc( who, byref packet )
    // You wont need to add anymore cliloc id's because you can just add all the props
    // into one string.
    var xDesc  := "";
-   var desc   := _ifOr(GetObjProperty(item, "description"), "");
    var descmods := _ifOr(GetObjProperty(item, "descmod"), array{});
 
    var new_desc := array{};
+
+   var desc   := GetObjProperty(item, "description");
+   if (desc) new_desc.append(desc); endif 
+   
    foreach descmod in descmods
       if (!(descmod in new_desc)) new_desc.append(descmod); endif
    endforeach
 
    if (new_desc.size())
-      desc := "{}<br>{}".format(desc, "<br>".join(new_desc));
-   endif
+      desc := "<br>".join(new_desc);
 
-   if (len(desc))
       if (len(desc) > 85)
          desc := desc[1, 85];
       endif
