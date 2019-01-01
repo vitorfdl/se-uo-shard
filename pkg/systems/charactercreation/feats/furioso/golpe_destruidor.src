@@ -32,7 +32,7 @@ program defensor(params)
 	PlayCustomSound( who, 33 );
 
    PlayAttackAnimation(who, weapon_cfg);
-   var dmg_type := GetDamageType(who, weapon_cfg);
+   var dmg_type := GetDamageType(who, who.weapon, weapon_cfg);
 
    DamageFLS(targ, spellinfo.PowerMod[1], dmg_type, who);
 

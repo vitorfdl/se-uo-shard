@@ -12,7 +12,7 @@ endfunction
 
 
 function _IfOr(a,b)
-   if (a) return a; endif
+   if (a != error && a != 0) return a; endif
    return b;
 endfunction
 

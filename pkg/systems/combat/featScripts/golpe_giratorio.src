@@ -12,7 +12,6 @@ program startTalent(param)
    var who := param[1];
    var hab := param[2];
 	who.SetWarMode(1);
-   PrintText(who, "Girando a Arma");
 	PlaySoundEffect(who, 0x520);
 
 	var alreadydamaged := array{};

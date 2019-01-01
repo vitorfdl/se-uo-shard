@@ -10,7 +10,7 @@ program unequipweapon(who, item)
 	var descmod_item := GetObjProperty(item,"descmod");
 	var aux:= array{};
 
-	var descmod:= GetObjProperty(who, "descmod"));
+	var descmod:= GetObjProperty(who, "descmod");
 
 	if (descmod_item != error && descmod != error)
       foreach desc in descmod 

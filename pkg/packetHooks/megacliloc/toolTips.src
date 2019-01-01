@@ -139,15 +139,20 @@ exported function MegaCliloc( who, byref packet )
       xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
 
       if (item.isA(POLCLASS_WEAPON))
+         if (elem.DamageType)
+            var dmgs := GetConfigStringDictionary(elem, "DamageType").keys();
+            if (dmgs)
+               dmgs := "/".join(dmgs);
+               xDesc += "Tipos de Dano: {}<br>".format(dmgs);
+            endif
+         endif
+
          if (!elem.DamagePercent)
             xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
          else
             xDesc += "{}Poder: {} [{}%]<br>{}".format(YELLOW, cint(item.dmg_mod), elem.DamagePercent,  WHITE);
          endif
 
-         if (elem.DamageType)
-            xDesc += "Tipo de Dano: {}<br>".format(TranslateDamage(elem.DamageType));
-         endif
          xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
          xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
          
@@ -164,38 +169,53 @@ exported function MegaCliloc( who, byref packet )
                xDesc += "{}Passivo: {}<br>".format(LIGHTGRAY, TranslatePassive(elem.Passive));
             endif
          endif
-      elseif (item.isA(POLCLASS_ARMOR) || GetObjProperty(item, "ArmorResists"))
+      elseif (item.isA(POLCLASS_ARMOR))
          var cfg  := ReadConfigFile(":*:itemdesc");
          var elem := FindConfigElem(cfg, item.objtype);
          if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
 
-         var resists := _ifOr(GetObjProperty(armor, "ArmorResists"), struct{});
-         var resist_list := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
+         var resists := GetObjProperty(item, "ArmorResists");
+         if (!resists) resists := struct{}; endif
+
+         var resist_list := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY};
          var res := 0;
          foreach resist in resist_list
-            var value := cint(elem["{}Resist".format(resist)]) + cint(resists[resist]);
+            var fix_resist :=  "{}Resist".format(resist);
+            var value := cint(GetConfigInt(elem, fix_resist) + cint(resists[fix_resist]));
             if (value)
-               xDesc += "Def. {}: {}?<br>".format(TranslateDamage(resist), value);
+               xDesc += "Def. {}: {}<br>".format(resist, TranslateResistStart(value));
                if (value > res)
                   res := value;
                endif
             endif
          endforeach
 
-         xDesc += "Lv. Personagem: {}<br>{}".format(getEquipCharRequirement(res) , WHITE);
-         xDesc += "Lv. Classe: {}<br>{}".format(getEquipClassRequirement(res) , WHITE);
+         xDesc += "Lv. Personagem: {}<br>".format(getEquipCharRequirement(res));
+         xDesc += "Lv. Classe: {}<br>".format(getEquipClassRequirement(res));
       endif
    elseif (item.isA(POLCLASS_CONTAINER))
       var cfg  := ReadConfigFile(":*:itemdesc");
       var elem := FindConfigElem(cfg, item.objtype);
       if (elem.MaxWeight) xDesc += "{}Peso: {}<br>".format(ORANGE, elem.MaxWeight); endif
    elseif (item.isA(POLCLASS_ITEM))
-      var cfg  := ReadConfigFile(":farming:itemdesc");
-      var elem := FindConfigElem(cfg, item.objtype);
-      if (elem.PlantDifficulty)
-         if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
-            xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
-            xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigIntArray(elem, "DestroyIn")));
+      var resourceCfg  := ReadConfigFile(":crafting:resourceList");
+      var resourceElem := FindConfigElem(resourceCfg, cstr(Hex(item.objtype)));
+      if (resourceElem)
+         var resists := GetConfigStringDictionary(resourceElem, "Resist");
+         if (resists.keys().size())
+            xDesc += "{}Resistências<br>{}".format(BLUE, WHITE);
+            foreach resist in (resists.keys())
+               xDesc += "{}: {}<br>".format(resist, TranslateResistStart(cint(resists[resist])));
+            endforeach
+         endif
+      else
+         var cfg  := ReadConfigFile(":farming:itemdesc");
+         var elem := FindConfigElem(cfg, item.objtype);
+         if (elem.PlantDifficulty)
+            if (AP_GetTrueSkill(who, PLANTACAO) >= 4)
+               xDesc += "Fase adulta em {} minutos<br>".format(cint(elem.Steps) * 60);
+               xDesc += "Plantio em: {}<br>".format(GetPlantDates(GetConfigIntArray(elem, "DestroyIn")));
+            endif
          endif
       endif
 

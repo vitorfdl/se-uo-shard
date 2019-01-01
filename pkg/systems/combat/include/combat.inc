@@ -8,39 +8,44 @@ include ":attributes:attributes";
 
 const IS_REMOVE := 1;
 
-function GetDamageType(attacker, weapon)
+function GetDamageType(attacker, wpn := 0, wpn_elem := 0)
 	var attack_types := struct{};
-   attack_types[DMG_BLUDGE] := 100%;
+   attack_types[DMG_BLUDGE] := 100;
+
+   if (!wpn) 
+      wpn := attacker.weapon;
+   endif
+
+   if (!wpn_elem) wpn_elem := GetItemCFGInfo(attacker, wpn); endif
 
    var dmg_mods;
 
-	if (weapon.objtype)
-	   var item_cfg2	:= ReadConfigFile(":*:itemdesc");
-		var weapon_type := GetConfigStringDictionary(item_cfg2[weapon.objtype], "DamageType");
+	if (typeof(wpn_elem) != "Struct")
+		var weapon_type := GetConfigStringDictionary(wpn_elem, "DamageType");
 		if (weapon_type)
 			attack_types := weapon_type;
 		endif
-      dmg_mods := GetObjProperty(weapon, "DamageTypes");
-	elseif (weapon.DamageType)
-		attack_types := weapon.DamageType;
+      dmg_mods := GetObjProperty(wpn, "DamageTypes");
+   else
+		attack_types := wpn.DamageType;
       dmg_mods := GetObjProperty(attacker, "DamageTypes");
 	endif
 
-   if (typeof(attack_types) != "Struct")
+   if (!(typeof(attack_types) in array{"Struct", "Dictionary"} ))
       var tmp := struct{};
-      tmp[attack_types] := 100%;
+      tmp[attack_types] := 100;
       attack_types := tmp;
    endif
 
    if (!dmg_mods) dmg_mods := struct{}; endif
 
-   foreach key in (dmg_mods.keys())
-      var mod := dmg_mods[key] * 10;
-      attack_types[key] := _ifElse(attack_types[key], attack_types[key] + mod, mod);
+   var result_types := struct{};
+   foreach key in (dmg_mods.keys() + attack_types.keys())
+      result_types[key] := cint(dmg_mods[key] * 10) + cint(attack_types[key]);
       sleepms(2);
    endforeach
 
-	return attack_type;
+	return result_types;
 endfunction
 
 function DistanceChecks(attacker, defender)

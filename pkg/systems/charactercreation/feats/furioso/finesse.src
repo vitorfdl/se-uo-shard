@@ -13,7 +13,7 @@ program startTalent(param)
    var who := param[1];
    var hab := param[2];
 
-   weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   var dmg_type := GetDamageType(who, who.weapon);
    if (!who.weapon || weapon_cfg.TwoHanded || who.weapon.isBow() || who.weapon.isMagicWeapon())
       FailFeat(who, hab);
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de uma mão.", SSM_FAIL);
@@ -30,14 +30,14 @@ program startTalent(param)
 	   PlaySoundEffect(who, 0x520);
       var direction := GetFacing(who.x, who.y, targ.x, targ.y);
 
-      FinesseEffect(who, direction, hab.PowerMod[1], weapon_cfg);
+      FinesseEffect(who, direction, hab.PowerMod[1], dmg_type);
       sleepms(200);
    endfor
 
    return 1;
 endprogram
 
-function FinesseEffect(who, face, dmg, weapon_cfg)
+function FinesseEffect(who, face, dmg, dmg_type)
    who.SetFacing(face);
    var mod := GetModByFacing(face);
 	var x := mod[1];
@@ -62,7 +62,7 @@ function FinesseEffect(who, face, dmg, weapon_cfg)
 
       var mobs := CheckIfIsAlly(who, ListMobilesNearLocationEx(who.x, who.y, who.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
       foreach mob in mobs
-         DamageFLS(mob, dmg, weapon_cfg.DamageType, who);
+         DamageFLS(mob, dmg, dmg_type, who);
          sleepms(5);
       endforeach
 

@@ -213,12 +213,13 @@ function PetGump(who, pet, targ := 0, no_commands := 0)
    endif
 
    if (!pet_cfg.TamingCombat)
+      var btn := 10840;
       var text := "I.A Automática";
-      if (no_commands) text := "Desabilitar {}".format(text);
+      if (no_commands) text := "Desabilitar {}".format(text); btn := 0x2A44;
       else text := "Habilitar {}".format(text); endif
       
       GFTextLine(gump, 64, 171, 2212, text);
-      GFAddButton(gump, 84, 188, 10840, 10840, GF_CLOSE_BTN, 99);
+      GFAddButton(gump, 84, 188, btn, btn, GF_CLOSE_BTN, 99);
       GFHTMLArea(gump, 26, 218, 228, 72, "Desabilitar a I.A automática fará o animal retornar a obedecer seus comandos. Ele não produzirá nenhum recurso e não se moverá espontaneamente.", 1, 1);
       GFGumpPicTiled(gump, 27, _ifElse(pet_cfg.TamingCombat, 179, 295), 232, 10, 50);
    endif

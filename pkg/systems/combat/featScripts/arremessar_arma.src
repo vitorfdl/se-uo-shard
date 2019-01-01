@@ -35,7 +35,7 @@ program arremessar_arma(params)
 		altura := 0;
 	endif
 
-   var dmg_type := GetDamageType(who, weapon_cfg);
+   var dmg_type := GetDamageType(who, who.weapon);
 
    foreach mobile in CheckifIsAlly(who, ListMobilesNearLocationEx( targ.x, targ.y, targ.z, 0, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN))
       if (!CheckBlockDodge(mobile, 1, 1))

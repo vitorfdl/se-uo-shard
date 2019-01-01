@@ -5,6 +5,7 @@ const BLUE   := "<BASEFONT COLOR=#4169E1>";
 const ORANGE := "<BASEFONT COLOR=#FFA500>";
 const LIGHTGRAY := "<BASEFONT COLOR=#D3D3D3>";
 const PURPLE := "<BASEFONT COLOR=#9583AB>";
+const GREEN := "<BASEFONT COLOR=#33CC66>";
 
 function GetMagentaMap(value)
 	case (value)

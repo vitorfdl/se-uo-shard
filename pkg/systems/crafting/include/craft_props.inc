@@ -173,8 +173,17 @@ function ApplyCraftChanges(theitem, level_select)
    endif
 endfunction
 
-function ApplyMaterialMods(theitem, material)
+function TranslateResistStart(value)
+   value := cint(value);
+   if (value <= -1) return "{}*{}".format(RED, WHITE); endif
 
+   var finalt := GREEN;
+   for i := 1 to value
+      if (i > 4) break; endif
+      finalt += "*";
+   endfor
+
+   return "{}{}".format(finalt, WHITE);
 endfunction
 
 function ApplyCraftColor(theitem, level_select)

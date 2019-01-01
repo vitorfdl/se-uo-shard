@@ -36,7 +36,7 @@ program defensor(params)
       endif
    endif
 
-   var dmg_type := GetDamageType(who, weapon_cfg);
+   var dmg_type := GetDamageType(who, who.weapon, weapon_cfg);
 
    PlaySoundEffect(who, cint(0x145));
    PrintText(who, "*golpe de {}*".format(_ifElse(who.shield, "escudo", "com arma gigante")));

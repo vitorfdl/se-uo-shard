@@ -118,7 +118,7 @@ program Attack(params)
       return;
 	endif
 
-	var damage_type := GetDamageType(wpn_a_elem);
+	var damage_type := GetDamageType(attacker, attacker.weapon, wpn_a_elem);
 	var armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
 	armor     := CS_SelectArmored(armor, damage_type);
 

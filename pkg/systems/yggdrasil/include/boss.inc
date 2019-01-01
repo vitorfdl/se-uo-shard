@@ -128,13 +128,13 @@ function CreateBossStructGump(who, byref boss)
 		cfg_hp := " [{}]".format(cfg.Hits);
 	endif
 	GFTextLine(chargump, cx_pos, y_pos, 1051, "HP{}:".format(cfg_hp));
-	hits := GFTextEntry( chargump, cx_pos+55, y_pos, 100, 20, 1935, "{}".format(cint(boss.hits)));
+	hits := GFTextEntry( chargump, cx_pos+85, y_pos, 100, 20, 1935, "{}".format(cint(boss.hits)));
    y_pos += 18;
 
    foreach res in resist_types
       var res_fix := "{}Resist".format(res);
-      GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. {} [{}]:".format(res, cint(cfg[res_fix])));
-      res_mods[res_fix] := GFTextEntry( chargump, cx_pos+100, y_pos, 100, 20, 1935, cint(boss.res_mods[res_fix]) + "");
+      GFTextLine(chargump, cx_pos, y_pos, 1051, "Res. {}. [{}]:".format(res[1, 7], cint(GetConfigInt(cfg, res_fix))));
+      res_mods[res_fix] := GFTextEntry( chargump, cx_pos+115, y_pos, 100, 20, 1935, cint(boss.res_mods[res_fix]) + "");
       y_pos += 18;
       sleepms(2);
    endforeach

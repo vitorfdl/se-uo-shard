@@ -723,9 +723,6 @@ function ConstructGroupConfig(byref gump)
                 color := 2103;
             endif
 
-            if (!spawngroup)
-                color := 337;
-            endif
             //endbutton
 
             GFTextLine(gump, x, base_y, color, routes[n].name);

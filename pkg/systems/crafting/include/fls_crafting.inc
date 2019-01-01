@@ -538,6 +538,11 @@ function AddMaterialMod(recipe, theitem, principalMaterial, materialColor)
       foreach key in (resists.keys())
          var key_fix := "{}Resist".format(key);
          item_resists[key_fix] := cint(item_resists[key_fix]) + cint(resists[key]);
+         if (item_resists[key_fix] > 4) 
+            item_resists[key_fix] := 4;
+         elseif (item_resists[key_fix] < -1)
+            item_resists[key_fix] := -1;
+         endif
       endforeach
 
       SetObjProperty(theitem, "ArmorResists", item_resists);

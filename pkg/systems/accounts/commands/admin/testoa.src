@@ -37,7 +37,7 @@ endfunction
 
 program oafeatures_sendpacket(who, text)
    var targ := Target(who);
-   testing(array{ who, 0, targ });
+   var res := _ifOr(GetObjProperty(targ, "ArmorResists"), struct{});
    // ApplyCraftColor(targ, 2);
    // ApplyCraftChanges(targ, 3);
 

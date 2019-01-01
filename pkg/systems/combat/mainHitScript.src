@@ -51,8 +51,7 @@ program MainHitScript( params )
 	ArrowRecovery(defender, weapon);
 
 	//calcula os danos
-	var damage_type := GetDamageType(wpn_a_elem);
-
+	var damage_type := GetDamageType(attacker, weapon, wpn_a_elem);
 	var base_damage :=  CalculateRawDamage(attacker, wpn_a_elem, weapon);
    if (bonus_dmg)
       base_damage += cint(cdbl(base_damage) * (cdbl(bonus_dmg) / 100));

@@ -170,12 +170,12 @@ function SetLastDamageInfo(mobile, amount, type, source)
 endfunction
 
 function convertResist(n)
-   var result := n * 15;
-   return _ifElse(result > 80, 80, result);
+   if (n < -1) n := -1; elseif (n > 4) n := 4; endif
+   return cdbl(n * 20);
 endfunction
 
 function CalculateDefenseReduction(defender, dmgs_type, dmg, armor := 0)
-   if (dmg_type == DMG_FORCED) return 0; endif
+   if (dmgs_type == DMG_FORCED) return 0; endif
 
    if (typeof(dmgs_type) != "Struct")
       var percent := struct{};
@@ -190,24 +190,26 @@ function CalculateDefenseReduction(defender, dmgs_type, dmg, armor := 0)
       armor := defender;
    elseif (!armor)
       armor := CS_GetEquipmentInArmorZone(defender, CS_GetRandomArmorZone());
-      armor := CS_SelectArmored(armor, dmg_type);
+      armor := CS_SelectArmored(armor, dmgs_type);
    endif
 
-   if (!armor) return 0; endif
+   if (!armor) return dmg; endif
    
    var reduction := 0;
    var resists := _ifOr(GetObjProperty(armor, "ArmorResists"), struct{});
+   var armorcfg := GetItemCFGInfo(defender, armor);
    var fdmg := 0;
 
    foreach type in (dmgs_type.keys())
       dmgs_type[type] := cdbl(dmg) * (cdbl(dmgs_type[type]) / 100);
-      var reduction ;
+      var reduction := 0;
 
       if (npctemplate)
-         var star := resists[type] + GetConfigInt(npctemplate, "{}Resist".format(type));
-         reduction := convertResist(cint(star)) / 100;
+         var star := cint(resists[type]) + GetConfigInt(npctemplate, "{}Resist".format(type));
+         reduction := convertResist(star) / 100;
       else
-         reduction := convertResist(cint(resists[type])) / 100;
+         var star := GetConfigInt(armorcfg, "{}Resist".format(type)) + cint(resists[type]);
+         reduction := convertResist(star) / 100;
       endif
 
       if (defender.shield) reduction += 0.05; endif
