@@ -170,28 +170,31 @@ exported function MegaCliloc( who, byref packet )
             endif
          endif
       elseif (item.isA(POLCLASS_ARMOR))
-         var cfg  := ReadConfigFile(":*:itemdesc");
+         var cfg  := ReadConfigFile(":combat:itemdesc");
          var elem := FindConfigElem(cfg, item.objtype);
-         if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
+         if (elem)
+            if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
 
-         var resists := GetObjProperty(item, "ArmorResists");
-         if (!resists) resists := struct{}; endif
+            var resists := GetObjProperty(item, "ArmorResists");
+            if (!resists) resists := struct{}; endif
 
-         var resist_list := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY};
-         var res := 0;
-         foreach resist in resist_list
-            var fix_resist :=  "{}Resist".format(resist);
-            var value := cint(GetConfigInt(elem, fix_resist) + cint(resists[fix_resist]));
-            if (value)
-               xDesc += "Def. {}: {}<br>".format(resist, TranslateResistStart(value));
-               if (value > res)
-                  res := value;
+            var resist_list := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY};
+            var res := 0;
+            foreach resist in resist_list
+               var fix_resist :=  "{}Resist".format(resist);
+               var value := cint(GetConfigInt(elem, fix_resist) + cint(resists[fix_resist]));
+               if (value)
+                  xDesc += "{}: {}<br>".format(resist, TranslateResistStar(value));
+                  if (value > res)
+                     res := value;
+                  endif
                endif
-            endif
-         endforeach
+            endforeach
 
-         xDesc += "Lv. Personagem: {}<br>".format(getEquipCharRequirement(res));
-         xDesc += "Lv. Classe: {}<br>".format(getEquipClassRequirement(res));
+            if (res)
+               xDesc += "Level: {} - Classe: {}<br>".format(getEquipCharRequirement(res), getEquipClassRequirement(res));
+            endif
+         endif
       endif
    elseif (item.isA(POLCLASS_CONTAINER))
       var cfg  := ReadConfigFile(":*:itemdesc");
@@ -205,7 +208,7 @@ exported function MegaCliloc( who, byref packet )
          if (resists.keys().size())
             xDesc += "{}Resistências<br>{}".format(BLUE, WHITE);
             foreach resist in (resists.keys())
-               xDesc += "{}: {}<br>".format(resist, TranslateResistStart(cint(resists[resist])));
+               xDesc += "{}: {}<br>".format(resist, TranslateResistStar(cint(resists[resist])));
             endforeach
          endif
       else

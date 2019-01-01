@@ -125,7 +125,7 @@ function BuildQuestGump(who, player)
          var y := ((_quest_iter-1) * 33);
          GFResizePic(gump, 54, 69+y, 5120, 252, 31);
          GFAddButton(gump, 64, 74+y, 210 + (quest_n == _quest_iter), 211, GF_CLOSE_BTN, 10+_quest_iter);
-         GFTextLine(gump, 92, 74+y, 1153, "{}".format(quest.title));
+         GFTextLine(gump, 92, 74+y, 1969, "{}".format(quest.title));
       endforeach
 
       if (quest_n)
