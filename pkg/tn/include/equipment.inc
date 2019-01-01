@@ -120,7 +120,7 @@ function CheckLevelRequirement(who, item)
       var power := item.dmg_mod;
       if (cint(cdbl(power) / 30.0 )+1 > level || cint(power / 50 )+1 > class_level) return 0; endif
    elseif (item.isA(POLCLASS_EQUIPMENT))
-      var resists := _ifOr(GetObjProperty(armor, "ArmorResists"), struct{});
+      var resists := _ifOr(GetObjProperty(item, "ArmorResists"), struct{});
       var resist_list := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
       var res := 0;
       foreach resist in resist_list
