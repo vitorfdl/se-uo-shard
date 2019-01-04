@@ -40,7 +40,7 @@ function mainGump(who, byref disfarce, byref choice, opts := 0)
 	// GFAddButton(gump, 44, 163, menus[5], 9763, GF_CLOSE_BTN, 5);
 	GFAddButton(gump, 66, 190, 247, 248, GF_CLOSE_BTN, RES_BTN_OK); //OKAY
 
-	if (gender != 2 && choice.barba && "Beard" in opts))
+	if (gender != 2 && choice.barba && "Beard" in opts)
 		GFTextLine(gump, 65, 100, 1101, "Barbas");
 		GFAddButton(gump, 44, 103, menus[2], 9763, GF_CLOSE_BTN, 2);
 	endif
