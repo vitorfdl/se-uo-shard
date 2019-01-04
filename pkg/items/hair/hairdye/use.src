@@ -38,7 +38,7 @@ program UseDyes(who, dyes)
    var not_closed := 1;
    var disfarce := struct{ "corcabelo" := color };
 	while(not_closed && who.connected)
-		var gump    := mainGump(who, disfarce, choice, struct{"HairColor"});
+		var gump    := mainGump(who, disfarce, choice, array{"HairColor"});
 		var input   := GFSendGump(who, gump);
 
 		if (input[0] >= 1 && input[0] <= 5)
