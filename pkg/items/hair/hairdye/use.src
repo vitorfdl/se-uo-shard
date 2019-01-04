@@ -55,7 +55,6 @@ program UseDyes(who, dyes)
 			not_closed := 0;
 		endif
    endwhile
-	var gump := BuildHairDyeGump(color);
 
 	hair.color := color;
 	beard.color := color;
