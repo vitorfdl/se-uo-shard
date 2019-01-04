@@ -9,7 +9,7 @@ const RES_BTN_OK    := 10;
 const RES_BTN_CLOSE := 0;
 const HAIR_BALD     := 0x999999;
 
-function mainGump(who, byref disfarce, byref choice)
+function mainGump(who, byref disfarce, byref choice, opts := struct{ "Hair", "Beard", "HairColor", "SkinColor"})
 	var menus    := array{9762, 9762, 9762, 9762, 9762};
    var gump 	 := GFCreateGump();
 	var gender   := CheckGender(who);
@@ -25,9 +25,9 @@ function mainGump(who, byref disfarce, byref choice)
 
 	GFResizePic(gump, 36, 69, 9350, 123, 157); //menu paper
 	GFHTMLArea(gump, 47, 34, 200, 20, "<BASEFONT COLOR=#7a600d>Configurar  Aparência");
-	GFTextLine(gump, 65, 80, 1101, "Cabelos");
-	GFTextLine(gump, 64, 120, 1101, "Cor do Cabelo");
-	GFTextLine(gump, 64, 140, 1101, "Cor de Pele");
+   if ("Hair" in opts) GFTextLine(gump, 65, 80, 1101, "Cabelos"); endif
+	if ("HairColor" in opts) GFTextLine(gump, 64, 120, 1101, "Cor do Cabelo"); endif
+	if ("SkinColor" in opts) GFTextLine(gump, 64, 140, 1101, "Cor de Pele"); endif
 	// GFTextLine(gump, 64, 160, 1101, "Raça");
 
 	if (choice.menu)
@@ -39,7 +39,7 @@ function mainGump(who, byref disfarce, byref choice)
 	// GFAddButton(gump, 44, 163, menus[5], 9763, GF_CLOSE_BTN, 5);
 	GFAddButton(gump, 66, 190, 247, 248, GF_CLOSE_BTN, RES_BTN_OK); //OKAY
 
-	if (gender != 2 && choice.barba)
+	if (gender != 2 && choice.barba && "Beard" in opts))
 		GFTextLine(gump, 65, 100, 1101, "Barbas");
 		GFAddButton(gump, 44, 103, menus[2], 9763, GF_CLOSE_BTN, 2);
 	endif
@@ -231,7 +231,7 @@ function disguiseGump(who, choice := struct{}, disfarce := 0);
 			choice.menu := input[0];
 		elseif (input[0] == RES_BTN_OK)
 			not_closed := 0;
-	        return disfarce;
+	      return disfarce;
 		elseif (choice.menu == 1 && input[0] != 0)
 			disfarce.cabelo := input[0];
 		elseif (choice.menu == 2 && input[0] != 0)
