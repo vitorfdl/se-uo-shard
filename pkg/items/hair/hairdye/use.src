@@ -35,8 +35,7 @@ program UseDyes(who, dyes)
 		SetObjProperty(who, "haircolor", color);
 	endif
 
-   var gump    := mainGump(who, disfarce, choice, array{"HairColor"});
-   var aparencia := disguiseGump(who, params, GetObjProperty(who, "chardata"));
+   var aparencia := disguiseGump(who, params, GetObjProperty(who, "chardata"), array{"HairColor"});
 
 	hair.color := aparencia.corcabelo;
 	beard.color := aparencia.corbarba;

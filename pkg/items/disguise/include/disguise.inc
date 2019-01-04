@@ -26,17 +26,23 @@ function mainGump(who, byref disfarce, byref choice, opts := 0)
 
 	GFResizePic(gump, 36, 69, 9350, 123, 157); //menu paper
 	GFHTMLArea(gump, 47, 34, 200, 20, "<BASEFONT COLOR=#7a600d>Configurar  Aparência");
-   if ("Hair" in opts) GFTextLine(gump, 65, 80, 1101, "Cabelos"); endif
-	if ("HairColor" in opts) GFTextLine(gump, 64, 120, 1101, "Cor do Cabelo"); endif
-	if ("SkinColor" in opts) GFTextLine(gump, 64, 140, 1101, "Cor de Pele"); endif
+   if ("Hair" in opts) 
+	GFAddButton(gump, 44, 83, menus[1], 9763, GF_CLOSE_BTN, 1);
+      GFTextLine(gump, 65, 80, 1101, "Cabelos"); 
+   endif
+	if ("HairColor" in opts) 
+	   GFAddButton(gump, 44, 123, menus[3], 9763, GF_CLOSE_BTN, 3);
+      GFTextLine(gump, 64, 120, 1101, "Cor do Cabelo");
+   endif
+	if ("SkinColor" in opts) 
+	   GFAddButton(gump, 44, 143, menus[4], 9763, GF_CLOSE_BTN, 4);
+      GFTextLine(gump, 64, 140, 1101, "Cor de Pele"); 
+   endif
 	// GFTextLine(gump, 64, 160, 1101, "Raça");
 
 	if (choice.menu)
 		menus[choice.menu] := 9763;
 	endif
-	GFAddButton(gump, 44, 83, menus[1], 9763, GF_CLOSE_BTN, 1);
-	GFAddButton(gump, 44, 123, menus[3], 9763, GF_CLOSE_BTN, 3);
-	GFAddButton(gump, 44, 143, menus[4], 9763, GF_CLOSE_BTN, 4);
 	// GFAddButton(gump, 44, 163, menus[5], 9763, GF_CLOSE_BTN, 5);
 	GFAddButton(gump, 66, 190, 247, 248, GF_CLOSE_BTN, RES_BTN_OK); //OKAY
 
