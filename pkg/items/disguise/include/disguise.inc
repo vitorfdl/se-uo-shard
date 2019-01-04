@@ -210,8 +210,9 @@ function buildColor(byref gump, byref disfarce, opts)
 	endforeach
 endfunction
 
-function disguiseGump(who, choice := struct{}, disfarce := 0);
-    if (!disfarce)
+function disguiseGump(who, choice := struct{}, disfarce := 0, opts := 0);
+   if (!opts) opts := array{ "Hair", "Beard", "HairColor", "SkinColor"}; endif
+   if (!disfarce)
         disfarce := struct{
             "barba"     := HAIR_BALD,
             "cabelo"    := HAIR_BALD,
@@ -225,7 +226,7 @@ function disguiseGump(who, choice := struct{}, disfarce := 0);
 
 	var not_closed := 1;
 	while(not_closed && who.connected)
-		var gump    := mainGump(who, disfarce, choice);
+		var gump    := mainGump(who, disfarce, choice, opts);
 		var input   := GFSendGump(who, gump);
 
 		if (input[0] >= 1 && input[0] <= 5)

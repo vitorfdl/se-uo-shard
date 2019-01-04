@@ -35,29 +35,11 @@ program UseDyes(who, dyes)
 		SetObjProperty(who, "haircolor", color);
 	endif
 
-   var choice := 0;
-   var not_closed := 1;
-   var disfarce := struct{ "corcabelo" := color };
-	while(not_closed && who.connected)
-		var gump    := mainGump(who, disfarce, choice, array{"HairColor"});
-		var input   := GFSendGump(who, gump);
+   var gump    := mainGump(who, disfarce, choice, array{"HairColor"});
+   var aparencia := disguiseGump(who, params, GetObjProperty(who, "chardata"));
 
-		if (input[0] >= 1 && input[0] <= 5)
-			choice.menu := input[0];
-		elseif (input[0] == RES_BTN_OK)
-			not_closed := 0;
-	      break;
-		elseif (choice.menu == 3 && input[0] != 0)
-         disfarce.corcabelo := input[0];
-         hair.color := input[0];
-         beard.color := input[0];
-		else
-			not_closed := 0;
-		endif
-   endwhile
-
-	hair.color := color;
-	beard.color := color;
+	hair.color := aparencia.corcabelo;
+	beard.color := aparencia.corbarba;
 	SubtractAmount(dyes, 1);
 
 	return 1;
