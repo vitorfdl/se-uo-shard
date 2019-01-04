@@ -9,7 +9,8 @@ const RES_BTN_OK    := 10;
 const RES_BTN_CLOSE := 0;
 const HAIR_BALD     := 0x999999;
 
-function mainGump(who, byref disfarce, byref choice, opts := struct{ "Hair", "Beard", "HairColor", "SkinColor"})
+function mainGump(who, byref disfarce, byref choice, opts := 0)
+   if (!opts) opts := struct{ "Hair", "Beard", "HairColor", "SkinColor";
 	var menus    := array{9762, 9762, 9762, 9762, 9762};
    var gump 	 := GFCreateGump();
 	var gender   := CheckGender(who);
