@@ -159,6 +159,11 @@ function Fight(opponent, alerted := 0)
          endif
       endif
 
+      var stam := AP_GetVital(me, STAMINA);
+      if (stam <= 2)
+         FatigueNPC(stam);
+      endif
+
       if (me.dead || !opponent || opponent.concealed)
          me.remAggro(opponent.serial);
          break;

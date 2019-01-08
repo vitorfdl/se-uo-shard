@@ -498,6 +498,7 @@ function HandleSkillPage(who, byref chardata, res, targ)
             endif
             chardata.points -= hab.PointCost;
             chardata[hab.ClassType][i].habs.append(hab.FeatId);
+            if (hab.FeatId == 69) AP_SetTrueStat(who, "Strength", 26); endif // Braços Fortes
             SetObjProperty(who, "chardata", chardata);
          endif
       elseif (hab.ClassType == "classes" && !(hab.FeatId in chardata[hab.ClassType][i].selected_habs))
@@ -515,7 +516,7 @@ function HandleSkillPage(who, byref chardata, res, targ)
 
          if (is_changing)
             if (TS_GetCooldown(who, "HabUsed"))
-               return SendSysMessageEx(who, "Você deve aguardar 10 minutos fora de combate para trocar habilidades.", SSM_FAIL);
+               return SendSysMessageEx(who, "Você deve aguardar 5 minutos fora de combate para trocar habilidades.", SSM_FAIL);
             endif
          endif
          

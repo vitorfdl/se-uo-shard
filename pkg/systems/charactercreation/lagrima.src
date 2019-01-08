@@ -56,6 +56,9 @@ program command_Message(who, item)
 	chardata.stam := 60;
 	chardata.proficiencias := array{};
    SetObjProperty(who, "chardata", chardata);
+   AP_SetTrueStat(who, "Strength", 15);
+   AP_SetTrueStat(who, "Intelligence", 15);
+   AP_SetTrueStat(who, "Dexterity", 15);
    RecalcVitals(who);
 
    var hotbar := GetObjProperty(who, "hotbar");

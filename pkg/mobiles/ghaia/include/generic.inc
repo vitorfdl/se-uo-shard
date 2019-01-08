@@ -270,6 +270,15 @@ function getFacingString(me_face)
    endcase
 endfunction
 
+function FatigueNPC(stam := 0)
+   PrintText(me, "*salivando pela boca e ofegante*");
+   var stam := AP_GetVitalMaximumValue(me, STAMINA);
+   for i := 1 to 6
+      HealStamina(me, cint(stam / 6));
+      sleep(1);
+   endfor
+endfunction
+
 function CalcPathAndMove(me, byref opponent, sleepdelay)
    var face_str := getFacingString(GetFacing(me.x, me.y, opponent.x, opponent.y));
    var stam := AP_GetVital(me, STAMINA);

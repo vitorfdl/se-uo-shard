@@ -418,7 +418,7 @@ function TriggerHabilitie(who, hab)
          return SendSysMessageEx(who, "Você não tem vigor suficiente para executar esta habilidade.", SSM_FAIL);
       endif
    endif
-   TS_StartCooldown(who, "HabUsed", 600);
+   TS_StartCooldown(who, "HabUsed", 300);
    who.hidden := 0;
 
    var weapon := who.weapon;
