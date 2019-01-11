@@ -244,18 +244,23 @@ function HandleInput(who, input)
          "title" := "Qual efeito deseja adicionar?",
          "marked" := 1, 
          "radio" := array{
-            "Hitscript",
-            "Armorscript",
-            "Criticalscript",
-            "Alterar Equipmod",
-            "Alterar Regen",
+            // "Hitscript",
+            // "Armorscript",
+            // "Criticalscript",
+            // "Alterar Equipmod",
+            // "Alterar Regen",
+            "Habilidade",
             "Efeito Ativável",
             // "Especial",
-            "Monstro +dmg",
+            // "Monstro +dmg",
             "ObjProperty",
             "Propriedade",
-            "Tamanho +dmg",
-            "Red. de Dano"
+            "Melhorar Dano",
+            "Reduzir Dano",
+            "Melhorar Resistência",
+            "Reduzir Resistência"
+            // "Tamanho +dmg",
+            // "Red. de Dano"
             // "Regen Moriquendi"
             }
          }
@@ -397,7 +402,7 @@ function ConfigureEvents(who, event)
       event.vartype := output[2];
       event.value := output[3];
    elseif (event.type == "Propriedade")
-      var prop_types := array{"hp_max", "speed_mod", "ar_mod", "color", "dmg_mod", "attribute", "name_suffix", "insured", "newbie"};
+      var prop_types := array{"hp_max", "speed_mod", "ar_mod", "color", "name_suffix", "insured", "newbie"};
       var input_list := array{};
       if (!event.amount) event.amount := 3; endif
       input_list.append(struct{ "title" := "Qual propriedade?", "marked" := event.property in prop_types, radio := prop_types });
@@ -436,6 +441,47 @@ function ConfigureEvents(who, event)
 
       event.vital := output[1];
       event.amount := cint(output[2]);
+
+   elseif ((event.type["Melhorar"] || event.type["Reduzir"]) && event.type["Dano"])
+      var input_list := array{};
+      var dmgs := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY};
+      if (!event.amount) event.amount := "10"; endif
+      if (!event.dmgtype) event.dmgtype := DMG_SLASH; endif
+      input_list.append(struct{ "title" := "Qual tipo de dano será afetado?", "marked" := event.dmgtype in dmgs, radio := dmgs });
+      input_list.append(struct{ "title" := "Qual o modificador em %? (Máximo de 40%)", marked := ""+cint(event.amount) });
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+
+      event.dmgtype := output[1];
+      event.amount := _ifElse(cint(output[2]) <= 40, cint(output[2]), 40);
+   elseif ((event.type["Melhorar"] || event.type["Reduzir"]) && event.type["Resistência"])
+      var input_list := array{};
+      var dmgs := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_COLD, DMG_POISON,DMG_ENERGY};
+      if (!event.amount) event.amount := "1"; endif
+      if (!event.dmgtype) event.dmgtype := DMG_SLASH; endif
+      input_list.append(struct{ "title" := "Qual tipo de dano será afetado?", "marked" := event.dmgtype in dmgs, radio := dmgs });
+      input_list.append(struct{ "title" := "Qual o modificador? (Máx 2) ", marked := ""+cint(event.amount) });
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+
+      event.dmgtype := output[1];
+      event.amount := cint(output[2]);
+   elseif (event.type == "Habilidade")
+      var input_list := array{};
+      if (!event.amount) event.amount := "1"; endif
+
+      var habs := AP_ListAttributesByType("Habilidade");
+
+      input_list.append(struct{ "title" := "Qual habilidade será acionada? (Deixe o mouse em cima para ver Desc)", "marked" := _ifOr(event.hab in habs, 1), radio := habs });
+      input_list.append(struct{ "title" := "Qual o modificador? (Máx 2) ", marked := ""+cint(event.amount) });
+      var output := QuestionsGump(who, input_list, HIDDEN_CANCEL);
+
+      event.hab := output[1];
+      event.amount := cint(output[2]);
+   elseif (event.type == "Efeito Ativável")
+      if (event.effect)
+         event.effect := ConfigureCombatEvent(who, event.effect, 1);
+      else
+         event.effect := ConfigureCombatEvent(who);
+      endif
    // elseif (event.type == "Especial")
    //    var special_list := array{"Casttime"};
    //    var incr_list := array{"Incrementar", "Reduzir"};
@@ -450,12 +496,6 @@ function ConfigureEvents(who, event)
    //    event.special := output[1];
    //    event.incr := output[2] == "Reduzir";
    //    event.amount := cint(output[2]);
-   elseif (event.type == "Efeito Ativável")
-      if (event.effect)
-         event.effect := ConfigureCombatEvent(who, event.effect, 1);
-      else
-         event.effect := ConfigureCombatEvent(who);
-      endif
    endif
 
    return event;

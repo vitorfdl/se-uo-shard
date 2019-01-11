@@ -19,6 +19,7 @@ var flee_point   := 0.1;
 var mystate      := INITIALIZING;
 var healing_amount;
 var npc_is_boss := 0;
+var route_config := struct{};
 
 program NPCMonitor()
    if (GetObjProperty(me, "%CooldownList%") || GetObjProperty(me, "%TimerList%"))
@@ -111,7 +112,8 @@ endfunction
 
 
 function Fight(opponent, alerted := 0)
-  // mystate := FIGHTING;
+  // mystate := FIGHTING; 
+
    if(opponent.serial == me.serial)
       SetWarMode(0);
       opponent := 0;
@@ -162,6 +164,13 @@ function Fight(opponent, alerted := 0)
       var stam := AP_GetVital(me, STAMINA);
       if (stam <= 2)
          FatigueNPC(stam);
+         SetCooldown(me, "CooldownTime", 5);
+      else
+         if (RandomInt(100) <= 30 && !GetCooldown(me, "CooldownTime"))
+            var my_cdtime := _ifOr(cint(AP_GetSkill(me, "CooldownTime")), 1);
+            sleep(my_cdtime);
+            SetCooldown(me, "CooldownTime", 5);
+         endif
       endif
 
       if (me.dead || !opponent || opponent.concealed)

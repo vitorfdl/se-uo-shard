@@ -272,9 +272,10 @@ endfunction
 
 function FatigueNPC(stam := 0)
    PrintText(me, "*salivando pela boca e ofegante*");
-   var stam := AP_GetVitalMaximumValue(me, STAMINA);
+   var max_stam := AP_GetVitalMaximumValue(me, STAMINA);
    for i := 1 to 6
-      HealStamina(me, cint(stam / 6));
+      if (i == 4)  PrintText(me, "*ofegante*"); endif
+      HealStamina(me, cint(max_stam / 6));
       sleep(1);
    endfor
 endfunction
@@ -319,7 +320,7 @@ function CalcPathAndMove(me, byref opponent, sleepdelay)
       endif
 
       var reachtry := GetObjProperty(me, "#reachtry");
-      if (reachtry == error || (reachtry[1].x != opponent.x && reachtry[2].y != opponent.y))
+      if (reachtry == error || (reachtry[1].x != opponent.x && reachtry[1].y != opponent.y))
          reachtry := array{struct{ x := opponent.x, y := opponent.y, z := opponent.z }, ReadGameClock()+5 };
          SetObjProperty(me, "#reachtry", reachtry);
       endif

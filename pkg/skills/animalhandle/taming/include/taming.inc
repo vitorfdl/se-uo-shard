@@ -77,6 +77,7 @@ function AddPet(who, serial, no_reset := 0)
    EraseObjProperty(pet, "spawnspot");
    EraseObjProperty(pet, "spawnpoint");
    EraseObjProperty(pet, "anchor");
+   EraseObjProperty(pet, "RouteConfig");
 
    pet.SetMaster(who);
          

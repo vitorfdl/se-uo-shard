@@ -196,7 +196,6 @@ function InitializeNpc(mobile)
    areasize     := CInt(npccfgfile.AreaSize);
    custombehaviors := GetConfigStringArray(npccfgfile, "CustomBehavior");
 
-
    // if (GetObjPRoperty(mobile, "championspawn") == 2)
    //     SetObjProperty(mobile, "#championspawn", 1);
    //     ApplyDamage( mobile, 20000);
@@ -219,7 +218,10 @@ function InitializeNpc(mobile)
          endif
          SetObjProperty(mobile, "anchor", array{ spawnpoint.x , spawnpoint.y , spawnpoint.z});
          SetObjProperty(mobile, "range", range);
-         SetAnchor(spawnpoint.x, spawnpoint.y, range, areasize);
+         route_config := GetObjProperty(mobile, "RouteConfig");
+         if (!route_config)
+            SetAnchor(spawnpoint.x, spawnpoint.y, range, areasize);
+         endif
          //print("drop anchor " + e);
       endif
    endif

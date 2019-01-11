@@ -153,7 +153,7 @@ function CreateBossStructGump(who, byref boss)
 
 	y := y_pos+(18*3);
 
-	y_pos := 340;
+	y_pos := 351;
 	GFTextLine(chargump, x_pos, y_pos, 1051, "Death Events: ");
 	GFAddButton( chargump, x_pos, y_pos+24, 2103, 2104, 1, 20);
 	if (boss.deathevent)

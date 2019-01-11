@@ -409,8 +409,8 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 
             //passando a cor pra materiais coloridos que não tem Id proprio (como madeira)
             AddMaterialMod(recipe, theitem, choosed_material, material_color);
-            if (recipe.exceptional == 1 &&( HaveFeat(who, 66) && Randomint(100) <= 10 || who.cmdlevel > 3))
-               SendSysMessageEx(who, "Você fez uma obra prima! Seu item tem qualidade {} e se tornará {}.".format(getQuality(theitem.quality), getQuality(theitem.quality+1)), SSM_INFO);
+            if ((recipe.exceptional == 1 && HaveFeatSecondary(who, 66) && Randomint(100) <= 10) || who.cmdlevel > 3)
+               SendSysMessageEx(who, "Você fez uma obra prima! Seu item tem qualidade {} e se tornará {}.".format(getQuality(theitem.quality, 1), getQuality(theitem.quality+1, 1)), SSM_INFO);
                SendSysMessageEx(who, "Para validar o objeto, você deve escolher uma joia para o item (Safira, Safira Estrela, Ruby, etc)", SSM_INFO);
                while (who.connected)
                   if (CraftExceptional(who, theitem, craft_skill) != 2)
