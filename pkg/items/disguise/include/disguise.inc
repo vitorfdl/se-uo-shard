@@ -115,13 +115,7 @@ function buildHairGump(byref gump, byref disfarce, opt := struct{})
 	foreach style in (styles.Keys())
 		var hairname := StrReplace(style, "_", " ");
 		var hairgraphic := cint(styles[style]);
-        
-		if (hairgraphic == disfarce[opt.param])
-			GFResizePic(gump, x_pos, y_pos, 9500, 85, 72);
-		else
-			GFResizePic(gump, x_pos, y_pos, 9568, 85, 72);
-		endif
-		
+
 		var gumppic;
 		if (hairgraphic != HAIR_BALD)
 			gumppic := GetConfigString(hairgumps, style);
@@ -131,6 +125,14 @@ function buildHairGump(byref gump, byref disfarce, opt := struct{})
 			else
 				gumppic := cint(gumppic[1]);
 			endif
+
+         if (!gumppic) continue; endif
+		endif
+
+		if (hairgraphic == disfarce[opt.param])
+			GFResizePic(gump, x_pos, y_pos, 9500, 85, 72);
+		else
+			GFResizePic(gump, x_pos, y_pos, 9568, 85, 72);
 		endif
 
 		hairnames.append(hairname);

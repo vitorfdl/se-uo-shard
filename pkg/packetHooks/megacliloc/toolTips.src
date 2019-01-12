@@ -127,6 +127,8 @@ exported function MegaCliloc( who, byref packet )
       xDesc += "{}{}<br>".format(WHITE, desc);
    endif
 
+   var people_who := GetObjProperty(item, "people_who");
+
    if (item.IsA(POLCLASS_MOBILE) && item.acctname)
       var deathpoint := AP_GetVital(item, "DP");
       if (deathpoint < 40)
@@ -139,61 +141,63 @@ exported function MegaCliloc( who, byref packet )
       if (elem.WeaponType) xDesc += "Categoria: {}<br>".format(elem.WeaponType); endif
       xDesc += "Qualidade: {}<br>{}".format(getQuality(item.quality, 1), WHITE);
 
-      if (item.isA(POLCLASS_WEAPON))
-         if (elem.DamageType)
-            var dmgs := GetConfigStringDictionary(elem, "DamageType").keys();
-            if (dmgs)
-               dmgs := "/".join(dmgs);
-               xDesc += "Tipos de Dano: {}<br>".format(dmgs);
-            endif
-         endif
-
-         if (!elem.DamagePercent)
-            xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
-         else
-            xDesc += "{}Poder: {} [{}%]<br>{}".format(YELLOW, cint(item.dmg_mod), elem.DamagePercent,  WHITE);
-         endif
-
-         xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
-         xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
-         
-         if (item.quality >= 2)
-            var hits := GetWeaponFeat(elem);
-            if (hits)
-               xDesc += "{}{}<br>".format(ORANGE, hits);
-            endif
-         endif
-
-         if (item.quality >= 3)
-            // var hits := GetHitsInfo(elem);
-            if (elem.Passive)
-               xDesc += "{}Passivo: {}<br>".format(LIGHTGRAY, TranslatePassive(elem.Passive));
-            endif
-         endif
-      elseif (item.isA(POLCLASS_ARMOR))
-         var cfg  := ReadConfigFile(":combat:itemdesc");
-         var elem := FindConfigElem(cfg, item.objtype);
-         if (elem)
-            if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
-
-            var resists := GetObjProperty(item, "ArmorResists");
-            if (!resists) resists := struct{}; endif
-
-            var resist_list := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY};
-            var res := 0;
-            foreach resist in resist_list
-               var fix_resist :=  "{}Resist".format(resist);
-               var value := cint(GetConfigInt(elem, fix_resist) + cint(resists[fix_resist]));
-               if (value)
-                  xDesc += "{}: {}<br>".format(resist, TranslateResistStar(value));
-                  if (value > res)
-                     res := value;
-                  endif
+      if (who.serial in people_who)
+         if (item.isA(POLCLASS_WEAPON))
+            if (elem.DamageType)
+               var dmgs := GetConfigStringDictionary(elem, "DamageType").keys();
+               if (dmgs)
+                  dmgs := "/".join(dmgs);
+                  xDesc += "Tipos de Dano: {}<br>".format(dmgs);
                endif
-            endforeach
+            endif
 
-            if (res)
-               xDesc += "Level: {} - Classe: {}<br>".format(getEquipCharRequirement(res), getEquipClassRequirement(res));
+            if (!elem.DamagePercent)
+               xDesc += "{}Poder: {}<br>{}".format(YELLOW, cint(item.dmg_mod), WHITE);
+            else
+               xDesc += "{}Poder: {} [{}%]<br>{}".format(YELLOW, cint(item.dmg_mod), elem.DamagePercent,  WHITE);
+            endif
+
+            xDesc += "Lv. Personagem: {}<br>{}".format(_ifElse((item.dmg_mod / 30)+1 <= 20, (item.dmg_mod / 30)+1, 20), WHITE);
+            xDesc += "Lv. Classe: {}<br>{}".format(_ifElse((item.dmg_mod / 50)+1 <= 4, (item.dmg_mod / 50)+1, 4), WHITE);
+            
+            if (item.quality >= 2)
+               var hits := GetWeaponFeat(elem);
+               if (hits)
+                  xDesc += "{}{}<br>".format(ORANGE, hits);
+               endif
+            endif
+
+            if (item.quality >= 3)
+               // var hits := GetHitsInfo(elem);
+               if (elem.Passive)
+                  xDesc += "{}Passivo: {}<br>".format(LIGHTGRAY, TranslatePassive(elem.Passive));
+               endif
+            endif
+         elseif (item.isA(POLCLASS_ARMOR))
+            var cfg  := ReadConfigFile(":combat:itemdesc");
+            var elem := FindConfigElem(cfg, item.objtype);
+            if (elem)
+               if (elem.BlockCooldown) xDesc += "CD de Bloqueio: {}<br>".format(elem.BlockCooldown); endif
+
+               var resists := GetObjProperty(item, "ArmorResists");
+               if (!resists) resists := struct{}; endif
+
+               var resist_list := array{DMG_SLASH, DMG_BLUDGE, DMG_PIERCE, DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY};
+               var res := 0;
+               foreach resist in resist_list
+                  var fix_resist :=  "{}Resist".format(resist);
+                  var value := cint(GetConfigInt(elem, fix_resist) + cint(resists[fix_resist]));
+                  if (value)
+                     xDesc += "{}: {}<br>".format(resist, TranslateResistStar(value));
+                     if (value > res)
+                        res := value;
+                     endif
+                  endif
+               endforeach
+
+               if (res)
+                  xDesc += "Level: {} - Classe: {}<br>".format(getEquipCharRequirement(res), getEquipClassRequirement(res));
+               endif
             endif
          endif
       endif
@@ -204,7 +208,7 @@ exported function MegaCliloc( who, byref packet )
    elseif (item.isA(POLCLASS_ITEM))
       var resourceCfg  := ReadConfigFile(":crafting:resourceList");
       var resourceElem := FindConfigElem(resourceCfg, cstr(Hex(item.objtype)));
-      if (resourceElem)
+      if (resourceElem && who.serial in people_who)
          var resists := GetConfigStringDictionary(resourceElem, "Resist");
          if (resists.keys().size())
             xDesc += "{}Resistências<br>{}".format(BLUE, WHITE);

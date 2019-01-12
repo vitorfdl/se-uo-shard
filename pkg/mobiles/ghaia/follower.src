@@ -416,7 +416,6 @@ function UnTame()
    EraseObjProperty(me, "name");
    EraseObjproperty(me, "script");
 
-
    RestartScript(me);
 endfunction
 

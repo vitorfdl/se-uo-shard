@@ -168,7 +168,6 @@ function Fight(opponent, alerted := 0)
       else
          if (RandomInt(100) <= 30 && !GetCooldown(me, "CooldownTime"))
             var my_cdtime := _ifOr(cint(AP_GetSkill(me, "CooldownTime")), 1);
-            sleep(my_cdtime);
             SetCooldown(me, "CooldownTime", 5);
          endif
       endif

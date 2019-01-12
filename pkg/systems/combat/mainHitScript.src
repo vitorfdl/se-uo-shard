@@ -81,6 +81,9 @@ program MainHitScript( params )
 
 	PlayHurtSound(defender);
 	DamageFLS(defender, base_damage, DMG_FORCED, attacker, no_damage_show);
+   if (TS_GetTimerInfo(attacker, "sangue_por_sangue"))
+      HealFLS(attacker, cint(base_damage/4));
+   endif
 	EraseObjProperty(attacker, "#backstab");
 
    // ApplyFeatChanges(attacker, defender, base_damage);

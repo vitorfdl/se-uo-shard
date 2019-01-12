@@ -292,7 +292,7 @@ function PetSkillGump(who, targ)
 	GFGumpPic(gump, 667, 149, 59, 0);
 
 	GFTextLine(gump, 233, 175, 2212, "Nível de aprendizado para domesticar criaturas");
-   for i := 0 to 12
+   for i := 0 to 8
 	   GFGumpPicTiled(gump, 59, 221+(i * 20), 611, 1, 2701);
    endfor
 
@@ -314,11 +314,43 @@ function PetSkillGump(who, targ)
    endforeach
 	// GFTextLine(gump, 67, 223, 1152, "Galinha: 100%");
 
+	GFTextLine(gump, 285, 385, 2212, "Criaturas Passivas Domesticadas");
+   for i := 0 to 3
+	   GFGumpPicTiled(gump, 59, 421+(i * 20), 611, 1, 2701);
+   endfor
+   
+	var tamed := GetObjProperty(who, "followers");
+   x := 0;
+   y := 0;
+	if ( tamed && tamed.size() )
+		foreach serial in tamed
+         if (tamed == pet.serial) continue; endif
+         var animal := SystemFindObjectBySerial(serial);
+         GFAddButton(gump, 55+x, 405+y, 2103, 2104, GF_CLOSE_BTN, 600+animal.serial);
+         GFTextLine(gump, 67+x, 402+y, 1152, "{}".format(animal.name));
+         if (_serial_iter % 3 == 0)
+            x += 200;
+            y := 0;
+         endif
+      endforeach
+	endif
    return GFSendGump(who, gump);
 endfunction
 
 function HandleTamingPage(who, res, targ)
-   
+   if (res >= 600)
+      res -= 600;
+      var pet := SystemFindObjectBySerial(res);
+      var output := RadioGump(who, 0, 0, "O que deseja fazer?", array{"Abandonar", "Rastrear", "Cancelar"}, 0, 3);
+
+      if (output == "Abandonar")
+         SetObjProperty(pet, "last_owner", who.serial);
+         ErasePet(who, res);
+         Destama(pet.serial);
+      elseif (output == "Rastrear")
+         SendSysMessageEx(who, "Opção desativada no momento");
+      endif
+   endif
 endfunction
 
 function TamingDiff(pet, pet_cfg)

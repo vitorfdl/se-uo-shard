@@ -26,6 +26,7 @@ include ":gumps:requestgump";
 include ":gumps:htmlgump";
 include ":crafting:craft_props";
 include ":charactercreation:proficiencies";
+include ":mounts:mounts";
 
 CONST GF_CHANGE_PAGE := 2;
 CONST GF_CHANGE_PAGE_TAME := 3;
