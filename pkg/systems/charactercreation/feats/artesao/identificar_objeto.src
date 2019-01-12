@@ -1,0 +1,46 @@
+use cfgfile;
+use uo;
+include ":attributes:attributes";
+include "include/say";
+include ":timedscripts:timedScripts";
+//include "include/damage";
+
+var item_config     := ReadConfigFile(":*:itemdesc");
+var resdmg_list := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
+
+program alchemy(params)
+   var who := params[1];
+   var hab := params[2];
+   var targ := params[3];
+
+   var people_who := GetObjProperty(targ, "people_who");
+   if (people_who) 
+      if (who.serial in people_who)
+         SendSysMessageEx(who, "Você já identificou esse objeto", SSM_INFO);
+         return FailFeat(who, hab);
+      endif
+
+      IdentifyObject(who, targ);
+   endif
+
+   if (targ.isA(POLCLASS_ARMOR) || targ.isA(POLCLASS_WEAPON))
+      return IdentifyObject(who, targ);
+   elseif (GetObjProperty(targ, "craftproperty"))
+      return IdentifyObject(who, targ);
+   endif
+   
+   SendSysMessageEx(who, "Este Objeto não pode ser identificado.", SSM_FAIL);
+   return FailFeat(who, hab);
+endprogram
+
+function IdentifyObject(who, targ)
+   if (RandomInt(100) >= 85) SendSysMessageEx(who, "Você falhou em identificar o objeto.", SSM_FAIL); endif
+
+   var people_who := GetObjProperty(targ, "people_who");
+   if (!people_who) people_who := array{}; endif
+   
+   people_who.append(who.serial);
+   SetObjProperty(targ, "people_who", people_who);
+   SetName(targ, targ.name).
+   SendSysMessageEx(who, "Você identificou o objeto.", SSM_INFO);
+endfunction
