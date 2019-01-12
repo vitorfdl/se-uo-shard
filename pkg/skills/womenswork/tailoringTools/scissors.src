@@ -6,6 +6,7 @@ include ":attributes:attributes";
 include "include/client";
 include ":itemutils:canAccess";
 include ":itemutils:toolWear";
+include ":disguise:disguise";
 
 var scissors_cfg := ReadConfigFile("scissors");
 var cfg2 := ReadConfigFile("tailoring");
@@ -22,6 +23,9 @@ program use_scissors( who, scissors )
 	if(!cloth)
 		SendSysMessageEx(who, "Cancelado.");
 		return;
+   elseif (cloth == who)
+      ChangeMyHair(who);
+      return;
 	elseif(!Accessible(who, cloth))
 		SendSysMessageEx(who, "Você não pode usar isto.");
 		return;
@@ -92,6 +96,44 @@ program use_scissors( who, scissors )
 
 endprogram
 
+function ChangeMyHair(who)
+   if (TS_GetCooldown(who, "HairCut"))
+		SendSysMessageEx(who, "Você deve aguardar 2 dias, a partir do ultimo corte, para mudar seu cabelo novamente..", SSM_FAIL);
+      return;
+   endif
+
+   TS_StartCooldown(who, "HairCut", 2880);
+   var chardata := GetObjProperty(who, "chardata");
+	var params := struct{
+		"race"  := chardata.raca,
+		"barba" := (chardata.raca != "Elfo")
+	};
+
+	var hair  := GetEquipmentByLayer(who, LAYER_HAIR);
+	var beard := GetEquipmentByLayer(who, LAYER_BEARD);
+
+   PrintText(who, "*cortando cabelo*");
+   var aparencia := disguiseGump(who, params, struct{ cabelo := hair.graphic, barba := beard.graphic }, array{"Hair", "Beard"});
+
+   var hair_color := hair.color;
+   var beard_color := beard.color;
+
+   DestroyItem(hair);
+   DestroyItem(beard);
+
+	var newhair := CreateItemAtLocation(who.x, who.y, who.z, aparencia.cabelo, 1, who.realm);
+	newhair.color := hair_color;
+	EquipItem(who, newhair);
+
+   if (aparencia.barba && aparencia.barba != -1)
+      var newbarba := CreateItemAtLocation(who.x, who.y, who.z, aparencia.barba, 1, who.realm);
+      newbarba.color := beard_color;
+      EquipItem(who, newbarba);
+   endif
+
+   PrintText(who, "*cortando cabelo*");
+	PlaySoundEffect(who, 0x0249);
+endfunction
 
 function MakeCartoes (who, papel)
 	if (!ReserveItem (papel))

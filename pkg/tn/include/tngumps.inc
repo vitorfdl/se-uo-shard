@@ -369,6 +369,7 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 
 			foreach entry in (quest.radio)
 				GFTextLine(gump, x_plus+25, y+3, 1153, entry);
+            if (quest.helper) if (quest.helper[entry_iter]) GFTooltipText(gump, quest.helper[entry_iter])); endif endif
             GFRadioButton(gump, x_plus, y+3, 210, 211, (_entry_iter == cint(quest.marked)), _entry_iter+(_quest_iter * 100));
 				x_plus += 130;
             if (_entry_iter % 4 == 0 && quest.radio[_entry_iter+1])
@@ -379,6 +380,7 @@ function QuestionsGump(who, questions := array{}, hidden_cancel_btn := 0)
 		elseif(quest.checkbox)
 			foreach entry in (quest.checkbox)
 				GFTextLine(gump, x_plus+25, y+3, 1153, entry);
+            if (quest.helper) if (quest.helper[entry_iter]) GFTooltipText(gump, quest.helper[entry_iter])); endif endif
 				GFCheckBox(gump, x_plus, y+3, 210, 211, (_entry_iter in quest.marked), _entry_iter+(_quest_iter * 500));
 				x_plus += 130;
            if (_entry_iter % 4 == 0 && quest.checkbox[_entry_iter+1])

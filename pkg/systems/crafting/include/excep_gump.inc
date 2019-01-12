@@ -28,7 +28,7 @@ function UpdateItemEvent(combatevent, index := 0)
 
    var elem := DFFindElementEx(df, index, DF_CREATE);
    elem.SetProp("name", combatevent.name);
-   elem.SetProp("diff", combatevent.diff);
+   elem.SetProp("qty", combatevent.qty);
    elem.SetProp("desc", combatevent.desc);
    elem.SetProp("uso", combatevent.uso);
    elem.SetProp("skills", combatevent.skills);
@@ -49,7 +49,7 @@ function GetItemEvent(index := 0, elem := 0)
    return struct{
       "index" := index,
       "name" := DFGetProp(elem, "name", DF_CREATE, "No Name"),
-      "diff" := cint(DFGetProp(elem, "diff", DF_CREATE, 0)),
+      "qty" := cint(DFGetProp(elem, "qty", DF_CREATE, 1)),
       "desc" := DFGetProp(elem, "desc", DF_CREATE, ""),
       "uso" := DFGetProp(elem, "uso", DF_CREATE, array{}),
       "skills" := DFGetProp(elem, "skills", DF_CREATE, array{}),
@@ -176,8 +176,9 @@ function sendUserGump(who, index := 0)
       GFTextLine(gump, 239+50, 50, 2000, "{}".format(iteminfo.name));
       GFAddButton(gump, 230, 45, 5020, 5020, GF_CLOSE_BTN, 21);
       
-      GFTextLine(gump, 239, 50+18, 2100, "Dificuldade:");
-      GFTextLine(gump, 239+80, 50+18, 2000, "{}".format(iteminfo.diff));
+      GFTextLine(gump, 239, 50+18, 2100, "Quantidade:");
+      GFTooltipText(gump, "Quantidade de itens desse tipo necessário para montar o efeito");
+      GFTextLine(gump, 239+80, 50+18, 2000, "{}".format(iteminfo.qty));
       GFAddButton(gump, 230, 45+18, 5020, 5020, GF_CLOSE_BTN, 22);
 
       GFTextLine(gump, 239, 50+36, 2100, "Descrição:");
@@ -285,12 +286,12 @@ function HandleInput(who, input)
          SendSysMessageEx(who, "Cancelado");
       endif
    elseif (input == 22)
-      var diffs := array{"0", "1", "2", "3", "4", "5", "6"}; 
+      var diffs := array{"1", "10", "20", "30", "40", "50", "60", "80"};
       var questions := array{};
-      questions.append(struct{ "title" := "Qual a dificuldade?", marked := cstr(iteminfo.diff) in diffs, "radio" := diffs});
+      questions.append(struct{ "title" := "Qual a quantidade de itens requeridos?", marked := cstr(iteminfo.qty) in diffs, "radio" := diffs});
       var output := QuestionsGump(who, questions);
       if (output)
-         iteminfo.diff := cint(output[1]);
+         iteminfo.qty := cint(output[1]);
          UpdateItemEvent(iteminfo, selected_item);
       endif
    elseif (input == 23)
@@ -322,7 +323,7 @@ endfunction
 
 function ConfigureEquipments(who, byref iteminfo)
    var skills := array{"Marcenaria", "Costura", "Ferraria"};
-   var item_types := array{"Armaduras", "Arcos", "Armas", "Armas Mágicas", "Joias", "Containers", "Elmos/Mascaras"}; 
+   var item_types := array{"Peito", "Calça", "Capa", "Luvas", "Ombros/Braços", "Arcos", "Armas", "Armas Mágicas", "Joias", "Containers", "Elmos/Mascaras", "Botas"}; 
 
    var marked_skills := iteminfo.skills;
    var marked_types := iteminfo.uso;
