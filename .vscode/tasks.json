@@ -1,9 +1,14 @@
 {
-    // See https://go.microsoft.com/fwlink/?LinkId=733558
-    // for the documentation about the tasks.json format
-    "version": "0.1.0",
-    "command": "ecompile.exe",
-    "isShellCommand": true,
-    "args": ["${file}"],
-    "showOutput": "always"
+   "version": "2.0.0",
+   "tasks": [
+       {
+           "label": "ecompile",
+           "type": "shell",
+           "command": "scripts/ecompile.exe",
+           "args": ["${file}"],
+           "presentation": {
+               "reveal": "always"
+           }
+       }
+   ]
 }
