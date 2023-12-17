@@ -74,35 +74,36 @@ A arquitetura de um projeto é fundamental para o seu sucesso. Ela define a estru
 
 ## Pacotes Importantes
 Descrição de packages importantes deste servidor e onde localizar sistemas especifícos.
-**yggdrasil**: Este é o sistema mais importante relacionado à inteligência de gerenciamento do shard.
+
+- **yggdrasil**: Este é o sistema mais importante relacionado à inteligência de gerenciamento do shard.
    - `.spawns`: Acesso ao sistema de spawnpoints da ghaia.
    - `.dynamicevents`: Acesso ao sistema de eventos dinâmicos da ghaia.
    - `.editgroups`: Acesso ao sistema de criação de grupos de monstros da ghaia.
    - `.combatevents`: Acesso ao sistema de habilidades de monstros. Permite criar habilidades e importar em monstros. Alterar a habilidade no combatevents afeta todos os monstros que possuem a habilidade.
    - `.reagentspawn`: Acesso ao sistema de spawn de itens no mapa.
-**ghaia**: Este é o sistema de AI do shard, controlando todos os tipos de NPCs autônomos e pets.
+- **ghaia**: Este é o sistema de AI do shard, controlando todos os tipos de NPCs autônomos e pets.
 
-**faccao**: Sistema que implementa gerenciamento de facções por players e utiliza includes ghaia para gerenciamento de AI.
+- **faccao**: Sistema que implementa gerenciamento de facções por players e utiliza includes ghaia para gerenciamento de AI.
    - `.faccoes`: Acesso ao sistema de facções.
 
-**quest**: Sistema de gerenciamento de quests automáticas, podendo fazer quest de evento único ou repetíveis.
+- **quest**: Sistema de gerenciamento de quests automáticas, podendo fazer quest de evento único ou repetíveis.
    - `.questmaker`: Acesso ao sistema.
 
-**roleplay_window**: Objeto interativo para exibir textos ou imagens. Usuários podem acessar ao clicar ou se posicionar próximo ao objeto.
+- **roleplay_window**: Objeto interativo para exibir textos ou imagens. Usuários podem acessar ao clicar ou se posicionar próximo ao objeto.
 
-**nature**: Sistema legado para gerenciamento de clima.
+- **nature**: Sistema legado para gerenciamento de clima.
 
-**heir**: Sistema de herança não finalizado.
+- **heir**: Sistema de herança não finalizado.
 
-**email**: Sistema de caixa de mensagens para notificar jogadores de eventos importantes out-of-game.
+- **email**: Sistema de caixa de mensagens para notificar jogadores de eventos importantes out-of-game.
 
-**charactercreation**: Sistema de criação de personagem. Inclui dependências usadas por muitos scripts, e configurações de feats, perícias e habilidades.
+- **charactercreation**: Sistema de criação de personagem. Inclui dependências usadas por muitos scripts, e configurações de feats, perícias e habilidades.
 
-**combat**: Sistema de combate, com todas as regras PvE, PvP e feats de combate.
+- **combat**: Sistema de combate, com todas as regras PvE, PvP e feats de combate.
 
-**vitals**: Sistema que gerencia vida, mana, stamina, death points e progressão de experiência.
+- **vitals**: Sistema que gerencia vida, mana, stamina, death points e progressão de experiência.
 
-**gathering**: Sistema de coleta de recursos baseado em veios. É necessário criar o item 0xee99 para adicionar minérios as minas.
+- **gathering**: Sistema de coleta de recursos baseado em veios. É necessário criar o item 0xee99 para adicionar minérios as minas.
 
 ---
 
@@ -119,8 +120,9 @@ Aqui estão alguns pacotes auxiliares que podem ser utilizados em outros pacotes:
 ---
 
 ## Pacotes em Desenvolvimento
-**architect**: Sistema de construção projetado para facilitar a construção de staff dentro do jogo. Planejado para expansão futura para os jogadores.
-**contract**: Sistema destinado a facilitar contratos entre jogadores.
+- **architect**: Sistema de construção projetado para facilitar a construção de staff dentro do jogo. Planejado para expansão futura para os jogadores.
+
+- **contract**: Sistema destinado a facilitar contratos entre jogadores.
 
 ---
 
