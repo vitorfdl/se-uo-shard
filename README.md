@@ -21,23 +21,7 @@ Nosso servidor é projetado para dar aos GMs (Game Masters) e jogadores um alto n
 Para garantir a consistência e a legibilidade do código em todo o projeto, adotamos as seguintes convenções de código:
 
 1. **Documentação de Código**: Cada arquivo .inc deve conter um cabeçalho com a descrição das funções incluídas no arquivo. Por exemplo:
-```polscript
-/**
- * [Commands for SpawnGroups]
- * LoadQuestData() - Get the DataFile document
- * SetSpawnGroupData(group_name, group_struct) - Set changes to a group;
- * GetSpawnGroupData(group_name) - Get all info about a group;
- * RemoveGroupData(group_name) - Remove a group;
- * RemoveGroupMobData(group_name, index_mob) - Remove a mob from mobList. Need index;
 
-## Arquitetura
-- NodeJS: É utlizado o serviço pm2 para manter o servidor ligado em host externo. Para local, não há necessidade de iniciar pelo pm2.
-- Methods: Utiliza-se o syshook de methods sempre que possível, permitindo invocar metódos direto nos objetos (mobile, item, etc). Como há sistemas legados no cliente, peço que opte-se sempre por criar métodos quando possível. (ex: Player: pkg/systems/attributes/charmethods.src , NPC: pkg/mobiles/ghaia/include/npcmethods.inc)
-
-## Convenções de Código
-Para garantir a consistência e a legibilidade do código em todo o projeto, adotamos as seguintes convenções de código:
-
-1. **Documentação de Código**: Cada arquivo .inc deve conter um cabeçalho com a descrição das funções incluídas no arquivo. Por exemplo:
 ```polscript
 /**
  * [Commands for SpawnGroups]
@@ -51,7 +35,7 @@ Para garantir a consistência e a legibilidade do código em todo o projeto, adota
 ```
 
 2. **Nomenclatura de Funções**: Os nomes das funções devem ser intuitivos e refletir o tipo de retorno da função. Por exemplo:
-```exemplo
+```polscript
 // A função retorna um valor booleano
 // Correto:
 isUserFrozen() // return true
