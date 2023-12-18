@@ -12,7 +12,7 @@ data/*
 realm/*
 log/*
 config/servers.cfg
-pol.exe'
+pol.exe
 data.zip
 pol.cfg
 ecompile
@@ -37,3 +37,6 @@ leftovers.txt
 objtypes.txt
 orphans.txt
 pol.pid
+
+# POL Modules
+*.em
