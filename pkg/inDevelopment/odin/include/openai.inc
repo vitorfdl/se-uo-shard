@@ -3,6 +3,12 @@ use uo;
 use os;
 use basic;
 
+
+enum OPENAI_MODELS
+   GPT_4 := "gpt-4-1106-preview",
+   GPT_3 := "gpt-3.5-turbo-1106",
+endenum
+
 /*
  * Function: OpenAICompletion
  * Description: This function takes a system message and an array of questions as input. It formats the questions and sends a POST request to the OpenAI API. 
@@ -23,7 +29,7 @@ use basic;
  *    A struct containing the API response or an error message.
  */
 
-function OpenAICompletion(systemMessage, questions)
+function OpenAICompletion(systemMessage, questions, gptModel := GPT_3)
    if (typeof(systemMessage) != "String")
       return struct{ "error" := "systemMessage must be a string" };
    endif
@@ -60,7 +66,7 @@ function OpenAICompletion(systemMessage, questions)
    var apiURL := "https://api.openai.com/v1/chat/completions";
    var method := "POST";
    var jsonData := PackJSON(struct{
-      "model" := "gpt-3.5-turbo-1106",
+      "model" := gptModel,
       "messages" := formatedQuestions
    });
 
