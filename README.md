@@ -157,7 +157,7 @@ Aqui estão alguns pacotes auxiliares que podem ser utilizados em outros pacotes:
    - `./uoconvert maptile realm=britannia`
 
 7. Crie uma cópia da pasta dev/data/ para a pasta raiz. Altere as informações no arquivo /data/accounts.txt para criar sua conta.
-- A senha da conta é 123. Não altere o hash!
+   - A senha da conta é 123. Não altere o hash!
 8. Para compilar todos os scripts, abra o terminal na pasta do projeto e execute o comando `scripts/ecompile -a`.
 
 Agora você está pronto para iniciar seu servidor Ultima Online!
