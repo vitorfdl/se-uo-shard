@@ -1,0 +1,26 @@
+//<?
+use uo;
+use datafile;
+use basic;
+
+include ":odin:openai";
+include "include/say";
+
+program textcmd_Odin(who, text)
+
+   if (!text)
+		SendSysMessage(who, "Syntax: .odintest <text>");
+		return;
+   endif
+
+   var sysMsg := "No matter what the user says, make a joke about what he said.";
+   var questions := array{ struct{ "user" := text } };
+
+	var result := OpenAICompletion(sysMsg, questions);
+   if (result["error"])
+      SendSysMessageEX(who, "Error: " + result["error"], SSM_FAIL);
+      return;
+   endif
+
+   SendSysMessageEX(who, result);
+endprogram
