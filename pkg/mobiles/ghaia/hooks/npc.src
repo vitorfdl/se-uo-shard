@@ -47,7 +47,7 @@ endfunction
 
 exported function getLowestAggro(creature)
    var aggros := aggroProp(creature);
-   var lowest := array{0, 9999999999};
+   var lowest := array{0, 99999999};
    foreach serial in (aggros.keys())
       if (aggros[serial] < lowest[2])
          lowest := array{serial, aggros[serial]};

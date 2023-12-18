@@ -1,0 +1,10 @@
+Account
+{
+	Name	admin
+	PasswordHash	7cd26e97d79d032a2f5944a185950ba3
+	Enabled	1
+	Banned	0
+	DefaultCmdLevel	test
+	UOExpansion	SA
+}
+

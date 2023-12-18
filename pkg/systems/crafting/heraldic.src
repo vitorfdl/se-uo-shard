@@ -105,7 +105,6 @@ function TranslateToPlayer(text)
       "wismod": return "Sabedoria";
       "toughmod": return "Tenacidade";
       "hitsmod":"hits": return "Vida";
-      "hp_max": return "Durabilidade do Equip.";
       "manamod":"mana": return "Mana";
       "stammod":"stamina": return "Vigor";
       "dp": return "P. de Desmaio";

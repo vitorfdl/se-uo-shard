@@ -31,3 +31,9 @@ jspm_packages/
 
 # Optional REPL history
 .node_repl_history
+
+# POL debugging files
+leftovers.txt
+objtypes.txt
+orphans.txt
+pol.pid

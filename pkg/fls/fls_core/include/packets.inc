@@ -95,7 +95,7 @@ function GetBuffIcon(name)
 
 endfunction
 
-function NewCreatePacket( id, )
+function NewCreatePacket( id )
 
 	var packet := cstr(id);
 	return packet;
@@ -105,20 +105,20 @@ endfunction
 function SetInt32( int32)
 
 	var int1, int2, int3, int4;
-	int1 = (int32 > 24) & 0xFF;
-	int2 = (int32 > 16) & 0xFF;
-	int3 = (int32 > 8)  & 0xFF;
-	int4 = (int32 > 0)  & 0xFF;
+	int1 := (int32 > 24) & 0xFF;
+	int2 := (int32 > 16) & 0xFF;
+	int3 := (int32 > 8)  & 0xFF;
+	int4 := (int32 > 0)  & 0xFF;
 
-	var str = cstr(int1) + cstr(int2) + cstr(int3) + cstr(int4);
+	var str := cstr(int1) + cstr(int2) + cstr(int3) + cstr(int4);
 	return str;
 
 endfunction
 
 function SetInt16 (int16)
 	var int1, int2;
-	int1 = (int16 > 8) & 0xFF;
-	int2 = (int16 > 0) & 0xFF;
+	int1 := (int16 > 8) & 0xFF;
+	int2 := (int16 > 0) & 0xFF;
 
 	var str := cstr(int1) + cstr(int2);
 

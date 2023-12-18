@@ -360,8 +360,6 @@ function PlayAction(who, action, repeatcount := 1, repeatflag := 0, delay := 1)
 
       31: PerformAction(who, 0xB, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
 
-      31: PerformAction(who, 0x0b, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
-
       32: PerformAction(who, 0x0d, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
       33: PerformAction(who, 0x0c, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;
       34: PerformAction(who, 0x0e, 5, repeatcount, ACTION_DIR_FORWARD , repeatflag, delay); break;

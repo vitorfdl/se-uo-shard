@@ -33,7 +33,7 @@ function writeName(who, item)
       return;
    endif
 
-   names_writed.append(name)
+   names_writed.append(name);
    SetObjProperty(item, "writed", names_writed);
    PrintText(who, "*gravando nome na pedra*");
 endfunction

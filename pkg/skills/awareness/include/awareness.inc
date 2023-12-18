@@ -144,9 +144,9 @@ function getItemDiff(who, item)
       default: diff := 18; 
    endcase
 
-   if ()
-      diff += 4;
-   endif
+   // if ()
+   //    diff += 4;
+   // endif
 
    return diff;
 endfunction

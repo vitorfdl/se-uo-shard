@@ -110,7 +110,6 @@ enum PRIMARY_SOUNDS
    SFX_BLESS              := 0x1EB,
    SFX_CURE               := 0x1E1,
    SFX_CREATE_FOOD        := 0x1E3,
-   SFX_DRINK_1            := 0x31,
    SFX_DRINK_2            := 0x32,
    SFX_DRINK_3            := 0x2D7,
    SFX_DRINK_4            := 0x4CD,

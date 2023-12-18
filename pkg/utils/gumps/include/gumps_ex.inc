@@ -386,20 +386,20 @@ function SelectWindowPosition(who, selected)
    endif 
 endfunction
 
-function SelectorGump(who, params)
-   if (TypeOf(params) != "Array") return; endif
+// function SelectorGump(who, params)
+//    if (TypeOf(params) != "Array") return; endif
 
-   var y := 0;
-   foreach param in params
-      param.id
-      param.image
-      param.item
-      param.color
-      param.text
+//    var y := 0;
+//    foreach param in params
+//       param.id
+//       param.image
+//       param.item
+//       param.color
+//       param.text
       
-      y += 10;
-      sleepms(1);
-   endforeach
+//       y += 10;
+//       sleepms(1);
+//    endforeach
 
-   return GFSendGump(who, gump)[0];
-endfunction
+//    return GFSendGump(who, gump)[0];
+// endfunction

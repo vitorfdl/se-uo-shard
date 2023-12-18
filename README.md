@@ -2,6 +2,16 @@
 
 Bem-vindo ao repositório do Projeto Servidor Ultima Online - Sussurros Eternos 2020. Este projeto é desenvolvido com a engine POL v100 e tem como objetivo criar uma experiência imersiva de roleplay em Ultima Online.
 
+## Sumário
+- [Características Principais](#características-principais)
+- [Filosofia do Projeto](#filosofia-do-projeto)
+- [Convenções do Projeto](#convenções-do-projeto)
+- [Estrutura de Arquivos](#estrutura-de-arquivos)
+- [Pacotes Importantes](#pacotes-importantes)
+- [Pacotes Auxiliares](#pacotes-auxiliares)
+- [Pacotes em Desenvolvimento](#pacotes-em-desenvolvimento)
+- [Instruções de Instalação](#instruções-de-instalação)
+
 ## Características Principais
 
 - **Sistema Baseado em D&D 5e**: Incorporamos um sistema de rolagem de dados dinâmico que inclui D20, D10, D6 e D4, proporcionando uma experiência de jogo rica e variada.
@@ -12,7 +22,10 @@ Bem-vindo ao repositório do Projeto Servidor Ultima Online - Sussurros Eternos 2
 Nosso servidor é projetado para dar aos GMs (Game Masters) e jogadores um alto nível de controle sobre a criação de conteúdo. Isso significa que:
 
 - **Criação Flexível de Monstros**: Utilizamos um sistema onde os monstros podem ser criados diretamente pelos usuários através de gumps e armazenados em datafiles.
-- **Sistema de Respawn Yggdrasil**: Implementamos um sistema de respawn exclusivo, denominado Yggdrasil, que oferece uma abordagem personalizada e integrada ao nosso mundo de jogo.
+- **Sistema de Respawn Yggdrasil**: Nosso sistema de respawn exclusivo, Yggdrasil, oferece uma abordagem personalizada e integrada ao nosso mundo de jogo. Ele permite um controle refinado sobre a frequência e localização dos respawns.
+- **Controle de Recursos Yggdrasil**: Nosso sistema Yggdrasil permite que todos os recursos de coleta sejam gerenciados diretamente através do cliente. Isso proporciona aos jogadores uma experiência de coleta de recursos mais imersiva e personalizada, que pode mudar através do tempo.
+- **Controle de Drops Yggdrasil**: Com o Yggdrasil, os drops de monstros são gerenciáveis através do cliente. Oferecemos pacotes pré-prontos que podem ser modificados para se adequar às necessidades específicas do servidor.
+- **Controle de IA Ghaia**: Ghaia é nosso sistema de inteligência artificial avançado para mobs. Embora seja um recurso pesado, ele proporciona uma complexidade sem precedentes no comportamento dos mobs.
 
 ---
 
@@ -52,23 +65,20 @@ userFrozen() // return true
 ## Estrutura de Arquivos
 A arquitetura de um projeto é fundamental para o seu sucesso. Ela define a estrutura do projeto e facilita a compreensão do fluxo de trabalho. Uma boa arquitetura permite que os desenvolvedores encontrem facilmente o que precisam e entendam como tudo se encaixa. A seguir, apresentamos a estrutura de arquivos do nosso projeto.
 
-`./dev`: Contém arquivos auxiliares não utilizados pelo servidor.
-
-`./pkg`: Este é um diretório principal que contém vários subdiretórios e arquivos relacionados a diferentes aspectos do jogo/servidor.
-- `./pkg/items`: Inclui itens usados no jogo, categorizados em vários tipos como jogos, champspawn, itens destrutíveis, armadilhas, quadros de avisos, etc. Cada categoria tem seus próprios subdiretórios para tipos de itens específicos ou scripts relacionados.
-- `./pkg/systems`: Contém diferentes sistemas usados no jogo, como criação de personagens, sistemas de loot, crafting e mais. Cada sistema está organizado em seu próprio subdiretório.
-- `./pkg/utils`: Contém scripts e arquivos de utilidade que auxiliam em várias funcionalidades como gumps, controles, coordenadas, etc.
-- `./pkg/commands`: Consiste em diferentes comandos categorizados por função do usuário (jogador, vidente, administrador, etc.).
-- `./pkg/multis`: Contém arquivos relacionados a estruturas multi-objetos como casas ou barcos.
-- `./pkg/skills`: Contém arquivos e scripts relacionados a várias habilidades do jogador no jogo.
-- Outros diretórios de itens específicos como montarias, comida, etc., cada um com sua própria estrutura e potencialmente contendo comandos, configurações e arquivos de inclusão.
-- `./pkg/mobiles`: Inclui scripts e arquivos relacionados a mobiles (NPCs, criaturas) no jogo, categorizados por sua funcionalidade.
-
-`./scripts`: Contém vários scripts POL-CORE usados no projeto, possivelmente incluindo funcionalidades principais, módulos e outros scripts diversos.
-`./regions`: Contém vários scripts de configuração POL-CORE para dados específicos de região.
-`./config`: Contém várias configurações globais POL-CORE para o servidor.
-
-`./node_service`: Contém scripts NodeJS para gerenciamento do servidor.
+- `./dev`: Contém arquivos auxiliares não utilizados pelo servidor.
+- `./pkg`: Este é um diretório principal que contém vários subdiretórios e arquivos relacionados a diferentes aspectos do jogo/servidor.
+   - `./pkg/items`: Inclui itens usados no jogo, categorizados em vários tipos como jogos, champspawn, itens destrutíveis, armadilhas, quadros de avisos, etc. Cada categoria tem seus próprios subdiretórios para tipos de itens específicos ou scripts relacionados.
+   - `./pkg/systems`: Contém diferentes sistemas usados no jogo, como criação de personagens, sistemas de loot, crafting e mais. Cada sistema está organizado em seu próprio subdiretório.
+   - `./pkg/utils`: Contém scripts e arquivos de utilidade que auxiliam em várias funcionalidades como gumps, controles, coordenadas, etc.
+   - `./pkg/commands`: Consiste em diferentes comandos categorizados por função do usuário (jogador, vidente, administrador, etc.).
+   - `./pkg/multis`: Contém arquivos relacionados a estruturas multi-objetos como casas ou barcos.
+   - `./pkg/skills`: Contém arquivos e scripts relacionados a várias habilidades do jogador no jogo.
+   - Outros diretórios de itens específicos como montarias, comida, etc., cada um com sua própria estrutura e potencialmente contendo comandos, configurações e arquivos de inclusão.
+   - `./pkg/mobiles`: Inclui scripts e arquivos relacionados a mobiles (NPCs, criaturas) no jogo, categorizados por sua funcionalidade.
+- `./scripts`: Contém vários scripts POL-CORE usados no projeto, possivelmente incluindo funcionalidades principais, módulos e outros scripts diversos.
+- `./regions`: Contém vários scripts de configuração POL-CORE para dados específicos de região.
+- `./config`: Contém várias configurações globais POL-CORE para o servidor.
+- `./node_service`: Contém scripts NodeJS para gerenciamento do servidor.
 
 ---
 
@@ -92,8 +102,6 @@ Descrição de packages importantes deste servidor e onde localizar sistemas espec
 - **roleplay_window**: Objeto interativo para exibir textos ou imagens. Usuários podem acessar ao clicar ou se posicionar próximo ao objeto.
 
 - **nature**: Sistema legado para gerenciamento de clima.
-
-- **heir**: Sistema de herança não finalizado.
 
 - **email**: Sistema de caixa de mensagens para notificar jogadores de eventos importantes out-of-game.
 
@@ -120,10 +128,10 @@ Aqui estão alguns pacotes auxiliares que podem ser utilizados em outros pacotes:
 ---
 
 ## Pacotes em Desenvolvimento
+
 - **architect**: Sistema de construção projetado para facilitar a construção de staff dentro do jogo. Planejado para expansão futura para os jogadores.
-
 - **contract**: Sistema destinado a facilitar contratos entre jogadores.
-
+- **heir**: Sistema de herança não finalizado.
 ---
 
 
