@@ -1,0 +1,136 @@
+/*===============================================================
+* FLS - PLAYERS COMMAND
+===============================================================*/
+
+use uo;
+use vitals;
+use os;
+use util;
+
+include ":gumps:include/gumps";
+include ":gumps:include/gumps_ex";
+include ":datafile:datafile";
+include ":attributes:attributes";
+include ":tn:tngumps";
+include ":gumps:playerselectiongump";
+
+const BTN_CHANGE_CLASS   := 12;
+const BTN_CHANGE_RACE    := 11;
+const BTN_CHANGE_CORPSE  := 13;
+const BTN_CHANGE_LEVELUP := 14;
+const BTN_CHANGE_FEAT    := 15;
+const BTN_SELECT_PLAYER  := 16;
+const BTN_CAN_SETLOOK    := 17;
+
+program command_Message(who)
+	var targ := target(who);;
+	if (!targ || !targ.ISA(POLCLASS_MOBILE))
+		return;
+	endif
+
+	while (1)
+		var gump := GFCreateGump();
+		GFResizePic(gump, 84, 90, 9260, 280, 260);
+
+		GFGumpPicTiled(gump, 100,100,30,235,10460);
+		GFGumpPicTiled(gump, 320,100,30,235,10460);
+		// GFGumpPicTiled(gump, 80,88,463,16,10100);
+		// GFGumpPicTiled(gump, 84,610,457,16,10100);
+		
+		var chardata := GetObjProperty(targ, "chardata");
+		if (!chardata)
+			var chardata := struct{ "level" := 1, "raca" := "Humano", "Feats" := array{}, "heir_of" := ""};
+		endif
+
+      var y := 120;
+		GFTextLine(gump, 170, y, 2100, "Raça:");
+		GFTextLine(gump, 220, y, 2103, "{}".format(chardata.raca));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_CHANGE_RACE);
+      y+= 20;
+		GFTextLine(gump, 170, y, 2100, "Parente:");
+		GFTextLine(gump, 220, y, 2103, "{}".format(SystemFindObjectBySerial(chardata.heir_of, SYSFIND_SEARCH_OFFLINE_MOBILES).name));
+      GFAddButton(gump, 150, y+3, 0x845, 0x846, GF_CLOSE_BTN, BTN_SELECT_PLAYER);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_CORPSE);
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#414141><center>Mudar Aparência", 1);
+      y+= 30;
+      GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CAN_SETLOOK);
+      var color := "#414141";
+      if (chardata.can_look)
+         color := "#7FFFD4";
+      endif
+		GFHTMLArea(gump,  170, y, 115, 25, "<basefont color={}><center>Autorizar M. Apr.".format(color), 1);
+      // y+= 30;
+      // GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_LEVELUP);
+		// GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Subir Level", 1);
+      // y+= 30;
+      // GFAddButton(gump, 172, y, 0x80E, 0x80E, GF_CLOSE_BTN, BTN_CHANGE_FEAT);
+		// GFHTMLArea(gump,  170, y, 115, 25, "<basefont color=#7FFFD4><center>Adquirir Talento", 1);
+      
+		var input := GFSendGump(who, gump);
+		input := input[0];
+
+      var output := handleInput(who, input, chardata, targ);
+
+		SetObjProperty(targ, "chardata", chardata);
+		if (output) return; endif;
+	endwhile
+endprogram
+
+function handleInput(who, input, byref chardata, targ)
+   case (input)
+      BTN_CHANGE_RACE:
+         var raca := RadioGump(who, 180, 190, "Qual raça deseja escolher?", array{"Humano", "Meio-Elfo", "Elfo", "Remover"});
+         if (raca == "Remover")
+            chardata.erase("raca");
+            return;
+         endif
+         chardata.raca := raca;
+         SetName(targ, targ.name);
+         return;
+      BTN_CHANGE_CORPSE:
+         var sexo := RadioGump(who, 180, 160, "Qual sexo deseja escolher?", array{"Homem", "Mulher"});
+         if (sexo == "Homem")
+            if (chardata.raca == "Humano")
+               targ.graphic 	:= 400;
+               targ.trueobjtype := 400;
+            else
+               targ.graphic 	:= 605;
+               targ.trueobjtype := 605;
+            endif
+            targ.gender := 0;
+         else
+            if (chardata.raca == "Humano")
+               targ.graphic 	:= 401;
+               targ.trueobjtype := 401;
+            else
+               targ.graphic 	:= 606;
+               targ.trueobjtype := 606;
+            endif
+            targ.gender := 1;
+         endif
+         chardata.gender := targ.gender;
+
+         Start_Script(":disguise:commands/gm/editlook", array{who, targ});
+         return;
+      BTN_SELECT_PLAYER:
+         var player := Target(who);
+         if (!player)
+            player := SelectCharacter( who, who.cmdlevel );
+         endif
+         
+         if (player)
+            var acc := FindAccount(player.acctname);
+            acc.SetProp("heir", targ.serial);
+            chardata.heir_of := player.serial;
+         endif
+         return;
+      BTN_CAN_SETLOOK:
+         if (chardata.can_look)
+            chardata.-can_look;
+         else
+            chardata.can_look := 1;
+         endif
+      default: return 1;
+   endcase
+endfunction

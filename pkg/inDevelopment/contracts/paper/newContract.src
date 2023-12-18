@@ -1,0 +1,27 @@
+
+use uo;
+
+include ":gumps:gumps";
+include ":gumps:gumps_ex";
+
+program contract(param)
+   var who := param[1];
+   var item := param[2];
+   var input := newContract(who);
+endprogram
+
+function newContract(who)
+   var gump := GFCreateGump();
+	
+	GFPage(gump, 0);
+	GFResizePic(gump, 8, 9, 5170, 364, 507);
+	GFResizePic(gump, 374, 19, 9270, 272, 349);
+	GFResizePic(gump, 385, 31, 9350, 251, 325);
+	GFCheckBox(gump, 396, 61, 210, 211, 0, 0);
+	GFAddButton(gump, 421, 312, 247, 248, GF_CLOSE_BTN, 0);
+	GFAddButton(gump, 523, 318, 40, 248, GF_CLOSE_BTN, 0);
+	GFTextLine(gump, 392, 34, 0, "New Label");
+	GFCheckBox(gump, 396, 89, 210, 211, 0, 0);
+
+	return GFSendGump(who, gump);
+endfunction

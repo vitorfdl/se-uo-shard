@@ -11,6 +11,7 @@ Bem-vindo ao repositório do Projeto Servidor Ultima Online - Sussurros Eternos 2
 - [Pacotes Auxiliares](#pacotes-auxiliares)
 - [Pacotes em Desenvolvimento](#pacotes-em-desenvolvimento)
 - [Instruções de Instalação](#instruções-de-instalação)
+- [LSP Plugin para VSCode](#lsp-para-vscode)
 
 ## Características Principais
 
@@ -113,6 +114,8 @@ Descrição de packages importantes deste servidor e onde localizar sistemas espec
 
 - **gathering**: Sistema de coleta de recursos baseado em veios. É necessário criar o item 0xee99 para adicionar minérios as minas.
 
+- **auxsvc**: Sistema de auxiliar TCP/IP para conectar com serviços externos. Porta 2973.
+
 ---
 
 ## Pacotes Auxiliares
@@ -133,7 +136,6 @@ Aqui estão alguns pacotes auxiliares que podem ser utilizados em outros pacotes:
 - **contract**: Sistema destinado a facilitar contratos entre jogadores.
 - **heir**: Sistema de herança não finalizado.
 ---
-
 
 ## Instruções de Instalação
 
@@ -161,3 +163,14 @@ Aqui estão alguns pacotes auxiliares que podem ser utilizados em outros pacotes:
 8. Para compilar todos os scripts, abra o terminal na pasta do projeto e execute o comando `scripts/ecompile -a`.
 
 Agora você está pronto para iniciar seu servidor Ultima Online!
+
+---
+
+## LSP para vsCode
+
+Siga as instruções abaixo para instalar o LSP do POL para o vscode:
+
+1. Baixe o release em [POL Server LSP](https://github.com/polserver/vscode-escript).
+2. Descompacte o arquivo e instale o VSIX arrastando-o para o vscode.
+3. Para que o LSP funcione corretamente, é necessário que o arquivo `scripts/ecompile.cfg` esteja preenchido corretamente. Se houver algum problema, tente usar o caminho absoluto das pastas.
+4. Recarregue o vscode ou feche e abra novamente.
