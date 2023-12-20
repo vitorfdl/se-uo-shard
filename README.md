@@ -92,7 +92,25 @@ Descrição de packages importantes deste servidor e onde localizar sistemas espec
    - `.editgroups`: Acesso ao sistema de criação de grupos de monstros da ghaia.
    - `.combatevents`: Acesso ao sistema de habilidades de monstros. Permite criar habilidades e importar em monstros. Alterar a habilidade no combatevents afeta todos os monstros que possuem a habilidade.
    - `.reagentspawn`: Acesso ao sistema de spawn de itens no mapa.
+
+```mermaid
+flowchart TB
+    Yggdrasil[Yggdrasil: Creature Spawn System] --> Spotgroup
+    Spotgroup[Spotgroup] -->|Manages| Spots
+    Spotgroup -->|Contains| Spawngroups
+    Spotgroup -->|Defines| Routes
+    Spots[Spots] -->|Manages| Spawnpoints
+    Spots -->|Triggers| DynamicEvents[Dynamic Events]
+    Spots -->|Controls| TreasureBehavior[Treasure Behavior]
+    Spawnpoints[Spawnpoints] -->|Defines| MonsterType[Monster Type]
+    Spawnpoints -->|Sets| OperationRange[Operation Range]
+    Spawnpoints -->|Specifies| TimeOfDay[Time of Day]
+```
+
+
 - **ghaia**: Este é o sistema de AI do shard, controlando todos os tipos de NPCs autônomos e pets.
+   - `.createnpc`: Spawn de NPCs.
+   - `.criartemplate`: Acesso ao sistema de criação de templates de npc.
 
 - **faccao**: Sistema que implementa gerenciamento de facções por players e utiliza includes ghaia para gerenciamento de AI.
    - `.faccoes`: Acesso ao sistema de facções.
