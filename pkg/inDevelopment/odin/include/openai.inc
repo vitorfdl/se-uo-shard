@@ -16,6 +16,14 @@ endenum
  * Parameters:
  *    systemMessage: A string representing the system message.
  *    questions: An array of questions where each question is a struct containing the keys 'assistant' and 'user'.
+ *    options: A struct containing the options for the API request. Refer to https://platform.openai.com/docs/api-reference/chat/create for more information.
+ *        options["model"]: The model to use for the API request. Defaults to GPT_3.
+ *        options["max_tokens"]: The maximum number of tokens to generate. Defaults to null.
+ *        options["temperature"]: What sampling temperature to use. Higher values means the model will take more risks. Try 0.9 for more creative applications, and 0 (argmax sampling) for ones with a well-defined answer. Defaults to null.
+ *        options["top_p"]: An alternative to sampling with temperature, called nucleus sampling, where the model considers the results of the tokens with top_p probability mass. So 0.1 means only the tokens comprising the top 10% probability mass are considered. Defaults to null.
+ *        options["presence_penalty"]: What penalty to apply if a token is already present at all. Bigger values mean the model is less likely to repeat itself. Defaults to null.
+ *        options["frequency_penalty"]: What penalty to apply if a token has already been generated in the past. Bigger values mean the model is less likely to repeat itself. Defaults to null.
+ *        options["json"]: Whether to return the API response as a struct or a string. Defaults to false.
  *
  * Example code:
  *  var exampleSystemMessage := "This is a system message example";
@@ -29,7 +37,7 @@ endenum
  *    A struct containing the API response or an error message.
  */
 
-function OpenAICompletion(systemMessage, questions, gptModel := GPT_3)
+function OpenAICompletion(systemMessage, questions, options := struct{})
    if (typeof(systemMessage) != "String")
       return struct{ "error" := "systemMessage must be a string" };
    endif
@@ -66,22 +74,33 @@ function OpenAICompletion(systemMessage, questions, gptModel := GPT_3)
    var apiURL := "https://api.openai.com/v1/chat/completions";
    var method := "POST";
    var jsonData := PackJSON(struct{
-      "model" := gptModel,
-      "messages" := formatedQuestions
+      "model" := options["model"] ? options["model"] : GPT_3,
+      "messages" := formatedQuestions,
+      "max_tokens" := options["max_tokens"] ? options["max_tokens"] : "",
+      "temperature" := options["temperature"] ? options["temperature"] : "",
+      "top_p" := options["top_p"] ? options["top_p"] : "",
+      "presence_penalty" := options["presence_penalty"] ? options["presence_penalty"] : "",
+      "frequency_penalty" := options["frequency_penalty"] ? options["frequency_penalty"] : "",
+      "response_format" := options["json"] ? struct{ "type" := "json_object"} : ""
    });
 
    var apiResponse := HTTPRequest(
-         apiURL,
-         method,
-         struct{
-            data := jsonData,
-            headers := struct{
-               "Content-Type" := "application/json",
-               "Authorization" := "Bearer {1}".format(GetEnvironmentVariable("OPENAI_KEY"))
-            }
+      apiURL,
+      method,
+      struct{
+         data := jsonData,
+         headers := struct{
+            "Content-Type" := "application/json",
+            "Authorization" := "Bearer {1}".format(GetEnvironmentVariable("OPENAI_KEY"))
          }
-      );
+      }
+   );
+
    var unpackedJSON := UnpackJSON(apiResponse);
+
+   if (unpackedJSON["error"])
+      return struct{ "error" := unpackedJSON["error"]["message"] };
+   endif
 
    return unpackedJSON["choices"][1]["message"]["content"];
 endfunction
