@@ -11,10 +11,6 @@
     },
     // The default character set encoding to use when reading and writing files.
     "files.encoding": "iso88591",
-
-    "files.associations": {
-        "**/*.cfg": "cfgpol"
-    },
     "material-icon-theme.files.associations": {
         "**.src": "less",
         "**.inc": "lib",
