@@ -92,6 +92,7 @@ Descrição de packages importantes deste servidor e onde localizar sistemas espec
    - `.editgroups`: Acesso ao sistema de criação de grupos de monstros da ghaia.
    - `.combatevents`: Acesso ao sistema de habilidades de monstros. Permite criar habilidades e importar em monstros. Alterar a habilidade no combatevents afeta todos os monstros que possuem a habilidade.
    - `.reagentspawn`: Acesso ao sistema de spawn de itens no mapa.
+   - `.fishspots`: Acesso ao sistema de spawn de peixes.
 
 ```mermaid
 flowchart TB
