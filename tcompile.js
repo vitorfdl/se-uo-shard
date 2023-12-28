@@ -1,7 +1,11 @@
 const { exec } = require('child_process');
 const workspaceRoot = process.cwd();
-const file = process.argv[2];
-exec(`/usr/bin/bash -c "${workspaceRoot}/scripts/ecompile ${file}"`, (error, stdout, stderr) => {
+let file = process.argv[2];
+
+file = file.replace(workspaceRoot, '.');
+
+
+exec(`"./scripts/ecompile" -u ${file}`, (error, stdout, stderr) => {
   if (error) {
     console.error(`exec error: ${error}`);
     return;
