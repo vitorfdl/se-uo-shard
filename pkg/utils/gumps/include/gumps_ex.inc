@@ -6,13 +6,16 @@
  * Function List
  * GFExtractData(input, data_id)
  * GFOptimizeGump(byref gump)
- * GFTextCoords()
- * GFTextMid()
- * GFTextRight()
- * GFTextWidth()
+ * GFTextCoords(x, y, width, height)
+ * GFCenterRectangle(align, rect_size_x, x_pos, width)
+ * GFColumnPosition(column_width, num_columns, total_width)
+ * GFRowPosition(row_height, num_rows, total_height)
+ * GFTextMid(gump, x, y, width, color, text)
+ * GFTextRight(gump, x, y, width, color, text)
+ * GFTextWidth(text, size)
  * GFWordWrap(text, pixels)
  * GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
- * GFHtmlShadowed(byref gump, x, y, width, height, color, text);
+ * GFHtmlShadowed(byref gump, x, y, width, height, color, text, size := 5);
  */
 use uo;
 use os;
@@ -25,6 +28,7 @@ include ":gumps:gumps";
 // CONSTants for GFTextCoords()
 CONST ALIGN_CENTER	:= 0x1;
 CONST ALIGN_RIGHT	:= 0x2;
+CONST ALIGN_CENTER_Y	:= 0x3;
 
 function GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
 	return Start_Script(":gumps:autoClose", array{mobile, pid, timer, ret_val});
@@ -184,6 +188,102 @@ function GFTextCoords(type:=ALIGN_CENTER, gump_text, x_pos, width:=0)
 	endif
 endfunction
 
+/*
+ * GFCenterRectangle(type, gump_rect, x_pos, width)
+ *
+ * Purpose
+ * Returns the X coordinate to pass to a gump that will align
+ * the rectangle.
+ * 
+ * Parameters
+ * type:	The type of horizontal alignment to do.
+ *		ALIGN_CENTER - Aligns rectangle between the x_pos and width position.
+ * 	ALIGN_CENTER_Y - Aligns rectangle between the y_pos and height position.
+ *		ALIGN_RIGHT -  Aligns rectangle so that it ends on the x_pos. (width not needed)
+ * rect_size_x:	The rectangle to find the x coordinate for.
+ * x_pos:	The x (or y) position to align the rectangle off of.
+ * width:	When center aligning the rectangle, specify the width (or height) of the area it will fit into.
+ *
+ * Return value
+ * Returns the x coordinate to place the rectangle on.
+ *	
+ */
+function GFCenterRectangle(type:=ALIGN_CENTER, rect_size_x, x_pos, width:=0)
+	x_pos := CInt(x_pos);
+	width := CInt(width);
+	rect_size_x := CInt(rect_size_x);
+	case(type)
+		ALIGN_CENTER: return CInt(x_pos+CInt((width-rect_size_x)/2));
+		ALIGN_CENTER_Y: return CInt(x_pos+CInt((width-rect_size_x)/2));
+		ALIGN_RIGHT: return CInt(x_pos-rect_size_x);
+	endcase
+endfunction
+
+
+/*
+ * GFColumnPosition(column_width, num_columns, total_width)
+ *
+ * Purpose
+ * Returns the X coordinate for a specified column.
+ * 
+ * Parameters
+ * column_width:	The width of each column.
+ * num_columns:	The number of columns.
+ * total_width:	The total width the columns will fill into.
+ * x_pos:	The x position to align the text off of.
+ *
+ * Return value
+ * Returns the x coordinate for each column.
+ *	
+ */
+function GFColumnPosition(column_width, num_columns, total_width, x_pos:=0)
+	column_width := CInt(column_width);
+	num_columns := CInt(num_columns);
+	total_width := CInt(total_width);
+	x_pos := CInt(x_pos);
+	
+	var space_between := (total_width - (column_width * num_columns)) / (num_columns + 1);
+	
+	var positions := array{};
+	var i;
+	for (i := 1; i <= num_columns; i += 1)
+		positions[i] := space_between * i + column_width * (i - 1) + x_pos;
+	endfor
+	
+	return positions;
+endfunction
+
+/*
+ * GFRowPosition(row_height, num_rows, total_height)
+ *
+ * Purpose
+ * Returns the Y coordinate for a specified row.
+ * 
+ * Parameters
+ * row_height:	The height of each row.
+ * num_rows:	The number of rows.
+ * total_height:	The total height the rows will fill into.
+ *
+ * Return value
+ * Returns the y coordinate for each row.
+ *	
+ */
+function GFRowPosition(row_height, num_rows, total_height, y_pos:=0)
+	row_height := CInt(row_height);
+	num_rows := CInt(num_rows);
+	total_height := CInt(total_height);
+	y_pos := CInt(y_pos);
+	
+	var space_between := (total_height - (row_height * num_rows)) / (num_rows + 1);
+	
+	var positions := array{};
+	var i;
+	for (i := 1; i <= num_rows; i += 1)
+		positions[i] := space_between * i + row_height * (i - 1) + y_pos;
+	endfor
+	
+	return positions;
+endfunction
 
 /*
  * GFTextMid(gump, x, y, width, color, text)
