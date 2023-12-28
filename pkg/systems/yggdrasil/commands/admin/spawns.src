@@ -378,12 +378,13 @@ function DoSpotList(who, input)
             selected_spawnpoint := 0;
             break;
         GF_SPOT_ADDTREASURE_BTN:
+            SendSysMessageEx(who, "Selecione um baú ou container:", SSM_INFO);
             var container := Target(who);
             if (!container.isA(POLCLASS_CONTAINER))
-                SendSysMessageEx(who, "You must select a container");
+                SendSysMessageEx(who, "Você precisa selecionar um container.");
                 break;
             endif
-            var new__name := RequestGump(who, "Nome do novo Treasure", "Obrigatório um nome ainda não usado neste spot.", "", CANCEL_BTN_ON);
+            var new__name := RequestGump(who, "Nome do novo Tesouro", "Obrigatório um nome ainda não usado neste spot.", "", CANCEL_BTN_ON);
             var new_treasure := struct{
                 "serial" := container.serial,
                 "name" := new__name
@@ -584,20 +585,19 @@ endfunction
 
 function ConstructGroupList(byref gump)
     GFResizePic(gump, 0, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 195, 600);
-    GFTextLine(gump, 50, 28, 555, "Grupos de Spots");
+    GFTextLine(gump, 20, 28, 555, "Dungeons / Locations");
 
     var page     := 1;
     var max_page := 20;
-    for i:=1 to spotgroups.Size()+1
+    var spotgroups_size := spotgroups.Size();
+    for i:=1 to spotgroups_size+1
         GFPage(gump, page);
         var x := 35;
         var y := (30+(18*i)) / (((page-1) * max_page)+1); //(BaseX(Espaçamento*i)) / (Calculo de Pagina)
-        var color := 1153;
-        if (selected_group == spotgroups[i])
-            color := 2103;
-        endif
-        if (spotgroups[i])
-            GFTextLine(gump, x, y, color, spotgroups[i]);
+        var color := (selected_group == spotgroups[i]) ? 2103 : 1153;
+        var spotgroup := spotgroups[i];
+        if (spotgroup)
+            GFTextLine(gump, x, y, color, spotgroup);
             GFAddButton(gump, x-14, y+5, 2103, 2104, GF_CLOSE_BTN, GF_SELECTELEM_BTN+i);
         else
             GFTextLine(gump, x+70, y, 1153, "Adicionar");
@@ -626,7 +626,7 @@ function ConstructGroupConfig(byref gump)
     var form_size   := spawnGroups.Size() + spots.Size() + routes.size();
 
     GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 180+(form_size*18));
-    GFTextLine(gump, 202, 28, 555, "Configurações do Grupo");
+    GFTextLine(gump, 202, 28, 555, "Configurações da Dungeon");
 
     GFTextLine(gump, 210, 50, 1153, "Ativado:");
     GFCheckBox(gump, 210+50, 50+5, 2360, 2361, group_data.active, GF_GROUP_ACTIVE_SWITCH);
@@ -674,7 +674,7 @@ function ConstructGroupConfig(byref gump)
     endfor
 
     //Create SpawnGroup Menu
-    GFTextLine(gump, 202, base_y, 555, "SpawnGroups Vinculados");
+    GFTextLine(gump, 202, base_y, 555, "Grupos de NPC Vinculados");
     base_y += 18;
     for i:=0 to spawnGroups.Size();
         var n := i+1;
@@ -710,35 +710,35 @@ function ConstructGroupConfig(byref gump)
         base_y += 18;
     endfor
 
-    GFTextLine(gump, 202, base_y, 555, "Rotas");
-    for i:=0 to routes.Size();
-        var n := i+1;
+    // GFTextLine(gump, 202, base_y, 555, "Rotas");
+    // for i:=0 to routes.Size();
+    //     var n := i+1;
 
-        if (routes[n])
-            //Start Button Change Color and Icon
-            var start_button := 0x2622;
-            var color := 1153;
-            if (routes[n].name == selected_route)
-                start_button := 0x2623;
-                color := 2103;
-            endif
+    //     if (routes[n])
+    //         //Start Button Change Color and Icon
+    //         var start_button := 0x2622;
+    //         var color := 1153;
+    //         if (routes[n].name == selected_route)
+    //             start_button := 0x2623;
+    //             color := 2103;
+    //         endif
 
-            //endbutton
+    //         //endbutton
 
-            GFTextLine(gump, x, base_y, color, routes[n].name);
-            GFAddButton(gump, x-20, base_y+2, start_button, 0x2623, GF_CLOSE_BTN, GF_SELECTSPAWNGROUP_BTN+n);
-        else
-            // if (spots.Size() <= 10)
-            //     GFTextLine(gump, x+30, base_y, 1153, "Adicionar");
-            //     GFAddButton(gump, x+30-14, base_y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_GROUP_ADDSPAWNGROUP_BTN);
-            // endif
-            // if (selected_spawngroup)
-            //     GFTextLine(gump, x+110, base_y, 1153, "Remover");
-            //     GFAddButton(gump, x+110-14, base_y+5, 0x938, 0x938, GF_CLOSE_BTN, GF_GROUP_REMSPAWNGROUP_BTN);
-            // endif
-        endif
-        base_y += 18;
-    endfor
+    //         GFTextLine(gump, x, base_y, color, routes[n].name);
+    //         GFAddButton(gump, x-20, base_y+2, start_button, 0x2623, GF_CLOSE_BTN, GF_SELECTSPAWNGROUP_BTN+n);
+    //     else
+    //         // if (spots.Size() <= 10)
+    //         //     GFTextLine(gump, x+30, base_y, 1153, "Adicionar");
+    //         //     GFAddButton(gump, x+30-14, base_y+5, 0x939, 0x939, GF_CLOSE_BTN, GF_GROUP_ADDSPAWNGROUP_BTN);
+    //         // endif
+    //         // if (selected_spawngroup)
+    //         //     GFTextLine(gump, x+110, base_y, 1153, "Remover");
+    //         //     GFAddButton(gump, x+110-14, base_y+5, 0x938, 0x938, GF_CLOSE_BTN, GF_GROUP_REMSPAWNGROUP_BTN);
+    //         // endif
+    //     endif
+    //     base_y += 18;
+    // endfor
 endfunction
 
 function ConstructSpotConfig(byref gump)
@@ -761,19 +761,22 @@ function ConstructSpotConfig(byref gump)
     spot_name := GFTextEntry(gump, sx+40, sy, 140, 18, 2103, spot.name);
 
     GFTextLine(gump, sx, sy+18, 1153, "Ativado:");
+    GFTooltipText(gump, "Ativa/Desativa o spot e todos os seus spawnpoints.");
     GFCheckBox(gump, sx+50, sy+18+5, 2360, 2361, data.active, GF_SPOT_ACTIVE_SWITCH);
 
     GFTextLine(gump, sx+80, sy+18, 1153, "Intervalo:");
+    GFTooltipText(gump, "Tempo em segundos para o spot ser ativado novamente.");
     spot_timeinterval := GFTextEntry(gump, sx+135, sy+18, 30, 18, 2103, data.timeinterval);
 
-    GFTextLine(gump, sx, sy+18+18, 1153, "Dyn. Event:");
+    GFTextLine(gump, sx, sy+18+18, 1153, "Evento Din.:");
+    GFTooltipText(gump, "Evento dinâmico que será ativado quando o spot for ativado.");
     GFAddButton(gump, sx+68, sy+18+18+6, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_DYNAMICEVENT_BTN);
    // := GFTextEntry(gump, sx+90, sy+18+18, 140, 18, 2103, data.evententry);
     GFTextLine(gump, sx+80, sy+18+18, 1000, "{}".format(data.evententry));
 
-    GFTextLine(gump, sx, sy+54, 1153, "Location:");
-    GFTextLine(gump, sx+65, sy+54, 2103, "{}, {}, {}".format(spot.x, spot.y, spot.z));
-    GFAddButton(gump, sx+52, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_TELEPORT_BTN);
+    GFTextLine(gump, sx, sy+54, 1153, "Localização:");
+    GFTextLine(gump, sx+77, sy+54, 2103, "{}, {}, {}".format(spot.x, spot.y, spot.z));
+    GFAddButton(gump, sx+67, sy+60, 2103, 2104, GF_CLOSE_BTN, GF_SPOT_TELEPORT_BTN);
 
     GFTextLine(gump, sx, sy+72, 1153, "Spawn:");
     GFAddButton(gump, sx+40, sy+77, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCESPAWN_BTN);
@@ -782,7 +785,7 @@ function ConstructSpotConfig(byref gump)
     GFAddButton(gump, sx+60+50, sy+77, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCEKILL_BTN);
 
     //SpawnPoints Menu
-    GFTextMid(gump, 390, 150, 260, 555, "SpawnPoint List");
+    GFTextMid(gump, 390, 150, 260, 555, "Lista de Spawnpoints");
 
     sx += 15;
     var base_y := 172;
@@ -822,7 +825,7 @@ function ConstructSpotConfig(byref gump)
     endfor
 
     //Create Treasure Menu
-    GFTextMid(gump, 380, base_y, 260, 555, "Treasure List");
+    GFTextMid(gump, 380, base_y, 260, 555, "Lista de Tesouros");
     base_y += 18;
     for i:=0 to treasure_list.Size();
         var y := (base_y+(18*i));
@@ -864,7 +867,7 @@ function ConstructSpawnPointConfig(byref gump)
 
     var basex := 590;
     GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 250, 180);
-    GFTextMid(gump, basex, 28, 260, 555, "SpawnPoint Configuration");
+    GFTextMid(gump, basex, 28, 260, 555, "Lista de Spawnpoints");
 
     var sx := basex+30;
     var sy := 45;
@@ -915,25 +918,32 @@ function ConstructTreasureConfig(byref gump)
     GFCheckBox(gump, sx+50, sy+18+5, 2360, 2361, treasure.active, GF_TREASURE_ACTIVE_SWITCH);
 
     GFTextLine(gump, sx+80, sy+18, 1153, "Target:");
+    GFTooltipText(gump, "<center>Selecione o container que será o baú.");
     GFAddButton(gump, sx+130, sy+18+5, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_TARGET_BTN);
 
     GFTextLine(gump, sx, sy+36, 1153, "Trapped:");
+    GFTooltipText(gump, "<center>Se marcado, o baú será armadilhado.");
     GFCheckBox(gump, sx+50, sy+36+5, 2360, 2361, treasure.trapped, GF_TREASURE_TRAP_SWITCH);
 
     GFTextLine(gump, sx+80, sy+36, 1153, "Protected:");
+    GFTooltipText(gump, "<center>Se marcado, o baú será protegido pelos monstros do Spawn Spot.");
     GFCheckBox(gump, sx+145, sy+36+5, 2360, 2361, treasure.protected, GF_TREASURE_PROTECTED_SWITCH);
 
     GFTextLine(gump, sx, sy+54, 1153, "Level:");
+    GFTooltipText(gump, "<center>Level da fechadura do baú.");
     GFTextLine(gump, sx+40, sy+54, 2103, treasure.level);
     GFAddButton(gump, sx-15, sy+21+36, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_LEVEL_BTN);
 
-    GFTextLine(gump, sx+80, sy+54, 1153, "Force Spawn:");
+    GFTextLine(gump, sx+80, sy+54, 1153, "Forçar Spawn:");
+    GFTooltipText(gump, "<center>Se marcado, o baú será forçado a spawnar.");
     GFAddButton(gump, sx+160, sy+21+38, 2103, 2104, GF_CLOSE_BTN, GF_TREASURE_SPAWN_BTN);
 
     GFTextLine(gump, sx+80, sy+36+18+18, 1153, "Hidden:");
+    GFTooltipText(gump, "<center>Se marcado, o baú irá spawnar escondido.");
     GFCheckBox(gump, sx+120, sy+36+5+18+18, 2360, 2361, treasure.hidden, GF_TREASURE_HIDDEN_SWITCH);
 
     GFTextLine(gump, sx, sy+36+18+18, 1153, "Breakable:");
+    GFTooltipText(gump, "<center>Se marcado, o baú poderá ser quebrado.");
     GFCheckBox(gump, sx+60, sy+36+5+18+18, 2360, 2361, treasure.breakable, GF_TREASURE_BREAKABLE_SWITCH);
     
     GFTextLine(gump, sx, sy+72+18, 1153, "Location:");

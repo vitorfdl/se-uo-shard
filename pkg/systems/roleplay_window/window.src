@@ -21,7 +21,7 @@ program AC_start(who)
       last_see := "<br>-----<br>".join(last_see);
 	   var gump := GFCreateGump();
       GFPage(gump, 0);
-      GFSetID(gump, 0x977);
+      GFSetID(gump, GUMPID_ROLEPLAY);
       GFMovable(gump, 0);
       GFClosable(gump, 0);
       GFResizePic(gump, 9+setup.x, 7+setup.y, 9270, setup.width, setup.height);
