@@ -2,6 +2,13 @@
 
 Bem-vindo ao repositório do Projeto Servidor Ultima Online - Sussurros Eternos 2020. Este projeto é desenvolvido com a engine POL v100 e tem como objetivo criar uma experiência imersiva de roleplay em Ultima Online.
 
+# Roadmap 2024
+Novos sistemas e funcionalidades que serão implementados no servidor para lançamento no Q2 de 2024.
+
+Você pode acompanhar o status de desenvolvimento de cada funcionalidade:
+- [Sistemas em Desenvolvimento](https://sharing.clickup.com/9017136554/l/h/8cqd5da-417/b6dc7e0b1e0f2bd)
+- [Classes e Sub-Classes em desenvolvimento](https://sharing.clickup.com/9017136554/l/h/8cqd5da-737/93ac78aa702e11d)
+
 ## Sumário
 - [Características Principais](#características-principais)
 - [Filosofia do Projeto](#filosofia-do-projeto)
