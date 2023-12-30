@@ -5,15 +5,28 @@ use cfgfile;
 
 include "include/facings";
 
+/**
+ * @DEPRECATED - Use tenary operator instead
+ *
+ * Return a or b if a is not 0 or error.
+ *
+ * @param {any} a - The first parameter.
+ * @param {any} b - The second parameter.
+ * @returns {any} - Return a or b
+ */
 function _ifElse(a,b,c)
-   if (a) return b; endif
-   return c;
+   return a ? b : c;
 endfunction
 
-
+/**
+ * Return a or b if a is not 0 or error.
+ *
+ * @param {any} a - The first parameter.
+ * @param {any} b - The second parameter.
+ * @returns {any} - Return a or b
+ */
 function _IfOr(a,b)
-   if (a != error && a != 0) return a; endif
-   return b;
+   return (a != error && a != 0) ? a : b;
 endfunction
 
 
