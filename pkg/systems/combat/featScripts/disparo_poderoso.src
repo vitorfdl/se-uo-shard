@@ -17,7 +17,7 @@ program startTalent(param)
 		who.warmode := 1;
 	endif
 	
-	var elem := GetItemCFGInfo(who, who.weapon);
+	var elem := GetWeaponCFGInfo(who, who.weapon);
 	
 	if (IsBehind(who, targ.x, targ.y))
       FailFeat(who, spellinfo);
@@ -25,7 +25,7 @@ program startTalent(param)
 		return 0;
 	endif
 	
-	var ammo := CheckForAmmo(who, who.weapon);
+	var ammo := ConsumeAmmo(who, who.weapon);
    if (!ammo)
       return FailFeat(who, spellinfo);
    endif

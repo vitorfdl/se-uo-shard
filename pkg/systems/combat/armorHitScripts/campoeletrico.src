@@ -26,7 +26,6 @@ program HitScript(params)
 	// if (dmg < 2)
 	// 	dmg := 2;
 	// endif
-	// //ApplyDamageEX(attacker, dmg, DMG_ENERGY);
 	// DamageFLS(attacker, dmg, DMG_ENERGY);
 	// PlaySoundEffect(attacker, SFX_LIGHTNING);
 	

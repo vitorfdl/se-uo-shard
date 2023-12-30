@@ -13,7 +13,7 @@ program HitScript(params)
 	var weapon	:= params[3];
 	params := 0; // Not needed anymore
    
-   var wpn_elem := GetItemCFGInfo(attacker, weapon);
+   var wpn_elem := GetWeaponCFGInfo(attacker, weapon);
    if (wpn_elem.DamageType == "Corte" || wpn_elem.DamageType == "Eletrecidade")
 		PrintText(defender, "*divide-se em dois*");
 		var npc := CreateNpcFromTemplate( defender.npctemplate, defender.x, defender.y, defender.z,  0, defender.realm);

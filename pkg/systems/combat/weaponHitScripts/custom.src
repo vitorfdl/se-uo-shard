@@ -1,0 +1,113 @@
+use uo;
+use util;
+
+include "include/damage";
+include "include/client";
+include "include/sounds";
+include ":combat:hitscripts";
+include ":timedscripts:timedScripts";
+
+function PerformGenericHitScript(attacker, defender, hitopt, rawdamage)
+	foreach vital in (hitopt.vitals)
+		var dmg := rawdamage*hitopt.dmg;
+		if (hitopt.area)
+			foreach mob in (ListMobilesNearLocation( attacker.x, attacker.y, attacker.z, hitopt.area, attacker.realm))
+				if ( !(mob in attacker.party.members) )
+					if (vital == "Hits")
+						DamageFLS(defender, dmg, hitopt.dmgtype, attacker);
+					elseif (vital == "Stam")
+						AP_ConsumeVital(defender, STAMINA, dmg);
+					elseif (vital == "Mana")
+						AP_ConsumeVital(defender, MANA, dmg);
+					endif
+				endif
+			endforeach
+		else
+			if (vital == "Hits")
+				var hitdmg := dmg;
+				if (defender.npctemplate)
+					var npccfg := NPC_GetNPCConfig(defender.npctemplate);
+					var category := GetConfigString(npccfg, "Category");
+					if (hitopt.slayer ==  category)
+						hitdmg := hitdmg * 2;
+					endif
+				endif
+
+				DamageFLS(defender, hitdmg, DMG_FORCED, attacker);
+			elseif (vital == "Stam")
+				AP_ConsumeVital(defender, STAMINA, dmg);
+			elseif (vital == "Mana")
+				AP_ConsumeVital(defender, MANA, dmg);
+			endif
+		endif
+	endforeach
+
+	if (hitopt.som != error)
+		PlaySoundEffect(defender, hitopt.som);
+	endif
+
+	// Custom Text
+	if (hitopt.textatacante != error)
+		PrintText(attacker, hitopt.textatacante);
+	endif
+	
+	if (hitopt.textdefensor != error)
+		PrintText(defender, hitopt.textdefensor);
+	endif
+
+	// FX Effects
+	if (hitopt.fxatacante != error)
+		PlayObjectCenteredEffect(attacker, hitopt.fxatacante[1], hitopt.fxatacante[2], hitopt.fxatacante[3]);
+	endif
+	
+	if (hitopt.fxdefensor != error)
+		PlayObjectCenteredEffect(defender, hitopt.fxdefensor[1], hitopt.fxdefensor[2], hitopt.fxdefensor[3]);
+	endif
+
+	// Timed Events
+	var timerName := StrReplace(hitopt.timername, " ", "");
+	if(hitopt.timername != error)
+		if (timerName == "bleed")
+			TS_StartTimer(defender, "bleed", 40, 5, attacker); 
+		else
+			TS_StartTimer(defender, timerName, cint(hitopt.timerduration), cint(hitopt.level) );
+		endif
+	endif
+	
+	// Create Item
+	if (hitopt.createitem != error)
+		var x , y, z;
+		if (hitopt.itemloc == "Atacante")
+			x := attacker.x;
+			y := attacker.y;
+			z := attacker.z;
+		elseif (hitopt.itemloc == "Defensor")
+			x := defender.x;
+			y := defender.y;
+			z := defender.z;
+		elseif (hitopt == "Random")
+			x :=  (attacker.x - 3 )+ RandomInt(7 );
+			y :=  (attacker.y - 3 )+ RandomInt(7 );
+			z := GetWorldHeight(x, y, attacker.realm);
+		endif
+		CreateItemAtLocation(x, y, z, hitopt.createitem, 1, attacker.realm);
+	endif
+
+endfunction
+
+program HitScript(params)
+	var attacker	:= params[1];
+	var defender	:= params[2];
+	//var weapon	:= params[3];
+	//var armor	:= params[4];
+	var basedamage	:= params[5];
+	var rawdamage	:= params[6];
+	var hitopt := params[7];
+	params := 0; // Not needed anymore.
+	
+	if (RandomInt(100) < hitopt.chance)
+		PerformGenericHitScript(attacker, defender, hitopt, basedamage);
+	endif
+	
+	return 1;
+endprogram

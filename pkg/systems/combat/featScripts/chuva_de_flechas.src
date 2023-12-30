@@ -18,10 +18,10 @@ program explosao(params)
 	var targ := params[3];
 	params := 0; // No longer needed
 
-   var ammo := CheckForAmmo(who, who.weapon, 5);
+   var ammo := ConsumeAmmo(who, who.weapon, 5);
    if (!ammo) FailFeat(who, spellinfo); return SendSysMessageEx(who, "Você precisa de ao menos 5 flechas.", SSM_FAIL); endif
 
-   var weapon_cfg := GetItemCfgInfo(who, who.weapon);
+   var weapon_cfg := GetWeaponCFGInfo(who, who.weapon);
 
    who.frozen := 1;
    var mod := GetModByFacing(who.facing);
