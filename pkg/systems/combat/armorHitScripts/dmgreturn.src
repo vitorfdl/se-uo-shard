@@ -22,7 +22,7 @@ program HitScript(params)
 	
 	PlayObjectCenteredEffectEx( defender, 0x22c6, 1, 9);
 	var dmg := rawdamage*returnamount;
-	ApplyDamageEX(attacker, dmg, DMG_SLASH);
+	DamageFLS(attacker, dmg, DMG_SLASH);
 	
 	return 1;
 endprogram

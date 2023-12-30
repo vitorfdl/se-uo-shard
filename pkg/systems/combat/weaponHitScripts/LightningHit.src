@@ -20,8 +20,6 @@ program HitScript(params)
 	PlayMovingEffectXYZ(defender.x, defender.y, defender.z+15, defender.x, defender.y-1, defender.z+15, GFX_ENERGY, 5, 25);
 	PlaySoundEffect(defender, SFX_LIGHTNING);
 	
-	//ApplyDamageEX(defender, RandomDiceRoll("1d3"), DMG_ENERGY);
-	//ApplyDamageEX(defender, (rawdamage*0.5)+1, DMG_COLD);
 	DamageFLS(defender, cint((basedamage*0.5)+1), DMG_ENERGY, attacker);
 	
 	// return 1;

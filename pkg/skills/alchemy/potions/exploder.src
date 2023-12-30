@@ -67,7 +67,7 @@ function FlameEffect(who, potion, lvl)
 			endif
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);
-			//ApplyDamageEX(critter, lvl*15, DMG_FIRE);
+
 			DamageFLS(critter, 45 * lvl, DMG_FIRE);
 		endif
 	endforeach
@@ -136,7 +136,7 @@ function ExplosionEffect(who, potion, lvl)
 			endif
 			PlayObjectCenteredEffect( critter, 0x36b0, 7, 0x10 );
 			PlaySoundEffect( critter, 0x208);
-			//ApplyDamageEX(critter, dmg, DMG_FIRE);
+
 			DamageFLS(critter, 45 * lvl, DMG_FIRE);
 		endif
 	endforeach

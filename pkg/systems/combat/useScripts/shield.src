@@ -24,7 +24,7 @@ program block(who, shield)
       endif
    endif
 
-   var weapon_cfg := GetItemCFGInfo(who, item);
+   var weapon_cfg := GetWeaponCFGInfo(who, item);
    if (!(weapon_cfg.WeaponType in array{"greatsword", "axe", "spear"}) && !who.shield)
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos ou um escudo.", SSM_FAIL);
    endif

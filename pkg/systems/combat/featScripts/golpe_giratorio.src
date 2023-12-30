@@ -30,7 +30,7 @@ program startTalent(param)
       sleepms(2);
    endforeach
 
-   var weapon_cfg := GetItemCfgInfo(who, who.weapon);
+   var weapon_cfg := GetWeaponCFGInfo(who, who.weapon);
    var area := GetMidpointCircleCoords(who.x, who.y, 2);
    for i := 1 to 3
       foreach p in area

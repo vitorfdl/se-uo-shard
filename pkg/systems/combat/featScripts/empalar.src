@@ -42,7 +42,7 @@ program startTalent(param)
    endfor
 
    who.setFacing(InverseFacing(who.facing));
-   var weapon_cfg := GetItemCfgInfo(who, who.weapon);
+   var weapon_cfg := GetWeaponCFGInfo(who, who.weapon);
 	PlayAttackAnimation(who, weapon_cfg);
    return 1;
 endprogram

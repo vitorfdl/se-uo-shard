@@ -1115,7 +1115,7 @@ function GetEnemiesNear(loc, range := 5, get_hidden := 0)
 endfunction    
 
 function GetAlliesNear(loc, range := 5)
-   var myallies := CheckifIsNotEnemy(me, ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
+   var myallies := filterMobileListByEnemies(me, ListMobilesNearLocationEx( loc.x, loc.y, loc.z, range, LISTEX_FLAG_NORMAL|LISTEX_FLAG_HIDDEN));
 
    return myallies;
 endfunction

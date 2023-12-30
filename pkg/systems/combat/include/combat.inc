@@ -1,4 +1,17 @@
 
+/**
+ * This file contains functions related to combat.
+ *    GetDamageType(attacker, wpn, wpn_elem)
+ *    GetWeaponCFGInfo(mobile, wpn)
+ *    PlayHurtSound(defender)
+ *    PlayHitSounds(attacker, defender)
+ *    PlayMissSound(attacker, wpn_elem)
+ *    PlayAttackAnimation(attacker, weapon_elem)
+ *    CheckifIsAlly(who, mobileOrMobileList)
+ *    FilterMobileListByEnemies(who, mobileList)
+ *    ConsumeAmmo(who, bow, qty)
+ */
+
 use uo;
 include ":ghaia:ghaiaUtil";
 include ":combat:weaponInfo";
@@ -6,86 +19,83 @@ include "include/newperformaction";
 include "include/client";
 include ":attributes:attributes";
 
-const IS_REMOVE := 1;
-
+/**
+ * GetDamageType function
+ * 
+ * @param {Object} attacker - The attacker object
+ * @param {number} wpn - The weapon id (optional if wpn_elem is present)
+ * @param {number} wpn_elem - The weapon element id (optional if wpn is present)
+ * 
+ * @returns {Object} result_types - The result damage types
+ */
 function GetDamageType(attacker, wpn := 0, wpn_elem := 0)
+   // Default damage type is bludgeoning
 	var attack_types := struct{};
    attack_types[DMG_BLUDGE] := 100;
 
-   if (!wpn) 
-      wpn := attacker.weapon;
-   endif
-
-   if (!wpn_elem) wpn_elem := GetItemCFGInfo(attacker, wpn); endif
+   wpn := wpn ? wpn : attacker.weapon;
+   wpn_elem := wpn_elem ? wpn_elem : GetWeaponCFGInfo(attacker, wpn);
 
    var dmg_mods;
 
 	if (typeof(wpn_elem) != "Struct")
 		var weapon_type := GetConfigStringDictionary(wpn_elem, "DamageType");
-		if (weapon_type)
-			attack_types := weapon_type;
-		endif
+		attack_types := weapon_type ? weapon_type : attack_types;
       dmg_mods := GetObjProperty(wpn, "DamageTypes");
    else
-		attack_types := wpn.DamageType;
+      // Usually NPC's
+      var wpnDmgType := wpn_elem.DamageType;
+      if (wpnDmgType)
+         // Not sure why, but sometimes the damage type is an error for NPC's
+         attack_types := struct{};
+         attack_types[wpnDmgType] := 100;
+      endif
+
       dmg_mods := GetObjProperty(attacker, "DamageTypes");
 	endif
 
-   if (!(typeof(attack_types) in array{"Struct", "Dictionary"} ))
-      var tmp := struct{};
-      tmp[attack_types] := 100;
-      attack_types := tmp;
+   if (!(typeof(attack_types) in array{"Struct", "Dictionary"}))
+      // There was so many .cfg files with wrong damage types, so we need to check if it's a valid type before using it
+      attack_types := struct{};
+      attack_types[DMG_BLUDGE] := 100;
    endif
 
-   if (!dmg_mods) dmg_mods := struct{}; endif
+   // To capture modded damage types
+   dmg_mods := typeof(dmg_mods) in array{"Struct", "Dictionary"} ? dmg_mods : struct{};
 
    var result_types := struct{};
    foreach key in (dmg_mods.keys() + attack_types.keys())
       result_types[key] := cint(dmg_mods[key] * 10) + cint(attack_types[key]);
-      sleepms(2);
+      // sleepms(1);
    endforeach
 
 	return result_types;
 endfunction
 
-function DistanceChecks(attacker, defender)
-	var cur_range := Distance(attacker, defender);
-	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
-	if ( wpn_a_elem2.MaxRange == error )
-		return 1;
-	endif
-   
-	if ( cur_range > wpn_a_elem2.MaxRange )
-		// CombatDbgMsg(attacker, "Oponente esta muito longe.");
-		return 0;
-	elseif ( cur_range < wpn_a_elem2.MinRange )
-		// CombatDbgMsg(attacker, "Oponente esta muito perto.");
-		return 0;
-	else
-		return 1;
-	endif
-endfunction
-
-function GetItemCFGInfo(mobile, wpn)
+/**
+ * Get Weapon Damage function
+ * @param {Object} mobile - The mobile object
+ * @param {Object} wpn - The weapon object
+ * @returns {Object} - Returns weapon configuration information
+ */
+function GetWeaponCFGInfo(mobile, wpn)
+   // IF the mobile is a NPC, we need to get the weapon info from the NPC config
 	if ( mobile.IsA(POLCLASS_NPC) )
 		var to_return := GetNpcRandomAttack(mobile);
-      if (wpn.objtype != 0x1F020)
+      if (wpn.objtype != 0x1F020) // Wrestling
          var wpn_elem := GetItemDescriptor(cint(wpn.objtype));
          wpn_elem.hitbonus     := to_return.hitbonus;
          wpn_elem.dicedmg      := to_return.dicedmg;
-         wpn_elem.AttackDamage := to_return.dicedmg;
+         wpn_elem.AttackDamage := to_return.dicedmg; // TODO: Remove this line when all NPC's are updated
          return wpn_elem;
       endif
       
       return to_return;
 	endif
    
+   // If the mobile is a player, we need to get the weapon info from the weapon itself
 	var item_cfg2	:= ReadConfigFile(":*:itemdesc");
 	return item_cfg2[wpn.objtype];
-endfunction
-
-function GetNPCattack(mobile)
-	
 endfunction
 
 function PlayHurtSound(defender)
@@ -98,7 +108,7 @@ function PlayHurtSound(defender)
 endfunction
   
 function PlayHitSounds(attacker, defender := 0)
-	var wpn_a_elem2 := GetItemCFGInfo(attacker, attacker.weapon);
+	var wpn_a_elem2 := GetWeaponCFGInfo(attacker, attacker.weapon);
    var metamorfose := GetObjProperty(attacker, "metamorfose");
 
 
@@ -137,24 +147,40 @@ function PlayHitSounds(attacker, defender := 0)
 	endif
 endfunction
 
+/**
+ * This function plays the miss sound for a given attacker and weapon.
+ * @param {Object} attacker - The entity performing the attack.
+ * @param {Object} wpn_elem - The weapon used in the attack.
+ */
 function PlayMissSound(attacker, wpn_elem)
 	if ( wpn_elem.MissSound )
 		PlaySoundEffect(attacker, wpn_elem.MissSound);
-	else
-		//NPC intrinsic weapon
-		var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
-		if (!npcelem.MissSound)
-			var miss_sound := array{569, 570, 571};
-			PlaySoundEffect(attacker, miss_sound.randomentry());
-		else
-			PlaySoundEffect(attacker, npcelem.MissSound);
-		endif
+      return;
 	endif
+
+
+   //NPC intrinsic weapon
+   var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
+   if (npcelem.MissSound)
+      PlaySoundEffect(attacker, npcelem.MissSound);
+      return;
+   endif
+
+
+   var miss_sound := array{569, 570, 571}; // Generic miss sounds
+   PlaySoundEffect(attacker, miss_sound.randomentry());
 endfunction
 
+/**
+ * This function plays the attack animation for a given attacker and weapon.
+ * @param {Object} attacker - The entity performing the attack.
+ * @param {Object} weapon_elem - The weapon used in the attack.
+ */
 function PlayAttackAnimation(attacker, weapon_elem)
+   var playerGraphics := array{400, 401, 605, 606, 666, 667, 744, 745};
+
 	//If they're not human, use different attack animations based on their graphic
-	if (attacker.graphic != 400 and attacker.graphic != 401 and attacker.graphic != 605 and attacker.graphic != 606 and attacker.graphic != 666 and attacker.graphic != 667 and attacker.graphic != 744 and attacker.graphic != 745)
+	if (!(attacker.graphic in playerGraphics))
 		case (attacker.graphic)
 			CID_ALLIGATOR:
 			CID_PIG:
@@ -188,33 +214,22 @@ function PlayAttackAnimation(attacker, weapon_elem)
 	
 		return;
 	endif
-	var anim;
+
+	var anim := 0;
+
 	//If the player is mounted, use special mount animations, if they're defined in
-	//the weapon's itemdesc.cfg entry, or a default animation if not
-	if (GetEquipmentByLayer (attacker, LAYER_MOUNT) and (attacker.graphic != 666 and attacker.graphic != 667))
+	if (GetEquipmentByLayer(attacker, LAYER_MOUNT) and (attacker.graphic != 666 and attacker.graphic != 667))
 		anim := CINT(weapon_elem.MountedAnim);
-//		if (anim)
-//			PerformAction (attacker, anim);
-//			return;
-//		endif
-//		PerformAction (attacker, 0x1A);
-//		return;
+
 		if(anim == 0x1D)
 			anim := 0;
 		endif
 	else
+	   //the weapon's itemdesc.cfg entry, or a default animation if not
 		anim := weapon_elem.Anim;
 	endif
-	
-//	//Otherwise, if they're not mounted, use the animation defined in the itemdesc.cfg file
-//	//or a default animation if one isn't defined
-	// var anim := weapon_elem.Anim;
-	// if (anim)
-	// 	PerformAction(attacker, anim, 7);
-	// 	return;
-	// endif
-//	PerformAction (attacker, 0x09, 7);
-	case (cint(anim))
+
+	case (cint(anim)) // I have no idea why the anims are being remapped, but they are
 		9: anim := 4;
 		10: anim := 5;
 		11: anim := 3;
@@ -224,109 +239,37 @@ function PlayAttackAnimation(attacker, weapon_elem)
 		18: anim := 1;
 		19: anim := 2;
 		26: anim := 7;
-		default: anim := anim;
 	endcase
-	// PerformAction(attacker, anim, 5);
+
 	NewPerformAction(attacker, 0, anim, RandomInt(4));
-	return;
-endfunction
-  
-function GetRawDmg(attacker)
-  
-    if (attacker.npctemplate)
-      var npcelem := NPC_GetNPCConfig(attacker.npctemplate);
-      var dmg := GetConfigString(npcelem, "AttackDamage");
-      return RandomDiceRoll(dmg);
-    else
-      var dmg := CS_GetWeaponInfo(attacker.weapon, "Damage");
-      return RandomDiceRoll(dmg);
-    endif
-  
 endfunction
 
-function SetArmorHitscript(who, hitscript, remove := 0);
-   var hitscripts := GetObjProperty(who, "ArmorHitScripts");
-   if (!hitscripts)
-      hitscripts := array{};
-   endif
+/**
+ * This function, CheckifIsAlly, is used to determine if a given set of mobiles are allies of a specific character.
+ *
+ * It takes two parameters: 'who', the character checking for allies, and 'mobiles', the list of mobiles to check.
+ * The function first checks if the character is in a party and lists all hostiles around the character.
+ * If the 'mobiles' parameter is not an array, the function checks if the mobile is hostile, has a master, or is aligned differently.
+ * If the 'mobiles' parameter is an array, the function iterates through each mobile and checks if it is hostile, has a master, is in the same guild, or is aligned differently.
+ * The function returns an array of allies.
+ *
+ * @param {Object} who - The character checking for allies
+ * @param {Array} mobileOrMobileList - The list of mobiles to check
+ * @returns {Array} - Returns an array of allies or 1/0 if the mobile is an ally
+ */
 
-   if (!remove)
-      if (!FindInArray(hitscripts, hitscript))
-         hitscripts.append(hitscript);
-      endif
-   else
-      hitscripts := RemoveFromArray(hitscripts, hitscript);
-   endif
-
-   if (hitscripts.size() < 1)
-      return EraseObjProperty(who, "ArmorHitScripts");
-   endif
-   SetObjProperty(who, "ArmorHitScripts", hitscripts);
-endfunction
-
-function SetHitscript(who, hitscript, remove := 0);
-   var hitscripts := GetObjProperty(who, "HitScripts");
-   if (!hitscripts)
-      hitscripts := array{};
-   endif
-
-   if (!remove)
-      if (!FindInArray(hitscripts, hitscript))
-         hitscripts.append(hitscript);
-      endif
-   else
-      hitscripts := RemoveFromArray(hitscripts, hitscript);
-   endif
-
-   if (hitscripts.size() < 1)
-      return EraseObjProperty(who, "HitScripts");
-   endif
-   SetObjProperty(who, "HitScripts", hitscripts);
-endfunction
-
-function SetCriticalHitscript(who, hitscript, remove := 0);
-   var criticalhitscript := GetObjProperty(who, "CriticalHitScripts");
-   if (!criticalhitscript)
-      criticalhitscript := array{};
-   endif
-
-   if (!remove)
-      if (!FindInArray(criticalhitscript, hitscript))
-         criticalhitscript.append(hitscript);
-      endif
-   else
-      criticalhitscript := RemoveFromArray(criticalhitscript, hitscript);
-   endif
-
-   if (criticalhitscript.size() < 1)
-      return EraseObjProperty(who, "CriticalHitScripts");
-   endif
-   SetObjProperty(who, "CriticalHitScripts", criticalhitscript);
-endfunction
-
-
-function getWeaponDmgTypes(attacker, wpn, wpn_elem)
-   if (!wpn) wpn := attacker.weapon; endif
-
-   if (!wpn_elem)
-      wpn_elem := GetItemCFGInfo(attacker, wpn);
-   endif
-
-   
-   
-endfunction
-
-function CheckifIsAlly(who, mobiles)
+function CheckifIsAlly(who, mobileOrMobileList)
+   // TODO: Fazer duas versòes dessa funçao, uma para o who ser um mobile e outra para ser um array de mobiles
    var party := who.party.members;
    var hostiles := ListHostiles(who, 20, LH_FLAG_INCLUDE_HIDDEN);
    
-   if (typeof(mobiles) != "Array")
-      if (mobiles in hostiles)
+   if (typeof(mobileOrMobileList) != "Array")
+      if (mobileOrMobileList in hostiles)
          return 0;
-      elseif (mobiles.npctemplate)
-         if (mobiles.master && (mobiles.master != who && mobiles.master in party))
+      elseif (mobileOrMobileList.npctemplate)
+         if (mobileOrMobileList.master && (mobileOrMobileList.master != who && mobileOrMobileList.master in party))
             return 0;
-         elseif(mobiles.alignment != 2 && (who.connected || who.alignment == 2))
+         elseif(mobileOrMobileList.alignment != 2 && (who.connected || who.alignment == 2))
             return 0;
          endif
       elseif (who.murderer)
@@ -337,7 +280,7 @@ function CheckifIsAlly(who, mobiles)
    endif
 
    var newarray := array{};
-   foreach mobile in mobiles
+   foreach mobile in mobileOrMobileList
       sleepms(2);
       if (mobile in hostiles)
           newarray.append(mobile);
@@ -365,12 +308,18 @@ function CheckifIsAlly(who, mobiles)
    return newarray;
 endfunction
 
-function CheckifIsNotEnemy(who, mobiles)
-   var spotserial := GetObjProperty(me, "spawnspot");
+/**
+ * Filter the mobileList by mobile enemies only
+ * @param {Object} who - The character checking for enemies
+ * @param {Array} mobileList - The list of mobiles to check
+ */
+function FilterMobileListByEnemies(who, mobileList)
+   var spotserial := GetObjProperty(who, "spawnspot");
+
    var hostiles := ListHostiles(who);
    var party := who.party.members;
    var newarray := array{};
-   foreach mobile in mobiles
+   foreach mobile in mobileList
       sleepms(2);
       if (mobile in hostiles)
          continue;
@@ -398,7 +347,15 @@ function CheckifIsNotEnemy(who, mobiles)
    return newarray;
 endfunction
 
-function CheckForAmmo(who, bow, qty := 1)
+/**
+ * Check for available ammo for the bow and consume it
+ *
+ * @param {Object} who - The character checking for ammo
+ * @param {Object} bow - The bow being checked for ammo
+ * @param {number} [qty=1] - The quantity of ammo to check for
+ * @returns {Object} - The type of ammo available for the bow
+ */
+function ConsumeAmmo(who, bow, qty := 1)
 	var aljava := GetEquipmentByLayer(who, 0x14);
 	var ammo := GetObjProperty(bow, "ammo");
 	if (!ammo)

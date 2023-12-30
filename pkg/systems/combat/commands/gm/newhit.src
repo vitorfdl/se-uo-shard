@@ -19,7 +19,7 @@ program createhit(who)
 		return;
 	endif
 	
-	var hitopt := configurehitscript(who);
+	var hitopt := CreateCustomHitscript(who);
 
 	SetObjProperty(item, "generichit", hitopt);
 
@@ -28,11 +28,11 @@ program createhit(who)
 		hit_scripts := array{};
 	endif
 	foreach hit in hit_scripts
-		if (hit == ":combat:weaponHitScripts/generic")
+		if (hit == ":combat:weaponHitScripts/custom")
 			return;
 		endif
 	endforeach
-	hit_scripts.Append(":combat:weaponHitScripts/generic");
+	hit_scripts.Append(":combat:weaponHitScripts/custom");
 	SetObjProperty(item, "HitScripts", hit_scripts);
 
 endprogram

@@ -20,7 +20,7 @@ program usewand(who, weapon)
 	endif
 
 
-   var weapon_cfg := GetItemCFGInfo(who, weapon);
+   var weapon_cfg := GetWeaponCFGInfo(who, weapon);
    if (!weapon_cfg.FeatID) return; endif
 
    var feat := getFeatById(cint(weapon_cfg.FeatID));

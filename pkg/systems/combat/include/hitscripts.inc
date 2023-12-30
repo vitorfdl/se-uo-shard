@@ -1,13 +1,108 @@
+/**
+  * Includes all the functions related to hitscripts
+  *  	SetArmorHitscript(who, hitscriptName, remove)
+  *  	SetHitscript(who, hitscriptName, remove)
+  *  	SetCriticalHitscript(who, hitscriptName, remove)
+  *  	GetHitScriptsName(type)
+  *  	GetHitScript(name)
+  *  	PlayDeathHitScript(attacker, defender)
+  *  	CreateCustomHitscript(who)
+***/
+
 use cfgfile;
+use uo;
 include "include/string";
+include "include/arrays";
+include ":gumps:requestgump";
 
-function GetHitScripts(type := "WeaponHits")
-   var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
-   var elem := FindConfigElem(hitscripts_cfg, type);
-   if (!elem) return array{}; endif
+const REMOVE_HITSCRIPT_FLAG := 1;
+/**
+ * SetArmorHitscript function
+ * @param {Object} who - The object to set the hitscript on
+ * @param {string} hitscript - The hitscript to set
+ * @param {number} remove - Optional parameter to remove the hitscript
+ */
+function SetArmorHitscript(who, hitscriptName := "", remove := 0);
+   var armorHitScripts := GetObjProperty(who, "ArmorHitScripts");
+   if (!armorHitScripts)
+      armorHitScripts := array{};
+   endif
 
-   return ListConfigElemProps(elem);
+   if (!remove)
+      if (hitscriptName in armorHitScripts)
+         armorHitScripts.append(hitscriptName);
+      endif
+   else
+      armorHitScripts := RemoveFromArray(armorHitScripts, hitscriptName);
+   endif
+
+   if (armorHitScripts.size() < 1)
+      return EraseObjProperty(who, "ArmorHitScripts");
+   endif
+
+   SetObjProperty(who, "ArmorHitScripts", armorHitScripts);
 endfunction
+
+
+/**
+ * SetHitscript function
+ * @param {Object} who - The object to set the hitscript on
+ * @param {string} hitscript - The hitscript to set
+ * @param {number} remove - Optional parameter to remove the hitscript
+ */
+function SetHitscript(who, hitscriptName := "", remove := 0);
+   var hitscripts := GetObjProperty(who, "HitScripts");
+   if (!hitscripts)
+      hitscripts := array{};
+   endif
+
+   if (!remove)
+      if (hitscriptName in hitscripts)
+         hitscripts.append(hitscriptName);
+      endif
+   else
+      hitscripts := RemoveFromArray(hitscripts, hitscriptName);
+   endif
+
+   if (hitscripts.size() < 1)
+      return EraseObjProperty(who, "HitScripts");
+   endif
+   SetObjProperty(who, "HitScripts", hitscripts);
+endfunction
+
+
+/**
+ * SetCriticalHitscript function
+ * @param {Object} who - The object to set the hitscript on
+ * @param {string} hitscript - The hitscript to set
+ * @param {number} remove - Optional parameter to remove the hitscript
+ */
+function SetCriticalHitscript(who, hitscriptName := "", remove := 0);
+   var criticalhitscript := GetObjProperty(who, "CriticalHitScripts");
+   if (!criticalhitscript)
+      criticalhitscript := array{};
+   endif
+
+   if (!remove)
+      if (hitscriptName in criticalhitscript)
+         criticalhitscript.append(hitscriptName);
+      endif
+   else
+      criticalhitscript := RemoveFromArray(criticalhitscript, hitscriptName);
+   endif
+
+   if (criticalhitscript.size() < 1)
+      return EraseObjProperty(who, "CriticalHitScripts");
+   endif
+
+   SetObjProperty(who, "CriticalHitScripts", criticalhitscript);
+endfunction
+
+/**
+ * GetHitScriptsName function
+ * @param {string} type - The type of hit scripts to retrieve
+ * @returns {array} - An array of hit script names
+ */
 
 function GetHitScriptsName(type := "WeaponHits")
    var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
@@ -23,6 +118,11 @@ function GetHitScriptsName(type := "WeaponHits")
    return hits_list;
 endfunction
 
+/**
+ * GetHitScript function
+ * @param {string} name - The name of the hit script to retrieve
+ * @returns {string} - The hit script found
+ */
 function GetHitScript(name)
    var hitscripts_cfg := ReadConfigFile(":combat:hitScripts");
    var elem := FindConfigElem(hitscripts_cfg, "WeaponHits");
@@ -50,112 +150,12 @@ function GetHitScript(name)
    return hit_found;
 endfunction
 
-
-function execgenerichit(attacker, defender, hitopt, rawdamage)
-
-//printtextabove(attacker, " " + hitopt.vitals);
-	//slayer entra aqui
-	foreach vital in (hitopt.vitals)
-		var dmg := rawdamage*hitopt.dmg;
-		if (hitopt.area)
-			foreach mob in (ListMobilesNearLocation( attacker.x, attacker.y, attacker.z, hitopt.area, attacker.realm))
-				if ( !(mob in attacker.party.members) )
-					if (vital == "Hits")
-						DamageFLS(defender, dmg, hitopt.dmgtype, attacker);
-					elseif (vital == "Stam")
-						AP_ConsumeVital(defender, STAMINA, dmg);
-					elseif (vital == "Mana")
-						AP_ConsumeVital(defender, MANA, dmg);
-					endif
-				endif
-			endforeach
-		else
-
-   //   printtextabove(attacker, " " + vital);
-    
-			if (vital == "Hits")
-				var hitdmg := dmg;
-				if (defender.npctemplate)
-					var npccfg := NPC_GetNPCConfig(defender.npctemplate);
-					var category := GetConfigString(npccfg, "Category");
-      //    printtextabove(attacker, " " + " " + hitopt.slayer + " "+ hitdmg);
-					if (hitopt.slayer ==  category)
-						hitdmg := hitdmg * 2;
-					endif
-				endif
-        //printtextabove(attacker, " "  + " " + hitopt.slayer + " "+ hitdmg);
-				DamageFLS(defender, hitdmg, DMG_FORCED, attacker);
-			elseif (vital == "Stam")
-				AP_ConsumeVital(defender, STAMINA, dmg);
-			elseif (vital == "Mana")
-				AP_ConsumeVital(defender, MANA, dmg);
-			endif
-		endif
-	endforeach
-
-	if (hitopt.som != error)
-		PlaySoundEffect(defender, hitopt.som);
-	endif
-
-	if (hitopt.textatacante != error)
-		PrintText(attacker, hitopt.textatacante);
-	endif
-	
-	if (hitopt.textdefensor != error)
-		PrintText(defender, hitopt.textdefensor);
-	endif
-
-	if (hitopt.fxatacante != error)
-		PlayObjectCenteredEffect(attacker, hitopt.fxatacante[1], hitopt.fxatacante[2], hitopt.fxatacante[3]);
-	endif
-	
-	if (hitopt.fxdefensor != error)
-		PlayObjectCenteredEffect(defender, hitopt.fxdefensor[1], hitopt.fxdefensor[2], hitopt.fxdefensor[3]);
-	endif
-
-	//POL DE MERDA
-	var tname := "";
-	var i := 1;
-	var j := 1;
-	while(i <= len(hitopt.timername))
-		if (hitopt.timername != " ")
-			tname[j] := hitopt.timername[i];
-			j := j + 1;
-		endif
-		i := i + 1;
-	endwhile
-	if(hitopt.timername != error)
-//		var timername := RemoveSpaces(hitopt.timername, CLR_ALL_SPACES);
-		if (tname == "bleed")
-			TS_StartTimer(defender, "bleed", 40, 5, attacker); 
-		else
-			var e := TS_StartTimer(defender, tname, cint(hitopt.timerduration), cint(hitopt.level) );
-		endif
-	//	sendsysmessage(attacker, " " + e);
-	endif
-	
-	if (hitopt.createitem != error)
-		var x , y, z;
-		if (hitopt.itemloc == "Atacante")
-			x := attacker.x;
-			y := attacker.y;
-			z := attacker.z;
-		elseif (hitopt.itemloc == "Defensor")
-			x := defender.x;
-			y := defender.y;
-			z := defender.z;
-		elseif (hitopt == "Random")
-			x :=  (attacker.x - 3 )+ RandomInt(7 );
-			y :=  (attacker.y - 3 )+ RandomInt(7 );
-			z := GetWorldHeight(x, y, attacker.realm);
-		endif
-		CreateItemAtLocation(x, y, z, hitopt.createitem, 1, attacker.realm);
-	endif
-
-endfunction
-
-function execonkill(attacker, defender)
-  
+/**
+ * Function to play death hit script. Usually for NPCs
+ * @param {object} attacker - The attacker object
+ * @param {object} defender - The defender object
+ */
+function PlayDeathHitScript(attacker, defender)
   var weapon := attacker.weapon;
   var opts := GetObjProperty(weapon, "generichit");
   if (opts == error)//ve no npc
@@ -169,7 +169,7 @@ function execonkill(attacker, defender)
   
 
   if (onkill.text != "")
-    printtext(defender, onkill.text);
+    PrintText(defender, onkill.text);
   endif
   if (onkill.fxmorto != error)
     PlayObjectCenteredEffect(defender, onkill.fxmorto[1], onkill.fxmorto[2], onkill.fxmorto[3]);
@@ -193,7 +193,7 @@ function execonkill(attacker, defender)
   if (onkill.lootcreate != error)
     var itm := CreateItemInContainer(defender, onkill.lootcreate, onkill.lootamt);
     if (itm  == error)
-      printText(defender, " " + itm);
+      PrintText(defender, " " + itm);
     endif
   endif
   if (onkill.destroy != error)
@@ -202,8 +202,12 @@ function execonkill(attacker, defender)
 
 endfunction
 
-function configurehitscript(who)
-
+/**
+ * Allow you to create a hitscript for a weapon or npc
+ * @param {object} who - The object for which the hit script is being created
+ * @returns {struct} - The hit script options
+ */
+function CreateCustomHitscript(who)
 	var options := CheckBoxGump(who, 300, 400, "Escolha as configuracoes do hitscript", array{"TimedScript", "Bonus Dano", "Dano Area", "Efeito Grafico", "Slayer", "Som", "Texto", "Criar Item", "OnKill"});
 	
 	var  hitopt := struct;

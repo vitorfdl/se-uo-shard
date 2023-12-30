@@ -17,7 +17,6 @@ program HitScript(params)
 	PlayObjectCenteredEffect(defender, GFX_BLUE_SPARKLE_GROUND, 7, 16);
 	PlaySoundEffect(defender, SFX_GLASS_BREAK_3);
 	
-	//ApplyDamageEX(defender, RandomDiceRoll("1d3"), DMG_COLD, attacker);
 	DamageFLS(defender, cint((basedamage*0.5)+1), DMG_COLD, attacker);
 
 	

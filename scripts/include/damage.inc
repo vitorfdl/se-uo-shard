@@ -44,38 +44,43 @@ enum DAMAGE_TYPES
 	DMG_PIERCE := "Perfuração",
 endenum
 
+/**
+ * CalculateRawDamage
+ *
+ * @param {object} attacker - The character dealing the damage.
+ * @param {object} wpn_elem - The weapon element used for the attack.
+ * @param {object} wpn - The weapon used for the attack. (Optional)
+ *
+ * @returns {number} The calculated raw damage.
+ */
 function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
-   if (!wpn) wpn := attacker.weapon; endif
+   wpn := wpn ? wpn : attacker.weapon;
+   wpn_elem := wpn_elem ? wpn_elem : GetWeaponCFGInfo(attacker, wpn);
 
-   if (!wpn_elem)
-      wpn_elem := GetItemCFGInfo(attacker, wpn);
-   endif
-
-   var base_dmg;
-   if (GetObjProperty(attacker, "dmgmod"))
-      base_dmg := GetObjProperty(attacker, "dmgmod");
-   elseif (attacker.isA(POLCLASS_NPC))
-      base_dmg := wpn_elem.AttackDamage + attacker.damage_physical_mod;
-   else
-      base_dmg := wpn.dmg_mod;
+   var base_dmg := GetObjProperty(attacker, "dmgmod");
+   if (!base_dmg)
+      base_dmg := attacker.isA(POLCLASS_NPC) ? wpn_elem.AttackDamage + attacker.damage_physical_mod : wpn.dmg_mod;
    endif
 
 	base_dmg += cint(GetObjProperty(wpn, "dmgbonus")) + cint(GetObjProperty(wpn, "#dmgbonus"));
 	base_dmg += cint(GetObjProperty(attacker, "dmgbonus")) + cint(GetObjProperty(attacker, "#dmgbonus"));
-	base_dmg -= cint(GetObjProperty(attacker, "dmgpenalty")) - cint(GetObjProperty(attacker, "#dmgpenalty")) ;
+	base_dmg -= cint(GetObjProperty(attacker, "dmgpenalty")) - cint(GetObjProperty(attacker, "#dmgpenalty"));
 
-   // Só pra tornar o dano não fixo
+   // Dice Damage
 	if (wpn_elem.dicedmg)
-		var dmg       := wpn_elem.dicedmg;
+		var dmg := wpn_elem.dicedmg;
       if (GetObjProperty(attacker, "dicedmg"))
          dmg := GetObjProperty(attacker, "dicedmg");
       endif
+
 		var attribute := wpn_elem.Attribute;
+
 		return (base_dmg + RandomDiceRoll(dmg) );
 	endif
 
-   var dmg := base_dmg + _ifElse(wpn_elem.Damage, RandomDiceRoll(wpn_elem.Damage), 0);
+   var dmg := base_dmg + (wpn_elem.Damage ? RandomDiceRoll(wpn_elem.Damage) : 0);
 
+   // Percent Damage
    if (wpn_elem.DamagePercent)
       var dmgp := cdbl(wpn_elem.DamagePercent);
       if (wpn_elem.WeaponType && !attacker.cmdlevel && !HaveProficiency(attacker, wpn_elem.WeaponType))
@@ -83,11 +88,17 @@ function CalculateRawDamage(attacker, wpn_elem, wpn := 0)
       endif
       dmg := cint(cdbl(dmg) * (dmgp / 100.0 ));
    endif
-   // fim
 
    return dmg;
 endfunction
 
+/**
+ * HealFLS
+ *
+ * @param {object} targ - The target to be healed.
+ * @param {number} amt - The amount of healing to be applied.
+ * @param {number} show_heal - Whether to show the healing effect (default is 1).
+ */
 function HealFLS(targ, amt, show_heal := 1)
    amt := cint(amt);
    if (amt <= 0)
@@ -122,31 +133,14 @@ function HealFLS(targ, amt, show_heal := 1)
 	endif
 endfunction
 
-function ApplyDamageEX(defender, dmg, type, source := 0)
-	ApplyRawDamage( defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
-
-	if (source)
-		SetLastDamageInfo(defender, dmg, type, source);
-		SetScriptController(source);
-	endif
-
-	return dmg;
-endfunction
-
-
-/* 
- * SetLastDamageInfo(mobile, amount, type, source)
+/**
+ * SetLastDamageInfo
  *
- * Purpose
- *
- * Parameters
- * mobile:	
- * amount:	
- * type:	
- * source:	
- *
- * Return value
- *
+ * @param {object} mobile - The mobile object that received the damage.
+ * @param {number} amount - The amount of damage received.
+ * @param {string} type - The type of damage received.
+ * @param {object} source - The source of the damage.
+ * @returns {object} - The last damage information.
  */
 function SetLastDamageInfo(mobile, amount, type, source)
 	var last_damage := struct;
@@ -169,11 +163,46 @@ function SetLastDamageInfo(mobile, amount, type, source)
 	return last_damage;
 endfunction
 
-function convertResist(n)
-   if (n < -1) n := -1; elseif (n > 4) n := 4; endif
+
+/*
+ * Function: fixResistLevel
+ * 
+ * Description:
+ * This function fixes the resistance level within a specified range.
+ * Only used by CalculateDefenseReduction.
+ *
+ * Parameters:
+ * n - The resistance level to be fixed.
+ *
+ * Returns:
+ * The function returns the fixed resistance level within the specified range.
+ */
+function fixResistLevel(n)
+   if (n < -1) 
+      n := -1; 
+   elseif (n > 4) 
+      n := 4; 
+   endif
+
    return cdbl(n * 20);
 endfunction
 
+
+/*
+ * Function: CalculateDefenseReduction
+ * 
+ * Description:
+ * This function calculates the defense reduction based on the defender, damage type, damage amount, and armor.
+ *
+ * Parameters:
+ * defender - The character that is defending.
+ * dmgs_type - The type of damage being dealt.
+ * dmg - The amount of damage being dealt.
+ * armor - The armor of the defender. Default value is 0.
+ *
+ * Returns:
+ * The function returns the final damage after reduction.
+ */
 function CalculateDefenseReduction(defender, dmgs_type, dmg, armor := 0)
    if (dmgs_type == DMG_FORCED) return 0; endif
 
@@ -193,11 +222,13 @@ function CalculateDefenseReduction(defender, dmgs_type, dmg, armor := 0)
       armor := CS_SelectArmored(armor, dmgs_type);
    endif
 
-   if (!armor) return dmg; endif
+   if (!armor) 
+      return dmg;
+   endif
    
    var reduction := 0;
    var resists := _ifOr(GetObjProperty(armor, "ArmorResists"), struct{});
-   var armorcfg := GetItemCFGInfo(defender, armor);
+   var armorcfg := GetWeaponCFGInfo(defender, armor);
    var fdmg := 0;
 
    foreach type in (dmgs_type.keys())
@@ -205,14 +236,16 @@ function CalculateDefenseReduction(defender, dmgs_type, dmg, armor := 0)
       var reduction := 0;
 
       if (npctemplate)
-         var star := cint(resists[type]) + GetConfigInt(npctemplate, "{}Resist".format(type));
-         reduction := convertResist(star) / 100;
+         var star := cint(resists[type]) + GetConfigInt(npctemplate, $"{type}Resist");
+         reduction := fixResistLevel(star) / 100;
       else
-         var star := GetConfigInt(armorcfg, "{}Resist".format(type)) + cint(resists[type]);
-         reduction := convertResist(star) / 100;
+         var star := GetConfigInt(armorcfg, $"{type}Resist") + cint(resists[type]);
+         reduction := fixResistLevel(star) / 100;
       endif
 
-      if (defender.shield) reduction += 0.05; endif
+      if (defender.shield) 
+         reduction += 0.05;
+      endif
 
       fdmg += cint(dmgs_type[type] - (dmgs_type[type] * reduction)); 
       sleepms(2);
@@ -220,102 +253,50 @@ function CalculateDefenseReduction(defender, dmgs_type, dmg, armor := 0)
 
    return fdmg;
 endfunction
-/* 
- * GetLastDamageInfo(mobile)
+
+/**
+ * Calculate the reduction in damage based on the defender's armor and resistances.
  *
- * Purpose
- *
- * Parameters
- * mobile:	
- *
- * Return value
- *
+ * @param {object} defender - The defender object.
+ * @param {string} dmgs_type - The type of damage being dealt.
+ * @param {number} dmg - The amount of damage before reduction.
+ * @param {number} armor - The defender's armor value.
+ * @returns {number} - The final damage after reduction.
  */
-function GetLastDamageInfo(mobile)
-	return GetObjProperty(mobile, "LastDamage");
-endfunction
-
-    
-function CalculateTotalDamageBonus(who, defender)
-	// if (!who.npctemplate)
-	// 	if (who.weapon && who.weapon.Attribute != "Versatil")
-	// 		attr_bonus := GetBonusAttr(AP_GetStat(who, who.weapon.Attribute));
-	// 	else
-	// 		attr_bonus := GetBonusAttr(AP_GetStat(who, STRENGTH));
-	// 	endif
-	// endif
-
-	//Bonus de prop da arma    
-
-   var other := 0;
-   if (defender != who)
-      //Bonus de Spells
-      other := other - cint(GetObjProperty(defender, "dmgreduction"));
-   
-      var dmg_increase := GetObjProperty(who.weapon, "dmg_increase");
-      if (dmg_increase)
-         if (defender.npctemplate)
-            var template := NPC_GetNPCConfig(defender.npctemplate);
-            other += cint(dmg_increase[template.Category]);
-            other += cint(dmg_increase[template.size]);
-         endif
-      endif
-   endif
-	// TODO: adicionar backstab
-
-	// TODO: ADicionar talentos de dano aqui
-	
-	var mod := weapon + other;
-    
-	dmg := dmg + mod;
-	if (dmg < 1)
-		dmg := 1;
-	endif
-
-	return dmg;
-endfunction
-
 function DamageFLS(defender, dmg, type := DMG_FORCED, source := 0, no_display := 0)
 	dmg := Cint(dmg);
 
-   if (defender.connected && source.connected)
-      if (TS_GetCooldown(defender, "attack_low_block"))
-         TS_LowerDuration(defender, "dodge_block", 1, 1);
-      endif
+   // Lower dodge block cooldow
+   if (defender.connected && source.connected && TS_GetCooldown(defender, "attack_low_block"))
+      TS_LowerDuration(defender, "dodge_block", 1, 1);
    endif
-   if (type != DMG_FORCED)
-      if (source)
-         if (defender.my_template() == "orb" && defender.master != source)
-            return 0;
-         endif
-      endif
 
+   if (type != DMG_FORCED && source && defender.my_template() != "orb" || defender.master == source)
       dmg := CalculateDefenseReduction(defender, type, dmg);
    endif
-   
-   if (defender.npctemplate && source.npctemplate)
-      var guild_id := GetObjProperty(defender, "guild");
-      if (guild_id)
-         var guild_ref := FindGuild(guild_id);
-         if (!InGuildRect(guild_ref, defender))
-            dmg *= 3;
-         endif
+
+   if (defender.npctemplate && source.npctemplate && GetObjProperty(defender, "guild"))
+      var guild_ref := FindGuild(GetObjProperty(defender, "guild"));
+      if (guild_ref && !InGuildRect(guild_ref, defender))
+         dmg *= 3;
       endif
    endif
 
+   // Barrier Handling
    var barrier := AP_GetTrueSkill(defender, "Barrier");
    if (barrier > 0)
-      var new_dmg := dmg - barrier;
-      barrier -= cint(dmg);
-      dmg := new_dmg;
-      AP_SetTrueSkill(defender, "Barrier", barrier);
+      dmg -= barrier;
+      AP_SetTrueSkill(defender, "Barrier", barrier - cint(dmg));
    endif
 
    if (dmg < 0)
-      return;
+      return; // Stop if damage is 0 or less
    endif
 
-	if (!no_display) DisplayDamage(defender, cint(dmg), source); endif
+	if (!no_display) 
+      DisplayDamage(defender, cint(dmg), source); 
+   endif
+
 	ApplyRawDamage(defender, cint(dmg), DAMAGE_NO_SHOW+DAMAGE_USE_REPSYS);
 	
 	if (source)

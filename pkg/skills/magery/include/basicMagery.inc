@@ -89,7 +89,7 @@ function CheckReagents(who, byref spell_elem, scroll)
 		var amountinpack := AmountInContainer(who.backpack, dictToAmount);
 		// print("reag " + reag + " objtype " + objtype + " pack " + amountinpack);
 		if (amountinpack  < amount )
-			SendSysMessageEx(who, "Você não possui "+GetObjTypeDesc(objtype, (amount>1)));
+			SendSysMessageEx(who, "Você não possui "+ GetObjTypeDesc(objtype, (amount>1)));
 			return 0;
 		endif
 		sleepms(2);
@@ -121,22 +121,28 @@ function FailSpell(who, no_sound := 0)
 endfunction
 
 function TS_ConsumeMana(mobile, qty) 
-	if (!AP_ConsumeVital(mobile, MANA, cint(qty)))
-      if (mobile.Caracteristica("Clérigo de Anar"))
-         return 0;
-      endif
-		var hit_qty := cint(qty);
-      if (GetVital(mobile, MANA) > 0)
-         hit_qty -= cint(GetVital(mobile, MANA));
-      endif
-      
-		AP_ConsumeVital(mobile, MANA, cint(GetVital(mobile, MANA)));
-		ApplyDamageEX(mobile, hit_qty * 2, "FORCED");
-		if (mobile.dead)
-			return 0;
-		endif
+	if (AP_ConsumeVital(mobile, MANA, cint(qty)))
+		return 1;
 	endif
-	// TODO: diseage for mana
+
+	// Feat: Clérigo de Anar
+	if (mobile.Caracteristica("Clérigo de Anar"))
+		return 0;
+	endif
+
+	// Uses health if no mana.
+	var hit_qty := cint(qty);
+	if (GetVital(mobile, MANA) > 0)
+		hit_qty -= cint(GetVital(mobile, MANA));
+	endif
+	
+	AP_ConsumeVital(mobile, MANA, cint(GetVital(mobile, MANA)));
+	DamageFLS(mobile, hit_qty * 2, "FORCED");
+	if (mobile.dead)
+		return 0;
+	endif
+
+	// TODO: curse for mana
 	return 1;
 endfunction
 
