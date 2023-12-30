@@ -4,6 +4,9 @@ let file = process.argv[2];
 
 file = file.replace(workspaceRoot, '.');
 
+file = file.replace('include/', '');
+
+
 
 exec(`"./scripts/ecompile" -u ${file}`, (error, stdout, stderr) => {
   if (error) {

@@ -159,47 +159,47 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
 endfunction
 
 function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0, first := 1)
-   if (!sizex) sizex := 200; endif;
-   if (!sizey) sizey := 120 + (options.size() * 20); endif;
+		if (!sizex) sizex := 200; endif;
+		if (!sizey) sizey := 120 + (options.size() * 20); endif;
 
-	var gump := GFCreateGump(250, 200);
-	GFClosable(gump, 0);
-	GFResizePic(gump, 0, 0, 3600, sizex, sizey);
-	GFResizePic(gump, 15, 15, 0x13BE, sizex-30, sizey-30);
-	
-	var y_pos := 20;
-	foreach line in (GFWordWrap(prompt, 360))
-		GFTextLine(gump, 20, y_pos, 1153, line);
-		y_pos := y_pos+20;
-		SleepMS(2);
+		var gump := GFCreateGump(250, 200);
+		GFClosable(gump, 0);
+		GFResizePic(gump, 0, 0, 3600, sizex, sizey); // Background
+		GFResizePic(gump, 15, 15, 0x13BE, sizex-30, sizey-30);
+		
+		var y_pos := 20;
+		foreach line in (GFWordWrap(prompt, 360))
+			GFTextLine(gump, 20, y_pos, 1153, line);
+			y_pos := y_pos+20;
+			SleepMS(2);
+		endforeach
+		
+	GFSetRadioGroup(gump, 1);
+	var indice := 1;
+	y_pos := 30;
+	foreach text in options
+		GFTextLine(gump, 60, y_pos + indice*20, 1153, text);
+		GFRadioButton(gump, 30, y_pos + indice*20, 210, 211, (indice == first), indice);
+		indice := indice+1;
 	endforeach
-	
-  GFSetRadioGroup(gump, 1);
-  var indice := 1;
-  y_pos := 30;
-  foreach text in options
-    GFTextLine(gump, 60, y_pos + indice*20, 1153, text);
-    GFRadioButton(gump, 30, y_pos + indice*20, 210, 211, (indice == first), indice);
-    indice := indice+1;
-  endforeach
-	
-  GFAddButton(gump, sizex-70, sizey-60, 4502, 4502, 1, 999 );
+		
+	GFAddButton(gump, sizex-70, sizey-60, 4502, 4502, 1, 999 );
 	GFTextLine(gump, sizex-110, sizey-50, 1153, "Próximo");
-  
+	
 	var input := GFSendGump(mobile, gump);
 	if ( input[0] == 999 )
-		 foreach key in (input.keys)
-        if (options[key])
-		    if (returnkeys)
+		foreach key in (input.keys)
+		if (options[key])
+			if (returnkeys)
 				return key;
-			 endif
-          return options[key];
-        endif
-     	endforeach
-  else
-      return 0;
+			endif
+			return options[key];
+		endif
+		endforeach
+	else
+		return 0;
 	endif	
-  
+	
 endfunction
 
   

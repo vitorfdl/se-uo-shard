@@ -5,24 +5,27 @@
 #
 # ModuleDirectory: Location of *.em files
 #
-ModuleDirectory=/Users/vitorlima/game/se-uo-shard/scripts/modules
+ModuleDirectory=D:\DistroDev\scripts\modules
 
 #
 # IncludeDirectory: Location of *.inc files, if not found relative
 #                   or with a specified package
 #
-IncludeDirectory=/Users/vitorlima/game/se-uo-shard/scripts
+IncludeDirectory=D:\DistroDev\scripts
 
 #
 # PolScriptRoot: Location of "::file" includes
 #
-PolScriptRoot=/Users/vitorlima/game/se-uo-shard
+PolScriptRoot=D:\DistroDev\scripts
 
 #
 # PackageRoot: root directories where packages are stored
 #              This can be specified multiple times.
 #
-PackageRoot=/Users/vitorlima/game/se-uo-shard/pkg
+PackageRoot=D:\DistroDev\pkg
+PackageRoot=D:\DistroDev\optpkg
+PackageRoot=D:\DistroDev\devpkg
+
 #
 # Default ecompile options
 #
@@ -48,6 +51,11 @@ GenerateDebugInfo=0
 # Default is 0
 #
 GenerateDebugTextInfo=0
+
+#
+# VerbosityLevel
+# Enabled logging more information such as locations of include files.
+VerbosityLevel=0
 
 #
 # DisplayWarnings
@@ -96,7 +104,7 @@ DisplaySummary=1
 # Generate .dep files whether or not updating.
 # Default is 0
 #
-GenerateDependencyInfo=0
+GenerateDependencyInfo=1
 
 #
 # 
@@ -126,9 +134,8 @@ ErrorOnWarning=0
 ThreadedCompilation=1
 
 #
-# Set the number of threads eCompile should use
-# when compiling scripts.
-# Values can be 0 to N. Set to 0 for auto-detect.
+# NumberOfThreads
+# Forces N threads to run, 0 autodetects the used number.
 # Default is 0
 #
 NumberOfThreads=0
@@ -139,7 +146,6 @@ NumberOfThreads=0
 # Default is 0
 #
 ParanoiaWarnings=0
-
 
 #
 # ErrorOnFileCaseMissmatch
@@ -160,9 +166,3 @@ ErrorOnFileCaseMissmatch=0
 # Number of *.inc files to cache (new compiler only)
 # Default is 50
 #IncParseTreeCacheSize=50
-
-#
-# UseCompiler2020
-# Use the ANTLR-grammar-based compiler
-# Default is 1
-#UseCompiler2020=1

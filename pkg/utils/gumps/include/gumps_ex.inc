@@ -1,21 +1,23 @@
-/* $Id: gumps_ex.inc 375 2006-06-17 19:26:32Z austinheilman $
+/* $Id: gumps_ex.inc 375 2006-06-17 19:26:32Z austin|vitor $
  *
- * Purpose
- * TODO
- *
- * Function List
- * GFExtractData(input, data_id)
- * GFOptimizeGump(byref gump)
- * GFTextCoords(x, y, width, height)
- * GFCenterRectangle(align, rect_size_x, x_pos, width)
- * GFColumnPosition(column_width, num_columns, total_width)
- * GFRowPosition(row_height, num_rows, total_height)
- * GFTextMid(gump, x, y, width, color, text)
- * GFTextRight(gump, x, y, width, color, text)
- * GFTextWidth(text, size)
- * GFWordWrap(text, pixels)
- * GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
- * GFHtmlShadowed(byref gump, x, y, width, height, color, text, size := 5);
+ * Text wrapper
+ * 	GFTextCoords(x, y, width, height)
+ * 	GFTextMid(gump, x, y, width, color, text)
+ * 	GFTextRight(gump, x, y, width, color, text)
+ * 	GFTextWidth(text, size)
+ * 	GFHtmlShadowed(byref gump, x, y, width, height, color, text, size := 5);
+ * 	GFWordWrap(text, pixels)
+
+ * Table wrapper
+ * 	GFColumnPosition(column_width, num_columns, total_width, x_pos:=0)
+ * 	GFRowPosition(align:=ALIGN_CENTER, row_height, num_rows, total_height, y_pos:=0)
+
+ * Else
+ * 	GFExtractData(input, data_id)
+ * 	GFOptimizeGump(byref gump)
+ * 	GFCenterRectangle(align, rect_size_x, x_pos, width)
+ * 	GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
+ * 	GFPageScrollBar(byref gump, pos_x := 0, pos_y := 0, n_of_pages := 1, cur_page := 1, scrollHeight := 0)
  */
 use uo;
 use os;
@@ -30,16 +32,44 @@ CONST ALIGN_CENTER	:= 0x1;
 CONST ALIGN_RIGHT	:= 0x2;
 CONST ALIGN_CENTER_Y	:= 0x3;
 
+/**
+* GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
+* Closes a gump after a specified time.
+* 
+* Parameters
+* mobile: The mobile to close the gump for.
+* pid: The pid of the gump to close.
+* timer: The time in seconds to wait before closing the gump.
+* ret_val: The return value to send to the gump.
+*
+* Return value
+* Returns the script id of the autoClose script.
+**/
 function GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
 	return Start_Script(":gumps:autoClose", array{mobile, pid, timer, ret_val});
 endfunction
 
-function GFHtmlShadowed(byref gump, x, y, width, height, color, text, size := 5);
-	GFHTMLArea(gump, x-1, y-1, width, height, "<BASEFONT SIZE={} COLOR=#111111>{}".format(size, text));
-   GFHTMLArea(gump, x+1, y+1, width, height, "<BASEFONT SIZE={} COLOR=#111111>{}".format(size, text));
-   GFHTMLArea(gump, x+1, y-1, width, height, "<BASEFONT SIZE={} COLOR=#111111>{}".format(size, text));
-   GFHTMLArea(gump, x-1, y+1, width, height, "<BASEFONT SIZE={} COLOR=#111111>{}".format(size, text));
-   GFHTMLArea(gump, x, y, width, height, "<BASEFONT SIZE={} COLOR={}>{}".format(size, color, text));
+/**
+* GFHtmlShadowed(byref gump, x, y, width, height, color, text, size := 5);
+* Creates a shadowed html area.
+*
+* Parameters
+*	 gump: The gump to add the html area to.
+*	 x: The x position of the html area.
+*	 y: The y position of the html area.
+*	 width: The width of the html area.
+*	 height: The height of the html area.
+*	 color: The color of the text.
+*	 text: The text to display.
+*	 size: The size of the text.
+*
+**/
+function GFHtmlShadowed(byref gump, x, y, width, height, color, text, fontSize := 5, shadowColor := "#111111");
+	GFHTMLArea(gump, x-1, y-1, width, height, $"<BASEFONT SIZE={fontSize} COLOR={shadowColor}>{text}");
+   GFHTMLArea(gump, x+1, y+1, width, height, $"<BASEFONT SIZE={fontSize} COLOR={shadowColor}>{text}");
+   GFHTMLArea(gump, x+1, y-1, width, height, $"<BASEFONT SIZE={fontSize} COLOR={shadowColor}>{text}");
+   GFHTMLArea(gump, x-1, y+1, width, height, $"<BASEFONT SIZE={fontSize} COLOR={shadowColor}>{text}");
+   GFHTMLArea(gump, x, y, width, height, $"<BASEFONT SIZE={fontSize} COLOR={color}>{text}");
 endfunction
 
 /*
@@ -213,9 +243,9 @@ function GFCenterRectangle(type:=ALIGN_CENTER, rect_size_x, x_pos, width:=0)
 	width := CInt(width);
 	rect_size_x := CInt(rect_size_x);
 	case(type)
-		ALIGN_CENTER: return CInt(x_pos+CInt((width-rect_size_x)/2));
+		ALIGN_CENTER: return CInt(x_pos+CInt((width-(rect_size_x+20))/2));
 		ALIGN_CENTER_Y: return CInt(x_pos+CInt((width-rect_size_x)/2));
-		ALIGN_RIGHT: return CInt(x_pos-rect_size_x);
+		ALIGN_RIGHT: return CInt(x_pos+(width - rect_size_x));
 	endcase
 endfunction
 
@@ -260,6 +290,7 @@ endfunction
  * Returns the Y coordinate for a specified row.
  * 
  * Parameters
+ * align: The alignment of the row. (ALIGN_CENTER, ALIGN_RIGHT, 0 = no alignment)
  * row_height:	The height of each row.
  * num_rows:	The number of rows.
  * total_height:	The total height the rows will fill into.
@@ -268,7 +299,7 @@ endfunction
  * Returns the y coordinate for each row.
  *	
  */
-function GFRowPosition(row_height, num_rows, total_height, y_pos:=0)
+function GFRowPosition(align:=ALIGN_CENTER, row_height, num_rows, total_height, y_pos:=0)
 	row_height := CInt(row_height);
 	num_rows := CInt(num_rows);
 	total_height := CInt(total_height);
@@ -279,7 +310,13 @@ function GFRowPosition(row_height, num_rows, total_height, y_pos:=0)
 	var positions := array{};
 	var i;
 	for (i := 1; i <= num_rows; i += 1)
-		positions[i] := space_between * i + row_height * (i - 1) + y_pos;
+		if (align == ALIGN_CENTER)
+			positions[i] := space_between * i + row_height * (i - 1) + y_pos;
+		elseif (align == ALIGN_RIGHT)
+			positions[i] := total_height - row_height * (num_rows - i) - space_between * (num_rows - i + 1) + y_pos;
+		else
+			positions[i] := row_height * (i - 1) + y_pos;
+		endif
 	endfor
 	
 	return positions;
@@ -366,11 +403,13 @@ function GFTextWidth(gump_text)
 	"XXXXXXXXXXXXXX"+	// 15
 	"VVVVVVVVVVVVVV"+	// 16
 	"MMMMMMMMMMMMMM"+	// 18
-	"WWWWWWWWWWWWWW";	// 21
+	"WWWWWWWWWWWWWW"+	// 21
+	"зг";                // Add your Unicode characters here
+
 	gft_length.+width := array
 	{
 		2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
-		12, 13, 14, 15, 16, 18, 21
+		12, 13, 14, 15, 16, 18, 21, 7, 7
 	};
 
 	var points:=0;
@@ -381,7 +420,7 @@ function GFTextWidth(gump_text)
 		if ( i>=0 )
 			points += gft_length.width[CInt(i/14)+1];
 		else
-			//print("XGFTextWidth: Unknown Character = '"+gump_text[j]+"'");
+			print("XGFTextWidth: Unknown Character = '"+gump_text[j]+"'");
 		endif
 	endfor
 
@@ -484,6 +523,32 @@ function SelectWindowPosition(who, selected)
    if (input[0])
       return positions[input[0]];
    endif 
+endfunction
+
+// GFPageScrollBar documentation
+//
+// Parameters:
+//   gump: The gump object to add the scrollbar to
+//   pos_x: The x position of the scrollbar
+//   pos_y: The y position of the scrollbar
+//   n_of_pages: The total number of pages
+//   cur_page: The current page
+//   scrollHeight: The height of the scrollbar background
+//
+// Description:
+// This function adds a scrollbar to a gump object. It is intended to be used
+// with the GFPageBtn event handler.
+//
+// Returns: None
+function GFPageScrollBar(byref gump, pos_x := 0, pos_y := 0, n_of_pages := 1, cur_page := 1, scrollHeight := 0)
+	GFResizePic(gump, pos_x, pos_y+10, 5120, 19, scrollHeight); // Scrollbar background
+
+   GFAddButton(gump, pos_x, pos_y, 2650, 2651, GF_PAGE_BTN, (cur_page > 1) ? cur_page-1 : cur_page); // Previous Button
+   GFAddButton(gump, pos_x, pos_y+scrollHeight+5, 2648, 2649, GF_PAGE_BTN, (cur_page < n_of_pages) ? cur_page+1 : cur_page); // Next Button
+
+	var pointerHeight := (scrollHeight - 20) / n_of_pages; // Calculate the height of the scroll inside the scrollbar, reducing the window for the scrollbar pointer
+	var scrollYPos := pos_y + 10 + (pointerHeight * (cur_page - 1)); // Calculate Y position of the scroll based on current page and offset
+	GFResizePic(gump, pos_x, scrollYPos+12, 9550, 19, pointerHeight); // Scrollbar pointer with offset applied to both top and bottom
 endfunction
 
 // function SelectorGump(who, params)

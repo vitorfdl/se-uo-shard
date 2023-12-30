@@ -31,7 +31,7 @@
             },
             {
                 "match": "\\.inc$",
-                "cmd": "node ./tcompile -r ${fileDirname}"
+                "cmd": "node ./tcompile -r -u ${fileDirname}"
             }
         ]
     },
