@@ -41,7 +41,7 @@ program trapScript(params)
 	// elseif ( rand == 4 )
    //    PlayLightningBoltEffect( mobile );
    //    PlaySoundEffect( mobile, 0x2a );
-   //    ApplyDamageEX(mobile, 8, DMG_ENERGY);
+   //    DamageFLS(mobile, 8, DMG_ENERGY);
 	// endif
 
 	

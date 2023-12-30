@@ -16,7 +16,7 @@ function SpellYesNo(who, nome, targname)
 	GfTextLine(gump, 40, 40, 1153, "" + nome);
 	GfTextLine(gump, 40, 60, 1153, "" + targname);
 	GfTextLine(gump, 40, 80, 1153, "Sim");
-	GfTextLine(gump, 40, 100, 1153, "Nao");
+	GfTextLine(gump, 40, 100, 1153, "Não");
 
 	GfAddButton(gump, 20, 83, 2117, 2118, GF_CLOSE_BTN,  10);
 	GfAddButton(gump, 20, 103, 2117, 2118, GF_CLOSE_BTN,  11);

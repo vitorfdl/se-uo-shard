@@ -72,7 +72,7 @@ program ArcheryButte(who, butte)
 		if ( closest.IsA(POLCLASS_MOBILE) )
 			PerformAction(closest, ANIM_HIT);
 			var projectile_damage := CS_GetWeaponInfo(weapon, "Damage");
-			ApplyDamageEX(closest, RandomDiceRoll(projectile_damage), DMG_PHYSICAL);
+			DamageFLS(closest, RandomDiceRoll(projectile_damage), DMG_PHYSICAL);
 		else
          var hited := DetermineIfHit(who, test);
 			PrintTextAbove(butte, hited);

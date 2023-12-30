@@ -9,7 +9,9 @@ use uo;
 use os;
 
 program core_onCreate(who)
+    // disables hunger
     SetObjProperty(who, "criandochar", 1);
+    
     // start_script(":charactercreation:gumpcriacao", who);
 	return 1;
 endprogram

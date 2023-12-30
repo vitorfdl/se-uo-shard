@@ -15,6 +15,7 @@ include "include/arrays";
 include ":combat:hitscripts";
 include ":loot:include/lootParser";
 include ":yggdrasil:combatevents";
+include ":combat:hitscripts";
 
 var resist_types := array{DMG_COLD, DMG_FIRE, DMG_ENERGY, DMG_POISON, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
 
@@ -514,7 +515,7 @@ function SetBoss(npc, boss)
             if ( !hit_scripts )
                hit_scripts := array{};
             endif
-            hit_scripts.Append(":combat:weaponHitScripts/generic");
+            hit_scripts.Append(":combat:weaponHitScripts/custom");
             SetObjProperty(npc, "HitScripts", hit_scripts);
          elseif (spec.name == "Special AI")
             npc.script := spec.ai;

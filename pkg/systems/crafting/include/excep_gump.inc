@@ -2,11 +2,12 @@
 include ":gumps:gumps";
 include ":tn:tngumps";
 include ":yggdrasil:combatevents";
+include ":combat:hitscripts";
 
 var selected_item := 0;
 
 function FindDataFile(filter := 0)
-   var df := LoadItemEventData();
+   var df := LoadItemEventData(); // Must be defined in the script itself. Bad architecture
    var events := array{};
    foreach event in (DFGetElemNames(df))
       var df_event := DFFindElementEx(df, event);

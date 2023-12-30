@@ -16,7 +16,8 @@ var previoustarg := array{};
 var selected_opponent;
 var lock_targ := 0;
 
-program loko(params)
+// TODO: Refactor this script. It's a mess
+program GenericSpecialScript(params)
 	var who := params[1];
 	var event := params[2];
    var deathevent := params[3];
@@ -657,9 +658,9 @@ function selectOpponent(who, type, dist := 3)
          sleepms(5);
       endforeach
    elseif (type == "All Allies")
-      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, dist));
+      targ := filterMobileListByEnemies(who, ListMobilesInLineOfSight(who, dist));
    elseif (type == "Random Ally")
-      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, dist));
+      targ := filterMobileListByEnemies(who, ListMobilesInLineOfSight(who, dist));
       targ := array{ targ.randomEntry() };
    endif
 
@@ -745,9 +746,9 @@ function ReturnPointsByTarget(who, type, conedist := 3)
          sleepms(5);
       endforeach
    elseif (type == "All Allies")
-      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, conedist));
+      targ := filterMobileListByEnemies(who, ListMobilesInLineOfSight(who, conedist));
    elseif (type == "Random Ally")
-      targ := CheckifIsNotEnemy(who, ListMobilesInLineOfSight(who, conedist));
+      targ := filterMobileListByEnemies(who, ListMobilesInLineOfSight(who, conedist));
       targ := array{ targ.randomEntry() };
    endif
 

@@ -24,7 +24,7 @@ program defensor(params)
    //    endif
    // endif
 
-   // var weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   // var weapon_cfg := GetWeaponCFGInfo(who, who.weapon);
    // if (!who.shield && weapon_cfg.WeaponType != "greatsword")
    //    FailFeat(who, spellinfo);
    //    return SendSysMessageEx(who, "Você deve estar equipando uma arma gigante ou um escudo.", SSM_FAIL);

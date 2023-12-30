@@ -23,12 +23,12 @@ program animateSword(params)
       return FailFeat(who, hab);
    endif
 
-	var ammo := CheckForAmmo(who, who.weapon);
+	var ammo := ConsumeAmmo(who, who.weapon);
    if (!ammo)
       return FailFeat(who, hab);
    endif
 
-	var elem := GetItemCFGInfo(who, who.weapon);
+	var elem := GetWeaponCFGInfo(who, who.weapon);
    PrintText(who, "*dispara no explosivo*");
 	PlaySoundEffect(who, 0x14A);
 	Performaction(who, elem.Anim);

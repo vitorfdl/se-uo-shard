@@ -19,7 +19,7 @@ program defensor(params)
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
    endif
 
-   var weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   var weapon_cfg := GetWeaponCFGInfo(who, who.weapon);
    if (!weapon_cfg.TwoHanded)
       return SendSysMessageEx(who, "Você deve estar equipando uma arma de duas mãos.", SSM_FAIL);
    endif

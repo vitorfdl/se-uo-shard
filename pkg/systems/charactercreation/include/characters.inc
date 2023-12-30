@@ -10,6 +10,7 @@ function translateAttribute(attr)
 	attr["Intelligence"] := "Inteligência";
 	attr["Constitution"] := "Constituição";
 	attr["Dexterity"]    := "Destreza";
+	attr["Charisma"]    := "Carisma";
 
 	return attr;
 endfunction

@@ -1,3 +1,6 @@
+/**
+ * 2024: This script is not used anymore, keeping it for reference
+**/
 use uo;
 use os;
 use vitals;

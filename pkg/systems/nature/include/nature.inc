@@ -82,7 +82,7 @@ function DruidWeather(who, type, duration, radius, som, bolt := 0, ventoForte :=
 			foreach mobile in (ListMobilesNearLocation( who.x, who.y, who.z, radius, who.realm ))
 				if (RandomInt(100) < 5)
 					PlayLightningBoltEffect( mobile );
-					ApplyDamageEX(mobile, RandomDiceRoll("1d10")+40, DMG_ENERGY);
+					DamageFLS(mobile, RandomDiceRoll("1d10")+40, DMG_ENERGY);
 				elseif (RandomInt(100) < 15 )
 					DoBolt(who);
 				endif

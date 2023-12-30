@@ -15,7 +15,7 @@ program startTalent(param)
 endprogram
 
 function ataquegiratorio(who, hab)
-   var weapon_cfg := GetItemCFGInfo(who, who.weapon);
+   var weapon_cfg := GetWeaponCFGInfo(who, who.weapon);
    if (!who.weapon)
       return SendSysMessageEx(who, "Você deve estar equipando uma arma.", SSM_FAIL);
    endif
