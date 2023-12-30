@@ -379,7 +379,6 @@ endfunction
  * @param {object} defender - The defending object.
  * @param {number} nofacecheck - Flag to indicate if face check is needed.
  */
-
 program Attack(params)
    var attacker := params[1];
    var defender := params[2];
