@@ -16,6 +16,8 @@ exported function ParryAdvancement(attacker, weapon, defender, shield)
 	defender := defender;
 	shield := shield;
 
+	// Advancement currently handled in mainHitScript
+	// Disable the UO advancement system
 	return 0;
 endfunction
 

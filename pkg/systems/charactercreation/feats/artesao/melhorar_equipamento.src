@@ -3,6 +3,7 @@ use uo;
 include ":attributes:attributes";
 include "include/say";
 include ":timedscripts:timedScripts";
+include ":gumps:gumps_ex";
 //include "include/damage";
 
 var item_config     := ReadConfigFile(":*:itemdesc");

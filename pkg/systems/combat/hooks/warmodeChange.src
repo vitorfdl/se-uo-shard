@@ -10,7 +10,9 @@ program hook_startup()
 endprogram
 
 exported function warmodeChange(who, new_state)
-   if (who.dead && new_state == 1) who.SetWarmode(0); endif
+	if (who.dead && new_state == 1) 
+		who.SetWarmode(0); // prevent ghost warmode
+	endif
 
 	return 0;
 endfunction

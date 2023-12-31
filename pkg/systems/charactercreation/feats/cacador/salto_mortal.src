@@ -20,7 +20,7 @@ program animateSword(params)
    if (who.warmode && who.opponent)
       if (!who.weapon.IsBow() && !who.weapon.IsMagicWeapon())
          // who.setswingtimer(50);
-         run_script(":combat:hooks/temporaryHook", array{who, who.opponent });
+         run_script(":combat:hooks/combatInteractionHandler", array{who, who.opponent });
       endif
    endif
 
@@ -42,7 +42,7 @@ program animateSword(params)
    if (who.warmode && who.opponent)
       if (who.weapon.IsBow() || who.weapon.IsMagicWeapon())
          // who.setswingtimer(80);
-         run_script(":combat:hooks/temporaryHook", array{who, who.opponent});
+         run_script(":combat:hooks/combatInteractionHandler", array{who, who.opponent});
       endif
    endif
 

@@ -37,7 +37,7 @@ program MainHitScript( params )
 	if ( attacker == defender || defender.hidden )
 		return 0;
 	endif
-	
+
 	if ( !attacker.npctemplate && defender.npctemplate && defender.master )
 		LogToFile(":fls_core:pets.log", "{} attacked {} ({})".format(attacker.acctname, defender.name, defender.npctemplate), LOG_DATETIME);
 	endif
@@ -48,34 +48,34 @@ program MainHitScript( params )
 
 	var damage_type := GetDamageType(attacker, weapon, wpn_a_elem);
 	var base_damage :=  CalculateRawDamage(attacker, wpn_a_elem, weapon);
-   if (bonus_dmg)
-      base_damage += cint(cdbl(base_damage) * (cdbl(bonus_dmg) / 100));
-   endif
+	if (bonus_dmg)
+		base_damage += cint(cdbl(base_damage) * (cdbl(bonus_dmg) / 100));
+	endif
 
-   var no_damage_show := 0;
+	var no_damage_show := 0;
 	SetLastDamageInfo(defender, base_damage, 0, attacker);
 
 	// Share the damage to the orb link (Spell)
-   if (defender.my_template() == "orb")
-      var serial := GetObjProperty(defender, "damage_transfer");
-      if (serial)
-         var mob := SystemFindObjectBySerial(serial);
-         DamageFLS(mob, cint( cdbl(base_damage) * 0.8), damage_type, attacker);
-         PlayMovingEffect(defender, mob, 0x22C6, 10, 10);
-         PlayHurtSound(mob);
-         no_damage_show := 1;
-      endif
-   endif
+	if (defender.my_template() == "orb")
+		var serial := GetObjProperty(defender, "damage_transfer");
+		if (serial)
+			var mob := SystemFindObjectBySerial(serial);
+			DamageFLS(mob, cint( cdbl(base_damage) * 0.8), damage_type, attacker);
+			PlayMovingEffect(defender, mob, 0x22C6, 10, 10);
+			PlayHurtSound(mob);
+			no_damage_show := 1;
+		endif
+	endif
 
-   base_damage := CalculateDefenseReduction(defender, damage_type, base_damage, armor);
+	base_damage := CalculateDefenseReduction(defender, damage_type, base_damage, armor);
 	DamageFLS(defender, base_damage, DMG_FORCED, attacker, no_damage_show);
-	
+
 	PlayHurtSound(defender);
-	
+
 	// Hitscript Triggers
 	WeaponHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 	ArmorHitScripts(attacker, defender, weapon, armor, base_damage);
-   PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
+	PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 	CriticalHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem);
 
 	// Feats Trigger
@@ -97,9 +97,9 @@ endprogram
 function PerformDamageFeats(attacker, defender, weapon, armor, base_damage, wpn_a_elem)
 	EraseObjProperty(attacker, "#backstab");
 
-   if (TS_GetTimerInfo(attacker, "sangue_por_sangue"))
-      HealFLS(attacker, cint(base_damage/4));
-   endif
+	if (TS_GetTimerInfo(attacker, "sangue_por_sangue"))
+		HealFLS(attacker, cint(base_damage/4));
+	endif
 
 	if( GetObjProperty(defender, "#chain_damage") != error && cint(GetObjProperty(defender, "#chain_damage")) > ReadGameClock() )
 		var cop_mobs   := GetObjProperty(defender, "#chain_serials");
@@ -204,8 +204,8 @@ function CriticalHitScripts(attacker, defender, weapon, armor, byref base_damage
 		sleepms(2);
 	endforeach
 
-   base_damage += cint(cdbl(base_damage) * 0.5);
-	
+	base_damage += cint(cdbl(base_damage) * 0.5);
+
 	return 1;
 endfunction
 
@@ -219,35 +219,35 @@ endfunction
  * @param {object} wpn_a_elem - The weapon's elemental properties.
  */
 function PassiveHitScripts(attacker, defender, weapon, armor, base_damage, wpn_a_elem)
-   if (weapon.quality < 3) 
+	if (weapon.quality < 3) 
 		return; 
 	endif
-   
-   var cfg  := ReadConfigFile(":combat:passive_scripts");
-   var elem := FindConfigElem(cfg, wpn_a_elem.Passive);
-   if (!elem) 
+
+	var cfg  := ReadConfigFile(":combat:passive_scripts");
+	var elem := FindConfigElem(cfg, wpn_a_elem.Passive);
+	if (!elem) 
 		return;
 	endif
 
-   var chance := cint(elem.Chance);
-   if (chance && RandomInt(150) > chance)  // I have no idea why 150, but it works.
+	var chance := cint(elem.Chance);
+	if (chance && RandomInt(150) > chance)  // I have no idea why 150, but it works.
 		return; 
-   endif
+	endif
 
-   var cooldown := cint(elem.Cooldown);
-   if (cooldown)
-      var cooldown_key := $"P_{wpn_a_elem.Passive}";
-      if (GetCooldown(attacker, cooldown_key)) 
+	var cooldown := cint(elem.Cooldown);
+	if (cooldown)
+		var cooldown_key := $"P_{wpn_a_elem.Passive}";
+		if (GetCooldown(attacker, cooldown_key)) 
 			return;
 		endif
-	
-      SetCooldown(attacker, cooldown_key, cooldown);
-   endif
 
-   var script := start_script("weaponHitScripts/{}".format(wpn_a_elem.Passive), array{attacker, defender, weapon, armor, base_damage});
-   if ( !script || script.errortext )
-      Print("*Attacker* Weapon {} passive script error starting [{}] : {}".format(weapon.name, wpn_a_elem.Passive, script.errortext));
-   endif
+		SetCooldown(attacker, cooldown_key, cooldown);
+	endif
+
+	var script := start_script("weaponHitScripts/{}".format(wpn_a_elem.Passive), array{attacker, defender, weapon, armor, base_damage});
+	if ( !script || script.errortext )
+		Print("*Attacker* Weapon {} passive script error starting [{}] : {}".format(weapon.name, wpn_a_elem.Passive, script.errortext));
+	endif
 endfunction
 
 /**
@@ -280,7 +280,7 @@ function ArmorHitScripts(attacker, defender, weapon, armor, base_damage)
 	endif
 
 	armor_scripts := armor_scripts + body_scripts + others_scripts;
-	
+
 	foreach hitscript in armor_scripts
 		var script := start_script("armorHitScripts/{}".format(hitscript), array{attacker, defender, weapon, armor, base_damage});
 		if ( script.errortext )
@@ -288,7 +288,7 @@ function ArmorHitScripts(attacker, defender, weapon, armor, base_damage)
 		endif
 		sleepms(2);
 	endforeach
-	
+
 	return 1;
 endfunction
 
@@ -320,34 +320,34 @@ function ApplyPoison(attacker, defender, weapon)
 
 		poisonInfo.dosage -= 1;
 		if (poisonInfo.dosage <= 0) // If no more poison charges, delete
-         SendSysMessageEx(attacker, "O veneno da sua arma parece ter perdido o efeito", SSM_FAIL);
+			SendSysMessageEx(attacker, "O veneno da sua arma parece ter perdido o efeito", SSM_FAIL);
 			EraseObjProperty(weapon, "poisonInfo");
 			return 0;
 		else // If still has poison, update on weapon
 			SetObjProperty(weapon, "poisonInfo", poisonInfo);
 		endif
-   else // If NPC, get poison from config
-      var npcelem  := NPC_GetNPCConfig(attacker.npctemplate);
-      var poison := GetConfigString(npcelem, "Poisoning");
-      if (poison)
-         poison := Splitwords(poison);
-         poisonInfo := struct{
-            name := poison[1],
-            level := Cint(poison[2])
-         };
-      endif
+	else // If NPC, get poison from config
+		var npcelem  := NPC_GetNPCConfig(attacker.npctemplate);
+		var poison := GetConfigString(npcelem, "Poisoning");
+		if (poison)
+			poison := Splitwords(poison);
+			poisonInfo := struct{
+				name := poison[1],
+				level := Cint(poison[2])
+			};
+		endif
 	endif
 
 	if (!poisonInfo || poisonInfo.name == error)
-      return 0;
-   endif
+		return 0;
+	endif
 
-   poisonInfo.level := poisonInfo.level ? poisonInfo.level : 1;
-   var time := (poisonInfo.name == "paralyzePoison") ? 3 : 15;
+	poisonInfo.level := poisonInfo.level ? poisonInfo.level : 1;
+	var time := (poisonInfo.name == "paralyzePoison") ? 3 : 15;
 
-   if (randomint(100) < 60)
-      TS_StartTimer(defender, poisonInfo.name, time, poisonInfo.level, attacker);
-   endif
+	if (randomint(100) < 60)
+		TS_StartTimer(defender, poisonInfo.name, time, poisonInfo.level, attacker);
+	endif
 endfunction
 
 // function Trespassar(attacker, defender)

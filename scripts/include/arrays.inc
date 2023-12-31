@@ -66,7 +66,7 @@ endfunction
  * Returns an array of arrays
  *
  */
-function BreakArray(byref the_array, size:=1)
+function BreakArray(the_array, size:=1)
 	if ( Lower(TypeOf(the_array)) != "array" )
 		return error{"errortext":="Object passed was not an array."};
 	endif
@@ -346,6 +346,20 @@ function ArraySum(the_array)
 	return f_val;
 endfunction
 
+/**
+ * SearchArrayOfModel
+ *
+ * Purpose
+ * Search for a specific value in an array of objects based on a given property.
+ *
+ * Parameters
+ * search_for:   The property to search for.
+ * equal:        The value to compare against.
+ * to_search:    The array of objects to search through.
+ *
+ * Return value
+ * Returns 1 if the value is found, 0 otherwise.
+ */
 function SearchArrayOfModel(search_for, equal, to_search)
     var counter;
 	foreach item in to_search
@@ -363,6 +377,20 @@ function SearchArrayOfModel(search_for, equal, to_search)
 	return 1;
 endfunction
 
+/**
+ * FindObjInModel
+ *
+ * Purpose
+ * Find a specific object in an array of objects based on a given property.
+ *
+ * Parameters
+ * search_for:   The property to search for.
+ * equal:        The value to compare against.
+ * to_search:    The array of objects to search through.
+ *
+ * Return value
+ * Returns the found object if it exists, 0 otherwise.
+ */
 function FindObjInModel(search_for, equal, to_search)
 	foreach item in to_search
 		var item_prop := item.get_member(search_for);
@@ -375,6 +403,16 @@ function FindObjInModel(search_for, equal, to_search)
 	return 0;
 endfunction
 
+/**
+ * removeIndexes
+ *
+ * Purpose
+ * Remove elements from an array based on the provided indexes.
+ *
+ * Parameters
+ * the_array:     The array from which elements will be removed.
+ * index_array:   The array of indexes to remove from the_array.
+ */
 function removeIndexes(byref the_array, index_array)
    index_array.Reverse(); //cheat for pol
    foreach index in index_array
@@ -382,3 +420,28 @@ function removeIndexes(byref the_array, index_array)
       sleepms(2);
    endforeach
 endfunction
+
+/**
+ * sliceArray
+ *
+ * Purpose
+ * Return a new array containing the elements from start to end.
+ *
+ * Parameters
+ * the_array:     The array to be sliced.
+ * start:         The starting index for the slice.
+ * end:           The ending index for the slice.
+ *
+ * Return value
+ * Returns the sliced array.
+ */
+function sliceArray(byref the_array, start, end)
+   var sliced_array := array{};
+	var i := 1;
+   for (i := start; i < end; i++)
+      sliced_array.push(the_array[i]);
+   endfor
+   return sliced_array;
+endfunction
+
+

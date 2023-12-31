@@ -46,12 +46,12 @@ function isInAttackRange(attacker, defender)
 	if ( wpn_a_elem2.MaxRange == error )
 		return 1;
 	endif
-   
+
 	if ( cur_range > wpn_a_elem2.MaxRange )
 		// CombatDbgMsg(attacker, "Oponente esta muito longe.");
 		return 0;
 	elseif ( cur_range < wpn_a_elem2.MinRange )
-      // TODO: Acho importante notificar nesse cenario. Usuário pode achar que o ataque não funcionou.
+		// TODO: Acho importante notificar nesse cenario. Usuário pode achar que o ataque não funcionou.
 		// CombatDbgMsg(attacker, "Oponente esta muito perto.");
 		return 0;
 	else
@@ -71,22 +71,22 @@ function canAttackOrBeAttacked(attacker, defender, nofacecheck)
 	if ( attacker == defender )
 		ApplyRawDamage(attacker, 5000); // .kill command ?
 		return 0;
-   elseif (attacker.my_template() == "orb") // Se for orb, não ataca. Especificidade do NPC.
-      return 0;
-   elseif (defender.my_template() == "orb" && defender.master != attacker) // Não deixar atacar orbs de outros jogadores
-      return 0;
+	elseif (attacker.my_template() == "orb") // Se for orb, não ataca. Especificidade do NPC.
+		return 0;
+	elseif (defender.my_template() == "orb" && defender.master != attacker) // Não deixar atacar orbs de outros jogadores
+		return 0;
 	elseif ( !CheckLineOfSight(attacker, defender) ) // Checa se tem linha de visão
 		return 0;
 	elseif ( GetObjProperty(attacker, "#Casting") || TS_GetCooldown(attacker, "noattack") ) // Checa se está castando ou em attack cooldown
 		return 0;
-   elseif ( TS_GetTimerInfo(attacker, "charmed") ) // Checa se está charmed
-      if (GetObjProperty(attacker, "#charmed") == defender.serial)
-         return 0;
-      endif
-   elseif ( GetEquipmentByLayer(attacker, LAYER_MOUNT) ) // Checa se está montado
-      // if (AP_GetTrueSkill(attacker, MONTARIA) <= 4)
-      //    return 0;
-      // endif
+	elseif ( TS_GetTimerInfo(attacker, "charmed") ) // Checa se está charmed
+		if (GetObjProperty(attacker, "#charmed") == defender.serial)
+			return 0;
+		endif
+	elseif ( GetEquipmentByLayer(attacker, LAYER_MOUNT) ) // Checa se está montado
+		// if (AP_GetTrueSkill(attacker, MONTARIA) <= 4)
+		//    return 0;
+		// endif
 	endif
 
 	// Checa se está em modo de combate se for jogador
@@ -127,19 +127,19 @@ function AmmoCheck(attacker, defender)
 		return 1;
 	endif
 
-   var cfgfile := NPC_GetNPCConfig(attacker);
+	var cfgfile := NPC_GetNPCConfig(attacker);
 	if ( !weapon.isBow() && !cfgfile.Ranged)
 		return 1;
 	endif
 
 	if(attacker.npctemplate)
-      if (wpn_a_elem.ProjectileAnim)
-		   PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, cint(wpn_a_elem.ProjectileColor));
-      elseif (cfgfile.AttackTargetAnim)
-         PlayObjectCenteredEffectEx( defender, cint(cfgfile.AttackTargetAnim), 10, 20, cint(cfgfile.ProjectileColor));
-      else
-		   PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, cint(cfgfile.ProjectileColor));
-      endif
+		if (wpn_a_elem.ProjectileAnim)
+			PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, cint(wpn_a_elem.ProjectileColor));
+		elseif (cfgfile.AttackTargetAnim)
+			PlayObjectCenteredEffectEx( defender, cint(cfgfile.AttackTargetAnim), 10, 20, cint(cfgfile.ProjectileColor));
+		else
+			PlayMovingEffectEx(attacker, defender, cint(cfgfile.ProjectileAnim), 10, 10, cint(cfgfile.ProjectileColor));
+		endif
 
 		return 1;
 	endif
@@ -154,11 +154,11 @@ function AmmoCheck(attacker, defender)
 		return 0;
 	endif
 
-   var cfg  := ReadConfigFile(":woodworking:itemdesc");
-   var elem := FindConfigElem(cfg, ammo);
-   var ammo_color := cint(elem.color);
-   PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, 0, ammo_color);
-   return 1;
+	var cfg  := ReadConfigFile(":woodworking:itemdesc");
+	var elem := FindConfigElem(cfg, ammo);
+	var ammo_color := cint(elem.color);
+	PlayMovingEffectEx(attacker, defender, cint(wpn_a_elem.ProjectileAnim), 10, 10, 0, ammo_color);
+	return 1;
 endfunction
 
 /**
@@ -169,10 +169,10 @@ endfunction
  */
 function ArrowRecovery(attacker, defender)
 	var chance := 15;
-   if (HaveFeat(attacker, "Flechas Intactas"))
-      chance := 70;
-   endif
-   
+	if (HaveFeat(attacker, "Flechas Intactas"))
+		chance := 70;
+	endif
+
 	if ( RandomDiceRoll("1d100") <= chance )
 		var ammo := GetObjProperty(weapon, "ammo");
 		var point := RandomPlace(defender, 1);
@@ -209,13 +209,13 @@ endfunction
  */
 
 function missArrowEvent(attacker, defender)
-   if ( weapon.isBow() && !attacker.npctemplate )
-      ArrowRecovery(attacker, defender);
-   endif
+	if ( weapon.isBow() && !attacker.npctemplate )
+		ArrowRecovery(attacker, defender);
+	endif
 
-   // EraseObjProperty(attacker, "movement");
+	// EraseObjProperty(attacker, "movement");
 
-   PlayMissSound(attacker, wpn_a_elem);
+	PlayMissSound(attacker, wpn_a_elem);
 endfunction
 
 
@@ -226,56 +226,56 @@ endfunction
 */
 function handlePreAttackEvents(byref attacker, byref defender)	
 	/**
-	 *  Must trigger before any other event
-	 */
+		*  Must trigger before any other event
+		*/
 	if ( (attacker.concealed) && (attacker.cmdlevel == 0) )
 		attacker.concealed := 0;
-   elseif ( attacker.hidden )
-      SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
-      bonus_atk := 40;
-      attacker.hidden := 0;
+	elseif ( attacker.hidden )
+		SendSystemReport(attacker, "*Golpe Furtivo*", SSM_INFO);
+		bonus_atk := 40;
+		attacker.hidden := 0;
 	endif
 
 
 	/**
-	 *  Stoppable Events
-	 */
-   if ( CheckBlockDodge(defender, 0, 1) ) // Checa se desviou
+		*  Stoppable Events
+		*/
+	if ( CheckBlockDodge(defender, 0, 1) ) // Checa se desviou
 		missArrowEvent(attacker, defender);
 
-      var defender_wpn := GetWeaponCFGInfo(defender, defender.weapon);
-      if (defender_wpn.Passive == "Riposte" && RandomInt(100) <= 40)
-         defender.attack_once(attacker);
-      endif
+		var defender_wpn := GetWeaponCFGInfo(defender, defender.weapon);
+		if (defender_wpn.Passive == "Riposte" && RandomInt(100) <= 40)
+			defender.attack_once(attacker);
+		endif
 
-      return 0;
+		return 0;
 	endif
-	
-   if (CheckBlockDodge(defender, 1, 0)) // Checa se bloqueou
-      // if (TS_GetCooldown(defender, "blockperfect"))
-      //    Start_Script(":charactercreation:feats/furioso/bloqueio_perfeito_effect", array{defender, attacker});
-      // endif
+
+	if (CheckBlockDodge(defender, 1, 0)) // Checa se bloqueou
+		// if (TS_GetCooldown(defender, "blockperfect"))
+		//    Start_Script(":charactercreation:feats/furioso/bloqueio_perfeito_effect", array{defender, attacker});
+		// endif
 		PlayHitSounds(attacker, defender);
-      return 0;
+		return 0;
 	endif
 
 	// Feat Arrow Repulse
-   if (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow())
+	if (GetObjProperty(defender, "#arrowrepulse") == 1 && weapon.isBow())
 		missArrowEvent(attacker, defender);
-      return 0;
+		return 0;
 	endif
 
 	/**
-	 *  Non-Stoppable Events
-	 */
+		*  Non-Stoppable Events
+		*/
 
-   // Efeito de alucinação. O atacante errará o alvo e atingirá um mobile aleatório próximo.
-   if (weapon.isBow() && TS_GetTimerInfo(attacker, "hallucination"))
-      SendSysMessageEx(attacker, "Você erra o alvo", SSM_FAIL);
-      var mobiles := ListMobilesNearLocation(defender.x, defender.y, defender.z, 2);
-      mobiles := RemoveFromArray(mobiles, attacker);
-      defender := mobiles.randomentry();
-   endif
+	// Efeito de alucinação. O atacante errará o alvo e atingirá um mobile aleatório próximo.
+	if (weapon.isBow() && TS_GetTimerInfo(attacker, "hallucination"))
+		SendSysMessageEx(attacker, "Você erra o alvo", SSM_FAIL);
+		var mobiles := ListMobilesNearLocation(defender.x, defender.y, defender.z, 2);
+		mobiles := RemoveFromArray(mobiles, attacker);
+		defender := mobiles.randomentry();
+	endif
 
 	// TODO: Implementar dano a durabilidade de armas e armaduras
 
@@ -291,21 +291,21 @@ endfunction
  * @returns {number} - 1 if successful, 0 if not.
  */
 function handlePreDamageEffects(attacker, defender, armor, wpn_a_elem)
-   if ( GetEquipmentByLayer(defender, LAYER_MOUNT) )
-      MP_UnMount(defender); // Desmonta o alvo
-   endif
+	if ( GetEquipmentByLayer(defender, LAYER_MOUNT) )
+		MP_UnMount(defender); // Desmonta o alvo
+	endif
 
 
 	// Efeito de habilidade de assassino
-   if (GetObjProperty(attacker, "#marca_assassino"))
-      EraseObjProperty(attacker, "#marca_assassino");
-      TS_StartTimer(defender, "silence", 3);
-      bonus_atk := 30;
-      PlayStationaryEffectEx( defender.x, defender.y, defender.z+15, defender.realm, 0x41A2, 1, 10);
-      if (IsBehind(defender, attacker.x, attacker.y))
-         TS_StartTimer(defender, "paralysis", 3);
-      endif
-   endif
+	if (GetObjProperty(attacker, "#marca_assassino"))
+		EraseObjProperty(attacker, "#marca_assassino");
+		TS_StartTimer(defender, "silence", 3);
+		bonus_atk := 30;
+		PlayStationaryEffectEx( defender.x, defender.y, defender.z+15, defender.realm, 0x41A2, 1, 10);
+		if (IsBehind(defender, attacker.x, attacker.y))
+			TS_StartTimer(defender, "paralysis", 3);
+		endif
+	endif
 
 	return 1;
 endfunction
@@ -380,9 +380,9 @@ endfunction
  * @param {number} nofacecheck - Flag to indicate if face check is needed.
  */
 program Attack(params)
-   var attacker := params[1];
-   var defender := params[2];
-   var nofacecheck := cint(params[3]);
+	var attacker := params[1];
+	var defender := params[2];
+	var nofacecheck := cint(params[3]);
 	weapon := attacker.weapon;
 
 	if (!canAttackOrBeAttacked(attacker, defender, nofacecheck))
@@ -400,23 +400,23 @@ program Attack(params)
 	armor     := CS_SelectArmored(armor, damage_type);
 
 	PlayAttackAnimation(attacker, wpn_a_elem);
-   PlayHitSounds(attacker, defender);
-   ExpGain(attacker, "minor");
+	PlayHitSounds(attacker, defender);
+	ExpGain(attacker, "minor");
 
 
 	if ( !handlePreDamageEffects(attacker, defender, armor, wpn_a_elem) )
 		return;
 	endif
-   // if (!defender.npctemplate && defender.shield)
-   //    if (wpn_a_elem.ProjectileAnim)
-   //       defender.SetAchievement("ragendshield", 1);
-   //    else
-   // 	   defender.SetAchievement("shield", 1);
-   //    endif
-   // endif
+	// if (!defender.npctemplate && defender.shield)
+	//    if (wpn_a_elem.ProjectileAnim)
+	//       defender.SetAchievement("ragendshield", 1);
+	//    else
+	// 	   defender.SetAchievement("shield", 1);
+	//    endif
+	// endif
 
 	// Dispara o script de DANO
-   Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, wpn_a_elem, bonus_atk });
+	Run_Script_To_Completion(":combat:mainHitScript", array{attacker, defender, weapon, armor, wpn_a_elem, bonus_atk });
 
 	return 1;
 endprogram

@@ -4,8 +4,6 @@ use os;
 include ":attributes:attributes";
 include ":fls_core:packets";
 
-include ":fls_core:packets";
-
 program boost (who, text)
 	var firstuse := GetObjProperty (who, "boost");
 	if (firstuse != 1)

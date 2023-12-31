@@ -19,5 +19,6 @@ exported function CombatAdvancement(attacker, weapon, defender)
 	defender := defender;
 	
 	// Advancement currently handled in mainHitScript
+	// Disable the UO advancement system
 	return 0;
 endfunction
