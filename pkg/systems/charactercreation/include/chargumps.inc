@@ -3,7 +3,6 @@ use cfgfile;
 
 include ":gumps:gumps";
 include "include/arrays";
-include ":fls_core:fls_chargumps_ex";
 include ":attributes:attributes";
 include ":gumps:yesno";
 include ":charactercreation:characters";

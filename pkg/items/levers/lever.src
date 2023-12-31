@@ -8,7 +8,7 @@ include "include/client";
 include ":attributes:attributes";
 include ":gumps:requestgump";
 include ":gumps:gumps";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/damage";
 include ":timedscripts:timedScripts";
 include ":traps:traps";

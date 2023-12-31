@@ -4,7 +4,7 @@ use cfgfile;
 use math;
 include ":gumps:gumps";
 include ":gumps:requestgump";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/say";
 
 var arrayquestion := array{0x6300, 0x6990, 0x6992, 0x6451, 0x6453, 0x6455, 0x6457, 0x645A, 0x645C, 0x645E, 0x6460 };

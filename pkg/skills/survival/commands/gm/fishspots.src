@@ -3,7 +3,7 @@ use datafile;
 use cfgfile;
 include ":gumps:gumps";
 include ":gumps:requestgump";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 var arrayquestion := array{0x0DD6, 0x9cc, 0x9cd, 0x9ce, 0x9cf, 0x44C3, 0x44E5, 0x44C6, 0x4303};
 

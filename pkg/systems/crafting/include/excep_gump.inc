@@ -1,6 +1,6 @@
 
 include ":gumps:gumps";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":yggdrasil:combatevents";
 include ":combat:hitscripts";
 

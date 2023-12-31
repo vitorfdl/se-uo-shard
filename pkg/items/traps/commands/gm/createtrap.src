@@ -6,7 +6,7 @@ use cfgfile;
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/say";
 
 var traplevel := 1;

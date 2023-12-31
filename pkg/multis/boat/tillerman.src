@@ -1,7 +1,7 @@
 use os;
 use uo;
 
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:yesno";
 include "include/say";
 

@@ -13,7 +13,7 @@ include ":datafile:datafile";
 include ":email:email_const";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
-include ":gumps:gumpprompt";
+include ":gumps:gump_prompts";
 include ":gumps:playerselectiongump";
 include "include/client";
 

@@ -4,7 +4,7 @@ use cfgfile;
 use math;
 include ":gumps:gumps";
 include ":gumps:requestgump";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/say";
 include "include/dungeons";
 

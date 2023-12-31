@@ -7,7 +7,7 @@ include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":datafile:datafile";
 include ":attributes:attributes";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 program command_Message(who, item)
    var insured := GetObjProperty(item, "insured");

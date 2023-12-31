@@ -6,7 +6,7 @@ use util;
 include "include/say";
 include "include/utils";
 include ":gumps:gumps";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 program usar_serra(who, item)
 	if (!Accessible (who, item) )

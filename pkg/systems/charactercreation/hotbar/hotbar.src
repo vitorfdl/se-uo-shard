@@ -6,7 +6,7 @@ include ":attributes:attributes";
 include ":timedscripts:timedScripts";
 include ":charactercreation:feats";
 include "include/say";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 var the_cfg_fix := ReadConfigFile(":fls_core:item_fix");
 
 var selector_open := 0;

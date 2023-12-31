@@ -6,7 +6,7 @@ include ":timedscripts:timedScripts";
 include ":ghaia:ghaiaUtil";
 include ":disguise:disguise";
 include ":timeUtils:time";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:yesno";
 
 program startTalent(param)

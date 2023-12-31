@@ -244,7 +244,7 @@ function PetSkillGump(who, targ)
       GFHtmlShadowed(gump, 57, 90, 128, 20, "#FFFFFF", "<center>{}".format(pet.name), 4);
       GFTextLine(gump, 51, 134, 1152, "Level");
       var max_exp := (cint(pet_properties.loyalt) + 1) * 100;
-      buildExpBar(gump, 106, 143, 576, cint(pet_properties.exp), max_exp);
+      GFBuildBar(gump, 106, 143, 576, cint(pet_properties.exp), max_exp);
       // GFGumpPicTiled(gump, 106, 143, 576, 9, 9750); // exp
       GFTextLine(gump, 88, 134, 1152, "{}".format(pet_properties.loyalt));
 

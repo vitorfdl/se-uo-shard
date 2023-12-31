@@ -3,7 +3,7 @@ use datafile;
 include ":gumps:yesno";
 include ":gumps:requestgump";
 include ":traps:traps";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 program makedungeondoor(who)
 

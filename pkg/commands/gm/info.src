@@ -14,7 +14,7 @@ use storage;
 include ":attributes:attributes";
 include ":ghaia:ghaiaUtil";
 include ":gumps:gumps";
-include ":gumps:gumpprompt";
+include ":gumps:gump_prompts";
 include ":gumps:requestgump";
 include ":gumps:yesno";
 include ":containers:storageAreas";

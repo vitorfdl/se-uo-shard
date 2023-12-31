@@ -12,7 +12,7 @@ include ":gumps:include/requestgump";
 include ":gumps:htmlgump";
 include "include/client";
 include "include/tileEffects";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 const GF_STDCOLOR := 1890;
 const MOEDAS      := 0xeed;

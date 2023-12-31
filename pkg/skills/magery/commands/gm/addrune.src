@@ -3,7 +3,7 @@ use os;
 use cfgfile;
 include "include/say";
 include "include/arrays";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 program monge_book(who, params )
 	params := splitwords(params);

@@ -2,7 +2,7 @@ use uo;
 use os;
 
 include ":gumps:gumps";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/say";
 include ":charactercreation:feats";
 

@@ -3,7 +3,7 @@ use uo;
 
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 // include ":gumps:yesno";
 var gumpid := 0x99B7;
 

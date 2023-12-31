@@ -15,7 +15,7 @@ include ":gumps:gumps";
 include ":gumps:yesno";
 include "include/say";   
 include ":keys:key";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":timeUtils:time";
 
 const BKGND_STONESLAB		:= 9200;  // Gray stone slab background

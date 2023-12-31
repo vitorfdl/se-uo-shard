@@ -12,6 +12,9 @@
  * 	GFColumnPosition(column_width, num_columns, total_width, x_pos:=0)
  * 	GFRowPosition(align:=ALIGN_CENTER, row_height, num_rows, total_height, y_pos:=0)
 
+ * Gump wrapper
+ * 	GFBuildBar(byref gump, x, y, width, curValue := 0, maxValue := 0, gump := 8)
+
  * Else
  * 	GFExtractData(input, data_id)
  * 	GFOptimizeGump(byref gump)
@@ -24,13 +27,26 @@ use os;
 use basic;
 use cfgfile;
 use polsys;
+use math;
 
+include "include/arrays";
 include ":gumps:gumps";
 
+enum GUMP_CONSTANTS
+	DEFAULT_DIVISOR := 0x1, 
+
+	// BAR
+	YELLOW_BAR := 9753,
+	BLUE_BAR := 9751,
+	GREEN_BAR := 9750,
+endenum
+
 // CONSTants for GFTextCoords()
-CONST ALIGN_CENTER	:= 0x1;
-CONST ALIGN_RIGHT	:= 0x2;
-CONST ALIGN_CENTER_Y	:= 0x3;
+enum  TEXT_ALIGNMENT_CONSTANTS
+	ALIGN_CENTER	:= 0x1,
+	ALIGN_RIGHT	:= 0x2,
+	ALIGN_CENTER_Y	:= 0x3,
+endenum
 
 /**
 * GFCloseGumpTimed(mobile, pid, timer, ret_val:=0)
@@ -69,6 +85,26 @@ function GFHtmlShadowed(byref gump, x, y, width, height, color, text, fontSize :
    GFHTMLArea(gump, x+1, y+1, width, height, $"<BASEFONT SIZE={fontSize} COLOR={shadowColor}>{text}");
    GFHTMLArea(gump, x+1, y-1, width, height, $"<BASEFONT SIZE={fontSize} COLOR={shadowColor}>{text}");
    GFHTMLArea(gump, x-1, y+1, width, height, $"<BASEFONT SIZE={fontSize} COLOR={shadowColor}>{text}");
+   GFHTMLArea(gump, x, y, width, height, $"<BASEFONT SIZE={fontSize} COLOR={color}>{text}");
+endfunction
+
+
+/**
+* GFHtmlLine(byref gump, x, y, width, height, color, text, size := 5);
+* Creates a shadowed html area.
+*
+* Parameters
+*	 gump: The gump to add the html area to.
+*	 x: The x position of the html area.
+*	 y: The y position of the html area.
+*	 width: The width of the html area.
+*	 height: The height of the html area.
+*	 color: The color of the text.
+*	 text: The text to display.
+*	 size: The size of the text.
+*
+**/
+function GFHtmlLine(byref gump, x, y, width, height, color, text, fontSize := 5);
    GFHTMLArea(gump, x, y, width, height, $"<BASEFONT SIZE={fontSize} COLOR={color}>{text}");
 endfunction
 
@@ -250,6 +286,22 @@ function GFCenterRectangle(type:=ALIGN_CENTER, rect_size_x, x_pos, width:=0)
 endfunction
 
 
+function GFTableProps(width, height, rowWidth, rowHeight, nOfItens)
+	var numberOfColumns := cint(Floor(width / rowWidth));
+	var numberOfRows := cint(Floor(height / rowHeight)); // assuming rowHeight is the height of each row
+
+	var nOfPages := cint(Ceil(cdbl(nOfItens) / cdbl(numberOfColumns * numberOfRows)));
+	var itemsPerPage := numberOfColumns * numberOfRows;
+	
+	return struct{
+		numberOfColumns := numberOfColumns, 
+		numberOfRows := numberOfRows, 
+		nOfPages := nOfPages, 
+		itemsPerPage := itemsPerPage
+	};
+endfunction
+
+
 /*
  * GFColumnPosition(column_width, num_columns, total_width)
  *
@@ -282,6 +334,32 @@ function GFColumnPosition(column_width, num_columns, total_width, x_pos:=0)
 	
 	return positions;
 endfunction
+
+function GFColumnPositionByWidthArray(column_widths, total_width, x_pos:=0)
+	if (typeof(column_widths) != "Array") 
+		print("GFColumnPositionByWidthArray: column_widths is not an array");
+		return; 
+	endif
+
+	total_width := CInt(total_width);
+	x_pos := CInt(x_pos);
+	
+	var num_columns := column_widths.size();
+	var total_column_width := ArraySum(column_widths);
+	
+	var space_between := (total_width - total_column_width) / (num_columns + 1);
+	
+	var positions := array{};
+	var i;
+	var current_x := x_pos + space_between;
+	for (i := 1; i <= num_columns; i += 1)
+		positions[i] := current_x;
+		current_x := current_x + column_widths[i] + space_between;
+	endfor
+	
+	return positions;
+endfunction
+
 
 /*
  * GFRowPosition(row_height, num_rows, total_height)
@@ -488,7 +566,16 @@ function GFWordWrap(text, pixels)
 	return wrap_lines;	
 endfunction
 
-function SelectWindowPosition(who, selected)
+
+
+/*
+ * Creates a gump with buttons each 52 pixels apart.
+ *
+ * @param who
+ *
+ * @return The selected position as an array [x, y]
+ */
+function SelectWindowPosition(who)
 	var gump := GFCreateGump();
 	GFClosable(gump, 0);
 	GFMovable(gump, 0);
@@ -516,7 +603,7 @@ function SelectWindowPosition(who, selected)
       sleepms(2);
    endwhile
 
-	GFTextLine(gump, 341, 25, Ultima.Hue, "Clique em um botão para reposicionar");
+	GFTextLine(gump, 341, 25, DEFAULT_FONT_COLOR, "Clique em um botão para reposicionar");
 
 	var input := GFSendGump(who, gump);
 
@@ -551,20 +638,39 @@ function GFPageScrollBar(byref gump, pos_x := 0, pos_y := 0, n_of_pages := 1, cu
 	GFResizePic(gump, pos_x, scrollYPos+12, 9550, 19, pointerHeight); // Scrollbar pointer with offset applied to both top and bottom
 endfunction
 
-// function SelectorGump(who, params)
-//    if (TypeOf(params) != "Array") return; endif
 
-//    var y := 0;
-//    foreach param in params
-//       param.id
-//       param.image
-//       param.item
-//       param.color
-//       param.text
-      
-//       y += 10;
-//       sleepms(1);
-//    endforeach
+// GFBuildBar documentation
+//
+// Parameters:
+//   gump: The gump object to add the bar to
+//   x: The x position of the bar
+//   y: The y position of the bar
+//   width: The width of the bar
+//   value: The current value of the bar
+//   maxexp: The maximum value of the bar
+//   barGump: An array containing the background and foreground gump ids
+//
+// Description:
+// This function adds a bar to a gump object. It is intended to display a progress bar with a current value and a maximum value.
+//
+// Returns: None
+function GFBuildBar(byref gump, x, y, width, curValue := 0, maxValue := 0, barColor := YELLOW_BAR) 
 
-//    return GFSendGump(who, gump)[0];
-// endfunction
+   GFGumpPicTiled(gump, x, y, width, 8, 9750);
+
+   var exp_width := cint((curValue * width) / maxValue);
+   GFGumpPicTiled(gump, x, y, exp_width, 8, barColor);
+endfunction
+
+
+function GFDivisorHorizontal(byref gump, x, y, width, gumpStyle := DEFAULT_DIVISOR)
+	var divisorStart := 57; // 95
+	var divisorMiddle := 58; // 96
+	var divisorEnd := 59; // 97
+	var color := 0;
+	var middleWidth := width - 56;
+	
+	GFGumpPic(gump, x, y, divisorStart, color); // start
+	GFGumpPicTiled(gump, x+28, y, middleWidth, 21, divisorMiddle); //middle
+	GFGumpPic(gump, x+28+middleWidth, y, divisorEnd, color); // end
+endfunction

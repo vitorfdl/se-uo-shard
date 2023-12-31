@@ -33,12 +33,53 @@ use uo;
 use os;
 use basic;
 
-//ADDED by gha
-//pra não ter q ler um cfg
-CONST DEFAULT_BACKGROUND := 0x13BE;
-CONST DEFAULT_FOREGROUND := 0x2486;
+// Use the constants to keep consistency between gumps
+enum GUMP_CONSTANTS
+	// Backgrounds
+	DEFAULT_BACKGROUND := 302,
+	DEFAULT_FOREGROUND := 1579,
 
-// CONSTants for the GFAddButton() function
+	DEFAULT_MENU_BACKGROUND := 311,
+
+	TEXT_ENTRY_BACKGROUND := 9350,
+
+	// For TextLines
+	DEFAULT_FONT_COLOR := 1152,
+	HIGHLIGHT_FONT_COLOR := 2212,
+	GRAY_FONT_COLOR := 1000,
+	RED_FONT_COLOR := 435,
+	GREEN_FONT_COLOR := 65,
+
+	// For HTML or HTML Shadowed
+	HTML_DEFAULT_COLOR := "#f1f1f1",
+	HTML_BLUE_COLOR := "#9999ff",
+	HTML_GREEN_COLOR := "#99ff99",
+
+	// Buttons
+	G_CANCEL_BTN := 2072,
+	G_CANCEL_BTN_HOVER := 2072,
+
+	G_OK_BTN := 247,
+	G_OK_BTN_HOVER := 248,
+
+	G_PAGE_BTN_R := 2224, // Direita
+	G_PAGE_BTN_L := 2223, // Esquerda
+
+	G_CLOSE_WINDOW_BTN := 1604,
+
+	G_PLUS_BTN := 55,
+	G_MINUS_BTN := 57,
+
+	G_PLUS_BTN_ALTERNATE := 1605,
+	G_MINUS_BTN_ALTERNATE := 1623,
+
+	G_CLICK_BTN := 1209,
+
+	// Checkboxes and Radiobuttons
+	G_UNSELECTED := 40014, // 210
+	G_SELECTED := 40015, // 211
+endenum
+
 CONST GF_PAGE_BTN	:= 0x0;
 CONST GF_CLOSE_BTN	:= 0x1;
 CONST GF_DUMMY_BTN	:= 0x2;
@@ -382,7 +423,6 @@ endfunction
  * No return value.
  *
  */
-
 function GFTooltipText(byref gump, entrytext)
    (gump.layout).Append("Tooltip 1114057 @{}@'".format(entrytext));
 

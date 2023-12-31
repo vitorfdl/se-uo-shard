@@ -11,7 +11,7 @@ include ":gumps:requestgump";
 include ":itemutils:canAccess";
 include "include/say";
 include ":crafting:fls_crafting";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:yesno";
 include ":crafting:excep_gump";
 include ":charactercreation:proficiencies";

@@ -10,7 +10,12 @@ program testCraft(who)
         "type"       := "Ferraria",
         "recipe_cfg" := ReadConfigFile(":metalworking:recipes")
     };
-    SetObjProperty(who, "recipes", struct{  "0x13BB" := struct{ level := 4, exp := 50 } });
+    SetObjProperty(who, "recipes", struct{ 
+        "0x13BB" := struct{ level := 4, exp := 50 },
+        "0xF5C"  := struct{ level := 4, exp := 50 },
+        "0xF60"  := struct{ level := 4, exp := 50 },
+        "0x140A" := struct{ level := 4, exp := 50 }
+    });
     SendCraftGump(who, params);
     return 1;
 endprogram

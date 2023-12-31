@@ -8,7 +8,7 @@ use file;
 use os;
 
 include ":death:resurrection";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":attributes:attributes";
 include ":death:death";
 include ":tn:cooldown";

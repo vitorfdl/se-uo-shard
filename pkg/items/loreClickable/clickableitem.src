@@ -6,7 +6,7 @@ include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":datafile:datafile";
 include ":attributes:attributes";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":charactercreation:proficiencies";
 
 const BTN_CHANGE_CHANGE := 13;

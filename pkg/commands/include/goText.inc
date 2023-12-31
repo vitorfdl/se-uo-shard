@@ -1,7 +1,7 @@
 /* $Id: goText.inc 129 2006-05-27 18:08:54Z austinheilman $
  *
  */
-
+include ":gumps:gump_prompts";
 
 function Go_Parse_Text(who, text)
 	if ( !text )

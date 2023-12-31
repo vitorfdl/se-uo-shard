@@ -1,6 +1,6 @@
 use uo;
 
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/say";
 
 program placas(who,item)

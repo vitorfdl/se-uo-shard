@@ -11,7 +11,7 @@ include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":datafile:datafile";
 include ":attributes:attributes";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 const BTN_CHANGE_RACE          := 11;
 const BTN_CHANGE_CORPSE        := 13;

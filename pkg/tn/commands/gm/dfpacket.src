@@ -4,7 +4,7 @@ use vitals;
 
 include ":yggdrasil:boss";
 include ":fls_core:packets";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 use polsys;
 
 function SpellYesNo(who, nome, targname)

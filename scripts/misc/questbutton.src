@@ -2,7 +2,7 @@ use uo;
 use basic;
 
 include ":charactercreation:characters";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:gumps";
 include ":quest:quest";
 include ":gumps:gumps_ex";

@@ -574,3 +574,87 @@ function PositionGump(who, cur_x := 0, cur_y := 0)
 	var res := GFSendGump(who, gump)[0];
    return positions[res];
 endfunction
+
+
+/* 
+ * GumpPrompt(mobile, text)
+ *
+ * Purpose
+ * Prompt User to enter a single line text
+ *
+ * Parameters
+ * mobile:	Mobile to send the gump to.
+ * text:	Text to display on the prompt gump.
+ * movable:	0 - Dialog will not be movable
+ *		1 - Dialog will be movable.
+ *
+ * Return value
+ * Returns 1 when the okay button has been clicked.
+ *
+ */
+function GumpPrompt(mobile, text, movable:=0)
+	var gump_prompt := GFCreateGump(180, 100);
+	if ( !movable )
+		GFClosable(gump_prompt, 0);
+	endif
+	GFResizePic( gump_prompt, 0, 0, DEFAULT_BACKGROUND, 300, 220 );
+	// GFResizePic( gump_prompt, 15, 15, DEFAULT_FOREGROUND, 270, 190 );
+		
+	GFHTMLArea( gump_prompt, 20, 20, 260, 154, text, 1, 1 );
+
+	GFAddButton( gump_prompt, 120, 179, G_OK_BTN, G_OK_BTN_HOVER, GF_CLOSE_BTN, 1 );
+	
+	var prompt_input := GFSendGump(mobile, gump_prompt);
+	return prompt_input[0];
+endfunction
+
+
+function GumpPromptMultiLine(who, text := "")
+	var gump := GFCreateGump();
+	var num_lines := 14;
+	var msg_array := array;
+	var y_pos := 80;
+	var i;
+
+	GFResizePic(gump, 0, 0, DEFAULT_BACKGROUND, 420, 405-10);
+	GFResizePic(gump, 15, 15, DEFAULT_FOREGROUND, 390, 55);
+	GFTextMid(gump, 15, 20, 390, DEFAULT_FONT_COLOR, text);
+	GFTextMid(gump, 60, 40, 330, GRAY_FONT_COLOR, "Você pode usar <\i></\i> para itálico e <b></b> para negrito!");
+	
+	// GFResizePic(gump, 15, 70+280+2, DEFAULT_FOREGROUND, 390, 28);
+	GFAddButton(gump, 200, 70+280+5, G_OK_BTN, G_OK_BTN_HOVER, GF_CLOSE_BTN, 20);
+	GFResizePic(gump, 15, 70, TEXT_ENTRY_BACKGROUND, 390, 280);
+	GFTextEntry(gump, 20, y_pos, 382, 30*num_lines, 1153, "");
+
+	y_pos := y_pos+(19 * num_lines);
+	
+	var input := GFSendGump(who, gump);
+
+	if (input[0] == 20)
+		// var i;
+		// for ( i:=1; i<=msg_array.Size(); i:=i+1 )
+		// 	var line := GFExtractData(input, msg_array[i]);
+		// 	if ( line )
+		// 		line := " "+line;
+		// 		msg_array[i] := line;
+		// 	else
+		// 		msg_array[i] := "";
+		// 	endif
+		// endfor
+	
+		// //Clear off empty lines.
+		// for ( i := msg_array.Size(); i>=1; i:=i-1 )
+		// 	if ( Len(msg_array[i]) <= 0 )
+		// 		msg_array.Erase(i);
+		// 	endif
+		// 	SleepMS(5);
+		// endfor
+		
+		// var text := "";
+		// for ( i:=1; i<=msg_array.Size(); i:=i+1 )
+		// 	text := text + msg_array[i];
+		// 	SleepMS(5);
+		// endfor
+		// return text;
+	endif
+endfunction

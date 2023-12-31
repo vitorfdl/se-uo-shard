@@ -9,7 +9,7 @@ include ":fls_core:fls_characters";
 include "include/say";
 include "include/client";
 include ":taming:taming";
-include ":gumps:gumpprompt";
+include ":gumps:gump_prompts";
 include ":charactercreation:feats"; // remove later
 
 program Logon(who)

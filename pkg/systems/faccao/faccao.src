@@ -7,7 +7,7 @@ include ":faccao:npc";
 include ":faccao:faccao";
 include ":faccao:laws";
 include ":gumps:gumps";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":yggdrasil:boss";
 include ":gumps:yesno";
 include ":unicos:item_template";

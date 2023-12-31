@@ -3,7 +3,7 @@ use uo;
 use datafile;
 use cfgfile;
 
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:gumps";
 include ":gumps:yesno";
 include ":gumps:gumps_ex";

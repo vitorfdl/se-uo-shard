@@ -14,8 +14,8 @@ use basic;
 
 include ":charactercreation:characters";
 include ":charactercreation:feats";
-include ":tn:tngumps";
 include ":gumps:gumps";
+include ":gumps:gump_prompts";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
 include ":taming:taming";
@@ -55,7 +55,7 @@ function buildSubClass(who, targ, charlevel, byref gump, subclass, x, y, power)
    if (subclass.level >= 3)
       GFGumpPicTiled(gump, x, y+35, 96, 8, 9753);
    else
-      buildExpBar(gump, x, y+35, 96, subclass.exp, GetClassMaxExp(subclass));
+      GFBuildBar(gump, x, y+35, 96, subclass.exp, GetClassMaxExp(subclass));
    endif
    GFTextLine(gump, x, y+17, 1000, "Lv. {}".format(subclass.level));
    
@@ -99,7 +99,7 @@ function buildClass(who, targ, charlevel, byref gump, classe, extrahabs := array
    if (classe.level >= 4)
       GFGumpPicTiled(gump, 50, 244, 96, 8, 9753);
    else
-      buildExpBar(gump, 50, 244, 96, classe.exp, GetClassMaxExp(classe));
+      GFBuildBar(gump, 50, 244, 96, classe.exp, GetClassMaxExp(classe));
    endif
    GFTooltipText(gump, "Experiência de sua classe. Faça missões e tarefas relacionadas a sua classe para aumentar sua experiência e disponibilizar novas habilidades.");
    GFTextLine(gump, 79, 250, 1000, "Lv. {}".format(cint(classe.level)));
@@ -185,18 +185,11 @@ function AddVitalIncreaseButtons(byref gump)
    GFTooltipText(gump, "Clique para aumentar seu vigor em 10");
 endfunction
 
-function buildExpBar(byref gump, x, y, width, value, maxexp) 
-   GFGumpPicTiled(gump, x, y, width, 8, 0x2616);
-
-   var exp_width := cint((value * width) / maxexp);
-   GFGumpPicTiled(gump, x, y, exp_width, 8, 9751);
-endfunction
-
 function SendSkillGump(who, chardata, targ, power)
    var gump := GFCreateGump();
 
    GFSetID(gump, GUMPID_SKILLLIST);
-	GFResizePic(gump, 13, 13, 9380, 712, 510);
+	GFResizePic(gump, 13, 13, DEFAULT_BACKGROUND, 712, 510);
 
    GFHtmlShadowed(gump, 297+15, 45, 150, 20, "#FFFFFF", "Ficha de Personagem", 4);
 	GFAddButton(gump, 425+13, 49, 2224, 2224, GF_CLOSE_BTN, GF_CHANGE_PAGE);
@@ -211,7 +204,7 @@ function SendSkillGump(who, chardata, targ, power)
 	GFTextLine(gump, 164, 93, 0, "{}".format(chardata.points));
    GFTooltipText(gump, "Pontos são gastos para aprender habilidades de classe e subclasse.");
 	GFTextLine(gump, 67, 122, 0, "Exp:");
-   buildExpBar(gump, 101, 129, 576, chardata.exppoints, targ.getMaxExp());
+   GFBuildBar(gump, 101, 129, 576, chardata.exppoints, targ.getMaxExp());
    GFTooltipText(gump, "Experiëncia de personagem é adquirida executando diversas tarefas como: matar monstros, criar itens, escrevendo livros e usando habilidades.");
    
    if (chardata.vitalpoints > 0 && who == targ) AddVitalIncreaseButtons(gump); endif
@@ -228,9 +221,7 @@ function SendSkillGump(who, chardata, targ, power)
    endif
 
    GFHtmlShadowed(gump, 240, 265, 300, 20, "#FFFF00", "Use suas habilidades através da barra de atalhos", 2);
-	GFGumpPic(gump, 37, 136, 57, 0); // bar
-	GFGumpPicTiled(gump, 65, 136, 607, 21, 58); //bar
-	GFGumpPic(gump, 667, 136, 59, 0); // bar
+   GFDivisorHorizontal(gump, 37, 136, 667);
 
    GFHtmlShadowed(gump, 186, 156, 80, 20, "#FFFFFF", "Habilidade 1", 4);
    GFHtmlShadowed(gump, 292, 156, 80, 20, "#FFFFFF", "Habilidade 2", 4);
@@ -242,9 +233,8 @@ function SendSkillGump(who, chardata, targ, power)
       buildClass(who, targ, chardata.level, gump, chardata.classes[1], array{}, power);
    endif
 
-	GFGumpPic(gump, 37, 274, 57, 0); // bar
-	GFGumpPicTiled(gump, 67, 274, 607, 21, 58); //bar
-	GFGumpPic(gump, 667, 274, 59, 0); //bar
+
+   GFDivisorHorizontal(gump, 37, 274, 667);
 
    if (chardata.subclasses)
       buildSubClass(who, targ, chardata.level, gump, chardata.subclasses[1], 49, 295, power);
@@ -278,7 +268,7 @@ function SendSkillGump(who, chardata, targ, power)
    
 	GFTextLine(gump, 196, 501, 0, "Coloque seu mouse sobre os icones para ver descrições detalhadas");
 
-	GFTextLine(gump, 539, 292, 2212, "Proficiências");
+	GFTextLine(gump, 539, 292, HIGHLIGHT_FONT_COLOR, "Proficiências");
 
    for i := 1 to 4
   	   GFGumpPicTiled(gump, 454, 324+(i * 20), 239, 1, 2700);
@@ -373,110 +363,6 @@ function OrganizarTexto(ficharp_elem, valores, prop)
 	
 	return texto;
 endfunction
-
-function PegarResposta(who)
-	var gump := GFCreateGump();
-	var num_lines := 14;
-	var msg_array := array;
-	var y_pos := 80;
-	var i;
-
-	GFResizePic(gump, 0, 0, 3600, 420, 405-10);
-	GFResizePic(gump, 15, 15, 0x13BE, 390, 55);
-	GFTextMid(gump, 15, 20, 390, 1153, "Descreva sua nova linha.");
-	GFTextMid(gump, 60, 40, 330, 1153, "Você pode usar <i></i> para itálico e <b></b> para negrito!");
-	GFResizePic(gump, 15, 70+280+2, 0x13BE, 390, 28);
-	GFAddButton(gump, 200, 70+280+5, 2075, 2074, GF_CLOSE_BTN, 20);
-	GFResizePic(gump, 15, 70, 0xA3C, 390, 280);
-	for ( i:=1; i<=num_lines; i:=i+1 )
-		msg_array.Append(GFTextEntry(gump, 20, y_pos, 396, 20, 1153, ""));
-		y_pos := y_pos+19;
-	endfor
-	
-	var input := GFSendGump(who, gump);
-
-	if (input[0] == 20)
-		var i;
-		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
-			var line := GFExtractData(input, msg_array[i]);
-			if ( line )
-				line := " "+line;
-				msg_array[i] := line;
-			else
-				msg_array[i] := "";
-			endif
-		endfor
-	
-		//Clear off empty lines.
-		for ( i := msg_array.Size(); i>=1; i:=i-1 )
-			if ( Len(msg_array[i]) <= 0 )
-				msg_array.Erase(i);
-			endif
-			SleepMS(5);
-		endfor
-		
-		var text := "";
-		for ( i:=1; i<=msg_array.Size(); i:=i+1 )
-			text := text + msg_array[i];
-			SleepMS(5);
-		endfor
-		return text;
-	endif
-endfunction
-
-program skillwin(who, targ, page)
-   _resolveParams(who, targ, page);
-   var cur_page := 0;
-   if (page) cur_page := 1; endif
-   if (!targ) targ := who; endif
-
-   if (CloseGump( who, GUMPID_SKILLLIST) || GetObjProperty(who, "criandochar"))
-      return;
-   endif
-
-   if (GetScriptCooldown(who, "skillwin")) return 0; endif
-
-   var chardata := GetObjProperty(targ, "chardata");
-
-   ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_NO_CREATE);
-   if (!ficharp_elem)
-      ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_CREATE);
-      var ficha := struct;
-      ficha.+Caracteristicas := array{};
-      ficha.+Feitos          := array{};
-      ficha.+Anotacoes       := array{};
-      ficha.+Avaliacoes      := array{};
-      fichaSetProp(targ, "Ficha", ficha);
-   endif
-
-   var res := 1;
-   while (who.connected && res)
-      if (cur_page == 0)
-         var power := CalculateRawDamage(targ, 0, targ.weapon);
-         res := SendSkillGump(who, chardata, targ, power)[0];
-      elseif (cur_page == 1)
-         res := SendBackgroundGump(who, _ifElse(who.cmdlevel >= 3, 3, 1), targ)[0];
-      elseif (cur_page == 2)
-         res := PetSkillGump(who, targ)[0];
-      endif
-      
-      if (res == GF_CHANGE_PAGE)
-         cur_page := !cur_page;
-      elseif (res == GF_CHANGE_PAGE_TAME)
-         cur_page := _ifElse(!cur_page, 2, 0);
-      elseif (res)
-         if (cur_page == 0)
-            HandleSkillPage(who, chardata, res, targ);
-         elseif(cur_page == 1)
-            HandleBackgroundPage(who, res, targ);
-         elseif(cur_page == 2)
-            HandleTamingPage(who, res, targ);
-         endif
-      endif
-
-      sleepms(20);
-   endwhile
-endprogram
 
 function HandleSkillPage(who, byref chardata, res, targ)
    if (res >= 300)
@@ -600,7 +486,7 @@ function HandleBackgroundPage(who, res, targ)
       res := tips[res];
 
       var value := ficharp_elem.GetProp("Ficha");
-      var resposta := PegarResposta(who);
+      var resposta := GumpPromptMultiLine(who);
       if (resposta)
          value[res].append(resposta);
          var teste := fichaSetProp(targ, "Ficha", value);
@@ -732,3 +618,58 @@ function changeClass(who, targ, byref chardata)
    chardata.current_class := classe.id;
    SetObjProperty(who, "chardata", chardata);
 endfunction
+
+
+program skillwin(who, targ, page)
+   _resolveParams(who, targ, page);
+   var cur_page := 0;
+   if (page) cur_page := 1; endif
+   if (!targ) targ := who; endif
+
+   if (CloseGump( who, GUMPID_SKILLLIST) || GetObjProperty(who, "criandochar"))
+      return;
+   endif
+
+   if (GetScriptCooldown(who, "skillwin")) return 0; endif
+
+   var chardata := GetObjProperty(targ, "chardata");
+
+   ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_NO_CREATE);
+   if (!ficharp_elem)
+      ficharp_elem := DFFindElement(ficharp_data_file, Hex(targ.serial), DF_CREATE);
+      var ficha := struct;
+      ficha.+Caracteristicas := array{};
+      ficha.+Feitos          := array{};
+      ficha.+Anotacoes       := array{};
+      ficha.+Avaliacoes      := array{};
+      fichaSetProp(targ, "Ficha", ficha);
+   endif
+
+   var res := 1;
+   while (who.connected && res)
+      if (cur_page == 0)
+         var power := CalculateRawDamage(targ, 0, targ.weapon);
+         res := SendSkillGump(who, chardata, targ, power)[0];
+      elseif (cur_page == 1)
+         res := SendBackgroundGump(who, _ifElse(who.cmdlevel >= 3, 3, 1), targ)[0];
+      elseif (cur_page == 2)
+         res := PetSkillGump(who, targ)[0];
+      endif
+      
+      if (res == GF_CHANGE_PAGE)
+         cur_page := !cur_page;
+      elseif (res == GF_CHANGE_PAGE_TAME)
+         cur_page := _ifElse(!cur_page, 2, 0);
+      elseif (res)
+         if (cur_page == 0)
+            HandleSkillPage(who, chardata, res, targ);
+         elseif(cur_page == 1)
+            HandleBackgroundPage(who, res, targ);
+         elseif(cur_page == 2)
+            HandleTamingPage(who, res, targ);
+         endif
+      endif
+
+      sleepms(20);
+   endwhile
+endprogram

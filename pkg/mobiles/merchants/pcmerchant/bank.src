@@ -12,7 +12,7 @@ include ":gumps:gumps";
 include ":crafting:recipes";
 include ":gumps:gumps_ex";
 include ":gumps:yesno";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:htmlgump";
 include ":merchants:bank";
 

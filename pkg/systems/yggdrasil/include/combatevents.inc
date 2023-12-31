@@ -1,5 +1,5 @@
 
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":yggdrasil:boss";
 
 function LoadCombatEventData()

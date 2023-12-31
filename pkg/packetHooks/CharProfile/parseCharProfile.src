@@ -11,7 +11,7 @@ use math;
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include "include/utils";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 CONST PROFILE_MSGTYPE := 0xB8;
 CONST PROFILE_TITLE := "Perfil de ";

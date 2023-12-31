@@ -5,7 +5,7 @@ include ":gumps:requestgump";
 include ":gumps:yesno";
 include ":unicos:item_template";
 include ":attributes:attributes";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":tn:questevent";
 include ":gumps:yesno";
 include "include/utils";

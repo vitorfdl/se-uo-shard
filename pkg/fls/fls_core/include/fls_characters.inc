@@ -5,7 +5,6 @@ use cfgfile;
 include "include/dungeons";
 include ":ghaia:ghaiaUtil";
 include ":attributes:attributes";
-include ":fls_core:fls_chargumps_ex";
 
 function checkGender(object)
 	var gender := 0;

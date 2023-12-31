@@ -4,7 +4,7 @@
 use uo;
 use os;
 
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:include/requestgump";
 include ":itemutils:canAccess";
 include "include/say";

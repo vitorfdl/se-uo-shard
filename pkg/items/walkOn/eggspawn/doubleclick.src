@@ -1,7 +1,7 @@
 use uo;
 use util;
 
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/say";
 include ":combat:combat";
 

@@ -9,6 +9,7 @@ include ":ghaia:objective";
 include ":ghaia:genericControl";
 include ":timedscripts:timedScripts";
 
+// Mostly used by the included scripts
 var me         := self();
 var npccfgfile := NPC_GetNPCConfig(me, 1);
 var idlesnd;
@@ -33,6 +34,13 @@ program NPCMonitor()
 	genericControl();
 endprogram
 
+/**
+ * Closes the distance between the NPC and the opponent.
+ * 
+ * @param {Object} opponent - The opponent to close distance with.
+ * 
+ * @returns {Number} - Returns 0 if the NPC should not close the distance (e.g., if the NPC is a ranged attacker and not in close combat mode, or if the NPC is set to not engage in close combat). Returns 1 if the NPC is in melee range of the opponent.
+ */
 function CloseDistance( opponent )
 	if ((cint(npccfgfile.Ranged) || me.weapon.isBow()) && !GetObjProperty(me, "closecombat"))
 		return CloseDistanceArcher(opponent);
@@ -40,6 +48,14 @@ function CloseDistance( opponent )
 
 	return CloseDistanceMeele(opponent);
 endfunction
+
+/**
+ * Closes the distance between the NPC and the opponent.
+ * 
+ * @param {Object} opponent - The opponent to close distance with.
+ * 
+ * @returns {Number} - Returns 0 if the NPC should not close the distance (e.g., if the NPC is a ranged attacker and not in close combat mode, or if the NPC is set to not engage in close combat). Returns 1 if the NPC is in melee range of the opponent.
+ */
 
 function CloseDistanceMeele( opponent )
 	if ( GetObjProperty(me, "noclosecombat") == 1)
@@ -61,6 +77,14 @@ function CloseDistanceMeele( opponent )
 	   return 1;
    endif  
 endfunction
+
+/**
+ * Closes the distance between the NPC and the opponent.
+ * 
+ * @param {Object} opponent - The opponent to close distance with.
+ * 
+ * @returns {Number} - Returns 0 if the NPC should not close the distance (e.g., if the NPC is a ranged attacker and not in close combat mode, or if the NPC is set to not engage in close combat). Returns 1 if the NPC is in melee range of the opponent.
+ */
 
 function CloseDistanceArcher(opponent)
 	var sleepdelay := 270 - me.run_speed;
@@ -95,6 +119,11 @@ function CloseDistanceArcher(opponent)
 	return 0;
 endfunction
 
+/**
+ * @param {Object} opponent - The opponent to fight against.
+ * @param {number} [alerted=0] - Flag indicating if the opponent is alerted.
+ */
+
 function lookAround()
    if (RandomInt(5) == 1)
       PerformAction(me, ANIM_FIDGET_1);
@@ -110,10 +139,12 @@ function lookAround()
    endforeach
 endfunction
 
+/**
+ * @param {Object} opponent - The opponent to fight against.
+ * @param {number} [alerted=0] - Flag indicating if the opponent is alerted.
+ */
 
 function Fight(opponent, alerted := 0)
-  // mystate := FIGHTING; 
-
    if(opponent.serial == me.serial)
       SetWarMode(0);
       opponent := 0;
@@ -156,7 +187,7 @@ function Fight(opponent, alerted := 0)
 
       if (my_spawnpoint && npc_is_boss)
          if (Distance(me, my_spawnpoint) > 35)
-            BackToSpawnpoint(my_spawnpoint);
+            MoveBackToSpawnPoint(my_spawnpoint);
             break;
          endif
       endif
@@ -298,73 +329,7 @@ function Fight(opponent, alerted := 0)
       endif
       
       CheckFlee(opponent);
-      
-      ev := wait_for_event(waittime);
-      if(ev.type == SYSEVENT_SPEECH)
-         continue;
-      endif
-      
-      case (ev.type)
-         EVID_OPPONENTHEALED:
-            if (!ev.source)
-               continue;
-            endif
-
-            if (ev.target == opponent)
-               me.setAggro(ev.source.serial, 30);
-            endif
-            ChooseHighestOpponent(me, opponent, ev.source);
-            continue;
-         SYSEVENT_DAMAGED: 
-            if (!ev.source)
-               continue;
-            endif
-            me.setAggro(ev.source.serial, cint(ev.damage/2)+1+cint(ev.source.getToughness()));
-            ChooseHighestOpponent(me, opponent, ev.source);
-            /*(CoordinateDistance(me.x, me.y, ev.source.x, ev.source.y) < CoordinateDistance(me.x, me.y, opponent.x, opponent.y)) ||*/
-            // if (ev.source && (!CheckLineOfSight(me, opponent) || !opponent))
-            //    if ( (opponent) && RandomInt(5) == 1 ) //se ainda existir o oponente so tem 25% de chance de mudar de alvo
-            //       opponent := ev.source;
-            //       SetOpponent(opponent);
-            //       TurnToward(opponent);
-            //    elseif ( (!opponent) || (!CheckLineOfSight(me, opponent))) //mas se não tiver mais o oponent entao 100% de chance de mudar de alvo
-            //       opponent := ev.source;
-            //       SetOpponent(opponent);
-            //       TurnToward(opponent);
-            //    endif
-            // endif
-            continue;
-
-         SYSEVENT_ENGAGED:
-            me.setAggro(ev.source.serial, 50);
-            ChooseHighestOpponent(me, opponent, ev.source);
-            continue;
-
-         EVID_TAUNT:
-            me.setAggro(ev.source.serial, 200);
-            ChooseHighestOpponent(me, opponent, ev.source);
-            continue;
-
-         EVID_FLEE:
-            if (ev.source)
-               Flee(ev.source);
-            endif
-            continue;
-         EVID_CHECK_NUMBER:
-            if (OutNumbered(me))
-               Flee(ev.source);
-            endif
-            continue;
-         EVID_PEACEMADE:
-         //	sendsysmessage(ev.source, "peacemade");
-            SetPeaceMade();
-            return;
-         EVID_COMBAT_MOVE:
-            RunTowardLocation( ev.x, ev.y );
-            if (CoordinateDistance(me.x, me.y, ev.x, ev.y) <= 1)
-               clear_event_queue();
-            endif
-      endcase
+      eventHandler(ev, waittime);
    endwhile
 
    DisableCombatEvents();
@@ -374,6 +339,68 @@ function Fight(opponent, alerted := 0)
    sleepms(1);
 endfunction
 
+function eventHandler(byref ev, waittime, opponent := 0)
+   ev := wait_for_event(waittime);
+   if(ev.type == SYSEVENT_SPEECH)
+      return;
+   endif
+   
+   case (ev.type)
+      EVID_OPPONENTHEALED:
+         if (!ev.source)
+            return;
+         endif
+
+         if (ev.target == opponent)
+            me.setAggro(ev.source.serial, 30);
+         endif
+         ChooseHighestOpponent(me, opponent, ev.source);
+         return;
+      SYSEVENT_DAMAGED: 
+         if (!ev.source)
+            return;
+         endif
+         me.setAggro(ev.source.serial, cint(ev.damage/2)+1+cint(ev.source.getToughness()));
+         ChooseHighestOpponent(me, opponent, ev.source);
+         return;
+
+      SYSEVENT_ENGAGED:
+         me.setAggro(ev.source.serial, 50);
+         ChooseHighestOpponent(me, opponent, ev.source);
+         return;
+
+      EVID_TAUNT:
+         me.setAggro(ev.source.serial, 200);
+         ChooseHighestOpponent(me, opponent, ev.source);
+         return;
+
+      EVID_FLEE:
+         if (ev.source)
+            Flee(ev.source);
+         endif
+         return;
+      EVID_CHECK_NUMBER:
+         if (OutNumbered(me))
+            Flee(ev.source);
+         endif
+         return;
+      EVID_PEACEMADE:
+         SetPeaceMade();
+         return;
+      EVID_COMBAT_MOVE:
+         RunTowardLocation( ev.x, ev.y );
+         if (CoordinateDistance(me.x, me.y, ev.x, ev.y) <= 1)
+            clear_event_queue();
+         endif
+   endcase
+endfunction
+
+/**
+ * @param {Object} opponent - The opponent to fight against.
+ * @param {number} [alerted=0] - Flag indicating if the opponent is alerted.
+ * 
+ * @returns {Number} - Returns 1 if the NPC is outnumbered, 0 otherwise.
+ */
 function OutNumbered(mobile)
    if ("RunWhenOutnumbered" in custombehaviors)
       var enemies := GetEnemiesNear(me, 7).size();
@@ -384,6 +411,11 @@ function OutNumbered(mobile)
    endif
 endfunction
 
+/**
+* @param {Object} mobile - The mobile that just teleported.
+*
+* @returns {Number} - Returns 1 if the mobile just teleported, 0 otherwise.
+*/
 function JustTeleported(mobile)
 	var tele_time := CInt(GetObjProperty(mobile, "#Teleported"));
 	if ( tele_time > ReadMillisecondClock()-500 )
@@ -395,7 +427,13 @@ function JustTeleported(mobile)
 	endif
 endfunction
 
-function BackToSpawnpoint(spawnpoint)
+/**
+ * Makes the NPC move to its spawn point.
+ *
+ * @param {Object} spawnpoint - The spawn point to move back to.
+ */
+
+function MoveBackToSpawnPoint(spawnpoint)
 	var sleepdelay := 270 - me.run_speed;
 
 	if (sleepdelay < 0)

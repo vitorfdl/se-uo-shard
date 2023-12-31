@@ -3,7 +3,7 @@ use uo;
 include ":gumps:gumps";
 include ":gumps:yesno";
 include ":gumps:requestgump";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include "include/say";
 include ":attributes:attributes";
 include ":containers:containers";

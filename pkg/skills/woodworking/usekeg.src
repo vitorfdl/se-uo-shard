@@ -1,7 +1,7 @@
 use uo;
 
 include "include/say";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 program usekeg(who, item)
 

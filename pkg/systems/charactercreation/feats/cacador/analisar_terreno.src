@@ -22,7 +22,7 @@ include "include/sysEvent";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 var BKGND_SILVERTRIM := GFCfgConst("Defaults", "BackGround");
 

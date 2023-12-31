@@ -113,7 +113,7 @@ function ChangeMyHair(who)
 	var beard := GetEquipmentByLayer(who, LAYER_BEARD);
 
    PrintText(who, "*cortando cabelo*");
-   var aparencia := disguiseGump(who, params, struct{ cabelo := hair.graphic, barba := beard.graphic }, array{"Hair", "Beard"});
+   var aparencia := disguiseGump(who, params, struct{ cabelo := hair.graphic, barba := beard.graphic }, array{"cabelo", "barba"});
 
    var hair_color := hair.color;
    var beard_color := beard.color;

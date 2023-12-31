@@ -16,7 +16,7 @@ include "include/objtype";
 include ":attributes:attributes";
 include ":crafting:fls_craftingUtils";
 include ":itemUtils:toolWear";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":crafting:craft_props";
 include ":crafting:excep_gump";
 include ":crafting:recipes";
@@ -29,12 +29,18 @@ var resource_config := ReadConfigFile(":crafting:config/resourceList");
 var resource_level := ReadConfigFile(":crafting:config/resourceLevels");
 var menu_config     := ReadConfigFile(":crafting:config/craftConfig");
 var requires_config := ReadConfigFile(":crafting:config/requires");
-// This function is used to display a craft skill's action,
-// sound, the loops to do it in, and the delay between loops.
-// Sound is required, loops defaults to 0 if none sent, and delay
-// defaults to 2 seconds if none sent, Action defaults to 0
-// (none) if none sent. Who is who the info is to be sent to.
-// All delays are in seconds.
+
+/**
+ * PlayCraftWork - Plays a crafting sound effect for the specified character.
+ * 
+ * @param {who} - The character for whom the crafting sound effect will be played.
+ * @param {craftSound} - The sound effect to be played for crafting.
+ * @param {loops} - The number of times the sound effect will be played in a loop.
+ * @param {delay} - The delay in seconds between each loop iteration.
+ * @param {craftAction} - The crafting action to be performed.
+ * @param {fastcraft} - Flag indicating fast crafting mode.
+ */
+
 function PlayCraftWork(who, craftSound, loops:=0, delay:=2, craftAction:=0, fastcraft := 0)
    if(loops)
       for i := 1 to loops
@@ -55,6 +61,14 @@ function PlayCraftWork(who, craftSound, loops:=0, delay:=2, craftAction:=0, fast
 
    return;
 endfunction
+
+/**
+ * GetRecipe - Retrieves recipe information for the specified objtype and elem.
+ * 
+ * @param {objtype} - The object type for which the recipe information will be retrieved.
+ * @param {elem} - The element containing the recipe information.
+ * @returns {struct} - The recipe information including graphic, color, name, requireFeat, difficulty, desc, colored, mark, exceptional, delay, fastcraft, more, hasLevel, materials, main_material, and requires.
+ */
 
 function GetRecipe(objtype, elem)
    var item := itemdesc_cfg[Hex(objtype)];
@@ -98,6 +112,15 @@ function GetRecipe(objtype, elem)
    return recipe_info;
 endfunction
 
+/**
+ * GetRecipeList - Retrieves a list of recipes for the specified player and recipe configuration, optionally filtered by a search string.
+ * 
+ * @param {who} - The player for whom the recipe list will be retrieved.
+ * @param {recipe_cfg} - The recipe configuration from which the recipe information will be retrieved.
+ * @param {search} - Optional. A search string to filter the recipe list.
+ * @returns {array} - An array of recipe information including graphic, color, name, objtype, requireFeat, difficulty, desc, colored, mark, exceptional, delay, fastcraft, more, hasLevel, materials, main_material, requires, level, and exp.
+ */
+
 function GetRecipeList(who, recipe_cfg, search := "")
 	var items := GetObjProperty(who,  "recipes"); //pega a lista de recipes
 	
@@ -131,13 +154,15 @@ function GetRecipeList(who, recipe_cfg, search := "")
 	return recipelist;
 endfunction
 
-// Function used to target material and check ability for crafting.
-// Returns an array of ItemRef for the item and Objtype for the
-// resourceList of the material, and the Points bonus the resource
-// gives for using it. If chk is passed, it is used for the "cprop"
-// to check the item for. This is used for example, for boards that
-// was originally colored logs. The colored log objtype is stored
-// in the cprop, and is used to get it's "ResourceList" reference.
+/**
+ * MaterialSelection - Retrieves a list of recipes for the specified player and recipe configuration, optionally filtered by a search string.
+ * 
+ * @param {who} - The player for whom the recipe list will be retrieved.
+ * @param {type} - The type of material being selected.
+ * @param {chk} - The check value for the material selection.
+ * @param {recipe} - The recipe being used for crafting.
+ * @param {craft_skill} - The crafting skill being used for the material selection.
+ */
 function MaterialSelection(who, type, chk, recipe, craft_skill)
    var material;
    var levelselect := 0;
@@ -237,45 +262,45 @@ function MaterialSelection(who, type, chk, recipe, craft_skill)
 	return retarray;
 endfunction
 
+/**
+ * CraftItem - Crafts an item using the specified parameters.
+ * 
+ * @param {who} - The character who is crafting the item.
+ * @param {craft_skill} - The crafting skill being used to craft the item.
+ * @param {tool} - The tool being used for crafting.
+ * @param {recipe} - The recipe for the item being crafted.
+ * @param {amt} - The amount of the item to be crafted.
+ * @param {canFix} - Flag indicating whether the item can be fixed during crafting.
+ */
 function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
-   if (recipe.requireFeat)
-      if (!HaveFeatSecondary(who, cint(recipe.RequireFeat)))
-         var feat := GetFeatById(recipe.RequireFeat);
-         return SendSysMessageEx(who, "Este item requer a habilidade {} para ser construido".format(feat.Name), SSM_FAIL);
-      endif
+   if (recipe.requireFeat && !HaveFeatSecondary(who, cint(recipe.RequireFeat)))
+      return SendSysMessageEx(who, "Este item requer a habilidade {} para ser construido".format(GetFeatById(recipe.RequireFeat).Name), SSM_FAIL);
    endif
+
 	var craft_sound  := menu_config[craft_skill].CraftSound;
 	var craft_delay  := menu_config[craft_skill].CraftDelay;
 	var craft_action := menu_config[craft_skill].CraftAnim;
-   
-	var craft_loops  := recipe.delay;
-	if (craft_loops == error)
-      craft_loops := 1;
-	endif
-
- 	craft_loops := cint(craft_loops);
+	var craft_loops  := _ifOr(recipe.delay, 1);
 
 	var materials     := recipe.materials;
 	var more          := cint(recipe.more);
 	var main_material := recipe.main_material;
-	//verifica se tem os objtypes na bag
 	var targ_materials   := GetBagList(who, materials.Keys());
    var material_amt := 1;
    var level_select := 0;
-   if (craft_skill == "Alquimia")
-      if (recipe.level)
-         var opts := array{};
-         for i := 1 to (recipe.level)
-            opts.append("Level {} - {}x mais recursos".format(i, i));
-         endfor
-         var res := RadioGump(who, 300, 0, "Qual level você deseja fazer?", opts, 1);
-         level_select := cint(res);
-      endif
+
+   if (craft_skill == "Alquimia" && recipe.level)
+      var opts := array{};
+      for i := 1 to (recipe.level)
+         opts.append("Level {} - {}x mais recursos".format(i, i));
+      endfor
+      level_select := cint(RadioGump(who, 300, 0, "Qual level você deseja fazer?", opts, 1));
    endif
 
 	var choosed_material := 0;
 	var material_color   := 0;
 	var material_cprops := struct{};
+
 	foreach thing in (materials.keys())
 		sleepms(5);
       if (thing in array{"metal", "madeira", "vidro", "couro", "pano", "pontaflecha", "planta"})
@@ -311,15 +336,13 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
          targ_materials[thing] := materials[thing];
       endif
 	endforeach
+
 	var counter  := 0;
 	var theitems := array{};
 	var initialX := who.x;
 	var initialY := who.y;
    var theitem;
-   var item_list := array{recipe.objtype};
-   if (recipe.pieces)
-      item_list := recipe.pieces;
-   endif
+   var item_list := _ifOr(recipe.pieces, array{recipe.objtype});
 
 	while (counter < amt)
 		counter := counter + 1;
@@ -469,17 +492,24 @@ function CraftItem(who, craft_skill, tool, recipe, amt, canFix)
 	return theitems;	
 endfunction
 
+/**
+ * SubtractMaterial - Subtracts materials from the player's inventory based on the provided target materials and amount modifier.
+ * 
+ * @param {who} - The character from whom the materials will be subtracted.
+ * @param {targ_materials} - The target materials to be subtracted from the player's inventory.
+ * @param {amountMod} - Optional. The amount modifier to be applied to the target materials.
+ * @returns {int} - 1 if the materials were successfully subtracted, 0 otherwise.
+ */
+
 function SubtractMaterial(who, targ_materials, amountMod := 1)
    var container_items := EnumerateItemsInContainer(who.backpack);
-	//no loop anterior procurou os materiais, agora consome.
+
 	foreach thing in (targ_materials.keys())
       sleepms(2);
       
-      if (amountMod < 1)
-         if (cint(thing) == 3968 || (cint(thing) >= 39066 && cint(thing) <= 39069))
-            targ_materials.-thing;
-            continue;
-         endif
+      if (amountMod < 1 && (cint(thing) == 3968 || (cint(thing) >= 39066 && cint(thing) <= 39069)))
+         targ_materials.-thing;
+         continue;
       endif
 
 		targ_materials[thing] := cint(cdbl(targ_materials[thing])*amountMod);
@@ -494,14 +524,13 @@ function SubtractMaterial(who, targ_materials, amountMod := 1)
          endif
 
          if (item.amount >= targ_materials[thing] )
-            //sendsysmessageEx(who, " " + item + " " + cint(targ_materials[thing]) + " " + thing);
             var chk := SubtractAmount(item, cint(targ_materials[thing]));
             if (!chk ) return 0; endif
             targ_materials[thing] := 0;
             break;
          endif
 
-         targ_materials[thing] := targ_materials[thing] - item.amount;
+         targ_materials[thing] -= item.amount;
          if (!SubtractAmount(item, item.amount))
             break;
          endif
@@ -515,6 +544,14 @@ function SubtractMaterial(who, targ_materials, amountMod := 1)
 	return 1;
 endfunction
 
+/**
+ * AddMaterialMod - Adds a material modifier to the specified item based on the provided recipe, principal material, and material color.
+ * 
+ * @param {recipe} - The recipe for the item being modified.
+ * @param {theitem} - The item to which the material modifier will be added.
+ * @param {principalMaterial} - The principal material to be used for the material modifier.
+ * @param {materialColor} - The color of the material to be used for the material modifier.
+ */
 function AddMaterialMod(recipe, theitem, principalMaterial, materialColor)
 	if (!principalMaterial)
 		return;
@@ -565,6 +602,13 @@ endfunction
    endif
 endfunction
 
+/**
+ * CraftExceptional - Crafts an exceptional item using a special material.
+ *
+ * @param {who} - The character attempting to craft the exceptional item.
+ * @param {theitem} - The item being crafted.
+ * @param {craft_skill} - The crafting skill being used for the exceptional crafting.
+ */
 function CraftExceptional(who, theitem, craft_skill)
    SendSysMessageEx(who, "Selecione o material que deseja unir a este objeto.", SSM_REQUEST);
    var special_obj := Target(who);
@@ -637,16 +681,32 @@ function CraftExceptional(who, theitem, craft_skill)
    return 1;
 endfunction
 
+/**
+ * SmeltItem - Smelts an item using specific configuration and crafting skill.
+ *
+ * @param {who} - The character performing the smelting.
+ * @param {item} - The item to be smelted.
+ * @param {specific_cfg} - The specific configuration for smelting.
+ * @param {craft_skill} - The crafting skill used for smelting.
+ */
+
 function fixItemName(name)
    for i := 1 to 9
-      name := StrReplace(name, "{}".format(i), "");
+      name := StrReplace(name, cstr(i), "");
       sleepms(2);
    endfor
 
-   if (name[1] == " ") name[1] := ""; endif
-
-   return name;
+   return Trim(name);
 endfunction
+
+/**
+ * SmeltItem - Smelts an item using specific configuration and crafting skill.
+ *
+ * @param {who} - The character performing the smelting.
+ * @param {item} - The item to be smelted.
+ * @param {specific_cfg} - The specific configuration for smelting.
+ * @param {craft_skill} - The crafting skill used for smelting.
+ */
 
 function SmeltItem(who, item, specific_cfg, craft_skill)
    if(item.movable == 0)

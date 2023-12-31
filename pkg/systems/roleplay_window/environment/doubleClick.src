@@ -5,7 +5,7 @@ use math;
 include "include/sysEvent";
 include "include/say";
 include ":datafile:datafile";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 program AC_start(who, item)
    if (!who.cmdlevel)

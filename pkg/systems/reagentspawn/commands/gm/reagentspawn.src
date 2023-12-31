@@ -8,7 +8,7 @@ include ":gumps:gumps_ex";
 include ":gumps:include/requestgump";
 include ":gumps:yesno";
 include "include/say";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 
 program reagentConfigure(who, text)
 	if (!text)

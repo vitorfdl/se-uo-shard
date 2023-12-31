@@ -6,7 +6,7 @@ use cfgfile;
 include "include/client";
 include "include/utils";
 include ":gumps:gumps";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:yesno";
 include ":ghaia:include/ghaiaUtil";
 include ":attributes:attributes";

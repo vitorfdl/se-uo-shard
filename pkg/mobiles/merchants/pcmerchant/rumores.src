@@ -9,7 +9,7 @@ include ":gumps:gumps";
 include ":gumps:yesno";
 include "include/say";   
 include ":keys:key";
-include ":tn:tngumps";
+include ":gumps:gump_prompts";
 include ":gumps:htmlgump";
 
 //Gump Constants
