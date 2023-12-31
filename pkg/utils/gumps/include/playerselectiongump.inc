@@ -15,28 +15,27 @@ include ":gumps:gumps_ex";
 //include ":onlineCount:settings";
 
 function SelectCharacter( mobile, cmdlevel:=0 )
-
-        var gump := GFCreateGump();
+	var gump := GFCreateGump();
 
 	GFResizePic( gump, 0, 0, GFCfgConst( "Defaults", "BackGround" ), 310, 380 );
 
 	GFResizePic( gump, 15, 15, GFCfgConst( "Defaults", "ForeGround" ), 280, 25 );
 	GFResizePic( gump, 15, 45, GFCfgConst( "Defaults", "ForeGround" ), 280, 320 );
- 
-        GFAddAlphaRegion( gump, 0, 0, 310, 380 );
+
+	GFAddAlphaRegion( gump, 0, 0, 310, 380 );
 
 	GFTextLine( gump, 30, 15, 1720, "Selecionar Jogador" );
 
 	var names_list := GetCharactersList( cmdlevel ),
-	    num_players := names_list.Size(),
-            list_keys := names_list.Keys(),
-	    counter := 0,
-	    y_pos := 60;
+	num_players := names_list.Size(),
+	list_keys := names_list.Keys(),
+	counter := 0,
+	y_pos := 60;
 
 	GFPage( gump, 1 );
 	foreach name in ( list_keys )
 
-                GFTextLine( gump, 25, y_pos, 2100, name );
+		GFTextLine( gump, 25, y_pos, 2100, name );
 		GFAddButton( gump, 261, y_pos+3, 2117, 2118, GF_CLOSE_BTN, _name_iter );
 
 		y_pos += 20;
@@ -60,10 +59,10 @@ function SelectCharacter( mobile, cmdlevel:=0 )
 
 	input := input[0];
 
-        var result := list_keys[input],
-            serial := names_list[result];
+	var result := list_keys[input],
+		serial := names_list[result];
 
-        var character := SystemFindObjectBySerial( serial, SYSFIND_SEARCH_OFFLINE_MOBILES );
+	var character := SystemFindObjectBySerial( serial, SYSFIND_SEARCH_OFFLINE_MOBILES );
 
 	return character;
 endfunction
