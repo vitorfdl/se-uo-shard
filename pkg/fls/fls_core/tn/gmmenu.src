@@ -4,7 +4,6 @@ use uo;
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
 include ":gumps:gump_prompts";
-// include ":gumps:yesno";
 var gumpid := 0x99B7;
 
 var menuCfg := ReadConfigFile(":fls_core:config/gmmenu");

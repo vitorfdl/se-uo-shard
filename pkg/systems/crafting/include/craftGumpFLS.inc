@@ -90,157 +90,175 @@ function sendCraftGump(who, params)
     endwhile
 endfunction
 
-// 0xC86E
+
 function createGump(who, recipes, params)
-	var gump := GFCreateGump();
-	GFSetID(gump, GUMPID_CRAFTING);
+   var gump := GFCreateGump();
+   GFSetID(gump, GUMPID_CRAFTING);
+   var baseX := 0;
+   var baseY := 12;
 
-    //Header
-	GFGumpPic(gump, 98+120, 12, 40019, 0);
-   GFHtmlShadowed(gump, 102+120, 16, 121, 20, "#ffffff", "<BASEFONT SIZE=5><center>{}".format(params.type));
+   GFResizePic(gump, baseX, baseY, 302, 640-40, 720); // background
 
-    //Background
-   if (params.filter)
-	   GFResizePic(gump, 328, 48, 30546, 184, 140); //filter
-      GFHTMLArea(gump, 337, 52, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Filtros");
-      foreach filter in (params.filter)
-         GFAddButton(gump, 343, 83, filter.button, 40015, GF_CLOSE_BTN, BTN_FILTER+_filter_iter);
-         GFTextLine(gump, 372, 83, 1153, filter.name);
-         sleepms(2);
-      endforeach
-   endif
-    
-   if (params.bonus)
-      GFResizePic(gump, 324, 186, 30546, 187, 140); //bonus
-      GFHTMLArea(gump, 402, 190, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Bonus");
-   endif
-   
-	GFResizePic(gump, 328+216, 324+100, 30546, 135, 88+24); //options
-	GFResizePic(gump, 13, 36, 40000, 540, 590);
+   var gumpMiddleWidth := 570;
+   var gumpMiddleHeight := 690;
 
-    //Search
-	GFTextLine(gump, 31+90, 50, 1153, "Filtrar:");
-	GFResizePic(gump, 31+140, 50, 30546, 288, 25);
-    search_entry := GFTextEntry(gump, 37+140, 52, 225, 20, 1101, params.search);
-	GFAddButton(gump, 288+140, 51, 9011, 9011, GF_CLOSE_BTN, BTN_SEARCH);
-    
-    //Crafting Options
-	GFTextLine(gump, 343+216, 333+100, 1153, "Quantidade");
-    // GFToolTipText(gump, 1062951);
-	GFResizePic(gump, 426+216, 332+100, 30546, 31, 22);
-    qty_entry := GFTextEntry(gump, 431+216, 334+100, 24, 20, 1101, ""+params.qty);
-    // GFToolTipText(gump, 1062951);
-	GFTextLine(gump, 343+216, 360+100, 1153, "Fazer Ultimo");
-	GFAddButton(gump, 426+216, 360+100, 40017, 40027, GF_CLOSE_BTN, BTN_MAKELAST);
-	GFTextLine(gump, 343+216, 384+100, 1153, "Desconstruir");
-	GFAddButton(gump, 426+216, 384+100, 40017, 40027, GF_CLOSE_BTN, BTN_SMELT);
+   baseY += 30;
+   baseX += 15;
+      //Header
+   // var headerXPos := GFCenterRectangle(ALIGN_CENTER, 100, baseX, gumpMiddleWidth);
+   GFGumpPic(gump, baseX+20, baseY+2, 1764, 0);
+   GFHtmlShadowed(gump, baseX+20+4, baseY+17, 190, 20, "#ffffff", "<BASEFONT SIZE=5><center>{}".format(params.type));
+
+      //Background
+   // if (params.filter)
+   //    GFResizePic(gump, baseX+208, baseY+36, 30546, 184, 140); //filter
+   //    GFHTMLArea(gump, baseX+217, baseY+40, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Filtros");
+   //    foreach filter in (params.filter)
+   //       GFAddButton(gump, baseX+223, baseY+71, filter.button, 40015, GF_CLOSE_BTN, BTN_FILTER+_filter_iter);
+   //       GFTextLine(gump, baseX+252, baseY+71, 1153, filter.name);
+   //       sleepms(2);
+   //    endforeach
+   // endif
+      
+   // if (params.bonus)
+   //    GFResizePic(gump, baseX+204, baseY+174, 30546, 187, 140); //bonus
+   //    GFHTMLArea(gump, baseX+282, baseY+178, 50, 20, "<BASEFONT SIZE=2 COLOR=#ffffff>Bonus");
+   // endif
+
+      //Search
+   var searchXPos := GFCenterRectangle(ALIGN_RIGHT, 300, baseX, gumpMiddleWidth) - 10;
+
+   GFResizePic(gump, searchXPos, baseY+3+12, 9350, 338-40, 25);
+   GFTextLine(gump, searchXPos+5, baseY+6+12, 1153, "Filtrar:");
+   search_entry := GFTextEntry(gump, searchXPos+57, baseY+6+12, 225-40, 20, 1101, params.search);
+   GFAddButton(gump, searchXPos+308-40, baseY+5+12, 9011, 9011, GF_CLOSE_BTN, BTN_SEARCH);
+   // end Search
+
+   GFResizePic(gump, baseX+544, baseY+424, 30546, 135, 112); //options
+      //Crafting Options
+   GFTextLine(gump, baseX+559, baseY+433, 1153, "Quantidade");
+      // GFToolTipText(gump, 1062951);
+   GFResizePic(gump, baseX+642, baseY+432, 30546, 31, 22);
+      qty_entry := GFTextEntry(gump, baseX+647, baseY+434, 24, 20, 1101, ""+params.qty);
+      // GFToolTipText(gump, 1062951);
+   GFTextLine(gump, baseX+559, baseY+460, 1153, "Fazer Ultimo");
+   GFAddButton(gump, baseX+642, baseY+460, 40017, 40027, GF_CLOSE_BTN, BTN_MAKELAST);
+   GFTextLine(gump, baseX+559, baseY+484, 1153, "Desconstruir");
+   GFAddButton(gump, baseX+642, baseY+484, 40017, 40027, GF_CLOSE_BTN, BTN_SMELT);
 
    if (!params.no_fix)
-      GFTextLine(gump, 343+216, 408+100, 1153, "Consertar");
-      GFAddButton(gump, 426+216, 408+100, 40017, 40027, GF_CLOSE_BTN, BTN_REPAIR);
+      GFTextLine(gump, baseX+559, baseY+508, 1153, "Consertar");
+      GFAddButton(gump, baseX+642, baseY+508, 40017, 40027, GF_CLOSE_BTN, BTN_REPAIR);
    endif
 
 
-	GFTextLine(gump, 260, 600, 1153, "Página");
-    //Recipes
-    var r_x := 80;
-    var r_y := 88;
-    GFPage(gump, 1);
-    foreach recipe in (recipes)
-      if (r_y >= 580)
-      //   GFAddButton(gump, 148, 553, 2095, 2095, GF_PAGE_BTN, gump.cur_page+1); //Expand Gump
-      //    r_y := 88;
-      r_y := 88;
-      r_x += 250;
-         if (r_x >= 540)
-            GFAddButton(gump, 230+75, 603, 2224, 2224, GF_PAGE_BTN, gump.cur_page+1); //Expand Gump
-            GFPage(gump, gump.cur_page+1);
-            GFAddButton(gump, 200+35, 603, 2223, 2223, GF_PAGE_BTN, gump.cur_page-1); //Expand Gump
-            r_x := 80;
-         endif
-      endif
+   var recipeWidth := 250;
+   var recipeHeight := 65;
 
+   baseY += 55;
+   //Recipes
+   var table := GFTableProps(gumpMiddleWidth, gumpMiddleHeight-100, recipeWidth, recipeHeight, 10);
 
+	var columnPos := GFColumnPosition(recipeWidth, table.numberOfColumns, gumpMiddleWidth-30, baseX+5);
+	var rowPos := GFRowPosition(0, recipeHeight, table.numberOfRows, gumpMiddleHeight, baseY);
 
-      //   if (_recipe_iter == recipes.Size())
-	      //   GFAddButton(gump, 300, 585, 2223, 2223, GF_PAGE_BTN, 1); //Expand Gump
-	      //   GFAddButton(gump, 300, 585, 2223, 2223, GF_PAGE_BTN, 1); //Expand Gump
-      //   endif
+	var recipePages := BreakArray(recipes, table.itemsPerPage);
+	var nColumns := table.numberOfColumns;
 
-      GFAddButton(gump, r_x-47, r_y+2, 306, 306, GF_CLOSE_BTN, BTN_CRAFTIT+_recipe_iter);
+   // GFAddAlphaRegion(gump, baseX, baseY, recipeWidth, recipeHeight);
 
-      GFResizePic(gump, r_x-7, r_y-4, 5120, 205, 49);
-      GFResizePic(gump, r_x-49, r_y, 30546, 45, 45);
-      var fix_p := GetItemFix(fix_cfg, recipe.graphic);
-      GFTilePic(gump, r_x-55+fix_p.x, r_y+4+fix_p.y, recipe.graphic, cint(recipe.color));
-      if (recipe.desc || recipe.level)
-         var description := array{};
-         if (recipe.level)
-            var div_amt := 100;
-            if (itemdesc_cfg[recipe.objtype].ArmorType) div_amt := 50; endif
+   foreach page in (recipePages)
+      GFPage(gump, 1);
 
-            var experience := cint(recipe.exp * 100) / (recipe.level * div_amt);
-            description.append("<center>Experiência: {}{}%".format(BLUE, experience));
-         endif
-
-         if (recipe.desc)
-            description.append("{}{}".format(WHITE, recipe.desc));
-         endif
-         GFTooltipText(gump, "<br>".join(description));
-      endif
-      var recipe_name := recipe.name;
-      if (recipe.level)
-         recipe_name += " Lv.{}".format(recipe.level);
-      endif
-
-      GFHtmlShadowed(gump, r_x, r_y-7, 190, 20, "#9999ff", "<BASEFONT SIZE=4>{}".format(recipe_name));
+      // if (table.nOfPages > 1)
+         GFPageScrollBar(gump, gumpMiddleWidth-17, baseY, table.nOfPages, gump.cur_page, gumpMiddleHeight-200);
+      // endif
       
-      var m_x := r_x;
-      var m_y := r_y+9;
-      foreach material in (recipe.materials.Keys())
-         if (_material_iter == 3)
-            m_x += 100;
-            m_y := r_y+8;
-            GFGumpPicTiled(gump, m_x-5, m_y+6, 1, 20, 5104);  // divisor
+      foreach recipe in (recipes)
+			var i := cint(((_recipe_iter -1) % nColumns) + 1); // columnPos
+         var j := cint(Floor((_recipe_iter - 1) / nColumns) + 1); // rowPos
+
+         var btnX := columnPos[i];
+         var btnY := rowPos[j];
+
+         GFAddButton(gump, btnX, btnY, 306, 306, GF_CLOSE_BTN, BTN_CRAFTIT+_recipe_iter);
+         GFResizePic(gump, btnX, btnY, 1579, 240, 62); // text background
+         // GFResizePic(gump, btnX+3, btnY+3, 30546, 45, 45); // item background
+
+         btnX += 5;
+         btnY += 5;
+
+         var fix_p := GetItemFix(fix_cfg, recipe.graphic);
+         GFTilePic(gump, btnX + fix_p.x, btnY+8 + fix_p.y, recipe.graphic, cint(recipe.color));
+         if (recipe.desc || recipe.level)
+            var description := array{};
+            if (recipe.level)
+               var div_amt := 100;
+               if (itemdesc_cfg[recipe.objtype].ArmorType) div_amt := 50; endif
+
+               var experience := cint(recipe.exp * 100) / (recipe.level * div_amt);
+               description.append("<center>Experiência: {}{}%".format(BLUE, experience));
+            endif
+
+            if (recipe.desc)
+               description.append("{}{}".format(WHITE, recipe.desc));
+            endif
+            GFTooltipText(gump, "<br>".join(description));
          endif
+
+         var recipe_name := $"{recipe.name}";
+         if (recipe.level)
+            recipe_name += $" Lv.{recipe.level}";
+         endif
+
+         var textOffset := btnX+50;
+         GFHtmlShadowed(gump, textOffset, btnY, 190, 20, "#9999ff", "<BASEFONT SIZE=4>{}".format(recipe_name));
          
+         var m_x := textOffset;
+         var m_y :=btnY + 15;
+         foreach material in (recipe.materials.Keys())
+            if (_material_iter == 3)
+               m_x += 100;
+               m_y := rowPos[_recipe_iter] + 8;
+               GFGumpPicTiled(gump, m_x - 5, m_y + 6, 1, 20, 5104);  // divisor
+            endif
+            
 
-         var color := 435;
-         var material_req  := recipe.materials[material];
-         var material_have := params.bag[cint(material)];
-         if (!material_have) 
-            material_have := params.bag[material];
-         endif
+            var color := RED_FONT_COLOR;
+            var material_req  := recipe.materials[material];
+            var material_have := params.bag[cint(material)];
+            if (!material_have) 
+               material_have := params.bag[material];
+            endif
 
-         if (!material_have)
-               material_have := 0;
-         elseif (material_have >= recipe.materials[material])
-               color := 65;
-         endif
+            if (!material_have)
+                  material_have := 0;
+            elseif (material_have >= recipe.materials[material])
+                  color := GREEN_FONT_COLOR;
+            endif
 
-         var orgname := TruncatePlural(material);
+            var orgname := TruncatePlural(material);
 
-         if (orgname == "demonbone")
-               orgname := "osso de moriq.";
-         elseif (orgname == "madeira")
-               orgname := "tábua";
-         endif
+            if (orgname == "demonbone")
+                  orgname := "osso de moriq.";
+            elseif (orgname == "madeira")
+                  orgname := "tábua";
+            endif
 
-         var name := orgname;
-         if (len(name) > 12)
-            name := "{}.".format(name[1,12]);
-         endif
+            var name := orgname;
+            if (len(name) > 12)
+               name := "{}.".format(name[1,12]);
+            endif
 
-         var material_text := "{} {}".format(material_req, name);
-         GFTextLine(gump, m_x, m_y, color, material_text);
-         GFTooltipText(gump, orgname);
-         // GFHTMLArea(gump, m_x, m_y, 90, 20, material_text);
-         m_y += 14;
+            var material_text := "{} {}".format(material_req, name);
+            GFTextLine(gump, m_x, m_y, color, material_text);
+            GFTooltipText(gump, orgname);
+            m_y += 14;
+            sleepms(2);
+         endforeach
+
          sleepms(2);
       endforeach
-
-      r_y += 52;
-      sleepms(2);
    endforeach
 
    return GFSendGump(who, gump);

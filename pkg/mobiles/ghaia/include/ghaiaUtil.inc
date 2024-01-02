@@ -102,6 +102,7 @@ function CopyAttributes(origin, destiny)
     AP_SetTrueStat(destiny, "Intelligence", CInt(stats.int));
     AP_SetTrueStat(destiny, "Wisdom", CInt(stats.wis));
     AP_SetTrueStat(destiny, "Constitution", CInt(stats.con));
+    AP_SetTrueStat(destiny, "Charisma", CInt(stats.cha));
 endfunction
 
 function ghaiaObjective(npc, destiny, move_type, can_stop := 0)

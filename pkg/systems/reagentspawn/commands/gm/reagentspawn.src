@@ -6,9 +6,8 @@ include ":datafile:include/datafile";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include ":gumps:include/requestgump";
-include ":gumps:yesno";
-include "include/say";
 include ":gumps:gump_prompts";
+include "include/say";
 
 program reagentConfigure(who, text)
 	if (!text)

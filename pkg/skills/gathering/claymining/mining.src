@@ -9,7 +9,6 @@ include ":attributes:attributes";
 include ":itemUtils:toolWear";
 include ":gathering:mining";
 include ":gumps:gump_prompts";
-include ":gumps:yesno";
 include "include/say";   
 
 CONST CLAY_BALL := 0x6074;

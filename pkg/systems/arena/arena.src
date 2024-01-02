@@ -7,7 +7,6 @@ include "include/client";
 include "include/utils";
 include ":gumps:gumps";
 include ":gumps:gump_prompts";
-include ":gumps:yesno";
 include ":ghaia:include/ghaiaUtil";
 include ":attributes:attributes";
 include ":death:death";

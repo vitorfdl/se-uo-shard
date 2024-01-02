@@ -1,5 +1,9 @@
 use uo;
 include ":timedscripts:timedScripts";
+include ":gumps:gumps_ex";
+include ":gumps:gump_prompts";
+include ":taming:taming";
+include ":crafting:craft_props";
 include "include/arrays";
 include "include/damage";
 

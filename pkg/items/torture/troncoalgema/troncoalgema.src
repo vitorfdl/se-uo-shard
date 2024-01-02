@@ -2,7 +2,7 @@
 include ":keys:key";
 include ":traps:traps";
 include "include/say";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program troncoAlgema(who, item)
 	

@@ -40,7 +40,7 @@ program drink ( character, drink )
 			SetObjProperty(drink, "poisonInfo", poisonInfo);
 			var roll := rollResistDice(character, CONSTITUTION);
 			if (!checkImmunity(character, DMG_POISON) && roll <= poisonInfo.difficulty )
-				PrintTextAbovePrivate(character, "Algo comeca a queimar no seu pescoco", character);
+				PrintTextAbovePrivate(character, "Algo começa a queimar no seu pescoco", character);
 				TS_StartTimer(character, poisonInfo.name, poisonInfo.time, poisonInfo.level, character);
 			endif
 		endif

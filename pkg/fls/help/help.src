@@ -5,7 +5,6 @@ use cfgfile;
 
 include ":gumps:gump_prompts";
 include ":gumps:gumps";
-include ":gumps:yesno";
 include ":gumps:gumps_ex";
 include ":gumps:requestgump";
 include "include/say";

@@ -1,57 +1,112 @@
+/* $Id: gumps_ex.inc 375 2006-06-17 19:26:32Z austin|vitor $
+ *
+ * Disguise Gump Wrappers
+ * 	buildHairGump(byref gump, x_pos := 0, y_pos := 0, width := 400, height := 400, byref disfarce, opt := struct{})
+ * 	buildColor(byref gump, x_pos := 0, y_pos := 0, width := 400, height := 400, byref disfarce, opt := struct{})
+ * 	mainGump(who, byref disfarce, byref choice, opts := 0)
+ * 	disguiseGump(who, choice := struct{}, disfarce := 0, opts := 0)
+ * 	
+ * Apply Disguise
+ * 	ApplyDisguise(who, disguise)
+ * 	RemoveDisguise(who)
+ *
+ * Documenting the disfarce struct
+ * disfarce := struct{
+ *     "barba"     := HAIR_BALD,
+ *     "cabelo"    := HAIR_BALD,
+ *     "corcabelo" := -1,
+ *     "corpele"   := -1,
+ *     "sexo"      := -1,
+ *     "raca"      := "",
+ *     "aparencia" := ""
+ * };
+ */
+
 include "include/say";
 include "include/client";
 include ":disguise:disguise";
 include ":attributes:attributes";
 include ":gumps:gumps";
+include ":gumps:gumps_ex";
 include ":fls_core:fls_characters";
+
 
 const RES_BTN_OK    := 10;
 const RES_BTN_CLOSE := 0;
 const HAIR_BALD     := 0x999999;
 
-function mainGump(who, byref disfarce, byref choice, opts := 0)
-   if (!opts) opts := array{ "Hair", "Beard", "HairColor", "SkinColor"}; endif
-	var menus    := array{9762, 9762, 9762, 9762, 9762};
-   var gump 	 := GFCreateGump();
+function getHairDescription(menuName := "")
+	case(menuName)
+		"cabelo":
+			return "Cabelos";
+		"corcabelo":
+			return "Cor do Cabelo";
+		"corpele":
+			return "Cor de Pele";
+		"barba":
+			return "Barbas";
+	endcase
+endfunction
+
+/**
+ * Function to create the main gump for disguise options
+ * @param who - The user interacting with the gump
+ * @param disfarce - The disguise options
+ * @param choice - The user's choice
+ * @param opts - Optional array of options
+ */
+function mainGump(who, byref disfarce, byref choice, opts := 0, gumpSettings := struct{ }, byref gump := 0)
+   if (!opts) 
+		opts := array{ "cabelo", "barba", "corcabelo", "corpele"};
+	endif
+
+	if (!choice.menu)
+		choice.menu := 1;
+	endif
+
+	if (!gump)
+		gump := GFCreateGump();
+	endif
 	var gender   := CheckGender(who);
 
-	GFPage(gump, 0);
-   if (who.cmdlevel)
-      GFClosable(gump, 1);
-   endif
-   
-   GFSetID(gump, GUMPID_DISGUISE);
-	GFResizePic(gump, 25, 8, 5120, 591, 340); //background
-	GFResizePic(gump, 37, 27, 9350, 572, 33); //top paper
+   var baseX := _IfOr(gumpSettings.baseX, -4);
+	var baseY := _IfOr(gumpSettings.baseY, 5);
+	var width := _IfOr(gumpSettings.width, 480);
+	var height := _IfOr(gumpSettings.height, 514);
 
-	GFResizePic(gump, 36, 69, 9350, 123, 157); //menu paper
-	GFHTMLArea(gump, 47, 34, 200, 20, "<BASEFONT COLOR=#7a600d>Configurar  Aparência");
-   if ("Hair" in opts) 
-	GFAddButton(gump, 44, 83, menus[1], 9763, GF_CLOSE_BTN, 1);
-      GFTextLine(gump, 65, 80, 1101, "Cabelos"); 
-   endif
-	if ("HairColor" in opts) 
-	   GFAddButton(gump, 44, 123, menus[3], 9763, GF_CLOSE_BTN, 3);
-      GFTextLine(gump, 64, 120, 1101, "Cor do Cabelo");
-   endif
-	if ("SkinColor" in opts) 
-	   GFAddButton(gump, 44, 143, menus[4], 9763, GF_CLOSE_BTN, 4);
-      GFTextLine(gump, 64, 140, 1101, "Cor de Pele"); 
-   endif
-	// GFTextLine(gump, 64, 160, 1101, "Raça");
+	if (!gumpSettings.noBackground)
+		GFPage(gump, 0);
+		if (who.cmdlevel)
+			GFClosable(gump, 1);
+		endif
+   	GFSetID(gump, GUMPID_DISGUISE);
 
-	if (choice.menu)
-		menus[choice.menu] := 9763;
-	endif
-	// GFAddButton(gump, 44, 163, menus[5], 9763, GF_CLOSE_BTN, 5);
-	GFAddButton(gump, 66, 190, 247, 248, GF_CLOSE_BTN, RES_BTN_OK); //OKAY
+   	GFResizePic(gump, baseX, baseY, DEFAULT_BACKGROUND, width, height);
 
-	if (gender != 2 && choice.barba && "Beard" in opts)
-		GFTextLine(gump, 65, 100, 1101, "Barbas");
-		GFAddButton(gump, 44, 103, menus[2], 9763, GF_CLOSE_BTN, 2);
+		var headerContainerX := GFCenterRectangle(ALIGN_CENTER, 194, baseX, width);
+      GFResizePic(gump, headerContainerX, baseY+20, DEFAULT_MENU_BACKGROUND, 194, 57);
+      GFTextMid(gump, baseX-15, baseY+20+18, 490, DEFAULT_FONT_COLOR, "Alterar Aparência");
+
+		baseY += 90;
 	endif
 
-	GFResizePic(gump, 168, 69, 9350, 441, 270); //Center paper
+	var menuWidth := !gumpSettings.noBackground ? width : width-100;
+	var columnWidthArray := array{};
+	foreach opt in opts
+		columnWidthArray.append(GFTextWidth(getHairDescription(opt)));
+	endforeach
+
+	var menuColumnPos := GFColumnPositionByWidthArray(columnWidthArray, width, baseX);
+	
+   foreach opt in opts
+      GFAddButton(gump, menuColumnPos[_opt_iter], baseY - 2, G_UNSELECTED + (choice.menu == _opt_iter), G_SELECTED, GF_CLOSE_BTN, _opt_iter);
+      var description := getHairDescription(opt);
+      var textPosition := menuColumnPos[_opt_iter] + 23;
+
+      if (opt != "barba" || (gender != 2 && choice.barba))
+         GFTextLine(gump, textPosition, baseY, HIGHLIGHT_FONT_COLOR, description);
+      endif
+   endforeach
 
 	//Difficulty
 	if (choice.is_disguise)
@@ -60,114 +115,161 @@ function mainGump(who, byref disfarce, byref choice, opts := 0)
 		GFAddButton(gump, 564, 32, 4017, 4018, GF_CLOSE_BTN, RES_BTN_CLOSE);
 	endif
 
-    
+	baseY += 40;
+	var totalHeighUsed := 0;
+
 	if (choice.menu == 1)
         var opts := struct{
-            "type"  := "{}_head".format(choice.race),
+            "type" := $"{choice.race}_head",
             "param" := "cabelo",
             "gender" := gender
         };
 
-        buildHairGump(gump, disfarce, opts);
+        totalHeighUsed := buildHairGump(gump, baseX+35, baseY, width-40, height-180, disfarce, opts);
 	elseif (choice.menu == 2)
         var opts := struct{
-            "type" := "{}_facialhair".format(choice.race),
+            "type" := $"{choice.race}_facialhair",
             "param" := "barba",
             "gender" := gender
         };
-        buildHairGump(gump, disfarce, opts);
+        totalHeighUsed := buildHairGump(gump, baseX+35, baseY, width-40, height-180, disfarce, opts);
 	elseif (choice.menu == 3)
         var opts := struct{
             "param" := "corcabelo",
             "text" := "Cabelo",
-			"race" := choice.race
+				"race" := choice.race
         };
-        buildColor(gump, disfarce, opts);
+        totalHeighUsed := buildColor(gump, baseX+35, baseY, width-40, height-180, disfarce, opts);
 	elseif (choice.menu == 4)
         var opts := struct{
             "param" := "corpele",
             "text" := "Pele",
-			"race" := choice.race
+				"race" := choice.race
         };
-        buildColor(gump, disfarce, opts);
+        totalHeighUsed := buildColor(gump, baseX+35, baseY, width-40, height-180, disfarce, opts);
 	endif
 
-    return gump;
+	GFPage(gump, 0);
+	var btnPosX := GFCenterRectangle(ALIGN_CENTER, 34, baseX, width);
+	GFAddButton(gump, btnPosX, totalHeighUsed+15, 247, 248, GF_CLOSE_BTN, RES_BTN_OK); //OKAY
+
+	return gump;
 endfunction
 
-function buildHairGump(byref gump, byref disfarce, opt := struct{})
-    UnloadConfigFile(":fls_core:config/hairtypes");
+/**
+ * Builds the hair gump for the disguise menu.
+ * @param {byref} gump - The gump to build on.
+ * @param {int} x_pos - The x position of the gump.
+ * @param {int} y_pos - The y position of the gump.
+ * @param {int} width - The width of the gump.
+ * @param {int} height - The height of the gump.
+ * @param {byref} disfarce - The disguise object.
+ * @param {struct} opt - The options for building the gump.
+ */
+
+function buildHairGump(byref gump, x_pos := 0, y_pos := 0, width := 400, height := 400, byref disfarce, opt := struct{})
+	UnloadConfigFile(":fls_core:config/hairtypes");
 	var config := ReadConfigFile(":fls_core:config/hairtypes");
 	var hairgumps := config["hairgump"];
-
-	var y_pos := 80;
-	var x_pos := 192;
 	var hairnames := array{};
 
 	var styles := GetConfigStringDictionary(config[opt.type], "style");
-    if (opt.type == "facialhair")
-	    styles["Liso"] := HAIR_BALD;
-    elseif (opt.type["head"])
-        styles["Careca"] := HAIR_BALD;
-    endif
+	if (opt.type == "facialhair")
+		styles["Liso"] := HAIR_BALD;
+	elseif (opt.type["head"])
+		styles["Careca"] := HAIR_BALD;
+	endif
 
-	GFPage(gump, gump.cur_page+1);
-	foreach style in (styles.Keys())
-		var hairname := StrReplace(style, "_", " ");
-		var hairgraphic := cint(styles[style]);
+	var nOfHairs := styles.Size();
 
-		var gumppic;
-		if (hairgraphic != HAIR_BALD)
-			gumppic := GetConfigString(hairgumps, style);
-			gumppic := splitwords(gumppic);
-			if (opt.gender == 2)
-				gumppic := cint(gumppic[2]);
-			else
-				gumppic := cint(gumppic[1]);
+	var selectorHeight := 80;
+	var selectorWidth := 90;
+
+	var table := GFTableProps(width, height, selectorWidth, selectorHeight, nOfHairs);
+
+	GFResizePic(gump, x_pos-10, y_pos-10, 9350, width+2, height); //Center paper
+	if (table.nOfPages == 1)
+		x_pos += 8;
+	endif
+
+	var columnPos := GFColumnPosition(selectorWidth, table.numberOfColumns, width-30, x_pos);
+	var rowPos := GFRowPosition(0, selectorHeight, table.numberOfRows, height, y_pos);
+
+	var stylePages := BreakArray(styles.Keys(), table.itemsPerPage);
+	var nColumns := table.numberOfColumns;
+
+	foreach page in stylePages
+		GFPage(gump, gump.cur_page+1);
+		var notAvailable := 0;
+		foreach style in page
+			var hairname := StrReplace(style, "_", " ");
+			var hairgraphic := cint(styles[style]);
+
+			var i := cint(((_style_iter -1 - notAvailable) % nColumns) + 1); // columnPos
+         var j := cint(Floor((_style_iter - 1 - notAvailable) / nColumns) + 1); // rowPos
+
+			var gumppic;
+			if (hairgraphic != HAIR_BALD)
+				gumppic := GetConfigString(hairgumps, style);
+				gumppic := splitwords(gumppic);
+				if (opt.gender == 2)
+					gumppic := cint(gumppic[2]);
+				else
+					gumppic := cint(gumppic[1]);
+				endif
+
+				if (!gumppic) 
+					notAvailable += 1;
+					continue; 
+				endif
 			endif
 
-         if (!gumppic) continue; endif
-		endif
+			if (hairgraphic == disfarce[opt.param])
+				GFResizePic(gump, columnPos[i], rowPos[j], 9500, 85, 72);
+			else
+				GFResizePic(gump, columnPos[i], rowPos[j], 9568, 85, 72);
+			endif
 
-		if (hairgraphic == disfarce[opt.param])
-			GFResizePic(gump, x_pos, y_pos, 9500, 85, 72);
-		else
-			GFResizePic(gump, x_pos, y_pos, 9568, 85, 72);
-		endif
+			hairnames.append(hairname);
+			GFHTMLArea(gump, columnPos[i]-4, rowPos[j]+49, 98, 20, "<BASEFONT SIZE=2 COLOR=#ffffff><center>{}".format(hairname));
+			if (hairgraphic != HAIR_BALD)
+				GFGumpPic(gump, columnPos[i]-50, rowPos[j]-34, gumppic, disfarce.corcabelo);
+			endif
 
-		hairnames.append(hairname);
-		GFHTMLArea(gump, x_pos-4, y_pos+49, 98, 20, "<BASEFONT SIZE=2 COLOR=#ffffff><center>{}".format(hairname));
-		if (hairgraphic != HAIR_BALD)
-			// GFAddButton(gump, x_pos-50, y_pos-34, 30061, 30061, GF_CLOSE_BTN, hairgraphic);
-			GFGumpPic(gump, x_pos-50, y_pos-34, gumppic);
-		endif
+			GFAddButton(gump, columnPos[i]-2, rowPos[j]-7, 30061, 30061, GF_CLOSE_BTN, hairgraphic);
+			if (hairgraphic == disfarce[opt.param])
+				GFGumpPic(gump, columnPos[i]-2, rowPos[j]-7, 30069);
+			endif
 
-		GFAddButton(gump, x_pos-2, y_pos-7, 30061, 30061, GF_CLOSE_BTN, hairgraphic);
-		if (hairgraphic == disfarce[opt.param])
-			GFGumpPic(gump, x_pos-2, y_pos-7, 30069);
-		endif
-		
-		x_pos += 100;
-		if (x_pos >= 500)
-			x_pos := 192;
-			y_pos += 85;
-		endif
-
-		if (y_pos >= 300)
-			GFAddButton(gump, 582, 185, 9903, 9904, GF_PAGE_BTN, gump.cur_page+1);
-			GFPage(gump, gump.cur_page+1);
-			GFAddButton(gump, 170, 185, 9909, 9910, GF_PAGE_BTN, gump.cur_page-1);
-			y_pos := 80;
+			sleepms(2);
+		endforeach
+		if (table.nOfPages > 1)
+			var scrollBarXPos := x_pos + (nColumns * selectorWidth) + 10;
+			GFPageScrollBar(gump, scrollBarXPos, y_pos, table.nOfPages, gump.cur_page, height-40);
 		endif
 	endforeach
+
+	// return the total height used
+	return y_pos+(table.numberOfRows * selectorHeight);
 endfunction
 
-function buildColor(byref gump, byref disfarce, opts)
+/**
+ * Function to build color options for disguise gump
+ * @param gump - The gump to build the color options for
+ * @param x_pos - The x position of the gump
+ * @param y_pos - The y position of the gump
+ * @param width - The width of the gump
+ * @param height - The height of the gump
+ * @param disfarce - The disguise options
+ * @param opt - Optional array of options
+ */
+
+function buildColor(byref gump, x_pos := 0, y_pos := 0, width := 400, height := 400, byref disfarce, opt := struct{})
 	var color_cfg;
-    if (opts.param == "corcabelo")
+    if (opt.param == "corcabelo")
         UnloadConfigFile(":hair:config/hairColors");
         color_cfg := ReadConfigFile(":hair:config/hairColors");
-    elseif (opts.param == "corpele")
+    elseif (opt.param == "corpele")
         UnloadConfigFile(":fls_core:config/skincolors");
         color_cfg := ReadConfigFile(":fls_core:config/skincolors");
     endif
@@ -177,59 +279,87 @@ function buildColor(byref gump, byref disfarce, opts)
 	endif
 
     var index_elem;
-    if (opts.race)
-        index_elem := color_cfg[opts.race];
-    elseif (opts.param == "corpele")
+    if (opt.race)
+        index_elem := color_cfg[opt.race];
+    elseif (opt.param == "corpele")
         index_elem := color_cfg["List"];
-    elseif (opts.param == "corcabelo")
+    elseif (opt.param == "corcabelo")
         index_elem := color_cfg["Humano"];
     endif
 
 	var colors := GetConfigStringArray(index_elem, "Color");
-	var y_pos := 80;
-	var x_pos := 195;
 
-	if (!opts.param)
-		opts.param := colors[1];
+	if (!opt.param)
+		opt.param := colors[1];
 	endif
-	// Build category buttons on the left first
-    GFPage(gump, gump.cur_page+1);
-	foreach color in colors;
-		color := CInt(color);
-		if (color == disfarce[opts.param])
-		    GFAddButton(gump, x_pos, y_pos, 2154, 2154, GF_CLOSE_BTN, color);
-		else
-            GFAddButton(gump, x_pos, y_pos, 2151, 2154, GF_CLOSE_BTN, color);
-		endif
-		GFTextline(gump, x_pos+35, y_pos+5, color-1, opts.text);
 
-		y_pos += 30;
-		if (y_pos >= 310)
-			x_pos += 75;
-			y_pos := 80;
-		endif
+	var nOfColors := colors.Size();
 
-		if (x_pos >= 510)
- 			GFAddButton(gump, 582, 185, 9903, 9904, GF_PAGE_BTN, gump.cur_page+1);
-			GFPage(gump, gump.cur_page+1);
-			GFAddButton(gump, 170, 185, 9909, 9910, GF_PAGE_BTN, gump.cur_page-1);
-			x_pos := 195;
+	var selectorHeight := 40;
+	var selectorWidth := 80;
+
+	var table := GFTableProps(width, height, selectorWidth, selectorHeight, nOfColors);
+
+	GFResizePic(gump, x_pos-10, y_pos-10, 9350, width-5, height); //Center paper
+	if (table.nOfPages == 1)
+		x_pos += 8;
+	endif
+
+	var columnPos := GFColumnPosition(selectorWidth, table.numberOfColumns, width-30, x_pos);
+	var rowPos := GFRowPosition(0, selectorHeight, table.numberOfRows, height, y_pos);
+
+	var colorPages := BreakArray(colors, table.itemsPerPage);
+	var nOfColumns := table.numberOfColumns;
+
+	foreach page in colorPages
+		GFPage(gump, gump.cur_page+1);
+		foreach color in page
+			var i := cint(((_color_iter -1) % nOfColumns) + 1); // columnPos
+         var j := cint(Floor((_color_iter -1) / nOfColumns) + 1); // rowPos
+
+			color := CInt(color);
+			if (color == disfarce[opt.param])
+				GFAddButton(gump, columnPos[i], rowPos[j], 2154, 2154, GF_CLOSE_BTN, color);
+			else
+				GFAddButton(gump, columnPos[i], rowPos[j], 2151, 2154, GF_CLOSE_BTN, color);
+			endif
+			GFTextline(gump, columnPos[i]+35, rowPos[j]+5, color-1, opt.text);
+	
+			sleepms(2);
+		endforeach
+
+		if (table.nOfPages > 1)
+			GFPageScrollBar(gump, x_pos+(nOfColumns*selectorWidth)+10, y_pos, table.nOfPages, gump.cur_page, height-40);
 		endif
 	endforeach
+
+	return y_pos+(table.numberOfRows * selectorHeight);
 endfunction
 
+/**
+ * Function to create the main gump for disguise options
+ * @param who - The user interacting with the gump
+ * @param disfarce - The disguise options
+ * @param choice - The user's choice
+ * @param opts - Optional array of options
+ * @purpose This function creates the main gump for disguise options, allowing the user to interact with various disguise options such as hair, beard, hair color, and skin color.
+ */
+
 function disguiseGump(who, choice := struct{}, disfarce := 0, opts := 0);
-   if (!opts) opts := array{ "Hair", "Beard", "HairColor", "SkinColor"}; endif
+   if (!opts) 
+		opts := array{ "cabelo", "barba", "corcabelo", "corpele"}; 
+	endif
+
    if (!disfarce)
-        disfarce := struct{
-            "barba"     := HAIR_BALD,
-            "cabelo"    := HAIR_BALD,
-            "corcabelo" := -1,
-            "corpele"   := -1,
-            "sexo"      := -1,
-            "raca"      := "",
-            "aparencia" := ""
-        };
+		disfarce := struct{
+			"barba"     := HAIR_BALD,
+			"cabelo"    := HAIR_BALD,
+			"corcabelo" := -1,
+			"corpele"   := -1,
+			"sexo"      := -1,
+			"raca"      := "",
+			"aparencia" := ""
+		};
     endif
 
 	var not_closed := 1;
@@ -257,6 +387,13 @@ function disguiseGump(who, choice := struct{}, disfarce := 0, opts := 0);
 
     return 0;
 endfunction
+
+/**
+ * Function to apply a disguise to a character
+ * @param who - The character to apply the disguise to
+ * @param disguise - The disguise options to apply
+ * @purpose This function applies a disguise to a character, changing their hair, beard, hair color, skin color, name, and profile.
+ */
 
 function ApplyDisguise(who, disguise)
 	who.color    := disguise.corpele;
@@ -288,6 +425,11 @@ function ApplyDisguise(who, disguise)
    endif
 endfunction
 
+/**
+ * Function to document the purpose of the RemoveDisguise function
+ * @param who - The character to remove the disguise from
+ * @purpose This function removes the disguise from a character, restoring their original appearance and profile.
+ */
 
 function RemoveDisguise(who)
    var old_look := GetObjProperty(who, "disfarce_oldlook");

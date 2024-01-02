@@ -3,11 +3,9 @@ use vitals;
 
 include "include/say";
 include ":gumps:requestgump";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":unicos:item_template";
 include ":attributes:attributes";
-include ":gumps:gump_prompts";
-include ":gumps:yesno";
 include ":combat:hitscripts";
 
 program createhit(who)

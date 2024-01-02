@@ -2,7 +2,7 @@ use uo;
 use os;
 use datafile;
 
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program teleto(who, param)
 	var tree;

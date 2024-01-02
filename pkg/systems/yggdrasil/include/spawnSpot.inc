@@ -2,7 +2,7 @@ use os;
 use datafile;
 
 include ":datafile:datafile";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":yggdrasil:boss";
 include "include/arrays";
 

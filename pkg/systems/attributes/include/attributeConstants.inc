@@ -18,6 +18,7 @@ enum STATS
 	INTELLIGENCE	 := "Intelligence",
 	CONSTITUTION	 := "Constitution",
 	WISDOM	       := "Wisdom",
+	CHARISMA	       := "Charisma",
 endenum
 
 enum DIFFICULTIES

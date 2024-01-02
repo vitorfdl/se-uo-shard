@@ -2,7 +2,6 @@ use os;
 use uo;
 
 include ":gumps:gump_prompts";
-include ":gumps:yesno";
 include "include/say";
 
 program renameboat(you, tillerman)

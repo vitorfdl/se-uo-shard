@@ -9,7 +9,7 @@ include ":yggdrasil:treasures";
 include ":ghaia:ghaiaUtil";
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:gump_prompts";
 include "include/say";
 include ":unicos:item_template";
@@ -183,6 +183,7 @@ function ConstructGump()
     var gump := GFCreateGump(150, 150);
     GFPage(gump, 0);
     GFSetID(gump, gumpid);
+    GFResizePic(gump, 0, 15, DEFAULT_BACKGROUND, 620, 600);
 
     if (selected_group)
         ConstructGroupConfig(gump); //second menu
@@ -584,7 +585,6 @@ function DoTreasureList(who, input)
 endfunction
 
 function ConstructGroupList(byref gump)
-    GFResizePic(gump, 0, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 195, 600);
     GFTextLine(gump, 20, 28, 555, "Dungeons / Locations");
 
     var page     := 1;
@@ -625,8 +625,8 @@ function ConstructGroupConfig(byref gump)
     var routes       := group_data.routes;
     var form_size   := spawnGroups.Size() + spots.Size() + routes.size();
 
-    GFResizePic(gump, 180, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 180+(form_size*18));
-    GFTextLine(gump, 202, 28, 555, "Configurações da Dungeon");
+    GFResizePic(gump, 180, 15, DEFAULT_MENU_BACKGROUND, 220, 600);
+    GFTextLine(gump, 210, 28, GREEN_FONT_COLOR, "Configurações da Dungeon");
 
     GFTextLine(gump, 210, 50, 1153, "Ativado:");
     GFCheckBox(gump, 210+50, 50+5, 2360, 2361, group_data.active, GF_GROUP_ACTIVE_SWITCH);
@@ -749,10 +749,9 @@ function ConstructSpotConfig(byref gump)
 
     var form_size   := spawpoint_list.Size() + treasure_list.Size();
     GFPage(gump, 0);
-    GFResizePic(gump, 385, 125, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 130+(form_size*18)); //Spawnpoints Backgroud
+    // GFResizePic(gump, 385, 125, DEFAULT_MENU_BACKGROUND, 220, 130+(form_size*19)); //Spawnpoints Backgroud
 
-    GFResizePic(gump, 385, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 220, 130);
-    GFTextMid(gump, 390, 28, 260, 555, "Spot Configuration");
+    GFTextMid(gump, 390, 28, 230, GREEN_FONT_COLOR, "Configuração do Spot");
 
     var sy := 45;
     var sx := 405;
@@ -784,8 +783,10 @@ function ConstructSpotConfig(byref gump)
     GFTextLine(gump, sx+80, sy+72, 1153, "Kill:");
     GFAddButton(gump, sx+60+50, sy+77, 0x837, 0x838, GF_CLOSE_BTN, GF_SPOT_FORCEKILL_BTN);
 
+    GFDivisorHorizontal(gump, 395, 145, 200, G_DIVISOR_LINE);
+
     //SpawnPoints Menu
-    GFTextMid(gump, 390, 150, 260, 555, "Lista de Spawnpoints");
+    GFTextMid(gump, 390, 150, 230, HIGHLIGHT_FONT_COLOR, "Lista de Spawnpoints");
 
     sx += 15;
     var base_y := 172;
@@ -824,8 +825,10 @@ function ConstructSpotConfig(byref gump)
         endif
     endfor
 
+    GFDivisorHorizontal(gump, 395, base_y-5, 200, G_DIVISOR_LINE);
+
     //Create Treasure Menu
-    GFTextMid(gump, 380, base_y, 260, 555, "Lista de Tesouros");
+    GFTextMid(gump, 390, base_y, 230, HIGHLIGHT_FONT_COLOR, "Lista de Tesouros");
     base_y += 18;
     for i:=0 to treasure_list.Size();
         var y := (base_y+(18*i));
@@ -866,8 +869,8 @@ function ConstructSpawnPointConfig(byref gump)
     var data          := spawnpoint.GetProps();
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 250, 180);
-    GFTextMid(gump, basex, 28, 260, 555, "Lista de Spawnpoints");
+    GFResizePic(gump, basex, 15, DEFAULT_MENU_BACKGROUND, 250, 180);
+    GFTextMid(gump, basex, 28, 260, HIGHLIGHT_FONT_COLOR, "Configurações de Spawnpoint");
 
     var sx := basex+30;
     var sy := 45;
@@ -905,8 +908,8 @@ function ConstructTreasureConfig(byref gump)
     var treasure_cont := SystemFindObjectBySerial(treasure.serial);
 
     var basex := 590;
-    GFResizePic(gump, basex, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 320, 210+(treasure.loots.Size()*18));
-    GFTextMid(gump, basex-10, 28, 260, 555, "Treasure Configuration");
+    GFResizePic(gump, basex, 15, DEFAULT_MENU_BACKGROUND, 320, 210+(treasure.loots.Size()*18));
+    GFTextMid(gump, basex-10, 28, 260, HIGHLIGHT_FONT_COLOR, "Treasure Configuration");
 
     var sx := basex+30;
     var sy := 45;
@@ -977,8 +980,8 @@ function ConstructSpawnGroupConfig(byref gump)
     GFPage(gump, 0);
     var spawngroup_list  := GetSpotGroupData(selected_group).spawngroup_list;
     var this_group := FindElemInArray(spawngroup_list, selected_spawngroup);
-    GFResizePic(gump, 385, 15, GFCfgConst("BackGrounds", "TRINKED_PAPER"), 230, 130);
-    GFTextMid(gump, 390, 28, 260, 555, "SpawnGroup {}".format(selected_spawngroup));
+    GFResizePic(gump, 385, 15, DEFAULT_MENU_BACKGROUND, 230, 130);
+    GFTextMid(gump, 390, 28, 260, HIGHLIGHT_FONT_COLOR, "SpawnGroup {}".format(selected_spawngroup));
 
     var sy := 45;
     var sx := 415;

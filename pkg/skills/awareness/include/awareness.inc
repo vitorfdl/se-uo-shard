@@ -1,7 +1,7 @@
 include "include/say";
 include ":attributes:attributes";
 include ":itemUtils:itemdesc";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":traps:traps";
 
 include ":timedscripts:timedScripts";

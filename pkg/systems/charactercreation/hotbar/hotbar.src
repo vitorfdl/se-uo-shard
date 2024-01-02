@@ -29,24 +29,24 @@ function BuildSelectorGump(who, byref gump, raw_x, raw_y)
       sleepms(2);
    endforeach
 
-	GFAddButton(gump, pos_x, raw_y+13, 2248, 2248, GF_CLOSE_BTN, 897);
-   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esquiva</basefont></center>Ativa sua ação de esquiva, permitindo esquivar de golpes e habilidades por 2 segundos.");
+	// GFAddButton(gump, pos_x, raw_y+13, 2248, 2248, GF_CLOSE_BTN, 897);
+   // GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esquiva</basefont></center>Ativa sua ação de esquiva, permitindo esquivar de golpes e habilidades por 2 segundos.");
 
-	GFAddButton(gump, pos_x+48, raw_y+13, 0x9BA5, 0x9BA5, GF_CLOSE_BTN, 896);
-   GFTooltipText(gump, "<center><basefont color=#7FFFD4>Bloqueio</basefont></center>Ativa sua ação de bloqueio, permitindo bloquear de golpes e habilidades por 2 segundos.");
+	// GFAddButton(gump, pos_x+48, raw_y+13, 0x9BA5, 0x9BA5, GF_CLOSE_BTN, 896);
+   // GFTooltipText(gump, "<center><basefont color=#7FFFD4>Bloqueio</basefont></center>Ativa sua ação de bloqueio, permitindo bloquear de golpes e habilidades por 2 segundos.");
 
-	GFAddButton(gump, pos_x+96, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 895);
-	GFGumpPic(gump, pos_x+96+2, raw_y+19, 27, 1485);
+	GFAddButton(gump, pos_x, raw_y+13, 0x59D8, 0x59D8, GF_CLOSE_BTN, 895);
+	// GFGumpPic(gump, pos_x+2, raw_y+19, 27, 1485);
    GFTooltipText(gump, "<center><basefont color=#7FFFD4>Atalho de Item</basefont></center>Selecione um ou mais itens para auto-equipar");
-	GFTextLine(gump, pos_x+96+8, raw_y+24, 1152, "Equip");
+	GFTextLine(gump, pos_x+8, raw_y+24, 1152, "Equip");
 
-	GFAddButton(gump, pos_x+96+48, raw_y+13, 39833, 39833, GF_CLOSE_BTN, 898);
-	GFGumpPic(gump, pos_x+96+2+48, raw_y+19, 27, 1485);
+	GFAddButton(gump, pos_x+48, raw_y+13, 0x59D8, 0x59D8, GF_CLOSE_BTN, 898);
+	// GFGumpPic(gump, pos_x+2+48, raw_y+19, 27, 1485);
    GFTooltipText(gump, "<center><basefont color=#7FFFD4>Atalho de Item</basefont></center>Selecione um item ou consumível para adicionar a barra de atalho");
-	GFTextLine(gump, pos_x+96+48, raw_y+24, 1152, "Item");
+	GFTextLine(gump, pos_x+56, raw_y+24, 1152, "Item");
 
-	GFAddButton(gump, pos_x+96+96, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
-	GFGumpPic(gump, pos_x+96+96, raw_y+13, 21012, 1485);
+	GFAddButton(gump, pos_x+96, raw_y+13, 21012, 21012, GF_CLOSE_BTN, 899);
+	GFGumpPic(gump, pos_x+96, raw_y+13, 21012, 1485);
    GFTooltipText(gump, "<center><basefont color=#7FFFD4>Esvaziar Atalho</basefont></center>");
 endfunction
 

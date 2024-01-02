@@ -33,7 +33,9 @@ include "include/arrays";
 include ":gumps:gumps";
 
 enum GUMP_CONSTANTS
-	DEFAULT_DIVISOR := 0x1, 
+	G_DIVISOR_DEFAULT := 0x1, 
+	G_DIVISOR_ALTERNATE := 0x2, 
+	G_DIVISOR_LINE := 0x3, 
 
 	// BAR
 	YELLOW_BAR := 9753,
@@ -662,15 +664,53 @@ function GFBuildBar(byref gump, x, y, width, curValue := 0, maxValue := 0, barCo
    GFGumpPicTiled(gump, x, y, exp_width, 8, barColor);
 endfunction
 
+/**
+ * GFDivisorHorizontal documentation
+ *
+ * Parameters:
+ *   gump: The gump object to add the divisor to
+ *   x: The x position of the divisor
+ *   y: The y position of the divisor
+ *   width: The width of the divisor
+ *   gumpStyle: The style of the divisor (optional, default value is DEFAULT_DIVISOR)
+ *
+ * Description:
+ * This function adds a horizontal divisor to a gump object. It is intended to visually separate sections within a gump.
+ *
+ * Returns: None
+ */
+function GFDivisorHorizontal(byref gump, x, y, width, gumpStyle := G_DIVISOR_DEFAULT)
+	if (gumpStyle == G_DIVISOR_LINE)
+		GFGumpPicTiled(gump, x, y, width, 1, 2701);  // divisor
+		return;
+	endif
 
-function GFDivisorHorizontal(byref gump, x, y, width, gumpStyle := DEFAULT_DIVISOR)
-	var divisorStart := 57; // 95
-	var divisorMiddle := 58; // 96
-	var divisorEnd := 59; // 97
+	var divisorStart := gumpStyle == G_DIVISOR_DEFAULT ? 57 : 95;
+	var divisorMiddle := gumpStyle == G_DIVISOR_DEFAULT ? 58 : 96;
+	var divisorEnd := gumpStyle == G_DIVISOR_DEFAULT ? 59 : 97;
 	var color := 0;
 	var middleWidth := width - 56;
 	
 	GFGumpPic(gump, x, y, divisorStart, color); // start
 	GFGumpPicTiled(gump, x+28, y, middleWidth, 21, divisorMiddle); //middle
 	GFGumpPic(gump, x+28+middleWidth, y, divisorEnd, color); // end
+endfunction
+
+/**
+ * GFDivisorVertical documentation
+ *
+ * Parameters:
+ *   gump: The gump object to add the divisor to
+ *   x: The x position of the divisor
+ *   y: The y position of the divisor
+ *   height: The height of the divisor
+ *   gumpStyle: The style of the divisor (optional, default value is DEFAULT_DIVISOR)
+ *
+ * Description:
+ * This function adds a vertical divisor to a gump object. It is intended to visually separate sections within a gump.
+ *
+ * Returns: None
+ */
+function GFDivisorVertical(byref gump, x, y, height)
+	GFGumpPicTiled(gump, x, y, 1, height, 2701);  // divisor
 endfunction

@@ -5,7 +5,7 @@
 
 use uo;
 
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program textcmd_DestroyMulti(who, serial)
 	serial := CInt(serial);

@@ -6,10 +6,9 @@ include ":containers:storageAreas";
 include ":containers:containers";
 include ":gumps:include/requestgump";
 include ":gumps:gumps";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include "include/say";   
 include ":keys:key";
-include ":gumps:gump_prompts";
 include ":gumps:htmlgump";
 
 //Gump Constants

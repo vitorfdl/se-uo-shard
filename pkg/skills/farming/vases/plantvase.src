@@ -8,7 +8,7 @@ const BOW_ANIM		:= 0x20;
 const PLANT_SOUND	:= 0x50;
 include ":attributes:include/attributeConstants";
 include ":attributes:include/attributes";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program PlantVase(who, vase)
    if (vase.container)

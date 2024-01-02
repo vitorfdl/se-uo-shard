@@ -192,7 +192,7 @@ function CheckExpUp(who)
 
 		who.StoreExp(maxexp);
 		who.setLevel(level+1);
-      who.SetPoints(1);
-      who.Setvitalpoints(1);
+      who.IncreasePoints(1);
+      who.IncreaseVitalPoints(1);
 	endif
 endfunction

@@ -5,7 +5,6 @@ use cfgfile;
 // include ":ghaia:ghaiaUtil";
 include ":gumps:requestgump";
 include ":gumps:gumps_ex";
-include ":gumps:yesno";
 include ":gumps:gump_prompts";
 include "include/say";
 

@@ -7,7 +7,6 @@ include ":ghaia:ghaiaUtil";
 include ":disguise:disguise";
 include ":timeUtils:time";
 include ":gumps:gump_prompts";
-include ":gumps:yesno";
 
 program startTalent(param)
    var who := param[1];

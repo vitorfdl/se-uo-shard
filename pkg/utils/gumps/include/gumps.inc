@@ -23,6 +23,7 @@
  * GFTextLine(byref gump, x, y, hue:=0, text:="")
  * GFTilePic(byref gump, x, y, tile_id, hue := 0)
  * GFDrawWrappedText(byref gump, x, y, text_lines, txt_color)
+ * GFTooltipText(byref gump, entrytext)
  *
  * Private Function List
  * XGFError(text)
@@ -40,6 +41,7 @@ enum GUMP_CONSTANTS
 	DEFAULT_FOREGROUND := 1579,
 
 	DEFAULT_MENU_BACKGROUND := 311,
+   ALTERNATE_MENU_SCROLL_BACKGROUND := 5170,
 
 	TEXT_ENTRY_BACKGROUND := 9350,
 
@@ -68,7 +70,7 @@ enum GUMP_CONSTANTS
 	G_CLOSE_WINDOW_BTN := 1604,
 
 	G_PLUS_BTN := 55,
-	G_MINUS_BTN := 57,
+	G_MINUS_BTN := 56,
 
 	G_PLUS_BTN_ALTERNATE := 1605,
 	G_MINUS_BTN_ALTERNATE := 1623,
@@ -270,19 +272,6 @@ function GFHTMLArea(byref gump, x, y, width, height, text, background:=0, scroll
 	return (index);
 endfunction
 
-// function GFAddHTMLLocalized(byref gump, x, y, width, height, cliloc, background:=0, scrollbar:=0, hue:=0)
-// 	if(hue == 0)
-// 		(gump.layout).Append("XMFHTMLGump "+CStr(CInt(x))+" "+CStr(CInt(y))+" "
-// 					+ CStr(CInt(width))+" "+CStr(CInt(height))+" "+CStr(cliloc)+" "
-// 					+ CStr(CInt(background))+" "+CStr(CInt(scrollbar)));
-// 	else
-// 		(gump.layout).Append("XMFHTMLGumpColor "+CStr(CInt(x))+" "+CStr(CInt(y))+" "
-// 					+ CStr(CInt(width))+" "+CStr(CInt(height))+" "+CStr(CInt(cliloc))+" "
-// 					+ CStr(CInt(background))+" "+CStr(CInt(scrollbar))+" "+CStr(CInt(hue)));
-// 	endif
-// 	return 1;
-// endfunction
-
 function GFGumpPic(byref gump, x, y, gump_id, hue := 0)
 	(gump.layout).Append("GumpPic {} {} {}".format(cint(x), cint(y), cint(gump_id))); 
 
@@ -407,7 +396,6 @@ function GFTextEntryLimited(byref gump, x, y, width, height, txt_color, ini_text
 	return (txt_id);   
 endfunction
 
-//Vitor Lima Entry
 /*
  * GFTooltip(byref gump, cliloc_id)
  *

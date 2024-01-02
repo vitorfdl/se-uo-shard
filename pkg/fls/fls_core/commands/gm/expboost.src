@@ -8,7 +8,7 @@ use uo;
 include ":attributes:attributes";
 include ":attributes:attributes";
 include ":charactercreation:characters";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include "include/utils";
 
 program testtttt(who, text)

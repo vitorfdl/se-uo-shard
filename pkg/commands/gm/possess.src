@@ -4,7 +4,7 @@ use polsys;
 use datafile;
 
 include ":commands:possess";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program textcmd_possess( me )
 

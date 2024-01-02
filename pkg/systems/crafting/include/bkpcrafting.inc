@@ -6,7 +6,7 @@ include ":crafting:include/craftingUtil";
 include ":gumps:include/gumps";
 include ":gumps:include/gumps_ex";
 include ":PacketConfig:settings";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:requestgump";
 include "include/say";
 include "include/damage";

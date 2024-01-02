@@ -3,7 +3,7 @@ use os;
 use util;
 
 include ":attributes:attributes";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include "include/say";
 
 include ":fls_core:fls_characters";

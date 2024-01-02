@@ -16,7 +16,6 @@ include ":ghaia:ghaiaUtil";
 include ":gumps:gumps";
 include ":gumps:gump_prompts";
 include ":gumps:requestgump";
-include ":gumps:yesno";
 include ":containers:storageAreas";
 include ":combat:weaponInfo";
 include ":timeUtils:time";

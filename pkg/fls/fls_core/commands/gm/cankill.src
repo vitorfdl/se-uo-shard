@@ -3,7 +3,7 @@ use uo;
 
 include ":fls_core:fls_characters";
 include "include/say";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:playerselectiongump";
 
 program changeSkill(who, text)

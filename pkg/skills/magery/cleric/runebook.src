@@ -1,9 +1,8 @@
 use uo;
 
 include ":gumps:gumps";
-include ":gumps:yesno";
-include ":gumps:requestgump";
 include ":gumps:gump_prompts";
+include ":gumps:requestgump";
 include "include/say";
 include ":attributes:attributes";
 include ":containers:containers";

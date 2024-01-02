@@ -114,9 +114,9 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
     
 	var gump := GFCreateGump(250, 200);
 	GFClosable(gump, 0);
-    GFSetID(gump, GUMPID_TNGUMPS);
-	GFResizePic(gump, 0, 0, 3600, sizex, sizey);
-	GFResizePic(gump, 15, 15, 0x13BE, sizex-30, sizey-30);
+   GFSetID(gump, GUMPID_TNGUMPS);
+	GFResizePic(gump, 0, 0, DEFAULT_BACKGROUND, sizex, sizey);
+	// GFResizePic(gump, 15, 15, 0x13BE, sizex-30, sizey-30);
 	
 	var y_pos := 20;
 	foreach line in (GFWordWrap(prompt, 360))
@@ -130,11 +130,11 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
   y_pos := 30;
   var first := 0;
   foreach text in options
-    GFTextLine(gump, 60, y_pos + indice*20, 1153, text);
+    GFTextLine(gump, 60, y_pos + indice*20, DEFAULT_FONT_COLOR, text);
     if (opts)
       first := opts[indice];
     endif
-    GFCheckBox(gump, 30, y_pos + indice*20, 210, 211, first, indice);
+    GFCheckBox(gump, 30, y_pos + indice*20, G_UNSELECTED, G_SELECTED, first, indice);
     first := 0;
     indice := indice+1;
   endforeach
@@ -159,42 +159,42 @@ function CheckBoxGump(mobile, sizex, sizey, prompt:="", options, opts := 0)
 endfunction
 
 function RadioGump(mobile, sizex, sizey, prompt:="", options, returnkeys := 0, first := 1)
-		if (!sizex) sizex := 200; endif;
-		if (!sizey) sizey := 120 + (options.size() * 20); endif;
+	if (!sizex) sizex := 240; endif;
+	if (!sizey) sizey := 150 + (options.size() * 20); endif;
+	sizey += 10;
 
-		var gump := GFCreateGump(250, 200);
-		GFClosable(gump, 0);
-		GFResizePic(gump, 0, 0, 3600, sizex, sizey); // Background
-		GFResizePic(gump, 15, 15, 0x13BE, sizex-30, sizey-30);
-		
-		var y_pos := 20;
-		foreach line in (GFWordWrap(prompt, 360))
-			GFTextLine(gump, 20, y_pos, 1153, line);
-			y_pos := y_pos+20;
-			SleepMS(2);
-		endforeach
-		
+	var gump := GFCreateGump(250, 200);
+	GFClosable(gump, 0);
+	GFResizePic(gump, 0, -5, ALTERNATE_MENU_SCROLL_BACKGROUND, sizex, sizey); // Background
+	
+	var y_pos := 20;
+	foreach line in (GFWordWrap(prompt, 360))
+		GFTextLine(gump, 30, y_pos, 1153, line);
+		y_pos := y_pos+20;
+		SleepMS(2);
+	endforeach
+	
 	GFSetRadioGroup(gump, 1);
 	var indice := 1;
 	y_pos := 30;
 	foreach text in options
-		GFTextLine(gump, 60, y_pos + indice*20, 1153, text);
-		GFRadioButton(gump, 30, y_pos + indice*20, 210, 211, (indice == first), indice);
+		GFTextLine(gump, 60, y_pos + indice*21, 1153, text);
+		GFRadioButton(gump, 30, y_pos + indice*21, G_UNSELECTED, G_SELECTED, (indice == first), indice);
 		indice := indice+1;
 	endforeach
 		
-	GFAddButton(gump, sizex-70, sizey-60, 4502, 4502, 1, 999 );
-	GFTextLine(gump, sizex-110, sizey-50, 1153, "Próximo");
+	GFAddButton(gump, sizex-110, sizey-55, G_OK_BTN, G_OK_BTN_HOVER, 1, 999 );
+	// GFTextLine(gump, sizex-110, sizey-50, 1153, "Próximo");
 	
 	var input := GFSendGump(mobile, gump);
 	if ( input[0] == 999 )
 		foreach key in (input.keys)
-		if (options[key])
-			if (returnkeys)
-				return key;
+			if (options[key])
+				if (returnkeys)
+					return key;
+				endif
+				return options[key];
 			endif
-			return options[key];
-		endif
 		endforeach
 	else
 		return 0;
@@ -611,20 +611,21 @@ endfunction
 
 function GumpPromptMultiLine(who, text := "")
 	var gump := GFCreateGump();
-	var num_lines := 14;
+	var num_lines := 8;
 	var msg_array := array;
 	var y_pos := 80;
 	var i;
 
-	GFResizePic(gump, 0, 0, DEFAULT_BACKGROUND, 420, 405-10);
+	GFResizePic(gump, 0, 0, ALTERNATE_MENU_SCROLL_BACKGROUND, 420, 405-10);
 	GFResizePic(gump, 15, 15, DEFAULT_FOREGROUND, 390, 55);
 	GFTextMid(gump, 15, 20, 390, DEFAULT_FONT_COLOR, text);
 	GFTextMid(gump, 60, 40, 330, GRAY_FONT_COLOR, "Você pode usar <\i></\i> para itálico e <b></b> para negrito!");
 	
 	// GFResizePic(gump, 15, 70+280+2, DEFAULT_FOREGROUND, 390, 28);
-	GFAddButton(gump, 200, 70+280+5, G_OK_BTN, G_OK_BTN_HOVER, GF_CLOSE_BTN, 20);
-	GFResizePic(gump, 15, 70, TEXT_ENTRY_BACKGROUND, 390, 280);
-	GFTextEntry(gump, 20, y_pos, 382, 30*num_lines, 1153, "");
+	GFResizePic(gump, 15+10, 70+10, TEXT_ENTRY_BACKGROUND, 370, 30*num_lines+10);
+	GFTextEntry(gump, 20+10, y_pos+10, 382, 30*num_lines, 1153, "");
+
+	GFAddButton(gump, 180, 70+280, G_OK_BTN, G_OK_BTN_HOVER, GF_CLOSE_BTN, 20);
 
 	y_pos := y_pos+(19 * num_lines);
 	
@@ -657,4 +658,68 @@ function GumpPromptMultiLine(who, text := "")
 		// endfor
 		// return text;
 	endif
+endfunction
+
+/* 
+ * YesNo(mobile, prompt, yes_text, no_text)
+ *
+ * Purpose
+ * Template to create a yes / no gump.
+ *
+ * Parameters
+ * mobile:	Mobile to send the gump to.
+ * prompt:	Primary text field, instructing the mobile on what the choices are about.
+ * yes_text:	Text to be displayed next to the 'YES' button.
+ * no_text:	The text to be displayed next to the 'NO' button.
+ *
+ * Return value
+ * Returns '0' if no is selected.
+ * Returns '1' if yes is selected.
+ *
+ */
+function YesNo(mobile, prompt:="", yes_text:="Sim", no_text:="Não")
+	var yn_gump := GFCreateGump(140, 100);
+
+	var wraps := struct;
+	wraps.+prompt := GFWordWrap(prompt, 385);
+	wraps.+yes := GFWordWrap(yes_text, 355);
+	wraps.+no := GFWordWrap(no_text, 355);
+	var wraps_size := len(wraps.prompt) + len(wraps.yes) + len(wraps.no);
+
+	GFClosable(yn_gump, 0);
+	GFResizePic(yn_gump, 0, 0, DEFAULT_BACKGROUND, 400, wraps_size*20 +80 ); //205);
+	GFResizePic(yn_gump, 15, 15, DEFAULT_FOREGROUND, 370, wraps_size*20 + 50); //175);
+	
+	var y_pos := 20;
+	foreach line in (wraps.prompt)
+		GFTextLine(yn_gump, 20, y_pos, DEFAULT_FONT_COLOR, line);
+		y_pos := y_pos+20;
+		SleepMS(2);
+	endforeach
+	
+	//y_pos := 90;
+	y_pos += 20;
+	GFAddButton(yn_gump, 20, (y_pos+3), 2117, 2118, GF_CLOSE_BTN, 100);
+	foreach line in (wraps.yes);
+		GFTextLine(yn_gump, 40, y_pos, DEFAULT_FONT_COLOR, line);
+		y_pos := y_pos+20;
+		SleepMS(2);
+	endforeach
+		
+	//y_pos := 140;
+	y_pos += 20;
+	GFAddButton(yn_gump, 20, (y_pos+3), 2117, 2118, GF_CLOSE_BTN);
+	foreach line in (wraps.no)
+		GFTextLine(yn_gump, 40, y_pos, DEFAULT_FONT_COLOR, line);
+		y_pos := y_pos+20;
+		SleepMS(2);
+	endforeach
+	
+	var input := GFSendGump(mobile, yn_gump);
+	input := input[0];
+	if ( input == 100 )
+		return 1;
+	else
+		return 0;
+	endif	
 endfunction

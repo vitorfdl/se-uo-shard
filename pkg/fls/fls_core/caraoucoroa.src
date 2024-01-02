@@ -3,7 +3,7 @@ use os;
 use util;
 
 include ":charactercreation:feats";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include "include/say";
 
 const SOUND_EFFECT_JOGAR := 0x36;

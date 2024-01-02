@@ -12,7 +12,7 @@ include ":attributes:attributes";
 include ":blood:blood";
 include ":survival:skinning";
 include ":ghaia:ghaiaUtil";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":fls_core:fls_characters";
 include ":loot:include/lootParser";
 include ":unicos:item_template";

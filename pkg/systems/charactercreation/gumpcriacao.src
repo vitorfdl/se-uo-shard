@@ -11,24 +11,58 @@ include "include/client";
 include "include/arrays";
 include "include/utils";
 include ":disguise:disguise";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":fls_core:fls_characters";
 include ":datafile:datafile";
 include ":timeUtils:time";
 include ":sysbook:flsbooks";
 include ":charactercreation:chargumps";
 
-//cores: 1153 -> 2103 -> 2105
+enum CHARCREATION_GUMPIDS
+   UO_GUMP_ID := 337,
+   MENU_CLIP_GUMP_ID := 1227,
+   TEXTENTRY_NAME_ID := 95,
+
+   BTN_RACE_HUMAN := 44,
+   BTN_RACE_ELF := 45,
+   BTN_RACE_DWARF := 46,
+   BTN_RACE_WEREWOLF := 47,
+
+   BTN_SEX_MALE := 9,
+   BTN_SEX_FEMALE := 10,
+   BTN_HEIGHT_TALL := 11,
+   BTN_HEIGHT_MEDIUM := 12,
+   BTN_HEIGHT_SHORT := 13,
+
+   BTN_WEIGHT_FAT := 14,
+   BTN_WEIGHT_MEDIUM := 15,
+   BTN_WEIGHT_THIN := 16,
+
+   BTN_APPEARANCE := 14,
+
+   GF_CHANGE_PAGE := 97,
+   GF_CHANGE_PAGE_BACK := 98,
+endenum
+
+const GUMP_MAX_WIDTH := 410; // Max width of the center area of the gump
+const GUMP_MAX_HEIGHT := 459; // Max height of the center area of the gump
+
+/**
+ * Function to create a new character for the player
+ *
+ * @param {mobile} who - The player character
+ * @returns {void}
+ */
 program createchar(who)
 	sleepms(850);
 	CloseGump(who, GUMPID_SKILLLIST);
 	CloseGump(who, GUMPID_EMAIL_INDEX);
-	CloseGump(who, 0x977);
+	CloseGump(who, GUMPID_ROLEPLAY);
 
    var account := FindAccount(who.acctname);
 
 	AP_SetVital(who, "Hunger", 0);
-	var chardata := struct;
+	var chardata := struct{};
 
    // if (!GetObjProperty(who, "criandochar") && who.cmdlevel < 1)
    //    SendSysMessageEx(who, "Delete seu personagem antes de criar de novo.", SSM_FAIL);
@@ -40,9 +74,12 @@ program createchar(who)
    //    return 1;
    // endif
 
-   AP_SetTrueStat(who, "Strength", 15);
-   AP_SetTrueStat(who, "Dexterity", 15);
-   AP_SetTrueStat(who, "Intelligence", 15);
+   AP_SetTrueStat(who, "Strength", 0);
+   AP_SetTrueStat(who, "Dexterity", 0);
+   AP_SetTrueStat(who, "Intelligence", 0);
+   AP_SetTrueStat(who, "Wisdom", 0);
+   AP_SetTrueStat(who, "Charisma", 0);
+   AP_SetTrueStat(who, "Constitution", 0);
 
    if (!who.backpack)
       var mochila := CreateItemAtLocation(who.x, who.y, who.z, 0x9b2, 1, who.realm);
@@ -66,12 +103,12 @@ program createchar(who)
 	//Gumps
 	StartCharacterCreation(who, chardata);
 
-	chardata.hits  := 300;
-	chardata.mana := 90;
-	chardata.stam := 60;
+	chardata.hits := 0;
+	chardata.mana := 0;
+	chardata.stam := 0;
 
    chardata.points := 1;
-   chardata.vitalpoints := 1;
+   chardata.attrpoints := 0;
 
    if (chardata.raca == "Humano")
       chardata.lifetime := AddTimeTo(POLCore().systime, 34, "weeks");
@@ -82,14 +119,14 @@ program createchar(who)
 	SetObjProperty(who, "chardata", chardata);
 
 	who.race := RACE_HUMAN;
-	who.name := chardata.nome;
+	who.name := chardata.nome || "";
 	RecalcVitals(who);
 
 	/*=====  End of Section comment block  ======*/
 
 	//Mudar Aparência
    if (!chardata.recriando)
-	   LookGump(who, chardata);
+	   LookGumpOld(who, chardata);
    endif
 
 	// SetProfessions(who, chardata);
@@ -115,30 +152,44 @@ program createchar(who)
    endif
 endprogram
 
+/*
+ * StartCharacterCreation(who, chardata)
+ * 
+ * Purpose
+ * Starts the character creation process for a player.
+**/
 function StartCharacterCreation(who, byref chardata)
 	while (who.connected)
       sleepms(20);
       
       chardata := struct{
-         current_class := "",
-         caminhos := array{"Obstinado"},
-         subclasses:= array{},
-         classes := array{struct{
-            id := "Furioso",
+         current_class := "", // TODO: Remove this
+         subclasses := array{},
+         classes := array{ struct{
+            id := "Guerreiro",
             exp := 0,
             level := 1,
             habs := array{},
             selected_habs := array{}
          }},
+         attributes := struct{
+            Strength := 8,
+            Dexterity := 8,
+            Intelligence := 8,
+            Wisdom := 8,
+            Charisma := 8,
+            Constitution := 8
+         },
+         antecedente := "",
          proficiencias := array{},
          exppoints := 0,
          level := 1,
          points := 1,
-         vitalpoints := 0,
-         hits := 300,
-         mana := 100,
-         stam := 30,
-         god := "Anar",
+         // vitalpoints := 0,
+         hits := 0,
+         mana := 0,
+         stam := 0,
+         god := "",
          raca := "Humano",
          height := 2,
          weight := 2,
@@ -149,12 +200,12 @@ function StartCharacterCreation(who, byref chardata)
          continue;
       endif
 
-      if (!chardata.heir)
-         chardata.Credits := 60;
-         if (ItemPickerGump(who, chardata))
-            continue;
-         endif
-      endif
+      // if (!chardata.heir)
+      //    chardata.Credits := 60;
+      //    if (ItemPickerGump(who, chardata))
+      //       continue;
+      //    endif
+      // endif
 
 		// if (getNotaRP(who) == 2)
 		// 	if (!YesNo(who, "Você receberá bonificações nesse personagem. Elas não estarão disponíveis no próximo. Deseja continuar?", "Sim", "Não"))
@@ -166,25 +217,322 @@ function StartCharacterCreation(who, byref chardata)
 	endwhile
 endfunction
 
+/* 
+ * Doc for characterPage function
+ * 
+ * Parameters:
+ *   gump: The gump object to be modified
+ *   baseX: The base X coordinate for positioning elements
+ *   baseY: The base Y coordinate for positioning elements
+ *   who: The character object
+ *   chardata: The character data object
+ * 
+ * Returns:
+ *   None
+ * 
+ * Description:
+ *   This function is responsible for creating the character page gump and handling user input for character creation.
+ *   It sets up text fields for entering character name, radio buttons for selecting race, gender, height, and weight.
+ *   The function also sets up event handlers for user input and gump navigation.
+ * 
+ * Example usage:
+ *   characterPage(gump, 100, 100, player, characterData);
+ */
+function characterPage(byref gump, baseX, baseY, who, chardata)
+   GFTextMid(gump, baseX, baseY+49, GUMP_MAX_WIDTH, 2212, "Nome do Personagem");
+
+   var rect_x := GFCenterRectangle(ALIGN_CENTER, 180, baseX, GUMP_MAX_WIDTH);
+   GFResizePic(gump, rect_x, baseY+67, 9350, 180, 25);
+   GFTextEntry(gump, rect_x+2, baseY+70, 187, 20, 0, chardata.nome, TEXTENTRY_NAME_ID);
+   
+   // //header
+   // GFGumpPicTiled(gump, 18, 38, 394, 9, 50);
+   // GFGumpPicTiled(gump, 16, 512, 398, 9, 50);
+   // //bottom
+
+   baseY += 118;
+
+   var colPos := GFColumnPosition(60, 4, GUMP_MAX_WIDTH, baseX);
+   GFTextLine(gump, colPos[1]+2, baseY, 2212, "Raça");
+   GFTextLine(gump, colPos[1]+24, baseY+23, 1152, "Humano");
+   GFTextLine(gump, colPos[1]+24, baseY+45, 1152, "Elfo");
+   GFTextLine(gump, colPos[1]+24, baseY+66, 1152, "Anão");
+   GFTextLine(gump, colPos[1]+24, baseY+87, 1152, "Werewolf");
+   GFAddButton(gump, colPos[1], baseY+23, G_UNSELECTED + (chardata.raca == "Humano" || !chardata.raca), G_SELECTED, GF_CLOSE_BTN, BTN_RACE_HUMAN);
+   GFAddButton(gump, colPos[1], baseY+45, G_UNSELECTED + (chardata.raca == "Elfo"), G_SELECTED, GF_CLOSE_BTN, BTN_RACE_ELF);
+   GFAddButton(gump, colPos[1], baseY+66, G_UNSELECTED + (chardata.raca == "Anão"), G_SELECTED, GF_CLOSE_BTN, BTN_RACE_DWARF);
+   GFAddButton(gump, colPos[1], baseY+87, G_UNSELECTED + (chardata.raca == "Werewolf"), G_SELECTED, GF_CLOSE_BTN, BTN_RACE_WEREWOLF);
+   
+   GFTextLine(gump, colPos[2]+2, baseY, 2212, "Sexo");
+   GFTextLine(gump, colPos[2]+24, baseY+23, 1152, "Homem");
+   GFTextLine(gump, colPos[2]+24, baseY+45, 1152, "Mulher");
+   GFSetRadioGroup(gump, 1);
+   GFRadioButton(gump, colPos[2], baseY+23, G_UNSELECTED, G_SELECTED, (!who.gender), BTN_SEX_MALE);
+   GFRadioButton(gump, colPos[2], baseY+45, G_UNSELECTED, G_SELECTED, (who.gender), BTN_SEX_FEMALE);
+
+   GFTextLine(gump, colPos[3]+2, baseY, 2212, "Altura");
+   GFTextLine(gump, colPos[3]+24, baseY+23, 1152, "Alto");
+   GFTextLine(gump, colPos[3]+24, baseY+45, 1152, "Médio");
+   GFTextLine(gump, colPos[3]+24, baseY+66, 1152, "Baixo");
+   GFSetRadioGroup(gump, 2);
+   GFRadioButton(gump, colPos[3], baseY+23, G_UNSELECTED, G_SELECTED, (chardata.height == 1 || !chardata.height), BTN_HEIGHT_TALL);
+   GFRadioButton(gump, colPos[3], baseY+45, G_UNSELECTED, G_SELECTED, (chardata.height == 2), BTN_HEIGHT_MEDIUM);
+   GFRadioButton(gump, colPos[3], baseY+66, G_UNSELECTED, G_SELECTED, (chardata.height == 3), BTN_HEIGHT_SHORT);
+
+   GFTextLine(gump, colPos[4]+2, baseY, 2212, "Peso");
+   GFTextLine(gump, colPos[4]+24, baseY+23, 1152, "Gordo");
+   GFTextLine(gump, colPos[4]+24, baseY+45, 1152, "Esbelto");
+   GFTextLine(gump, colPos[4]+24, baseY+66, 1152, "Magro");
+   GFSetRadioGroup(gump, 3);
+   GFRadioButton(gump, colPos[4], baseY+23, G_UNSELECTED, G_SELECTED, (chardata.weight == 1 || !chardata.weight), BTN_WEIGHT_FAT);
+   GFRadioButton(gump, colPos[4], baseY+45, G_UNSELECTED, G_SELECTED, (chardata.weight == 2), BTN_WEIGHT_MEDIUM);
+   GFRadioButton(gump, colPos[4], baseY+66, G_UNSELECTED, G_SELECTED, (chardata.weight == 3), BTN_WEIGHT_THIN);
+
+   baseY += 120;
+   GFTextMid(gump, baseX, baseY, GUMP_MAX_WIDTH, 1000, "Descrição das Escolhas");
+   // GFTextLine(gump, baseX+108, baseY, 1000, "Descrição das Escolhas");
+   GFResizePic(gump, baseX+5, baseY+20, 3500, GUMP_MAX_WIDTH-20, 140);
+   GFHTMLArea(gump, baseX+30, baseY+45, GUMP_MAX_WIDTH-35, 140, "Descrição das influências de raça e sexo no personagem", 0, 0);
+endfunction
+
+/*
+ * classPage(gump, baseX, baseY, who, chardata, classes)
+ *
+ * Purpose
+ * Displays a page of character classes in the character creation gump.
+ *
+ * Parameters
+ *    gump: The gump object to display the classes in.
+ *    baseX: The base X coordinate for the classes display.
+ *    baseY: The base Y coordinate for the classes display.
+ *    who: The character being created.
+ *    chardata: The character data being modified.
+ *    classes: The array of available character classes.
+ *
+ * Return value
+ *    None
+**/
+function classPage(byref gump, baseX, baseY, who, chardata, classes)
+   var classSize := classes.size();
+   var classInRows := BreakArray(classes, 2); // Breaks the classes array in 2 rows
+
+   GFTextMid(gump, baseX, baseY+44, GUMP_MAX_WIDTH, 2212, "Escolha sua classe:");
+   GFTextMid(gump, baseX, baseY+64, GUMP_MAX_WIDTH, 1152, "Coloque o mouse sobre a classe para ver a descrição.");
+
+   baseX += 5;
+   baseY += 20;
+   var colPos := GFRowPosition(0, 150, 2, GUMP_MAX_HEIGHT, baseY+80);
+   GFGumpPicTiled(gump, baseX, colPos[1]-14, 370, 9, 50); // separator
+   GFSetRadioGroup(gump, 4);
+   foreach displayClasses in classInRows
+      // Create a page each 2 class
+      GFPage(gump, _displayClasses_iter);
+
+      // Create the class display
+      foreach class in displayClasses
+         var columnY := colPos[_class_iter];
+         GFHtmlShadowed(gump, baseX+24, columnY, 120, 20, "#F6F6f6", $"{class.name}");
+         GFTooltipText(gump, $"{class.description}");
+         GFRadioButton(gump, baseX, columnY, G_UNSELECTED, G_SELECTED, (chardata.classes[1].id == class.name), 210);
+
+         // Display feats
+         var featColumnPos := GFColumnPosition(92, 4, GUMP_MAX_WIDTH-30, baseX);
+         var currentGroup := 1;
+         for (currentGroup := 1; currentGroup <= 4; currentGroup += 1)
+            var featList := FindAllElemInArray(class.Feats, struct{ Group := currentGroup });
+            var featX := featColumnPos[currentGroup];
+            var featRowY := GFRowPosition(0, 45, 2, 140, columnY+40);
+
+            var g;
+            for (g := 1; g <= 4; g++)
+               if (g == 1)
+                  GFTextLine(gump, featX, featRowY[g]-20, 2212, $"Level {currentGroup}");
+               endif
+
+               var feat := featList[g];
+               if (g <= 2)
+                  GFGumpPic(gump, featX, featRowY[g], cint(feat ? feat.Icon : 0x5DD3), 0);
+               else
+                  GFGumpPic(gump, featX+45, featRowY[g-2], cint(feat ? feat.Icon : 0x5DD3), 0);
+               endif
+               GFTooltipText(gump, BuildFeatToolTip(feat, 1, 10));
+            endfor
+
+         endfor
+         // End display feats
+
+         GFGumpPicTiled(gump, baseX, columnY+130, 370, 9, 50); // separator
+         sleepms(2);
+      endforeach
+
+      GFPageScrollBar(gump, baseX+GUMP_MAX_WIDTH-30, baseY+65, 3, _displayClasses_iter, 280);
+
+
+      var isLastPage := _displayClasses_iter >= classSize/2;
+
+      // if (_displayClasses_iter < classSize/2)
+         // Page Next Button
+      // endif
+      sleepms(2);
+   endforeach
+endfunction
+
+
+/*
+ * backgroundPage(gump, baseX, baseY, who, chardata, backgroundList)
+ *
+ * Purpose
+ * Displays a page of character backgrounds in the character creation gump.
+ *
+ * Parameters
+ *    gump: The gump object to display the backgrounds in.
+ *    baseX: The base X coordinate for the backgrounds display.
+ *    baseY: The base Y coordinate for the backgrounds display.
+ *    who: The character being created.
+ *    chardata: The character data being modified.
+ *    backgroundList: The array of available character backgrounds.
+ *
+ * Return value
+ *    None
+**/
+function backgroundPage(byref gump, baseX, baseY, who, chardata, backgroundList)
+   var bgsSize := backgroundList.size();
+   var bgsInRows := BreakArray(backgroundList, 2); // Breaks the classes array in 2 rows
+
+   GFTextMid(gump, baseX, baseY+44, GUMP_MAX_WIDTH, 2212, "Escolha seu antecedente:");
+   GFTextMid(gump, baseX, baseY+64, GUMP_MAX_WIDTH, 1152, "Seu antecedente define seus itens iniciais.");
+   baseX += 5;
+   baseY += 20;
+
+   var rowPos := GFRowPosition(0, 150, 2, GUMP_MAX_HEIGHT, baseY+80);
+   GFGumpPicTiled(gump, baseX, rowPos[1]-14, 370, 9, 50); // separator
+   GFSetRadioGroup(gump, 5);
+   foreach displayBgs in bgsInRows
+         GFPage(gump, _displayBgs_iter);
+
+      foreach background in displayBgs
+         var columnY := rowPos[_background_iter];
+         GFHtmlShadowed(gump, baseX+24, columnY, 200, 20, "#F6F6f6", $"<basefont size=0>{background.name}");
+         GFRadioButton(gump, baseX, columnY, G_UNSELECTED, G_SELECTED, (chardata.atencedente[1] == background.name), 210);
+
+         var featColPos := GFColumnPosition(25, background.items.size(), GUMP_MAX_WIDTH-30, baseX);
+         foreach item in (background.items)
+            GFTilePic(gump, featColPos[_item_iter], columnY+20, item.graphic);
+            GFTooltipText(gump, item.name);
+         endforeach
+
+         GFHTMLArea(gump, baseX, columnY+80, GUMP_MAX_WIDTH-35, 60, $"{background.Description}", 1, 1);
+      endforeach
+
+      GFPageScrollBar(gump, baseX+GUMP_MAX_WIDTH-30, baseY+65, 3, _displayBgs_iter, 280);
+   endforeach
+
+endfunction
+
+
+/*
+ * Function to create the character creation gump and handle user input for character creation
+ *
+ * Parameters:
+ *   who: The character object
+ *   chardata: The character data object
+ *
+ * Returns:
+ *   None
+ *
+ * Description:
+ *   This function is responsible for creating the character creation gump and handling user input for character creation.
+ */
+function abilityPointsPage(byref gump, baseX, baseY, who, chardata)
+
+   baseY += 20;
+   GFTextMid(gump, baseX, baseY+44, GUMP_MAX_WIDTH, 2212, "Pontos de Atributo:");
+   GFTextMid(gump, baseX, baseY+64, GUMP_MAX_WIDTH, 1152, $"{_ifOr(chardata.attrpoints, 0)} ");
+
+   var rowPos := GFRowPosition(0, 35, 6, GUMP_MAX_HEIGHT, baseY+100);
+   var columPos := GFColumnPosition(70, 2, GUMP_MAX_WIDTH, baseX);
+   GFResizePic(gump, columPos[1]-20, rowPos[1]-15, 1579, columPos[2]+100 - columPos[1], rowPos[6]+50 - rowPos[1]); // bg
+   // GFAddAlphaRegion(gump, columPos[1]-20, rowPos[1]-15, columPos[2]+100 - columPos[1], rowPos[6]+50 - rowPos[1]); // bg
+
+   var attributes := array{ "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma" };
+   foreach attribute in attributes
+      // GFGumpPicTiled(gump, columPos[1], rowPos[_attribute_iter]-14, 210, 9, 50); // separator
+      // GFResizePic(gump, columPos[1]-5, rowPos[_attribute_iter]-5, 9350, columPos[2]+70 - columPos[1], 29); // separator
+      // GFTextLine(gump, columPos[1], rowPos[_attribute_iter], 1152, translateAttribute(attribute));
+      // GFHTMLArea(gump, columPos[1], rowPos[_attribute_iter], 200, 20, $"<basefont size=0>{translateAttribute(attribute)}", 0, 0);
+      GFHtmlShadowed(gump, columPos[1], rowPos[_attribute_iter], 200, 20, "#111111", $"{translateAttribute(attribute)}", 0, "#FFFFFF");
+
+      var points_x := columPos[2];
+      GFAddButton(gump, points_x, rowPos[_attribute_iter], 56, 56, GF_CLOSE_BTN, 100+_attribute_iter);
+      GFTextRight(gump, points_x+35, rowPos[_attribute_iter], 1152, chardata.attributes[attribute]);
+      GFAddButton(gump, points_x+40, rowPos[_attribute_iter], 55, 55, GF_CLOSE_BTN, 100+_attribute_iter);
+   endforeach
+endfunction
+
+
+/*
+ * Function to create the character creation gump and handle user input for character creation
+ *
+ * Parameters:
+ *   who: The character object
+ *   chardata: The character data object
+ *
+ * Returns:
+ *   None
+ *
+ * Description:
+ *   This function is responsible for creating the character creation gump and handling user input for character creation.
+ */
 function CharacterCreationGump(who, byref chardata)
+   var backgroundCfg := ReadConfigFile(":charactercreation:config/antecedentes");
    var godsCfg := ReadConfigFile(":charactercreation:config/deuses");
    var classCfg := ReadConfigFile(":charactercreation:config/classes");
-   var classes := struct{};
+   var itemCfg := ReadConfigFile("::itemdesc");
+
+   // Get the Classes for the character creation
+   var classes := array{};
    foreach classe_name in GetConfigStringKeys(classCfg)
       var classe := FindConfigElem(classCfg, classe_name);
-      if (classe.Caminho && classe.Type == "Main") 
-         if (!classes[classe.Caminho]) classes[classe.Caminho] := array{}; endif
-         classes[classe.Caminho].append(struct{
-            caminho := classe.Caminho,
-            type := classe.Type,
-            name := classe_name
-         });
+      if (classe.Type == "Main") 
+         classe.+name := classe_name;
+         var feats := GetClassFeats(0, classe);
+         classes.append(struct{ name := classe_name, description := classe.Description, Feats := feats });
       endif
+      sleepms(2);
+   endforeach
+
+   // Get the Backgrounds for the character creation
+   var backgroundList := array{};
+   foreach background_name in GetConfigStringKeys(backgroundCfg)
+      var background := FindConfigElem(backgroundCfg, background_name);
+      background.+name := background_name;
+      var bgStruct := struct{ name := background_name, description := background.Description, items := array{} };
+
+      var itemList := GetConfigStringArray(background, "Item");
+      foreach itemAndQty in itemList
+         var splittedItem := SplitWords(itemAndQty);
+         if (splittedItem[1].find("/"))
+            var splitItem := SplitWords(splittedItem[1], "/");
+            splittedItem[1] := splitItem[1];
+         endif
+
+         var objType := GetObjtypeByName(splittedItem[1]);
+         var item := FindConfigElem(itemCfg, objType ? objType : splittedItem[1]);
+         if (item && splittedItem[1] != "moedaouro" && !splittedItem[1].find("Seed"))
+            bgStruct.items.append(struct{ name := StrReplace(item.Desc, "%s%", ""), qty := splittedItem[2], graphic := item.graphic ? item.graphic : hex(objType) });
+         else
+            print($"Item not found in character creation: {splittedItem[1]} {splittedItem[2]} {objType}");
+         endif
+         sleepms(2);
+      endforeach
+
+      backgroundList.append(bgStruct);
       sleepms(2);
    endforeach
 
    var desc := array{"Escreva aqui.", ""};
    var available_gods;
+   var currStep := 4;
 
    while (who.connected)
       available_gods := array{};
@@ -206,101 +554,125 @@ function CharacterCreationGump(who, byref chardata)
          god := 1;
       endif
 
+      var baseX := -4;
+      var baseY := 5;
       var gump := GFCreateGump();
       
       GFDisposable(gump, 0);
-      GFClosable(gump, 0);
+      GFClosable(gump, 1);
       GFSetID(gump, GUMPID_CREATECHAR);//9260
-      GFResizePic(gump, -4, 5, 9380, 441, 547);
-      GFTextLine(gump, 155, 49, 2212, "Nome do Personagem");
-      GFResizePic(gump, 122, 67, 9350, 195, 25);
-      GFTextEntry(gump, 125, 70, 187, 20, 0, chardata.nome, 95);
+      GFPage(gump, 0);
+
+      GFResizePic(gump, baseX, baseY, 302, 540, 514);
+
+      // Sidebar Menu
+      GFResizePic(gump, baseX, baseY, 311, 120, 514);
+      GFGumpPic(gump, baseX+17, baseY, UO_GUMP_ID);
+
+      GFResizePic(gump, baseX+12, baseY+134, 9400, 95, 31);
+      GFTextLine(gump, baseX+20, baseY+140, currStep == 0 ? 1152 : 1000, "Personagem");
       
-      //header
-      GFGumpPicTiled(gump, 18, 38, 394, 9, 50);
-      GFGumpPicTiled(gump, 16, 512, 398, 9, 50);
-      //bottom
-
-      GFTextLine(gump, 36+2, 105, 2212, "Raça");
-      GFTextLine(gump, 62, 126, 1152, "Núro");
-      GFTextLine(gump, 62, 148, 1152, "Vala");
-      GFTextLine(gump, 62, 169, 1152, "Alayarz");
-      GFAddButton(gump, 39, 126, 210 + (chardata.raca == "Humano" || !chardata.raca), 211, GF_CLOSE_BTN, 44);
-      GFAddButton(gump, 39, 148, 210 + (chardata.raca == "Elfo"), 211, GF_CLOSE_BTN, 45);
-      GFAddButton(gump, 39, 169, 210 + (chardata.raca == "Meio-Elfo"), 211, GF_CLOSE_BTN, 46);
+      GFResizePic(gump, baseX+12, baseY+174, 9400, 95, 31);
+      GFTextLine(gump, baseX+20, baseY+180, currStep == 1 ? 1152 : 1000, "Classe");
       
-      GFTextLine(gump, 145, 103, 2212, "Sexo");
-      GFTextLine(gump, 167, 126, 1152, "Homem");
-      GFTextLine(gump, 167, 148, 1152, "Mulher");
-	   GFSetRadioGroup(gump, 1);
-      GFRadioButton(gump, 145, 126, 210, 211, (!who.gender), 9);
-      GFRadioButton(gump, 145, 148, 210, 211, (who.gender), 10);
-
-      GFTextLine(gump, 235, 103, 2212, "Altura");
-      GFTextLine(gump, 257, 126, 1152, "Alto");
-      GFTextLine(gump, 257, 148, 1152, "Mediano");
-      GFTextLine(gump, 257, 169, 1152, "Baixo");
-	   GFSetRadioGroup(gump, 2);
-      GFRadioButton(gump, 235, 126, 210, 211, (chardata.height == 1 || !chardata.height), 11);
-      GFRadioButton(gump, 235, 148, 210, 211, (chardata.height == 2), 12);
-      GFRadioButton(gump, 235, 169, 210, 211, (chardata.height == 3), 13);
-
-      GFTextLine(gump, 327, 103, 2212, "Peso");
-      GFTextLine(gump, 348, 126, 1152, "Gordo");
-      GFTextLine(gump, 348, 148, 1152, "Esbelto");
-      GFTextLine(gump, 348, 169, 1152, "Magro");
-	   GFSetRadioGroup(gump, 3);
-      GFRadioButton(gump, 327, 126, 210, 211, (chardata.weight == 1 || !chardata.weight), 14);
-      GFRadioButton(gump, 327, 148, 210, 211, (chardata.weight == 2), 15);
-      GFRadioButton(gump, 327, 169, 210, 211, (chardata.weight == 3), 16);
-
-      GFTextLine(gump, 20, 191, 2212, "Marcas e Características Físicas");
-      GFResizePic(gump, 19, 209, 9350, 388, 43);
-      GFTextEntry(gump, 25, 210, 375, 20, 0, desc[1], 98);
-      GFTextEntry(gump, 25, 230, 375, 20, 0, desc[2], 99);
+      GFResizePic(gump, baseX+12, baseY+214, 9400, 95, 31);
+      GFTextLine(gump, baseX+20, baseY+220, currStep == 2 ? 1152 : 1000, "Antecedentes");
       
-      GFGumpPicTiled(gump, 39, 255, 340, 9, 50); //divisor
-
-      //caminho
-      GFTextLine(gump, 189, 269, 2212, "Caminho");
-      GFTextLine(gump, 109-10, 293, 1152, "Obstinado");
-      GFAddButton(gump, 85-10, 293, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
-      GFTextLine(gump, 222-10, 293, 1152, "Sábio");
-      GFAddButton(gump, 199-10, 293, 210 + cint(chardata.caminhos[1] == "Sábio"), 211, GF_CLOSE_BTN, 62);
-      GFTextLine(gump, 313, 293, 1152, "Sagaz");
-      GFAddButton(gump, 290, 293, 210 + cint(chardata.caminhos[1] == "Sagaz"), 211, GF_CLOSE_BTN, 63);
+      GFResizePic(gump, baseX+12, baseY+254, 9400, 95, 31);
+      GFTextLine(gump, baseX+20, baseY+260, currStep == 3 ? 1152 : 1000, "Atributos");
       
-      // classe
-      GFTextLine(gump, 193, 322, 2212, "Classe");
-      GFTextLine(gump, 138, 345, 1152, classes[chardata.caminhos[1]][1].name);
-      GFAddButton(gump, 115, 345, 210 + (chardata.classes[1].id == classes[chardata.caminhos[1]][1].name), 211, GF_CLOSE_BTN, 64);
-      GFTextLine(gump, 265, 345, 1152, classes[chardata.caminhos[1]][2].name);
-      GFAddButton(gump, 242, 345, 210+ (chardata.classes[1].id == classes[chardata.caminhos[1]][2].name), 211, GF_CLOSE_BTN, 65);
+      GFResizePic(gump, baseX+12, baseY+294, 9400, 95, 31);
+      GFTextLine(gump, baseX+20, baseY+300, currStep == 4 ? 1152 : 1000, "Aparência");
 
-      var selected_class := FindConfigElem(classCfg, chardata.classes[1].id);
-      GFHTMLArea(gump, 21, 383, 387, 100, selected_class.Description, 1, 1); // class_desc
-
-      //god
-      GFResizePic(gump, 396, 29, 5170, 292, 490);
-      GFTextLine(gump, 499, 58, 2212, "Deus Venerado");
-      GFGumpPic(gump, 423, 75, cint(available_gods[god].GumpPic), 0);
-
-      if (available_gods.size() > 1)
-         if (god > 1) GFAddButton(gump, 566, 477, 2224, 2224, GF_CLOSE_BTN, 31); endif
-         GFTextLine(gump, 524, 473, 1152, "Trocar");
-         if (god < available_gods.size())  GFAddButton(gump, 503, 477, 2223, 2223, GF_CLOSE_BTN, 32); endif
+      GFGumpPic(gump, baseX-18, baseY + 135 + (currStep * 40), MENU_CLIP_GUMP_ID);
+      
+      baseX += 120;
+      if (currStep <= 3)
+         GFTextLine(gump, baseX+GUMP_MAX_WIDTH-35-50, baseY+466, 1152, "Próximo");
+         GFAddButton(gump, baseX+GUMP_MAX_WIDTH-35, baseY+470, 2224, 2224, GF_CLOSE_BTN, GF_CHANGE_PAGE);
       endif
 
-      GFAddButton(gump, 189, 489, 2076, 2077, GF_CLOSE_BTN, 2);
+      if (currStep > 0)
+         GFTextLine(gump, baseX+5+22, baseY+466, 1152, "Retornar");
+         GFAddButton(gump, baseX+5, baseY+470, 2223, 2223, GF_CLOSE_BTN, GF_CHANGE_PAGE_BACK);
+      endif
+
+
+
+      // From here, we should have only 385 width space to work with
+      
+      // Gump Header
+      var headerContainerX := GFCenterRectangle(ALIGN_CENTER, 194, baseX, GUMP_MAX_WIDTH);
+      GFResizePic(gump, headerContainerX, baseY+20, 311, 194, 57);
+      GFTextMid(gump, baseX, baseY+20+18, GUMP_MAX_WIDTH, 1152, "Criação de Personagem");
+
+      // Page: Character Creation 
+      baseY += 50;
+
+      case (currStep)
+         0: characterPage(gump, baseX, baseY, who, chardata);
+         1: classPage(gump, baseX, baseY, who, chardata, classes);
+         2: backgroundPage(gump, baseX, baseY, who, chardata, backgroundList);
+         3: abilityPointsPage(gump, baseX, baseY, who, chardata);
+         4: lookPage(gump, baseX, baseY, who, chardata);
+      endcase
+
+
+      
+      // GFTextLine(gump, 20, 191, 2212, "Marcas e Características Físicas");
+      // GFResizePic(gump, 19, 209, 9350, 388, 43);
+      // GFTextEntry(gump, 25, 210, 375, 20, 0, desc[1], 98);
+      // GFTextEntry(gump, 25, 230, 375, 20, 0, desc[2], 99);
+      
+      // GFGumpPicTiled(gump, 39, 255, 340, 9, 50); //divisor
+
+      // //caminho
+      // GFTextLine(gump, 189, 269, 2212, "Caminho");
+      // GFTextLine(gump, 109-10, 293, 1152, "Obstinado");
+      // GFAddButton(gump, 85-10, 293, 210 + cint(chardata.caminhos[1] == "Obstinado"), 211, GF_CLOSE_BTN, 61);
+      // GFTextLine(gump, 222-10, 293, 1152, "Sábio");
+      // GFAddButton(gump, 199-10, 293, 210 + cint(chardata.caminhos[1] == "Sábio"), 211, GF_CLOSE_BTN, 62);
+      // GFTextLine(gump, 313, 293, 1152, "Sagaz");
+      // GFAddButton(gump, 290, 293, 210 + cint(chardata.caminhos[1] == "Sagaz"), 211, GF_CLOSE_BTN, 63);
+      
+      // // classe
+      // GFTextLine(gump, 193, 322, 2212, "Classe");
+      // GFTextLine(gump, 138, 345, 1152, classes[chardata.caminhos[1]][1].name);
+      // GFAddButton(gump, 115, 345, 210 + (chardata.classes[1].id == classes[chardata.caminhos[1]][1].name), 211, GF_CLOSE_BTN, 64);
+      // GFTextLine(gump, 265, 345, 1152, classes[chardata.caminhos[1]][2].name);
+      // GFAddButton(gump, 242, 345, 210+ (chardata.classes[1].id == classes[chardata.caminhos[1]][2].name), 211, GF_CLOSE_BTN, 65);
+
+      // var selected_class := FindConfigElem(classCfg, chardata.classes[1].id);
+      // GFHTMLArea(gump, 21, 383, 387, 100, selected_class.Description, 1, 1); // class_desc
+
+      // //god
+      // GFResizePic(gump, 396, 29, 5170, 292, 490);
+      // GFTextLine(gump, 499, 58, 2212, "Deus Venerado");
+      // GFGumpPic(gump, 423, 75, cint(available_gods[god].GumpPic), 0);
+
+      // if (available_gods.size() > 1)
+      //    if (god > 1) GFAddButton(gump, 566, 477, 2224, 2224, GF_CLOSE_BTN, 31); endif
+      //    GFTextLine(gump, 524, 473, 1152, "Trocar");
+      //    if (god < available_gods.size())  GFAddButton(gump, 503, 477, 2223, 2223, GF_CLOSE_BTN, 32); endif
+      // endif
+
+      // GFAddButton(gump, 189, 489, 2076, 2077, GF_CLOSE_BTN, 2);
 
 	   var input := GFSendGump(who, gump);
 
-      chardata.nome := GFExtractData(input, 95);
-      if (!chardata.nome) chardata.nome := ""; endif
+      chardata.nome := GFExtractData(input, TEXTENTRY_NAME_ID);
+      if (!chardata.nome) 
+         chardata.nome := ""; 
+      endif
       desc[1] := GFExtractData(input, 98);
       desc[2] := GFExtractData(input, 99);
-      if (!desc[1]) desc[1] := ""; endif
-      if (!desc[2]) desc[2] := ""; endif
+      if (!desc[1]) 
+         desc[1] := ""; 
+      endif
+      
+      if (!desc[2]) 
+         desc[2] := ""; 
+      endif
 
       if (11 in input.keys)
          chardata.height := 1;
@@ -321,39 +693,49 @@ function CharacterCreationGump(who, byref chardata)
       who.gender := (10 in input.keys) != 0;
 
       case (input[0])
-         44:
+         GF_CHANGE_PAGE:
+            if (currStep <= 4)
+               currStep++;
+            endif
+            break;
+         GF_CHANGE_PAGE_BACK:
+            if (currStep > 0)
+               currStep--;
+            endif
+            break;
+         BTN_RACE_HUMAN:
             chardata.raca := "Humano";
             who.graphic 	:= 400;
             who.trueobjtype := 400;
             break;
-         45:
+         BTN_RACE_ELF:
             chardata.raca := "Elfo";
             who.graphic 	:= 605;
             who.trueobjtype := 605;
             break;
-         46:
-            chardata.raca := "Meio-Elfo";
-            who.graphic 	:= 605;
-            who.trueobjtype := 605;
+         BTN_RACE_DWARF:
+            chardata.raca := "Anão";
+            who.graphic 	:= 605; // TODO: Update this
+            who.trueobjtype := 605; // TODO: Update this
             break;
-         61:
-            chardata.caminhos[1] := "Obstinado";
-            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
-            break;
-         62:
-            chardata.caminhos[1] := "Sábio";
-            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
-            break;
-         63:
-            chardata.caminhos[1] := "Sagaz";
-            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
-            break;
-         64:
-            chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
-            break;
-         65:
-            chardata.classes[1].id := classes[chardata.caminhos[1]][2].name;
-            break;
+         // 61:
+         //    chardata.caminhos[1] := "Obstinado";
+         //    chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+         //    break;
+         // 62:
+         //    chardata.caminhos[1] := "Sábio";
+         //    chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+         //    break;
+         // 63:
+         //    chardata.caminhos[1] := "Sagaz";
+         //    chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+         //    break;
+         // 64:
+         //    chardata.classes[1].id := classes[chardata.caminhos[1]][1].name;
+         //    break;
+         // 65:
+         //    chardata.classes[1].id := classes[chardata.caminhos[1]][2].name;
+         //    break;
          31:
             chardata.god := available_gods[god-1].Name;
          32:
@@ -369,7 +751,7 @@ function CharacterCreationGump(who, byref chardata)
       endif
 
       if (input[0] == 2)
-         chardata.profile := "{} {}".format(desc[1], desc[2]);
+         chardata.profile := $"{desc[1]} {desc[2]}";
          if (!chardata.nome || len(chardata.nome) < 3) 
             SendSysMessageEx(who, "Preencha o nome do personagem! (Min: 3 palavras)", SSM_FAIL);
             continue;
@@ -385,14 +767,44 @@ function CharacterCreationGump(who, byref chardata)
    endwhile
 endfunction
 
-function LookGump(who, chardata, aparencia := 0)
+function lookPage(byref gump, baseX, baseY, who, chardata)
    sleepms(20);
-	var params := struct{
+	var opts := array{ "cabelo", "barba", "corcabelo", "corpele"}; 
+
+	var disfarce := struct{
+      "barba"     := HAIR_BALD,
+      "cabelo"    := HAIR_BALD,
+      "corcabelo" := -1,
+      "corpele"   := -1,
+      "sexo"      := -1,
+      "raca"      := "",
+      "aparencia" := ""
+   };
+
+   var choice := struct{
+      "race"  := chardata.raca,
+		"barba" := (chardata.raca != "Elfo")
+   };
+
+   mainGump(0, disfarce, choice, 0, struct{ noBackground := 1, width := 440, height := 515, baseX := baseX-20, baseY := baseY+40 }, gump);
+endfunction
+
+/**
+ * Function to display the character appearance gump when editing only the appareance
+ *
+ * @param {mobile} who - The player character
+ * @param {struct} chardata - The character data
+ * @param {int} aparencia - The appearance index
+ * @returns {void}
+ */
+function LookGumpOld(who, chardata, aparencia := 0)
+   sleepms(20);
+	var disfarce := struct{
 		"race"  := chardata.raca,
 		"barba" := (chardata.raca != "Elfo")
 	};
 
-	aparencia := disguiseGump(who, params, aparencia);
+	aparencia := disguiseGump(who, disfarce, aparencia);
 
 	//equipa os itens de aparencia tudo
 	who.color     := aparencia.corpele;
@@ -416,10 +828,10 @@ function LookGump(who, chardata, aparencia := 0)
 
 	if ((!aparencia || aparencia.corpele == -1 || aparencia.corcabelo == -1) && !who.cmdlevel)
 		SendSysMessageEx(who, "Escolha uma cor para pele e cabelos!", SSM_FAIL);
-		LookGump(who, chardata, aparencia);
+		LookGumpOld(who, chardata, aparencia);
 	elseif (YesNo(who, "Deseja manter esta aparência?" , "Sim.", "Não."))
 		return 1;
 	else
-		LookGump(who, chardata, aparencia);
+		LookGumpOld(who, chardata, aparencia);
 	endif
 endfunction

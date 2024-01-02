@@ -7,7 +7,6 @@ include ":merchants:pcconversation";
 include ":gumps:gumps";
 include "include/say";
 include ":gumps:gump_prompts";
-include ":gumps:yesno";
 include ":gumps:include/requestgump";
 include ":attributes:attributes";
 include ":attributes:stats";

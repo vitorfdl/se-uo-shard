@@ -5,16 +5,16 @@ include "include/client";
 include ":disguise:disguise";
 include ":attributes:attributes";
 include ":gumps:gumps";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":fls_core:fls_characters";
 
 program testgump(who, test)
    var targ := who;
-   if (typeof(targ) == "Array")
+   if (typeof(targ) == "Array") // algum script chama esse programa com um array
       who := targ[1];
       targ := targ[2];
    elseif (test)
-      targ := Target(who);
+      targ := test == "me" ? who : Target(who); // copylook cmd
       who := targ;
    elseif (who.cmdlevel > 2)
       targ := Target(who);
@@ -32,7 +32,7 @@ endprogram
 function LookGump(who, targ, chardata, aparencia := 0)
    sleepms(20);
 	var params := struct{
-		"race"  := chardata.raca,
+		"race"  := chardata.raca ? chardata.raca : "Humano",
 		"barba" := (chardata.raca != "Elfo")
 	};
 

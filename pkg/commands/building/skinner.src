@@ -6,7 +6,7 @@
 use uo;
 use os;
 
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:requestgump";
 
 program textcmd_Skinner(who)

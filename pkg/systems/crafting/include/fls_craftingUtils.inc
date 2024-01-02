@@ -9,7 +9,7 @@
  **/
 
 include ":keys:key";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":unicos:item_template";
 include "include/facings";
 

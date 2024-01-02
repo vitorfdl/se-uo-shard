@@ -18,7 +18,7 @@
 use uo;
 use os;
 
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 // Defines the total number of items that can be moved at one time. If the number
 // exceeds this value, the command fails. Be careful setting this too high, you could

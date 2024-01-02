@@ -3,7 +3,7 @@ use uo;
 use os;
 use cfgfile;
 
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include "include/say";

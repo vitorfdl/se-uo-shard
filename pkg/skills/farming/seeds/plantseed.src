@@ -9,7 +9,7 @@ const PLANT_SOUND	:= 0x50;
 include ":attributes:include/attributeConstants";
 include ":attributes:include/attributes";
 include ":charactercreation:feats";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program PlantSeed(who, seed)
 	

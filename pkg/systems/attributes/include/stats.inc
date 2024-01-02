@@ -11,8 +11,13 @@
 ===============================================================*/
 
 use uo;
+use math;
 
-const RETURN_BONUS := 1;
+enum ATTR_CONST
+	RETURN_BONUS := 1,
+	RETURN_MOD := 1, // same
+	RETURN_TRUE := 0,
+endenum
 
 function GetBonusAttr(number)
 	var modifier := Floor((number - 10) / 2);

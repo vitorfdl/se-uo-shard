@@ -1,0 +1,13 @@
+# Vitor Lima - 2024-12-31
+- tngumps renomeado para gump_prompts
+- adicionado funções novas ao gumps_ex
+   - GFTableProps
+   - GFCenterRectangle
+   - GFTableProps
+   - GFColumnPosition
+   - GFColumnPositionByWidthArray
+   - GFRowPosition
+   - GFPageScrollBar
+   - GFBuildBar
+   - GFDivisorHorizontal 
+- adicionado wrapper gump_caching 

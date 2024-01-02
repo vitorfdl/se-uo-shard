@@ -1,7 +1,7 @@
 use uo;
 
 include "include/say";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 function CheckIngredients(master, ritualid)
 

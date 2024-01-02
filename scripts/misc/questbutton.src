@@ -6,7 +6,6 @@ include ":gumps:gump_prompts";
 include ":gumps:gumps";
 include ":quest:quest";
 include ":gumps:gumps_ex";
-include ":gumps:yesno";
 include "include/say";
 include "include/utils";
 include "include/client";

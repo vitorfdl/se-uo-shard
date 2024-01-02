@@ -24,6 +24,7 @@ use os;
 use cfgfile;
 use vitals;
 use attributes;
+use math;
 
 include ":attributes:regen";
 include ":attributes:settings";
@@ -42,18 +43,199 @@ include ":timedscripts:timedScripts";
 const BASE_DIFFICULTY := 19;
 const GET_MODIFIER := 1;
 
-function rollAttrDice(a := 1, b:= 1, c :=1, d:= 1, e:= 1)
-   return 0;
+enum DICE_PENALTY
+	DICE_PENALTY_NONE := 0,
+	DICE_PENALTY_LIGHT := 1,
+	DICE_PENALTY_MEDIUM := 2,
+	DICE_PENALTY_HEAVY := 3,
+	DICE_PENALTY_EXHAUSTED := 4,
+endenum
+
+
+enum STAT_BEHAVIOR
+	SS_OVERRIDE := 0x0,
+	SS_ADD := 0x1,
+	SS_SUBTRACT := 0x2,
+endenum
+
+
+// params.critical -> dice >= value
+// params.failure -> dice <= value
+// params.get_critical -> returns {dice, critical}
+function rollAttrDice(mobile, attribute := "", penalty := DICE_PENALTY_NONE, params := struct{})
+	// Seta parametro de critico
+	if (!params.critical)
+		params.critical := 20;
+	endif
+	if (!params.failure)
+		params.failure := 1;
+	endif
+
+	// Rolagem de dados
+	var dice := RandomDiceRoll("1d20");
+	var param_return := struct{};
+
+	if (!mobile.npctemplate && !mobile.master)
+		if (AP_GetVitalMaximumValue(mobile, "DP")-30 > AP_GetVital(mobile, "DP"))
+			penalty -= 2;
+		endif
+
+		var hunger := AP_GetVital(mobile, "Hunger") / 60;
+		if (!mobile.npctemplate && hunger >= 5)
+			penalty -= 2;
+		endif
+	endif
+
+	// Rola o dado com penalidade, se for o caso.
+	if (penalty < 0 || GetObjProperty(mobile, "ArmorPenalty") >= 1)
+		var dices := array{ RandomDiceRoll("1d20"), dice};
+		dice := ReturnLowest(dices);
+      param_return.second_dice := ReturnHighest(dices);
+	elseif (penalty > 0)
+		var dices := array{ RandomDiceRoll("1d20"), dice};
+		dice := ReturnHighest(dices);
+      param_return.second_dice := ReturnLowest(dices);
+	endif
+
+	// Grava info de critico.
+	if (dice >= params.is_critical)
+		param_return.is_critical := 1;
+	elseif (dice <= params.failure)
+		param_return.is_critical := -1;
+	else
+		param_return.is_critical := 0;
+	endif
+
+	// Adiciona bonus de atributo
+	if (attribute && attribute != 0)
+		var mod := AP_GetStat(mobile, attribute, RETURN_BONUS);
+		dice += mod;
+	endif
+	
+   if (GetObjProperty(mobile, "#divineorientation"))
+      dice += RandomDiceRoll("1d4");
+      TS_LowerDuration(mobile, "divineorientation", -1);
+   endif
+
+
+	if (dice < 1)
+		dice := 1;
+	endif
+
+	// Retorna
+	if (params.get_critical)
+		param_return.dice := dice;
+		return param_return;
+	endif
+
+	return dice;
 endfunction
-function GetSkillBonus(a := 1, b:= 1)
-   return 0;
-endfunction
-function rollResistDice(a := 1, b:= 1)
-   return 0;
-endfunction
+
 function checkImmunity(a := 1, b:= 1)
    return 0;
 endfunction
+
+function GetSkillBonus(mobile, skills := 0) // TODO: Fix this
+   DebugMsg(mobile, "Searching skill bonus for {}".format(skills));
+   // var bn := 1;
+	// if (skills)
+	// 	if (typeof(skills) != "Array") 
+	// 		skills := array{skills};
+	// 	endif
+   //    if (!skills[1])
+   //       return 0;
+   //    endif
+
+      // bn := HaveSkill(mobile, skills, GET_MODIFIER);
+		// if (!bn) 
+         return 0; 
+      // endif
+	// endif
+
+   // var proficiency := 0;
+
+   // if (mobile.npctemplate);
+   //    var level := 1;
+   //    var npcelem := NPC_GetNPCConfig(mobile.npctemplate);
+   //    level       := GetConfigInt(npcelem, "Difficulty");
+
+   //    if (!level || level <= 4)
+   //       proficiency := 2;
+   //    elseif (level <= 8)
+   //       proficiency := 3;
+   //    elseif (level <= 12)
+   //       proficiency := 4;
+   //    elseif (level <= 16)
+   //       proficiency := 5;
+   //    elseif (level <= 20)
+   //       proficiency := 6; // Players stop here
+   //    elseif (level <= 24)
+   //       proficiency := 7;
+   //    elseif (level <= 28)
+   //       proficiency := 8;
+   //    elseif (level <= 30)
+   //       proficiency := 9; // Npc's can get to +9
+   //    endif
+   // else
+   //    if (bn >= 1)
+   //       bn -= 1; //fix for +0
+   //    endif
+
+   //    proficiency := bn;
+   // endif
+
+   // DebugMsg(mobile, "Bonus is: {}".format(proficiency));
+	// return proficiency;
+endfunction
+
+function getResistBonus(mobile, type)
+	if (type == "Fortitude")
+		var strength_modifier := AP_GetStat(mobile, "Strength", RETURN_MOD);
+		var constitution_modifier := AP_GetStat(mobile, "Constitution", RETURN_MOD);
+		return ceil((strength_modifier + constitution_modifier) / 2);
+	elseif (type == "Reflex")
+		var dexterity_modifier := AP_GetStat(mobile, "Dexterity", RETURN_MOD);
+		var wisdom_modifier := AP_GetStat(mobile, "Wisdom", RETURN_MOD);
+		return ceil((dexterity_modifier + wisdom_modifier) / 2);
+	elseif (type == "Will")
+		var intelligence_modifier := AP_GetStat(mobile, "Intelligence", RETURN_MOD);
+		var charisma_modifier := AP_GetStat(mobile, "Charisma", RETURN_MOD);
+		return ceil((intelligence_modifier + charisma_modifier) / 2);
+	else
+		print("Invalid Resist type: " + type);
+		return 0;
+	endif
+endfunction
+
+function rollResistDice(mobile, type)
+	var proficiency_bonus := 0;
+	var dice := RandomDiceRoll("1d20");
+
+	dice += getResistBonus(mobile, type);
+	return dice;
+endfunction
+
+// function HaveSkill(mobile, skill, get_mod := 1)
+// 	if (typeof(skill) != "Array")
+// 		skill := array{skill};
+// 	endif
+
+//    var modifier := 0;
+
+// 	foreach name in skill
+//       var res := AP_GetTrueSkill(mobile, name);
+// 		if (res > 0)
+// 			return cint(res);
+// 		endif
+
+//       if (get_mod)
+//          modifier := GetSkillModifier(name);
+//       endif
+//       sleepms(2);
+// 	endforeach
+
+// 	return modifier; //n tem skill
+// endfunction
 
 function CalculatePowerPercent(power, percent := 100)
    percent := cdbl(percent);

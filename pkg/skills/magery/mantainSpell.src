@@ -1,6 +1,6 @@
 use uo;
 include ":timedscripts:timedScripts";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":attributes:attributes";
 include "include/say";
 include ":gumps:gumps";

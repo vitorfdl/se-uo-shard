@@ -4,7 +4,7 @@ use cfgfile;
 include ":gumps:gumps";
 include "include/arrays";
 include ":attributes:attributes";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":charactercreation:characters";
 include "include/say";
 

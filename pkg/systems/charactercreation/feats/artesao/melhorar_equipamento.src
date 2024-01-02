@@ -7,7 +7,6 @@ include ":gumps:gumps_ex";
 //include "include/damage";
 
 var item_config     := ReadConfigFile(":*:itemdesc");
-var resdmg_list := array{DMG_FIRE, DMG_POISON, DMG_COLD, DMG_ENERGY, DMG_SLASH, DMG_BLUDGE, DMG_PIERCE};
 
 program alchemy(params)
    var who := params[1];

@@ -2,7 +2,7 @@ use polsys;
 use datafile;
 use cfgfile;
 
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:requestgump";
 include ":timedscripts:timedScripts";
 include "include/say";

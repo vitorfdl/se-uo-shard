@@ -24,7 +24,7 @@ include "include/math";
 include "plankUtil";
 include "include/sysEvent";
 include "include/say";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":ghaia:objective";
 include ":keys:key";
 include ":tn:cooldown";

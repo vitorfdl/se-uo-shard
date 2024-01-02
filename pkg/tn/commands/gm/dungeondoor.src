@@ -1,9 +1,8 @@
 use uo;
 use datafile;
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:requestgump";
 include ":traps:traps";
-include ":gumps:gump_prompts";
 
 program makedungeondoor(who)
 

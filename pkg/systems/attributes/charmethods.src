@@ -4,6 +4,7 @@ use uo;
 
 include "include/arrays";
 include ":attributes:attributes";
+include ":attributes:attributeConstants";
 
 program Install()
     return 1;
@@ -95,13 +96,13 @@ exported function GetPoints(who)
 	var chardata := GetObjProperty(who, "chardata");
 	var points := chardata["points"];
 	if (points == error || !points)
-		SetPoints(who, 0);
+		IncreasePoints(who, 0);
 		points := 0;
 	endif
 	return points;
 endfunction
 
-exported function SetPoints(who, points)
+exported function IncreasePoints(who, points)
    set_critical(1);
 	var chardata := GetObjProperty(who, "chardata");
    if (!chardata)
@@ -127,14 +128,14 @@ exported function Getvitalpoints(who)
 	var chardata := GetObjProperty(who, "chardata");
 	var vitalpoints := chardata["vitalpoints"];
 	if (vitalpoints == error || !vitalpoints)
-		Setvitalpoints(who, 0);
+		IncreaseVitalPoints(who, 0);
 		vitalpoints := 0;
 	endif
 
 	return vitalpoints;
 endfunction
 
-exported function Setvitalpoints(who, points := 1)
+exported function IncreaseVitalPoints(who, points := 1)
    set_critical(1);
 	var chardata := GetObjProperty(who, "chardata");
    if (!chardata)
@@ -288,11 +289,47 @@ exported function UpTameProperty(who, template)
    if (!HaveFeatSecondary(who, 53)) return; endif
    template[":ghaia:"] := "";
    var pet_knowledge := GetObjProperty(who, "pet_knowledge");
-   if (!pet_knowledge) pet_knowledge := dictionary{}; endif
+   if (!pet_knowledge) 
+		pet_knowledge := dictionary{};
+	endif
    
-   if (pet_knowledge[template] >= 150) return; endif
+   if (pet_knowledge[template] >= 150) 
+		return; 
+	endif
    
    pet_knowledge[template] := cint(pet_knowledge[template]) +1;
 
    SetObjProperty(who, "pet_knowledge", pet_knowledge);
 endfunction
+
+exported function GetStat(who, stat := "", mod := 0)
+	if (!(stat in array{"Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"}))
+		return 0;
+	endif
+
+	return AP_GetStat(who, stat, mod);
+endfunction
+
+
+exported function SetStat(who, stat := "", amount := 0, behavior := SS_OVERRIDE)
+	if (!(stat in array{"Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma"}))
+		return 0;
+	endif
+
+	var chardata := GetObjProperty(who, "chardata");
+
+	case (behavior)
+		SS_OVERRIDE:
+			AP_SetTrueStat(who, stat, amount);
+			chardata.attributes[stat] := amount;
+		SS_ADD:
+			AP_SetTrueStat(who, stat, AP_GetTrueStat(who, stat) + amount);
+			chardata.attributes[stat] += amount;
+		SS_SUBTRACT:
+			AP_SetTrueStat(who, stat, AP_GetTrueStat(who, stat) - amount);
+			chardata.attributes[stat] -= amount;
+	endcase
+
+	SetObjProperty(who, "chardata", chardata);
+endfunction
+

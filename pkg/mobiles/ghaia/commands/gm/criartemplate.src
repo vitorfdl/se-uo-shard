@@ -16,7 +16,7 @@ use polsys;
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
 include "include/packets";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include "include/say";
 include "include/arrays";
 

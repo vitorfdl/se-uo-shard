@@ -5,7 +5,7 @@ include ":unicos:unicos";
 include	":merchants:crafthelp";
 include ":gumps:include/requestgump";
 include ":gumps:gumps";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 const ADD_ITEM_BTN		:= 0x1;
 const SHOW_ITEMS_BTN		:= 0x2;

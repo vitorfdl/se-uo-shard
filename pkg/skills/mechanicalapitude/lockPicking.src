@@ -9,7 +9,7 @@ include ":itemutils:canAccess";
 include ":attributes:attributeConstants";
 include ":attributes:attributes";
 include "include/say";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":quest:quest";
 include ":tn:cooldown";
 

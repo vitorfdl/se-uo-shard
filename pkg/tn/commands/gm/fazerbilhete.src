@@ -1,6 +1,5 @@
 use uo;
 use boat;
-include ":gumps:yesno";
 include ":gumps:gump_prompts";
 include "include/say";
 

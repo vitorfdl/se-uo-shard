@@ -9,7 +9,7 @@ include":merchants:crafthelp";
 include ":ghaia:ghaiaUtil";
 include ":gumps:gumps";
 include ":gumps:gumps_ex";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 include ":gumps:include/requestgump";
 include ":crafting:craft_props";
 include ":crafting:fls_crafting";

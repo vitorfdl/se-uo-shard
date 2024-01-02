@@ -7,7 +7,7 @@ include "include/sounds";
 include "include/say";
 include ":attributes:attributes";
 include ":itemutils:canAccess";
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program magicudel(who, item)
 	if(!can_access(who, item))

@@ -161,67 +161,67 @@ function GetFeatList(who, only_active := 0)
 endfunction
 
 
-function LearnFeat(who, feat, minus_point := 0, gives := 1)
-	if (typeof(feat) != "Struct")
-		feat := FeatInfo(feat, 1);
-	endif
+// function LearnFeat(who, feat, minus_point := 0, gives := 1)
+// 	if (typeof(feat) != "Struct")
+// 		feat := FeatInfo(feat, 1);
+// 	endif
 
-	if (typeof(feat) != "Struct")
-		Print(">>>>> ERROR OCURRED, NO FEAT FOUND {}".format(feat));
-		return 0;
-	endif
+// 	if (typeof(feat) != "Struct")
+// 		Print(">>>>> ERROR OCURRED, NO FEAT FOUND {}".format(feat));
+// 		return 0;
+// 	endif
 
-	var chardata := GetObjProperty(who, "chardata");
-	var feat_list := chardata.Feats;
-   if (!feat_list)
-      feat_list := array{};
-   endif
+// 	var chardata := GetObjProperty(who, "chardata");
+// 	var feat_list := chardata.Feats;
+//    if (!feat_list)
+//       feat_list := array{};
+//    endif
    
-	if (feat.name in feat_list)
-		return 0;
-	endif
+// 	if (feat.name in feat_list)
+// 		return 0;
+// 	endif
 
-   if (feat.type == "Classe")
-      var class_feats := chardata.class_feats;
-      if (!class_feats || typeof(class_feats) != "Array" )
-         class_feats := array{};
-      endif
-      class_feats.append(feat.level);
-      chardata.class_feats := class_feats;
-   endif
+//    if (feat.type == "Classe")
+//       var class_feats := chardata.class_feats;
+//       if (!class_feats || typeof(class_feats) != "Array" )
+//          class_feats := array{};
+//       endif
+//       class_feats.append(feat.level);
+//       chardata.class_feats := class_feats;
+//    endif
 
-	feat_list.append(feat.name);
-	chardata.Feats := feat_list;
-	SetObjProperty(who, "chardata", chardata);
+// 	feat_list.append(feat.name);
+// 	chardata.Feats := feat_list;
+// 	SetObjProperty(who, "chardata", chardata);
 	
-	// if (minus_point)
-	// 	who.SetTalentPoints(-1);
-	// endif
+// 	// if (minus_point)
+// 	// 	who.SetTalentPoints(-1);
+// 	// endif
 
-   if (gives)
-      foreach give_parse in (feat.give)
-         give_parse := SplitWords(give_parse);
-         if (give_parse[1] == "item")
-            createiteminBackpack(who, give_parse[2], give_parse[3]);
-         elseif (give_parse[1] == "stat")
-            AP_SetTrueStat(who, give_parse[2], AP_GetTrueStat(who, give_parse[2]) + cint(give_parse[3]));
-         // else
-         //    var oldskill := AP_GetTrueSkill(who, give_parse[2]);
-         //    AP_SetTrueSkill(who, give_parse[2], oldskill+1);
-         endif
-         sleepms(2);
-      endforeach
-   endif
+//    if (gives)
+//       foreach give_parse in (feat.give)
+//          give_parse := SplitWords(give_parse);
+//          if (give_parse[1] == "item")
+//             createiteminBackpack(who, give_parse[2], give_parse[3]);
+//          elseif (give_parse[1] == "stat")
+//             AP_SetTrueStat(who, give_parse[2], AP_GetTrueStat(who, give_parse[2]) + cint(give_parse[3]));
+//          // else
+//          //    var oldskill := AP_GetTrueSkill(who, give_parse[2]);
+//          //    AP_SetTrueSkill(who, give_parse[2], oldskill+1);
+//          endif
+//          sleepms(2);
+//       endforeach
+//    endif
 
-   if (chardata.subclasses)
-      foreach classe in (chardata.subclasses)
-         all_feats := all_feats + classe.habs;
-         sleepms(2);
-      endforeach
-   endif
+//    if (chardata.subclasses)
+//       foreach classe in (chardata.subclasses)
+//          all_feats := all_feats + classe.habs;
+//          sleepms(2);
+//       endforeach
+//    endif
 
-	return feat_list;
-endfunction
+// 	return feat_list;
+// endfunction
 
 function HaveFeat(who, feat)
 	var feat_list := GetFeatList(who);
@@ -271,16 +271,33 @@ endfunction
 
 function BuildFeatToolTip(feat, return_points := 0, power := 0)
    var desc := "";
-   if (feat.Script) desc += "{}Habilidade Ativável<br>".format(ORANGE, feat.PointCost);
-   else desc += "{}Habilidade Passiva<br>".format(ORANGE, feat.PointCost); endif
-   if (return_points && feat.PointCost) desc += "{}Custo: {} ponto(s)<br>".format(LIGHTGRAY, feat.PointCost); endif
-   if (return_points && feat.Level) desc += "{}Level do Personagem: {}<br>".format(LIGHTGRAY, feat.Level); endif
-   if (return_points && feat.Group) desc += "{}Level de Classe: {}<br>".format(LIGHTGRAY, feat.Group); endif
-   if (feat.Mana) desc += "{}Mana: {}<br>".format(BLUE, feat.Mana); endif
-   if (feat.Vigor) desc += "{}Vigor: {}<br>".format(YELLOW, feat.Vigor); endif
-   if (feat.Cooldown) desc += "{}Cooldown: {}<br>".format(LIGHTGRAY, feat.Cooldown); endif
-   if (feat.Description) desc += "{}{}<br>".format(WHITE, feat.Description); endif
-   var tooltip := "<center><basefont color=#7FFFD4><b>{}</b></basefont><br>{}".format(feat.Name, desc);
+   if (feat.Script) 
+       desc += $"{ORANGE}[Habilidade Ativável]<br>";
+   else 
+       desc += $"{ORANGE}[Habilidade Passiva]<br>"; 
+   endif
+   if (return_points && feat.PointCost) 
+       desc += "{}Custo: {} ponto(s)<br>".format(LIGHTGRAY, feat.PointCost); 
+   endif
+   if (return_points && feat.Level) 
+       desc += "{}Level do Personagem: {}<br>".format(LIGHTGRAY, feat.Level); 
+   endif
+   if (return_points && feat.Group) 
+       desc += "{}Level de Classe: {}<br>".format(LIGHTGRAY, feat.Group); 
+   endif
+   if (feat.Mana) 
+       desc += "{}Mana: {}<br>".format(BLUE, feat.Mana); 
+   endif
+   if (feat.Vigor) 
+       desc += "{}Vigor: {}<br>".format(YELLOW, feat.Vigor); 
+   endif
+   if (feat.Cooldown) 
+       desc += "{}Cooldown: {}<br>".format(LIGHTGRAY, feat.Cooldown); 
+   endif
+   if (feat.Description) 
+       desc += "{}{}<br>".format(WHITE, feat.Description); 
+   endif
+   var tooltip := "<basefont color=#7FFFD4>{}</basefont><br>{}".format(feat.Name, desc);
 
    foreach mod in (feat.PowerMod)
       if (power)

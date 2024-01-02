@@ -9,7 +9,6 @@ include ":faccao:laws";
 include ":gumps:gumps";
 include ":gumps:gump_prompts";
 include ":yggdrasil:boss";
-include ":gumps:yesno";
 include ":unicos:item_template";
 include ":gumps:htmlgump";
 include ":keys:key";

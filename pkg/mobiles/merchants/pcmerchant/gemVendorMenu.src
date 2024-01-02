@@ -15,7 +15,7 @@
 // include ":gumps:gumps";
 // include ":merchants:merchant";
 // include	":merchants:crafthelp";
-// include ":gumps:yesno";
+// include ":gumps:gump_prompts";
 // include "include/say";    
 // 
 // include ":ghaia:ghaiaUtil";
