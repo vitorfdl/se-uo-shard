@@ -7,7 +7,7 @@ use uo;
 use os;
 use cfgfile;
 
-include ":gumps:yesno";
+include ":gumps:gump_prompts";
 
 program textcmd_MakeSet(who , text)
 	if( !text )
