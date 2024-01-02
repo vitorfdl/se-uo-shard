@@ -27,11 +27,11 @@
             // },
             {
                 "match": "\\.src$",
-                "cmd": "node ./tcompile ${file}"
+                "cmd": "node ./tcompile -q ${file}"
             },
             {
                 "match": "\\.inc$",
-                "cmd": "node ./tcompile -r -u ${fileDirname}"
+                "cmd": "node ./tcompile -r -q ${fileDirname}"
             }
         ]
     },
