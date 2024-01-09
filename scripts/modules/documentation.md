@@ -78,8 +78,15 @@
   ...
   look[mykey].call();
   ```
+
+- **Elvis operator** - `EXPR_LHS ?: EXPR_RHS`
+  - **Description:**
+    - This operator evaluates the left-hand-side operand and keeps its value if it is a true value.
+      - If `EXPR_LHS` is true, then it is evaluated and returned.
+      - If not true, `EXPR_RHS` is evaluated and returned.
+    - These can also be changed: `A ?: B ?: C ?: D` evaluates to the first true value from left to right
   
-- **Added: Conditional Operator** - `condition ? exprIfTrue : exprIfFalse`
+- **Conditional Operator** - `condition ? exprIfTrue : exprIfFalse`
   - **Description:** 
     - This operator allows for efficient evaluation of two expressions based on a condition.
     - The syntax `condition ? exprIfTrue : exprIfFalse` evaluates the condition:
