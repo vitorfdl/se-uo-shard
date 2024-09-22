@@ -23,7 +23,7 @@
     - `$"Hello, {who.name}! You are player #{who in EnumerateOnlineCharacters()} online. Your graphic is {who.graphic : #x}."`
     - Replaces complex concatenations or `.format` method.
 
-## Array Functions
+## Array Functions and Methods
 - `Min(x, y:=0)`: Returns the minimum of x and y or the lowest element in an array.
 - `Max(x, y:=0)`: Returns the maximum of x and y or the highest element in an array.
 - `array.Size()`: Returns the number of elements in the array.
@@ -36,7 +36,20 @@
 - `array.cycle([count])`: Rotates the array like a conveyor belt.
 - `array[randomIndex]`: Accesses a random entry in the array.
 - `_elem_iter`: Index in `foreach` and `while` loops.
+- `array.filter(FunctionObject testFn)`: Returns a new array with all elements that pass the test implemented by the provided function.
+- `array.find(FunctionObject testFn)`: Returns the first element in the array that satisfies the provided testing function.
+- `array.findIndex(FunctionObject testFn)`: Returns the index of the first element in the array that satisfies the provided testing function.
+- `array.map(FunctionObject mapFn)`: Creates a new array with the results of calling a provided function on every element in the array.
+- `array.reduce(FunctionObject testFn, [initialValue])`: Executes a reducer function on each element of the array, resulting in a single output value.
+  
+  Example:
+  ```php
+  var all_hidden := EnumerateOnlinePlayers()
+                .filter( @( player ) {
+                  return player.hidden;
+                });
 
+  ```
 ## Struct Enhancements
 - `struct .?` and `.-`: Shortcuts for `.exists()` and `.erase()` respectively.
 
@@ -48,11 +61,11 @@
 - `dictionary.keys()`: Returns an array of all keys.
 - Example: Nested dictionary with options.
 
-## Functions Update (02-05-2018)
+## Functions Objects
 - Operator `@`: Used to create a function object.
   - `func.call(..)`: Calls the function with specified parameters.
-  - Limitations: The function object can only be executed in the same script instance and cannot be saved/loaded.
-  - Use Case: Creating generic item loops and fast function tables.
+  - Function objects can now be called across different scripts.
+  - Use Case: Creating generic item loops, fast function tables, and passing functions between scripts.
 
   ```php
   function genericItemLoop(func)
@@ -75,8 +88,43 @@
   var look=dictionary;
   look["blubb"]:=@doSomething
   look["blah"]:=@doSomethingElse
-  ...
   look[mykey].call();
+
+  // Example of passing a function between scripts
+  program item_usescript( who, item )
+    var color_changer := GetProcess( ... );
+    color_changer.SendEvent( struct{
+      type := "new",
+      item := item,
+      initializer := @SetupItem
+    } );
+    // ... wait for result ...
+    SendSysMessage( who, $"Item color changed: {item.color}" );
+  endprogram
+
+  function SetupItem( item, color )
+    Print( $"Changing color: {item.color} -> {color}" );
+    item.color := color;
+  endfunction
+  ```
+- Function Expressions: Supported via syntax `@(param1, param2, ..., paramN) { ... }`
+  - Example: Filtering hidden online players
+  ```php
+  var all_hidden := EnumerateOnlinePlayers()
+    .filter( @( player ) {
+      return player.hidden;
+    });
+  ```
+
+- Variadic User Functions: Functions that accept any number of arguments
+  ```php
+  function SendMessageToPlayers( message, players... )
+    foreach player in players
+      SendSysMessage( player, $"[Server] {message}" );
+    endforeach
+  endfunction
+
+  SendMessageToPlayers( "Hello!", player1, player2, player3 );
   ```
 
 - **Elvis operator** - `EXPR_LHS ?: EXPR_RHS`
@@ -93,6 +141,22 @@
       - If the condition is true, `exprIfTrue` is evaluated and returned.
       - If the condition is false, `exprIfFalse` is evaluated and returned.
 
+- Spread Operator: Used to expand an array's elements into arguments of a function call or elements of a new array
+  ```php
+  var players := array{};
+  if (condition2)
+    var more_players := GetMorePlayers();
+    players := { players..., more_players... };
+  endif
+  SendMessageToPlayers( "Hello!", players... );
+  ```
+
+- Function Calls: The compiler now supports any expression as the callee for a function call
+  ```php
+  var func := @FunctionObject;
+  func( 1, 2, 3 );
+  func( 1 )( 2 )( 3 );
+  ```
 # GET ENVIRONMENT VARIABLE
 - **Added Function:** `os::GetEnvironmentVariable(name:="")`
   - **Description:** Returns the string value of a given environment variable `name`.
