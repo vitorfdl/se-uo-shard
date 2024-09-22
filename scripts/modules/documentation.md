@@ -61,6 +61,17 @@
 - `dictionary.keys()`: Returns an array of all keys.
 - Example: Nested dictionary with options.
 
+## Spread Operator
+Used to expand an array's elements into arguments of a function call or elements of a new array
+  ```php
+  var players := array{};
+  if (condition2)
+    var more_players := GetMorePlayers();
+    players := { players..., more_players... };
+  endif
+  SendMessageToPlayers( "Hello!", players... );
+  ```
+
 ## Functions Objects
 - Operator `@`: Used to create a function object.
   - `func.call(..)`: Calls the function with specified parameters.
@@ -140,16 +151,6 @@
     - The syntax `condition ? exprIfTrue : exprIfFalse` evaluates the condition:
       - If the condition is true, `exprIfTrue` is evaluated and returned.
       - If the condition is false, `exprIfFalse` is evaluated and returned.
-
-- Spread Operator: Used to expand an array's elements into arguments of a function call or elements of a new array
-  ```php
-  var players := array{};
-  if (condition2)
-    var more_players := GetMorePlayers();
-    players := { players..., more_players... };
-  endif
-  SendMessageToPlayers( "Hello!", players... );
-  ```
 
 - Function Calls: The compiler now supports any expression as the callee for a function call
   ```php
