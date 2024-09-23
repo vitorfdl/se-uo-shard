@@ -16,7 +16,7 @@ program textcmd_Odin(who, text)
    var sysMsg := "No matter what the user says, make a joke about what he said.";
    var questions := array{ struct{ "user" := text } };
 
-	var result := OpenAICompletion(sysMsg, questions);
+	var result := openAICompletion(sysMsg, questions);
    if (result["error"])
       SendSysMessageEX(who, "Error: " + result["error"], SSM_FAIL);
       return;
